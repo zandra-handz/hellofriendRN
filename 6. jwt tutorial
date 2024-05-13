@@ -1,0 +1,11 @@
+i did not use typescript
+
+
+create new config file:
+
+npx tsc --init
+
+
+npm install axios
+npx expo install react-native-screens react-native-safe-area-context
+npx expo install expo-secure-store

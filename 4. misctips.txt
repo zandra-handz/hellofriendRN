@@ -1,0 +1,28 @@
+add for expo app display:
+{
+  "expo": {
+    ...
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "userInterfaceStyle": "automatic"
+    },
+    "android": {
+      "userInterfaceStyle": "automatic"
+    },
+
+in scrollview can add prop: keyboardDismissMode="on-drag"
+
+instead of view component can use
+
+<KeyboardAvoidingView
+    behavior={Platform.OS==="ios" ? "padding":"position"}
+    styles={styles.container}
+>
+
+    <TextInput
+        style={styles.input}
+        value={firstName}
+        onChangeText={onChangeFirstName}
+    />
+</KeyboardAvoidingView>
+

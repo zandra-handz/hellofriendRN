@@ -1,0 +1,9 @@
+in terminal:
+
+npx create-expo-app sampleproject
+cd sampleproject
+npm start 
+
+install expo app on phone if do not have already
+scan QR code to view app on phone
+
