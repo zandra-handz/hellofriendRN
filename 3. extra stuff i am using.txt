@@ -60,3 +60,6 @@ npm install react-native-date-picker
 this will throw error RNDatePicker not found in the UIManager
 
 expo install @react-native-community/datetimepicker
+
+npm install @react-native-community/slider
+import Slider from '@react-native-community/slider'; 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuthUser } from '../context/AuthUserContext';
 import { Button, View, StyleSheet } from 'react-native';
 import HelloFriendFooter from '../components/HelloFriendFooter';
-import ProgressBarOnboarding from './ProgressBarOnboarding';
+import ProgressBarOnboarding from '../components/ProgressBarOnboarding';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import ScreenOnboardingOne from './ScreenOnboardingOne';
@@ -16,6 +16,7 @@ const Stack = createNativeStackNavigator();
 
 const ScreenOnboardingFlow = () => {
     const [finalizingData, setFinalizingData] = useState({});
+    
     const { authUserState, onSignOut } = useAuthUser();
 
     const handleSignOutPress = () => {
@@ -26,7 +27,7 @@ const ScreenOnboardingFlow = () => {
     const handleFriendNameChange = (friendName) => {
         setFinalizingData((prevData) => ({ ...prevData, friendName }));
     };
-
+    
     const handleFriendEffortChange = (friendEffort) => {
         setFinalizingData((prevData) => ({ ...prevData, friendEffort }));
     };
@@ -36,7 +37,7 @@ const ScreenOnboardingFlow = () => {
     };
 
     const handleFriendDateChange = (friendDate) => {
-        console.log("Friend Date Updated:", friendDate);
+        console.log("Friend Date Updated:", friendDate); // Added console.log statement
         setFinalizingData((prevData) => ({ ...prevData, friendDate }));
     };
 
@@ -64,14 +65,8 @@ const ScreenOnboardingFlow = () => {
                         header: (props) => <ProgressBarOnboarding percentage={0.40} {...props} /> 
                     }}
                 >
-                    {(props) => (
-                        <ScreenOnboardingTwo
-                            {...props}
-                            onChange={handleFriendNameChange}
-                        />
-                    )}
+                    {(props) => <ScreenOnboardingTwo {...props} onChange={handleFriendNameChange} />}
                 </Stack.Screen>
-
                 <Stack.Screen
                     name="Three"
                     options={{
@@ -86,16 +81,19 @@ const ScreenOnboardingFlow = () => {
                         />
                     )}
                 </Stack.Screen>
-
                 <Stack.Screen
                     name="Four"
                     options={{
                         header: (props) => <ProgressBarOnboarding percentage={0.80} {...props} /> 
                     }}
                 >
-                    {(props) => <ScreenOnboardingFour {...props} onChange={handleFriendDateChange} />}
+                    {(props) => (
+                        <ScreenOnboardingFour
+                            {...props}
+                            onChange={handleFriendDateChange}
+                        />
+                    )}
                 </Stack.Screen>
-
                 <Stack.Screen
                     name="Five"
                     options={{
@@ -110,32 +108,27 @@ const ScreenOnboardingFlow = () => {
                         />
                     )}
                 </Stack.Screen>
-
                 <Stack.Screen
                     name="Complete"
                     options={{
                         header: (props) => <ProgressBarOnboarding percentage={1} {...props} /> 
                     }}
                 >
-                    {(props) => {
-                        console.log('finalizingData:', finalizingData); // Log finalizingData before rendering
-                        return <ScreenOnboardingComplete {...props} finalizingData={finalizingData} />;
-                    }}
+                    {(props) => (
+                        <ScreenOnboardingComplete
+                            {...props}
+                            finalizingData={finalizingData} // Pass finalizingData as a prop
+                        />
+                    )}
                 </Stack.Screen>
 
             </Stack.Navigator>
-            <View style={styles.exitButtonContainer}>
-                <Button
-                    title="Exit"
-                    onPress={handleSignOutPress}
-                    color="#39f0df" 
-                />
-            </View>
+            <Button title="Exit" onPress={handleSignOutPress} /> 
             <View style={styles.footerContainer}>
                 <HelloFriendFooter />
             </View>
         </>
-    );a
+    );
 };
 
 const styles = StyleSheet.create({
@@ -146,9 +139,6 @@ const styles = StyleSheet.create({
     },
     progressBarContainer: {
         marginTop: 66,
-    },
-    exitButtonContainer: {
-        marginTop: 20,
     },
     footerContainer: { backgroundColor: '#333333' },
 });

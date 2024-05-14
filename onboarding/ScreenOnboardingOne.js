@@ -1,21 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native'; 
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'; 
 import { useAuthUser } from '../context/AuthUserContext';
 import { useNavigation } from '@react-navigation/native';  
 import { FontAwesome } from '@expo/vector-icons'; 
 import ButtonColorHighlight from '../components/ButtonColorHighlight';
 
 const ScreenOnboardingOne = () => {
-    const { authUserState, onSignOut } = useAuthUser();
+    const { authUserState } = useAuthUser();
     const navigation = useNavigation(); 
 
     const goToNextScreen = () => {
         navigation.navigate('Two'); 
-    };
-
-    const handleSignOutPress = () => {
-        console.log("Sign Out button pressed");  
-        onSignOut(); 
     };
 
     return (
@@ -24,12 +19,7 @@ const ScreenOnboardingOne = () => {
             <Text style={styles.message}></Text>
             <Text style={styles.message}>Please add your first friend to start using hellofriend.</Text>
 
-
             <View style={styles.buttonContainer}> 
-                <TouchableOpacity>
-                    <FontAwesome name="angle-left" size={34} color="lightgray" />
-                </TouchableOpacity>
-
                 <TouchableOpacity onPress={goToNextScreen}>
                     <FontAwesome name="angle-right" size={34} color="hotpink" />
                 </TouchableOpacity>
@@ -48,7 +38,7 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: 'row', // Arrange buttons horizontally
-        justifyContent: 'space-between', // Evenly distribute space between buttons
+        justifyContent: 'flex-end', // Align button to the right
         width: '100%', // Take up 100% width of the container
         marginTop: 0,
     },
@@ -65,7 +55,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
         fontFamily: 'Poppins-Regular',
-    }
+    },
 });
 
 export default ScreenOnboardingOne;

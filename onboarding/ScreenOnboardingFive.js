@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-nativ
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { useNavigation } from '@react-navigation/native';  
 import { FontAwesome } from '@expo/vector-icons'; 
+import ButtonsOnboardingNav from './ButtonsOnboardingNav'; // Importing the navigation buttons component
 
 const ScreenOnboardingFive = ({ onChange, onCategoryChange }) => {
     const navigation = useNavigation(); 
@@ -73,18 +74,13 @@ const ScreenOnboardingFive = ({ onChange, onCategoryChange }) => {
                     onChangeText={handleCategoryChange}
                     value={category}
                 />
-                <View style={styles.buttonContainer}> 
-                    <TouchableOpacity onPress={goToPrevScreen}>
-                        <FontAwesome name="angle-left" size={34} color="black" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={goToNextScreen} style={[styles.button, { borderColor: iconColor }]}>
-                        <FontAwesome name="angle-right" size={34} color={iconColor} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View style={styles.footerContainer}>
-                <HelloFriendFooter />
+                <ButtonsOnboardingNav
+                    showPrevButton={true}
+                    showNextButton={true}
+                    onPrevPress={goToPrevScreen}
+                    onNextPress={goToNextScreen}
+                    iconColor={iconColor} // Passing the icon color
+                />
             </View>
         </>
     );
@@ -97,6 +93,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: 10,
     },
     footerContainer: { backgroundColor: '#333333' },
     message: {
@@ -105,22 +102,13 @@ const styles = StyleSheet.create({
         marginBottom: 20,  
     },
     input: {
-        width: '80%',
+        width: '100%',
         height: 40,
         borderWidth: 1,
         borderColor: 'black',
         borderRadius: 5,
         marginBottom: 20,
         paddingHorizontal: 10,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '80%',
-    },
-    button: {
-        borderWidth: 0,
-        borderRadius: 5,
     },
 });
 

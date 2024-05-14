@@ -73,10 +73,11 @@ export const AuthUserProvider = ({ children }) => {
                 },
                 authenticated: false,
             });
-            await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
+            await SecureStore.setItemAsync(TOKEN_KEY, String(result.data.token)); // Convert token to string before storing
         }
         return result;
     };
+    
 
     const handleSignin = async (username, password) => {
         const result = await signin(username, password);
