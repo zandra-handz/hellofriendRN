@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 
-const InputOnboarding = forwardRef(({ value, onChangeText, placeholder, onFocus, onBlur, style, isFocused, inputRef, maxLength }, ref) => {
+const TextAreaOnboarding = forwardRef(({ value, onChangeText, placeholder, onFocus, onBlur, style, isFocused, inputRef, maxLength }, ref) => {
     return (
         <View>
             <TextInput
@@ -16,7 +16,10 @@ const InputOnboarding = forwardRef(({ value, onChangeText, placeholder, onFocus,
                 placeholder={placeholder}
                 onFocus={onFocus}
                 onBlur={onBlur}
-                maxLength={maxLength} // Add maxLength prop
+                multiline // Allow multiline input
+                numberOfLines={4} // Adjust as needed
+                textAlignVertical="top" // Align text to top-left corner
+                maxLength={maxLength} // Limit the number of characters
             />
         </View>
     );
@@ -24,10 +27,10 @@ const InputOnboarding = forwardRef(({ value, onChangeText, placeholder, onFocus,
 
 const styles = StyleSheet.create({
     input: {
-        height: 44,
+        height: 100, // Adjust height for the textarea
         borderWidth: 1,
-        padding: 10,
-        borderRadius: 20,
+        padding: 16,
+        borderRadius: 30,
         backgroundColor: '#fff',
         width: '100%',
         fontFamily: 'Poppins-Regular',
@@ -39,4 +42,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default InputOnboarding;
+export default TextAreaOnboarding;

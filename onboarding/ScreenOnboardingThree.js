@@ -55,55 +55,58 @@ const ScreenOnboardingThree = ({ onEffortChange, onPriorityChange }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Configure</Text>
-            
-            {/* Container for friend's effort slider */}
-            <View style={styles.sliderContainer}>
-                <SliderInputOnboarding
-                    value={friendEffort}
-                    onValueChange={setFriendEffort}
-                    min={1} // Minimum value allowed
-                    max={5} // Maximum value allowed
-                    messages={{
-                        1: 'Little (check in twice a year)',
-                        2: 'Casual (check in every 60-90 days)',
-                        3: 'Moderate (check in every month)',
-                        4: 'Concerted (check in every two weeks)',
-                        5: 'A frankly tenacious amount (check in every few days)'
-                    }}
-                    label="Effort needed to maintain this friendship"
+            <View style={styles.content}> 
+                
+                {/* Container for friend's effort slider */}
+                <View style={styles.sliderContainer}>
+                    <SliderInputOnboarding
+                        value={friendEffort}
+                        onValueChange={setFriendEffort}
+                        min={1} // Minimum value allowed
+                        max={5} // Maximum value allowed
+                        messages={{
+                            1: 'Little (check in twice a year)',
+                            2: 'Casual (check in every 60-90 days)',
+                            3: 'Moderate (check in every month)',
+                            4: 'Concerted (check in every two weeks)',
+                            5: 'A frankly tenacious amount (check in every few days)'
+                        }}
+                        label="Effort needed to maintain this friendship"
+                    />
+                </View>
+
+                {/* Container for friend's priority slider */}
+                <View style={styles.sliderContainer}>
+                    <SliderInputOnboarding
+                        value={friendPriority}
+                        onValueChange={setFriendPriority}
+                        min={1} // Minimum value allowed
+                        max={3} // Maximum value allowed
+                        messages={{
+                            1: 'High',
+                            2: 'Medium',
+                            3: 'Unworried'
+                        }}
+                        label="Priority given to this friendship"
+                    />
+                </View>
+
+                <MessageOnboardingNote
+                    firstValue="Choose carefully!"
+                    secondValue="You cannot change these settings unless you are logging a meet up."
+                    marginTop={0}
+                    marginBottom={20}
                 />
             </View>
-
-            {/* Container for friend's priority slider */}
-            <View style={styles.sliderContainer}>
-                <SliderInputOnboarding
-                    value={friendPriority}
-                    onValueChange={setFriendPriority}
-                    min={1} // Minimum value allowed
-                    max={3} // Maximum value allowed
-                    messages={{
-                        1: 'High',
-                        2: 'Medium',
-                        3: 'Unworried'
-                    }}
-                    label="Priority given to this friendship"
+            <View style={styles.bottom}>
+                <ButtonsOnboardingNav
+                    showPrevButton={true}
+                    showNextButton={true}
+                    onPrevPress={goToPrevScreen}
+                    onNextPress={goToNextScreen}
+                    iconColor={iconColor}
                 />
             </View>
-
-            <MessageOnboardingNote
-                firstValue="Choose carefully!"
-                secondValue="You cannot change these settings unless you are logging a meet up."
-                marginTop={20}
-                marginBottom={20}
-            />
-            <ButtonsOnboardingNav
-                showPrevButton={true}
-                showNextButton={true}
-                onPrevPress={goToPrevScreen}
-                onNextPress={goToNextScreen}
-                iconColor={iconColor}
-            />
         </View>
     );
 };
@@ -117,6 +120,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         height: '100%',
     },
+    content: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
     title: {
         fontSize: 40,
         fontWeight: 'bold',
@@ -124,17 +133,13 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Bold',
         textAlign: 'center',
     },
-    messageBottom: {
-        fontSize: 16,
-        textAlign: 'center',
-        marginBottom: 20,
-        marginTop: 20,
-        fontFamily: 'Poppins-Regular',
-    },
     sliderContainer: {
         marginTop: 20,
-        marginBottom: 20,
+        marginBottom: 70,
         width: '100%',
+    },
+    bottom: {
+        paddingBottom: 20,
     },
 });
 

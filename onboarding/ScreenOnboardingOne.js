@@ -21,7 +21,7 @@ const ScreenOnboardingOne = () => {
 
             <View style={styles.buttonContainer}> 
                 <TouchableOpacity onPress={goToNextScreen}>
-                    <FontAwesome name="angle-right" size={34} color="hotpink" />
+                    <FontAwesome name="angle-right" size={46} color="hotpink" />
                 </TouchableOpacity>
             </View>
         </View>

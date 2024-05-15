@@ -11,7 +11,7 @@ const ScreenOnboardingComplete = ({ finalizingData }) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        console.log('Finalizing Data:', finalizingData);
+        handleCreateFriend(); // Automatically call handleCreateFriend when the page mounts
     }, []); // Empty dependency array ensures this effect runs only once
 
     const handleCreateFriend = async () => {
@@ -82,8 +82,8 @@ const ScreenOnboardingComplete = ({ finalizingData }) => {
                 <View style={styles.buttonContainer}>
                     <Button title="Go back" onPress={goToPrevScreen} /> 
                     <Button 
-                        title="Create Friend & Save Thought Capsule" 
-                        onPress={handleCreateFriend} 
+                        title="Finish" 
+                        onPress={handleUpdateAppSetup} 
                         disabled={loading} 
                         loading={loading} 
                     />
@@ -91,14 +91,6 @@ const ScreenOnboardingComplete = ({ finalizingData }) => {
 
             </View>
             <View style={styles.footerContainer}>
-                <View style={styles.buttonContainer}>
-                        <Button 
-                            title="Update App Setup" 
-                            onPress={handleUpdateAppSetup} 
-                            disabled={loading} 
-                            loading={loading} 
-                        /> 
-                    </View>
                 <HelloFriendFooter />
             </View>
         </>

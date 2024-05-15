@@ -14,6 +14,16 @@ import ScreenOnboardingComplete from './ScreenOnboardingComplete';
 
 const Stack = createNativeStackNavigator();
 
+
+const HeaderProgress = ({ percentage }) => {
+    return (
+        <View style={styles.progressBarContainer}>
+            <ProgressBarOnboarding percentage={percentage} />
+        </View>
+    );
+};
+
+
 const ScreenOnboardingFlow = () => {
     const [finalizingData, setFinalizingData] = useState({});
     const { authUserState, onSignOut } = useAuthUser();
@@ -55,13 +65,13 @@ const ScreenOnboardingFlow = () => {
                     name="One"
                     component={ScreenOnboardingOne} 
                     options={{
-                        header: (props) => <ProgressBarOnboarding percentage={0.20} {...props} /> 
+                        header: (props) => <HeaderProgress percentage={0.1} {...props} /> 
                     }}
                 />
                 <Stack.Screen
                     name="Two"
                     options={{
-                        header: (props) => <ProgressBarOnboarding percentage={0.40} {...props} /> 
+                        header: (props) => <HeaderProgress percentage={0.2} {...props} /> 
                     }}
                 >
                     {(props) => (
@@ -75,7 +85,7 @@ const ScreenOnboardingFlow = () => {
                 <Stack.Screen
                     name="Three"
                     options={{
-                        header: (props) => <ProgressBarOnboarding percentage={0.60} {...props} /> 
+                        header: (props) => <HeaderProgress percentage={0.4} {...props} /> 
                     }}
                 >
                     {(props) => (
@@ -90,7 +100,7 @@ const ScreenOnboardingFlow = () => {
                 <Stack.Screen
                     name="Four"
                     options={{
-                        header: (props) => <ProgressBarOnboarding percentage={0.80} {...props} /> 
+                        header: (props) => <HeaderProgress percentage={0.6} {...props} /> 
                     }}
                 >
                     {(props) => <ScreenOnboardingFour {...props} onChange={handleFriendDateChange} />}
@@ -99,7 +109,7 @@ const ScreenOnboardingFlow = () => {
                 <Stack.Screen
                     name="Five"
                     options={{
-                        header: (props) => <ProgressBarOnboarding percentage={0.90} {...props} /> 
+                        header: (props) => <HeaderProgress percentage={0.86} {...props} /> 
                     }}
                 >
                     {(props) => (
@@ -114,7 +124,7 @@ const ScreenOnboardingFlow = () => {
                 <Stack.Screen
                     name="Complete"
                     options={{
-                        header: (props) => <ProgressBarOnboarding percentage={1} {...props} /> 
+                        header: (props) => <HeaderProgress percentage={1} {...props} /> 
                     }}
                 >
                     {(props) => {
@@ -138,7 +148,7 @@ const ScreenOnboardingFlow = () => {
     );a
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
     container: {
         flex: 1,
         height: '100%',
@@ -148,7 +158,7 @@ const styles = StyleSheet.create({
         marginTop: 66,
     },
     exitButtonContainer: {
-        marginTop: 20,
+        marginTop: 0,
     },
     footerContainer: { backgroundColor: '#333333' },
 });

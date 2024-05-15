@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import HelloFriendFooter from '../components/HelloFriendFooter';
-import { useNavigation } from '@react-navigation/native';  
-import { FontAwesome } from '@expo/vector-icons'; 
-import ButtonsOnboardingNav from './ButtonsOnboardingNav'; // Importing the navigation buttons component
+import { View, Text, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import ButtonsOnboardingNav from './ButtonsOnboardingNav';
+import InputOnboarding from './InputOnboarding'; // Importing the custom input component
+import TextAreaOnboarding from './TextAreaOnboarding';
+
 
 const ScreenOnboardingFive = ({ onChange, onCategoryChange }) => {
     const navigation = useNavigation(); 
@@ -38,11 +39,9 @@ const ScreenOnboardingFive = ({ onChange, onCategoryChange }) => {
         onCategoryChange(text);
     };
 
-    const handleKeyPress = (event) => {
-        if (event.nativeEvent.key === 'Enter') {
-            // Focus on the Category input field when the user presses Enter
-            categoryInputRef.current.focus();
-        }
+    const handleThoughtCapsuleBlur = () => {
+        // Focus on the Category input field when the user leaves the Thought Capsule field
+        categoryInputRef.current.focus();
     };
 
     const goToNextScreen = () => {
@@ -54,61 +53,73 @@ const ScreenOnboardingFive = ({ onChange, onCategoryChange }) => {
     };
 
     return (
-        <>
-            <View style={styles.container}> 
+        <View style={styles.container}> 
+            <Text style={styles.title}></Text>
                 <Text style={styles.message}>Please add one thought you would like to tell them later.</Text>
-                <TextInput
-                    ref={thoughtCapsuleInputRef} // Assign the ref to the Thought Capsule input field
-                    style={styles.input}
-                    placeholder="Thought Capsule"
-                    onChangeText={handleThoughtCapsuleChange}
-                    value={thoughtCapsule}
-                    multiline
-                    numberOfLines={4}
-                    onKeyPress={handleKeyPress} // Call handleKeyPress when a key is pressed
-                />
-                <TextInput
-                    ref={categoryInputRef} // Assign the ref to the Category input field
-                    style={styles.input}
-                    placeholder="Category"
-                    onChangeText={handleCategoryChange}
-                    value={category}
-                />
-                <ButtonsOnboardingNav
-                    showPrevButton={true}
-                    showNextButton={true}
-                    onPrevPress={goToPrevScreen}
-                    onNextPress={goToNextScreen}
-                    iconColor={iconColor} // Passing the icon color
-                />
-            </View>
-        </>
+                <View style={styles.inputContainer}>
+                    <TextAreaOnboarding
+                        inputRef={thoughtCapsuleInputRef} // Use inputRef instead of ref
+                        value={thoughtCapsule}
+                        onChangeText={handleThoughtCapsuleChange}
+                        placeholder="Thought Capsule" 
+                        maxLength={500}
+                        onBlur={handleThoughtCapsuleBlur} // Call handleThoughtCapsuleBlur when the input field loses focus
+                    />
+                </View>
+                <View style={styles.inputContainer}>
+                    <InputOnboarding
+                        inputRef={categoryInputRef} // Use inputRef instead of ref
+                        value={category}
+                        onChangeText={handleCategoryChange}
+                        placeholder="Category"
+                        maxLength={50}
+                    />
+                </View>
+                <View style={styles.bottomContainer}>
+                    <ButtonsOnboardingNav
+                        showPrevButton={true}
+                        showNextButton={true}
+                        onPrevPress={goToPrevScreen}
+                        onNextPress={goToNextScreen}
+                        iconColor={iconColor} // Passing the icon color
+                    />
+                </View>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        height: '100%',
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 10,
     },
-    footerContainer: { backgroundColor: '#333333' },
+    title: { 
+        fontWeight: 'bold',
+        fontFamily: 'Poppins-Bold',
+        textAlign: 'center',
+    },
+    message: {
+        fontSize: 20,
+        textAlign: 'center',
+        marginBottom: 20,
+        fontFamily: 'Poppins-Regular',
+    },
+    inputContainer: {
+        marginTop: 10,
+        marginBottom: 10,
+        width: '100%',
+    },
     message: {
         fontSize: 20,  
         textAlign: 'center',
         marginBottom: 20,  
     },
-    input: {
-        width: '100%',
-        height: 40,
-        borderWidth: 1,
-        borderColor: 'black',
-        borderRadius: 5,
-        marginBottom: 20,
-        paddingHorizontal: 10,
+    bottomContainer: {
+        position: 'absolute',
+        bottom: 20,
     },
 });
 
