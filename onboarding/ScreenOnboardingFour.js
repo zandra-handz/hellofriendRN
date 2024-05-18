@@ -1,46 +1,44 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';  
-import { FontAwesome } from '@expo/vector-icons'; 
+import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import ButtonsOnboardingNav from './ButtonsOnboardingNav'; // Import ButtonsOnboardingNav
+import moment from 'moment';
+import ButtonsOnboardingNav from './ButtonsOnboardingNav';
 
 const ScreenOnboardingFour = ({ onChange }) => {
-    const navigation = useNavigation(); 
-
+    const navigation = useNavigation();
     const [friendDate, setFriendDate] = useState(new Date());
-    const [nextButtonColor, setNextButtonColor] = useState('gray'); 
-    const [showDatePicker, setShowDatePicker] = useState(false);  
+    const [nextButtonColor, setNextButtonColor] = useState('gray');
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     const onChangeDate = (event, selectedDate) => {
         const currentDate = selectedDate || friendDate;
-        setShowDatePicker(false);  
-    
-        // Extracting date part without timestamp
+        setShowDatePicker(false);
+
         const dateWithoutTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-    
-        setFriendDate(dateWithoutTime);  
+
+        setFriendDate(dateWithoutTime);
         console.log(dateWithoutTime);
-        setNextButtonColor('hotpink');  
+        setNextButtonColor('hotpink');
     };
 
     const goToNextScreen = () => {
         if (nextButtonColor === 'hotpink') {
-            navigation.navigate('Five');  
+            navigation.navigate('Five');
             onChange(friendDate);
         }
     };
 
     const goToPrevScreen = () => {
-        navigation.navigate('Three'); 
+        navigation.navigate('Three');
     };
 
     return (
-        <View style={styles.container}> 
+        <View style={styles.container}>
             <View style={styles.content}>
                 <Text style={styles.message}>When was the last time you met or spoke with your friend?</Text>
                 <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
-                    <Text>{friendDate.toDateString()}</Text>
+                    <Text style={styles.dateText}>{moment(friendDate).format('MMMM Do YYYY')}</Text>
                 </TouchableOpacity>
                 {showDatePicker && (
                     <DateTimePicker
@@ -48,13 +46,13 @@ const ScreenOnboardingFour = ({ onChange }) => {
                         value={friendDate}
                         mode="date"
                         display="default"
-                        maximumDate={new Date()} // Set maximum date to current date
+                        maximumDate={new Date()}
                         onChange={onChangeDate}
                     />
                 )}
             </View>
             <View style={styles.bottom}>
-                <ButtonsOnboardingNav // Use ButtonsOnboardingNav instead of TouchableOpacity
+                <ButtonsOnboardingNav
                     showPrevButton={true}
                     showNextButton={true}
                     onPrevPress={goToPrevScreen}
@@ -70,7 +68,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
-        paddingHorizontal: 10,  
+        paddingHorizontal: 10,
         justifyContent: 'center',
     },
     content: {
@@ -78,14 +76,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
-    },
-    title: {
-        fontSize: 40,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        fontFamily: 'Poppins-Bold',
-        textAlign: 'center',
-        marginTop: 130,
     },
     message: {
         fontSize: 20,
@@ -99,6 +89,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 10,
         marginBottom: 20,
+        backgroundColor: '#f0f0f0',
+    },
+    dateText: {
+        fontSize: 18,
+        fontFamily: 'Poppins-Regular',
     },
     bottom: {
         paddingBottom: 20,

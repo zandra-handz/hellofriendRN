@@ -1,24 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, Button, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ButtonsOnboardingNav from './ButtonsOnboardingNav';
 import InputOnboarding from './InputOnboarding'; // Importing the custom input component
+import { useFriendList } from '../context/FriendListContext'; // Importing useFriendList hook
+import { fetchFriendList } from '../api'; // Importing the function to fetch the friend list
 
 const ScreenOnboardingTwo = ({ onChange }) => {
     const navigation = useNavigation();
+    const { friendList, setFriendList } = useFriendList(); // Accessing friendList from context
     const [friendName, setFriendName] = useState('');
-    const [isFocused, setIsFocused] = useState(false); // State to track focus
-
     const inputRef = useRef(null); // Reference for the input field
 
-    useEffect(() => {
-        // Focus the input field when the screen mounts
+    useEffect(() => { 
         inputRef.current.focus();
     }, []);
 
-    const goToNextScreen = () => {
-        navigation.navigate('Three');
-        onChange(friendName);
+    const goToNextScreen = async () => { 
+        try {
+            // Fetch the updated friend list from the server
+            const updatedFriendList = await fetchFriendList();
+            console.log(updatedFriendList);
+            // Check if the entered friend name already exists in the updated friend list
+            const friendAlreadyExists = updatedFriendList.some(friend => friend.name === friendName.trim());
+            if (friendAlreadyExists) {
+                // Handle case where friend name already exists
+                alert('This friend already exists. Please enter a different name.');
+            } else {
+                // If the friend name doesn't exist, navigate to the next screen
+                navigation.navigate('Three');
+                onChange(friendName);
+            }
+        } catch (error) {
+            console.error('Failed to fetch friend list:', error);
+            // Handle error fetching friend list (display error message, retry, etc.)
+        }
     };
 
     const goToPrevScreen = () => {
@@ -29,18 +45,11 @@ const ScreenOnboardingTwo = ({ onChange }) => {
         setFriendName(text);
     };
 
-    const handleFocus = () => {
-        setIsFocused(true);
-    };
-
-    const handleBlur = () => {
-        setIsFocused(false);
-    };
-
     const handleSubmitEditing = () => {
         // Automatically navigate to the next screen when Enter is pressed
         goToNextScreen();
     };
+ 
 
     return (
         <View style={styles.container}>
@@ -53,11 +62,9 @@ const ScreenOnboardingTwo = ({ onChange }) => {
                         onChangeText={handleFriendNameChange}
                         placeholder="Friend's Name"
                         maxLength={30} // Limit to 30 characters
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
                         onSubmitEditing={handleSubmitEditing}
                     />
-                </View>
+                </View> 
             </View>
             <View style={styles.bottom}>
                 <ButtonsOnboardingNav
@@ -93,13 +100,10 @@ const styles = StyleSheet.create({
     bottom: {
         paddingBottom: 20,
     },
-    title: {
-        fontSize: 40,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        fontFamily: 'Poppins-Bold',
-        textAlign: 'center',
-        marginTop: 80,
+    completeButtonContainer: {
+        alignItems: 'center',
+        width: '100%',
+        marginTop: 20,
     },
     message: {
         fontSize: 20,

@@ -63,3 +63,19 @@ expo install @react-native-community/datetimepicker
 
 npm install @react-native-community/slider
 import Slider from '@react-native-community/slider'; 
+
+
+customizing the datetimepicker:
+
+npm install moment
+
+or
+
+npm install date-fns
+
+
+alternative datepicker more customizable
+npm install @react-native-community/datetimepicker react-native-modal-datetime-picker
+NVM THIS IS JUST FOR IOS
+
+npm install react-native-modal

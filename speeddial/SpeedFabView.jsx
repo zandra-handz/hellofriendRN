@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import ModalGen from '../components/ModalGen';
 import FriendSelect from '../data/FriendSelect';
@@ -6,13 +6,14 @@ import QuickAddThought from './QuickAddThought'; // Import QuickAddThought compo
 
 const SpeedFabView = () => {
   const [showSpeedDial, setSpeedDial] = useState(false);
-  const [rotationAnimation] = useState(new Animated.Value(0));
+  const rotationAnimation = useRef(new Animated.Value(0)).current;
+  const pulseAnimation = useRef(new Animated.Value(1)).current;
   const [modal1Visible, setModal1Visible] = useState(false);
   const [modal2Visible, setModal2Visible] = useState(false);
   const [modal3Visible, setModal3Visible] = useState(false);
-  const [button1Opacity] = useState(new Animated.Value(0));
-  const [button2Opacity] = useState(new Animated.Value(0));
-  const [button3Opacity] = useState(new Animated.Value(0));
+  const button1Opacity = useRef(new Animated.Value(0)).current;
+  const button2Opacity = useRef(new Animated.Value(0)).current;
+  const button3Opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const animations = [
@@ -24,18 +25,44 @@ const SpeedFabView = () => {
       Animated.timing(button2Opacity, {
         toValue: showSpeedDial ? 1 : 0,
         duration: 100,
-        delay: showSpeedDial ? 3 : 0, // Delay for button 2 animation
+        delay: showSpeedDial ? 2 : 0, // Delay for button 2 animation
         useNativeDriver: true
       }),
       Animated.timing(button1Opacity, {
         toValue: showSpeedDial ? 1 : 0,
         duration: 60,
-        delay: showSpeedDial ? 5 : 0, // Delay for button 1 animation
+        delay: showSpeedDial ? 3 : 0, // Delay for button 1 animation
         useNativeDriver: true
       })
     ];
 
     Animated.stagger(50, animations).start();
+  }, [showSpeedDial]);
+
+  useEffect(() => {
+    const pulse = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnimation, {
+          toValue: 1.2,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnimation, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    if (showSpeedDial) {
+      pulse.start();
+    } else {
+      pulse.stop();
+      pulseAnimation.setValue(1);
+    }
+    
+    return () => pulse.stop(); // Clean up the animation on unmount
   }, [showSpeedDial]);
 
   const rotateButton = () => {
@@ -53,24 +80,26 @@ const SpeedFabView = () => {
 
   const openModal1 = () => {
     setModal1Visible(true);
-    setSpeedDial(false);
   };
 
   const openModal2 = () => {
     setModal2Visible(true);
-    setSpeedDial(false);
   };
 
   const openModal3 = () => {
     setModal3Visible(true);
-    setSpeedDial(false);
   };
+
+  const rotation = rotationAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['180deg', '0deg']
+  });
 
   return (
     <View style={styles.container}>
       <ModalGen modalVisible={modal1Visible} setModalVisible={setModal1Visible}>
         <FriendSelect />
-        </ModalGen>  
+      </ModalGen>  
       
       <ModalGen modalVisible={modal2Visible} setModalVisible={setModal2Visible} />
       <ModalGen modalVisible={modal3Visible} setModalVisible={setModal3Visible}>
@@ -98,7 +127,7 @@ const SpeedFabView = () => {
           </Animated.View>
         </Animated.View>
       )}
-      <Animated.View style={[styles.fabButton]}>
+      <Animated.View style={[styles.fabButton, { transform: [{ rotate: rotation }, { scale: pulseAnimation }] }]}>
         <TouchableOpacity onPress={openSpeedDial} style={styles.touchable}>
           <Text style={styles.text}>+</Text>
         </TouchableOpacity>

@@ -6,7 +6,7 @@ export default function HelloFriendFooter() {
   return (
     <View style={styles.container}>
       <Text style={styles.footerText}>
-        All rights reserved by hellofriend, 2024{' '}
+        {' '}
       </Text>
     </View>
   );

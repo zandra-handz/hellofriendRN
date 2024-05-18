@@ -5,7 +5,6 @@ import ButtonsOnboardingNav from './ButtonsOnboardingNav';
 import InputOnboarding from './InputOnboarding'; // Importing the custom input component
 import TextAreaOnboarding from './TextAreaOnboarding';
 
-
 const ScreenOnboardingFive = ({ onChange, onCategoryChange }) => {
     const navigation = useNavigation(); 
     const thoughtCapsuleInputRef = useRef(null); // Reference for the Thought Capsule input field
@@ -45,7 +44,7 @@ const ScreenOnboardingFive = ({ onChange, onCategoryChange }) => {
     };
 
     const goToNextScreen = () => {
-        navigation.navigate('Complete');  
+        navigation.navigate('Intermediary'); // Navigate to the intermediary page instead of 'Complete'
     };
 
     const goToPrevScreen = () => {
@@ -111,11 +110,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
         width: '100%',
-    },
-    message: {
-        fontSize: 20,  
-        textAlign: 'center',
-        marginBottom: 20,  
     },
     bottomContainer: {
         position: 'absolute',

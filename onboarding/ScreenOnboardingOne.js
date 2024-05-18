@@ -1,13 +1,48 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'; 
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native'; 
 import { useAuthUser } from '../context/AuthUserContext';
 import { useNavigation } from '@react-navigation/native';  
 import { FontAwesome } from '@expo/vector-icons'; 
 import ButtonColorHighlight from '../components/ButtonColorHighlight';
+import AlertPopUp from '../components/AlertPopUp'; // Import AlertPopUp component
 
-const ScreenOnboardingOne = () => {
+const PulsatingArrow = () => {
+    const pulseAnimation = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+        const pulse = () => {
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(pulseAnimation, {
+                        toValue: 1.2,
+                        duration: 1000,
+                        easing: Easing.linear,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(pulseAnimation, {
+                        toValue: 1,
+                        duration: 1000,
+                        easing: Easing.linear,
+                        useNativeDriver: true,
+                    }),
+                ])
+            ).start();
+        };
+        pulse();
+    }, []);
+
+    return (
+        <Animated.View style={{ transform: [{ scale: pulseAnimation }] }}>
+            <FontAwesome name="angle-right" size={46} color="hotpink" />
+        </Animated.View>
+    );
+};
+
+const ScreenOnboardingOne = ({ messageContent }) => { // Receive messageContent as props
     const { authUserState } = useAuthUser();
     const navigation = useNavigation(); 
+    const [showAlert, setShowAlert] = useState(false); // State for alert visibility
+    const [alertType, setAlertType] = useState('success'); // State for alert type
 
     const goToNextScreen = () => {
         navigation.navigate('Two'); 
@@ -15,15 +50,15 @@ const ScreenOnboardingOne = () => {
 
     return (
         <View style={styles.container}> 
-            <Text style={styles.title}>Hi {authUserState.user.username}, thanks for signing up!</Text>
-            <Text style={styles.message}></Text>
-            <Text style={styles.message}>Please add your first friend to start using hellofriend.</Text>
-
+            <Text style={styles.title}>Hi {authUserState.user.username}!</Text>
+            <Text style={styles.message}>{messageContent}</Text> 
+            
             <View style={styles.buttonContainer}> 
                 <TouchableOpacity onPress={goToNextScreen}>
-                    <FontAwesome name="angle-right" size={46} color="hotpink" />
+                    <PulsatingArrow />
                 </TouchableOpacity>
             </View>
+
         </View>
     );
 };
@@ -42,6 +77,19 @@ const styles = StyleSheet.create({
         width: '100%', // Take up 100% width of the container
         marginTop: 0,
     },
+    alertButton: {
+        marginTop: 20,
+        padding: 16,
+        borderColor: '#1E90FF',
+        borderBlockEndColor: '#39f0df',
+        borderBlockStartColor: '#39f0df',
+        borderWidth: 2,
+        backgroundColor: 'black', // Darker sky blue color with slight purplish tint
+        borderRadius: 30, // Border radius of 18
+    },
+    alertButtonText: {
+        color: 'white',
+    },
     footerContainer: { backgroundColor: '#333333' },
     title: {
         fontSize: 40,
@@ -52,6 +100,7 @@ const styles = StyleSheet.create({
     },
     message: {
         fontSize: 20,
+        color: 'black',
         textAlign: 'center',
         marginBottom: 20,
         fontFamily: 'Poppins-Regular',

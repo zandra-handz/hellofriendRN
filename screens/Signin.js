@@ -3,7 +3,9 @@ import { View, TextInput, StyleSheet, ActivityIndicator, Text, TouchableOpacity 
 import { useAuthUser } from '../context/AuthUserContext';
 import ButtonColorHighlight from '../components/ButtonColorHighlight';
 import { useFonts } from 'expo-font';
-import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome from expo vector icons
+import { FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage for storing authentication token
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
 const CustomButton = ({ onPress, title }) => (
     <TouchableOpacity style={styles.buttonContainer} onPress={onPress}>
@@ -13,19 +15,21 @@ const CustomButton = ({ onPress, title }) => (
 
 const Signin = () => {
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState(''); // Add email state
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false); // State to track loading status
-    const [isSignIn, setIsSignIn] = useState(true); // State to track whether it's sign-in or sign-up mode
+    const [verifyPassword, setVerifyPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [isSignIn, setIsSignIn] = useState(true);
+    const [signUpSuccess, setSignUpSuccess] = useState(false);
     const { onSignin, onSignup } = useAuthUser();
-    const usernameInputRef = useRef(null); // Create a ref for the username input field
-    const passwordInputRef = useRef(null); // Create a ref for the password input field
-    const emailInputRef = useRef(null); // Create a ref for the email input field
-    const [isUsernameFocused, setIsUsernameFocused] = useState(false); // State to track focus state of username field
-    const [isPasswordFocused, setIsPasswordFocused] = useState(false); // State to track focus state of password field
-    const [isEmailFocused, setIsEmailFocused] = useState(false); // State to track focus state of email field
+    const usernameInputRef = useRef(null);
+    const passwordInputRef = useRef(null);
+    const emailInputRef = useRef(null);
+    const [isUsernameFocused, setIsUsernameFocused] = useState(false);
+    const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+    const [isEmailFocused, setIsEmailFocused] = useState(false);
+    const navigation = useNavigation(); // Get navigation object
 
-    // Load custom fonts
     const [fontsLoaded] = useFonts({
         'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),
         'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
@@ -33,46 +37,77 @@ const Signin = () => {
     });
 
     useEffect(() => {
-        // Focus on the username input field when the component mounts
         if (usernameInputRef.current) {
             usernameInputRef.current.focus();
         }
-    }, []); // Empty dependency array ensures this effect runs only once, when the component mounts
+    }, []);
+
+    useEffect(() => {
+        // Check if the user is already signed in upon component mount
+        checkIfSignedIn();
+    }, []);
+
+    const checkIfSignedIn = async () => {
+        try {
+            const token = await AsyncStorage.getItem('authToken');
+            if (token) {
+                // Redirect the user to the home screen or any authenticated screen
+                // For example:
+                // navigation.navigate('Home');
+            }
+        } catch (error) {
+            console.error('Error checking authentication status:', error);
+        }
+    };
 
     if (!fontsLoaded) {
         return <ActivityIndicator />;
     }
 
     const handleAuthentication = async () => {
-        setLoading(true); // Set loading to true when authentication process starts
+        setLoading(true);
         let result;
         if (isSignIn) {
             result = await onSignin(username, password);
         } else {
-            result = await onSignup(username, email, password); // Include email in signup call
+            if (password !== verifyPassword) {
+                alert("Passwords do not match!");
+                setLoading(false);
+                return;
+            }
+            result = await onSignup(username, email, password);
+            console.log(result);
+            if (result && result.status === 201) {
+                // Successful sign-up
+                alert("Sign up was successful!");
+                setSignUpSuccess(true);
+                setLoading(false);
+                navigation.navigate('Signin'); // Navigate back to the sign-in page
+            } else if (result && result.error) {
+                // Error handling
+                alert("Error: " + result.error);
+            }
         }
-        setLoading(false); // Set loading to false when authentication process completes
-        if (result && result.error) {
-            alert(result.msg);
-        }
+        setLoading(false);
     };
+    
 
     const toggleMode = () => {
-        setUsername(''); // Reset form fields
-        setEmail(''); // Reset email field
+        setUsername('');
+        setEmail('');
         setPassword('');
-        setIsSignIn(prevState => !prevState); // Toggle between sign-in and sign-up mode
+        setVerifyPassword('');
+        setIsSignIn(prevState => !prevState);
+        setSignUpSuccess(false);
     };
 
     const handleUsernameSubmit = () => {
-        // When "Enter" is pressed in the username input, focus on the password input
         if (passwordInputRef.current) {
             passwordInputRef.current.focus();
         }
     };
 
     const handleEmailSubmit = () => {
-        // When "Enter" is pressed in the email input, focus on the password input
         if (passwordInputRef.current) {
             passwordInputRef.current.focus();
         }
@@ -88,44 +123,58 @@ const Signin = () => {
                 </TouchableOpacity>
             </Text>
             <View style={styles.form}>
-                {!isSignIn && ( // Render email input field only in signup mode
+                {!isSignIn && (
                     <TextInput
-                        style={[styles.input, isEmailFocused && styles.inputFocused]} // Apply focused style if isEmailFocused is true
+                        style={[styles.input, isEmailFocused && styles.inputFocused]}
                         placeholder="Email"
                         onChangeText={(text) => setEmail(text)}
                         value={email}
-                        onSubmitEditing={handleEmailSubmit} // Call handleEmailSubmit when "Enter" is pressed
-                        ref={emailInputRef} // Set the ref for the email input field
-                        onFocus={() => setIsEmailFocused(true)} // Set isEmailFocused to true when input is focused
-                        onBlur={() => setIsEmailFocused(false)} // Set isEmailFocused to false when input loses focus
+                        onSubmitEditing={handleEmailSubmit}
+                        ref={emailInputRef}
+                        onFocus={() => setIsEmailFocused(true)}
+                        onBlur={() => setIsEmailFocused(false)}
                     />
                 )}
                 <TextInput
-                    style={[styles.input, isUsernameFocused && styles.inputFocused]} // Apply focused style if isUsernameFocused is true
+                    style={[styles.input, isUsernameFocused && styles.inputFocused]}
                     placeholder="Username"
                     onChangeText={(text) => setUsername(text)}
                     value={username}
-                    onSubmitEditing={handleUsernameSubmit} // Call handleUsernameSubmit when "Enter" is pressed
-                    ref={usernameInputRef} // Set the ref for the username input field
-                    onFocus={() => setIsUsernameFocused(true)} // Set isUsernameFocused to true when input is focused
-                    onBlur={() => setIsUsernameFocused(false)} // Set isUsernameFocused to false when input loses focus
+                    onSubmitEditing={handleUsernameSubmit}
+                    ref={usernameInputRef}
+                    onFocus={() => setIsUsernameFocused(true)}
+                    onBlur={() => setIsUsernameFocused(false)}
                 />
                 <TextInput
-                    style={[styles.input, isPasswordFocused && styles.inputFocused]} // Apply focused style if isPasswordFocused is true
+                    style={[styles.input, isPasswordFocused && styles.inputFocused]}
                     placeholder="Password"
                     secureTextEntry={true}
                     onChangeText={(text) => setPassword(text)}
                     value={password}
-                    ref={passwordInputRef} // Set the ref for the password input field
-                    onFocus={() => setIsPasswordFocused(true)} // Set isPasswordFocused to true when input is focused
-                    onBlur={() => setIsPasswordFocused(false)} // Set isPasswordFocused to false when input loses focus
+                    ref={passwordInputRef}
+                    onFocus={() => setIsPasswordFocused(true)}
+                    onBlur={() => setIsPasswordFocused(false)}
                 />
-                {loading ? ( // Conditionally render spinner when loading is true
+                {!isSignIn && (
+                    <TextInput
+                        style={[styles.input, isPasswordFocused && styles.inputFocused]}
+                        placeholder="Verify Password"
+                        secureTextEntry={true}
+                        onChangeText={(text) => setVerifyPassword(text)}
+                        value={verifyPassword}
+                        onFocus={() => setIsPasswordFocused(true)}
+                        onBlur={() => setIsPasswordFocused(false)}
+                    />
+                )}
+                {loading ? (
                     <ActivityIndicator size="large" color="#0000ff" />
                 ) : (
                     <>
                         <ButtonColorHighlight onPress={handleAuthentication} title={isSignIn ? "Sign in" : "Create account"} />
                         <Text style={styles.toggleButton} onPress={toggleMode}>{isSignIn ? "Create account" : "Go back to sign in"}</Text>
+                        {signUpSuccess && (
+                            <Text style={styles.successMessage}>Sign up successful! Please log in.</Text>
+                        )}
                     </>
                 )}
             </View>
@@ -134,7 +183,6 @@ const Signin = () => {
     );
 };
 
-// Inside the styles constant
 const styles = StyleSheet.create({
     form: {
         gap: 10,
@@ -148,10 +196,10 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: '#fff',
         fontFamily: 'Poppins-Regular',
-        color: 'black', // Set text color to black
+        color: 'black',
     },
     inputFocused: {
-        borderColor: '#ff69b4', // Change border color to hot pink when input is focused
+        borderColor: '#ff69b4',
         borderWidth: 2,
     },
     container: {
@@ -195,8 +243,13 @@ const styles = StyleSheet.create({
         marginTop: 2,
         textAlign: 'center',
         fontFamily: 'Poppins-Regular',
-    }
+    },
+    successMessage: {
+        marginTop: 10,
+        color: 'green',
+        textAlign: 'center',
+        fontFamily: 'Poppins-Regular',
+    },
 });
-
 
 export default Signin;

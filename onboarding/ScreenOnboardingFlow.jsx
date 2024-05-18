@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useAuthUser } from '../context/AuthUserContext';
+import { useFriendList } from '../context/FriendListContext'; // Importing useFriendList hook
 import { Button, View, StyleSheet } from 'react-native';
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import ProgressBarOnboarding from './ProgressBarOnboarding';
+import ButtonSpecialAlert from '../components/ButtonSpecialAlert';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import ScreenOnboardingOne from './ScreenOnboardingOne';
@@ -10,7 +12,10 @@ import ScreenOnboardingTwo from './ScreenOnboardingTwo';
 import ScreenOnboardingThree from './ScreenOnboardingThree';
 import ScreenOnboardingFour from './ScreenOnboardingFour';
 import ScreenOnboardingFive from './ScreenOnboardingFive';
+import ScreenOnboardingIntermediary from './ScreenOnboardingIntermediary'; // Import the intermediary component
 import ScreenOnboardingComplete from './ScreenOnboardingComplete';
+import Animated, { Transition, Transitioning } from 'react-native-reanimated';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +30,7 @@ const HeaderProgress = ({ percentage }) => {
 
 
 const ScreenOnboardingFlow = () => {
+    const { friendList } = useFriendList();
     const [finalizingData, setFinalizingData] = useState({});
     const { authUserState, onSignOut } = useAuthUser();
 
@@ -58,21 +64,88 @@ const ScreenOnboardingFlow = () => {
         setFinalizingData((prevData) => ({ ...prevData, category }));
     };
 
+    const handleGoToCompletePage = () => { 
+        navigation.navigate('Complete');
+    };
+
+    const resetFinalizingData = () => {
+        setFinalizingData(null); // Reset finalizingData to null
+    };
+    const renderCompleteButton = () => {
+        if (friendList.length > 0) {
+            return (
+                <View style={styles.completeButtonContainer}>
+                    <Button
+                        title="Complete"
+                        onPress={handleGoToCompletePage}
+                        color="hotpink"
+                    />
+                </View>
+            );
+        }
+        return null;
+    };
+
     return (
         <>
             <Stack.Navigator>
-                <Stack.Screen
-                    name="One"
-                    component={ScreenOnboardingOne} 
-                    options={{
-                        header: (props) => <HeaderProgress percentage={0.1} {...props} /> 
-                    }}
-                />
+            <Stack.Screen
+                name="One"
+                component={({ route }) => {
+                    const { friendList } = useFriendList(); // Retrieve friendList from context
+                    const messageContent = friendList.length > 0 ? "Your account is ready! You can add more friends here, or add them later." : "Thanks for signing up! Please add your first friend to start using hellofriend.";
+
+                    return <ScreenOnboardingOne messageContent={messageContent} />;
+                }} 
+                options={({ route, navigation }) => {
+                    return {
+                        header: (props) => (
+                            <View>
+                                {friendList.length < 1 && (
+                                    <HeaderProgress percentage={0.1} {...props} />
+                                )}
+                                {friendList.length > 0 && (
+                                    <>
+                                        <HeaderProgress percentage={1} {...props} />
+                                        <View style={styles.completeButtonContainer}>
+                                            <ButtonSpecialAlert
+                                                title="Finialize account"
+                                                onPress={() => navigation.navigate('Complete')}
+                                            />
+                                        </View>
+                                    </>
+                                )}
+                            </View>
+                        ),
+                    };
+                }}
+            />
+
+
+
                 <Stack.Screen
                     name="Two"
-                    options={{
-                        header: (props) => <HeaderProgress percentage={0.2} {...props} /> 
-                    }}
+                    options={({ navigation }) => ({
+                        header: (props) => (
+                            <View>
+                                {friendList.length < 1 && (
+                                <HeaderProgress percentage={0.2} {...props} />
+    
+                                )}
+                                {friendList.length > 0 && (
+                                <>
+                                <HeaderProgress percentage={1} {...props} />
+                                    <View style={styles.completeButtonContainer}>
+                                        <ButtonSpecialAlert
+                                            title="Finialize account"
+                                            onPress={() => navigation.navigate('Complete')}
+                                        />
+                                    </View>
+                                </>
+                                )}
+                            </View>
+                        )
+                    })}
                 >
                     {(props) => (
                         <ScreenOnboardingTwo
@@ -84,9 +157,27 @@ const ScreenOnboardingFlow = () => {
 
                 <Stack.Screen
                     name="Three"
-                    options={{
-                        header: (props) => <HeaderProgress percentage={0.4} {...props} /> 
-                    }}
+                    options={({ navigation }) => ({
+                        header: (props) => (
+                            <View>
+                                {friendList.length < 1 && (
+                                <HeaderProgress percentage={0.4} {...props} />
+    
+                                )}
+                                {friendList.length > 0 && (
+                                <>
+                                <HeaderProgress percentage={1} {...props} />
+                                    <View style={styles.completeButtonContainer}>
+                                        <ButtonSpecialAlert
+                                            title="Finialize account"
+                                            onPress={() => navigation.navigate('Complete')}
+                                        />
+                                    </View>
+                                </>
+                                )}
+                            </View>
+                        )
+                    })}
                 >
                     {(props) => (
                         <ScreenOnboardingThree
@@ -99,24 +190,74 @@ const ScreenOnboardingFlow = () => {
 
                 <Stack.Screen
                     name="Four"
-                    options={{
-                        header: (props) => <HeaderProgress percentage={0.6} {...props} /> 
-                    }}
+                    options={({ navigation }) => ({
+                        header: (props) => (
+                            <View>
+                                {friendList.length < 1 && (
+                                <HeaderProgress percentage={0.6} {...props} />
+    
+                                )}
+                                {friendList.length > 0 && (
+                                <>
+                                <HeaderProgress percentage={1} {...props} />
+                                    <View style={styles.completeButtonContainer}>
+                                        <ButtonSpecialAlert
+                                            title="Finialize account"
+                                            onPress={() => navigation.navigate('Complete')}
+                                        />
+                                    </View>
+                                </>
+                                )}
+                            </View>
+                        )
+                    })}
                 >
                     {(props) => <ScreenOnboardingFour {...props} onChange={handleFriendDateChange} />}
                 </Stack.Screen>
 
                 <Stack.Screen
                     name="Five"
-                    options={{
-                        header: (props) => <HeaderProgress percentage={0.86} {...props} /> 
-                    }}
+                    options={({ navigation }) => ({
+                        header: (props) => (
+                            <View>
+                                {friendList.length < 1 && (
+                                <HeaderProgress percentage={0.86} {...props} />
+    
+                                )}
+                                {friendList.length > 0 && (
+                                <>
+                                <HeaderProgress percentage={1} {...props} />
+                                    <View style={styles.completeButtonContainer}>
+                                        <ButtonSpecialAlert
+                                            title="Finialize account"
+                                            onPress={() => navigation.navigate('Complete')}
+                                        />
+                                    </View>
+                                </>
+                                )}
+                            </View>
+                        )
+                    })}
                 >
                     {(props) => (
                         <ScreenOnboardingFive
                             {...props}
                             onChange={handleThoughtCapsuleChange}
                             onCategoryChange={handleCategoryChange}
+                        />
+                    )}
+                </Stack.Screen>
+                <Stack.Screen
+                    name="Intermediary" // Name the intermediary screen
+                    options={{
+                        headerShown: false, // Hide header for the intermediary screen
+                    }}
+                >
+                    {(props) => (
+                        <ScreenOnboardingIntermediary
+                            {...props}
+                            finalizingData={finalizingData} // Pass finalizingData to ScreenOnboardingIntermediary
+                            resetFinalizingData={resetFinalizingData}
                         />
                     )}
                 </Stack.Screen>
@@ -129,23 +270,30 @@ const ScreenOnboardingFlow = () => {
                 >
                     {(props) => {
                         console.log('finalizingData:', finalizingData); // Log finalizingData before rendering
-                        return <ScreenOnboardingComplete {...props} finalizingData={finalizingData} />;
+                        return <ScreenOnboardingComplete {...props} finalizingData={finalizingData} resetFinalizingData={resetFinalizingData} />;
                     }}
                 </Stack.Screen>
 
             </Stack.Navigator>
+            <View style={styles.bottomButtonsContainer}> 
             <View style={styles.exitButtonContainer}>
                 <Button
                     title="Exit"
                     onPress={handleSignOutPress}
-                    color="#39f0df" 
+                    color="#1E90FF"
+                    borderColor="black"
+                    borderWidth={4} 
                 />
             </View>
+        </View>
+        <View style={styles.footerContainer}>
+            <HelloFriendFooter />
+        </View>
             <View style={styles.footerContainer}>
                 <HelloFriendFooter />
             </View>
         </>
-    );a
+    );
 };
 
 const styles = StyleSheet.create({ 
@@ -157,6 +305,19 @@ const styles = StyleSheet.create({
     progressBarContainer: {
         marginTop: 66,
     },
+
+    completeButtonContainer: {  
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        marginRight: 10, 
+        backgroundColor: 'white',
+    },
+
+    completeButton: {
+        borderRadius: 20,
+
+    },
+
     exitButtonContainer: {
         marginTop: 0,
     },

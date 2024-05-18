@@ -155,9 +155,24 @@ export const createFriend = async (friendData) => {
         const res = await axios.post('/friends/create/', friendData);
         return res.data;
     } catch (error) {
+        console.log(error);
         throw error;
     }
 };
+
+
+export const updateFriendSugSettings = async (SugSettingsData) => {
+    try {
+        const res = await axios.put(`/friends/${SugSettingsData.friend}/settings/update/`, SugSettingsData);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+
+
 
 export const updateAppSetup = async () => {
     try {
