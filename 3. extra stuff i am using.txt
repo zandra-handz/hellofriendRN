@@ -79,3 +79,10 @@ npm install @react-native-community/datetimepicker react-native-modal-datetime-p
 NVM THIS IS JUST FOR IOS
 
 npm install react-native-modal
+
+
+npm install react-native-picker-select
+
+npm install react-native-modal-dropdown
+
+

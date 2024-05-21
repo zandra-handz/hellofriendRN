@@ -1,47 +1,60 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-const SelectMenu = ({ options, onSelect, text }) => {
-  // Add an extra item at the beginning of the options array
+const SelectMenu = ({ options, onSelect, text, showLabel = true, interfaceType = 'dropdown' }) => {
   const optionsWithDefault = [{ id: -1, name: text }, ...options];
-  const [selectedOption, setSelectedOption] = useState(-1); // Set default selected value to -1
+  const [selectedOption, setSelectedOption] = useState(-1);
+
+  const handlePickerChange = (itemValue, itemIndex) => {
+    setSelectedOption(itemValue);
+    onSelect(options.find(option => option.id === itemValue));
+  };
 
   return (
     <View style={styles.container}>
-      <Picker
-        selectedValue={selectedOption}
-        onValueChange={(itemValue, itemIndex) => {
-          setSelectedOption(itemValue);
-          onSelect(options.find(option => option.id === itemValue));
-        }}
-        style={styles.picker}
-        itemStyle={styles.pickerItem}
-        mode="dropdown" // Set the mode to dropdown
-      >
-        {optionsWithDefault.map(option => (
-          <Picker.Item key={option.id} label={option.name} value={option.id} />
-        ))}
-      </Picker>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={selectedOption}
+          onValueChange={handlePickerChange}
+          style={styles.picker}
+          itemStyle={styles.pickerItem}
+          mode={showLabel ? 'dialog' : 'dropdown'}
+        >
+          {optionsWithDefault.map(option => (
+            <Picker.Item key={option.id} label={option.name} value={option.id} />
+          ))}
+        </Picker>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: 0,
     margin: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pickerContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: 'hotpink',
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   picker: {
-    width: 120, // Adjust width as needed
-    backgroundColor: 'white',
-    borderRadius: 10,
+    width: '100%',
+    height: '100%',
+    color: 'white',
   },
   pickerItem: {
-    fontSize: 20,
+    fontSize: 16,
     textAlign: 'center',
+    color: 'white',
   },
 });
 

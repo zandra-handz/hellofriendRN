@@ -1,9 +1,10 @@
 import React from 'react';
-import { Alert, Modal, StyleSheet, Text, Pressable, View } from 'react-native';
+import { Alert, Modal, StyleSheet, Text, View } from 'react-native';
 import Button from './Button';
-import FriendSelect from '../data/FriendSelect';
 
-const ModalGen = ({ modalVisible, setModalVisible, children }) => {
+const ModalGen = ({ modalVisible, setModalVisible, headerTitle, headerRightComponent, children, buttons = [] }) => {
+  const buttonCount = buttons.length;
+
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -12,19 +13,38 @@ const ModalGen = ({ modalVisible, setModalVisible, children }) => {
         visible={modalVisible}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
-          setModalVisible(false); 
-        }}>
-          
+          setModalVisible(false);
+        }}
+      >
         <View style={styles.centeredView}>
-          <View style={styles.modalView}> 
-            <View style={styles.contentContainer}> 
-              {/* Render children component here */}
+          <View style={styles.modalView}>
+            <View style={styles.header}>
+              <Text style={styles.headerText}>{headerTitle}</Text>
+              <View style={styles.headerRight}>
+                {headerRightComponent}
+              </View> 
+            </View>
+
+            <View style={styles.contentContainer}>
               {children}
+            </View>
+
+            <View style={styles.footer}>
               <Button
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(false)}>
-                Close Modal
+                style={styles.buttonClose}
+                onPress={() => setModalVisible(false)}
+              >
+                Close
               </Button>
+              {buttons.map((button, index) => (
+                <Button
+                  key={index}
+                  style={[styles.button, { width: `${100 / (buttons.length + 1)}%` }, button.style]}
+                  onPress={button.onPress}
+                >
+                  {button.text}
+                </Button>
+              ))}
             </View>
           </View>
         </View>
@@ -39,7 +59,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    marginTop: 0,
   },
   modalView: {
     margin: 20,
@@ -47,8 +67,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 12,
     alignItems: 'left',
-    width: '90%',
-    height: '80%',
+    width: '100%',
+    height: '100%',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -58,20 +78,43 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  header: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerRight: {
+    marginLeft: 'auto', // Pushes the left component to the start of the header
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   contentContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%',
-  },
-  button: {
-    borderRadius: 20,
     padding: 10,
+  },
+  footer: {
+    padding: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'stretch',
+    width: '100%',
+  },
+  button: {  
+    padding: 10,
+    backgroundColor: 'black',
     elevation: 2,
-    width: '90%',
     marginBottom: 3,
   },
-  buttonClose: {
-    backgroundColor: '#2196F3',
+  buttonClose: { 
+    backgroundColor: 'black',
   },
   textStyle: {
     color: 'black',

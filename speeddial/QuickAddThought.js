@@ -201,7 +201,7 @@ const FirstScreen = ({
   handleNextScreen,
 }) => (
   <>
-    <Text style={styles.title}>Add a thought</Text>
+    <Text style={styles.title}></Text>
     <TextInput
       style={styles.input}
       multiline={true}

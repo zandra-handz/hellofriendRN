@@ -1,35 +1,42 @@
 import React from 'react';
-import { Button, Image, View, StyleSheet, Dimensions } from 'react-native';
-import {useColorScheme} from 'react-native';
+import { Image, View, StyleSheet, Dimensions, Text } from 'react-native';
+import { useColorScheme } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import DynTextFriend from './DynTextFriend'; // Import DynTextFriend component
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const { width, height } = Dimensions.get('window');
 
 const HelloFriendHeader = ({ handleSignOutPress, additionalElements }) => {
   const colorScheme = useColorScheme();
+  const { selectedFriend, friendState } = useSelectedFriend();
 
   return (
     <View style={[styles.container,
-        colorScheme === 'light'
-          ? { backgroundColor: '#fff' }
-          : { backgroundColor: '#fff' },
-      ]}>
+      colorScheme === 'light'
+        ? { backgroundColor: '#fff' }
+        : { backgroundColor: '#fff' },
+    ]}>
       {/* Container for additional elements on the left */}
       <View style={styles.additionalElementsContainer}>
         {additionalElements.map((element, index) => (
           <View key={index} style={styles.additionalElement}>{element}</View>
         ))}
       </View>
-      
-      {/* Container for the image in the center */}
-      <View style={styles.imageContainer}>
-        <Image
-          style={styles.croppedImage}
-          source={require('../img/lizard-14.jpg')}
-          resizeMode="contain" // or any other appropriate resizeMode
-        />
+
+      {/* Container for the dynamic text or image */}
+      <View style={styles.dynamicContentContainer}>
+        <DynTextFriend maxWidth={500}/>
+        {/* Render the image only if DynTextFriend returns nothing */}
+        {!selectedFriend && (
+          <Image
+            style={styles.croppedImage}
+            source={require('../img/lizard-14.jpg')}
+            resizeMode="contain" // or any other appropriate resizeMode
+          />
+        )}
       </View>
-      
+
       {/* Container for the gear icon on the right */}
       <View style={styles.iconContainer}>
         <FontAwesome name="gear" size={28} paddingBottom={18} color="black" onPress={handleSignOutPress} />
@@ -44,19 +51,20 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
     backgroundColor: 'white',
-    paddingHorizontal: 14,  
-    paddingTop: 32, 
-     
+    paddingHorizontal: 14,
+    paddingTop: 32,
   },
   additionalElementsContainer: {
     flex: 1, // Equal width to other containers
-    flexDirection: 'row',  
-    alignItems: 'center',  
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  imageContainer: {
+  dynamicContentContainer: {
     flex: 1, // Equal width to other containers
+    width: 200,
+    height: 100, // this to match the image
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -70,6 +78,6 @@ const styles = StyleSheet.create({
     resizeMode: 'contain', // or any other appropriate resizeMode
   },
   additionalElement: {
-    marginRight: 10,  
+    marginRight: 10,
   },
 });

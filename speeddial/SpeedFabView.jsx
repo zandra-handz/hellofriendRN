@@ -3,8 +3,10 @@ import { Text, View, StyleSheet, TouchableOpacity, Animated } from 'react-native
 import ModalGen from '../components/ModalGen';
 import FriendSelect from '../data/FriendSelect';
 import QuickAddThought from './QuickAddThought'; // Import QuickAddThought component
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const SpeedFabView = () => {
+  const { selectedFriend } = useSelectedFriend();
   const [showSpeedDial, setSpeedDial] = useState(false);
   const rotationAnimation = useRef(new Animated.Value(0)).current;
   const pulseAnimation = useRef(new Animated.Value(1)).current;
@@ -61,7 +63,7 @@ const SpeedFabView = () => {
       pulse.stop();
       pulseAnimation.setValue(1);
     }
-    
+
     return () => pulse.stop(); // Clean up the animation on unmount
   }, [showSpeedDial]);
 
@@ -97,20 +99,37 @@ const SpeedFabView = () => {
 
   return (
     <View style={styles.container}>
-      <ModalGen modalVisible={modal1Visible} setModalVisible={setModal1Visible}>
-        <FriendSelect />
-      </ModalGen>  
-      
+    <ModalGen
+      modalVisible={modal1Visible}
+      setModalVisible={setModal1Visible}
+      headerTitle="Modal Title"
+      headerRightComponent={<FriendSelect />}
+      buttons={[
+        { text: 'Confirm', onPress: () => console.log('Confirm button pressed!') },
+        { text: 'Cancel', onPress: () => console.log('Cancel button pressed!') }
+      ]}
+    > 
+    </ModalGen>
+
       <ModalGen modalVisible={modal2Visible} setModalVisible={setModal2Visible} />
-      <ModalGen modalVisible={modal3Visible} setModalVisible={setModal3Visible}>
-        <FriendSelect />
-        <QuickAddThought /> 
+      <ModalGen 
+        modalVisible={modal3Visible} 
+        setModalVisible={setModal3Visible} 
+        headerTitle={selectedFriend ? `Add thought for ${selectedFriend.name}` : 'Add thought'}
+        headerRightComponent={<FriendSelect />}
+        buttons={[
+          { text: 'Confirm', onPress: () => console.log('Confirm button pressed!') },
+          { text: 'Cancel', onPress: () => console.log('Cancel button pressed!') }
+        ]}
+        >
+        <QuickAddThought />
+
       </ModalGen>
       {showSpeedDial && (
         <Animated.View style={[styles.speedView]}>
           <Animated.View style={[styles.customButton, { opacity: button1Opacity }]}>
             <TouchableOpacity onPress={openModal1}>
-              <Text style={styles.buttonText}>Add hello!</Text>
+              <Text style={styles.buttonText}>Add hello</Text>
             </TouchableOpacity>
           </Animated.View>
           <View style={{ height: 8 }}></View>
@@ -127,7 +146,7 @@ const SpeedFabView = () => {
           </Animated.View>
         </Animated.View>
       )}
-      <Animated.View style={[styles.fabButton, { transform: [{ rotate: rotation }, { scale: pulseAnimation }] }]}>
+      <Animated.View style={[styles.fabButton, { transform: [{ rotate: rotation }, { scale: pulseAnimation }], backgroundColor: showSpeedDial ? 'hotpink' : '#292929' }]}>
         <TouchableOpacity onPress={openSpeedDial} style={styles.touchable}>
           <Text style={styles.text}>+</Text>
         </TouchableOpacity>
@@ -145,9 +164,9 @@ const styles = StyleSheet.create({
   },
   customButton: {
     backgroundColor: 'black',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    paddingVertical: 24,
+    paddingHorizontal: 26,
+    borderRadius: 40,
     borderWidth: 1,
     borderColor: '#292929',
   },
@@ -160,7 +179,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#292929',
   },
   text: {
-    fontSize: 40,
+    fontSize: 30,
     textAlign: 'center',
     color: 'white',
   },
@@ -176,6 +195,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
 
