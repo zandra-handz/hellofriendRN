@@ -111,7 +111,36 @@ export const fetchThoughtCapsules = async (friendId) => {
             return;
         }
     } catch (error) {
-        console.error('Error fetching thought capsules:', error);
+        console.error('Error fetching thought capsules: ', error);
+        throw error;
+    }
+};
+
+
+
+export const fetchPastHelloes = async (friendId) => {
+    try {
+        const response = await axios.get(`/friends/${friendId}/helloes/`);
+        if (response) {
+            const helloesData = response.data;
+
+            const formattedHelloesList = helloesData.map(hello => ({
+                id: hello.id,
+                date: hello.past_date_in_words,
+                type: hello.type,
+                pastCapsules: Object.keys(hello.thought_capsules_shared).map(key => ({
+                    id: key,
+                    capsule: hello.thought_capsules_shared[key].capsule,
+                    typed_category: hello.thought_capsules_shared[key].typed_category,
+                }))
+            }));
+            return formattedHelloesList; 
+        } else {
+            console.log("fetchPastHelloes: no helloes added yet");
+            return [];
+        }
+    } catch (error) {
+        console.error('Error fetching helloes: ', error);
         throw error;
     }
 };

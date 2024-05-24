@@ -4,12 +4,13 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import SpeedFabView from '../speeddial/SpeedFabView';
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import TabScreen from './TabScreen'; // Import the TabScreen component
-import NextHello from '../data/FriendDashboardData'; // Import the NextHello component
+import TabScreen from './TabScreen'; 
+import NextHello from '../data/FriendDashboardData';  
 
 import TabScreenNext from './TabScreenNext';
-import DaysSince from '../data/FriendDaysSince'; // Import the NextHello component
-import TabScreenFriend from './TabScreenFriend'; // Import the TabScreenFriend component
+import DaysSince from '../data/FriendDaysSince';  
+import TabScreenFriend from './TabScreenFriend'; 
+import TabScreenHelloes from './TabScreenHelloes';
 
 
 
@@ -46,6 +47,12 @@ const TabScreens = tabScreenData.reduce((screens, { name, data, showStatusCard }
       <TabScreenNext
       />
     );
+
+  } else if (name === 'TabScreen4') {
+    screens[name] = () => (
+      <TabScreenHelloes />
+    );
+
   } else {
   
     screens[name] = () => (
