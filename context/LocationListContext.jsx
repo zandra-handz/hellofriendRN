@@ -1,7 +1,7 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchAllLocations } from '../api';
 
-const LocationListContext = createContext({});
+const LocationListContext = createContext();
 
 export const LocationListProvider = ({ children }) => {
   const [locationList, setLocationList] = useState([]);
@@ -35,6 +35,14 @@ export const LocationListProvider = ({ children }) => {
       {children}
     </LocationListContext.Provider>
   );
+};
+
+export const useLocationList = () => {
+  const context = useContext(LocationListContext);
+  if (context === undefined) {
+    throw new Error('useLocationList must be used within a LocationListProvider');
+  }
+  return context;
 };
 
 export default LocationListContext;

@@ -83,6 +83,10 @@ npm install react-native-modal
 
 npm install react-native-picker-select
 
+@react-native-community/checkbox
+OR NOT?
+npm install react-native-elements   { CheckBox }
+
 npm install react-native-modal-dropdown
 
 

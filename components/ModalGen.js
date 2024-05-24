@@ -62,10 +62,10 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   modalView: {
-    margin: 20,
+    margin: 0,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 12,
+    padding: 0,
     alignItems: 'left',
     width: '100%',
     height: '100%',
@@ -94,9 +94,10 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding: 0,
   },
   footer: {
     padding: 10,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {  
-    padding: 10,
+    padding: 0,
     backgroundColor: 'black',
     elevation: 2,
     marginBottom: 3,

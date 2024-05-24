@@ -1,10 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import SpeedFabView from '../speeddial/SpeedFabView';
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import CardGen from '../components/CardGen'; // Import the CardGen component
+import TabScreen from './TabScreen'; // Import the TabScreen component
+import NextHello from '../data/FriendDashboardData'; // Import the NextHello component
+
+import TabScreenNext from './TabScreenNext';
+import DaysSince from '../data/FriendDaysSince'; // Import the NextHello component
+import TabScreenFriend from './TabScreenFriend'; // Import the TabScreenFriend component
+
+
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -12,59 +19,44 @@ const Tab = createMaterialTopTabNavigator();
 const dummyData = Array.from({ length: 10 }, (_, index) => ({
   id: index,
   title: `Card ${index + 1}`,
-  description: 'This is a dummy description for the card. This is a dummy description for the card.',
+  description: 'This is a dummy description for the card.',
 }));
-
-// Function to interpolate between two colors
-const interpolateColor = (startColor, endColor, factor) => {
-  const result = startColor.slice();
-  for (let i = 0; i < 3; i++) {
-    result[i] = Math.round(result[i] + factor * (endColor[i] - startColor[i]));
-  }
-  return `rgb(${result[0]}, ${result[1]}, ${result[2]})`;
-};
-
-const endColor = [25, 90, 25]; // Darker Forest Green
-const startColor = [190, 255, 0]; // More Vibrant Yellow-Green
-
-
-// Function to get gradient color based on index
-const getGradientColor = (index, total) => {
-  // Adjust the factor to be twice as much towards the end color
-  const factor = (index / (total - 1)) * 2;
-  // Clamp the factor to a maximum of 1
-  const clampedFactor = Math.min(factor, 1);
-  return interpolateColor(startColor, endColor, clampedFactor);
-};
-
-const TabScreen = ({ data }) => (
-  <FlatList
-    data={data}
-    renderItem={({ item, index }) => (
-      <CardGen
-        key={item.id}
-        title={item.title}
-        description={item.description}
-        showIcon={true}
-        iconColor={getGradientColor(index, data.length)}
-      />
-    )}
-    keyExtractor={item => item.id.toString()}
-    contentContainerStyle={styles.tabContent}
-  />
-);
 
 // Define specific data for each tab screen
 const tabScreenData = [
-  { name: 'TabScreen1', data: dummyData },
-  { name: 'TabScreen2', data: dummyData },
-  { name: 'TabScreen3', data: dummyData },
-  { name: 'TabScreen4', data: dummyData },
+  { name: 'TabScreen1', data: dummyData, showStatusCard: false },
+  { name: 'TabScreen2', data: dummyData, showStatusCard: false },
+  { name: 'TabScreen3', data: dummyData, showStatusCard: true }, // Show status card here
+  { name: 'TabScreen4', data: dummyData, showStatusCard: false },
 ];
 
 // Create TabScreen components for each tab
-const TabScreens = tabScreenData.reduce((screens, { name, data }) => {
-  screens[name] = () => <TabScreen data={data} />;
+const TabScreens = tabScreenData.reduce((screens, { name, data, showStatusCard }) => {
+  if (name === 'TabScreen3') {
+    screens[name] = () => (
+      <TabScreenFriend 
+        data={data} 
+        showStatusCard={showStatusCard} 
+        leftContent={<NextHello />} 
+        rightContent={<DaysSince />} 
+      />
+    );
+  } else if (name === 'TabScreen1') {
+    screens[name] = () => (
+      <TabScreenNext
+      />
+    );
+  } else {
+  
+    screens[name] = () => (
+      <TabScreen 
+        data={data} 
+        showStatusCard={showStatusCard} 
+        leftContent={<NextHello />} 
+        rightContent={<DaysSince />} 
+      />
+    );
+  }
   return screens;
 }, {});
 
@@ -136,7 +128,10 @@ const styles = StyleSheet.create({
   tabContent: {
     padding: 0,
   },
-  footerContainer: { backgroundColor: '#333333', marginBottom: 0 },
+  footerContainer: {
+    backgroundColor: '#333333',
+    marginBottom: 0,
+  },
 });
 
 export default Tabs;

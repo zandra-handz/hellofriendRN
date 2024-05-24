@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
-import { fetchUpcomingHelloes } from '../api'; // Import API methods from api.js
+import { useAuthUser } from './AuthUserContext';
+import { fetchUpcomingHelloes } from '../api';
 
 const UpcomingHelloesContext = createContext({});
 
@@ -10,6 +10,7 @@ export const useUpcomingHelloes = () => {
 
 export const UpcomingHelloesProvider = ({ children }) => {
     const [upcomingHelloes, setUpcomingHelloes] = useState([]);
+    const { authUserState } = useAuthUser();
 
     useEffect(() => {
         const loadUpcomingHelloes = async () => {
@@ -23,12 +24,18 @@ export const UpcomingHelloesProvider = ({ children }) => {
             }
         };
 
-        loadUpcomingHelloes();
-    }, []);
+        if (authUserState.authenticated) {
+            loadUpcomingHelloes();
+        }
+    }, [authUserState.authenticated]);
 
     const value = {
         upcomingHelloes,
     };
 
-    return <UpcomingHelloesContext.Provider value={value}>{children}</UpcomingHelloesContext.Provider>;
+    return (
+        <UpcomingHelloesContext.Provider value={value}>
+            {children}
+        </UpcomingHelloesContext.Provider>
+    );
 };

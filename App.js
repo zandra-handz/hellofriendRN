@@ -31,17 +31,17 @@ export default function App() {
   
   return (
     <AuthUserProvider>
-      <FriendListProvider>
-        <SelectedFriendProvider>
-          <LocationListProvider> 
-            <CapsuleListProvider>
-              <UpcomingHelloesProvider>
+      <UpcomingHelloesProvider>
+        <FriendListProvider>
+          <SelectedFriendProvider>
+            <LocationListProvider> 
+              <CapsuleListProvider> 
                 <Layout></Layout>
-              </UpcomingHelloesProvider>
-            </CapsuleListProvider>
-          </LocationListProvider>
-        </SelectedFriendProvider>
-      </FriendListProvider>
+              </CapsuleListProvider>
+            </LocationListProvider>
+          </SelectedFriendProvider>
+        </FriendListProvider>
+      </UpcomingHelloesProvider>
     </AuthUserProvider>
   );
 }

@@ -84,6 +84,7 @@ export const fetchFriendDashboard = async (friendId) => {
 export const fetchUpcomingHelloes = async () => {
     try {
         const response = await axios.get('/friends/upcoming/');
+        console.log("Upcoming called: ", response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching upcoming helloes:', error);
@@ -128,6 +129,17 @@ export const saveThoughtCapsule = async (requestData) => {
 };
 
 
+export const saveHello = async (requestData) => {
+    try {
+        const response = await axios.post(`/friends/${requestData.friend}/helloes/add/`, requestData);
+        return response.data;
+    } catch (error) {
+        console.error('Error saving hello:', error);
+        throw error;
+    }
+};
+
+
 
 export const deleteThoughtCapsule = async (capsuleId) => {
     try {
@@ -142,6 +154,7 @@ export const deleteThoughtCapsule = async (capsuleId) => {
 export const fetchAllLocations = async () => {
     try {
         const response = await axios.get('/friends/locations/all/');
+        console.log("fetchAllLocations: ", response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching all locations:', error);
@@ -183,3 +196,27 @@ export const updateAppSetup = async () => {
         throw error;
     }
 };
+
+
+export const fetchFriendImagesByCategory = async (friendId) => {
+    try {
+        const response = await axios.get(`/friends/${friendId}/images/by-category/`);
+        console.log("images/: ", response);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching friend images by category:', error);
+        throw error;
+    }
+};
+
+
+export const fetchTypeChoices = async () => {
+    try {
+        const response = await axios.get('friends/dropdown/hello-type-choices/');
+        return response.data.type_choices;
+    } catch (error) {
+        console.error('Error fetching type choices:', error);
+        throw error;
+    }
+};
+

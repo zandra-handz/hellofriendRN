@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import ModalGen from '../components/ModalGen';
 import FriendSelect from '../data/FriendSelect';
-import QuickAddThought from './QuickAddThought'; // Import QuickAddThought component
+import QuickAddThought from './QuickAddThought'; 
+import  QuickAddHello from './QuickAddHello';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const SpeedFabView = () => {
@@ -97,6 +98,10 @@ const SpeedFabView = () => {
     outputRange: ['180deg', '0deg']
   });
 
+  const closeModal = () => {
+    setModal1Visible(false);
+  };
+
   return (
     <View style={styles.container}>
     <ModalGen
@@ -109,9 +114,10 @@ const SpeedFabView = () => {
         { text: 'Cancel', onPress: () => console.log('Cancel button pressed!') }
       ]}
     > 
+    <QuickAddHello onClose={closeModal} /> 
     </ModalGen>
 
-      <ModalGen modalVisible={modal2Visible} setModalVisible={setModal2Visible} />
+    <ModalGen modalVisible={modal2Visible} setModalVisible={setModal2Visible} />
       <ModalGen 
         modalVisible={modal3Visible} 
         setModalVisible={setModal3Visible} 
