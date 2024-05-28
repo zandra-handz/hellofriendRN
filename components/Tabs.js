@@ -8,9 +8,11 @@ import TabScreen from './TabScreen';
 import NextHello from '../data/FriendDashboardData';  
 
 import TabScreenNext from './TabScreenNext';
+import TabScreenPlaces from './TabScreenPlaces';
 import DaysSince from '../data/FriendDaysSince';  
 import TabScreenFriend from './TabScreenFriend'; 
 import TabScreenHelloes from './TabScreenHelloes';
+
 
 
 
@@ -47,6 +49,12 @@ const TabScreens = tabScreenData.reduce((screens, { name, data, showStatusCard }
       <TabScreenNext
       />
     );
+
+  } else if (name === 'TabScreen2') {
+    screens[name] = () => (
+      <TabScreenPlaces />
+    );
+
 
   } else if (name === 'TabScreen4') {
     screens[name] = () => (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
+import { FlashList } from "@shopify/flash-list";
 import CardHelloes from './CardHelloes';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext'
@@ -34,7 +35,7 @@ const TabScreenHelloes = () => {
 
     return (
         <View style={styles.container}>
-            <FlatList
+            <FlashList
                 data={helloesList}
                 renderItem={({ item }) => (
                     <CardHelloes
@@ -44,7 +45,9 @@ const TabScreenHelloes = () => {
                     key={item.id}
                     />
                 )}
+                estimatedItemSize={110}
                 keyExtractor={item => item.id.toString()}
+                
             />
 
         </View>
@@ -52,6 +55,9 @@ const TabScreenHelloes = () => {
 };
 
 const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
     tabContent: {
       padding: 0,
     },

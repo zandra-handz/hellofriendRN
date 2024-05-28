@@ -180,16 +180,75 @@ export const deleteThoughtCapsule = async (capsuleId) => {
     }
 };
 
+
 export const fetchAllLocations = async () => {
     try {
         const response = await axios.get('/friends/locations/all/');
-        console.log("fetchAllLocations: ", response.data);
-        return response.data;
+
+        const formattedLocations = response.data.map(location => ({
+            id: location.id,
+            address: location.address,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            notes: location.notes,
+            title: location.title,
+            notes: location.personal_experience_info,
+            validatedAddress: location.validated_address,
+            friendsCount: location.friends ? location.friends.length : 0,
+            friends: location.friends ? location.friends.map(friend => ({
+                id: friend.id,
+                name: friend.name,
+            })) : []
+        }));
+        console.log("API formatted data all locations: ", formattedLocations);
+        return formattedLocations;
     } catch (error) {
         console.error('Error fetching all locations:', error);
         throw error;
     }
 };
+
+export const createLocation = async (locationData) => {
+    try {
+        const response = await axios.post('/friends/locations/add/', locationData);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating location:', error);
+        throw error;
+    }
+};
+
+
+// Not being used
+export const fetchValidatedLocations = async () => {
+    try {
+        const response = await axios.get('/friends/locations/validated/');
+
+        const formattedLocations = response.data.map(location => ({
+            id: location.id,
+            address: location.address,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            notes: location.notes,
+            title: location.title,
+            notes: location.personal_experience_info,
+            validatedAddress: location.validated_address,
+            friendsCount: location.friends ? location.friends.length : 0,
+            friends: location.friends ? location.friends.map(friend => ({
+                id: friend.id,
+                name: friend.name,
+            })) : []
+        }));
+         
+
+        console.log("API formatted data validated locations: ", formattedLocations);
+        return formattedLocations;
+    } catch (error) {
+        console.error('Error fetching validated locations:', error);
+        throw error;
+    }
+};
+
 
 
 export const createFriend = async (friendData) => {

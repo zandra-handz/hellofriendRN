@@ -1,7 +1,10 @@
+// CardHelloes.js
+
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ButtonCapsule from './ButtonCapsule';
+import AlertSmallColored from './AlertSmallColored'; // Adjust the path according to your file structure
 
 const CardHelloes = ({ title, description, capsules, showIcon, iconColor, showFooter = false }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -51,16 +54,11 @@ const CardHelloes = ({ title, description, capsules, showIcon, iconColor, showFo
           </View>
         )}
       </View>
-      <Modal visible={isModalVisible} animationType="fade" transparent={true}>
-        <View style={[styles.modalContainer, { top: modalPosition.top - 50, left: modalPosition.left - 75 }]}>
-          <TouchableOpacity onPress={() => setIsModalVisible(false)} style={styles.closeButton}>
-            <FontAwesome5 name="times" size={20} color="#555" solid={false} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.deleteButton}>
-            <FontAwesome5 name="trash" size={20} color="#FF0000" solid={false} />
-          </TouchableOpacity>
-        </View>
-      </Modal>
+      <AlertSmallColored
+        isVisible={isModalVisible}
+        toggleModal={() => setIsModalVisible(false)}
+        position={modalPosition}
+      />
     </View>
   );
 };
@@ -126,29 +124,6 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 2,
-  },
-  modalContainer: {
-    position: 'absolute',
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-  },
-  deleteButton: {
-    backgroundColor: 'transparent',
-    padding: 15,
-    borderRadius: 10,
   },
 });
 
