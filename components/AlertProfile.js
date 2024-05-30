@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 
 const AlertProfile = ({ visible, profileData, onClose }) => {
   return (
-    <Modal transparent={true} visible={visible} animationType="slide">
+    <Modal transparent={true} visible={visible} presentationStyle="overFullScreen">
+      
       <View style={styles.overlay}>
         <View style={styles.container}> 
           <Text>Name: {profileData.name}</Text>
@@ -20,14 +21,13 @@ const AlertProfile = ({ visible, profileData, onClose }) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'flex-end', // Align pop-up at the top
+    justifyContent: 'flex-start', // Align pop-up at the top
   },
   container: {
     backgroundColor: 'white',
     padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   closeButton: {
     alignSelf: 'flex-end',

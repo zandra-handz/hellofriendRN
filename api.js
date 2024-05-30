@@ -69,6 +69,27 @@ export const fetchFriendList = async () => {
     }
 };
 
+export const fetchUserAddresses = async () => {
+    try {
+        const response = await axios.get(`/users/${userId}/addresses/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching user addresses:', error);
+        throw error;
+    }
+};
+
+export const addUserAddress = async (addressData) => {
+    try {
+        const response = await axios.post(`/users/${userId}/addresses/add/`, addressData);
+        return response.data;
+    } catch (error) {
+        console.error('Error adding user address:', error);
+        throw error;
+    }
+};
+
+
 
 export const fetchFriendDashboard = async (friendId) => {
     try {
@@ -307,4 +328,6 @@ export const fetchTypeChoices = async () => {
         throw error;
     }
 };
+
+
 

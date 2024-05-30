@@ -13,9 +13,6 @@ import DaysSince from '../data/FriendDaysSince';
 import TabScreenFriend from './TabScreenFriend'; 
 import TabScreenHelloes from './TabScreenHelloes';
 
-
-
-
 const Tab = createMaterialTopTabNavigator();
 
 // Dummy data for cards
@@ -46,8 +43,7 @@ const TabScreens = tabScreenData.reduce((screens, { name, data, showStatusCard }
     );
   } else if (name === 'TabScreen1') {
     screens[name] = () => (
-      <TabScreenNext
-      />
+      <TabScreenNext />
     );
 
   } else if (name === 'TabScreen2') {
@@ -55,14 +51,12 @@ const TabScreens = tabScreenData.reduce((screens, { name, data, showStatusCard }
       <TabScreenPlaces />
     );
 
-
   } else if (name === 'TabScreen4') {
     screens[name] = () => (
       <TabScreenHelloes />
     );
 
   } else {
-  
     screens[name] = () => (
       <TabScreen 
         data={data} 
@@ -86,9 +80,10 @@ const Tabs = () => {
           screenOptions={{
             tabBarActiveTintColor: 'hotpink',
             tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold', textTransform: 'none' },
-            tabBarItemStyle: { width: 210 },
+            tabBarItemStyle: { width: 'auto', alignItems: 'flex-start' }, // Align items to the left
             tabBarIndicatorStyle: { backgroundColor: 'hotpink' },
             tabBarStyle: { backgroundColor: 'white' },
+            tabBarContentContainerStyle: { alignItems: 'flex-start' }, // Ensure the container is aligned left
             tabBarGap: 0,
             tabBarAllowFontScaling: true,
             tabBarAndroidRipple: { borderless: true },
@@ -102,11 +97,6 @@ const Tabs = () => {
                 name="Home"
                 component={TabScreens.TabScreen1}
                 options={{ tabBarLabel: 'Up next', tabBarAccessibilityLabel: 'Home' }}
-              />
-              <Tab.Screen
-                name="Updates"
-                component={TabScreens.TabScreen2}
-                options={{ tabBarLabel: 'Places', tabBarAccessibilityLabel: 'Updates' }}
               />
             </Tab.Group>
           )}
@@ -123,7 +113,14 @@ const Tabs = () => {
                 options={{ tabBarLabel: 'Past', tabBarAccessibilityLabel: 'Past' }}
               />
             </Tab.Group>
+
           )}
+            <Tab.Screen
+              name="Updates"
+              component={TabScreens.TabScreen2}
+              options={{ tabBarLabel: 'Places', tabBarAccessibilityLabel: 'Updates' }}
+            />
+
         </Tab.Navigator>
       </View>
       <SpeedFabView />
@@ -150,3 +147,19 @@ const styles = StyleSheet.create({
 });
 
 export default Tabs;
+
+
+/*
+screenOptions={{
+  tabBarActiveTintColor: 'hotpink',
+  tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold', textTransform: 'none' },
+  tabBarItemStyle: { width: 210 }, // Centered tab item style
+  tabBarIndicatorStyle: { backgroundColor: 'hotpink' },
+  tabBarStyle: { backgroundColor: 'white' },
+  tabBarGap: 0,
+  tabBarAllowFontScaling: true,
+  tabBarAndroidRipple: { borderless: true },
+  tabBarPressColor: 'transparent',
+  tabBarBounces: true,
+}}
+*/

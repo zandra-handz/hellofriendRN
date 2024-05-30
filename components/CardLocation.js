@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  
   address: {
     fontSize: 14,
     fontWeight: '400',

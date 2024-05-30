@@ -1,9 +1,10 @@
 import React from 'react';
-import { Image, View, StyleSheet, Dimensions, Text } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { useColorScheme } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import DynTextFriend from './DynTextFriend'; // Import DynTextFriend component
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import DynImageUser from './DynImageUser'; // Import DynImageUser component
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,14 +28,8 @@ const HelloFriendHeader = ({ handleSignOutPress, additionalElements }) => {
       {/* Container for the dynamic text or image */}
       <View style={styles.dynamicContentContainer}>
         <DynTextFriend maxWidth={500}/>
-        {/* Render the image only if DynTextFriend returns nothing */}
-        {!selectedFriend && (
-          <Image
-            style={styles.croppedImage}
-            source={require('../img/lizard-14.jpg')}
-            resizeMode="contain" // or any other appropriate resizeMode
-          />
-        )}
+        {/* Render the DynImageUser component */}
+        {!selectedFriend && <DynImageUser />}
       </View>
 
       {/* Container for the gear icon on the right */}
@@ -71,11 +66,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     flex: 1, // Equal width to other containers
     alignItems: 'flex-end', // Align the icon to the right within the container
-  },
-  croppedImage: {
-    width: 100, // Set the width of the image
-    height: 100, // Set the height of the image
-    resizeMode: 'contain', // or any other appropriate resizeMode
   },
   additionalElement: {
     marginRight: 10,

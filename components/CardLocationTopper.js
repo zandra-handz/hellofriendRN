@@ -1,17 +1,31 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AlertSmall from './AlertSmall';
 import InputSearchAddress from './InputSearchAddress';
 import InputFilterByFriend from './InputFilterByFriend';
 import InputAddLocation from './InputAddLocation';
 import InputConsiderTheDrive from './InputConsiderTheDrive';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555' }) => {
+const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', onToggleStar }) => {
   const [activeModal, setActiveModal] = useState(null);
+  const [isStarSelected, setIsStarSelected] = useState(false);
+  const { selectedFriend } = useSelectedFriend();
+
+  useEffect(() => {
+    // Set the initial state of the star based on whether a friend is selected
+    setIsStarSelected(selectedFriend !== null);
+  }, [selectedFriend]);
 
   const toggleModal = (modal) => {
     setActiveModal(activeModal === modal ? null : modal);
+  };
+
+  const toggleStar = () => {
+    const newStarState = !isStarSelected;
+    setIsStarSelected(newStarState);
+    onToggleStar(newStarState);
   };
 
   return (
@@ -20,9 +34,11 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555' }) =
         <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('search')}>
           <FontAwesome5 name="search" size={16} color={iconColor} solid={false} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('filter')}>
-          <FontAwesome5 name="filter" size={14} color={iconColor} solid={false} />
-        </TouchableOpacity>
+        {selectedFriend && (
+          <TouchableOpacity style={styles.iconButton} onPress={toggleStar}>
+            <FontAwesome5 name="star" size={14} color={iconColor} solid={isStarSelected} />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('add')}>
           <FontAwesome5 name="plus-square" size={14} color={iconColor} solid={false} />
         </TouchableOpacity>

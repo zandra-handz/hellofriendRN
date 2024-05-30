@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import AlertProfile from './AlertProfile'; // Import the AlertProfile component
+import AlertPanelBottom from './AlertPanelBottom'; // Import the AlertProfile component
 
 const DynTextFriend = ({ maxWidth }) => {
   const { selectedFriend } = useSelectedFriend();
@@ -25,7 +25,7 @@ const DynTextFriend = ({ maxWidth }) => {
       </TouchableOpacity>
 
       {/* Render the popup based on showPopup state */}
-      <AlertProfile
+      <AlertPanelBottom
         visible={showPopup}
         profileData={selectedFriend} // Pass the selectedFriend data to the AlertProfile component
         onClose={() => setShowPopup(false)} // Close the popup when Close button is pressed
