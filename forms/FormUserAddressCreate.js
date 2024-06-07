@@ -1,27 +1,35 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { addUserAddress } from '../api'; // Import the addUserAddress function
 
 const FormUserAddressCreate = ({ userId }) => {
   const [address, setAddress] = useState('');
   const [title, setTitle] = useState('');
+  const [showSaveMessage, setShowSaveMessage] = useState(false);
 
   const handleSubmit = async () => {
     try {
-      // Call the addUserAddress function with the user ID and form data
-      await addUserAddress(userId, { address, title });
-      // Clear form fields after successful submission
+      const addressData = {
+        title: title,
+        address: address,
+      };
+      await addUserAddress(userId, addressData);
+      
       setAddress('');
-      setTitle('');
-      // Optionally, you can add some feedback to the user here
+      setTitle(''); 
+      
+      setShowSaveMessage(true);
+      setTimeout(() => {
+        setShowSaveMessage(false);
+      }, 3000); 
     } catch (error) {
-      console.error('Error adding address:', error);
-      // Optionally, handle error states here
+      console.error('Error adding address:', error); 
     }
   };
 
   return (
     <View style={styles.container}>
+      {showSaveMessage && <Text style={styles.saveMessage}>Address added successfully!</Text>}
       <TextInput
         style={styles.input}
         placeholder="Address"
@@ -41,13 +49,18 @@ const FormUserAddressCreate = ({ userId }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
-    paddingHorizontal: 10,
+    marginBottom: 20,
+    paddingHorizontal: 0,
+  }, 
+  saveMessage: {
+    color: 'green',
+    marginBottom: 10,
   },
   input: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
+    borderRadius: 10,
     marginBottom: 10,
     paddingHorizontal: 10,
   },

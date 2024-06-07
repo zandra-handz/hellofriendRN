@@ -69,25 +69,87 @@ export const fetchFriendList = async () => {
     }
 };
 
-export const fetchUserAddresses = async () => {
+
+export const addUserAddress = async (userId, addressData) => {
     try {
-        const response = await axios.get(`/users/${userId}/addresses/`);
+      console.log('addUserAddress - userId:', userId); 
+      console.log('addUserAddress - address:', addressData.address); 
+      console.log('addUserAddress - title:', addressData.title); 
+  
+      const url = `/users/${userId}/addresses/add/`;
+      console.log('addUserAddress - URL:', url); // Log the URL here
+      const response = await axios.post(`/users/${userId}/addresses/add/`, addressData); // Pass addressData directly
+      return response.data;
+    } catch (error) {
+      console.error('Error adding user address:', error);
+      throw error;
+    }
+  };
+
+
+  export const deleteUserAddress = async (userId, title) => {
+    try { 
+      console.log('deleteUserAddress payload: ', {userId, title});
+      const response = await axios.post(`/users/${userId}/addresses/delete/`, title); // Pass addressData directly
+      console.log('Address deleted successfully');
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting user address:', error);
+      throw error;
+    }
+  }; 
+
+export const validateAddress = async (userId, address) => {
+    try {
+        const response = await axios.post(`/friends/location/validate-only/`, {
+            user: userId,
+            address: address,
+        });
         return response.data;
     } catch (error) {
-        console.error('Error fetching user addresses:', error);
-        throw error;
+        console.error('Error validating address:', error);
     }
+};
+  
+
+export const GetTravelComparisons = async (locationData) => {
+      try {
+
+        console.log(locationData);
+        const response = await axios.post(`/friends/places/`, locationData);
+        console.log('Consider the Drive Response:', response.data);
+      } catch (error) {
+        console.error('Error submitting addresses:', error); 
+        }
 };
 
-export const addUserAddress = async (addressData) => {
+export const SearchForMidpointLocations = async (locationData) => {
     try {
-        const response = await axios.post(`/users/${userId}/addresses/add/`, addressData);
-        return response.data;
+
+      console.log(locationData);
+      const response = await axios.post(`/friends/places/near-midpoint/`, locationData);
+      console.log('Consider the Drive Response:', response.data);
     } catch (error) {
-        console.error('Error adding user address:', error);
-        throw error;
-    }
+      console.error('Error submitting addresses:', error); 
+      }
 };
+
+
+export const updateUserProfile = async (userId, firstName, lastName, dateOfBirth, gender, address) => {
+    try {
+      await axios.put(`/users/${userId}/profile/update/`, {
+        user: userId,
+        first_name: firstName,
+        last_name: lastName,
+        date_of_birth: dateOfBirth,
+        gender: gender,
+        addresses: address
+      });
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      throw error;
+    }
+  };
 
 
 
@@ -200,6 +262,9 @@ export const deleteThoughtCapsule = async (capsuleId) => {
         throw error;
     }
 };
+
+
+
 
 
 export const fetchAllLocations = async () => {

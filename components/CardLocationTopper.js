@@ -6,9 +6,10 @@ import InputSearchAddress from './InputSearchAddress';
 import InputFilterByFriend from './InputFilterByFriend';
 import InputAddLocation from './InputAddLocation';
 import InputConsiderTheDrive from './InputConsiderTheDrive';
+import InputSearchMidpointLocations from './InputSearchMidpointLocations';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', onToggleStar }) => {
+const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', selectedAddress, onToggleStar }) => {
   const [activeModal, setActiveModal] = useState(null);
   const [isStarSelected, setIsStarSelected] = useState(false);
   const { selectedFriend } = useSelectedFriend();
@@ -73,7 +74,8 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', onT
         <AlertSmall 
           isModalVisible={true} 
           toggleModal={() => toggleModal('route')} 
-          modalContent={<InputConsiderTheDrive onClose={() => toggleModal('route')} />} 
+          modalContent={<InputSearchMidpointLocations onClose={() => toggleModal('route')} destinationAddress={selectedAddress} />} 
+          modalTitle="Find travel times"
         />
       )}
     </View>

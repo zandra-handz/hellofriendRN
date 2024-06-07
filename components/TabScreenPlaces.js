@@ -81,7 +81,7 @@ const TabScreenPlaces = () => {
           <MapVisitedLocations locations={locationList} selectedLocation={selectedLocation} />
         </View>
         <View style={styles.cardContainer}>
-          <CardLocationTopper backgroundColor="black" iconColor="white" onToggleStar={handleToggleStar} />
+          <CardLocationTopper backgroundColor="black" iconColor="white" selectedAddress={selectedLocation} onToggleStar={handleToggleStar} />
           <FlatList
             ref={flatListRef}
             data={filteredLocationList}

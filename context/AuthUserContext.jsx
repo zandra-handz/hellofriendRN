@@ -104,6 +104,7 @@ export const AuthUserProvider = ({ children }) => {
                     user: {
                         id: currentUserData.id,
                         email: currentUserData.email,
+                        addresses: currentUserData.addresses,
                         app_setup_complete: currentUserData.app_setup_complete,
                         profile: currentUserData.profile,
                         settings: currentUserData.settings,

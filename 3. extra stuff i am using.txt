@@ -93,3 +93,8 @@ npm install react-native-maps
 
 npm install react-native-google-places-autocomplete
 
+
+npm install react-native-google-autocomplete
+
+
+npm install @react-native-google-places-autocomplete/native

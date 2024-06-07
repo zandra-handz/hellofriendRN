@@ -118,7 +118,7 @@ const Tabs = () => {
             <Tab.Screen
               name="Updates"
               component={TabScreens.TabScreen2}
-              options={{ tabBarLabel: 'Places', tabBarAccessibilityLabel: 'Updates' }}
+              options={{ tabBarLabel: 'Places to go', tabBarAccessibilityLabel: 'Updates' }}
             />
 
         </Tab.Navigator>
