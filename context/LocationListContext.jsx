@@ -22,7 +22,9 @@ export const LocationListProvider = ({ children }) => {
 
     if (authUserState.authenticated) {
       fetchData();
-    }
+    } else {
+      setLocationList([]); 
+  }
   }, [authUserState.authenticated]); // Fetch data when authenticated
 
   useEffect(() => {

@@ -98,3 +98,7 @@ npm install react-native-google-autocomplete
 
 
 npm install @react-native-google-places-autocomplete/native
+
+
+Spinners! https://github.com/phamfoo/react-native-animated-spinkit/blob/master/README.md
+npm install react-native-animated-spinkit

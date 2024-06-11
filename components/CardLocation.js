@@ -1,14 +1,20 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { Button, View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import InputAddLocation from './InputAddLocation'; // Import InputAddLocation component
+import InputAddLocationQuickSave from './InputAddLocationQuickSave'; // Import InputAddLocation component
 import AlertSmall from './AlertSmall'; // Import AlertSmall component
+import AlertMicro from './AlertMicro';
+import { useLocationList } from '../context/LocationListContext'; 
+import { deleteLocation } from '../api'; 
 import ButtonFriend from './ButtonFriend';
 import { TapGestureHandler, State } from 'react-native-gesture-handler';
 
-const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsCount, friends, validatedAddress, isSelected, setSelectedLocation }) => {
+const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsCount, friends, validatedAddress, isSelected, setSelectedLocation, showBottomBar=false }) => {
+  const { locationList, setLocationList } = useLocationList();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isMicroModalVisible, setIsMicroModalVisible] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(address || '');
+  const [saveLocationModal, setSaveLocationModal] = useState(false);
   const [selectedLatitude, setSelectedLatitude] = useState(latitude || '');
   const [selectedLongitude, setSelectedLongitude] = useState(longitude || '');
   const [isValidatedAddress, setIsValidatedAddress] = useState(validatedAddress); // Change name to isValidatedAddress
@@ -24,8 +30,11 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
   };
 
   const handleValidateAddress = () => {
-    setIsValidatedAddress(true); // Change to setIsValidatedAddress
+    setSaveLocationModal(true); // Change to setIsValidatedAddress
+    setIsModalVisible(true);
   };
+
+  
 
   const showValidateButton = !id || validatedAddress === false || validatedAddress === undefined;
   const showSaveButton = id && typeof id === 'string' && id.startsWith('temp_');
@@ -38,19 +47,38 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
     }
   };
 
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const closeMicroModal = () => {
+    setIsMicroModalVisible(false);
+  };
+
+  const handleDeleteLocation = async (locationId) => {
+    console.log(locationId);
+    try {
+      await deleteLocation(locationId);
+      const updatedLocationList = locationList.filter(location => location.id !== locationId);
+      setLocationList(updatedLocationList);
+    } catch (error) {
+      console.error('Error deleting location:', error);
+    }
+  };
+
+
   return (
     <TapGestureHandler
       ref={doubleTapRef}
       onHandlerStateChange={onDoubleTap}
       numberOfTaps={2}
     >
+
       <View style={[styles.container, isSelected ? styles.selected : null]}>
-        {showSaveButton && (
-          <TouchableOpacity style={styles.saveButton} onPress={handleValidateAddress}>
-            <Text style={styles.saveButtonText}>Save location</Text>
-          </TouchableOpacity>
-        )}
-        <View style={styles.contentContainer}>
+        <View style={styles.iconPlaceholderContainer}>
+            <View style={[styles.iconPlaceholder, { backgroundColor: 'hotpink' }]} />
+        </View>
+        <View style={styles.contentContainer, styles.contentWithIcon}>
           <Text style={styles.title}>{title}</Text>
           <View style={styles.addressContainer}>
             {!id && (
@@ -67,6 +95,8 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
               <ButtonFriend key={index} friend={friend} onPress={() => console.log('Friend pressed:', friend)} />
             ))}
           </View>
+
+          {showBottomBar && (
           <View style={styles.bottomBar}>
             <TouchableOpacity style={styles.iconButton}>
               <FontAwesome5 name="star" size={14} color="#555" solid={false} />
@@ -81,22 +111,57 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
               <FontAwesome5 name="ellipsis-h" size={14} color="#555" solid={false} />
             </TouchableOpacity>
           </View>
+          )}
         </View>
-        <Modal visible={isModalVisible} animationType="fade" transparent={true}>
-          <View style={styles.modalContainer}>
-            <TouchableOpacity onPress={() => setIsModalVisible(false)} style={styles.closeButton}>
-              <FontAwesome5 name="times" size={20} color="#555" solid={false} />
+        <View style={styles.rightPlaceholderContainer}> 
+          {showSaveButton && (
+            
+            <TouchableOpacity style={styles.iconButton} onPress={handleValidateAddress}>
+            <FontAwesome5 name="heart" size={20} color="#555" solid={false} />
             </TouchableOpacity>
-            <AlertSmall>
-              <InputAddLocation 
-                initialAddress={selectedAddress}
-                initialLatitude={selectedLatitude}
-                initialLongitude={selectedLongitude}
-                onClose={() => setIsModalVisible(false)} 
-              />
-            </AlertSmall>
-          </View>
-        </Modal>
+          )}
+          {!showSaveButton && (
+            
+            <TouchableOpacity style={styles.iconButton} onPress={() => setIsMicroModalVisible(true)}>
+            <FontAwesome5 name="heart" size={20} color="#555" solid={true} />
+            </TouchableOpacity>
+          )}
+          {!showSaveButton && (
+            <TouchableOpacity style={styles.iconButton}>
+              <FontAwesome5 name="edit" size={0} color="#555" solid={false} />
+            </TouchableOpacity>
+            )}
+        </View>
+         
+          <AlertSmall
+            isModalVisible={isModalVisible}
+            toggleModal={closeModal}
+            modalContent={ 
+            <InputAddLocationQuickSave
+              onClose={closeModal}
+              title={title}
+              address={address}  
+            />
+            }
+            modalTitle={'Save Location'}
+          /> 
+          <AlertMicro
+            isModalVisible={isMicroModalVisible}
+            toggleModal={closeMicroModal}
+            modalContent={
+              <>
+              <Text>Remove {title} from your saved locations?</Text>
+              <Button 
+                title="yes"
+                onPress={() => handleDeleteLocation(id)} 
+                />
+              
+              </>
+            }
+            modalTitle={'Remove location'}
+          /> 
+
+
       </View>
     </TapGestureHandler>
   );
@@ -146,9 +211,40 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 12,
     fontWeight: '600',
+  }, 
+  iconPlaceholderContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    width: 'auto', // One-sixth of the width
+  },
+  iconPlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#ccc', // Placeholder color
+  },
+  rightPlaceholderContainer: {
+    position: 'absolute',
+    top: 0, // Adjust this value based on your layout needs
+    right: 20, // Adjust this value to set the distance from the right edge
+    width: 40, // Set the width of the container if needed
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    marginTop: 8,
+  },
+  rightPlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#ccc', // Placeholder color
   },
   contentContainer: {
     flex: 1,
+  },
+  contentWithIcon: {
+    paddingLeft: 8, // Add some padding to separate from the icon placeholder
+    width: '66%',
   },
   title: {
     fontSize: 15,
@@ -188,6 +284,7 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 2,
+    marginLeft: 2,
   },
   modalContainer: {
     position: 'absolute',

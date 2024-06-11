@@ -30,55 +30,73 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
   };
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('search')}>
-          <FontAwesome5 name="search" size={16} color={iconColor} solid={false} />
-        </TouchableOpacity>
-        {selectedFriend && (
-          <TouchableOpacity style={styles.iconButton} onPress={toggleStar}>
-            <FontAwesome5 name="star" size={14} color={iconColor} solid={isStarSelected} />
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('add')}>
-          <FontAwesome5 name="plus-square" size={14} color={iconColor} solid={false} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('route')}>
-          <FontAwesome5 name="route" size={14} color={iconColor} solid={false} />
-        </TouchableOpacity>
+    <>
+      <View style={[styles.container, { backgroundColor }]}>
+        <View style={styles.bottomBar}>
+          {selectedFriend && (
+            <View style={styles.floatingContainer}>
+              <TouchableOpacity style={styles.iconButton} onPress={toggleStar}>
+                <FontAwesome5 name="star" size={15} color={'black'} solid={isStarSelected} />
+              </TouchableOpacity>
+            </View>
+          )}
+          <View style={styles.floatingContainer}>
+            <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('midpoint')}>
+              <FontAwesome5 name="dot-circle" size={15} color={'black'} solid={false} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.floatingContainer}>
+            <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('search')}>
+              <FontAwesome5 name="search" size={15} color={'black'} solid={false} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.floatingContainer}>
+            <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('route')}>
+              <FontAwesome5 name="clock" size={15} color={'black'} solid={false} />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
       {activeModal === 'search' && (
         <AlertSmall 
           isModalVisible={true} 
-          toggleModal={() => toggleModal('search')} 
+          toggleModal={() => setActiveModal(null)} 
           modalTitle='Search for a location'
-          modalContent={<InputSearchAddress onClose={() => toggleModal('search')} />} 
+          modalContent={<InputSearchAddress onClose={() => setActiveModal(null)} />} 
         />
       )}
       {activeModal === 'filter' && (
         <AlertSmall 
           isModalVisible={true} 
-          toggleModal={() => toggleModal('filter')} 
-          modalContent={<InputFilterByFriend onClose={() => toggleModal('filter')} />} 
+          toggleModal={() => setActiveModal(null)} 
+          modalContent={<InputFilterByFriend onClose={() => setActiveModal(null)} />} 
         />
       )}
       {activeModal === 'add' && (
         <AlertSmall 
           isModalVisible={true} 
-          toggleModal={() => toggleModal('add')} 
-          modalContent={<InputAddLocation onClose={() => toggleModal('add')} />} 
+          toggleModal={() => setActiveModal(null)} 
+          modalContent={<InputAddLocation onClose={() => setActiveModal(null)} />} 
           modalTitle="Add Location"
         />
       )}
+      {activeModal === 'midpoint' && (
+        <AlertSmall 
+          isModalVisible={true} 
+          toggleModal={() => setActiveModal(null)} 
+          modalContent={<InputSearchMidpointLocations onClose={() => setActiveModal(null)} destinationAddress={selectedAddress} />} 
+          modalTitle="Find midpoint locations"
+        />
+      )} 
       {activeModal === 'route' && (
         <AlertSmall 
           isModalVisible={true} 
-          toggleModal={() => toggleModal('route')} 
-          modalContent={<InputSearchMidpointLocations onClose={() => toggleModal('route')} destinationAddress={selectedAddress} />} 
+          toggleModal={() => setActiveModal(null)} 
+          modalContent={<InputConsiderTheDrive onClose={() => setActiveModal(null)} destinationAddress={selectedAddress} />} 
           modalTitle="Find travel times"
         />
-      )}
-    </View>
+      )} 
+    </>
   );
 };
 
@@ -94,26 +112,40 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.0,
     shadowRadius: 0,
     width: '100%',
-    borderTopWidth: 0.5,
-    borderTopColor: 'black',
+    borderTopWidth: 0.0,
+    borderTopColor: 'transparent',
   },
   bottomBar: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 2,
-    marginTop: 1,
-    paddingBottom: 2,
-    marginBottom: 1,
+    justifyContent: 'space-around', 
+    alignItems: 'center',
+    paddingTop: 4, 
+    paddingBottom: 4,
+    borderBottomWidth: .5,
+    borderBottomColor: 'gray',
     flex: 1,
   },
-  iconButton: {
-    padding: 2,
+  floatingContainer: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    borderRadius: 20,
+    height: 30,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginLeft: 6,
+    shadowOffset: { width: 0, height: 2 },
+    borderWidth: .2,
+    borderColor: 'gray',
+    shadowOpacity: 1,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  // Use if replacing icons with text
-  iconText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
+  iconButton: {
     padding: 2,
   },
 });

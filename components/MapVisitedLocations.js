@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, OverLay } from 'react-native-maps';
 
 const MapVisitedLocations = ({ locations, selectedLocation }) => {
   const mapRef = useRef(null);
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 182, 193, 0.5)',
+    backgroundColor: 'rgba(128, 128, 128, 0.5)',
   },
 });
 

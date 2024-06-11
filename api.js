@@ -128,9 +128,10 @@ export const SearchForMidpointLocations = async (locationData) => {
 
       console.log(locationData);
       const response = await axios.post(`/friends/places/near-midpoint/`, locationData);
-      console.log('Consider the Drive Response:', response.data);
+      console.log('Search for Midpoint Response:', response.data);
+      return response.data.suggested_places;
     } catch (error) {
-      console.error('Error submitting addresses:', error); 
+      console.error('Error searching for midpoint locations:', error); 
       }
 };
 
@@ -297,12 +298,25 @@ export const fetchAllLocations = async () => {
 export const createLocation = async (locationData) => {
     try {
         const response = await axios.post('/friends/locations/add/', locationData);
+        console.log(response.data);
         return response.data;
     } catch (error) {
-        console.error('Error creating location:', error);
+        console.error('Error creating location:', error, locationData);
         throw error;
     }
 };
+
+export const deleteLocation = async (locationId) => {
+    console.log(locationId);
+    try {
+        const response = await axios.delete(`friends/location/${locationId}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting location:', error);
+        throw error;
+    }
+};
+
 
 
 // Not being used

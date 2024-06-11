@@ -4,9 +4,10 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import SpeedFabView from '../speeddial/SpeedFabView';
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import TabScreen from './TabScreen'; 
 import NextHello from '../data/FriendDashboardData';  
-
+import { Flow, Grid } from 'react-native-animated-spinkit';
 import TabScreenNext from './TabScreenNext';
 import TabScreenPlaces from './TabScreenPlaces';
 import DaysSince from '../data/FriendDaysSince';  
@@ -71,10 +72,18 @@ const TabScreens = tabScreenData.reduce((screens, { name, data, showStatusCard }
 
 const Tabs = () => {
   const { selectedFriend } = useSelectedFriend();
+  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
+    
 
   return (
     <>
       <View style={styles.container}>
+      {isLoading ? (
+        <View style={styles.spinnerContainer}>
+          <Flow size={60} color='hotpink'/>
+        </View>
+
+      ):(
         <Tab.Navigator
           initialRouteName="Home"
           screenOptions={{
@@ -122,6 +131,7 @@ const Tabs = () => {
             />
 
         </Tab.Navigator>
+      )}
       </View>
       <SpeedFabView />
       <View style={styles.footerContainer}>
@@ -139,6 +149,11 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     padding: 0,
+  },
+  spinnerContainer: { 
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '50%',
   },
   footerContainer: {
     backgroundColor: '#333333',

@@ -14,7 +14,7 @@ const TabScreenPlaces = () => {
   const [filteredLocationList, setFilteredLocationList] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const flatListRef = useRef(null);
-  const [isStarSelected, setIsStarSelected] = useState(true); // Set the initial state to true
+  const [isStarSelected, setIsStarSelected] = useState(false); // Set the initial state to true
 
   useEffect(() => {
     const sortedList = [...locationList].sort((a, b) => {
@@ -81,7 +81,7 @@ const TabScreenPlaces = () => {
           <MapVisitedLocations locations={locationList} selectedLocation={selectedLocation} />
         </View>
         <View style={styles.cardContainer}>
-          <CardLocationTopper backgroundColor="black" iconColor="white" selectedAddress={selectedLocation} onToggleStar={handleToggleStar} />
+          <CardLocationTopper backgroundColor="white" iconColor="white" selectedAddress={selectedLocation} onToggleStar={handleToggleStar} />
           <FlatList
             ref={flatListRef}
             data={filteredLocationList}
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mapContainer: {
-    flex: 1,
+    flex: .8, 
   },
   cardContainer: {
     flex: 1,

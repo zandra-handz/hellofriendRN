@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage for storing authentication token
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { Flow } from 'react-native-animated-spinkit';
 
 const CustomButton = ({ onPress, title }) => (
     <TouchableOpacity style={styles.buttonContainer} onPress={onPress}>
@@ -167,7 +168,9 @@ const Signin = () => {
                     />
                 )}
                 {loading ? (
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <View style={styles.spinnerContainer}>
+                        <Flow size={48} color='hotpink'/>
+                    </View>
                 ) : (
                     <>
                         <ButtonColorHighlight onPress={handleAuthentication} title={isSignIn ? "Sign in" : "Create account"} />
@@ -243,6 +246,12 @@ const styles = StyleSheet.create({
         marginTop: 2,
         textAlign: 'center',
         fontFamily: 'Poppins-Regular',
+    },
+    spinnerContainer: {
+        width: '100%',
+        marginTop: 26,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     successMessage: {
         marginTop: 10,
