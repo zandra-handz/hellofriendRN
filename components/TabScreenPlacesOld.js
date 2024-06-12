@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FlatList, StyleSheet, View, Dimensions } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CardLocationTopper from './CardLocationTopper';
 import CardLocation from './CardLocation';
@@ -7,15 +7,14 @@ import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import MapVisitedLocations from './MapVisitedLocations';
 
-const TabScreenPlaces = () => {
+const TabScreenPlacesOld = () => {
   const { selectedFriend } = useSelectedFriend();
   const { locationList } = useLocationList();
   const [sortedLocationList, setSortedLocationList] = useState([]);
   const [filteredLocationList, setFilteredLocationList] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const flatListRef = useRef(null);
-  const [isStarSelected, setIsStarSelected] = useState(false);
-  const [itemHeight, setItemHeight] = useState(0); // State to store the height of each item
+  const [isStarSelected, setIsStarSelected] = useState(false); // Set the initial state to true
 
   useEffect(() => {
     const sortedList = [...locationList].sort((a, b) => {
@@ -28,16 +27,11 @@ const TabScreenPlaces = () => {
   }, [locationList, isStarSelected]);
 
   useEffect(() => {
-    setIsStarSelected(true);
-    filterLocations(true, sortedLocationList);
+    // Toggle the star button on every selectedFriend change
+    setIsStarSelected(true); // Assuming you want to turn on the toggle button
+    filterLocations(true, sortedLocationList); // Filter locations with isStarSelected set to true
   }, [selectedFriend]);
-
-  useEffect(() => {
-    // Measure the height of a sample item
-    if (flatListRef.current) {
-      flatListRef.current.scrollToOffset({ offset: 0 });
-    }
-  }, [flatListRef]);
+  
 
   const filterLocations = (isStarSelected, locations) => {
     let filteredList = [...locations];
@@ -58,26 +52,19 @@ const TabScreenPlaces = () => {
 
   const handleViewableItemsChanged = ({ viewableItems }) => {
     if (viewableItems.length > 0) {
-      const visibleItems = viewableItems.map(item => ({
-        ...item,
-        top: item.itemIndex * itemHeight,
-        bottom: (item.itemIndex + 1) * itemHeight,
-      }));
-
-      const windowHeight = Dimensions.get('window').height;
-
-      const closestItem = visibleItems.reduce((closest, currentItem) => {
-        const currentMiddle = (currentItem.top + currentItem.bottom) / 2;
-        const closestMiddle = (closest.top + closest.bottom) / 2;
-        const currentDistance = Math.abs(windowHeight / 2 - currentMiddle);
-        const closestDistance = Math.abs(windowHeight / 2 - closestMiddle);
-        return currentDistance < closestDistance ? currentItem : closest;
-      });
-
-      setSelectedLocation(closestItem.item);
-      console.log('Selected Location:', closestItem.item);
+      const topItem = viewableItems[0];
+      const bottomItem = viewableItems[viewableItems.length - 1];
+      const lastIndex = sortedLocationList.length - 1;
+      if (bottomItem.index === lastIndex && bottomItem.isViewable && bottomItem.percentVisible === 1) {
+        setSelectedLocation(bottomItem.item);
+        console.log('Selected Location:', bottomItem.item);
+      } else if (topItem.isViewable) {
+        setSelectedLocation(topItem.item);
+        console.log('Selected Location:', topItem.item);
+      }
     }
   };
+  
 
   const onDoubleTap = (item) => {
     setSelectedLocation(item);
@@ -98,29 +85,26 @@ const TabScreenPlaces = () => {
           <CardLocationTopper backgroundColor="white" iconColor="white" selectedAddress={selectedLocation} onToggleStar={handleToggleStar} />
           <FlatList
             ref={flatListRef}
-            data={[...filteredLocationList, { isSpacer: true }]}
+            data={filteredLocationList}
             renderItem={({ item }) => (
-              item.isSpacer ? (
-                <View style={styles.spacer} />
-              ) : (
-                <View style={item.id === selectedLocation?.id ? styles.selectedCardContainer : styles.cardWrapper} onLayout={(event) => setItemHeight(event.nativeEvent.layout.height)}>
-                  <CardLocation
-                    title={item.title}
-                    address={item.address}
-                    notes={item.notes}
-                    id={item.id || generateTemporaryId()}
-                    latitude={item.latitude}
-                    longitude={item.longitude}
-                    friendsCount={item.friendsCount}
-                    friends={item.friends}
-                    validatedAddress={item.validatedAddress}
-                    isSelected={selectedLocation && selectedLocation.id === item.id}
-                    setSelectedLocation={onDoubleTap}
-                  />
-                </View>
-              )
+              <View style={item.id === selectedLocation?.id ? styles.selectedCardContainer : styles.cardWrapper}>
+                <CardLocation
+                  title={item.title}
+                  address={item.address}
+                  notes={item.notes}
+                  id={item.id || generateTemporaryId()}
+                  latitude={item.latitude}
+                  longitude={item.longitude}
+                  friendsCount={item.friendsCount}
+                  friends={item.friends}
+                  validatedAddress={item.validatedAddress}
+                  isSelected={selectedLocation && selectedLocation.id === item.id}
+                  setSelectedLocation={onDoubleTap}
+                />
+              </View>
             )}
-            keyExtractor={item => item.id ? item.id.toString() : 'spacer'}
+            estimatedItemSize={148}
+            keyExtractor={item => item.id.toString()}
             onViewableItemsChanged={handleViewableItemsChanged}
             viewabilityConfig={{
               itemVisiblePercentThreshold: 50,
@@ -137,7 +121,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mapContainer: {
-    flex: 0.8,
+    flex: .8, 
   },
   cardContainer: {
     flex: 1,
@@ -154,10 +138,6 @@ const styles = StyleSheet.create({
     marginTop: -1,
     zIndex: 1,
   },
-  spacer: {
-    height: 300,
-    backgroundColor: 'white',
-  },
 });
 
-export default TabScreenPlaces;
+export default TabScreenPlacesOld;

@@ -13,9 +13,9 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
   const [activeModal, setActiveModal] = useState(null);
   const [isStarSelected, setIsStarSelected] = useState(false);
   const { selectedFriend } = useSelectedFriend();
+  const [destinationForDrive, setDestinationForDrive] = useState(null); // New state to store destination for driving modal
 
   useEffect(() => {
-    // Set the initial state of the star based on whether a friend is selected
     setIsStarSelected(selectedFriend !== null);
   }, [selectedFriend]);
 
@@ -27,6 +27,11 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
     const newStarState = !isStarSelected;
     setIsStarSelected(newStarState);
     onToggleStar(newStarState);
+  };
+
+  const handleClockButtonPress = () => {
+    setDestinationForDrive(selectedAddress); // Save destination address when clock button is pressed
+    setActiveModal('route');
   };
 
   return (
@@ -51,12 +56,13 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
             </TouchableOpacity>
           </View>
           <View style={styles.floatingContainer}>
-            <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('route')}>
+            <TouchableOpacity style={styles.iconButton} onPress={handleClockButtonPress}>
               <FontAwesome5 name="clock" size={15} color={'black'} solid={false} />
             </TouchableOpacity>
           </View>
         </View>
       </View>
+      {/* Modals */}
       {activeModal === 'search' && (
         <AlertSmall 
           isModalVisible={true} 
@@ -65,35 +71,26 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
           modalContent={<InputSearchAddress onClose={() => setActiveModal(null)} />} 
         />
       )}
-      {activeModal === 'filter' && (
+      {/* Other modals */}
+      {activeModal === 'route' && (
         <AlertSmall 
           isModalVisible={true} 
           toggleModal={() => setActiveModal(null)} 
-          modalContent={<InputFilterByFriend onClose={() => setActiveModal(null)} />} 
+          modalContent={
+            <InputConsiderTheDrive 
+              onClose={() => setActiveModal(null)} 
+              destinationAddress={destinationForDrive} 
+            />
+          } 
+          modalTitle="Find travel times"
         />
-      )}
-      {activeModal === 'add' && (
-        <AlertSmall 
-          isModalVisible={true} 
-          toggleModal={() => setActiveModal(null)} 
-          modalContent={<InputAddLocation onClose={() => setActiveModal(null)} />} 
-          modalTitle="Add Location"
-        />
-      )}
+      )} 
       {activeModal === 'midpoint' && (
         <AlertSmall 
           isModalVisible={true} 
           toggleModal={() => setActiveModal(null)} 
           modalContent={<InputSearchMidpointLocations onClose={() => setActiveModal(null)} destinationAddress={selectedAddress} />} 
           modalTitle="Find midpoint locations"
-        />
-      )} 
-      {activeModal === 'route' && (
-        <AlertSmall 
-          isModalVisible={true} 
-          toggleModal={() => setActiveModal(null)} 
-          modalContent={<InputConsiderTheDrive onClose={() => setActiveModal(null)} destinationAddress={selectedAddress} />} 
-          modalTitle="Find travel times"
         />
       )} 
     </>
