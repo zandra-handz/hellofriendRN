@@ -118,6 +118,7 @@ export const GetTravelComparisons = async (locationData) => {
         console.log(locationData);
         const response = await axios.post(`/friends/places/`, locationData);
         console.log('Consider the Drive Response:', response.data);
+        return response.data;
       } catch (error) {
         console.error('Error submitting addresses:', error); 
         }
