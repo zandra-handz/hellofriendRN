@@ -60,6 +60,8 @@ const AlertProfileBottomUser = ({ visible, profileData, onClose }) => {
                         <FontAwesome5 name="times" size={20} color="black" solid={false} />
                     </TouchableOpacity>
                     <ScrollView contentContainerStyle={styles.scrollContainer}>
+                        
+                        
                         <View>
                             <View style={styles.row}>
                                 <FontAwesome5 name="user" size={20} color="black" style={styles.icon} />

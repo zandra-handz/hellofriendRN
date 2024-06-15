@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FormUserAddressCreate from '../forms/FormUserAddressCreate'; // Import the form component
+import FormFriendAddressCreate from '../forms/FormFriendAddressCreate'; // Import the form component
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
@@ -30,7 +30,7 @@ const AlertProfileBottomFriend = ({ visible, profileData, onClose }) => {
               </TouchableOpacity>
             </>
           ) : ( // Render form if in edit mode
-            <FormUserAddressCreate userId={profileData.id} onCancel={toggleEditMode} />
+            <FormFriendAddressCreate friendId={selectedFriend.id} onCancel={toggleEditMode} />
           )}
           {editMode && ( // Render back button if in edit mode
             <TouchableOpacity onPress={toggleEditMode} style={styles.backButton}>

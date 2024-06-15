@@ -69,15 +69,44 @@ export const fetchFriendList = async () => {
     }
 };
 
+export const fetchFriendAddresses = async (friendId) => {
+    try {
+        const response = await axios.get(`/friends/${friendId}/addresses/all/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching friend dashboard data:', error);
+        throw error;
+    }
+};
+
+
+export const addFriendAddress = async (friendId, addressData) => {
+    console.log('addFriendAddress', {addressData}); 
+    try {  
+      const response = await axios.post(`/friends/${friendId}/addresses/add/`, addressData); // Include friendId in the URL
+      return response.data;
+    } catch (error) {
+      console.error('Error adding friend address:', error);
+      throw error;
+    }
+  };
+
+
+  export const deleteFriendAddress = async (friendId, addressId) => {
+    try {
+        const response = await axios.delete(`/friends/${friendId}/address/${addressId}/`);
+        console.log('Address deleted successfully');
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting user address:', error);
+        throw error;
+    }
+};
+
 
 export const addUserAddress = async (userId, addressData) => {
     try {
-      console.log('addUserAddress - userId:', userId); 
-      console.log('addUserAddress - address:', addressData.address); 
-      console.log('addUserAddress - title:', addressData.title); 
-  
-      const url = `/users/${userId}/addresses/add/`;
-      console.log('addUserAddress - URL:', url); // Log the URL here
+
       const response = await axios.post(`/users/${userId}/addresses/add/`, addressData); // Pass addressData directly
       return response.data;
     } catch (error) {

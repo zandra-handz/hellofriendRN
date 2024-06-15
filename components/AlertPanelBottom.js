@@ -1,13 +1,57 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, ScrollView, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FormUserAddressCreate from '../forms/FormUserAddressCreate'; // Import the form component
+import FormFriendAddressCreate from '../forms/FormFriendAddressCreate'; // Import the form component
+import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useAuthUser } from '../context/AuthUserContext';
+import { fetchFriendAddresses, deleteFriendAddress } from '../api';
+import ButtonAddress from './ButtonAddress';
 
 const AlertPanelBottom = ({ visible, profileData, onClose }) => {
+  const { authUserState } = useAuthUser();
   const [editMode, setEditMode] = useState(false);
+  const [differentEditScreen, setDifferentEditScreen] = useState(false);
+  const { selectedFriend } = useSelectedFriend();
+  const [friendAddresses, setFriendAddresses] = useState(null);
+
+  useEffect(() => {
+    if (visible) {
+      const fetchAddresses = async () => {
+        try {
+          const data = await fetchFriendAddresses(selectedFriend.id);
+          setFriendAddresses(data);
+        } catch (error) {
+          console.error('Error fetching friend addresses:', error);
+        }
+      };
+      fetchAddresses();
+    }
+  }, [visible, selectedFriend]);
+
+  const toggleDifferentEditScreen = () => {
+    setDifferentEditScreen(!differentEditScreen);
+  };
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
+  };
+
+  const handleDeleteAddress = async (addressId) => {
+    try {
+      await deleteFriendAddress(selectedFriend.id, addressId);
+      fetchAddresses(); // Refresh addresses after deletion
+    } catch (error) {
+      console.error('Error deleting address:', error);
+    }
+  };
+
+  const fetchAddresses = async () => {
+    try {
+      const data = await fetchFriendAddresses(selectedFriend.id);
+      setFriendAddresses(data);
+    } catch (error) {
+      console.error('Error fetching friend addresses:', error);
+    }
   };
 
   return (
@@ -17,22 +61,40 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <FontAwesome5 name="times" size={20} color="black" solid={false} />
           </TouchableOpacity>
-          {!editMode ? ( // Render profile view if not in edit mode
-            <>
-              <Text style={styles.modalTitle}>Name: {profileData.name}</Text>
-              <Text>Email: {profileData.email}</Text>
-              <TouchableOpacity onPress={toggleEditMode} style={styles.editButton}>
-                <Text style={styles.editButtonText}>Edit Address</Text>
-              </TouchableOpacity>
-            </>
-          ) : ( // Render form if in edit mode
-            <FormUserAddressCreate userId={profileData.id} onCancel={toggleEditMode} />
-          )}
-          {editMode && ( // Render back button if in edit mode
-            <TouchableOpacity onPress={toggleEditMode} style={styles.backButton}>
-              <Text style={styles.backButtonText}>Back</Text>
-            </TouchableOpacity>
-          )}
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View>
+              <View style={styles.row}>
+                <FontAwesome5 name="user" size={20} color="black" style={styles.icon} />
+                <Text style={styles.modalTitle}>{selectedFriend.name}</Text>
+              </View>
+              <View style={styles.addressRow}>
+                <FontAwesome5 name="map-marker-alt" size={20} color="black" style={[styles.icon, styles.mapIcon]} />
+                <Text style={styles.sectionTitle}></Text>
+                {friendAddresses &&
+                  friendAddresses.map((friendAddress, index) => (
+                    <View key={index} style={styles.addressSection}>
+                      <ButtonAddress address={friendAddress} onDelete={() => handleDeleteAddress(friendAddress.id)} />
+                    </View>
+                  ))}
+                <TouchableOpacity onPress={toggleDifferentEditScreen} style={styles.editButton}>
+                  <FontAwesome5 name="plus" size={12} color="white" />
+                </TouchableOpacity>
+              </View>
+
+              {!differentEditScreen ? (
+                <>
+                  <Text>Email: {profileData.email}</Text>
+                </>
+              ) : (
+                <FormFriendAddressCreate friendId={selectedFriend.id} onCancel={toggleEditMode} />
+              )}
+              {editMode && (
+                <TouchableOpacity onPress={toggleEditMode} style={styles.backButton}>
+                  <Text style={styles.backButtonText}>Back</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </ScrollView>
         </View>
       </View>
     </Modal>
@@ -42,7 +104,7 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'flex-end', // Align pop-up at the bottom
+    justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   container: {
@@ -50,7 +112,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
-    minHeight: '50%', // Set the minimum height
+    height: '60%',
   },
   closeButton: {
     position: 'absolute',
@@ -62,25 +124,84 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 6,
   },
-  editButton: {
-    marginTop: 10,
-    alignSelf: 'flex-start',
-    padding: 5,
-    backgroundColor: '#ccc',
-    borderRadius: 5,
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  editButtonText: {
-    color: 'blue',
+  icon: {
+    marginRight: 10,
+  },
+  addressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginBottom: 8,
+  },
+  addressSection: {
+    marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 5,
+  },
+  editButton: {
+    marginLeft: 3,
+    borderRadius: 15,
+    backgroundColor: '#ccc',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  editButtonRight: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  mapIcon: {
+    marginLeft: 5,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  updateButton: {
+    backgroundColor: 'blue',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  updateButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   backButton: {
     marginTop: 10,
-    alignSelf: 'flex-start',
-    padding: 5,
-    backgroundColor: '#ccc',
+    backgroundColor: 'grey',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   backButtonText: {
-    color: 'blue',
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  formContainer: {
+    marginTop: 10,
+  },
+  scrollContainer: {
+    paddingBottom: 20,
   },
 });
 

@@ -14,7 +14,7 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
   const { selectedFriend } = useSelectedFriend();
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isLoading, setIsLoading] = useState(false); 
-  const [isChangingAddress, setIsChangingAddress] = useState(false);
+  const [isChangingSavedUserAddress, setIsChangingSavedUserAddress] = useState(false);
   const [travelTimeResults, setTravelTimeResults] = useState(null);
   const [travelTimeResultsView, setTravelTimeResultsView] = useState(false);
   const [selectedFriendAddress, setSelectedFriendAddress] = useState(null);
@@ -31,7 +31,7 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
   }));
 
   const handleToggleUserAddress = () => {
-    setIsChangingAddress(prevState => !prevState); 
+    setIsChangingSavedUserAddress(prevState => !prevState); 
   };
 
   const handleBackButtonPress = async () => {
@@ -90,118 +90,115 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
     setShowAddressOptions(false); // Close the address options dropdown after selection
   };
 
+  
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {isLoading ? (
-        <View style={styles.formContainer}>
-          <View style={styles.spinnerContainer}>
-            <Wander size={48} color='hotpink' />
-          </View>
-        </View>
-      ) : (
+      {destinationAddress && destinationAddress.title ? (
         <>
-          <View style={styles.destinationContainer}>
-            <Text style={styles.title}>{destinationAddress ? destinationAddress.title : ""}</Text>
-            <Text style={styles.address}>{destinationAddress ? destinationAddress.address : ""}</Text>
-          </View>
-          <View style={styles.formContainer}>
-            {!travelTimeResultsView ? (
-              <>
-                <View style={styles.section}>
-                  <Text style={styles.subtitle}>{selectedFriend ? selectedFriend.name : "My friend"} is coming from</Text>
-                  <TouchableOpacity
-                    onPress={() => setShowAddressOptions(true)} // Show address options when pressed
-                    style={styles.addressInput}
-                  >
-                    <Text>{selectedFriendAddress ? selectedFriendAddress.label : 'Search for address'}</Text>
-                  </TouchableOpacity>
-                  <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={showAddressOptions}
-                    onRequestClose={() => setShowAddressOptions(false)}
-                  >
-                    <View style={styles.modalContainer}>
-                      <GooglePlacesAutocomplete
-                        placeholder="Search"
-                        keepResultsAfterBlur={true}
-                        onPress={(data, details = null) => {
-                          console.log("GooglePlacesAutocomplete onPress called with:", data, details);
-                          const friendAddress = {
-                            label: data.description,
-                            lat: details.geometry.location.lat,
-                            lng: details.geometry.location.lng
-                          };
-                          setSelectedFriendAddress(friendAddress);
-                          handleFriendAddressSelect(friendAddress);
-                        }}
-                        fetchDetails={true}
-                        query={{
-                          key: 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk',
-                          language: 'en',
-                        }}
-                        debounce={300}
-                        styles={{
-                          textInputContainer: styles.textInputContainer,
-                          textInput: styles.textInput,
-                          predefinedPlacesDescription: {
-                            color: '#1faadb',
-                          },
-                        }}
-                      />
-                      <Button title="Close" onPress={() => setShowAddressOptions(false)} />
-                    </View>
-                  </Modal>
-                </View>
-                {isChangingAddress ? (
-                  <View style={styles.section}>
-                    <Text style={styles.subtitle}>You are coming from</Text>
-                    <Picker
-                      selectedValue={selectedAddress ? selectedAddress.label : null}
-                      style={styles.picker}
-                      onValueChange={(itemValue, itemIndex) => {
-                        const newAddress = addressOptions.find(option => option.label === itemValue).value;
-                        setSelectedAddress(newAddress);
+        <View style={styles.destinationContainer}>
+          <Text style={styles.title}>{destinationAddress.title}</Text>
+          <Text style={styles.address}>{destinationAddress.address}</Text>
+        </View>
+
+        <View style={styles.formContainer}>
+          {!travelTimeResultsView ? (
+            <>
+              <View style={styles.section}>
+                <Text style={styles.subtitle}>{selectedFriend ? selectedFriend.name : "My friend"} is coming from</Text>
+                <TouchableOpacity
+                  onPress={() => setShowAddressOptions(true)} // Show address options when pressed
+                  style={styles.addressInput}
+                >
+                  <Text>{selectedFriendAddress ? selectedFriendAddress.label : 'Search for address'}</Text>
+                </TouchableOpacity>
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={showAddressOptions}
+                  onRequestClose={() => setShowAddressOptions(false)}
+                >
+                  <View style={styles.modalContainer}>
+                    <GooglePlacesAutocomplete
+                      placeholder="Search"
+                      keepResultsAfterBlur={true}
+                      onPress={(data, details = null) => {
+                        const friendAddress = {
+                          label: data.description,
+                          lat: details.geometry.location.lat,
+                          lng: details.geometry.location.lng
+                        };
+                        setSelectedFriendAddress(friendAddress);
+                        handleFriendAddressSelect(friendAddress);
                       }}
-                    >
-                      {addressOptions.map((option) => (
-                        <Picker.Item key={option.label} label={option.label} value={option.label} />
-                      ))}
-                    </Picker>
+                      fetchDetails={true}
+                      query={{
+                        key: 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk',
+                        language: 'en',
+                      }}
+                      debounce={300}
+                      styles={{
+                        textInputContainer: styles.textInputContainer,
+                        textInput: styles.textInput,
+                        predefinedPlacesDescription: {
+                          color: '#1faadb',
+                        },
+                      }}
+                    />
+                    <Button title="Close" onPress={() => setShowAddressOptions(false)} />
                   </View>
-                ) : (
-                  <TouchableOpacity
-                    onPress={handleToggleUserAddress}
-                    style={styles.addressInput}
+                </Modal>
+              </View>
+              {isChangingSavedUserAddress ? (
+                <View style={styles.section}>
+                  <Text style={styles.subtitle}>You are coming from</Text>
+                  <Picker
+                    selectedValue={selectedAddress ? selectedAddress.label : null}
+                    style={styles.picker}
+                    onValueChange={(itemValue, itemIndex) => {
+                      const newAddress = addressOptions.find(option => option.label === itemValue).value;
+                      setSelectedAddress(newAddress);
+                    }}
                   >
-                    <Text>{selectedAddress ? selectedAddress.label : 'Select your starting address'}</Text>
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity style={styles.editButton} onPress={handleButtonPress}>
-                  <Text>Find Route</Text>
+                    {addressOptions.map((option) => (
+                      <Picker.Item key={option.label} label={option.label} value={option.label} />
+                    ))}
+                  </Picker>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={handleToggleUserAddress}
+                  style={styles.addressInput}
+                >
+                  <Text>{selectedAddress ? selectedAddress.label : 'Select your starting address'}</Text>
                 </TouchableOpacity>
-              </>
-            ) : (
-              <>
-                <TouchableOpacity onPress={handleBackButtonPress} style={styles.editButtonRight}>
-                  <FontAwesome5 name="arrow-left" size={20} color="#000" />
-                </TouchableOpacity>
-                {travelTimeResults && (
-                  <CardTravelComparison
-                    myData={{
-                      time: travelTimeResults.Me ? travelTimeResults.Me.duration : 'N/A',
-                      miles: travelTimeResults.Me ? travelTimeResults.Me.distance : 'N/A',
-                    }}
-                    friendData={{
-                      time: travelTimeResults.friend ? travelTimeResults.friend.duration : 'N/A',
-                      miles: travelTimeResults.friend ? travelTimeResults.friend.distance : 'N/A',
-                    }}
-                  />
-                )}
-              </>
-            )}
-          </View>
+              )}
+              <TouchableOpacity style={styles.editButton} onPress={handleGetRoute}>
+                <Text>Find Route</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity onPress={handleBackButtonPress} style={styles.editButtonRight}>
+                <FontAwesome5 name="arrow-left" size={20} color="#000" />
+              </TouchableOpacity>
+              {travelTimeResults && (
+                <CardTravelComparison
+                  myData={{
+                    time: travelTimeResults.Me ? travelTimeResults.Me.duration : 'N/A',
+                    miles: travelTimeResults.Me ? travelTimeResults.Me.distance : 'N/A',
+                  }}
+                  friendData={{
+                    time: travelTimeResults.friend ? travelTimeResults.friend.duration : 'N/A',
+                    miles: travelTimeResults.friend ? travelTimeResults.friend.distance : 'N/A',
+                  }}
+                />
+              )}
+            </>
+          )}
+        </View>
         </>
+      ) : (
+        <Text style={styles.message}>Please select a destination address to calculate travel times.</Text>
       )}
     </ScrollView>
   );
@@ -290,6 +287,13 @@ const styles = StyleSheet.create({
     right: 10,
   },
   resultsContainer: {},
+  message: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: 'gray',
+    marginTop: 20,
+  },
 });
 
 export default InputConsiderTheDrive;
