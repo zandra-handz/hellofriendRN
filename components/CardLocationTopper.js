@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AlertSmall from './AlertSmall';
 import InputSearchAddress from './InputSearchAddress';
-import InputFilterByFriend from './InputFilterByFriend';
-import InputAddLocation from './InputAddLocation';
 import InputConsiderTheDrive from './InputConsiderTheDrive';
 import InputSearchMidpointLocations from './InputSearchMidpointLocations';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -39,30 +37,33 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
       <View style={[styles.container, { backgroundColor }]}>
         <View style={styles.bottomBar}>
           {selectedFriend && (
+          <>
             <View style={styles.floatingContainer}>
               <TouchableOpacity style={styles.iconButton} onPress={toggleStar}>
                 <FontAwesome5 name="star" size={15} color={'black'} solid={isStarSelected} />
               </TouchableOpacity>
             </View>
-          )}
           <View style={styles.floatingContainer}>
             <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('midpoint')}>
               <FontAwesome5 name="dot-circle" size={15} color={'black'} solid={false} />
             </TouchableOpacity>
           </View>
+          </>
+          )}
           <View style={styles.floatingContainer}>
             <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('search')}>
               <FontAwesome5 name="search" size={15} color={'black'} solid={false} />
             </TouchableOpacity>
           </View>
+          {selectedFriend && (
           <View style={styles.floatingContainer}>
             <TouchableOpacity style={styles.iconButton} onPress={handleClockButtonPress}>
               <FontAwesome5 name="clock" size={15} color={'black'} solid={false} />
             </TouchableOpacity>
           </View>
+          )}
         </View>
       </View>
-      {/* Modals */}
       {activeModal === 'search' && (
         <AlertSmall 
           isModalVisible={true} 
@@ -71,7 +72,6 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
           modalContent={<InputSearchAddress onClose={() => setActiveModal(null)} />} 
         />
       )}
-      {/* Other modals */}
       {activeModal === 'route' && (
         <AlertSmall 
           isModalVisible={true} 

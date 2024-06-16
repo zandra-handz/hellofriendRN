@@ -1,3 +1,5 @@
+//'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk'
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker'; 
@@ -8,17 +10,23 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { GetTravelComparisons } from '../api';
 import CardTravelComparison from './CardTravelComparison';
 import { Wander } from 'react-native-animated-spinkit';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Hint from './Hint'; 
 
 const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
   const { authUserState } = useAuthUser();
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData } = useSelectedFriend();
+  const [ friendAddresses, setFriendAddresses ] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isLoading, setIsLoading] = useState(false); 
   const [isChangingSavedUserAddress, setIsChangingSavedUserAddress] = useState(false);
+  const [isChangingSavedFriendAddress, setIsChangingSavedFriendAddress] = useState(false);
   const [travelTimeResults, setTravelTimeResults] = useState(null);
   const [travelTimeResultsView, setTravelTimeResultsView] = useState(false);
   const [selectedFriendAddress, setSelectedFriendAddress] = useState(null);
   const [showAddressOptions, setShowAddressOptions] = useState(false); // State to manage the visibility of the address options
+  const [showFriendAddressOptions, setShowFriendAddressOptions] = useState(false);
+
 
   const addressOptions = authUserState.user.addresses.map((address) => ({
     label: address.title,
@@ -30,27 +38,64 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
     },
   }));
 
+  useEffect(() => {
+    if (addressOptions.length > 0) {
+      const homeAddresses = addressOptions.filter(option => option.label.toLowerCase().includes('home'));
+      setSelectedAddress(homeAddresses.length > 0 ? homeAddresses[0].value : addressOptions[0].value);
+    }
+  }, [authUserState.user.addresses]);
+
+
+
+
+  useEffect(() => {
+    if (friendDashboardData && friendDashboardData[0].friend_addresses) {
+        console.log('InputConsiderTheDrive: friend addresses targeted');
+        const options = friendDashboardData[0].friend_addresses.map(address => ({
+            label: address.title,
+            value: {
+            label: address.address,
+            address: address.address,
+            lat: address.latitude,
+            lng: address.longitude
+            }
+        }));
+        setFriendAddresses(options);
+        // Optionally, set the initial selected address
+        if (options.length > 0) {
+            const friendHomeAddresses = options.filter(option => option.label.toLowerCase().includes('home'));
+            setSelectedFriendAddress(friendHomeAddresses.length > 0 ? friendHomeAddresses[0].value : options[0].value);
+        }
+    } else {
+      console.log('InputConsiderTheDrive: no friend addresses found');
+    }
+}, [friendDashboardData, selectedFriend]);
+
   const handleToggleUserAddress = () => {
     setIsChangingSavedUserAddress(prevState => !prevState); 
+  };
+
+  const handleToggleFriendAddress = () => {
+    setIsChangingSavedFriendAddress(prevState => !prevState); 
   };
 
   const handleBackButtonPress = async () => {
     setTravelTimeResultsView(false);
   };
 
-  const handleGetRoute = async () => {
+  const handleGetTravelData = async () => {
     setIsLoading(true);
     try {
       const locationData = {
         address_a_address: selectedAddress.address,
-        address_a_lat: parseFloat(selectedAddress.lat), // Ensure latitude is a float
-        address_a_long: parseFloat(selectedAddress.lng), // Ensure longitude is a float
+        address_a_lat: parseFloat(selectedAddress.lat),  
+        address_a_long: parseFloat(selectedAddress.lng),  
         address_b_address: selectedFriendAddress.label,
-        address_b_lat: parseFloat(selectedFriendAddress.lat), // Ensure latitude is a float
-        address_b_long: parseFloat(selectedFriendAddress.lng), // Ensure longitude is a float
+        address_b_lat: parseFloat(selectedFriendAddress.lat),  
+        address_b_long: parseFloat(selectedFriendAddress.lng), 
         destination_address: destinationAddress.address,
-        destination_lat: parseFloat(destinationAddress.latitude), // Ensure latitude is a float
-        destination_long: parseFloat(destinationAddress.longitude), // Ensure longitude is a float
+        destination_lat: parseFloat(destinationAddress.latitude), 
+        destination_long: parseFloat(destinationAddress.longitude),  
         search: 'coffee', // Assuming default value for now
         radius: 500, // Assuming default value for now
         length: 8, // Assuming default value for now
@@ -70,19 +115,13 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
     setIsLoading(false);
   };
 
-  const handleButtonPress = async () => {
-    console.log("Starting Address:", selectedAddress.lat, selectedAddress.lng);
-    console.log("Selected Friend's Address:", selectedFriendAddress.lat, selectedFriendAddress.lng);
-    console.log("Destination Address:", destinationAddress.latitude, destinationAddress.longitude);
-    await handleGetRoute();
+  
+  const handleAddressSelect = (userAddress) => {
+    console.log("handleUserAddressSelect called with:", userAddress);
+    setSelectedAddress(userAddress); 
+    //setShowAddressOptions(false); // Close the address options dropdown after selection
   };
 
-  useEffect(() => {
-    if (addressOptions.length > 0) {
-      const homeAddresses = addressOptions.filter(option => option.label.toLowerCase().includes('home'));
-      setSelectedAddress(homeAddresses.length > 0 ? homeAddresses[0].value : addressOptions[0].value);
-    }
-  }, [authUserState.user.addresses]);
 
   const handleFriendAddressSelect = (friendAddress) => {
     console.log("handleFriendAddressSelect called with:", friendAddress);
@@ -90,120 +129,276 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
     setShowAddressOptions(false); // Close the address options dropdown after selection
   };
 
-  
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {destinationAddress && destinationAddress.title ? (
-        <>
-        <View style={styles.destinationContainer}>
-          <Text style={styles.title}>{destinationAddress.title}</Text>
-          <Text style={styles.address}>{destinationAddress.address}</Text>
+      {isLoading ? (
+        <View style={styles.spinnerContainer}>
+          <Wander />
         </View>
-
-        <View style={styles.formContainer}>
-          {!travelTimeResultsView ? (
+      ) : (
+        <>
+          {destinationAddress && destinationAddress.title ? (
             <>
-              <View style={styles.section}>
-                <Text style={styles.subtitle}>{selectedFriend ? selectedFriend.name : "My friend"} is coming from</Text>
-                <TouchableOpacity
-                  onPress={() => setShowAddressOptions(true)} // Show address options when pressed
-                  style={styles.addressInput}
-                >
-                  <Text>{selectedFriendAddress ? selectedFriendAddress.label : 'Search for address'}</Text>
-                </TouchableOpacity>
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={showAddressOptions}
-                  onRequestClose={() => setShowAddressOptions(false)}
-                >
-                  <View style={styles.modalContainer}>
-                    <GooglePlacesAutocomplete
-                      placeholder="Search"
-                      keepResultsAfterBlur={true}
-                      onPress={(data, details = null) => {
-                        const friendAddress = {
-                          label: data.description,
-                          lat: details.geometry.location.lat,
-                          lng: details.geometry.location.lng
-                        };
-                        setSelectedFriendAddress(friendAddress);
-                        handleFriendAddressSelect(friendAddress);
-                      }}
-                      fetchDetails={true}
-                      query={{
-                        key: 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk',
-                        language: 'en',
-                      }}
-                      debounce={300}
-                      styles={{
-                        textInputContainer: styles.textInputContainer,
-                        textInput: styles.textInput,
-                        predefinedPlacesDescription: {
-                          color: '#1faadb',
-                        },
-                      }}
-                    />
-                    <Button title="Close" onPress={() => setShowAddressOptions(false)} />
-                  </View>
-                </Modal>
+              <View style={styles.destinationContainer}>
+                <Text style={styles.title}>{destinationAddress.title}</Text>
+                <Text style={styles.address}>{destinationAddress.address}</Text>
               </View>
-              {isChangingSavedUserAddress ? (
-                <View style={styles.section}>
-                  <Text style={styles.subtitle}>You are coming from</Text>
-                  <Picker
-                    selectedValue={selectedAddress ? selectedAddress.label : null}
-                    style={styles.picker}
-                    onValueChange={(itemValue, itemIndex) => {
-                      const newAddress = addressOptions.find(option => option.label === itemValue).value;
-                      setSelectedAddress(newAddress);
-                    }}
-                  >
-                    {addressOptions.map((option) => (
-                      <Picker.Item key={option.label} label={option.label} value={option.label} />
-                    ))}
-                  </Picker>
-                </View>
-              ) : (
-                <TouchableOpacity
-                  onPress={handleToggleUserAddress}
-                  style={styles.addressInput}
-                >
-                  <Text>{selectedAddress ? selectedAddress.label : 'Select your starting address'}</Text>
-                </TouchableOpacity>
-              )}
-              <TouchableOpacity style={styles.editButton} onPress={handleGetRoute}>
+              <View style={styles.formContainer}>
+                {!travelTimeResultsView ? (
+                  <>
+                    <View style={styles.section}>
+                      <View style={styles.cardComparisonCardtridge}>
+
+
+
+
+                      <View style={styles.cardSide}>
+  <Text style={styles.cardTitle}>
+    Me
+  </Text>
+
+  {selectedAddress ? (
+    <>
+      {!isChangingSavedUserAddress && (
+        <View style={styles.checkmarkContainer}>
+          <FontAwesome name="check-circle" size={20} color="green" />
+        </View>
+      )}
+      <TouchableOpacity onPress={handleToggleUserAddress}>
+        <Text style={styles.toggleButton}>
+          {isChangingSavedUserAddress ? 'Go back' : 'Change address?'}
+        </Text>
+      </TouchableOpacity>
+    </>
+  ) : (
+    <>
+      <Hint message={'Please select a starting address.'} />
+      <TouchableOpacity onPress={handleToggleUserAddress}>
+        <Text style={styles.toggleButton}>
+          {isChangingSavedUserAddress ? 'Back' : 'Enter address'}
+        </Text>
+      </TouchableOpacity>
+    </>
+  )}
+
+  {isChangingSavedUserAddress && (
+    <View style={styles.editScreen}>
+      <Text style={styles.addressText}>{selectedAddress ? selectedAddress.label : ''}</Text>
+      <View style={styles.searchIconContainer}>
+      <View style={styles.pickerContainer}>
+        <Text style={styles.hardcodedLabel}>Select Address</Text>  
+        <Picker
+          selectedValue={selectedAddress ? selectedAddress.label : null}
+          style={styles.picker}
+          onValueChange={(itemValue, itemIndex) => {
+            const newUserAddress = addressOptions.find(option => option.label === itemValue).value;
+            setSelectedAddress(newUserAddress);
+          }}
+        >
+          {addressOptions.map(option => (
+            <Picker.Item key={option.label} label={option.label} value={option.label} />
+          ))}
+        </Picker>
+      </View>
+        <TouchableOpacity onPress={() => setShowAddressOptions(true)}> 
+            <FontAwesome name="search" size={24} color="#000" />
+        </TouchableOpacity> 
+      </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showAddressOptions}
+        onRequestClose={() => setShowAddressOptions(false)}
+      >
+        <View style={styles.modalContainer}>
+          <GooglePlacesAutocomplete
+            placeholder="Search"
+            keepResultsAfterBlur={true}
+            onPress={(data, details = null) => {
+              const userAddress = {
+                title: data.description,
+                address: data.description,
+                label: data.description,
+                lat: details.geometry.location.lat,
+                lng: details.geometry.location.lng,
+              };
+              handleAddressSelect(userAddress);
+              setShowAddressOptions(false); // Close modal after selecting an address
+            }}
+            fetchDetails={true}
+            query={{
+              key: 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk', // Replace with your actual Google Maps API key
+              language: 'en',
+            }}
+            debounce={300}
+            styles={{
+              textInputContainer: styles.textInputContainer,
+              textInput: styles.textInput,
+              predefinedPlacesDescription: {
+                color: '#1faadb',
+              },
+            }}
+          />
+          <Button title="Close" onPress={() => setShowAddressOptions(false)} />
+        </View>
+      </Modal>
+    </View>
+  )}
+</View>
+
+
+
+
+                        <View style={styles.cardDivider} />
+  
+
+
+
+
+
+                        <View style={styles.cardSide}>
+                          <Text style={styles.cardTitle}>
+                            {selectedFriend ? selectedFriend.name : 'My friend'}
+                          </Text>
+    
+                          {selectedFriendAddress ? (
+                            <>
+                              {!isChangingSavedFriendAddress && (
+                                <View style={styles.checkmarkContainer}>
+                                  <FontAwesome name="check-circle" size={20} color="green" />
+                                </View>
+                              )}
+                              <TouchableOpacity onPress={handleToggleFriendAddress}>
+                                <Text style={styles.toggleButton}>
+                                  {isChangingSavedFriendAddress ? 'Go back' : 'Change address?'}
+                                </Text>
+                              </TouchableOpacity>
+                            </>
+                          ) : (
+                            <>
+                              <Hint message={'Please select a starting address.'} />
+                              <TouchableOpacity onPress={handleToggleFriendAddress}>
+                                <Text style={styles.toggleButton}>
+                                  {isChangingSavedFriendAddress ? 'Back' : 'Enter address'}
+                                </Text>
+                              </TouchableOpacity>
+                            </>
+                          )}
+  
+                          {isChangingSavedFriendAddress && (
+                            <View style={styles.editScreen}>
+                              <Text style={styles.addressText}>{selectedFriendAddress ? selectedFriendAddress.label : ''}</Text>
+    
+                              <TouchableOpacity onPress={() => setShowAddressOptions(true)}>
+                                <View style={styles.searchIconContainer}>
+                                  <FontAwesome name="search" size={24} color="#000" />
+                                </View>
+                              </TouchableOpacity>
+    
+                              <View style={styles.addressEditContainer}>
+                                <TouchableOpacity onPress={handleToggleFriendAddress} style={styles.dropdownButton}>
+                                  <Text style={styles.dropDownButton}>Saved addresses</Text>
+                                </TouchableOpacity>
+                                <Picker
+                                  selectedValue={selectedFriendAddress ? selectedFriendAddress.label : null}
+                                  style={styles.picker}
+                                  onValueChange={(itemValue, itemIndex) => {
+                                    const newFriendAddress = friendAddresses.find(option => option.label === itemValue).value;
+                                    setSelectedFriendAddress(newFriendAddress);
+                                  }}
+                                >
+                                  {friendAddresses.map(option => (
+                                    <Picker.Item key={option.label} label={option.label} value={option.label} />
+                                  ))}
+                                </Picker>
+                              </View>
+    
+                              <Modal
+                                animationType="slide"
+                                transparent={true}
+                                visible={showAddressOptions}
+                                onRequestClose={() => setShowAddressOptions(false)}
+                              >
+                                <View style={styles.modalContainer}>
+                                  <GooglePlacesAutocomplete
+                                    placeholder="Search"
+                                    keepResultsAfterBlur={true}
+                                    onPress={(data, details = null) => {
+                                      const friendAddress = {
+                                        title: data.description,
+                                        address: data.description,
+                                        label: data.description,
+                                        lat: details.geometry.location.lat,
+                                        lng: details.geometry.location.lng,
+                                      };
+                                      handleFriendAddressSelect(friendAddress);
+                                      setShowAddressOptions(false); // Close modal after selecting an address
+                                    }}
+                                    fetchDetails={true}
+                                    query={{
+                                      key: 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk', // Replace with your actual Google Maps API key
+                                      language: 'en',
+                                    }}
+                                    debounce={300}
+                                    styles={{
+                                      textInputContainer: styles.textInputContainer,
+                                      textInput: styles.textInput,
+                                      predefinedPlacesDescription: {
+                                        color: '#1faadb',
+                                      },
+                                    }}
+                                  />
+                                  <Button title="Close" onPress={() => setShowAddressOptions(false)} />
+                                </View>
+                              </Modal>
+                            </View>
+                          )}
+                        </View>
+
+
+
+
+
+                      </View>
+                    </View>
+                  </>
+                ) : (
+                  <> 
+                    <TouchableOpacity onPress={handleBackButtonPress} style={styles.editButtonRight}>
+                      <FontAwesome5 name="arrow-left" size={20} color="#000" />
+                    </TouchableOpacity>
+                    {travelTimeResults && (
+                      <CardTravelComparison
+                        myData={{
+                          time: travelTimeResults.Me ? travelTimeResults.Me.duration : 'N/A',
+                          miles: travelTimeResults.Me ? travelTimeResults.Me.distance : 'N/A',
+                        }}
+                        friendData={{
+                          time: travelTimeResults.friend ? travelTimeResults.friend.duration : 'N/A',
+                          miles: travelTimeResults.friend ? travelTimeResults.friend.distance : 'N/A',
+                        }}
+                      />
+                    )}
+                  </>
+                )}
+              </View>
+              {selectedAddress && selectedFriendAddress && (
+              <TouchableOpacity style={styles.editButton} onPress={handleGetTravelData}>
                 <Text>Find Route</Text>
               </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <TouchableOpacity onPress={handleBackButtonPress} style={styles.editButtonRight}>
-                <FontAwesome5 name="arrow-left" size={20} color="#000" />
-              </TouchableOpacity>
-              {travelTimeResults && (
-                <CardTravelComparison
-                  myData={{
-                    time: travelTimeResults.Me ? travelTimeResults.Me.duration : 'N/A',
-                    miles: travelTimeResults.Me ? travelTimeResults.Me.distance : 'N/A',
-                  }}
-                  friendData={{
-                    time: travelTimeResults.friend ? travelTimeResults.friend.duration : 'N/A',
-                    miles: travelTimeResults.friend ? travelTimeResults.friend.distance : 'N/A',
-                  }}
-                />
               )}
             </>
+          ) : (
+            <Text style={styles.message}>Please select a destination address to calculate travel times.</Text>
           )}
-        </View>
         </>
-      ) : (
-        <Text style={styles.message}>Please select a destination address to calculate travel times.</Text>
       )}
     </ScrollView>
   );
+  
+  
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -230,6 +425,7 @@ const styles = StyleSheet.create({
   },
   destinationContainer: {
     marginBottom: 36,
+    alignItems: 'center',
   },
   subtitle: {
     fontSize: 16,
@@ -246,11 +442,47 @@ const styles = StyleSheet.create({
     color: 'black',
     marginBottom: 10,
   },
+  searchIconContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    padding: 2,
+    borderWidth: 1,
+    justifyContents: 'center',
+    alignItems: 'center',
+    borderColor: '#ccc',
+    borderRadius: 8, 
+    height: 36,
+  },
+  pickerContainer: {
+    position: 'relative',
+    width: '100%',
+  },
   picker: {
-    width: '75%',
+    width: '100%',
+    opacity: 0, // Hide the Picker text
+  },
+  hardcodedLabel: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 16,
+    fontSize: 12, // Change the hardcoded label text size here
+    fontWeight: 'bold',
+    color: 'pink',
+    paddingLeft: 10, // Adjust padding as needed
   },
   textInputContainer: {
     width: '100%',
+  },
+  dropDownButton: {
+    fontWeight: 'bold',
+    width: '100%',
+    color: 'pink',
   },
   textInput: {
     height: 40,
@@ -270,7 +502,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    width: '100%',
+    width: '20%',
     borderRadius: 20,
     paddingHorizontal: 10,
     justifyContent: 'center',
@@ -293,6 +525,55 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: 'gray',
     marginTop: 20,
+  },
+  cardComparisonCardtridge: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: 'hotpink',
+    padding: 16,
+    marginVertical: 8,
+    elevation: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    width: '100%',
+  },
+  cardSide: {
+      flex: 1,
+      alignItems: 'center',
+  },
+  cardTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: 'black',
+      marginBottom: 8,
+  },
+  cardTimeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 4,
+  },
+  cardTime: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: 'black',
+      marginLeft: 8,
+  },
+  cardMiles: {
+      fontSize: 14,
+      color: 'black',
+  },
+  cardDivider: {
+      width: 1,
+      backgroundColor: '#ccc',
+      marginHorizontal: 16,
+  },
+  editScreen: {
+    flex: 1, 
+
   },
 });
 
