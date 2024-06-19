@@ -15,6 +15,7 @@ export const LocationListProvider = ({ children }) => {
         const locationData = await fetchAllLocations();
         setLocationList(locationData);
         console.log('Fetch (location) Data:', locationData);
+        console.log('Location List:', locationList);
       } catch (error) {
         console.error('Error fetching location list:', error);
       }

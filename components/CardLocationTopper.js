@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AlertSmall from './AlertSmall';
 import InputSearchAddress from './InputSearchAddress';
+import InputAddLocation from './InputAddLocation';
 import InputConsiderTheDrive from './InputConsiderTheDrive';
 import InputSearchMidpointLocations from './InputSearchMidpointLocations';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -55,6 +56,11 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
               <FontAwesome5 name="search" size={15} color={'black'} solid={false} />
             </TouchableOpacity>
           </View>
+          <View style={styles.floatingContainer}>
+            <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('plus')}>
+              <FontAwesome5 name="plus" size={15} color={'black'} solid={false} />
+            </TouchableOpacity>
+          </View>
           {selectedFriend && (
           <View style={styles.floatingContainer}>
             <TouchableOpacity style={styles.iconButton} onPress={handleClockButtonPress}>
@@ -70,6 +76,14 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
           toggleModal={() => setActiveModal(null)} 
           modalTitle='Search for a location'
           modalContent={<InputSearchAddress onClose={() => setActiveModal(null)} />} 
+        />
+      )}
+      {activeModal === 'plus' && (
+        <AlertSmall 
+          isModalVisible={true} 
+          toggleModal={() => setActiveModal(null)} 
+          modalTitle='Search for a location'
+          modalContent={<InputAddLocation onClose={() => setActiveModal(null)} />} 
         />
       )}
       {activeModal === 'route' && (

@@ -4,6 +4,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import InputAddLocationQuickSave from './InputAddLocationQuickSave'; // Import InputAddLocation component
 import AlertSmall from './AlertSmall'; // Import AlertSmall component
 import AlertMicro from './AlertMicro';
+import InputUpdateLocation from './InputUpdateLocation';
 import { useLocationList } from '../context/LocationListContext'; 
 import { deleteLocation } from '../api'; 
 import ButtonFriend from './ButtonFriend';
@@ -13,6 +14,7 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
   const { locationList, setLocationList } = useLocationList();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isMicroModalVisible, setIsMicroModalVisible] = useState(false);
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(address || '');
   const [saveLocationModal, setSaveLocationModal] = useState(false);
   const [selectedLatitude, setSelectedLatitude] = useState(latitude || '');
@@ -22,6 +24,11 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
 
   const handleFriendPress = () => {
     setIsModalVisible(true);
+  };
+
+  const handleUpdatePress = () => {
+    setIsUpdateModalVisible(true);
+
   };
 
   const handleAddressSelect = (selectedAddress) => {
@@ -49,6 +56,10 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
 
   const closeModal = () => {
     setIsModalVisible(false);
+  };
+
+  const closeUpdateModal = () => {
+    setIsUpdateModalVisible(false);
   };
 
   const closeMicroModal = () => {
@@ -127,8 +138,8 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
             </TouchableOpacity>
           )}
           {!showSaveButton && (
-            <TouchableOpacity style={styles.iconButton}>
-              <FontAwesome5 name="edit" size={0} color="#555" solid={false} />
+            <TouchableOpacity style={styles.iconButton} onPress={() => setIsUpdateModalVisible(true)}>
+              <FontAwesome5 name="edit" size={20} color="#555" solid={false} />
             </TouchableOpacity>
             )}
         </View>
@@ -144,6 +155,21 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
             />
             }
             modalTitle={'Save Location'}
+          /> 
+          <AlertSmall
+            isModalVisible={isUpdateModalVisible}
+            toggleModal={closeUpdateModal}
+            modalContent={ 
+              <InputUpdateLocation
+                onClose={closeUpdateModal}
+                id={id}
+                title={title}
+                address={address}
+                notes={notes} 
+                latitude={latitude}
+                longitude={longitude}
+              />
+            }
           /> 
           <AlertMicro
             isModalVisible={isMicroModalVisible}

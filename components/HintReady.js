@@ -1,12 +1,12 @@
-// Hint.js
+// HintReady.js
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const Hint = ({ message, icon, onPress }) => {
+const HintReady = ({ message, icon, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
-      <FontAwesome name={icon} size={24} color="#000" style={styles.icon} />
+      <FontAwesome name={icon} size={24} color="green" style={styles.icon} />
       <Text style={styles.message}>{message}</Text>
     </TouchableOpacity>
   );
@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     alignItems: 'top',
     width: '100%',
     paddingTop: 0,
+    paddingHorizontal: 2,
   },
   icon: {
     marginRight: 0,
@@ -31,4 +32,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Hint;
+export default HintReady;

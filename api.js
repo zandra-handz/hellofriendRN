@@ -327,6 +327,7 @@ export const fetchAllLocations = async () => {
 
 export const createLocation = async (locationData) => {
     try {
+        console.log('createLocation payload: ', locationData);
         const response = await axios.post('/friends/locations/add/', locationData);
         console.log(response.data);
         return response.data;
@@ -347,6 +348,16 @@ export const deleteLocation = async (locationId) => {
     }
 };
 
+
+export const updateLocation = async (locationId, locationData) => {
+    try {
+        const response = await axios.patch(`friends/location/${locationId}/`, locationData);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating location:', error);
+        throw error;
+    }
+};
 
 
 // Not being used

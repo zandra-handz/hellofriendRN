@@ -9,9 +9,12 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GetTravelComparisons } from '../api';
 import CardTravelComparison from './CardTravelComparison';
+import CardAddressUser from './CardAddressUser';
+import CardAddressFriend from './CardAddressFriend';
 import { Wander } from 'react-native-animated-spinkit';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Hint from './Hint'; 
+import HintReady from './HintReady';
 
 const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
   const { authUserState } = useAuthUser();
@@ -28,18 +31,19 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
   const [showFriendAddressOptions, setShowFriendAddressOptions] = useState(false);
 
 
-  const addressOptions = authUserState.user.addresses.map((address) => ({
+  const addressOptions = authUserState.user.addresses ? authUserState.user.addresses.map((address) => ({
     label: address.title,
     value: {
       address: address.address,
-      label: address.title, // Added label to the value object
-      lat: address.coordinates[0], 
+      label: address.title,
+      lat: address.coordinates[0],
       lng: address.coordinates[1]
     },
-  }));
+  })) : [];
+  
 
   useEffect(() => {
-    if (addressOptions.length > 0) {
+    if (addressOptions && addressOptions.length > 0) {
       const homeAddresses = addressOptions.filter(option => option.label.toLowerCase().includes('home'));
       setSelectedAddress(homeAddresses.length > 0 ? homeAddresses[0].value : addressOptions[0].value);
     }
@@ -133,7 +137,7 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
     <ScrollView contentContainerStyle={styles.container}>
       {isLoading ? (
         <View style={styles.spinnerContainer}>
-          <Wander />
+          <Wander color={'hotpink'}/>
         </View>
       ) : (
         <>
@@ -153,31 +157,44 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
 
 
                       <View style={styles.cardSide}>
-  <Text style={styles.cardTitle}>
+  <Text style={styles.cardTitle} fLines={1} adjustsFontSizeToFit minimumFontScale={0.5}>
     Me
   </Text>
 
   {selectedAddress ? (
+    <> 
     <>
-      {!isChangingSavedUserAddress && (
-        <View style={styles.checkmarkContainer}>
-          <FontAwesome name="check-circle" size={20} color="green" />
-        </View>
-      )}
-      <TouchableOpacity onPress={handleToggleUserAddress}>
-        <Text style={styles.toggleButton}>
-          {isChangingSavedUserAddress ? 'Go back' : 'Change address?'}
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.hintContainer}>
+        <HintReady 
+          message={
+            isChangingSavedUserAddress 
+              ? (`${selectedAddress.address}`)
+              : `Press to edit address`
+          }
+          icon={isChangingSavedUserAddress ? 'pencil' : 'check-circle'}
+          onPress={handleToggleUserAddress}
+          />
+      </View>
+      </> 
     </>
   ) : (
     <>
-      <Hint message={'Please select a starting address.'} />
+    <View style={styles.hintContainer}>
+      <Hint 
+        message={
+          isChangingSavedUserAddress 
+            ? (selectedFriendAddress ? selectedFriendAddress : 'No address selected')
+            : 'Please select a starting address.'
+        }
+        icon={isChangingSavedUserAddress ? 'pencil' : 'exclamation-circle'}
+        onPress={handleToggleUserAddress}
+      />
       <TouchableOpacity onPress={handleToggleUserAddress}>
         <Text style={styles.toggleButton}>
           {isChangingSavedUserAddress ? 'Back' : 'Enter address'}
         </Text>
       </TouchableOpacity>
+    </View>
     </>
   )}
 
@@ -186,7 +203,7 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
       <Text style={styles.addressText}>{selectedAddress ? selectedAddress.label : ''}</Text>
       <View style={styles.searchIconContainer}>
       <View style={styles.pickerContainer}>
-        <Text style={styles.hardcodedLabel}>Select Address</Text>  
+        <Text style={styles.hardcodedLabel}>Saved</Text>  
         <Picker
           selectedValue={selectedAddress ? selectedAddress.label : null}
           style={styles.picker}
@@ -198,6 +215,7 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
           {addressOptions.map(option => (
             <Picker.Item key={option.label} label={option.label} value={option.label} />
           ))}
+
         </Picker>
       </View>
         <TouchableOpacity onPress={() => setShowAddressOptions(true)}> 
@@ -212,6 +230,7 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
         onRequestClose={() => setShowAddressOptions(false)}
       >
         <View style={styles.modalContainer}>
+          <View style={styles.modalContent}> 
           <GooglePlacesAutocomplete
             placeholder="Search"
             keepResultsAfterBlur={true}
@@ -242,6 +261,7 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
           />
           <Button title="Close" onPress={() => setShowAddressOptions(false)} />
         </View>
+        </View>
       </Modal>
     </View>
   )}
@@ -258,48 +278,50 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
 
 
                         <View style={styles.cardSide}>
-                          <Text style={styles.cardTitle}>
+                          <Text style={styles.cardTitle} fLines={1} adjustsFontSizeToFit minimumFontScale={0.5}>
                             {selectedFriend ? selectedFriend.name : 'My friend'}
                           </Text>
     
                           {selectedFriendAddress ? (
+                            <> 
                             <>
-                              {!isChangingSavedFriendAddress && (
-                                <View style={styles.checkmarkContainer}>
-                                  <FontAwesome name="check-circle" size={20} color="green" />
-                                </View>
-                              )}
-                              <TouchableOpacity onPress={handleToggleFriendAddress}>
-                                <Text style={styles.toggleButton}>
-                                  {isChangingSavedFriendAddress ? 'Go back' : 'Change address?'}
-                                </Text>
-                              </TouchableOpacity>
+                              <View style={styles.hintContainer}>
+                                <HintReady 
+                                  message={
+                                    isChangingSavedFriendAddress 
+                                      ? (`${selectedFriendAddress.address}`)
+                                      : `Press to edit address`
+                                  }
+                                  icon={isChangingSavedFriendAddress ? 'pencil' : 'check-circle'}
+                                  onPress={handleToggleFriendAddress}
+                                  />
+                              </View>
+                              </> 
                             </>
                           ) : (
                             <>
-                              <Hint message={'Please select a starting address.'} />
-                              <TouchableOpacity onPress={handleToggleFriendAddress}>
-                                <Text style={styles.toggleButton}>
-                                  {isChangingSavedFriendAddress ? 'Back' : 'Enter address'}
-                                </Text>
-                              </TouchableOpacity>
+                          <View style={styles.hintContainer}>
+                            <Hint 
+                              message={
+                                isChangingSavedFriendAddress 
+                                  ? (selectedFriendAddress ? selectedFriendAddress : 'Add address:')
+                                  : 'Please select a starting address.'
+                              }
+                              icon={isChangingSavedFriendAddress ? 'pencil' : 'exclamation-circle'}
+                              onPress={handleToggleFriendAddress}
+                            />
+                            </View>
                             </>
                           )}
   
                           {isChangingSavedFriendAddress && (
                             <View style={styles.editScreen}>
                               <Text style={styles.addressText}>{selectedFriendAddress ? selectedFriendAddress.label : ''}</Text>
-    
-                              <TouchableOpacity onPress={() => setShowAddressOptions(true)}>
-                                <View style={styles.searchIconContainer}>
-                                  <FontAwesome name="search" size={24} color="#000" />
-                                </View>
-                              </TouchableOpacity>
-    
-                              <View style={styles.addressEditContainer}>
-                                <TouchableOpacity onPress={handleToggleFriendAddress} style={styles.dropdownButton}>
-                                  <Text style={styles.dropDownButton}>Saved addresses</Text>
-                                </TouchableOpacity>
+                              <View style={styles.searchIconContainer}>
+                              <View style={styles.pickerContainer}>
+                              {friendAddresses && friendAddresses.length > 0 && (
+                                <>
+                                <Text style={styles.hardcodedLabel}>Saved</Text> 
                                 <Picker
                                   selectedValue={selectedFriendAddress ? selectedFriendAddress.label : null}
                                   style={styles.picker}
@@ -312,8 +334,14 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
                                     <Picker.Item key={option.label} label={option.label} value={option.label} />
                                   ))}
                                 </Picker>
+                                </>
+                              )}
+                              </View> 
+                                <TouchableOpacity onPress={() => setShowAddressOptions(true)}>
+                                  <FontAwesome name="search" size={24} color="#000" />
+                                </TouchableOpacity>
                               </View>
-    
+                              
                               <Modal
                                 animationType="slide"
                                 transparent={true}
@@ -321,6 +349,7 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
                                 onRequestClose={() => setShowAddressOptions(false)}
                               >
                                 <View style={styles.modalContainer}>
+                                  <View style={styles.modalContent}> 
                                   <GooglePlacesAutocomplete
                                     placeholder="Search"
                                     keepResultsAfterBlur={true}
@@ -350,6 +379,7 @@ const InputConsiderTheDrive = ({ onClose, destinationAddress }) => {
                                     }}
                                   />
                                   <Button title="Close" onPress={() => setShowAddressOptions(false)} />
+                                </View>
                                 </View>
                               </Modal>
                             </View>
@@ -416,21 +446,24 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    fontSize: 18,
+    fontSize: 21,
     fontWeight: 'bold',
     paddingBottom: 6,
+    color: 'hotpink',
+    
   },
   address: {
-    fontSize: 16,
+    fontSize: 16, 
   },
   destinationContainer: {
-    marginBottom: 36,
-    alignItems: 'center',
+    marginBottom: 28,
+    marginTop: 16,
+    alignItems: 'left',
   },
   subtitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 10, 
   },
   input: {
     fontSize: 16,
@@ -473,7 +506,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     fontSize: 12, // Change the hardcoded label text size here
     fontWeight: 'bold',
-    color: 'pink',
+    color: 'black',
     paddingLeft: 10, // Adjust padding as needed
   },
   textInputContainer: {
@@ -496,7 +529,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    height: '50%',
+  },
+  modalContent: {
+    width: '80%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    height: '50%',
+    position: 'relative',
   },
   addressInput: {
     height: 40,
@@ -526,12 +567,13 @@ const styles = StyleSheet.create({
     color: 'gray',
     marginTop: 20,
   },
+  pinFeatureContainer: {},
   cardComparisonCardtridge: {
     flexDirection: 'row',
     backgroundColor: 'white',
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: 'hotpink',
+    borderColor: 'lightgray',
     padding: 16,
     marginVertical: 8,
     elevation: 0,
@@ -541,15 +583,29 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     width: '100%',
   },
+  hintContainer: {
+    justifyContent: 'top',
+    alignItems: 'top',
+    height: 100,
+  },
+  addressText: {
+    fontWeight: 'bold',
+    height: 0,
+    marginTop: 0,
+    
+  },
   cardSide: {
       flex: 1,
       alignItems: 'center',
+      paddingRight: 0,
+      paddingLeft: 6,
+      height: 160,
   },
   cardTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: 'black',
-      marginBottom: 8,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'black',
+    marginBottom: 8, 
   },
   cardTimeContainer: {
       flexDirection: 'row',
@@ -569,7 +625,7 @@ const styles = StyleSheet.create({
   cardDivider: {
       width: 1,
       backgroundColor: '#ccc',
-      marginHorizontal: 16,
+      marginHorizontal: 12, 
   },
   editScreen: {
     flex: 1, 

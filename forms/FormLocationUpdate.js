@@ -1,19 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import { createLocation } from '../api'; // Import the createLocation function
+import { updateLocation } from '../api'; // Import the updateLocation function
 import { useAuthUser } from '../context/AuthUserContext';
+import { useLocationList } from '../context/LocationListContext';
 import { useFriendList } from '../context/FriendListContext';
 
-const FormLocationCreate = ({ onLocationCreate }) => {
-    
+const FormLocationUpdate = ({ onLocationUpdate, location }) => {
   const { authUserState } = useAuthUser();
   const { friendList } = useFriendList();
+  const { locationList, setLocationList } = useLocationList();
 
-  const [title, setTitle] = useState('');
-  const [address, setAddress] = useState('');
-  const [personalExperience, setPersonalExperience] = useState('');
-  const [selectedFriends, setSelectedFriends] = useState([]);
+  const { id, title: initialTitle, address, notes, latitude, longitude, friends } = location;
+
+  // Log the friends prop to check its value
+  useEffect(() => {
+    console.log('Friends prop:', friends);
+  }, [friends]);
+
+  // Initialize selectedFriends with an empty array if location.friends is undefined
+  const initialSelectedFriends = Array.isArray(friends) ? friends : [];
+  const [formTitle, setFormTitle] = useState(initialTitle); // Renamed to formTitle to avoid conflict
+  const [personalExperience, setPersonalExperience] = useState(location.personal_experience_info);
+  const [selectedFriends, setSelectedFriends] = useState(initialSelectedFriends);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
 
   const handleFriendSelect = (friendId) => {
@@ -21,45 +30,46 @@ const FormLocationCreate = ({ onLocationCreate }) => {
       ? selectedFriends.filter(id => id !== friendId)
       : [...selectedFriends, friendId];
     setSelectedFriends(updatedFriends);
-    console.log('Updated selected friends:', updatedFriends);
   };
 
   const handleSubmit = async () => {
     try {
       const locationData = {
-        title: title,
-        address: address,
-        personal_experience_info: personalExperience,
+        title: formTitle,
+        personal_experience_info: personalExperience || '', // Ensure personalExperience is not undefined
         user: authUserState.user.id,
         friends: selectedFriends
       };
-      console.log('Payload before sending:', locationData);
-      const res = await createLocation(locationData); // Use the createLocation function from the api file
-      onLocationCreate(res);
+  
+
+      // Log the locationData payload just before sending it to updateLocation
+      console.log('Location Data to be sent:', id, locationData);
+
+      const res = await updateLocation(id, locationData); // Use the updateLocation function from the api file
+      onLocationUpdate(res);
+
+      setLocationList(locationList.map(loc => loc.id === id ? res : loc)); // Update the location in the list
+      console.log('Location updated in location list:', res);
+      
       setShowSaveMessage(true);
       setTimeout(() => {
         setShowSaveMessage(false);
       }, 3000);
     } catch (error) {
-      console.error('Error creating location:', error);
+      console.error('Error updating location:', error);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.heading}>Create Location</Text>
-      {showSaveMessage && <Text style={styles.saveMessage}>Location created successfully!</Text>}
+    <ScrollView contentContainerStyle={styles.container}> 
+      {showSaveMessage && <Text style={styles.saveMessage}>Location updated successfully!</Text>}
+      <Text style={styles.address}>{address}</Text>
+
       <TextInput
         style={styles.input}
-        value={title}
-        onChangeText={setTitle}
+        value={formTitle}
+        onChangeText={setFormTitle}
         placeholder='Title'
-      />
-      <TextInput
-        style={styles.input}
-        value={address}
-        onChangeText={setAddress}
-        placeholder='Address'
       />
       <TextInput
         style={[styles.input, styles.textArea]}
@@ -79,7 +89,7 @@ const FormLocationCreate = ({ onLocationCreate }) => {
           />
         ))}
       </View>
-      <Button title='Create Location' onPress={handleSubmit} />
+      <Button title='Update Location' onPress={handleSubmit} />
     </ScrollView>
   );
 };
@@ -87,13 +97,17 @@ const FormLocationCreate = ({ onLocationCreate }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: 'white',
   },
   heading: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  address: {
+    fontSize: 16,
+    marginBottom: 26,
   },
   saveMessage: {
     color: 'green',
@@ -109,11 +123,11 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 80,
-    textAlignVertical: 'top', // For multiline TextInput alignment
+    textAlignVertical: 'top', 
   },
   friendCheckboxesContainer: {
     marginBottom: 10,
   },
 });
 
-export default FormLocationCreate;
+export default FormLocationUpdate;
