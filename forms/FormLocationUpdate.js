@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import { updateLocation } from '../api'; // Import the updateLocation function
+import { updateLocation } from '../api';  
 import { useAuthUser } from '../context/AuthUserContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useFriendList } from '../context/FriendListContext';
@@ -13,17 +13,17 @@ const FormLocationUpdate = ({ onLocationUpdate, location }) => {
 
   const { id, title: initialTitle, address, notes, latitude, longitude, friends } = location;
 
-  // Log the friends prop to check its value
   useEffect(() => {
-    console.log('Friends prop:', friends);
+    console.log('Friends prop:', friends); 
+
+    const initialSelectedFriends = Array.isArray(friends) ? friends.map(friend => friend.id) : [];
+    setSelectedFriends(initialSelectedFriends);
   }, [friends]);
 
-  // Initialize selectedFriends with an empty array if location.friends is undefined
-  const initialSelectedFriends = Array.isArray(friends) ? friends : [];
-  const [formTitle, setFormTitle] = useState(initialTitle); // Renamed to formTitle to avoid conflict
+  const [formTitle, setFormTitle] = useState(initialTitle);
   const [personalExperience, setPersonalExperience] = useState(location.personal_experience_info);
-  const [selectedFriends, setSelectedFriends] = useState(initialSelectedFriends);
-  const [showSaveMessage, setShowSaveMessage] = useState(false);
+  const [selectedFriends, setSelectedFriends] = useState([]);
+  const [showSaveMessage, setShowSaveMessage] = useState(false); 
 
   const handleFriendSelect = (friendId) => {
     const updatedFriends = selectedFriends.includes(friendId)
@@ -34,34 +34,41 @@ const FormLocationUpdate = ({ onLocationUpdate, location }) => {
 
   const handleSubmit = async () => {
     try {
-      const locationData = {
-        title: formTitle,
-        personal_experience_info: personalExperience || '', // Ensure personalExperience is not undefined
-        user: authUserState.user.id,
-        friends: selectedFriends
-      };
-  
+        const locationData = {
+            friends: selectedFriends.map(id => Number(id)),
+            title: formTitle,
+            personal_experience_info: personalExperience || '',
+            user: authUserState.user.id,
+        };
 
-      // Log the locationData payload just before sending it to updateLocation
-      console.log('Location Data to be sent:', id, locationData);
+        console.log('Location Data to be sent:', id, locationData);
 
-      const res = await updateLocation(id, locationData); // Use the updateLocation function from the api file
-      onLocationUpdate(res);
+        const res = await updateLocation(id, locationData);
+        onLocationUpdate(res);
+ 
+        const updatedLocationList = locationList.map(loc => loc.id === id ? {
+            ...loc,
+            friends: res.friends.map(friendId => ({
+                id: friendId,
+                name: friendId  
+            })),
+        } : loc);
+        setLocationList(updatedLocationList);
 
-      setLocationList(locationList.map(loc => loc.id === id ? res : loc)); // Update the location in the list
-      console.log('Location updated in location list:', res);
-      
-      setShowSaveMessage(true);
-      setTimeout(() => {
-        setShowSaveMessage(false);
-      }, 3000);
+        console.log('Location updated in location list:', res);
+
+        setShowSaveMessage(true);
+        setTimeout(() => {
+            setShowSaveMessage(false);
+        }, 3000);
     } catch (error) {
-      console.error('Error updating location:', error);
+        console.error('Error updating location:', error);
     }
-  };
+};
+
 
   return (
-    <ScrollView contentContainerStyle={styles.container}> 
+    <ScrollView contentContainerStyle={styles.container}>
       {showSaveMessage && <Text style={styles.saveMessage}>Location updated successfully!</Text>}
       <Text style={styles.address}>{address}</Text>
 
@@ -123,7 +130,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 80,
-    textAlignVertical: 'top', 
+    textAlignVertical: 'top',
   },
   friendCheckboxesContainer: {
     marginBottom: 10,

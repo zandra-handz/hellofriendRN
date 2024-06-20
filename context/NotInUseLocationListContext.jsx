@@ -1,26 +1,32 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuthUser } from './AuthUserContext'; // Import the AuthUser context
+import { useAuthUser } from './AuthUserContext';
 import { fetchAllLocations } from '../api';
+import { useFriendList } from './FriendListContext'; // Import useFriendList hook
 
 const LocationListContext = createContext();
 
 export const LocationListProvider = ({ children }) => {
   const [locationList, setLocationList] = useState([]);
   const [validatedLocationList, setValidatedLocationList] = useState([]);
-  const { authUserState } = useAuthUser(); // Use the authentication state
+  const { authUserState } = useAuthUser();
+  const { friendList } = useFriendList(); // Use friendList from FriendListContext
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const locationData = await fetchAllLocations();
-        setLocationList(locationData);
-        console.log('Fetch (location) Dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:', locationData);
-  
-        // Logging friends object
-        locationData.forEach(location => {
-          console.log(`Friends for location ${location.title}:`, location.friends);
-        });
-  
+
+        // Enhance locationData with friend names
+        const enrichedLocationData = locationData.map(location => ({
+          ...location,
+          friends: location.friends.map(friendId => {
+            const friend = friendList.find(friend => friend.id === friendId);
+            return friend ? { id: friend.id, name: friend.name } : { id: friendId, name: 'Unknown Friend' }; // Enhance friend object with name
+          })
+        }));
+
+        setLocationList(enrichedLocationData);
+        console.log('Fetch (location) Data:', enrichedLocationData);
       } catch (error) {
         console.error('Error fetching location list:', error);
       }
@@ -29,12 +35,11 @@ export const LocationListProvider = ({ children }) => {
     if (authUserState.authenticated) {
       fetchData();
     } else {
-      setLocationList([]); 
-  }
-  }, [authUserState.authenticated]); // Fetch data when authenticated
+      setLocationList([]);
+    }
+  }, [authUserState.authenticated, friendList]);
 
   useEffect(() => {
-    // Update the filtered list whenever the locationList changes
     setValidatedLocationList(locationList.filter(location => location.validatedAddress));
   }, [locationList]);
 

@@ -26,11 +26,11 @@ const FormLocationQuickCreate = ({ onLocationCreate, title, address }) => {
   const handleSubmit = async () => {
     try {
       const locationData = {
+        friends: selectedFriends.map(id => Number(id)),
         title: title,
         address: address,
         personal_experience_info: personalExperience,
-        user: authUserState.user.id,
-        friends: selectedFriends
+        user: authUserState.user.id, 
       };
       const res = await createLocation(locationData); // Use the createLocation function from the api file
       onLocationCreate(res);

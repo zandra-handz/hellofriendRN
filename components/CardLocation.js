@@ -103,7 +103,7 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
           </View>
           <View style={styles.friendButtonsContainer}>
             {friends.map((friend, index) => (
-              <ButtonFriend key={index} friend={friend} onPress={() => console.log('Friend pressed:', friend)} />
+              <ButtonFriend key={index} friendId={friend.id} onPress={() => console.log('Friend pressed:', friend)} />
             ))}
           </View>
 
@@ -163,6 +163,7 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
               <InputUpdateLocation
                 onClose={closeUpdateModal}
                 id={id}
+                friends={friends}
                 title={title}
                 address={address}
                 notes={notes} 
@@ -338,4 +339,3 @@ const styles = StyleSheet.create({
 });
 
 export default CardLocation;
-

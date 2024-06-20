@@ -313,8 +313,8 @@ export const fetchAllLocations = async () => {
             validatedAddress: location.validated_address,
             friendsCount: location.friends ? location.friends.length : 0,
             friends: location.friends ? location.friends.map(friend => ({
-                id: friend.id,
-                name: friend.name,
+                id: friend,
+                name: friend,
             })) : []
         }));
         console.log("API formatted data all locations: ", formattedLocations);
@@ -350,8 +350,10 @@ export const deleteLocation = async (locationId) => {
 
 
 export const updateLocation = async (locationId, locationData) => {
+    console.log('updateLocation payload in api file: ', locationData);
     try {
         const response = await axios.patch(`friends/location/${locationId}/`, locationData);
+        console.log(response);
         return response.data;
     } catch (error) {
         console.error('Error updating location:', error);

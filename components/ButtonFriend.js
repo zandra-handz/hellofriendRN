@@ -1,11 +1,17 @@
-// ButtonFriend.js
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useFriendList } from '../context/FriendListContext'; // Import useFriendList hook
 
-const ButtonFriend = ({ friend, onPress }) => {
+
+const ButtonFriend = ({ friendId, onPress }) => {
+  const { friendList } = useFriendList();
+  console.log("ButtonFriend friendId: ", friendId);
+ 
+  const friend = friendList.find(friend => friend.id === friendId);
+
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.text}>{friend.name}</Text>
+      <Text style={styles.text}>{friend ? friend.name : 'Unknown Friend'}</Text>
     </TouchableOpacity>
   );
 };
