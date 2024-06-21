@@ -12,29 +12,29 @@ import { fetchTypeChoices, saveHello } from '../api';
 import CapsuleItem from '../components/CapsuleItem';
 
 const QuickAddHello = ({ onClose }) => {
-  const [textInput, setTextInput] = useState('');
+  const [textInput, setTextInput] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [typeChoices, setTypeChoices] = useState([]);
-  const [locationLabelValue, setLocationLabelValue] = useState('');
-  const [locationInput, setLocationInput] = useState('');
-  const [locationNameInput, setLocationNameInput] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('');
-  const [selectedLocationName, setSelectedLocationName] = useState('');
-  const [capsuleLabelValue, setCapsuleLabelValue] = useState('');
-  const [selectedTypeCapsule, setSelectedTypeCapsule] = useState('');
-  const [selectedCapsule, setSelectedCapsule] = useState('');
+  const [locationLabelValue, setLocationLabelValue] = useState(null);
+  const [locationInput, setLocationInput] = useState(null);
+  const [locationNameInput, setLocationNameInput] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedLocationName, setSelectedLocationName] = useState(null);
+  const [capsuleLabelValue, setCapsuleLabelValue] = useState(null);
+  const [selectedTypeCapsule, setSelectedTypeCapsule] = useState(null);
+  const [selectedCapsule, setSelectedCapsule] = useState(null);
   const [selectedCapsules, setSelectedCapsules] = useState([]); 
   const [deleteChoice, setDeleteChoice] = useState(false);
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedType, setSelectedType] = useState(null);
   const [locationData, setLocationData] = useState([]);
-  const [ideaLimit, setIdeaLimit] = useState('');
-  const [capsuleData, setCapsuleData] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [ideaLimit, setIdeaLimit] = useState(null);
+  const [capsuleData, setCapsuleData] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [shouldClose, setShouldClose] = useState(false);
   const { selectedFriend } = useSelectedFriend();
   const { locationList } = useLocationList();
-  const { capsuleList } = useCapsuleList();
+  const { capsuleList, removeCapsules } = useCapsuleList();
   const { authUserState } = useAuthUser();
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
   const textareaRef = useRef();
@@ -50,21 +50,21 @@ const QuickAddHello = ({ onClose }) => {
   const handleLocationInputChange = (text) => {
     setLocationInput(text);
     setTextboxPlaceholder('Location address');
-    setSelectedLocation('');
+    setSelectedLocation(null);
   };
 
   const handleLocationNameInputChange = (text) => {
     setLocationNameInput(text);
     setTextboxPlaceholder('Location name');
-    setSelectedLocation('');
+    setSelectedLocation(null);
   };
 
   const handleLocationChange = (value) => {
     setSelectedLocation(value);
-    setLocationLabelValue(value || '');
+    setLocationLabelValue(value || null);
     setTextboxPlaceholder(`add to ${value || locationInput || locationNameInput}`);
-    setLocationNameInput('');
-    setLocationInput('');
+    setLocationNameInput(null);
+    setLocationInput(null);
   };
 
   const handleCheckboxCapsuleChange = (capsuleInfo) => {
@@ -78,14 +78,14 @@ const QuickAddHello = ({ onClose }) => {
       }
     });
     setTextboxPlaceholder(`add to ${capsuleInfo.capsule}`);
-    setCapsuleLabelValue(capsuleInfo.id ? `${capsuleInfo.id}` : '');
+    setCapsuleLabelValue(capsuleInfo.id ? `${capsuleInfo.id}` : null);
   };
   
   const handleCapsuleChange = (value) => {
     setSelectedCapsule(value);
-    setCapsuleLabelValue(value ? `${value}` : '');
+    setCapsuleLabelValue(value ? `${value}` : null);
     setTextboxPlaceholder(`add to ${value}`);
-    setLocationInput('');
+    setLocationInput(null);
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
@@ -101,54 +101,79 @@ const QuickAddHello = ({ onClose }) => {
     setShowDatePicker(true);
   };
 
-
-  const handleSave = async () => {
-    try {
-      if (selectedFriend) {
-        const formattedDate = selectedDate.toISOString().split('T')[0];
-        const capsulesDictionary = {};
-        selectedCapsules.forEach((capsule) => {
-          capsulesDictionary[capsule.id] = {
-            typed_category: capsule.typedCategory,
-            capsule: capsule.capsule,
-          };
-        });
-
-        const requestData = {
-          user: authUserState.user.id,
-          friend: selectedFriend.id,
-          type: selectedType,
-          typed_location: locationInput,
-          location_name: selectedLocationName || locationNameInput,
-          location: selectedLocation,
-          date: formattedDate,
-          thought_capsules_shared: capsulesDictionary,
-          delete_all_unshared_capsules: deleteChoice,
-        };
-        console.log("saving hello with data: ", requestData);
-
-        const response = await saveHello(requestData);
-
-        handleSetFriend(selectedFriend);
-        setIdeaLimit('limit feature disabled');
-        setTextInput('');
-        setLocationInput('');
-        setLocationNameInput('');
-        setCapsuleLabelValue('');
-        setSelectedCapsule('');
-        setLocationLabelValue('');
-        setSelectedLocation('');
-        setSuccessMessage('Hello saved successfully!');
-        setTimeout(() => {
-          setSuccessMessage('');
-          onClose();
-        }, 4000);
-        setUpdateTrigger((prev) => !prev);
-      }
-    } catch (error) {
-      console.error('Error creating hello:', error);
+  const convertEmptyStringsToNull = (obj) => {
+    const convertedObj = {};
+    for (let key in obj) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            convertedObj[key] = convertEmptyStringsToNull(obj[key]); // Recursively convert nested objects
+        } else {
+            convertedObj[key] = obj[key] === '' ? null : obj[key]; // Convert empty strings to null
+        }
     }
-  };
+    return convertedObj;
+};
+
+
+const handleSave = async () => {
+  try {
+    if (selectedFriend) {
+      const formattedDate = selectedDate.toISOString().split('T')[0];
+      const capsulesDictionary = {};
+      selectedCapsules.forEach((capsule) => {
+        capsulesDictionary[capsule.id] = {
+          typed_category: capsule.typedCategory,
+          capsule: capsule.capsule,
+        };
+      });
+
+      const requestData = {
+        user: authUserState.user.id,
+        friend: selectedFriend.id,
+        type: selectedType,
+        typed_location: locationInput,
+        location_name: selectedLocationName || locationNameInput,
+        location: selectedLocation,
+        date: formattedDate,
+        thought_capsules_shared: capsulesDictionary,
+        delete_all_unshared_capsules: deleteChoice,
+      };
+
+      console.log("saving hello with data: ", requestData);
+      const response = await saveHello(requestData);
+
+      // Reset form fields and state after successful save
+      setIdeaLimit('limit feature disabled');
+      setTextInput(null);
+      setLocationInput(null);
+      setLocationNameInput(null);
+      setCapsuleLabelValue(null);
+      setSelectedCapsule(null);
+      setLocationLabelValue(null);
+      setSelectedLocation(null);
+      setSuccessMessage('Hello saved successfully!');
+      setTimeout(() => {
+        setSuccessMessage('');
+        onClose();
+      }, 4000);
+ 
+      setSelectedCapsules([]);
+      
+      // Clear selected capsules based on deleteChoice
+      if (deleteChoice) {
+        setSelectedCapsules([]);
+        removeCapsules(capsuleList.map(capsule => capsule.id));
+      } else {
+        const capsuleIdsToRemove = selectedCapsules.map(capsule => capsule.id);
+        removeCapsules(capsuleIdsToRemove);
+      }
+
+      setUpdateTrigger((prev) => !prev);
+    }
+  } catch (error) {
+    console.error('Error creating hello:', error);
+  }
+};
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -227,7 +252,7 @@ const QuickAddHello = ({ onClose }) => {
           >
             <Picker.Item label="Select from previously saved locations" value="" />
               {filteredLocationList.map((location) => (
-                <Picker.Item key={location.id} label={location.address} value={location.address} />
+                <Picker.Item key={location.id} label={location.id} value={location.id} />
               ))}
           </Picker>
         </View>

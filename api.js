@@ -262,6 +262,7 @@ export const fetchPastHelloes = async (friendId) => {
 
 
 export const saveThoughtCapsule = async (requestData) => {
+    
     try {
         const response = await axios.post(`/friends/${requestData.friend}/thoughtcapsules/add/`, requestData);
         return response.data;
@@ -273,11 +274,13 @@ export const saveThoughtCapsule = async (requestData) => {
 
 
 export const saveHello = async (requestData) => {
+    console.log(requestData);
     try {
         const response = await axios.post(`/friends/${requestData.friend}/helloes/add/`, requestData);
         return response.data;
     } catch (error) {
         console.error('Error saving hello:', error);
+        console.log(response.data);
         throw error;
     }
 };

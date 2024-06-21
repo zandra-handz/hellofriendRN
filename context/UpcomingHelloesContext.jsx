@@ -11,6 +11,7 @@ export const useUpcomingHelloes = () => {
 export const UpcomingHelloesProvider = ({ children }) => {
     const [upcomingHelloes, setUpcomingHelloes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [updateTrigger, setUpdateTrigger] = useState(false); // Introducing updateTrigger state
     const { authUserState } = useAuthUser();
 
     useEffect(() => {
@@ -34,11 +35,13 @@ export const UpcomingHelloesProvider = ({ children }) => {
             setUpcomingHelloes([]);
             setIsLoading(false);
         }
-    }, [authUserState.authenticated]);
+    }, [authUserState.authenticated, updateTrigger]); // Include updateTrigger in dependencies
 
     const value = {
         upcomingHelloes,
         isLoading,
+        updateTrigger, // Include updateTrigger in the context value
+        setUpdateTrigger, // Function to set updateTrigger
     };
 
     return (

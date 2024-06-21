@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Button, View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { Button, View, ScrollView, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import InputAddLocationQuickSave from './InputAddLocationQuickSave'; // Import InputAddLocation component
 import AlertSmall from './AlertSmall'; // Import AlertSmall component
@@ -21,6 +21,24 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
   const [selectedLongitude, setSelectedLongitude] = useState(longitude || '');
   const [isValidatedAddress, setIsValidatedAddress] = useState(validatedAddress); // Change name to isValidatedAddress
   const doubleTapRef = useRef(null);
+
+  const scrollViewRef = useRef(null);
+  const positions = useRef([]).current;
+
+  const onLayout = (event, index) => {
+    const { layout } = event.nativeEvent;
+    positions[index] = layout.x;
+  };
+
+  const onMomentumScrollEnd = (event) => {
+    const { contentOffset } = event.nativeEvent;
+    const closest = positions.reduce((prev, curr) => {
+      return Math.abs(curr - contentOffset.x) < Math.abs(prev - contentOffset.x) ? curr : prev;
+    });
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ x: closest, animated: true });
+    }
+  };
 
   const handleFriendPress = () => {
     setIsModalVisible(true);
@@ -101,11 +119,27 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
               <Text style={styles.address}>{selectedAddress || address}</Text>
             )}
           </View>
-          <View style={styles.friendButtonsContainer}>
-            {friends.map((friend, index) => (
-              <ButtonFriend key={index} friendId={friend.id} onPress={() => console.log('Friend pressed:', friend)} />
-            ))}
+      <ScrollView 
+        horizontal={true} 
+        style={styles.friendButtonsContainer} 
+        showsHorizontalScrollIndicator={false}
+        ref={scrollViewRef}
+        onMomentumScrollEnd={onMomentumScrollEnd}
+        decelerationRate="fast" // Faster snapping
+      >
+        {friends.map((friend, index) => (
+          <View
+            style={styles.friendButtonWrapper}
+            key={index}
+            onLayout={(event) => onLayout(event, index)}
+          >
+            <ButtonFriend 
+              friendId={friend.id} 
+              onPress={() => console.log('Friend pressed:', friend)} 
+            />
           </View>
+        ))}
+      </ScrollView>
 
           {showBottomBar && (
           <View style={styles.bottomBar}>
@@ -300,6 +334,9 @@ const styles = StyleSheet.create({
   friendButtonsContainer: {
     flexDirection: 'row',
     marginBottom: 6,
+    overflow: 'scroll',
+    marginRight: -100,
+    
   },
   bottomBar: {
     flexDirection: 'row',

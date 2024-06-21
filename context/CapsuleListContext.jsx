@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSelectedFriend } from './SelectedFriendContext'; // Adjust the import path as needed
 import { fetchThoughtCapsules } from '../api';
 
-const CapsuleListContext = createContext({ capsuleList: [], setCapsuleList: () => {} });
+const CapsuleListContext = createContext({ capsuleList: [], setCapsuleList: () => {}, removeCapsules: () => {} });
 
 export const useCapsuleList = () => {
     const context = useContext(CapsuleListContext);
@@ -37,8 +37,14 @@ export const CapsuleListProvider = ({ children }) => {
         fetchData();
     }, [selectedFriend]);
 
+    const removeCapsules = (capsuleIdsToRemove) => {
+        setCapsuleList(prevCapsules => {
+            return prevCapsules.filter(capsule => !capsuleIdsToRemove.includes(capsule.id));
+        });
+    };
+
     return (
-        <CapsuleListContext.Provider value={{ capsuleList, setCapsuleList }}>
+        <CapsuleListContext.Provider value={{ capsuleList, setCapsuleList, removeCapsules }}>
             {children}
         </CapsuleListContext.Provider>
     );

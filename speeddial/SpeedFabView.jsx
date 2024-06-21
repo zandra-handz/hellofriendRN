@@ -107,7 +107,7 @@ const SpeedFabView = () => {
     <ModalGen
       modalVisible={modal1Visible}
       setModalVisible={setModal1Visible}
-      headerTitle="Modal Title"
+      headerTitle={selectedFriend ? `Add hello for ${selectedFriend.name}` : 'Add hello'}
       headerRightComponent={<FriendSelect />}
       buttons={[
         { text: 'Confirm', onPress: () => console.log('Confirm button pressed!') },
@@ -121,7 +121,7 @@ const SpeedFabView = () => {
       <ModalGen 
         modalVisible={modal3Visible} 
         setModalVisible={setModal3Visible} 
-        headerTitle={selectedFriend ? `Add thought for ${selectedFriend.name}` : 'Add thought'}
+        headerTitle={selectedFriend ? `Add moment to give ${selectedFriend.name}` : 'Add moment'}
         headerRightComponent={<FriendSelect />}
         buttons={[
           { text: 'Confirm', onPress: () => console.log('Confirm button pressed!') },
@@ -147,7 +147,7 @@ const SpeedFabView = () => {
           <View style={{ height: 8 }}></View>
           <Animated.View style={[styles.customButton, { opacity: button3Opacity }]}>
             <TouchableOpacity onPress={openModal3}>
-              <Text style={styles.buttonText}>Add thought</Text>
+              <Text style={styles.buttonText}>Add moment</Text>
             </TouchableOpacity>
           </Animated.View>
         </Animated.View>

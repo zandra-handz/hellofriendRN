@@ -56,11 +56,6 @@ const CardLocationTopper = ({ backgroundColor = 'white', iconColor = '#555', sel
               <FontAwesome5 name="search" size={15} color={'black'} solid={false} />
             </TouchableOpacity>
           </View>
-          <View style={styles.floatingContainer}>
-            <TouchableOpacity style={styles.iconButton} onPress={() => toggleModal('plus')}>
-              <FontAwesome5 name="plus" size={15} color={'black'} solid={false} />
-            </TouchableOpacity>
-          </View>
           {selectedFriend && (
           <View style={styles.floatingContainer}>
             <TouchableOpacity style={styles.iconButton} onPress={handleClockButtonPress}>

@@ -114,12 +114,12 @@ const Tabs = () => {
               <Tab.Screen
                 name="Capsules"
                 component={TabScreens.TabScreen3}
-                options={{ tabBarLabel: 'Capsules', tabBarAccessibilityLabel: 'Capsules' }}
+                options={{ tabBarLabel: 'Moments', tabBarAccessibilityLabel: 'Capsules' }}
               />
               <Tab.Screen
                 name="Past"
                 component={TabScreens.TabScreen4}
-                options={{ tabBarLabel: 'Past', tabBarAccessibilityLabel: 'Past' }}
+                options={{ tabBarLabel: 'Past helloes', tabBarAccessibilityLabel: 'Past' }}
               />
             </Tab.Group>
 

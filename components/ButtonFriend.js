@@ -5,7 +5,7 @@ import { useFriendList } from '../context/FriendListContext'; // Import useFrien
 
 const ButtonFriend = ({ friendId, onPress }) => {
   const { friendList } = useFriendList();
-  console.log("ButtonFriend friendId: ", friendId);
+  //console.log("ButtonFriend friendId: ", friendId);
  
   const friend = friendList.find(friend => friend.id === friendId);
 

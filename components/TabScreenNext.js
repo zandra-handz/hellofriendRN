@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import CardGen from './CardGen';
+import CardUpcoming from './CardUpcoming';
 import { Flow, Grid } from 'react-native-animated-spinkit';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 
@@ -20,11 +20,12 @@ const TabScreenNext = () => {
             <FlatList
                 data={upcomingHelloes}
                 renderItem={({ item }) => (
-                    <CardGen
+                    <CardUpcoming
                     title={item.friend_name}
                     description={item.future_date_in_words}
+                    thought_capsules_by_category={item.thought_capsules_by_category}
                     key={item.id}
-                    />
+                  />
                 )}
                 keyExtractor={item => item.id.toString()}
             />
