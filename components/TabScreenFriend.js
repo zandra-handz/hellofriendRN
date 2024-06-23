@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import { View, FlatList, Image, StyleSheet, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, Image, StyleSheet, Button, Dimensions, Text } from 'react-native';
 import CardGen from '../components/CardGen';
 import CardStatus from '../components/CardStatus';
-import { useCapsuleList } from '../context/CapsuleListContext';
-import NextHello from '../data/FriendDashboardData';
-import DaysSince from '../data/FriendDaysSince';
 import CardToggler from '../components/CardToggler';
+import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { fetchFriendImagesByCategory } from '../api';
 
-const baseURL = 'https://ac67e9fa-7838-487d-a3bc-e7a176f4bfbf-dev.e1-us-cdp-2.choreoapis.dev/hellofriend/hellofriend/rest-api-be2/v1.0/';
+const windowWidth = Dimensions.get('window').width;
+
+// Base URL for your S3 bucket
+// const s3BaseUrl = 'https://hfriendbucket.s3.us-east-2.amazonaws.com/';
 
 const interpolateColor = (startColor, endColor, factor) => {
   const result = startColor.slice();
@@ -43,10 +44,13 @@ const TabScreenFriend = () => {
         const flattenedImages = [];
         Object.keys(imagesData).forEach(category => {
           imagesData[category].forEach(image => {
-            // Construct the correct image URL
-            const imageUrl = image.image.startsWith('http')
-              ? image.image
-              : baseURL + image.image;
+            // Remove '/media' from the front of the image name
+            let imagePath = image.image;
+            if (imagePath.startsWith('/media/')) {
+              imagePath = imagePath.substring(7);  // Remove '/media/' prefix
+            }
+ 
+            const imageUrl = imagePath;
 
             // Add the image object with the full URL to the flattened array
             flattenedImages.push({
@@ -62,7 +66,7 @@ const TabScreenFriend = () => {
           console.log(`Category: ${image.image_category}, Title: ${image.title}, Image URL: ${image.image}`);
         });
 
-        setImages(flattenedImages);
+        setImages([...flattenedImages]); // Ensure new array reference for state update
       } catch (error) {
         console.error('Error fetching friend images by category:', error);
       }
@@ -78,30 +82,46 @@ const TabScreenFriend = () => {
 
   const categories = Array.from(new Set(capsuleList.map(capsule => capsule.typedCategory)));
 
-  const renderFooter = () => (
-    <View style={styles.footerContainer}>
-      {images.map((image, index) => (
-        <Image
-          key={index}
-          source={{ uri: image.image }}
-          style={styles.footerImage}
-        />
-      ))}
-    </View>
-  );
+  const renderFooter = () => {
+    // Group images by category
+    const imagesByCategory = images.reduce((acc, image) => {
+      if (!acc[image.image_category]) {
+        acc[image.image_category] = [];
+      }
+      acc[image.image_category].push(image);
+      return acc;
+    }, {});
+
+    return (
+      <View style={styles.imageContainer}>
+        {Object.keys(imagesByCategory).map(category => (
+          <View key={category}>
+            <Text style={styles.categoryTitle}>{category}</Text>
+            <View style={styles.imageRow}>
+              {imagesByCategory[category].map((image, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: image.image }}
+                  style={styles.image}
+                />
+              ))}
+            </View>
+          </View>
+        ))}
+      </View>
+    );
+  };
 
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
         ListHeaderComponent={(
-          <>
-            <CardStatus
-              title={<NextHello />}
-              rightTitle={<DaysSince />}
-              description=""
-              showFooter={false}
-            />
-          </>
+          <CardStatus
+            title="Next Hello"
+            rightTitle="Days Since"
+            description=""
+            showFooter={false}
+          />
         )}
         data={categories}
         renderItem={({ item: category }) => (
@@ -136,18 +156,30 @@ const TabScreenFriend = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   tabContent: {
     padding: 0,
   },
-  footerContainer: {
+  imageContainer: {
+    padding: 10,
+    width: '100%',
+    flex: 1,
+  },
+  categoryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  imageRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    padding: 10,
   },
-  footerImage: {
-    width: 100,
-    height: 100,
+  image: {
+    width: windowWidth / 3 - 20,
+    height: windowWidth / 3 - 20,
     margin: 5,
     borderRadius: 10,
   },

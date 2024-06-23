@@ -4,6 +4,7 @@ import ModalGen from '../components/ModalGen';
 import FriendSelect from '../data/FriendSelect';
 import QuickAddThought from './QuickAddThought'; 
 import  QuickAddHello from './QuickAddHello';
+import  QuickAddImage from './QuickAddImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const SpeedFabView = () => {
@@ -116,8 +117,19 @@ const SpeedFabView = () => {
     > 
     <QuickAddHello onClose={closeModal} /> 
     </ModalGen>
+    <ModalGen
+      modalVisible={modal2Visible}
+      setModalVisible={setModal2Visible}
+      headerTitle={selectedFriend ? `Add image for ${selectedFriend.name}` : 'Add hello'}
+      headerRightComponent={<FriendSelect />}
+      buttons={[
+        { text: 'Confirm', onPress: () => console.log('Confirm button pressed!') },
+        { text: 'Cancel', onPress: () => console.log('Cancel button pressed!') }
+      ]}
+    > 
+    <QuickAddImage onClose={closeModal} /> 
+    </ModalGen>
 
-    <ModalGen modalVisible={modal2Visible} setModalVisible={setModal2Visible} />
       <ModalGen 
         modalVisible={modal3Visible} 
         setModalVisible={setModal3Visible} 

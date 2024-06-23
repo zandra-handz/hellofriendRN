@@ -106,3 +106,7 @@ npm install react-native-animated-spinkit
 npm install react-native-reanimated
 
  npm install expo-linear-gradient
+
+//not this  npm install react-native-image-picker
+
+npm install expo-image-picker 

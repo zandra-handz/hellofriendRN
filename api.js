@@ -443,6 +443,27 @@ export const fetchFriendImagesByCategory = async (friendId) => {
     }
 };
 
+export const createFriendImage = async (friendId, formData) => {
+    console.log('FormData in createFriendImage:', friendId, formData);
+    
+    try {
+        const response = await axios.post(`/friends/${friendId}/images/add/`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        console.log('Image created successfully:', response.data);
+        return response.data; // Return the created image data if needed
+    } catch (error) {
+        console.error('Error creating friend image:', error);
+        throw error; // Throw error to handle it in component level
+    }
+};
+
+   
+
+
 
 export const fetchTypeChoices = async () => {
     try {
