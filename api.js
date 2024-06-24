@@ -235,19 +235,22 @@ export const fetchThoughtCapsules = async (friendId) => {
 export const fetchPastHelloes = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/helloes/`);
-        if (response) {
+        if (response && response.data) {
             const helloesData = response.data;
 
             const formattedHelloesList = helloesData.map(hello => ({
                 id: hello.id,
                 date: hello.past_date_in_words,
                 type: hello.type,
-                pastCapsules: Object.keys(hello.thought_capsules_shared).map(key => ({
-                    id: key,
-                    capsule: hello.thought_capsules_shared[key].capsule,
-                    typed_category: hello.thought_capsules_shared[key].typed_category,
-                }))
+                pastCapsules: hello.thought_capsules_shared
+                    ? Object.keys(hello.thought_capsules_shared).map(key => ({
+                          id: key,
+                          capsule: hello.thought_capsules_shared[key].capsule,
+                          typed_category: hello.thought_capsules_shared[key].typed_category,
+                      }))
+                    : []
             }));
+
             return formattedHelloesList; 
         } else {
             console.log("fetchPastHelloes: no helloes added yet");
@@ -258,6 +261,7 @@ export const fetchPastHelloes = async (friendId) => {
         throw error;
     }
 };
+
 
 
 
@@ -443,6 +447,8 @@ export const fetchFriendImagesByCategory = async (friendId) => {
     }
 };
 
+
+
 export const createFriendImage = async (friendId, formData) => {
     console.log('FormData in createFriendImage:', friendId, formData);
     
@@ -461,7 +467,46 @@ export const createFriendImage = async (friendId, formData) => {
     }
 };
 
-   
+
+export const fetchFriendImage = async (friendId, imageId) => {
+    
+    try {
+        const response = await axios.get(`/friends/${friendId}/image/${imageId}/`);
+
+        console.log('API fetchFriendImage response: ', response.data);
+        return response.data; 
+    } catch (error) {
+        console.error('API fetchFriendImage error: ', error);
+        throw error; 
+    }
+};
+
+export const updateFriendImage = async (friendId, imageId) => {
+    
+    try {
+        const response = await axios.patch(`/friends/${friendId}/image/${imageId}/`);
+
+        console.log('API fetchFriendImage response: ', response.data);
+        return response.data; 
+    } catch (error) {
+        console.error('API fetchFriendImage error: ', error);
+        throw error; 
+    }
+};
+
+
+export const deleteFriendImage = async (friendId, imageId) => {
+    
+    try {
+        const response = await axios.delete(`/friends/${friendId}/image/${imageId}/`);
+
+        console.log('API fetchFriendImage response: ', response.data);
+        return response.data; 
+    } catch (error) {
+        console.error('API fetchFriendImage error: ', error);
+        throw error; 
+    }
+};
 
 
 

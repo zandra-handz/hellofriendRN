@@ -19,13 +19,14 @@ const ButtonFriend = ({ friendId, onPress }) => {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#ccc',
-    borderRadius: 15,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    borderRadius: 8,
+    paddingVertical: 2,
+    paddingHorizontal: 6,
     marginRight: 5,
   },
   text: {
-    fontSize: 14,
+    fontSize: 12,
+    fontWeight: 'bold',
     color: '#000',
   },
 });

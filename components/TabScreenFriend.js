@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Image, StyleSheet, Button, Dimensions, Text } from 'react-native';
+import { View, FlatList, Image, StyleSheet, Dimensions, Text, TouchableOpacity, TextInput, Button } from 'react-native';
+import { FontAwesome5 } from 'react-native-vector-icons'; // Import FontAwesome5
 import CardGen from '../components/CardGen';
 import CardStatus from '../components/CardStatus';
+import DaysSince from '../data/FriendDaysSince';
+import NextHello from '../data/FriendDashboardData';
 import CardToggler from '../components/CardToggler';
+import AlertImage from '../components/AlertImage';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { fetchFriendImagesByCategory } from '../api';
+import { fetchFriendImagesByCategory, updateFriendImage, deleteFriendImage } from '../api';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const windowWidth = Dimensions.get('window').width;
-
-// Base URL for your S3 bucket
-// const s3BaseUrl = 'https://hfriendbucket.s3.us-east-2.amazonaws.com/';
 
 const interpolateColor = (startColor, endColor, factor) => {
   const result = startColor.slice();
@@ -33,6 +36,10 @@ const TabScreenFriend = () => {
   const { capsuleList } = useCapsuleList();
   const [expandedCategories, setExpandedCategories] = useState({});
   const [images, setImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState('');
   const { selectedFriend } = useSelectedFriend();
 
   const fetchImages = async () => {
@@ -40,19 +47,15 @@ const TabScreenFriend = () => {
       try {
         const imagesData = await fetchFriendImagesByCategory(selectedFriend.id);
 
-        // Flatten the nested imagesData into an array of image objects
         const flattenedImages = [];
         Object.keys(imagesData).forEach(category => {
           imagesData[category].forEach(image => {
-            // Remove '/media' from the front of the image name
             let imagePath = image.image;
             if (imagePath.startsWith('/media/')) {
-              imagePath = imagePath.substring(7);  // Remove '/media/' prefix
+              imagePath = imagePath.substring(7);
             }
- 
             const imageUrl = imagePath;
 
-            // Add the image object with the full URL to the flattened array
             flattenedImages.push({
               ...image,
               image: imageUrl,
@@ -61,12 +64,7 @@ const TabScreenFriend = () => {
           });
         });
 
-        // Log the required fields for each image
-        flattenedImages.forEach(image => {
-          console.log(`Category: ${image.image_category}, Title: ${image.title}, Image URL: ${image.image}`);
-        });
-
-        setImages([...flattenedImages]); // Ensure new array reference for state update
+        setImages([...flattenedImages]);
       } catch (error) {
         console.error('Error fetching friend images by category:', error);
       }
@@ -80,10 +78,69 @@ const TabScreenFriend = () => {
     }));
   };
 
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setTitle(image.title); // Initialize title state
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+    setIsModalVisible(false);
+    setIsEditing(false); // Reset editing state
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleUpdate = async () => {
+    if (selectedFriend && selectedImage) {
+      try {
+        await updateFriendImage(selectedFriend.id, selectedImage.id, { title });
+        setSelectedImage(prev => ({ ...prev, title }));
+        setIsEditing(false);
+      } catch (error) {
+        console.error('Error updating image:', error);
+      }
+    }
+  };
+
+  const handleDelete = async () => {
+    if (selectedFriend && selectedImage) {
+      try {
+        await deleteFriendImage(selectedFriend.id, selectedImage.id);
+        setImages(images.filter(image => image.id !== selectedImage.id));
+        closeModal();
+      } catch (error) {
+        console.error('Error deleting image:', error);
+      }
+    }
+  };
+
+  const handleShare = async () => {
+    if (selectedImage) {
+      const imageUrl = selectedImage.image;
+      const fileUri = FileSystem.documentDirectory + selectedImage.title + '.jpg';
+  
+      try {
+        const { uri } = await FileSystem.downloadAsync(imageUrl, fileUri);
+        await Sharing.shareAsync(uri);
+  
+        // After successful sharing, delete the image
+        await deleteFriendImage(selectedFriend.id, selectedImage.id);
+        setImages(images.filter(image => image.id !== selectedImage.id));
+        closeModal(); // Close the modal or perform other actions
+      } catch (error) {
+        console.error('Error sharing image:', error);
+      }
+    }
+  };
+  
+
   const categories = Array.from(new Set(capsuleList.map(capsule => capsule.typedCategory)));
 
   const renderFooter = () => {
-    // Group images by category
     const imagesByCategory = images.reduce((acc, image) => {
       if (!acc[image.image_category]) {
         acc[image.image_category] = [];
@@ -99,11 +156,12 @@ const TabScreenFriend = () => {
             <Text style={styles.categoryTitle}>{category}</Text>
             <View style={styles.imageRow}>
               {imagesByCategory[category].map((image, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: image.image }}
-                  style={styles.image}
-                />
+                <TouchableOpacity key={index} onPress={() => openModal(image)}>
+                  <Image
+                    source={{ uri: image.image }}
+                    style={styles.image}
+                  />
+                </TouchableOpacity>
               ))}
             </View>
           </View>
@@ -116,12 +174,14 @@ const TabScreenFriend = () => {
     <View style={styles.container}>
       <FlatList
         ListHeaderComponent={(
-          <CardStatus
-            title="Next Hello"
-            rightTitle="Days Since"
-            description=""
-            showFooter={false}
-          />
+          <>
+            <CardStatus
+              title={<NextHello />}
+              rightTitle={<DaysSince />}
+              description=""
+              showFooter={false}
+            />
+          </>
         )}
         data={categories}
         renderItem={({ item: category }) => (
@@ -150,6 +210,46 @@ const TabScreenFriend = () => {
         contentContainerStyle={styles.tabContent}
         ListFooterComponent={renderFooter}
       />
+
+      <AlertImage
+        isModalVisible={isModalVisible}
+        toggleModal={closeModal}
+        modalContent={
+          selectedImage ? (
+            <View>
+              <Image
+                source={{ uri: selectedImage.image }}
+                style={styles.modalImage}
+              />
+              {isEditing ? (
+                <>
+                  <TextInput
+                    style={styles.input}
+                    value={title}
+                    onChangeText={setTitle}
+                  />
+                  <Button title="Update" onPress={handleUpdate} />
+                  <Button title="Cancel" onPress={() => setIsEditing(false)} />
+                </>
+              ) : (
+                <>
+                  <Text style={styles.modalText}>{selectedImage.title}</Text>
+                  <TouchableOpacity onPress={handleEdit}>
+                    <FontAwesome5 name="edit" size={24} color="blue" style={styles.icon} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleDelete}>
+                    <FontAwesome5 name="trash-alt" size={24} color="red" style={styles.icon} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleShare}>
+                    <FontAwesome5 name="share" size={24} color="green" style={styles.icon} />
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          ) : null
+        }
+        modalTitle="Image Details"
+      />
       <Button title="Fetch Images" onPress={fetchImages} />
     </View>
   );
@@ -175,13 +275,34 @@ const styles = StyleSheet.create({
   imageRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'left',
   },
   image: {
     width: windowWidth / 3 - 20,
     height: windowWidth / 3 - 20,
     margin: 5,
     borderRadius: 10,
+  },
+  modalImage: {
+    width: '100%',
+    height: 300,
+    resizeMode: 'cover',
+    marginBottom: 10,
+    borderRadius: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  input: {
+    borderColor: 'gray',
+    borderWidth: 1,
+    padding: 8,
+    marginBottom: 10,
+    borderRadius: 8,
+  },
+  icon: {
+    marginHorizontal: 10,
   },
 });
 

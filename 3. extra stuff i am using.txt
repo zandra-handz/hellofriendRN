@@ -110,3 +110,7 @@ npm install react-native-reanimated
 //not this  npm install react-native-image-picker
 
 npm install expo-image-picker 
+
+
+
+npm install expo-file-system expo-sharing
