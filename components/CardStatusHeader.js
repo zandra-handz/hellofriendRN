@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import DaysSince from '../data/FriendDaysSince';
+import NextHello from '../data/FriendDashboardData';
 
-
-const CardStatus = ({ title, rightTitle, description, showFooter = true, leftContent, rightContent }) => {
+const CardStatusHeader = ({ title, rightTitle, description, showFooter = true, leftContent, rightContent }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [showNextHello, setShowNextHello] = useState(true);
 
   const toggleModal = (event) => {
     const { pageX, pageY } = event.nativeEvent;
@@ -13,11 +15,15 @@ const CardStatus = ({ title, rightTitle, description, showFooter = true, leftCon
     setIsModalVisible(!isModalVisible);
   };
 
+  const toggleComponent = () => {
+    setShowNextHello(!showNextHello);
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.leftContainer}>
-        {leftContent}
-      </View>
+      <TouchableOpacity style={styles.toggleContainer} onPress={toggleComponent}>
+        {showNextHello ? <NextHello /> : <DaysSince />}
+      </TouchableOpacity>
       <View style={styles.contentContainer}>
         <View style={styles.titleContainer}>
           <View style={styles.flexItem}>
@@ -26,7 +32,7 @@ const CardStatus = ({ title, rightTitle, description, showFooter = true, leftCon
           <View style={styles.flexItem}>
             <Text style={styles.rightTitle}>{rightTitle}</Text>
           </View>
-        </View> 
+        </View>
         {showFooter && (
           <View style={styles.bottomBar}>
             <TouchableOpacity style={styles.iconButton}>
@@ -44,9 +50,6 @@ const CardStatus = ({ title, rightTitle, description, showFooter = true, leftCon
           </View>
         )}
       </View>
-      <View style={styles.rightContainer}>
-        {rightContent}
-      </View>
       <Modal visible={isModalVisible} animationType="fade" transparent={true}>
         <View style={[styles.modalContainer, { top: modalPosition.top - 50, left: modalPosition.left - 75 }]}>
           <TouchableOpacity onPress={() => setIsModalVisible(false)} style={styles.closeButton}>
@@ -63,40 +66,34 @@ const CardStatus = ({ title, rightTitle, description, showFooter = true, leftCon
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     borderRadius: 0,
     padding: 0,
-    paddingLeft: 10,
-    marginBottom: 0,
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.0,
-    shadowRadius: 0,
-    width: '100%',
-    borderTopWidth: 0.5,
-    borderTopColor: 'black',
+    marginBottom: 0, 
+    width: '60%',
+    height: 18,
+    alignContent: 'left',  
   },
-  leftContainer: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    width: 'auto',
+  toggleContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    
+    padding: 0,
   },
   contentContainer: {
+    
     flex: 1,
     paddingLeft: 0,
   },
   titleContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    padding: 12,
+    width: '100%', 
+    padding: 0,
   },
-  flexItem: {
-    flex: 1,
-    alignItems: 'center',
+  flexItem: { 
   },
   title: {
     fontSize: 14,
@@ -105,8 +102,6 @@ const styles = StyleSheet.create({
   },
   rightTitle: {
     fontWeight: 'bold',
-    alignItems: 'center',
-    justifyContent: "center",
   },
   description: {
     fontSize: 14,
@@ -122,11 +117,6 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 2,
-  },
-  rightContainer: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    width: 'auto',
   },
   modalContainer: {
     position: 'absolute',
@@ -153,4 +143,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CardStatus;
+export default CardStatusHeader;

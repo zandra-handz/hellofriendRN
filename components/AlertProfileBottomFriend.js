@@ -4,6 +4,10 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FormFriendAddressCreate from '../forms/FormFriendAddressCreate'; // Import the form component
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import ArrowAnimation from '../components/ArrowAnimation'; // Adjust the import path
+
+
+
 
 const AlertProfileBottomFriend = ({ visible, profileData, onClose }) => {
     const { authUserState } = useAuthUser();
@@ -28,6 +32,8 @@ const AlertProfileBottomFriend = ({ visible, profileData, onClose }) => {
               <TouchableOpacity onPress={toggleEditMode} style={styles.editButton}>
                 <Text style={styles.editButtonText}>Edit Address</Text>
               </TouchableOpacity>
+              
+              
             </>
           ) : ( // Render form if in edit mode
             <FormFriendAddressCreate friendId={selectedFriend.id} onCancel={toggleEditMode} />
@@ -37,6 +43,7 @@ const AlertProfileBottomFriend = ({ visible, profileData, onClose }) => {
               <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
           )}
+          
         </View>
       </View>
     </Modal>

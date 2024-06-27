@@ -6,6 +6,8 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { fetchFriendAddresses, deleteFriendAddress } from '../api';
 import ButtonAddress from './ButtonAddress';
+import ArrowAnimation from '../components/ArrowAnimation'; // Adjust the import path
+
 
 const AlertPanelBottom = ({ visible, profileData, onClose }) => {
   const { authUserState } = useAuthUser();
@@ -80,6 +82,7 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
                   <FontAwesome5 name="plus" size={12} color="white" />
                 </TouchableOpacity>
               </View>
+              <ArrowAnimation/>
 
               {!differentEditScreen ? (
                 <>

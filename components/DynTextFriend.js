@@ -1,53 +1,61 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import AlertPanelBottom from './AlertPanelBottom'; // Import the AlertProfile component
+import AlertPanelBottom from './AlertPanelBottom';
+import CardStatusHeader from './CardStatusHeader';
 
 const DynTextFriend = ({ maxWidth }) => {
   const { selectedFriend } = useSelectedFriend();
-  const [showPopup, setShowPopup] = useState(false); // State to toggle the visibility of the popup
+  const [showPopup, setShowPopup] = useState(false);
 
-  // If no friend is selected, return null
   if (!selectedFriend) {
     return null;
   }
 
   return (
-    <View>
-      {/* Wrap the text with TouchableOpacity to make it a button */}
-      <TouchableOpacity onPress={() => setShowPopup(true)}>
-        {/* Add a container with maxWidth to ensure the text doesn't wrap */}
-        <View style={[styles.container, { maxWidth: maxWidth }]}>
-          <Text style={styles.text}>
-            {selectedFriend.name}
-          </Text>
-        </View>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={() => setShowPopup(true)} style={styles.touchable}>
+        <Text style={styles.text}>
+          {selectedFriend.name}
+        </Text>
       </TouchableOpacity>
 
-      {/* Render the popup based on showPopup state */}
+      {/* Ensure CardStatusHeader starts on a new line */}
+      <View style={styles.statusContainer}>
+        <CardStatusHeader showFooter={false} />
+      </View>
+
       <AlertPanelBottom
         visible={showPopup}
-        profileData={selectedFriend} // Pass the selectedFriend data to the AlertProfile component
-        onClose={() => setShowPopup(false)} // Close the popup when Close button is pressed
+        profileData={selectedFriend}
+        onClose={() => setShowPopup(false)}
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%', // Ensure the container takes up full width
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-},
+    flexDirection: 'column', // Ensure items are stacked vertically
+    paddingHorizontal: 2,
+    paddingVertical: 10,
+    
+  },
+  touchable: {
+    width: '100%', // Take up full width
+  },
   text: {
     fontFamily: 'Roboto',
     fontWeight: 'bold',
     color: 'black',
-    fontSize: 24,
+    fontSize: 24, 
     overflow: 'hidden',
+  },
+  statusContainer: {
+    width: '100&',
+    alignItems: 'left',
+    alignContent: 'left',
+    
   },
 });
 

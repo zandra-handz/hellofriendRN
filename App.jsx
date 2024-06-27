@@ -7,7 +7,7 @@ import { FriendListProvider } from './context/FriendListContext';
 import { LocationListProvider } from './context/LocationListContext';
 import { UpcomingHelloesProvider } from './context/UpcomingHelloesContext';
 import { CapsuleListProvider } from './context/CapsuleListContext';
-
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SelectedFriendProvider } from './context/SelectedFriendContext';
 import SpeedFabView from './speeddial/SpeedFabView';
 import FriendSelect from './data/FriendSelect';
@@ -30,19 +30,21 @@ export default function App() {
   const { onSignOut } = useAuthUser();
   
   return (
-    <AuthUserProvider>
-      <UpcomingHelloesProvider>
-        <FriendListProvider>
-          <SelectedFriendProvider>
-            <LocationListProvider> 
-              <CapsuleListProvider> 
-                <Layout></Layout>
-              </CapsuleListProvider>
-            </LocationListProvider>
-          </SelectedFriendProvider>
-        </FriendListProvider>
-      </UpcomingHelloesProvider>
-    </AuthUserProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthUserProvider>
+        <UpcomingHelloesProvider>
+          <FriendListProvider>
+            <SelectedFriendProvider>
+              <LocationListProvider> 
+                <CapsuleListProvider> 
+                  <Layout></Layout>
+                </CapsuleListProvider>
+              </LocationListProvider>
+            </SelectedFriendProvider>
+          </FriendListProvider>
+        </UpcomingHelloesProvider>
+      </AuthUserProvider>
+    </GestureHandlerRootView>
   );
 }
 

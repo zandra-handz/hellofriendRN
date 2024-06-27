@@ -1,46 +1,33 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { useColorScheme } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import DynTextFriend from './DynTextFriend'; // Import DynTextFriend component
+import DynTextFriend from './DynTextFriend';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import DynImageUser from './DynImageUser'; // Import DynImageUser component
-
-const { width, height } = Dimensions.get('window');
+import DynImageUser from './DynImageUser';
 
 const HelloFriendHeader = ({ handleSignOutPress, additionalElements }) => {
-  const colorScheme = useColorScheme();
-  const { selectedFriend, friendState } = useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
 
   return (
-    <View style={[styles.container,
-      colorScheme === 'light'
-        ? { backgroundColor: '#fff' }
-        : { backgroundColor: '#fff' },
-    ]}>
-      {/* Container for additional elements on the left */}
+    <View style={styles.container}>
       <View style={styles.additionalElementsContainer}>
         {additionalElements.map((element, index) => (
           <View key={index} style={styles.additionalElement}>{element}</View>
         ))}
       </View>
 
-      {/* Container for the dynamic text or image */}
       <View style={styles.dynamicContentContainer}>
-        <DynTextFriend maxWidth={500}/>
-        {/* Render the DynImageUser component */}
+        <DynTextFriend maxWidth={500} />
         {!selectedFriend && <DynImageUser />}
       </View>
 
-      {/* Container for the gear icon on the right */}
       <View style={styles.iconContainer}>
-        <FontAwesome name="gear" size={28} paddingBottom={18} color="black" onPress={handleSignOutPress} />
+        {/* Adjust icon alignment */}
+        <FontAwesome name="gear" size={28} color="black" onPress={handleSignOutPress} style={styles.icon} />
       </View>
     </View>
   );
 };
-
-export default HelloFriendHeader;
 
 const styles = StyleSheet.create({
   container: {
@@ -48,26 +35,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: 'white',
-    paddingHorizontal: 14,
-    paddingTop: 32,
+    height: 130, // Fixed height for the header
+    paddingHorizontal: 8,
+    paddingTop: 42,
+    
   },
   additionalElementsContainer: {
-    flex: 1, // Equal width to other containers
     flexDirection: 'row',
-    alignItems: 'center',
   },
   dynamicContentContainer: {
-    flex: 1, // Equal width to other containers
-    width: 200,
-    height: 100, // this to match the image
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    marginLeft: 10, // Ensure alignment with NextHello component
   },
   iconContainer: {
-    flex: 1, // Equal width to other containers
-    alignItems: 'flex-end', // Align the icon to the right within the container
+    alignItems: 'flex-start', // Align icon to the top
+  },
+  icon: {
+    padding: 0,
+    marginRight: 4, // Adjust as needed for precise positioning
+    marginTop: -10,
   },
   additionalElement: {
-    marginRight: 10,
   },
 });
+
+export default HelloFriendHeader;

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const DaysSince = () => {
@@ -58,7 +59,8 @@ const DaysSince = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.daysSinceText}>Days Since: {friendDashboardData[0].days_since}</Text>
+      <View style={styles.daysSinceContainer}> 
+      <Text style={styles.daysSinceText}>{friendDashboardData[0].days_since} days</Text>
       <Animated.Text
         style={[
           styles.icon,
@@ -69,6 +71,7 @@ const DaysSince = () => {
       >
         {renderIcon()}
       </Animated.Text>
+      </View>
     </View>
   );
 };
@@ -76,17 +79,30 @@ const DaysSince = () => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
+    borderRadius: 0,
+    padding: 0,
+    marginBottom: 0, 
+    width: '60%',
+    height: 18,
+    alignContent: 'left',  
+  },
+  daysSinceContainer: {
+    flexDirection: 'row',
+    justifyContent: 'left',
+    alignItems: 'left',
+    width: '100%', 
+    padding: 0,
+    
   },
   daysSinceText: {
+    fontSize: 14,
     fontWeight: 'bold',
-    fontSize: 13,
-    marginRight: 10,
+    color: 'black',
+    marginRight: 4,
   },
   icon: {
-    fontSize: 10,
+    fontSize: 14,
   },
 });
 

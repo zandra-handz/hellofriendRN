@@ -114,3 +114,9 @@ npm install expo-image-picker
 
 
 npm install expo-file-system expo-sharing
+
+// not this bc requires custom dev build  npx expo install @shopify/react-native-skia
+
+
+npm install eslint-plugin-react-hooks --save-dev
+

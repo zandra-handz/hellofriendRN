@@ -1,13 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { Button, View, ScrollView, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, Button, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import InputAddLocationQuickSave from './InputAddLocationQuickSave';
+import ButtonFriend from './ButtonFriend';
 import AlertSmall from './AlertSmall';
 import AlertMicro from './AlertMicro';
 import InputUpdateLocation from './InputUpdateLocation';
 import { useLocationList } from '../context/LocationListContext';
 import { deleteLocation } from '../api';
-import ButtonFriend from './ButtonFriend';
 import { TapGestureHandler, State } from 'react-native-gesture-handler';
 
 const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsCount, friends, validatedAddress, isSelected, setSelectedLocation, showBottomBar = false }) => {
@@ -20,8 +19,10 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
   const [selectedLatitude, setSelectedLatitude] = useState(latitude || '');
   const [selectedLongitude, setSelectedLongitude] = useState(longitude || '');
   const [isValidatedAddress, setIsValidatedAddress] = useState(validatedAddress);
-  const doubleTapRef = useRef(null);
+  const [selectedFriend, setSelectedFriend] = useState(null); // State to manage selected friend
+  const [isFriendMenuVisible, setIsFriendMenuVisible] = useState(false); // State to control friend menu modal
 
+  const doubleTapRef = useRef(null);
   const scrollViewRef = useRef(null);
   const positions = useRef([]).current;
 
@@ -41,7 +42,7 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
   };
 
   const handleFriendPress = () => {
-    setIsModalVisible(true);
+    setIsFriendMenuVisible(true); // Show friend menu modal
   };
 
   const handleUpdatePress = () => {
@@ -99,8 +100,8 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
       numberOfTaps={2}
     >
       <View style={[styles.container, isSelected ? styles.selected : null]}>
-        <View style={styles.iconPlaceholderContainer}>
-          <View style={[styles.iconPlaceholder, { backgroundColor: 'hotpink' }]} />
+        <View style={styles.iconContainer}>
+          <FontAwesome5 name="map-marker-alt" size={30} color="#555" solid={true} style={styles.icon} />
         </View>
         <View style={styles.contentContainer}>
           <View style={styles.titleRow}>
@@ -133,87 +134,110 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
               <Text style={styles.address}>{selectedAddress || address}</Text>
             )}
           </View>
-          <ScrollView
-            horizontal={true}
-            style={styles.friendButtonsContainer}
-            showsHorizontalScrollIndicator={false}
-            ref={scrollViewRef}
-            onMomentumScrollEnd={onMomentumScrollEnd}
-            decelerationRate="fast"
-          >
-            {friends.map((friend, index) => (
-              <View
-                style={styles.friendButtonWrapper}
-                key={index}
-                onLayout={(event) => onLayout(event, index)}
-              >
-                <ButtonFriend
-                  friendId={friend.id}
-                  onPress={() => console.log('Friend pressed:', friend)}
-                />
-              </View>
-            ))}
-          </ScrollView>
 
-          {showBottomBar && (
-            <View style={styles.bottomBar}>
-              <TouchableOpacity style={styles.iconButton}>
-                <FontAwesome5 name="star" size={14} color="#555" solid={false} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconButton}>
-                <FontAwesome5 name="pen-alt" size={14} color="#555" solid={false} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconButton}>
-                <FontAwesome5 name="share-alt" size={14} color="#555" solid={false} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconButton} onPress={() => setIsModalVisible(true)}>
-                <FontAwesome5 name="ellipsis-h" size={14} color="#555" solid={false} />
-              </TouchableOpacity>
+          <View style={styles.bottomBar}>
+            <TouchableOpacity style={styles.iconButton} onPress={handleFriendPress}>
+              <FontAwesome5 name="users" size={20} color="#555" solid={false} style={styles.icon} />
+            </TouchableOpacity>
+            {showBottomBar && (
+              <>
+                <TouchableOpacity style={styles.iconButton}>
+                  <FontAwesome5 name="star" size={20} color="#555" solid={false} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconButton}>
+                  <FontAwesome5 name="pen-alt" size={20} color="#555" solid={false} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconButton}>
+                  <FontAwesome5 name="share-alt" size={20} color="#555" solid={false} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconButton} onPress={() => setIsModalVisible(true)}>
+                  <FontAwesome5 name="ellipsis-h" size={20} color="#555" solid={false} />
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isFriendMenuVisible}
+            onRequestClose={() => setIsFriendMenuVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.closeButton}>
+                <TouchableOpacity onPress={() => setIsFriendMenuVisible(false)}>
+                  <FontAwesome5 name="times" size={20} color="#000" />
+                </TouchableOpacity>
+              </View>
+              <ScrollView>
+                {friends.map((friend, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.friendMenuItem}
+                    onPress={() => {
+                      setSelectedFriend(friend);
+                      setIsFriendMenuVisible(false);
+                    }}
+                  >
+                    <ButtonFriend
+                      friendId={friend.id}
+                      onPress={() => console.log('Friend pressed:', friend)}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             </View>
-          )}
-        </View>
-        <AlertSmall
-          isModalVisible={isModalVisible}
-          toggleModal={closeModal}
-          modalContent={
-            <InputAddLocationQuickSave
-              onClose={closeModal}
-              title={title}
-              address={address}
-            />
-          }
-          modalTitle={'Save Location'}
-        />
-        <AlertSmall
-          isModalVisible={isUpdateModalVisible}
-          toggleModal={closeUpdateModal}
-          modalContent={
-            <InputUpdateLocation
-              onClose={closeUpdateModal}
-              id={id}
-              friends={friends}
-              title={title}
-              address={address}
-              notes={notes}
-              latitude={latitude}
-              longitude={longitude}
-            />
-          }
-        />
-        <AlertMicro
-          isModalVisible={isMicroModalVisible}
-          toggleModal={closeMicroModal}
-          modalContent={
-            <>
-              <Text>Remove {title} from your saved locations?</Text>
-              <Button
-                title="yes"
-                onPress={() => handleDeleteLocation(id)}
+          </Modal>
+
+          <AlertSmall
+            isModalVisible={isModalVisible}
+            toggleModal={closeModal}
+            modalContent={
+              <InputUpdateLocation
+                onClose={closeModal}
+                id={id}
+                friends={friends}
+                title={title}
+                address={address}
+                notes={notes}
+                latitude={latitude}
+                longitude={longitude}
               />
-            </>
-          }
-          modalTitle={'Remove location'}
-        />
+            }
+            modalTitle={'Update Location'}
+          />
+          <AlertSmall
+            isModalVisible={isUpdateModalVisible}
+            toggleModal={closeUpdateModal}
+            modalContent={
+              <InputUpdateLocation
+                onClose={closeUpdateModal}
+                id={id}
+                friends={friends}
+                title={title}
+                address={address}
+                notes={notes}
+                latitude={latitude}
+                longitude={longitude}
+              />
+            }
+            modalTitle={'Update Location'}
+          />
+          <AlertMicro
+            isModalVisible={isMicroModalVisible}
+            toggleModal={closeMicroModal}
+            modalContent={
+              <>
+                <Text>Remove {title} from your saved locations?</Text>
+                <Button
+                  title="yes"
+                  onPress={() => handleDeleteLocation(id)}
+                />
+              </>
+            }
+            modalTitle={'Remove location'}
+          />
+        </View>
       </View>
     </TapGestureHandler>
   );
@@ -223,118 +247,82 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: 'white',
-    borderRadius: 0,
+    borderRadius: 20,
     padding: 20,
-    paddingLeft: 10,
-    marginBottom: 0,
-    elevation: 0,
+    marginBottom: 16,
+    elevation: 3,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.0,
-    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
     width: '100%',
-    borderTopWidth: 1.5,
-    borderBottomWidth: 1.5,
-    borderRightWidth: 1.5,
-    borderLeftWidth: 1.5,
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderLeftColor: 'transparent',
-    position: 'relative',
-    marginBottom: 1,
   },
   selected: {
     borderColor: 'hotpink',
-    borderWidth: .5,
-    marginBottom: 0,
+    borderWidth: 2,
   },
-  iconPlaceholderContainer: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    marginRight: 16,
-    width: 'auto',
-  },
-  iconPlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  iconContainer: {
+    position: 'absolute',
+    left: -15,
+    top: 15,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  icon: {
+    padding: 10,
   },
   contentContainer: {
+    marginLeft: 60,
     flex: 1,
   },
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   title: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
-    marginBottom: 10,
-    marginTop: 2,
+    marginBottom: 8,
   },
   iconButtonsContainer: {
     flexDirection: 'row',
   },
+  iconButton: {
+    padding: 6,
+  },
   addressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    marginBottom: 8,
   },
   address: {
-    fontSize: 14,
-    fontWeight: '400',
+    fontSize: 16,
     color: 'black',
-    marginBottom: 10,
-    marginRight: 30,
-  },
-  friendsCount: {
-    fontSize: 12,
-    color: 'black',
-    marginBottom: 2,
-  },
-  friendButtonsContainer: {
-    flexDirection: 'row',
-    marginBottom: 6,
-    marginTop: 6,
-    overflow: 'scroll',
-    marginRight: -100,
   },
   bottomBar: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderTopWidth: 0,
+    justifyContent: 'flex-end',
+    borderTopWidth: 1,
     borderTopColor: '#ccc',
-    paddingTop: 2,
-    marginTop: 2,
-  },
-  iconButton: {
-    padding: 2,
-    marginLeft: 2,
+    paddingTop: 8,
   },
   modalContainer: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: [{ translateX: -100 }, { translateY: -100 }],
-    width: 200,
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   closeButton: {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: 20,
+    right: 20,
+    zIndex: 1,
+  },
+  friendMenuItem: {
     padding: 10,
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ButtonCapsule from './ButtonCapsule';
@@ -7,49 +7,27 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  withRepeat,
-  withTiming,
-  Easing,
 } from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
 
-const CardUpcoming = ({ title, description, thought_capsules_by_category = {}, showIcon, iconColor, showFooter = false }) => {
+const CardUpcoming = ({ title, description, thought_capsules_by_category = {}, showIcon = true, iconColor, showFooter = false }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
 
   const animatedValue = useSharedValue(0);
-  const shimmerOpacity = useSharedValue(1);
-  const gradientOffset = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateY: withSpring(animatedValue.value) }],
-      opacity: shimmerOpacity.value,
     };
   });
 
-  const gradientStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: withTiming(gradientOffset.value, { duration: 2000, easing: Easing.linear }) }],
-    };
-  });
+  const startWavingAnimation = () => {
+    animatedValue.value = Math.random() * 20 - 10; // Adjust the range for waving effect
+  };
 
-  useEffect(() => {
-    shimmerOpacity.value = withRepeat(
-      withTiming(0.5, {
-        duration: 500,
-        easing: Easing.linear,
-      }),
-      -1,
-      true
-    );
-
-    gradientOffset.value = withRepeat(
-      withTiming(200, { duration: 2000, easing: Easing.linear }),
-      -1,
-      false
-    );
-  }, []);
+  const stopWavingAnimation = () => {
+    animatedValue.value = 0;
+  };
 
   const toggleModal = (event) => {
     const { pageX, pageY } = event.nativeEvent;
@@ -62,24 +40,18 @@ const CardUpcoming = ({ title, description, thought_capsules_by_category = {}, s
     return accumulator.concat(categoryCapsules);
   }, []);
 
-  const startWavingAnimation = () => {
-    animatedValue.value = Math.random() * 20 - 10; // Adjust the range for waving effect
-  };
-
-  const stopWavingAnimation = () => {
-    animatedValue.value = 0;
-  };
-
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPressIn={startWavingAnimation}
-        onPressOut={stopWavingAnimation}
-      >
-        <Animated.View style={[styles.iconPlaceholderContainer, animatedStyle]}>
-          <FontAwesome5 name="hand-holding-heart" size={40} color={iconColor} />
-        </Animated.View>
-      </TouchableOpacity>
+      {showIcon && (
+        <TouchableOpacity
+          onPressIn={startWavingAnimation}
+          onPressOut={stopWavingAnimation}
+        >
+          <Animated.View style={[styles.iconContainer, animatedStyle]}>
+            <FontAwesome5 name="hand-holding-heart" size={30} color={iconColor} />
+          </Animated.View>
+        </TouchableOpacity>
+      )}
       <View style={[styles.contentContainer, showIcon && styles.contentWithIcon]}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
@@ -87,13 +59,7 @@ const CardUpcoming = ({ title, description, thought_capsules_by_category = {}, s
         <Text style={styles.description}>{description}</Text>
         
         {capsules.length > 0 ? (
-          <Animated.View style={[styles.capsuleListContainer, gradientStyle]}>
-            <LinearGradient
-              colors={['#ff0000', '#ff9900', '#ffff00', '#00ff00', '#0000ff', '#9900ff', '#ff00ff']}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              style={styles.gradientBackground}
-            />
+          <View style={styles.capsuleListContainer}>
             <FlatList
               data={capsules}
               renderItem={({ item }) => <ButtonCapsule capsule={item} />}
@@ -101,7 +67,7 @@ const CardUpcoming = ({ title, description, thought_capsules_by_category = {}, s
               horizontal
               contentContainerStyle={styles.flatListContent}
             />
-          </Animated.View>
+          </View>
         ) : (
           <Text>No capsules found</Text>
         )}
@@ -109,16 +75,16 @@ const CardUpcoming = ({ title, description, thought_capsules_by_category = {}, s
         {showFooter && (
           <View style={styles.bottomBar}>
             <TouchableOpacity style={styles.iconButton}>
-              <FontAwesome5 name="star" size={14} color="#555" solid={false} />
+              <FontAwesome5 name="star" size={20} color="#555" solid={false} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton}>
-              <FontAwesome5 name="pen-alt" size={14} color="#555" solid={false} />
+              <FontAwesome5 name="pen-alt" size={20} color="#555" solid={false} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton}>
-              <FontAwesome5 name="share-alt" size={14} color="#555" solid={false} />
+              <FontAwesome5 name="share-alt" size={20} color="#555" solid={false} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton} onPress={toggleModal}>
-              <FontAwesome5 name="ellipsis-h" size={14} color="#555" solid={false} />
+              <FontAwesome5 name="ellipsis-h" size={20} color="#555" solid={false} />
             </TouchableOpacity>
           </View>
         )}
@@ -136,24 +102,26 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: 'white',
-    borderRadius: 0,
-    padding: 16, // Increased padding
-    paddingLeft: 10,
-    marginBottom: 0,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 3, // Shadow for Android
+    shadowColor: '#000', // Shadow for iOS
+    shadowOffset: { width: 0, height: 1 }, // Shadow for iOS
+    shadowOpacity: 0.3, // Shadow for iOS
+    shadowRadius: 2, // Shadow for iOS
     width: '100%',
-    borderTopWidth: 0.5,
+    borderTopWidth: 0.5, // Add top border
     borderTopColor: 'black',
   },
-  iconPlaceholderContainer: {
+  iconContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 80, // Adjust as per your design
-    height: 80, // Adjust as per your design
+    width: 60, // Adjust size as per your design
+    height: 60, // Adjust size as per your design
+    borderRadius: 30,
+    backgroundColor: '#ccc',
+    marginRight: 10,
   },
   contentContainer: {
     flex: 1,
@@ -166,17 +134,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
-    marginBottom: 0,
-    padding: 0,
+    marginBottom: 8,
   },
   description: {
     fontSize: 16,
-    paddingTop: 0,
     color: 'black',
-    marginBottom: 2,
+    marginBottom: 8,
   },
   capsuleListContainer: {
     position: 'relative',
@@ -184,23 +150,18 @@ const styles = StyleSheet.create({
     borderRadius: 8, // Add some border radius if desired
     marginTop: 10, // Add some margin if desired
   },
-  gradientBackground: {
-    ...StyleSheet.absoluteFillObject,
-    width: '200%', // Extend the width to allow for the shimmering effect
-  },
   flatListContent: {
     paddingHorizontal: 10, // Adjust as per your design
   },
   bottomBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    borderTopWidth: 0,
+    borderTopWidth: 1,
     borderTopColor: '#ccc',
-    paddingTop: 2,
-    marginTop: 2,
+    paddingTop: 8,
   },
   iconButton: {
-    padding: 2,
+    padding: 6,
   },
 });
 

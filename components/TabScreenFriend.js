@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, Image, StyleSheet, Dimensions, Text, TouchableOpacity, TextInput, Button } from 'react-native';
 import { FontAwesome5 } from 'react-native-vector-icons'; // Import FontAwesome5
 import CardGen from '../components/CardGen';
-import CardStatus from '../components/CardStatus';
-import DaysSince from '../data/FriendDaysSince';
-import NextHello from '../data/FriendDashboardData';
+import CardMoment from '../components/CardMoment';
 import CardToggler from '../components/CardToggler';
 import AlertImage from '../components/AlertImage';
 import { useCapsuleList } from '../context/CapsuleListContext';
@@ -174,13 +172,7 @@ const TabScreenFriend = () => {
     <View style={styles.container}>
       <FlatList
         ListHeaderComponent={(
-          <>
-            <CardStatus
-              title={<NextHello />}
-              rightTitle={<DaysSince />}
-              description=""
-              showFooter={false}
-            />
+          <> 
           </>
         )}
         data={categories}
@@ -194,7 +186,7 @@ const TabScreenFriend = () => {
               capsuleList
                 .filter(capsule => capsule.typedCategory === category)
                 .map((capsule, index) => (
-                  <CardGen
+                  <CardMoment
                     key={index}
                     title={capsule.typedCategory}
                     description={capsule.capsule}

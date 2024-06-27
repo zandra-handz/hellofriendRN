@@ -7,6 +7,9 @@ import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage for storing authentication token
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 import { Flow } from 'react-native-animated-spinkit';
+import ArrowAnimation from '../components/ArrowAnimation'; // Adjust the import path
+import TestLottieAnimation from '../components/TestLottieAnimation'; // Adjust the import path
+
 
 const CustomButton = ({ onPress, title }) => (
     <TouchableOpacity style={styles.buttonContainer} onPress={onPress}>
@@ -116,6 +119,7 @@ const Signin = () => {
 
     return (
         <View style={styles.container}>
+            <TestLottieAnimation />
             <Text style={styles.title}>hellofr::nd</Text>
             <Text style={styles.appDescription}>
                 Stash thoughts and stories to share with a friend for later, get reminders to reach out, and speedily find mutually closeby meetup locations.
