@@ -1,27 +1,77 @@
-import * as React from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import ButtonSignOut from './ButtonSignOut';
+import ButtonSettings from './ButtonSettings';
+import ButtonInfo from './ButtonInfo'; // Import the ButtonInfo component
+import AlertMicro from './AlertMicro';
+import ButtonToActionMode from './ButtonToActionMode';
+import { useNavigationState } from '@react-navigation/native';
 
 export default function HelloFriendFooter() {
-  
+  const navigationState = useNavigationState(state => state);
+  const currentRouteName = navigationState.routes[navigationState.index]?.name;
+  const isOnActionPage = currentRouteName === 'hellofriend';
+
   return (
     <View style={styles.container}>
-      <Text style={styles.footerText}>
-        {' '}
-      </Text>
+      {isOnActionPage ? (
+        <View style={styles.section}>
+          <ButtonSignOut
+            icon="logout"
+            iconOnly={false}
+            label="Logout"
+            confirmationAlert={true}
+            modal={AlertMicro}
+          />
+        </View>
+      ) : (
+        <View style={styles.section}>
+          <ButtonToActionMode iconName="arrow-left" navigateScreen="hellofriend" />
+        </View>
+      )}
+
+      <View style={styles.divider} />
+
+      <ButtonSettings />
+
+      <View style={styles.divider} />
+
+      {/* Replace TouchableOpacity with ButtonInfo */}
+      <ButtonInfo />
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'black',
-    marginBottom: '0px',
-    padding: '10px', 
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    height: 64,
+    marginBottom: 0,
+    padding: 10,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  section: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  divider: {
+    width: 1,
+    backgroundColor: 'gray',
+    marginVertical: 10,
   },
   footerText: {
     fontSize: 16,
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
-    fontStyle: 'bold',
+    fontWeight: 'bold',
+    marginTop: 4,
   },
 });

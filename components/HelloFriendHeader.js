@@ -1,12 +1,19 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 import DynTextFriend from './DynTextFriend';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import DynImageUser from './DynImageUser';
+import CardStatusVertical from './CardStatusVertical';
 
-const HelloFriendHeader = ({ handleSignOutPress, additionalElements }) => {
+const HelloFriendHeader = ({ additionalElements }) => {
   const { selectedFriend } = useSelectedFriend();
+  const navigation = useNavigation(); // Get the navigation object
+
+  const navigateToDefaultActionMode = () => {
+    navigation.navigate('hellofriend'); // Navigate to the Intermediate screen
+  };
 
   return (
     <View style={styles.container}>
@@ -21,9 +28,8 @@ const HelloFriendHeader = ({ handleSignOutPress, additionalElements }) => {
         {!selectedFriend && <DynImageUser />}
       </View>
 
-      <View style={styles.iconContainer}>
-        {/* Adjust icon alignment */}
-        <FontAwesome name="gear" size={28} color="black" onPress={handleSignOutPress} style={styles.icon} />
+      <View style={styles.statusContainer}>
+        <CardStatusVertical showFooter={false} /> 
       </View>
     </View>
   );
@@ -38,6 +44,12 @@ const styles = StyleSheet.create({
     height: 130, // Fixed height for the header
     paddingHorizontal: 8,
     paddingTop: 42,
+  },
+  statusContainer: {  
+    alignItems: 'center', 
+    justifyContent: 'center',
+    width: '50%', 
+    height: '100%',
     
   },
   additionalElementsContainer: {
@@ -49,16 +61,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginLeft: 10, // Ensure alignment with NextHello component
   },
-  iconContainer: {
-    alignItems: 'flex-start', // Align icon to the top
-  },
-  icon: {
-    padding: 0,
-    marginRight: 4, // Adjust as needed for precise positioning
-    marginTop: -10,
-  },
-  additionalElement: {
-  },
+  additionalElement: {},
 });
 
 export default HelloFriendHeader;

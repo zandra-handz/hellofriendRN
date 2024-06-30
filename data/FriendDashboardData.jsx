@@ -13,26 +13,28 @@ const NextHello = () => {
   const firstFriendData = friendDashboardData[0];
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titleBold}>next hello     </Text>
+    <View style={styles.container}> 
+      <Text style={styles.titleBold}>{firstFriendData.future_date_in_words}</Text>
       <TestLottieAnimation />
-      <Text style={styles.title}>      {firstFriendData.future_date_in_words}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'black',
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%', 
-  },
-  title: {
-    fontSize: 13,
+    justifyContent: 'center',
+    width: '100%',
+    marginTop: -50,
+    marginRight: -86,
   },
   titleBold: {
     fontSize: 13,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
+    paddingTop: 10,
+    marginRight: -50, // Adjust spacing between animation and text as needed
   },
 });
 

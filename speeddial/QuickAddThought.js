@@ -161,33 +161,39 @@ const QuickAddThought = () => {
   return (
     <View style={styles.container}>
       <View style={styles.modal}>
-        {isFirstScreen ? (
-          <FirstScreen
-            handleInputChange={handleInputChange}
-            textInput={textInput}
-            placeholderText={placeholderText}
-            textareaRef={textareaRef}
-            handleNextScreen={handleNextScreen}
-          />
-        ) : (
-          <SecondScreen
-            handleCategoryInputChange={handleCategoryInputChange}
-            handleCategoryChange={handleCategoryChange}
-            handleSave={handleSave}
-            handleBack={() => setIsFirstScreen(true)}
-            categoryInput={categoryInput}
-            selectedCategory={selectedCategory}
-            uniqueCategories={uniqueCategories}
-            remainingCategories={remainingCategories}
-            textareaRef={textareaRef}
-            handleDelete={handleDelete}
-            successMessage={successMessage}
-            // Pass userEntryCapsule from the first screen to the second screen
-            userEntryCapsule={userEntryCapsule}
-            // Pass the capsules associated with the selected category
-            capsulesForSelectedCategory={capsuleList.filter(capsule => capsule.typedCategory === selectedCategory)}
-          />
-        )}
+      {selectedFriend ? (
+          <> 
+          {isFirstScreen ? (
+            <FirstScreen
+              handleInputChange={handleInputChange}
+              textInput={textInput}
+              placeholderText={placeholderText}
+              textareaRef={textareaRef}
+              handleNextScreen={handleNextScreen}
+            />
+          ) : (
+            <SecondScreen
+              handleCategoryInputChange={handleCategoryInputChange}
+              handleCategoryChange={handleCategoryChange}
+              handleSave={handleSave}
+              handleBack={() => setIsFirstScreen(true)}
+              categoryInput={categoryInput}
+              selectedCategory={selectedCategory}
+              uniqueCategories={uniqueCategories}
+              remainingCategories={remainingCategories}
+              textareaRef={textareaRef}
+              handleDelete={handleDelete}
+              successMessage={successMessage}
+              // Pass userEntryCapsule from the first screen to the second screen
+              userEntryCapsule={userEntryCapsule}
+              // Pass the capsules associated with the selected category
+              capsulesForSelectedCategory={capsuleList.filter(capsule => capsule.typedCategory === selectedCategory)}
+            />
+          )}
+          </>
+          ) : (
+            <Text style={styles.title}>Please select a friend first</Text>
+          )}
       </View>
     </View>
   );

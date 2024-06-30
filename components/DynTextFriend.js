@@ -20,10 +20,6 @@ const DynTextFriend = ({ maxWidth }) => {
         </Text>
       </TouchableOpacity>
 
-      {/* Ensure CardStatusHeader starts on a new line */}
-      <View style={styles.statusContainer}>
-        <CardStatusHeader showFooter={false} />
-      </View>
 
       <AlertPanelBottom
         visible={showPopup}
@@ -39,16 +35,16 @@ const styles = StyleSheet.create({
     flexDirection: 'column', // Ensure items are stacked vertically
     paddingHorizontal: 2,
     paddingVertical: 10,
+    justifyContents: 'center',
     
   },
   touchable: {
     width: '100%', // Take up full width
   },
   text: {
-    fontFamily: 'Roboto',
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
     color: 'black',
-    fontSize: 24, 
+    fontSize: 32, 
     overflow: 'hidden',
   },
   statusContainer: {

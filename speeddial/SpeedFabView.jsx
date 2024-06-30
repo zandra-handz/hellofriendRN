@@ -176,8 +176,8 @@ const SpeedFabView = () => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    right: 20,
-    bottom: 40,
+    right: 0,
+    bottom: 76,
     alignItems: 'flex-end'
   },
   customButton: {
@@ -186,7 +186,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 26,
     borderRadius: 40,
     borderWidth: 1,
-    borderColor: '#292929',
+    borderColor: '#292929', 
+    right: -10,
   },
   fabButton: {
     width: 72,
@@ -209,7 +210,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    height: '100%'
+    height: '100%',
+   
   },
   buttonText: {
     color: 'white',

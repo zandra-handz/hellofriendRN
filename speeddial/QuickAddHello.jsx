@@ -203,7 +203,10 @@ const handleSave = async () => {
 
   return (
     <ScrollView contentContainerStyle={styles.modalWrapper}> 
-      <View style={styles.modalContentContainer}> 
+      <View style={styles.modalContentContainer}>
+      {selectedFriend ? (
+      <>
+
         <View style={styles.dateContainer}>
           <Text style={styles.label}>Date</Text>
           <TouchableOpacity onPress={handleShowDatePicker} style={styles.dateButton}>
@@ -292,6 +295,10 @@ const handleSave = async () => {
         <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
+      </>
+      ) : (
+          <Text style={styles.title}>Please select a friend first</Text>
+      )}
       </View>
       {successMessage ? (
         <View style={styles.successMessageContainer}>

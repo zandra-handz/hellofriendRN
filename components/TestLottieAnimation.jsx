@@ -15,7 +15,7 @@ const TestLottieAnimation = () => {
     <View style={styles.container}>
       <LottieView
         ref={lottieViewRef}
-        source={require('../assets/anims/arrows.json')}
+        source={require('../assets/anims/heartincircles.json')}
         loop
         autoPlay
         style={styles.lottie}
@@ -26,13 +26,13 @@ const TestLottieAnimation = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row',
+    alignItems: 'center', 
+    
   },
   lottie: {
-    width: 40,
-    height: 40,
+    width: 140,
+    height: 140,
   },
 });
 

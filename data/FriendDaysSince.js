@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'left',
     alignItems: 'left',
-    width: '100%', 
     padding: 0,
     
   },

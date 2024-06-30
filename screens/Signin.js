@@ -119,7 +119,6 @@ const Signin = () => {
 
     return (
         <View style={styles.container}>
-            <TestLottieAnimation />
             <Text style={styles.title}>hellofr::nd</Text>
             <Text style={styles.appDescription}>
                 Stash thoughts and stories to share with a friend for later, get reminders to reach out, and speedily find mutually closeby meetup locations.

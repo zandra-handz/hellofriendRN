@@ -120,3 +120,7 @@ npm install expo-file-system expo-sharing
 
 npm install eslint-plugin-react-hooks --save-dev
 
+// NOT THIS FOR EXPO  npm install react-native-linear-gradient
+
+npx expo install expo-linear-gradient
+

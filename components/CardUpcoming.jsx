@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ButtonCapsule from './ButtonCapsule';
+import ButtonChatCapsule from './ButtonChatCapsule';
 import AlertSmallColored from './AlertSmallColored'; // Adjust the path according to your file structure
 import Animated, {
   useSharedValue,
@@ -62,7 +63,7 @@ const CardUpcoming = ({ title, description, thought_capsules_by_category = {}, s
           <View style={styles.capsuleListContainer}>
             <FlatList
               data={capsules}
-              renderItem={({ item }) => <ButtonCapsule capsule={item} />}
+              renderItem={({ item }) => <ButtonChatCapsule capsule={item} />}
               keyExtractor={(item) => item.id}
               horizontal
               contentContainerStyle={styles.flatListContent}
