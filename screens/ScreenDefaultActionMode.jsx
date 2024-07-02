@@ -7,6 +7,7 @@ import QuickAddImage from '../speeddial/QuickAddImage';
 import QuickAddThought from '../speeddial/QuickAddThought';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
+import ActionPageSettings from '../components/ActionPageSettings';
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -15,10 +16,12 @@ const ScreenDefaultActionMode = ({ navigation }) => {
   const [modal1Visible, setModal1Visible] = useState(false);
   const [modal2Visible, setModal2Visible] = useState(false);
   const [modal3Visible, setModal3Visible] = useState(false);
+  const [modalSettingsVisible, setModalSettingsVisible] = useState(false);
 
   const openModal1 = () => setModal1Visible(true);
   const openModal2 = () => setModal2Visible(true);
   const openModal3 = () => setModal3Visible(true);
+  const openModalSettings = () => setModalSettingsVisible(true);
 
   return (
     <View style={styles.container}>
@@ -37,7 +40,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
       <ModalGen
         modalVisible={modal2Visible}
         setModalVisible={setModal2Visible}
-        headerTitle={selectedFriend ? `Add image for ${selectedFriend.name}` : 'Add hello'}
+        headerTitle={selectedFriend ? `Add image for ${selectedFriend.name}` : 'Add image'}
         headerRightComponent={<FriendSelect />}
         buttons={[
           { text: 'Confirm', onPress: () => console.log('Confirm button pressed!') },
@@ -59,6 +62,17 @@ const ScreenDefaultActionMode = ({ navigation }) => {
         <QuickAddThought onClose={() => setModal3Visible(false)} />
       </ModalGen>
 
+      <ModalGen
+        modalVisible={modalSettingsVisible}
+        setModalVisible={setModalSettingsVisible}
+        headerTitle="Settings"
+        buttons={[
+          { text: 'Close', onPress: () => setModalSettingsVisible(false) }
+        ]}
+      >
+        <ActionPageSettings />
+      </ModalGen>
+
       <TouchableOpacity style={styles.navigationButton} onPress={() => navigation.navigate('Home')}>
         <Ionicons name="calendar" size={24} color="white" />
         <Text style={styles.navigationButtonText}>main app</Text>
@@ -78,7 +92,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           labelContainerMarginHorizontal={4}
           animationMargin={-64}  
           shapePosition="right"
-          shapeSource={require("../assets/shapes/rainbowleaf.png")} // Different shape for "ADD HELLO"
+          shapeSource={require("../assets/shapes/rainbowleaf.png")}
           shapeWidth={240}
           shapeHeight={240}
           shapePositionValue={-104}  
@@ -106,7 +120,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           labelContainerMarginHorizontal={-6}
           animationMargin={20}
           shapePosition="right"
-          shapeSource={require("../assets/shapes/fernbasic.png")} // Different shape for "ADD HELLO"
+          shapeSource={require("../assets/shapes/fernbasic.png")}
           shapeWidth={340}
           shapeHeight={340}
           shapePositionValue={-136}
@@ -117,7 +131,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           showIcon={false}
           fontMargin={3}
           animationSource={require("../assets/anims/goldspinningstar.json")}
-          rightSideAnimation={false} 
+          rightSideAnimation={false}
           labelFontSize={30}
           labelColor="white"
           animationWidth={80}
@@ -133,17 +147,16 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           labelContainerMarginHorizontal={4}
           animationMargin={-64}  
           shapePosition="right"
-          shapeSource={require("../assets/shapes/coffeebeans.png")} // Different shape for "ADD HELLO"
+          shapeSource={require("../assets/shapes/coffeebeans.png")}
           shapeWidth={260}
           shapeHeight={260}
-          shapeSource={require("../assets/shapes/happyskull.png")} // Different shape for "ADD HELLO"
+          shapeSource={require("../assets/shapes/happyskull.png")}
           shapeWidth={200}
           shapeHeight={200}
           shapePositionValue={-70}
-        
         />
         <ButtonLottieAnimation
-          onPress={openModal1} 
+          onPress={openModalSettings}
           label="FRIEND"
           animationSource={require("../assets/anims/goldspinningstar.json")}
           rightSideAnimation={false}
@@ -162,14 +175,12 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           animationHeight={240}
           labelContainerMarginHorizontal={4}
           animationMargin={-68}
-
-
-          shapeSource={require("../assets/shapes/redleafsimple.png")} // Different shape for "ADD HELLO"
+          shapeSource={require("../assets/shapes/redleafsimple.png")}
           shapeWidth={340}
           shapeHeight={340}
           shapePosition="right"
           shapePositionValue={-190}
-          shapeSource={require("../assets/shapes/pinkflower.png")} // Different shape for "ADD HELLO"
+          shapeSource={require("../assets/shapes/pinkflower.png")}
           shapeWidth={440}
           shapeHeight={440}
           shapePositionValue={-310}
@@ -213,3 +224,4 @@ const styles = StyleSheet.create({
 });
 
 export default ScreenDefaultActionMode;
+ 

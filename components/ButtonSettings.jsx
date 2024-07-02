@@ -32,6 +32,7 @@ const ButtonSettings = () => {
 const styles = StyleSheet.create({
   section: {
     flex: 1, // Divide space equally
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },

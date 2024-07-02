@@ -48,6 +48,7 @@ const TabScreen = ({ data, showStatusCard, leftContent, rightContent }) => (
 const styles = StyleSheet.create({
   tabContent: {
     padding: 0,
+    
   },
 });
 

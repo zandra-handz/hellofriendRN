@@ -1,18 +1,22 @@
-import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import ActionPageBase from './ActionPageBase'; // Import ActionPageBase component
+import React, { useState, useEffect } from 'react';
+import { View, Text, Switch } from 'react-native';
+import ActionPageBase from './ActionPageBase';
+import SectionAccessibilitySettings from './SectionAccessibilitySettings';
 import { useAuthUser } from '../context/AuthUserContext';
 
 const ActionPageSettings = ({ visible, onClose }) => {
     const { authUserState } = useAuthUser();
+    const [testSwitchValue, setTestSwitchValue] = useState(false);
 
-    // Dummy components for sections
-    const AccessibilitySettings = () => (
-        <View>
-            <Text>Accessibility settings content goes here</Text>
-        </View>
-    );
+    // Ensure state initialization based on props or context
+    useEffect(() => {
+        // Initialize state based on authUserState or other context
+        setTestSwitchValue(authUserState.someValue || false);
+    }, [authUserState]);
+
+    const handleTestSwitchToggle = () => {
+        setTestSwitchValue(prevState => !prevState);
+    };
 
     const UserSettings = () => (
         <View>
@@ -26,18 +30,17 @@ const ActionPageSettings = ({ visible, onClose }) => {
         </View>
     );
 
-    // Define sections for ActionPageBase
     const sections = [
-        { title: 'Accessibility', content: <AccessibilitySettings /> },
+        { title: 'Accessibility', content: <SectionAccessibilitySettings /> },
         { title: 'User Settings', content: <UserSettings /> },
         { title: 'Friends', content: <FriendsSettings /> },
     ];
 
-    // Footer content for ActionPageBase
-    const footerContent = "© badrainbowz 2024"; // Copyright info
+    const footerContent = "© badrainbowz 2024";
 
     return (
         <ActionPageBase
+            key={visible ? 'modal-open' : 'modal-closed'} // Ensure key changes when modal visibility changes
             visible={visible}
             onClose={onClose}
             sections={sections}

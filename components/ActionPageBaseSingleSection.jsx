@@ -1,44 +1,22 @@
-import React, { useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, PanResponder, Animated } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footerContent }) => {
-    const scrollRef = useRef(null);
-
-    const panResponder = useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onPanResponderMove: (evt, gestureState) => {
-                // Check if the gesture is a downward swipe
-                if (gestureState.dy > 0 && gestureState.dy > 10) {
-                    // Close the modal when swiped down
-                    onClose();
-                }
-            },
-            onPanResponderRelease: () => {},
-        })
-    ).current;
-
+const ActionPageBaseSingleSection = ({ visible, onClose, section, showFooter = false, footerContent }) => {
     return (
         <Modal transparent={true} visible={visible} animationType="slide" presentationStyle="overFullScreen">
-            <View style={styles.overlay} {...panResponder.panHandlers}>
+            <View style={styles.overlay}>
                 <View style={styles.container}>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                         <FontAwesome5 name="times" size={20} color="black" solid={false} />
                     </TouchableOpacity>
-                    <ScrollView
-                        ref={scrollRef}
-                        contentContainerStyle={styles.scrollContainer}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        {sections.map((section, index) => (
-                            <View key={index} style={styles.section}>
-                                <Text style={styles.sectionTitle}>{section.title}</Text>
-                                <View style={styles.titleDivider}></View>
-                                {section.content}
-                                <View style={styles.divider}></View>
-                            </View>
-                        ))}
+                    <ScrollView contentContainerStyle={styles.scrollContainer}>
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>{section.title}</Text>
+                            <View style={styles.titleDivider}></View>
+                            {section.content}
+                            <View style={styles.divider}></View>
+                        </View>
                         <View style={{ paddingBottom: 40 }} />
                     </ScrollView>
                     {showFooter && (
@@ -105,4 +83,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ActionPageBase;
+export default ActionPageBaseSingleSection;

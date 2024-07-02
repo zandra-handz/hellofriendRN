@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     height: 64,
+    width: '100%',
     marginBottom: 0,
     padding: 10,
     shadowColor: '#000000',
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 10,
   },
-  section: {
+  section: { 
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

@@ -166,6 +166,8 @@ export const SearchForMidpointLocations = async (locationData) => {
 };
 
 
+
+
 export const updateUserProfile = async (userId, firstName, lastName, dateOfBirth, gender, address) => {
     try {
       await axios.put(`/users/${userId}/profile/update/`, {

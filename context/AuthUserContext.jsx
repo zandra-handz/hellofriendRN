@@ -6,9 +6,7 @@ const TOKEN_KEY = 'my-jwt';
 
 const AuthUserContext = createContext({});
 
-export const useAuthUser = () => {
-    return useContext(AuthUserContext);
-};
+export const useAuthUser = () => useContext(AuthUserContext);
 
 export const AuthUserProvider = ({ children }) => {
     const [authUserState, setAuthUserState] = useState({
@@ -21,10 +19,10 @@ export const AuthUserProvider = ({ children }) => {
         },
         authenticated: false,
     });
+    const [userAppSettings, setUserAppSettings] = useState(null);
 
     const fetchUser = async (token) => {
         try {
-            // Fetch user data using the token
             const response = await getCurrentUser();
             return response;
         } catch (error) {
@@ -53,9 +51,7 @@ export const AuthUserProvider = ({ children }) => {
         const result = await signin(username, password);
         if (!result.error) {
             await SecureStore.setItemAsync(TOKEN_KEY, result.data.access);
-
             const currentUserData = await fetchUser(result.data.access);
-            console.log("currentUserData: ", currentUserData);
 
             if (currentUserData) {
                 setAuthUserState(prevState => ({
@@ -76,7 +72,7 @@ export const AuthUserProvider = ({ children }) => {
                     },
                     authenticated: true,
                 }));
-                console.log("authuserstate after updating with currentUserData: ", authUserState);
+                setUserAppSettings(currentUserData.settings);
             }
         }
         return result;
@@ -91,8 +87,14 @@ export const AuthUserProvider = ({ children }) => {
                 ...authUserState.credentials,
                 token: null,
             },
+            authenticated: false,
         });
+        setUserAppSettings(null);
         return result;
+    };
+
+    const updateUserSettings = (newSettings) => {
+        setUserAppSettings(newSettings);
     };
 
     const value = {
@@ -100,6 +102,8 @@ export const AuthUserProvider = ({ children }) => {
         onSignin: handleSignin,
         onSignOut: handleSignout,
         authUserState,
+        userAppSettings,
+        updateUserSettings
     };
 
     return <AuthUserContext.Provider value={value}>{children}</AuthUserContext.Provider>;

@@ -88,7 +88,7 @@ const Tabs = () => {
           initialRouteName="Home"
           screenOptions={{
             tabBarActiveTintColor: 'hotpink',
-            tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold', textTransform: 'none' },
+            tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold', textTransform: 'none' },
             tabBarItemStyle: { width: 'auto', alignItems: 'flex-start' }, // Align items to the left
             tabBarIndicatorStyle: { backgroundColor: 'hotpink' },
             tabBarStyle: { backgroundColor: 'white' },
@@ -103,7 +103,7 @@ const Tabs = () => {
           {!selectedFriend && (
             <Tab.Group screenOptions={{ headerStyle: { backgroundColor: 'papayawhip' } }}>
               <Tab.Screen
-                name="Home"
+                name="Up next"
                 component={TabScreens.TabScreen1}
                 options={{ tabBarLabel: 'Up next', tabBarAccessibilityLabel: 'Home' }}
               />
