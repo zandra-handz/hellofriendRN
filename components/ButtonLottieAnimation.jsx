@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
 
 const ButtonLottieAnimation = ({
   onPress,
@@ -32,6 +33,7 @@ const ButtonLottieAnimation = ({
   showIcon = true, // New property to show/hide Lottie icon
 }) => {
   const lottieViewRef = useRef(null);
+  const globalStyles = useGlobalStyle(); // Get the global styles
 
   useEffect(() => {
     if (lottieViewRef.current && animationSource) {
@@ -55,6 +57,20 @@ const ButtonLottieAnimation = ({
         return { left: 0 };
     }
   };
+
+  const adjustFontSize = (fontSize) => {
+    return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
+  };
+
+  const textStyles = (fontSize, color) => ({
+    fontSize: adjustFontSize(fontSize),
+    color,
+    ...(globalStyles.highContrast && {
+      textShadowColor: 'rgba(0, 0, 0, 0.75)',
+      textShadowOffset: { width: 2, height: 2 },
+      textShadowRadius: 1,
+    }),
+  });
 
   return (
     <TouchableOpacity
@@ -98,23 +114,18 @@ const ButtonLottieAnimation = ({
         {rightSideAnimation ? (
           <>
             <Text
-              style={{
-                fontSize: preLabelFontSize,
-                color: preLabelColor,
-                fontFamily: 'Pacifico-Regular',
-                marginRight: fontMargin,
-                
-              }}
+              style={[
+                textStyles(preLabelFontSize, preLabelColor),
+                { fontFamily: 'Pacifico-Regular', marginRight: fontMargin },
+              ]}
             >
               {preLabel}
             </Text>
             <Text
-              style={{
-                fontSize: labelFontSize,
-                color: labelColor,
-                fontFamily: 'Poppins-Light',
-                marginRight: fontMargin,
-              }}
+              style={[
+                textStyles(labelFontSize, labelColor),
+                { fontFamily: 'Poppins-Light', marginRight: fontMargin },
+              ]}
             >
               {label}
             </Text>
@@ -142,23 +153,18 @@ const ButtonLottieAnimation = ({
               />
             )}
             <Text
-              style={{
-                fontSize: preLabelFontSize,
-                color: preLabelColor,
-                fontFamily: 'Pacifico-Regular',
-                marginRight: fontMargin,
-                marginBottom: 15,
-              }}
+              style={[
+                textStyles(preLabelFontSize, preLabelColor),
+                { fontFamily: 'Pacifico-Regular', marginRight: fontMargin, marginBottom: 15 },
+              ]}
             >
               {preLabel}
             </Text>
             <Text
-              style={{
-                fontSize: labelFontSize,
-                color: labelColor,
-                fontFamily: 'Poppins-Regular',
-                marginRight: fontMargin,
-              }}
+              style={[
+                textStyles(labelFontSize, labelColor),
+                { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
+              ]}
             >
               {label}
             </Text>

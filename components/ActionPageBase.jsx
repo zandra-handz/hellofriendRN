@@ -1,9 +1,11 @@
 import React, { useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, PanResponder, Animated } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
 
 const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footerContent }) => {
     const scrollRef = useRef(null);
+    const globalStyles = useGlobalStyle(); // Get the global styles
 
     const panResponder = useRef(
         PanResponder.create({
@@ -19,6 +21,19 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
         })
     ).current;
 
+    const adjustFontSize = (fontSize) => {
+        return globalStyles.fontSize === 20 ? fontSize + 6 : fontSize;
+    };
+
+    const textStyles = (fontSize) => ({
+        fontSize: adjustFontSize(fontSize),
+        ...(globalStyles.highContrast && {
+            textShadowColor: 'rgba(0, 0, 0, 0.75)',
+            textShadowOffset: { width: 2, height: 2 },
+            textShadowRadius: 1,
+        }),
+    });
+
     return (
         <Modal transparent={true} visible={visible} animationType="slide" presentationStyle="overFullScreen">
             <View style={styles.overlay} {...panResponder.panHandlers}>
@@ -33,7 +48,7 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
                     >
                         {sections.map((section, index) => (
                             <View key={index} style={styles.section}>
-                                <Text style={styles.sectionTitle}>{section.title}</Text>
+                                <Text style={[styles.sectionTitle, textStyles(18)]}>{section.title}</Text>
                                 <View style={styles.titleDivider}></View>
                                 {section.content}
                                 <View style={styles.divider}></View>
@@ -43,7 +58,7 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
                     </ScrollView>
                     {showFooter && (
                         <View style={styles.footer}>
-                            <Text style={styles.footerText}>{footerContent}</Text>
+                            <Text style={[styles.footerText, textStyles(16)]}>{footerContent}</Text>
                         </View>
                     )}
                 </View>
@@ -77,7 +92,6 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     sectionTitle: {
-        fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
     },
@@ -100,9 +114,7 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         alignItems: 'center',
     },
-    footerText: {
-        fontSize: 16,
-    },
+    footerText: {},
 });
 
 export default ActionPageBase;

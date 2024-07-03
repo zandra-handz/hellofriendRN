@@ -3,6 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RootNavigator from "./navigators/RootNavigator";
 import { AuthUserProvider } from './context/AuthUserContext';
+import { GlobalStyleProvider } from './context/GlobalStyleContext';
+
 import { useAuthUser } from './context/AuthUserContext';
 import { FriendListProvider } from './context/FriendListContext';
 import { LocationListProvider } from './context/LocationListContext';
@@ -10,6 +12,7 @@ import { UpcomingHelloesProvider } from './context/UpcomingHelloesContext';
 import { CapsuleListProvider } from './context/CapsuleListContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SelectedFriendProvider } from './context/SelectedFriendContext';
+
 import SpeedFabView from './speeddial/SpeedFabView';
 import FriendSelect from './data/FriendSelect';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
@@ -45,17 +48,19 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthUserProvider>
-        <UpcomingHelloesProvider>
-          <FriendListProvider>
-            <SelectedFriendProvider>
-              <LocationListProvider> 
-                <CapsuleListProvider> 
-                  <Layout></Layout>
-                </CapsuleListProvider>
-              </LocationListProvider>
-            </SelectedFriendProvider>
-          </FriendListProvider>
-        </UpcomingHelloesProvider>
+        <GlobalStyleProvider> 
+          <UpcomingHelloesProvider>
+            <FriendListProvider>
+              <SelectedFriendProvider>
+                <LocationListProvider> 
+                  <CapsuleListProvider> 
+                    <Layout></Layout>
+                  </CapsuleListProvider>
+                </LocationListProvider>
+              </SelectedFriendProvider>
+            </FriendListProvider>
+          </UpcomingHelloesProvider>
+        </GlobalStyleProvider>
       </AuthUserProvider>
     </GestureHandlerRootView>
   );

@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import { useAuthUser } from '../context/AuthUserContext';  
-import { useSelectedFriend, friendDashboardData, updateFriendDashboardData } from '../context/SelectedFriendContext';  
-import { useCapsuleList } from '../context/CapsuleListContext'; 
-import { saveThoughtCapsule, deleteThoughtCapsule } from '../api';  
+import React, { useState, useEffect } from 'react';
+import { Text, View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { useAuthUser } from '../context/AuthUserContext';
+import { useSelectedFriend, friendDashboardData } from '../context/SelectedFriendContext';
+import { useCapsuleList } from '../context/CapsuleListContext';
+import { saveThoughtCapsule, deleteThoughtCapsule } from '../api';
 import { Picker } from '@react-native-picker/picker';
-import ContainerEditCapsules from '../components/ContainerEditCapsules'; // Import the new component
+import ContainerEditCapsules from '../components/ContainerEditCapsules';
+import TextAreaMoment from './TextAreaMoment'; // Import the new component
 
 const QuickAddThought = () => {
   const { authUserState } = useAuthUser();
-  const { selectedFriend, friendDashboardData, updateFriendDashboardData  } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData } = useSelectedFriend();
   const { capsuleList, setCapsuleList } = useCapsuleList();
   const [textInput, setTextInput] = useState('');
   const [categoryInput, setCategoryInput] = useState('');
@@ -21,21 +22,6 @@ const QuickAddThought = () => {
   const [remainingCategories, setRemainingCategories] = useState('');
   const [userEntryCapsule, setUserEntryCapsule] = useState('');
   const [isFirstScreen, setIsFirstScreen] = useState(true); // Track which screen the user is on
-  const textareaRef = useRef();
-
-  // Function to calculate unique categories count
-  const calculateUniqueCategoriesCount = (capsuleList) => {
-    const uniqueCategories = [...new Set(capsuleList.map(capsule => capsule.typedCategory))];
-    console.log('Unique categories count:', uniqueCategories.length);
-    return uniqueCategories.length;
-  };
-
-  // Function to calculate remaining categories count
-  const calculateRemainingCategories = (categoryLimit, capsuleList) => {
-    const uniqueCategoriesCount = calculateUniqueCategoriesCount(capsuleList);
-    console.log('Remaining categories count:', categoryLimit - uniqueCategoriesCount);
-    return categoryLimit - uniqueCategoriesCount;
-  };
 
   useEffect(() => {
     // Filter unique categories from the capsuleList
@@ -61,11 +47,10 @@ const QuickAddThought = () => {
   const fetchInitialData = async () => {
     try {
       if (friendDashboardData && friendDashboardData.length > 0) {
-        console.log("friendDashBoard at start of fetchInitialData: ", friendDashboardData);
-        const firstFriendData = friendDashboardData[0]; 
+        const firstFriendData = friendDashboardData[0];
         const categoryLimitResponse = firstFriendData.suggestion_settings.category_limit_formula;
         const categoryActivationsLeft = firstFriendData.category_activations_left;
-        const categoryLimitValue = parseInt(categoryLimitResponse); 
+        const categoryLimitValue = parseInt(categoryLimitResponse);
         setCategoryLimit(categoryLimitValue);
         setRemainingCategories(categoryActivationsLeft);
       }
@@ -92,14 +77,9 @@ const QuickAddThought = () => {
   const handleCategoryChange = (value) => {
     setSelectedCategory(value);
     setCategoryInput('');
-    const textareaElement = textareaRef.current;
-    if (textareaElement) {
-      textareaRef.current.focus();
-    }
   };
 
-  const onSave = async (data) => { 
-    console.log('Data saved:', data);
+  const onSave = async (data) => {
     // Update unique categories after saving a new category
     const updatedCategories = [...uniqueCategories, data.typedCategory];
     setUniqueCategories(updatedCategories);
@@ -134,7 +114,7 @@ const QuickAddThought = () => {
         setCategoryInput('');
         setSelectedCategory('');
         setSuccessMessage('Idea saved successfully!');
-        
+
         // Call the onSave function with the response data
         onSave(response);
       }
@@ -160,15 +140,13 @@ const QuickAddThought = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.modal}>
       {selectedFriend ? (
-          <> 
+        <View style={styles.modal}>
           {isFirstScreen ? (
             <FirstScreen
               handleInputChange={handleInputChange}
               textInput={textInput}
               placeholderText={placeholderText}
-              textareaRef={textareaRef}
               handleNextScreen={handleNextScreen}
             />
           ) : (
@@ -181,20 +159,16 @@ const QuickAddThought = () => {
               selectedCategory={selectedCategory}
               uniqueCategories={uniqueCategories}
               remainingCategories={remainingCategories}
-              textareaRef={textareaRef}
               handleDelete={handleDelete}
               successMessage={successMessage}
-              // Pass userEntryCapsule from the first screen to the second screen
               userEntryCapsule={userEntryCapsule}
-              // Pass the capsules associated with the selected category
               capsulesForSelectedCategory={capsuleList.filter(capsule => capsule.typedCategory === selectedCategory)}
             />
           )}
-          </>
-          ) : (
-            <Text style={styles.title}>Please select a friend first</Text>
-          )}
-      </View>
+        </View>
+      ) : (
+        <Text style={styles.title}>Please select a friend first</Text>
+      )}
     </View>
   );
 };
@@ -203,18 +177,14 @@ const FirstScreen = ({
   handleInputChange,
   textInput,
   placeholderText,
-  textareaRef,
   handleNextScreen,
 }) => (
   <>
-    <Text style={styles.title}></Text>
-    <TextInput
-      style={styles.input}
-      multiline={true}
-      value={textInput}
-      onChangeText={handleInputChange}
-      placeholder={placeholderText}
-      ref={textareaRef}
+    <TextAreaMoment
+      onInputChange={handleInputChange}
+      initialText={textInput}
+      placeholderText={placeholderText}
+      autoFocus={true}
     />
     <TouchableOpacity style={styles.nextButton} onPress={handleNextScreen}>
       <Text style={styles.nextButtonText}>Next</Text>
@@ -232,10 +202,9 @@ const SecondScreen = ({
   uniqueCategories,
   capsulesForSelectedCategory,
   remainingCategories,
-  textareaRef,
   handleDelete,
   successMessage,
-  userEntryCapsule, // Pass the user's text input from the first screen as a prop
+  userEntryCapsule,
 }) => (
   <>
     {/* Display the text entered on the first screen */}
@@ -258,112 +227,107 @@ const SecondScreen = ({
       ))}
     </Picker>
     {/* Display the name of the selected category */}
-    {selectedCategory !== '' && (
-      <Text style={styles.selectedCategory}>{selectedCategory}</Text>
+    {selectedCategory && (
+      <Text style={styles.selectedCategory}>Selected category: {selectedCategory}</Text>
     )}
-    {/* Display the remaining category count */}
-    <Text style={styles.remainingCategories}>
-      Remaining Categories: {remainingCategories}
-    </Text>
-    <ScrollView style={styles.capsulesContainer}>
-      {/* Display the capsules associated with the selected category */}
-      {capsulesForSelectedCategory.map((capsule, index) => (
-        <ContainerEditCapsules key={index} capsuleId={capsule.id} onDelete={() => handleDelete(capsule.id)}>
-          <Text>{capsule.capsule}</Text>
-        </ContainerEditCapsules>
-      ))}
-    </ScrollView>
-    <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-      <Text style={styles.backButtonText}>Back</Text>
-    </TouchableOpacity>
     <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
       <Text style={styles.saveButtonText}>Save</Text>
     </TouchableOpacity>
-    {successMessage !== '' && <Text style={styles.successMessage}>{successMessage}</Text>}
+    <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+      <Text style={styles.backButtonText}>Back</Text>
+    </TouchableOpacity>
+    {successMessage ? (
+      <Text style={styles.successMessage}>{successMessage}</Text>
+    ) : (
+      <ContainerEditCapsules
+        capsules={capsulesForSelectedCategory}
+        remainingCategories={remainingCategories}
+        handleDelete={handleDelete}
+      />
+    )}
   </>
 );
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   modal: {
-    width: '100%', // Take up full width of modal
-    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
   input: {
     backgroundColor: '#ffffff',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
-    width: '100%', // Take up full width of parent container
+    width: '100%',
+    borderWidth: 1,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 18,
+    color: 'black',
   },
   nextButton: {
-    backgroundColor: 'blue',
-    padding: 10,
+    backgroundColor: '#007BFF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 10,
-    width: '100%', // Take up full width of parent container
   },
   nextButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  capsulesContainer: {
-    maxHeight: 200, // Limit the height to ensure scrollability
-    marginBottom: 10,
-  },
-  backButton: {
-    backgroundColor: 'gray',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 10,
-    width: '100%', // Take up full width of parent container
-  },
-  backButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 18,
   },
   saveButton: {
-    backgroundColor: 'blue',
-    padding: 10,
+    backgroundColor: '#28a745',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 10,
-    width: '100%', // Take up full width of parent container
   },
   saveButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 18,
+  },
+  backButton: {
+    backgroundColor: '#dc3545',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  enteredText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  selectedCategory: {
+    marginTop: 10,
+    fontSize: 18,
   },
   successMessage: {
     marginTop: 10,
-    color: 'green',
-  },
-  selectedCategory: {
-    marginBottom: 10,
-    fontWeight: 'bold',
-  },
-  remainingCategories: {
-    marginTop: 10,
-    fontWeight: 'bold',
-  },
-  enteredText: {
-    marginBottom: 10,
-    fontWeight: 'bold',
+    fontSize: 18,
+    color: '#28a745',
   },
 });
 
 export default QuickAddThought;
-

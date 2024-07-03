@@ -165,6 +165,14 @@ export const SearchForMidpointLocations = async (locationData) => {
       }
 };
 
+export const updateUserAccessibilitySettings = async (userId, fieldUpdates) => {
+    try {
+      await axios.patch(`/users/${userId}/settings/update/`, fieldUpdates);
+    } catch (error) {
+      console.error('Error updating user settings:', error);
+      throw error;
+    }
+  };
 
 
 

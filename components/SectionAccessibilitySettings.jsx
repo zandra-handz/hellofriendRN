@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useAuthUser } from '../context/AuthUserContext';
-import { updateUserSettings as apiUpdateUserSettings } from '../api';
+import { updateUserAccessibilitySettings } from '../api';
 import ToggleButton from '../components/ToggleButton';
-import SaveButton from '../components/SaveButton'; // Import the SaveButton component
 
 const SectionAccessibilitySettings = () => {
   const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
@@ -22,15 +21,10 @@ const SectionAccessibilitySettings = () => {
     }
   }, [userAppSettings]);
 
-  const handleSave = async () => {
+  const updateSetting = async (setting) => {
     try {
-      const newSettings = {
-        high_contrast_mode: highContrastMode,
-        large_text: largeText,
-        receive_notifications: receiveNotifications,
-        screen_reader: screenReader
-      };
-      await apiUpdateUserSettings(authUserState.user.id, newSettings);
+      const newSettings = { ...userAppSettings, ...setting };
+      await updateUserAccessibilitySettings(authUserState.user.id, setting);
       updateUserSettings(newSettings);
       console.log('User settings updated successfully');
     } catch (error) {
@@ -39,19 +33,27 @@ const SectionAccessibilitySettings = () => {
   };
 
   const toggleHighContrastMode = () => {
-    setHighContrastMode(!highContrastMode);
+    const newValue = !highContrastMode;
+    setHighContrastMode(newValue);
+    updateSetting({ high_contrast_mode: newValue });
   };
 
   const toggleLargeText = () => {
-    setLargeText(!largeText);
+    const newValue = !largeText;
+    setLargeText(newValue);
+    updateSetting({ large_text: newValue });
   };
 
   const toggleReceiveNotifications = () => {
-    setReceiveNotifications(!receiveNotifications);
+    const newValue = !receiveNotifications;
+    setReceiveNotifications(newValue);
+    updateSetting({ receive_notifications: newValue });
   };
 
   const toggleScreenReader = () => {
-    setScreenReader(!screenReader);
+    const newValue = !screenReader;
+    setScreenReader(newValue);
+    updateSetting({ screen_reader: newValue });
   };
 
   return (
@@ -76,7 +78,6 @@ const SectionAccessibilitySettings = () => {
         <Text style={styles.label}>Screen Reader</Text>
         <ToggleButton value={screenReader} onToggle={toggleScreenReader} />
       </View>
-      <SaveButton onPress={handleSave} />
     </View>
   );
 };
