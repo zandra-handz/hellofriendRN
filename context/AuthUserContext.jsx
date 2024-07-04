@@ -1,3 +1,5 @@
+// AuthUserContext.js
+
 import React, { createContext, useContext, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { signup, signin, signout, getCurrentUser } from '../api';
@@ -72,7 +74,10 @@ export const AuthUserProvider = ({ children }) => {
                     },
                     authenticated: true,
                 }));
-                setUserAppSettings(currentUserData.settings);
+                setUserAppSettings(prevSettings => ({
+                    ...prevSettings,
+                    ...currentUserData.settings, // Merge with existing settings
+                }));
             }
         }
         return result;
@@ -94,7 +99,10 @@ export const AuthUserProvider = ({ children }) => {
     };
 
     const updateUserSettings = (newSettings) => {
-        setUserAppSettings(newSettings);
+        setUserAppSettings(prevSettings => ({
+            ...prevSettings,
+            ...newSettings,
+        }));
     };
 
     const value = {

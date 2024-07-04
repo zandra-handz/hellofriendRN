@@ -120,15 +120,29 @@ const Signin = () => {
             shapeColor="black" // Customize shape color here
             shapeHeight={100}
             shapeWidth={100}
+            accessible={true}
+            accessibilityLabel="App Logo"
+            accessibilityHint="This is the logo of the app"
           />
-          <Text style={styles.appDescription}>
+          <Text
+            style={styles.appDescription}
+            accessible={true}
+            accessibilityLabel="App description"
+            accessibilityHint="Description of the app functionality"
+            allowFontScaling={true}
+          >
             a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
-            <TouchableOpacity onPress={toggleMode}>
+            <TouchableOpacity
+              onPress={toggleMode}
+              accessible={true}
+              accessibilityLabel="Toggle sign in and sign up mode"
+              accessibilityHint="Toggles between sign in and sign up forms"
+            >
               <FontAwesome name="arrow-right" size={16} color="transparent" />
             </TouchableOpacity>
           </Text>
 
-          <View style={styles.form}>
+          <View style={styles.form} accessible={true} accessibilityLabel="Form container">
             {!isSignIn && (
               <TextInput
                 style={[styles.input, isEmailFocused && styles.inputFocused]}
@@ -139,6 +153,10 @@ const Signin = () => {
                 ref={emailInputRef}
                 onFocus={() => setIsEmailFocused(true)}
                 onBlur={() => setIsEmailFocused(false)}
+                accessible={true}
+                accessibilityLabel="Email input"
+                accessibilityHint="Enter your email address"
+                importantForAccessibility="yes"
               />
             )}
             <TextInput
@@ -150,6 +168,10 @@ const Signin = () => {
               ref={usernameInputRef}
               onFocus={() => setIsUsernameFocused(true)}
               onBlur={() => setIsUsernameFocused(false)}
+              accessible={true}
+              accessibilityLabel="Username input"
+              accessibilityHint="Enter your username"
+              importantForAccessibility="yes"
             />
             <TextInput
               style={[styles.input, isPasswordFocused && styles.inputFocused]}
@@ -160,6 +182,10 @@ const Signin = () => {
               ref={passwordInputRef}
               onFocus={() => setIsPasswordFocused(true)}
               onBlur={() => setIsPasswordFocused(false)}
+              accessible={true}
+              accessibilityLabel="Password input"
+              accessibilityHint="Enter your password"
+              importantForAccessibility="yes"
             />
             {!isSignIn && (
               <TextInput
@@ -170,6 +196,10 @@ const Signin = () => {
                 value={verifyPassword}
                 onFocus={() => setIsPasswordFocused(true)}
                 onBlur={() => setIsPasswordFocused(false)}
+                accessible={true}
+                accessibilityLabel="Verify Password input"
+                accessibilityHint="Re-enter your password for verification"
+                importantForAccessibility="yes"
               />
             )}
             {!loading && (
@@ -184,10 +214,28 @@ const Signin = () => {
                   shapePositionValue={-74}
                   shapePositionVerticalValue={-60}
                   fontColor="white"
+                  accessible={true}
+                  accessibilityLabel={isSignIn ? "Sign in button" : "Create account button"}
+                  accessibilityHint="Press to sign in or create an account"
                 />
-                <Text style={styles.toggleButton} onPress={toggleMode}>{isSignIn ? "Create account" : "Go back to sign in"}</Text>
+                <Text
+                  style={styles.toggleButton}
+                  onPress={toggleMode}
+                  accessible={true}
+                  accessibilityLabel="Toggle button"
+                  accessibilityHint="Press to toggle between sign in and create account"
+                >
+                  {isSignIn ? "Create account" : "Go back to sign in"}
+                </Text>
                 {signUpSuccess && (
-                  <Text style={styles.successMessage}>Sign up successful! Please log in.</Text>
+                  <Text
+                    style={styles.successMessage}
+                    accessible={true}
+                    accessibilityLabel="Sign up success message"
+                    accessibilityHint="Message indicating sign up was successful"
+                  >
+                    Sign up successful! Please log in.
+                  </Text>
                 )}
               </>
             )}

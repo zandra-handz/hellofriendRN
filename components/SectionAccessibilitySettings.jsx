@@ -4,20 +4,22 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useAuthUser } from '../context/AuthUserContext';
 import { updateUserAccessibilitySettings } from '../api';
 import ToggleButton from '../components/ToggleButton';
+import AlertMicro from '../components/AlertMicro'; // Assuming AlertMicro component is located here
 
 const SectionAccessibilitySettings = () => {
   const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
   const [highContrastMode, setHighContrastMode] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [receiveNotifications, setReceiveNotifications] = useState(false);
-  const [screenReader, setScreenReader] = useState(false);
+  const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false); // Local state for screen reader
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     if (userAppSettings) {
       setHighContrastMode(userAppSettings.high_contrast_mode);
       setLargeText(userAppSettings.large_text);
       setReceiveNotifications(userAppSettings.receive_notifications);
-      setScreenReader(userAppSettings.screen_reader);
+      setIsScreenReaderEnabled(userAppSettings.screen_reader); // Initialize local state with screen reader status
     }
   }, [userAppSettings]);
 
@@ -50,10 +52,27 @@ const SectionAccessibilitySettings = () => {
     updateSetting({ receive_notifications: newValue });
   };
 
-  const toggleScreenReader = () => {
-    const newValue = !screenReader;
-    setScreenReader(newValue);
-    updateSetting({ screen_reader: newValue });
+  const toggleScreenReader = async () => {
+    if (!AccessibilityInfo.isScreenReaderEnabled()) {
+      setShowAlert(true);
+      return;
+    }
+
+    const newValue = !isScreenReaderEnabled; // Toggle local state
+    setIsScreenReaderEnabled(newValue); // Update local state immediately
+
+    try {
+      // Update backend setting
+      await updateUserAccessibilitySettings(authUserState.user.id, { screen_reader: newValue });
+
+      // Update user settings context if needed
+      const updatedSettings = { ...userAppSettings, screen_reader: newValue };
+      updateUserSettings(updatedSettings);
+
+      console.log(`Screen reader ${newValue ? 'enabled' : 'disabled'} successfully`);
+    } catch (error) {
+      console.error('Error toggling screen reader:', error);
+    }
   };
 
   return (
@@ -76,8 +95,20 @@ const SectionAccessibilitySettings = () => {
       <View style={styles.row}>
         <FontAwesome5 name="volume-up" size={20} color="black" style={styles.icon} />
         <Text style={styles.label}>Screen Reader</Text>
-        <ToggleButton value={screenReader} onToggle={toggleScreenReader} />
+        <ToggleButton value={isScreenReaderEnabled} onToggle={toggleScreenReader} />
       </View>
+      
+      {/* Alert message component */}
+      <AlertMicro
+        isModalVisible={showAlert}
+        toggleModal={() => setShowAlert(false)}
+        modalContent={
+          <Text>
+            Please enable the screen reader in your device settings to use this feature.
+          </Text>
+        }
+        modalTitle="Screen Reader Required"
+      />
     </View>
   );
 };
