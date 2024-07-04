@@ -1,22 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Switch } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
 import ActionPageBase from './ActionPageBase';
 import SectionAccessibilitySettings from './SectionAccessibilitySettings';
+import { AccessibilityInfo } from 'react-native';
 import { useAuthUser } from '../context/AuthUserContext';
 
 const ActionPageSettings = ({ visible, onClose }) => {
     const { authUserState } = useAuthUser();
-    const [testSwitchValue, setTestSwitchValue] = useState(false);
-
-    // Ensure state initialization based on props or context
-    useEffect(() => {
-        // Initialize state based on authUserState or other context
-        setTestSwitchValue(authUserState.someValue || false);
-    }, [authUserState]);
-
-    const handleTestSwitchToggle = () => {
-        setTestSwitchValue(prevState => !prevState);
-    };
 
     const UserSettings = () => (
         <View>
@@ -37,6 +27,15 @@ const ActionPageSettings = ({ visible, onClose }) => {
     ];
 
     const footerContent = "© badrainbowz 2024";
+
+    useEffect(() => {
+        const handleAccessibilityAnnouncement = () => {
+            AccessibilityInfo.announceForAccessibility(visible ? 'Settings modal opened.' : 'Settings modal closed.');
+        };
+
+        // Announce accessibility state change when modal visibility changes
+        handleAccessibilityAnnouncement();
+    }, [visible]);
 
     return (
         <ActionPageBase

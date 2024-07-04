@@ -1,5 +1,3 @@
-// GlobalStyleContext.js
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext';
 import { updateUserAccessibilitySettings } from '../api';
@@ -36,14 +34,13 @@ export const GlobalStyleProvider = ({ children }) => {
             await updateUserAccessibilitySettings(authUserState.user.id, updates);
             updateUserSettings({
                 ...userAppSettings,
-                ...updates, // Merge updates with existing settings
+                ...updates, 
             });
         } catch (error) {
             console.error('Error updating user settings:', error);
         }
     };
 
-    // Listener for screen reader changes
     useEffect(() => {
         if (!authUserState.authenticated) {
             return;
@@ -56,8 +53,6 @@ export const GlobalStyleProvider = ({ children }) => {
                     ...prevStyles,
                     screenReader: isActive,
                 }));
-
-                // Update backend with initial screen reader status
                 if (authUserState.user) {
                     await updateUserAccessibility({ screen_reader: isActive });
                 }

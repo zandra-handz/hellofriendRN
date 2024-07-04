@@ -28,6 +28,7 @@ const TabScreen = ({ data, showStatusCard, leftContent, rightContent }) => (
         rightTitle={rightContent}
         description=""
         showFooter={false}
+        accessibilityLabel={`Status Card: ${leftContent}`}
       />
     )}
     data={data}
@@ -38,17 +39,19 @@ const TabScreen = ({ data, showStatusCard, leftContent, rightContent }) => (
         description={item.description}
         showIcon={true}
         iconColor={getGradientColor(index, data.length)}
+        accessibilityLabel={`Item ${index + 1}: ${item.title}`}
       />
     )}
     keyExtractor={item => item.id.toString()}
     contentContainerStyle={styles.tabContent}
+    accessibilityRole="list"
+    keyboardShouldPersistTaps="handled"
   />
 );
 
 const styles = StyleSheet.create({
   tabContent: {
     padding: 0,
-    
   },
 });
 
