@@ -50,7 +50,6 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
                         accessible={true}
                         accessibilityRole="adjustable"
                         accessibilityLabel="Modal Content"
-                       
                         importantForAccessibility="yes"
                     >
                         {sections.map((section, index) => (

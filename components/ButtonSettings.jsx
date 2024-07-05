@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Import the icons
-import ActionPageSettings from './ActionPageSettings'; // Import the ActionPageSettings component
+import ActionPageBase from './ActionPageBase'; // Import ActionPageBase
+import SectionAccessibilitySettings from './SectionAccessibilitySettings'; // Import SectionAccessibilitySettings
+import { useAuthUser } from '../context/AuthUserContext'; // Import useAuthUser hook
 
 const ButtonSettings = () => {
   const [isModalVisible, setModalVisible] = React.useState(false);
@@ -10,6 +12,34 @@ const ButtonSettings = () => {
     setModalVisible(!isModalVisible);
   };
 
+  const { authUserState } = useAuthUser(); // Get authUserState from context
+
+  React.useEffect(() => {
+    if (isModalVisible) {
+      AccessibilityInfo.announceForAccessibility('Settings opened'); // Announce to screen reader
+    }
+  }, [isModalVisible]);
+
+  const UserSettings = () => (
+    <View>
+      <Text>User settings content goes here</Text>
+    </View>
+  );
+
+  const FriendsSettings = () => (
+    <View>
+      <Text>Friends settings content goes here</Text>
+    </View>
+  );
+
+  const sections = [
+    { title: 'Accessibility', content: <SectionAccessibilitySettings /> },
+    { title: 'User Settings', content: <UserSettings /> },
+    { title: 'Friends', content: <FriendsSettings /> },
+  ];
+
+  const footerContent = "© badrainbowz 2024";
+
   return (
     <>
       <TouchableOpacity style={styles.section} onPress={toggleModal}>
@@ -17,14 +47,13 @@ const ButtonSettings = () => {
         <Text style={styles.footerText}>Settings</Text>
       </TouchableOpacity>
 
-      <Modal
+      <ActionPageBase
         visible={isModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={toggleModal}
-      >
-        <ActionPageSettings onClose={toggleModal} />
-      </Modal>
+        onClose={toggleModal}
+        sections={sections}
+        showFooter={true}
+        footerContent={footerContent}
+      />
     </>
   );
 };

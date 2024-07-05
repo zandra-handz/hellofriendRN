@@ -18,6 +18,7 @@ const ButtonInfo = () => {
       </TouchableOpacity>
 
       <ActionPageInfo visible={isModalVisible} onClose={toggleModal} />
+    
     </>
   );
 };

@@ -126,4 +126,6 @@ npx expo install expo-linear-gradient
 
 npm install react-native-switch --save
 
+npm install react-native-modal
+
 
