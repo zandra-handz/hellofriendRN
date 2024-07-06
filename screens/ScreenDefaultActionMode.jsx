@@ -7,7 +7,9 @@ import QuickAddImage from '../speeddial/QuickAddImage';
 import QuickAddThought from '../speeddial/QuickAddThought';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
+import ButtonLottieAnimationSatellites from '../components/ButtonLottieAnimationSatellites'; // Make sure to import the correct component
 import ActionPageSettings from '../components/ActionPageSettings';
+import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; // Import the new component
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -79,8 +81,10 @@ const ScreenDefaultActionMode = ({ navigation }) => {
       </TouchableOpacity>
 
       <View style={styles.buttonContainer}>
+        <ActionPageUpcomingButton/>
+        
         <ButtonLottieAnimation
-          onPress={openModal3} 
+          onPress={openModal3}
           label="MOMENT"
           fontMargin={3}
           animationSource={require("../assets/anims/heartinglobe.json")}
@@ -90,16 +94,16 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           animationWidth={234}
           animationHeight={234}
           labelContainerMarginHorizontal={4}
-          animationMargin={-64}  
+          animationMargin={-64}
           shapePosition="right"
           shapeSource={require("../assets/shapes/rainbowleaf.png")}
           shapeWidth={240}
           shapeHeight={240}
-          shapePositionValue={-104}  
+          shapePositionValue={-104}
           showIcon={false}
         />
         <ButtonLottieAnimation
-          onPress={openModal2} 
+          onPress={openModal2}
           label="IMAGE"
           showIcon={false}
           fontMargin={3}
@@ -126,7 +130,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           shapePositionValue={-136}
         />
         <ButtonLottieAnimation
-          onPress={openModal1} 
+          onPress={openModal1}
           label="HELLO"
           showIcon={false}
           fontMargin={3}
@@ -145,7 +149,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           animationWidth={234}
           animationHeight={234}
           labelContainerMarginHorizontal={4}
-          animationMargin={-64}  
+          animationMargin={-64}
           shapePosition="right"
           shapeSource={require("../assets/shapes/coffeebeans.png")}
           shapeWidth={260}
@@ -206,6 +210,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 10000,
   },
   navigationButtonText: {
     color: 'white',
@@ -214,14 +219,13 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   buttonContainer: {
-    height: '80%',
+    height: '90%',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     marginHorizontal: 10,
-    paddingBottom: 10,
-    paddingTop: 20,
+    paddingBottom: 6, 
+    paddingTop: 0,
   },
 });
 
 export default ScreenDefaultActionMode;
- 

@@ -42,7 +42,13 @@ const Logo = ({
         ]}
         resizeMode="contain"
       />
-      <Text style={[styles.title, { color: fontColor }]}>hellofr::nd</Text>
+      <View style={styles.titleContainer}>
+        <Text style={[styles.titleOutline, styles.titleOutlineTopLeft]}>hellofr::nd</Text>
+        <Text style={[styles.titleOutline, styles.titleOutlineTopRight]}>hellofr::nd</Text>
+        <Text style={[styles.titleOutline, styles.titleOutlineBottomLeft]}>hellofr::nd</Text>
+        <Text style={[styles.titleOutline, styles.titleOutlineBottomRight]}>hellofr::nd</Text>
+        <Text style={[styles.title, { color: fontColor }]}>hellofr::nd</Text>
+      </View>
     </View>
   );
 };
@@ -56,11 +62,36 @@ const styles = StyleSheet.create({
   shape: {
     position: 'absolute',
   },
+  titleContainer: {
+    position: 'relative',
+  },
   title: {
     fontSize: 62,
     fontFamily: 'Poppins-Bold',
     textAlign: 'center',
     backgroundColor: 'transparent', // Transparent background
+  },
+  titleOutline: {
+    position: 'absolute',
+    fontSize: 62,
+    fontFamily: 'Poppins-Bold',
+    color: 'white',
+  },
+  titleOutlineTopLeft: {
+    left: -1,
+    top: -1,
+  },
+  titleOutlineTopRight: {
+    right: -1,
+    top: -1,
+  },
+  titleOutlineBottomLeft: {
+    left: -1,
+    bottom: -1,
+  },
+  titleOutlineBottomRight: {
+    right: -1,
+    bottom: -1,
   },
 });
 

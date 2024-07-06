@@ -1,29 +1,30 @@
+// App.js
+
 import React, { useEffect } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import RootNavigator from "./navigators/RootNavigator";
-import { AuthUserProvider } from './context/AuthUserContext';
+import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
 import { GlobalStyleProvider } from './context/GlobalStyleContext';
-
-import { useAuthUser } from './context/AuthUserContext';
 import { FriendListProvider } from './context/FriendListContext';
 import { LocationListProvider } from './context/LocationListContext';
 import { UpcomingHelloesProvider } from './context/UpcomingHelloesContext';
 import { CapsuleListProvider } from './context/CapsuleListContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SelectedFriendProvider } from './context/SelectedFriendContext';
+import * as Font from 'expo-font'; // Import expo-font
 
+// Import screens and components
 import SpeedFabView from './speeddial/SpeedFabView';
 import FriendSelect from './data/FriendSelect';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
 import HelloFriendHeader from './components/HelloFriendHeader';
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
 import ScreenDefaultActionMode from './screens/ScreenDefaultActionMode';
-
-import Tabs from './components/Tabs'; 
+import Tabs from './components/Tabs';
 import Signin from './screens/Signin';
-import * as Font from 'expo-font'; // Import expo-font
+import ScreenFriendFocus from './screens/ScreenFriendFocus'; // Import the new screen component
+import { View, TextInput, Button, StyleSheet } from 'react-native';
 
+// Load fonts asynchronously
 async function loadFonts() {
   await Font.loadAsync({
     'Poppins-Light': require('./assets/fonts/Poppins-Light.ttf'),
@@ -34,27 +35,25 @@ async function loadFonts() {
 
 const Stack = createNativeStackNavigator();
 
-
-// App.js is already setup by wrapping NavigationContainer around Root Navigator
+// App component
 export default function App() {
-
   const { onSignOut } = useAuthUser();
 
+  // Load fonts when component mounts
   useEffect(() => {
-    loadFonts(); // Load fonts when component mounts
+    loadFonts();
   }, []);
 
-  
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthUserProvider>
-        <GlobalStyleProvider> 
+        <GlobalStyleProvider>
           <UpcomingHelloesProvider>
             <FriendListProvider>
               <SelectedFriendProvider>
-                <LocationListProvider> 
-                  <CapsuleListProvider> 
-                    <Layout></Layout>
+                <LocationListProvider>
+                  <CapsuleListProvider>
+                    <Layout />
                   </CapsuleListProvider>
                 </LocationListProvider>
               </SelectedFriendProvider>
@@ -66,8 +65,7 @@ export default function App() {
   );
 }
 
- 
-
+// Layout component to manage navigation and screens
 export const Layout = () => {
   const { authUserState, onSignOut } = useAuthUser();
 
@@ -78,7 +76,29 @@ export const Layout = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false, // Hide header by default
+          cardStyle: { backgroundColor: 'transparent' }, // Set background to transparent for custom transition
+          cardStyleInterpolator: ({ current: { progress } }) => ({
+            cardStyle: {
+              opacity: progress.interpolate({
+                inputRange: [0, 0.5, 1],
+                outputRange: [0, 0.7, 1],
+              }),
+              transform: [
+                {
+                  scale: progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.8, 1],
+                    extrapolate: 'clamp',
+                  }),
+                },
+              ],
+            },
+          }),
+        }}
+      >
         {authUserState?.authenticated && authUserState?.user ? (
           authUserState.user.app_setup_complete ? (
             <>
@@ -86,7 +106,7 @@ export const Layout = () => {
                 name="hellofriend"
                 component={ScreenDefaultActionMode}
                 options={{
-                  headerShown: true, // Optionally, you can show/hide the header for the intermediate screen
+                  headerShown: true,
                 }}
               />
               <Stack.Screen
@@ -98,10 +118,19 @@ export const Layout = () => {
                       {...props}
                       handleSignOutPress={handleSignOutPress}
                       additionalElements={[
-                        <FriendSelect />
+                        <FriendSelect key="friendSelect" />,
                       ]}
                     />
                   ),
+                }}
+              />
+              {/* New screen added for ScreenFriendFocus */}
+              <Stack.Screen
+                name="FriendFocus"
+                component={ScreenFriendFocus}
+                options={{
+                  headerShown: true,
+                  title: 'View friend', // Adjust the title as needed
                 }}
               />
             </>
@@ -110,7 +139,7 @@ export const Layout = () => {
               name="Setup"
               component={ScreenOnboardingFlow}
               options={{
-                headerShown: false, // Optionally, you can hide the header for the setup screen
+                headerShown: false,
               }}
             />
           )

@@ -77,7 +77,7 @@ const ButtonLottieAnimation = ({
       style={{
         flexDirection: 'row',
         width: '100%',
-        height: 140,
+        height: 134,
         padding: 10,
         marginBottom: 2,
         borderRadius: 30,

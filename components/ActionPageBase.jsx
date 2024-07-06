@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, AccessibilityInfo } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, AccessibilityInfo, PanResponder } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useAuthUser } from '../context/AuthUserContext';
@@ -7,6 +7,24 @@ import { useAuthUser } from '../context/AuthUserContext';
 const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footerContent }) => {
     const globalStyles = useGlobalStyle();
     const { userAppSettings } = useAuthUser();
+
+    const panResponder = useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onPanResponderMove: (evt, gestureState) => {
+                // Detect a significant downward swipe
+                if (gestureState.dy > 50) { // Customize the threshold as needed
+                    onClose();
+                }
+            },
+            onPanResponderRelease: (evt, gestureState) => {
+                // Final check when the touch is released
+                if (gestureState.dy > 50) { // Customize the threshold as needed
+                    onClose();
+                }
+            },
+        })
+    ).current;
 
     useEffect(() => {
         const handleAccessibilityAnnouncement = () => {
@@ -33,7 +51,7 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
 
     return (
         <Modal transparent={true} visible={visible} animationType="slide" presentationStyle="overFullScreen">
-            <View style={styles.overlay}>
+            <View style={styles.overlay} {...panResponder.panHandlers}>
                 <View style={styles.container}>
                     <TouchableOpacity
                         accessible={true}
