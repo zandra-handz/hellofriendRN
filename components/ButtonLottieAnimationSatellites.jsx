@@ -1,7 +1,5 @@
-// ButtonLottieAnimationSatellites.js
-
-import React, { useRef, useEffect } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Image, View, Dimensions } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { TouchableOpacity, Text, StyleSheet, Image, View, Dimensions, Animated, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,42 +7,47 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ButtonLottieAnimationSatellites = ({
   onPress,
-  headerText = 'Up next:',
+  headerText = 'UP NEXT',
   label,
   additionalText = 'N/A',
   animationSource,
   rightSideAnimation = false,
   preLabelFontSize = 18,
   preLabelColor = 'white',
-  labelFontSize = 20,
+  labelFontSize = 22,
   labelColor = 'black',
   additionalTextFontSize = 16,
-  additionalTextColor = 'gray',
+  additionalTextColor = 'white',
   backgroundColor = 'transparent',
   animationWidth = 40,
   animationHeight = 40,
-  fontMargin = 10,
-  animationMargin = 0,
   showGradient = true,
-  darkColor = '#C0C0C0',
-  lightColor = '#D3D3D3',
+  darkColor = 'black',
+  lightColor = '#C0C0C0',
   direction = { x: 1, y: 0 },
+  showIcon = false,
   showShape = true,
   shapePosition = 'left',
   shapeSource = require('../assets/shapes/greenleaf.png'),
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134,
-  labelContainerMarginHorizontal = 0,
-  showIcon = true,
   satellites = false,
   satelliteSectionPosition = 'right',
   satelliteCount = 3,
+  satellitesOrientation = 'horizontal',
+  satelliteHeight = 40,
+  satelliteHellos = [],
+  additionalPages = false, // New prop for additional pages
+  additionalSatellites = [], // New prop for additional satellites
 }) => {
   const lottieViewRef = useRef(null);
   const globalStyles = useGlobalStyle();
   const { width } = Dimensions.get('window');
   const navigation = useNavigation();
+  const [showEmptyContainer, setShowEmptyContainer] = useState(false);
+  const [mainViewVisible, setMainViewVisible] = useState(true);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     if (lottieViewRef.current && animationSource) {
@@ -87,13 +90,31 @@ const ButtonLottieAnimationSatellites = ({
 
   const renderSatellites = () => {
     const satellitesArray = [];
-    for (let i = 0; i < satelliteCount; i++) {
-      satellitesArray.push(
-        <TouchableOpacity key={i} style={[styles.satelliteButton, { width: satelliteWidth, height: satelliteWidth }]}>
-          <Text style={styles.satelliteText}>{i + 1}</Text>
-        </TouchableOpacity>
-      );
+
+    // Render satellite hellos
+    if (satelliteHellos && satelliteHellos.length > 0) {
+      const numSatellites = Math.min(satelliteCount, satelliteHellos.length);
+
+      for (let i = 0; i < numSatellites; i++) {
+        satellitesArray.push(
+          <TouchableOpacity
+            key={i}
+            style={[
+              styles.satelliteButton,
+              { width: satelliteWidth, height: satellitesOrientation === 'horizontal' ? satelliteHeight : '25%' },
+            ]}
+            onPress={() => {
+              // Log the friend_name for corresponding upcoming hello
+              const friendName = satelliteHellos[i].friend_name;
+              console.log(`Friend Name: ${friendName}`);
+            }}
+          >
+            <Text style={styles.satelliteText}>{satelliteHellos[i].friend_name}</Text>
+          </TouchableOpacity>
+        );
+      }
     }
+
     return satellitesArray;
   };
 
@@ -102,112 +123,148 @@ const ButtonLottieAnimationSatellites = ({
     navigation.navigate('FriendFocus');
   };
 
+ 
+
+  const renderAdditionalSatellites = () => (
+    <FlatList
+      data={additionalSatellites}
+      horizontal
+      keyExtractor={(item, index) => `satellite-${index}`}
+      renderItem={({ item }) => (
+        <TouchableOpacity
+          style={[
+            styles.additionalSatelliteButton,
+            { width: satelliteWidth },
+          
+          ]}
+          onPress={() => {
+            // Handle onPress for additional satellites
+          }}
+        >
+          <Text style={styles.satelliteText}>{item.friend_name}</Text>
+        </TouchableOpacity>
+      )}
+    />
+  );
+
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row' }}>
-        <View style={[styles.mainButtonContainer, { width: satellites ? '66.66%' : '100%' }]}>
-          <TouchableOpacity
-            style={{
-              flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
-              width: '100%',
-              height: 126,
-              padding: 10,
-              borderRadius: 30,
-              alignItems: 'center',
-              overflow: 'hidden',
-              backgroundColor: showGradient ? 'transparent' : backgroundColor,
-            }}
-            onPress={handlePress}
-          >
-            {showGradient && (
-              <LinearGradient
-                colors={[darkColor, lightColor]}
-                start={{ x: 0, y: 0 }}
-                end={direction}
-                style={StyleSheet.absoluteFillObject}
-              />
-            )}
-            {showShape && (
-              <Image
-                source={shapeSource}
+      {!additionalPages && mainViewVisible && (
+        <Animated.View style={{ opacity: fadeAnim }}>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={[styles.mainButtonContainer, { width: satellites ? '76.66%' : '100%' }]}>
+              <TouchableOpacity
                 style={{
-                  position: 'absolute',
-                  width: shapeWidth,
-                  height: shapeHeight,
-                  ...getShapeStyle(),
+                  flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
+                  width: '100%',
+                  height: 126,
+                  padding: 10,
+                  borderRadius: 30,
+                  alignItems: 'center',
+                  overflow: 'hidden',
+                  backgroundColor: showGradient ? 'transparent' : backgroundColor,
                 }}
-                resizeMode="contain"
-              />
-            )}
-            <Text
-              style={[
-                textStyles(preLabelFontSize, preLabelColor),
-                { fontFamily: 'Pacifico-Regular', marginBottom: fontMargin, position: 'absolute', top: 5 },
-              ]}
-            >
-              {headerText}
-            </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              {rightSideAnimation ? (
-                <>
+                onPress={handlePress}
+              >
+                {showGradient && (
+                  <LinearGradient
+                    colors={[darkColor, lightColor]}
+                    start={{ x: 0, y: 0 }}
+                    end={direction}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                )}
+                {showShape && (
+                  <Image
+                    source={shapeSource}
+                    style={{
+                      position: 'absolute',
+                      width: shapeWidth,
+                      height: shapeHeight,
+                      ...getShapeStyle(),
+                    }}
+                    resizeMode="contain"
+                  />
+                )}
+                <View style={{ flexDirection: 'column', paddingHorizontal: 5, paddingBottom: 8, paddingTop: 8, flex: 1 }}>
                   <Text
                     style={[
-                      textStyles(labelFontSize, labelColor),
-                      { fontFamily: 'Poppins-Light', marginLeft: 10 },
+                      textStyles(preLabelFontSize, preLabelColor),
+                      { fontFamily: 'Poppins-Regular', marginBottom: -6 },
                     ]}
                   >
-                    {label}
+                    {headerText}
                   </Text>
-                  {showIcon && animationSource && (
-                    <LottieView
-                      ref={lottieViewRef}
-                      source={animationSource}
-                      loop
-                      autoPlay
-                      style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
-                      onError={(error) => console.error('Error rendering animation:', error)}
-                    />
-                  )}
-                </>
-              ) : (
-                <>
-                  {showIcon && animationSource && (
-                    <LottieView
-                      ref={lottieViewRef}
-                      source={animationSource}
-                      loop
-                      autoPlay
-                      style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
-                      onError={(error) => console.error('Error rendering animation:', error)}
-                    />
-                  )}
+                  <View style={{ flexDirection: 'row' }}>
+                    {rightSideAnimation ? (
+                      <>
+                        <Text
+                          style={[
+                            textStyles(labelFontSize, labelColor),
+                            { fontFamily: 'Poppins-Light' },
+                          ]}
+                        >
+                          {label}
+                        </Text>
+                        {showIcon && animationSource && (
+                          <LottieView
+                            ref={lottieViewRef}
+                            source={animationSource}
+                            loop
+                            autoPlay
+                            style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
+                            onError={(error) => console.error('Error rendering animation:', error)}
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {showIcon && animationSource && (
+                          <LottieView
+                            ref={lottieViewRef}
+                            source={animationSource}
+                            loop
+                            autoPlay
+                            style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
+                            onError={(error) => console.error('Error rendering animation:', error)}
+                          />
+                        )}
+                        <Text
+                          style={[
+                            textStyles(labelFontSize, labelColor),
+                            { fontFamily: 'Poppins-Regular' },
+                          ]}
+                        >
+                          {label}
+                        </Text>
+                      </>
+                    )}
+                  </View>
                   <Text
                     style={[
-                      textStyles(labelFontSize, labelColor),
-                      { fontFamily: 'Poppins-Regular', marginRight: 10 },
+                      textStyles(additionalTextFontSize, additionalTextColor),
+                      { textAlign: 'left', marginBottom: 10 },
                     ]}
                   >
-                    {label}
+                    {additionalText}
                   </Text>
-                </>
-              )}
+                </View>
+              </TouchableOpacity>
             </View>
-            <Text
-              style={[
-                textStyles(additionalTextFontSize, additionalTextColor),
-                { marginTop: 5, textAlign: 'center', paddingHorizontal: 20 }, // Ensure text wraps and takes full width
-              ]}
-            >
-              {additionalText}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {satellites && (
-          <View style={styles.satelliteSection}>
-            {renderSatellites()}
+            {satellites && (
+              <View style={[styles.satelliteSection, { flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+                {renderSatellites()}
+              </View>
+            )}
           </View>
-        )}
-      </View>
+        </Animated.View>
+      )}
+      {additionalPages && (
+        <View style={styles.additionalSatelliteSection}>
+           
+          {renderAdditionalSatellites()}
+        </View>
+      )}
     </View>
   );
 };
@@ -215,31 +272,58 @@ const ButtonLottieAnimationSatellites = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginBottom: 8,
+    marginBottom: 0,
     borderRadius: 30,
     overflow: 'hidden',
   },
   mainButtonContainer: {
+    alignItems: 'center',
     overflow: 'hidden',
+    zIndex: 1000,
   },
   satelliteSection: {
     width: '33.33%',
-    height: 126,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    height: 110,
+    borderRadius: 0,
+    marginLeft: -20,
+    paddingLeft: 8,
+    marginTop: '4%', 
     alignItems: 'center',
+    justifyContent: 'space-evenly',
+    backgroundColor: 'darkgrey',
   },
   satelliteButton: {
-    backgroundColor: '#4caf50',
-    borderRadius: 50,
     justifyContent: 'center',
+    alignItems: 'center',  
+    borderRightWidth: .8,
+    borderRightBottomRadius: 30,
+    borderColor: 'darkgray',
+    height: 100,
+    backgroundColor: 'transparent',
+  },
+  additionalSatelliteSection: {
+    flexDirection: 'row',
+    height: 126,
+    backgroundColor: 'black',
     alignItems: 'center',
-    margin: 6,
+    justifyContent: 'center',
+    paddingVertical: 10,
+  },
+  additionalSatelliteButton: {
+    justifyContent: 'center',
+    alignItems: 'center', 
+    borderRadius: 0, 
+    borderRightWidth: .8,
+    borderColor: 'darkgray',
+    height: 100,
+    backgroundColor: 'black',
+    
   },
   satelliteText: {
-    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+    color: 'white',
+    
   },
 });
 

@@ -179,15 +179,17 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           animationHeight={240}
           labelContainerMarginHorizontal={4}
           animationMargin={-68}
-          shapeSource={require("../assets/shapes/redleafsimple.png")}
-          shapeWidth={340}
-          shapeHeight={340}
+          shapeSource={require("../assets/shapes/redeyedlizard.png")}
+          shapeWidth={150}
+          shapeHeight={150}
           shapePosition="right"
-          shapePositionValue={-190}
+          shapePositionValue={-20}
+
           shapeSource={require("../assets/shapes/pinkflower.png")}
           shapeWidth={440}
           shapeHeight={440}
           shapePositionValue={-310}
+
           showIcon={false}
         />
       </View>
