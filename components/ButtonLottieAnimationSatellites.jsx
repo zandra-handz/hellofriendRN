@@ -7,6 +7,8 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ButtonLottieAnimationSatellites = ({
   onPress,
+  isLoading = false,
+  loadingMessage = 'Loading...',
   headerText = 'UP NEXT',
   label,
   additionalText = 'N/A',
@@ -38,6 +40,7 @@ const ButtonLottieAnimationSatellites = ({
   satellitesOrientation = 'horizontal',
   satelliteHeight = 40,
   satelliteHellos = [],
+  satelliteOnPress,
   additionalPages = false, // New prop for additional pages
   additionalSatellites = [], // New prop for additional satellites
 }) => {
@@ -58,6 +61,36 @@ const ButtonLottieAnimationSatellites = ({
       }
     }
   }, [animationSource]);
+
+  useEffect(() => {
+    if (isLoading) { 
+      animateLoadingIndicator();
+    } else {
+      // Reset animation to full opacity
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 0,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isLoading]);
+
+  const animateLoadingIndicator = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 0.0,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  };
 
   const getShapeStyle = () => {
     switch (shapePosition) {
@@ -103,11 +136,7 @@ const ButtonLottieAnimationSatellites = ({
               styles.satelliteButton,
               { width: satelliteWidth, height: satellitesOrientation === 'horizontal' ? satelliteHeight : '25%' },
             ]}
-            onPress={() => {
-              // Log the friend_name for corresponding upcoming hello
-              const friendName = satelliteHellos[i].friend_name;
-              console.log(`Friend Name: ${friendName}`);
-            }}
+            onPress={() => satelliteOnPress(satelliteHellos[i])}
           >
             <Text style={styles.satelliteText}>{satelliteHellos[i].friend_name}</Text>
           </TouchableOpacity>
@@ -119,7 +148,6 @@ const ButtonLottieAnimationSatellites = ({
   };
 
   const handlePress = () => {
-    // Navigate to FriendFocusScreen with animation
     navigation.navigate('FriendFocus');
   };
 
@@ -137,9 +165,7 @@ const ButtonLottieAnimationSatellites = ({
             { width: satelliteWidth },
           
           ]}
-          onPress={() => {
-            // Handle onPress for additional satellites
-          }}
+          onPress={() => satelliteOnPress(item)}
         >
           <Text style={styles.satelliteText}>{item.friend_name}</Text>
         </TouchableOpacity>
@@ -164,7 +190,7 @@ const ButtonLottieAnimationSatellites = ({
                   overflow: 'hidden',
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
                 }}
-                onPress={handlePress}
+                onPress={onPress}
               >
                 {showGradient && (
                   <LinearGradient

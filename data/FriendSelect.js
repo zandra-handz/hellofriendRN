@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import SelectMenu from '../components/SelectMenu';
 import Button from '../components/Button'; // Import your Button component
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 import { useFriendList } from '../context/FriendListContext';
 
 const FriendSelect = ({ interfaceType = 'dropdown' }) => {
   const { selectedFriend, setFriend } = useSelectedFriend();
+  
   const { friendList } = useFriendList(); 
   const [forceUpdate, setForceUpdate] = useState(false); // State to force re-render
 

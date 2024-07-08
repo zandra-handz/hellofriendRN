@@ -100,6 +100,18 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           shapeWidth={240}
           shapeHeight={240}
           shapePositionValue={-104}
+          shapeSource={require("../assets/shapes/magicstars.png")}
+          shapeWidth={440}
+          shapeHeight={440}
+          shapePositionValue={-44}
+          shapePositionValueVertical={-120}
+          shapeSource={require("../assets/shapes/fairymagic.png")}
+          shapeWidth={540}
+          shapeHeight={540}
+          shapePositionValue={-244}
+          shapePositionValueVertical={-140}
+
+
           showIcon={false}
         />
         <ButtonLottieAnimation
@@ -128,6 +140,12 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           shapeWidth={340}
           shapeHeight={340}
           shapePositionValue={-136}
+
+          shapeSource={require("../assets/shapes/chatmountain.png")}
+          shapeWidth={150}
+          shapeHeight={150}
+          shapePositionValueVertical={-5}
+          shapePositionValue={-24}
         />
         <ButtonLottieAnimation
           onPress={openModal1}
@@ -151,13 +169,13 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           labelContainerMarginHorizontal={4}
           animationMargin={-64}
           shapePosition="right"
-          shapeSource={require("../assets/shapes/coffeebeans.png")}
-          shapeWidth={260}
-          shapeHeight={260}
           shapeSource={require("../assets/shapes/happyskull.png")}
           shapeWidth={200}
           shapeHeight={200}
-          shapePositionValue={-70}
+          shapePositionValue={-50}
+          shapeSource={require("../assets/shapes/coffeecupnoheart.png")}
+          shapeWidth={170}
+          shapeHeight={170} 
         />
         <ButtonLottieAnimation
           onPress={openModalSettings}
@@ -190,6 +208,17 @@ const ScreenDefaultActionMode = ({ navigation }) => {
           shapeHeight={440}
           shapePositionValue={-310}
 
+          shapeSource={require("../assets/shapes/butterfly.png")}
+          shapeWidth={360}
+          shapeHeight={360}
+          shapePositionValueVertical={-10}
+          shapePositionValue={-90}
+
+          shapeSource={require("../assets/shapes/yellowleaves.png")}
+          shapeWidth={200}
+          shapeHeight={200}
+          shapePositionValueVertical={-20}
+          shapePositionValue={-55}
           showIcon={false}
         />
       </View>

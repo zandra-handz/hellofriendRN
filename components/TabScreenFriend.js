@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Image, StyleSheet, Dimensions, Text, TouchableOpacity, TextInput, Button } from 'react-native';
 import { FontAwesome5 } from 'react-native-vector-icons'; // Import FontAwesome5
+
 import CardGen from '../components/CardGen';
 import CardMoment from '../components/CardMoment';
 import CardToggler from '../components/CardToggler';

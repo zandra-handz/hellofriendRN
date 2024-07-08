@@ -65,7 +65,7 @@ export default function App() {
   );
 }
 
-// Layout component to manage navigation and screens
+
 export const Layout = () => {
   const { authUserState, onSignOut } = useAuthUser();
 
@@ -123,8 +123,7 @@ export const Layout = () => {
                     />
                   ),
                 }}
-              />
-              {/* New screen added for ScreenFriendFocus */}
+              /> 
               <Stack.Screen
                 name="FriendFocus"
                 component={ScreenFriendFocus}

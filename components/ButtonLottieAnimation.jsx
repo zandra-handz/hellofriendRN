@@ -29,6 +29,7 @@ const ButtonLottieAnimation = ({
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134, // Default value
+  shapePositionValueVertical = null,
   labelContainerMarginHorizontal = 0, // Default margin for label container
   showIcon = true, // New property to show/hide Lottie icon
 }) => {
@@ -105,7 +106,9 @@ const ButtonLottieAnimation = ({
             position: 'absolute',
             width: shapeWidth,
             height: shapeHeight,
-            ...getShapeStyle(),
+            
+            ...getShapeStyle(), 
+            top: shapePositionValueVertical
           }}
           resizeMode="contain"
         />

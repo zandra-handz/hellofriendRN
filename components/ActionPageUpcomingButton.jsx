@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
 import ButtonLottieAnimationSatellites from './ButtonLottieAnimationSatellites';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
+import { useNavigation } from '@react-navigation/native';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 
 const ActionPageUpcomingButton = ({ onPress }) => {
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-
-  // Extract the first upcoming hello and the next three for satellites
+  const { selectedFriend, setFriend } = useSelectedFriend();
+  const navigation = useNavigation();
+  
   let mainHello = null;
   let satelliteHellos = [];
   let satellitesFirstPage = 1;
@@ -15,17 +19,14 @@ const ActionPageUpcomingButton = ({ onPress }) => {
 
   if (!isLoading && upcomingHelloes.length > 0) {
     mainHello = upcomingHelloes[0];
-    satelliteHellos = upcomingHelloes.slice(1); // Slice to get next three
+    satelliteHellos = upcomingHelloes.slice(1);
     additionalSatelliteCount = satelliteHellos.length - satellitesFirstPage;
-    
+
     if (additionalSatelliteCount > 0) {
-      additionalHellos = upcomingHelloes.slice(satellitesFirstPage + 1); 
-      console.log(additionalHellos);
+      additionalHellos = upcomingHelloes.slice(satellitesFirstPage + 1);
     } else {
       additionalHellos = null;
-
     }
-     
   }
 
   const [showSecondButton, setShowSecondButton] = useState(false);
@@ -49,19 +50,25 @@ const ActionPageUpcomingButton = ({ onPress }) => {
     }).start();
   };
 
-  // Log the length of upcomingHelloes to the console
-  console.log('Length of upcomingHelloes:', upcomingHelloes.length);
+  
+  const handlePress = (hello) => {
+    const { id, friend_name } = hello; 
+    const selectedFriend = id === null ? null : { id, name: friend_name }; 
+    setFriend(selectedFriend);
+    navigation.navigate('FriendFocus');
+    console.log('ALL!!', hello);
+  };
 
   return (
     <View style={styles.container}>
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 ? (
           <ButtonLottieAnimationSatellites
-            onPress={onPress}
+            onPress={() => handlePress(mainHello)}
+            isLoading={isLoading}
             navigateToFirstPage={navigateToFirstPage}
             label={mainHello ? mainHello.friend_name : 'Loading...'}
             additionalText={mainHello ? mainHello.future_date_in_words : 'Loading...'}
-            
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
@@ -86,10 +93,11 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             satelliteHeight="60%"
             additionalPages={showSecondButton}
             additionalSatellites={additionalHellos}
+            satelliteOnPress={(friend) => handlePress(friend)} 
           />
         ) : (
           <ButtonLottieAnimationSatellites
-            onPress={onPress}
+            onPress={() => handlePress(mainHello)}
             navigateToFirstPage={navigateToFirstPage}
             label={mainHello ? mainHello.friend_name : 'Loading...'}
             fontMargin={3}
@@ -114,7 +122,8 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             satelliteHellos={satelliteHellos}
             satellitesOrientation="horizontal"
             satelliteHeight="60%"
-            additionalPages={false} // or null as per your data structure
+            additionalPages={false}
+            satelliteOnPress={(friend) => handlePress(friend)} 
           />
         )}
       </Animated.View>
@@ -139,7 +148,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 8,
     borderRadius: 30,
-    overflow: 'hidden', // Ensure inner elements respect the rounded border
+    overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -151,11 +160,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: 'black',
-  },
-  arrowTextWhite: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
   },
 });
 
