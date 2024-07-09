@@ -1,69 +1,103 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
-import ButtonLottieAnimationSatellitesMoments from './ButtonLottieAnimationSatellites';
-import { useCapsuleList } from '../context/CapsuleListContext';
+import { View, StyleSheet, Animated, TouchableOpacity, Text, Button, Image } from 'react-native';
+import ButtonLottieAnimationSatellitesImages from './ButtonLottieAnimationSatellitesImages';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { fetchFriendImagesByCategory, updateFriendImage, deleteFriendImage } from '../api'; // Import API functions here
+import ItemImageMulti from '../components/ItemImageMulti';
 
+const ActionFriendPageImages = ({ onPress }) => { 
+  const { selectedFriend } = useSelectedFriend();
+  const [imageData, setImageData] = useState([]);
 
-const ActionFriendPageImages = ({ onPress }) => {
-  const { capsuleList, setCapsuleList } = useCapsuleList();
-  const { selectedFriend, setFriend } = useSelectedFriend();
-
-  
-  let mainMoment = null;
-  let satelliteMoments = [];
+  let mainImage = null;
+  let satelliteImages = [];
   let satellitesFirstPage = 1;
   let additionalSatelliteCount = null;
-  let additionalMoments = [];
+  let additionalImages = [];
 
-  if (capsuleList.length > 0) {
-    mainMoment = capsuleList[0];
-    satelliteMoments = capsuleList.slice(1);
-    additionalSatelliteCount = satelliteMoments.length - satellitesFirstPage;
+  const fetchImages = async () => {
+    if (selectedFriend) {
+      try {
+        const imagesData = await fetchFriendImagesByCategory(selectedFriend.id);
+
+        const flattenedImages = [];
+        Object.keys(imagesData).forEach(category => {
+          imagesData[category].forEach(image => {
+            let imagePath = image.image;
+            if (imagePath.startsWith('/media/')) {
+              imagePath = imagePath.substring(7);
+            }
+            const imageUrl = imagePath;
+
+            flattenedImages.push({
+              ...image,
+              image: imageUrl,
+              image_category: category,
+            });
+          });
+        });
+
+        setImageData(flattenedImages); 
+      } catch (error) {
+        console.error('Error fetching friend images by category:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchImages();
+    console.log(imageData);
+  }, [selectedFriend]);
+
+  if (imageData.length > 0) {
+    
+    mainImage = imageData[0];
+    console.log("WOOOOOOOOOOOOOOOOOOOOOOOO", mainImage);
+    satelliteImages = imageData.slice(1);
+    additionalSatelliteCount = satelliteImages.length - satellitesFirstPage;
 
     if (additionalSatelliteCount > 0) {
-      additionalMoments = capsuleList.slice(satellitesFirstPage + 1);
+      additionalImages = satelliteImages.slice(satellitesFirstPage + 1);
+      additionalImages = imageData;
+      console.log('additionalImages: ', additionalImages);
     } else {
-      additionalMoments = null;
+      additionalImages = null;
     }
   }
 
+
   const [showSecondButton, setShowSecondButton] = useState(false);
   const opacityAnim = new Animated.Value(1);
+  const [selectedImage, setSelectedImage] = useState(null); // State for selected image
+  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
+  const [isEditing, setIsEditing] = useState(false); // State for edit mode
+  const [title, setTitle] = useState(''); // State for image title
 
-  const navigateToFirstPage = () => {
-    setShowSecondButton(false);
-    Animated.timing(opacityAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  };
 
-  const handleNext = () => {
-    setShowSecondButton(true);
-    Animated.timing(opacityAnim, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+
+  // Open modal function
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setTitle(image.title); // Initialize title state
+    setIsModalVisible(true);
   };
 
   
-  const handlePress = (moment) => {
-    const { capsule, typedCategory } = moment;   
-    console.log('ALL!!', capsule);
+  const handlePress = (image) => { 
+    console.log('IMAGE!!', image); 
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}> 
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 ? (
-          <ButtonLottieAnimationSatellitesMoments
-            onPress={() => handlePress(mainMoment)} 
-            navigateToFirstPage={navigateToFirstPage}
-            label={mainMoment ? mainMoment.capsule : 'Loading...'}
-            additionalText={mainMoment ? mainMoment.typedCategory : 'Loading...'}
+           
+          <ButtonLottieAnimationSatellitesImages
+            onPress={() => handlePress(mainImage)} 
+            navigateToFirstPage={() => setShowSecondButton(false)}
+            firstItem={mainImage ? mainImage : 'Loading...'}
+            allItems={imageData ? imageData : `Can't get all data`}
+            additionalText={mainImage ? mainImage.title : 'Loading...'}
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
@@ -83,18 +117,19 @@ const ActionFriendPageImages = ({ onPress }) => {
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
-            satelliteHellos={satelliteMoments}
+            satelliteHellos={satelliteImages}
             satellitesOrientation="horizontal"
-            satelliteHeight="60%"
+            satelliteHeight="100%"
             additionalPages={showSecondButton}
-            additionalSatellites={additionalMoments}
-            satelliteOnPress={(moment) => handlePress(moment)} 
-          />
+            additionalSatellites={additionalImages}
+            satelliteOnPress={(image) => handlePress(image)} 
+          /> 
         ) : (
-          <ButtonLottieAnimationSatellitesMoments
-            onPress={() => handlePress(mainMoment)}
-            navigateToFirstPage={navigateToFirstPage}
-            label={mainMoment ? mainMoment.capsule : 'Loading...'}
+          <ButtonLottieAnimationSatellitesImages
+            onPress={() => handlePress(mainImage)}
+            navigateToFirstPage={() => setShowSecondButton(false)}
+            firstItem={mainImage ? mainImage : 'Loading...'}
+            allItems={imageData ? imageData : `Can't get all data`}
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
@@ -114,23 +149,24 @@ const ActionFriendPageImages = ({ onPress }) => {
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
-            satelliteHellos={satelliteMoments}
+            satelliteHellos={satelliteImages}
             satellitesOrientation="horizontal"
             satelliteHeight="60%"
             additionalPages={false}
-            satelliteOnPress={(moment) => handlePress(moment)} 
+            satelliteOnPress={(image) => handlePress(image)} 
           />
         )}
       </Animated.View>
+      
 
       {!showSecondButton && additionalSatelliteCount > 0 && (
-        <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
+        <TouchableOpacity onPress={() => setShowSecondButton(true)} style={styles.arrowButton}>
           <Text style={styles.arrowText}>{'>'}</Text>
         </TouchableOpacity>
       )}
 
       {showSecondButton && (
-        <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
+        <TouchableOpacity onPress={() => setShowSecondButton(false)} style={styles.arrowButton}>
           <Text style={styles.arrowText}>{'<'}</Text>
         </TouchableOpacity>
       )}
@@ -139,6 +175,13 @@ const ActionFriendPageImages = ({ onPress }) => {
 };
 
 const styles = StyleSheet.create({
+  innerContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
   container: {
     width: '100%',
     marginBottom: 8,

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 20,
-    height: '60%',
+    height: '70%',
     position: 'relative',
   },
   closeButton: {

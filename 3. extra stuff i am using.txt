@@ -128,4 +128,5 @@ npm install react-native-switch --save
 
 npm install react-native-modal
 
+npm install expo-image-manipulator
 
