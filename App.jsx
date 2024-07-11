@@ -9,6 +9,9 @@ import { FriendListProvider } from './context/FriendListContext';
 import { LocationListProvider } from './context/LocationListContext';
 import { UpcomingHelloesProvider } from './context/UpcomingHelloesContext';
 import { CapsuleListProvider } from './context/CapsuleListContext';
+import { ImageListProvider } from './context/ImageListContext';
+
+
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SelectedFriendProvider } from './context/SelectedFriendContext';
 import * as Font from 'expo-font'; // Import expo-font
@@ -21,25 +24,23 @@ import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
 import ScreenDefaultActionMode from './screens/ScreenDefaultActionMode';
 import Tabs from './components/Tabs';
 import Signin from './screens/Signin';
-import ScreenFriendFocus from './screens/ScreenFriendFocus'; // Import the new screen component
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
 
-// Load fonts asynchronously
 async function loadFonts() {
   await Font.loadAsync({
     'Poppins-Light': require('./assets/fonts/Poppins-Light.ttf'),
     'Pacifico-Regular': require('./assets/fonts/Pacifico-Regular.ttf'),
-    // Add more fonts if needed
+    
   });
 }
 
 const Stack = createNativeStackNavigator();
 
-// App component
+
 export default function App() {
   const { onSignOut } = useAuthUser();
 
-  // Load fonts when component mounts
+
   useEffect(() => {
     loadFonts();
   }, []);
@@ -53,7 +54,9 @@ export default function App() {
               <SelectedFriendProvider>
                 <LocationListProvider>
                   <CapsuleListProvider>
-                    <Layout />
+                    <ImageListProvider>
+                      <Layout/>
+                    </ImageListProvider> 
                   </CapsuleListProvider>
                 </LocationListProvider>
               </SelectedFriendProvider>
@@ -78,8 +81,8 @@ export const Layout = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          headerShown: false, // Hide header by default
-          cardStyle: { backgroundColor: 'transparent' }, // Set background to transparent for custom transition
+          headerShown: false,  
+          cardStyle: { backgroundColor: 'transparent' }, 
           cardStyleInterpolator: ({ current: { progress } }) => ({
             cardStyle: {
               opacity: progress.interpolate({
@@ -129,7 +132,7 @@ export const Layout = () => {
                 component={ScreenFriendFocus}
                 options={{
                   headerShown: true,
-                  title: 'View friend', // Adjust the title as needed
+                  title: 'View friend', 
                 }}
               />
             </>

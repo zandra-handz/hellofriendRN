@@ -496,10 +496,10 @@ export const updateFriendImage = async (friendId, imageId) => {
     try {
         const response = await axios.patch(`/friends/${friendId}/image/${imageId}/`);
 
-        console.log('API fetchFriendImage response: ', response.data);
+        console.log('API updateFriendImage response: ', response.data);
         return response.data; 
     } catch (error) {
-        console.error('API fetchFriendImage error: ', error);
+        console.error('API updateFriendImage error: ', error);
         throw error; 
     }
 };

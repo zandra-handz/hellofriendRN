@@ -11,10 +11,9 @@ import * as Sharing from 'expo-sharing';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import ItemViewFooter from './ItemViewFooter'; // Import your ItemViewFooter component
 
-const ItemViewMoment = ({ image, onClose }) => {
+const ItemViewImage = ({ image, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [momentText, setMomentText] = useState(null);
-  const [momentCategory, setMomentCategory] = useState(null);
+  const [title, setTitle] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(true);
   const [includeTag, setIncludeTag] = useState(false);
 
@@ -53,8 +52,57 @@ const ItemViewMoment = ({ image, onClose }) => {
     }
   };
 
+  const addTagToImage = async (uri) => {
+    try {
+      const result = await manipulateAsync(
+        uri,
+        [
+          {
+            resize: { width: 500, height: 500 },
+          },
+          {
+            drawText: {
+              text: 'sent via hellofriend!',
+              position: { x: 10, y: 450 },
+              color: 'white',
+              fontSize: 20,
+              anchor: 'bottomLeft',
+            },
+          },
+        ],
+        { format: SaveFormat.JPEG }
+      );
+      return result.uri;
+    } catch (error) {
+      console.error('Error adding tag to image:', error);
+      return uri; // Return the original uri if there's an error
+    }
+  };
 
+  const handleShare = async () => {
+    if (!image.image) {
+      console.error('Error: Image URL is null or undefined');
+      return;
+    }
 
+    const fileUri = FileSystem.documentDirectory + (image.title || 'shared_image') + '.jpg';
+
+    try {
+      const { uri } = await FileSystem.downloadAsync(image.image, fileUri);
+
+      let imageUri = uri;
+      if (includeTag) {
+        imageUri = await addTagToImage(uri);
+      }
+
+      await Sharing.shareAsync(imageUri);
+
+      await deleteFriendImage(image.friendId, image.id);
+      onClose();
+    } catch (error) {
+      console.error('Error sharing image:', error);
+    }
+  };
 
   return (
     <AlertImage
@@ -152,4 +200,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemViewMoment;
+export default ItemViewImage;

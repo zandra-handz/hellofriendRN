@@ -1,21 +1,19 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Text, TouchableOpacity, TextInput, Button } from 'react-native';
-import { FontAwesome5 } from 'react-native-vector-icons';
-
-import { updateFriendImage, deleteFriendImage } from '../api';
 import AlertImage from '../components/AlertImage';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useImageList } from '../context/ImageListContext';
+import { updateFriendImage, deleteFriendImage } from '../api';
+import ItemViewFooter from './ItemViewFooter'; // Import your ItemViewFooter component
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
-import ItemViewFooter from './ItemViewFooter'; // Import your ItemViewFooter component
 
 const ItemViewImage = ({ image, onClose }) => {
+  const { selectedFriend } = useSelectedFriend();
+  const { imageList, setImageList, updateImage, deleteImage } = useImageList();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(true);
-  const [includeTag, setIncludeTag] = useState(false);
 
   useEffect(() => {
     if (image) {
@@ -37,6 +35,8 @@ const ItemViewImage = ({ image, onClose }) => {
   const handleUpdate = async () => {
     try {
       await updateFriendImage(image.friendId, image.id, { title });
+      updateImage(image.id);
+      setIsEditing(false); // Reset editing state
       onClose();
     } catch (error) {
       console.error('Error updating image:', error);
@@ -45,37 +45,11 @@ const ItemViewImage = ({ image, onClose }) => {
 
   const handleDelete = async () => {
     try {
-      await deleteFriendImage(image.friendId, image.id);
-      onClose();
+      await deleteFriendImage(selectedFriend.id, image.id);
+      deleteImage(image.id); // Delete image from imageList context
+      closeModal(); // Close modal after deletion
     } catch (error) {
       console.error('Error deleting image:', error);
-    }
-  };
-
-  const addTagToImage = async (uri) => {
-    try {
-      const result = await manipulateAsync(
-        uri,
-        [
-          {
-            resize: { width: 500, height: 500 },
-          },
-          {
-            drawText: {
-              text: 'sent via hellofriend!',
-              position: { x: 10, y: 450 },
-              color: 'white',
-              fontSize: 20,
-              anchor: 'bottomLeft',
-            },
-          },
-        ],
-        { format: SaveFormat.JPEG }
-      );
-      return result.uri;
-    } catch (error) {
-      console.error('Error adding tag to image:', error);
-      return uri; // Return the original uri if there's an error
     }
   };
 
@@ -89,16 +63,19 @@ const ItemViewImage = ({ image, onClose }) => {
 
     try {
       const { uri } = await FileSystem.downloadAsync(image.image, fileUri);
+      await Sharing.shareAsync(uri);
 
-      let imageUri = uri;
-      if (includeTag) {
-        imageUri = await addTagToImage(uri);
-      }
+      // Add a delay to ensure the share sheet completes its process
+      setTimeout(async () => {
+        try {
+          await deleteFriendImage(selectedFriend.id, image.id);
+          deleteImage(image.id);
+          closeModal();
+        } catch (error) {
+          console.error('Error deleting shared image:', error);
+        }
+      }, 500); // Delay in milliseconds, adjust as necessary
 
-      await Sharing.shareAsync(imageUri);
-
-      await deleteFriendImage(image.friendId, image.id);
-      onClose();
     } catch (error) {
       console.error('Error sharing image:', error);
     }
@@ -129,12 +106,11 @@ const ItemViewImage = ({ image, onClose }) => {
               <>
                 <Text style={styles.modalText}>{title}</Text>
                 <ItemViewFooter
-                  onClose={onClose}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onShare={handleShare}
-                  includeTag={includeTag}
-                  setIncludeTag={setIncludeTag}
+                  buttons={[
+                    { label: 'Edit', icon: 'edit', color: 'blue', onPress: handleEdit },
+                    { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
+                    { label: 'Share', icon: 'share', color: 'green', onPress: handleShare },
+                  ]}
                 />
               </>
             )}
@@ -196,7 +172,6 @@ const styles = StyleSheet.create({
   },
   tagLabel: {
     fontSize: 16,
-    marginRight: 10,
   },
 });
 

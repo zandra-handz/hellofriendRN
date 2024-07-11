@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
-import ButtonLottieAnimationSatellitesMoments from './ButtonLottieAnimationSatellites';
+import ButtonLottieAnimationSatellitesMoments from './ButtonLottieAnimationSatellitesMoments';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 
 const ActionFriendPageMoments = ({ onPress }) => {
-  const { capsuleList, setCapsuleList } = useCapsuleList();
   const { selectedFriend, setFriend } = useSelectedFriend();
+  const { capsuleList, setCapsuleList } = useCapsuleList();
+
 
   
   let mainMoment = null;
@@ -62,8 +63,9 @@ const ActionFriendPageMoments = ({ onPress }) => {
           <ButtonLottieAnimationSatellitesMoments
             onPress={() => handlePress(mainMoment)} 
             navigateToFirstPage={navigateToFirstPage}
-            label={mainMoment ? mainMoment.capsule : 'Loading...'}
-            additionalText={mainMoment ? mainMoment.typedCategory : 'Loading...'}
+            firstItem={mainMoment ? mainMoment.capsule : 'Loading...'}
+            allItems={capsuleList ? capsuleList : 'Loading...'}
+            additionalText={mainMoment ? mainMoment.typed_category : ''}
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
@@ -87,14 +89,16 @@ const ActionFriendPageMoments = ({ onPress }) => {
             satellitesOrientation="horizontal"
             satelliteHeight="60%"
             additionalPages={showSecondButton}
-            additionalSatellites={additionalMoments}
+            additionalSatellites={capsuleList}
             satelliteOnPress={(moment) => handlePress(moment)} 
           />
         ) : (
           <ButtonLottieAnimationSatellitesMoments
             onPress={() => handlePress(mainMoment)}
             navigateToFirstPage={navigateToFirstPage}
-            label={mainMoment ? mainMoment.capsule : 'Loading...'}
+            firstItem={mainMoment ? mainMoment.capsule : 'Loading...'}
+            allItems={capsuleList ? capsuleList : 'Loading...'}
+            
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}

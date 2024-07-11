@@ -7,15 +7,15 @@ import ItemImageMulti from '../components/ItemImageMulti'; // Import the ItemIma
 
 
 
-const ButtonLottieAnimationSatellitesImages = ({
+const ButtonLottieAnimationSatellitesNonImages = ({
   onPress,
   isLoading = false,
-  loadingMessage = '',
-  headerText = 'IMAGES',
+  loadingMessage = 'Loading...',
+  headerText = 'UP NEXT',
   
   firstItem,
   allItems,
-  additionalText = '',
+  additionalText = 'N/A',
   animationSource,
   rightSideAnimation = false,
   preLabelFontSize = 18,
@@ -121,7 +121,8 @@ const ButtonLottieAnimationSatellitesImages = ({
 
   const renderSatellites = () => {
     const satellitesArray = [];
- 
+
+    // Render satellite images
     if (satelliteImages && satelliteImages.length > 0) {
       console.log('satelliteImages: ', satelliteImages);
       const numSatellites = Math.min(satelliteCount, satelliteImages.length);
@@ -253,7 +254,8 @@ const ButtonLottieAnimationSatellitesImages = ({
     </View>
   );
 };
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
+  // Existing styles continue here...
   satelliteSection: {
     width: '33.33%',
     height: 126,
@@ -304,4 +306,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ButtonLottieAnimationSatellitesImages;
+export default ButtonLottieAnimationSatellitesNonImages;

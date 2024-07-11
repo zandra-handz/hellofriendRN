@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import ItemViewImage from '../components/ItemViewImage';
+
 const windowWidth = Dimensions.get('window').width;
 
-const ItemImageSingle = ({ imageObject }) => {
+const ItemImageSingle = ({ imageObject, imageWidth, imageHeight }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [title, setTitle] = useState(null);
 
@@ -25,10 +26,19 @@ const ItemImageSingle = ({ imageObject }) => {
     return null; // or some loading indicator if needed
   }
 
+  const dynamicStyles = {
+    image: {
+      width: imageWidth || windowWidth / 3 - 80,
+      height: imageHeight || windowWidth / 3 - 80,
+      margin: 5,
+      borderRadius: 10,
+    },
+  };
+
   return (
     <View style={styles.imageContainer}>
       <TouchableOpacity onPress={openModal}>
-        <Image source={{ uri: imageObject.image }} style={styles.image} />
+        <Image source={{ uri: imageObject.image }} style={dynamicStyles.image} />
       </TouchableOpacity>
       {isModalVisible && (
         <ItemViewImage image={imageObject} onClose={closeModal} />
@@ -42,12 +52,6 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '100%',
     flex: 1, 
-  },
-  image: {
-    width: windowWidth / 3 - 80,
-    height: windowWidth / 3 - 80,
-    margin: 5,
-    borderRadius: 10,
   },
   modalContainer: {
     flex: 1,

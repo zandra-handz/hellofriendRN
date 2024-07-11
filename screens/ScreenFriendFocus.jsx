@@ -23,8 +23,8 @@ const ScreenFriendFocus = () => {
     <View style={styles.container}>
             <View style={styles.buttonContainer}>
             <ActionFriendPageHeader />
-            <ActionFriendPageMoments />
             <ActionFriendPageImages />
+            <ActionFriendPageMoments />
             <ActionPageUpcomingButton/>
             <ActionPageUpcomingButton/>
             </View>

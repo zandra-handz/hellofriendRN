@@ -8,6 +8,7 @@ import CardToggler from '../components/CardToggler';
 import AlertImage from '../components/AlertImage';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 import { fetchFriendImagesByCategory, updateFriendImage, deleteFriendImage } from '../api';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';

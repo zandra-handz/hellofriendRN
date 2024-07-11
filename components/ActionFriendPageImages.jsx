@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text, Button, Image } from 'react-native';
 import ButtonLottieAnimationSatellitesImages from './ButtonLottieAnimationSatellitesImages';
+import { useImageList } from '../context/ImageListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { fetchFriendImagesByCategory, updateFriendImage, deleteFriendImage } from '../api'; // Import API functions here
-import ItemImageMulti from '../components/ItemImageMulti';
 
 const ActionFriendPageImages = ({ onPress }) => { 
+  
   const { selectedFriend } = useSelectedFriend();
-  const [imageData, setImageData] = useState([]);
+  const { imageList, setImageList } = useImageList();
 
   let mainImage = null;
   let satelliteImages = [];
@@ -15,77 +15,27 @@ const ActionFriendPageImages = ({ onPress }) => {
   let additionalSatelliteCount = null;
   let additionalImages = [];
 
-  const fetchImages = async () => {
-    if (selectedFriend) {
-      try {
-        const imagesData = await fetchFriendImagesByCategory(selectedFriend.id);
-
-        const flattenedImages = [];
-        Object.keys(imagesData).forEach(category => {
-          imagesData[category].forEach(image => {
-            let imagePath = image.image;
-            if (imagePath.startsWith('/media/')) {
-              imagePath = imagePath.substring(7);
-            }
-            const imageUrl = imagePath;
-
-            flattenedImages.push({
-              ...image,
-              image: imageUrl,
-              image_category: category,
-            });
-          });
-        });
-
-        setImageData(flattenedImages); 
-      } catch (error) {
-        console.error('Error fetching friend images by category:', error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchImages();
-    console.log(imageData);
-  }, [selectedFriend]);
-
-  if (imageData.length > 0) {
-    
-    mainImage = imageData[0];
-    console.log("WOOOOOOOOOOOOOOOOOOOOOOOO", mainImage);
-    satelliteImages = imageData.slice(1);
+  if (imageList.length > 0) {
+    console.log('IMAGE CONTEXT', imageList);
+    mainImage = imageList[0];
+    satelliteImages = imageList.slice(1);
     additionalSatelliteCount = satelliteImages.length - satellitesFirstPage;
-
+    
     if (additionalSatelliteCount > 0) {
-      additionalImages = satelliteImages.slice(satellitesFirstPage + 1);
-      additionalImages = imageData;
-      console.log('additionalImages: ', additionalImages);
+      additionalImages = imageList.slice(satellitesFirstPage + 1);
     } else {
       additionalImages = null;
     }
   }
 
 
+
+
+
   const [showSecondButton, setShowSecondButton] = useState(false);
   const opacityAnim = new Animated.Value(1);
-  const [selectedImage, setSelectedImage] = useState(null); // State for selected image
-  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
-  const [isEditing, setIsEditing] = useState(false); // State for edit mode
-  const [title, setTitle] = useState(''); // State for image title
 
 
-
-  // Open modal function
-  const openModal = (image) => {
-    setSelectedImage(image);
-    setTitle(image.title); // Initialize title state
-    setIsModalVisible(true);
-  };
-
-  
-  const handlePress = (image) => { 
-    console.log('IMAGE!!', image); 
-  };
 
   return (
     <View style={styles.container}> 
@@ -96,7 +46,7 @@ const ActionFriendPageImages = ({ onPress }) => {
             onPress={() => handlePress(mainImage)} 
             navigateToFirstPage={() => setShowSecondButton(false)}
             firstItem={mainImage ? mainImage : 'Loading...'}
-            allItems={imageData ? imageData : `Can't get all data`}
+            allItems={imageList ? imageList : `Can't get all data`}
             additionalText={mainImage ? mainImage.title : 'Loading...'}
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
@@ -121,7 +71,7 @@ const ActionFriendPageImages = ({ onPress }) => {
             satellitesOrientation="horizontal"
             satelliteHeight="100%"
             additionalPages={showSecondButton}
-            additionalSatellites={additionalImages}
+            additionalSatellites={imageList}
             satelliteOnPress={(image) => handlePress(image)} 
           /> 
         ) : (
@@ -129,7 +79,7 @@ const ActionFriendPageImages = ({ onPress }) => {
             onPress={() => handlePress(mainImage)}
             navigateToFirstPage={() => setShowSecondButton(false)}
             firstItem={mainImage ? mainImage : 'Loading...'}
-            allItems={imageData ? imageData : `Can't get all data`}
+            allItems={imageList ? imageList : `Can't get all data`}
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}

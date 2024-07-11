@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { View, FlatList, Image, StyleSheet, Dimensions, Text, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
-import { FontAwesome5 } from 'react-native-vector-icons';
+import { View, FlatList, Image, StyleSheet, Dimensions, TouchableOpacity, Modal } from 'react-native';
 import ItemViewImage from '../components/ItemViewImage'; // Import your ItemViewImage component
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true }) => {
+const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true, width, height }) => {
   const [images, setImages] = useState(imageData);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -24,8 +23,6 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true 
     setIsEditing(false); // Reset editing state
   };
 
-
-
   return (
     <View style={styles.container}>
       <FlatList
@@ -34,7 +31,10 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true 
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => openModal(item)}>
-            <Image source={{ uri: item.image }} style={styles.image} />
+            <Image 
+              source={{ uri: item.image }} 
+              style={[styles.image, { width: width || windowWidth / 3 - 20, height: height || windowWidth / 3 - 20 }]} 
+            />
           </TouchableOpacity>
         )}
         numColumns={horizontal && !singleLineScroll ? 3 : 1}
@@ -61,8 +61,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   image: {
-    width: windowWidth / 3 - 20,
-    height: windowWidth / 3 - 20,
     margin: 5,
     borderRadius: 10,
   },
