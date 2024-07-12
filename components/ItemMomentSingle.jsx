@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Svg, { Image } from 'react-native-svg'; // Import SVG and Image components from react-native-svg
-import ItemViewMoment from '../components/ItemViewMoment';
+import ItemViewMoment from '../components/ItemViewMoment'; 
+import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -40,15 +41,12 @@ const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight }) => {
   return (
     <View style={styles.imageContainer}>
       <TouchableOpacity onPress={openModal}>
-        <View style={styles.bubbleContainer}>
-          <Svg width={80} height={80}>
-            <Image
-              width="100%"
-              height="100%"
-              href={require('../assets/svgs/bubble-chat.svg')}
-            />
-          </Svg>
-          <Text style={styles.bubbleText}>{momentObject.capsule}</Text>
+        <View style={styles.relativeContainer}>  
+          <BubbleChatSvg width={160} height={160} style={styles.svgImage} />
+          
+          <View style={styles.bubbleContainer}>
+            <Text style={styles.bubbleText}>{momentObject.capsule}</Text>
+          </View>
         </View>
       </TouchableOpacity>
       {isModalVisible && (
@@ -61,22 +59,46 @@ const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight }) => {
 const styles = StyleSheet.create({
   imageContainer: {
     padding: 10,
-    width: '100%',
+    width: 200,
     flex: 1,
-    height: 100,
+    height: 200,
     alignItems: 'center',
     alignContent: 'center',
     justifyContent: 'center',
   },
-  bubbleContainer: {  
+  relativeContainer: {  
+    position: 'relative',
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
-    alignItems: 'center', 
+    alignItems: 'center',
   },
-  bubbleText: {
-    position: 'absolute',
-    padding: 10,
-    fontSize: 16,
+  bubbleContainer: {
+    position: 'absolute',  
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    margin: 'auto',
+    marginLeft: 24,
+    marginTop: 20,
+    width: 120,
+    height: 80,
+    zIndex: 1, // Ensure text is above SVG
+  },
+  bubbleText: { 
+    fontSize: 14,
     color: 'black',
+    fontFamily: 'Poppins-Regular',
+  },
+  svgImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    margin: 'auto',
+    zIndex: 0, // Ensure SVG is below text
   },
   modalContainer: {
     flex: 1,
