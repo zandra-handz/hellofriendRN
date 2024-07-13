@@ -40,8 +40,8 @@ export const UpcomingHelloesProvider = ({ children }) => {
     const value = {
         upcomingHelloes,
         isLoading,
-        updateTrigger, // Include updateTrigger in the context value
-        setUpdateTrigger, // Function to set updateTrigger
+        updateTrigger, 
+        setUpdateTrigger,  
     };
 
     return (

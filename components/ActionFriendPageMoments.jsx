@@ -14,19 +14,14 @@ const ActionFriendPageMoments = ({ onPress }) => {
   let mainMoment = null;
   let satelliteMoments = [];
   let satellitesFirstPage = 1;
-  let additionalSatelliteCount = null;
-  let additionalMoments = [];
+  let additionalSatelliteCount = null; 
 
   if (capsuleList.length > 0) {
     mainMoment = capsuleList[0];
     satelliteMoments = capsuleList.slice(1);
     additionalSatelliteCount = satelliteMoments.length - satellitesFirstPage;
 
-    if (additionalSatelliteCount > 0) {
-      additionalMoments = capsuleList.slice(satellitesFirstPage + 1);
-    } else {
-      additionalMoments = null;
-    }
+ 
   }
 
   const [showSecondButton, setShowSecondButton] = useState(false);
@@ -85,7 +80,7 @@ const ActionFriendPageMoments = ({ onPress }) => {
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
-            satelliteHellos={satelliteMoments}
+            satelliteMoments={satelliteMoments}
             satellitesOrientation="horizontal"
             satelliteHeight="60%"
             additionalPages={showSecondButton}
@@ -118,7 +113,7 @@ const ActionFriendPageMoments = ({ onPress }) => {
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
-            satelliteHellos={satelliteMoments}
+            satelliteMoments={satelliteMoments}
             satellitesOrientation="horizontal"
             satelliteHeight="60%"
             additionalPages={false}

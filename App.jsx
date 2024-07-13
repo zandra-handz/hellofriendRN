@@ -52,13 +52,15 @@ export default function App() {
           <UpcomingHelloesProvider>
             <FriendListProvider>
               <SelectedFriendProvider>
-                <LocationListProvider>
-                  <CapsuleListProvider>
-                    <ImageListProvider>
+              
+                <CapsuleListProvider>
+                  <ImageListProvider>
+                  <LocationListProvider>
                       <Layout/>
-                    </ImageListProvider> 
-                  </CapsuleListProvider>
-                </LocationListProvider>
+                    </LocationListProvider>
+                  </ImageListProvider> 
+                </CapsuleListProvider>
+               
               </SelectedFriendProvider>
             </FriendListProvider>
           </UpcomingHelloesProvider>

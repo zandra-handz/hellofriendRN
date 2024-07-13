@@ -204,6 +204,40 @@ export const fetchFriendDashboard = async (friendId) => {
     }
 };
 
+export const addToFriendFavesLocations = async (userId, friendId, locationId) => {
+    console.log(`favorite locations add call, ${userId}, ${friendId}, ${locationId}`);
+    try {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
+            
+            friend: friendId,
+            user: userId, 
+            location_id: locationId // Use an array if locationId is a single ID
+        });
+        console.log('Location added to favorites: ', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error adding favorite location:', error);
+        throw error;
+    }
+};
+
+
+export const removeFromFriendFavesLocations = async (userId, friendId, locationId) => {
+    console.log(`favorite locations add call, ${userId}, ${friendId}, ${locationId}`);
+    try {
+        const response = await axios.patch(`/friends/${friendId}/faves/remove/location/`, {
+            user: userId,
+            friend: friendId,
+            location_id: locationId  
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error adding favorite location:', error);
+        throw error;
+    }
+};
+
+
 
 export const fetchUpcomingHelloes = async () => {
     try {
@@ -227,7 +261,8 @@ export const fetchThoughtCapsules = async (friendId) => {
             const formattedCapsuleList = capsuleData.map(capsule => ({
                 id: capsule.id,
                 typedCategory: capsule.typed_category,
-                capsule: capsule.capsule
+                capsule: capsule.capsule,
+                created: capsule.created_on,
             }));
             return formattedCapsuleList;
         } else {

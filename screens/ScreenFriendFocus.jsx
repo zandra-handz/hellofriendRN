@@ -13,6 +13,8 @@ import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; /
 import ActionFriendPageHeader from '../components/ActionFriendPageHeader'; // Import the new component
 import ActionFriendPageMoments from '../components/ActionFriendPageMoments'; // Import the new component
 import ActionFriendPageImages from '../components/ActionFriendPageImages'; // Import the new component
+import ActionFriendPageHelloes from '../components/ActionFriendPageHelloes'; // Import the new component
+import ActionFriendPageLocations from '../components/ActionFriendPageLocations'; // Import the new component
 
 
 import HelloFriendFooter from '../components/HelloFriendFooter';
@@ -23,10 +25,11 @@ const ScreenFriendFocus = () => {
     <View style={styles.container}>
             <View style={styles.buttonContainer}>
             <ActionFriendPageHeader />
-            <ActionFriendPageImages />
+            <ActionFriendPageLocations />
             <ActionFriendPageMoments />
-            <ActionPageUpcomingButton/>
-            <ActionPageUpcomingButton/>
+            <ActionFriendPageImages /> 
+            <ActionFriendPageHelloes />
+            
             </View>
       <Text style={styles.text}> </Text>
     </View>

@@ -52,6 +52,7 @@ const ButtonLottieAnimationSatellitesImages = ({
   const { width } = Dimensions.get('window');
   const [showEmptyContainer, setShowEmptyContainer] = useState(false);
   const [mainViewVisible, setMainViewVisible] = useState(true);
+  
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -107,8 +108,7 @@ const ButtonLottieAnimationSatellitesImages = ({
     }
   };
 
-  const adjustFontSize = (fontSize) => {
-    // Modify this function if needed
+  const adjustFontSize = (fontSize) => { 
     return fontSize;
   };
 
@@ -153,7 +153,7 @@ const ButtonLottieAnimationSatellitesImages = ({
       {!additionalPages && mainViewVisible && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { width: satellites ? '76.66%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: 136, width: satellites ? '76.66%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
@@ -222,17 +222,16 @@ const ButtonLottieAnimationSatellitesImages = ({
                             onError={(error) => console.error('Error rendering animation:', error)}
                           />
                         )} 
-                        <ItemImageMulti imageData={allItems} /> 
+                        <ItemImageMulti imageData={allItems} width={80} height={80} /> 
                       </>
                     )}
                   </View>
                   <Text
                     style={[
                       textStyles(additionalTextFontSize, additionalTextColor),
-                      { textAlign: 'left', marginBottom: 10 },
+                      { textAlign: 'left', marginBottom: 0 },
                     ]}
-                  >
-                    {additionalText}
+                  > 
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -253,17 +252,17 @@ const ButtonLottieAnimationSatellitesImages = ({
     </View>
   );
 };
+
 const styles = StyleSheet.create({ 
   satelliteSection: {
-    width: '33.33%',
-    height: 126,
-    borderRadius: 20,
-    marginLeft: -20,
+    width: '23.33%',
+    height: 136,
+    borderRadius: 20, 
     paddingLeft: 8,
-    marginTop: '4%',
+    marginLeft: 6, 
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    backgroundColor: 'darkgrey', 
+    backgroundColor: 'white', 
   },
   satelliteButton: {
     justifyContent: 'center',
@@ -289,7 +288,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     marginVertical: 10,
-    height: 166,
+    height: 116,
     borderRadius: 30, 
     backgroundColor: 'black',
   },

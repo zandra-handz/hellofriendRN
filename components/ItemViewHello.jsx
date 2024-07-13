@@ -5,7 +5,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemViewFooter from './ItemViewFooter';
 
-const ItemViewMoment = ({ moment, onClose }) => {
+const ItemViewHello = ({ moment, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
   const [includeTag, setIncludeTag] = useState(false);
@@ -138,4 +138,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemViewMoment;
+export default ItemViewHello;

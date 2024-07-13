@@ -1,16 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image, View, Dimensions, Animated, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+import ItemLocationSingle from '../components/ItemLocationSingle';
+import ItemLocationMulti from '../components/ItemLocationMulti'; 
+import ItemLocationFaves from '../components/ItemLocationFaves'; 
+import { useLocationList } from '../context/LocationListContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-const ButtonLottieAnimationSatellites = ({
+const ButtonLottieAnimationSatellitesLocations = ({
   onPress,
   isLoading = false,
-  loadingMessage = 'Welcome back!',
-  headerText = 'UP NEXT',
-  label,
+  loadingMessage = '',
+  headerText = 'PINNED',
+  headerSvg = null,
+  firstItem,
+  allItems, 
   additionalText = '',
   animationSource,
   rightSideAnimation = false,
@@ -39,34 +44,56 @@ const ButtonLottieAnimationSatellites = ({
   satelliteCount = 3,
   satellitesOrientation = 'horizontal',
   satelliteHeight = 40,
-  satelliteHellos = [],
-  satelliteOnPress,
-  additionalPages = false, // New prop for additional pages
-  additionalSatellites = [], // New prop for additional satellites
+  satelliteLocations = [],  
+  additionalPages = false,
+  additionalPagesCategorize = true,
+  additionalSatellites = [], 
 }) => {
   const lottieViewRef = useRef(null);
-  const globalStyles = useGlobalStyle();
-  const { width } = Dimensions.get('window');
-  const navigation = useNavigation();
-  const [showEmptyContainer, setShowEmptyContainer] = useState(false);
-  const [mainViewVisible, setMainViewVisible] = useState(true);
+  const [category, setCategory] = useState(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const { width } = Dimensions.get('window');
+  const [mainViewVisible, setMainViewVisible] = useState(true);
+  const { selectedFriend, friendDashboardData } = useSelectedFriend();
+  const { locationList } = useLocationList();
+
+  const [faveLocationList, setFaveLocationList] = useState([]);
+
+
+  useEffect(() => {
+      if (friendDashboardData && friendDashboardData.length > 0) {
+          const favoriteLocationIds = friendDashboardData[0]?.friend_faves?.locations?.map(location => location.id) || [];
+          const favoriteLocations = locationList.filter(location => favoriteLocationIds.includes(location.id));
+          setFaveLocationList(favoriteLocations);
+          
+      }
+  }, [locationList, friendDashboardData]);
+
+  useEffect(() => {
+      console.log('Total number of favorite locations:', faveLocationList.length);
+  }, [faveLocationList.length]);
+  
+
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      const topItem = viewableItems[0].item;
+
+      setCategory(topItem.title); // Correct usage
+      console.log('Top item:', topItem);
+      console.log('Category:', topItem.title); // Correct usage
+    }
+  }).current;
 
   useEffect(() => {
     if (lottieViewRef.current && animationSource) {
-      try {
-        lottieViewRef.current.play();
-      } catch (error) {
-        console.error('Error playing animation:', error);
-      }
+      lottieViewRef.current.play();
     }
   }, [animationSource]);
 
   useEffect(() => {
-    if (isLoading) { 
+    if (isLoading) {
       animateLoadingIndicator();
-    } else {
-      // Reset animation to full opacity
+    } else { 
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 0,
@@ -106,91 +133,68 @@ const ButtonLottieAnimationSatellites = ({
   };
 
   const adjustFontSize = (fontSize) => {
-    return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
+    return fontSize;
   };
 
   const textStyles = (fontSize, color) => ({
     fontSize: adjustFontSize(fontSize),
     color,
-    ...(globalStyles.highContrast && {
-      textShadowColor: 'rgba(0, 0, 0, 0.75)',
-      textShadowOffset: { width: 2, height: 2 },
-      textShadowRadius: 1,
-    }),
   });
 
   const satelliteWidth = (width / 4) / satelliteCount;
 
   const renderSatellites = () => {
+    if (!satellites || satelliteLocations.length === 0) {
+      return null;
+    }
+
+    const numSatellites = Math.min(satelliteCount, satelliteLocations.length);
     const satellitesArray = [];
 
-    // Render satellite hellos
-    if (satelliteHellos && satelliteHellos.length > 0) {
-      const numSatellites = Math.min(satelliteCount, satelliteHellos.length);
-
-      for (let i = 0; i < numSatellites; i++) {
-        satellitesArray.push(
-          <TouchableOpacity
-            key={i}
-            style={[
-              styles.satelliteButton,
-              { width: satelliteWidth, height: satellitesOrientation === 'horizontal' ? satelliteHeight : '25%' },
-            ]}
-            onPress={() => satelliteOnPress(satelliteHellos[i])}
-          >
-            <Text style={styles.satelliteText}>{satelliteHellos[i].friend_name}</Text>
-          </TouchableOpacity>
-        );
-      }
+    for (let i = 0; i < numSatellites; i++) {
+      satellitesArray.push(
+        <ItemLocationSingle key={`satellite-${i}`} locationObject={null} />
+      );
     }
 
     return satellitesArray;
   };
 
-  const handlePress = () => {
-    if (!isLoading) {
-      onPress();
-    }
-  };
-
-  const renderAdditionalSatellites = () => (
-    <FlatList
-      data={additionalSatellites}
-      horizontal
-      keyExtractor={(item, index) => `satellite-${index}`}
-      renderItem={({ item }) => (
-        <TouchableOpacity
-          style={[
-            styles.additionalSatelliteButton,
-            { width: satelliteWidth },
-          
-          ]}
-          onPress={() => satelliteOnPress(item)}
-        >
-          <Text style={styles.satelliteText}>{item.friend_name}</Text>
-        </TouchableOpacity>
-      )}
-    />
-  );
+  const renderAdditionalSatellites = useCallback(() => {
+    return (
+      <FlatList
+        data={allItems}
+        horizontal
+        keyExtractor={(item, index) => `additional-satellite-${index}`}
+        renderItem={({ item }) => (
+          <ItemLocationSingle locationObject={item} />
+        )}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={{
+          itemVisiblePercentThreshold: 50
+        }}
+      />
+    );
+  }, [allItems, onViewableItemsChanged]);
 
   return (
     <View style={styles.container}>
-      {!additionalPages && mainViewVisible && (
+      {!additionalPages && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { width: satellites ? '76.66%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: 60, width: satellites ? '76.66%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 126,
+                  height: 60,
                   padding: 10,
                   borderRadius: 30,
                   alignItems: 'center',
                   overflow: 'hidden',
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
                 }}
-                onPress={handlePress}
+                onPress={onPress}
               >
                 {showGradient && (
                   <LinearGradient
@@ -212,11 +216,13 @@ const ButtonLottieAnimationSatellites = ({
                     resizeMode="contain"
                   />
                 )}
-                <View style={{ flexDirection: 'column', paddingHorizontal: 5, paddingBottom: 8, paddingTop: 8, flex: 1 }}>
+                <View style={{ flexDirection: 'row', paddingHorizontal: 5, paddingBottom: 0, paddingTop: 6, flex: 1 }}>
+                <View style={styles.svgContainer}>
+                    {headerSvg} 
+                </View>
                   <Text
                     style={[
                       textStyles(preLabelFontSize, preLabelColor),
-                      { fontFamily: 'Poppins-Regular', marginBottom: -6 },
                     ]}
                   >
                     {headerText}
@@ -224,14 +230,7 @@ const ButtonLottieAnimationSatellites = ({
                   <View style={{ flexDirection: 'row' }}>
                     {rightSideAnimation ? (
                       <>
-                        <Text
-                          style={[
-                            textStyles(labelFontSize, labelColor),
-                            { fontFamily: 'Poppins-Light' },
-                          ]}
-                        >
-                          {label}
-                        </Text>
+                        <ItemLocationSingle locationObject={firstItem} /> 
                         {showIcon && animationSource && (
                           <LottieView
                             ref={lottieViewRef}
@@ -255,14 +254,7 @@ const ButtonLottieAnimationSatellites = ({
                             onError={(error) => console.error('Error rendering animation:', error)}
                           />
                         )}
-                        <Text
-                          style={[
-                            textStyles(labelFontSize, labelColor),
-                            { fontFamily: 'Poppins-Regular' },
-                          ]}
-                        >
-                          {label}
-                        </Text>
+                        <ItemLocationFaves locationData={faveLocationList} width={24} height={24} limit={2} newestFirst={true}/> 
                       </>
                     )}
                   </View>
@@ -271,8 +263,7 @@ const ButtonLottieAnimationSatellites = ({
                       textStyles(additionalTextFontSize, additionalTextColor),
                       { textAlign: 'left', marginBottom: 10 },
                     ]}
-                  >
-                    {additionalText}
+                  > 
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -287,69 +278,44 @@ const ButtonLottieAnimationSatellites = ({
       )}
       {additionalPages && (
         <View style={styles.additionalSatelliteSection}>
+          {additionalPagesCategorize && (
+            <Text style={styles.categoryText}>{category}</Text>
+          )}
           {renderAdditionalSatellites()}
         </View>
       )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    marginBottom: 0,
-    borderRadius: 30,
-    overflow: 'hidden',
-  },
-  mainButtonContainer: {
-    alignItems: 'center',
-    overflow: 'hidden',
-    zIndex: 1000,
-  },
+  
+const styles = StyleSheet.create({ 
+svgContainer: {
+    marginRight: 40,
+},
   satelliteSection: {
-    width: '33.33%',
-    height: 110,
-    borderRadius: 0,
-    marginLeft: -20,
-    paddingLeft: 8,
-    marginTop: '4%', 
+    width: '23.33%',
+    height: 60,
+    borderRadius: 20, 
+    paddingLeft: 8, 
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    backgroundColor: 'darkgrey',
-  },
-  satelliteButton: {
-    justifyContent: 'center',
-    alignItems: 'center',  
-    borderRightWidth: .8,
-    borderRightBottomRadius: 30,
-    borderColor: 'darkgray',
-    height: 100,
-    backgroundColor: 'transparent',
+    backgroundColor: 'white',
   },
   additionalSatelliteSection: {
-    flexDirection: 'row',
-    height: 126,
-    backgroundColor: 'black',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-  },
-  additionalSatelliteButton: {
-    justifyContent: 'center',
-    alignItems: 'center', 
-    borderRadius: 0, 
-    borderRightWidth: .8,
-    borderColor: 'darkgray',
+    flexDirection: 'column',
+    marginVertical: 0,
     height: 100,
+    borderRadius: 30, 
     backgroundColor: 'black',
-    
   },
-  satelliteText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  categoryText: {
+    fontSize: 18, 
     color: 'white',
-    
+    fontFamily: 'Poppins-Regular',
+    marginLeft: 20,
+    marginBottom: 0, 
+    textTransform: 'uppercase',
   },
 });
 
-export default ButtonLottieAnimationSatellites;
+export default ButtonLottieAnimationSatellitesLocations;

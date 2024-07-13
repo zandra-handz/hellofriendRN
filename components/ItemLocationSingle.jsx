@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import Svg, { Image } from 'react-native-svg'; // Import SVG and Image components from react-native-svg
-import ItemViewMoment from '../components/ItemViewMoment'; 
+
+import ItemViewLocation from '../components/ItemViewLocation'; 
 import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight }) => {
+const ItemLocationSingle = ({ locationObject, locationWidth, locationHeight }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [momentText, setMomentText] = useState(null);
-  const [momentCategory, setMomentCategory] = useState(null);
+  const [locationTittle, setLocationTitle] = useState(null);
 
   useEffect(() => {
-    if (momentObject && momentObject.capsule) {
-      setMomentText(momentObject.capsule);
+    if (locationObject && locationObject.capsule) {
+      setLocationTitle(locationObject.title);
     }
-  }, [momentObject]);
+  }, [locationObject]);
 
   const openModal = () => {
     setIsModalVisible(true);
@@ -25,14 +24,14 @@ const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight }) => {
     setIsModalVisible(false);
   };
 
-  if (!momentObject) {
-    return null; // or some loading indicator if needed
+  if (!locationObject) {
+    return null;  
   }
 
   const dynamicStyles = {
     image: {
-      width: momentWidth || windowWidth / 2 - 80,
-      height: momentHeight || windowWidth / 2 - 80,
+      width: locationWidth || windowWidth / 2 - 80,
+      height: locationHeight || windowWidth / 2 - 80,
       margin: 5,
       borderRadius: 10,
     },
@@ -45,12 +44,12 @@ const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight }) => {
           <BubbleChatSvg width={210} height={210} style={styles.svgImage} />
           
           <View style={styles.bubbleContainer}>
-            <Text style={styles.bubbleText}>{momentObject.capsule}</Text>
+            <Text style={styles.bubbleText}>{locationObject.address}</Text>
           </View>
         </View>
       </TouchableOpacity>
       {isModalVisible && (
-        <ItemViewMoment moment={momentObject} onClose={closeModal} />
+        <ItemViewLocation location={locationObject} onClose={closeModal} />
       )}
     </View>
   );
@@ -129,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemMomentSingle;
+export default ItemLocationSingle;

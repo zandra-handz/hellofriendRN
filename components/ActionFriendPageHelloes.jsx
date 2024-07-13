@@ -1,33 +1,49 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
-import ButtonLottieAnimationSatellites from './ButtonLottieAnimationSatellites';
-import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
-import { useNavigation } from '@react-navigation/native';
+import ButtonLottieAnimationSatellitesHelloes from './ButtonLottieAnimationSatellitesHelloes';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useAuthUser } from '../context/AuthUserContext';
+import { fetchPastHelloes } from '../api';
+
+const ActionFriendPageHelloes = ({ onPress }) => {
+  const { selectedFriend, setFriend } = useSelectedFriend(); 
+  const [helloesList, setHelloesList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            if (selectedFriend) {
+                const helloes = await fetchPastHelloes(selectedFriend.id);
+                
+                setHelloesList(helloes);  
+                console.log("fetchData Helloes List: ", helloes);
+            } else { 
+                setHelloesList(helloes || []);
+            }
+        } catch (error) {
+            console.error('Error fetching helloes list:', error);
+        }
+    };
+
+    fetchData();
+}, [selectedFriend]);
 
 
-const ActionPageUpcomingButton = ({ onPress }) => {
-  const { authUserState } = useAuthUser();
-  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { selectedFriend, setFriend } = useSelectedFriend();
-  const navigation = useNavigation();
   
   let mainHello = null;
-  let satelliteHellos = [];
+  let satelliteHelloes = [];
   let satellitesFirstPage = 1;
   let additionalSatelliteCount = null;
-  let additionalHellos = [];
+  let additionalHelloes = [];
 
-  if (!isLoading && upcomingHelloes.length > 0) {
-    mainHello = upcomingHelloes[0];
-    satelliteHellos = upcomingHelloes.slice(1);
-    additionalSatelliteCount = satelliteHellos.length - satellitesFirstPage;
+  if (helloesList.length > 0) {
+    mainHello = helloesList[0];
+    satelliteHelloes = helloesList.slice(1);
+    additionalSatelliteCount = satelliteHelloes.length - satellitesFirstPage;
 
     if (additionalSatelliteCount > 0) {
-      additionalHellos = upcomingHelloes.slice(satellitesFirstPage + 1);
+      additionalHelloes = helloesList.slice(satellitesFirstPage + 1);
     } else {
-      additionalHellos = null;
+      additionalHelloes = null;
     }
   }
 
@@ -54,30 +70,24 @@ const ActionPageUpcomingButton = ({ onPress }) => {
 
   
   const handlePress = (hello) => {
-    const { id, friend_name } = hello; 
-    const selectedFriend = id === null ? null : { id, name: friend_name }; 
-    setFriend(selectedFriend);
-    navigation.navigate('FriendFocus');
-    console.log('ALL!!', hello);
+    const { location } = hello;   
+    console.log('ALL HELLOES!!', hello);
   };
 
   return (
     <View style={styles.container}>
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 ? (
-          <ButtonLottieAnimationSatellites
-            onPress={() => handlePress(mainHello)}
-            isLoading={isLoading} 
+          <ButtonLottieAnimationSatellitesHelloes
+            onPress={() => handlePress(mainHello)} 
             navigateToFirstPage={navigateToFirstPage}
-            headerText={mainHello ? 'UP NEXT' : ''}
-            
-            label={mainHello ? mainHello.friend_name : `Hi ${authUserState.user.username}!`}
-            
-            additionalText={mainHello ? mainHello.future_date_in_words : ''}
+            firstItem={mainHello ? mainHello.type : 'Loading...'}
+            allItems={helloesList ? helloesList : 'Loading...'}
+            additionalText={mainHello ? mainHello.date : ''}
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
-            labelFontSize={30}
+            labelFontSize={16}
             labelColor="white"
             animationWidth={234}
             animationHeight={234}
@@ -85,7 +95,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             shapePosition="right"
-            shapeSource={require('../assets/shapes/funkycoloredpattern.png')}
+            shapeSource={require('../assets/shapes/greenfloral.png')}
             shapeWidth={340}
             shapeHeight={340}
             shapePositionValue={-154}
@@ -93,25 +103,24 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
-            satelliteHellos={satelliteHellos}
+            satelliteHellos={satelliteHelloes}
             satellitesOrientation="horizontal"
             satelliteHeight="60%"
             additionalPages={showSecondButton}
-            additionalSatellites={additionalHellos}
-            satelliteOnPress={(friend) => handlePress(friend)} 
+            additionalSatellites={helloesList}
+            satelliteOnPress={(hello) => handlePress(hello)} 
           />
         ) : (
-          <ButtonLottieAnimationSatellites
+          <ButtonLottieAnimationSatellitesHelloes
             onPress={() => handlePress(mainHello)}
             navigateToFirstPage={navigateToFirstPage}
-            headerText={mainHello ? 'UP NEXT' : ''}
-            
-            label={mainHello ? mainHello.friend_name : `Hi ${authUserState.user.username}!`}
+            firstItem={mainHello ? mainHello : 'Loading...'}
+            allItems={helloesList ? helloesList : 'Loading...'}
             
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
-            labelFontSize={30}
+            labelFontSize={16}
             labelColor="white"
             animationWidth={234}
             animationHeight={234}
@@ -127,11 +136,11 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
-            satelliteHellos={satelliteHellos}
+            satelliteHellos={satelliteHelloes}
             satellitesOrientation="horizontal"
             satelliteHeight="60%"
             additionalPages={false}
-            satelliteOnPress={(friend) => handlePress(friend)} 
+            satelliteOnPress={(hello) => handlePress(hello)} 
           />
         )}
       </Animated.View>
@@ -171,4 +180,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActionPageUpcomingButton;
+export default ActionFriendPageHelloes;

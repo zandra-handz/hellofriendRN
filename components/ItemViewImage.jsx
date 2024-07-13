@@ -3,6 +3,7 @@ import { View, Image, StyleSheet, Text, TouchableOpacity, TextInput, Button } fr
 import AlertImage from '../components/AlertImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
+
 import { updateFriendImage, deleteFriendImage } from '../api';
 import ItemViewFooter from './ItemViewFooter'; // Import your ItemViewFooter component
 import * as FileSystem from 'expo-file-system';

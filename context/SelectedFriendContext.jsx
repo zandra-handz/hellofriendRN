@@ -49,6 +49,7 @@ export const SelectedFriendProvider = ({ children }) => {
 
   const updateFriendDashboardData = (friendId, newData) => {
     setFriendDashboardData(newData);
+    
     // You might need to call an API here to update the dashboard data on the server
   };
 

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, FlatList, Image, StyleSheet, Dimensions, TouchableOpacity, Modal } from 'react-native';
 import ItemViewImage from '../components/ItemViewImage'; // Import your ItemViewImage component
-
+import { useImageList } from '../context/ImageListContext';
 const windowWidth = Dimensions.get('window').width;
 
 const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true, width, height }) => {
+  const { imageList } = useImageList();
   const [images, setImages] = useState(imageData);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -26,7 +27,7 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true,
   return (
     <View style={styles.container}>
       <FlatList
-        data={images}
+        data={imageList}
         horizontal={horizontal && singleLineScroll}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
