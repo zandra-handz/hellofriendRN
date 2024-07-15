@@ -135,7 +135,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
 
     for (let i = 0; i < numSatellites; i++) {
       satellitesArray.push(
-        <ItemMomentSingle key={`satellite-${i}`} momentObject={null} />
+        <ItemMomentSingle key={`satellite-${i}`} momentObject={null} momentWidth={174} momentHeight={174} />
       );
     }
 
@@ -149,7 +149,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
         horizontal
         keyExtractor={(item, index) => `additional-satellite-${index}`}
         renderItem={({ item }) => (
-          <ItemMomentSingle momentObject={item} />
+          <ItemMomentSingle momentObject={item} momentWidth={174} momentHeight={174}/>
         )}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{
@@ -164,13 +164,13 @@ const ButtonLottieAnimationSatellitesMoments = ({
       {!additionalPages && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { height: 194, width: satellites ? '76.66%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: 194, width: satellites ? '100%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
                   height: 196,
-                  padding: 10,
+                  padding: 6,
                   borderRadius: 30,
                   alignItems: 'center',
                   overflow: 'hidden',
@@ -209,7 +209,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
                   <View style={{ flexDirection: 'row' }}>
                     {rightSideAnimation ? (
                       <>
-                        <ItemMomentSingle momentObject={firstItem} /> 
+                        <ItemMomentSingle momentObject={firstItem} momentWidth={174} momentHeight={174}/> 
                         {showIcon && animationSource && (
                           <LottieView
                             ref={lottieViewRef}
@@ -233,7 +233,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
                             onError={(error) => console.error('Error rendering animation:', error)}
                           />
                         )}
-                        <ItemMomentMulti momentData={capsuleList} width={180} height={180} limit={2} newestFirst={true}/> 
+                        <ItemMomentMulti momentData={capsuleList} width={154} height={154} limit={2} newestFirst={true}/> 
                       </>
                     )}
                   </View>
@@ -272,6 +272,8 @@ const styles = StyleSheet.create({
   satelliteSection: {
     width: '23.33%',
     height: 194,
+    height: 0,
+    width: 0,
     borderRadius: 20, 
     paddingLeft: 8, 
     alignItems: 'center',

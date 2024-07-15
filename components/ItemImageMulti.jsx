@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, FlatList, Image, StyleSheet, Dimensions, TouchableOpacity, Modal } from 'react-native';
 import ItemViewImage from '../components/ItemViewImage'; // Import your ItemViewImage component
 import { useImageList } from '../context/ImageListContext';
+import { FlashList } from "@shopify/flash-list"; 
+
 const windowWidth = Dimensions.get('window').width;
 
 const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true, width, height }) => {
@@ -26,7 +28,7 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true,
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <FlashList
         data={imageList}
         horizontal={horizontal && singleLineScroll}
         keyExtractor={(item) => item.id.toString()}
@@ -41,6 +43,7 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true,
         numColumns={horizontal && !singleLineScroll ? 3 : 1}
         columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
         contentContainerStyle={horizontal && !singleLineScroll ? null : styles.imageContainer}
+        estimatedItemSize={100}
       />
 
       <Modal visible={isModalVisible} onRequestClose={closeModal} transparent>

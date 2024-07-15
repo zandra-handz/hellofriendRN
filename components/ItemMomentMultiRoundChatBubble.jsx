@@ -12,7 +12,7 @@ import { useCapsuleList } from '../context/CapsuleListContext';
 const windowWidth = Dimensions.get('window').width;
 
 
-const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = true, showCategoryHeader = false, width = 100, height = 100, limit, newestFirst = true }) => {
+const ItemMomentMultiRoundChatBubble = ({ momentData, horizontal = true, singleLineScroll = true, width = 160, height = 160, limit, newestFirst = true }) => {
 
     const { capsuleList } = useCapsuleList();
     const [selectedMoment, setSelectedMoment] = useState(null);
@@ -45,18 +45,18 @@ const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = tru
     };
 
     const calculateFontSize = (width) => {
-        return width * 0.094; // Adjust this multiplier to get the desired proportion
+        return width * 0.06; // Adjust this multiplier to get the desired proportion
     };
 
     const calculateBubbleContainerDimensions = (width, height) => {
         return {
-            width: width * 1, // Adjust this multiplier to get the desired width
-            height: height * 0.63, // Adjust this multiplier to get the desired height
+            width: width * 0.8, // Adjust this multiplier to get the desired width
+            height: height * 0.33, // Adjust this multiplier to get the desired height
         };
     };
 
     const calculateLeftPadding = (bubbleWidth) => {
-        return bubbleWidth * 0.064; // Adjust this multiplier to get the desired left padding
+        return bubbleWidth * 0.35; // Adjust this multiplier to get the desired left padding
     };
 
     const bubbleContainerDimensions = calculateBubbleContainerDimensions(width, height);
@@ -64,15 +64,15 @@ const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = tru
     return (
         <View style={styles.container}>
             <FlashList
-                data={capsuleList.slice(0, limit)}
+                data={capsuleList}
                 horizontal={horizontal && singleLineScroll}
                 keyExtractor={(moment) => moment.id.toString()}
                 renderItem={({ item: moment }) => (
                     <TouchableOpacity onPress={() => openModal(moment)}>
-                        <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>  
-                            <BubbleChatSquareSolidSvg width={width} height={height} style={styles.svgImage} />
+                        <View style={[styles.relativeContainer, { width, height }]}>  
+                            <BubbleChatSvg width={width} height={height} style={styles.svgImage} />
                             <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
-                                <Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.2 }]}>{moment.capsule}</Text>
+                                <Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.7 }]}>{moment.capsule}</Text>
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -94,35 +94,30 @@ const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = tru
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, 
+        flex: 1,
         backgroundColor: 'transparent',
-        
     },
     relativeContainer: {  
         position: 'relative',
-        
     },
     bubbleContainer: {
         position: 'absolute',  
         justifyContent: 'flex-start', // Align items to the top
         alignItems: 'flex-start', // Align items to the left
         zIndex: 1, 
-        
     },
     bubbleText: { 
-        color: 'black', 
-        fontFamily: 'Poppins-Regular',
+        color: 'black',
+        fontFamily: 'Poppins-Bold',
         textAlign: 'left',
     },
     imageContainer: {
         flexDirection: 'row',
         backgroundColor: 'transparent',
-        
     },
     imageRow: {
         flex: 1,
         justifyContent: 'space-between',
-        
     },
     image: {
         margin: 5,
@@ -138,4 +133,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ItemMomentMulti;
+export default ItemMomentMultiRoundChatBubble;

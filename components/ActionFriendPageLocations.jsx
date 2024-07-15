@@ -4,6 +4,9 @@ import ButtonLottieAnimationSatellitesLocations from './ButtonLottieAnimationSat
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
+import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
+import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
+import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
 
 
 const ActionFriendPageLocations = ({ onPress }) => {
@@ -76,10 +79,11 @@ const ActionFriendPageLocations = ({ onPress }) => {
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             shapePosition="right"
+            showShape={false}
             shapeSource={require('../assets/shapes/coffeestarbux.png')}
-            shapeWidth={340}
-            shapeHeight={340}
-            shapePositionValue={-154}
+            shapeWidth={240}
+            shapeHeight={240}
+            shapePositionValue={-104}
             showIcon={false}
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
@@ -87,7 +91,7 @@ const ActionFriendPageLocations = ({ onPress }) => {
             satelliteLocations={satelliteLocations}
             satellitesOrientation="horizontal"
             satelliteHeight="60%"
-            additionalPages={false}
+            additionalPages={showSecondButton}
             additionalSatellites={locationList}
             satelliteOnPress={(location) => handlePress(location)} 
           />
@@ -130,13 +134,17 @@ const ActionFriendPageLocations = ({ onPress }) => {
 
       {!showSecondButton && additionalSatelliteCount > 0 && (
         <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
-          <Text style={styles.arrowText}>{'>'}</Text>
+          <View style={styles.svgContainer}>
+            <ArrowFullScreenOutlineSvg width={70} height={70} style={styles.SvgImage} />
+          </View>
         </TouchableOpacity>
       )}
 
       {showSecondButton && (
         <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
-          <Text style={styles.arrowText}>{'<'}</Text>
+          <View style={styles.svgContainer}>
+            <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
+          </View>
         </TouchableOpacity>
       )}
     </View>
@@ -153,13 +161,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   arrowButton: {
-    padding: 10,
-    marginRight: 10,
+    padding: 4,
+    marginRight: -8,
+    marginLeft: -10,
   },
-  arrowText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'black',
+  svgContainer: {
+    width: 60,  
+    height: 60,  
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',  
+  },
+  SvgImage: {
+    transform: [{ scale: .8 }],  
   },
 });
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Svg, { Image } from 'react-native-svg'; // Import SVG and Image components from react-native-svg
-import ItemViewMoment from '../components/ItemViewMoment'; 
-import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
+import ItemViewMoment from '../components/ItemViewMoment';
+import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg'; // Import the SVG
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -29,23 +29,30 @@ const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight }) => {
     return null; // or some loading indicator if needed
   }
 
-  const dynamicStyles = {
-    image: {
-      width: momentWidth || windowWidth / 2 - 80,
-      height: momentHeight || windowWidth / 2 - 80,
-      margin: 5,
-      borderRadius: 10,
-    },
+  const calculateFontSize = (width) => {
+    return width * 0.094; // Adjust this multiplier to get the desired proportion
   };
+
+  const calculateBubbleContainerDimensions = (width, height) => {
+    return {
+      width: width * 1, // Adjust this multiplier to get the desired width
+      height: height * 0.63, // Adjust this multiplier to get the desired height
+    };
+  };
+
+  const calculateLeftPadding = (bubbleWidth) => {
+    return bubbleWidth * 0.064; // Adjust this multiplier to get the desired left padding
+  };
+
+  const bubbleContainerDimensions = calculateBubbleContainerDimensions(momentWidth || windowWidth / 2 - 80, momentHeight || windowWidth / 2 - 80);
 
   return (
     <View style={styles.imageContainer}>
       <TouchableOpacity onPress={openModal}>
-        <View style={styles.relativeContainer}>  
-          <BubbleChatSvg width={210} height={210} style={styles.svgImage} />
-          
-          <View style={styles.bubbleContainer}>
-            <Text style={styles.bubbleText}>{momentObject.capsule}</Text>
+        <View style={[styles.relativeContainer, { width: momentWidth || windowWidth / 2 - 80, height: momentHeight || windowWidth / 2 - 80 }]}>
+          <BubbleChatSquareSolidSvg width={momentWidth} height={momentHeight} style={styles.svgImage} />
+          <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
+            <Text style={[styles.bubbleText, { fontSize: calculateFontSize(momentWidth || windowWidth / 2 - 80), top: bubbleContainerDimensions.height * 0.2 }]}>{momentObject.capsule}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -57,40 +64,30 @@ const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight }) => {
 };
 
 const styles = StyleSheet.create({
-  imageContainer: {
-    padding: 0,
-    width: 210,
-    flex: 1,
-    height: 210, 
+  imageContainer: { 
+    padding: 10,
+    flex: 1, 
     alignContent: 'center',
     justifyContent: 'center',
   },
-  relativeContainer: {  
-    position: 'relative',
-    width: '100%',
-    height: '100%',  
-     
+  relativeContainer: {
+    position: 'relative', 
   },
   bubbleContainer: {
-    position: 'absolute',  
-    margin: 'auto',
-    marginLeft: 40,
-    marginTop: 30,
-    width: 150,
-    height: 60,
-    zIndex: 1, 
+    position: 'absolute',
+    justifyContent: 'flex-start', // Align items to the top
+    alignItems: 'flex-start', // Align items to the left
+    zIndex: 1,
   },
-  
-  bubbleText: { 
-    fontSize: 14,
+  bubbleText: {
     color: 'black',
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Poppins-Regular',
+    textAlign: 'left',
   },
   svgImage: {
     position: 'absolute',
     top: 0, 
-    marginTop: -24,
-    backgroundColor: 'transparent',  
+    backgroundColor: 'transparent',
     zIndex: 0, // Ensure SVG is below text
   },
   modalContainer: {

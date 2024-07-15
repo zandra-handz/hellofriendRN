@@ -13,7 +13,7 @@ const ItemViewLocation = ({ location, onClose }) => {
   const [includeTag, setIncludeTag] = useState(false);
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-  const { locationList, setLocationList } = useLocationList();
+  const { locationList, setLocationList, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
 
   useEffect(() => {
     if (location) {
@@ -35,11 +35,14 @@ const ItemViewLocation = ({ location, onClose }) => {
     try {
       if (selectedFriend && location) { 
         const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
-        const updatedFaves = response.data;
+        addLocationToFaves(location.id);
+        const updatedFaves = response;
+        console.log(updatedFaves);
         
         if (friendDashboardData && friendDashboardData.length > 0) {
           friendDashboardData[0].friend_faves = updatedFaves;
-          updateFriendDashboardData(selectedFriend.id, friendDashboardData);
+          console.log(friendDashboardData);
+          updateFriendDashboardData(friendDashboardData);
           console.log('Location added to friend\'s favorites.');
         }
       }
@@ -54,11 +57,12 @@ const ItemViewLocation = ({ location, onClose }) => {
     try {
       if (selectedFriend && location) {
         const response = await removeFromFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
-        const updatedFaves = response.data;
+        removeLocationFromFaves(location.id);
+        const updatedFaves = response;
 
         if (friendDashboardData && friendDashboardData.length > 0) {
           friendDashboardData[0].friend_faves = updatedFaves;
-          updateFriendDashboardData(selectedFriend.id, friendDashboardData);
+          updateFriendDashboardData(friendDashboardData); 
           console.log('Location removed from friend\'s favorites.');
         }
         

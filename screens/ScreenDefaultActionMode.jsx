@@ -13,7 +13,7 @@ import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; /
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 
-const ScreenDefaultActionMode = ({ navigation }) => {
+const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   const { selectedFriend } = useSelectedFriend();
   const [modal1Visible, setModal1Visible] = useState(false);
   const [modal2Visible, setModal2Visible] = useState(false);
@@ -74,11 +74,12 @@ const ScreenDefaultActionMode = ({ navigation }) => {
       >
         <ActionPageSettings />
       </ModalGen>
-
+      {mainAppButton && (
       <TouchableOpacity style={styles.navigationButton} onPress={() => navigation.navigate('Home')}>
         <Ionicons name="calendar" size={24} color="white" />
         <Text style={styles.navigationButtonText}>main app</Text>
       </TouchableOpacity>
+      )}
 
       <View style={styles.buttonContainer}>
         <ActionPageUpcomingButton/>

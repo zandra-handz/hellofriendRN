@@ -1,20 +1,22 @@
+// Multi feature buttons include options for a Lottie animation (L/R/Center), a background gradient, and a PNG background image (L/R/Center)
+// Multi page functionality is a work in progress
+
 import React, { useEffect, useRef, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image, View, Dimensions, Animated, FlatList } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import ItemImageSingle from '../components/ItemImageSingle'; // Import the ItemImageSingle component
-import ItemImageMulti from '../components/ItemImageMulti'; // Import the ItemImageSingle component
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import UICalendarPageDynamic from '../components/UICalendarPageDynamic';
 
+import { Ionicons } from '@expo/vector-icons';
 
-
-const ButtonLottieAnimationSatellitesImages = ({
+const ButtonMultiFeatureUpcoming = ({
   onPress,
   isLoading = false,
-  loadingMessage = '',
-  headerText = 'IMAGES',
-  
-  firstItem,
-  allItems,
+  loadingMessage = 'Welcome back!',
+  headerText = 'UP NEXT',
+  label,
   additionalText = '',
   animationSource,
   rightSideAnimation = false,
@@ -29,8 +31,12 @@ const ButtonLottieAnimationSatellitesImages = ({
   animationHeight = 40,
   showGradient = true,
   darkColor = 'black',
-  lightColor = '#C0C0C0',
+  lightColor = 'black',
+  showGradientSatelliteSection = true,
+  satelliteDarkColor = 'darkgrey',
+  satelliteLightColor = 'darkgrey',
   direction = { x: 1, y: 0 },
+  showSatelliteHeader = false,
   showIcon = false,
   showShape = true,
   shapePosition = 'left',
@@ -43,16 +49,17 @@ const ButtonLottieAnimationSatellitesImages = ({
   satelliteCount = 3,
   satellitesOrientation = 'horizontal',
   satelliteHeight = 40,
-  satelliteImages = [], // New prop for satellite images
+  satelliteHellos = [],
   satelliteOnPress,
-  additionalPages = false,
+  additionalPages = false, // New prop for additional pages
   additionalSatellites = [], // New prop for additional satellites
 }) => {
   const lottieViewRef = useRef(null);
+  const globalStyles = useGlobalStyle();
   const { width } = Dimensions.get('window');
+  const navigation = useNavigation();
   const [showEmptyContainer, setShowEmptyContainer] = useState(false);
   const [mainViewVisible, setMainViewVisible] = useState(true);
-  
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -66,7 +73,7 @@ const ButtonLottieAnimationSatellitesImages = ({
   }, [animationSource]);
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading) { 
       animateLoadingIndicator();
     } else {
       // Reset animation to full opacity
@@ -108,27 +115,64 @@ const ButtonLottieAnimationSatellitesImages = ({
     }
   };
 
-  const adjustFontSize = (fontSize) => { 
-    return fontSize;
+  const adjustFontSize = (fontSize) => {
+    return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
   };
 
   const textStyles = (fontSize, color) => ({
     fontSize: adjustFontSize(fontSize),
     color,
+    ...(globalStyles.highContrast && {
+      textShadowColor: 'rgba(0, 0, 0, 0.75)',
+      textShadowOffset: { width: 2, height: 2 },
+      textShadowRadius: 1,
+    }),
   });
 
-  const satelliteWidth = (width / 4) / satelliteCount;
+  const extractNumberDate = (dateString) => {
+    const match = dateString.match(/\d+/);  
+    return match ? match[0] : '';  
+  };
+
+  const extractMonth = (dateString) => {
+    const match = dateString.match(/([a-zA-Z]+)\s+\d+/);  
+    return match ? match[1].slice(0, 3).toUpperCase() : ''; 
+  };
+
+  const extractDay = (dateString) => {
+    const match = dateString.match(/^\w+/); 
+    return match ? match[0].slice(0, 3).toUpperCase() : '';  
+};
+  
+  
+
+  const satelliteWidth = (width / 1.6) / satelliteCount;
 
   const renderSatellites = () => {
     const satellitesArray = [];
- 
-    if (satelliteImages && satelliteImages.length > 0) {
-      console.log('satelliteImages: ', satelliteImages);
-      const numSatellites = Math.min(satelliteCount, satelliteImages.length);
+
+    // Render satellite hellos
+    if (satelliteHellos && satelliteHellos.length > 0) {
+      const numSatellites = Math.min(satelliteCount, satelliteHellos.length);
 
       for (let i = 0; i < numSatellites; i++) {
         satellitesArray.push(
-          <ItemImageSingle imageData={satelliteImages[i]} /> 
+          <TouchableOpacity
+            key={i}
+            style={[
+              styles.satelliteButton,
+              { width: 60, borderRadius: 50, margin: 2,padding: 7,   alignItems: 'center', height: satellitesOrientation === 'horizontal' ? satelliteHeight : 60 },
+            ]}
+            onPress={() => satelliteOnPress(satelliteHellos[i])}
+          >
+            
+            <UICalendarPageDynamic 
+                numberDate={extractNumberDate(satelliteHellos[i].future_date_in_words)}
+                month={extractMonth(satelliteHellos[i].future_date_in_words)} 
+                width={40} 
+                height={40} 
+                color='black' />
+          </TouchableOpacity>
         );
       }
     }
@@ -136,36 +180,57 @@ const ButtonLottieAnimationSatellitesImages = ({
     return satellitesArray;
   };
 
+  const handlePress = () => {
+    if (!isLoading) {
+      onPress();
+    }
+  };
+
   const renderAdditionalSatellites = () => (
-        <FlatList
-        data={additionalSatellites}
-        horizontal
-        keyExtractor={(item, index) => `satellite-${index}`}
-        renderItem={({ item }) => (
+    <FlatList
+      data={additionalSatellites}
+      horizontal
+      keyExtractor={(item, index) => `satellite-${index}`}
+      renderItem={({ item }) => (
+        <TouchableOpacity
+          style={[
+            styles.additionalSatelliteButton,
+            { width: satelliteWidth },
           
-          <ItemImageSingle imageObject={item} />
-        )}
-      />
-    );
+          ]}
+          onPress={() => satelliteOnPress(item)}
+        >
+          <Text style={styles.satelliteText}>{item.friend_name}</Text>
+          <UICalendarPageDynamic 
+                numberDate={extractNumberDate(item.future_date_in_words)}
+                month={extractMonth(item.future_date_in_words)} 
+                width={50} 
+                height={50}
+                color='white' />
+        
+        </TouchableOpacity>
+      )}
+    />
+  );
 
   return (
     <View style={styles.container}>
       {!additionalPages && mainViewVisible && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { height: 136, width: satellites ? '100%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { width: satellites ? '76.66%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 146,
+                  height: 140,
                   padding: 10,
                   borderRadius: 30,
                   alignItems: 'center',
                   overflow: 'hidden',
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
                 }}
-                onPress={onPress}
+                onPress={handlePress}
               >
                 {showGradient && (
                   <LinearGradient
@@ -191,6 +256,7 @@ const ButtonLottieAnimationSatellitesImages = ({
                   <Text
                     style={[
                       textStyles(preLabelFontSize, preLabelColor),
+                      { fontFamily: 'Poppins-Regular', marginBottom: -6 },
                     ]}
                   >
                     {headerText}
@@ -198,7 +264,14 @@ const ButtonLottieAnimationSatellitesImages = ({
                   <View style={{ flexDirection: 'row' }}>
                     {rightSideAnimation ? (
                       <>
-                        <ItemImageSingle imageObject={firstItem} /> 
+                        <Text
+                          style={[
+                            textStyles(labelFontSize, labelColor),
+                            { fontFamily: 'Poppins-Light' },
+                          ]}
+                        >
+                          {label}
+                        </Text>
                         {showIcon && animationSource && (
                           <LottieView
                             ref={lottieViewRef}
@@ -221,23 +294,49 @@ const ButtonLottieAnimationSatellitesImages = ({
                             style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
                             onError={(error) => console.error('Error rendering animation:', error)}
                           />
-                        )} 
-                        <ItemImageMulti imageData={allItems} width={80} height={80} /> 
+                        )}
+                        <Text
+                          style={[
+                            textStyles(labelFontSize, labelColor),
+                            { fontFamily: 'Poppins-Regular' },
+                          ]}
+                        >
+                          {label}
+                        </Text>
                       </>
                     )}
                   </View>
                   <Text
                     style={[
                       textStyles(additionalTextFontSize, additionalTextColor),
-                      { textAlign: 'left', marginBottom: 0 },
+                      { textAlign: 'left', marginBottom: 10 },
                     ]}
-                  > 
+                  >
+                    {additionalText}
                   </Text>
                 </View>
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, { backgroundColor: backgroundColor, paddingTop: 0, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+                    {showSatelliteHeader && (
+                    <Text
+                        style={[
+                        textStyles(preLabelFontSize, preLabelColor),
+                        { fontFamily: 'Poppins-Regular', marginBottom: -6 , zIndex: 1},
+                        ]}
+                    >
+                       SOON
+                  </Text>
+                  )}
+                {showGradientSatelliteSection && (
+                  <LinearGradient
+                    colors={[satelliteDarkColor,satelliteLightColor]}
+                    start={{ x: 0, y: 0 }}
+                    end={direction}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                )}
                 {renderSatellites()}
               </View>
             )}
@@ -253,56 +352,63 @@ const ButtonLottieAnimationSatellitesImages = ({
   );
 };
 
-const styles = StyleSheet.create({ 
-  satelliteSection: {
-    width: '23.33%',
-    height: 136,
-    width: 0,
-    height: 0,
-    borderRadius: 20, 
-    paddingLeft: 8,
-    marginLeft: 6, 
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    backgroundColor: 'white', 
-  },
-  satelliteButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRightWidth: 1,
-    borderColor: 'white',
-    backgroundColor: 'rgba(0, 0, 0, 0.0)',
-  },
-  satelliteImage: {
+const styles = StyleSheet.create({
+  container: {
     width: '100%',
-    height: '75%',
-    resizeMode: 'cover',
-    borderRadius: 20,
+    marginBottom: 0,
+    borderRadius: 30,
+    overflow: 'hidden',
   },
-  satelliteText: {
-    fontSize: 10,
-    color: 'rgba(0, 0, 0, 0.7)',
-    marginTop: 5,
-    textAlign: 'center',
+  mainButtonContainer: {
+    alignItems: 'center',
+    overflow: 'hidden',
+    zIndex: 1000,
+  },
+  satelliteSection: {
+    width: '33.33%',
+    height: 140,
+    borderRadius: 0,
+    marginLeft: -20,
+    paddingLeft: 0,  
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'lightblue',
+  },
+  satelliteButton: { 
+    alignItems: 'center',  
+    alignContents: 'center', 
+    justifyContent: 'space-around',
+    borderRadius: '50%',
+    borderWidth: 1.2, 
+    borderColor: 'black',  
+    backgroundColor: 'lightgray',
   },
   additionalSatelliteSection: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    marginVertical: 10,
-    height: 116,
-    borderRadius: 30, 
+    height: 140,
     backgroundColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
   },
   additionalSatelliteButton: {
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.0)',
-    borderRadius: 20,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    marginHorizontal: 5,
+    alignItems: 'center', 
+    borderRadius: 0, 
+    borderRightWidth: .8,
+    borderColor: 'darkgray',
+    height: 140,
+    width: 100,
+    backgroundColor: 'black',
+    
+  },
+  satelliteText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    fontWeight: 'bold',
+    color: 'black',
+    
   },
 });
 
-export default ButtonLottieAnimationSatellitesImages;
+export default ButtonMultiFeatureUpcoming;

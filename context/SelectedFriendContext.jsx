@@ -7,14 +7,13 @@ const SelectedFriendContext = createContext({});
 
 export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const { authUserState } = useAuthUser(); // Get authentication state
-  const { friendList } = useFriendList(); // Get friend list from FriendListContext
+  const { authUserState } = useAuthUser(); 
+  const { friendList } = useFriendList(); 
   const [friendDashboardData, setFriendDashboardData] = useState(null);
   const [loadingNewFriend, setLoadingNewFriend] = useState(false);
 
   useEffect(() => {
-    console.log('Friend list:', friendList);
-    // This will log the friend list obtained from the FriendListContext
+    console.log('Friend list:', friendList); 
   }, [friendList]);
 
   useEffect(() => {
@@ -39,7 +38,6 @@ export const SelectedFriendProvider = ({ children }) => {
   }, [selectedFriend]);
 
   useEffect(() => {
-    // Reset selectedFriend to null when the authUserState changes (user logs in or logs out)
     setSelectedFriend(null);
   }, [authUserState]);
 
@@ -47,10 +45,9 @@ export const SelectedFriendProvider = ({ children }) => {
     console.log('Selected friend being set:', selectedFriend);
   }, [selectedFriend]);
 
-  const updateFriendDashboardData = (friendId, newData) => {
+  const updateFriendDashboardData = (newData) => {
     setFriendDashboardData(newData);
     
-    // You might need to call an API here to update the dashboard data on the server
   };
 
   return (

@@ -3,6 +3,9 @@ import { View, StyleSheet, Animated, TouchableOpacity, Text, Button, Image } fro
 import ButtonLottieAnimationSatellitesImages from './ButtonLottieAnimationSatellitesImages';
 import { useImageList } from '../context/ImageListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
+import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
+
 
 const ActionFriendPageImages = ({ onPress }) => { 
   
@@ -58,6 +61,7 @@ const ActionFriendPageImages = ({ onPress }) => {
             lightColor="black"
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
+            showShape={false}
             shapePosition="right"
             shapeSource={require('../assets/shapes/greenfloral.png')}
             shapeWidth={340}
@@ -90,6 +94,7 @@ const ActionFriendPageImages = ({ onPress }) => {
             lightColor="black"
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
+            showShape={false}
             shapePosition="right"
             shapeSource={require('../assets/shapes/funkycoloredpattern.png')}
             shapeWidth={340}
@@ -141,13 +146,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   arrowButton: {
-    padding: 10,
-    marginRight: 10,
+    padding: 4,
+    marginRight: -8,
+    marginLeft: -10,
   },
-  arrowText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'black',
+  svgContainer: {
+    width: 60,  
+    height: 60,  
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',  
+  },
+  SvgImage: {
+    transform: [{ scale: .8 }],  
   },
 });
 

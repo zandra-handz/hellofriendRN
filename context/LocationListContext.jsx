@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext'; // Import the AuthUser context
+import { selectedFriend } from './SelectedFriendContext';
 import { fetchAllLocations } from '../api';
 
 const LocationListContext = createContext();
 
 export const LocationListProvider = ({ children }) => {
   const [locationList, setLocationList] = useState([]);
+  const [faveLocationList, setFaveLocationList] = useState([]);
   const [validatedLocationList, setValidatedLocationList] = useState([]);
   const { authUserState } = useAuthUser(); // Use the authentication state
 
@@ -33,13 +35,30 @@ export const LocationListProvider = ({ children }) => {
   }
   }, [authUserState.authenticated]); // Fetch data when authenticated
 
-  useEffect(() => {
-    // Update the filtered list whenever the locationList changes
+  useEffect(() => { 
     setValidatedLocationList(locationList.filter(location => location.validatedAddress));
   }, [locationList]);
 
+  const populateFaveLocationsList = (locationIds) => {
+    const favoriteLocations = locationList.filter(location => locationIds.includes(location.id));
+    setFaveLocationList(favoriteLocations);
+  };
+
+  const addLocationToFaves = (locationId) => {
+    const location = locationList.find(loc => loc.id === locationId);
+    if (location && !faveLocationList.some(loc => loc.id === locationId)) {
+      setFaveLocationList([...faveLocationList, location]);
+    }
+  };
+
+  const removeLocationFromFaves = (locationId) => {
+    const updatedFaves = faveLocationList.filter(loc => loc.id !== locationId);
+    setFaveLocationList(updatedFaves);
+  };
+
+
   return (
-    <LocationListContext.Provider value={{ locationList, validatedLocationList, setLocationList }}>
+    <LocationListContext.Provider value={{ locationList, validatedLocationList, faveLocationList, populateFaveLocationsList, addLocationToFaves, removeLocationFromFaves, setLocationList }}>
       {children}
     </LocationListContext.Provider>
   );

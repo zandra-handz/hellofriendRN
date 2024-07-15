@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
-import ButtonLottieAnimationSatellites from './ButtonLottieAnimationSatellites';
+import React, { useState } from 'react';
+import { View, StyleSheet, Animated, TouchableOpacity } from 'react-native';
+import ButtonMultiFeatureUpcoming from './ButtonMultiFeatureUpcoming';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useNavigation } from '@react-navigation/native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
-
+import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
+import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 
 const ActionPageUpcomingButton = ({ onPress }) => {
   const { authUserState } = useAuthUser();
@@ -15,7 +16,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
   
   let mainHello = null;
   let satelliteHellos = [];
-  let satellitesFirstPage = 1;
+  let satellitesFirstPage = 2;
   let additionalSatelliteCount = null;
   let additionalHellos = [];
 
@@ -25,7 +26,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
     additionalSatelliteCount = satelliteHellos.length - satellitesFirstPage;
 
     if (additionalSatelliteCount > 0) {
-      additionalHellos = upcomingHelloes.slice(satellitesFirstPage + 1);
+      additionalHellos = upcomingHelloes.slice(satellitesFirstPage);
     } else {
       additionalHellos = null;
     }
@@ -52,7 +53,6 @@ const ActionPageUpcomingButton = ({ onPress }) => {
     }).start();
   };
 
-  
   const handlePress = (hello) => {
     const { id, friend_name } = hello; 
     const selectedFriend = id === null ? null : { id, name: friend_name }; 
@@ -65,14 +65,12 @@ const ActionPageUpcomingButton = ({ onPress }) => {
     <View style={styles.container}>
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 ? (
-          <ButtonLottieAnimationSatellites
+          <ButtonMultiFeatureUpcoming
             onPress={() => handlePress(mainHello)}
             isLoading={isLoading} 
             navigateToFirstPage={navigateToFirstPage}
             headerText={mainHello ? 'UP NEXT' : ''}
-            
             label={mainHello ? mainHello.friend_name : `Hi ${authUserState.user.username}!`}
-            
             additionalText={mainHello ? mainHello.future_date_in_words : ''}
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
@@ -94,20 +92,18 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
             satelliteHellos={satelliteHellos}
-            satellitesOrientation="horizontal"
-            satelliteHeight="60%"
+            satellitesOrientation="vertical"
+            satelliteHeight="100%"
             additionalPages={showSecondButton}
             additionalSatellites={additionalHellos}
             satelliteOnPress={(friend) => handlePress(friend)} 
           />
         ) : (
-          <ButtonLottieAnimationSatellites
+          <ButtonMultiFeatureUpcoming
             onPress={() => handlePress(mainHello)}
             navigateToFirstPage={navigateToFirstPage}
             headerText={mainHello ? 'UP NEXT' : ''}
-            
             label={mainHello ? mainHello.friend_name : `Hi ${authUserState.user.username}!`}
-            
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
@@ -138,13 +134,17 @@ const ActionPageUpcomingButton = ({ onPress }) => {
 
       {!showSecondButton && additionalSatelliteCount > 0 && (
         <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
-          <Text style={styles.arrowText}>{'>'}</Text>
+          <View style={styles.svgContainer}>
+            <ArrowRightCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
+          </View>
         </TouchableOpacity>
       )}
 
       {showSecondButton && (
         <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
-          <Text style={styles.arrowText}>{'<'}</Text>
+          <View style={styles.svgContainer}>
+            <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
+          </View>
         </TouchableOpacity>
       )}
     </View>
@@ -161,13 +161,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   arrowButton: {
-    padding: 10,
-    marginRight: 10,
+    padding: 4,
+    marginRight: -8,
+    marginLeft: -10,
   },
-  arrowText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'black',
+  svgContainer: {
+    width: 60,  
+    height: 60,  
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',  
+  },
+  SvgImage: {
+    transform: [{ scale: .8 }],  
   },
 });
 

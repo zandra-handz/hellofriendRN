@@ -9,17 +9,15 @@ const windowWidth = Dimensions.get('window').width;
 
 const ItemLocationFaves = ({ locationData, horizontal = true, singleLineScroll = true, width = 160, height = 160, limit, newestFirst = true }) => {
     const { selectedFriend, friendDashboardData } = useSelectedFriend();
-    const { locationList } = useLocationList();
-    const [faveLocationList, setFaveLocationList] = useState([]);
+    const { locationList, faveLocationList, populateFaveLocationsList } = useLocationList();
+  
 
     useEffect(() => {
         if (friendDashboardData && friendDashboardData.length > 0) {
-            console.log('Friend Dashboard Daaaaaaaaaaaaata:', friendDashboardData[0].friend_faves.locations); // Logging friendDashboardData
             const favoriteLocationIds = friendDashboardData[0]?.friend_faves?.locations || [];
 
-            console.log(favoriteLocationIds);
-            const favoriteLocations = locationList.filter(location => favoriteLocationIds.includes(location.id));
-            setFaveLocationList(favoriteLocations);
+            console.log('favorite location IDs: ', favoriteLocationIds);
+            populateFaveLocationsList(favoriteLocationIds);
         }
     }, [locationList, friendDashboardData]);
 
@@ -81,6 +79,8 @@ const ItemLocationFaves = ({ locationData, horizontal = true, singleLineScroll =
             <Modal visible={isModalVisible} onRequestClose={closeModal} transparent>
                 <View style={styles.modalContainer}>
                     <ItemViewLocation location={selectedLocation} onClose={closeModal} />
+                
+                
                 </View>
             </Modal>
         </View>

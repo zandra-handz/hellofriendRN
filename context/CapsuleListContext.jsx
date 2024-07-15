@@ -31,7 +31,7 @@ export const CapsuleListProvider = ({ children }) => {
           setCapsuleList(capsules || []); // Set capsules or empty array if none
           console.log("fetchData Capsule List context: ", capsules);
         } else {
-          // Reset capsule list if no friend is selected
+          
           setCapsuleList([]);
         }
       } catch (error) {
