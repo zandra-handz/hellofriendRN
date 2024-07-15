@@ -5,7 +5,9 @@ import FriendSelect from '../data/FriendSelect';
 import QuickAddHello from '../speeddial/QuickAddHello';
 import QuickAddImage from '../speeddial/QuickAddImage';
 import QuickAddThought from '../speeddial/QuickAddThought';
+import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
 import ButtonLottieAnimationSatellites from '../components/ButtonLottieAnimationSatellites'; // Make sure to import the correct component
 import ActionPageSettings from '../components/ActionPageSettings';
@@ -14,7 +16,9 @@ import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 
 const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
+  const { authUserState } = useAuthUser();
   const { selectedFriend } = useSelectedFriend();
+  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const [modal1Visible, setModal1Visible] = useState(false);
   const [modal2Visible, setModal2Visible] = useState(false);
   const [modal3Visible, setModal3Visible] = useState(false);
@@ -27,6 +31,14 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.loadingTextContainer}>
+        <Text style={styles.loadingTextBold}>Welcome back, {authUserState.user.username}!</Text>
+        </View>
+
+      )}
+      {!isLoading &&(
+      <>
       <ModalGen
         modalVisible={modal1Visible}
         setModalVisible={setModal1Visible}
@@ -224,6 +236,8 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
         />
       </View>
       <HelloFriendFooter />
+    </>
+    )}
     </View>
   );
 };
@@ -232,6 +246,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
+  },
+  loadingTextContainer: {
+    flex: 1, 
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 10,
+    paddingBottom: 6, 
+    paddingTop: 0,
+  },
+  loadingText: {
+    fontSize: 28,
+    fontFamily: 'Poppins-Regular',
+
+  },
+  loadingTextBold: {
+    fontSize: 22,
+    fontFamily: 'Poppins-Bold',
+
   },
   navigationButton: {
     position: 'absolute',

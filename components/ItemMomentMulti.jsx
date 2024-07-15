@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
-import Svg, { Image } from 'react-native-svg'; // Import SVG and Image components from react-native-svg
-import ItemViewMoment from '../components/ItemViewMoment'; 
-import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
-import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg'; // Import the SVG
-
-import { FlashList } from "@shopify/flash-list"; 
-
+import Svg, { Image } from 'react-native-svg';
+import { FlashList } from "@shopify/flash-list"; // Assuming this is a specific component library import
 import { useCapsuleList } from '../context/CapsuleListContext';
+import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg';
+import ItemViewMoment from '../components/ItemViewMoment';
 
 const windowWidth = Dimensions.get('window').width;
 
-
-const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = true, showCategoryHeader = false, width = 100, height = 100, limit, newestFirst = true }) => {
-
+const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = true, columns = 3, showCategoryHeader = false, width = 100, height = 100, limit, newestFirst = true, svgColor = 'white', includeCategoryTitle = false }) => {
     const { capsuleList } = useCapsuleList();
     const [selectedMoment, setSelectedMoment] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -21,15 +16,12 @@ const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = tru
     const [momentText, setMomentText] = useState('');
     const [momentCategory, setMomentCategory] = useState('');
 
-    const sortedMoments = capsuleList.sort((a, b) => {
-        return newestFirst ? new Date(b.created) - new Date(a.created) : new Date(a.created) - new Date(b.created);
-    });
-    const [moments, setMoments] = useState(sortedMoments.slice(0, limit)); // Initialize moments with sorted and limited momentData
-    
+    const sortedMoments = capsuleList.sort((a, b) => newestFirst ? new Date(b.created) - new Date(a.created) : new Date(a.created) - new Date(b.created));
+    const [moments, setMoments] = useState(sortedMoments.slice(0, limit));
 
     useEffect(() => {
-        console.log('TOOOOTTTAAAAAALLLLLLLLLLLLLLLLLLLLLLL number of moments:', moments.length);
-    }, [moments.length]); // Update dependency array to include moments.length
+        console.log('Total number of moments:', moments.length);
+    }, [moments.length]);
 
     const openModal = (moment) => {
         console.log('Opening modal for moment:', moment);
@@ -45,42 +37,46 @@ const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = tru
     };
 
     const calculateFontSize = (width) => {
-        return width * 0.094; // Adjust this multiplier to get the desired proportion
+        return width * 0.094;
     };
 
     const calculateBubbleContainerDimensions = (width, height) => {
         return {
-            width: width * 1, // Adjust this multiplier to get the desired width
-            height: height * 0.63, // Adjust this multiplier to get the desired height
+            width: width * 1,
+            height: height * 0.63,
         };
     };
 
     const calculateLeftPadding = (bubbleWidth) => {
-        return bubbleWidth * 0.064; // Adjust this multiplier to get the desired left padding
+        return bubbleWidth * 0.064;
     };
 
     const bubbleContainerDimensions = calculateBubbleContainerDimensions(width, height);
 
     return (
-        <View style={styles.container}>
+        <View style={{ minHeight: 2 }}>
             <FlashList
                 data={capsuleList.slice(0, limit)}
                 horizontal={horizontal && singleLineScroll}
                 keyExtractor={(moment) => moment.id.toString()}
                 renderItem={({ item: moment }) => (
                     <TouchableOpacity onPress={() => openModal(moment)}>
-                        <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>  
-                            <BubbleChatSquareSolidSvg width={width} height={height} style={styles.svgImage} />
+                        <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
+                            <BubbleChatSquareSolidSvg width={width} height={height} color={svgColor} style={styles.svgImage} />
                             <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
                                 <Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.2 }]}>{moment.capsule}</Text>
+                                {includeCategoryTitle && (
+                                    <View style={[styles.categoryCircle, { backgroundColor: 'green' }]}>
+                                        <Text style={styles.categoryText}>{moment.typed_category}</Text>
+                                    </View>
+                                )}
                             </View>
                         </View>
                     </TouchableOpacity>
                 )}
-                numColumns={horizontal && !singleLineScroll ? 3 : 1}
+                numColumns={horizontal && !singleLineScroll ? columns : 1}
                 columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
-                contentContainerStyle={horizontal && !singleLineScroll ? null : styles.imageContainer}
-                estimatedItemSize={179}
+                estimatedItemSize={100}
             />
 
             <Modal visible={isModalVisible} onRequestClose={closeModal} transparent>
@@ -93,36 +89,27 @@ const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = tru
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1, 
-        backgroundColor: 'transparent',
-        
-    },
-    relativeContainer: {  
+    relativeContainer: {
         position: 'relative',
-        
     },
     bubbleContainer: {
-        position: 'absolute',  
-        justifyContent: 'flex-start', // Align items to the top
-        alignItems: 'flex-start', // Align items to the left
-        zIndex: 1, 
-        
+        position: 'absolute',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        zIndex: 1,
     },
-    bubbleText: { 
-        color: 'black', 
+    bubbleText: {
+        color: 'black',
         fontFamily: 'Poppins-Regular',
         textAlign: 'left',
     },
     imageContainer: {
         flexDirection: 'row',
         backgroundColor: 'transparent',
-        
     },
     imageRow: {
         flex: 1,
         justifyContent: 'space-between',
-        
     },
     image: {
         margin: 5,
@@ -135,6 +122,21 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    categoryCircle: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    categoryText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: 'bold',
     },
 });
 

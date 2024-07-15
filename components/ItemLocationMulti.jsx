@@ -4,11 +4,12 @@ import { View, FlatList, Text, TouchableOpacity, Modal, StyleSheet, Dimensions }
 import ItemViewLocation from '../components/ItemViewLocation'; 
 import LocationOutlineSvg from '../assets/svgs/location-outline.svg'; // Import the SVG
 import { useLocationList } from '../context/LocationListContext';
+import { FlashList } from "@shopify/flash-list"; 
 
 const windowWidth = Dimensions.get('window').width;
 
 
-const ItemLocationMulti = ({ locationData, horizontal = true, singleLineScroll = true, width = 160, height = 160, limit, newestFirst = true }) => {
+const ItemLocationMulti = ({ locationData, horizontal = true, singleLineScroll = true, width = 160, height = 160, columns = 5, limit, newestFirst = true }) => {
 
     const { locationList } = useLocationList();
     const [selectedLocation, setSelectedLocation] = useState(null);
@@ -59,7 +60,7 @@ const ItemLocationMulti = ({ locationData, horizontal = true, singleLineScroll =
 
     return (
         <View style={styles.container}>
-            <FlatList
+            <FlashList
                 data={locationList}
                 horizontal={horizontal && singleLineScroll}
                 keyExtractor={(location) => location.id.toString()}
@@ -73,9 +74,10 @@ const ItemLocationMulti = ({ locationData, horizontal = true, singleLineScroll =
                         </View>
                     </TouchableOpacity>
                 )}
-                numColumns={horizontal && !singleLineScroll ? 3 : 1}
+                numColumns={horizontal && !singleLineScroll ? columns : 1}
                 columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
                 contentContainerStyle={horizontal && !singleLineScroll ? null : styles.imageContainer}
+                estimatedItemSize={99}
             />
 
             <Modal visible={isModalVisible} onRequestClose={closeModal} transparent>
@@ -91,6 +93,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent',
+        justifyContent: 'center',
     },
     relativeContainer: {  
         position: 'relative',
@@ -114,8 +117,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'space-between',
     },
-    image: {
-        margin: 5,
+    image: { 
         borderRadius: 10,
         color: 'white',
         backgroundColor: 'white',

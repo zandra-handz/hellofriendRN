@@ -7,11 +7,15 @@ import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the S
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
-
+import ActionFriendPageAllLocations from '../components/ActionFriendPageAllLocations';
+ 
 
 const ActionFriendPageLocations = ({ onPress }) => {
   const { selectedFriend, setFriend } = useSelectedFriend();
   const { locationList, setLocationList } = useLocationList();
+  const [isFSModalVisible, setIsFSModalVisible] = useState(false);
+  const [showSecondButton, setShowSecondButton] = useState(false);
+  const opacityAnim = useRef(new Animated.Value(1)).current;
 
 
   
@@ -27,9 +31,7 @@ const ActionFriendPageLocations = ({ onPress }) => {
 
  
   }
-
-  const [showSecondButton, setShowSecondButton] = useState(false);
-  const opacityAnim = new Animated.Value(1);
+ 
 
   const navigateToFirstPage = () => {
     setShowSecondButton(false);
@@ -43,10 +45,18 @@ const ActionFriendPageLocations = ({ onPress }) => {
   const handleNext = () => {
     setShowSecondButton(true);
     Animated.timing(opacityAnim, {
-      toValue: 0,
+      toValue: 1,
       duration: 500,
       useNativeDriver: true,
     }).start();
+  };
+
+  const handleFullScreen = () => {
+    setIsFSModalVisible(true); // Set modal visible when fullscreen button is pressed
+  };
+
+  const closeModal = () => {
+    setIsFSModalVisible(false); // Close the modal
   };
 
   
@@ -133,20 +143,41 @@ const ActionFriendPageLocations = ({ onPress }) => {
       </Animated.View>
 
       {!showSecondButton && additionalSatelliteCount > 0 && (
-        <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
-          <View style={styles.svgContainer}>
-            <ArrowFullScreenOutlineSvg width={70} height={70} style={styles.SvgImage} />
-          </View>
-        </TouchableOpacity>
+        <>
+        <View style={styles.arrowContainer}>
+          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
+            <View style={styles.svgFSContainer}>
+              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
+            <View style={styles.svgContainer}>
+              <ArrowRightCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
+            </View>
+          </TouchableOpacity>
+        </View>
+        </>
       )}
 
       {showSecondButton && (
-        <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
-          <View style={styles.svgContainer}>
-            <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-          </View>
-        </TouchableOpacity>
+        <>
+        <View style={styles.arrowContainer}>
+          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
+            <View style={styles.svgFSContainer}>
+              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
+            <View style={styles.svgContainer}>
+              <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
+            </View>
+          </TouchableOpacity>
+        </View>
+        </>
       )}
+      <ActionFriendPageAllLocations
+      isModalVisible={isFSModalVisible}
+      toggleModal={closeModal} onClose={closeModal} />
     </View>
   );
 };
@@ -159,6 +190,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  arrowContainer: {
+    flexDirection: 'column',
+    marginRight: -4,
+
   },
   arrowButton: {
     padding: 4,
@@ -174,6 +210,18 @@ const styles = StyleSheet.create({
   },
   SvgImage: {
     transform: [{ scale: .8 }],  
+  },
+  svgFSContainer: {
+    width: 60,
+    height: 50,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center', 
+    paddingTop: 20,
+    marginBottom: -6,
+  },
+  SvgFSImage: {
+    transform: [{ scale: 1.22 }],
   },
 });
 

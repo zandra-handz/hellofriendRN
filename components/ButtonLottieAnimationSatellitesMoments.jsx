@@ -53,17 +53,20 @@ const ButtonLottieAnimationSatellitesMoments = ({
   const { width } = Dimensions.get('window');
   const [mainViewVisible, setMainViewVisible] = useState(true);
   const { capsuleList } = useCapsuleList();
-  
+  const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
 
-  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
     if (viewableItems.length > 0) {
       const topItem = viewableItems[0].item;
-
-      setCategory(topItem.typedCategory); // Correct usage
-      console.log('Top item:', topItem);
-      console.log('Category:', topItem.typedCategory); // Correct usage
+      setCategory(topItem.typedCategory);
     }
-  }).current;
+  }, []);
+
+  useEffect(() => {
+    if (capsuleList.length > 0) {
+      setIsCapsuleListReady(true);
+    }
+  }, [capsuleList]);
 
   useEffect(() => {
     if (lottieViewRef.current && animationSource) {
@@ -75,7 +78,6 @@ const ButtonLottieAnimationSatellitesMoments = ({
     if (isLoading) {
       animateLoadingIndicator();
     } else {
-      // Reset animation to full opacity
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 0,
@@ -198,7 +200,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
                     resizeMode="contain"
                   />
                 )}
-                <View style={{ flexDirection: 'column', paddingHorizontal: 5, paddingBottom: 4, paddingTop: 28, flex: 1 }}>
+                <View style={{ flexDirection: 'column', paddingHorizontal: 5, paddingBottom: 4, width: '100%', height: '100%', paddingTop: 6, flex: 1 }}>
                   <Text
                     style={[
                       textStyles(preLabelFontSize, preLabelColor),
@@ -233,7 +235,9 @@ const ButtonLottieAnimationSatellitesMoments = ({
                             onError={(error) => console.error('Error rendering animation:', error)}
                           />
                         )}
-                        <ItemMomentMulti momentData={capsuleList} width={154} height={154} limit={2} newestFirst={true}/> 
+                        {isCapsuleListReady && (
+                          <ItemMomentMulti momentData={capsuleList} width={154} height={154} limit={2} newestFirst={true}/> 
+                        )}
                       </>
                     )}
                   </View>
@@ -293,6 +297,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     marginLeft: 20,
     marginBottom: 0, 
+    paddingTop: 6,
     textTransform: 'uppercase',
   },
 });

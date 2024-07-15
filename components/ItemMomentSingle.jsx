@@ -6,7 +6,7 @@ import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.sv
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight }) => {
+const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight, svgColor='white' }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [momentText, setMomentText] = useState(null);
   const [momentCategory, setMomentCategory] = useState(null);
@@ -50,7 +50,7 @@ const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight }) => {
     <View style={styles.imageContainer}>
       <TouchableOpacity onPress={openModal}>
         <View style={[styles.relativeContainer, { width: momentWidth || windowWidth / 2 - 80, height: momentHeight || windowWidth / 2 - 80 }]}>
-          <BubbleChatSquareSolidSvg width={momentWidth} height={momentHeight} style={styles.svgImage} />
+          <BubbleChatSquareSolidSvg width={momentWidth} height={momentHeight} color={svgColor} style={styles.svgImage} />
           <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
             <Text style={[styles.bubbleText, { fontSize: calculateFontSize(momentWidth || windowWidth / 2 - 80), top: bubbleContainerDimensions.height * 0.2 }]}>{momentObject.capsule}</Text>
           </View>

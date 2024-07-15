@@ -55,7 +55,10 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true,
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1, 
+    backgroundColor: 'transparent',
+    width: '100%',
+    height: '100%',
   },
   imageContainer: {
     flexDirection: 'row',

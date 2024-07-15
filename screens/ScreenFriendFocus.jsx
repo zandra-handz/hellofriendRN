@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
 import ModalGen from '../components/ModalGen';
 import FriendSelect from '../data/FriendSelect';
 import QuickAddHello from '../speeddial/QuickAddHello';
@@ -21,8 +21,16 @@ import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 
 const ScreenFriendFocus = () => {
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+
   return (
     <View style={styles.container}>
+      {loadingNewFriend && (
+        <View style={styles.loadingTextContainer}>
+        <Text style={styles.loadingTextBold}>Loading data for {selectedFriend.name}!</Text>
+        </View>
+      )}
+      {!loadingNewFriend && (
             <View style={styles.buttonContainer}>
             <ActionFriendPageHeader />
             <ActionFriendPageLocations />
@@ -31,7 +39,7 @@ const ScreenFriendFocus = () => {
             <ActionFriendPageHelloes />
             
             </View>
-      <Text style={styles.text}> </Text>
+      )}
     </View>
   );
 };
@@ -40,6 +48,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
+  }, 
+  loadingTextContainer: {
+    flex: 1, 
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 10,
+    paddingBottom: 6, 
+    paddingTop: 0,
+  },
+  loadingText: {
+    fontSize: 28,
+    fontFamily: 'Poppins-Regular',
+
+  },
+  loadingTextBold: {
+    fontSize: 22,
+    fontFamily: 'Poppins-Bold',
+
   },
   navigationButton: {
     position: 'absolute',
@@ -59,12 +85,13 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   buttonContainer: {
-    height: '100%',
+    flex: 1, 
     alignItems: 'center',
     justifyContent: 'space-evenly',
     marginHorizontal: 10,
     paddingBottom: 6, 
     paddingTop: 0,
   },
+
 });
 export default ScreenFriendFocus;

@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image, View, Dimensions, Animated, FlatList } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ItemImageSingle from '../components/ItemImageSingle'; // Import the ItemImageSingle component
 import ItemImageMulti from '../components/ItemImageMulti'; // Import the ItemImageSingle component
-
+import { useImageList } from '../context/ImageListContext';
 
 
 const ButtonLottieAnimationSatellitesImages = ({
@@ -52,6 +52,9 @@ const ButtonLottieAnimationSatellitesImages = ({
   const { width } = Dimensions.get('window');
   const [showEmptyContainer, setShowEmptyContainer] = useState(false);
   const [mainViewVisible, setMainViewVisible] = useState(true);
+  const { imageList } = useImageList();
+  const [isImageListReady, setIsImageListReady] = useState(false);
+
   
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -64,6 +67,12 @@ const ButtonLottieAnimationSatellitesImages = ({
       }
     }
   }, [animationSource]);
+
+  useEffect(() => {
+    if (imageList.length > 0) {
+      setIsImageListReady(true);
+    }
+  }, [imageList]);
 
   useEffect(() => {
     if (isLoading) {
@@ -128,7 +137,7 @@ const ButtonLottieAnimationSatellitesImages = ({
 
       for (let i = 0; i < numSatellites; i++) {
         satellitesArray.push(
-          <ItemImageSingle imageData={satelliteImages[i]} /> 
+          <ItemImageSingle imageData={satelliteImages[i]} width={70} height={70} /> 
         );
       }
     }
@@ -137,13 +146,14 @@ const ButtonLottieAnimationSatellitesImages = ({
   };
 
   const renderAdditionalSatellites = () => (
+
         <FlatList
         data={additionalSatellites}
         horizontal
         keyExtractor={(item, index) => `satellite-${index}`}
         renderItem={({ item }) => (
           
-          <ItemImageSingle imageObject={item} />
+          <ItemImageSingle imageObject={item} height={80} width={80} />
         )}
       />
     );
@@ -158,8 +168,8 @@ const ButtonLottieAnimationSatellitesImages = ({
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 146,
-                  padding: 10,
+                  height: 136,
+                  padding: 6,
                   borderRadius: 30,
                   alignItems: 'center',
                   overflow: 'hidden',
@@ -187,7 +197,7 @@ const ButtonLottieAnimationSatellitesImages = ({
                     resizeMode="contain"
                   />
                 )}
-                <View style={{ flexDirection: 'column', paddingHorizontal: 5, paddingBottom: 8, paddingTop: 8, flex: 1 }}>
+                <View style={{ flexDirection: 'column', paddingHorizontal: 5,   paddingTop: 6, flex: 1 }}>
                   <Text
                     style={[
                       textStyles(preLabelFontSize, preLabelColor),
@@ -198,7 +208,7 @@ const ButtonLottieAnimationSatellitesImages = ({
                   <View style={{ flexDirection: 'row' }}>
                     {rightSideAnimation ? (
                       <>
-                        <ItemImageSingle imageObject={firstItem} /> 
+                        <ItemImageSingle imageObject={firstItem} height={80} width={80} /> 
                         {showIcon && animationSource && (
                           <LottieView
                             ref={lottieViewRef}
@@ -222,8 +232,10 @@ const ButtonLottieAnimationSatellitesImages = ({
                             onError={(error) => console.error('Error rendering animation:', error)}
                           />
                         )} 
-                        <ItemImageMulti imageData={allItems} width={80} height={80} /> 
-                      </>
+                        {isImageListReady && (
+                          <ItemImageMulti imageData={allItems} width={70} height={70} /> 
+                        )}
+                        </>
                     )}
                   </View>
                   <Text
@@ -290,7 +302,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     marginVertical: 10,
-    height: 116,
+    height: 136,
     borderRadius: 30, 
     backgroundColor: 'black',
   },

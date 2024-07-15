@@ -1,34 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, Modal, Animated, TouchableOpacity } from 'react-native';
 import ButtonLottieAnimationSatellitesMoments from './ButtonLottieAnimationSatellitesMoments';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
-
-
-
-const ActionFriendPageMoments = ({ onPress }) => {
-  const { selectedFriend, setFriend } = useSelectedFriend();
-  const { capsuleList, setCapsuleList } = useCapsuleList();
-
-
-  
-  let mainMoment = null;
-  let satelliteMoments = [];
-  let satellitesFirstPage = 1;
-  let additionalSatelliteCount = null; 
-
-  if (capsuleList.length > 0) {
-    mainMoment = capsuleList[0];
-    satelliteMoments = capsuleList.slice(1);
-    additionalSatelliteCount = satelliteMoments.length - satellitesFirstPage;
-
+import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
+import ActionFriendPageAllMoments from '../components/ActionFriendPageAllMoments';
  
-  }
-
+const ActionFriendPageMoments = () => {
+  const { capsuleList } = useCapsuleList();
+  const [isFSModalVisible, setIsFSModalVisible] = useState(false);
   const [showSecondButton, setShowSecondButton] = useState(false);
-  const opacityAnim = new Animated.Value(1);
+  const opacityAnim = useRef(new Animated.Value(1)).current;
+
+  const mainMoment = capsuleList.length > 0 ? capsuleList[0] : null;
+  const satelliteMoments = capsuleList.length > 1 ? capsuleList.slice(1) : [];
+  const additionalSatelliteCount = satelliteMoments.length - 1;
+
+  let satellitesFirstPage = 1;
 
   const navigateToFirstPage = () => {
     setShowSecondButton(false);
@@ -42,16 +32,23 @@ const ActionFriendPageMoments = ({ onPress }) => {
   const handleNext = () => {
     setShowSecondButton(true);
     Animated.timing(opacityAnim, {
-      toValue: 0,
+      toValue: 1,
       duration: 500,
       useNativeDriver: true,
     }).start();
   };
 
-  
+  const handleFullScreen = () => {
+    setIsFSModalVisible(true); // Set modal visible when fullscreen button is pressed
+  };
+
+  const closeModal = () => {
+    setIsFSModalVisible(false); // Close the modal
+  };
+
   const handlePress = (moment) => {
-    const { capsule, typedCategory } = moment;   
-    console.log('ALL!!', capsule);
+    // Handle moment press actions
+    console.log('Selected Moment:', moment);
   };
 
   return (
@@ -128,20 +125,42 @@ const ActionFriendPageMoments = ({ onPress }) => {
       </Animated.View>
 
       {!showSecondButton && additionalSatelliteCount > 0 && (
-        <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
-          <View style={styles.svgContainer}>
-            <ArrowRightCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-          </View>
-        </TouchableOpacity>
+        <>
+        <View style={styles.arrowContainer}>
+          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
+            <View style={styles.svgFSContainer}>
+              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
+            <View style={styles.svgContainer}>
+              <ArrowRightCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
+            </View>
+          </TouchableOpacity>
+        </View>
+        </>
       )}
 
       {showSecondButton && (
-        <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
-          <View style={styles.svgContainer}>
-            <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-          </View>
-        </TouchableOpacity>
+        <>
+        <View style={styles.arrowContainer}>
+          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
+            <View style={styles.svgFSContainer}>
+              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
+            <View style={styles.svgContainer}>
+              <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
+            </View>
+          </TouchableOpacity>
+        </View>
+        </>
       )}
+ 
+      <ActionFriendPageAllMoments
+      isModalVisible={isFSModalVisible}
+      toggleModal={closeModal} onClose={closeModal} />
     </View>
   );
 };
@@ -155,20 +174,46 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  arrowContainer: {
+    flexDirection: 'column',
+    marginRight: -4,
+
+  },
   arrowButton: {
     padding: 4,
     marginRight: -8,
     marginLeft: -10,
   },
+  animatedView: {
+    flex: 1,
+  },
   svgContainer: {
-    width: 60,  
-    height: 60,  
+    width: 60,
+    height: 60,
     overflow: 'hidden',
     alignItems: 'center',
-    justifyContent: 'center',  
+    justifyContent: 'center',
   },
   SvgImage: {
-    transform: [{ scale: .8 }],  
+    transform: [{ scale: 0.8 }],
+  }, 
+  svgFSContainer: {
+    width: 60,
+    height: 50,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center', 
+    paddingTop: 20,
+    marginBottom: -6,
+  },
+  SvgFSImage: {
+    transform: [{ scale: 1.22 }],
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

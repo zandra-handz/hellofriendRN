@@ -4,7 +4,7 @@ import ItemViewImage from '../components/ItemViewImage';
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemImageSingle = ({ imageObject, imageWidth, imageHeight }) => {
+const ItemImageSingle = ({ imageObject, width, height }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [title, setTitle] = useState(null);
 
@@ -28,10 +28,12 @@ const ItemImageSingle = ({ imageObject, imageWidth, imageHeight }) => {
 
   const dynamicStyles = {
     image: {
-      width: imageWidth || windowWidth / 3 - 80,
-      height: imageHeight || windowWidth / 3 - 80,
-      margin: 5,
+      width: width || windowWidth / 3 - 80,
+      height: height || windowWidth / 3 - 80,
+      margin: 0, 
       borderRadius: 10,
+      borderWidth: 2.6,
+      borderColor: 'white',
     },
   };
 
@@ -49,7 +51,7 @@ const ItemImageSingle = ({ imageObject, imageWidth, imageHeight }) => {
 
 const styles = StyleSheet.create({
   imageContainer: {
-    padding: 10,
+    padding: 4, 
     width: '100%',
     flex: 1, 
   },
