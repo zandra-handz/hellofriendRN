@@ -23,6 +23,8 @@ const ActionFriendPageImages = ({ onPress }) => {
   let additionalSatelliteCount = null;
   let additionalImages = [];
 
+  let overrideView = true;
+
   if (imageList.length > 0) {
     console.log('IMAGE CONTEXT', imageList);
     mainImage = imageList[0];
@@ -75,7 +77,7 @@ const ActionFriendPageImages = ({ onPress }) => {
   return (
     <View style={styles.container}> 
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
-        {additionalSatelliteCount > 0 ? (
+        {additionalSatelliteCount > 0 || overrideView ? (
            
           <ButtonLottieAnimationSatellitesImages
             onPress={() => handlePress(mainImage)} 
@@ -146,7 +148,7 @@ const ActionFriendPageImages = ({ onPress }) => {
       </Animated.View>
       
 
-      {!showSecondButton && additionalSatelliteCount > 0 && (
+      {((!showSecondButton && additionalSatelliteCount > 0) || !showSecondButton && overrideView) && (
         <>
         <View style={styles.arrowContainer}>
           <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
@@ -162,6 +164,7 @@ const ActionFriendPageImages = ({ onPress }) => {
         </View>
         </>
       )}
+
 
       {showSecondButton && (
         <>

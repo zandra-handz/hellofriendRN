@@ -14,6 +14,7 @@ const ActionFriendPageLocations = ({ onPress }) => {
   const { selectedFriend, setFriend } = useSelectedFriend();
   const { locationList, setLocationList } = useLocationList();
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
+  
   const [showSecondButton, setShowSecondButton] = useState(false);
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
@@ -175,6 +176,7 @@ const ActionFriendPageLocations = ({ onPress }) => {
         </View>
         </>
       )}
+      
       <ActionFriendPageAllLocations
       isModalVisible={isFSModalVisible}
       toggleModal={closeModal} onClose={closeModal} />

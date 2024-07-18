@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
 import Svg, { Image } from 'react-native-svg';
-import { FlashList } from "@shopify/flash-list"; // Assuming this is a specific component library import
 import { useCapsuleList } from '../context/CapsuleListContext';
 import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg';
-import BubbleChatVibrantGreenSvg from '../assets/svgs/bubble-chat-vibrant-green.svg';
-
-import ItemViewMoment from '../components/ItemViewMoment';
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = true, columns = 3, showCategoryHeader = false, width = 100, height = 100, limit, newestFirst = true, svgColor = 'white', includeCategoryTitle = false }) => {
+const ItemArchivedMomentMulti = ({
+    archivedMomentData,
+    horizontal = true,
+    singleLineScroll = true,
+    columns = 3,
+    showCategoryHeader = false,
+    width = 100,
+    height = 100,
+    limit,
+    newestFirst = true,
+    svgColor = 'black',
+    includeCategoryTitle = false
+}) => {
     const { capsuleList } = useCapsuleList();
     const [selectedMoment, setSelectedMoment] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -18,21 +26,16 @@ const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = tru
     const [momentText, setMomentText] = useState('');
     const [momentCategory, setMomentCategory] = useState('');
 
-    const sortedMoments = capsuleList.sort((a, b) => newestFirst ? new Date(b.created) - new Date(a.created) : new Date(a.created) - new Date(b.created));
-    const [moments, setMoments] = useState(sortedMoments.slice(0, limit));
-
     useEffect(() => {
-        console.log('Total number of moments:', moments.length);
-    }, [moments.length]);
+        console.log('Total number of moments:', archivedMomentData.length);
+    }, [archivedMomentData.length]);
 
     const openModal = (moment) => {
-        console.log('Opening modal for moment:', moment);
         setSelectedMoment(moment);
         setIsModalVisible(true);
     };
 
     const closeModal = () => {
-        console.log('Closing modal');
         setSelectedMoment(null);
         setIsModalVisible(false);
         setIsEditing(false);
@@ -57,8 +60,8 @@ const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = tru
 
     return (
         <View style={{ minHeight: 2 }}>
-            <FlashList
-                data={capsuleList.slice(0, limit)}
+            <FlatList
+                data={archivedMomentData.slice(0, limit)}
                 horizontal={horizontal && singleLineScroll}
                 keyExtractor={(moment) => moment.id.toString()}
                 renderItem={({ item: moment }) => (
@@ -76,14 +79,15 @@ const ItemMomentMulti = ({ momentData, horizontal = true, singleLineScroll = tru
                         </View>
                     </TouchableOpacity>
                 )}
-                numColumns={horizontal && !singleLineScroll ? columns : 1}
+                numColumns={horizontal && !singleLineScroll ? columns : 1} // Adjust numColumns based on horizontal and singleLineScroll props
                 columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
-                estimatedItemSize={100}
+                contentContainerStyle={styles.flatlistContentContainer}
+                // Remove estimatedItemSize for better column layout
             />
 
             <Modal visible={isModalVisible} onRequestClose={closeModal} transparent>
                 <View style={styles.modalContainer}>
-                    <ItemViewMoment moment={selectedMoment} onClose={closeModal} />
+                    {/* Render modal content here */}
                 </View>
             </Modal>
         </View>
@@ -101,23 +105,13 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     bubbleText: {
-        color: 'black',
-        fontFamily: 'Poppins-Regular',
+        color: 'white',
+        fontFamily: 'Poppins-Bold',
         textAlign: 'left',
-    },
-    imageContainer: {
-        flexDirection: 'row',
-        backgroundColor: 'transparent',
     },
     imageRow: {
         flex: 1,
         justifyContent: 'space-between',
-    },
-    image: {
-        margin: 5,
-        borderRadius: 10,
-        color: 'white',
-        backgroundColor: 'white',
     },
     modalContainer: {
         flex: 1,
@@ -142,5 +136,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ItemMomentMulti;
-
+export default ItemArchivedMomentMulti;

@@ -20,6 +20,8 @@ const ActionFriendPageMoments = () => {
 
   let satellitesFirstPage = 1;
 
+  let overrideView = true;
+
   const navigateToFirstPage = () => {
     setShowSecondButton(false);
     Animated.timing(opacityAnim, {
@@ -54,7 +56,7 @@ const ActionFriendPageMoments = () => {
   return (
     <View style={styles.container}>
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
-        {additionalSatelliteCount > 0 ? (
+        {additionalSatelliteCount > 0 || overrideView ? (
           <ButtonLottieAnimationSatellitesMoments
             onPress={() => handlePress(mainMoment)} 
             navigateToFirstPage={navigateToFirstPage}
@@ -62,6 +64,7 @@ const ActionFriendPageMoments = () => {
             allItems={capsuleList ? capsuleList : 'Loading...'}
             additionalText={mainMoment ? mainMoment.typed_category : ''}
             fontMargin={3}
+            
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
             labelFontSize={16}
@@ -78,6 +81,8 @@ const ActionFriendPageMoments = () => {
             shapeHeight={340}
             shapePositionValue={-154}
             showIcon={false}
+            showGradient={false}
+            backgroundColor="black"
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
@@ -112,6 +117,8 @@ const ActionFriendPageMoments = () => {
             shapeHeight={340}
             shapePositionValue={-154}
             showIcon={false}
+            showGradient={false}
+            backgroundColor="transparent"
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
@@ -124,7 +131,7 @@ const ActionFriendPageMoments = () => {
         )}
       </Animated.View>
 
-      {!showSecondButton && additionalSatelliteCount > 0 && (
+      {((!showSecondButton && additionalSatelliteCount > 0) || !showSecondButton && overrideView) && (
         <>
         <View style={styles.arrowContainer}>
           <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
@@ -140,6 +147,7 @@ const ActionFriendPageMoments = () => {
         </View>
         </>
       )}
+
 
       {showSecondButton && (
         <>

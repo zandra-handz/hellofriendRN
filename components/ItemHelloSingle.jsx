@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Dimensions, TouchableOpacity } from 'react-native';
 import ItemViewHello from '../components/ItemViewHello';
+import IconDynamicHelloType from '../components/IconDynamicHelloType';
+
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -38,6 +40,8 @@ const ItemHelloSingle = ({ helloObject, helloWidth, helloHeight }) => {
   return (
     <View style={styles.helloContainer}>
       <TouchableOpacity onPress={openModal}>
+      <IconDynamicHelloType selectedChoice={helloObject.type} svgColor="white"/>
+                            
 
         <Text>TEXT HERE</Text>
       
@@ -51,8 +55,10 @@ const ItemHelloSingle = ({ helloObject, helloWidth, helloHeight }) => {
 
 const styles = StyleSheet.create({
   helloContainer: {
-    padding: 10,
+    padding: 40,
     width: '100%',
+    background: 'white',
+    height: 120,
     flex: 1, 
   },
   modalContainer: {

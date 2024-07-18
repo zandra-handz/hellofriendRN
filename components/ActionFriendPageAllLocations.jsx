@@ -5,11 +5,21 @@ import { useLocationList } from '../context/LocationListContext';
 
 import ItemLocationMulti from '../components/ItemLocationMulti';
 import ItemImageMulti from '../components/ItemImageMulti';
+import ActionFriendPageGoogleMap from '../components/ActionFriendPageGoogleMap';
 
 const ActionFriendPageAllLocations = ({ isModalVisible, toggleModal, onClose }) => {
 
     const { locationList, faveLocationList } = useLocationList();
     const [isLocationListReady, setIsLocationListReady] = useState(false);
+    const [isMapModalVisible, setIsMapModalVisible] = useState(false);
+  
+    const handleMapScreen = () => {
+        setIsMapModalVisible(true); // Set modal visible when fullscreen button is pressed
+      };
+    
+      const closeModal = () => {
+        setIsMapModalVisible(false); // Close the modal
+      };
 
     useEffect(() => {
         if (locationList.length > 0) {
@@ -21,9 +31,14 @@ const ActionFriendPageAllLocations = ({ isModalVisible, toggleModal, onClose }) 
         <Modal visible={isModalVisible} onRequestClose={toggleModal} transparent>
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
+                    <> 
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                         <Text style={styles.closeText}>Close</Text>
                     </TouchableOpacity> 
+                    <TouchableOpacity onPress={handleMapScreen} style={styles.searchMapButton}>
+                        <Text style={styles.searchMapText}>Search</Text>
+                    </TouchableOpacity> 
+                    </>
                     <ScrollView>
                         {isLocationListReady ? (
                             <> 
@@ -34,6 +49,10 @@ const ActionFriendPageAllLocations = ({ isModalVisible, toggleModal, onClose }) 
                         ) : (
                             <Text>Loading...</Text>
                         )}
+                        <ActionFriendPageGoogleMap
+                        isModalVisible={isMapModalVisible}
+                        toggleModal={closeModal} onClose={closeModal} />
+                         
                     </ScrollView>
                 </View>
             </View>
@@ -59,6 +78,18 @@ const styles = StyleSheet.create({
         height: '100%',
         maxHeight: '100%',
     },
+    searchMapButton: {
+        position: 'absolute',
+        top: 10,
+        right: 80,
+        zIndex: 1,
+    },
+    searchMapText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'white',
+    },
+
     closeButton: {
         position: 'absolute',
         top: 10,

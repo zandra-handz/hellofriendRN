@@ -13,6 +13,7 @@ const ActionFriendPageHeader = ({ onPress }) => {
   
     const [showNextHello, setShowNextHello] = useState(true);
 
+    let daysSinceInHeader = false;
 
     const handleOnPress = () => {
         console.log("ActionFriendPageHeader clicked!");

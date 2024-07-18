@@ -5,16 +5,21 @@ import useCapsuleList from '../context/CapsuleListContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import ItemHelloSingle from '../components/ItemHelloSingle';
 import ItemHelloMulti from '../components/ItemHelloMulti'; // Import the ItemImageSingle component
+import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
+import CoffeeCupPaperSolid from '../assets/svgs/coffee-cup-paper-solid';
 
+import IconDynamicHelloType from '../components/IconDynamicHelloType';
 
 const ButtonLottieAnimationSatellitesHelloes = ({
   onPress,
   isLoading = false,
   loadingMessage = '',
-  headerText = 'PAST',
+  headerText = 'LAST HELLO',
   firstItem,
+  firstItemDetailsAsSatellites = true,
   allItems,
   categoryAttribute = 'typedCategory',
+  subHeaderText = '',
   additionalText = '',
   animationSource,
   rightSideAnimation = false,
@@ -24,6 +29,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
   labelColor = 'black',
   additionalTextFontSize = 16,
   additionalTextColor = 'white',
+  typeIcon = null,
   backgroundColor = 'transparent',
   animationWidth = 40,
   animationHeight = 40,
@@ -42,7 +48,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
   satelliteSectionPosition = 'right',
   satelliteCount = 3,
   satellitesOrientation = 'horizontal',
-  satelliteHeight = 40,
+  satelliteHeight = 60,
   satelliteHelloes = [],  
   additionalPages = false,
   additionalPagesCategorize = true,
@@ -58,9 +64,9 @@ const ButtonLottieAnimationSatellitesHelloes = ({
     if (viewableItems.length > 0) {
       const topItem = viewableItems[0].item;
 
-      setCategory(topItem.typedCategory); // Correct usage
+      setCategory(topItem.date); // Correct usage
       console.log('Top item:', topItem);
-      console.log('Category:', topItem.typedCategory); // Correct usage
+      console.log('Category:', topItem); // Correct usage
     }
   }).current;
 
@@ -125,21 +131,29 @@ const ButtonLottieAnimationSatellitesHelloes = ({
   const satelliteWidth = (width / 4) / satelliteCount;
 
   const renderSatellites = () => {
-    if (!satellites || satelliteHelloes.length === 0) {
-      return null;
+    if (!firstItemDetailsAsSatellites) {
+      if (!satellites || satelliteHelloes.length === 0) {
+        return null;
+      }
+  
+      const numSatellites = Math.min(satelliteCount, satelliteHelloes.length);
+      const satellitesArray = [];
+  
+      for (let i = 0; i < numSatellites; i++) {
+        satellitesArray.push(
+          <ItemHelloSingle key={`satellite-${i}`} helloObject={satelliteHelloes[i]} />
+       
+        );
+      }
+  
+      return satellitesArray;
     }
-
-    const numSatellites = Math.min(satelliteCount, satelliteHelloes.length);
-    const satellitesArray = [];
-
-    for (let i = 0; i < numSatellites; i++) {
-      satellitesArray.push(
-        <ItemHelloSingle key={`satellite-${i}`} helloObject={satelliteHelloes[i]} />
-      );
+  
+    if (firstItemDetailsAsSatellites) {
+      return typeIcon;
     }
-
-    return satellitesArray;
   };
+  
 
   const renderAdditionalSatellites = useCallback(() => {
     return (
@@ -163,16 +177,15 @@ const ButtonLottieAnimationSatellitesHelloes = ({
       {!additionalPages && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { width: satellites ? '76.66%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { width: satellites ? '100%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
-                  width: '100%',
-                  height: 146,
-                  padding: 10,
-                  borderRadius: 30,
-                  alignItems: 'center',
-                  overflow: 'hidden',
+                  width: '76%',
+                  height: 126,
+                  padding: 6,
+                  borderRadius: 30, 
+                  overflow: 'hidden', 
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
                 }}
                 onPress={onPress}
@@ -232,23 +245,32 @@ const ButtonLottieAnimationSatellitesHelloes = ({
                             onError={(error) => console.error('Error rendering animation:', error)}
                           />
                         )}
-                        <ItemHelloMulti helloData={allItems} width={120} height={120} /> 
+                        <ItemHelloMulti helloData={allItems} width={120} height={120} limit={0} /> 
                       </>
                     )}
                   </View>
                   <Text
                     style={[
                       textStyles(additionalTextFontSize, additionalTextColor),
-                      { textAlign: 'left', marginBottom: 10 },
+                      { textAlign: 'left', marginVertical: 4, marginBottom: 2 },
                     ]}
                   >
-                    {additionalText}
+                    {additionalText} 
+                  </Text>
+                  <Text
+                    style={[
+                      textStyles(additionalTextFontSize, additionalTextColor),
+                      { textAlign: 'left', marginVertical: 4 },
+                    ]}
+                  >  
                   </Text>
                 </View>
               </TouchableOpacity>
             </View>
             {satellites && (
               <View style={[styles.satelliteSection, { flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+                
+                
                 {renderSatellites()}
               </View>
             )}
@@ -269,12 +291,11 @@ const ButtonLottieAnimationSatellitesHelloes = ({
   
 const styles = StyleSheet.create({ 
   satelliteSection: {
-    width: '33.33%',
+    width: '36.33%',
     height: 126,
-    borderRadius: 20,
-    marginLeft: -20,
-    paddingLeft: 8,
-    marginTop: '4%',
+    borderRadius: 30,
+    marginLeft: -125,
+    paddingLeft: 8, 
     alignItems: 'center',
     justifyContent: 'space-evenly',
     backgroundColor: 'darkgrey',
@@ -282,7 +303,7 @@ const styles = StyleSheet.create({
   additionalSatelliteSection: {
     flexDirection: 'column',
     marginVertical: 0,
-    height: 'auto',
+    height: 126,
     borderRadius: 30, 
     backgroundColor: 'black',
   },
@@ -292,7 +313,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     marginLeft: 20,
     marginBottom: 0, 
+    paddingTop: 6,
     textTransform: 'uppercase',
+    zIndex: 1,
   },
 });
 

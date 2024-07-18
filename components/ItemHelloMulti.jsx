@@ -3,10 +3,16 @@ import { View, FlatList, Text, TouchableOpacity, Modal, StyleSheet, Dimensions }
 
 import ItemViewHello from '../components/ItemViewHello'; 
 import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
+import CoffeeCupPaperSolid from '../assets/svgs/coffee-cup-paper-solid';
+
+import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
+
 import useCapsuleList from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext'
 
 import { FlashList } from "@shopify/flash-list"; 
+import IconDynamicHelloType from '../components/IconDynamicHelloType';
+
 
 const windowWidth = Dimensions.get('window').width; 
 
@@ -65,9 +71,11 @@ const ItemHelloMulti = ({ helloData, horizontal = true, singleLineScroll = true,
                 renderItem={({ item: hello }) => (
                     <TouchableOpacity onPress={() => openModal(hello)}>
                         <View style={[styles.relativeContainer, { width, height }]}>  
-                            <BubbleChatSvg width={width} height={height} style={styles.svgImage} />
+                            <CoffeeCupPaperSolid width={width} height={height} color={"white"} style={styles.svgImage} />
                             <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
                                 <Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.7 }]}>{hello.type}</Text>
+                                <IconDynamicHelloType selectedChoice={hello.type}/>
+                            
                             </View>
                         </View>
                     </TouchableOpacity>

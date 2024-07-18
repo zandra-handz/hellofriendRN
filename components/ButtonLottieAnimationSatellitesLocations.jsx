@@ -182,12 +182,12 @@ const ButtonLottieAnimationSatellitesLocations = ({
       {!additionalPages && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { height: 60, width: satellites ? '100%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: 90, width: satellites ? '100%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 60,
+                  height: 90,
                   padding: 10,
                   borderRadius: 30,
                   alignItems: 'center',
@@ -304,7 +304,7 @@ svgContainer: {
   additionalSatelliteSection: {
     flexDirection: 'column',
     marginVertical: 0,
-    height: 100,
+    height: 90,
     borderRadius: 30, 
     backgroundColor: 'black',
   },

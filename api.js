@@ -282,11 +282,15 @@ export const fetchPastHelloes = async (friendId) => {
         const response = await axios.get(`/friends/${friendId}/helloes/`);
         if (response && response.data) {
             const helloesData = response.data;
+            console.log('pastHelloes data: ', helloesData);
 
             const formattedHelloesList = helloesData.map(hello => ({
                 id: hello.id,
                 date: hello.past_date_in_words,
                 type: hello.type,
+                typedLocation: hello.typed_location,
+                locationName: hello.location_name,
+                location: hello.location, 
                 pastCapsules: hello.thought_capsules_shared
                     ? Object.keys(hello.thought_capsules_shared).map(key => ({
                           id: key,

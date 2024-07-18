@@ -170,8 +170,7 @@ const ButtonLottieAnimationSatellitesImages = ({
                   width: '100%',
                   height: 136,
                   padding: 6,
-                  borderRadius: 30,
-                  alignItems: 'center',
+                  borderRadius: 30, 
                   overflow: 'hidden',
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
                 }}

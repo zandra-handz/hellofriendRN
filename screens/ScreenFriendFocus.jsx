@@ -32,9 +32,10 @@ const ScreenFriendFocus = () => {
       )}
       {!loadingNewFriend && (
             <View style={styles.buttonContainer}>
+            
             <ActionFriendPageHeader />
             <ActionFriendPageLocations />
-            <ActionFriendPageMoments />
+            <ActionFriendPageMoments /> 
             <ActionFriendPageImages /> 
             <ActionFriendPageHelloes />
             

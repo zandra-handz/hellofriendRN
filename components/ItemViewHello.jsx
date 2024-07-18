@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, Text, TouchableOpacity, TextInput, Button } from 'react-native';
+import { View, StyleSheet, Text, Button } from 'react-native';
 import AlertImage from '../components/AlertImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
-import ItemViewFooter from './ItemViewFooter';
+import ItemViewFooter from '../components/ItemViewFooter';
+import ItemArchivedMomentMulti from '../components/ItemArchivedMomentMulti'; // Import ItemArchivedMomentMulti component
 
-const ItemViewHello = ({ moment, onClose }) => {
+const ItemViewHello = ({ hello, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
-  const [includeTag, setIncludeTag] = useState(false);
-
   const { selectedFriend } = useSelectedFriend();
   const { capsuleList, setCapsuleList } = useCapsuleList();
-   
-  const [title, setTitle] = useState(null); 
 
   useEffect(() => {
-    if (moment) {
-
-      console.log('Moment data:', moment);
+    if (hello) {
+      console.log('Hello data:', hello);
     }
-  }, [moment]);
+  }, [hello]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -55,86 +51,51 @@ const ItemViewHello = ({ moment, onClose }) => {
       isModalVisible={isModalVisible}
       toggleModal={closeModal}
       modalContent={
-       moment ? (
-        <View> 
-          <Text>{moment.capsule}</Text>
-          {isEditing ? (
-            <>
-              <Button title="Update" onPress={handleUpdate} />
-              <Button title="Cancel" onPress={() => setIsEditing(false)} />
-            </>
-          ) : (
-            <>
-              <Text style={styles.modalText}> </Text>
-              <ItemViewFooter
+        hello ? (
+          <View style={styles.container}>
+            <Text>{hello.locationName}</Text>
+            <View style={styles.archivedMomentsContainer}>
+              <ItemArchivedMomentMulti archivedMomentData={hello.pastCapsules} horizontal={false} singleLineScroll={false} />
+              {isEditing ? (
+                <>
+                  <Button title="Update" onPress={handleUpdate} />
+                  <Button title="Cancel" onPress={() => setIsEditing(false)} />
+                </>
+              ) : (
+                <ItemViewFooter
                   buttons={[
                     { label: 'Edit', icon: 'edit', color: 'blue', onPress: handleEdit },
                     { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
-                    { label: 'Share', icon: 'share', color: 'green', onPress: handleDelete },
+                    { label: 'Share', icon: 'share', color: 'green', onPress: handleDelete }, // Adjust onPress actions as needed
                   ]}
-              />
-            </>
-          )}
-        </View>
-      ) : null
-    }
-    modalTitle={moment.typedCategory}
-  />
-);
+                />
+              )}
+            </View>
+          </View>
+        ) : null
+      }
+      modalTitle={hello.type}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20, // Adjust padding as needed
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  imageContainer: {
-    padding: 10,
-    width: '100%',
-    flex: 1,
-  },
-  categoryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  imageRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'left',
-  },
-  modalImage: {
-    width: '100%',
-    height: 300,
-    resizeMode: 'cover',
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  input: {
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 8,
-  },
-  icon: {
-    marginHorizontal: 10,
-  },
-  tagContainer: {
-    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  tagLabel: {
-    fontSize: 16,
+  archivedMomentsContainer: {
+    width: '100%',
+    backgroundColor: 'transparent',
+    justifyContent: 'space-around',
+    alignContent: 'center',
+    borderRadius: 0,
+    padding: 4,
+    paddingTop: 50,
+    height: '100%',
+    maxHeight: '100%',
   },
 });
 

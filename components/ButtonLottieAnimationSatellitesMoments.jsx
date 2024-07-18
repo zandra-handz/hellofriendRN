@@ -166,7 +166,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
       {!additionalPages && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { height: 194, width: satellites ? '100%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: 194,   width: satellites ? '100%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
