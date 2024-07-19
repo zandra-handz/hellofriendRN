@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FlatList, StyleSheet, View, Dimensions } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 import CardLocationTopper from './CardLocationTopper';
 import CardLocation from './CardLocation';
 import { useLocationList } from '../context/LocationListContext';

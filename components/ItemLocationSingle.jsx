@@ -3,6 +3,10 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-nati
 
 import ItemViewLocation from '../components/ItemViewLocation'; 
 import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
+import CoffeeBeansOutlineSvg from '../assets/svgs/coffee-beans-outline.svg';
+import CoffeeShopOutlineSvg from '../assets/svgs/coffee-shop-outline';
+import CoffeeShopColoredSvg from '../assets/svgs/coffee-shop-colored';
+
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -41,7 +45,7 @@ const ItemLocationSingle = ({ locationObject, locationWidth, locationHeight }) =
     <View style={styles.imageContainer}>
       <TouchableOpacity onPress={openModal}>
         <View style={styles.relativeContainer}>  
-          <BubbleChatSvg width={210} height={210} style={styles.svgImage} />
+          <CoffeeShopOutlineSvg width={40} height={40} color="white" style={styles.svgImage} />
           
           <View style={styles.bubbleContainer}>
             <Text style={styles.bubbleText}>{locationObject.address}</Text>
@@ -58,7 +62,7 @@ const ItemLocationSingle = ({ locationObject, locationWidth, locationHeight }) =
 const styles = StyleSheet.create({
   imageContainer: {
     padding: 0,
-    width: 210,
+    width: 110,
     flex: 1,
     height: 210, 
     alignContent: 'center',
@@ -82,13 +86,13 @@ const styles = StyleSheet.create({
   
   bubbleText: { 
     fontSize: 14,
-    color: 'black',
+    color: 'transparent',
     fontFamily: 'Poppins-Bold',
   },
   svgImage: {
     position: 'absolute',
     top: 0, 
-    marginTop: -24,
+    marginTop: 0,
     backgroundColor: 'transparent',  
     zIndex: 0, // Ensure SVG is below text
   },

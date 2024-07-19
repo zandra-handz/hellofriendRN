@@ -21,17 +21,19 @@ const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) =
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+    alignItems: 'center', 
     height: '50%',
   },
   modalContent: {
-    width: '90%',
+    width: '100%',
     padding: 20,
     backgroundColor: 'white',
-    borderRadius: 20,
-    height: '70%',
+    borderRadius: 30,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    height: '48%',
+    bottom: 0,
     position: 'relative',
   },
   closeButton: {

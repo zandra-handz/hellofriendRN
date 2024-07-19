@@ -20,25 +20,21 @@ const ItemViewFooter = ({ buttons }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: { 
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
+    justifyContent: 'space-between',
     height: 64,
     width: '100%',
     marginBottom: 0,
-    padding: 10,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: -5 },
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
-    elevation: 10,
+    padding: 10, 
+    zIndex: 1,
   },
-  button: {
-    marginLeft: 10,
+  button: { 
     alignItems: 'center',
   },
   icon: {
-    marginHorizontal: 10,
+    marginHorizontal: 0,
   },
 });
 

@@ -39,6 +39,7 @@ const InputGoogleSearchAddress = ({ onAddressSelected }) => {
         debounce={200}
         renderRightButton={() => (
           <FontAwesome5 name="search" size={16} color="gray" style={styles.searchIcon} />
+        
         )}
       />
     </View>

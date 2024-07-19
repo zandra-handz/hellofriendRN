@@ -5,24 +5,38 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import ItemViewFooter from './ItemViewFooter';
-import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; // Adjust the import path as needed
+import { addToFriendFavesLocations, removeFromFriendFavesLocations, saveNewLocation } from '../api'; // Adjust the import path as needed
 
 const ItemViewLocation = ({ location, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
-  const [includeTag, setIncludeTag] = useState(false);
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-  const { locationList, setLocationList, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+  const { locationList, setLocationList, selectedLocation, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
 
   useEffect(() => {
     if (location) {
+      setSelectedLocation(location);
       console.log('Location data:', location);
     }
   }, [location]);
 
   const handleEdit = () => {
     setIsEditing(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      if (selectedFriend && location) {
+        // See InputAddLocationQuickSave
+        setIsEditing(false); // Optionally close editing mode after saving
+
+        // Handle updating the location list or other state changes as needed
+        console.log(response);
+      }
+    } catch (error) {
+      console.error('Error saving new location in handleSave:', error);
+    }
   };
 
   const closeModal = () => {
@@ -33,12 +47,12 @@ const ItemViewLocation = ({ location, onClose }) => {
 
   const handleUpdate = async () => {
     try {
-      if (selectedFriend && location) { 
+      if (selectedFriend && location) {
         const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
         addLocationToFaves(location.id);
         const updatedFaves = response;
         console.log(updatedFaves);
-        
+
         if (friendDashboardData && friendDashboardData.length > 0) {
           friendDashboardData[0].friend_faves = updatedFaves;
           console.log(friendDashboardData);
@@ -51,7 +65,6 @@ const ItemViewLocation = ({ location, onClose }) => {
       console.error('Error adding location to favorites in handleUpdate:', error);
     }
   };
-  
 
   const handleDelete = async () => {
     try {
@@ -62,16 +75,24 @@ const ItemViewLocation = ({ location, onClose }) => {
 
         if (friendDashboardData && friendDashboardData.length > 0) {
           friendDashboardData[0].friend_faves = updatedFaves;
-          updateFriendDashboardData(friendDashboardData); 
+          updateFriendDashboardData(friendDashboardData);
           console.log('Location removed from friend\'s favorites.');
         }
-        
+
         console.log('Location removed from friend\'s favorites.');
       }
       onClose();
     } catch (error) {
       console.error('Error removing location to favorites in handleUpdate:', error);
     }
+  };
+
+  const getLocationTitle = (location) => {
+    let title = location.title;
+    if (location.id.startsWith('temp')) {
+      title += ' (unsaved)';
+    }
+    return title;
   };
 
   return (
@@ -84,7 +105,7 @@ const ItemViewLocation = ({ location, onClose }) => {
             <Text>{location.address}</Text>
             {isEditing ? (
               <>
-                <Button title="Update" onPress={handleUpdate} />
+                <Button title="Save" onPress={handleSave} />
                 <Button title="Cancel" onPress={() => setIsEditing(false)} />
               </>
             ) : (
@@ -92,7 +113,7 @@ const ItemViewLocation = ({ location, onClose }) => {
                 <Text style={styles.modalText}> </Text>
                 <ItemViewFooter
                   buttons={[
-                    { label: 'Edit', icon: 'edit', color: 'blue', onPress: handleEdit },
+                    { label: location.id.startsWith('temp') ? 'Save' : 'Edit', icon: location.id.startsWith('temp') ? 'save' : 'edit', color: location.id.startsWith('temp') ? 'green' : 'blue', onPress: location.id.startsWith('temp') ? handleSave : handleEdit },
                     { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
                     { label: 'Share', icon: 'share', color: 'green', onPress: handleDelete },
                   ]}
@@ -102,8 +123,7 @@ const ItemViewLocation = ({ location, onClose }) => {
           </View>
         ) : null
       }
-      
-      modalTitle={location && location.title ? location.title : null}
+      modalTitle={location ? getLocationTitle(location) : null}
     />
   );
 };

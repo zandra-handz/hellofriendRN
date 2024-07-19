@@ -9,6 +9,7 @@ export const LocationListProvider = ({ children }) => {
   const [locationList, setLocationList] = useState([]);
   const [faveLocationList, setFaveLocationList] = useState([]);
   const [validatedLocationList, setValidatedLocationList] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const { authUserState } = useAuthUser(); // Use the authentication state
 
   useEffect(() => {
@@ -16,13 +17,18 @@ export const LocationListProvider = ({ children }) => {
       try {
         const locationData = await fetchAllLocations();
         setLocationList(locationData);
-        console.log('Fetch (location) Dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:', locationData);
+        console.log('Fetch (location) Data:', locationData);
   
         // Logging friends object
         locationData.forEach(location => {
           console.log(`Friends for location ${location.title}:`, location.friends);
         });
-  
+
+        // Set the initial selected location
+        if (locationData.length > 0) {
+          setSelectedLocation(locationData[locationData.length - 1]);
+        }
+
       } catch (error) {
         console.error('Error fetching location list:', error);
       }
@@ -31,11 +37,11 @@ export const LocationListProvider = ({ children }) => {
     if (authUserState.authenticated) {
       fetchData();
     } else {
-      setLocationList([]); 
-  }
+      setLocationList([]);
+    }
   }, [authUserState.authenticated]); // Fetch data when authenticated
 
-  useEffect(() => { 
+  useEffect(() => {
     setValidatedLocationList(locationList.filter(location => location.validatedAddress));
   }, [locationList]);
 
@@ -56,9 +62,8 @@ export const LocationListProvider = ({ children }) => {
     setFaveLocationList(updatedFaves);
   };
 
-
   return (
-    <LocationListContext.Provider value={{ locationList, validatedLocationList, faveLocationList, populateFaveLocationsList, addLocationToFaves, removeLocationFromFaves, setLocationList }}>
+    <LocationListContext.Provider value={{ locationList, validatedLocationList, faveLocationList, selectedLocation, setSelectedLocation, populateFaveLocationsList, addLocationToFaves, removeLocationFromFaves, setLocationList }}>
       {children}
     </LocationListContext.Provider>
   );
