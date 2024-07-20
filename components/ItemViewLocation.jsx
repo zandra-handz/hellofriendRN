@@ -5,7 +5,9 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import ItemViewFooter from './ItemViewFooter';
-import { addToFriendFavesLocations, removeFromFriendFavesLocations, saveNewLocation } from '../api'; // Adjust the import path as needed
+import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; // Adjust the import path as needed
+import FormLocationQuickCreate from '../forms/FormLocationQuickCreate'; // Adjust the import path as needed
+import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
 
 const ItemViewLocation = ({ location, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -13,6 +15,7 @@ const ItemViewLocation = ({ location, onClose }) => {
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
   const { locationList, setLocationList, selectedLocation, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+  const [isTemp, setIsTemp] = useState(false);
 
   useEffect(() => {
     if (location) {
@@ -21,18 +24,39 @@ const ItemViewLocation = ({ location, onClose }) => {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (location && location.id) {
+      setIsTemp(String(location.id).startsWith('temp'));
+    }
+  }, [location]);
+
   const handleEdit = () => {
     setIsEditing(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (newLocation) => {
     try {
-      if (selectedFriend && location) {
-        // See InputAddLocationQuickSave
+      if (isTemp) {
+        // Handle saving of temporary locations
+        const newLocationWithId = { ...newLocation, id: Date.now().toString() }; // Generate a unique ID for the new location
+        setLocationList([...locationList, newLocationWithId]);
         setIsEditing(false); // Optionally close editing mode after saving
+      } else {
+        // If the location is not temporary, update or add the location to the friend's favorites
+        if (selectedFriend && location) {
+          const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
+          addLocationToFaves(location.id);
+          const updatedFaves = response;
+          console.log(updatedFaves);
 
-        // Handle updating the location list or other state changes as needed
-        console.log(response);
+          if (friendDashboardData && friendDashboardData.length > 0) {
+            friendDashboardData[0].friend_faves = updatedFaves;
+            console.log(friendDashboardData);
+            updateFriendDashboardData(friendDashboardData);
+            console.log('Location added to friend\'s favorites.');
+          }
+        }
+        onClose();
       }
     } catch (error) {
       console.error('Error saving new location in handleSave:', error);
@@ -83,16 +107,21 @@ const ItemViewLocation = ({ location, onClose }) => {
       }
       onClose();
     } catch (error) {
-      console.error('Error removing location to favorites in handleUpdate:', error);
+      console.error('Error removing location from favorites in handleUpdate:', error);
     }
   };
 
   const getLocationTitle = (location) => {
-    let title = location.title;
-    if (location.id.startsWith('temp')) {
-      title += ' (unsaved)';
+    try {
+      let title = location.title || 'Unknown Location'; // Default title if location.title is undefined
+      if (location.id && String(location.id).startsWith('temp')) {
+        title += ' (unsaved)';
+      }
+      return title;
+    } catch (error) {
+      console.error('Error getting location title:', error);
+      return location.title; // Fallback title in case of an error
     }
-    return title;
   };
 
   return (
@@ -105,15 +134,26 @@ const ItemViewLocation = ({ location, onClose }) => {
             <Text>{location.address}</Text>
             {isEditing ? (
               <>
-                <Button title="Save" onPress={handleSave} />
-                <Button title="Cancel" onPress={() => setIsEditing(false)} />
+                {isTemp ? (
+                  <FormLocationQuickCreate 
+                    title={location.title} 
+                    address={location.address} 
+                    onLocationCreate={handleSave} 
+                  />
+                ) : (
+                  <>
+                    <Button title="Save" onPress={handleSave} />
+                    <Button title="Cancel" onPress={() => setIsEditing(false)} />
+                  </>
+                )}
               </>
             ) : (
               <>
-                <Text style={styles.modalText}> </Text>
+                <Text style={styles.modalText}></Text>
+                <ItemViewLocationDetails location={location} />
                 <ItemViewFooter
                   buttons={[
-                    { label: location.id.startsWith('temp') ? 'Save' : 'Edit', icon: location.id.startsWith('temp') ? 'save' : 'edit', color: location.id.startsWith('temp') ? 'green' : 'blue', onPress: location.id.startsWith('temp') ? handleSave : handleEdit },
+                    { label: isTemp ? 'Save' : 'Edit', icon: isTemp ? 'save' : 'edit', color: isTemp ? 'green' : 'blue', onPress: isTemp ? handleSave : handleEdit },
                     { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
                     { label: 'Share', icon: 'share', color: 'green', onPress: handleDelete },
                   ]}

@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center', 
     height: '50%',
+    zIndex: 1,
   },
   modalContent: {
     width: '100%',
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
     height: '48%',
     bottom: 0,
     position: 'relative',
+    zIndex: 1,
   },
   closeButton: {
     position: 'absolute', 
