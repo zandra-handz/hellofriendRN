@@ -570,24 +570,19 @@ export const fetchTypeChoices = async () => {
 };
 
 
-const GOOGLE_PLACES_API_KEY = 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk';
 
-export const fetchLocationDetails = async (lat, lng) => {
-  try {
-    const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json`, {
-      params: {
-        location: `${lat},${lng}`,
-        radius: 5000, // Adjust the radius as needed
-        key: GOOGLE_PLACES_API_KEY,
-      },
-    });
-
-    if (response.data.results.length > 0) {
-      return response.data.results[0]; // Get details of the first result
-    } else {
-      throw new Error('No details found for this location.');
+export const fetchLocationDetails = async (locationData) => {
+    try {
+        
+  
+      const response = await axios.post('/friends/places/get-details/', locationData);
+  
+      // Handle the response data as needed
+      console.log('fetchLocationDetails response: ', response.data);
+      return response.data;
+  
+    } catch (error) {
+      console.error('Error fetching location details:', error.message);
+      throw error; // Re-throw the error to be handled by the calling code
     }
-  } catch (err) {
-    throw new Error('Failed to fetch location details.');
-  }
-};
+  };

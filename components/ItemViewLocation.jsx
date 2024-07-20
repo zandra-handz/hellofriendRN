@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, ScrollView } from 'react-native';
 import AlertImage from '../components/AlertImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
@@ -79,7 +79,6 @@ const ItemViewLocation = ({ location, onClose }) => {
 
         if (friendDashboardData && friendDashboardData.length > 0) {
           friendDashboardData[0].friend_faves = updatedFaves;
-          console.log(friendDashboardData);
           updateFriendDashboardData(friendDashboardData);
           console.log('Location added to friend\'s favorites.');
         }
@@ -130,36 +129,42 @@ const ItemViewLocation = ({ location, onClose }) => {
       toggleModal={closeModal}
       modalContent={
         location ? (
-          <View>
-            <Text>{location.address}</Text>
-            {isEditing ? (
-              <>
-                {isTemp ? (
-                  <FormLocationQuickCreate 
-                    title={location.title} 
-                    address={location.address} 
-                    onLocationCreate={handleSave} 
-                  />
+          <View style={styles.modalContainer}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+              <Text>{location.address}</Text>
+              <View style={styles.container}>
+                {isEditing ? (
+                  <>
+                    {isTemp ? (
+                      <FormLocationQuickCreate 
+                        title={location.title} 
+                        address={location.address} 
+                        onLocationCreate={handleSave} 
+                      />
+                    ) : (
+                      <>
+                        <Button title="Save" onPress={handleSave} />
+                        <Button title="Cancel" onPress={() => setIsEditing(false)} />
+                      </>
+                    )}
+                  </>
                 ) : (
                   <>
-                    <Button title="Save" onPress={handleSave} />
-                    <Button title="Cancel" onPress={() => setIsEditing(false)} />
+                    <Text style={styles.modalText}></Text>
+                    <ItemViewLocationDetails location={location} />
+                    <View style={styles.footerContainer}>
+                      <ItemViewFooter
+                        buttons={[
+                          { label: isTemp ? 'Save' : 'Edit', icon: isTemp ? 'save' : 'edit', color: isTemp ? 'green' : 'blue', onPress: isTemp ? handleSave : handleEdit },
+                          { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
+                          { label: 'Share', icon: 'share', color: 'green', onPress: handleDelete },
+                        ]}
+                      />
+                    </View>
                   </>
                 )}
-              </>
-            ) : (
-              <>
-                <Text style={styles.modalText}></Text>
-                <ItemViewLocationDetails location={location} />
-                <ItemViewFooter
-                  buttons={[
-                    { label: isTemp ? 'Save' : 'Edit', icon: isTemp ? 'save' : 'edit', color: isTemp ? 'green' : 'blue', onPress: isTemp ? handleSave : handleEdit },
-                    { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
-                    { label: 'Share', icon: 'share', color: 'green', onPress: handleDelete },
-                  ]}
-                />
-              </>
-            )}
+              </View>
+            </ScrollView>
           </View>
         ) : null
       }
@@ -169,9 +174,19 @@ const ItemViewLocation = ({ location, onClose }) => {
 };
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     padding: 20, // Adjust padding as needed
+  },
+  footerContainer: {
+    justifyContent: 'left',
   },
   modalText: {
     fontSize: 16,
