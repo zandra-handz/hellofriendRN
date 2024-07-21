@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'transparent',
         justifyContent: 'center',
+        
     },
     relativeContainer: {  
         position: 'relative',
