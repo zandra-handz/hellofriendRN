@@ -131,7 +131,7 @@ const ItemViewLocation = ({ location, onClose }) => {
         location ? (
           <View style={styles.modalContainer}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-              <Text>{location.address}</Text>
+              
               <View style={styles.container}>
                 {isEditing ? (
                   <>
@@ -149,9 +149,8 @@ const ItemViewLocation = ({ location, onClose }) => {
                     )}
                   </>
                 ) : (
-                  <>
-                    <Text style={styles.modalText}></Text>
-                    <ItemViewLocationDetails location={location} />
+                  <> 
+                    <ItemViewLocationDetails location={location} unSaved={isTemp} />
                     <View style={styles.footerContainer}>
                       <ItemViewFooter
                         buttons={[
@@ -168,7 +167,7 @@ const ItemViewLocation = ({ location, onClose }) => {
           </View>
         ) : null
       }
-      modalTitle={location ? getLocationTitle(location) : null}
+      modalTitle={location ? 'Meet Up Location' : null}
     />
   );
 };
@@ -181,16 +180,16 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
   },
-  container: {
+  container: { 
     flex: 1,
-    padding: 20, // Adjust padding as needed
+    padding: 0, // Adjust padding as needed
   },
   footerContainer: {
     justifyContent: 'left',
   },
   modalText: {
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 0, 
   },
   imageContainer: {
     padding: 10,
@@ -201,6 +200,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+   
   },
   imageRow: {
     flexDirection: 'row',

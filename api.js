@@ -574,6 +574,7 @@ export const fetchTypeChoices = async () => {
 export const fetchLocationDetails = async (locationData) => {
     try {
         
+      console.log('Location data to get details for: ', locationData);
   
       const response = await axios.post('/friends/places/get-details/', locationData);
   
