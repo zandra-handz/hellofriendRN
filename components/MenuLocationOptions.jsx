@@ -2,6 +2,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
+
 const MenuLocationOptions = ({ onEdit, onDelete, onHelp, closeMenu }) => (
   <View style={styles.menuContainer}>
     <TouchableOpacity

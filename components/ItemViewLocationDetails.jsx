@@ -106,7 +106,10 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
 
       <CardLocationPreviewImage photos={details.photos} />
 
-      <ScrollView horizontal style={styles.reviewsContainer}>
+      <ScrollView
+        horizontal
+        contentContainerStyle={styles.reviewsContainer} // Move styles here
+      >
         {details.reviews.map((review, index) => (
           <View key={index} style={styles.reviewCard}>
             <CardCustomerReview review={review} />
@@ -172,8 +175,12 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   reviewsContainer: {
-    marginBottom: 16,
+    marginBottom: -8,
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center', 
+    
   },
   reviewCard: {
     marginRight: 8,

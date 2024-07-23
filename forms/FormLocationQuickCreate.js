@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import { createLocation } from '../api'; // Import the createLocation function
+import { createLocation } from '../api';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useFriendList } from '../context/FriendListContext';
 
 const FormLocationQuickCreate = ({ onLocationCreate, title, address }) => {
-    
   const { authUserState } = useAuthUser();
   const { friendList } = useFriendList();
-  const { locationList, setLocationList } = useLocationList();
+  const { locationList, setLocationList, selectedLocation, setSelectedLocation } = useLocationList();
 
   const [personalExperience, setPersonalExperience] = useState('');
   const [selectedFriends, setSelectedFriends] = useState([]);
@@ -32,12 +31,21 @@ const FormLocationQuickCreate = ({ onLocationCreate, title, address }) => {
         personal_experience_info: personalExperience,
         user: authUserState.user.id, 
       };
-      const res = await createLocation(locationData); // Use the createLocation function from the api file
+      
+      console.log('Creating location with payload:', locationData);
+      
+      const res = await createLocation(locationData);
+      console.log('Created location:', res);
+      
+      setLocationList(prevList => [res, ...prevList]); // Update locationList with the new location
+
+      // Set selectedLocation after updating locationList
+      setSelectedLocation(res);
+      
       onLocationCreate(res);
 
-      setLocationList([res, ...locationList]); // Add new location to the beginning of the list
       console.log('Location added to location list:', res);
-      
+
       setShowSaveMessage(true);
       setTimeout(() => {
         setShowSaveMessage(false);
@@ -46,6 +54,11 @@ const FormLocationQuickCreate = ({ onLocationCreate, title, address }) => {
       console.error('Error creating location:', error);
     }
   };
+
+  // Log selectedLocation changes
+  useEffect(() => {
+    console.log('Selected Location changed:', selectedLocation);
+  }, [selectedLocation]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}> 
@@ -110,7 +123,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 80,
-    textAlignVertical: 'top', // For multiline TextInput alignment
+    textAlignVertical: 'top',
   },
   friendCheckboxesContainer: {
     marginBottom: 10,

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext'; // Import the AuthUser context
-import { selectedFriend } from './SelectedFriendContext';
 import { fetchAllLocations } from '../api';
 
 const LocationListContext = createContext();
@@ -10,6 +9,8 @@ export const LocationListProvider = ({ children }) => {
   const [faveLocationList, setFaveLocationList] = useState([]);
   const [validatedLocationList, setValidatedLocationList] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isTemp, setIsTemp] = useState(false); // Add isTemp state
+  const [isFave, setIsFave] = useState(false); // Add isFave state
   const { authUserState } = useAuthUser(); // Use the authentication state
 
   useEffect(() => {
@@ -18,11 +19,6 @@ export const LocationListProvider = ({ children }) => {
         const locationData = await fetchAllLocations();
         setLocationList(locationData);
         console.log('Fetch (location) Data:', locationData);
-  
-        // Logging friends object
-        locationData.forEach(location => {
-          console.log(`Friends for location ${location.title}:`, location.friends);
-        });
 
         // Set the initial selected location
         if (locationData.length > 0) {
@@ -45,6 +41,22 @@ export const LocationListProvider = ({ children }) => {
     setValidatedLocationList(locationList.filter(location => location.validatedAddress));
   }, [locationList]);
 
+  useEffect(() => {
+    if (selectedLocation && selectedLocation.id) {
+      setIsTemp(String(selectedLocation.id).startsWith('temp'));
+    } else {
+      setIsTemp(false); // Default to false if selectedLocation is null or id is missing
+    }
+  }, [selectedLocation]); // Dependency on selectedLocation
+  
+  useEffect(() => {
+    if (selectedLocation && faveLocationList.length > 0) {
+      setIsFave(faveLocationList.some(location => location.id === selectedLocation.id));
+    } else {
+      setIsFave(false); // Default to false if no selectedLocation or empty faveLocationList
+    }
+  }, [selectedLocation, faveLocationList]); // Update isFave when selectedLocation or faveLocationList changes
+
   const populateFaveLocationsList = (locationIds) => {
     const favoriteLocations = locationList.filter(location => locationIds.includes(location.id));
     setFaveLocationList(favoriteLocations);
@@ -63,7 +75,19 @@ export const LocationListProvider = ({ children }) => {
   };
 
   return (
-    <LocationListContext.Provider value={{ locationList, validatedLocationList, faveLocationList, selectedLocation, setSelectedLocation, populateFaveLocationsList, addLocationToFaves, removeLocationFromFaves, setLocationList }}>
+    <LocationListContext.Provider value={{ 
+      locationList, 
+      validatedLocationList, 
+      faveLocationList, 
+      selectedLocation, 
+      setSelectedLocation, 
+      populateFaveLocationsList, 
+      addLocationToFaves, 
+      removeLocationFromFaves, 
+      setLocationList, 
+      isTemp, // Provide isTemp directly
+      isFave // Provide isFave directly
+    }}>
       {children}
     </LocationListContext.Provider>
   );

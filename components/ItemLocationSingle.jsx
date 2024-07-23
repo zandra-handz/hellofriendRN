@@ -6,6 +6,7 @@ import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
 import CoffeeBeansOutlineSvg from '../assets/svgs/coffee-beans-outline.svg';
 import CoffeeShopOutlineSvg from '../assets/svgs/coffee-shop-outline';
 import CoffeeShopColoredSvg from '../assets/svgs/coffee-shop-colored';
+import CoffeeShopStoreSimpleSvg from '../assets/svgs/coffee-shop-store-simple';
 
 
 const windowWidth = Dimensions.get('window').width;
@@ -45,7 +46,7 @@ const ItemLocationSingle = ({ locationObject, locationWidth, locationHeight }) =
     <View style={styles.imageContainer}>
       <TouchableOpacity onPress={openModal}>
         <View style={styles.relativeContainer}>  
-          <CoffeeShopOutlineSvg width={40} height={40} color="white" style={styles.svgImage} />
+          <CoffeeShopStoreSimpleSvg width={30} height={30} color="white" style={styles.svgImage} />
           
           <View style={styles.bubbleContainer}>
             <Text style={styles.bubbleText}>{locationObject.address}</Text>

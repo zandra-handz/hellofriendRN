@@ -4,6 +4,7 @@ import ButtonLottieAnimationSatellitesLocations from './ButtonLottieAnimationSat
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
+
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
@@ -74,7 +75,7 @@ const ActionFriendPageLocations = ({ onPress }) => {
             onPress={() => handlePress(mainLocation)} 
             navigateToFirstPage={navigateToFirstPage}
             headerText=''
-            headerSvg={<PushPinSolidSvg width={20} height={20}  />}
+            headerSvg={<PushPinSolidSvg width={20} height={20} color="white" />}
             
             firstItem={mainLocation ? mainLocation.address : 'Loading...'}
             allItems={locationList ? locationList : 'Loading...'}

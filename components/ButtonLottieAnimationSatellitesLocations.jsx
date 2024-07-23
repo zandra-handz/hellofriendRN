@@ -279,7 +279,9 @@ const ButtonLottieAnimationSatellitesLocations = ({
       {additionalPages && (
         <View style={styles.additionalSatelliteSection}>
           {additionalPagesCategorize && (
-            <Text style={styles.categoryText}>{category}</Text>
+            <View style={styles.categoryTextContainer}>
+              <Text style={styles.categoryText}>{category}</Text>
+            </View>
           )}
           {renderAdditionalSatellites()}
         </View>
@@ -308,13 +310,27 @@ svgContainer: {
     borderRadius: 30, 
     backgroundColor: 'black',
   },
+  categoryTextContainer: {
+    // Set a specific width or maxWidth for the text container
+    width: 300, // Adjust this value as needed
+    // Other styling properties if necessary
+    marginLeft: 10, 
+    height: 46,
+    marginBottom: 0,
+    justifyContent: 'center',
+    whiteSpace: 'nowrap', 
+  },
+
   categoryText: {
-    fontSize: 18, 
+    fontSize: 16,
     color: 'white',
-    fontFamily: 'Poppins-Regular',
-    marginLeft: 20,
-    marginBottom: 0, 
+    fontFamily: 'Poppins-Bold', 
     textTransform: 'uppercase',
+    overflow: 'hidden',
+    maxHeight: 20,
+    whiteSpace: 'nowrap', // This property may not be supported in React Native, so adjust using maxWidth or width
+    textOverflow: 'ellipsis', // This property may not be supported in React Native, so adjust using maxWidth or width
+  
   },
 });
 

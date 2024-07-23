@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
 
-const ButtonLottieAnimation = ({
+const ButtonLottieAnimationSvg = ({
   onPress,
   label,
   height = 134,
   radius = 30,
-  preLabel = 'new', // Default pre-label text
+  preLabel = '', // Default pre-label text
   animationSource,
   rightSideAnimation = false,
   preLabelFontSize = 18, // Font size for pre-label
@@ -27,7 +27,7 @@ const ButtonLottieAnimation = ({
   direction = { x: 1, y: 0 },
   showShape = true,
   shapePosition = 'left',
-  shapeSource = require('../assets/shapes/greenleaf.png'), // Default shape
+  shapeSource: ShapeSvg, // Expecting an SVG component
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134, // Default value
@@ -101,18 +101,15 @@ const ButtonLottieAnimation = ({
           }}
         />
       )}
-      {showShape && (
-        <Image
-          source={shapeSource}
+      {showShape && ShapeSvg && (
+        <ShapeSvg
+          width={shapeWidth}
+          height={shapeHeight}
           style={{
             position: 'absolute',
-            width: shapeWidth,
-            height: shapeHeight,
-            
             ...getShapeStyle(), 
             top: shapePositionValueVertical
           }}
-          resizeMode="contain"
         />
       )}
       <View style={{ flexDirection: 'row', marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
@@ -180,4 +177,4 @@ const ButtonLottieAnimation = ({
   );
 };
 
-export default ButtonLottieAnimation;
+export default ButtonLottieAnimationSvg;

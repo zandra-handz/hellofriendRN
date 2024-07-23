@@ -4,10 +4,16 @@ import AlertImage from '../components/AlertImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
+
 import ItemViewFooter from './ItemViewFooter';
 import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; // Adjust the import path as needed
+
 import FormLocationQuickCreate from '../forms/FormLocationQuickCreate'; // Adjust the import path as needed
 import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
+import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
+import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
+
+
 
 const ItemViewLocation = ({ location, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -15,6 +21,7 @@ const ItemViewLocation = ({ location, onClose }) => {
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
   const { locationList, setLocationList, selectedLocation, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+  
   const [isTemp, setIsTemp] = useState(false);
 
   useEffect(() => {
@@ -36,8 +43,8 @@ const ItemViewLocation = ({ location, onClose }) => {
 
   const handleSave = async (newLocation) => {
     try {
-      if (isTemp) {
-        // Handle saving of temporary locations
+      if (isTemp) { 
+
         const newLocationWithId = { ...newLocation, id: Date.now().toString() }; // Generate a unique ID for the new location
         setLocationList([...locationList, newLocationWithId]);
         setIsEditing(false); // Optionally close editing mode after saving
@@ -151,23 +158,17 @@ const ItemViewLocation = ({ location, onClose }) => {
                 ) : (
                   <> 
                     <ItemViewLocationDetails location={location} unSaved={isTemp} />
-                    <View style={styles.footerContainer}>
-                      <ItemViewFooter
-                        buttons={[
-                          { label: isTemp ? 'Save' : 'Edit', icon: isTemp ? 'save' : 'edit', color: isTemp ? 'green' : 'blue', onPress: isTemp ? handleSave : handleEdit },
-                          { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
-                          { label: 'Share', icon: 'share', color: 'green', onPress: handleDelete },
-                        ]}
-                      />
-                    </View>
+                
                   </>
                 )}
               </View>
+              < ButtonCalculateAndCompareTravel />
+              < ButtonSendDirectionsToFriend />
             </ScrollView>
           </View>
         ) : null
       }
-      modalTitle={location ? 'Meet Up Location' : null}
+      modalTitle={location ? null : null}
     />
   );
 };
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
   },
   container: { 
     flex: 1,
-    padding: 0, // Adjust padding as needed
+    padding: 0, 
   },
   footerContainer: {
     justifyContent: 'left',

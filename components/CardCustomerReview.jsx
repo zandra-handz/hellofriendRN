@@ -30,14 +30,16 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   reviewAuthor: {
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
     marginBottom: 4,
   },
   reviewRating: {
+    fontFamily: 'Poppins-Bold',
     marginBottom: 4,
   },
   reviewText: {
-    fontSize: 16,
+    fontSize: 13,
+    fontFamily: 'Poppins-Regular',
   },
 });
 
