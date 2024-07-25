@@ -9,6 +9,7 @@ import CardCustomerReview from './CardCustomerReview';
 import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
 import ButtonDirections from '../components/ButtonDirections';
 import ButtonSaveLocation from '../components/ButtonSaveLocation';
+import StylingRating from '../components/StylingRating';
 
 
 
@@ -69,36 +70,29 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
       <View style={styles.headerContainer}>
         <Text style={styles.name}>{details.name}</Text>
         <ButtonSaveLocation saveable={unSaved} />
- 
-        <View style={[
-              styles.statusContainer, 
-              (details && details.hours && details.hours.open_now) ? styles.openNowContainer : styles.closedContainer
-            ]}>
-          <Text style={[styles.statusText, (details && details.hours && details.hours.open_now) ? styles.openNowText : styles.closedText]}>
-            {(details && details.hours && details.hours.open_now) ? "Open Now" : "Closed"}
-          </Text>
-        </View>
       </View>
-
       <View style={styles.infoContainer}>
         <View style={styles.detailsColumn}>
           <View style={styles.detailRow}>
             <ButtonDirections address={details.address} />
+            
           </View>
           <View style={styles.detailRow}>
             <ButtonPhoneNumber phoneNumber={details.phone}/>
+            <View style={[
+              styles.statusContainer, 
+              (details && details.hours && details.hours.open_now) ? styles.openNowContainer : styles.closedContainer
+            ]}>
+          <Text style={[styles.statusText, (details && details.hours && details.hours.open_now) ? styles.openNowText : styles.closedText]}>
+            {(details && details.hours && details.hours.open_now) ? "Open" : "Closed"}
+          </Text>
+        </View>
         
           </View>
           <View style={styles.detailRow}> 
-            <View style={styles.ratingContainer}>
-              {Array.from({ length: Math.floor(details.rating) }, (_, index) => (
-                <FontAwesome5 key={index} name="star" size={16} />
-              ))}
-              {details.rating % 1 !== 0 && (
-                <FontAwesome5 name="star-half" size={16}  />
-              )}
-              <Text style={styles.ratingText}>{details.rating}</Text>
-            </View>
+            
+              <StylingRating rating={details.rating} /> 
+           
           </View>
         </View>
         {details.hours && <CardHours hours={details.hours.weekday_text} />}
@@ -128,12 +122,17 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+    alignItems: 'center', 
+    marginBottom: 2,
+  },
+  secondHeaderContainer: {
+    flexDirection: 'row',
+    alignItems: 'center', 
+    marginBottom: 4,
   },
   name: {
-    fontSize: 22,
-    fontFamily: 'Poppins-Regular',
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
     flex: 1,
   },
   infoContainer: {
@@ -203,9 +202,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   statusContainer: {
-    paddingVertical: 4,
+    paddingVertical: 2,
     paddingHorizontal: 8,
-    borderRadius: 8,
+    borderRadius: 30,
     marginLeft: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -217,8 +216,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8d7da',
   },
   statusText: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: 10, 
+    fontFamily: 'Poppins-Bold',
   },
   openNowText: {
     color: 'green',

@@ -20,7 +20,7 @@ const ItemViewLocation = ({ location, onClose }) => {
   const [isModalVisible, setIsModalVisible] = useState(true);
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-  const { locationList, setLocationList, selectedLocation, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+  const { locationList, setLocationList, selectedLocation, setSelectedLocation, additionalDetails, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
   
   const [isTemp, setIsTemp] = useState(false);
 
@@ -168,7 +168,7 @@ const ItemViewLocation = ({ location, onClose }) => {
           </View>
         ) : null
       }
-      modalTitle={location ? null : null}
+      modalTitle={location ? "View location" : null}
     />
   );
 };

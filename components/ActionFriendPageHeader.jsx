@@ -4,13 +4,13 @@ import ButtonLottieAnimationTwoSections from './ButtonLottieAnimationTwoSections
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import DaysSince from '../data/FriendDaysSince'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-
+import AlertPanelBottom from './AlertPanelBottom';
 
 
 
 const ActionFriendPageHeader = ({ onPress }) => {
     const { selectedFriend, friendDashboardData, loadingNewFriend } = useSelectedFriend();
-  
+    const [showProfile, setShowProfile] = useState(false);
     const [showNextHello, setShowNextHello] = useState(true);
 
     let daysSinceInHeader = false;
@@ -26,7 +26,7 @@ const ActionFriendPageHeader = ({ onPress }) => {
     <View style={styles.container}>
       <Animated.View style={{ flex: 1 }}>
           <ButtonLottieAnimationTwoSections
-            onPress={handleOnPress}
+            onPress={() => setShowProfile(true)}
             headerText={selectedFriend.name}
             
             navigateToFirstPage={false}
@@ -52,7 +52,11 @@ const ActionFriendPageHeader = ({ onPress }) => {
             additionalPages={false} 
           />
       </Animated.View>
-
+      <AlertPanelBottom
+        visible={showProfile}
+        profileData={selectedFriend}
+        onClose={() => setShowProfile(false)}
+      />
     </View>
   );
 };

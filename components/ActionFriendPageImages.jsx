@@ -6,6 +6,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
+
 import ActionFriendPageAllImages from '../components/ActionFriendPageAllImages';
  
 
@@ -154,6 +155,7 @@ const ActionFriendPageImages = ({ onPress }) => {
           <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
             <View style={styles.svgFSContainer}>
               <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
+            
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>

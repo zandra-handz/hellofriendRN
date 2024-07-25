@@ -10,6 +10,7 @@ import { LocationListProvider } from './context/LocationListContext';
 import { UpcomingHelloesProvider } from './context/UpcomingHelloesContext';
 import { CapsuleListProvider } from './context/CapsuleListContext';
 import { ImageListProvider } from './context/ImageListContext';
+import ArrowBackSharpOutlineSvg from './assets/svgs/arrow-back-sharp-outline.svg';
 
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -83,7 +84,7 @@ export const Layout = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          headerShown: false,  
+          headerShown: true, 
           cardStyle: { backgroundColor: 'transparent' }, 
           cardStyleInterpolator: ({ current: { progress } }) => ({
             cardStyle: {
@@ -112,6 +113,7 @@ export const Layout = () => {
                 component={ScreenDefaultActionMode}
                 options={{
                   headerShown: true,
+                  
                 }}
               />
               <Stack.Screen
@@ -135,6 +137,7 @@ export const Layout = () => {
                 options={{
                   headerShown: true,
                   title: 'View friend', 
+
                 }}
               />
             </>

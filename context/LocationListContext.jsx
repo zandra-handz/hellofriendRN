@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext'; // Import the AuthUser context
-import { fetchAllLocations } from '../api';
+import { fetchAllLocations, fetchLocationDetails } from '../api'; // Import the API methods
 
 const LocationListContext = createContext();
 
@@ -9,9 +9,10 @@ export const LocationListProvider = ({ children }) => {
   const [faveLocationList, setFaveLocationList] = useState([]);
   const [validatedLocationList, setValidatedLocationList] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [isTemp, setIsTemp] = useState(false); // Add isTemp state
-  const [isFave, setIsFave] = useState(false); // Add isFave state
-  const { authUserState } = useAuthUser(); // Use the authentication state
+  const [additionalDetails, setAdditionalDetails] = useState(null); // Add this line
+  const [isTemp, setIsTemp] = useState(false);
+  const [isFave, setIsFave] = useState(false);
+  const { authUserState } = useAuthUser();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +21,6 @@ export const LocationListProvider = ({ children }) => {
         setLocationList(locationData);
         console.log('Fetch (location) Data:', locationData);
 
-        // Set the initial selected location
         if (locationData.length > 0) {
           setSelectedLocation(locationData[locationData.length - 1]);
         }
@@ -35,7 +35,7 @@ export const LocationListProvider = ({ children }) => {
     } else {
       setLocationList([]);
     }
-  }, [authUserState.authenticated]); // Fetch data when authenticated
+  }, [authUserState.authenticated]);
 
   useEffect(() => {
     setValidatedLocationList(locationList.filter(location => location.validatedAddress));
@@ -45,17 +45,46 @@ export const LocationListProvider = ({ children }) => {
     if (selectedLocation && selectedLocation.id) {
       setIsTemp(String(selectedLocation.id).startsWith('temp'));
     } else {
-      setIsTemp(false); // Default to false if selectedLocation is null or id is missing
+      setIsTemp(false);
     }
-  }, [selectedLocation]); // Dependency on selectedLocation
-  
+  }, [selectedLocation]);
+
   useEffect(() => {
     if (selectedLocation && faveLocationList.length > 0) {
       setIsFave(faveLocationList.some(location => location.id === selectedLocation.id));
     } else {
-      setIsFave(false); // Default to false if no selectedLocation or empty faveLocationList
+      setIsFave(false);
     }
-  }, [selectedLocation, faveLocationList]); // Update isFave when selectedLocation or faveLocationList changes
+  }, [selectedLocation, faveLocationList]);
+
+  useEffect(() => {
+    const updateAdditionalDetails = async () => {
+      try {
+        if (selectedLocation && selectedLocation.id) {
+          console.log('Fetching additional details for location:', selectedLocation);
+          
+          // Fetch additional details when selectedLocation changes
+          const details = await fetchLocationDetails({
+            address: encodeURIComponent(`${selectedLocation.title} ${selectedLocation.address}`),
+            lat: parseFloat(selectedLocation.latitude),
+            lon: parseFloat(selectedLocation.longitude),
+          });
+          
+          console.log('Fetched additional details:', details);
+          setAdditionalDetails(details);
+        } else {
+          // Reset additionalDetails if no selectedLocation
+          console.log('No selected location. Resetting additional details.');
+          setAdditionalDetails(null);
+        }
+      } catch (err) {
+        console.error('Error fetching location details:', err);
+        setAdditionalDetails(null);
+      }
+    };
+
+    updateAdditionalDetails();
+  }, [selectedLocation]);
 
   const populateFaveLocationsList = (locationIds) => {
     const favoriteLocations = locationList.filter(location => locationIds.includes(location.id));
@@ -80,13 +109,14 @@ export const LocationListProvider = ({ children }) => {
       validatedLocationList, 
       faveLocationList, 
       selectedLocation, 
+      additionalDetails, // Provide additionalDetails directly
       setSelectedLocation, 
       populateFaveLocationsList, 
       addLocationToFaves, 
       removeLocationFromFaves, 
       setLocationList, 
-      isTemp, // Provide isTemp directly
-      isFave // Provide isFave directly
+      isTemp, 
+      isFave 
     }}>
       {children}
     </LocationListContext.Provider>

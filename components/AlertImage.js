@@ -1,6 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
+
 import { FontAwesome5 } from 'react-native-vector-icons';
+import ArrowBackSharpOutlineSvg from '../assets/svgs/arrow-back-sharp-outline.svg';
+
 
 const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
   return (
@@ -8,7 +11,7 @@ const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) =
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-            <FontAwesome5 name="times" size={20} color="black" solid={false} />
+            <ArrowBackSharpOutlineSvg width={36} height={36} color="black" style={styles.SvgFSImage} />
           </TouchableOpacity>
           {modalTitle && <Text style={styles.modalTitle}>{modalTitle}</Text>}
           {modalContent}
@@ -30,25 +33,28 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
     backgroundColor: 'white',
-    borderRadius: 30,
+    borderRadius: 0,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
-    height: '85%',
+    height: '100%',
     bottom: 0,
     position: 'relative',
     zIndex: 1,
   },
   closeButton: {
     position: 'absolute', 
-    top:16,
-    right: 22,
+    top:6,
+    left: 18, 
+    marginTop: 4,
     zIndex: 1,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 0,
-    marginTop: 0,
+    fontSize: 20, 
+    fontWeight: '500',
+    marginBottom: 10,
+    marginTop: -46,
+    marginTop: 4,
+    marginLeft: 62,
     textAlign: 'left',
   },
 });

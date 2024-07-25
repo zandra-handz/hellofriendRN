@@ -31,7 +31,7 @@ const CardHours = ({ hours }) => {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>Hours</Text>
+      <Text style={styles.title}>{showAllHours ? 'Hours' : 'Today'}</Text>
       {showAllHours ? (
         hours.map((hour, index) => {
           const [day, time] = hour.split(': ');
@@ -40,7 +40,7 @@ const CardHours = ({ hours }) => {
           return (
             <View key={index} style={[styles.hourRow, isToday && styles.currentDayRow]}>
             <Text style={[styles.day, isToday && styles.currentDayText]}>
-            {day.substring(0, 3)}:
+            {day.substring(0, 2)}:
             </Text>
             <Text style={[styles.time, isToday && styles.currentDayText]}>{time.replace(/:00/g, '')}</Text>
                        
@@ -66,33 +66,37 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 8, // Reduced padding
+    padding: 2, // Reduced padding
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
     marginVertical: 8,
+    width: 94,
   },
   title: {
-    fontSize: 16, // Reduced font size
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontSize: 14, // Reduced font size
+    fontFamily: 'Poppins-Bold',
+    marginBottom: 2,
     textAlign: 'center',
   },
   hourRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    borderRadius: 20,
+    padding: 2,
     marginBottom: 4,
   },
   currentDayRow: {
     backgroundColor: '#d4edda',
-    borderRadius: 4,
+    borderRadius: 10,
     padding: 4,
+    paddingHorizontal: 10,
   },
   day: {
     fontFamily: 'Poppins-Bold',
-    fontSize: 12,
+    fontSize: 11,
   },
   currentDayText: {
     color: 'green',
@@ -100,14 +104,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   time: {
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Poppins-Regular',
     fontSize: 11,
   },
   toggleText: {
-    fontSize: 14, // Reduced font size
-    color: '#00796b',
+    fontSize: 11, 
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: 2,
+    fontFamily: 'Poppins-Regular',
   },
 });
 

@@ -7,6 +7,9 @@ import { useLocationList } from '../context/LocationListContext';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 
+import CompareTravel from '../components/CompareTravel';
+
+
 import { Ionicons } from '@expo/vector-icons';
 import QuickAddHello from '../speeddial/QuickAddHello';
 import AlarmClockGeoSvg from '../assets/svgs/alarm-clock-geo.svg'; // Import the SVG
@@ -21,11 +24,17 @@ const ButtonCalculateAndCompareTravel = () => {
 
     const openModal = () => setIsModalVisible(true);
 
+    const closeModal = () => setIsModalVisible(false);
+
 
     return (
         <View style={styles.container}>
         <AlertImage
             isModalVisible={isModalVisible} 
+            toggleModal={closeModal} 
+            modalContent={<CompareTravel/>}
+            modalTitle={'Compare travel times'}
+
 
  
         > 
