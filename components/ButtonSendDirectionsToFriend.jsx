@@ -10,9 +10,10 @@ import SelectorUserAddress from '../components/SelectorUserAddress';
 
 import HelloFriendInvite from '../components/HelloFriendInvite';
 
-import AlarmClockGeoSvg from '../assets/svgs/alarm-clock-geo.svg'; // Import the SVG
+import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; // Import the SVG
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; // Import the SVG
 import CompassGeoSvg from '../assets/svgs/compass-geo.svg'; // Import the SVG
+
 import InputConsiderTheDrive from './InputConsiderTheDrive';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -61,11 +62,11 @@ const ButtonSendDirectionsToFriend = () => {
                 showGradient={true} // Add this if you want to show the gradient
                 showShape={true} // Ensure this is true to display the SVG shape
                 shapePosition="right"
-                shapeSource={CompassGeoSvg} // Pass the SVG component here
-                shapeWidth={100}
-                shapeHeight={100}
-                shapePositionValue={-14}
-                shapePositionValueVertical={-10}
+                shapeSource={DistanceDottedSvg} // Pass the SVG component here
+                shapeWidth={86}
+                shapeHeight={86}
+                shapePositionValue={-4}
+                shapePositionValueVertical={-14}
                 showIcon={false} // Ensure this is set as needed
                 />
 

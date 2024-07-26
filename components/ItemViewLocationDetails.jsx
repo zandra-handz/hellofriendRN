@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { fetchLocationDetails } from '../api'; // Adjust the import path as needed
+
 import { useAuthUser } from '../context/AuthUserContext';
 import CardHours from './CardHours'; // Adjust the import path as needed
 import CardLocationPreviewImage from './CardLocationPreviewImage';

@@ -34,6 +34,12 @@ const ButtonLottieAnimationSvg = ({
   shapePositionValueVertical = null,
   labelContainerMarginHorizontal = 0, // Default margin for label container
   showIcon = true, // New property to show/hide Lottie icon
+  showTopLevelShape = false, // New prop to show/hide the top-level SVG
+  TopLevelShapeSvg, // Expecting an SVG component
+  topLevelShapeWidth = 100,
+  topLevelShapeHeight = 100,
+  topLevelShapePositionValue = -134,
+  topLevelShapePositionValueVertical = 0,
 }) => {
   const lottieViewRef = useRef(null);
   const globalStyles = useGlobalStyle(); // Get the global styles
@@ -59,6 +65,13 @@ const ButtonLottieAnimationSvg = ({
       default:
         return { left: 0 };
     }
+  };
+
+  const getTopLevelShapeStyle = () => {
+    return {
+      left: topLevelShapePositionValue,
+      top: topLevelShapePositionValueVertical,
+    };
   };
 
   const adjustFontSize = (fontSize) => {
@@ -88,6 +101,7 @@ const ButtonLottieAnimationSvg = ({
         justifyContent: 'flex-start',
         overflow: 'hidden', // Ensure the gradient and shape stay within rounded borders
         backgroundColor: showGradient ? 'transparent' : backgroundColor,
+        position: 'relative', // Ensure children can be absolutely positioned
       }}
       onPress={onPress}
     >
@@ -108,7 +122,17 @@ const ButtonLottieAnimationSvg = ({
           style={{
             position: 'absolute',
             ...getShapeStyle(), 
-            top: shapePositionValueVertical
+            top: shapePositionValueVertical,
+          }}
+        />
+      )}
+      {showTopLevelShape && TopLevelShapeSvg && (
+        <TopLevelShapeSvg
+          width={topLevelShapeWidth}
+          height={topLevelShapeHeight}
+          style={{
+            position: 'absolute',
+            ...getTopLevelShapeStyle(),
           }}
         />
       )}

@@ -12,6 +12,8 @@ import FormLocationQuickCreate from '../forms/FormLocationQuickCreate'; // Adjus
 import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
 import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
 import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
+import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
+
 
 
 
@@ -164,6 +166,7 @@ const ItemViewLocation = ({ location, onClose }) => {
               </View>
               < ButtonCalculateAndCompareTravel />
               < ButtonSendDirectionsToFriend />
+              < ButtonFindMidpoints />
             </ScrollView>
           </View>
         ) : null

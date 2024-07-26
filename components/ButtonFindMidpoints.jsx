@@ -6,20 +6,25 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
+import SelectorUserAddress from '../components/SelectorUserAddress';
 
-import CompareTravel from '../components/CompareTravel';
+import HelloFriendInvite from '../components/HelloFriendInvite';
+import FindMidpoints from '../components/FindMidpoints';
 
+import AlarmClockGeoSvg from '../assets/svgs/alarm-clock-geo.svg'; // Import the SVG
+import TwoCirclesCommonSvg from '../assets/svgs/two-circles-common';
+import LocationSingleForMultiSvg from '../assets/svgs/location-single-for-multi.svg'; // Import the SVG
+
+import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; // Import the SVG
+import CompassGeoSvg from '../assets/svgs/compass-geo.svg'; // Import the SVG
+import ThreeLocationsSvg from '../assets/svgs/three-locations.svg'; // Import the SVG
+
+import InputConsiderTheDrive from './InputConsiderTheDrive';
 
 import { Ionicons } from '@expo/vector-icons';
 import QuickAddHello from '../speeddial/QuickAddHello';
-import AlarmClockGeoSvg from '../assets/svgs/alarm-clock-geo.svg'; // Import the SVG
-import LocationsOnMapSvg from '../assets/svgs/locations-on-map.svg'; // Import the SVG
-import LocationsOnMapColoredSvg from '../assets/svgs/locations-on-map-colored.svg'; // Import the SVG
 
-
-
-
-const ButtonCalculateAndCompareTravel = () => {
+const ButtonFindMidpoints = () => {
     const { authUserState } = useAuthUser();
     const { selectedFriend } = useSelectedFriend();
     const { selectedLocation } = useLocationList();
@@ -33,21 +38,21 @@ const ButtonCalculateAndCompareTravel = () => {
     return (
         <View style={styles.container}>
         <AlertImage
-            isModalVisible={isModalVisible} 
+            isModalVisible={isModalVisible}
             toggleModal={closeModal} 
-            modalContent={<CompareTravel/>}
-            modalTitle={'Compare travel times'}
-
+            modalContent={<FindMidpoints />}
+            modalTitle={'Find midpoint locations'}
 
  
         > 
       </AlertImage>
-            <View style={styles.buttonContainer}>
+            <View style={styles.buttonContainer}> 
+
 
             <ButtonLottieAnimationSvg
                 onPress={openModal}
                 preLabel = ''
-                label="Compare Travel Times"
+                label={`Search For Midpoints`}
                 height={64}
                 radius={16}
                 fontMargin={3}
@@ -61,13 +66,19 @@ const ButtonCalculateAndCompareTravel = () => {
                 animationMargin={-64}
                 showGradient={true} // Add this if you want to show the gradient
                 showShape={true} // Ensure this is true to display the SVG shape
-                shapePosition="right"
-                shapeSource={LocationsOnMapColoredSvg} // Pass the SVG component here
-                shapeWidth={110}
-                shapeHeight={110}
-                shapePositionValue={-14}
-                shapePositionValueVertical={-23}
+                shapePosition="right" 
+                shapeSource={TwoCirclesCommonSvg} // Pass the SVG component here
+                shapeWidth={100}
+                shapeHeight={100}
+                shapePositionValue={0}
+                shapePositionValueVertical={0}
                 showIcon={false} // Ensure this is set as needed
+                showTopLevelShape={true} // New prop to show/hide the top-level SVG
+                TopLevelShapeSvg={ThreeLocationsSvg}
+                topLevelShapeWidth={40}
+                topLevelShapeHeight={40}
+                topLevelShapePositionValue={320}
+                topLevelShapePositionValueVertical={20}
                 />
 
             </View>
@@ -86,9 +97,9 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'space-evenly',
       marginHorizontal: 0,
-      paddingBottom: 6, 
+      paddingBottom: 0, 
       paddingTop: 0,
     },
   });
 
-  export default ButtonCalculateAndCompareTravel;
+  export default ButtonFindMidpoints;

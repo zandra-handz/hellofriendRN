@@ -67,9 +67,8 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
                 addresses={authUserState.user.addresses}
                 onAddressSelect={handleUserAddressSelect}
                 contextTitle="My Address"
-            />
-
-            {/* Conditional Rendering Fixed */}
+            /> 
+            
             {friendDashboardData && Array.isArray(friendDashboardData[0]?.friend_addresses) && (
                 <SelectorAddressBase
                     addresses={friendDashboardData[0].friend_addresses}
