@@ -13,7 +13,6 @@ import ContentConfirmLocationPin from '../components/ContentConfirmLocationPin';
 
 import AlertMicro from '../components/AlertMicro';
 import AlertConfirm from '../components/AlertConfirm';
-
 import AlertSmall from '../components/AlertSmall';
 import InputAddLocationQuickSave from '../components/InputAddLocationQuickSave';
 import MenuLocationOptions from '../components/MenuLocationOptions';
@@ -211,6 +210,7 @@ const styles = StyleSheet.create({
     }, 
     iconContainer: {
         margin: 4,
+        marginLeft: 14,
 
     },
     saveText: {

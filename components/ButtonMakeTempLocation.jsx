@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ItemViewLocation from '../components/ItemViewLocation'; // Import your modal component
+import ItemViewLocationSuggested from '../components/ItemViewLocationSuggested'; // Import your modal component
+
 
 import { useLocationList } from '../context/LocationListContext';
 
@@ -11,6 +13,11 @@ const ButtonMakeTempLocation = ({ location, size = 11, iconSize = 16, family = '
 
     const generateTemporaryId = () => {
         return `temp_${Date.now()}`; // Use timestamp to generate a unique temporary ID
+    };
+
+    const openLocationView = () => {
+        setIsLocationModalVisible(true);
+
     };
 
     const handlePress = () => {
@@ -29,7 +36,6 @@ const ButtonMakeTempLocation = ({ location, size = 11, iconSize = 16, family = '
             };
 
             setLocationList([newLocation, ...locationList]); // Add new location to the beginning of the list
-            setSelectedLocation(newLocation); // Set the selected location
             console.log('New Location Added:', newLocation);
 
             setIsLocationModalVisible(true); // Show the ItemViewLocation modal
@@ -54,7 +60,7 @@ const ButtonMakeTempLocation = ({ location, size = 11, iconSize = 16, family = '
                     onRequestClose={closeModal}
                 >
                     <View style={styles.modalBackground}>
-                        <ItemViewLocation location={selectedLocation} onClose={closeModal} />
+                        <ItemViewLocationSuggested onClose={closeModal} />
                     </View>
                 </Modal>
             )}

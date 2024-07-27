@@ -64,7 +64,7 @@ const ItemLocationFaves = ({ locationData, horizontal = true, singleLineScroll =
                 renderItem={({ item: location }) => (
                     <TouchableOpacity onPress={() => openModal(location)}>
                         <View style={[styles.relativeContainer, { width, height }]}>
-                            <LocationOutlineSvg width={width} height={height} style={styles.svgImage} />
+                            <LocationOutlineSvg width={width} height={height} color={'white'} style={styles.svgImage} />
                             <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
                                 <Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.7 }]}>{location.title}</Text>
                             </View>

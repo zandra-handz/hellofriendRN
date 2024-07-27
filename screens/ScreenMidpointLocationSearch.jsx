@@ -1,3 +1,5 @@
+// ScreenMidpointLocationSearch.js
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import ResultsMidpointFinds from '../components/ResultsMidpointFinds';
@@ -7,9 +9,9 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import SelectorAddressBase from '../components/SelectorAddressBase';
-import { Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 
-const FindMidpoints = () => {
+const ScreenMidpointLocationSearch = () => {
     const { selectedLocation } = useLocationList();
     const { authUserState } = useAuthUser();
     const { friendDashboardData } = useSelectedFriend();
@@ -22,7 +24,6 @@ const FindMidpoints = () => {
     const [triggerFetch, setTriggerFetch] = useState(false);
 
     useEffect(() => {
-        // Reset triggerFetch when addresses or search parameters change
         setTriggerFetch(false);
     }, [selectedUserAddress, selectedFriendAddress, searchKeyword, radius, length]);
 
@@ -54,13 +55,9 @@ const FindMidpoints = () => {
                         style={styles.picker}
                         onValueChange={(itemValue) => setRadius(itemValue)}
                     >
-                        <Picker.Item label="500" value="500" />
-                        <Picker.Item label="1000" value="1000" />
-                        <Picker.Item label="1500" value="1500" />
-                        <Picker.Item label="2000" value="2000" />
-                        <Picker.Item label="3000" value="3000" />
-                        <Picker.Item label="5000" value="5000" />
-                        <Picker.Item label="10000" value="10000" />
+                        {[500, 1000, 1500, 2000, 3000, 5000, 10000].map(value => (
+                            <Picker.Item key={value} label={`${value}`} value={`${value}`} />
+                        ))}
                     </Picker>
 
                     <Text style={styles.inputLabel}>Length (1-10)</Text>
@@ -130,32 +127,30 @@ const FindMidpoints = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
-        justifyContent: 'center',
+        backgroundColor: 'black',
+        padding: 20,
     },
     mainContainer: {
         flex: 1,
     },
     inputLabel: {
+        color: 'white',
         fontSize: 16,
-        fontFamily: 'Poppins-Bold',
         marginVertical: 10,
     },
     textInput: {
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 8,
-        padding: 10,
-        fontFamily: 'Poppins-Regular',
         height: 40,
-        marginBottom: 10,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 20,
+        color: 'white',
+        paddingHorizontal: 10,
     },
     picker: {
-        height: 40,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 8,
+        height: 50,
+        width: '100%',
+        color: 'white',
     },
 });
 
-export default FindMidpoints;
+export default ScreenMidpointLocationSearch;

@@ -7,22 +7,42 @@ const LocationListContext = createContext();
 export const LocationListProvider = ({ children }) => {
   const [locationList, setLocationList] = useState([]);
   const [faveLocationList, setFaveLocationList] = useState([]);
+  const [tempLocationList, setTempLocationList] = useState([]);
+  const [savedLocationList, setSavedLocationList] = useState([]);
   const [validatedLocationList, setValidatedLocationList] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [additionalDetails, setAdditionalDetails] = useState(null); // Add this line
+  const [additionalDetails, setAdditionalDetails] = useState(null);
   const [isTemp, setIsTemp] = useState(false);
   const [isFave, setIsFave] = useState(false);
   const { authUserState } = useAuthUser();
+
+  const extractZipCode = (address) => {
+    const zipCodePattern = /(?:\b\d{5}(?:-\d{4})?\b)/;
+    const cleanedAddress = address.replace(/^\d+\s*/, '');
+    const match = cleanedAddress.match(zipCodePattern);
+    return match ? match[0] : null;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const locationData = await fetchAllLocations();
-        setLocationList(locationData);
-        console.log('Fetch (location) Data:', locationData);
+        const updatedLocationData = locationData.map(location => {
+          const zipCode = extractZipCode(location.address);
+          return {
+            ...location,
+            zipCode,
+          };
+        });
 
-        if (locationData.length > 0) {
-          setSelectedLocation(locationData[locationData.length - 1]);
+        setLocationList(updatedLocationData);
+        console.log('Fetch (location) Data:', updatedLocationData);
+
+        // Automatically set selectedLocation to the first item if locationList is not empty
+        if (updatedLocationData.length > 0) {
+          setSelectedLocation(updatedLocationData[0]); // Set to the first item
+        } else {
+          setSelectedLocation(null); // Clear selectedLocation if the list is empty
         }
 
       } catch (error) {
@@ -34,8 +54,15 @@ export const LocationListProvider = ({ children }) => {
       fetchData();
     } else {
       setLocationList([]);
+      setSelectedLocation(null); // Clear selectedLocation if not authenticated
     }
   }, [authUserState.authenticated]);
+
+  useEffect(() => {
+    if (locationList.length > 0) {
+      setSelectedLocation(locationList[0]);
+    }
+  }, [locationList]);
 
   useEffect(() => {
     setValidatedLocationList(locationList.filter(location => location.validatedAddress));
@@ -58,22 +85,26 @@ export const LocationListProvider = ({ children }) => {
   }, [selectedLocation, faveLocationList]);
 
   useEffect(() => {
+    setTempLocationList(locationList.filter(location => String(location.id).startsWith('temp')));
+  }, [locationList]);
+
+  useEffect(() => {
+    setSavedLocationList(locationList.filter(location => !(String(location.id).startsWith('temp'))));
+  }, [locationList]);
+
+  useEffect(() => {
     const updateAdditionalDetails = async () => {
       try {
         if (selectedLocation && selectedLocation.id) {
           console.log('Fetching additional details for location:', selectedLocation);
-          
-          // Fetch additional details when selectedLocation changes
           const details = await fetchLocationDetails({
             address: encodeURIComponent(`${selectedLocation.title} ${selectedLocation.address}`),
             lat: parseFloat(selectedLocation.latitude),
             lon: parseFloat(selectedLocation.longitude),
           });
-          
           console.log('Fetched additional details:', details);
           setAdditionalDetails(details);
         } else {
-          // Reset additionalDetails if no selectedLocation
           console.log('No selected location. Resetting additional details.');
           setAdditionalDetails(null);
         }
@@ -108,8 +139,10 @@ export const LocationListProvider = ({ children }) => {
       locationList, 
       validatedLocationList, 
       faveLocationList, 
+      tempLocationList,
+      savedLocationList,
       selectedLocation, 
-      additionalDetails, // Provide additionalDetails directly
+      additionalDetails, 
       setSelectedLocation, 
       populateFaveLocationsList, 
       addLocationToFaves, 

@@ -23,6 +23,10 @@ import FriendSelect from './data/FriendSelect';
 import HelloFriendHeader from './components/HelloFriendHeader';
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
 import ScreenDefaultActionMode from './screens/ScreenDefaultActionMode';
+import ScreenLocationSearch from './screens/ScreenLocationSearch';
+import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch';
+
+
 import Tabs from './components/Tabs';
 import Signin from './screens/Signin';
 import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
@@ -137,6 +141,24 @@ export const Layout = () => {
                 options={{
                   headerShown: true,
                   title: 'View friend', 
+
+                }}
+              />
+              <Stack.Screen
+                name="LocationSearch"
+                component={ScreenLocationSearch}
+                options={{
+                  headerShown: true,
+                  title: 'Search locations', 
+
+                }}
+              />
+              <Stack.Screen
+                name="MidpointLocationSearch"
+                component={ScreenMidpointLocationSearch}
+                options={{
+                  headerShown: true,
+                  title: 'Find midpoint locations', 
 
                 }}
               />

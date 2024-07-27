@@ -42,7 +42,7 @@ const ActionFriendPageAllLocations = ({ isModalVisible, toggleModal, onClose }) 
                     <ScrollView>
                         {isLocationListReady ? (
                             <> 
-                            <ItemLocationMulti height={50} width={50} columns={8} horizontal={true} singleLineScroll={false} newestFirst={false} svgColor='white' includeCategoryTitle={true}/>
+                            <ItemLocationMulti height={100} width={100} columns={3} horizontal={true} singleLineScroll={false} newestFirst={false} svgColor='white' includeCategoryTitle={true}/>
                             
                             </>
                            

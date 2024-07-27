@@ -9,9 +9,9 @@ const ResultsMidpointFinds = ({
     userAddress, 
     friendAddress, 
     destinationLocation, 
-    search='coffee',
-    radius='5000',
-    length='6',
+    search,
+    radius,
+    length,
     triggerFetch 
 }) => {
     
@@ -51,7 +51,7 @@ const ResultsMidpointFinds = ({
 
             fetchMidpointData();
         }
-    }, [triggerFetch, userAddress, friendAddress, destinationLocation]);
+    }, [triggerFetch, userAddress, friendAddress, search, radius, length]);
 
     const sortData = (data, order) => {
         return data.slice().sort((a, b) => {

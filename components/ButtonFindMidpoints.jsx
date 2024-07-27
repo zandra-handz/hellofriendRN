@@ -1,104 +1,68 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import AlertImage from '../components/AlertImage';
-import { useAuthUser } from '../context/AuthUserContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useLocationList } from '../context/LocationListContext';
-import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
+// ButtonFindMidpoints.js
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
-import SelectorUserAddress from '../components/SelectorUserAddress';
-
-import HelloFriendInvite from '../components/HelloFriendInvite';
-import FindMidpoints from '../components/FindMidpoints';
-
-import AlarmClockGeoSvg from '../assets/svgs/alarm-clock-geo.svg'; // Import the SVG
-import TwoCirclesCommonSvg from '../assets/svgs/two-circles-common';
-import LocationSingleForMultiSvg from '../assets/svgs/location-single-for-multi.svg'; // Import the SVG
-
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; // Import the SVG
-import CompassGeoSvg from '../assets/svgs/compass-geo.svg'; // Import the SVG
+import TwoCirclesCommonSvg from '../assets/svgs/two-circles-common.svg'; // Import the SVG
 import ThreeLocationsSvg from '../assets/svgs/three-locations.svg'; // Import the SVG
 
-import InputConsiderTheDrive from './InputConsiderTheDrive';
+const ButtonFindMidpoints = ({ onPress }) => {
+    const navigation = useNavigation();
 
-import { Ionicons } from '@expo/vector-icons';
-import QuickAddHello from '../speeddial/QuickAddHello';
-
-const ButtonFindMidpoints = () => {
-    const { authUserState } = useAuthUser();
-    const { selectedFriend } = useSelectedFriend();
-    const { selectedLocation } = useLocationList();
-    const [ isModalVisible, setIsModalVisible ] = useState(false);
-
-    const openModal = () => setIsModalVisible(true);
-
-    const closeModal = () => setIsModalVisible(false);
-
+    const navigateToMidpointSearch = () => {
+        navigation.navigate('MidpointLocationSearch'); // Navigate to the 'MidpointLocationSearch' screen
+        if (onPress) onPress(); // Call the onPress function to close the modal
+    };
 
     return (
         <View style={styles.container}>
-        <AlertImage
-            isModalVisible={isModalVisible}
-            toggleModal={closeModal} 
-            modalContent={<FindMidpoints />}
-            modalTitle={'Find midpoint locations'}
-
- 
-        > 
-      </AlertImage>
-            <View style={styles.buttonContainer}> 
-
-
             <ButtonLottieAnimationSvg
-                onPress={openModal}
-                preLabel = ''
+                onPress={navigateToMidpointSearch}
+                preLabel=''
                 label={`Search For Midpoints`}
                 height={64}
                 radius={16}
                 fontMargin={3}
                 animationSource={require("../assets/anims/heartinglobe.json")}
                 rightSideAnimation={false}
-                labelFontSize={22} 
+                labelFontSize={22}
                 animationWidth={234}
                 animationHeight={234}
                 labelContainerMarginHorizontal={4}
                 animationMargin={-64}
-                showGradient={true} // Add this if you want to show the gradient
-                showShape={true} // Ensure this is true to display the SVG shape
-                shapePosition="right" 
-                shapeSource={TwoCirclesCommonSvg} // Pass the SVG component here
+                showGradient={true}
+                showShape={true}
+                shapePosition="right"
+                shapeSource={TwoCirclesCommonSvg}
                 shapeWidth={100}
                 shapeHeight={100}
                 shapePositionValue={0}
                 shapePositionValueVertical={0}
-                showIcon={false} // Ensure this is set as needed
-                showTopLevelShape={true} // New prop to show/hide the top-level SVG
+                showIcon={false}
+                showTopLevelShape={true}
                 TopLevelShapeSvg={ThreeLocationsSvg}
                 topLevelShapeWidth={40}
                 topLevelShapeHeight={40}
                 topLevelShapePositionValue={320}
                 topLevelShapePositionValueVertical={20}
-                />
-
-            </View>
+            />
         </View>
-
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: 'transparent',
-    },   
-    buttonContainer: {
-      height: '90%',
-      alignItems: 'center',
-      justifyContent: 'space-evenly',
-      marginHorizontal: 0,
-      paddingBottom: 0, 
-      paddingTop: 0,
+        flex: 1,
+        backgroundColor: 'transparent',
     },
-  });
+    buttonContainer: {
+        height: '90%',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        marginHorizontal: 0,
+        paddingBottom: 0,
+        paddingTop: 0,
+    },
+});
 
-  export default ButtonFindMidpoints;
+export default ButtonFindMidpoints;

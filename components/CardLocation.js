@@ -14,6 +14,7 @@ const CardLocation = ({ id, title, address, notes, latitude, longitude, friendsC
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isMicroModalVisible, setIsMicroModalVisible] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
+  
   const [selectedAddress, setSelectedAddress] = useState(address || '');
   const [saveLocationModal, setSaveLocationModal] = useState(false);
   const [selectedLatitude, setSelectedLatitude] = useState(latitude || '');

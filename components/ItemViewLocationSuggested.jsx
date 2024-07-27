@@ -12,9 +12,8 @@ import FormLocationQuickCreate from '../forms/FormLocationQuickCreate'; // Adjus
 import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
 import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
 import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
-import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
 
-const ItemViewLocation = ({ location, onClose }) => {
+const ItemViewLocationSuggested = ({ onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
   const { authUserState } = useAuthUser();
@@ -23,18 +22,6 @@ const ItemViewLocation = ({ location, onClose }) => {
   
   const [isTemp, setIsTemp] = useState(false);
 
-  useEffect(() => {
-    if (location) {
-      setSelectedLocation(location);
-      console.log('Location data:', location);
-    }
-  }, [location]);
-
-  useEffect(() => {
-    if (location && location.id) {
-      setIsTemp(String(location.id).startsWith('temp'));
-    }
-  }, [location]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -48,9 +35,9 @@ const ItemViewLocation = ({ location, onClose }) => {
         setIsEditing(false); // Optionally close editing mode after saving
       } else {
         // If the location is not temporary, update or add the location to the friend's favorites
-        if (selectedFriend && location) {
-          const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
-          addLocationToFaves(location.id);
+        if (selectedFriend && selectedLocation) {
+          const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, selectedLocation.id);
+          addLocationToFaves(selectedLocation.id);
           const updatedFaves = response;
           console.log(updatedFaves);
 
@@ -76,9 +63,9 @@ const ItemViewLocation = ({ location, onClose }) => {
 
   const handleUpdate = async () => {
     try {
-      if (selectedFriend && location) {
-        const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
-        addLocationToFaves(location.id);
+      if (selectedFriend && selectedLocation) {
+        const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, selectedLocation.id);
+        addLocationToFaves(selectedLocation.id);
         const updatedFaves = response;
         console.log(updatedFaves);
 
@@ -96,9 +83,9 @@ const ItemViewLocation = ({ location, onClose }) => {
 
   const handleDelete = async () => {
     try {
-      if (selectedFriend && location) {
-        const response = await removeFromFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
-        removeLocationFromFaves(location.id);
+      if (selectedFriend && selectedLocation) {
+        const response = await removeFromFriendFavesLocations(authUserState.user.id, selectedFriend.id, selectedLocation.id);
+        removeLocationFromFaves(selectedLocation.id);
         const updatedFaves = response;
 
         if (friendDashboardData && friendDashboardData.length > 0) {
@@ -133,7 +120,7 @@ const ItemViewLocation = ({ location, onClose }) => {
       isModalVisible={isModalVisible}
       toggleModal={closeModal}
       modalContent={
-        location ? (
+        selectedLocation ? (
           <View style={styles.modalContainer}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
               <View style={styles.container}>
@@ -141,8 +128,8 @@ const ItemViewLocation = ({ location, onClose }) => {
                   <>
                     {isTemp ? (
                       <FormLocationQuickCreate 
-                        title={location.title} 
-                        address={location.address} 
+                        title={selectedLocation.title} 
+                        address={selectedLocation.address} 
                         onLocationCreate={handleSave} 
                       />
                     ) : (
@@ -154,18 +141,17 @@ const ItemViewLocation = ({ location, onClose }) => {
                   </>
                 ) : (
                   <> 
-                    <ItemViewLocationDetails location={location} unSaved={isTemp} />
+                    <ItemViewLocationDetails location={selectedLocation} unSaved={isTemp} />
                   </>
                 )}
               </View>
               <ButtonCalculateAndCompareTravel />
-              <ButtonSendDirectionsToFriend />
-              <ButtonFindMidpoints onPress={closeModal} /> 
+              <ButtonSendDirectionsToFriend /> 
             </ScrollView>
           </View>
         ) : null
       }
-      modalTitle={location ? "View location" : null}
+      modalTitle={selectedLocation ? "View location" : null}
     />
   );
 };
@@ -231,4 +217,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemViewLocation;
+export default ItemViewLocationSuggested;

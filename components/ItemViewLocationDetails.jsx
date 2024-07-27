@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { fetchLocationDetails } from '../api'; // Adjust the import path as needed
-
+import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import CardHours from './CardHours'; // Adjust the import path as needed
 import CardLocationPreviewImage from './CardLocationPreviewImage';
@@ -15,6 +15,7 @@ import StylingRating from '../components/StylingRating';
 
 
 const ItemViewLocationDetails = ({ location, unSaved }) => {
+  const { selectedLocation } = useLocationList();
   const { authUserState } = useAuthUser(); // Access authentication context
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,11 +26,11 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        if (location) {
+        if (selectedLocation) {
           const locationData = {
-            address: encodeURIComponent(`${location.title} ${location.address}`),
-            lat: parseFloat(location.latitude),
-            lon: parseFloat(location.longitude),
+            address: encodeURIComponent(`${selectedLocation.title} ${selectedLocation.address}`),
+            lat: parseFloat(selectedLocation.latitude),
+            lon: parseFloat(selectedLocation.longitude),
           };
 
           // Fetch location details using user ID and address or coordinates
@@ -44,7 +45,7 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
     };
 
     fetchDetails();
-  }, [location]);
+  }, [selectedLocation]);
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
