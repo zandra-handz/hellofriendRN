@@ -136,7 +136,7 @@ const ButtonLottieAnimationSvg = ({
           }}
         />
       )}
-      <View style={{ flexDirection: 'row', marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
+      <View style={{ flexDirection: 'row',  marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
         {rightSideAnimation ? (
           <>
             <Text
@@ -189,7 +189,7 @@ const ButtonLottieAnimationSvg = ({
             <Text
               style={[
                 textStyles(labelFontSize, labelColor),
-                { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
+                { fontFamily: 'Poppins-Bold', marginRight: fontMargin },
               ]}
             >
               {label}

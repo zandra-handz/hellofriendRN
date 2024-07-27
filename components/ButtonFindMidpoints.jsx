@@ -58,8 +58,7 @@ const ButtonFindMidpoints = () => {
                 fontMargin={3}
                 animationSource={require("../assets/anims/heartinglobe.json")}
                 rightSideAnimation={false}
-                labelFontSize={22}
-                labelColor="white"
+                labelFontSize={22} 
                 animationWidth={234}
                 animationHeight={234}
                 labelContainerMarginHorizontal={4}

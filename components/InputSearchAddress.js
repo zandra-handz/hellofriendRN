@@ -3,12 +3,15 @@ import { View, StyleSheet } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useLocationList } from '../context/LocationListContext'; // Adjust the import path as necessary
+
 import ItemViewLocation from '../components/ItemViewLocation';
 
 const InputSearchAddress = () => {
   const { locationList, setLocationList, setSelectedLocation, selectedLocation } = useLocationList();
+  
   const [listViewDisplayed, setListViewDisplayed] = useState(true); // State to control list view visibility
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
+  
   const googlePlacesRef = useRef(null); // Reference to the GooglePlacesAutocomplete component
 
   const generateTemporaryId = () => {

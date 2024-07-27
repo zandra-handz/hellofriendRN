@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { fetchLocationDetails } from '../api'; // Adjust the import path as needed
 import { useAuthUser } from '../context/AuthUserContext';
+import { useLocationList } from '../context/LocationListContext'; // Adjust the import path as necessary
+
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
 import ButtonDirections from '../components/ButtonDirections';
-import ButtonSaveLocation from '../components/ButtonSaveLocation';
+import ButtonMakeTempLocation from '../components/ButtonMakeTempLocation';
 import StylingRating from '../components/StylingRating';
 
-const CardMidpointLocation = ({ id, unSaved=true, name, address, mydistance, frienddistance, mytraveltime, friendtraveltime }) => {
+const CardMidpointLocation = ({ fullLocationData, id, unSaved=true, name, address, mydistance, frienddistance, mytraveltime, friendtraveltime, timeDifference, distanceDifference }) => {
   const { authUserState } = useAuthUser(); // Access authentication context
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -55,8 +57,8 @@ const CardMidpointLocation = ({ id, unSaved=true, name, address, mydistance, fri
       )} 
       <View style={styles.contentContainer}>
       <View style={styles.headerContainer}>
-        <Text style={styles.name}>{details.name}</Text>
-        <ButtonSaveLocation saveable={unSaved} />
+        <Text style={styles.name}>{details.name}</Text> 
+        <ButtonMakeTempLocation location={fullLocationData} />
       </View>
         <StylingRating rating={details.rating} starSize={10} /> 
         
@@ -65,6 +67,13 @@ const CardMidpointLocation = ({ id, unSaved=true, name, address, mydistance, fri
         <View style={styles.bottomBar}>
           <Text style={styles.iconButton}>me: {mytraveltime} | {mydistance.toFixed(2)} mi</Text>
           <Text style={styles.iconButton}>friend: {friendtraveltime} | {frienddistance.toFixed(2)} mi</Text>
+         
+        </View>
+        <View style={styles.bottomBar}>
+        
+          <Text style={styles.iconButton}>time difference: {timeDifference.toFixed(2)}</Text>
+          <Text style={styles.iconButton}>distance difference: {distanceDifference.toFixed(2)}</Text>
+       
         </View>
         {error && (
           <View style={styles.errorContainer}>

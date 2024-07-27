@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 
 import ItemViewLocation from '../components/ItemViewLocation'; 
+
 import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
 import CoffeeBeansOutlineSvg from '../assets/svgs/coffee-beans-outline.svg';
 import CoffeeShopOutlineSvg from '../assets/svgs/coffee-shop-outline';
