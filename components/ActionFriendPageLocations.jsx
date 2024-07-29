@@ -10,8 +10,12 @@ import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.
 import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
 import ActionFriendPageAllLocations from '../components/ActionFriendPageAllLocations';
  
+import { useNavigation } from '@react-navigation/native';
 
 const ActionFriendPageLocations = ({ onPress }) => {
+
+  const navigation = useNavigation();
+
   const { selectedFriend, setFriend } = useSelectedFriend();
   const { locationList, setLocationList } = useLocationList();
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
@@ -25,6 +29,13 @@ const ActionFriendPageLocations = ({ onPress }) => {
   let satelliteLocations = [];
   let satellitesFirstPage = 1;
   let additionalSatelliteCount = null; 
+
+
+  const navigateToLocationScreen = ({ onPress }) =>  {
+    navigation.navigate('Locations');
+    if (onPress) onPress();
+
+  };
 
   if (locationList.length > 0) {
     mainLocation = locationList[0];
@@ -147,7 +158,7 @@ const ActionFriendPageLocations = ({ onPress }) => {
       {!showSecondButton && additionalSatelliteCount > 0 && (
         <>
         <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
+          <TouchableOpacity onPress={navigateToLocationScreen} style={styles.arrowButton}>
             <View style={styles.svgFSContainer}>
               <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
             </View>

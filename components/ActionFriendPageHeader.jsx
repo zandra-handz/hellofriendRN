@@ -1,56 +1,71 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
 import ButtonLottieAnimationTwoSections from './ButtonLottieAnimationTwoSections';
-import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
-import DaysSince from '../data/FriendDaysSince'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import AlertPanelBottom from './AlertPanelBottom';
+import { useNavigation } from '@react-navigation/native';
 
 
+const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
 
-const ActionFriendPageHeader = ({ onPress }) => {
-    const { selectedFriend, friendDashboardData, loadingNewFriend } = useSelectedFriend();
-    const [showProfile, setShowProfile] = useState(false);
-    const [showNextHello, setShowNextHello] = useState(true);
+  const navigation = useNavigation();
 
-    let daysSinceInHeader = false;
+  const { selectedFriend, friendDashboardData, loadingNewFriend, setFriend } = useSelectedFriend();
+  const [showProfile, setShowProfile] = useState(false);
+  const [showNextHello, setShowNextHello] = useState(true);
 
-    const handleOnPress = () => {
-        console.log("ActionFriendPageHeader clicked!");
+  // Function to handle resetting the selected friend
+  const handleDeselect = () => {
+    if (Deselector) {
+      setFriend(null);
+    }
+  };
+
+  const navigateBackToFriendFocus = () => {
+    navigation.navigate('FriendFocus');
+  };
+
+    // Function to handle button press based on Deselector
+    const handlePress = () => {
+      if (Deselector) {
+        navigateBackToFriendFocus();
+      } else {
+        setShowProfile(true);
+      }
     };
- 
-    
 
-  
   return (
     <View style={styles.container}>
       <Animated.View style={{ flex: 1 }}>
-          <ButtonLottieAnimationTwoSections
-            onPress={() => setShowProfile(true)}
-            headerText={selectedFriend.name}
-            
-            navigateToFirstPage={false}
-            label={friendDashboardData ? `days since last hello: ${friendDashboardData[0].days_since}`: ''}
-            additionalText={friendDashboardData ? `say hello on ${friendDashboardData[0].future_date_in_words}`: ' '}
-            
-            fontMargin={3}
-            animationSource={require('../assets/anims/heartinglobe.json')}
-            rightSideAnimation={false} 
-            labelColor="white"
-            animationWidth={234}
-            animationHeight={234}
-            lightColor="black"
-            labelContainerMarginHorizontal={4}
-            animationMargin={-64}
-            shapePosition="right"
-            shapeSource={require('../assets/shapes/beer.png')}
-            shapeWidth={340}
-            shapeHeight={340}
-            shapePositionValue={-154}
-            showIcon={false}
-            satellites={false}
-            additionalPages={false} 
-          />
+        <ButtonLottieAnimationTwoSections
+          onPress={handlePress}
+          headerText={selectedFriend ? selectedFriend.name : ''}
+          navigateToFirstPage={false}
+          label={friendDashboardData ? `days since last hello: ${friendDashboardData[0].days_since}` : ''}
+          additionalText={friendDashboardData ? `say hello on ${friendDashboardData[0].future_date_in_words}` : ' '}
+          fontMargin={3}
+          animationSource={require('../assets/anims/heartinglobe.json')}
+          rightSideAnimation={false}
+          labelColor="white"
+          animationWidth={234}
+          animationHeight={234}
+          lightColor="black"
+          labelContainerMarginHorizontal={4}
+          animationMargin={-64}
+          shapePosition="right"
+          shapeSource={require('../assets/shapes/beer.png')}
+          shapeWidth={340}
+          shapeHeight={340}
+          shapePositionValue={-154}
+          showIcon={false}
+          satellites={Deselector} // Toggle satellite section based on Deselector
+          satelliteSectionPosition="right"
+          satelliteCount={Deselector ? 2 : 0} // Show two satellites if Deselector is true
+          satelliteHellos={Deselector ? [{ label: 'Deselect', onPress: handleDeselect }] : []} // Satellite button to reset the selected friend
+          satellitesOrientation="vertical" // Adjust orientation if needed
+          satelliteHeight="20%" // Adjust height if needed
+          satelliteOnPress={handleDeselect} 
+        />
       </Animated.View>
       <AlertPanelBottom
         visible={showProfile}
@@ -66,7 +81,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 8,
     borderRadius: 30,
-    overflow: 'hidden', // Ensure inner elements respect the rounded border
+    overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
   },

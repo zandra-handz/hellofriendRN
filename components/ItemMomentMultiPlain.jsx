@@ -1,22 +1,22 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Dimensions, FlatList } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome'; // Importing FontAwesome icons
 import { useCapsuleList } from '../context/CapsuleListContext';
-import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg';
-import ItemViewMoment from '../components/ItemViewMoment';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Assuming you're using this for icons
+import ButtonMoment from '../components/ButtonMoment'; // Importing ButtonMoment
+import ItemViewMoment from '../components/ItemViewMoment'; // Importing ItemViewMoment
+import ButtonMomentCategory from '../components/ButtonMomentCategory';
+
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemMomentMultiOlder = ({ 
+const ItemMomentMultiPlain = ({ 
   horizontal = true,
   singleLineScroll = true,
   columns = 3, 
-  width = 100,
-  height = 100,
   limit,
   newestFirst = true,
   svgColor = 'white',
-  includeCategoryTitle = true,
+  includeCategoryTitle = false,
   viewSortedList = true // Boolean prop to determine view mode
 }) => {
   const { sortedByCategory, newestFirst: newestFirstList } = useCapsuleList();
@@ -84,17 +84,6 @@ const ItemMomentMultiOlder = ({
     setIsModalVisible(false);
   };
 
-  const calculateFontSize = (width) => width * 0.094;
-
-  const calculateBubbleContainerDimensions = (width, height) => ({
-    width: width * 1,
-    height: height * 0.63,
-  });
-
-  const calculateLeftPadding = (bubbleWidth) => bubbleWidth * 0.064;
-
-  const bubbleContainerDimensions = calculateBubbleContainerDimensions(width, height);
-
   // Unique key generator function
   const generateUniqueKey = (item) => `${item.id}-${item.capsule}`;
 
@@ -102,39 +91,34 @@ const ItemMomentMultiOlder = ({
     <View style={{ minHeight: 2 }}>
       <View style={styles.controlPanel}>
         <TouchableOpacity onPress={handleExpandAll} style={styles.controlButton}>
-          <Icon name="expand-all" size={24} color="black" />
+          <Icon name="expand" size={24} color="black" />
           <Text style={styles.controlButtonText}>Expand All</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleCollapseAll} style={styles.controlButton}>
-          <Icon name="collapse-all" size={24} color="black" />
+          <Icon name="compress" size={24} color="black" />
           <Text style={styles.controlButtonText}>Collapse All</Text>
         </TouchableOpacity>
       </View>
 
       {viewSortedList && Object.keys(groupedMoments).map(category => (
         <View key={category}>
-          <TouchableOpacity
-            style={styles.categoryButton}
+          <ButtonMomentCategory 
             onPress={() => handleToggleCategory(category)}
-          >
-            <Text style={styles.categoryButtonText}>{category}</Text>
-          </TouchableOpacity>
+            categoryText={category}
+            />  
           {expandedCategories[category] && (
             <FlatList
               data={groupedMoments[category]}
               keyExtractor={(moment) => generateUniqueKey(moment)}
               renderItem={({ item: moment }) => (
                 <TouchableOpacity onPress={() => openModal(moment)}>
-                  <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
-                    <BubbleChatSquareSolidSvg width={width} height={height} color={svgColor} style={styles.svgImage} />
-                    <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
-                      <Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.2 }]}>{moment.capsule}</Text>
-                      {includeCategoryTitle && (
-                        <View style={[styles.categoryCircle, { backgroundColor: 'green' }]}>
-                          <Text style={styles.categoryText}>{moment.typedCategory}</Text>
-                        </View>
-                      )}
-                    </View>
+                  <View style={styles.momentContainer}>
+                    <ButtonMoment onPress={() => openModal(moment)} moment={moment} iconSize={26} size={14} color={svgColor} />
+                    {includeCategoryTitle && (
+                      <View style={styles.categoryCircle}>
+                        <Text style={styles.categoryText}>{moment.typedCategory}</Text>
+                      </View>
+                    )}
                   </View>
                 </TouchableOpacity>
               )}
@@ -152,16 +136,13 @@ const ItemMomentMultiOlder = ({
           keyExtractor={(moment) => generateUniqueKey(moment)}
           renderItem={({ item: moment }) => (
             <TouchableOpacity onPress={() => openModal(moment)}>
-              <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
-                <BubbleChatSquareSolidSvg width={width} height={height} color={svgColor} style={styles.svgImage} />
-                <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
-                  <Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.2 }]}>{moment.capsule}</Text>
-                  {includeCategoryTitle && (
-                    <View style={[styles.categoryCircle, { backgroundColor: 'green' }]}>
-                      <Text style={styles.categoryText}>{moment.typedCategory}</Text>
-                    </View>
-                  )}
-                </View>
+              <View style={styles.momentContainer}>
+                <ButtonMoment moment={moment} size={24} color={svgColor} />
+                {includeCategoryTitle && (
+                  <View style={styles.categoryCircle}>
+                    <Text style={styles.categoryText}>{moment.typedCategory}</Text>
+                  </View>
+                )}
               </View>
             </TouchableOpacity>
           )}
@@ -181,83 +162,65 @@ const ItemMomentMultiOlder = ({
 };
 
 const styles = StyleSheet.create({
-  relativeContainer: {
-    position: 'relative',
-  },
-  bubbleContainer: {
-    position: 'absolute',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    zIndex: 1,
-  },
-  bubbleText: {
-    color: 'black',
-    fontFamily: 'Poppins-Regular',
-    textAlign: 'left',
-  },
-  imageContainer: {
+  controlPanel: {
     flexDirection: 'row',
+    alignItems: 'left',
+    padding: 10,
     backgroundColor: 'transparent',
+  },
+  controlButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  controlButtonText: {
+    marginLeft: 5,
+    fontFamily: 'Poppins-Bold',
+  },
+  momentContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    borderWidth: .8,
+    borderColor: 'black',
+    borderRadius: 10,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    marginBottom: 11, // doing too much spacing for ButtonMomentCategory
+    marginTop: 5,
+  },
+  categoryButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 15,
+    backgroundColor: 'lightgray',
+    marginVertical: 2,
+    borderRadius: 10,
+  },
+  categoryButtonText: { 
+    fontSize: 17,
+    fontFamily: 'Poppins-Bold',
+  },
+  categoryCircle: {
+    borderRadius: 50,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    backgroundColor: 'green',
+  },
+  categoryText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   imageRow: {
     flex: 1,
     justifyContent: 'space-between',
   },
-  image: {
-    margin: 5,
-    borderRadius: 10,
-    color: 'white',
-    backgroundColor: 'white',
-  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  categoryCircle: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  categoryText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  categoryButton: {
-    backgroundColor: 'transparent',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    alignItems: 'left',
-  },
-  categoryButtonText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-  },
-  controlPanel: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    backgroundColor: 'white',
-  },
-  controlButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  controlButtonText: {
-    marginLeft: 5,
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
   },
 });
 
-export default ItemMomentMultiOlder;
+export default ItemMomentMultiPlain;

@@ -73,7 +73,7 @@ const ScreenLocationSearch = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'transparent',
     },
     modalContent: {
         flex: 1,

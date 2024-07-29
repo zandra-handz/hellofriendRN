@@ -4,9 +4,13 @@ import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemMomentMulti from '../components/ItemMomentMulti';
 import ItemImageMulti from '../components/ItemImageMulti';
 
+
 const ActionFriendPageAllMoments = ({ isModalVisible, toggleModal, onClose }) => {
+    
     const { capsuleList } = useCapsuleList();
     const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
+
+
 
     useEffect(() => {
         if (capsuleList.length > 0) {

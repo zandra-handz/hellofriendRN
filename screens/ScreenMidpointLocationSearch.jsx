@@ -18,8 +18,8 @@ const ScreenMidpointLocationSearch = () => {
     const [selectedUserAddress, setSelectedUserAddress] = useState(null);
     const [selectedFriendAddress, setSelectedFriendAddress] = useState(null);
     const [showResults, setShowResults] = useState(false);
-    const [radius, setRadius] = useState('500');
-    const [length, setLength] = useState('1');
+    const [radius, setRadius] = useState('5000');
+    const [length, setLength] = useState('4');
     const [searchKeyword, setSearchKeyword] = useState('');
     const [triggerFetch, setTriggerFetch] = useState(false);
 
@@ -49,7 +49,7 @@ const ScreenMidpointLocationSearch = () => {
                 />
             ) : (
                 <View style={styles.mainContainer}>
-                    <Text style={styles.inputLabel}>Radius (meters)</Text>
+                    <Text style={styles.inputLabel}>Search radius (meters)</Text>
                     <Picker
                         selectedValue={radius}
                         style={styles.picker}
@@ -60,7 +60,7 @@ const ScreenMidpointLocationSearch = () => {
                         ))}
                     </Picker>
 
-                    <Text style={styles.inputLabel}>Length (1-10)</Text>
+                    <Text style={styles.inputLabel}># of search results</Text>
                     <Picker
                         selectedValue={length}
                         style={styles.picker}
@@ -127,14 +127,15 @@ const ScreenMidpointLocationSearch = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'black',
+        backgroundColor: 'white',
         padding: 20,
     },
     mainContainer: {
         flex: 1,
     },
     inputLabel: {
-        color: 'white',
+        color: 'black',
+        fontFamily: 'Poppins-Bold',
         fontSize: 16,
         marginVertical: 10,
     },
@@ -143,13 +144,14 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 20,
-        color: 'white',
+        fontFamily: 'Poppins-Regular',
+        color: 'black',
         paddingHorizontal: 10,
     },
     picker: {
         height: 50,
         width: '100%',
-        color: 'white',
+        color: 'black',
     },
 });
 

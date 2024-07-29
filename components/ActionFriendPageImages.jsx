@@ -3,6 +3,7 @@ import { View, StyleSheet, Animated, TouchableOpacity, Text, Button, Image } fro
 import ButtonLottieAnimationSatellitesImages from './ButtonLottieAnimationSatellitesImages';
 import { useImageList } from '../context/ImageListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useNavigation } from '@react-navigation/native';
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
@@ -11,6 +12,8 @@ import ActionFriendPageAllImages from '../components/ActionFriendPageAllImages';
  
 
 const ActionFriendPageImages = ({ onPress }) => { 
+
+  const navigation = useNavigation();
   
   const { selectedFriend } = useSelectedFriend();
   const { imageList, setImageList } = useImageList();
@@ -26,6 +29,11 @@ const ActionFriendPageImages = ({ onPress }) => {
 
   let overrideView = true;
 
+  const navigateToImagesScreen = () => {
+    navigation.navigate('Images'); // Navigate to the 'MidpointLocationSearch' screen
+    if (onPress) onPress(); // Call the onPress function to close the modal
+};
+
   if (imageList.length > 0) {
     console.log('IMAGE CONTEXT', imageList);
     mainImage = imageList[0];
@@ -38,6 +46,8 @@ const ActionFriendPageImages = ({ onPress }) => {
       additionalImages = null;
     }
   }
+
+  
 
   const navigateToFirstPage = () => {
     setShowSecondButton(false);
@@ -152,7 +162,7 @@ const ActionFriendPageImages = ({ onPress }) => {
       {((!showSecondButton && additionalSatelliteCount > 0) || !showSecondButton && overrideView) && (
         <>
         <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
+          <TouchableOpacity onPress={navigateToImagesScreen} style={styles.arrowButton}>
             <View style={styles.svgFSContainer}>
               <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
             

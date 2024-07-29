@@ -8,6 +8,8 @@ import ItemLocationFaves from '../components/ItemLocationFaves';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
+
+
 const ButtonLottieAnimationSatellitesLocations = ({
   onPress,
   isLoading = false,

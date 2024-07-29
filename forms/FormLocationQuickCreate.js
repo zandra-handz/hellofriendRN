@@ -40,7 +40,7 @@ const FormLocationQuickCreate = ({ onLocationCreate, title, address }) => {
       setLocationList(prevList => [res, ...prevList]); // Update locationList with the new location
 
       // Set selectedLocation after updating locationList
-      setSelectedLocation(res);
+      // rsetSelectedLocation(res);
       
       onLocationCreate(res);
 

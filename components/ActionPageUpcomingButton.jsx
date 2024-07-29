@@ -3,10 +3,13 @@ import { View, StyleSheet, Animated, TouchableOpacity } from 'react-native';
 import ButtonMultiFeatureUpcoming from './ButtonMultiFeatureUpcoming';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useNavigation } from '@react-navigation/native';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
+import ActionFriendPageHeader from './ActionFriendPageHeader';
+
 
 const ActionPageUpcomingButton = ({ onPress }) => {
   const { authUserState } = useAuthUser();
@@ -63,6 +66,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
 
   return (
     <View style={styles.container}>
+      {!selectedFriend && (
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 ? (
           <ButtonMultiFeatureUpcoming
@@ -128,9 +132,14 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             satelliteHeight="60%"
             additionalPages={false}
             satelliteOnPress={(friend) => handlePress(friend)} 
-          />
+          /> 
         )}
       </Animated.View>
+      )} 
+
+      {selectedFriend &&(
+        <ActionFriendPageHeader Deselector={true} />
+      )}
 
       {!showSecondButton && additionalSatelliteCount > 0 && (
         <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>

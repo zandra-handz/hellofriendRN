@@ -236,7 +236,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
                           />
                         )}
                         {isCapsuleListReady && (
-                          <ItemMomentMulti momentData={capsuleList} width={154} height={154} limit={2} newestFirst={true}/> 
+                          <ItemMomentMulti width={170} height={170} limit={1} viewSortedList={false} horizontal={true} singleLineScroll={true} newestFirst={true}/> 
                         )}
                       </>
                     )}

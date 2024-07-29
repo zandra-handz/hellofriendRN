@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
+import { useCapsuleList } from '../context/CapsuleListContext';
 import { useImageList } from '../context/ImageListContext';
-
-
 import ItemMomentMulti from '../components/ItemMomentMulti';
 import ItemImageMulti from '../components/ItemImageMulti';
 
-const ActionFriendPageAllImages = ({ isModalVisible, toggleModal, onClose }) => {
+const ScreenImages = ({ route, navigation }) => {
     const { imageList } = useImageList();
     const [isImageListReady, setIsImageListReady] = useState(false);
 
@@ -16,30 +15,30 @@ const ActionFriendPageAllImages = ({ isModalVisible, toggleModal, onClose }) => 
         }
     }, [imageList]);
 
-    return (
-        <Modal visible={isModalVisible} onRequestClose={toggleModal} transparent>
-            <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                        <Text style={styles.closeText}>Close</Text>
-                    </TouchableOpacity> 
-                    <ScrollView>
-                        {isImageListReady ? (
-                            <>  
-                            <ItemImageMulti height={120} width={120} singleLineScroll={false} />
-                            </>
-                           
-                        ) : (
-                            <Text>Loading...</Text>
-                        )}
-                    </ScrollView>
-                </View>
-            </View>
-        </Modal>
-    );
+    return ( 
+            <View style={styles.container}> 
+                <ScrollView>
+                    {isImageListReady ? (
+                        <>  
+                        <ItemImageMulti height={120} width={120} singleLineScroll={false} />
+                        </>
+                        
+                    ) : (
+                        <Text>Loading...</Text>
+                    )}
+                </ScrollView>
+            </View> )
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+        padding: 20,
+    },
+    mainContainer: {
+        flex: 1,
+    },
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -75,4 +74,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ActionFriendPageAllImages;
+export default ScreenImages;

@@ -6,7 +6,7 @@ const CapsuleListContext = createContext({
   capsuleList: [], 
   setCapsuleList: () => {}, 
   removeCapsules: () => {}, 
-  updateCapsule: () => {} 
+  updateCapsule: () => {}
 });
 
 export const useCapsuleList = () => {
@@ -18,10 +18,13 @@ export const useCapsuleList = () => {
 
   return context;
 };
+ 
 
 export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
   const [capsuleList, setCapsuleList] = useState([]);
+  const [sortedByCategory, setSortedByCategory] = useState([]);
+  const [newestFirst, setNewestFirst] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +45,12 @@ export const CapsuleListProvider = ({ children }) => {
     fetchData();
   }, [selectedFriend]);
 
+  useEffect(() => {
+    sortByCategory();
+    sortNewestFirst();
+  }, [capsuleList]);
+
+
   const removeCapsules = (capsuleIdsToRemove) => {
     setCapsuleList(prevCapsules => {
       return prevCapsules.filter(capsule => !capsuleIdsToRemove.includes(capsule.id));
@@ -56,8 +65,32 @@ export const CapsuleListProvider = ({ children }) => {
     });
   };
 
+  const sortByCategory = () => {
+    const sorted = [...capsuleList].sort((a, b) => {
+      if (a.typed_category < b.typed_category) return -1;
+      if (a.typed_category > b.typed_category) return 1;
+      return 0;
+    });
+    setSortedByCategory(sorted);
+    console.log("Sorted by Category: ", sorted);
+  };
+
+  const sortNewestFirst = () => {
+    const sorted = [...capsuleList].sort((a, b) => new Date(b.created) - new Date(a.created));
+    setNewestFirst(sorted);
+  };
+
   return (
-    <CapsuleListContext.Provider value={{ capsuleList, setCapsuleList, removeCapsules, updateCapsule }}>
+    <CapsuleListContext.Provider value={{ 
+      capsuleList, 
+      sortedByCategory,
+      newestFirst,
+      setCapsuleList, 
+      removeCapsules, 
+      updateCapsule, 
+      sortByCategory,
+      sortNewestFirst
+      }}>
       {children}
     </CapsuleListContext.Provider>
   );

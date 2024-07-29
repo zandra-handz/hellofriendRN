@@ -8,7 +8,12 @@ import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.
 import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
 import ActionFriendPageAllMoments from '../components/ActionFriendPageAllMoments';
  
-const ActionFriendPageMoments = () => {
+import { useNavigation } from '@react-navigation/native';
+
+const ActionFriendPageMoments = ({ onPress }) => {
+
+  const navigation = useNavigation();
+
   const { capsuleList } = useCapsuleList();
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
   const [showSecondButton, setShowSecondButton] = useState(false);
@@ -21,6 +26,11 @@ const ActionFriendPageMoments = () => {
   let satellitesFirstPage = 1;
 
   let overrideView = true;
+
+  const navigateToMomentsScreen = () => {
+    navigation.navigate('Moments');
+    if (onPress) onPress();
+  };
 
   const navigateToFirstPage = () => {
     setShowSecondButton(false);
@@ -134,7 +144,7 @@ const ActionFriendPageMoments = () => {
       {((!showSecondButton && additionalSatelliteCount > 0) || !showSecondButton && overrideView) && (
         <>
         <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
+          <TouchableOpacity onPress={navigateToMomentsScreen} style={styles.arrowButton}>
             <View style={styles.svgFSContainer}>
               <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
             </View>

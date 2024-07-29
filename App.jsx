@@ -23,7 +23,12 @@ import FriendSelect from './data/FriendSelect';
 import HelloFriendHeader from './components/HelloFriendHeader';
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
 import ScreenDefaultActionMode from './screens/ScreenDefaultActionMode';
+import ScreenMoments from './screens/ScreenMoments';
+import ScreenImages from './screens/ScreenImages';
+import ScreenLocations from './screens/ScreenLocations';
+
 import ScreenLocationSearch from './screens/ScreenLocationSearch';
+
 import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch';
 
 
@@ -141,6 +146,33 @@ export const Layout = () => {
                 options={{
                   headerShown: true,
                   title: 'View friend', 
+
+                }}
+              />
+              <Stack.Screen
+                name="Moments"
+                component={ScreenMoments}
+                options={{
+                  headerShown: true,
+                  title: 'All moments', 
+
+                }}
+              />
+              <Stack.Screen
+                name="Images"
+                component={ScreenImages}
+                options={{
+                  headerShown: true,
+                  title: 'All images', 
+
+                }}
+              />
+              <Stack.Screen
+                name="Locations"
+                component={ScreenLocations}
+                options={{
+                  headerShown: true,
+                  title: 'All locations', 
 
                 }}
               />
