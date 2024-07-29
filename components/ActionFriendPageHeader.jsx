@@ -42,7 +42,8 @@ const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
           headerText={selectedFriend ? selectedFriend.name : ''}
           navigateToFirstPage={false}
           label={friendDashboardData ? `days since last hello: ${friendDashboardData[0].days_since}` : ''}
-          additionalText={friendDashboardData ? `say hello on ${friendDashboardData[0].future_date_in_words}` : ' '}
+          label={friendDashboardData ? `say hello on ${friendDashboardData[0].future_date_in_words}` : ' '}
+          //moved 'say hello' from additionalText to label
           fontMargin={3}
           animationSource={require('../assets/anims/heartinglobe.json')}
           rightSideAnimation={false}
@@ -78,8 +79,7 @@ const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    marginBottom: 8,
+    width: '100%', 
     borderRadius: 30,
     overflow: 'hidden',
     flexDirection: 'row',

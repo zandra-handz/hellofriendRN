@@ -40,10 +40,10 @@ const ItemHelloSingle = ({ helloObject, helloWidth, helloHeight }) => {
   return (
     <View style={styles.helloContainer}>
       <TouchableOpacity onPress={openModal}>
-      <IconDynamicHelloType selectedChoice={helloObject.type} svgColor="white"/>
+      <IconDynamicHelloType selectedChoice={helloObject.type} svgHeight={36} svgWidth={36} svgColor="white"/>
                             
 
-        <Text>TEXT HERE</Text>
+        <Text> </Text>
       
       </TouchableOpacity>
       {isModalVisible && (
@@ -55,10 +55,11 @@ const ItemHelloSingle = ({ helloObject, helloWidth, helloHeight }) => {
 
 const styles = StyleSheet.create({
   helloContainer: {
-    padding: 40,
+    padding: 0,
+    marginHorizontal: 20,
     width: '100%',
     background: 'white',
-    height: 120,
+    height: 90,
     flex: 1, 
   },
   modalContainer: {

@@ -8,18 +8,22 @@ import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import SelectorUserAddress from '../components/SelectorUserAddress';
 
+
+
 import HelloFriendInvite from '../components/HelloFriendInvite';
 
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; // Import the SVG
 import SpeechBubbleEllipsisSolidSvg from '../assets/svgs/speech-bubble-ellipsis-solid.svg'; // Import the SVG
-import CompassGeoSvg from '../assets/svgs/compass-geo.svg'; // Import the SVG
+import ThoughtBubbleSvg from '../assets/svgs/thought-bubble.svg'; // Import the SVG
+import ThoughtBubbleTwoSolidSvg from '../assets/svgs/thought-bubble-two-solid.svg'; // Import the SVG
+import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 
 import InputConsiderTheDrive from './InputConsiderTheDrive';
 
 import { Ionicons } from '@expo/vector-icons';
 import QuickAddHello from '../speeddial/QuickAddHello';
 
-const ButtonMomentCategory = ({onPress, categoryText}) => {
+const ButtonMomentCategory = ({onPress, categoryText, momentCount}) => {
     const { authUserState } = useAuthUser();
     const { selectedFriend } = useSelectedFriend();
     const { selectedLocation } = useLocationList();
@@ -46,7 +50,9 @@ const ButtonMomentCategory = ({onPress, categoryText}) => {
 
             <ButtonLottieAnimationSvg
                 onPress={onPress}
-                preLabel = ''
+                preLabel = {momentCount}
+                preLabelFontSize = {18} // Font size for pre-label
+                preLabelColor='white' // Color for pre-label text
                 label={categoryText}
                 height={46}
                 radius={10}
@@ -61,11 +67,20 @@ const ButtonMomentCategory = ({onPress, categoryText}) => {
                 showGradient={true} // Add this if you want to show the gradient
                 showShape={true} // Ensure this is true to display the SVG shape
                 shapePosition="right"
-                shapeSource={SpeechBubbleEllipsisSolidSvg} // Pass the SVG component here
-                shapeWidth={76}
-                shapeHeight={76}
+                shapeSource={ThoughtBubbleTwoSolidSvg} // Pass the SVG component here
+                shapeWidth={72}
+                shapeHeight={72}
+                shapePositionValue={-14}
+                shapePositionValueVertical={-10}
+                shapeSource={ThoughtBubbleOutlineSvg} // Pass the SVG component here
+                shapeWidth={66}
+                shapeHeight={66}
                 shapePositionValue={-4}
-                shapePositionValueVertical={-14}
+                shapePositionValueVertical={-11}
+                shapeLabel={momentCount}
+                shapeLabelColor='white'
+                shapeLabelFontSize={24}
+                shapeLabelPositionRight='95%' 
                 showIcon={false} // Ensure this is set as needed
                 />
 

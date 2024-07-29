@@ -166,13 +166,13 @@ const ButtonLottieAnimationSatellitesMoments = ({
       {!additionalPages && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { height: 194,   width: satellites ? '100%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: 270,   width: satellites ? '100%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 196,
-                  padding: 6,
+                  height: 260,
+                  paddingHorizontal: 6,
                   borderRadius: 30,
                   alignItems: 'center',
                   overflow: 'hidden',
@@ -236,7 +236,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
                           />
                         )}
                         {isCapsuleListReady && (
-                          <ItemMomentMulti width={170} height={170} limit={1} viewSortedList={false} horizontal={true} singleLineScroll={true} newestFirst={true}/> 
+                          <ItemMomentMulti width={240} height={240} limit={3} viewSortedList={false} horizontal={true} singleLineScroll={true} newestFirst={true}/> 
                         )}
                       </>
                     )}
@@ -275,7 +275,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
 const styles = StyleSheet.create({ 
   satelliteSection: {
     width: '23.33%',
-    height: 194,
+    height: 270,
     height: 0,
     width: 0,
     borderRadius: 20, 
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   additionalSatelliteSection: {
     flexDirection: 'column',
     marginVertical: 0,
-    height: 194,
+    height: 270,
     borderRadius: 30, 
     backgroundColor: 'black',
   },

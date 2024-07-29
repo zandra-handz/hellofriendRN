@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
-import ItemImageMulti from '../components/ItemImageMulti';
+
 
 const ScreenMoments = ({ route, navigation }) => {
     const { capsuleList } = useCapsuleList();

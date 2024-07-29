@@ -182,7 +182,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '76%',
-                  height: 126,
+                  height: 100,
                   padding: 6,
                   borderRadius: 30, 
                   overflow: 'hidden', 
@@ -292,7 +292,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
 const styles = StyleSheet.create({ 
   satelliteSection: {
     width: '36.33%',
-    height: 126,
+    height: 100,
     borderRadius: 30,
     marginLeft: -125,
     paddingLeft: 8, 
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   additionalSatelliteSection: {
     flexDirection: 'column',
     marginVertical: 0,
-    height: 126,
+    height: 100,
     borderRadius: 30, 
     backgroundColor: 'black',
   },

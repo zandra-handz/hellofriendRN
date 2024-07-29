@@ -185,8 +185,7 @@ const ActionFriendPageMoments = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    marginBottom: 8,
+    width: '100%', 
     borderRadius: 30,
     overflow: 'hidden',
     flexDirection: 'row',

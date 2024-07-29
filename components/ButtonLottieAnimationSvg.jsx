@@ -40,6 +40,11 @@ const ButtonLottieAnimationSvg = ({
   topLevelShapeHeight = 100,
   topLevelShapePositionValue = -134,
   topLevelShapePositionValueVertical = 0,
+  shapeLabel = '', // New prop for shape label
+  shapeLabelFontSize = 16, // Font size for shape label
+  shapeLabelColor = 'black', // Color for shape label
+  shapeLabelPositionRight = '93%'
+  
 }) => {
   const lottieViewRef = useRef(null);
   const globalStyles = useGlobalStyle(); // Get the global styles
@@ -135,8 +140,26 @@ const ButtonLottieAnimationSvg = ({
             ...getTopLevelShapeStyle(),
           }}
         />
+      )} 
+      {shapeLabel && (
+        <Text
+          style={[
+            textStyles(shapeLabelFontSize, shapeLabelColor),
+            {
+              position: 'absolute',
+              top: shapePositionValueVertical ? shapePositionValueVertical + shapeHeight / 2.4 - shapeLabelFontSize / 3 : shapeHeight / 2 - shapeLabelFontSize / 2,
+              left: shapePosition === 'center' ? '50%' : shapePosition === 'right' ? shapeLabelPositionRight : '10%',
+              transform: [{ translateX: shapePosition === 'center' ? -shapeLabelFontSize * 2 : 0 }, { translateY: shapePositionValueVertical ? -shapeLabelFontSize / 2 : 0 }],
+              textAlign: 'center',
+              fontFamily: 'Poppins-Bold',
+              zIndex: 1,
+            },
+          ]}
+        >
+          {shapeLabel}
+        </Text>
       )}
-      <View style={{ flexDirection: 'row',  marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
+      <View style={{ flexDirection: 'row', marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
         {rightSideAnimation ? (
           <>
             <Text

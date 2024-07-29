@@ -6,7 +6,7 @@ import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import { Flow } from 'react-native-animated-spinkit';
+import LoadingPage from '../components/LoadingPage';
 import Logo from '../components/Logo'; // Import the Logo component
 
 const Signin = () => {
@@ -105,9 +105,7 @@ const Signin = () => {
   return (
     <View style={styles.container}>
       {loading && (
-        <View style={styles.spinnerContainer}>
-          <Flow size={48} color='green' />
-        </View>
+        <LoadingPage loading={loading} spinnerType='fold' />
       )}
       {!loading && (
         <>
@@ -311,7 +309,7 @@ const styles = StyleSheet.create({
   },
   spinnerContainer: {
     ...StyleSheet.absoluteFillObject, // Cover the entire screen
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
+    backgroundColor: 'transparent', // Semi-transparent background
     justifyContent: 'center',
     alignItems: 'center',
   },

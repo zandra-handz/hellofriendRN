@@ -172,7 +172,7 @@ const ItemViewLocation = ({ location, onClose }) => {
 
 const styles = StyleSheet.create({
   modalContainer: {
-    flex: 1,
+    flex: 1, 
   },
   scrollContainer: {
     flexGrow: 1,

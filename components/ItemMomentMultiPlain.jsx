@@ -105,6 +105,7 @@ const ItemMomentMultiPlain = ({
           <ButtonMomentCategory 
             onPress={() => handleToggleCategory(category)}
             categoryText={category}
+            momentCount={groupedMoments[category].length}
             />  
           {expandedCategories[category] && (
             <FlatList

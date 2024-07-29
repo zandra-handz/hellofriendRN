@@ -67,9 +67,12 @@ export const CapsuleListProvider = ({ children }) => {
 
   const sortByCategory = () => {
     const sorted = [...capsuleList].sort((a, b) => {
-      if (a.typed_category < b.typed_category) return -1;
-      if (a.typed_category > b.typed_category) return 1;
-      return 0;
+      // First, compare by category
+      if (a.typedCategory < b.typedCategory) return -1;
+      if (a.typedCategory > b.typedCategory) return 1;
+  
+      // If categories are the same, compare by date (newest first)
+      return new Date(b.created) - new Date(a.created);
     });
     setSortedByCategory(sorted);
     console.log("Sorted by Category: ", sorted);

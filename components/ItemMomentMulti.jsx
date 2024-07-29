@@ -2,12 +2,13 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Dimensions, FlatList } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg';
-import ItemViewMoment from '../components/ItemViewMoment';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Assuming you're using this for icons
+import ItemViewMoment from '../components/ItemViewMoment';
+
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemMomentMultiOlder = ({ 
+const ItemMomentMulti = ({ 
   horizontal = true,
   singleLineScroll = true,
   columns = 3, 
@@ -16,7 +17,7 @@ const ItemMomentMultiOlder = ({
   limit,
   newestFirst = true,
   svgColor = 'white',
-  includeCategoryTitle = true,
+  includeCategoryTitle = false,
   viewSortedList = true // Boolean prop to determine view mode
 }) => {
   const { sortedByCategory, newestFirst: newestFirstList } = useCapsuleList();
@@ -84,14 +85,14 @@ const ItemMomentMultiOlder = ({
     setIsModalVisible(false);
   };
 
-  const calculateFontSize = (width) => width * 0.094;
+  const calculateFontSize = (width) => width * 0.06;
 
   const calculateBubbleContainerDimensions = (width, height) => ({
-    width: width * 1,
-    height: height * 0.63,
+    width: width * .96,
+    height: height * 0.58,
   });
 
-  const calculateLeftPadding = (bubbleWidth) => bubbleWidth * 0.064;
+  const calculateLeftPadding = (bubbleWidth) => bubbleWidth * 0.06;
 
   const bubbleContainerDimensions = calculateBubbleContainerDimensions(width, height);
 
@@ -100,16 +101,18 @@ const ItemMomentMultiOlder = ({
 
   return (
     <View style={{ minHeight: 2 }}>
-      <View style={styles.controlPanel}>
-        <TouchableOpacity onPress={handleExpandAll} style={styles.controlButton}>
-          <Icon name="expand-all" size={24} color="black" />
-          <Text style={styles.controlButtonText}>Expand All</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleCollapseAll} style={styles.controlButton}>
-          <Icon name="collapse-all" size={24} color="black" />
-          <Text style={styles.controlButtonText}>Collapse All</Text>
-        </TouchableOpacity>
-      </View>
+      {viewSortedList && (
+        <View style={styles.controlPanel}>
+          <TouchableOpacity onPress={handleExpandAll} style={styles.controlButton}>
+            <Icon name="expand-all" size={24} color="black" />
+            <Text style={styles.controlButtonText}>Expand All</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleCollapseAll} style={styles.controlButton}>
+            <Icon name="collapse-all" size={24} color="black" />
+            <Text style={styles.controlButtonText}>Collapse All</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {viewSortedList && Object.keys(groupedMoments).map(category => (
         <View key={category}>
@@ -245,9 +248,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10,
+    backgroundColor: '#f1f1f1',
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    backgroundColor: 'white',
+    borderBottomColor: '#ddd',
   },
   controlButton: {
     flexDirection: 'row',
@@ -256,8 +259,8 @@ const styles = StyleSheet.create({
   controlButtonText: {
     marginLeft: 5,
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Poppins-Regular',
   },
 });
 
-export default ItemMomentMultiOlder;
+export default ItemMomentMulti;

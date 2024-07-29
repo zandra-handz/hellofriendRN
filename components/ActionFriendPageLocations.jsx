@@ -198,8 +198,7 @@ const ActionFriendPageLocations = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    marginBottom: 8,
+    width: '100%', 
     borderRadius: 30,
     overflow: 'hidden',
     flexDirection: 'row',
@@ -207,11 +206,12 @@ const styles = StyleSheet.create({
   },
   arrowContainer: {
     flexDirection: 'column',
+    paddingHorizontal: 6,
     marginRight: -4,
 
   },
   arrowButton: {
-    padding: 4,
+    paddingTop: 0,
     marginRight: -8,
     marginLeft: -10,
   },

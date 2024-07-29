@@ -5,6 +5,10 @@ import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import SwitchUsersSvg from '../assets/svgs/switch-users.svg';
+import SwitchRedSvg from '../assets/svgs/switch-red.svg';
+import SwitchPlainSolidSvg from '../assets/svgs/switch-plain-solid.svg';
+
 
 const ButtonLottieAnimationTwoSections = ({
   onPress,
@@ -134,11 +138,11 @@ const ButtonLottieAnimationTwoSections = ({
             key={i}
             style={[
               styles.satelliteButton,
-              { width: satelliteWidth, height: satellitesOrientation === 'horizontal' ? satelliteHeight : '25%' },
+              { width: 74, borderRadius: 50, margin: 2,padding: 7,   alignItems: 'center', height: satellitesOrientation === 'horizontal' ? satelliteHeight : 74 },
             ]}
             onPress={() => satelliteOnPress(satelliteHellos[i])}
           >
-            <Text style={styles.satelliteText}>{satelliteHellos[i].friend_name}</Text>
+            <SwitchPlainSolidSvg height={42} width={42} color="black"/>
           </TouchableOpacity>
         );
       }
@@ -176,7 +180,7 @@ const ButtonLottieAnimationTwoSections = ({
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 136,
+                  height: 140,
                   padding: 10,
                   borderRadius: 30,
                   alignItems: 'center',
@@ -301,22 +305,22 @@ const styles = StyleSheet.create({
   },
   satelliteSection: {
     width: '33.33%',
-    height: 110,
+    height: 140,
     borderRadius: 0,
     marginLeft: -20,
-    paddingLeft: 8,
-    marginTop: '4%',
+    paddingLeft: 0,  
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     backgroundColor: 'darkgrey',
   },
-  satelliteButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRightWidth: 0.8,
-    borderColor: 'darkgray',
-    height: 100,
-    backgroundColor: 'transparent',
+  satelliteButton: { 
+    alignItems: 'center',  
+    alignContents: 'center', 
+    justifyContent: 'space-around',
+    borderRadius: '50%',
+    borderWidth: 1.8, 
+    borderColor: 'black',  
+    backgroundColor: 'lightgray',
   },
   additionalSatelliteSection: {
     flexDirection: 'row',
