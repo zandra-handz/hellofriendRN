@@ -5,6 +5,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
+
 import PushPinOutlineSvg from '../assets/svgs/push-pin-outline.svg'; // Import the SVG
 
 import FavoriteProfileSvg from '../assets/svgs/favorite-profile.svg'; // Import the SVG

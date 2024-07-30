@@ -51,10 +51,7 @@ const ScreenLocationSearch = ({ route, navigation }) => {
 
     return (
         <GestureHandlerRootView style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeButton}>
-                    <Text style={styles.closeText}>Close</Text>
-                </TouchableOpacity> 
+            <View style={styles.modalContent}> 
                 <View style={styles.mapContainer}>
                     <InputSearchAddress />
                     <MapWithLocations locations={locationList} />
@@ -81,8 +78,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignContent: 'center',
         borderRadius: 0,
-        padding: 4,
-        paddingTop: 50,
+        padding: 0,
+        paddingTop: 0,
     },
     mapContainer: {
         flex: 1,

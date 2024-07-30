@@ -7,6 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage';
+
 import Logo from '../components/Logo'; // Import the Logo component
 
 const Signin = () => {

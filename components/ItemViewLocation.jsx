@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, ScrollView } from 'react-native';
-import AlertImage from '../components/AlertImage';
+import AlertLocation from '../components/AlertLocation';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
+
+import LoadingPage from '../components/LoadingPage';
 
 import ItemViewFooter from './ItemViewFooter';
 import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; // Adjust the import path as needed
@@ -11,6 +13,7 @@ import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../ap
 import FormLocationQuickCreate from '../forms/FormLocationQuickCreate'; // Adjust the import path as needed
 import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
 import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
+
 import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
 import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
 
@@ -19,7 +22,7 @@ const ItemViewLocation = ({ location, onClose }) => {
   const [isModalVisible, setIsModalVisible] = useState(true);
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-  const { locationList, setLocationList, selectedLocation, setSelectedLocation, additionalDetails, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+  const { locationList, setLocationList, selectedLocation, setSelectedLocation, additionalDetails, loadingAdditionalDetails, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
   
   const [isTemp, setIsTemp] = useState(false);
 
@@ -129,12 +132,17 @@ const ItemViewLocation = ({ location, onClose }) => {
   };
 
   return (
-    <AlertImage
+    
+    <AlertLocation
       isModalVisible={isModalVisible}
       toggleModal={closeModal}
       modalContent={
         location ? (
           <View style={styles.modalContainer}>
+            {loadingAdditionalDetails && (
+              <LoadingPage loading={loadingAdditionalDetails} spinnerType='circle' />
+            )}
+            {!loadingAdditionalDetails && (
             <ScrollView contentContainerStyle={styles.scrollContainer}>
               <View style={styles.container}>
                 {isEditing ? (
@@ -158,15 +166,19 @@ const ItemViewLocation = ({ location, onClose }) => {
                   </>
                 )}
               </View>
+              <View style={styles.buttonContainer}>
               <ButtonCalculateAndCompareTravel />
               <ButtonSendDirectionsToFriend />
               <ButtonFindMidpoints onPress={closeModal} /> 
+              </View> 
             </ScrollView>
+            )}
+            
           </View>
         ) : null
       }
       modalTitle={location ? "View location" : null}
-    />
+    /> 
   );
 };
 
@@ -181,53 +193,12 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1,
     padding: 0, 
-  },
-  footerContainer: {
-    justifyContent: 'left',
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 0, 
-  },
-  imageContainer: {
-    padding: 10,
-    width: '100%',
-    flex: 1,
-  },
-  categoryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  imageRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'left',
-  },
-  modalImage: {
-    width: '100%',
-    height: 300,
-    resizeMode: 'cover',
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  input: {
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 8,
-  },
-  icon: {
-    marginHorizontal: 10,
-  },
-  tagContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  tagLabel: {
-    fontSize: 16,
+  }, 
+  buttonContainer: {
+    height: '30%',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+
   },
 });
 

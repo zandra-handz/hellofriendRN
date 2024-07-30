@@ -6,6 +6,7 @@ import { updateUserSettings } from '../api'; // Ensure to implement this API cal
 const FormAccessibilityUpdate = ({ onClose }) => {
     const { authUserState } = useAuthUser();
     const [highContrastMode, setHighContrastMode] = useState(authUserState.user.settings.high_contrast_mode);
+    const [simplifyAppForFocus, setSimplifyAppForFocus] = useState(authUserState.user.settings.simplify_app_for_focus);
     const [largeText, setLargeText] = useState(authUserState.user.settings.large_text);
     const [receiveNotifications, setReceiveNotifications] = useState(authUserState.user.settings.receive_notifications);
     const [screenReader, setScreenReader] = useState(authUserState.user.settings.screen_reader);
@@ -16,6 +17,7 @@ const FormAccessibilityUpdate = ({ onClose }) => {
                 high_contrast_mode: highContrastMode,
                 large_text: largeText,
                 receive_notifications: receiveNotifications,
+                simplify_app_for_focus: simplifyAppForFocus,
                 screen_reader: screenReader
             });
             onClose();
@@ -38,6 +40,13 @@ const FormAccessibilityUpdate = ({ onClose }) => {
                 <Switch
                     value={largeText}
                     onValueChange={setLargeText}
+                />
+            </View>
+            <View style={styles.row}>
+                <Text style={styles.label}>Simplify App for Focus</Text>
+                <Switch
+                    value={simplifyAppForFocus}
+                    onValueChange={setSimplifyAppForFocus}
                 />
             </View>
             <View style={styles.row}>

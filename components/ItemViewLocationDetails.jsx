@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { fetchLocationDetails } from '../api'; // Adjust the import path as needed
 import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import CardHours from './CardHours'; // Adjust the import path as needed
@@ -11,55 +10,17 @@ import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
 import ButtonDirections from '../components/ButtonDirections';
 import ButtonSaveLocation from '../components/ButtonSaveLocation';
 import StylingRating from '../components/StylingRating';
-
-
+import LoadingPage from '../components/LoadingPage';
 
 const ItemViewLocationDetails = ({ location, unSaved }) => {
-  const { selectedLocation } = useLocationList();
+  const { selectedLocation, additionalDetails, loadingAdditionalDetails } = useLocationList();
   const { authUserState } = useAuthUser(); // Access authentication context
-  const [details, setDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  // Not using this because it doesn't work, just using unSaved in ButtonSaveLocation instead
-  const [ isTemp, setIsTemp ] = useState(unSaved);
 
-  useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        if (selectedLocation) {
-          const locationData = {
-            address: encodeURIComponent(`${selectedLocation.title} ${selectedLocation.address}`),
-            lat: parseFloat(selectedLocation.latitude),
-            lon: parseFloat(selectedLocation.longitude),
-          };
-
-          // Fetch location details using user ID and address or coordinates
-          const fetchedDetails = await fetchLocationDetails(locationData);
-          setDetails(fetchedDetails);
-          setLoading(false);
-        }
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchDetails();
-  }, [selectedLocation]);
-
-  if (loading) {
+  if (loadingAdditionalDetails) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
-  if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error: {error}</Text>
-      </View>
-    );
-  }
-
-  if (!details) {
+  if (!additionalDetails) {
     return (
       <View style={styles.noDataContainer}>
         <Text style={styles.noDataText}>No details available</Text>
@@ -70,43 +31,46 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.name}>{details.name}</Text>
+        <Text style={styles.name}>{additionalDetails.name}</Text>
         <ButtonSaveLocation saveable={unSaved} />
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.detailsColumn}>
           <View style={styles.detailRow}>
-            <ButtonDirections address={details.address} />
-            
+            <ButtonDirections address={additionalDetails.address} />
           </View>
           <View style={styles.detailRow}>
-            <ButtonPhoneNumber phoneNumber={details.phone}/>
-            <View style={[
-              styles.statusContainer, 
-              (details && details.hours && details.hours.open_now) ? styles.openNowContainer : styles.closedContainer
-            ]}>
-          <Text style={[styles.statusText, (details && details.hours && details.hours.open_now) ? styles.openNowText : styles.closedText]}>
-            {(details && details.hours && details.hours.open_now) ? "Open" : "Closed"}
-          </Text>
-        </View>
-        
+            <ButtonPhoneNumber phoneNumber={additionalDetails.phone} />
+            <View
+              style={[
+                styles.statusContainer,
+                additionalDetails.hours?.open_now ? styles.openNowContainer : styles.closedContainer,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.statusText,
+                  additionalDetails.hours?.open_now ? styles.openNowText : styles.closedText,
+                ]}
+              >
+                {additionalDetails.hours?.open_now ? 'Open' : 'Closed'}
+              </Text>
+            </View>
           </View>
-          <View style={styles.detailRow}> 
-            
-              <StylingRating rating={details.rating} /> 
-           
+          <View style={styles.detailRow}>
+            <StylingRating rating={additionalDetails.rating} />
           </View>
         </View>
-        {details.hours && <CardHours hours={details.hours.weekday_text} />}
+        {additionalDetails.hours && <CardHours hours={additionalDetails.hours.weekday_text} />}
       </View>
 
-      <CardLocationPreviewImage photos={details.photos} />
+      <CardLocationPreviewImage photos={additionalDetails.photos} />
 
       <ScrollView
         horizontal
-        contentContainerStyle={styles.reviewsContainer} // Move styles here
+        contentContainerStyle={styles.reviewsContainer}
       >
-        {details.reviews.map((review, index) => (
+        {additionalDetails.reviews?.map((review, index) => (
           <View key={index} style={styles.reviewCard}>
             <CardCustomerReview review={review} />
           </View>
@@ -124,13 +88,8 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    alignItems: 'center', 
+    alignItems: 'center',
     marginBottom: 2,
-  },
-  secondHeaderContainer: {
-    flexDirection: 'row',
-    alignItems: 'center', 
-    marginBottom: 4,
   },
   name: {
     fontSize: 20,
@@ -152,16 +111,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  address: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-    marginLeft: 4,
-  },
-  tinyText: {
-    fontSize: 11,
-    fontFamily: 'Poppins-Bold',
-
-  },
   phone: {
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
@@ -180,8 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignContent: 'center',
-    alignItems: 'center', 
-    
+    alignItems: 'center',
   },
   reviewCard: {
     marginRight: 8,
@@ -218,7 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8d7da',
   },
   statusText: {
-    fontSize: 10, 
+    fontSize: 10,
     fontFamily: 'Poppins-Bold',
   },
   openNowText: {

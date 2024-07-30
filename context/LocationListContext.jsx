@@ -27,6 +27,7 @@ export const LocationListProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingSelectedLocation(true);
       try {
         const locationData = await fetchAllLocations();
         const updatedLocationData = locationData.map(location => {
@@ -35,20 +36,22 @@ export const LocationListProvider = ({ children }) => {
             ...location,
             zipCode,
           };
+          
         });
 
         setLocationList(updatedLocationData);
-        console.log('Fetch (location) Data:', updatedLocationData);
+        setLoadingSelectedLocation(false); 
 
         // Automatically set selectedLocation to the first item if locationList is not empty
         if (updatedLocationData.length > 0) {
-          setSelectedLocation(updatedLocationData[0]); // Set to the first item
+          setSelectedLocation(updatedLocationData[0]); 
         } else {
-          setSelectedLocation(null); // Clear selectedLocation if the list is empty
+          setSelectedLocation(null);  
         }
 
       } catch (error) {
         console.error('Error fetching location list:', error);
+        setLoadingSelectedLocation(true);
       }
     };
 
@@ -96,6 +99,7 @@ export const LocationListProvider = ({ children }) => {
 
   useEffect(() => {
     const updateAdditionalDetails = async () => {
+      setLoadingAdditionalDetails(true);
       try {
         if (selectedLocation && selectedLocation.id) {
           console.log('Fetching additional details for location:', selectedLocation);
@@ -106,13 +110,16 @@ export const LocationListProvider = ({ children }) => {
           });
           console.log('Fetched additional details:', details);
           setAdditionalDetails(details);
+          setLoadingAdditionalDetails(false);
         } else {
           console.log('No selected location. Resetting additional details.');
           setAdditionalDetails(null);
+          setLoadingAdditionalDetails(false);
         }
       } catch (err) {
         console.error('Error fetching location details:', err);
         setAdditionalDetails(null);
+        setLoadingAdditionalDetails(false);
       }
     };
 
@@ -150,6 +157,8 @@ export const LocationListProvider = ({ children }) => {
       addLocationToFaves, 
       removeLocationFromFaves, 
       setLocationList, 
+      loadingSelectedLocation,
+      loadingAdditionalDetails,
       isTemp, 
       isFave 
     }}>

@@ -12,7 +12,7 @@ import ActionFriendPageHeader from './ActionFriendPageHeader';
 
 
 const ActionPageUpcomingButton = ({ onPress }) => {
-  const { authUserState } = useAuthUser();
+  const { authUserState, userAppSettings } = useAuthUser();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { selectedFriend, setFriend } = useSelectedFriend();
   const navigation = useNavigation();
@@ -25,7 +25,12 @@ const ActionPageUpcomingButton = ({ onPress }) => {
 
   if (!isLoading && upcomingHelloes.length > 0) {
     mainHello = upcomingHelloes[0];
-    satelliteHellos = upcomingHelloes.slice(1);
+    if ( userAppSettings && userAppSettings.simplify_app_for_focus) {
+      satelliteHellos = 0;
+    } else {
+      satelliteHellos = upcomingHelloes.slice(1);
+    };
+    
     additionalSatelliteCount = satelliteHellos.length - satellitesFirstPage;
 
     if (additionalSatelliteCount > 0) {

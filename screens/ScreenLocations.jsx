@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
- 
+import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
+import ButtonSearchGoogleMap from '../components/ButtonSearchGoogleMap';
+import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
+import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
+
 import { useLocationList } from '../context/LocationListContext';
 
 import { useNavigation } from '@react-navigation/native';
@@ -38,32 +42,42 @@ const ScreenLocations = ({ route, navigation}) => {
 
     return ( 
         <View style={styles.container}>
-            <> 
-            <TouchableOpacity onPress={navigateToLocationSearchScreen} style={styles.searchMapButton}>
-                <Text style={styles.searchMapText}>Search</Text>
-            </TouchableOpacity> 
-            </>
-            <ScrollView>
-                {isLocationListReady ? (
-                    <> 
-                    <ItemLocationMulti height={100} width={100} columns={3} horizontal={true} singleLineScroll={false} newestFirst={false} svgColor='white' includeCategoryTitle={true}/>
-                    
-                    </>
-                    
-                ) : (
-                    <Text>Loading...</Text>
-                )}
-                <ActionFriendPageGoogleMap
-                isModalVisible={isMapModalVisible}
-                toggleModal={closeModal} onClose={closeModal} />
-                    
-            </ScrollView>
+            <View style={styles.scrollViewContainer}>
+                <ScrollView>
+                    {isLocationListReady ? (
+                        <> 
+                        <ItemLocationMulti height={100} width={100} columns={3} horizontal={true} singleLineScroll={false} newestFirst={false} svgColor='white' includeCategoryTitle={true}/>
+                        
+                        </>
+                        
+                    ) : (
+                        <Text>Loading...</Text>
+                    )}
+                    <ActionFriendPageGoogleMap
+                    isModalVisible={isMapModalVisible}
+                    toggleModal={closeModal} onClose={closeModal} />
+                        
+                </ScrollView>
+            </View>
+                <View style={styles.bottomContainer}> 
+                        <ButtonSearchGoogleMap onPress={navigateToLocationSearchScreen} />  
+                        <ButtonFindMidpoints /> 
+                </View>
         </View>
 
     );
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    scrollViewContainer: {
+        height: '80%',
+        paddingHorizontal: 10,
+        paddingBottom: 30,
+
+    },
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -109,6 +123,23 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
+    buttonContainer: {
+        padding: 20, 
+
+    },
+    bottomContainer: {
+        height: '24%',
+        width: '100%',
+        padding: 10,
+        paddingTop: 20,
+        backgroundColor: 'black',
+        flexDirection: 'column', 
+        justifyContent: 'space-evenly',
+        position: 'absolute',
+        zIndex: 1,
+        bottom: 0,
+    
+      },
 });
 
 export default ScreenLocations;

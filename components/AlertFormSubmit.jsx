@@ -2,11 +2,12 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text, Button } from 'react-native';
 import { FontAwesome5 } from 'react-native-vector-icons';
 
-const AlertConfirm = ({
+const AlertFormSubmit = ({
   isModalVisible,
   toggleModal,
   headerContent,
   questionText,
+  formBody,
   onConfirm,
   onCancel,
   confirmText = 'OK',
@@ -18,6 +19,9 @@ const AlertConfirm = ({
         <View style={styles.modalContent}> 
           {headerContent && <View style={styles.headerContainer}>{headerContent}</View>}
           {questionText && <Text style={styles.questionText}>{questionText}</Text>}
+          <View style={styles.formBodyContainer}> 
+            {formBody}
+          </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
               <Text style={styles.buttonText}>{confirmText}</Text>
@@ -96,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AlertConfirm;
+export default AlertFormSubmit;

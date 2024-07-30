@@ -5,6 +5,7 @@ import ButtonSignOut from './ButtonSignOut';
 import ButtonSettings from './ButtonSettings';
 import ButtonInfo from './ButtonInfo'; // Import the ButtonInfo component
 import AlertMicro from './AlertMicro';
+import AlertConfirm from './AlertConfirm';
 import ButtonToActionMode from './ButtonToActionMode';
 import { useNavigationState } from '@react-navigation/native';
 
@@ -22,7 +23,7 @@ export default function HelloFriendFooter() {
             iconOnly={false}
             label="Logout"
             confirmationAlert={true}
-            modal={AlertMicro}
+            modal={AlertConfirm}
           />
         </View>
       ) : (
@@ -36,8 +37,7 @@ export default function HelloFriendFooter() {
       <ButtonSettings />
 
       <View style={styles.divider} />
-
-      {/* Replace TouchableOpacity with ButtonInfo */}
+ 
       <ButtonInfo />
 
     </View>

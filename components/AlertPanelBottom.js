@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { View, ScrollView, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FormFriendAddressCreate from '../forms/FormFriendAddressCreate'; // Import the form component
@@ -6,8 +6,9 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { fetchFriendAddresses, deleteFriendAddress } from '../api';
 import ButtonAddress from './ButtonAddress';
-import ArrowAnimation from '../components/ArrowAnimation'; // Adjust the import path
+import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
 
+import AlertFormSubmit from '../components/AlertFormSubmit';
 
 const AlertPanelBottom = ({ visible, profileData, onClose }) => {
   const { authUserState } = useAuthUser();
@@ -15,6 +16,18 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
   const [differentEditScreen, setDifferentEditScreen] = useState(false);
   const { selectedFriend } = useSelectedFriend();
   const [friendAddresses, setFriendAddresses] = useState(null);
+  const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
+  const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false);
+
+  const formRef = useRef(null); // Create ref using useRef
+
+  const closeAddressModal = () => {
+    setIsAddressModalVisible(false);
+  };
+
+  const toggleAddressModal = () => {
+    setIsAddressModalVisible(true);
+  };
 
   useEffect(() => {
     if (visible) {
@@ -30,29 +43,12 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
     }
   }, [visible, selectedFriend]);
 
-  const toggleDifferentEditScreen = () => {
-    setDifferentEditScreen(!differentEditScreen);
-  };
-
-  const toggleEditMode = () => {
-    setEditMode(!editMode);
-  };
-
   const handleDeleteAddress = async (addressId) => {
     try {
       await deleteFriendAddress(selectedFriend.id, addressId);
       fetchAddresses(); // Refresh addresses after deletion
     } catch (error) {
       console.error('Error deleting address:', error);
-    }
-  };
-
-  const fetchAddresses = async () => {
-    try {
-      const data = await fetchFriendAddresses(selectedFriend.id);
-      setFriendAddresses(data);
-    } catch (error) {
-      console.error('Error fetching friend addresses:', error);
     }
   };
 
@@ -78,27 +74,30 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
                       <ButtonAddress address={friendAddress} onDelete={() => handleDeleteAddress(friendAddress.id)} />
                     </View>
                   ))}
-                <TouchableOpacity onPress={toggleDifferentEditScreen} style={styles.editButton}>
+                <TouchableOpacity onPress={toggleAddressModal} style={styles.editButton}>
                   <FontAwesome5 name="plus" size={12} color="white" />
                 </TouchableOpacity>
-              </View>
-              <ArrowAnimation/>
-
-              {!differentEditScreen ? (
-                <>
-                  <Text>Email: {profileData.email}</Text>
-                </>
-              ) : (
-                <FormFriendAddressCreate friendId={selectedFriend.id} onCancel={toggleEditMode} />
-              )}
-              {editMode && (
-                <TouchableOpacity onPress={toggleEditMode} style={styles.backButton}>
-                  <Text style={styles.backButtonText}>Back</Text>
-                </TouchableOpacity>
-              )}
+              </View> 
             </View>
           </ScrollView>
         </View>
+
+        <AlertFormSubmit
+          isModalVisible={isAddressModalVisible}
+          toggleModal={closeAddressModal}
+          headerContent={<PushPinSolidSvg width={18} height={18} color='black' />}
+          questionText={'Add starting origin for friend?'}
+          formBody={<FormFriendAddressCreate friendId={selectedFriend.id} ref={formRef} />}
+          onConfirm={() => {
+            if (formRef.current) {
+              formRef.current.submit(); // Call submit method on the form
+            }
+            closeAddressModal(); // Close the modal after submission
+          }}
+          onCancel={closeAddressModal}
+          confirmText="Add"
+          cancelText="Nevermind"
+        />
       </View>
     </Modal>
   );
@@ -160,48 +159,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  editButtonRight: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-  },
   mapIcon: {
     marginLeft: 5,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  updateButton: {
-    backgroundColor: 'blue',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  updateButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  backButton: {
-    marginTop: 10,
-    backgroundColor: 'grey',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  formContainer: {
-    marginTop: 10,
   },
   scrollContainer: {
     paddingBottom: 20,

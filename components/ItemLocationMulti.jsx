@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     headerText: {
-        color: 'white',
+        color: 'black',
         fontFamily: 'Poppins-Bold',
         fontSize: 16,
         marginVertical: 12,

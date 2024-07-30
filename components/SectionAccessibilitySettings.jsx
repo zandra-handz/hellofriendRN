@@ -10,6 +10,7 @@ const SectionAccessibilitySettings = () => {
   const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
   const [highContrastMode, setHighContrastMode] = useState(false);
   const [largeText, setLargeText] = useState(false);
+  const [simplifyAppForFocus, setSimplifyAppForFocus] = useState(false);
   const [receiveNotifications, setReceiveNotifications] = useState(false);
   const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false); // Local state for screen reader
   const [showAlert, setShowAlert] = useState(false);
@@ -18,6 +19,7 @@ const SectionAccessibilitySettings = () => {
     if (userAppSettings) {
       setHighContrastMode(userAppSettings.high_contrast_mode);
       setLargeText(userAppSettings.large_text);
+      setSimplifyAppForFocus(userAppSettings.simplify_app_for_focus);
       setReceiveNotifications(userAppSettings.receive_notifications);
       setIsScreenReaderEnabled(userAppSettings.screen_reader); // Initialize local state with screen reader status
     }
@@ -44,6 +46,13 @@ const SectionAccessibilitySettings = () => {
     const newValue = !largeText;
     setLargeText(newValue);
     updateSetting({ large_text: newValue });
+  };
+
+
+  const toggleSimplifyAppForFocus = () => {
+    const newValue = !simplifyAppForFocus;
+    setSimplifyAppForFocus(newValue);
+    updateSetting({ simplify_app_for_focus: newValue });
   };
 
   const toggleReceiveNotifications = () => {
@@ -86,6 +95,11 @@ const SectionAccessibilitySettings = () => {
         <FontAwesome5 name="text-height" size={20} color="black" style={styles.icon} />
         <Text style={styles.label}>Large Text</Text>
         <ToggleButton value={largeText} onToggle={toggleLargeText} />
+      </View>
+      <View style={styles.row}>
+        <FontAwesome5 name="bell" size={20} color="black" style={styles.icon} />
+        <Text style={styles.label}>Simplify App For Focus</Text>
+        <ToggleButton value={simplifyAppForFocus} onToggle={toggleSimplifyAppForFocus} />
       </View>
       <View style={styles.row}>
         <FontAwesome5 name="bell" size={20} color="black" style={styles.icon} />

@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useImperativeHandle, useRef } from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { addFriendAddress } from '../api'; // Import the addFriendAddress function
 import { useAuthUser } from '../context/AuthUserContext';
 
-const FormFriendAddressCreate = ({ friendId }) => { // Receive friendId as a prop
+const FormFriendAddressCreate = forwardRef(({ friendId }, ref) => { // Forward ref and receive friendId as a prop
   const { authUserState } = useAuthUser();
   const [address, setAddress] = useState('');
   const [title, setTitle] = useState('');
   const [showSaveMessage, setShowSaveMessage] = useState(false);
+  const formRef = useRef();
+
+  // Expose submit method
+  useImperativeHandle(ref, () => ({
+    submit: handleSubmit,
+  }));
 
   const handleSubmit = async () => {
-    console.log({friendId});
+    console.log({ friendId });
     try {
       const addressData = {
         title: title,
@@ -19,7 +25,6 @@ const FormFriendAddressCreate = ({ friendId }) => { // Receive friendId as a pro
         user: authUserState.user.id,
       };
 
-      
       await addFriendAddress(friendId, addressData); // Pass friendId to the function
 
       setAddress('');
@@ -35,41 +40,49 @@ const FormFriendAddressCreate = ({ friendId }) => { // Receive friendId as a pro
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} ref={formRef}>
       {showSaveMessage && <Text style={styles.saveMessage}>Address added successfully!</Text>}
-      <TextInput
-        style={styles.input}
-        placeholder="Address"
-        value={address}
-        onChangeText={setAddress}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Title"
-        value={title}
-        onChangeText={setTitle}
-      />
-      <Button title="Add Address" onPress={handleSubmit} />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Address"
+          value={address}
+          onChangeText={setAddress}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Title"
+          value={title}
+          onChangeText={setTitle}
+        />
+      </View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-    paddingHorizontal: 0,
+  container: { 
+    justifyContent: 'center', 
+    width: '100%',
   },
   saveMessage: {
     color: 'green',
     marginBottom: 10,
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 10,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+  inputContainer: {
+    width: '100%',
+    marginTop: 10, // Add some spacing between input fields
+  },
+  input: { 
+    borderColor: 'black',
+    fontFamily: 'Poppins-Bold',
+    fontSize: 16,
+    borderWidth: 1, 
+    textAlign: 'center', 
+    borderRadius: 20,
+    padding: 10,
   },
 });
 
