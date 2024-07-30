@@ -11,7 +11,9 @@ export const LocationListProvider = ({ children }) => {
   const [savedLocationList, setSavedLocationList] = useState([]);
   const [validatedLocationList, setValidatedLocationList] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [loadingSelectedLocation, setLoadingSelectedLocation] = useState(false);
   const [additionalDetails, setAdditionalDetails] = useState(null);
+  const [loadingAdditionalDetails, setLoadingAdditionalDetails ] = useState(false);
   const [isTemp, setIsTemp] = useState(false);
   const [isFave, setIsFave] = useState(false);
   const { authUserState } = useAuthUser();

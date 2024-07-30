@@ -19,8 +19,7 @@ const FormLocationUpdate = ({ onLocationUpdate, location }) => {
     const initialSelectedFriends = Array.isArray(friends) ? friends.map(friend => friend.id) : [];
     setSelectedFriends(initialSelectedFriends);
   }, [friends]);
-
-  const [formTitle, setFormTitle] = useState(initialTitle);
+ 
   const [personalExperience, setPersonalExperience] = useState(location.personal_experience_info);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [showSaveMessage, setShowSaveMessage] = useState(false); 
@@ -36,7 +35,6 @@ const FormLocationUpdate = ({ onLocationUpdate, location }) => {
     try {
         const locationData = {
             friends: selectedFriends.map(id => Number(id)),
-            title: formTitle,
             personal_experience_info: personalExperience || '',
             user: authUserState.user.id,
         };
@@ -72,12 +70,9 @@ const FormLocationUpdate = ({ onLocationUpdate, location }) => {
       {showSaveMessage && <Text style={styles.saveMessage}>Location updated successfully!</Text>}
       <Text style={styles.address}>{address}</Text>
 
-      <TextInput
-        style={styles.input}
-        value={formTitle}
-        onChangeText={setFormTitle}
-        placeholder='Title'
-      />
+      <Text style={styles.address}>{initialTitle}</Text>
+
+
       <TextInput
         style={[styles.input, styles.textArea]}
         value={personalExperience}
