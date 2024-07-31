@@ -222,6 +222,7 @@ export const addToFriendFavesLocations = async (userId, friendId, locationId) =>
 };
 
 
+
 export const removeFromFriendFavesLocations = async (userId, friendId, locationId) => {
     console.log(`favorite locations add call, ${userId}, ${friendId}, ${locationId}`);
     try {
@@ -233,6 +234,24 @@ export const removeFromFriendFavesLocations = async (userId, friendId, locationI
         return response.data;
     } catch (error) {
         console.error('Error adding favorite location:', error);
+        throw error;
+    }
+};
+
+export const updateFriendFavesColorTheme = async (userId, friendId, darkColor, lightColor) => {
+    console.log(`favorite locations add call, ${userId}, ${friendId}, ${darkColor}, ${lightColor}`);
+    try {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
+            
+            friend: friendId,
+            user: userId, 
+            dark_color: darkColor,
+            light_color: lightColor
+        });
+        console.log('Color theme for friend updated: ', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating color theme for friend:', error);
         throw error;
     }
 };

@@ -1,13 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, ScrollView, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FormFriendAddressCreate from '../forms/FormFriendAddressCreate'; // Import the form component
+import FormFriendAddressCreate from '../forms/FormFriendAddressCreate'; 
+import FormFriendColorThemeUpdate from '../forms/FormFriendColorThemeUpdate'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { fetchFriendAddresses, deleteFriendAddress } from '../api';
 import ButtonAddress from './ButtonAddress';
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
-
+import ArtistColorPaletteSvg from '../assets/svgs/artist-color-palette.svg';
 import AlertFormSubmit from '../components/AlertFormSubmit';
 
 const AlertPanelBottom = ({ visible, profileData, onClose }) => {
@@ -25,9 +26,19 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
     setIsAddressModalVisible(false);
   };
 
+  const closeColorThemeModal = () => {
+    setIsColorThemeModalVisible(false);
+  };
+
   const toggleAddressModal = () => {
     setIsAddressModalVisible(true);
   };
+
+  
+  const toggleColorThemeModal = () => {
+    setIsColorThemeModalVisible(true);
+  };
+
 
   useEffect(() => {
     if (visible) {
@@ -63,11 +74,13 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
             <View>
               <View style={styles.row}>
                 <FontAwesome5 name="user" size={20} color="black" style={styles.icon} />
-                <Text style={styles.modalTitle}>{selectedFriend.name}</Text>
-              </View>
+                <Text style={styles.modalTitle}>Settings for {selectedFriend.name}</Text>
+                </View>
               <View style={styles.addressRow}>
                 <FontAwesome5 name="map-marker-alt" size={20} color="black" style={[styles.icon, styles.mapIcon]} />
-                <Text style={styles.sectionTitle}></Text>
+                <Text style={styles.sectionTitle}>Starting Addresses</Text>
+                </View>
+                <View style={[styles.addressRow, {marginLeft: 34}]}>
                 {friendAddresses &&
                   friendAddresses.map((friendAddress, index) => (
                     <View key={index} style={styles.addressSection}>
@@ -75,6 +88,15 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
                     </View>
                   ))}
                 <TouchableOpacity onPress={toggleAddressModal} style={styles.editButton}>
+                  <FontAwesome5 name="plus" size={12} color="white" />
+                </TouchableOpacity>
+                
+              </View> 
+              <View style={styles.addressRow}>
+                <FontAwesome5 name="palette" size={20} color="black" style={[styles.icon, styles.mapIcon]} />
+                <Text style={styles.sectionTitle}>Color Theme</Text>
+
+                <TouchableOpacity onPress={toggleColorThemeModal} style={styles.editButton}>
                   <FontAwesome5 name="plus" size={12} color="white" />
                 </TouchableOpacity>
               </View> 
@@ -96,6 +118,23 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
           }}
           onCancel={closeAddressModal}
           confirmText="Add"
+          cancelText="Nevermind"
+        />
+
+        <AlertFormSubmit
+          isModalVisible={isColorThemeModalVisible}
+          toggleModal={closeColorThemeModal}
+          headerContent={<ArtistColorPaletteSvg width={38} height={38} color='black' />}
+          questionText={`Update color theme for friend dashboard?`}
+          formBody={<FormFriendColorThemeUpdate friendId={selectedFriend.id} ref={formRef} />}
+          onConfirm={() => {
+            if (formRef.current) {
+              formRef.current.submit(); // Call submit method on the form
+            }
+            closeColorThemeModal(); // Close the modal after submission
+          }}
+          onCancel={closeColorThemeModal}
+          confirmText="Update"
           cancelText="Nevermind"
         />
       </View>
@@ -122,8 +161,8 @@ const styles = StyleSheet.create({
     right: 10,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize:20,
+    fontFamil: 'Poppins-Bold',
     marginBottom: 6,
   },
   row: {
@@ -146,8 +185,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
     marginLeft: 5,
   },
   editButton: {
@@ -160,7 +199,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   mapIcon: {
-    marginLeft: 5,
+    marginLeft: 2,
   },
   scrollContainer: {
     paddingBottom: 20,

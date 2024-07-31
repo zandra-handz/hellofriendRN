@@ -2,7 +2,15 @@ import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const ButtonAddress = ({ address, onDelete }) => {
+const ButtonAddress = ({
+  address,
+  onDelete,
+  fontFamily = 'Poppins-Regular', // Default values if not provided
+  fontSize = 14,
+  fontColor = '#000',
+  buttonColor = '#ccc',
+  buttonSize = 'auto',
+}) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [isAddressVisible, setIsAddressVisible] = useState(false);
 
@@ -26,16 +34,16 @@ const ButtonAddress = ({ address, onDelete }) => {
   };
 
   return (
-    <TouchableOpacity style={styles.button} onPress={toggleAddressPopup}>
-      <Text style={styles.text}>{address.title}</Text>
+    <TouchableOpacity style={[styles.button, { backgroundColor: buttonColor, width: buttonSize }]} onPress={toggleAddressPopup}>
+      <Text style={[styles.text, { fontFamily, fontSize, color: fontColor }]}>{address.title}</Text>
       <Modal transparent={true} visible={isAddressVisible} animationType="slide" onRequestClose={handleCloseModal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
               <FontAwesome5 name="times" size={20} color="black" solid={false} />
             </TouchableOpacity>
-            <Text style={styles.modalTitle}>{address.title}</Text>
-            <Text style={styles.addressText}>{address.address}</Text>
+            <Text style={[styles.modalTitle, { fontFamily, fontSize: fontSize + 4, color: fontColor }]}>{address.title}</Text>
+            <Text style={[styles.addressText, { fontFamily, fontSize, color: fontColor }]}>{address.address}</Text>
             <TouchableOpacity onPress={toggleMenu} style={styles.threeDotsButton}>
               <FontAwesome5 name="ellipsis-v" size={20} color="black" />
             </TouchableOpacity>
@@ -55,17 +63,16 @@ const ButtonAddress = ({ address, onDelete }) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#ccc',
     borderRadius: 15,
     paddingVertical: 5,
-    paddingHorizontal: 10,
-    marginRight: 5,
+    paddingHorizontal: 10, 
     flexDirection: 'row',
     alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
   },
   text: {
-    fontSize: 14,
-    color: '#000',
     marginRight: 5,
   },
   menu: {
@@ -91,8 +98,6 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   addressText: {
-    fontSize: 16,
-    color: '#000',
     marginBottom: 20,
   },
   closeButton: {
@@ -107,7 +112,6 @@ const styles = StyleSheet.create({
     right: 10,
   },
   modalTitle: {
-    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 6,
     marginTop: 0,
