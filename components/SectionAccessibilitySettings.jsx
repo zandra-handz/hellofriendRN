@@ -13,6 +13,8 @@ const SectionAccessibilitySettings = () => {
   const [simplifyAppForFocus, setSimplifyAppForFocus] = useState(false);
   const [receiveNotifications, setReceiveNotifications] = useState(false);
   const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false); // Local state for screen reader
+  const [manualTheme, setManualTheme] = useState(false);
+  const [manualDarkMode, setManualDarkMode ] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
@@ -22,6 +24,13 @@ const SectionAccessibilitySettings = () => {
       setSimplifyAppForFocus(userAppSettings.simplify_app_for_focus);
       setReceiveNotifications(userAppSettings.receive_notifications);
       setIsScreenReaderEnabled(userAppSettings.screen_reader); // Initialize local state with screen reader status
+      // Determine manualTheme based on manual_dark_mode
+      if (userAppSettings.manual_dark_mode === null) {
+        setManualTheme(false);
+      } else {
+        setManualTheme(true);
+        setManualDarkMode(userAppSettings.manual_dark_mode);
+      }
     }
   }, [userAppSettings]);
 
@@ -61,6 +70,27 @@ const SectionAccessibilitySettings = () => {
     updateSetting({ receive_notifications: newValue });
   };
 
+  // Sets manual_dark_mode field on backend to null again, but state to false
+  const toggleManualTheme = () => {
+    const newValue = !manualTheme;
+    if (newValue === true) {
+      updateSetting({ manual_dark_mode: false }); 
+
+    };
+    if (newValue === false) {
+      updateSetting({ manual_dark_mode: null });
+      setManualDarkMode(false);
+
+    };
+    setManualTheme(newValue); 
+  };
+
+  const toggleLightDark = () => {
+    const newValue = !manualDarkMode;
+    setManualDarkMode(newValue);
+    updateSetting({ manual_dark_mode: newValue });
+  };
+
   const toggleScreenReader = async () => {
     if (!AccessibilityInfo.isScreenReaderEnabled()) {
       setShowAlert(true);
@@ -86,6 +116,18 @@ const SectionAccessibilitySettings = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.row}>
+        <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
+        <Text style={styles.label}>Manual Light/Dark Mode</Text>
+        <ToggleButton value={manualTheme} onToggle={toggleManualTheme} />
+      </View>
+      {manualTheme && (  
+      <View style={styles.row}>
+        <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
+        <Text style={styles.label}>Light/Dark</Text>
+        <ToggleButton value={manualDarkMode} onToggle={toggleLightDark} />
+      </View>
+      )}
       <View style={styles.row}>
         <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
         <Text style={styles.label}>High Contrast Mode</Text>

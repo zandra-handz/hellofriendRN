@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
 import ButtonLottieAnimationTwoSections from './ButtonLottieAnimationTwoSections';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -13,6 +13,21 @@ const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
   const { selectedFriend, friendDashboardData, loadingNewFriend, setFriend } = useSelectedFriend();
   const [showProfile, setShowProfile] = useState(false);
   const [showNextHello, setShowNextHello] = useState(true);
+  const [ lightColor, setLightColor ] = useState(null);
+  const [ darkColor, setDarkColor ] = useState(null);
+
+  useEffect(() => {
+    if (friendDashboardData && friendDashboardData.length > 0) {
+        const lightColorCode = friendDashboardData[0]?.friend_faves?.light_color? friendDashboardData[0].friend_faves.light_color : 'black';
+        setLightColor(lightColorCode);
+         
+        const darkColorCode = friendDashboardData[0]?.friend_faves?.dark_color? friendDashboardData[0].friend_faves.dark_color : 'black';
+        setDarkColor(darkColorCode);
+        
+    }
+}, [friendDashboardData]);
+
+
 
   // Function to handle resetting the selected friend
   const handleDeselect = () => {
@@ -33,9 +48,10 @@ const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
         setShowProfile(true);
       }
     };
-
+ 
   return (
     <View style={styles.container}>
+      {friendDashboardData && (
       <Animated.View style={{ flex: 1 }}>
         <ButtonLottieAnimationTwoSections
           onPress={handlePress}
@@ -49,11 +65,13 @@ const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
           rightSideAnimation={false}
           labelColor="white"
           animationWidth={234}
-          animationHeight={234}
-          lightColor="black"
+          animationHeight={234} 
           labelContainerMarginHorizontal={4}
           animationMargin={-64}
           shapePosition="right"
+          showGradient={true}
+          lightColor={lightColor ? lightColor : 'black'}
+          darkColor={darkColor ? darkColor : 'black'}
           shapeSource={require('../assets/shapes/beer.png')}
           shapeWidth={340}
           shapeHeight={340}
@@ -68,6 +86,7 @@ const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
           satelliteOnPress={handleDeselect} 
         />
       </Animated.View>
+       )}
       <AlertPanelBottom
         visible={showProfile}
         profileData={selectedFriend}

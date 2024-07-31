@@ -15,7 +15,8 @@ const ActionFriendPageHelloes = ({ onPress }) => {
   const { selectedFriend, setFriend, friendDashboardData } = useSelectedFriend(); 
   const [helloesList, setHelloesList] = useState([]);
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
-  
+  const [ lightColor, setLightColor ] = useState(null);
+  const [ darkColor, setDarkColor ] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +36,17 @@ const ActionFriendPageHelloes = ({ onPress }) => {
 
     fetchData();
 }, [selectedFriend]);
+
+  useEffect(() => {
+    if (friendDashboardData && friendDashboardData.length > 0) {
+        const lightColorCode = friendDashboardData[0]?.friend_faves?.light_color? friendDashboardData[0].friend_faves.light_color : 'black';
+        setLightColor(lightColorCode);
+        
+        const darkColorCode = friendDashboardData[0]?.friend_faves?.dark_color? friendDashboardData[0].friend_faves.dark_color : 'black';
+        setDarkColor(darkColorCode);
+        
+    }
+  }, [friendDashboardData]);
 
 
   
@@ -127,6 +139,9 @@ const ActionFriendPageHelloes = ({ onPress }) => {
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             showShape={false}
+            showGradient={true}
+            lightColor={darkColor}
+            darkColor={darkColor}
             shapePosition="right"
             shapeSource={require('../assets/shapes/greenfloral.png')}
             shapeWidth={340}

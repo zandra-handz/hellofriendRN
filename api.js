@@ -239,7 +239,7 @@ export const removeFromFriendFavesLocations = async (userId, friendId, locationI
 };
 
 export const updateFriendFavesColorTheme = async (userId, friendId, darkColor, lightColor) => {
-    console.log(`favorite locations add call, ${userId}, ${friendId}, ${darkColor}, ${lightColor}`);
+    console.log(`colro theme add call, ${userId}, ${friendId}, ${darkColor}, ${lightColor}`);
     try {
         const response = await axios.patch(`/friends/${friendId}/faves/`, {
             

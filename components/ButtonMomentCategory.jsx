@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AlertImage from '../components/AlertImage';
 import { useAuthUser } from '../context/AuthUserContext';
@@ -25,13 +25,28 @@ import QuickAddHello from '../speeddial/QuickAddHello';
 
 const ButtonMomentCategory = ({onPress, categoryText, momentCount}) => {
     const { authUserState } = useAuthUser();
-    const { selectedFriend } = useSelectedFriend();
+    const { selectedFriend, friendDashboardData } = useSelectedFriend();
     const { selectedLocation } = useLocationList();
     const [ isModalVisible, setIsModalVisible ] = useState(false);
+    const [ lightColor, setLightColor ] = useState(null);
+    const [ darkColor, setDarkColor ] = useState(null);
+  
 
     const openModal = () => setIsModalVisible(true);
 
     const closeModal = () => setIsModalVisible(false);
+
+    useEffect(() => {
+      if (friendDashboardData && friendDashboardData.length > 0) {
+          const lightColorCode = friendDashboardData[0]?.friend_faves?.light_color? friendDashboardData[0].friend_faves.light_color : 'black';
+          setLightColor(lightColorCode);
+          
+          const darkColorCode = friendDashboardData[0]?.friend_faves?.dark_color? friendDashboardData[0].friend_faves.dark_color : 'black';
+          setDarkColor(darkColorCode);
+          
+      }
+    }, [friendDashboardData]);
+  
 
 
     return (
@@ -65,6 +80,8 @@ const ButtonMomentCategory = ({onPress, categoryText, momentCount}) => {
                 labelContainerMarginHorizontal={4}
                 animationMargin={-64}
                 showGradient={true} // Add this if you want to show the gradient
+                lightColor={lightColor}
+                darkColor={darkColor}
                 showShape={true} // Ensure this is true to display the SVG shape
                 shapePosition="right"
                 shapeSource={ThoughtBubbleTwoSolidSvg} // Pass the SVG component here

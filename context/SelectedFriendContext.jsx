@@ -10,6 +10,11 @@ export const SelectedFriendProvider = ({ children }) => {
   const { authUserState } = useAuthUser(); 
   const { friendList } = useFriendList(); 
   const [friendDashboardData, setFriendDashboardData] = useState(null);
+  const [friendColorTheme, setFriendColorTheme] = useState({
+    useFriendColorTheme: null,
+    lightColor: null,
+    darkColor: null,
+  });
   const [loadingNewFriend, setLoadingNewFriend] = useState(false);
 
   useEffect(() => {
@@ -23,6 +28,17 @@ export const SelectedFriendProvider = ({ children }) => {
         const dashboardData = await fetchFriendDashboard(friendId);
         console.log('Friend dashboard data:', dashboardData);
         setFriendDashboardData(dashboardData);
+
+        const data = Array.isArray(dashboardData) ? dashboardData[0] : dashboardData;
+
+        const colorThemeData = {
+          useFriendColorTheme: data?.friend_faves?.use_friend_color_theme || null,
+          lightColor: data?.friend_faves?.light_color || null,
+          darkColor: data?.friend_faves?.dark_color || null,
+        };
+        console.log('Setting color theme data:', colorThemeData); // Add this line
+        setFriendColorTheme(colorThemeData);
+
       } catch (error) {
         console.error('Error fetching friend dashboard data:', error);
       } finally {
@@ -45,10 +61,29 @@ export const SelectedFriendProvider = ({ children }) => {
     console.log('Selected friend being set:', selectedFriend);
   }, [selectedFriend]);
 
+  useEffect(() => {
+    console.log('Friend color theme updated:', friendColorTheme); // Add this line
+  }, [friendColorTheme]);
+
   const updateFriendDashboardData = (newData) => {
     setFriendDashboardData(newData);
-    
+
+    const colorThemeData = {
+      useFriendColorTheme: newData?.friend_faves?.use_friend_color_theme || null,
+      lightColor: newData?.friend_faves?.light_color || null,
+      darkColor: newData?.friend_faves?.dark_color || null,
+    };
+    console.log('Updating color theme data:', colorThemeData); // Add this line
+    setFriendColorTheme(colorThemeData);
   };
+
+  const updateFriendColorTheme = (newColorTheme) => {
+    setFriendColorTheme(prev => ({
+      ...prev,
+      ...newColorTheme
+    }));
+  };
+
 
   return (
     <SelectedFriendContext.Provider value={{ 
@@ -56,8 +91,10 @@ export const SelectedFriendProvider = ({ children }) => {
       setFriend: setSelectedFriend, 
       friendList, 
       friendDashboardData, 
+      friendColorTheme,
       loadingNewFriend,
-      updateFriendDashboardData, // Include the updateFriendDashboardData function in the context value
+      updateFriendDashboardData,
+      updateFriendColorTheme,
     }}>
       {children}
     </SelectedFriendContext.Provider>

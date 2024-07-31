@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 const ActionFriendPageMoments = ({ onPress }) => {
 
   const navigation = useNavigation();
-
+  const { selectedFriend, friendDashboardData, friendColorTheme } = useSelectedFriend();
   const { capsuleList } = useCapsuleList();
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
   const [showSecondButton, setShowSecondButton] = useState(false);
@@ -22,6 +22,21 @@ const ActionFriendPageMoments = ({ onPress }) => {
   const mainMoment = capsuleList.length > 0 ? capsuleList[0] : null;
   const satelliteMoments = capsuleList.length > 1 ? capsuleList.slice(1) : [];
   const additionalSatelliteCount = satelliteMoments.length - 1;
+
+
+  // State for colors
+  const [lightColor, setLightColor] = useState('black');
+  const [darkColor, setDarkColor] = useState('black');
+
+  useEffect(() => {
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
+      // Update local state when friendColorTheme changes
+      setLightColor(friendColorTheme.lightColor || 'black');
+      setDarkColor(friendColorTheme.darkColor || 'black');
+    }
+  }, [friendColorTheme]);
+ 
+  
 
   let satellitesFirstPage = 1;
 
@@ -81,7 +96,9 @@ const ActionFriendPageMoments = ({ onPress }) => {
             labelColor="white"
             animationWidth={234}
             animationHeight={234}
-            lightColor="black"
+            showGradient={true}
+            lightColor={lightColor}
+            darkColor={darkColor}
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             showShape={false}
@@ -90,8 +107,7 @@ const ActionFriendPageMoments = ({ onPress }) => {
             shapeWidth={340}
             shapeHeight={340}
             shapePositionValue={-154}
-            showIcon={false}
-            showGradient={false}
+            showIcon={false} 
             backgroundColor="black"
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
@@ -116,8 +132,7 @@ const ActionFriendPageMoments = ({ onPress }) => {
             labelFontSize={16}
             labelColor="white"
             animationWidth={234}
-            animationHeight={234}
-            lightColor="black"
+            animationHeight={234} 
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             showShape={false}
@@ -127,7 +142,9 @@ const ActionFriendPageMoments = ({ onPress }) => {
             shapeHeight={340}
             shapePositionValue={-154}
             showIcon={false}
-            showGradient={false}
+            showGradient={true}
+            lightColor={darkColor}
+            darkColor={darkColor}
             backgroundColor="transparent"
             satellites={!showSecondButton}
             satelliteSectionPosition="right"

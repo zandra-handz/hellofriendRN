@@ -55,7 +55,7 @@ const ButtonLottieAnimationTwoSections = ({
   const [showEmptyContainer, setShowEmptyContainer] = useState(false);
   const [mainViewVisible, setMainViewVisible] = useState(true);
   const fadeAnim = useRef(new Animated.Value(1)).current;
-  const { selectedFriend, friendDashboardData, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend } = useSelectedFriend();
 
   useEffect(() => {
     if (lottieViewRef.current && animationSource) {

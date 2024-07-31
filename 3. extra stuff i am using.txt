@@ -154,3 +154,12 @@ module.exports = (async () => {
     }
   };
 })();
+
+
+// nope, uninstalled
+npm install react-native-color-picker
+
+// not found
+npm install react-native-color-picker-toolkit
+
+npm i reanimated-color-picker

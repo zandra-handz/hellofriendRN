@@ -126,7 +126,7 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
           toggleModal={closeColorThemeModal}
           headerContent={<ArtistColorPaletteSvg width={38} height={38} color='black' />}
           questionText={`Update color theme for friend dashboard?`}
-          formBody={<FormFriendColorThemeUpdate friendId={selectedFriend.id} ref={formRef} />}
+          formBody={<FormFriendColorThemeUpdate ref={formRef} />}
           onConfirm={() => {
             if (formRef.current) {
               formRef.current.submit(); // Call submit method on the form

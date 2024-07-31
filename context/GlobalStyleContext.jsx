@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import { useAuthUser } from './AuthUserContext';
 import { updateUserAccessibilitySettings } from '../api';
-import { AccessibilityInfo } from 'react-native';
+import { AccessibilityInfo, useColorScheme } from 'react-native';
 
 const GlobalStyleContext = createContext();
 
@@ -9,32 +10,48 @@ export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
     const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
+    const colorScheme = useColorScheme();
+
     const [styles, setStyles] = useState({
         fontSize: 16,
         highContrast: false,
         screenReader: false,
         receiveNotifications: false,
+        theme: colorScheme || 'light',
     });
-
     useEffect(() => {
         if (authUserState.authenticated && userAppSettings) {
-            console.log('User app settings:', userAppSettings);
-            setStyles({
+            // Determine the theme based on `userAppSettings.manual_dark_mode` and `colorScheme`
+            const determineTheme = () => {
+                if (userAppSettings.manual_dark_mode !== null) {
+                    return userAppSettings.manual_dark_mode ? 'dark' : 'light';
+                }
+                return colorScheme || 'light';
+            };
+    
+            setStyles(prevStyles => ({
+                ...prevStyles,
                 fontSize: userAppSettings.large_text ? 20 : 16,
                 highContrast: userAppSettings.high_contrast_mode,
                 screenReader: userAppSettings.screen_reader,
                 receiveNotifications: userAppSettings.receive_notifications,
-            });
+                theme: determineTheme(),
+            }));
+        } else {
+            // Fallback to default styles if user is not authenticated
+            setStyles(prevStyles => ({
+                ...prevStyles,
+                theme: colorScheme || 'light',
+            }));
         }
-    }, [authUserState.authenticated, userAppSettings]);
-
-    // Function to update user settings and trigger backend update
+    }, [authUserState.authenticated, userAppSettings, colorScheme]);
+    
     const updateUserAccessibility = async (updates) => {
         try {
             await updateUserAccessibilitySettings(authUserState.user.id, updates);
             updateUserSettings({
                 ...userAppSettings,
-                ...updates, 
+                ...updates,
             });
         } catch (error) {
             console.error('Error updating user settings:', error);
@@ -66,7 +83,6 @@ export const GlobalStyleProvider = ({ children }) => {
         const screenReaderListener = AccessibilityInfo.addEventListener(
             'screenReaderChanged',
             async isActive => {
-                console.log(`Screen reader is ${isActive ? 'active' : 'inactive'}`);
                 if (authUserState.user) {
                     await updateUserAccessibility({ screen_reader: isActive });
                 }
@@ -78,11 +94,47 @@ export const GlobalStyleProvider = ({ children }) => {
         };
     }, [authUserState.authenticated]);
 
+    const themeStyles = styles.theme === 'dark' ? darkThemeStyles : lightThemeStyles;
+
     return (
-        <GlobalStyleContext.Provider value={styles}>
+        <GlobalStyleContext.Provider value={{ ...styles, themeStyles }}>
             {children}
         </GlobalStyleContext.Provider>
     );
 };
+
+const lightThemeStyles = StyleSheet.create({
+    container: {
+        backgroundColor: 'white',
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: -5 },
+        shadowOpacity: 0.8,
+        shadowRadius: 8,
+        elevation: 10,
+    },
+    divider: {
+        backgroundColor: 'gray',
+    },
+    footerText: {
+        color: 'black',
+    },
+});
+
+const darkThemeStyles = StyleSheet.create({
+    container: {
+        backgroundColor: '#333',
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: -5 },
+        shadowOpacity: 0.8,
+        shadowRadius: 8,
+        elevation: 10,
+    },
+    divider: {
+        backgroundColor: 'lightgray',
+    },
+    footerText: {
+        color: 'white',
+    },
+});
 
 export default GlobalStyleProvider;

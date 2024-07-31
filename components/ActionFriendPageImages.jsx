@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text, Button, Image } from 'react-native';
 import ButtonLottieAnimationSatellitesImages from './ButtonLottieAnimationSatellitesImages';
 import { useImageList } from '../context/ImageListContext';
@@ -15,11 +15,24 @@ const ActionFriendPageImages = ({ onPress }) => {
 
   const navigation = useNavigation();
   
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData } = useSelectedFriend();
   const { imageList, setImageList } = useImageList();
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
   const [showSecondButton, setShowSecondButton] = useState(false);
   const opacityAnim = new Animated.Value(1);
+  const [ lightColor, setLightColor ] = useState(null);
+  const [ darkColor, setDarkColor ] = useState(null);
+
+  useEffect(() => {
+    if (friendDashboardData && friendDashboardData.length > 0) {
+        const lightColorCode = friendDashboardData[0]?.friend_faves?.light_color? friendDashboardData[0].friend_faves.light_color : 'black';
+        setLightColor(lightColorCode);
+         
+        const darkColorCode = friendDashboardData[0]?.friend_faves?.dark_color? friendDashboardData[0].friend_faves.dark_color : 'black';
+        setDarkColor(darkColorCode);
+        
+    }
+}, [friendDashboardData]);
 
   let mainImage = null;
   let satelliteImages = [];
@@ -103,7 +116,9 @@ const ActionFriendPageImages = ({ onPress }) => {
             labelColor="white"
             animationWidth={234}
             animationHeight={234}
-            lightColor="black"
+            showGradient={true}
+            lightColor={darkColor}
+            darkColor={darkColor}
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             showShape={false}
