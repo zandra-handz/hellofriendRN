@@ -24,15 +24,23 @@ const ActionFriendPageMoments = ({ onPress }) => {
   const additionalSatelliteCount = satelliteMoments.length - 1;
 
 
-  // State for colors
+  
   const [lightColor, setLightColor] = useState('black');
   const [darkColor, setDarkColor] = useState('black');
 
   useEffect(() => {
     if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
-      // Update local state when friendColorTheme changes
-      setLightColor(friendColorTheme.lightColor || 'black');
-      setDarkColor(friendColorTheme.darkColor || 'black');
+      if(friendColorTheme.invertGradient) {
+        setLightColor(friendColorTheme.lightColor || 'black');
+        setDarkColor(friendColorTheme.darkColor || 'black');
+      } else {
+        setLightColor(friendColorTheme.darkColor || 'black');
+        setDarkColor(friendColorTheme.lightColor || 'black');
+      };
+    }
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
+      setLightColor('black');
+      setDarkColor('black');
     }
   }, [friendColorTheme]);
  

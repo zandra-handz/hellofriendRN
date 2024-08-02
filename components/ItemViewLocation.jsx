@@ -168,8 +168,7 @@ const ItemViewLocation = ({ location, onClose }) => {
               </View>
               <View style={styles.buttonContainer}>
               <ButtonCalculateAndCompareTravel />
-              <ButtonSendDirectionsToFriend />
-              <ButtonFindMidpoints onPress={closeModal} /> 
+              <ButtonSendDirectionsToFriend /> 
               </View> 
             </ScrollView>
             )}
@@ -195,7 +194,7 @@ const styles = StyleSheet.create({
     padding: 0, 
   }, 
   buttonContainer: {
-    height: '30%',
+    height: '20%',
     flexDirection: 'column',
     justifyContent: 'space-evenly',
 

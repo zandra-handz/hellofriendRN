@@ -46,6 +46,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
   shapePositionValue = -134,
   satellites = false,
   satelliteSectionPosition = 'right',
+  satelliteSectionBackgroundColor = 'black',
   satelliteCount = 3,
   satellitesOrientation = 'horizontal',
   satelliteHeight = 60,
@@ -268,7 +269,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, { backgroundColor: satelliteSectionBackgroundColor, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
                 
                 
                 {renderSatellites()}
@@ -295,11 +296,20 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 30,
     marginLeft: -125,
-    paddingLeft: 8, 
+    paddingLeft: 8,
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    backgroundColor: 'darkgrey',
+  
+    // iOS shadow properties
+    shadowColor: '#000', // Dark shadow color
+    shadowOffset: { width: 0, height: 6 }, // More vertical offset
+    shadowOpacity: 0.5, // Increased opacity for a darker shadow
+    shadowRadius: 12, // Larger radius for a more defined shadow
+  
+    // Android shadow properties
+    elevation: 8, // Higher elevation for a more pronounced shadow
   },
+  
   additionalSatelliteSection: {
     flexDirection: 'column',
     marginVertical: 0,

@@ -12,11 +12,33 @@ import IconDynamicHelloType from '../components/IconDynamicHelloType';
 
 
 const ActionFriendPageHelloes = ({ onPress }) => {
-  const { selectedFriend, setFriend, friendDashboardData } = useSelectedFriend(); 
+  const { selectedFriend, setFriend, friendDashboardData, friendColorTheme } = useSelectedFriend(); 
   const [helloesList, setHelloesList] = useState([]);
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
   const [ lightColor, setLightColor ] = useState(null);
   const [ darkColor, setDarkColor ] = useState(null);
+  const [ iconBackgroundColor, setIconBackgroundColor ] = useState(null);
+
+
+  useEffect(() => {
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
+      if(friendColorTheme.invertGradient) {
+        setLightColor(friendColorTheme.lightColor || 'black');
+        setDarkColor(friendColorTheme.lightColor || 'black');
+        setIconBackgroundColor(friendColorTheme.darkColor || 'black')
+      } else {
+        setLightColor(friendColorTheme.darkColor || 'black');
+        setDarkColor(friendColorTheme.darkColor || 'black');
+        setIconBackgroundColor(friendColorTheme.lightColor || 'black')
+      };
+    }
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
+      setLightColor('black');
+      setDarkColor('black');
+      setIconBackgroundColor('gray');
+    }
+  }, [friendColorTheme]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,16 +59,6 @@ const ActionFriendPageHelloes = ({ onPress }) => {
     fetchData();
 }, [selectedFriend]);
 
-  useEffect(() => {
-    if (friendDashboardData && friendDashboardData.length > 0) {
-        const lightColorCode = friendDashboardData[0]?.friend_faves?.light_color? friendDashboardData[0].friend_faves.light_color : 'black';
-        setLightColor(lightColorCode);
-        
-        const darkColorCode = friendDashboardData[0]?.friend_faves?.dark_color? friendDashboardData[0].friend_faves.dark_color : 'black';
-        setDarkColor(darkColorCode);
-        
-    }
-  }, [friendDashboardData]);
 
 
   
@@ -140,7 +152,7 @@ const ActionFriendPageHelloes = ({ onPress }) => {
             animationMargin={-64}
             showShape={false}
             showGradient={true}
-            lightColor={darkColor}
+            lightColor={lightColor}
             darkColor={darkColor}
             shapePosition="right"
             shapeSource={require('../assets/shapes/greenfloral.png')}
@@ -150,6 +162,7 @@ const ActionFriendPageHelloes = ({ onPress }) => {
             showIcon={false}
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
+            satelliteSectionBackgroundColor={iconBackgroundColor}
             satelliteCount={satellitesFirstPage}
             satelliteHellos={satelliteHelloes}
             satellitesOrientation="horizontal"
@@ -181,7 +194,9 @@ const ActionFriendPageHelloes = ({ onPress }) => {
             labelColor="white"
             animationWidth={234}
             animationHeight={234}
-            lightColor="black"
+            showGradient={true}
+            lightColor={lightColor}
+            darkColor={darkColor}
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             showShape={false}
@@ -193,6 +208,7 @@ const ActionFriendPageHelloes = ({ onPress }) => {
             showIcon={false}
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
+            satelliteSectionBackgroundColor={iconBackgroundColor}
             satelliteCount={satellitesFirstPage}
             satelliteHellos={satelliteHelloes}
             satellitesOrientation="horizontal"

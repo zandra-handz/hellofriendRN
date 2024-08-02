@@ -101,10 +101,8 @@ const SectionAccessibilitySettings = () => {
     setIsScreenReaderEnabled(newValue); // Update local state immediately
 
     try {
-      // Update backend setting
       await updateUserAccessibilitySettings(authUserState.user.id, { screen_reader: newValue });
 
-      // Update user settings context if needed
       const updatedSettings = { ...userAppSettings, screen_reader: newValue };
       updateUserSettings(updatedSettings);
 

@@ -5,7 +5,8 @@ import FormFriendAddressCreate from '../forms/FormFriendAddressCreate';
 import FormFriendColorThemeUpdate from '../forms/FormFriendColorThemeUpdate'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
-import { fetchFriendAddresses, deleteFriendAddress } from '../api';
+import { fetchFriendAddresses, deleteFriendAddress, updateFriendFavesColorThemeSetting, updateFriendFavesColorThemeGradientDirection} from '../api';
+import ToggleButton from '../components/ToggleButton';
 import ButtonAddress from './ButtonAddress';
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
 import ArtistColorPaletteSvg from '../assets/svgs/artist-color-palette.svg';
@@ -15,12 +16,69 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
   const { authUserState } = useAuthUser();
   const [editMode, setEditMode] = useState(false);
   const [differentEditScreen, setDifferentEditScreen] = useState(false);
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, friendColorTheme, setFriendColorTheme, updateFriendColorTheme } = useSelectedFriend();
   const [friendAddresses, setFriendAddresses] = useState(null);
   const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
   const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false);
+  const [isGradientDirectionModalVisible, setIsGradientDirectionModalVisible] = useState(false);
 
   const formRef = useRef(null); // Create ref using useRef
+
+  const [useFriendColorTheme, setUseFriendColorTheme] = useState(false);
+  const [invertGradientDirection, setInvertGradientDirection] = useState(false);
+
+  useEffect(() => {
+    if (friendColorTheme) {
+      setUseFriendColorTheme(friendColorTheme.useFriendColorTheme === true || friendColorTheme.useFriendColorTheme === null);
+      setInvertGradientDirection(friendColorTheme.invertGradient === true);
+      
+      console.log('friendColorTheme useEffect inside panelbottom: ', friendColorTheme);
+    }
+  }, [friendColorTheme]);
+
+  const toggleUseFriendColorTheme = () => {
+    const newValue = !useFriendColorTheme;
+    console.log('newValue: ', newValue, useFriendColorTheme);
+    setUseFriendColorTheme(newValue);
+    updateColorThemeSetting(newValue);
+    console.log('newValue: ', newValue, useFriendColorTheme);
+  };
+
+  const toggleColorThemeGradientDirection = () => {
+    const newValue = !invertGradientDirection;
+    console.log('newValue: ', newValue, invertGradientDirection);
+    setInvertGradientDirection(newValue);
+    updateGradientDirectionSetting(newValue);
+    console.log('newValue for gradient direction: ', newValue, invertGradientDirection);
+  };
+
+  const updateColorThemeSetting = async (setting) => {
+    try {
+      const newSettings = { ...friendColorTheme, ...setting};
+      await updateFriendFavesColorThemeSetting(authUserState.user.id, selectedFriend.id, setting);
+      setFriendColorTheme(prev => ({
+        ...prev,
+        useFriendColorTheme: setting
+      }));
+      console.log('Color theme setting updated successfully ', setting);
+    } catch (error) {
+      console.error('Error updating color theme setting:', error);
+    }
+  };
+
+  const updateGradientDirectionSetting = async (setting) => {
+    try {
+      const newSettings = { ...friendColorTheme, ...setting};
+      await updateFriendFavesColorThemeGradientDirection(authUserState.user.id, selectedFriend.id, setting);
+      setFriendColorTheme(prev => ({
+        ...prev,
+        invertGradient: setting
+      }));
+      console.log('Color theme gradient direction updated successfully ', setting);
+    } catch (error) {
+      console.error('Error updating color theme gradient direction:', error);
+    }
+  };
 
   const closeAddressModal = () => {
     setIsAddressModalVisible(false);
@@ -29,6 +87,7 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
   const closeColorThemeModal = () => {
     setIsColorThemeModalVisible(false);
   };
+
 
   const toggleAddressModal = () => {
     setIsAddressModalVisible(true);
@@ -100,6 +159,20 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
                   <FontAwesome5 name="plus" size={12} color="white" />
                 </TouchableOpacity>
               </View> 
+              <View style={styles.addressRow}>
+                <FontAwesome5 name="palette" size={20} color="black" style={[styles.icon, styles.mapIcon]} />
+                <Text style={styles.sectionTitle}>Color Theme</Text>
+                <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
+                  <Text style={styles.label}>teeest</Text>
+                  <ToggleButton value={useFriendColorTheme} onToggle={toggleUseFriendColorTheme} />   
+              </View>
+              <View style={styles.addressRow}>
+                <FontAwesome5 name="palette" size={20} color="black" style={[styles.icon, styles.mapIcon]} />
+                <Text style={styles.sectionTitle}>Invert gradient?</Text>
+                <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
+                  <Text style={styles.label}>Invert gradient?</Text>
+                  <ToggleButton value={invertGradientDirection} onToggle={toggleColorThemeGradientDirection} />   
+              </View>
             </View>
           </ScrollView>
         </View>

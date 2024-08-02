@@ -207,7 +207,7 @@ export const fetchFriendDashboard = async (friendId) => {
 export const addToFriendFavesLocations = async (userId, friendId, locationId) => {
     console.log(`favorite locations add call, ${userId}, ${friendId}, ${locationId}`);
     try {
-        const response = await axios.patch(`/friends/${friendId}/faves/`, {
+        const response = await axios.patch(`/friends/${friendId}/faves/add/location/`, {
             
             friend: friendId,
             user: userId, 
@@ -238,8 +238,43 @@ export const removeFromFriendFavesLocations = async (userId, friendId, locationI
     }
 };
 
+export const updateFriendFavesColorThemeSetting = async (userId, friendId, setting) => {
+    console.log(`color theme setting call, ${userId}, ${friendId}, ${setting}`);
+    try {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
+            
+            friend: friendId,
+            user: userId, 
+            use_friend_color_theme: setting,
+        });
+        console.log('Color theme setting for friend updated: ', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating color theme setting for friend:', error);
+        throw error;
+    }
+};
+
+export const updateFriendFavesColorThemeGradientDirection = async (userId, friendId, setting) => {
+    console.log(`color theme gradient direction call, ${userId}, ${friendId}, ${setting}`);
+    try {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
+            
+            friend: friendId,
+            user: userId, 
+            second_color_option: setting,
+        });
+        console.log('Color theme gradient direction for friend updated: ', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating color theme gradient direction for friend:', error);
+        throw error;
+    }
+};
+
+
 export const updateFriendFavesColorTheme = async (userId, friendId, darkColor, lightColor) => {
-    console.log(`colro theme add call, ${userId}, ${friendId}, ${darkColor}, ${lightColor}`);
+    console.log(`color theme add call, ${userId}, ${friendId}, ${darkColor}, ${lightColor}`);
     try {
         const response = await axios.patch(`/friends/${friendId}/faves/`, {
             

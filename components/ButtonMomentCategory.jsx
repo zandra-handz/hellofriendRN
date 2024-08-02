@@ -25,28 +25,33 @@ import QuickAddHello from '../speeddial/QuickAddHello';
 
 const ButtonMomentCategory = ({onPress, categoryText, momentCount}) => {
     const { authUserState } = useAuthUser();
-    const { selectedFriend, friendDashboardData } = useSelectedFriend();
+    const { selectedFriend, friendDashboardData, friendColorTheme } = useSelectedFriend();
     const { selectedLocation } = useLocationList();
     const [ isModalVisible, setIsModalVisible ] = useState(false);
-    const [ lightColor, setLightColor ] = useState(null);
-    const [ darkColor, setDarkColor ] = useState(null);
+    const [lightColor, setLightColor] = useState('black');
+    const [darkColor, setDarkColor] = useState('black');
+  
+    useEffect(() => {
+      if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
+        if(friendColorTheme.invertGradient) {
+          setLightColor(friendColorTheme.darkColor || 'black');
+          setDarkColor(friendColorTheme.lightColor || 'black');
+        } else {
+          setLightColor(friendColorTheme.lightColor || 'black');
+          setDarkColor(friendColorTheme.darkColor || 'black');
+        };
+      }
+      if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
+        setLightColor('black');
+        setDarkColor('black');
+      }
+    }, [friendColorTheme]);
   
 
     const openModal = () => setIsModalVisible(true);
 
     const closeModal = () => setIsModalVisible(false);
 
-    useEffect(() => {
-      if (friendDashboardData && friendDashboardData.length > 0) {
-          const lightColorCode = friendDashboardData[0]?.friend_faves?.light_color? friendDashboardData[0].friend_faves.light_color : 'black';
-          setLightColor(lightColorCode);
-          
-          const darkColorCode = friendDashboardData[0]?.friend_faves?.dark_color? friendDashboardData[0].friend_faves.dark_color : 'black';
-          setDarkColor(darkColorCode);
-          
-      }
-    }, [friendDashboardData]);
-  
 
 
     return (

@@ -10,26 +10,31 @@ const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
 
   const navigation = useNavigation();
 
-  const { selectedFriend, friendDashboardData, loadingNewFriend, setFriend } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend, setFriend } = useSelectedFriend();
   const [showProfile, setShowProfile] = useState(false);
   const [showNextHello, setShowNextHello] = useState(true);
-  const [ lightColor, setLightColor ] = useState(null);
-  const [ darkColor, setDarkColor ] = useState(null);
+  const [lightColor, setLightColor] = useState('black');
+  const [darkColor, setDarkColor] = useState('black');
 
   useEffect(() => {
-    if (friendDashboardData && friendDashboardData.length > 0) {
-        const lightColorCode = friendDashboardData[0]?.friend_faves?.light_color? friendDashboardData[0].friend_faves.light_color : 'black';
-        setLightColor(lightColorCode);
-         
-        const darkColorCode = friendDashboardData[0]?.friend_faves?.dark_color? friendDashboardData[0].friend_faves.dark_color : 'black';
-        setDarkColor(darkColorCode);
-        
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
+      if(friendColorTheme.invertGradient) {
+        setLightColor(friendColorTheme.darkColor || 'black');
+        setDarkColor(friendColorTheme.lightColor || 'black');
+      } else {
+        setLightColor(friendColorTheme.lightColor || 'black');
+        setDarkColor(friendColorTheme.darkColor || 'black');
+      };
     }
-}, [friendDashboardData]);
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
+      setLightColor('black');
+      setDarkColor('black');
+    }
+  }, [friendColorTheme]);
+ 
+ 
 
 
-
-  // Function to handle resetting the selected friend
   const handleDeselect = () => {
     if (Deselector) {
       setFriend(null);
@@ -58,20 +63,21 @@ const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
           headerText={selectedFriend ? selectedFriend.name : ''}
           navigateToFirstPage={false}
           label={friendDashboardData ? `days since last hello: ${friendDashboardData[0].days_since}` : ''}
-          label={friendDashboardData ? `say hello on ${friendDashboardData[0].future_date_in_words}` : ' '}
+          label={friendDashboardData ? `${friendDashboardData[0].future_date_in_words}` : ' '}
           //moved 'say hello' from additionalText to label
           fontMargin={3}
           animationSource={require('../assets/anims/heartinglobe.json')}
           rightSideAnimation={false}
           labelColor="white"
+          labelFontSize={20}
           animationWidth={234}
           animationHeight={234} 
           labelContainerMarginHorizontal={4}
           animationMargin={-64}
           shapePosition="right"
           showGradient={true}
-          lightColor={lightColor ? lightColor : 'black'}
-          darkColor={darkColor ? darkColor : 'black'}
+          lightColor={lightColor}
+          darkColor={darkColor}
           shapeSource={require('../assets/shapes/beer.png')}
           shapeWidth={340}
           shapeHeight={340}

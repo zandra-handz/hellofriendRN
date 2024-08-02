@@ -15,24 +15,30 @@ const ActionFriendPageImages = ({ onPress }) => {
 
   const navigation = useNavigation();
   
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
+  const { selectedFriend, friendColorTheme, friendDashboardData } = useSelectedFriend();
   const { imageList, setImageList } = useImageList();
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
   const [showSecondButton, setShowSecondButton] = useState(false);
   const opacityAnim = new Animated.Value(1);
+
   const [ lightColor, setLightColor ] = useState(null);
   const [ darkColor, setDarkColor ] = useState(null);
 
   useEffect(() => {
-    if (friendDashboardData && friendDashboardData.length > 0) {
-        const lightColorCode = friendDashboardData[0]?.friend_faves?.light_color? friendDashboardData[0].friend_faves.light_color : 'black';
-        setLightColor(lightColorCode);
-         
-        const darkColorCode = friendDashboardData[0]?.friend_faves?.dark_color? friendDashboardData[0].friend_faves.dark_color : 'black';
-        setDarkColor(darkColorCode);
-        
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
+      if(friendColorTheme.invertGradient) {
+        setLightColor(friendColorTheme.lightColor || 'black');
+        setDarkColor(friendColorTheme.lightColor || 'black');
+      } else {
+        setLightColor(friendColorTheme.darkColor || 'black');
+        setDarkColor(friendColorTheme.darkColor || 'black');
+      };
     }
-}, [friendDashboardData]);
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
+      setLightColor('black');
+      setDarkColor('black');
+    }
+  }, [friendColorTheme]);
 
   let mainImage = null;
   let satelliteImages = [];

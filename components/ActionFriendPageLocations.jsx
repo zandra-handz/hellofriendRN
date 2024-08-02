@@ -16,13 +16,14 @@ const ActionFriendPageLocations = ({ onPress }) => {
 
   const navigation = useNavigation();
 
-  const { selectedFriend, setFriend } = useSelectedFriend();
+  const { selectedFriend, setFriend, friendColorTheme } = useSelectedFriend();
   const { locationList, setLocationList } = useLocationList();
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
   
   const [showSecondButton, setShowSecondButton] = useState(false);
   const opacityAnim = useRef(new Animated.Value(1)).current;
-
+  const [lightColor, setLightColor] = useState('black');
+  const [darkColor, setDarkColor] = useState('black');
 
   
   let mainLocation = null;
@@ -30,6 +31,22 @@ const ActionFriendPageLocations = ({ onPress }) => {
   let satellitesFirstPage = 1;
   let additionalSatelliteCount = null; 
 
+
+  useEffect(() => {
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
+      if(friendColorTheme.invertGradient) {
+        setLightColor(friendColorTheme.lightColor || 'black');
+        setDarkColor(friendColorTheme.lightColor || 'black');
+      } else {
+        setLightColor(friendColorTheme.darkColor || 'black');
+        setDarkColor(friendColorTheme.darkColor || 'black');
+      };
+    }
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
+      setLightColor('black');
+      setDarkColor('black');
+    }
+  }, [friendColorTheme]);
 
   const navigateToLocationScreen = ({ onPress }) =>  {
     navigation.navigate('Locations');
@@ -98,7 +115,9 @@ const ActionFriendPageLocations = ({ onPress }) => {
             labelColor="white"
             animationWidth={234}
             animationHeight={234}
-            lightColor="black"
+            showGradient={true}
+            lightColor={lightColor}
+            darkColor={lightColor}
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             shapePosition="right"
@@ -133,8 +152,10 @@ const ActionFriendPageLocations = ({ onPress }) => {
             labelFontSize={16}
             labelColor="white"
             animationWidth={234}
-            animationHeight={234}
-            lightColor="black"
+            animationHeight={234} 
+            showGradient={true}
+            lightColor={lightColor}
+            darkColor={lightColor}
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             shapePosition="right"

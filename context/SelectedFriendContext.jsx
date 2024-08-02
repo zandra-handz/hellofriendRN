@@ -12,6 +12,7 @@ export const SelectedFriendProvider = ({ children }) => {
   const [friendDashboardData, setFriendDashboardData] = useState(null);
   const [friendColorTheme, setFriendColorTheme] = useState({
     useFriendColorTheme: null,
+    invertGradient: null,
     lightColor: null,
     darkColor: null,
   });
@@ -32,7 +33,8 @@ export const SelectedFriendProvider = ({ children }) => {
         const data = Array.isArray(dashboardData) ? dashboardData[0] : dashboardData;
 
         const colorThemeData = {
-          useFriendColorTheme: data?.friend_faves?.use_friend_color_theme || null,
+          useFriendColorTheme: data.friend_faves.use_friend_color_theme || null,
+          invertGradient: data?.friend_faves?.second_color_option || false,
           lightColor: data?.friend_faves?.light_color || null,
           darkColor: data?.friend_faves?.dark_color || null,
         };
@@ -68,13 +70,6 @@ export const SelectedFriendProvider = ({ children }) => {
   const updateFriendDashboardData = (newData) => {
     setFriendDashboardData(newData);
 
-    const colorThemeData = {
-      useFriendColorTheme: newData?.friend_faves?.use_friend_color_theme || null,
-      lightColor: newData?.friend_faves?.light_color || null,
-      darkColor: newData?.friend_faves?.dark_color || null,
-    };
-    console.log('Updating color theme data:', colorThemeData); // Add this line
-    setFriendColorTheme(colorThemeData);
   };
 
   const updateFriendColorTheme = (newColorTheme) => {
@@ -92,6 +87,7 @@ export const SelectedFriendProvider = ({ children }) => {
       friendList, 
       friendDashboardData, 
       friendColorTheme,
+      setFriendColorTheme,
       loadingNewFriend,
       updateFriendDashboardData,
       updateFriendColorTheme,

@@ -106,7 +106,7 @@ const Signin = () => {
   return (
     <View style={styles.container}>
       {loading && (
-        <LoadingPage loading={loading} spinnerType='fold' />
+        <LoadingPage loading={loading} spinnerType='circle' />
       )}
       {!loading && (
         <>

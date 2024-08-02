@@ -190,51 +190,54 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
           shapeWidth={170}
           shapeHeight={170} 
         />
-        <ButtonLottieAnimation
-          onPress={openModalSettings}
-          label="FRIEND"
-          animationSource={require("../assets/anims/goldspinningstar.json")}
-          rightSideAnimation={false}
-          labelFontSize={30}
-          labelColor="white"
-          fontMargin={3}
-          animationWidth={80}
-          animationHeight={80}
-          labelContainerMarginHorizontal={-6}
-          animationMargin={20}
-          animationSource={require("../assets/anims/heartsinglecircle.json")}
-          rightSideAnimation={false}
-          labelFontSize={30}
-          labelColor="white"
-          animationWidth={240}
-          animationHeight={240}
-          labelContainerMarginHorizontal={4}
-          animationMargin={-68}
-          shapeSource={require("../assets/shapes/redeyedlizard.png")}
-          shapeWidth={150}
-          shapeHeight={150}
-          shapePosition="right"
-          shapePositionValue={-20}
+        {!selectedFriend && (
+          <ButtonLottieAnimation
+            onPress={openModalSettings}
+            label="FRIEND"
+            animationSource={require("../assets/anims/goldspinningstar.json")}
+            rightSideAnimation={false}
+            labelFontSize={30}
+            labelColor="white"
+            fontMargin={3}
+            animationWidth={80}
+            animationHeight={80}
+            labelContainerMarginHorizontal={-6}
+            animationMargin={20}
+            animationSource={require("../assets/anims/heartsinglecircle.json")}
+            rightSideAnimation={false}
+            labelFontSize={30}
+            labelColor="white"
+            animationWidth={240}
+            animationHeight={240}
+            labelContainerMarginHorizontal={4}
+            animationMargin={-68}
+            shapeSource={require("../assets/shapes/redeyedlizard.png")}
+            shapeWidth={150}
+            shapeHeight={150}
+            shapePosition="right"
+            shapePositionValue={-20}
 
-          shapeSource={require("../assets/shapes/pinkflower.png")}
-          shapeWidth={440}
-          shapeHeight={440}
-          shapePositionValue={-310}
+            shapeSource={require("../assets/shapes/pinkflower.png")}
+            shapeWidth={440}
+            shapeHeight={440}
+            shapePositionValue={-310}
 
-          shapeSource={require("../assets/shapes/butterfly.png")}
-          shapeWidth={360}
-          shapeHeight={360}
-          shapePositionValueVertical={-10}
-          shapePositionValue={-90}
+            shapeSource={require("../assets/shapes/butterfly.png")}
+            shapeWidth={360}
+            shapeHeight={360}
+            shapePositionValueVertical={-10}
+            shapePositionValue={-90}
 
-          shapeSource={require("../assets/shapes/yellowleaves.png")}
-          shapeWidth={200}
-          shapeHeight={200}
-          shapePositionValueVertical={-20}
-          shapePositionValue={-55}
-          showIcon={false}
-        />
+            shapeSource={require("../assets/shapes/yellowleaves.png")}
+            shapeWidth={200}
+            shapeHeight={200}
+            shapePositionValueVertical={-20}
+            shapePositionValue={-55}
+            showIcon={false}
+          />
+        )}
       </View>
+      
       <HelloFriendFooter />
     </>
     )}
@@ -245,7 +248,7 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f0f0f0', 
   },
   loadingTextContainer: {
     flex: 1, 
