@@ -4,6 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useAuthUser } from '../context/AuthUserContext';
 import AlertConfirm from '../components/AlertConfirm';
+
 import ByeSvg from '../assets/svgs/bye.svg';
 
 const ButtonSignOut = ({ 

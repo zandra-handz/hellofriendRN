@@ -73,7 +73,7 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
                         {sections.map((section, index) => (
                             <View key={index} style={styles.section}>
                                 <Text style={[styles.sectionTitle, textStyles(18)]}>{section.title}</Text>
-                                <View style={styles.titleDivider}></View>
+                                
                                 {section.content}
                                 <View style={styles.divider}></View>
                             </View>
@@ -98,11 +98,11 @@ const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: 'white',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        padding: 20,
+        borderTopLeftRadius:  0,
+        borderTopRightRadius: 0,
+        padding: 12,
         width: '100%',
-        maxHeight: '90%',
+        maxHeight: '100%',
     },
     closeButton: {
         position: 'absolute',
@@ -110,24 +110,25 @@ const styles = StyleSheet.create({
         right: 10,
     },
     section: {
-        marginBottom: 20,
+        marginBottom: 10,
     },
     sectionTitle: {
-        fontWeight: 'bold',
-        marginBottom: 10,
+        fontFamily: 'Poppins-Bold',
+        fontSize: 14,
+        marginBottom: 8,
     },
     titleDivider: {
         borderBottomWidth: 1,
         borderBottomColor: 'black',
-        marginBottom: 10,
+        marginBottom: 8,
     },
     divider: {
         borderBottomWidth: 1,
         borderBottomColor: 'black',
-        marginBottom: 10,
+        marginBottom: 8,
     },
     scrollContainer: {
-        paddingBottom: 20,
+        paddingBottom: 10,
     },
     footer: {
         borderTopWidth: 1,

@@ -26,7 +26,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
   if (!isLoading && upcomingHelloes.length > 0) {
     mainHello = upcomingHelloes[0];
     if ( userAppSettings && userAppSettings.simplify_app_for_focus) {
-      satelliteHellos = 0;
+      satelliteHellos = upcomingHelloes.slice(1,2);
     } else {
       satelliteHellos = upcomingHelloes.slice(1);
     };
@@ -81,6 +81,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             headerText={mainHello ? 'UP NEXT' : ''}
             label={mainHello ? mainHello.friend_name : `Hi ${authUserState.user.username}!`}
             additionalText={mainHello ? mainHello.future_date_in_words : ''}
+            
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
@@ -114,6 +115,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             headerText={mainHello ? 'UP NEXT' : ''}
             label={mainHello ? mainHello.friend_name : `Hi ${authUserState.user.username}!`}
             fontMargin={3}
+            additionalText={mainHello ? mainHello.future_date_in_words : ''}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
             labelFontSize={30}
@@ -133,7 +135,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
             satelliteHellos={satelliteHellos}
-            satellitesOrientation="horizontal"
+            satellitesOrientation="vertical"
             satelliteHeight="60%"
             additionalPages={false}
             satelliteOnPress={(friend) => handlePress(friend)} 

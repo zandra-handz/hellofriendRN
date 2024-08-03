@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject, // Cover the entire screen
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
+    backgroundColor: 'transparent', // Semi-transparent background
   },
   spinnerContainer: {
     justifyContent: 'center',

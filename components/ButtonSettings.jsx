@@ -3,6 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'rea
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Import the icons
 import ActionPageBase from './ActionPageBase'; // Import ActionPageBase
 import SectionAccessibilitySettings from './SectionAccessibilitySettings'; // Import SectionAccessibilitySettings
+import SectionFriendSettings from './SectionFriendSettings'; // Import SectionAccessibilitySettings
+import SectionAccountSettings from './SectionAccountSettings'; // Import SectionAccessibilitySettings
+
+
+
 import { useAuthUser } from '../context/AuthUserContext'; // Import useAuthUser hook
 
 const ButtonSettings = () => {
@@ -18,24 +23,13 @@ const ButtonSettings = () => {
     if (isModalVisible) {
       AccessibilityInfo.announceForAccessibility('Settings opened'); // Announce to screen reader
     }
-  }, [isModalVisible]);
-
-  const UserSettings = () => (
-    <View>
-      <Text>User settings content goes here</Text>
-    </View>
-  );
-
-  const FriendsSettings = () => (
-    <View>
-      <Text>Friends settings content goes here</Text>
-    </View>
-  );
+  }, [isModalVisible]); 
+  
 
   const sections = [
     { title: 'Accessibility', content: <SectionAccessibilitySettings /> },
-    { title: 'User Settings', content: <UserSettings /> },
-    { title: 'Friends', content: <FriendsSettings /> },
+    { title: 'Friends', content: <SectionFriendSettings /> },
+    { title: 'Account', content: <SectionAccountSettings /> }, 
   ];
 
   const footerContent = "© badrainbowz 2024";
@@ -67,7 +61,8 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 16,
-    color: 'black', // Changed color to make the text visible
+    color: 'black',  
+    fontFamily: 'Poppins-Bold',
     textAlign: 'center',
     fontWeight: 'bold', // Use fontWeight instead of fontStyle for bold text
     marginTop: 4, // Add some margin to separate the icon from the text

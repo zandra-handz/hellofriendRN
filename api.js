@@ -204,6 +204,16 @@ export const fetchFriendDashboard = async (friendId) => {
     }
 };
 
+export const remixAllNextHelloes = async (userId) => {
+    try {
+        const response = await axios.post(`/friends/remix/all/`, userId);
+        return response.data;
+    } catch (error) {
+        console.error('Error remixing next helloes:', error);
+        throw error;
+    }
+};
+
 export const addToFriendFavesLocations = async (userId, friendId, locationId) => {
     console.log(`favorite locations add call, ${userId}, ${friendId}, ${locationId}`);
     try {

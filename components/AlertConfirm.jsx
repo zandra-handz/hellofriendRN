@@ -1,31 +1,42 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View, Modal, Text, Button } from 'react-native';
-import { FontAwesome5 } from 'react-native-vector-icons';
+import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
+import LoadingPage from '../components/LoadingPage';
 
 const AlertConfirm = ({
   isModalVisible,
+  isFetching,
+  useSpinner = false,
   toggleModal,
   headerContent,
   questionText,
   onConfirm,
   onCancel,
   confirmText = 'OK',
-  cancelText = 'Nevermind'
+  cancelText = 'Nevermind',
+  fixedHeight = false,
+  height = 200, // Default height value
+  type = 'success', // Can be 'success' or 'failure'
 }) => {
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
       <View style={styles.modalContainer}>
-        <View style={styles.modalContent}> 
+        <View style={[styles.modalContent, fixedHeight && { height }]}> 
           {headerContent && <View style={styles.headerContainer}>{headerContent}</View>}
-          {questionText && <Text style={styles.questionText}>{questionText}</Text>}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
-              <Text style={styles.buttonText}>{confirmText}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
-              <Text style={styles.buttonText}>{cancelText}</Text>
-            </TouchableOpacity>
-          </View>
+          {useSpinner && isFetching ? (
+            <LoadingPage loading={isFetching} spinnerType='circle' />
+          ) : (
+            <View style={styles.contentContainer}>
+              {questionText && <Text style={styles.questionText}>{questionText}</Text>}
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
+                  <Text style={styles.buttonText}>{confirmText}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onCancel} style={[styles.cancelButton, type === 'success' && styles.successCancelButton]}>
+                  <Text style={styles.buttonText}>{cancelText}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
         </View>
       </View>
     </Modal>
@@ -45,13 +56,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
-    position: 'relative',  
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    zIndex: 1,
   },
   headerContainer: {
     marginBottom: 20,
@@ -62,37 +66,38 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Poppins-Regular',
   },
-  formBodyContainer: { 
-    width: '100%',  
-    marginBottom: 10,
-    position: 'relative',
+  contentContainer: {
+    width: '100%',
+    alignItems: 'center',
   },
   buttonContainer: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    width: '100%', 
+    width: '100%',
+    marginTop: 20,
   },
   confirmButton: {
     backgroundColor: '#4CAF50',
     padding: 10,
-    borderRadius: 20, 
+    borderRadius: 20,
     marginVertical: 6,
-    width: '100%', 
+    width: '100%', // Full width
+    alignItems: 'center', // Center text inside button
   },
   cancelButton: {
-    backgroundColor: 'green',
-    width: '100%',
-    borderRadius: 20, 
-    padding: 10, 
-    marginVertical: 6, 
-    alignItems: 'center',
+    backgroundColor: 'green', // Default cancel color
+    padding: 10,
+    borderRadius: 20,
+    marginVertical: 6,
+    width: '100%', // Full width
+    alignItems: 'center', // Center text inside button
+  },
+  successCancelButton: {
+    backgroundColor: '#388E3C', // Dark green for success type
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
     fontFamily: 'Poppins-Bold',
-
   },
 });
 
