@@ -125,34 +125,8 @@ const SectionAccountSettings = () => {
         <Text style={styles.label}>Light/Dark</Text>
         <ToggleButton value={manualDarkMode} onToggle={toggleLightDark} />
       </View>
-      )}
-      <View style={styles.row}>
-        <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>High Contrast Mode</Text>
-        <ToggleButton value={highContrastMode} onToggle={toggleHighContrastMode} />
-      </View>
-      <View style={styles.row}>
-        <FontAwesome5 name="text-height" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Large Text</Text>
-        <ToggleButton value={largeText} onToggle={toggleLargeText} />
-      </View>
-      <View style={styles.row}>
-        <FontAwesome5 name="bell" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Simplify App For Focus</Text>
-        <ToggleButton value={simplifyAppForFocus} onToggle={toggleSimplifyAppForFocus} />
-      </View>
-      <View style={styles.row}>
-        <FontAwesome5 name="bell" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Receive Notifications</Text>
-        <ToggleButton value={receiveNotifications} onToggle={toggleReceiveNotifications} />
-      </View>
-      <View style={styles.row}>
-        <FontAwesome5 name="volume-up" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Screen Reader</Text>
-        <ToggleButton value={isScreenReaderEnabled} onToggle={toggleScreenReader} />
-      </View>
-      
-      {/* Alert message component */}
+      )} 
+
       <AlertMicro
         isModalVisible={showAlert}
         toggleModal={() => setShowAlert(false)}

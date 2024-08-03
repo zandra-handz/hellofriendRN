@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Import the icons
 import ActionPageInfo from './ActionPageInfo'; // Import the ActionPageInfo component
 
 const ButtonInfo = () => {
+
+  const { themeStyles } = useGlobalStyle();
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -13,8 +16,8 @@ const ButtonInfo = () => {
   return (
     <>
       <TouchableOpacity style={styles.buttonContainer} onPress={toggleModal}>
-        <Icon name="info" size={24} color="black" />
-        <Text style={styles.label}>Info</Text>
+        <Icon name="info" size={24} style={themeStyles.footerIcon} />
+        <Text style={themeStyles.footerText}>Info</Text>
       </TouchableOpacity>
 
       <ActionPageInfo visible={isModalVisible} onClose={toggleModal} />

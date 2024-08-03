@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useAuthUser } from '../context/AuthUserContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+
 import AlertConfirm from '../components/AlertConfirm';
 
 import ByeSvg from '../assets/svgs/bye.svg';
@@ -15,6 +17,7 @@ const ButtonSignOut = ({
   fAIcon = false // Boolean prop to determine icon type
 }) => {
   const { onSignOut } = useAuthUser();
+  const { themeStyles } = useGlobalStyle();
   const [isModalVisible, setModalVisible] = useState(false);
 
   const handleSignOutPress = () => {
@@ -40,17 +43,15 @@ const ButtonSignOut = ({
         <FontAwesome 
           name={icon} 
           size={28} 
-          color="black" 
-          style={styles.icon} 
+          style={[styles.icon, themeStyles.footerIcon]} 
         />
       );
     } else {
       return (
         <Icon 
           name={icon} 
-          size={28} 
-          color="black" 
-          style={styles.icon} 
+          size={28}  
+          style={[styles.icon, themeStyles.footerIcon]} 
         />
       );
     }
@@ -58,9 +59,9 @@ const ButtonSignOut = ({
 
   return (
     <>
-      <TouchableOpacity onPress={handleSignOutPress} style={styles.buttonContainer}>
+      <TouchableOpacity onPress={handleSignOutPress} style={[styles.buttonContainer, themeStyles.footerIcon]}>
         {renderIcon()}
-        {!iconOnly && <Text style={styles.label}>{label}</Text>}
+        {!iconOnly && <Text style={[styles.label, themeStyles.footerText]}>{label}</Text>}
       </TouchableOpacity>
 
       {confirmationAlert && (
@@ -86,12 +87,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
-    marginRight: 8,
+    marginRight: 8, 
   },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'black',
+  label: { 
   },
 });
 

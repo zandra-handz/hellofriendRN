@@ -3,7 +3,14 @@ import { useAuthUser } from './AuthUserContext'; // Import useAuthUser hook
 
 import { fetchFriendList } from '../api';
 
-const FriendListContext = createContext({});
+const FriendListContext = createContext({
+  friendList: [], 
+  setFriendList: () => {}, 
+  addToFriendList: () => {}, 
+  removeFromFriendList: () => {}, 
+  updateFriend: () => {}
+
+});
 
 export const useFriendList = () => useContext(FriendListContext);
 
@@ -28,15 +35,44 @@ export const FriendListProvider = ({ children }) => {
     };
 
     fetchData();
-  }, [authUserState.authenticated]); // Fetch data when authentication state changes
+  }, [authUserState.authenticated]);  
 
-  const value = {
-    friendList,
-    setFriendList
+
+  const addToFriendList = (newFriend) => {
+    setFriendList(prevFriendList => { 
+      const isAlreadyFriend = prevFriendList.some(friend => friend.id === newFriend.id);
+      if (!isAlreadyFriend) {
+        return [...prevFriendList, newFriend];
+      }
+      return prevFriendList;
+    });
   };
 
+  const removeFromFriendList = (friendIdToRemove) => {
+    setFriendList(prevFriendList => {
+      const idsToRemove = Array.isArray(friendIdToRemove) ? friendIdToRemove : [friendIdToRemove];
+
+      return prevFriendList.filter(friend => !idsToRemove.includes(friend.id));
+    });
+  };
+
+
+  const updateFriend = (updatedFriend) => {
+    setFriendList(prevFriendList => {
+      return prevFriendList.map(friend =>
+        friend.id === updatedFriend.id ? updatedFriend : friend
+      );
+    });
+  }; 
+
   return (
-    <FriendListContext.Provider value={value}>
+    <FriendListContext.Provider value={{
+      friendList,
+      setFriendList,
+      addToFriendList,
+      removeFromFriendList,
+      updateFriend
+    }}>
       {children}
     </FriendListContext.Provider>
   );

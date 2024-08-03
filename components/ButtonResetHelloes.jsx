@@ -6,6 +6,7 @@ import { useAuthUser } from '../context/AuthUserContext';
 import ButtonToggleSize from '../components/ButtonToggleSize'; // Adjust the path as needed
 import AlertConfirm from '../components/AlertConfirm';
 import AlertSuccessFail from '../components/AlertSuccessFail';
+
 import LoadingPage from '../components/LoadingPage';
 import ByeSvg from '../assets/svgs/bye.svg';
 import { remixAllNextHelloes } from '../api'; // Ensure correct import
@@ -13,6 +14,7 @@ import { remixAllNextHelloes } from '../api'; // Ensure correct import
 const ButtonResetHelloes = ({ title, onPress, confirmationAlert = true }) => {
     const { setUpdateTrigger } = useUpcomingHelloes(); // Removed unused variables
     const [isModalVisible, setModalVisible] = useState(false);
+    
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isFailModalVisible, setFailModalVisible] = useState(false);
     

@@ -37,15 +37,15 @@ export const UpcomingHelloesProvider = ({ children }) => {
         }
     }, [authUserState.authenticated, updateTrigger]); // Include updateTrigger in dependencies
 
-    const value = {
-        upcomingHelloes,
-        isLoading,
-        updateTrigger, 
-        setUpdateTrigger,  
-    };
 
     return (
-        <UpcomingHelloesContext.Provider value={value}>
+        <UpcomingHelloesContext.Provider value={{
+            upcomingHelloes,
+            isLoading,
+            updateTrigger, 
+            setUpdateTrigger,  
+            
+        }}>
             {children}
         </UpcomingHelloesContext.Provider>
     );

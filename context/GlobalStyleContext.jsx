@@ -116,13 +116,24 @@ const lightThemeStyles = StyleSheet.create({
         backgroundColor: 'gray',
     },
     footerText: {
+        fontFamily: 'Poppins-Bold',
+        fontSize: 14,
+        color: 'black',
+    }, 
+    footerIcon: {
         color: 'black',
     },
+    header: {
+        backgroundColor: 'white',
+        borderBottomColor: 'gray',
+        borderBottomWidth: 1,
+      },
+      headerTextColor: 'black',
 });
 
 const darkThemeStyles = StyleSheet.create({
     container: {
-        backgroundColor: '#333',
+        backgroundColor: '#001a00',
         shadowColor: '#000000',
         shadowOffset: { width: 0, height: -5 },
         shadowOpacity: 0.8,
@@ -133,8 +144,20 @@ const darkThemeStyles = StyleSheet.create({
         backgroundColor: 'lightgray',
     },
     footerText: {
+        fontFamily: 'Poppins-Bold',
+        fontSize: 14,
+        color: 'white',
+    }, 
+    footerIcon: {
         color: 'white',
     },
+    header: {
+        backgroundColor: '#222',
+        borderBottomColor: 'darkgray',
+        borderBottomWidth: 1,
+        borderBottomColor: 'lightgray',
+      },
+      headerTextColor: 'white',
 });
 
 export default GlobalStyleProvider;

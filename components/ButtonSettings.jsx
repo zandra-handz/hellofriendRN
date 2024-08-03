@@ -5,6 +5,7 @@ import ActionPageBase from './ActionPageBase'; // Import ActionPageBase
 import SectionAccessibilitySettings from './SectionAccessibilitySettings'; // Import SectionAccessibilitySettings
 import SectionFriendSettings from './SectionFriendSettings'; // Import SectionAccessibilitySettings
 import SectionAccountSettings from './SectionAccountSettings'; // Import SectionAccessibilitySettings
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 
 
@@ -17,6 +18,7 @@ const ButtonSettings = () => {
     setModalVisible(!isModalVisible);
   };
 
+  const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); // Get authUserState from context
 
   React.useEffect(() => {
@@ -37,8 +39,8 @@ const ButtonSettings = () => {
   return (
     <>
       <TouchableOpacity style={styles.section} onPress={toggleModal}>
-        <Icon name="settings" size={24} color="black" />
-        <Text style={styles.footerText}>Settings</Text>
+        <Icon name="settings" size={24} style={themeStyles.footerIcon} />
+        <Text style={themeStyles.footerText}>Settings</Text>
       </TouchableOpacity>
 
       <ActionPageBase

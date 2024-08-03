@@ -10,15 +10,12 @@ import { LocationListProvider } from './context/LocationListContext';
 import { UpcomingHelloesProvider } from './context/UpcomingHelloesContext';
 import { CapsuleListProvider } from './context/CapsuleListContext';
 import { ImageListProvider } from './context/ImageListContext';
-import ArrowBackSharpOutlineSvg from './assets/svgs/arrow-back-sharp-outline.svg';
-
-
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SelectedFriendProvider } from './context/SelectedFriendContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font'; // Import expo-font
+import { useGlobalStyle } from './context/GlobalStyleContext';
 
 // Import screens and components
-import SpeedFabView from './speeddial/SpeedFabView';
 import FriendSelect from './data/FriendSelect';
 import HelloFriendHeader from './components/HelloFriendHeader';
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
@@ -26,12 +23,8 @@ import ScreenDefaultActionMode from './screens/ScreenDefaultActionMode';
 import ScreenMoments from './screens/ScreenMoments';
 import ScreenImages from './screens/ScreenImages';
 import ScreenLocations from './screens/ScreenLocations';
-
 import ScreenLocationSearch from './screens/ScreenLocationSearch';
-
 import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch';
-
-
 import Tabs from './components/Tabs';
 import Signin from './screens/Signin';
 import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
@@ -40,17 +33,12 @@ async function loadFonts() {
   await Font.loadAsync({
     'Poppins-Light': require('./assets/fonts/Poppins-Light.ttf'),
     'Pacifico-Regular': require('./assets/fonts/Pacifico-Regular.ttf'),
-    
   });
 }
 
 const Stack = createNativeStackNavigator();
 
-
 export default function App() {
-  const { onSignOut } = useAuthUser();
-
-
   useEffect(() => {
     loadFonts();
   }, []);
@@ -62,15 +50,13 @@ export default function App() {
           <UpcomingHelloesProvider>
             <FriendListProvider>
               <SelectedFriendProvider>
-              
                 <CapsuleListProvider>
                   <ImageListProvider>
-                  <LocationListProvider>
-                      <Layout/>
+                    <LocationListProvider>
+                      <Layout />
                     </LocationListProvider>
                   </ImageListProvider> 
                 </CapsuleListProvider>
-               
               </SelectedFriendProvider>
             </FriendListProvider>
           </UpcomingHelloesProvider>
@@ -80,8 +66,8 @@ export default function App() {
   );
 }
 
-
 export const Layout = () => {
+  const { themeStyles } = useGlobalStyle(); 
   const { authUserState, onSignOut } = useAuthUser();
 
   const handleSignOutPress = () => {
@@ -93,7 +79,9 @@ export const Layout = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          headerShown: true, 
+          headerShown: true,
+          headerStyle: themeStyles.header, // Apply theme styles to header
+          headerTintColor: themeStyles.headerTextColor,  
           cardStyle: { backgroundColor: 'transparent' }, 
           cardStyleInterpolator: ({ current: { progress } }) => ({
             cardStyle: {
@@ -122,7 +110,6 @@ export const Layout = () => {
                 component={ScreenDefaultActionMode}
                 options={{
                   headerShown: true,
-                  
                 }}
               />
               <Stack.Screen
@@ -145,8 +132,7 @@ export const Layout = () => {
                 component={ScreenFriendFocus}
                 options={{
                   headerShown: true,
-                  title: 'View friend', 
-
+                  title: 'View friend',
                 }}
               />
               <Stack.Screen
@@ -154,8 +140,7 @@ export const Layout = () => {
                 component={ScreenMoments}
                 options={{
                   headerShown: true,
-                  title: 'All moments', 
-
+                  title: 'All moments',
                 }}
               />
               <Stack.Screen
@@ -163,8 +148,7 @@ export const Layout = () => {
                 component={ScreenImages}
                 options={{
                   headerShown: true,
-                  title: 'All images', 
-
+                  title: 'All images',
                 }}
               />
               <Stack.Screen
@@ -172,8 +156,7 @@ export const Layout = () => {
                 component={ScreenLocations}
                 options={{
                   headerShown: true,
-                  title: 'All locations', 
-
+                  title: 'All locations',
                 }}
               />
               <Stack.Screen
@@ -181,8 +164,7 @@ export const Layout = () => {
                 component={ScreenLocationSearch}
                 options={{
                   headerShown: true,
-                  title: 'Search locations', 
-
+                  title: 'Search locations',
                 }}
               />
               <Stack.Screen
@@ -190,8 +172,7 @@ export const Layout = () => {
                 component={ScreenMidpointLocationSearch}
                 options={{
                   headerShown: true,
-                  title: 'Find midpoint locations', 
-
+                  title: 'Find midpoint locations',
                 }}
               />
             </>

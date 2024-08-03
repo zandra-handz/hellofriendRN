@@ -6,18 +6,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import SwitchUsersSvg from '../assets/svgs/switch-users.svg';
+import RefreshFriendSvg from '../assets/svgs/refresh-friend.svg';
+import PersonalConnectionsSvg from '../assets/svgs/personal-connections.svg';
 import SwitchRedSvg from '../assets/svgs/switch-red.svg';
 import SwitchPlainSolidSvg from '../assets/svgs/switch-plain-solid.svg';
+
 
 
 const ButtonLottieAnimationTwoSections = ({
   onPress,
   headerText = '',
   label,
+  labeltwo,
   additionalText = '',
   animationSource,
   rightSideAnimation = false,
-  preLabelFontSize = 36,
+  preLabelFontSize = 28,
   preLabelColor = 'white',
   labelFontSize = 16,
   labelColor = 'black',
@@ -142,7 +146,10 @@ const ButtonLottieAnimationTwoSections = ({
             ]}
             onPress={() => satelliteOnPress(satelliteHellos[i])}
           >
-            <SwitchPlainSolidSvg height={42} width={42} color="black"/>
+            <View style={{marginBottom: 11, borderWidth: 0, borderRadius: 50, padding: 10, borderColor: 'pink'}}>
+              <PersonalConnectionsSvg height={58} width={58} color="black"/>
+            </View>
+            
           </TouchableOpacity>
         );
       }
@@ -213,12 +220,14 @@ const ButtonLottieAnimationTwoSections = ({
                   <Text
                     style={[
                       textStyles(preLabelFontSize, preLabelColor),
-                      { fontFamily: 'Poppins-Regular', marginBottom: -6 },
+                      { fontFamily: 'Poppins-Bold', width: '70%', marginBottom: -6 },
                     ]}
+                    numberOfLines={1} // Ensure text does not wrap
+                    ellipsizeMode='tail' // Display ellipsis at the end
                   >
                     {headerText}
                   </Text>
-                  <View style={{ flexDirection: 'row' }}>
+                  <View style={{ flexDirection: 'column' }}>
                     {rightSideAnimation ? (
                       <>
                         <Text
@@ -255,10 +264,18 @@ const ButtonLottieAnimationTwoSections = ({
                         <Text
                           style={[
                             textStyles(labelFontSize, labelColor),
+                            { fontFamily: 'Poppins-Regular', marginBottom: -6, },
+                          ]}
+                        >
+                          {label} 
+                        </Text>
+                        <Text
+                          style={[
+                            textStyles(labelFontSize, labelColor),
                             { fontFamily: 'Poppins-Regular' },
                           ]}
                         >
-                          {label}
+                          {labeltwo}
                         </Text>
                       </>
                     )}

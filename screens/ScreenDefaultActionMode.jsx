@@ -8,6 +8,7 @@ import QuickAddThought from '../speeddial/QuickAddThought';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
 import ButtonLottieAnimationSatellites from '../components/ButtonLottieAnimationSatellites'; // Make sure to import the correct component
 import ActionPageSettings from '../components/ActionPageSettings';
@@ -16,6 +17,9 @@ import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 
 const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
+  
+  const { themeStyles } = useGlobalStyle(); 
+
   const { authUserState } = useAuthUser();
   const { selectedFriend } = useSelectedFriend();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
@@ -30,7 +34,7 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   const openModalSettings = () => setModalSettingsVisible(true);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, themeStyles.container]}>
       {isLoading && (
         <View style={styles.loadingTextContainer}>
         <Text style={styles.loadingTextBold}>Welcome back, {authUserState.user.username}!</Text>
@@ -249,6 +253,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0', 
+    backgroundColor: 'black',
   },
   loadingTextContainer: {
     flex: 1, 

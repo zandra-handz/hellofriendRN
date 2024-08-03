@@ -7,6 +7,8 @@ import ButtonResetHelloes from '../components/ButtonResetHelloes';
 import ButtonManageFriends from '../components/ButtonManageFriends';
 import AlertMicro from '../components/AlertMicro'; // Assuming AlertMicro component is located here
 
+import PersonalConnectionsSvg from '../assets/svgs/personal-connections.svg';
+
 const SectionFriendSettings = () => {
   const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
   const [highContrastMode, setHighContrastMode] = useState(false);
@@ -28,8 +30,8 @@ const SectionFriendSettings = () => {
         <Text style={styles.label}>Manage friends</Text> 
         <ButtonManageFriends />
       </View>  
-      <View style={styles.row}>
-        <FontAwesome5 name="recycle" size={20} color="black" style={styles.icon} />
+      <View style={styles.row}> 
+        <FontAwesome5 name="recycle" size={22} color="black" style={styles.icon} />
         <Text style={styles.label}>Reset All</Text> 
         <ButtonResetHelloes />
       </View> 

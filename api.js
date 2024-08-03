@@ -404,9 +404,9 @@ export const saveHello = async (requestData) => {
 
 
 
-export const deleteThoughtCapsule = async (capsuleId) => {
+export const deleteThoughtCapsule = async (friendId, capsuleId) => {
     try {
-        const response = await axios.delete(`/thoughtcapsules/${capsuleId}/`);
+        const response = await axios.delete(`/friends/${friendId}/thoughtcapsules/${capsuleId}/`);
         return response.data;
     } catch (error) {
         console.error('Error deleting thought capsule:', error);
@@ -523,6 +523,18 @@ export const createFriend = async (friendData) => {
         throw error;
     }
 };
+
+export const deleteFriend = async (friendId) => {
+
+    try {
+        const response = await axios.delete(`/friends/${friendId}/info/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting friend:', error);
+        throw error;
+    }
+};
+
 
 
 export const updateFriendSugSettings = async (SugSettingsData) => {
