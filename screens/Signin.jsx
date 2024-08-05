@@ -1,16 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useAuthUser } from '../context/AuthUserContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonColorHighlight from '../components/ButtonColorHighlight';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import LoadingPage from '../components/LoadingPage';
-
+import LoadingPage from '../components/LoadingPage'; 
 import Logo from '../components/Logo'; // Import the Logo component
+import { LinearGradient } from 'expo-linear-gradient'; 
 
 const Signin = () => {
+  const { themeStyles, gradientColors } = useGlobalStyle();
+  const { darkColor, lightColor } = gradientColors;
+
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -103,8 +107,14 @@ const Signin = () => {
     return null; // Or any other loading indicator if fonts are not yet loaded
   }
 
-  return (
-    <View style={styles.container}>
+  return ( 
+        <LinearGradient
+          colors={[darkColor, lightColor]} // Gradient colors
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }} // Direction of the gradient
+          style={[styles.container, themeStyles.signinContainer]}
+        >
+       
       {loading && (
         <LoadingPage loading={loading} spinnerType='circle' />
       )}
@@ -114,9 +124,7 @@ const Signin = () => {
             shapeSource={require('../assets/shapes/lizard.png')}
             shapePosition="right"
             shapePositionValue={50}
-            shapePositionVerticalValue={-30}
-            fontColor="black" // Customize font color here
-            shapeColor="black" // Customize shape color here
+            shapePositionVerticalValue={-30}  
             shapeHeight={100}
             shapeWidth={100}
             accessible={true}
@@ -124,7 +132,7 @@ const Signin = () => {
             accessibilityHint="This is the logo of the app"
           />
           <Text
-            style={styles.appDescription}
+            style={[styles.appDescription, themeStyles.signInAppDescription]}
             accessible={true}
             accessibilityLabel="App description"
             accessibilityHint="Description of the app functionality"
@@ -144,8 +152,9 @@ const Signin = () => {
           <View style={styles.form} accessible={true} accessibilityLabel="Form container">
             {!isSignIn && (
               <TextInput
-                style={[styles.input, isEmailFocused && styles.inputFocused]}
+                style={[styles.input, themeStyles.signinInput, isEmailFocused && styles.inputFocused]}
                 placeholder="Email"
+                placeholderTextColor={themeStyles.signinInput.placeholderTextColor} 
                 onChangeText={(text) => setEmail(text)}
                 value={email}
                 onSubmitEditing={handleEmailSubmit}
@@ -159,8 +168,9 @@ const Signin = () => {
               />
             )}
             <TextInput
-              style={[styles.input, isUsernameFocused && styles.inputFocused]}
+              style={[styles.input, themeStyles.signinInput, isUsernameFocused && styles.inputFocused]}
               placeholder="Username"
+              placeholderTextColor={themeStyles.signinInput.placeholderTextColor} 
               onChangeText={(text) => setUsername(text)}
               value={username}
               onSubmitEditing={handleUsernameSubmit}
@@ -173,8 +183,9 @@ const Signin = () => {
               importantForAccessibility="yes"
             />
             <TextInput
-              style={[styles.input, isPasswordFocused && styles.inputFocused]}
+              style={[styles.input, themeStyles.signinInput, isPasswordFocused && styles.inputFocused]}
               placeholder="Password"
+              placeholderTextColor={themeStyles.signinInput.placeholderTextColor} 
               secureTextEntry={true}
               onChangeText={(text) => setPassword(text)}
               value={password}
@@ -188,8 +199,9 @@ const Signin = () => {
             />
             {!isSignIn && (
               <TextInput
-                style={[styles.input, isPasswordFocused && styles.inputFocused]}
+                style={[styles.input, themeStyles.signinInput, isPasswordFocused && styles.inputFocused]}
                 placeholder="Verify Password"
+                placeholderTextColor={themeStyles.signinInput.placeholderTextColor} 
                 secureTextEntry={true}
                 onChangeText={(text) => setVerifyPassword(text)}
                 value={verifyPassword}
@@ -253,7 +265,9 @@ const Signin = () => {
           </View>
         </>
       )}
-    </View>
+         
+      </LinearGradient> 
+       
   );
 };
 
@@ -297,9 +311,9 @@ const styles = StyleSheet.create({
   appDescription: {
     textAlign: 'center',
     marginBottom: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 20, 
+    fontSize: 16,
     fontFamily: 'Poppins-Regular',
-    fontSize: 18,
   },
   toggleButton: {
     color: 'black',

@@ -2,19 +2,23 @@ import React, { useState } from 'react';
 import { FlatList, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
+
 import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext';
 import ButtonToggleSize from '../components/ButtonToggleSize'; // Adjust the path as needed
 import AlertConfirm from '../components/AlertConfirm';
 import AlertList from '../components/AlertList';
 import AlertSuccessFail from '../components/AlertSuccessFail';
+
 import LoadingPage from '../components/LoadingPage';
+
 import ByeSvg from '../assets/svgs/bye.svg';
 import { remixAllNextHelloes } from '../api'; // Ensure correct import
 import RowItemFriend from '../components/RowItemFriend';
 
 const ButtonManageFriends = ({ title, onPress, confirmationAlert = true }) => {
     const { setUpdateTrigger } = useUpcomingHelloes(); // Removed unused variables
+    
     const { friendList, setFriendList, removeFromFriendList, updateFriend } = useFriendList();
     const [isModalVisible, setModalVisible] = useState(false);
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);

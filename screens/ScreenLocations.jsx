@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
 import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
+
 import ButtonSearchGoogleMap from '../components/ButtonSearchGoogleMap';
 import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
+
 import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
 
 import { useLocationList } from '../context/LocationListContext';

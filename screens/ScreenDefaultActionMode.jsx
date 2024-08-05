@@ -6,10 +6,13 @@ import QuickAddHello from '../speeddial/QuickAddHello';
 import QuickAddImage from '../speeddial/QuickAddImage';
 import QuickAddThought from '../speeddial/QuickAddThought';
 import { useAuthUser } from '../context/AuthUserContext';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
+import ActionScreenButtonAddFriend from '../components/ActionScreenButtonAddFriend';
+
 import ButtonLottieAnimationSatellites from '../components/ButtonLottieAnimationSatellites'; // Make sure to import the correct component
 import ActionPageSettings from '../components/ActionPageSettings';
 import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; // Import the new component
@@ -32,6 +35,11 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   const openModal2 = () => setModal2Visible(true);
   const openModal3 = () => setModal3Visible(true);
   const openModalSettings = () => setModalSettingsVisible(true);
+
+  const navigateToAddFriendScreen = () => {
+    navigation.navigate('AddFriend');
+
+};
 
   return (
     <View style={[styles.container, themeStyles.container]}>
@@ -195,52 +203,10 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
           shapeHeight={170} 
         />
         {!selectedFriend && (
-          <ButtonLottieAnimation
-            onPress={openModalSettings}
-            label="FRIEND"
-            animationSource={require("../assets/anims/goldspinningstar.json")}
-            rightSideAnimation={false}
-            labelFontSize={30}
-            labelColor="white"
-            fontMargin={3}
-            animationWidth={80}
-            animationHeight={80}
-            labelContainerMarginHorizontal={-6}
-            animationMargin={20}
-            animationSource={require("../assets/anims/heartsinglecircle.json")}
-            rightSideAnimation={false}
-            labelFontSize={30}
-            labelColor="white"
-            animationWidth={240}
-            animationHeight={240}
-            labelContainerMarginHorizontal={4}
-            animationMargin={-68}
-            shapeSource={require("../assets/shapes/redeyedlizard.png")}
-            shapeWidth={150}
-            shapeHeight={150}
-            shapePosition="right"
-            shapePositionValue={-20}
-
-            shapeSource={require("../assets/shapes/pinkflower.png")}
-            shapeWidth={440}
-            shapeHeight={440}
-            shapePositionValue={-310}
-
-            shapeSource={require("../assets/shapes/butterfly.png")}
-            shapeWidth={360}
-            shapeHeight={360}
-            shapePositionValueVertical={-10}
-            shapePositionValue={-90}
-
-            shapeSource={require("../assets/shapes/yellowleaves.png")}
-            shapeWidth={200}
-            shapeHeight={200}
-            shapePositionValueVertical={-20}
-            shapePositionValue={-55}
-            showIcon={false}
-          />
+          <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} />
         )}
       </View>
+
       
       <HelloFriendFooter />
     </>

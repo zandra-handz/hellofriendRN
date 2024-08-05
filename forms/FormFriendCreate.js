@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import api from '../api';
-import useFriendList from '../hooks/UseFriendList'; // Import hook to access friendList state
+import { useFriendList } from '../context/FriendListContext'; // Import hook to access friendList state
 
 function FormFriendCreate() {
     const [friendName, setFriendName] = useState('');

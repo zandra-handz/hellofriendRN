@@ -60,6 +60,7 @@ const ScreenOnboardingTwo = ({ onChange }) => {
                         inputRef={inputRef}
                         value={friendName}
                         onChangeText={handleFriendNameChange}
+                        
                         placeholder="Friend's Name"
                         maxLength={30} // Limit to 30 characters
                         onSubmitEditing={handleSubmitEditing}

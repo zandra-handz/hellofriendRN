@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const Logo = ({
   shapeSource,
@@ -8,9 +10,10 @@ const Logo = ({
   shapePosition = 'left',
   shapePositionValue = 0,
   shapePositionVerticalValue = 0,
-  fontColor = 'black', // Default font color
-  shapeColor = 'transparent', // Default shape color
 }) => {
+  const { themeStyles, gradientColors } = useGlobalStyle();
+  const { darkColor, lightColor } = gradientColors;
+
   const getShapeStyle = () => {
     let positionStyle = {};
     switch (shapePosition) {
@@ -36,18 +39,21 @@ const Logo = ({
       <Image
         source={shapeSource}
         style={[
-          styles.shape,
-          { width: shapeWidth, height: shapeHeight, tintColor: shapeColor }, // Apply shape color
+          styles.shape, themeStyles.logoShape,
+          { width: shapeWidth, height: shapeHeight }, // Apply shape color
           getShapeStyle()
         ]}
         resizeMode="contain"
       />
       <View style={styles.titleContainer}>
-        <Text style={[styles.titleOutline, styles.titleOutlineTopLeft]}>hellofr::nd</Text>
-        <Text style={[styles.titleOutline, styles.titleOutlineTopRight]}>hellofr::nd</Text>
-        <Text style={[styles.titleOutline, styles.titleOutlineBottomLeft]}>hellofr::nd</Text>
-        <Text style={[styles.titleOutline, styles.titleOutlineBottomRight]}>hellofr::nd</Text>
-        <Text style={[styles.title, { color: fontColor }]}>hellofr::nd</Text>
+        <Text style={[  themeStyles.logoTextOutline, styles.titleOutlineTopLeft]}>hellofr::nd</Text>
+        <Text style={[  themeStyles.logoTextOutline, styles.titleOutlineTopRight]}>hellofr::nd</Text>
+        <Text style={[  themeStyles.logoTextOutline, styles.titleOutlineBottomLeft]}>hellofr::nd</Text>
+        <Text style={[ themeStyles.logoTextOutline, styles.titleOutlineBottomRight]}>hellofr::nd</Text>
+
+          <Text style={[styles.title, themeStyles.logoText ]}>
+            hellofr::nd
+          </Text> 
       </View>
     </View>
   );
@@ -66,16 +72,16 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   title: {
-    fontSize: 62,
+    fontSize: 64,
     fontFamily: 'Poppins-Bold',
     textAlign: 'center',
     backgroundColor: 'transparent', // Transparent background
+    padding: .4, // Adjust padding as needed to fit the text
   },
   titleOutline: {
-    position: 'absolute',
-    fontSize: 62,
+    position: 'absolute', 
     fontFamily: 'Poppins-Bold',
-    color: 'white',
+    fontSize: 64,
   },
   titleOutlineTopLeft: {
     left: -1,
@@ -92,6 +98,15 @@ const styles = StyleSheet.create({
   titleOutlineBottomRight: {
     right: -1,
     bottom: -1,
+  },
+  gradientTextContainer: {
+    // Ensure container has the same size as the text
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gradientText: {
+    // Apply necessary styles here if needed
+    backgroundColor: 'transparent', // Ensure no background
   },
 });
 

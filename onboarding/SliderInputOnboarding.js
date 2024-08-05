@@ -15,8 +15,8 @@ const SliderInputOnboarding = ({ value, onValueChange, min, max, messages, label
                 value={value}
                 onValueChange={onValueChange}
                 step={1}
-                thumbTintColor="#39f0df" // Set the thumb color to teal
-                minimumTrackTintColor="#39f0df" // Set the track color to teal
+                thumbTintColor="limegreen" // Old: "#39f0df"  Set the thumb color to teal
+                minimumTrackTintColor="limegreen" // Old: "#39f0df"  Set the track color to teal
             />
             {selectedMessage && <Text style={styles.value}>{selectedMessage}</Text>}
         </View>
@@ -39,7 +39,9 @@ const styles = StyleSheet.create({
         
     },
     slider: {
-        marginHorizontal: 0, 
+        marginHorizontal: 0,  
+        marginBottom: 20,
+        marginTop: 6,
     },
     value: {
         fontSize: 16,

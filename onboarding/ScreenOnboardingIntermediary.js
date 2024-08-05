@@ -25,8 +25,8 @@ const ScreenOnboardingIntermediary = ({ finalizingData, resetFinalizingData }) =
             const formattedDate = new Date(finalizingData.friendDate).toISOString().split('T')[0];
             const postData = {
                 name: finalizingData.friendName,
-                first_name: 'John', 
-                last_name: 'Doe', 
+                first_name: 'Add First Name', 
+                last_name: 'Add Last Name', 
                 first_meet_entered: formattedDate,
                 friendEffort: finalizingData.friendEffort,
                 friendPriority: finalizingData.friendPriority

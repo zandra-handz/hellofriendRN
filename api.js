@@ -197,6 +197,7 @@ export const updateUserProfile = async (userId, firstName, lastName, dateOfBirth
 export const fetchFriendDashboard = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/dashboard/`);
+        console.log('fetchFriendDashboard Id sent:', friendId);
         return response.data;
     } catch (error) {
         console.error('Error fetching friend dashboard data:', error);

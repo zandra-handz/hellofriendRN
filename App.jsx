@@ -28,6 +28,7 @@ import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch
 import Tabs from './components/Tabs';
 import Signin from './screens/Signin';
 import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
+import ScreenAddFriend from './screens/ScreenAddFriend';
 
 async function loadFonts() {
   await Font.loadAsync({
@@ -173,6 +174,14 @@ export const Layout = () => {
                 options={{
                   headerShown: true,
                   title: 'Find midpoint locations',
+                }}
+              />
+                            <Stack.Screen
+                name="AddFriend"
+                component={ScreenAddFriend}
+                options={{
+                  headerShown: true,
+                  title: 'Add new friend',
                 }}
               />
             </>
