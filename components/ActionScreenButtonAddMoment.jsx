@@ -3,61 +3,41 @@ import { View, StyleSheet } from 'react-native';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
+const ActionScreenButtonAddMoment = ({ onPress }) => {
 
-const ActionScreenButtonAddFriend = ({ onPress }) => {
-
-    const { themeStyles } = useGlobalStyle();  
 
     return (
         <View style={styles.container}>
             <ButtonLottieAnimation
             onPress={onPress}
-            label="FRIEND"
-            animationSource={require("../assets/anims/goldspinningstar.json")}
-            rightSideAnimation={false}
-            labelFontSize={30}
-            labelColor="white"
+            label="MOMENT"
             fontMargin={3}
-            animationWidth={80}
-            animationHeight={80}
-            labelContainerMarginHorizontal={-6}
-            animationMargin={20}
-            animationSource={require("../assets/anims/heartsinglecircle.json")}
+            animationSource={require("../assets/anims/heartinglobe.json")}
             rightSideAnimation={false}
             labelFontSize={30}
             labelColor="white"
-            animationWidth={240}
-            animationHeight={240}
+            animationWidth={234}
+            animationHeight={234}
             labelContainerMarginHorizontal={4}
-            animationMargin={-68}
-            shapeSource={require("../assets/shapes/redeyedlizard.png")}
-            shapeWidth={150}
-            shapeHeight={150}
+            animationMargin={-64}
             shapePosition="right"
-            shapePositionValue={-20}
-
-            shapeSource={require("../assets/shapes/pinkflower.png")}
+            shapeSource={require("../assets/shapes/rainbowleaf.png")}
+            shapeWidth={240}
+            shapeHeight={240}
+            shapePositionValue={-104}
+            shapeSource={require("../assets/shapes/magicstars.png")}
             shapeWidth={440}
             shapeHeight={440}
-            shapePositionValue={-310}
-
-            shapeSource={require("../assets/shapes/butterfly.png")}
-            shapeWidth={360}
-            shapeHeight={360}
-            shapePositionValueVertical={-10}
-            shapePositionValue={-90}
-
-            shapeSource={require("../assets/shapes/yellowleaves.png")}
-            shapeWidth={200}
-            shapeHeight={200}
-            shapePositionValueVertical={-20}
-            shapePositionValue={-55}
+            shapePositionValue={-44}
+            shapePositionValueVertical={-120}
+            shapeSource={require("../assets/shapes/fairymagic.png")}
+            shapeWidth={540}
+            shapeHeight={540}
+            shapePositionValue={-244}
+            shapePositionValueVertical={-140}
             showIcon={false}
-          />
-
-
+            />
         </View>
-
     );
   };
   
@@ -112,5 +92,5 @@ const ActionScreenButtonAddFriend = ({ onPress }) => {
     },
   });
   
-  export default ActionScreenButtonAddFriend;
+  export default ActionScreenButtonAddMoment;
   

@@ -62,8 +62,11 @@ const ActionPageUpcomingButton = ({ onPress }) => {
   };
 
   const handlePress = (hello) => {
-    const { id, friend_name } = hello; 
-    const selectedFriend = id === null ? null : { id, name: friend_name }; 
+    const { id, name } = hello.friend; 
+   
+    console.log(id);
+    console.log(hello.id);
+    const selectedFriend = id === null ? null : { id: id, name: name }; 
     setFriend(selectedFriend);
     navigation.navigate('FriendFocus');
     console.log('ALL!!', hello);
@@ -79,7 +82,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             isLoading={isLoading} 
             navigateToFirstPage={navigateToFirstPage}
             headerText={mainHello ? 'UP NEXT' : ''}
-            label={mainHello ? mainHello.friend_name : `Hi ${authUserState.user.username}!`}
+            label={mainHello ? mainHello.friend.name : `Hi ${authUserState.user.username}!`}
             additionalText={mainHello ? mainHello.future_date_in_words : ''}
             
             fontMargin={3}

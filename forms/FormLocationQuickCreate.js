@@ -12,6 +12,7 @@ const FormLocationQuickCreate = ({ onLocationCreate, title, address }) => {
   const { locationList, setLocationList, selectedLocation, setSelectedLocation } = useLocationList();
 
   const [personalExperience, setPersonalExperience] = useState('');
+  const [customTitle, setCustomTitle] = useState(null);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
 
@@ -23,11 +24,15 @@ const FormLocationQuickCreate = ({ onLocationCreate, title, address }) => {
   };
 
   const handleSubmit = async () => {
+
+    const trimmedCustomTitle = customTitle?.trim() || null;
+
     try {
       const locationData = {
         friends: selectedFriends.map(id => Number(id)),
         title: title,
         address: address,
+        custom_title: trimmedCustomTitle,
         personal_experience_info: personalExperience,
         user: authUserState.user.id, 
       };
@@ -65,6 +70,18 @@ const FormLocationQuickCreate = ({ onLocationCreate, title, address }) => {
       {showSaveMessage && <Text style={styles.saveMessage}>Location saved successfully!</Text>}
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.address}>{address}</Text>
+
+
+      <TextInput
+        style={[styles.input]}
+        value={customTitle}
+        onChangeText={setCustomTitle}
+        placeholder='Custom Title'
+        multiline
+        numberOfLines={4}
+      />
+
+
 
       <TextInput
         style={[styles.input, styles.textArea]}

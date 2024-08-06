@@ -28,6 +28,8 @@ import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch
 import Tabs from './components/Tabs';
 import Signin from './screens/Signin';
 import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
+
+import ScreenAddMoment from './screens/ScreenAddMoment';
 import ScreenAddFriend from './screens/ScreenAddFriend';
 
 async function loadFonts() {
@@ -176,7 +178,15 @@ export const Layout = () => {
                   title: 'Find midpoint locations',
                 }}
               />
-                            <Stack.Screen
+              <Stack.Screen
+                name="AddMoment"
+                component={ScreenAddMoment}
+                options={{
+                  headerShown: true,
+                  title: 'Add new moment',
+                }}
+              />
+              <Stack.Screen
                 name="AddFriend"
                 component={ScreenAddFriend}
                 options={{

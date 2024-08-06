@@ -4,10 +4,12 @@ import * as ImagePicker from 'expo-image-picker';
 import { createFriendImage } from '../api'; // Import your API function
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useImageList } from '../context/ImageListContext';
 
 const QuickAddImage = () => {
   const { authUserState } = useAuthUser();
   const { selectedFriend } = useSelectedFriend();
+  const { setUpdateImagesTrigger } = useImageList();
   const [imageUri, setImageUri] = useState(null);
   const [title, setTitle] = useState('');
   const [imageCategory, setImageCategory] = useState('Misc');
@@ -87,6 +89,7 @@ const QuickAddImage = () => {
         setImageUri(null);
         setTitle('');
         setImageCategory('Misc');
+        setUpdateImagesTrigger(prev => !prev); 
         // Handle success as needed
       } catch (error) {
         console.error('Error creating image:', error);

@@ -3,7 +3,7 @@ import FormLocationQuickCreate from '../forms/FormLocationQuickCreate'; // Impor
 
 const InputAddLocationQuickSave = ({ onClose, friends, title, address }) => {
   return (
-    <FormLocationQuickCreate onLocationCreate={onClose} friends={friends} title={title} address={address} />
+    <FormLocationQuickCreate onLocationCreate={onClose} friends={friends} title={title} address={address}  />
   );
 };
 

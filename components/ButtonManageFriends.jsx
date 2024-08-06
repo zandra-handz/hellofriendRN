@@ -21,6 +21,7 @@ const ButtonManageFriends = ({ title, onPress, confirmationAlert = true }) => {
     
     const { friendList, setFriendList, removeFromFriendList, updateFriend } = useFriendList();
     const [isModalVisible, setModalVisible] = useState(false);
+    
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isFailModalVisible, setFailModalVisible] = useState(false);
     

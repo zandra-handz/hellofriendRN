@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import ModalGen from '../components/ModalGen';
 import FriendSelect from '../data/FriendSelect';
+
 import QuickAddHello from '../speeddial/QuickAddHello';
 import QuickAddImage from '../speeddial/QuickAddImage';
 import QuickAddThought from '../speeddial/QuickAddThought';
@@ -11,6 +12,10 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
+
+import ActionScreenButtonAddMoment from '../components/ActionScreenButtonAddMoment';
+import ActionScreenButtonAddImage from '../components/ActionScreenButtonAddImage';
+import ActionScreenButtonAddHello from '../components/ActionScreenButtonAddHello';
 import ActionScreenButtonAddFriend from '../components/ActionScreenButtonAddFriend';
 
 import ButtonLottieAnimationSatellites from '../components/ButtonLottieAnimationSatellites'; // Make sure to import the correct component
@@ -36,9 +41,13 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   const openModal3 = () => setModal3Visible(true);
   const openModalSettings = () => setModalSettingsVisible(true);
 
+
+  const navigateToAddMomentScreen = () => {
+    navigation.navigate('AddMoment');
+};
+
   const navigateToAddFriendScreen = () => {
     navigation.navigate('AddFriend');
-
 };
 
   return (
@@ -107,107 +116,14 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 
       <View style={styles.buttonContainer}>
         <ActionPageUpcomingButton/>
-        
-        <ButtonLottieAnimation
-          onPress={openModal3}
-          label="MOMENT"
-          fontMargin={3}
-          animationSource={require("../assets/anims/heartinglobe.json")}
-          rightSideAnimation={false}
-          labelFontSize={30}
-          labelColor="white"
-          animationWidth={234}
-          animationHeight={234}
-          labelContainerMarginHorizontal={4}
-          animationMargin={-64}
-          shapePosition="right"
-          shapeSource={require("../assets/shapes/rainbowleaf.png")}
-          shapeWidth={240}
-          shapeHeight={240}
-          shapePositionValue={-104}
-          shapeSource={require("../assets/shapes/magicstars.png")}
-          shapeWidth={440}
-          shapeHeight={440}
-          shapePositionValue={-44}
-          shapePositionValueVertical={-120}
-          shapeSource={require("../assets/shapes/fairymagic.png")}
-          shapeWidth={540}
-          shapeHeight={540}
-          shapePositionValue={-244}
-          shapePositionValueVertical={-140}
+        <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
+        <ActionScreenButtonAddImage onPress={openModal2}/>
+        <ActionScreenButtonAddHello onPress={openModal1}/>
 
-
-          showIcon={false}
-        />
-        <ButtonLottieAnimation
-          onPress={openModal2}
-          label="IMAGE"
-          showIcon={false}
-          fontMargin={3}
-          animationSource={require("../assets/anims/koispinner.json")}
-          rightSideAnimation={false}
-          labelFontSize={30}
-          labelColor="white"
-          animationWidth={260}
-          animationHeight={260}
-          labelContainerMarginHorizontal={-4}
-          animationMargin={-68}
-          animationSource={require("../assets/anims/goldspinningstar.json")}
-          rightSideAnimation={false}
-          labelFontSize={30}
-          labelColor="white"
-          animationWidth={80}
-          animationHeight={80}
-          labelContainerMarginHorizontal={-6}
-          animationMargin={20}
-          shapePosition="right"
-          shapeSource={require("../assets/shapes/fernbasic.png")}
-          shapeWidth={340}
-          shapeHeight={340}
-          shapePositionValue={-136}
-
-          shapeSource={require("../assets/shapes/chatmountain.png")}
-          shapeWidth={150}
-          shapeHeight={150}
-          shapePositionValueVertical={-5}
-          shapePositionValue={-24}
-        />
-        <ButtonLottieAnimation
-          onPress={openModal1}
-          label="HELLO"
-          showIcon={false}
-          fontMargin={3}
-          animationSource={require("../assets/anims/goldspinningstar.json")}
-          rightSideAnimation={false}
-          labelFontSize={30}
-          labelColor="white"
-          animationWidth={80}
-          animationHeight={80}
-          labelContainerMarginHorizontal={-6}
-          animationMargin={20}
-          animationSource={require("../assets/anims/heartinglobe.json")}
-          rightSideAnimation={false}
-          labelFontSize={30}
-          labelColor="white"
-          animationWidth={234}
-          animationHeight={234}
-          labelContainerMarginHorizontal={4}
-          animationMargin={-64}
-          shapePosition="right"
-          shapeSource={require("../assets/shapes/happyskull.png")}
-          shapeWidth={200}
-          shapeHeight={200}
-          shapePositionValue={-50}
-          shapeSource={require("../assets/shapes/coffeecupnoheart.png")}
-          shapeWidth={170}
-          shapeHeight={170} 
-        />
         {!selectedFriend && (
           <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} />
         )}
       </View>
-
-      
       <HelloFriendFooter />
     </>
     )}
