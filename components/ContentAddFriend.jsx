@@ -27,7 +27,7 @@ const ContentAddFriend = ({ size = 14, family = 'Poppins-Regular', color = "blac
    
     const { authUserState } = useAuthUser();
     const { setUpdateTrigger } = useUpcomingHelloes(); // Removed unused variables
-    const { friendList } = useFriendList();
+    const { friendList, addToFriendList } = useFriendList();
     const [isFriendLimitReached, setIsFriendLimitReached] = useState(false);
     const [ isFriendNameUnique, setIsFriendNameUnique ] = useState(false);
     const [ isReviewModalVisible, setIsReviewModalVisible ] = useState(false);
@@ -173,6 +173,7 @@ const ContentAddFriend = ({ size = 14, family = 'Poppins-Regular', color = "blac
             console.log('postData: ', postData);
             setSaveInProgress(true);
             const friendResponse = await createFriend(postData);
+            addToFriendList(friendResponse);
             console.log(friendResponse);
 
 

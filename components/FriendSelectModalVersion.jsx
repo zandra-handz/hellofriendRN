@@ -21,15 +21,21 @@ const FriendSelectModalVersion = () => {
 
   const toggleModal = () => {
     setIsFriendMenuModalVisible(!isFriendMenuModalVisible);
+    
   };
 
   useEffect(() => {
-    if (selectedFriend && selectedFriend.name) {
-        setDisplayName(selectedFriend.name);
+    if (loadingNewFriend) {
+      setDisplayName('Switching friends...');
     } else {
-        setDisplayName('No friend selected');
+      if (selectedFriend && selectedFriend.name) {
+
+          setDisplayName(selectedFriend.name);
+      } else {
+          setDisplayName('No friend selected');
+      };
     };
-  }, [selectedFriend]);
+  }, [selectedFriend, loadingNewFriend]);
 
   const handleSelectFriend = (itemId) => {
     // Find the friend item by id
@@ -38,14 +44,22 @@ const FriendSelectModalVersion = () => {
     setFriend(selectedFriend);
     console.log("Friend selected: ", selectedFriend);
     setForceUpdate(prevState => !prevState); // Toggle forceUpdate to trigger re-render
+    
   };
 
   return (
     <>
+    <View style={styles.container}>
+      <View style={styles.displaySelectedContainer}>
+        <Text style={styles.displaySelected}>
+          {displayName}
+        </Text>
+      </View>
+      <View style={styles.selectorButtonContainer}>
       <ButtonToggleSize
-        title={'title'}
+        title={''}
         onPress={toggleModal}
-        iconName="list" 
+        iconName="users" 
         style={{
           backgroundColor: '#e63946',  
           width: 70,  
@@ -53,6 +67,8 @@ const FriendSelectModalVersion = () => {
           borderRadius: 20, 
         }}
       />
+      </View>
+      </View>
 
       <AlertList
         fixedHeight={true}
@@ -61,7 +77,7 @@ const FriendSelectModalVersion = () => {
         isFetching={loadingNewFriend}
         useSpinner={true}
         toggleModal={toggleModal}
-        headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>Friends ({friendTotal}/20)</Text>}
+        headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>{displayName}</Text>}
         content={
           <FlatList
             data={friendList}
@@ -78,13 +94,37 @@ const FriendSelectModalVersion = () => {
         }
         onCancel={toggleModal}
         confirmText="Reset All"
-        cancelText="Done"
+        cancelText="Back"
       />
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: 'gray',
+    },
+  displaySelectedContainer: {
+    alignItems: 'left',  
+    flex: 2,
+
+  },
+  displaySelected: {
+
+    color: 'black',
+    fontFamily: 'Poppins-Bold',
+    fontSize: 16,
+  },
+  selectorButtonContainer: {
+    alignItems: 'flex-end',
+    flex: .4, 
+  },
   row: {
     padding: 0,
     marginBottom: 0, 

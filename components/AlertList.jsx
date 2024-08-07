@@ -7,6 +7,7 @@ const AlertList = ({
     height,
     isModalVisible,
     isFetching,
+    closeAfterFetching = false,
     useSpinner,
     toggleModal,
     headerContent,
@@ -31,20 +32,23 @@ const AlertList = ({
                     {useSpinner && isFetching ? (
                         <LoadingPage loading={isFetching} spinnerType='circle' />
                     ) : (
+                        <> 
                         <ScrollView contentContainerStyle={[styles.contentContainer, borderRadius=20]}>
                             {content}
                         </ScrollView>
-                    )}
-                    <View style={styles.buttonContainer}>
-                        {bothButtons && ( 
-                        <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
-                            <Text style={styles.buttonText}>{confirmText}</Text>
-                        </TouchableOpacity>
-                        )}
-                        <TouchableOpacity onPress={onCancel} style={[styles.cancelButton, type === 'success' && styles.successCancelButton]}>
-                            <Text style={styles.buttonText}>{cancelText}</Text>
-                        </TouchableOpacity>
-                    </View>
+                    
+                        <View style={styles.buttonContainer}>
+                            {bothButtons && ( 
+                            <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
+                                <Text style={styles.buttonText}>{confirmText}</Text>
+                            </TouchableOpacity>
+                            )}
+                            <TouchableOpacity onPress={onCancel} style={[styles.cancelButton, type === 'success' && styles.successCancelButton]}>
+                                <Text style={styles.buttonText}>{cancelText}</Text>
+                            </TouchableOpacity>
+                        </View>
+                        </>
+                     )}
                 </View>
             </View>
         </Modal>
@@ -72,8 +76,7 @@ const styles = StyleSheet.create({
     contentContainer: {
         width: '100%',
         alignItems: 'center',
-        borderRadius: 20,
-        backgroundColor: 'lightgray',
+        borderRadius: 20, 
     },
     buttonContainer: {
         width: '100%',

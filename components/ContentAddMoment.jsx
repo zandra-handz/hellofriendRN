@@ -16,11 +16,16 @@ import LoadingPage from '../components/LoadingPage';
 
 import { useNavigation } from '@react-navigation/native';
 
- 
+import QuickAddThought from '../speeddial/QuickAddThought'; 
+import EnterMoment from '../components/EnterMoment';
  
 const ContentAddMoment= ({ size = 14, family = 'Poppins-Regular', color = "black", style }) => {
    
     const { authUserState } = useAuthUser(); 
+    const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+    
+    const [ firstSectionTitle, setFirstSectionTitle ] = useState('Select friend');
+    
     const [isFriendLimitReached, setIsFriendLimitReached] = useState(false);
     const [ isFriendNameUnique, setIsFriendNameUnique ] = useState(false);
     const [ isReviewModalVisible, setIsReviewModalVisible ] = useState(false);
@@ -52,6 +57,12 @@ const ContentAddMoment= ({ size = 14, family = 'Poppins-Regular', color = "black
 
     };
     
+    useEffect(() => {
+
+        if (selectedFriend && !loadingNewFriend) {
+            setFirstSectionTitle('Change friend');
+        } 
+    }, [selectedFriend, loadingNewFriend]);
  
  
 
@@ -59,12 +70,18 @@ const ContentAddMoment= ({ size = 14, family = 'Poppins-Regular', color = "black
         <View style={styles.container}> 
              <View style={styles.mainContainer}>
                 <Text style={styles.locationTitle}>
-                    Select or change friend
+                    {firstSectionTitle}
                 </Text>
                 <View style={styles.selectFriendContainer}>
                     <FriendSelectModalVersion />
                     
-                </View> 
+                </View>
+
+                <View style={styles.locationContainer}>
+                    
+                    <EnterMoment />
+                </View>
+
              </View> 
 
         </View>
@@ -84,27 +101,28 @@ const styles = StyleSheet.create({
         paddingBottom: 68,
 
     },
-    locationContainer: {
-        backgroundColor: '#fff',
+    locationContainer: { 
         borderRadius: 8,
-        padding: 10,
+        top: 80,
+        position: 'absolute',
+        padding: 0,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-        marginVertical: 8,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.0,
+        shadowRadius: 0,
+        elevation: 0,
+        marginVertical: 10, 
+        height: 360,
     },
     selectFriendContainer: {
-        top: 30,
         position: 'absolute',
-        zIndex: 1,
+        top: 30, 
         justifyContent: 'flex-end',
         flexDirection: 'row',
         width: '100%',
-        marginVertical: 10,
-        height: 40,
-        backgroundColor: 'black',
+        marginVertical: 8,
+        height: 40, 
+        zIndex: 1,
     },
     locationTitle: {
         fontSize: 17,

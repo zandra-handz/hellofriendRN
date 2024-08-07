@@ -1,18 +1,34 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AlertConfirm from '../components/AlertConfirm';
 import AlertList from '../components/AlertList';
 import RowItemFriendDelete from '../components/RowItemFriendDelete';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const RowItemFriendSelect = ({ friend }) => {
+    const { selectedFriend } = useSelectedFriend();
     const [isFriendDetailsModalVisible, setIsFriendDetailsModalVisible] = useState(false);
+    const [ rowColor, setRowColor ] = useState('gray');
 
     const toggleFriendDetailsModal = () => {
         setIsFriendDetailsModalVisible(true);
 
     };
+
+    useEffect(() => {
+        if (selectedFriend) {
+            if (friend.id === selectedFriend.id) {
+                setRowColor('limegreen');
+            } else {
+                setRowColor('gray');
+            }
+        };
+
+    }, [selectedFriend]);
+
+
 
     const closeFriendDetailsModal = () => {
         setIsFriendDetailsModalVisible(false);
@@ -20,7 +36,7 @@ const RowItemFriendSelect = ({ friend }) => {
     };
     
     return (
-        <View style={styles.row}>
+        <View style={[styles.row, {backgroundColor: rowColor}]}>
             <Text style={styles.name}>{friend.name}</Text> 
             <TouchableOpacity onPress={toggleFriendDetailsModal}>
                 <View style={styles.iconContainer}>
