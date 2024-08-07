@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity, Text } from 'react-native';
+import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal'; // Import react-native-modal
 import SpeechRectCartoonishSvg from '../assets/svgs/speech-rect-cartoonish.svg';
+import MaximizeSquareSolidSvg from '../assets/svgs/maximize-square-solid.svg';
 
-const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus, width = '100%' }) => {
+
+
+const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus, width = '100%', editMode = true }) => {
   const [textInput, setTextInput] = useState(initialText || '');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const textareaRef = useRef();
@@ -43,17 +46,29 @@ const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus
           <View style={styles.backgroundSvgContainer}>
             <SpeechRectCartoonishSvg height={360} width={360} />
           </View>
-          <TextInput
-            style={[dynamicInputStyle, { width: width }]}
-            multiline={true}
-            value={textInput}
-            onChangeText={handleInputChange}
-            placeholder={placeholderText}
-            ref={textareaRef}
-          />
-          <TouchableOpacity onPress={handleOpenModal} style={styles.previewButton}>
-            <Text style={styles.previewButtonText}>Preview</Text>
-          </TouchableOpacity>
+          {editMode ? (
+            <TextInput
+              style={[dynamicInputStyle, { width: width }]}
+              multiline={true}
+              value={textInput}
+              onChangeText={handleInputChange}
+              placeholder={placeholderText}
+              ref={textareaRef}
+            />
+          ) : (
+            <Text
+              style={[styles.input, { width: width }]}
+              numberOfLines={4}
+            >
+              {textInput || placeholderText}
+            </Text>
+          )}
+          {editMode && (
+            <TouchableOpacity onPress={handleOpenModal} style={styles.maxButtonContainer}>
+              
+              <MaximizeSquareSolidSvg height={30} width={30} color='limegreen' />
+            </TouchableOpacity>
+          )}
         </View>
       </TouchableWithoutFeedback>
       
@@ -91,13 +106,13 @@ const styles = StyleSheet.create({
   },
   backgroundSvgContainer: {
     width: '100%',  
-    marginTop: 40,
+    marginTop: 0,
     marginLeft: 14,
   },
   input: {
     position: 'absolute', 
     zIndex: 2,
-    top: 18, 
+    top: 30, 
     backgroundColor: 'transparent',
     borderRadius: 20,    
     paddingLeft: 40, 
@@ -106,7 +121,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 16,
     color: 'black',
-    height: '76%',
+    height: '70%',
   },
   inputActive: {
     zIndex: 1,
@@ -114,19 +129,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
   },
-  previewButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#1E90FF',
+  maxButtonContainer: {
+    position: 'absolute', 
+    top: 10,
+    right: 14, 
     borderRadius: 20,
-    padding: 10,
+    padding: 20,
     alignItems: 'center',
+    zIndex: 2,
   },
-  previewButtonText: {
+  maxButton: {
     color: 'white',
     fontSize: 16,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Bold',
   },
   modal: {
     justifyContent: 'center',
@@ -153,7 +168,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 20,
-    backgroundColor: '#1E90FF',
+    backgroundColor: 'limegreen',
     borderRadius: 20,
     padding: 10,
     alignItems: 'center',

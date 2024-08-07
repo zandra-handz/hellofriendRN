@@ -44,7 +44,7 @@ const FriendSelectModalVersion = () => {
     setFriend(selectedFriend);
     console.log("Friend selected: ", selectedFriend);
     setForceUpdate(prevState => !prevState); // Toggle forceUpdate to trigger re-render
-    
+    toggleModal();
   };
 
   return (

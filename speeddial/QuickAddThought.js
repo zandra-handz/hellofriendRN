@@ -4,6 +4,7 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend, friendDashboardData } from '../context/SelectedFriendContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule, deleteThoughtCapsule } from '../api';
+
 import { Picker } from '@react-native-picker/picker';
 import ContainerEditCapsules from '../components/ContainerEditCapsules';
 import TextAreaMoment from './TextAreaMoment'; // Import the new component
@@ -19,7 +20,9 @@ const QuickAddThought = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [placeholderText, setPlaceholderText] = useState('Start typing your thought here');
   const [categoryLimit, setCategoryLimit] = useState('');
+  
   const [remainingCategories, setRemainingCategories] = useState('');
+  
   const [userEntryCapsule, setUserEntryCapsule] = useState('');
   const [isFirstScreen, setIsFirstScreen] = useState(true); // Track which screen the user is on
 
