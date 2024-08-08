@@ -5,35 +5,32 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonSingleInput from '../components/ButtonSingleInput'; // Adjust the import path as needed
 
 const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }) => {
-  
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
   const { capsuleList } = useCapsuleList(); // Assuming useCapsuleList provides the list of capsules
   const [categoryLimit, setCategoryLimit] = useState('');
-  const [remainingCategories, setRemainingCategories] = useState('');
-  const [newCategoryEntered, setNewCategoryEntered ] = useState(false);
+  const [remainingCategories, setRemainingCategories] = useState(null);
+  const [newCategoryEntered, setNewCategoryEntered] = useState(false);
 
   useEffect(() => {
     if (selectedFriend) {
       setSelectedCategory(null); // Reset selectedCategory when selectedFriend changes
       fetchCategoryLimitData();
     }
-  }, [selectedFriend]);
+  }, [selectedFriend, friendDashboardData]);
 
   useEffect(() => {
-
-    if (newCategoryEntered) { 
-        setRemainingCategories((parseInt(remainingCategories - 1)));
-        setNewCategoryEntered(false);
-    };
-    
+    if (newCategoryEntered && remainingCategories) { 
+      setRemainingCategories(parseInt(remainingCategories - 1));
+      setNewCategoryEntered(false);
+    }
   }, [newCategoryEntered]);
 
   useEffect(() => {
     if (categoryLimit) {
-        console.log(categoryLimit);
-        console.log(remainingCategories);
+      console.log(categoryLimit);
+      console.log(remainingCategories);
     }
   }, [categoryLimit, remainingCategories]);
 
@@ -52,14 +49,37 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
     }
   };
 
-  useEffect(() => { 
+  const getMostCapsulesCategory = () => {
+    if (capsuleList.length === 0) return null;
+    const categoryCounts = {};
+
+    // Count capsules for each category
+    capsuleList.forEach(capsule => {
+      const category = capsule.typedCategory;
+      if (!categoryCounts[category]) {
+        categoryCounts[category] = 0;
+      }
+      categoryCounts[category]++;
+    });
+
+    // Find the maximum count
+    const maxCount = Math.max(...Object.values(categoryCounts));
+    const mostCapsulesCategories = Object.keys(categoryCounts).filter(category => categoryCounts[category] === maxCount);
+
+    // Pick a random category from those with the maximum count
+    return mostCapsulesCategories[Math.floor(Math.random() * mostCapsulesCategories.length)];
+  };
+
+  useEffect(() => {
     const uniqueCategories = [...new Set(capsuleList.map(capsule => capsule.typedCategory))];
     setCategories(uniqueCategories);
 
-    // Reset selectedCategory to null when categories are updated
-    if (selectedCategory !== null && uniqueCategories.length > 0) {
-      if (selectedCategory >= uniqueCategories.length) {
-        setSelectedCategory(null);
+    // Automatically select the category with the most capsules
+    if (uniqueCategories.length > 0) {
+      const mostCapsulesCategory = getMostCapsulesCategory();
+      if (mostCapsulesCategory) {
+        const categoryIndex = uniqueCategories.indexOf(mostCapsulesCategory);
+        setSelectedCategory(categoryIndex);
       }
     }
   }, [capsuleList]);
@@ -67,15 +87,17 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
   useEffect(() => {
     // Notify parent about the selected category whenever it changes
     if (onCategorySelect) {
-      const category = selectedCategory === null
-        ? (showAllCategories ? 'All Categories' : 'No Category')
-        : categories[selectedCategory];
-      const capsulesForCategory = selectedCategory === null
-        ? capsuleList
-        : capsuleList.filter(capsule => capsule.typedCategory === categories[selectedCategory]);
-      onCategorySelect(category, capsulesForCategory);
-      console.log('Selected category:', category);
-      console.log('Capsules for selected category:', capsulesForCategory); // Log capsules
+      if (selectedCategory === null) {
+        console.log('Please enter a category');
+        // Handle no category situation
+        onCategorySelect(null, []);
+      } else {
+        const category = categories[selectedCategory];
+        const capsulesForCategory = capsuleList.filter(capsule => capsule.typedCategory === category);
+        onCategorySelect(category, capsulesForCategory);
+        console.log('Selected category:', category);
+        console.log('Capsules for selected category:', capsulesForCategory); // Log capsules
+      }
     }
   }, [selectedCategory, showAllCategories, categories]);
 
@@ -102,12 +124,18 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
   };
 
   const handleNewCategory = (newCategory) => { 
-    setCategories([...categories, newCategory]);
-    setSelectedCategory(categories.length);  
-    onCategorySelect(newCategory, []); // No capsules for new category yet
+    // Check if there's already a new category (i.e., the last item in the categories array)
+    const updatedCategories = categories.length > 0 
+      ? [...categories.slice(0, -1), newCategory] // Replace the last category
+      : [newCategory]; // If no categories yet, just add the new one
+  
+    setCategories(updatedCategories);
+    setSelectedCategory(updatedCategories.length - 1); // Set the index to the new category
+    
+    onCategorySelect(newCategory, []);  
     setNewCategoryEntered(true);
-    };
-
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.categoriesContainer}>
@@ -129,26 +157,30 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
             </Text>
           </TouchableOpacity>
         )}
-        {categories.map((category, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.categoryButton,
-              selectedCategory === index && styles.selectedCategoryButton
-            ]}
-            onPress={() => handleCategoryPress(index)}
-          >
-            <Text
+        {categories.length === 0 ? (
+          <Text style={styles.noCategoriesText}>Please enter a category</Text>
+        ) : (
+          categories.map((category, index) => (
+            <TouchableOpacity
+              key={index}
               style={[
-                styles.categoryText,
-                selectedCategory === index && styles.selectedCategoryText
+                styles.categoryButton,
+                selectedCategory === index && styles.selectedCategoryButton
               ]}
+              onPress={() => handleCategoryPress(index)}
             >
-              {category}
-            </Text>
-          </TouchableOpacity>
-        ))}
-        {remainingCategories && (
+              <Text
+                style={[
+                  styles.categoryText,
+                  selectedCategory === index && styles.selectedCategoryText
+                ]}
+              >
+                {category}
+              </Text>
+            </TouchableOpacity>
+          ))
+        )}
+        {remainingCategories !== null && remainingCategories > 0 && (
           <ButtonSingleInput onInputValueChange={handleNewCategory} title={`Add new (${remainingCategories} left)`}/>
         )}
       </View>
@@ -219,6 +251,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 14,
     marginVertical: 5,
+  },
+  noCategoriesText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    color: 'red',
+    marginVertical: 10,
   },
 });
 

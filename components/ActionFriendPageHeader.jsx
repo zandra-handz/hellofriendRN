@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
 import ButtonLottieAnimationTwoSections from './ButtonLottieAnimationTwoSections';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 import AlertPanelBottom from './AlertPanelBottom';
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,6 +12,7 @@ const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
   const navigation = useNavigation();
 
   const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend, setFriend } = useSelectedFriend();
+  
   const [showProfile, setShowProfile] = useState(false);
   const [showNextHello, setShowNextHello] = useState(true);
   const [lightColor, setLightColor] = useState('black');

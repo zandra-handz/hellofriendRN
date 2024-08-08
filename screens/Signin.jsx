@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+
 import ButtonColorHighlight from '../components/ButtonColorHighlight';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';

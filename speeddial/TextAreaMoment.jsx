@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
-import Modal from 'react-native-modal'; // Import react-native-modal
 import SpeechRectCartoonishSvg from '../assets/svgs/speech-rect-cartoonish.svg';
 import MaximizeSquareSolidSvg from '../assets/svgs/maximize-square-solid.svg';
-
-
+import ModalMomentFocus from '../components/ModalMomentFocus'; // Import the new component
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus, width = '100%', editMode = true }) => {
   const [textInput, setTextInput] = useState(initialText || '');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const textareaRef = useRef();
+  const { themeStyles } = useGlobalStyle();
 
   useEffect(() => {
     if (autoFocus && textareaRef.current) {
@@ -65,32 +65,19 @@ const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus
           )}
           {editMode && (
             <TouchableOpacity onPress={handleOpenModal} style={styles.maxButtonContainer}>
-              
               <MaximizeSquareSolidSvg height={30} width={30} color='limegreen' />
             </TouchableOpacity>
           )}
         </View>
       </TouchableWithoutFeedback>
       
-      <Modal
-        isVisible={isModalVisible}
-        onBackdropPress={handleCloseModal}
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <TextInput
-            style={styles.modalTextInput}
-            multiline={true}
-            value={textInput}
-            onChangeText={handleInputChange}
-            placeholder={placeholderText}
-            autoFocus={true}
-          />
-          <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+      <ModalMomentFocus
+        isModalVisible={isModalVisible}
+        handleCloseModal={handleCloseModal}
+        textInput={textInput}
+        handleInputChange={handleInputChange}
+        placeholderText={placeholderText}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -142,41 +129,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
-  },
-  modal: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 0, // Full-screen modal
-  },
-  modalContent: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'white',
-    padding: 20,
-    justifyContent: 'center',
-  },
-  modalTextInput: {
-    flex: 1,
-    fontSize: 18,
-    fontFamily: 'Poppins-Regular',
-    color: 'black',
-    padding: 10,
-    textAlignVertical: 'top',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 10,
-  },
-  closeButton: {
-    marginTop: 20,
-    backgroundColor: 'limegreen',
-    borderRadius: 20,
-    padding: 10,
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontFamily: 'Poppins-Regular',
   },
 });
 

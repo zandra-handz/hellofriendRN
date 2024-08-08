@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AlertSingleInput from './AlertSingleInput'; // Adjust the import path as needed
 
-const ButtonSingleInput = ({ title, onInputValueChange }) => {
+const ButtonSingleInput = ({ title = '', onInputValueChange }) => {
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -25,21 +25,30 @@ const ButtonSingleInput = ({ title, onInputValueChange }) => {
 
   return (
     <>
-      <TouchableOpacity onPress={toggleModal} style={[styles.editButton, { width: title ? 'auto' : 40 }]}>
-        {title && <Text style={styles.buttonText}>{title}</Text>}
-        {!title && <FontAwesome5 name="plus" size={12} color="white" />}
-      </TouchableOpacity>
+      <View> 
+        <TouchableOpacity 
+          onPress={toggleModal} 
+          style={[styles.editButton, { width: title ? 'auto' : 40 }]}
+        >
+          {/* Render Text only if title is not an empty string */}
+          {title.length > 0 ? (
+            <Text style={styles.buttonText}>{title}</Text>
+          ) : (
+            <FontAwesome5 name="plus" size={12} color="white" />
+          )}
+        </TouchableOpacity>
 
-      <AlertSingleInput
-        isModalVisible={isModalVisible}
-        toggleModal={toggleModal}
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-        questionText="Please enter your input:"
-        confirmText="Submit"
-        cancelText="Cancel"
-        onInputChange={(value) => console.log('Input value changed:', value)} // Optional: Handle input change if needed
-      />
+        <AlertSingleInput
+          isModalVisible={isModalVisible}
+          toggleModal={toggleModal}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+          questionText="Please enter your input:"
+          confirmText="Submit"
+          cancelText="Cancel"
+          onInputChange={(value) => console.log('Input value changed:', value)} // Optional: Handle input change if needed
+        />
+      </View>
     </>
   );
 };

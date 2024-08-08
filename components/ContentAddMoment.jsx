@@ -60,8 +60,7 @@ const ContentAddMoment = () => {
 
   }, [selectedCategory]);
 
-  useEffect(() => {
-    // Filter unique categories from the capsuleList
+  useEffect(() => { 
     const categories = [...new Set(capsuleList.map(capsule => capsule.typedCategory))];
     setUniqueCategories(categories);
   }, [capsuleList]);
@@ -129,7 +128,7 @@ const ContentAddMoment = () => {
         <View style={styles.categoryContainer}>
         {userEntryCapsule && selectedFriend && !momentEditMode && ( 
             <>
-            <Text style={styles.locationTitle}>{`Category: ${selectedCategory}`}</Text>
+            <Text style={styles.locationTitle}>Category: {selectedCategory}</Text>
             
                 <CardCategoriesAsButtons onCategorySelect={handleCategorySelect}/> 
             </>
@@ -187,10 +186,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     padding: 0,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.0,
-    shadowRadius: 0,
-    elevation: 0,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
     marginVertical: 10, 
     height: 360,
   },
@@ -200,10 +199,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     padding: 0,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.0,
-    shadowRadius: 0,
-    elevation: 0,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
     marginVertical: 10, 
     height: 300,
   },

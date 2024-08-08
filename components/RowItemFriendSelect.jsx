@@ -39,8 +39,8 @@ const RowItemFriendSelect = ({ friend }) => {
         <View style={[styles.row, {backgroundColor: rowColor}]}>
             <Text style={styles.name}>{friend.name}</Text> 
             <TouchableOpacity onPress={toggleFriendDetailsModal}>
-                <View style={styles.iconContainer}>
-                    <FontAwesome5 name="ellipsis-v" size={24} />
+                <View style={styles.iconContainer}> 
+                
                 </View>
             </TouchableOpacity>
             <AlertList
