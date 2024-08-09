@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
-import SpeechRectCartoonishSvg from '../assets/svgs/speech-rect-cartoonish.svg';
-import MaximizeSquareSolidSvg from '../assets/svgs/maximize-square-solid.svg';
+import SpeechRectCartoonishSvg from '../assets/svgs/speech-rect-cartoonish.svg';//height={360} width={360}
+import MaximizeSquareSolidSvg from '../assets/svgs/maximize-square-solid.svg';  
+import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
+
 import ModalMomentFocus from '../components/ModalMomentFocus'; // Import the new component
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus, width = '100%', editMode = true }) => {
+const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus, width = '100%', editMode = true, onScreenChange }) => {
   const [textInput, setTextInput] = useState(initialText || '');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const textareaRef = useRef();
@@ -44,7 +46,7 @@ const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.inner}>
           <View style={styles.backgroundSvgContainer}>
-            <SpeechRectCartoonishSvg height={360} width={360} />
+            <ThoughtBalloonLightBlueSvg color='lightgray' height={410} width={410} />
           </View>
           {editMode ? (
             <TextInput
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
   },
   backgroundSvgContainer: {
     width: '100%',  
-    marginTop: 0,
+    marginTop: 90,
     marginLeft: 14,
   },
   input: {
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     top: 30, 
     backgroundColor: 'transparent',
     borderRadius: 20,    
-    paddingLeft: 40, 
+    paddingLeft: 94, 
     paddingRight: 30,
     borderWidth: 0,
     fontFamily: 'Poppins-Regular',

@@ -6,35 +6,70 @@ import Button from '../components/Button'; // Import your Button component
 import AlertList from '../components/AlertList';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
+
+import { LinearGradient } from 'expo-linear-gradient';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import RowItemFriendSelect from '../components/RowItemFriendSelect';
 import ButtonToggleSize from '../components/ButtonToggleSize';
 import LoadingPage from '../components/LoadingPage';
 
-const FriendSelectModalVersion = () => {
-  const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend();
+const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring to get props
+  const { gradientColors } = useGlobalStyle();
+  const globalStyles = useGlobalStyle(); 
+  const { darkColor, lightColor } = gradientColors;
+  const { selectedFriend, setFriend, friendColorTheme, loadingNewFriend } = useSelectedFriend();
   const { friendList } = useFriendList();
   const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false); // State to force re-render
   const [displayName, setDisplayName] = useState(null);
+  const [friendLightColor, setFriendLightColor] = useState('white');
+  const [friendDarkColor, setFriendDarkColor] = useState('white');
+  
+  const adjustFontSize = (fontSize) => {
+    return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
+  };
+
+  const textStyles = (fontSize, color) => ({
+    fontSize: adjustFontSize(fontSize),
+    color,
+    ...(globalStyles.highContrast && {
+      textShadowColor: 'rgba(0, 0, 0, 0.75)',
+      textShadowOffset: { width: 2, height: 2 },
+      textShadowRadius: 1,
+    }),
+  });
+
+  useEffect(() => {
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
+      if (friendColorTheme.invertGradient) {
+        setFriendLightColor(friendColorTheme.darkColor || darkColor);
+        setFriendDarkColor(friendColorTheme.lightColor || lightColor);
+      } else {
+        setFriendLightColor(friendColorTheme.lightColor || darkColor);
+        setFriendDarkColor(friendColorTheme.darkColor || lightColor);
+      }
+    } else {
+      setFriendLightColor(lightColor);
+      setFriendDarkColor(darkColor);
+    }
+  }, [friendColorTheme]);
 
   const friendTotal = (friendList ? friendList.length : 0);
 
   const toggleModal = () => {
     setIsFriendMenuModalVisible(!isFriendMenuModalVisible);
-    
   };
 
   useEffect(() => {
     if (loadingNewFriend) {
-      setDisplayName('Switching friends...');
+      setDisplayName('Loading friend...');
     } else {
       if (selectedFriend && selectedFriend.name) {
-
-          setDisplayName(selectedFriend.name);
+        setDisplayName(selectedFriend.name);
       } else {
-          setDisplayName('No friend selected');
-      };
-    };
+        setDisplayName(' ');
+      }
+    }
   }, [selectedFriend, loadingNewFriend]);
 
   const handleSelectFriend = (itemId) => {
@@ -49,26 +84,32 @@ const FriendSelectModalVersion = () => {
 
   return (
     <>
-    <View style={styles.container}>
-      <View style={styles.displaySelectedContainer}>
-        <Text style={styles.displaySelected}>
-          {displayName}
-        </Text>
-      </View>
-      <View style={styles.selectorButtonContainer}>
-      <ButtonToggleSize
-        title={''}
-        onPress={toggleModal}
-        iconName="users" 
-        style={{
-          backgroundColor: '#e63946',  
-          width: 70,  
-          height: 35,  
-          borderRadius: 20, 
-        }}
-      />
-      </View>
-      </View>
+      <LinearGradient
+        colors={[friendDarkColor, friendLightColor]} // Gradient colors
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }} // Direction of the gradient
+        style={[styles.container, { width }]} // Apply width here
+      >  
+        <View style={styles.displaySelectedContainer}>
+          <Text style={[styles.displaySelected, textStyles(18, 'white')]}>
+            {displayName}
+          </Text>
+        </View>
+        <View style={styles.selectorButtonContainer}>
+          <ButtonToggleSize
+            title={''}
+            onPress={toggleModal}
+            iconName="arrow-down" 
+            backgroundColor={friendLightColor}
+            color='black'
+            style={{
+              width: 70,  
+              height: 35,  
+              borderRadius: 20, 
+            }}
+          />
+        </View> 
+      </LinearGradient>
 
       <AlertList
         fixedHeight={true}
@@ -77,7 +118,7 @@ const FriendSelectModalVersion = () => {
         isFetching={loadingNewFriend}
         useSpinner={true}
         toggleModal={toggleModal}
-        headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>{displayName}</Text>}
+        headerContent={<Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18 }}>{displayName}</Text>}
         content={
           <FlatList
             data={friendList}
@@ -103,27 +144,26 @@ const FriendSelectModalVersion = () => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    height: 'auto',
     justifyContent: 'space-between',
-    width: '100%',
     alignItems: 'center',
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: 'gray',
-    },
+    padding: 4,
+    paddingHorizontal: 10,
+    borderRadius: 10, 
+  },
   displaySelectedContainer: {
-    alignItems: 'left',  
-    flex: 2,
-
+    alignItems: 'left',   
+    flex: 1,
   },
   displaySelected: {
-
     color: 'black',
     fontFamily: 'Poppins-Bold',
     fontSize: 16,
+    zIndex: 2,
   },
   selectorButtonContainer: {
     alignItems: 'flex-end',
-    flex: .4, 
+    flex: 0.4, 
   },
   row: {
     padding: 0,

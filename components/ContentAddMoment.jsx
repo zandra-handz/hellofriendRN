@@ -20,7 +20,7 @@ const ContentAddMoment = () => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { capsuleList, setCapsuleList } = useCapsuleList();
   const [ momentEditMode, setMomentEditMode] = useState(false);
-  const [firstSectionTitle, setFirstSectionTitle] = useState('Select friend');
+  const [firstSectionTitle, setFirstSectionTitle] = useState('Friend: ');
   const [textInput, setTextInput] = useState('');
   const [categoryInput, setCategoryInput] = useState('');
   const [categoryCapsules, setCategoryCapsules ] = useState([]);
@@ -34,7 +34,7 @@ const ContentAddMoment = () => {
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
-      setFirstSectionTitle('Change friend');
+      setFirstSectionTitle('Friend: ');
     }
   }, [selectedFriend, loadingNewFriend]);
 
@@ -110,30 +110,32 @@ const ContentAddMoment = () => {
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
-        <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
+        <Text style={styles.locationTitle}> </Text>
 
         <View style={styles.selectFriendContainer}>
-          <FriendSelectModalVersion />
+        <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
+
+          <FriendSelectModalVersion width='82%' />
         </View>
 
         <View style={styles.locationContainer}>
           <EnterMoment
             handleInputChange={handleInputChange}
             textInput={textInput}
-            placeholderText="Enter your moment here..."
+            placeholderText="Enter moment here..."
             handleNextScreen={() => {}}  
             onScreenChange={handleMomentToggle} 
           />
-        </View>
-        <View style={styles.categoryContainer}>
+        </View> 
         {userEntryCapsule && selectedFriend && !momentEditMode && ( 
+          <View style={styles.categoryContainer}>
             <>
             <Text style={styles.locationTitle}>Category: {selectedCategory}</Text>
             
                 <CardCategoriesAsButtons onCategorySelect={handleCategorySelect}/> 
-            </>
-            )}
+            </> 
         </View>
+        )}
         {userEntryCapsule && selectedCategory && ( 
                 <View style={styles.bottomButtonContainer}>  
                     <ButtonLottieAnimationSvg
@@ -182,39 +184,42 @@ const styles = StyleSheet.create({
   },
   locationContainer: { 
     borderRadius: 8,
-    top: 80,
+    top: 70,
     position: 'absolute',
+    width: '100%',
     padding: 0,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.0,
+    shadowRadius: 0,
+    elevation: 0,
     marginVertical: 10, 
     height: 360,
   },
   categoryContainer: { 
+    backgroundColor: '#fff',
+    width: '100%', 
     borderRadius: 8,
-    top: 348,
-    position: 'absolute',
-    padding: 0,
+    padding: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-    marginVertical: 10, 
-    height: 300,
   },
   selectFriendContainer: {
     position: 'absolute',
-    top: 30, 
-    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    top: 0, 
+    borderRadius: 8,
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    alignItems: 'center',
     flexDirection: 'row',
     width: '100%',
     marginVertical: 8,
-    height: 40, 
-    zIndex: 1,
+    height:' auto',
+    zIndex: 1, 
   },
   locationTitle: {
     fontSize: 17,

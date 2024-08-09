@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-import { useCapsuleList } from '../context/CapsuleListContext'; // Adjust the import path as needed
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Button } from 'react-native';
+import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import ButtonSingleInput from '../components/ButtonSingleInput'; // Adjust the import path as needed
+import ButtonSingleInput from '../components/ButtonSingleInput';
 
-const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }) => {
+const DOUBLE_PRESS_DELAY = 300; // Time delay to detect double press
+
+const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, showInModal = true }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { capsuleList } = useCapsuleList(); // Assuming useCapsuleList provides the list of capsules
+  const { capsuleList } = useCapsuleList();
   const [categoryLimit, setCategoryLimit] = useState('');
   const [remainingCategories, setRemainingCategories] = useState(null);
   const [newCategoryEntered, setNewCategoryEntered] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const lastPress = useRef(0);
 
   useEffect(() => {
     if (selectedFriend) {
@@ -20,12 +25,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
     }
   }, [selectedFriend, friendDashboardData]);
 
-  useEffect(() => {
-    if (newCategoryEntered && remainingCategories) { 
-      setRemainingCategories(parseInt(remainingCategories - 1));
-      setNewCategoryEntered(false);
-    }
-  }, [newCategoryEntered]);
+ 
 
   useEffect(() => {
     if (categoryLimit) {
@@ -53,7 +53,6 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
     if (capsuleList.length === 0) return null;
     const categoryCounts = {};
 
-    // Count capsules for each category
     capsuleList.forEach(capsule => {
       const category = capsule.typedCategory;
       if (!categoryCounts[category]) {
@@ -62,11 +61,9 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
       categoryCounts[category]++;
     });
 
-    // Find the maximum count
     const maxCount = Math.max(...Object.values(categoryCounts));
     const mostCapsulesCategories = Object.keys(categoryCounts).filter(category => categoryCounts[category] === maxCount);
 
-    // Pick a random category from those with the maximum count
     return mostCapsulesCategories[Math.floor(Math.random() * mostCapsulesCategories.length)];
   };
 
@@ -74,7 +71,6 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
     const uniqueCategories = [...new Set(capsuleList.map(capsule => capsule.typedCategory))];
     setCategories(uniqueCategories);
 
-    // Automatically select the category with the most capsules
     if (uniqueCategories.length > 0) {
       const mostCapsulesCategory = getMostCapsulesCategory();
       if (mostCapsulesCategory) {
@@ -85,57 +81,80 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
   }, [capsuleList]);
 
   useEffect(() => {
-    // Notify parent about the selected category whenever it changes
     if (onCategorySelect) {
       if (selectedCategory === null) {
         console.log('Please enter a category');
-        // Handle no category situation
         onCategorySelect(null, []);
       } else {
         const category = categories[selectedCategory];
         const capsulesForCategory = capsuleList.filter(capsule => capsule.typedCategory === category);
         onCategorySelect(category, capsulesForCategory);
         console.log('Selected category:', category);
-        console.log('Capsules for selected category:', capsulesForCategory); // Log capsules
+        console.log('Capsules for selected category:', capsulesForCategory);
       }
     }
   }, [selectedCategory, showAllCategories, categories]);
 
   const handleCategoryPress = (categoryIndex) => {
-    const category = categories[categoryIndex];
-    const capsulesForCategory = capsuleList.filter(capsule => capsule.typedCategory === category);
-    
-    console.log('Clicked category index:', categoryIndex);
-    console.log('Category name:', category);
-    console.log('Capsules for category:', capsulesForCategory); // Log capsules
-    setSelectedCategory(categoryIndex);
+    const now = Date.now();
+    const isDoublePress = now - lastPress.current < DOUBLE_PRESS_DELAY;
+    lastPress.current = now;
+
+    if (isDoublePress) {
+      // Double press detected
+      setSelectedCategory(categoryIndex);
+      setModalVisible(true);
+    } else {
+      // Single press detected
+      const category = categories[categoryIndex];
+      const capsulesForCategory = capsuleList.filter(capsule => capsule.typedCategory === category);
+      
+      console.log('Clicked category index:', categoryIndex);
+      console.log('Category name:', category);
+      console.log('Capsules for category:', capsulesForCategory);
+      setSelectedCategory(categoryIndex);
+    }
   };
 
   const handleAllCategoriesPress = () => {
     console.log('Clicked All Categories');
-    console.log('All capsules:', capsuleList); // Log all capsules when "All Categories" is clicked
+    console.log('All capsules:', capsuleList);
     setSelectedCategory(null);
   };
 
   const handleInputValueChange = (inputValue) => {
     setSelectedCategory(inputValue);
     console.log('Received input value from ButtonSingleInput:', inputValue);
-    // Handle the input value as needed
   };
 
   const handleNewCategory = (newCategory) => { 
-    // Check if there's already a new category (i.e., the last item in the categories array)
     const updatedCategories = categories.length > 0 
-      ? [...categories.slice(0, -1), newCategory] // Replace the last category
-      : [newCategory]; // If no categories yet, just add the new one
+      ? [...categories.slice(0, -1), newCategory] 
+      : [newCategory];
   
     setCategories(updatedCategories);
-    setSelectedCategory(updatedCategories.length - 1); // Set the index to the new category
-    
+    setSelectedCategory(updatedCategories.length - 1); 
     onCategorySelect(newCategory, []);  
     setNewCategoryEntered(true);
   };
   
+  const renderCapsules = () => {
+    if (selectedCategory === null) {
+      return capsuleList.map((capsule, index) => (
+        <Text key={index} style={styles.capsulesText}>
+          {capsule.capsule}
+        </Text>
+      ));
+    } else {
+      return capsuleList.filter(capsule => capsule.typedCategory === categories[selectedCategory])
+        .map((capsule, index) => (
+          <Text key={index} style={styles.capsulesText}>
+            {capsule.capsule}
+          </Text>
+        ));
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.categoriesContainer}>
@@ -168,6 +187,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
                 selectedCategory === index && styles.selectedCategoryButton
               ]}
               onPress={() => handleCategoryPress(index)}
+              onLongPress={() => handleCategoryPress(index)} // For testing
             >
               <Text
                 style={[
@@ -184,24 +204,30 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false }
           <ButtonSingleInput onInputValueChange={handleNewCategory} title={`Add new (${remainingCategories} left)`}/>
         )}
       </View>
-      <View style={styles.capsulesContainer}>
-        <ScrollView> 
-          {selectedCategory === null ? (
-            capsuleList.map((capsule, index) => (
-              <Text key={index} style={styles.capsulesText}>
-                {capsule.capsule}
-              </Text>
-            ))
-          ) : (
-            capsuleList.filter(capsule => capsule.typedCategory === categories[selectedCategory])
-              .map((capsule, index) => (
-                <Text key={index} style={styles.capsulesText}>
-                  {capsule.capsule}
-                </Text>
-              ))
-          )}
-        </ScrollView>
-      </View>
+      {!showInModal && (
+        <View style={styles.capsulesContainer}>
+          <ScrollView> 
+            {renderCapsules()}
+          </ScrollView>
+        </View>
+      )}
+      {showInModal && (
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <ScrollView> 
+                {renderCapsules()}
+              </ScrollView>
+              <Button title="Close" onPress={() => setModalVisible(false)} />
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -211,12 +237,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     width: '100%', 
     borderRadius: 8,
-    padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    padding: 0, 
   },
   categoriesContainer: {
     flexDirection: 'row',
@@ -245,18 +266,31 @@ const styles = StyleSheet.create({
   capsulesContainer: {
     marginTop: 0,
     height: 120,
-    backgroundColor: 'pink',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    overflow: 'hidden',
   },
   capsulesText: {
     fontFamily: 'Poppins-Regular',
     fontSize: 14,
-    marginVertical: 5,
+    margin: 5,
   },
   noCategoriesText: {
     fontFamily: 'Poppins-Regular',
     fontSize: 14,
-    color: 'red',
-    marginVertical: 10,
+    color: 'gray',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
   },
 });
 

@@ -35,6 +35,7 @@ const EnterMoment = ({
             initialText={textInput}
             placeholderText={placeholderText}
             autoFocus={true}
+            closeModal={onScreenChange}
           />
           {textInput && (
           <View style={styles.nextButtonContainer}> 

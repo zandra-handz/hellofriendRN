@@ -46,7 +46,7 @@ const ModalMomentFocus = ({ isModalVisible, handleCloseModal, textInput, handleI
           style={styles.modalContent}
         >
           <TextInput
-            style={styles.modalTextInput}
+            style={[styles.modalTextInput, {borderColor: friendDarkColor}]}
             multiline={true}
             value={textInput}
             onChangeText={handleInputChange}
@@ -83,14 +83,13 @@ const styles = StyleSheet.create({
   },
   modalTextInput: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Poppins-Regular',
-    color: 'black',
-    padding: 10,
+    color: 'white',
+    padding: 20,
     textAlignVertical: 'top',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 10,
+    borderWidth: 1.8,
+    borderRadius: 20,
     backgroundColor: 'transparent',
     width: '100%', // Full width for text input
   },
