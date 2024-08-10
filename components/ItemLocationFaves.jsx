@@ -9,6 +9,7 @@ const windowWidth = Dimensions.get('window').width;
 
 const ItemLocationFaves = ({ locationData, horizontal = true, singleLineScroll = true, width = 160, height = 160, limit, newestFirst = true }) => {
     const { selectedFriend, friendDashboardData } = useSelectedFriend();
+    
     const { locationList, faveLocationList, populateFaveLocationsList } = useLocationList();
   
 

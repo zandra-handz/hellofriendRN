@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, ScrollView } from 'react-native';
+import AlertSingleInput from './AlertSingleInput'; // Import the AlertSingleInput component
 
 const PickerComplexList = ({
   label = 'Select Label',
   onLabelChange,
   modalHeader,
-  primaryOptions = [], // First set of options
+  primaryOptions = [],
   primaryOptionsHeader,
-  secondaryOptions = [], // Second set of options
+  secondaryOptions = [],
   secondaryOptionsHeader,
-  objects = false, // Prop to determine if options are objects
+  objects = false,
   containerText = 'Select an option',
   containerStyle,
   buttonStyle,
@@ -18,45 +19,68 @@ const PickerComplexList = ({
   modalVisible = false,
   setModalVisible,
   inline = false,
+  primaryIcon: PrimaryIcon,
+  secondaryIcon: SecondaryIcon,
+  primaryIconColor = 'black',
+  secondaryIconColor = 'black',
+  iconSize = 34,
+  allowCustomEntry = false, // New prop for allowing custom entry
 }) => {
-  // Combine both lists into one for rendering
+  const [isCustomModalVisible, setCustomModalVisible] = useState(false);
+  const [customValue, setCustomValue] = useState('');
+
+  // Include the custom value in the options list if it's allowed
+  const allOptions = allowCustomEntry && customValue ? [...primaryOptions, ...secondaryOptions, customValue] : [...primaryOptions, ...secondaryOptions];
+
   const combinedOptions = [
-    { type: `${primaryOptionsHeader}`, data: primaryOptions },
-    { type: `${secondaryOptionsHeader}`, data: secondaryOptions },
+    { type: `${primaryOptionsHeader}`, data: primaryOptions, icon: PrimaryIcon },
+    { type: `${secondaryOptionsHeader}`, data: secondaryOptions, icon: SecondaryIcon },
   ];
 
-  // Handler for selecting a label
   const handleSelectLabel = (selectedItem) => {
     onLabelChange(selectedItem);
     setModalVisible(false);
   };
 
-  // Render option item based on whether options are objects
+  const handleCustomEntry = (value) => {
+    setCustomValue(value);
+    onLabelChange(value);  
+    setCustomModalVisible(false);
+    setModalVisible(false);  
+  };
+
+  const handleClear = () => {
+    onLabelChange('');  
+    setCustomValue(''); 
+    setModalVisible(false);  
+  };
+
   const renderOptionItem = ({ item }) => {
-    if (objects) {
-      // If options are objects, use item.label for display
-      return (
-        <TouchableOpacity
-          style={styles.optionButton}
-          onPress={() => handleSelectLabel(item)}
-        >
-        <Text style={styles.optionTitleText}>{item.title
-            }</Text>
-          <Text style={styles.optionText}>{item.address
-            }</Text>
-        </TouchableOpacity>
-      );
-    } else {
-      // If options are strings, use item for display
-      return (
-        <TouchableOpacity
-          style={styles.optionButton}
-          onPress={() => handleSelectLabel(item)}
-        >
-          <Text style={styles.optionText}>{item}</Text>
-        </TouchableOpacity>
-      );
-    }
+    const Icon = combinedOptions.find(section => section.data.includes(item))?.icon || null;
+    const iconColor = combinedOptions.find(section => section.data.includes(item))?.color || 'black';
+
+    return (
+      <TouchableOpacity
+        style={styles.optionButton}
+        onPress={() => handleSelectLabel(item)}
+      >
+        {Icon && (
+          <View style={styles.iconContainer}>
+            <Icon width={iconSize} height={iconSize} color={iconColor} />
+          </View>
+        )}
+        <View style={styles.textContainer}>
+          {objects ? (
+            <>
+              <Text style={styles.optionTitleText}>{item.title}</Text>
+              <Text style={styles.optionText}>{item.address}</Text>
+            </>
+          ) : (
+            <Text style={styles.optionText}>{item}</Text>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   return (
@@ -92,6 +116,15 @@ const PickerComplexList = ({
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>{modalHeader}</Text>
+              {allowCustomEntry && (
+                <TouchableOpacity
+                  style={styles.customEntryButton}
+                  onPress={() => setCustomModalVisible(true)}
+                >
+                  <Text style={styles.customEntryText}>Manual entry?</Text>
+                </TouchableOpacity>
+              )}
+              
               <ScrollView style={styles.scrollView}>
                 {combinedOptions.map((section) => (
                   <View key={section.type} style={styles.section}>
@@ -103,16 +136,48 @@ const PickerComplexList = ({
                     />
                   </View>
                 ))}
+                {allowCustomEntry && customValue && (
+                  <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Custom Entry</Text>
+                    <TouchableOpacity
+                      style={styles.optionButton}
+                      onPress={() => handleSelectLabel(customValue)}
+                    >
+                      <Text style={styles.optionText}>{customValue}</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </ScrollView>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.closeButtonText}>Close</Text>
-              </TouchableOpacity>
+              <View style={styles.modalFooter}>
+                <TouchableOpacity
+                  style={[styles.closeButton, styles.footerButton]}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.clearButton, styles.footerButton]}
+                  onPress={handleClear}
+                >
+                  <Text style={styles.clearButtonText}>Clear</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>
+      )}
+
+      {allowCustomEntry && (
+        <AlertSingleInput
+          isModalVisible={isCustomModalVisible}
+          toggleModal={() => setCustomModalVisible(false)}
+          headerContent={<Text>Add Custom Entry</Text>}
+          questionText="Enter your custom value:"
+          onConfirm={handleCustomEntry}
+          onCancel={() => setCustomModalVisible(false)}
+          confirmText="Add"
+          cancelText="Cancel"
+        />
       )}
     </View>
   );
@@ -172,7 +237,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    maxHeight: '80%', // Prevent modal content from exceeding the screen height
+    maxHeight: '80%',
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 20,
@@ -201,6 +266,14 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ddd',
     width: '100%',
     alignItems: 'flex-start',
+    flexDirection: 'row',
+  },
+  iconContainer: {
+    marginRight: 10,
+    justifyContent: 'center',
+  },
+  textContainer: {
+    flex: 1,
   },
   optionTitleText: {
     fontSize: 12,
@@ -216,10 +289,34 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray',
     borderRadius: 20,
   },
+  clearButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: 'red',
+    borderRadius: 20,
+  },
+  footerButton: {
+    marginHorizontal: 10,
+    padding: 10,
+    borderRadius: 20,
+  },
   closeButtonText: {
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
     color: '#fff',
+  },
+  clearButtonText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: '#fff',
+  },
+  customEntryButton: {
+    marginVertical: 10,
+  },
+  customEntryText: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    color: 'blue',
   },
 });
 

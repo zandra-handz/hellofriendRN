@@ -12,6 +12,11 @@ import { saveThoughtCapsule } from '../api';
 import { fetchTypeChoices, saveHello } from '../api';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
+import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
+import LocationSolidSvg from '../assets/svgs/location-solid.svg';
+
+import PickerMultiMoments from '../components/PickerMultiMoments';
+
 import PickerDate from '../components/PickerDate';
 import PickerMenuOptions from '../components/PickerMenuOptions';
 import PickerComplexList from '../components/PickerComplexList';
@@ -25,41 +30,87 @@ import CoffeeCupPaperSolid from '../assets/svgs/coffee-cup-paper-solid';
 import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
 import CelebrationSparkOutlineSvg from '../assets/svgs/celebration-spark-outline';
 
+import AlertYesNo from '../components/AlertYesNo'; // Import the AlertSingleInput component
+import AlertConfirm from '../components/AlertConfirm'; // Import the AlertSingleInput component
 
-import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
+import AlertSuccessFail from '../components/AlertSuccessFail';
+
+import LoadingPage from '../components/LoadingPage';
+
 
 const ContentAddHello = () => {
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, loadingNewFriend, friendDashboardData } = useSelectedFriend();
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [typeChoices, setTypeChoices] = useState([]);
   const [selectedTypeChoice, setSelectedTypeChoice] = useState(null);
+  const [selectedTypeChoiceText, setSelectedTypeChoiceText] = useState(null);
   const [locationModalVisible, setLocationModalVisible] = useState(false);
-  const { locationList, faveLocationList, tempLocationList, savedLocationList }  = useLocationList();
+  const { locationList, faveLocationList,populateFaveLocationsList, savedLocationList } = useLocationList();
+  const [isLocationListReady, setIsLocationListReady] = useState(false);
     
   const [selectedLocation, setSelectedLocation] = useState('Select location');
-  
+  const [existingLocationId, setExistingLocationId ] = useState('');
+  const [customLocation, setCustomLocation ] = useState('');
   
   const { capsuleList, setCapsuleList } = useCapsuleList();
-  const [ momentEditMode, setMomentEditMode] = useState(false);
+ 
   const [firstSectionTitle, setFirstSectionTitle] = useState('Friend: ');
-  const [textInput, setTextInput] = useState('');
-  const [categoryInput, setCategoryInput] = useState('');
-  const [categoryCapsules, setCategoryCapsules ] = useState([]);
-  const [uniqueCategories, setUniqueCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [momentsSelected, setMomentsSelected] = useState([]);
+  const [isDeleteChoiceModalVisible, setDeleteChoiceModalVisible] = useState(false);
+  
+  const [deleteChoice, setDeleteChoice ] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [userEntryCapsule, setUserEntryCapsule] = useState('');
  
   
   const navigation = useNavigation();
+
+  const handleDeleteChoiceToggle = (isToggledYes) => {
+    setDeleteChoice(isToggledYes ? true : false);
+    console.log('Toggle state:', isToggledYes ? 'Yes' : 'No');
+  };
+
+  useEffect(() => {
+    console.log(deleteChoice);
+  }, [deleteChoice]);
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
       setFirstSectionTitle('Friend: ');
     }
   }, [selectedFriend, loadingNewFriend]);
+
+
+  useEffect(() => {
+    if (loadingNewFriend) {
+        setIsLocationListReady(false); 
+    } else {
+      setIsLocationListReady(true)
+    };
+  }, [loadingNewFriend]);
+
+  useEffect(() => {
+        if (friendDashboardData && friendDashboardData.length > 0) {
+            const favoriteLocationIds = friendDashboardData[0]?.friend_faves?.locations || [];
+
+            console.log('favorite location IDs: ', favoriteLocationIds);
+            populateFaveLocationsList(favoriteLocationIds);
+
+        }
+    }, [locationList, friendDashboardData]);
+
+  useEffect(() => {
+        console.log('Favorite Locations:', faveLocationList); // Logging faveLocationList
+    }, [faveLocationList]);
+
+  useEffect(() => {
+    if (locationList.length > 0) {
+        setIsLocationListReady(true);
+    }
+  }, [locationList]);
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,11 +138,30 @@ const ContentAddHello = () => {
 
   const handleTypeChoiceChange = (index) => {
     setSelectedTypeChoice(index);
+    setSelectedTypeChoiceText(`${typeChoices[index]}`);
     console.log(`Selected type: ${typeChoices[index]}`);
+    console.log(index);
   };
 
   const handleLocationChange = (item) => {
-    setSelectedLocation(item.title);
+    if (item && item.id) { 
+      setSelectedLocation(item.title);
+      setExistingLocationId(item.id);
+      setCustomLocation(null);
+    } else { 
+      if (item) { 
+      setSelectedLocation(item);
+      setCustomLocation(item);
+      setExistingLocationId(null);
+      } else {
+        setSelectedLocation('None');
+      }
+    }
+  };
+
+  const handleMomentSelect = (selectedMoments) => {
+    setMomentsSelected(selectedMoments);
+    console.log('Selected Moments in Parent:', selectedMoments);
   };
 
   const onChangeDate = (event, selectedDate) => {
@@ -103,68 +173,47 @@ const ContentAddHello = () => {
     setHelloDate(dateWithoutTime);
     console.log(dateWithoutTime); 
 };
+  
+ 
 
-  const handleMomentToggle = (screenState) => {
-    console.log(screenState); 
-    setMomentEditMode(screenState);
-  };
  
 
 
-  const handleCategorySelect = (category, capsulesForCategory) => {
-    setSelectedCategory(category);
-    setCategoryCapsules(capsulesForCategory); 
-
-    console.log('Category selected in parent:', category);
-    console.log('Capsules for selected category in parent:', capsulesForCategory);
-  };
-
-  useEffect(() => {
-    if (selectedCategory) {
-        console.log('category in parent:', selectedCategory);
-    }
-
-  }, [selectedCategory]);
-
-  useEffect(() => { 
-    const categories = [...new Set(capsuleList.map(capsule => capsule.typedCategory))];
-    setUniqueCategories(categories);
-  }, [capsuleList]);
-
-  const handleInputChange = (text) => {
-    setTextInput(text);
-    setUserEntryCapsule(text);
-  };
-
-
   const handleSave = async () => {
+    setDeleteChoiceModalVisible(false);
+    
     try {
       if (selectedFriend) {
+        const formattedDate = helloDate.toISOString().split('T')[0];
+        const momentsDictionary = {};
+        momentsSelected.forEach((moment) => {
+          momentsDictionary[moment.id] = {
+            typed_category: moment.typedCategory,
+            capsule: moment.capsule,
+          };
+        });
         const requestData = {
           user: authUserState.user.id,
-          friend: selectedFriend.id,
-          typed_category: selectedCategory,
-          capsule: userEntryCapsule,
+          friend: selectedFriend.id, 
+          type: selectedTypeChoiceText,
+          typed_location: customLocation,
+          location: existingLocationId,
+          date: formattedDate,
+          thought_capsules_shared: momentsDictionary,
+          delete_all_unshared_caspules: deleteChoice,
         };
   
-        const response = await saveThoughtCapsule(requestData);
-  
-        const newCapsule = {
-          id: response.id,
-          typedCategory: response.typed_category,
-          capsule: response.capsule,
-        };
-  
-        // Add the new capsule to the front of the list
-        setCapsuleList(prevCapsules => [newCapsule, ...prevCapsules]);
-  
-        setTextInput('');
-        setCategoryInput('');
-        setSuccessMessage('Capsule saved successfully!');
+        console.log("saving hello with data: ", requestData);
+        const response = await saveHello(requestData);
+        console.log(response.data);
+        
+ 
+        setSuccessMessage('Hello logged successfully!');
       }
     } catch (error) {
-      console.error('Error saving capsule:', error);
+      console.error('Error saving hello: ', error);
     }
+    
   };
   
  
@@ -198,15 +247,20 @@ const ContentAddHello = () => {
                 labels={labels}
          />
             </View>
+            {(selectedTypeChoice === 1 || selectedTypeChoice === 2) && (
             <View style={styles.locationContainer}>
+            {isLocationListReady && (
             <PickerComplexList 
                 containerText='Location: '
                 inline={true}
                 modalHeader='Select Location'
+                allowCustomEntry={true}
                 primaryOptions={faveLocationList}
                 primaryOptionsHeader='Pinned'
-                secondaryOptions={locationList}
+                primaryIcon={LocationHeartSolidSvg}
+                secondaryOptions={savedLocationList}
                 secondaryOptionsHeader='All Saved'
+                secondaryIcon={LocationSolidSvg}
                 objects={true} 
                 onLabelChange={handleLocationChange}
                 label={selectedLocation}
@@ -216,13 +270,20 @@ const ContentAddHello = () => {
                 buttonStyle={styles.optionButton}
                 buttonTextStyle={styles.optionText}  
          />
+          )}
             </View>
+            )}
             
+            <View style={styles.momentsContainer}> 
+            <PickerMultiMoments
+              onMomentSelect={handleMomentSelect}
+             />
+          </View>
 
 
 
 
-            <View style={styles.dateContainer}> 
+          <View style={styles.dateContainer}> 
             <PickerDate
                 value={helloDate}
                 mode="date"
@@ -237,21 +298,11 @@ const ContentAddHello = () => {
                 labelStyle={styles.locationTitle} 
                 inline={true}
             />
-
-        </View>
-        {userEntryCapsule && selectedFriend && !momentEditMode && ( 
-          <View style={styles.categoryContainer}>
-            <>
-            <Text style={styles.locationTitle}>Category: {selectedCategory}</Text>
-            
-                <CardCategoriesAsButtons onCategorySelect={handleCategorySelect}/> 
-            </> 
-        </View>
-        )}
-        {userEntryCapsule && selectedCategory && ( 
+          </View> 
+        {helloDate && ( 
                 <View style={styles.bottomButtonContainer}>  
                     <ButtonLottieAnimationSvg
-                        onPress={handleSave}
+                        onPress={() => setDeleteChoiceModalVisible(true)}
                         preLabel=''
                         label={`Add hello`}
                         height={54}
@@ -278,6 +329,17 @@ const ContentAddHello = () => {
             </View> 
             )}
       </View>
+      <AlertYesNo
+          isModalVisible={isDeleteChoiceModalVisible}
+          toggleModal={() => setDeleteChoiceModalVisible(false)}
+          headerContent={<Text>Adding hello</Text>}
+          questionText="Do you want to clear out all unshared moments?"
+          onConfirm={handleSave}
+          onToggle={handleDeleteChoiceToggle}
+          onCancel={() => setDeleteChoiceModalVisible(false)}
+          confirmText="Save hello"
+          cancelText="Go back"
+        />
     </View>
   );
 };
@@ -331,16 +393,12 @@ const styles = StyleSheet.create({
     marginVertical: 10, 
     height: 360,
   },
-  categoryContainer: { 
+  momentsContainer: { 
     backgroundColor: '#fff',
     width: '100%', 
     borderRadius: 8,
-    padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    padding: 0,
+    minHeight: 400, 
   },
   selectFriendContainer: {
     position: 'absolute',
@@ -379,17 +437,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     marginVertical: 10,
-  },
-  textInput: {
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    fontSize: 18,
-    padding: 10,
-    borderRadius: 20,
-    fontFamily: 'Poppins-Regular',
-
-  },
+  }, 
   bottomButtonContainer: {
     height: '12%', 
     padding: 0,

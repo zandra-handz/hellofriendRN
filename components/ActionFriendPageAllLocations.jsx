@@ -11,6 +11,7 @@ const ActionFriendPageAllLocations = ({ isModalVisible, toggleModal, onClose }) 
 
     const { locationList, faveLocationList } = useLocationList();
     const [isLocationListReady, setIsLocationListReady] = useState(false);
+    
     const [isMapModalVisible, setIsMapModalVisible] = useState(false);
   
     const handleMapScreen = () => {

@@ -118,6 +118,7 @@ const handleSave = async () => {
   try {
     if (selectedFriend) {
       const formattedDate = selectedDate.toISOString().split('T')[0];
+      
       const capsulesDictionary = {};
       selectedCapsules.forEach((capsule) => {
         capsulesDictionary[capsule.id] = {

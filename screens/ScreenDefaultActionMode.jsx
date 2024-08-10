@@ -21,6 +21,7 @@ import ActionScreenButtonAddFriend from '../components/ActionScreenButtonAddFrie
 import ButtonLottieAnimationSatellites from '../components/ButtonLottieAnimationSatellites'; // Make sure to import the correct component
 import ActionPageSettings from '../components/ActionPageSettings';
 import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; // Import the new component
+import ActionFriendPageLocations from '../components/ActionFriendPageLocations'; // Import the new component
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -120,6 +121,9 @@ const navigateToAddHelloScreen = () => {
 
       <View style={styles.buttonContainer}>
         <ActionPageUpcomingButton/>
+        {selectedFriend &&(
+          <ActionFriendPageLocations />
+        )}
         <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
         <ActionScreenButtonAddImage onPress={openModal2}/>
         <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen}/>

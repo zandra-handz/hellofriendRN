@@ -211,7 +211,7 @@ const darkThemeStyles = StyleSheet.create({
         backgroundColor:'black',
         color: 'white',
         fontFamily: 'Poppins-Regular',
-        placeholderTextColor: 'gray',
+        placeholderTextColor: 'lightgray',
     },
     logoText: {
         color: 'black',  
