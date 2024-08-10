@@ -31,6 +31,7 @@ import ScreenFriendFocus from './screens/ScreenFriendFocus';
 
 import ScreenAddMoment from './screens/ScreenAddMoment';
 import ScreenAddFriend from './screens/ScreenAddFriend';
+import ScreenAddHello from './screens/ScreenAddHello';
 
 async function loadFonts() {
   await Font.loadAsync({
@@ -184,6 +185,14 @@ export const Layout = () => {
                 options={{
                   headerShown: true,
                   title: 'Add new moment',
+                }}
+              />
+              <Stack.Screen
+                name="AddHello"
+                component={ScreenAddHello}
+                options={{
+                  headerShown: true,
+                  title: 'Record new hello',
                 }}
               />
               <Stack.Screen

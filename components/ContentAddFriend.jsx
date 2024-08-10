@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; // Import the SVG
+import PickerDate from '../components/PickerDate';
 import moment from 'moment';
 
 import { useAuthUser } from '../context/AuthUserContext';
@@ -269,23 +270,20 @@ const ContentAddFriend = ({ size = 14, family = 'Poppins-Regular', color = "blac
                         />
                 </View>
 
-                <View style={styles.locationContainer}>
-                    <Text style={styles.locationTitle}>
-                        Last time you said hello?
-                    </Text>
-                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
-                        <Text style={styles.dateText}>{moment(friendDate).format('MMMM Do YYYY')}</Text>
-                    </TouchableOpacity>
-                    {showDatePicker && (
-                        <DateTimePicker
-                            testID="dateTimePicker"
-                            value={friendDate}
-                            mode="date"
-                            display="default"
-                            maximumDate={new Date()}
-                            onChange={onChangeDate}
-                        />
-                    )}
+                <View style={styles.locationContainer}> 
+                    <PickerDate
+                        value={friendDate}
+                        mode="date"
+                        display="default"
+                        maximumDate={new Date()}
+                        onChange={onChangeDate}
+                        showDatePicker={showDatePicker}
+                        setShowDatePicker={setShowDatePicker}
+                        dateTextStyle={styles.dateText}
+                        containerStyle={styles.locationContainer}
+                        labelStyle={styles.locationTitle}
+                        buttonStyle={styles.datePickerButton}
+                    />
 
                 </View>
                 </>
