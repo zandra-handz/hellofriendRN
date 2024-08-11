@@ -31,6 +31,8 @@ import ScreenFriendFocus from './screens/ScreenFriendFocus';
 
 import ScreenAddMoment from './screens/ScreenAddMoment';
 import ScreenAddFriend from './screens/ScreenAddFriend';
+import ScreenAddImage from './screens/ScreenAddImage';
+
 import ScreenAddHello from './screens/ScreenAddHello';
 
 async function loadFonts() {
@@ -185,6 +187,14 @@ export const Layout = () => {
                 options={{
                   headerShown: true,
                   title: 'Add new moment',
+                }}
+              />
+              <Stack.Screen
+                name="AddImage"
+                component={ScreenAddImage}
+                options={{
+                  headerShown: true,
+                  title: 'Upload memes and photos',
                 }}
               />
               <Stack.Screen

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import SpeechBubbleIconHeartSvg from '../assets/svgs/speech-bubble-icon-heart.svg';
 import ThoughtBubbleIconPinkHeartSvg from '../assets/svgs/thought-bubble-icon-pink-heart.svg';
+
 import FormatDate from '../components/FormatDate';
 
 const ButtonMoment = ({

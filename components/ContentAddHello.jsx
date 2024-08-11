@@ -8,6 +8,8 @@ import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
+import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
+
 import { saveThoughtCapsule } from '../api';
 import { fetchTypeChoices, saveHello } from '../api';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
@@ -40,7 +42,7 @@ import LoadingPage from '../components/LoadingPage';
 
 const ContentAddHello = () => {
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, loadingNewFriend, friendDashboardData } = useSelectedFriend();
+  const { selectedFriend, loadingNewFriend, friendDashboardData, setFriend } = useSelectedFriend();
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [typeChoices, setTypeChoices] = useState([]);
@@ -61,8 +63,17 @@ const ContentAddHello = () => {
   const [isDeleteChoiceModalVisible, setDeleteChoiceModalVisible] = useState(false);
   
   const [deleteChoice, setDeleteChoice ] = useState(false);
+  
+  const [ saveInProgress, setSaveInProgress ] = useState(false);
+    
+  
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [isFailModalVisible, setFailModalVisible] = useState(false);
+
+  
   const [successMessage, setSuccessMessage] = useState('');
- 
+  const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
+  
   
   const navigation = useNavigation();
 
@@ -70,6 +81,11 @@ const ContentAddHello = () => {
     setDeleteChoice(isToggledYes ? true : false);
     console.log('Toggle state:', isToggledYes ? 'Yes' : 'No');
   };
+
+  const navigateToMainScreen = () => {
+    navigation.navigate('hellofriend');
+
+};
 
   useEffect(() => {
     console.log(deleteChoice);
@@ -181,7 +197,8 @@ const ContentAddHello = () => {
 
   const handleSave = async () => {
     setDeleteChoiceModalVisible(false);
-    
+    setSaveInProgress(true); 
+
     try {
       if (selectedFriend) {
         const formattedDate = helloDate.toISOString().split('T')[0];
@@ -200,21 +217,34 @@ const ContentAddHello = () => {
           location: existingLocationId,
           date: formattedDate,
           thought_capsules_shared: momentsDictionary,
-          delete_all_unshared_caspules: deleteChoice,
+          delete_all_unshared_capsules: deleteChoice ? true : false,
         };
   
         console.log("saving hello with data: ", requestData);
         const response = await saveHello(requestData);
         console.log(response.data);
         
- 
-        setSuccessMessage('Hello logged successfully!');
+        setSuccessModalVisible(true); 
+        setUpdateTrigger((prev) => !prev);
       }
     } catch (error) {
       console.error('Error saving hello: ', error);
-    }
+      setFailModalVisible(true);
+    } finally {
+      setSaveInProgress(false); 
+    };
     
   };
+
+  const successOk = () => {
+    setUpdateTrigger(prev => !prev); 
+    navigateToMainScreen();
+    setSuccessModalVisible(false);
+};
+
+const failOk = () => { 
+    setFailModalVisible(false);
+};
   
  
 
@@ -331,6 +361,8 @@ const ContentAddHello = () => {
       </View>
       <AlertYesNo
           isModalVisible={isDeleteChoiceModalVisible}
+          isFetching={saveInProgress}
+          useSpinner={true}
           toggleModal={() => setDeleteChoiceModalVisible(false)}
           headerContent={<Text>Adding hello</Text>}
           questionText="Do you want to clear out all unshared moments?"
@@ -339,6 +371,22 @@ const ContentAddHello = () => {
           onCancel={() => setDeleteChoiceModalVisible(false)}
           confirmText="Save hello"
           cancelText="Go back"
+        />
+          <AlertSuccessFail
+            isVisible={isSuccessModalVisible}
+            message={`Hello has been added!`}
+            onClose={successOk}
+            type='success'
+        />
+
+        <AlertSuccessFail
+            isVisible={isFailModalVisible}
+            message={`Could not add Hello.`}
+            onClose={failOk}
+            tryAgain={false}
+            onRetry={handleSave}
+            isFetching={saveInProgress}
+            type='failure'
         />
     </View>
   );

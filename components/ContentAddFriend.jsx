@@ -39,6 +39,7 @@ const ContentAddFriend = ({ size = 14, family = 'Poppins-Regular', color = "blac
     const [ canSubmit, setCanSubmit ] = useState(false);
     
     const [ saveInProgress, setSaveInProgress ] = useState(false);
+    
     const [friendName, setFriendName] = useState('');
     const [friendEffort, setFriendEffort] = useState(3);
     const [friendPriority, setFriendPriority] = useState(2);
@@ -171,8 +172,7 @@ const ContentAddFriend = ({ size = 14, family = 'Poppins-Regular', color = "blac
                 friendEffort: friendEffort,
                 friendPriority: friendPriority
             };
-            console.log('postData: ', postData);
-            setSaveInProgress(true);
+            console.log('postData: ', postData); 
             const friendResponse = await createFriend(postData);
             addToFriendList(friendResponse);
             console.log(friendResponse);

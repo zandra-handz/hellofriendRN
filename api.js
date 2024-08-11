@@ -392,10 +392,12 @@ export const saveThoughtCapsule = async (requestData) => {
 
 
 export const saveHello = async (requestData) => {
-    console.log(requestData);
+    console.log('data sent to saveHello: ', requestData);
     try {
         const response = await axios.post(`/friends/${requestData.friend}/helloes/add/`, requestData);
-        return response.data;
+        console.log('response from saveHello endpoint: ', response);
+        return response;
+        
     } catch (error) {
         console.error('Error saving hello:', error);
         console.log(response.data);

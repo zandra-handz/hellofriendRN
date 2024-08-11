@@ -45,11 +45,15 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 
   const navigateToAddMomentScreen = () => {
     navigation.navigate('AddMoment');
-};
+  };
 
-const navigateToAddHelloScreen = () => {
-  navigation.navigate('AddHello');
-};
+  const navigateToAddImageScreen = () => {
+    navigation.navigate('AddImage');
+  };
+
+  const navigateToAddHelloScreen = () => {
+    navigation.navigate('AddHello');
+  };
 
   const navigateToAddFriendScreen = () => {
     navigation.navigate('AddFriend');
@@ -125,7 +129,7 @@ const navigateToAddHelloScreen = () => {
           <ActionFriendPageLocations />
         )}
         <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
-        <ActionScreenButtonAddImage onPress={openModal2}/>
+        <ActionScreenButtonAddImage onPress={navigateToAddImageScreen }/>
         <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen}/>
 
         {!selectedFriend && (

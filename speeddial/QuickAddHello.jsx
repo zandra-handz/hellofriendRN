@@ -8,6 +8,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
+
 import { fetchTypeChoices, saveHello } from '../api';
 import CapsuleItem from '../components/CapsuleItem';
 
@@ -37,6 +38,7 @@ const QuickAddHello = ({ onClose }) => {
   const { capsuleList, removeCapsules } = useCapsuleList();
   const { authUserState } = useAuthUser();
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
+  
   const textareaRef = useRef();
   const [textboxPlaceholder, setTextboxPlaceholder] = useState('Start typing your thought here');
   
