@@ -1,6 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, Image, TextInput, Alert } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
  
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
@@ -11,9 +12,12 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
 
 import PickerBinary from '../components/PickerBinary';
+import InputSingleValue from '../components/InputSingleValue';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import CameraCuteSvg from '../assets/svgs/camera-cute.svg';
 import UploadCurlySvg from '../assets/svgs/upload-curly.svg';
+
+import PhotosTwoSvg from '../assets/svgs/photos-two.svg';
 
 
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
@@ -21,13 +25,16 @@ import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 const ContentAddImage = () => {
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-
+  const [ canContinue, setCanContinue ] = useState('');
+    
   const { setUpdateImagesTrigger } = useImageList();
   const [imageUri, setImageUri] = useState(null);
-  const [title, setTitle] = useState('');
+  const [imageTitle, setImageTitle] = useState('');
   const [imageCategory, setImageCategory] = useState('Misc');
   const [firstSectionTitle, setFirstSectionTitle] = useState('Friend: ');
 
+  const imageTitleRef = useRef(null);
+  const imageCategoryRef = useRef(null);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -48,6 +55,49 @@ const ContentAddImage = () => {
     requestPermission();
   }, []);
 
+  const handleCaptureImage = async () => {
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+
+
+  useEffect(() => {
+    if (imageTitleRef) {
+    console.log(imageTitleRef);
+    };
+
+  }, [imageTitleRef]);
+
+
+  const handleImageTitleChange = (value) => {
+    setImageTitle(value);
+    if (value.length > 0) {
+        console.log('ContentAddImage Title: ', value); 
+    } else {
+        setCanContinue(false);
+    }
+    };
+
+    const handleImageCategoryChange = (value) => {
+      setImageTitle(value);
+      if (value.length > 0) {
+          console.log('ContentAddImage Category: ', value);
+          setCanContinue(true);
+      } else {
+          setCanContinue(false);
+      }
+      };
+
+
 
   const handleSelectImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -64,12 +114,9 @@ const ContentAddImage = () => {
 
 
   const handleSave = async () => {
-    if (imageUri && title.trim() && selectedFriend && authUserState.user) {
-      try {
-        // Create FormData object
-        const formData = new FormData();
-  
-        // Append image data
+    if (imageUri && imageTitle.trim() && selectedFriend && authUserState.user) {
+      try { 
+        const formData = new FormData(); 
         const imageUriParts = imageUri.split('.');
         const fileType = imageUriParts[imageUriParts.length - 1];
         formData.append('image', {
@@ -77,26 +124,23 @@ const ContentAddImage = () => {
           name: `image.${fileType}`,
           type: `image/${fileType}`,
         });
-  
-        // Append other fields
-        formData.append('title', title.trim());
+   
+        formData.append('title', imageTitle.trim());
         formData.append('image_category', imageCategory.trim());
-        formData.append('image_notes', ''); // Adjust as needed
+        formData.append('image_notes', '');  
         formData.append('friend', selectedFriend.id);
         formData.append('user', authUserState.user.id);
-        formData.append('thought_capsules', ''); // Adjust as needed
+        formData.append('thought_capsules', '');  
   
         console.log('FormData before sending:', formData);
   
         const response = await createFriendImage(selectedFriend.id, formData);
         console.log('Image created successfully:', response);
-  
-        // Optionally clear the image URI state or handle the response
+   
         setImageUri(null);
-        setTitle('');
+        setImageTitle('');
         setImageCategory('Misc');
-        setUpdateImagesTrigger(prev => !prev); 
-        // Handle success as needed
+        setUpdateImagesTrigger(prev => !prev);  
       } catch (error) {
         console.error('Error creating image:', error);
         Alert.alert('Error', 'Error creating image.');
@@ -120,27 +164,53 @@ const ContentAddImage = () => {
 
           <FriendSelectModalVersion width='82%' />
         </View>
+        {imageUri && (
+          <View style={styles.previewContainer}> 
+          <View style={styles.previewTitleContainer}>
+            <Text style={styles.previewTitle}>Image:</Text>
+          </View>
+            <View style={styles.previewImageContainer}>
+            <Image
+              source={{ uri: imageUri }}
+              style={styles.previewImage}
+            />
+            </View>
+              <InputSingleValue
+              valueRef={imageTitleRef}
+              handleValueChange={handleImageTitleChange}
+              label='Title'
+              placeholder='Enter here'
+            />
+            <InputSingleValue
+              valueRef={imageTitleRef}
+              handleValueChange={handleImageCategoryChange}
+              label='Category'
+              placeholder='Enter here'
+            />
+          </View>
+        )} 
 
         <View style={styles.locationContainer}>
           <PickerBinary
+          onPressRight={handleSelectImage}
+          onPressLeft={handleCaptureImage}
           LeftSvg={CameraCuteSvg}
           RightSvg={UploadCurlySvg}
-          containerText="Image" />
-        </View> 
-        { selectedFriend && ( 
-          <View style={styles.categoryContainer}>
-            <>
-            <Text style={styles.locationTitle}>Add image</Text>
-            
-            </> 
+          leftLabel='Camera'  
+          rightLabel='Upload' 
+          leftLabelPosition='above'  
+          rightLabelPosition='above'
+          containerText="Image: " />
+          
         </View>
-        )}
-        {selectedFriend && imageUri && ( 
+
+
+        {selectedFriend && canContinue && imageUri && ( 
                 <View style={styles.bottomButtonContainer}>  
                     <ButtonLottieAnimationSvg
                         onPress={handleSave}
                         preLabel=''
-                        label={`Add moment`}
+                        label={`Upload image`}
                         height={54}
                         radius={16}
                         fontMargin={3}
@@ -155,9 +225,9 @@ const ContentAddImage = () => {
                         showGradient={true}
                         showShape={true}
                         shapePosition="right"
-                        shapeSource={CompassCuteSvg}
-                        shapeWidth={100}
-                        shapeHeight={100}
+                        shapeSource={PhotosTwoSvg}
+                        shapeWidth={90}
+                        shapeHeight={90}
                         shapePositionValue={-14}
                         shapePositionValueVertical={-10}
                         showIcon={false}
@@ -183,7 +253,7 @@ const styles = StyleSheet.create({
   },
   locationContainer: { 
     borderRadius: 8,
-    top: 70,
+    top: 50,
     position: 'absolute',
     width: '100%',
     padding: 0,
@@ -193,7 +263,7 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 0,
     marginVertical: 10, 
-    height: 360,
+    height: 200,
   },
   categoryContainer: { 
     backgroundColor: '#fff',
@@ -230,15 +300,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     marginVertical: 10,
-  },
-  previewContainer: {
-    marginVertical: 10,
-  },
-  previewTitle: {
-    fontSize: 15,
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 5,
-  },
+  }, 
   inputContainer: {
     justifyContent: 'center',
     width: '100%',
@@ -272,6 +334,46 @@ const styles = StyleSheet.create({
     bottom: 0, 
     right: 0,
     left: 0,
+  },
+  previewContainer: {
+    borderRadius: 8,
+    top: 60,
+    position: 'absolute',
+    width: '100%',
+    flexDirection: 'column',
+    padding: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.0,
+    shadowRadius: 0,
+    elevation: 0,
+    marginVertical: 0, 
+    justifyContent: 'space-between',
+    height:300,
+    alignItems: 'center',
+    width: '100%',
+    zIndex: 2,
+    backgroundColor: 'white',
+  },
+  previewImageContainer: { 
+    paddingVertical: 10,
+
+  },
+  previewTitleContainer: {
+    width: '100%',
+    textAlign: 'left',
+
+  },
+  previewTitle: {
+    fontSize: 17,
+    fontFamily: 'Poppins-Bold', 
+
+  },
+  previewImage: {
+    width: 200,
+    height: 150,
+    borderRadius: 8,
+    backgroundColor: '#eee',
   },
 });
 

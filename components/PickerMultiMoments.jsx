@@ -36,8 +36,8 @@ const PickerMultiMoments = ({
     // Log the total number of items in capsuleList
     console.log('Total Number of Items in Capsule List:', capsuleList.length);
 
-    if (selectedFriend) {
-      setSelectedCategory(null); // Reset selectedCategory when selectedFriend changes
+    if (selectedFriend) { 
+      setSelectedCategory(null);  
       fetchCategoryLimitData();
     }
   }, [selectedFriend, friendDashboardData, capsuleList, selectedMoments]);
@@ -146,10 +146,7 @@ const PickerMultiMoments = ({
             showsHorizontalScrollIndicator={false} // Hide scroll indicator for better UX
           />
         </View>
-
-        <View style={styles.selectionContainer}> 
-            <Text style={styles.title}>Select from:</Text>
-        </View>
+ 
       </View>
 
       {showInModal && (
@@ -199,7 +196,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: 'lightgray',
     padding: 10,
-    height: 240, // Ensure this height is sufficient for scrolling
+    height: 300, // Ensure this height is sufficient for scrolling
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 20,

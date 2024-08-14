@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Image, TextInput, Alert } from 'react-native';
+
 import * as ImagePicker from 'expo-image-picker';
 import { createFriendImage } from '../api'; // Import your API function
 import { useAuthUser } from '../context/AuthUserContext';

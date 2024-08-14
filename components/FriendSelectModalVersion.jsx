@@ -24,7 +24,8 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
   const [displayName, setDisplayName] = useState(null);
   const [friendLightColor, setFriendLightColor] = useState('white');
   const [friendDarkColor, setFriendDarkColor] = useState('white');
-  
+  const [refreshButtonColor, setRefreshButtonColor ] = useState('white');
+
   const adjustFontSize = (fontSize) => {
     return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
   };
@@ -63,11 +64,16 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
   useEffect(() => {
     if (loadingNewFriend) {
       setDisplayName('Loading friend...');
+      
+      setRefreshButtonColor('white');
     } else {
       if (selectedFriend && selectedFriend.name) {
         setDisplayName(selectedFriend.name);
+        
+        setRefreshButtonColor('white');
       } else {
-        setDisplayName(' ');
+        setDisplayName('Select friend');
+        setRefreshButtonColor('black');
       }
     }
   }, [selectedFriend, loadingNewFriend]);
@@ -99,9 +105,9 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
           <ButtonToggleSize
             title={''}
             onPress={toggleModal}
-            iconName="arrow-down" 
+            iconName="refresh" 
             backgroundColor={friendLightColor}
-            color='black'
+            color={refreshButtonColor}
             style={{
               width: 70,  
               height: 35,  

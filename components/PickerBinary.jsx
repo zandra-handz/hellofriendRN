@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from 'react-native';
 
 const PickerBinary = ({
   LeftSvg,
@@ -31,7 +31,9 @@ const PickerBinary = ({
           {leftLabel && leftLabelPosition === 'above' && (
             <Text style={styles.label}>{leftLabel}</Text>
           )}
-          <LeftSvg width="100%" height="100%" />
+          <View style={styles.iconContainer}>
+            <LeftSvg width="70%" height="70%" />
+          </View>
           {leftLabel && leftLabelPosition === 'below' && (
             <Text style={styles.label}>{leftLabel}</Text>
           )}
@@ -43,7 +45,9 @@ const PickerBinary = ({
           {rightLabel && rightLabelPosition === 'above' && (
             <Text style={styles.label}>{rightLabel}</Text>
           )}
-          <RightSvg width="100%" height="100%" />
+          <View style={styles.iconContainer}>
+            <RightSvg width="70%" height="70%" />
+          </View>
           {rightLabel && rightLabelPosition === 'below' && (
             <Text style={styles.label}>{rightLabel}</Text>
           )}
@@ -56,14 +60,13 @@ const PickerBinary = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 10,
     overflow: 'hidden',
     backgroundColor: '#fff',
+    padding: 5,
   },
   containerText: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Poppins-Bold',
     textAlign: 'left',
     marginVertical: 10,
@@ -71,22 +74,29 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexDirection: 'row',
+    width: '100%',
   },
   side: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f0f0f0', // Adjust as needed
-    padding: 10,
+    paddingVertical: 10,
     borderColor: '#ddd',
     borderWidth: 1,
   },
+  iconContainer: {
+    width: '70%',
+    height: '70%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
   label: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
     color: 'black',
     textAlign: 'center',
-    marginVertical: 5,
   },
 });
 
