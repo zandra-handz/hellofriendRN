@@ -17,7 +17,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.badrainbowz.sampleproject"
     },
     "splash": {
       "image": "./assets/splash.png",
@@ -33,6 +34,11 @@
     "plugins": [
       "expo-secure-store",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "3564e25f-85ac-4c60-9f14-93d9153871b3"
+      }
+    }
   }
 }

@@ -126,7 +126,7 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
       <View style={styles.buttonContainer}>
         <ActionPageUpcomingButton/>
         {selectedFriend &&(
-          <ActionFriendPageLocations />
+          <ActionFriendPageLocations includeHeader={false} headerInside={false}/>
         )}
         <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
         <ActionScreenButtonAddImage onPress={navigateToAddImageScreen }/>

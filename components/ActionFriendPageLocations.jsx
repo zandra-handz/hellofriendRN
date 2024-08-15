@@ -9,10 +9,10 @@ import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outlin
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
 import ActionFriendPageAllLocations from '../components/ActionFriendPageAllLocations';
- 
+import TogglerActionButton from '../components/TogglerActionButton'; // Import the new component
 import { useNavigation } from '@react-navigation/native';
 
-const ActionFriendPageLocations = ({ onPress }) => {
+const ActionFriendPageLocations = ({ onPress, includeHeader=true, headerText='PINNED', headerInside=true}) => {
 
   const navigation = useNavigation();
 
@@ -24,6 +24,25 @@ const ActionFriendPageLocations = ({ onPress }) => {
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const [lightColor, setLightColor] = useState('black');
   const [darkColor, setDarkColor] = useState('black');
+
+  const buttonHeight = 90;
+  const buttonRadius = 20;
+
+  const headerHeight = 30;
+
+  const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
+  const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
+
+
+  useEffect(() => {
+    if (headerInside) {
+      
+    }
+
+  }, []);
+
+
+
 
   
   let mainLocation = null;
@@ -96,11 +115,37 @@ const ActionFriendPageLocations = ({ onPress }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
+    <View style={[styles.container, {backgroundColor: calculatedBackgroundColor, borderRadius: buttonRadius }]}>
+      <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
+      {includeHeader && !headerInside && (
+        <View style={[styles.headerContainer, { height: headerHeight}]}>
+          <Text style={styles.headerText}>
+            {headerText}
+          </Text>
+        </View>
+
+      )}
+      <View style={styles.containerInnerRow}> 
+
+
+
+        <View style={styles.containerHeaderInside}>
+          {includeHeader && headerInside && (
+            <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
+            <Text style={styles.headerText}>
+              {headerText}
+            </Text>
+          </View>
+          )}
+
+      
+        
+      <Animated.View style={{ opacity: opacityAnim, flex: 1, zIndex: 1 }}>
         {additionalSatelliteCount > 0 ? (
           <ButtonLottieAnimationSatellitesLocations
             onPress={() => handlePress(mainLocation)} 
+            buttonHeight={buttonHeight}
+            buttonRadius={buttonRadius}
             navigateToFirstPage={navigateToFirstPage}
             headerText=''
             headerSvg={<PushPinSolidSvg width={20} height={20} color="white" />}
@@ -140,6 +185,8 @@ const ActionFriendPageLocations = ({ onPress }) => {
         ) : (
           <ButtonLottieAnimationSatellitesLocations
             onPress={() => handlePress(mainLocation)}
+            buttonHeight={buttonHeight}
+            buttonRadius={buttonRadius}
             navigateToFirstPage={navigateToFirstPage}
             firstItem={mainLocation ? mainLocation.address : 'Loading...'}
             allItems={locationList ? locationList : 'Loading...'}
@@ -176,39 +223,24 @@ const ActionFriendPageLocations = ({ onPress }) => {
         )}
       </Animated.View>
 
-      {!showSecondButton && additionalSatelliteCount > 0 && (
-        <>
-        <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={navigateToLocationScreen} style={styles.arrowButton}>
-            <View style={styles.svgFSContainer}>
-              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
-            <View style={styles.svgContainer}>
-              <ArrowRightCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-            </View>
-          </TouchableOpacity>
-        </View>
-        </>
-      )}
+      </View>
+      
 
-      {showSecondButton && (
-        <>
-        <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
-            <View style={styles.svgFSContainer}>
-              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
-            <View style={styles.svgContainer}>
-              <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-            </View>
-          </TouchableOpacity>
-        </View>
-        </>
-      )}
+      <TogglerActionButton
+        showSecondButton={showSecondButton}
+        handleNext={handleNext}
+        navigateToFirstPage={navigateToFirstPage}
+        handleFullScreen={handleFullScreen}
+        navigateToLocationScreen={navigateToLocationScreen}
+        height={calculatedButtonHeight}
+        borderRadius={buttonRadius} 
+        backgroundColor={friendColorTheme.lightColor}
+        topIconSize={34}
+        bottomIconSize={34}
+        iconColor={friendColorTheme.darkColor}
+      />
+      </View>
+       </View> 
       
       <ActionFriendPageAllLocations
       isModalVisible={isFSModalVisible}
@@ -219,44 +251,39 @@ const ActionFriendPageLocations = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%', 
-    borderRadius: 30,
+    width: '100%',  
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
+    paddingTop: 0, 
   },
-  arrowContainer: {
+  containerInner: {
     flexDirection: 'column',
-    paddingHorizontal: 6,
-    marginRight: -4,
-
+    width: '100%',  
+    backgroundColor: 'transparent',
   },
-  arrowButton: {
-    paddingTop: 0,
-    marginRight: -8,
-    marginLeft: -10,
+  containerHeaderInside: { 
+    flexDirection: 'column', 
+    backgroundColor: 'transparent',
+    flex: 1,
+    zIndex: 1,
+    },
+ 
+  containerInnerRow: {
+    flexDirection: 'row',
+    width: '100%',  
+    backgroundColor: 'transparent',
   },
-  svgContainer: {
-    width: 60,  
-    height: 60,  
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',  
+  headerContainer: { 
+    textAlign: 'left', 
+    justifyContent: 'center',
+    paddingLeft: 10,  
+  
   },
-  SvgImage: {
-    transform: [{ scale: .8 }],  
-  },
-  svgFSContainer: {
-    width: 60,
-    height: 50,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center', 
-    paddingTop: 20,
-    marginBottom: -6,
-  },
-  SvgFSImage: {
-    transform: [{ scale: 1.22 }],
+  headerText: {
+    fontFamily: 'Poppins-Bold',
+    color: 'black',
+    fontSize: 18,
   },
 });
 

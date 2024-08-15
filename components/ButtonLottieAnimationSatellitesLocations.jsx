@@ -12,6 +12,8 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const ButtonLottieAnimationSatellitesLocations = ({
   onPress,
+  buttonHeight = 90,
+  buttonRadius = 10,
   isLoading = false,
   loadingMessage = '',
   headerText = 'PINNED',
@@ -184,14 +186,14 @@ const ButtonLottieAnimationSatellitesLocations = ({
       {!additionalPages && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { height: 90, width: satellites ? '100%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: buttonHeight, width: satellites ? '100%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 90,
+                  height: buttonHeight,
                   padding: 10,
-                  borderRadius: 30,
+                  borderRadius: buttonRadius,
                   alignItems: 'center',
                   overflow: 'hidden',
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
@@ -271,7 +273,7 @@ const ButtonLottieAnimationSatellitesLocations = ({
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, { borderRadius : buttonRadius, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
                 {renderSatellites()}
               </View>
             )}
@@ -279,7 +281,7 @@ const ButtonLottieAnimationSatellitesLocations = ({
         </Animated.View>
       )}
       {additionalPages && (
-        <View style={styles.additionalSatelliteSection}>
+        <View style={[styles.additionalSatelliteSection, {borderRadius: buttonRadius, height: buttonHeight}]}>
           {additionalPagesCategorize && (
             <View style={styles.categoryTextContainer}>
               <Text style={styles.categoryText}>{category}</Text>
@@ -299,7 +301,6 @@ svgContainer: {
   satelliteSection: {
     width: '0%',
     height: 0,
-    borderRadius: 20, 
     paddingLeft: 8, 
     alignItems: 'center',
     justifyContent: 'space-evenly',
@@ -307,9 +308,7 @@ svgContainer: {
   },
   additionalSatelliteSection: {
     flexDirection: 'column',
-    marginVertical: 0,
-    height: 90,
-    borderRadius: 30, 
+    marginVertical: 0, 
     backgroundColor: 'black',
   },
   categoryTextContainer: {

@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     bubbleText: {
-        color: 'black',
+        color: 'transparent',
         fontFamily: 'Poppins-Bold',
         textAlign: 'left',
     },
