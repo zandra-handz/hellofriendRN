@@ -1,10 +1,16 @@
-// ArrowContainer.js
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
-import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
-import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
+
 import MagGlassSimpleSvg from '../assets/svgs/mag-glass-simple.svg';
+import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
+import BookmarkOutlineSvg from '../assets/svgs/bookmark-outline.svg';
+
+
+import RightArrowMotionOutlineSvg from '../assets/svgs/right-arrow-motion-outline.svg';
+import RightArrowMotionSolidSvg from '../assets/svgs/right-arrow-motion-solid.svg';
+
+import LeftArrowMotionOutlineSvg from '../assets/svgs/left-arrow-motion-outline.svg';
+import LeftArrowMotionSolidSvg from '../assets/svgs/left-arrow-motion-solid.svg';
 
 const TogglerActionButton = ({ 
     showSecondButton, 
@@ -19,6 +25,7 @@ const TogglerActionButton = ({
     topIconSize=30,
     bottomIconSize=30,
     iconColor='black',
+    highlightIconColor='red'
 
     
 
@@ -27,7 +34,7 @@ const TogglerActionButton = ({
   const negativeMarginLeft = -marginLeft;
 
   return (
-    <View style={[styles.arrowContainer, { marginLeft: negativeMarginLeft, backgroundColor: backgroundColor, borderTopRightRadius: borderRadius, borderBottomRightRadius: borderRadius, height: height }]}>
+    <View style={[styles.arrowContainer, { marginLeft: negativeMarginLeft, backgroundColor: 'transparent', borderTopRightRadius: borderRadius, borderBottomRightRadius: borderRadius, height: height }]}>
       {!showSecondButton ? (
         <>
           <TouchableOpacity onPress={navigateToLocationScreen} style={styles.arrowButton}>
@@ -37,7 +44,7 @@ const TogglerActionButton = ({
           </TouchableOpacity>
           <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
             <View style={styles.svgContainer}>
-                <MagGlassSimpleSvg width={bottomIconSize} height={bottomIconSize} color={iconColor} style={styles.SvgImage} />
+                <ScrollOutlineSvg width={bottomIconSize} height={bottomIconSize} color={iconColor} style={styles.SvgImage} />
             </View>
           </TouchableOpacity>
         </>
@@ -50,7 +57,7 @@ const TogglerActionButton = ({
           </TouchableOpacity>
           <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
             <View style={[styles.svgContainer, {marginLeft: marginLeft}]}>
-                <MagGlassSimpleSvg width={bottomIconSize} height={bottomIconSize} color={iconColor} style={styles.SvgImage} />
+                <ScrollOutlineSvg  width={bottomIconSize} height={bottomIconSize} color={highlightIconColor} style={styles.SvgImage} />
             </View>
           </TouchableOpacity>
         </>
@@ -62,10 +69,10 @@ const TogglerActionButton = ({
 const styles = StyleSheet.create({
   arrowContainer: {
     flexDirection: 'column', 
-    width: 64,
+    width: 74,
     marginRight: 0, 
     backgroundColor: 'black',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-end',
     alignContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',

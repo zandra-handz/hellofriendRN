@@ -3,22 +3,16 @@ import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native
 import ButtonLottieAnimationSatellitesLocations from './ButtonLottieAnimationSatellitesLocations';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
-
-import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
-import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
-import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
-import ActionFriendPageAllLocations from '../components/ActionFriendPageAllLocations';
-import TogglerActionButton from '../components/TogglerActionButton'; // Import the new component
+import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';  
+import TogglerActionButton from '../components/TogglerActionButton';
 import { useNavigation } from '@react-navigation/native';
 
-const ActionFriendPageLocations = ({ onPress, includeHeader=true, headerText='PINNED', headerInside=true}) => {
+const ActionFriendPageLocations = ({ onPress, includeHeader=false, headerText='MEET UP PLACES', headerInside=false}) => {
 
   const navigation = useNavigation();
 
   const { selectedFriend, setFriend, friendColorTheme } = useSelectedFriend();
-  const { locationList, setLocationList } = useLocationList();
-  const [isFSModalVisible, setIsFSModalVisible] = useState(false);
+  const { locationList, setLocationList } = useLocationList(); 
   
   const [showSecondButton, setShowSecondButton] = useState(false);
   const opacityAnim = useRef(new Animated.Value(1)).current;
@@ -33,18 +27,6 @@ const ActionFriendPageLocations = ({ onPress, includeHeader=true, headerText='PI
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
   const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
 
-
-  useEffect(() => {
-    if (headerInside) {
-      
-    }
-
-  }, []);
-
-
-
-
-  
   let mainLocation = null;
   let satelliteLocations = [];
   let satellitesFirstPage = 1;
@@ -77,8 +59,6 @@ const ActionFriendPageLocations = ({ onPress, includeHeader=true, headerText='PI
     mainLocation = locationList[0];
     satelliteLocations = locationList.slice(1);
     additionalSatelliteCount = satelliteLocations.length - satellitesFirstPage;
-
- 
   }
  
 
@@ -99,20 +79,8 @@ const ActionFriendPageLocations = ({ onPress, includeHeader=true, headerText='PI
       useNativeDriver: true,
     }).start();
   };
-
-  const handleFullScreen = () => {
-    setIsFSModalVisible(true); // Set modal visible when fullscreen button is pressed
-  };
-
-  const closeModal = () => {
-    setIsFSModalVisible(false); // Close the modal
-  };
-
   
-  const handlePress = (location) => {
-    const { title, address } = location;   
-    console.log('ALL LOCATIONS!!', location);
-  };
+   
 
   return (
     <View style={[styles.container, {backgroundColor: calculatedBackgroundColor, borderRadius: buttonRadius }]}>
@@ -141,6 +109,7 @@ const ActionFriendPageLocations = ({ onPress, includeHeader=true, headerText='PI
       
         
       <Animated.View style={{ opacity: opacityAnim, flex: 1, zIndex: 1 }}>
+        
         {additionalSatelliteCount > 0 ? (
           <ButtonLottieAnimationSatellitesLocations
             onPress={() => handlePress(mainLocation)} 
@@ -230,21 +199,19 @@ const ActionFriendPageLocations = ({ onPress, includeHeader=true, headerText='PI
         showSecondButton={showSecondButton}
         handleNext={handleNext}
         navigateToFirstPage={navigateToFirstPage}
-        handleFullScreen={handleFullScreen}
+        handleFullScreen={navigateToLocationScreen}
         navigateToLocationScreen={navigateToLocationScreen}
         height={calculatedButtonHeight}
         borderRadius={buttonRadius} 
-        backgroundColor={friendColorTheme.lightColor}
+        backgroundColor={friendColorTheme.darkColor}
         topIconSize={34}
         bottomIconSize={34}
-        iconColor={friendColorTheme.darkColor}
+        iconColor={'black'}
+        highlightIconColor={friendColorTheme.lightColor}
       />
       </View>
-       </View> 
-      
-      <ActionFriendPageAllLocations
-      isModalVisible={isFSModalVisible}
-      toggleModal={closeModal} onClose={closeModal} />
+    </View> 
+       
     </View>
   );
 };
@@ -254,8 +221,7 @@ const styles = StyleSheet.create({
     width: '100%',  
     overflow: 'hidden',
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 0, 
+    alignItems: 'center', 
   },
   containerInner: {
     flexDirection: 'column',
@@ -265,8 +231,10 @@ const styles = StyleSheet.create({
   containerHeaderInside: { 
     flexDirection: 'column', 
     backgroundColor: 'transparent',
+    marginBottom: 20,
     flex: 1,
     zIndex: 1,
+
     },
  
   containerInnerRow: {

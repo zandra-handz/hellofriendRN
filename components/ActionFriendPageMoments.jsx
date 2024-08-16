@@ -1,21 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Modal, Animated, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Animated, TouchableOpacity } from 'react-native';
 import ButtonLottieAnimationSatellitesMoments from './ButtonLottieAnimationSatellitesMoments';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
-import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
-import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
-import ActionFriendPageAllMoments from '../components/ActionFriendPageAllMoments';
- 
+
+import TogglerActionButton from '../components/TogglerActionButton';
+
 import { useNavigation } from '@react-navigation/native';
 
-const ActionFriendPageMoments = ({ onPress }) => {
+const ActionFriendPageMoments = ({ onPress, includeHeader=false, headerText='MOMENTS', headerInside=false }) => {
 
   const navigation = useNavigation();
   const { selectedFriend, friendDashboardData, friendColorTheme } = useSelectedFriend();
   const { capsuleList } = useCapsuleList();
-  const [isFSModalVisible, setIsFSModalVisible] = useState(false);
   const [showSecondButton, setShowSecondButton] = useState(false);
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
@@ -23,10 +20,17 @@ const ActionFriendPageMoments = ({ onPress }) => {
   const satelliteMoments = capsuleList.length > 1 ? capsuleList.slice(1) : [];
   const additionalSatelliteCount = satelliteMoments.length - 1;
 
-
-  
   const [lightColor, setLightColor] = useState('black');
   const [darkColor, setDarkColor] = useState('black');
+
+  const buttonHeight = 260;
+  const buttonRadius = 20;
+
+  const headerHeight = 30;
+
+  const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
+  const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
+
 
   useEffect(() => {
     if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
@@ -73,25 +77,43 @@ const ActionFriendPageMoments = ({ onPress }) => {
     }).start();
   };
 
-  const handleFullScreen = () => {
-    setIsFSModalVisible(true); // Set modal visible when fullscreen button is pressed
-  };
-
-  const closeModal = () => {
-    setIsFSModalVisible(false); // Close the modal
-  };
-
-  const handlePress = (moment) => {
-    // Handle moment press actions
-    console.log('Selected Moment:', moment);
-  };
+ 
+ 
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
+    <View style={[styles.container, {backgroundColor: calculatedBackgroundColor, borderRadius: buttonRadius }]}>
+      <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
+      {includeHeader && !headerInside && (
+        <View style={[styles.headerContainer, { height: headerHeight}]}>
+          <Text style={styles.headerText}>
+            {headerText}
+          </Text>
+        </View>
+
+      )}
+      <View style={styles.containerInnerRow}> 
+
+
+
+        <View style={styles.containerHeaderInside}>
+          {includeHeader && headerInside && (
+            <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
+            <Text style={styles.headerText}>
+              {headerText}
+            </Text>
+          </View>
+          )}
+
+      
+
+
+
+      <Animated.View style={{ opacity: opacityAnim, flex: 1, zIndex: 1 }}>
         {additionalSatelliteCount > 0 || overrideView ? (
           <ButtonLottieAnimationSatellitesMoments
             onPress={() => handlePress(mainMoment)} 
+            buttonHeight={buttonHeight}
+            buttonRadius={buttonRadius}
             navigateToFirstPage={navigateToFirstPage}
             firstItem={mainMoment ? mainMoment.capsule : 'Loading...'}
             allItems={capsuleList ? capsuleList : 'Loading...'}
@@ -130,6 +152,8 @@ const ActionFriendPageMoments = ({ onPress }) => {
         ) : (
           <ButtonLottieAnimationSatellitesMoments
             onPress={() => handlePress(mainMoment)}
+            buttonHeight={buttonHeight}
+            buttonRadius={buttonRadius}
             navigateToFirstPage={navigateToFirstPage}
             firstItem={mainMoment ? mainMoment.capsule : 'Loading...'}
             allItems={capsuleList ? capsuleList : 'Loading...'}
@@ -166,97 +190,71 @@ const ActionFriendPageMoments = ({ onPress }) => {
         )}
       </Animated.View>
 
-      {((!showSecondButton && additionalSatelliteCount > 0) || !showSecondButton && overrideView) && (
-        <>
-        <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={navigateToMomentsScreen} style={styles.arrowButton}>
-            <View style={styles.svgFSContainer}>
-              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
-            <View style={styles.svgContainer}>
-              <ArrowRightCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-            </View>
-          </TouchableOpacity>
-        </View>
-        </>
-      )}
+      </View>
 
-
-      {showSecondButton && (
-        <>
-        <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
-            <View style={styles.svgFSContainer}>
-              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
-            <View style={styles.svgContainer}>
-              <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-            </View>
-          </TouchableOpacity>
-        </View>
-        </>
-      )}
- 
-      <ActionFriendPageAllMoments
-      isModalVisible={isFSModalVisible}
-      toggleModal={closeModal} onClose={closeModal} />
+      <TogglerActionButton
+        showSecondButton={showSecondButton}
+        handleNext={handleNext}
+        navigateToFirstPage={navigateToFirstPage}
+        handleFullScreen={navigateToMomentsScreen}
+        navigateToLocationScreen={navigateToMomentsScreen}
+        height={calculatedButtonHeight}
+        borderRadius={buttonRadius}
+        marginLeft={22} 
+        backgroundColor={friendColorTheme.darkColor}
+        topIconSize={34}
+        bottomIconSize={34}
+        iconColor={'black'}
+        highlightIconColor={friendColorTheme.lightColor}
+      />
+      </View>
+    </View> 
+       
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%', 
-    borderRadius: 30,
+    width: '100%',  
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
   },
-  arrowContainer: {
+  containerInner: {
     flexDirection: 'column',
-    marginRight: -4,
+    width: '100%',  
+    backgroundColor: 'transparent',
+  },
+  containerHeaderInside: { 
+    flexDirection: 'column', 
+    backgroundColor: 'transparent',
+    marginBottom: 20,
+    flex: 1,
+    zIndex: 1,
 
+    },
+ 
+  containerInnerRow: {
+    flexDirection: 'row',
+    width: '100%',  
+    backgroundColor: 'transparent',
   },
-  arrowButton: {
-    padding: 4,
-    marginRight: -8,
-    marginLeft: -10,
+  headerContainer: { 
+    textAlign: 'left', 
+    justifyContent: 'center',
+    paddingLeft: 10,  
+  
   },
+  headerText: {
+    fontFamily: 'Poppins-Bold',
+    color: 'black',
+    fontSize: 18,
+  },
+ 
   animatedView: {
     flex: 1,
-  },
-  svgContainer: {
-    width: 60,
-    height: 60,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  SvgImage: {
-    transform: [{ scale: 0.8 }],
   }, 
-  svgFSContainer: {
-    width: 60,
-    height: 50,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center', 
-    paddingTop: 20,
-    marginBottom: -6,
-  },
-  SvgFSImage: {
-    transform: [{ scale: 1.22 }],
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 });
 
 export default ActionFriendPageMoments;

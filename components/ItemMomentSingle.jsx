@@ -26,25 +26,19 @@ const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight, svgColor='w
   };
 
   if (!momentObject) {
-    return null; // or some loading indicator if needed
+    return null;  
   }
 
-  const calculateFontSize = (width) => {
-    return width * 0.094; // Adjust this multiplier to get the desired proportion
-  };
+  const calculateFontSize = (width) => width * 0.06;
 
-  const calculateBubbleContainerDimensions = (width, height) => {
-    return {
-      width: width * 1, // Adjust this multiplier to get the desired width
-      height: height * 0.63, // Adjust this multiplier to get the desired height
-    };
-  };
+  const calculateBubbleContainerDimensions = (width, height) => ({
+    width: width * .96,
+    height: height * 0.58,
+  });
 
-  const calculateLeftPadding = (bubbleWidth) => {
-    return bubbleWidth * 0.064; // Adjust this multiplier to get the desired left padding
-  };
+  const calculateLeftPadding = (bubbleWidth) => bubbleWidth * 0.06;
 
-  const bubbleContainerDimensions = calculateBubbleContainerDimensions(momentWidth || windowWidth / 2 - 80, momentHeight || windowWidth / 2 - 80);
+  const bubbleContainerDimensions = calculateBubbleContainerDimensions(momentWidth, momentHeight);
 
   return (
     <View style={styles.imageContainer}>

@@ -311,10 +311,8 @@ svgContainer: {
     marginVertical: 0, 
     backgroundColor: 'black',
   },
-  categoryTextContainer: {
-    // Set a specific width or maxWidth for the text container
-    width: 300, // Adjust this value as needed
-    // Other styling properties if necessary
+  categoryTextContainer: { 
+    width: 300,  
     marginLeft: 10, 
     height: 46,
     marginBottom: 0,
@@ -323,7 +321,7 @@ svgContainer: {
   },
 
   categoryText: {
-    fontSize: 16,
+    fontSize: 14,
     color: 'white',
     fontFamily: 'Poppins-Bold', 
     textTransform: 'uppercase',

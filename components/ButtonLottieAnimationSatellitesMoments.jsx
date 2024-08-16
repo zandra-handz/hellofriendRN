@@ -8,6 +8,8 @@ import { useCapsuleList } from '../context/CapsuleListContext';
 
 const ButtonLottieAnimationSatellitesMoments = ({
   onPress,
+  buttonHeight = 270,
+  buttonRadius = 10,
   isLoading = false,
   loadingMessage = '',
   headerText = 'LAST ADDED',
@@ -151,7 +153,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
         horizontal
         keyExtractor={(item, index) => `additional-satellite-${index}`}
         renderItem={({ item }) => (
-          <ItemMomentSingle momentObject={item} momentWidth={174} momentHeight={174}/>
+          <ItemMomentSingle momentObject={item} momentWidth={240} momentHeight={240}/>
         )}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{
@@ -166,14 +168,14 @@ const ButtonLottieAnimationSatellitesMoments = ({
       {!additionalPages && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { height: 270,   width: satellites ? '100%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: buttonHeight,   width: satellites ? '100%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 260,
+                  height: buttonHeight,
                   paddingHorizontal: 6,
-                  borderRadius: 30,
+                  borderRadius: buttonRadius,
                   alignItems: 'center',
                   overflow: 'hidden',
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
@@ -253,7 +255,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, { height: buttonHeight, borderRadius: buttonRadius, lexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
                 {renderSatellites()}
               </View>
             )}
@@ -261,7 +263,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
         </Animated.View>
       )}
       {additionalPages && (
-        <View style={styles.additionalSatelliteSection}>
+        <View style={[styles.additionalSatelliteSection, {height: buttonHeight, borderRadius: buttonRadius }]}>
           {additionalPagesCategorize && (
             <Text style={styles.categoryText}>{category}</Text>
           )}
@@ -274,31 +276,27 @@ const ButtonLottieAnimationSatellitesMoments = ({
   
 const styles = StyleSheet.create({ 
   satelliteSection: {
-    width: '23.33%',
-    height: 270,
+    width: '23.33%', 
     height: 0,
-    width: 0,
-    borderRadius: 20, 
-    paddingLeft: 8, 
+    width: 0,   
     alignItems: 'center',
     justifyContent: 'space-evenly',
     backgroundColor: 'white',
   },
   additionalSatelliteSection: {
     flexDirection: 'column',
-    marginVertical: 0,
-    height: 270,
-    borderRadius: 30, 
+    marginVertical: 0,  
     backgroundColor: 'black',
   },
   categoryText: {
-    fontSize: 18, 
+    fontSize: 14, 
     color: 'white',
-    fontFamily: 'Poppins-Regular',
-    marginLeft: 20,
-    marginBottom: 0, 
-    paddingTop: 6,
+    fontFamily: 'Poppins-Bold', 
     textTransform: 'uppercase',
+    overflow: 'hidden',
+    maxHeight: 20,
+    whiteSpace: 'nowrap', // This property may not be supported in React Native, so adjust using maxWidth or width
+    textOverflow: 'ellipsis',
   },
 });
 
