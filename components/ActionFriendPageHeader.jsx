@@ -7,7 +7,7 @@ import AlertPanelBottom from './AlertPanelBottom';
 import { useNavigation } from '@react-navigation/native';
 
 
-const ActionFriendPageHeader = ({ onPress, Deselector = false }) => {
+const ActionFriendPageHeader = ({ onPress, buttonRadius=30, Deselector=false }) => {
 
   const navigation = useNavigation();
 

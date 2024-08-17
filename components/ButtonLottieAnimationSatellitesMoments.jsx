@@ -153,7 +153,11 @@ const ButtonLottieAnimationSatellitesMoments = ({
         horizontal
         keyExtractor={(item, index) => `additional-satellite-${index}`}
         renderItem={({ item }) => (
+          <> 
+          <View style={{paddingRight: 10 }}>
           <ItemMomentSingle momentObject={item} momentWidth={240} momentHeight={240}/>
+          </View>
+          </>
         )}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{
@@ -173,8 +177,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: buttonHeight,
-                  paddingHorizontal: 6,
+                  height: buttonHeight, 
                   borderRadius: buttonRadius,
                   alignItems: 'center',
                   overflow: 'hidden',
@@ -202,14 +205,10 @@ const ButtonLottieAnimationSatellitesMoments = ({
                     resizeMode="contain"
                   />
                 )}
-                <View style={{ flexDirection: 'column', paddingHorizontal: 5, paddingBottom: 4, width: '100%', height: '100%', paddingTop: 6, flex: 1 }}>
-                  <Text
-                    style={[
-                      textStyles(preLabelFontSize, preLabelColor),
-                    ]}
-                  >
-                    {headerText}
-                  </Text>
+                <View style={[styles.mainSection, {height: buttonHeight, width: '100%', borderRadius: buttonRadius }]}>
+          
+                <Text style={styles.categoryText}>{headerText}</Text>
+          
                   <View style={{ flexDirection: 'row' }}>
                     {rightSideAnimation ? (
                       <>
@@ -264,8 +263,10 @@ const ButtonLottieAnimationSatellitesMoments = ({
       )}
       {additionalPages && (
         <View style={[styles.additionalSatelliteSection, {height: buttonHeight, borderRadius: buttonRadius }]}>
+          
           {additionalPagesCategorize && (
-            <Text style={styles.categoryText}>{category}</Text>
+            <Text style={styles.categoryText}>Category: {category}</Text>
+          
           )}
           {renderAdditionalSatellites()}
         </View>
@@ -275,6 +276,11 @@ const ButtonLottieAnimationSatellitesMoments = ({
 };
   
 const styles = StyleSheet.create({ 
+  mainSection: {
+    flexDirection: 'column',
+    paddingHorizontal: 10,
+    paddingVertical: 10,   
+  },
   satelliteSection: {
     width: '23.33%', 
     height: 0,
@@ -285,8 +291,10 @@ const styles = StyleSheet.create({
   },
   additionalSatelliteSection: {
     flexDirection: 'column',
-    marginVertical: 0,  
+    paddingHorizontal: 10,
+    paddingTop: 13.5,  
     backgroundColor: 'black',
+    overflow: 'hidden',
   },
   categoryText: {
     fontSize: 14, 

@@ -6,9 +6,30 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 import TogglerActionButton from '../components/TogglerActionButton';
 
+import MagGlassSimpleSvg from '../assets/svgs/mag-glass-simple.svg';
+import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
+import BookmarkOutlineSvg from '../assets/svgs/bookmark-outline.svg';
+
+import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
+
+
 import { useNavigation } from '@react-navigation/native';
 
-const ActionFriendPageMoments = ({ onPress, includeHeader=false, headerText='MOMENTS', headerInside=false }) => {
+const ActionFriendPageMoments = ({ 
+  onPress, 
+  includeHeader=true, 
+  headerText='MOMENTS', 
+  headerTextColor='white',
+  headerFontFamily='Poppins-Bold',
+  headerTextSize=15, 
+  headerInside=false,
+  buttonHeight=260,
+  buttonRadius=20,
+  headerHeight=30,
+  inactiveIconColor='white',
+
+
+}) => {
 
   const navigation = useNavigation();
   const { selectedFriend, friendDashboardData, friendColorTheme } = useSelectedFriend();
@@ -23,10 +44,6 @@ const ActionFriendPageMoments = ({ onPress, includeHeader=false, headerText='MOM
   const [lightColor, setLightColor] = useState('black');
   const [darkColor, setDarkColor] = useState('black');
 
-  const buttonHeight = 260;
-  const buttonRadius = 20;
-
-  const headerHeight = 30;
 
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
   const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
@@ -85,7 +102,7 @@ const ActionFriendPageMoments = ({ onPress, includeHeader=false, headerText='MOM
       <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
       {includeHeader && !headerInside && (
         <View style={[styles.headerContainer, { height: headerHeight}]}>
-          <Text style={styles.headerText}>
+          <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
             {headerText}
           </Text>
         </View>
@@ -98,7 +115,7 @@ const ActionFriendPageMoments = ({ onPress, includeHeader=false, headerText='MOM
         <View style={styles.containerHeaderInside}>
           {includeHeader && headerInside && (
             <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
-            <Text style={styles.headerText}>
+            <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
           </View>
@@ -119,7 +136,6 @@ const ActionFriendPageMoments = ({ onPress, includeHeader=false, headerText='MOM
             allItems={capsuleList ? capsuleList : 'Loading...'}
             additionalText={mainMoment ? mainMoment.typed_category : ''}
             fontMargin={3}
-            
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
             labelFontSize={16}
@@ -200,12 +216,16 @@ const ActionFriendPageMoments = ({ onPress, includeHeader=false, headerText='MOM
         navigateToLocationScreen={navigateToMomentsScreen}
         height={calculatedButtonHeight}
         borderRadius={buttonRadius}
-        marginLeft={22} 
+        marginLeft={16} 
         backgroundColor={friendColorTheme.darkColor}
         topIconSize={34}
         bottomIconSize={34}
-        iconColor={'black'}
+        iconColor={inactiveIconColor}
         highlightIconColor={friendColorTheme.lightColor}
+        firstPageTopSvg={GridViewOutlineSvg}
+        firstPageBottomSvg={ScrollOutlineSvg}
+        secondPageTopSvg={GridViewOutlineSvg}
+        secondPageBottomSvg={ScrollOutlineSvg}
       />
       </View>
     </View> 
@@ -243,13 +263,11 @@ const styles = StyleSheet.create({
   headerContainer: { 
     textAlign: 'left', 
     justifyContent: 'center',
-    paddingLeft: 10,  
+    paddingLeft: 0,  
   
   },
-  headerText: {
-    fontFamily: 'Poppins-Bold',
-    color: 'black',
-    fontSize: 18,
+  headerText: { 
+    marginLeft: 10,
   },
  
   animatedView: {

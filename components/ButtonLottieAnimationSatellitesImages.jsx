@@ -9,9 +9,11 @@ import { useImageList } from '../context/ImageListContext';
 
 const ButtonLottieAnimationSatellitesImages = ({
   onPress,
+  buttonHeight = 136,
+  buttonRadius = 10,
   isLoading = false,
   loadingMessage = '',
-  headerText = 'IMAGES',
+  headerText = 'LAST ADDED',
   
   firstItem,
   allItems,
@@ -77,8 +79,7 @@ const ButtonLottieAnimationSatellitesImages = ({
   useEffect(() => {
     if (isLoading) {
       animateLoadingIndicator();
-    } else {
-      // Reset animation to full opacity
+    } else { 
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 0,
@@ -163,14 +164,14 @@ const ButtonLottieAnimationSatellitesImages = ({
       {!additionalPages && mainViewVisible && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { height: 136, width: satellites ? '100%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: buttonHeight, borderRadius: buttonRadius, width: satellites ? '100%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 136,
+                  height: buttonHeight,
                   padding: 6,
-                  borderRadius: 30, 
+                  borderRadius: buttonRadius, 
                   overflow: 'hidden',
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
                 }}
@@ -196,14 +197,8 @@ const ButtonLottieAnimationSatellitesImages = ({
                     resizeMode="contain"
                   />
                 )}
-                <View style={{ flexDirection: 'column', paddingHorizontal: 5,   paddingTop: 6, flex: 1 }}>
-                  <Text
-                    style={[
-                      textStyles(preLabelFontSize, preLabelColor),
-                    ]}
-                  >
-                    {headerText}
-                  </Text>
+              <View style={[styles.mainSection, {height: buttonHeight, width: '100%', borderRadius: buttonRadius }]}>
+          
                   <View style={{ flexDirection: 'row' }}>
                     {rightSideAnimation ? (
                       <>
@@ -232,7 +227,7 @@ const ButtonLottieAnimationSatellitesImages = ({
                           />
                         )} 
                         {isImageListReady && (
-                          <ItemImageMulti imageData={allItems} width={70} height={70} /> 
+                          <ItemImageMulti imageData={allItems} width={40} height={40} borderRadius={buttonRadius} /> 
                         )}
                         </>
                     )}
@@ -248,7 +243,7 @@ const ButtonLottieAnimationSatellitesImages = ({
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, { height: buttonHeight, borderRadius: buttonRadius, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
                 {renderSatellites()}
               </View>
             )}
@@ -256,7 +251,7 @@ const ButtonLottieAnimationSatellitesImages = ({
         </Animated.View>
       )}
       {additionalPages && (
-        <View style={styles.additionalSatelliteSection}>
+        <View style={[styles.additionalSatelliteSection, {height: buttonHeight, borderRadius: buttonRadius }]}>
           {renderAdditionalSatellites()}
         </View>
       )}
@@ -265,54 +260,35 @@ const ButtonLottieAnimationSatellitesImages = ({
 };
 
 const styles = StyleSheet.create({ 
+  mainSection: {
+    flexDirection: 'column',
+    paddingHorizontal: 10,
+    paddingVertical: 10,   
+  },
   satelliteSection: {
-    width: '23.33%',
-    height: 136,
+    width: '23.33%', 
     width: 0,
-    height: 0,
-    borderRadius: 20, 
-    paddingLeft: 8,
-    marginLeft: 6, 
+    height: 0,  
     alignItems: 'center',
     justifyContent: 'space-evenly',
     backgroundColor: 'white', 
-  },
-  satelliteButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRightWidth: 1,
-    borderColor: 'white',
-    backgroundColor: 'rgba(0, 0, 0, 0.0)',
-  },
-  satelliteImage: {
-    width: '100%',
-    height: '75%',
-    resizeMode: 'cover',
-    borderRadius: 20,
-  },
-  satelliteText: {
-    fontSize: 10,
-    color: 'rgba(0, 0, 0, 0.7)',
-    marginTop: 5,
-    textAlign: 'center',
-  },
+  },  
   additionalSatelliteSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    marginVertical: 10,
-    height: 136,
-    borderRadius: 30, 
-    backgroundColor: 'black',
-  },
-  additionalSatelliteButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.0)',
-    borderRadius: 20,
-    paddingVertical: 5,
+    flexDirection: 'column',
     paddingHorizontal: 10,
-    marginHorizontal: 5,
+    paddingTop: 13.5,  
+    backgroundColor: 'black',
+    overflow: 'hidden',
+  }, 
+  categoryText: {
+    fontSize: 14, 
+    color: 'white',
+    fontFamily: 'Poppins-Bold', 
+    textTransform: 'uppercase',
+    overflow: 'hidden',
+    maxHeight: 20,
+    whiteSpace: 'nowrap', // This property may not be supported in React Native, so adjust using maxWidth or width
+    textOverflow: 'ellipsis',
   },
 });
 

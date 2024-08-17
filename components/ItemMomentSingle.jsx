@@ -59,8 +59,8 @@ const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight, svgColor='w
 
 const styles = StyleSheet.create({
   imageContainer: { 
-    padding: 10,
-    flex: 1, 
+    padding: 0,
+    backgroundColor: 'transparent', 
     alignContent: 'center',
     justifyContent: 'center',
   },
@@ -77,47 +77,14 @@ const styles = StyleSheet.create({
     color: 'black',
     fontFamily: 'Poppins-Regular',
     textAlign: 'left',
+    
   },
   svgImage: {
     position: 'absolute',
-    top: 0, 
-    backgroundColor: 'transparent',
-    zIndex: 0, // Ensure SVG is below text
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalImage: {
-    width: '100%',
-    height: 300,
-    resizeMode: 'cover',
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  input: {
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 8,
-    width: '100%',
-  },
-  icon: {
-    marginHorizontal: 10,
-  },
+    top: 0,   
+    backgroundColor: 'transparent', 
+    zIndex: 0, 
+  },  
 });
 
 export default ItemMomentSingle;

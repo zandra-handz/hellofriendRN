@@ -6,7 +6,7 @@ import { FlashList } from "@shopify/flash-list";
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true, width, height }) => {
+const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true, width, height, borderRadius = 10 }) => {
   const { imageList } = useImageList();
   const [images, setImages] = useState(imageData);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -16,7 +16,7 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true,
 
   const openModal = (image) => {
     setSelectedImage(image);
-    setTitle(image.title); // Initialize title state
+    setTitle(image.title); 
     setIsModalVisible(true);
   };
 
@@ -34,10 +34,11 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true,
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => openModal(item)}>
+            
             <Image 
               source={{ uri: item.image }} 
-              style={[styles.image, { width: width || windowWidth / 3 - 20, height: height || windowWidth / 3 - 20 }]} 
-            />
+              style={[styles.image, { borderRadius: borderRadius, width: width || windowWidth / 3 - 20, height: height || windowWidth / 3 - 20 }]} 
+            />  
           </TouchableOpacity>
         )}
         numColumns={horizontal && !singleLineScroll ? 3 : 1}
@@ -54,28 +55,23 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true,
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1, 
-    backgroundColor: 'transparent',
+  container: { 
+    flex: 1,
+    backgroundColor: 'transparent', 
     width: '100%',
     height: '100%',
   },
   imageContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row', 
+   
   },
   imageRow: {
-    flex: 1,
+    flex: 1, 
     justifyContent: 'space-between',
-  },
-  image: {
-    margin: 5,
+  },  
+  image: { 
     borderRadius: 10,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    marginRight: 10,
   },
 });
 

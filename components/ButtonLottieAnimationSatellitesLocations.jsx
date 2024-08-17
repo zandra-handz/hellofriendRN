@@ -157,7 +157,7 @@ const ButtonLottieAnimationSatellitesLocations = ({
 
     for (let i = 0; i < numSatellites; i++) {
       satellitesArray.push(
-        <ItemLocationSingle key={`satellite-${i}`} locationObject={null} />
+        <ItemLocationSingle key={`satellite-${i}`} locationObject={null}  />
       );
     }
 
@@ -166,18 +166,20 @@ const ButtonLottieAnimationSatellitesLocations = ({
 
   const renderAdditionalSatellites = useCallback(() => {
     return (
-      <FlatList
-        data={allItems}
-        horizontal
-        keyExtractor={(item, index) => `additional-satellite-${index}`}
-        renderItem={({ item }) => (
-          <ItemLocationSingle locationObject={item} />
-        )}
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{
-          itemVisiblePercentThreshold: 50
-        }}
-      />
+    <FlatList
+      data={allItems}
+      horizontal
+      keyExtractor={(item, index) => `additional-satellite-${index}`}
+      renderItem={({ item }) => (
+        <ItemLocationSingle locationObject={item} locationWidth={20} locationHeight={20} spacer={30} />
+      )}
+      onViewableItemsChanged={onViewableItemsChanged}
+      viewabilityConfig={{
+        itemVisiblePercentThreshold: 50,
+      }}
+      ListFooterComponent={<View style={{ width: 283 }} />} // Add blank space at the end of the list
+    />
+
     );
   }, [allItems, onViewableItemsChanged]);
 
@@ -234,7 +236,7 @@ const ButtonLottieAnimationSatellitesLocations = ({
                   <View style={{ flexDirection: 'row' }}>
                     {rightSideAnimation ? (
                       <>
-                        <ItemLocationSingle locationObject={firstItem} /> 
+                        <ItemLocationSingle locationObject={firstItem}  /> 
                         {showIcon && animationSource && (
                           <LottieView
                             ref={lottieViewRef}

@@ -41,8 +41,7 @@ export const LocationListProvider = ({ children }) => {
 
         setLocationList(updatedLocationData);
         setLoadingSelectedLocation(false); 
-
-        // Automatically set selectedLocation to the first item if locationList is not empty
+ 
         if (updatedLocationData.length > 0) {
           setSelectedLocation(updatedLocationData[0]); 
         } else {

@@ -12,7 +12,7 @@ import CoffeeShopStoreSimpleSvg from '../assets/svgs/coffee-shop-store-simple';
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemLocationSingle = ({ locationObject, locationWidth, locationHeight }) => {
+const ItemLocationSingle = ({ locationObject, locationWidth, locationHeight, spacer=30 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [locationTittle, setLocationTitle] = useState(null);
 
@@ -33,21 +33,12 @@ const ItemLocationSingle = ({ locationObject, locationWidth, locationHeight }) =
   if (!locationObject) {
     return null;  
   }
-
-  const dynamicStyles = {
-    image: {
-      width: locationWidth || windowWidth / 2 - 80,
-      height: locationHeight || windowWidth / 2 - 80,
-      margin: 5,
-      borderRadius: 10,
-    },
-  };
-
+ 
   return (
-    <View style={styles.imageContainer}>
+    <View style={[styles.imageContainer, {width: locationWidth, marginRight: spacer}]}>
       <TouchableOpacity onPress={openModal}>
         <View style={styles.relativeContainer}>  
-          <CoffeeShopStoreSimpleSvg width={30} height={30} color="white" style={styles.svgImage} />
+          <CoffeeShopStoreSimpleSvg width={locationWidth} height={locationHeight} color="white" style={styles.svgImage} />
           
           <View style={styles.bubbleContainer}>
             <Text style={styles.bubbleText}>{locationObject.address}</Text>
@@ -62,11 +53,8 @@ const ItemLocationSingle = ({ locationObject, locationWidth, locationHeight }) =
 };
 
 const styles = StyleSheet.create({
-  imageContainer: {
-    padding: 0,
-    width: 110,
-    flex: 1,
-    height: 210, 
+  imageContainer: {  
+    flex: 1,  
     alignContent: 'center',
     justifyContent: 'center',
   },
@@ -97,41 +85,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     backgroundColor: 'transparent',  
     zIndex: 0, // Ensure SVG is below text
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalImage: {
-    width: '100%',
-    height: 300,
-    resizeMode: 'cover',
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  input: {
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 8,
-    width: '100%',
-  },
-  icon: {
-    marginHorizontal: 10,
-  },
+  }, 
 });
 
 export default ItemLocationSingle;

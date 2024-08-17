@@ -23,6 +23,15 @@ import { Ionicons } from '@expo/vector-icons';
 const ScreenFriendFocus = () => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
 
+  const headers = true;
+  const insideHeaders = true;
+  const radius = 20;
+  const buttonMargin = 0;
+
+  const headerTextColor = 'white';
+  const inactiveIconColor = 'white';
+
+
   return (
     <View style={styles.container}>
       {loadingNewFriend && (
@@ -34,10 +43,18 @@ const ScreenFriendFocus = () => {
             <View style={styles.buttonContainer}>
             
             <ActionFriendPageHeader />
-            <ActionFriendPageLocations />
-            <ActionFriendPageMoments /> 
-            <ActionFriendPageImages /> 
+            <View style={{marginHorizontal: buttonMargin}}>
+              <ActionFriendPageLocations buttonHeight={80} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'LOCATIONS'} />
+            </View>
+            <View style={{marginHorizontal: buttonMargin}}>
+            <ActionFriendPageMoments buttonHeight={260} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'MOMENTS'}/> 
+            </View>
+            <View style={{marginHorizontal: buttonMargin}}>
+            <ActionFriendPageImages buttonHeight={70} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'IMAGES'}/> 
+            </View>
+            <View style={{marginHorizontal: buttonMargin}}>
             <ActionFriendPageHelloes />
+            </View>
             
             </View>
       )}
@@ -85,11 +102,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 5,
   },
+  headerContainer: {
+    flex: 1, 
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    marginHorizontal: 0,
+    paddingBottom: 6, 
+    paddingTop: 0,
+  },
   buttonContainer: {
     flex: 1, 
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    marginHorizontal: 10,
+    marginHorizontal: 0,
     paddingBottom: 6, 
     paddingTop: 0,
   },

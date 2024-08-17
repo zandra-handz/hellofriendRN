@@ -7,7 +7,25 @@ import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';
 import TogglerActionButton from '../components/TogglerActionButton';
 import { useNavigation } from '@react-navigation/native';
 
-const ActionFriendPageLocations = ({ onPress, includeHeader=false, headerText='MEET UP PLACES', headerInside=false}) => {
+import MagGlassSimpleSvg from '../assets/svgs/mag-glass-simple.svg';
+import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
+import BookmarkOutlineSvg from '../assets/svgs/bookmark-outline.svg';
+
+
+const ActionFriendPageLocations = ({ 
+  onPress, 
+  includeHeader=false, 
+  headerText='MEET UP PLACES', 
+  headerTextColor='white',
+  headerFontFamily='Poppins-Bold',
+  headerTextSize=15, 
+  headerInside=false,
+  buttonHeight=80,
+  buttonRadius=10,
+  headerHeight=30,
+  inactiveIconColor='white',
+
+}) => {
 
   const navigation = useNavigation();
 
@@ -19,10 +37,6 @@ const ActionFriendPageLocations = ({ onPress, includeHeader=false, headerText='M
   const [lightColor, setLightColor] = useState('black');
   const [darkColor, setDarkColor] = useState('black');
 
-  const buttonHeight = 90;
-  const buttonRadius = 20;
-
-  const headerHeight = 30;
 
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
   const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
@@ -87,7 +101,7 @@ const ActionFriendPageLocations = ({ onPress, includeHeader=false, headerText='M
       <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
       {includeHeader && !headerInside && (
         <View style={[styles.headerContainer, { height: headerHeight}]}>
-          <Text style={styles.headerText}>
+          <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
             {headerText}
           </Text>
         </View>
@@ -100,7 +114,7 @@ const ActionFriendPageLocations = ({ onPress, includeHeader=false, headerText='M
         <View style={styles.containerHeaderInside}>
           {includeHeader && headerInside && (
             <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
-            <Text style={styles.headerText}>
+            <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
           </View>
@@ -204,10 +218,14 @@ const ActionFriendPageLocations = ({ onPress, includeHeader=false, headerText='M
         height={calculatedButtonHeight}
         borderRadius={buttonRadius} 
         backgroundColor={friendColorTheme.darkColor}
-        topIconSize={34}
-        bottomIconSize={34}
-        iconColor={'black'}
+        topIconSize={30}
+        bottomIconSize={30}
+        iconColor={inactiveIconColor}
         highlightIconColor={friendColorTheme.lightColor}
+        firstPageTopSvg={MagGlassSimpleSvg}
+        firstPageBottomSvg={ScrollOutlineSvg}
+        secondPageTopSvg={MagGlassSimpleSvg}
+        secondPageBottomSvg={BookmarkOutlineSvg}
       />
       </View>
     </View> 
@@ -244,14 +262,15 @@ const styles = StyleSheet.create({
   },
   headerContainer: { 
     textAlign: 'left', 
-    justifyContent: 'center',
-    paddingLeft: 10,  
+    justifyContent: 'center', 
+    height: 70,
+    marginBottom: -3,
+    color: 'black',
+    zIndex: 0,
   
   },
   headerText: {
-    fontFamily: 'Poppins-Bold',
-    color: 'black',
-    fontSize: 18,
+    marginLeft: 10,
   },
 });
 
