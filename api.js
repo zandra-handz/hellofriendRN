@@ -439,8 +439,7 @@ export const fetchAllLocations = async () => {
                 id: friend,
                 name: friend,
             })) : []
-        }));
-        console.log("API formatted data all locations: ", formattedLocations);
+        })); 
         return formattedLocations;
     } catch (error) {
         console.error('Error fetching all locations:', error);

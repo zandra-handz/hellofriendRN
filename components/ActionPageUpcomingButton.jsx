@@ -148,7 +148,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
       )} 
 
       {selectedFriend &&(
-        <ActionFriendPageHeader Deselector={true} />
+        <ActionFriendPageHeader Deselector={true} buttonHeight={190} />
       )}
 
       {!showSecondButton && additionalSatelliteCount > 0 && (
@@ -173,7 +173,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginBottom: 8,
+    marginBottom: 0,
     borderRadius: 30,
     overflow: 'hidden',
     flexDirection: 'row',

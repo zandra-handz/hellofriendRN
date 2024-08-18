@@ -126,7 +126,8 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
       <View style={styles.buttonContainer}>
         <ActionPageUpcomingButton/>
         {selectedFriend &&(
-          <ActionFriendPageLocations includeHeader={false} headerInside={false}/>
+          <ActionFriendPageLocations topIconSize={28} bottomIconSize={28} buttonHeight={80} buttonRadius={30} headerHeight={30} includeHeader={false} headerInside={false} headerText={'LOCATIONS'} />
+            
         )}
         <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
         <ActionScreenButtonAddImage onPress={navigateToAddImageScreen }/>
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     height: '90%',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     marginHorizontal: 10,
     paddingBottom: 6, 
     paddingTop: 0,

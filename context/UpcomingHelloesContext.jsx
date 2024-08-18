@@ -21,7 +21,6 @@ export const UpcomingHelloesProvider = ({ children }) => {
             setIsLoading(true);
             try {
                 const helloes = await fetchUpcomingHelloes();
-                console.log("loadUpcomingHelloes: ", helloes);
                 setUpcomingHelloes(helloes);
             } catch (error) {
                 console.error('Error loading upcoming helloes:', error);

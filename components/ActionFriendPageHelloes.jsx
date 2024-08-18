@@ -2,16 +2,39 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
 import ButtonLottieAnimationSatellitesHelloes from './ButtonLottieAnimationSatellitesHelloes';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useNavigation } from '@react-navigation/native';
+
 import { fetchPastHelloes } from '../api';
-import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
-import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
-import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
-import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
+
 import ActionFriendPageAllHelloes from '../components/ActionFriendPageAllHelloes';
 import IconDynamicHelloType from '../components/IconDynamicHelloType';
 
+import TogglerActionButton from '../components/TogglerActionButton';
 
-const ActionFriendPageHelloes = ({ onPress }) => {
+import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
+import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
+
+
+const ActionFriendPageHelloes = ({ 
+  onPress,
+  includeHeader=true, 
+  headerText='HELLOES',
+  headerTextColor='white',
+  headerFontFamily='Poppins-Bold',
+  headerTextSize=15, 
+  headerInside=false,
+  buttonHeight=70,
+  buttonRadius=20,
+  headerHeight=30,
+  justifyIconContent='center',
+  inactiveIconColor='white',
+  topIconSize=30,
+  bottomIconSize=30
+
+ }) => {
+  
+  const navigation = useNavigation();
+  
   const { selectedFriend, setFriend, friendDashboardData, friendColorTheme } = useSelectedFriend(); 
   const [helloesList, setHelloesList] = useState([]);
   const [isFSModalVisible, setIsFSModalVisible] = useState(false);
@@ -19,26 +42,26 @@ const ActionFriendPageHelloes = ({ onPress }) => {
   const [ darkColor, setDarkColor ] = useState(null);
   const [ iconBackgroundColor, setIconBackgroundColor ] = useState(null);
 
+  const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
+  const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
+
 
   useEffect(() => {
     if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
       if(friendColorTheme.invertGradient) {
-        setLightColor(friendColorTheme.lightColor || 'black');
-        setDarkColor(friendColorTheme.lightColor || 'black');
-        setIconBackgroundColor(friendColorTheme.darkColor || 'black')
+        setLightColor(friendColorTheme.darkColor || 'gray');
+        setDarkColor(friendColorTheme.lightColor || 'white');
       } else {
-        setLightColor(friendColorTheme.darkColor || 'black');
-        setDarkColor(friendColorTheme.darkColor || 'black');
-        setIconBackgroundColor(friendColorTheme.lightColor || 'black')
+        setLightColor(friendColorTheme.lightColor || 'white');
+        setDarkColor(friendColorTheme.darkColor || 'gray');
       };
     }
     if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
-      setLightColor('black');
-      setDarkColor('black');
-      setIconBackgroundColor('gray');
+      setLightColor('white');
+      setDarkColor('gray');
     }
   }, [friendColorTheme]);
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,6 +81,13 @@ const ActionFriendPageHelloes = ({ onPress }) => {
 
     fetchData();
 }, [selectedFriend]);
+
+
+
+  const navigateToHelloesScreen = () => {
+    navigation.navigate('Helloes'); 
+    if (onPress) onPress(); 
+  };
 
 
 
@@ -106,23 +136,34 @@ const ActionFriendPageHelloes = ({ onPress }) => {
       useNativeDriver: true,
     }).start();
   };
-
-  const handleFullScreen = () => {
-    setIsFSModalVisible(true); 
-  };
-
-  const closeModal = () => {
-    setIsFSModalVisible(false); 
-  };
-
   
-  const handlePress = (hello) => {
-    const { location } = hello;   
-    console.log('ALL HELLOES!!', hello);
-  };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: calculatedBackgroundColor, borderRadius: buttonRadius }]}>
+      <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
+      {includeHeader && !headerInside && (
+        <View style={[styles.headerContainer, { height: headerHeight}]}>
+          <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
+          
+            {headerText}
+          </Text>
+        </View>
+
+      )}
+      <View style={styles.containerInnerRow}> 
+
+
+
+        <View style={[styles.containerHeaderInside, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius }]}>
+          
+          {includeHeader && headerInside && (
+            <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
+                      <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
+              {headerText}
+            </Text>
+          </View>
+          )}
+
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 || overrideView ? (
           <ButtonLottieAnimationSatellitesHelloes
@@ -219,91 +260,67 @@ const ActionFriendPageHelloes = ({ onPress }) => {
         )}
       </Animated.View>
 
-      {((!showSecondButton && additionalSatelliteCount > 0) || !showSecondButton && overrideView) && (
-        <>
-        <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
-            <View style={styles.svgFSContainer}>
-              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
-            <View style={styles.svgContainer}>
-              <ArrowRightCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-            </View>
-          </TouchableOpacity>
-        </View>
-        </>
-      )}
+      </View>
 
-      {showSecondButton && (
-        <>
-        <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
-            <View style={styles.svgFSContainer}>
-              <ArrowFullScreenOutlineSvg width={60} height={46} style={styles.SvgFSImage} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
-            <View style={styles.svgContainer}>
-              <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-            </View>
-          </TouchableOpacity>
-        </View>
-        </>
-      )}
-      <ActionFriendPageAllHelloes
-        helloData={helloesList}
-        isModalVisible={isFSModalVisible}
-        toggleModal={closeModal} onClose={closeModal} />
+      <TogglerActionButton
+        showSecondButton={showSecondButton}
+        handleNext={handleNext}
+        navigateToFirstPage={navigateToFirstPage}
+        handleFullScreen={navigateToHelloesScreen}
+        navigateToLocationScreen={navigateToHelloesScreen}
+        height={calculatedButtonHeight}
+        borderRadius={buttonRadius}
+        justifyContent={justifyIconContent}
+        marginLeft={16} 
+        backgroundColor={friendColorTheme.darkColor}
+        topIconSize={topIconSize}
+        bottomIconSize={bottomIconSize}
+        iconColor={inactiveIconColor}
+        highlightIconColor={friendColorTheme.lightColor}
+        firstPageTopSvg={GridViewOutlineSvg}
+        firstPageBottomSvg={ScrollOutlineSvg}
+        secondPageTopSvg={GridViewOutlineSvg}
+        secondPageBottomSvg={ScrollOutlineSvg}
+      /> 
     </View> 
+    </View>
+  </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%', 
-    borderRadius: 30,
+    width: '100%',  
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
   },
-  arrowContainer: {
+  containerInner: {
     flexDirection: 'column',
-    marginRight: -4,
+    width: '100%',  
+    backgroundColor: 'transparent',
+  },
+  containerHeaderInside: { 
+    flexDirection: 'column',  
+    marginBottom: 20,
+    flex: 1,
+    zIndex: 1,
 
+    },
+ 
+  containerInnerRow: {
+    flexDirection: 'row',
+    width: '100%',  
+    backgroundColor: 'transparent',
   },
-  arrowButton: {
-    padding: 4,
-    marginRight: -8,
-    marginLeft: -10,
+  headerContainer: { 
+    textAlign: 'left', 
+    justifyContent: 'center',
+    paddingLeft: 0,  
+  
   },
-  arrowText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  svgContainer: {
-    width: 60,  
-    height: 60,  
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',  
-  },
-  SvgImage: {
-    transform: [{ scale: .8 }],  
-  },
-  svgFSContainer: {
-    width: 60,
-    height: 50,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center', 
-    paddingTop: 20,
-    marginBottom: -6,
-  },
-  SvgFSImage: {
-    transform: [{ scale: 1.22 }],
+  headerText: { 
+    marginLeft: 10,
   },
 });
 

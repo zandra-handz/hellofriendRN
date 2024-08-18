@@ -26,7 +26,10 @@ const ActionFriendPageMoments = ({
   buttonHeight=260,
   buttonRadius=20,
   headerHeight=30,
+  justifyIconContent='center',
   inactiveIconColor='white',
+  topIconSize=30,
+  bottomIconSize=30
 
 
 }) => {
@@ -52,16 +55,16 @@ const ActionFriendPageMoments = ({
   useEffect(() => {
     if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
       if(friendColorTheme.invertGradient) {
-        setLightColor(friendColorTheme.lightColor || 'black');
-        setDarkColor(friendColorTheme.darkColor || 'black');
+        setLightColor(friendColorTheme.darkColor || 'gray');
+        setDarkColor(friendColorTheme.lightColor || 'white');
       } else {
-        setLightColor(friendColorTheme.darkColor || 'black');
-        setDarkColor(friendColorTheme.lightColor || 'black');
+        setLightColor(friendColorTheme.lightColor || 'white');
+        setDarkColor(friendColorTheme.darkColor || 'gray');
       };
     }
     if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
-      setLightColor('black');
-      setDarkColor('black');
+      setLightColor('white');
+      setDarkColor('gray');
     }
   }, [friendColorTheme]);
  
@@ -112,7 +115,7 @@ const ActionFriendPageMoments = ({
 
 
 
-        <View style={styles.containerHeaderInside}>
+      <View style={[styles.containerHeaderInside, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius }]}>
           {includeHeader && headerInside && (
             <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
             <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
@@ -216,10 +219,11 @@ const ActionFriendPageMoments = ({
         navigateToLocationScreen={navigateToMomentsScreen}
         height={calculatedButtonHeight}
         borderRadius={buttonRadius}
+        justifyContent={justifyIconContent}
         marginLeft={16} 
         backgroundColor={friendColorTheme.darkColor}
-        topIconSize={34}
-        bottomIconSize={34}
+        topIconSize={topIconSize}
+        bottomIconSize={topIconSize}
         iconColor={inactiveIconColor}
         highlightIconColor={friendColorTheme.lightColor}
         firstPageTopSvg={GridViewOutlineSvg}
@@ -247,8 +251,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   containerHeaderInside: { 
-    flexDirection: 'column', 
-    backgroundColor: 'transparent',
+    flexDirection: 'column',  
     marginBottom: 20,
     flex: 1,
     zIndex: 1,

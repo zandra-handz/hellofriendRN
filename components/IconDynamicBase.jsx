@@ -36,7 +36,7 @@ const IconDynamicBase = ({ icons, choices, selectedChoice, svgWidth = 50, svgHei
     <View style={styles.container}>
       {SelectedSvgIcon && (
         <View style={styles.iconContainer}>
-          <SelectedSvgIcon width={svgWidth} height={svgHeight} fill={svgColor} />
+          <SelectedSvgIcon width={svgWidth} height={svgHeight} color={svgColor} />
         </View>
       )}
     </View>

@@ -163,6 +163,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50
         }}
+        ListFooterComponent={<View style={{ width: 76 }} />}
       />
     );
   }, [allItems, onViewableItemsChanged]);

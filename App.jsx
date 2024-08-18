@@ -1,6 +1,8 @@
 // App.js
 
 import React, { useEffect } from 'react';
+import TopLevelNavigationHandler from './TopLevelNavigationHandler'; // Adjust import path if necessary
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
@@ -14,6 +16,8 @@ import { SelectedFriendProvider } from './context/SelectedFriendContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font'; // Import expo-font
 import { useGlobalStyle } from './context/GlobalStyleContext';
+import { useNavigation } from '@react-navigation/native';
+
 
 // Import screens and components
 import FriendSelect from './data/FriendSelect';
@@ -22,6 +26,7 @@ import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
 import ScreenDefaultActionMode from './screens/ScreenDefaultActionMode';
 import ScreenMoments from './screens/ScreenMoments';
 import ScreenImages from './screens/ScreenImages';
+import ScreenHelloes from './screens/ScreenHelloes';
 import ScreenLocations from './screens/ScreenLocations';
 import ScreenLocationSearch from './screens/ScreenLocationSearch';
 import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch';
@@ -76,17 +81,20 @@ export const Layout = () => {
   const { themeStyles } = useGlobalStyle(); 
   const { authUserState, onSignOut } = useAuthUser();
 
+
   const handleSignOutPress = () => {
     console.log("Sign Out button pressed");
     onSignOut();
   };
+ 
 
   return (
     <NavigationContainer>
+      <TopLevelNavigationHandler>
       <Stack.Navigator
         screenOptions={{
           headerShown: true,
-          headerStyle: themeStyles.header, // Apply theme styles to header
+          headerStyle: themeStyles.header,  
           headerTintColor: themeStyles.headerTextColor,  
           cardStyle: { backgroundColor: 'transparent' }, 
           cardStyleInterpolator: ({ current: { progress } }) => ({
@@ -158,6 +166,14 @@ export const Layout = () => {
                 }}
               />
               <Stack.Screen
+                name="Helloes"
+                component={ScreenHelloes}
+                options={{
+                  headerShown: true,
+                  title: 'Archived helloes',
+                }}
+              />
+              <Stack.Screen
                 name="Locations"
                 component={ScreenLocations}
                 options={{
@@ -224,9 +240,12 @@ export const Layout = () => {
             />
           )
         ) : (
-          <Stack.Screen name="Signin" component={Signin} />
+          <Stack.Screen 
+            name="Signin" 
+            component={Signin} />
         )}
       </Stack.Navigator>
+      </TopLevelNavigationHandler>
     </NavigationContainer>
   );
 };

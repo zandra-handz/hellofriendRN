@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
-import ButtonLottieAnimationTwoSections from './ButtonLottieAnimationTwoSections';
+import ButtonLottieAnimationTwoSectionsSvg from '../components/ButtonLottieAnimationTwoSectionsSvg';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-
+import MeetingWithAFriendOutlineSvg from '../assets/svgs/meeting-with-a-friend-outline.svg';
 import AlertPanelBottom from './AlertPanelBottom';
 import { useNavigation } from '@react-navigation/native';
+import PersonalConnectionsSvg from '../assets/svgs/personal-connections.svg';
 
 
-const ActionFriendPageHeader = ({ onPress, buttonRadius=30, Deselector=false }) => {
+const ActionFriendPageHeader = ({ 
+  onPress,
+  buttonHeight=140,
+  headerRadius=30, 
+  headerTopRadius=0,
+  svgColor='white',
+  Deselector=false }) => {
 
   const navigation = useNavigation();
 
@@ -21,20 +28,18 @@ const ActionFriendPageHeader = ({ onPress, buttonRadius=30, Deselector=false }) 
   useEffect(() => {
     if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
       if(friendColorTheme.invertGradient) {
-        setLightColor(friendColorTheme.darkColor || 'black');
-        setDarkColor(friendColorTheme.lightColor || 'black');
+        setLightColor(friendColorTheme.darkColor || 'gray');
+        setDarkColor(friendColorTheme.lightColor || 'white');
       } else {
-        setLightColor(friendColorTheme.lightColor || 'black');
-        setDarkColor(friendColorTheme.darkColor || 'black');
+        setLightColor(friendColorTheme.lightColor || 'white');
+        setDarkColor(friendColorTheme.darkColor || 'gray');
       };
     }
     if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
-      setLightColor('black');
-      setDarkColor('black');
+      setLightColor('white');
+      setDarkColor('gray');
     }
   }, [friendColorTheme]);
- 
- 
 
 
   const handleDeselect = () => {
@@ -60,11 +65,13 @@ const ActionFriendPageHeader = ({ onPress, buttonRadius=30, Deselector=false }) 
     <View style={styles.container}>
       {friendDashboardData && (
       <Animated.View style={{ flex: 1 }}>
-        <ButtonLottieAnimationTwoSections
+        <ButtonLottieAnimationTwoSectionsSvg
           onPress={handlePress}
+          buttonHeight={buttonHeight}
+          borderRadius={headerRadius}
+          borderTopRadius={headerTopRadius}
           headerText={selectedFriend ? selectedFriend.name : ''}
           navigateToFirstPage={false}
-          label={friendDashboardData ? `days since last hello: ${friendDashboardData[0].days_since}` : ''}
           label='Say hello on '
           labeltwo={friendDashboardData ? `${friendDashboardData[0].future_date_in_words}` : ' '}
           //moved 'say hello' from additionalText to label
@@ -81,10 +88,11 @@ const ActionFriendPageHeader = ({ onPress, buttonRadius=30, Deselector=false }) 
           showGradient={true}
           lightColor={lightColor}
           darkColor={darkColor}
-          shapeSource={require('../assets/shapes/beer.png')}
-          shapeWidth={340}
-          shapeHeight={340}
-          shapePositionValue={-154}
+          SourceSvg={MeetingWithAFriendOutlineSvg}
+          svgColor={darkColor}
+          shapeWidth={190}
+          shapeHeight={190} 
+          shapePositionValue={-214}
           showIcon={false}
           satellites={Deselector} // Toggle satellite section based on Deselector
           satelliteSectionPosition="right"
@@ -107,26 +115,11 @@ const ActionFriendPageHeader = ({ onPress, buttonRadius=30, Deselector=false }) 
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%', 
-    borderRadius: 30,
+    width: '100%',  
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  arrowButton: {
-    padding: 10,
-    marginRight: 10,
-  },
-  arrowText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  arrowTextWhite: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-  },
+  },   
 });
 
 export default ActionFriendPageHeader;

@@ -14,8 +14,11 @@ import SwitchPlainSolidSvg from '../assets/svgs/switch-plain-solid.svg';
 
 
 
-const ButtonLottieAnimationTwoSections = ({
-  onPress,
+const ButtonLottieAnimationTwoSectionsSvg = ({
+  onPress, 
+  buttonHeight=140,
+  borderTopRadius=0,
+  borderRadius=30,
   headerText = '',
   label,
   labeltwo,
@@ -38,7 +41,6 @@ const ButtonLottieAnimationTwoSections = ({
   showIcon = false,
   showShape = true,
   shapePosition = 'left',
-  shapeSource = require('../assets/shapes/greenleaf.png'),
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134,
@@ -51,7 +53,9 @@ const ButtonLottieAnimationTwoSections = ({
   satelliteOnPress,
   additionalPages = false,
   additionalSatellites = [],
-  isLoading = false, // New prop for loading state
+  isLoading = false, 
+  svgColor='white',
+  SourceSvg: SourceSvg,
 }) => {
   const lottieViewRef = useRef(null);
   const globalStyles = useGlobalStyle();
@@ -179,18 +183,20 @@ const ButtonLottieAnimationTwoSections = ({
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { borderBottomRightRadius: borderRadius, borderBottomLeftRadius: borderRadius, borderTopRightRadius: borderTopRadius, borderTopLeftRadius: borderTopRadius}]}>
       {!additionalPages && mainViewVisible && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { width: satellites ? '76.66%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { width: satellites ? '77%' : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 140,
+                  height: buttonHeight,
                   padding: 10,
-                  borderRadius: 30,
+                  borderBottomRightRadius: borderRadius,
+                  borderBottomLeftRadius: borderRadius,
+                  
                   alignItems: 'center',
                   overflow: 'hidden',
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
@@ -206,16 +212,10 @@ const ButtonLottieAnimationTwoSections = ({
                   />
                 )}
                 {showShape && (
-                  <Image
-                    source={shapeSource}
-                    style={{
-                      position: 'absolute',
-                      width: shapeWidth,
-                      height: shapeHeight,
-                      ...getShapeStyle(),
-                    }}
-                    resizeMode="contain"
-                  />
+                  <View style={{ position: 'absolute'}}>
+                  
+                  {SourceSvg && <SourceSvg color={svgColor} width={shapeWidth} height={shapeHeight} style={getShapeStyle()} />}
+                  </View>
                 )}
                 <View style={{ flexDirection: 'column', paddingHorizontal: 5, paddingBottom: 8, paddingTop: 8, flex: 1 }}>
                   <Text
@@ -293,7 +293,7 @@ const ButtonLottieAnimationTwoSections = ({
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, { height: buttonHeight, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
                 {renderSatellites()}
               </View>
             )}
@@ -301,7 +301,7 @@ const ButtonLottieAnimationTwoSections = ({
         </Animated.View>
       )}
       {additionalPages && (
-        <View style={styles.additionalSatelliteSection}>
+        <View style={[styles.additionalSatelliteSection, { height: buttonHeight }]}>
           {renderAdditionalSatellites()}
         </View>
       )}
@@ -312,8 +312,7 @@ const ButtonLottieAnimationTwoSections = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginBottom: 0,
-    borderRadius: 30,
+    marginBottom: 0, 
     overflow: 'hidden',
   },
   mainButtonContainer: {
@@ -322,8 +321,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   satelliteSection: {
-    width: '33.33%',
-    height: 140,
+    width: '33.33%', 
     borderRadius: 0,
     marginLeft: -20,
     paddingLeft: 0,  
@@ -341,8 +339,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgray',
   },
   additionalSatelliteSection: {
-    flexDirection: 'row',
-    height: 136,
+    flexDirection: 'row', 
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
@@ -362,6 +359,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
+  svgContainer: { 
+    marginLeft: 16,
+    width: '2%',
+    alignItems: 'right', 
+    alignContent: 'right', 
+    zIndex: 1,
+  }, 
 });
 
-export default ButtonLottieAnimationTwoSections;
+export default ButtonLottieAnimationTwoSectionsSvg;

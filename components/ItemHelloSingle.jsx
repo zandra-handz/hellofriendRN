@@ -25,7 +25,7 @@ const ItemHelloSingle = ({ helloObject, helloWidth, helloHeight }) => {
   };
 
   if (!helloObject) {
-    return null; // or some loading indicator if needed
+    return null; 
   }
 
   const dynamicStyles = {
@@ -40,7 +40,7 @@ const ItemHelloSingle = ({ helloObject, helloWidth, helloHeight }) => {
   return (
     <View style={styles.helloContainer}>
       <TouchableOpacity onPress={openModal}>
-      <IconDynamicHelloType selectedChoice={helloObject.type} svgHeight={36} svgWidth={36} svgColor="white"/>
+      <IconDynamicHelloType selectedChoice={helloObject.type} svgHeight={28} svgWidth={28} svgColor="white"/>
                             
 
         <Text> </Text>

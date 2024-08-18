@@ -4,7 +4,9 @@ import ButtonLottieAnimationSatellitesImages from './ButtonLottieAnimationSatell
 import { useImageList } from '../context/ImageListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useNavigation } from '@react-navigation/native';
+
 import TogglerActionButton from '../components/TogglerActionButton';
+
 import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
 import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
 
@@ -21,7 +23,10 @@ const ActionFriendPageImages = ({
   buttonHeight=70,
   buttonRadius=20,
   headerHeight=30,
+  justifyIconContent='center',
   inactiveIconColor='white',
+  topIconSize=30,
+  bottomIconSize=30
 
 
 }) => { 
@@ -44,16 +49,16 @@ const ActionFriendPageImages = ({
   useEffect(() => {
     if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
       if(friendColorTheme.invertGradient) {
-        setLightColor(friendColorTheme.lightColor || 'black');
-        setDarkColor(friendColorTheme.lightColor || 'black');
+        setLightColor(friendColorTheme.darkColor || 'gray');
+        setDarkColor(friendColorTheme.lightColor || 'white');
       } else {
-        setLightColor(friendColorTheme.darkColor || 'black');
-        setDarkColor(friendColorTheme.darkColor || 'black');
+        setLightColor(friendColorTheme.lightColor || 'white');
+        setDarkColor(friendColorTheme.darkColor || 'gray');
       };
     }
     if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
-      setLightColor('black');
-      setDarkColor('black');
+      setLightColor('white');
+      setDarkColor('gray');
     }
   }, [friendColorTheme]);
 
@@ -121,7 +126,8 @@ const ActionFriendPageImages = ({
 
 
 
-        <View style={styles.containerHeaderInside}>
+        <View style={[styles.containerHeaderInside, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius }]}>
+          
           {includeHeader && headerInside && (
             <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
                       <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
@@ -150,7 +156,7 @@ const ActionFriendPageImages = ({
             animationWidth={234}
             animationHeight={234}
             showGradient={true}
-            lightColor={darkColor}
+            lightColor={lightColor}
             darkColor={darkColor}
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
@@ -219,12 +225,14 @@ const ActionFriendPageImages = ({
         navigateToLocationScreen={navigateToImagesScreen}
         height={calculatedButtonHeight}
         borderRadius={buttonRadius}
+        justifyContent={justifyIconContent}
         marginLeft={16} 
         backgroundColor={friendColorTheme.darkColor}
-        topIconSize={34}
-        bottomIconSize={34}
+        topIconSize={topIconSize}
+        bottomIconSize={bottomIconSize}
         iconColor={inactiveIconColor}
         highlightIconColor={friendColorTheme.lightColor}
+        oneButtonOnly={true}
         firstPageTopSvg={GridViewOutlineSvg}
         firstPageBottomSvg={ScrollOutlineSvg}
         secondPageTopSvg={GridViewOutlineSvg}
@@ -250,8 +258,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   containerHeaderInside: { 
-    flexDirection: 'column', 
-    backgroundColor: 'transparent',
+    flexDirection: 'column',  
     marginBottom: 20,
     flex: 1,
     zIndex: 1,

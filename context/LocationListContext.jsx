@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext'; // Import the AuthUser context
+import { useUpcomingHelloes } from './UpcomingHelloesContext';
 import { fetchAllLocations, fetchLocationDetails } from '../api'; // Import the API methods
 
 const LocationListContext = createContext();
@@ -13,10 +14,11 @@ export const LocationListProvider = ({ children }) => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [loadingSelectedLocation, setLoadingSelectedLocation] = useState(false);
   const [additionalDetails, setAdditionalDetails] = useState(null);
-  const [loadingAdditionalDetails, setLoadingAdditionalDetails ] = useState(false);
+  const [loadingAdditionalDetails, setLoadingAdditionalDetails] = useState(false);
   const [isTemp, setIsTemp] = useState(false);
   const [isFave, setIsFave] = useState(false);
-  const { authUserState } = useAuthUser();
+  const { authUserState } = useAuthUser(); 
+  const { upcomingHelloes, isLoading } = useUpcomingHelloes(); // Access isLoading from UpcomingHelloesContext
 
   const extractZipCode = (address) => {
     const zipCodePattern = /(?:\b\d{5}(?:-\d{4})?\b)/;
@@ -27,40 +29,41 @@ export const LocationListProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoadingSelectedLocation(true);
-      try {
-        const locationData = await fetchAllLocations();
-        const updatedLocationData = locationData.map(location => {
-          const zipCode = extractZipCode(location.address);
-          return {
-            ...location,
-            zipCode,
-          };
-          
-        });
-
-        setLocationList(updatedLocationData);
-        setLoadingSelectedLocation(false); 
- 
-        if (updatedLocationData.length > 0) {
-          setSelectedLocation(updatedLocationData[0]); 
-        } else {
-          setSelectedLocation(null);  
-        }
-
-      } catch (error) {
-        console.error('Error fetching location list:', error);
+      if (upcomingHelloes && !isLoading) {  // Wait until upcomingHelloes is loaded
         setLoadingSelectedLocation(true);
+        try {
+          const locationData = await fetchAllLocations();
+          const updatedLocationData = locationData.map(location => {
+            const zipCode = extractZipCode(location.address);
+            return {
+              ...location,
+              zipCode,
+            };
+          });
+
+          setLocationList(updatedLocationData);
+          setLoadingSelectedLocation(false); 
+
+          if (updatedLocationData.length > 0) {
+            setSelectedLocation(updatedLocationData[0]); 
+          } else {
+            setSelectedLocation(null);  
+          }
+
+        } catch (error) {
+          console.error('Error fetching location list:', error);
+          setLoadingSelectedLocation(true);
+        }
       }
     };
 
-    if (authUserState.authenticated) {
+    if (authUserState.authenticated && !isLoading) { // Ensure that the locations only fetch after upcomingHelloes has loaded
       fetchData();
     } else {
       setLocationList([]);
       setSelectedLocation(null); // Clear selectedLocation if not authenticated
     }
-  }, [authUserState.authenticated]);
+  }, [authUserState.authenticated, isLoading, upcomingHelloes]); // Include isLoading in dependencies
 
   useEffect(() => {
     if (locationList.length > 0) {
@@ -100,8 +103,7 @@ export const LocationListProvider = ({ children }) => {
     const updateAdditionalDetails = async () => {
       setLoadingAdditionalDetails(true);
       try {
-        if (selectedLocation && selectedLocation.id) {
-          console.log('Fetching additional details for location:', selectedLocation);
+        if (selectedLocation && selectedLocation.id) { 
           const details = await fetchLocationDetails({
             address: encodeURIComponent(`${selectedLocation.title} ${selectedLocation.address}`),
             lat: parseFloat(selectedLocation.latitude),

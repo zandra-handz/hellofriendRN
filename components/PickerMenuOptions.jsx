@@ -16,6 +16,7 @@ const PickerMenuOptions = ({
   includeContainer = false,
   layout = 'row', // New prop to control layout
   useSvg = false, // New prop to toggle between text and SVG
+  svgColor = 'black',
   svgIcons = [], // Array of SVG components
   labels = [], // Array of labels to be shown with SVGs (optional)
   labelPosition = 'below', // New prop to control label position
@@ -55,7 +56,7 @@ const PickerMenuOptions = ({
                       {labelPosition === 'beside' && labels[index] && (
                         <Text style={styles.optionLabel}>{labels[index]}</Text>
                       )}
-                      {React.createElement(svgIcons[index], { width: 30, height: 30 })}
+                      {React.createElement(svgIcons[index], { width: 30, height: 30, color: svgColor })}
                       {labelPosition === 'below' && labels[index] && (
                         <Text style={styles.optionLabel}>{labels[index]}</Text>
                       )}
