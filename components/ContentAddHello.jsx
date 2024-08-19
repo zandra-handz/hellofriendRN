@@ -238,6 +238,7 @@ const ContentAddHello = () => {
 
   const successOk = () => {
     setUpdateTrigger(prev => !prev); 
+    setFriend(null);
     navigateToMainScreen();
     setSuccessModalVisible(false);
 };

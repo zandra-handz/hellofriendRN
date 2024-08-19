@@ -145,7 +145,7 @@ export const Layout = () => {
                 name="FriendFocus"
                 component={ScreenFriendFocus}
                 options={{
-                  headerShown: true,
+                  headerShown: false,
                   title: 'View friend',
                 }}
               />

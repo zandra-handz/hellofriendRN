@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 import SpeechRectCartoonishSvg from '../assets/svgs/speech-rect-cartoonish.svg';//height={360} width={360}
 import MaximizeSquareSolidSvg from '../assets/svgs/maximize-square-solid.svg';  
+import MaximizeOutlineSvg from '../assets/svgs/maximize-outline.svg';  
+
 import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
 
 import ModalMomentFocus from '../components/ModalMomentFocus'; // Import the new component
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus, width = '100%', editMode = true, onScreenChange }) => {
+const TextAreaMoment = ({ onInputChange, initialText, placeholderText, maxButtonColor='black', autoFocus, width = '100%', editMode = true, onScreenChange }) => {
   const [textInput, setTextInput] = useState(initialText || '');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const textareaRef = useRef();
@@ -67,7 +69,7 @@ const TextAreaMoment = ({ onInputChange, initialText, placeholderText, autoFocus
           )}
           {editMode && (
             <TouchableOpacity onPress={handleOpenModal} style={styles.maxButtonContainer}>
-              <MaximizeSquareSolidSvg height={30} width={30} color='limegreen' />
+              <MaximizeOutlineSvg height={30} width={30} color={maxButtonColor} />
             </TouchableOpacity>
           )}
         </View>
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
   },
   maxButtonContainer: {
     position: 'absolute', 
-    top: 10,
+    top: 30,
     right: 14, 
     borderRadius: 20,
     padding: 20,

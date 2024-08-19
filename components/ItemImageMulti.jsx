@@ -6,7 +6,7 @@ import { FlashList } from "@shopify/flash-list";
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true, width, height, borderRadius = 10 }) => {
+const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true, width, height, containerWidth='100%', borderRadius = 10 }) => {
   const { imageList } = useImageList();
   const [images, setImages] = useState(imageData);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -27,7 +27,7 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true,
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {width: containerWidth}]}>
       <FlashList
         data={imageList}
         horizontal={horizontal && singleLineScroll}
@@ -58,20 +58,24 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1,
     backgroundColor: 'transparent', 
-    width: '100%',
-    height: '100%',
+    
+    height: '100%', 
   },
+
   imageContainer: {
     flexDirection: 'row', 
+    
    
   },
   imageRow: {
     flex: 1, 
     justifyContent: 'space-between',
+    
   },  
   image: { 
     borderRadius: 10,
     marginRight: 10,
+   
   },
 });
 

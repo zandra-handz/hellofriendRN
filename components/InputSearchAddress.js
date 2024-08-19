@@ -5,6 +5,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useLocationList } from '../context/LocationListContext'; // Adjust the import path as necessary
 
 import ItemViewLocation from '../components/ItemViewLocation';
+import { GOOGLE_API_KEY } from '@env';
 
 const InputSearchAddress = () => {
   const { locationList, setLocationList, setSelectedLocation, selectedLocation } = useLocationList();
@@ -66,7 +67,7 @@ const InputSearchAddress = () => {
         keepResultsAfterBlur={true}
         onPress={handlePress}
         query={{
-          key: 'AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk',
+          key: GOOGLE_API_KEY,
           language: 'en',
         }}
         styles={{

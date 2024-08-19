@@ -223,6 +223,7 @@ const ButtonLottieAnimationSatellitesLocations = ({
                   />
                 )}
                 <View style={{ flexDirection: 'row', paddingHorizontal: 5, paddingBottom: 0, paddingTop: 6, flex: 1 }}>
+                
                 <View style={styles.svgContainer}>
                     {headerSvg} 
                 </View>
@@ -260,7 +261,9 @@ const ButtonLottieAnimationSatellitesLocations = ({
                             onError={(error) => console.error('Error rendering animation:', error)}
                           />
                         )}
-                        <ItemLocationFaves locationData={faveLocationList} width={24} height={24} limit={2} newestFirst={true}/> 
+                        <View style={{flex: 1}}> 
+                          <ItemLocationFaves locationData={faveLocationList}  containerWidth={254} width={26} height={26} newestFirst={true}/> 
+                        </View>
                       </>
                     )}
                   </View>

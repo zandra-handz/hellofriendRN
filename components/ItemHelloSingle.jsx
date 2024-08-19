@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
     padding: 0,
     marginHorizontal: 20,
     width: '100%',
-    background: 'white',
-    height: 90,
+    background: 'white', 
+    height: '100%',
     flex: 1, 
   },
   modalContainer: {

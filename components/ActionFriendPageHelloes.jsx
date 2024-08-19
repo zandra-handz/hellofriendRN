@@ -174,10 +174,8 @@ const ActionFriendPageHelloes = ({
             subHeaderText={mainHello ? mainHello.locationName : 'Loading...'}
             
             additionalText={
-              mainHello && friendDashboardData.length > 0 && friendDashboardData[0].days_since !== undefined
-                ? friendDashboardData[0].days_since === 1
-                  ? `${friendDashboardData[0].days_since} day ago`
-                  : `${friendDashboardData[0].days_since} days ago`
+              mainHello && friendDashboardData.length > 0 && friendDashboardData[0].days_since_words !== undefined
+                ? `${friendDashboardData[0].days_since_words}`
                 : ''
             }
             typeIcon={mainHello ? <IconDynamicHelloType selectedChoice={mainHello.type} svgHeight={70} svgWidth={70} /> : null}

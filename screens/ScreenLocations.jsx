@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         width: '100%',
         padding: 10,
         paddingTop: 20,
-        backgroundColor: 'black',
+        backgroundColor: 'white',
         flexDirection: 'column', 
         justifyContent: 'space-evenly',
         position: 'absolute',

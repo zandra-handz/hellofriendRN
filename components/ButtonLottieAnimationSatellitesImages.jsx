@@ -14,6 +14,7 @@ const ButtonLottieAnimationSatellitesImages = ({
   isLoading = false,
   loadingMessage = '',
   headerText = 'LAST ADDED',
+  headerSvg=null,
   
   firstItem,
   allItems,
@@ -197,8 +198,13 @@ const ButtonLottieAnimationSatellitesImages = ({
                     resizeMode="contain"
                   />
                 )}
-              <View style={[styles.mainSection, {height: buttonHeight, width: '100%', borderRadius: buttonRadius }]}>
+                <View style={[styles.mainSection, {height: buttonHeight, width: '100%', orderRadius: buttonRadius }]}>
           
+           
+                <View style={styles.svgContainer}>
+                    {headerSvg} 
+                </View>
+              
                   <View style={{ flexDirection: 'row' }}>
                     {rightSideAnimation ? (
                       <>
@@ -227,7 +233,9 @@ const ButtonLottieAnimationSatellitesImages = ({
                           />
                         )} 
                         {isImageListReady && (
-                          <ItemImageMulti imageData={allItems} width={40} height={40} borderRadius={buttonRadius} /> 
+                          <View style={{flex: 1 }}> 
+                           <ItemImageMulti imageData={allItems} width={40} height={40} containerWidth={254} borderRadius={buttonRadius} /> 
+                          </View>
                         )}
                         </>
                     )}
@@ -261,10 +269,16 @@ const ButtonLottieAnimationSatellitesImages = ({
 
 const styles = StyleSheet.create({ 
   mainSection: {
-    flexDirection: 'column',
-    paddingHorizontal: 10,
-    paddingVertical: 10,   
+    flexDirection: 'row',
+    paddingHorizontal: 10, 
+    paddingTop: 5,
+    paddingBottom: 4, 
+    flex: 1 
   },
+  svgContainer: {
+    paddingTop: 7,
+    marginRight: 30,   
+},
   satelliteSection: {
     width: '23.33%', 
     width: 0,

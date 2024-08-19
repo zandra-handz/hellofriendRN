@@ -144,7 +144,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
   
       for (let i = 0; i < numSatellites; i++) {
         satellitesArray.push(
-          <ItemHelloSingle key={`satellite-${i}`} helloObject={satelliteHelloes[i]} helloWidth={20} helloHeight={20}/>
+          <ItemHelloSingle key={`satellite-${i}`} helloObject={satelliteHelloes[i]} helloWidth={28} helloHeight={28}/>
        
         );
       }
@@ -165,7 +165,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
         horizontal
         keyExtractor={(item, index) => `additional-satellite-${index}`}
         renderItem={({ item }) => (
-          <ItemHelloSingle helloObject={item}  />
+          <ItemHelloSingle helloObject={item}  helloHeight={28} helloWidth={28}/>
         )}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{
@@ -219,7 +219,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
                   <View style={{ flexDirection: 'row' }}>
                     {rightSideAnimation ? (
                       <>
-                        <ItemHelloSingle helloObject={firstItem}   /> 
+                        <ItemHelloSingle helloObject={firstItem} helloHeight={28} helloWidth={28} /> 
                         {showIcon && animationSource && (
                           <LottieView
                             ref={lottieViewRef}
@@ -266,7 +266,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { height:buttonHeight, borderRadius: buttonRadius, backgroundColor: satelliteSectionBackgroundColor, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, { height:'buttonHeight', borderRadius: buttonRadius, backgroundColor: satelliteSectionBackgroundColor, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
                 
                 
                 {renderSatellites()}

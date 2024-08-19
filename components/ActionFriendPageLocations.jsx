@@ -4,6 +4,7 @@ import ButtonLottieAnimationSatellitesLocations from './ButtonLottieAnimationSat
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';  
+
 import TogglerActionButton from '../components/TogglerActionButton';
 import { useNavigation } from '@react-navigation/native';
 
@@ -25,6 +26,7 @@ const ActionFriendPageLocations = ({
   buttonHeight=80,
   buttonRadius=10,
   headerHeight=30,
+  marginLeft=16,
   justifyIconContent='center',
   inactiveIconColor='white',
   topIconSize=30,
@@ -132,7 +134,7 @@ const ActionFriendPageLocations = ({
         
         {additionalSatelliteCount > 0 ? (
           <ButtonLottieAnimationSatellitesLocations
-            onPress={() => handlePress(mainLocation)} 
+            onPress={() => {}}
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius}
             navigateToFirstPage={navigateToFirstPage}
@@ -173,7 +175,7 @@ const ActionFriendPageLocations = ({
           />
         ) : (
           <ButtonLottieAnimationSatellitesLocations
-            onPress={() => handlePress(mainLocation)}
+            onPress={() => {}}
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius}
             navigateToFirstPage={navigateToFirstPage}
@@ -223,6 +225,7 @@ const ActionFriendPageLocations = ({
         navigateToLocationScreen={navigateToLocationScreen}
         height={calculatedButtonHeight}
         borderRadius={buttonRadius} 
+        marginLeft={marginLeft}
         justifyContent={justifyIconContent}
         backgroundColor={friendColorTheme.darkColor}
         topIconSize={topIconSize}

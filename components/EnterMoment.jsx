@@ -6,6 +6,7 @@ const EnterMoment = ({
   handleInputChange,
   textInput, 
   placeholderText,
+  buttonBackgroundColor='black',
   handleNextScreen,
   onScreenChange, // New prop for notifying parent of screen changes
 }) => {
@@ -39,8 +40,8 @@ const EnterMoment = ({
           />
           {textInput && (
           <View style={styles.nextButtonContainer}> 
-            <TouchableOpacity style={styles.nextButton} onPress={handleNextScreenClick}>
-              <Text style={styles.nextButtonText}>Finished</Text>
+            <TouchableOpacity style={[styles.nextButton, {backgroundColor: buttonBackgroundColor}]} onPress={handleNextScreenClick}>
+              <Text style={styles.nextButtonText}>Done</Text>
             </TouchableOpacity>
           </View>
            )}
@@ -56,7 +57,7 @@ const EnterMoment = ({
             editMode={false}
           />
           <View style={styles.editButtonContainer}> 
-            <TouchableOpacity style={styles.nextButton} onPress={handleBackScreenClick}>
+            <TouchableOpacity style={[styles.nextButton, {backgroundColor: buttonBackgroundColor}]} onPress={handleBackScreenClick}>
               <Text style={styles.nextButtonText}>Edit</Text>
             </TouchableOpacity>
           </View>
@@ -87,24 +88,26 @@ const styles = StyleSheet.create({
   },
   nextButtonContainer: { 
     width: '100%', 
+    position: 'absolute',
+    zIndex: 1,
+    bottom: 4,
+    right: -154,
     alignItems: 'center',
     alignContent: 'center',
     justifyContent: 'center',
-    position: 'absolute',
-    bottom: 0,
   },
   editButtonContainer: { 
     width: '100%', 
     position: 'absolute',
     zIndex: 1,
-    top: 26,
-    right: -132,
+    top: 48,
+    right: -154,
     alignItems: 'center',
     alignContent: 'center',
     justifyContent: 'center',
   },
   nextButton: {
-    backgroundColor: 'limegreen',
+    
     paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 20,

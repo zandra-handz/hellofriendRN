@@ -30,7 +30,7 @@ const ScreenFriendFocus = () => {
   const topRadius = 20;
   const radius = 20;
   const buttonMargin = 10;
-  const pageHeaderHeight = 160; 
+  const pageHeaderHeight = 220; 
 
   const headerTextColor = 'white';
   const inactiveIconColor = 'white';
@@ -56,7 +56,7 @@ const ScreenFriendFocus = () => {
               <ActionFriendPageLocations topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={74} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'LOCATIONS'} />
             </View>
             <View style={{marginHorizontal: buttonMargin}}>
-            <ActionFriendPageImages topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={66} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'IMAGES'}/> 
+            <ActionFriendPageImages topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={64} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'IMAGES'}/> 
             </View>
             <View style={{marginHorizontal: buttonMargin}}>
             <ActionFriendPageMoments topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={260} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'MOMENTS'}/> 

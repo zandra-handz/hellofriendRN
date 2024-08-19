@@ -163,3 +163,8 @@ npm install react-native-color-picker
 npm install react-native-color-picker-toolkit
 
 npm i reanimated-color-picker
+
+
+eas cli   or something (?)
+
+ npm install react-native-dotenv

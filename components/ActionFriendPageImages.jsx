@@ -4,7 +4,8 @@ import ButtonLottieAnimationSatellitesImages from './ButtonLottieAnimationSatell
 import { useImageList } from '../context/ImageListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useNavigation } from '@react-navigation/native';
-
+import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';  
+import PhotoSolidSvg from '../assets/svgs/photo-solid.svg';
 import TogglerActionButton from '../components/TogglerActionButton';
 
 import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
@@ -141,9 +142,11 @@ const ActionFriendPageImages = ({
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 || overrideView ? (
           <ButtonLottieAnimationSatellitesImages
-            onPress={() => handlePress(mainImage)} 
+            onPress={() => {}}
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius}
+            headerSvg={<PhotoSolidSvg width={28} height={28} color="white" />}
+            
             navigateToFirstPage={() => setShowSecondButton(false)}
             firstItem={mainImage ? mainImage : 'Loading...'}
             allItems={imageList ? imageList : `Can't get all data`}
@@ -179,7 +182,7 @@ const ActionFriendPageImages = ({
           /> 
         ) : (
           <ButtonLottieAnimationSatellitesImages
-            onPress={() => handlePress(mainImage)}
+            onPress={() => {}}
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius}
             navigateToFirstPage={() => setShowSecondButton(false)}

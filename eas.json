@@ -4,13 +4,23 @@
   },
   "build": {
     "development": {
+      "env": {
+        "GOOGLE_API_KEY": "AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk"
+      },
       "developmentClient": true,
       "distribution": "internal"
     },
     "preview": {
+      "env": {
+        "GOOGLE_API_KEY": "AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk"
+      },
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "env": {
+        "GOOGLE_API_KEY": "AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk"
+      }
+    }
   },
   "submit": {
     "production": {}
