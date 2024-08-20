@@ -125,17 +125,12 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 
       <View style={styles.buttonContainer}>
         <ActionPageUpcomingButton/>
-        {selectedFriend &&(
-          <ActionFriendPageLocations topIconSize={28} bottomIconSize={28} buttonHeight={80} marginLeft={24} buttonRadius={30} headerHeight={30} includeHeader={false} headerInside={false} headerText={'LOCATIONS'} />
-            
-        )}
         <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
         <ActionScreenButtonAddImage onPress={navigateToAddImageScreen }/>
         <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen}/>
-
-        {!selectedFriend && (
+ 
           <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} />
-        )}
+     
       </View>
       <HelloFriendFooter />
     </>

@@ -12,6 +12,7 @@ const ScreenOnboardingComplete = ({ resetFinalizingData }) => {
         resetFinalizingData(); // Reset finalizingData
         navigation.navigate('Two');  
     };
+    
 
     const handleFinish = async () => {
         try {

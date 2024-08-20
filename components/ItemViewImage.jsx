@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, Text, TouchableOpacity, TextInput, Button } from 'react-native';
+import { View, Image, StyleSheet, Text, TouchableOpacity, TextInput, Button, ScrollView } from 'react-native';
 import AlertImage from '../components/AlertImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
+import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
+
+import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
+
+import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
+import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
+
 
 import { updateFriendImage, deleteFriendImage } from '../api';
 import ItemViewFooter from './ItemViewFooter'; // Import your ItemViewFooter component
@@ -88,68 +95,113 @@ const ItemViewImage = ({ image, onClose }) => {
       toggleModal={closeModal}
       modalContent={
         image ? (
-          <View>
-            <Image
-              source={{ uri: image.image }}
-              style={styles.modalImage}
-            />
-            {isEditing ? (
-              <>
-                <TextInput
-                  style={styles.input}
-                  value={title}
-                  onChangeText={setTitle}
-                />
-                <Button title="Update" onPress={handleUpdate} />
-                <Button title="Cancel" onPress={() => setIsEditing(false)} />
-              </>
-            ) : (
-              <>
-                <Text style={styles.modalText}>{title}</Text>
-                <ItemViewFooter
+          <View style={styles.modalContainer}>
+
+              <View style={styles.container}>
+              <View style={styles.headerContainer}>
+
+                <View style={styles.infoContainer}>
+                
+                <View style={styles.detailsColumn}>
+                <View style={styles.detailRow}>
+                <Text style={styles.name}>{image.title}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                <Text style={styles.name}>{image.id}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                <View style={styles.modalImageContainer}>
+                  <Image
+                    source={{ uri: image.image }}
+                    style={styles.modalImage}
+                  />
+                </View>
+                
+
+
+
+
+                </View>
+                  </View>
+                </View>
+              </View>
+
+              </View>
+              <View style={styles.buttonContainer}> 
+              <View style={styles.footerContainer}>
+              <ItemViewFooter
                   buttons={[
-                    { label: 'Edit', icon: 'edit', color: 'blue', onPress: handleEdit },
-                    { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
-                    { label: 'Share', icon: 'share', color: 'green', onPress: handleShare },
+                    { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color='black'/>, onPress: handleEdit },
+                    { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete },
+                    { label: 'Share', icon: <TrashOutlineSvg width={24} height={24} fill="green" />, onPress: handleShare },
                   ]}
+                  maxButtons={2} 
+                  showLabels={false}
                 />
-              </>
-            )}
+                </View>
+              <ButtonSendImageToFriend onPress={handleShare} friendName={selectedFriend.name} /> 
+              </View>
           </View>
         ) : null
       }
-      modalTitle="Image Details"
+      modalTitle="View Image"
+     
     />
   );
 };
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  name: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
+    flex: 1,
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 6,
+
+    backgroundColor: 'pink',
+  },
+  detailsColumn: {
+    backgroundColor: 'hotpink',
+    flex: 1,
+    flexDirection: 'column',
+    marginRight: 4,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
-  },
-  tabContent: {
     padding: 0,
   },
-  imageContainer: {
-    padding: 10,
+  modalImageContainer: {
     width: '100%',
-    flex: 1,
-  },
-  categoryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    height: '80%',
     marginBottom: 10,
-  },
-  imageRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'left',
+    borderRadius: 10,
   },
   modalImage: {
     width: '100%',
-    height: 300,
-    resizeMode: 'cover',
-    marginBottom: 10,
+    height: '100%',
+    resizeMode: 'contain',
+    marginBottom: 0,
     borderRadius: 10,
   },
   modalText: {
@@ -163,16 +215,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 8,
   },
-  icon: {
-    marginHorizontal: 10,
-  },
-  tagContainer: {
+  footerContainer: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    padding: 10, // Add some padding if needed
+    backgroundColor: 'lightgray', // Temporary background for debugging
   },
-  tagLabel: {
-    fontSize: 16,
+  
+  buttonContainer: { 
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: 'pink',
+    flexDirection: 'column',
+    justifyContent: 'space-between', 
   },
 });
 

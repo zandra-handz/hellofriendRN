@@ -148,7 +148,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
       )} 
 
       {selectedFriend &&(
-        <ActionFriendPageHeader Deselector={true} buttonHeight={190} />
+        <ActionFriendPageHeader Deselector={true} />
       )}
 
       {!showSecondButton && additionalSatelliteCount > 0 && (

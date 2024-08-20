@@ -15,7 +15,10 @@ import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the n
 import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
 
 import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
+
 import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
+
+
 
 const ItemViewLocation = ({ location, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);

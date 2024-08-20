@@ -17,7 +17,7 @@ import SwitchPlainSolidSvg from '../assets/svgs/switch-plain-solid.svg';
 const ButtonLottieAnimationTwoSectionsSvg = ({
   onPress, 
   buttonHeight=140,
-  borderTopRadius=0,
+  borderTopRadius=30,
   borderRadius=30,
   headerText = '',
   label,
@@ -196,6 +196,8 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
                   padding: 10,
                   borderBottomRightRadius: borderRadius,
                   borderBottomLeftRadius: borderRadius,
+                  borderTopLeftRadius: borderTopRadius,
+                  borderTopRightRadius: borderTopRadius,
                   
                   alignItems: 'center',
                   overflow: 'hidden',
@@ -221,7 +223,7 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
                   <Text
                     style={[
                       textStyles(preLabelFontSize, preLabelColor),
-                      { fontFamily: 'Poppins-Bold', width: '70%', marginBottom: -6 },
+                      { fontFamily: 'Poppins-Regular', width: '70%', marginBottom: -6 },
                     ]}
                     numberOfLines={1} // Ensure text does not wrap
                     ellipsizeMode='tail' // Display ellipsis at the end

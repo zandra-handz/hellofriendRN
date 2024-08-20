@@ -1,18 +1,22 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { FontAwesome5 } from 'react-native-vector-icons';
 
-const ItemViewFooter = ({ buttons }) => {
+const ItemViewFooter = ({ buttons, maxButtons, showLabels }) => {
+  // Limit the number of buttons displayed based on maxButtons prop
+  const displayedButtons = maxButtons ? buttons.slice(0, maxButtons) : buttons;
+
   return (
     <View style={styles.container}>
-      {buttons.map((button, index) => (
+      {displayedButtons.map((button, index) => (
         <TouchableOpacity
           key={index}
           style={styles.button}
           onPress={button.onPress}
         >
-          <FontAwesome5 name={button.icon} size={24} color={button.color || 'black'} style={styles.icon} />
-          <Text>{button.label}</Text>
+          <View style={styles.iconContainer}>
+            {button.icon}
+          </View>
+          {showLabels !== false && <Text>{button.label}</Text>}
         </TouchableOpacity>
       ))}
     </View>
@@ -24,16 +28,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'transparent',
     justifyContent: 'space-between',
-    height: 64,
-    width: '100%',
-    marginBottom: 0,
-    padding: 10, 
+    alignContent: 'center', 
+    height: 40,
+    width: '100%', 
+    paddingHorizontal: 10, 
     zIndex: 1,
   },
   button: { 
-    alignItems: 'center',
+    alignItems: 'center', 
   },
-  icon: {
+  iconContainer: {
     marginHorizontal: 0,
   },
 });

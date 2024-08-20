@@ -58,10 +58,10 @@ const ContentAddImage = () => {
   const handleCaptureImage = async () => {
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
+      allowsEditing: true, // User can crop but not constrained by aspect ratio
       quality: 1,
     });
+    
 
     if (!result.cancelled) {
       setImageUri(result.assets[0].uri);
@@ -102,8 +102,7 @@ const ContentAddImage = () => {
   const handleSelectImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
+      allowsEditing: true, 
       quality: 1,
     });
 
