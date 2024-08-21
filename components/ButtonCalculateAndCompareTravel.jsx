@@ -1,28 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import AlertImage from '../components/AlertImage';
-import { useAuthUser } from '../context/AuthUserContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useLocationList } from '../context/LocationListContext';
-import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
+import { View, StyleSheet } from 'react-native';
 
 import CompareTravel from '../components/CompareTravel';
 
-
-import { Ionicons } from '@expo/vector-icons';
-import QuickAddHello from '../speeddial/QuickAddHello';
-import AlarmClockGeoSvg from '../assets/svgs/alarm-clock-geo.svg'; // Import the SVG
-import LocationsOnMapSvg from '../assets/svgs/locations-on-map.svg'; // Import the SVG
+import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import LocationsOnMapColoredSvg from '../assets/svgs/locations-on-map-colored.svg'; // Import the SVG
 
+import AlertImage from '../components/AlertImage';
+import AlertLocation from '../components/AlertLocation';
 
 
 
 const ButtonCalculateAndCompareTravel = () => {
-    const { authUserState } = useAuthUser();
-    const { selectedFriend } = useSelectedFriend();
-    const { selectedLocation } = useLocationList();
     const [ isModalVisible, setIsModalVisible ] = useState(false);
 
     const openModal = () => setIsModalVisible(true);
@@ -37,40 +26,33 @@ const ButtonCalculateAndCompareTravel = () => {
             toggleModal={closeModal} 
             modalContent={<CompareTravel/>}
             modalTitle={'Compare travel times'}
-
-
- 
         > 
-      </AlertImage>
-            <View style={styles.buttonContainer}>
+      </AlertImage> 
 
-            <ButtonLottieAnimationSvg
-                onPress={openModal}
+            
+            <ButtonLottieAnimationSvg 
+                onPress={openModal} 
                 preLabel = ''
-                label="Compare Travel Times"
-                height={64}
-                radius={16}
+                label="Compare Travel Times" 
                 fontMargin={3}
                 animationSource={require("../assets/anims/heartinglobe.json")}
-                rightSideAnimation={false}
-                labelFontSize={22} 
+                rightSideAnimation={false}  
                 animationWidth={234}
                 animationHeight={234}
                 labelContainerMarginHorizontal={4}
                 animationMargin={-64}
-                showGradient={true} // Add this if you want to show the gradient
-                showShape={true} // Ensure this is true to display the SVG shape
+                showGradient={true} 
+                showShape={true} 
                 shapePosition="right"
-                shapeSource={LocationsOnMapColoredSvg} // Pass the SVG component here
+                shapeSource={LocationsOnMapColoredSvg} 
                 shapeWidth={110}
                 shapeHeight={110}
                 shapePositionValue={-14}
                 shapePositionValueVertical={-23}
-                showIcon={false} // Ensure this is set as needed
+                showIcon={false}  
                 />
 
-            </View>
-        </View>
+            </View> 
 
     );
 };
@@ -78,16 +60,9 @@ const ButtonCalculateAndCompareTravel = () => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
+      width: '100%',
       backgroundColor: 'transparent',
-    },   
-    buttonContainer: {
-      height: '90%',
-      alignItems: 'center',
-      justifyContent: 'space-evenly',
-      marginHorizontal: 0,
-      paddingBottom: 6, 
-      paddingTop: 0,
-    },
+    }, 
   });
 
   export default ButtonCalculateAndCompareTravel;

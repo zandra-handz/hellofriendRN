@@ -59,8 +59,11 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
                         accessibilityLabel="Close"
                         onPress={onClose}
                         style={styles.closeButton}
-                    >
-                        <FontAwesome5 name="times" size={20} color="black" solid={false} />
+                    >   
+                    <View flexDirection='row'>
+                        <Text style={styles.closeButtonText}></Text>
+                        <FontAwesome5 name="times" size={14} color="white" solid={false} />
+                        </View>
                     </TouchableOpacity>
                     <ScrollView
                         contentContainerStyle={styles.scrollContainer}
@@ -105,9 +108,23 @@ const styles = StyleSheet.create({
         maxHeight: '100%',
     },
     closeButton: {
+        flex: 1,
         position: 'absolute',
-        top: 10,
+        top: 16, 
         right: 10,
+        borderRadius: 50,
+        textAlign: 'center',
+        backgroundColor: 'black',
+        zIndex: 1, 
+        padding: 5,
+        paddingHorizontal: 10,
+        justifyContent: 'center',
+    },
+    closeButtonText: {
+        fontFamily: 'Poppins-Regular',
+        color: 'white',
+        alignContent: 'center',
+
     },
     section: {
         marginBottom: 10,

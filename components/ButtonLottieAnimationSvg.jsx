@@ -4,17 +4,19 @@ import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
 
-const ButtonLottieAnimationSvg = ({
+
+
+const ButtonLottieAnimationSvg = ({ 
   onPress,
   label,
-  height = 134,
-  radius = 30,
+  height = 58,
+  radius = 12,
+  labelFontSize = 22,
   preLabel = '', // Default pre-label text
   animationSource,
   rightSideAnimation = false,
   preLabelFontSize = 18, // Font size for pre-label
   preLabelColor = 'white', // Color for pre-label text
-  labelFontSize = 20,
   labelColor = 'white',
   backgroundColor = 'transparent',
   animationWidth = 40,
@@ -151,7 +153,7 @@ const ButtonLottieAnimationSvg = ({
               left: shapePosition === 'center' ? '50%' : shapePosition === 'right' ? shapeLabelPositionRight : '10%',
               transform: [{ translateX: shapePosition === 'center' ? -shapeLabelFontSize * 2 : 0 }, { translateY: shapePositionValueVertical ? -shapeLabelFontSize / 2 : 0 }],
               textAlign: 'center',
-              fontFamily: 'Poppins-Bold',
+              fontFamily: 'Poppins-Regular',
               zIndex: 1,
             },
           ]}
@@ -212,7 +214,7 @@ const ButtonLottieAnimationSvg = ({
             <Text
               style={[
                 textStyles(labelFontSize, labelColor),
-                { fontFamily: 'Poppins-Bold', marginRight: fontMargin },
+                { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
               ]}
             >
               {label}

@@ -9,8 +9,7 @@ import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg';
 const ButtonSendImageToFriend = ({ onPress, friendName }) => { 
 
     return (
-        <View style={styles.container}> 
-            <View style={styles.buttonContainer}> 
+        <View style={styles.container}>  
                 <ButtonLottieAnimationSvg
                     onPress={onPress}
                     preLabel = ''
@@ -34,8 +33,7 @@ const ButtonSendImageToFriend = ({ onPress, friendName }) => {
                     shapePositionValue={-4}
                     shapePositionValueVertical={-14}
                     showIcon={false}  
-                    />
-            </View>
+                    /> 
         </View>
 
     );
@@ -44,16 +42,9 @@ const ButtonSendImageToFriend = ({ onPress, friendName }) => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
+      width: '100%',
       backgroundColor: 'transparent',
-    },   
-    buttonContainer: {
-      height: '90%',
-      alignItems: 'center',
-      justifyContent: 'space-evenly',
-      marginHorizontal: 0,
-      paddingBottom: 0, 
-      paddingTop: 0,
-    },
+    },    
   });
 
   export default ButtonSendImageToFriend;

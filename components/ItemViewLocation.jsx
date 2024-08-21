@@ -1,32 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, ScrollView } from 'react-native';
-import AlertLocation from '../components/AlertLocation';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useLocationList } from '../context/LocationListContext';
-import { useAuthUser } from '../context/AuthUserContext';
+import { View, StyleSheet, Button, ScrollView } from 'react-native';
+ 
+import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
 
 import LoadingPage from '../components/LoadingPage';
+ 
+import FormLocationQuickCreate from '../forms/FormLocationQuickCreate';  
+import ItemViewLocationDetails from './ItemViewLocationDetails';  
 
-import ItemViewFooter from './ItemViewFooter';
-import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; // Adjust the import path as needed
+import AlertLocation from '../components/AlertLocation';
 
-import FormLocationQuickCreate from '../forms/FormLocationQuickCreate'; // Adjust the import path as needed
-import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
 import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
-
 import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
 
-import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
+import FooterActionButtons from '../components/FooterActionButtons';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useLocationList } from '../context/LocationListContext';
 
+import { useAuthUser } from '../context/AuthUserContext';
 
 
 const ItemViewLocation = ({ location, onClose }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(true);
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-  const { locationList, setLocationList, selectedLocation, setSelectedLocation, additionalDetails, loadingAdditionalDetails, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
-  
+  const { locationList, setLocationList, setSelectedLocation, loadingAdditionalDetails, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(true);
   const [isTemp, setIsTemp] = useState(false);
 
   useEffect(() => {
@@ -141,12 +140,7 @@ const ItemViewLocation = ({ location, onClose }) => {
       toggleModal={closeModal}
       modalContent={
         location ? (
-          <View style={styles.modalContainer}>
-            {loadingAdditionalDetails && (
-              <LoadingPage loading={loadingAdditionalDetails} spinnerType='circle' />
-            )}
-            {!loadingAdditionalDetails && (
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.modalContainer}> 
               <View style={styles.container}>
                 {isEditing ? (
                   <>
@@ -169,13 +163,16 @@ const ItemViewLocation = ({ location, onClose }) => {
                   </>
                 )}
               </View>
-              <View style={styles.buttonContainer}>
-              <ButtonCalculateAndCompareTravel />
-              <ButtonSendDirectionsToFriend /> 
-              </View> 
-            </ScrollView>
-            )}
-            
+
+            <FooterActionButtons
+              height='9%'
+              bottom={66} 
+              backgroundColor='white'
+              buttons={[
+                <ButtonCalculateAndCompareTravel />,
+                <ButtonSendDirectionsToFriend />,
+              ]}
+            />
           </View>
         ) : null
       }
@@ -188,18 +185,17 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1, 
   },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
   container: { 
     flex: 1,
     padding: 0, 
   }, 
   buttonContainer: {
-    height: '20%',
+    height: '16%',
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
     flexDirection: 'column',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
 
   },
 });

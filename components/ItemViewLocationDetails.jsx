@@ -4,35 +4,40 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import CardHours from './CardHours'; // Adjust the import path as needed
-import CardLocationPreviewImage from './CardLocationPreviewImage';
-import CardCustomerReview from './CardCustomerReview';
+import SectionLocationImages from '../components/SectionLocationImages';
+import SectionCustomerReviews from '../components/SectionCustomerReviews';
 import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
 import ButtonDirections from '../components/ButtonDirections';
 import ButtonSaveLocation from '../components/ButtonSaveLocation';
 import StylingRating from '../components/StylingRating';
-import LoadingPage from '../components/LoadingPage';
+ 
 
 const ItemViewLocationDetails = ({ location, unSaved }) => {
   const { selectedLocation, additionalDetails, loadingAdditionalDetails } = useLocationList();
   const { authUserState } = useAuthUser(); // Access authentication context
 
-  if (loadingAdditionalDetails) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
+
 
   if (!additionalDetails) {
     return (
-      <View style={styles.noDataContainer}>
-        <Text style={styles.noDataText}>No details available</Text>
+      <View style={[styles.noDataContainer, {backgroundColor: 'transparent'}]}>
+        <Text style={styles.noDataText}></Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container}> 
       <View style={styles.headerContainer}>
+        {loadingAdditionalDetails && (
+          <Text style={styles.name}>{selectedLocation.title} </Text>
+        )}
+        {!loadingAdditionalDetails && (
+        <>
         <Text style={styles.name}>{additionalDetails.name}</Text>
         <ButtonSaveLocation saveable={unSaved} />
+        </> 
+        )}
       </View>
       <View style={styles.infoContainer}>
         <View style={styles.detailsColumn}>
@@ -64,18 +69,9 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
         {additionalDetails.hours && <CardHours hours={additionalDetails.hours.weekday_text} />}
       </View>
 
-      <CardLocationPreviewImage photos={additionalDetails.photos} />
+      <SectionLocationImages photos={additionalDetails.photos} />
 
-      <ScrollView
-        horizontal
-        contentContainerStyle={styles.reviewsContainer}
-      >
-        {additionalDetails.reviews?.map((review, index) => (
-          <View key={index} style={styles.reviewCard}>
-            <CardCustomerReview review={review} />
-          </View>
-        ))}
-      </ScrollView>
+      <SectionCustomerReviews reviews={additionalDetails.reviews} />
     </ScrollView>
   );
 };
@@ -83,17 +79,18 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 0,
     paddingHorizontal: 2,
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 2,
+    marginBottom: 2, 
   },
   name: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Poppins-Bold',
+    textTransform: 'uppercase',
     flex: 1,
   },
   infoContainer: {
@@ -112,7 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   phone: {
-    fontSize: 14,
+    fontSize: 10,
     fontFamily: 'Poppins-Regular',
     marginLeft: 4,
   },
@@ -123,17 +120,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 14,
     marginLeft: 4,
-  },
-  reviewsContainer: {
-    marginBottom: -8,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignContent: 'center',
-    alignItems: 'center',
-  },
-  reviewCard: {
-    marginRight: 8,
-  },
+  }, 
   errorContainer: {
     flex: 1,
     justifyContent: 'center',

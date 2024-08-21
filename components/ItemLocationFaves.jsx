@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
-import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
-import LocationRoundOutlineSvg from '../assets/svgs/location-round-outline.svg';
 
+import LocationRoundOutlineSvg from '../assets/svgs/location-round-outline.svg';
 
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -10,8 +9,8 @@ import ItemViewLocation from '../components/ItemViewLocation';
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemLocationFaves = ({ locationData, horizontal = true, singleLineScroll = true, containerWidth=260, width = 160, height = 160, limit, newestFirst = true }) => {
-    const { selectedFriend, friendDashboardData } = useSelectedFriend();
+const ItemLocationFaves = ({ horizontal = true, singleLineScroll = true, containerWidth=260, width = 160, height = 160, limit, newestFirst = true }) => {
+    const { friendDashboardData } = useSelectedFriend();
     
     const { locationList, faveLocationList, populateFaveLocationsList } = useLocationList();
   
@@ -80,13 +79,9 @@ const ItemLocationFaves = ({ locationData, horizontal = true, singleLineScroll =
                 contentContainerStyle={horizontal && !singleLineScroll ? null : styles.imageContainer}
             />
 
-            <Modal visible={isModalVisible} onRequestClose={closeModal} transparent>
-                <View style={styles.modalContainer}>
-                    <ItemViewLocation location={selectedLocation} onClose={closeModal} />
-                
-                
-                </View>
-            </Modal>
+            {isModalVisible && (
+                <ItemViewLocation location={selectedLocation} onClose={closeModal} />
+            )}
         </View>
     );
 };
@@ -94,7 +89,8 @@ const ItemLocationFaves = ({ locationData, horizontal = true, singleLineScroll =
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
-        backgroundColor: 'transparent',
+        alignContent: 'center',
+        justifyContent: 'center',
     },
     relativeContainer: {
         marginHorizontal: 2,
@@ -119,12 +115,7 @@ const styles = StyleSheet.create({
     imageRow: {
         flex: 1,
         justifyContent: 'space-between',
-    }, 
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center', 
-    },
+    },  
 });
 
 export default ItemLocationFaves;

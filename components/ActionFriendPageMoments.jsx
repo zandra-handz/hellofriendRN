@@ -131,7 +131,7 @@ const ActionFriendPageMoments = ({
       <Animated.View style={{ opacity: opacityAnim, flex: 1, zIndex: 1 }}>
         {additionalSatelliteCount > 0 || overrideView ? (
           <ButtonLottieAnimationSatellitesMoments
-            onPress={() => handlePress(mainMoment)} 
+            onPress={() => {}}
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius}
             navigateToFirstPage={navigateToFirstPage}
@@ -170,7 +170,7 @@ const ActionFriendPageMoments = ({
           />
         ) : (
           <ButtonLottieAnimationSatellitesMoments
-            onPress={() => handlePress(mainMoment)}
+            onPress={() => {}}
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius}
             navigateToFirstPage={navigateToFirstPage}

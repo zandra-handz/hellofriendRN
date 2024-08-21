@@ -13,14 +13,6 @@ const ActionScreenButtonAddHello = ({ onPress }) => {
                 label="HELLO"
                 showIcon={false}
                 fontMargin={3}
-                animationSource={require("../assets/anims/goldspinningstar.json")}
-                rightSideAnimation={false}
-                labelFontSize={30}
-                labelColor="white"
-                animationWidth={80}
-                animationHeight={80}
-                labelContainerMarginHorizontal={-6}
-                animationMargin={20}
                 animationSource={require("../assets/anims/heartinglobe.json")}
                 rightSideAnimation={false}
                 labelFontSize={30}
@@ -30,9 +22,6 @@ const ActionScreenButtonAddHello = ({ onPress }) => {
                 labelContainerMarginHorizontal={4}
                 animationMargin={-64}
                 shapePosition="right"
-                shapeSource={require("../assets/shapes/happyskull.png")}
-                shapeWidth={200}
-                shapeHeight={200}
                 shapePositionValue={-50}
                 shapeSource={require("../assets/shapes/coffeecupnoheart.png")}
                 shapeWidth={170}

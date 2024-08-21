@@ -37,13 +37,11 @@ const ItemLocationMulti = ({
     }, [locations.length]);  
 
     const openModal = (location) => {
-        console.log('Opening modal for location:', location);
         setSelectedLocation(location);
         setIsModalVisible(true);
     };
 
-    const closeModal = () => {
-        console.log('Closing modal');
+    const closeModal = () => { 
         setSelectedLocation(null);
         setIsModalVisible(false);
     };
@@ -134,11 +132,9 @@ const ItemLocationMulti = ({
                 </View>
             )}
 
-            <Modal visible={isModalVisible} onRequestClose={closeModal} transparent>
-                <View style={styles.modalContainer}>
+             {isModalVisible && (
                     <ItemViewLocation location={selectedLocation} onClose={closeModal} />
-                </View>
-            </Modal>
+            )}
         </View>
     );
 };
@@ -167,12 +163,7 @@ const styles = StyleSheet.create({
     },
     imageRow: {
         justifyContent: 'space-between',
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center', 
-    },
+    }, 
 });
 
 export default ItemLocationMulti;

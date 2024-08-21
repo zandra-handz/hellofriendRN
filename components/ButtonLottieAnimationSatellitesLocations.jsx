@@ -3,7 +3,6 @@ import { TouchableOpacity, Text, StyleSheet, Image, View, Dimensions, Animated, 
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ItemLocationSingle from '../components/ItemLocationSingle';
-import ItemLocationMulti from '../components/ItemLocationMulti'; 
 import ItemLocationFaves from '../components/ItemLocationFaves'; 
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';

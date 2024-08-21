@@ -4,14 +4,10 @@ import ButtonLottieAnimationSatellitesLocations from './ButtonLottieAnimationSat
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';  
-
 import TogglerActionButton from '../components/TogglerActionButton';
 import { useNavigation } from '@react-navigation/native';
-
 import MagGlassSimpleSvg from '../assets/svgs/mag-glass-simple.svg';
-import MapSearchOutlineSvg from '../assets/svgs/map-search-outline.svg';
 import MapPinOutlineSvg from '../assets/svgs/map-pin-outline.svg';
-
 import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
 
 

@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 
 import { fetchPastHelloes } from '../api';
 
-import ActionFriendPageAllHelloes from '../components/ActionFriendPageAllHelloes';
 import IconDynamicHelloType from '../components/IconDynamicHelloType';
 
 import TogglerActionButton from '../components/TogglerActionButton';
@@ -167,7 +166,7 @@ const ActionFriendPageHelloes = ({
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 || overrideView ? (
           <ButtonLottieAnimationSatellitesHelloes
-            onPress={() => handlePress(mainHello)} 
+            onPress={() => {}}
             navigateToFirstPage={navigateToFirstPage}
             firstItem={mainHello ? mainHello : 'Loading...'}
             allItems={helloesList ? helloesList : 'Loading...'}
@@ -178,15 +177,14 @@ const ActionFriendPageHelloes = ({
                 ? `${friendDashboardData[0].days_since_words}`
                 : ''
             }
-            typeIcon={mainHello ? <IconDynamicHelloType selectedChoice={mainHello.type} svgHeight={70} svgWidth={70} /> : null}
+            typeIcon={mainHello ? <IconDynamicHelloType selectedChoice={mainHello.type} svgHeight={40} svgWidth={40} /> : null}
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}
             labelFontSize={16}
             labelColor="white"
             animationWidth={234}
-            animationHeight={234}
-            lightColor="black"
+            animationHeight={234} 
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             showShape={false}
@@ -212,7 +210,7 @@ const ActionFriendPageHelloes = ({
           />
         ) : (
           <ButtonLottieAnimationSatellitesHelloes
-            onPress={() => handlePress(mainHello)}
+            onPress={() => {}}
             navigateToFirstPage={navigateToFirstPage}
             firstItem={mainHello ? mainHello.date : 'Loading...'}
             allItems={helloesList ? helloesList : 'Loading...'}
@@ -225,7 +223,7 @@ const ActionFriendPageHelloes = ({
                   : `${friendDashboardData[0].days_since} days ago`
                 : ''
             }
-            typeIcon={mainHello ? <IconDynamicHelloType selectedChoice={mainHello.type} /> : null}
+            typeIcon={mainHello ? <IconDynamicHelloType selectedChoice={mainHello.type} svgWidth={40} svgHeight={40} /> : null}
             fontMargin={3}
             animationSource={require('../assets/anims/heartinglobe.json')}
             rightSideAnimation={false}

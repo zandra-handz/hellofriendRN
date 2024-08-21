@@ -98,15 +98,17 @@ const ResultsTravelComparison = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%', 
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 0,
   },
   resultsContainer: {
     width: '100%',
+    height: '100%',
     flexDirection: 'row',
   },
-  card: {
+  card: { 
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
@@ -119,13 +121,13 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Bold',
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: 'leftr',
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Regular',
     marginBottom: 10,
   },
   detail: {

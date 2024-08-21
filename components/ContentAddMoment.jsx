@@ -1,9 +1,8 @@
-// ContentAddMoment.js
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import EnterMoment from '../components/EnterMoment';
-import EnterMomentCategory from '../components/EnterMomentCategory';
+import EnterMoment from '../components/EnterMoment'; 
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';

@@ -5,6 +5,11 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemViewFooter from './ItemViewFooter';
 
+
+import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
+import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
+
+
 const ItemViewMoment = ({ moment, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
@@ -51,13 +56,17 @@ const ItemViewMoment = ({ moment, onClose }) => {
   };
 
   return (
+    <View> 
     <AlertImage
       isModalVisible={isModalVisible}
       toggleModal={closeModal}
       modalContent={
        moment ? (
-        <View> 
-          <Text>{moment.capsule}</Text>
+        <View style={styles.momentContainer}> 
+          <Text style={styles.momentText}>
+            {moment.capsule
+            }</Text>
+        
           {isEditing ? (
             <>
               <Button title="Update" onPress={handleUpdate} />
@@ -66,54 +75,41 @@ const ItemViewMoment = ({ moment, onClose }) => {
           ) : (
             <>
               <Text style={styles.modalText}> </Text>
-              <ItemViewFooter
-                  buttons={[
-                    { label: 'Edit', icon: 'edit', color: 'blue', onPress: handleEdit },
-                    { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
-                    { label: 'Share', icon: 'share', color: 'green', onPress: handleDelete },
-                  ]}
-              />
+
             </>
           )}
+            <View style={styles.buttonContainer}> 
+              <View style={styles.footerContainer}>
+              <ItemViewFooter
+                  buttons={[
+                    { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color='black'/>, onPress: handleEdit },
+                    { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete },
+                    { label: 'Share', icon: <TrashOutlineSvg width={24} height={24} color="black" />, onPress: handleEdit },
+                  ]}
+                  maxButtons={3} 
+                  showLabels={false}
+                />
+                </View> 
+              </View>
         </View>
       ) : null
     }
     modalTitle={moment.typedCategory}
   />
+  </View>
 );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20, // Adjust padding as needed
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  imageContainer: {
-    padding: 10,
-    width: '100%',
-    flex: 1,
-  },
+    padding: 20,  
+  }, 
   categoryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-  },
-  imageRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'left',
-  },
-  modalImage: {
-    width: '100%',
-    height: 300,
-    resizeMode: 'cover',
-    marginBottom: 10,
-    borderRadius: 10,
-  },
+  }, 
   modalText: {
     fontSize: 16,
     marginBottom: 10,
@@ -128,6 +124,20 @@ const styles = StyleSheet.create({
   icon: {
     marginHorizontal: 10,
   },
+  momentContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    padding: 10,
+    borderRadius: 20,
+    borderWidth: .8,
+    borderColor: 'gray',
+  },
+  momentText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 13,
+
+  },
   tagContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -135,6 +145,20 @@ const styles = StyleSheet.create({
   },
   tagLabel: {
     fontSize: 16,
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10, // Add some padding if needed
+    backgroundColor: 'transparent', // Temporary background for debugging
+  },
+  
+  buttonContainer: { 
+    position: 'absolute',
+    bottom: 0, 
+    flexDirection: 'column',
+    justifyContent: 'space-between', 
   },
 });
 

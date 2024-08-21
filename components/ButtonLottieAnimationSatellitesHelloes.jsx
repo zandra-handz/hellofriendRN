@@ -1,15 +1,10 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image, View, Dimensions, Animated, FlatList } from 'react-native';
-import LottieView from 'lottie-react-native';
-import useCapsuleList from '../context/CapsuleListContext';
+import LottieView from 'lottie-react-native'; 
 import { LinearGradient } from 'expo-linear-gradient';
 import ItemHelloSingle from '../components/ItemHelloSingle';
 import ItemHelloMulti from '../components/ItemHelloMulti'; // Import the ItemImageSingle component
-import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
-import CoffeeCupPaperSolid from '../assets/svgs/coffee-cup-paper-solid';
-
-import IconDynamicHelloType from '../components/IconDynamicHelloType';
-
+ 
 const ButtonLottieAnimationSatellitesHelloes = ({
   onPress,
   buttonHeight = 60,
@@ -185,9 +180,10 @@ const ButtonLottieAnimationSatellitesHelloes = ({
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
-                  width: '76%',
+                  width: '100%',
                   height: buttonHeight,
                   padding: 10,
+                  paddingBottom: 2,
                   borderRadius: buttonRadius, 
                   overflow: 'hidden', 
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
@@ -294,16 +290,18 @@ const styles = StyleSheet.create({
     paddingLeft: 0, 
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    backgroundColor: 'black',
+    backgroundColor: 'transparent',
   
     // iOS shadow properties
     shadowColor: '#000', // Dark shadow color
     shadowOffset: { width: 0, height: 6 }, // More vertical offset
     shadowOpacity: 0.5, // Increased opacity for a darker shadow
     shadowRadius: 12, // Larger radius for a more defined shadow
-  
+    shadowOffset: { width: 0, height: 0}, // More vertical offset
+    shadowOpacity: 0.0, // Increased opacity for a darker shadow
+    shadowRadius: 0, 
     // Android shadow properties
-    elevation: 8, // Higher elevation for a more pronounced shadow
+    elevation: 0, // Higher elevation for a more pronounced shadow
   },
   
   additionalSatelliteSection: {

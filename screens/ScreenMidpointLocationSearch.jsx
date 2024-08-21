@@ -1,5 +1,3 @@
-// ScreenMidpointLocationSearch.js
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import ResultsMidpointFinds from '../components/ResultsMidpointFinds';
@@ -9,7 +7,7 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import SelectorAddressBase from '../components/SelectorAddressBase';
-import { Picker } from '@react-native-picker/picker';
+import PickerSimpleButtons from '../components/PickerSimpleButtons';
 
 const ScreenMidpointLocationSearch = () => {
     const { selectedLocation } = useLocationList();
@@ -49,27 +47,19 @@ const ScreenMidpointLocationSearch = () => {
                 />
             ) : (
                 <View style={styles.mainContainer}>
-                    <Text style={styles.inputLabel}>Search radius (meters)</Text>
-                    <Picker
-                        selectedValue={radius}
-                        style={styles.picker}
+                    <PickerSimpleButtons
+                        name="radius (meters)"
+                        selectedOption={radius}
+                        options={[500, 1000, 1500, 2000, 3000, 5000, 10000]}
                         onValueChange={(itemValue) => setRadius(itemValue)}
-                    >
-                        {[500, 1000, 1500, 2000, 3000, 5000, 10000].map(value => (
-                            <Picker.Item key={value} label={`${value}`} value={`${value}`} />
-                        ))}
-                    </Picker>
+                    />
 
-                    <Text style={styles.inputLabel}># of search results</Text>
-                    <Picker
-                        selectedValue={length}
-                        style={styles.picker}
+                    <PickerSimpleButtons
+                        name="# of search results"
+                        selectedOption={length}
+                        options={[...Array(10).keys()].map(index => index + 1)}
                         onValueChange={(itemValue) => setLength(itemValue)}
-                    >
-                        {[...Array(10)].map((_, index) => (
-                            <Picker.Item key={index + 1} label={`${index + 1}`} value={`${index + 1}`} />
-                        ))}
-                    </Picker>
+                    />
 
                     <Text style={styles.inputLabel}>Search Keyword</Text>
                     <TextInput
@@ -147,11 +137,6 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
         color: 'black',
         paddingHorizontal: 10,
-    },
-    picker: {
-        height: 50,
-        width: '100%',
-        color: 'black',
     },
 });
 

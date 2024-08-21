@@ -174,11 +174,9 @@ const ItemMomentMulti = ({
         />
       )}
 
-      <Modal visible={isModalVisible} onRequestClose={closeModal} transparent>
-        <View style={styles.modalContainer}>
+      {isModalVisible && (
           <ItemViewMoment moment={selectedMoment} onClose={closeModal} />
-        </View>
-      </Modal>
+      )}
     </View>
   );
 };

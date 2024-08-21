@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
 import { useLocationList } from '../context/LocationListContext';
-import ArrowBackSharpOutlineSvg from '../assets/svgs/arrow-back-sharp-outline.svg';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
+
 import LoadingPage from '../components/LoadingPage';
 
 const AlertLocation = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
   const { selectedLocation, setSelectedLocation, loadingAdditionalDetails } = useLocationList();
+  const [useSpinner, setUseSpinner] = useState(true);
 
   // Define a function to handle closing the modal and resetting the location
   const handleCloseModal = () => {
@@ -19,14 +21,19 @@ const AlertLocation = ({ isModalVisible, toggleModal, modalContent, modalTitle }
         <View style={styles.modalContent}>
           <View style={styles.header}>
             <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
-              <ArrowBackSharpOutlineSvg width={36} height={36} color="black" />
+              <Ionicons name="arrow-back" size={23} color="black" /> 
             </TouchableOpacity>
             {modalTitle && <Text style={styles.modalTitle}>{modalTitle}</Text>}
           </View>
 
-          {loadingAdditionalDetails ? (
+          {loadingAdditionalDetails && useSpinner ? (
             <View style={styles.loadingWrapper}>
-              <LoadingPage loading={loadingAdditionalDetails} spinnerType='circle' />
+              <LoadingPage
+                loading={loadingAdditionalDetails}
+                spinnerType='wander'
+                includeLabel={true}
+                label='Just a moment please!'
+              />
             </View>
           ) : (
             <View style={styles.modalBody}>{modalContent}</View>
@@ -48,8 +55,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
     backgroundColor: 'white',
-    borderRadius: 
-    0,
+    borderRadius: 0,
     height: '100%',
     position: 'relative',
     bottom: 0,
@@ -60,11 +66,14 @@ const styles = StyleSheet.create({
     marginBottom: 10, // Space below the header
   },
   closeButton: {
-    marginRight: 8, // Space between button and title
+    paddingRight: 30, // Space between button and title
+    paddingLeft: 7,
+    paddingTop: 5,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: '500',
+    marginTop: 4,
     textAlign: 'left',
     flex: 1, // Take up remaining space
   },

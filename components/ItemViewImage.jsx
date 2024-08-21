@@ -5,7 +5,6 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
 import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
 
-import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
 
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
@@ -18,7 +17,7 @@ import * as Sharing from 'expo-sharing';
 
 const ItemViewImage = ({ image, onClose }) => {
   const { selectedFriend } = useSelectedFriend();
-  const { imageList, setImageList, updateImage, deleteImage } = useImageList();
+  const { updateImage, deleteImage } = useImageList();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(true);
@@ -95,7 +94,7 @@ const ItemViewImage = ({ image, onClose }) => {
       toggleModal={closeModal}
       modalContent={
         image ? (
-          <View style={styles.modalContainer}>
+          <View style={[styles.modalContainer, {backgroundColor: 'transparent'}]}>
 
               <View style={styles.container}>
               <View style={styles.headerContainer}>
@@ -133,7 +132,7 @@ const ItemViewImage = ({ image, onClose }) => {
                   buttons={[
                     { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color='black'/>, onPress: handleEdit },
                     { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete },
-                    { label: 'Share', icon: <TrashOutlineSvg width={24} height={24} fill="green" />, onPress: handleShare },
+                    { label: 'Share', icon: <TrashOutlineSvg width={24} height={24} color="black" />, onPress: handleShare },
                   ]}
                   maxButtons={2} 
                   showLabels={false}
@@ -152,8 +151,7 @@ const ItemViewImage = ({ image, onClose }) => {
 
 const styles = StyleSheet.create({
   modalContainer: {
-    flex: 1,
-    backgroundColor: 'black',
+    flex: 1, 
   },
   headerContainer: {
     flexDirection: 'row',
@@ -225,7 +223,6 @@ const styles = StyleSheet.create({
   buttonContainer: { 
     position: 'absolute',
     bottom: 0,
-    backgroundColor: 'pink',
     flexDirection: 'column',
     justifyContent: 'space-between', 
   },

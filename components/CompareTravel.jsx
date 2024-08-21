@@ -17,7 +17,7 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
     const [triggerFetch, setTriggerFetch] = useState(false);
     const [selectedUserAddress, setSelectedUserAddress] = useState(null);
     const [selectedFriendAddress, setSelectedFriendAddress] = useState(null);
-
+    const [showMessage, setShowMessage ] = useState(false); // Just for me to turn off right now
     useEffect(() => {
         if (selectedLocation && selectedLocation.address) {
             const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedLocation.address)}`;
@@ -52,7 +52,7 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
                 <Text style={styles.locationAddress}>{selectedLocation?.address}</Text>
             </View>
 
-
+            {showMessage && ( 
             <View style={styles.previewContainer}>
                 <Text style={styles.previewTitle}>Message</Text>
                 <TextInput
@@ -62,6 +62,7 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
                     multiline
                 />
             </View>
+            )}
 
             <SelectorAddressBase
                 addresses={authUserState.user.addresses}
@@ -84,6 +85,7 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
                 triggerFetch={triggerFetch}
             />
 
+            <View style={{position: 'absolute', width: '100%', bottom: 0}}>
 
             <ButtonLottieAnimationSvg
                 onPress={handleCalculate}
@@ -111,6 +113,7 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
                 showIcon={false}
             />
         </View>
+        </View>
     );
 };
 
@@ -119,6 +122,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         justifyContent: 'center',
+        paddingBottom: 160,
     },
     locationContainer: {
         backgroundColor: '#fff',

@@ -38,11 +38,8 @@ const ButtonReviewNewFriendDetails = () => {
             modalContent={<CompareTravel/>}
             modalTitle={'Compare travel times'}
 
-
- 
         > 
-      </AlertImage>
-            <View style={styles.buttonContainer}>
+      </AlertImage> 
 
             <ButtonLottieAnimationSvg
                 onPress={openModal}
@@ -66,10 +63,8 @@ const ButtonReviewNewFriendDetails = () => {
                 shapeHeight={110}
                 shapePositionValue={-14}
                 shapePositionValueVertical={-23}
-                showIcon={false} // Ensure this is set as needed
+                showIcon={false}  
                 />
-
-            </View>
         </View>
 
     );
