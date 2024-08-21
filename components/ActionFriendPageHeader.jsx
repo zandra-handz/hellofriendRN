@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, Animated  } from 'react-native';
 import ButtonLottieAnimationTwoSectionsSvg from '../components/ButtonLottieAnimationTwoSectionsSvg';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import MeetingWithAFriendOutlineSvg from '../assets/svgs/meeting-with-a-friend-outline.svg';
 import AlertPanelBottom from './AlertPanelBottom';
 import { useNavigation } from '@react-navigation/native';
-import PersonalConnectionsSvg from '../assets/svgs/personal-connections.svg';
-
+import LoadingPage from '../components/LoadingPage';
+import ButtonArrowSvgAndLabel from '../components/ButtonArrowSvgAndLabel';
 
 const ActionFriendPageHeader = ({ 
   onPress,
@@ -19,9 +19,7 @@ const ActionFriendPageHeader = ({
   const navigation = useNavigation();
 
   const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend, setFriend } = useSelectedFriend();
-  
-  const [showProfile, setShowProfile] = useState(false);
-  const [showNextHello, setShowNextHello] = useState(true);
+  const [showProfile, setShowProfile] = useState(false); 
   const [lightColor, setLightColor] = useState('black');
   const [darkColor, setDarkColor] = useState('black');
 
@@ -63,6 +61,26 @@ const ActionFriendPageHeader = ({
  
   return (
     <View style={styles.container}>
+      {loadingNewFriend && (
+      <View style={styles.loadingContainer}>
+
+        <LoadingPage 
+          loading={loadingNewFriend}
+          spinnerSize={70}
+          color='lightgreen'
+          spinnerType='wander'
+        />
+      </View>
+    )}
+      {Deselector && !loadingNewFriend && friendDashboardData && (
+        
+        <ButtonArrowSvgAndLabel 
+          direction='profile'
+          screenSide='left'
+          label='view'
+          onPress={navigateBackToFriendFocus}
+          /> 
+      )}
       {friendDashboardData && (
       <Animated.View style={{ flex: 1 }}>
         <ButtonLottieAnimationTwoSectionsSvg
@@ -70,16 +88,19 @@ const ActionFriendPageHeader = ({
           buttonHeight={Deselector ? 140 : buttonHeight}
           borderRadius={headerRadius}
           borderTopRadius={Deselector ? 30 : headerTopRadius}
+          preLabelFontSize={Deselector ? 18 : 28}
+          mainButtonWidth={Deselector ? '84%' : '77%'}
           headerText={Deselector ? 'SELECTED' : selectedFriend ? selectedFriend.name : ''}
-          navigateToFirstPage={false}
-          label='Say hello on '
-          labeltwo={friendDashboardData ? `${friendDashboardData[0].future_date_in_words}` : ' '}
-          //moved 'say hello' from additionalText to label
+          navigateToFirstPage={false} 
+          labelColor="white"
+          labelFontSize={Deselector? 30 : 17}
+          label={Deselector? selectedFriend ? selectedFriend.name : '' : 'Say hello on '}
+          additionalTextSize={16}
+          additionalText={friendDashboardData ? `${friendDashboardData[0].future_date_in_words}` : ' '}
+          showLabelTwo={false}
           fontMargin={3}
           animationSource={require('../assets/anims/heartinglobe.json')}
-          rightSideAnimation={false}
-          labelColor="white"
-          labelFontSize={17}
+          rightSideAnimation={false} 
           animationWidth={234}
           animationHeight={234} 
           labelContainerMarginHorizontal={4}
@@ -92,11 +113,13 @@ const ActionFriendPageHeader = ({
           svgColor={darkColor}
           shapeWidth={190}
           shapeHeight={190}
-          showShape={false} 
+          showShape={Deselector? false : true} 
           shapePositionValue={-214}
           showIcon={false}
           satellites={Deselector} // Toggle satellite section based on Deselector
           satelliteSectionPosition="right"
+          satelliteSectionWidth={Deselector ? '28%' : '33.33%'}
+          satelliteSectionMarginLeft={Deselector ? -22 : -20}
           satelliteCount={Deselector ? 2 : 0} // Show two satellites if Deselector is true
           satelliteHellos={Deselector ? [{ label: 'Deselect', onPress: handleDeselect }] : []} // Satellite button to reset the selected friend
           satellitesOrientation="vertical" // Adjust orientation if needed
@@ -105,6 +128,7 @@ const ActionFriendPageHeader = ({
         />
       </Animated.View>
        )}
+
       <AlertPanelBottom
         visible={showProfile}
         profileData={selectedFriend}
@@ -120,7 +144,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
-  },   
+  },  
+  loadingContainer: {
+    width: '100%',
+    height: 140,
+    marginBottom: 0,
+    borderRadius: 30,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  }, 
 });
 
 export default ActionFriendPageHeader;

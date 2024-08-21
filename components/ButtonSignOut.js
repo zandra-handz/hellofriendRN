@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
+import LogoutOutlineSvg from '../assets/svgs/logout-outline.svg';
+import ByeSvg from '../assets/svgs/bye.svg';
 import AlertConfirm from '../components/AlertConfirm';
 
-import ByeSvg from '../assets/svgs/bye.svg';
-
 const ButtonSignOut = ({ 
-  icon = 'sign-out', 
   iconOnly = false, 
   label = 'Sign Out', 
-  confirmationAlert = true, 
-  fAIcon = false // Boolean prop to determine icon type
+  confirmationAlert = true 
 }) => {
   const { onSignOut } = useAuthUser();
   const { themeStyles } = useGlobalStyle();
@@ -37,30 +32,10 @@ const ButtonSignOut = ({
     onSignOut();
   };
 
-  const renderIcon = () => {
-    if (fAIcon) {
-      return (
-        <FontAwesome 
-          name={icon} 
-          size={28} 
-          style={[styles.icon, themeStyles.footerIcon]} 
-        />
-      );
-    } else {
-      return (
-        <Icon 
-          name={icon} 
-          size={28}  
-          style={[styles.icon, themeStyles.footerIcon]} 
-        />
-      );
-    }
-  };
-
   return (
     <>
       <TouchableOpacity onPress={handleSignOutPress} style={[styles.buttonContainer, themeStyles.footerIcon]}>
-        {renderIcon()}
+        <LogoutOutlineSvg width={30} height={30} style={styles.icon} />
         {!iconOnly && <Text style={[styles.label, themeStyles.footerText]}>{label}</Text>}
       </TouchableOpacity>
 
@@ -88,8 +63,12 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 8, 
+    color: 'black'
   },
   label: { 
+    fontFamily: 'Poppins-Bold',
+    fontSize: 13,
+    color: 'black',
   },
 });
 

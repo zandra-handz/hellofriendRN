@@ -1,34 +1,31 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Animated } from 'react-native';
 import ButtonMultiFeatureUpcoming from './ButtonMultiFeatureUpcoming';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
-import { useNavigation } from '@react-navigation/native';
-
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
-import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
-import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import ActionFriendPageHeader from './ActionFriendPageHeader';
+import ButtonArrowSvgAndLabel from '../components/ButtonArrowSvgAndLabel';
 
 
 const ActionPageUpcomingButton = ({ onPress }) => {
   const { authUserState, userAppSettings } = useAuthUser();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { selectedFriend, setFriend } = useSelectedFriend();
-  const navigation = useNavigation();
+ 
   
   let mainHello = null;
   let satelliteHellos = [];
-  let satellitesFirstPage = 2;
+  let satellitesFirstPage = 1;
   let additionalSatelliteCount = null;
   let additionalHellos = [];
 
   if (!isLoading && upcomingHelloes.length > 0) {
     mainHello = upcomingHelloes[0];
     if ( userAppSettings && userAppSettings.simplify_app_for_focus) {
-      satelliteHellos = upcomingHelloes.slice(1,2);
+      satelliteHellos = upcomingHelloes.slice(0,1);
     } else {
-      satelliteHellos = upcomingHelloes.slice(1);
+      satelliteHellos = upcomingHelloes.slice(0);
     };
     
     additionalSatelliteCount = satelliteHellos.length - satellitesFirstPage;
@@ -42,6 +39,12 @@ const ActionPageUpcomingButton = ({ onPress }) => {
 
   const [showSecondButton, setShowSecondButton] = useState(false);
   const opacityAnim = new Animated.Value(1);
+
+
+  useEffect(() => {
+    setShowSecondButton(false);
+
+  }, [selectedFriend]);
 
   const navigateToFirstPage = () => {
     setShowSecondButton(false);
@@ -63,17 +66,15 @@ const ActionPageUpcomingButton = ({ onPress }) => {
 
   const handlePress = (hello) => {
     const { id, name } = hello.friend; 
-   
-    console.log(id);
-    console.log(hello.id);
     const selectedFriend = id === null ? null : { id: id, name: name }; 
-    setFriend(selectedFriend);
-    navigation.navigate('FriendFocus');
-    console.log('ALL!!', hello);
+    setFriend(selectedFriend);  
   };
 
   return (
+    <>
+ 
     <View style={styles.container}>
+
       {!selectedFriend && (
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 ? (
@@ -152,21 +153,25 @@ const ActionPageUpcomingButton = ({ onPress }) => {
       )}
 
       {!showSecondButton && additionalSatelliteCount > 0 && (
-        <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
-          <View style={styles.svgContainer}>
-            <ArrowRightCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-          </View>
-        </TouchableOpacity>
+        
+        <ButtonArrowSvgAndLabel 
+        direction='right'
+        screenSide='right'
+        label='more'
+        onPress={handleNext}
+        /> 
       )}
 
       {showSecondButton && (
-        <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
-          <View style={styles.svgContainer}>
-            <ArrowLeftCircleOutlineSvg width={100} height={100} style={styles.SvgImage} />
-          </View>
-        </TouchableOpacity>
+        <ButtonArrowSvgAndLabel 
+        direction='left'
+        screenSide='right'
+        label='back'
+        onPress={navigateToFirstPage}
+        /> 
       )}
-    </View>
+    </View> 
+    </>
   );
 };
 
@@ -179,21 +184,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  arrowButton: {
-    padding: 4,
-    marginRight: -8,
-    marginLeft: -10,
-  },
-  svgContainer: {
-    width: 60,  
-    height: 60,  
+  loadingContainer: {
+    width: '100%',
+    height: 140,
+    marginBottom: 0,
+    borderRadius: 30,
     overflow: 'hidden',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',  
-  },
-  SvgImage: {
-    transform: [{ scale: .8 }],  
-  },
+    backgroundColor: 'transparent',
+  }, 
 });
 
 export default ActionPageUpcomingButton;

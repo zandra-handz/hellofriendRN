@@ -170,10 +170,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 6,
 
-    backgroundColor: 'pink',
+    backgroundColor: 'transparent',
   },
-  detailsColumn: {
-    backgroundColor: 'hotpink',
+  detailsColumn: { 
     flex: 1,
     flexDirection: 'column',
     marginRight: 4,
@@ -220,7 +219,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10, // Add some padding if needed
-    backgroundColor: 'lightgray', // Temporary background for debugging
+    backgroundColor: 'transparent', // Temporary background for debugging
   },
   
   buttonContainer: { 

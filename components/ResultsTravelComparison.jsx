@@ -63,8 +63,11 @@ const ResultsTravelComparison = ({
       };
   
       return (
-        <View style={styles.resultsContainer}>
+        <View style={{width: '100%'}}>
           <Text style={styles.header}>Travel Comparison Results</Text>
+          <View style={styles.resultsContainer}>
+
+          
           <View style={styles.card}>
             <Text style={styles.title}>Your Travel Time</Text>
             <Text style={styles.detail}>Duration: {myData.time}</Text>
@@ -74,6 +77,7 @@ const ResultsTravelComparison = ({
             <Text style={styles.title}>Friend's Travel Time</Text>
             <Text style={styles.detail}>Duration: {friendData.time}</Text>
             <Text style={styles.detail}>Distance: {friendData.miles}</Text>
+          </View>
           </View>
         </View>
       );
@@ -100,6 +104,7 @@ const styles = StyleSheet.create({
   },
   resultsContainer: {
     width: '100%',
+    flexDirection: 'row',
   },
   card: {
     padding: 20,

@@ -18,7 +18,6 @@ import ActionFriendPageLocations from '../components/ActionFriendPageLocations';
 
 
 
-
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -30,7 +29,9 @@ const ScreenFriendFocus = () => {
   const topRadius = 20;
   const radius = 20;
   const buttonMargin = 10;
-  const pageHeaderHeight = 220; 
+
+  const pageHeaderHeightTall = 220;
+  const pageHeaderHeight = 170; 
 
   const headerTextColor = 'white';
   const inactiveIconColor = 'white';

@@ -1,15 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Import the icons
-import ActionPageBase from './ActionPageBase'; // Import ActionPageBase
-import SectionAccessibilitySettings from './SectionAccessibilitySettings'; // Import SectionAccessibilitySettings
-import SectionFriendSettings from './SectionFriendSettings'; // Import SectionAccessibilitySettings
-import SectionAccountSettings from './SectionAccountSettings'; // Import SectionAccessibilitySettings
+import ActionPageBase from './ActionPageBase';
+import SectionAccessibilitySettings from './SectionAccessibilitySettings';
+import SectionFriendSettings from './SectionFriendSettings';
+import SectionAccountSettings from './SectionAccountSettings';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
-
-
-import { useAuthUser } from '../context/AuthUserContext'; // Import useAuthUser hook
+import SettingsOutlineSvg from '../assets/svgs/settings-outline.svg';
+import { useAuthUser } from '../context/AuthUserContext';
 
 const ButtonSettings = () => {
   const [isModalVisible, setModalVisible] = React.useState(false);
@@ -19,14 +16,13 @@ const ButtonSettings = () => {
   };
 
   const { themeStyles } = useGlobalStyle();
-  const { authUserState } = useAuthUser(); // Get authUserState from context
+  const { authUserState } = useAuthUser();
 
   React.useEffect(() => {
     if (isModalVisible) {
-      AccessibilityInfo.announceForAccessibility('Settings opened'); // Announce to screen reader
+      AccessibilityInfo.announceForAccessibility('Settings opened');
     }
   }, [isModalVisible]); 
-  
 
   const sections = [
     { title: 'Accessibility', content: <SectionAccessibilitySettings /> },
@@ -39,7 +35,9 @@ const ButtonSettings = () => {
   return (
     <>
       <TouchableOpacity style={styles.section} onPress={toggleModal}>
-        <Icon name="settings" size={24} style={themeStyles.footerIcon} />
+        <SettingsOutlineSvg width={30} height={30
+          
+        } style={themeStyles.footerIcon} />
         <Text style={themeStyles.footerText}>Settings</Text>
       </TouchableOpacity>
 
@@ -66,7 +64,7 @@ const styles = StyleSheet.create({
     color: 'black',  
     fontFamily: 'Poppins-Bold',
     textAlign: 'center',
-    fontWeight: 'bold', // Use fontWeight instead of fontStyle for bold text
+    fontWeight: 'bold',
     marginTop: 4, // Add some margin to separate the icon from the text
   },
 });

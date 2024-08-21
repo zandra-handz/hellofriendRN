@@ -1,21 +1,27 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Flow, Circle, CircleFade, Fold } from 'react-native-animated-spinkit';
+import { Flow, Swing, Chase, Circle, CircleFade, Fold, Grid, Pulse, Wander, Wave } from 'react-native-animated-spinkit';
 
 const spinners = {
   circle: Circle,
+  chase: Chase,
+  swing: Swing,
+  pulse: Pulse,
+  grid: Grid,
   flow: Flow,
   circleFade: CircleFade,
   fold: Fold,
+  wander: Wander,
+  wave: Wave,
 };
 
 const LoadingPage = ({
   loading,
   spinnerSize = 90,
   color = 'limegreen',
-  spinnerType = 'circle', // Default to 'circle'
+  spinnerType = 'circle', 
 }) => {
-  // Only render the component if loading is true
+  
   if (!loading) return null;
 
   // Get the spinner component based on the spinnerType prop

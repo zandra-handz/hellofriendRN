@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import { PROVIDER_GOOGLE } from 'react-native-maps';
 import { useLocationList } from '../context/LocationListContext';
 
 const MapWithLocations = ({ locations }) => {
@@ -50,6 +51,7 @@ const MapWithLocations = ({ locations }) => {
     <View style={styles.container}>
       {initialRegion && (
         <MapView
+          provider={PROVIDER_GOOGLE}
           ref={mapRef}
           style={styles.map}
           initialRegion={initialRegion}
@@ -79,17 +81,14 @@ const MapWithLocations = ({ locations }) => {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(128, 128, 128, 0.5)',
-    zIndex: 2,
+    flex: 1, // Ensure the map takes up the entire space of the container
+    width: '100%', // Full width
+    height: '100%', // Full height
   },
 });
 

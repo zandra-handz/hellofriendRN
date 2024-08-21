@@ -12,30 +12,23 @@ const ActionScreenButtonAddMoment = ({ onPress }) => {
             onPress={onPress}
             label="MOMENT"
             fontMargin={3}
-            animationSource={require("../assets/anims/heartinglobe.json")}
-            rightSideAnimation={false}
+            animationSource={require("../assets/anims/lightbulbsimple.json")}
+            rightSideAnimation={true}
+            showIcon={true}
             labelFontSize={30}
             labelColor="white"
             animationWidth={234}
             animationHeight={234}
+     
             labelContainerMarginHorizontal={4}
-            animationMargin={-64}
-            shapePosition="right"
-            shapeSource={require("../assets/shapes/rainbowleaf.png")}
-            shapeWidth={240}
-            shapeHeight={240}
-            shapePositionValue={-104}
-            shapeSource={require("../assets/shapes/magicstars.png")}
-            shapeWidth={440}
-            shapeHeight={440}
-            shapePositionValue={-44}
-            shapePositionValueVertical={-120}
+            animationMargin={50}
+            shapePosition="right"   
             shapeSource={require("../assets/shapes/fairymagic.png")}
             shapeWidth={540}
             shapeHeight={540}
             shapePositionValue={-244}
             shapePositionValueVertical={-140}
-            showIcon={false}
+            
             />
         </View>
     );

@@ -178,6 +178,7 @@ const ButtonLottieAnimationSatellitesLocations = ({
         itemVisiblePercentThreshold: 50,
       }}
       ListFooterComponent={<View style={{ width: 283 }} />} // Add blank space at the end of the list
+    
     />
 
     );

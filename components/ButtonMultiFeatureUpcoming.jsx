@@ -8,7 +8,7 @@ import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import UICalendarPageDynamic from '../components/UICalendarPageDynamic';
-
+import ButtonCalendarDateSvgAndLabel from '../components/ButtonCalendarDateSvgAndLabel';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -47,7 +47,7 @@ const ButtonMultiFeatureUpcoming = ({
   shapePositionValue = -134,
   satellites = false,
   satelliteSectionPosition = 'right',
-  satelliteCount = 3,
+  satelliteCount = 2,
   satellitesOrientation = 'horizontal',
   satelliteHeight = 40,
   satelliteHellos = [],
@@ -147,7 +147,7 @@ const ButtonMultiFeatureUpcoming = ({
   
   
 
-  const satelliteWidth = (width / 1.6) / satelliteCount;
+  const satelliteWidth = (width / 3) / satelliteCount;
 
   const renderSatellites = () => {
     const satellitesArray = [];
@@ -162,17 +162,23 @@ const ButtonMultiFeatureUpcoming = ({
             key={i}
             style={[
               styles.satelliteButton,
-              { width: 60, borderRadius: 50, margin: 2,padding: 7,   alignItems: 'center', height: satellitesOrientation === 'horizontal' ? satelliteHeight : 60 },
+              { width: 60, alignItems: 'center', height: satellitesOrientation === 'horizontal' ? satelliteHeight : 60 },
             ]}
             onPress={() => satelliteOnPress(satelliteHellos[i])}
           >
-            
-            <UICalendarPageDynamic 
-                numberDate={extractNumberDate(satelliteHellos[i].future_date_in_words)}
-                month={extractMonth(satelliteHellos[i].future_date_in_words)} 
-                width={40} 
-                height={40} 
-                color='black' />
+
+
+          <ButtonCalendarDateSvgAndLabel 
+            numberDate={extractNumberDate(satelliteHellos[i].future_date_in_words)}
+            month={extractMonth(satelliteHellos[i].future_date_in_words)} 
+            width={60} 
+            height={60} 
+            showMonth={true} 
+            showLabel={false}
+            onPress={() => satelliteOnPress(satelliteHellos[i])}
+            enabled={true}  
+            color='white' 
+          />
           </TouchableOpacity>
         );
       }
@@ -201,13 +207,19 @@ const ButtonMultiFeatureUpcoming = ({
           ]}
           onPress={() => satelliteOnPress(item)}
         >
-          <Text style={styles.satelliteText}>{item.friend_name}</Text>
-          <UICalendarPageDynamic 
+      
+          <ButtonCalendarDateSvgAndLabel 
                 numberDate={extractNumberDate(item.future_date_in_words)}
                 month={extractMonth(item.future_date_in_words)} 
+                label={item.friend_name}
                 width={50} 
-                height={50}
-                color='white' />
+                height={50} 
+                showMonth={false} 
+                enabled={true}  
+                color='white' 
+                onPress={() => satelliteOnPress(item)}
+              />
+           
         
         </TouchableOpacity>
       )}
@@ -220,6 +232,7 @@ const ButtonMultiFeatureUpcoming = ({
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
             <View style={[styles.mainButtonContainer, { width: satellites ? '76.66%' : '100%' }]}>
+              
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
@@ -299,7 +312,7 @@ const ButtonMultiFeatureUpcoming = ({
                         <Text
                           style={[
                             textStyles(labelFontSize, labelColor),
-                            { fontFamily: 'Poppins-Regular' },
+                            { fontFamily: 'Poppins-Regular'},
                           ]}
                         >
                           {label}
@@ -378,11 +391,7 @@ const styles = StyleSheet.create({
   satelliteButton: { 
     alignItems: 'center',  
     alignContents: 'center', 
-    justifyContent: 'space-around',
-    borderRadius: '50%',
-    borderWidth: 1.2, 
-    borderColor: 'black',  
-    backgroundColor: 'lightgray',
+    justifyContent: 'space-around',  
   },
   additionalSatelliteSection: {
     flexDirection: 'row',
@@ -390,24 +399,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 0,
   },
   additionalSatelliteButton: {
     justifyContent: 'center',
+    alignContent: 'center',
     alignItems: 'center', 
     borderRadius: 0, 
     borderRightWidth: .8,
-    borderColor: 'darkgray',
-    height: 140,
-    width: 100,
-    backgroundColor: 'black',
+    borderColor: 'darkgray', 
+    paddingTop: 30,
+    height: '100%',
+    width: 50,
+    backgroundColor: 'transparent',
+
     
   },
   satelliteText: {
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
     
   },
 });

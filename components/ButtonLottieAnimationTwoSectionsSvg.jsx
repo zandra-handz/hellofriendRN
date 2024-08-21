@@ -4,15 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import SwitchUsersSvg from '../assets/svgs/switch-users.svg';
-import RefreshFriendSvg from '../assets/svgs/refresh-friend.svg';
+import { useSelectedFriend } from '../context/SelectedFriendContext'; 
 import PersonalConnectionsSvg from '../assets/svgs/personal-connections.svg';
 
-import SwitchRedSvg from '../assets/svgs/switch-red.svg';
-import SwitchPlainSolidSvg from '../assets/svgs/switch-plain-solid.svg';
-
-
+import ProfileTwoUsersSvg from '../assets/svgs/profile-two-users.svg';
 
 const ButtonLottieAnimationTwoSectionsSvg = ({
   onPress, 
@@ -20,8 +15,10 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
   borderTopRadius=30,
   borderRadius=30,
   headerText = '',
+  mainButtonWidth = '77%',
   label,
-  labeltwo,
+  labeltwo = '',
+  showLabelTwo=true,
   additionalText = '',
   animationSource,
   rightSideAnimation = false,
@@ -46,6 +43,8 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
   shapePositionValue = -134,
   satellites = false,
   satelliteSectionPosition = 'right',
+  satelliteSectionWidth='33.33%',
+  satelliteSectionMarginLeft = -20,
   satelliteCount = 3,
   satellitesOrientation = 'horizontal',
   satelliteHeight = 40,
@@ -147,12 +146,12 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
             key={i}
             style={[
               styles.satelliteButton,
-              { width: 74, borderRadius: 50, margin: 2,padding: 7,   alignItems: 'center', height: satellitesOrientation === 'horizontal' ? satelliteHeight : 74 },
+              { width: 64, borderRadius: 50, margin: 2,padding: 7,   alignItems: 'center', height: satellitesOrientation === 'horizontal' ? satelliteHeight : 64 },
             ]}
             onPress={() => satelliteOnPress(satelliteHellos[i])}
           >
             <View style={{marginBottom: 11, borderWidth: 0, borderRadius: 50, padding: 10, borderColor: 'pink'}}>
-              <PersonalConnectionsSvg height={58} width={58} color="black"/>
+              <ProfileTwoUsersSvg height={40} width={40} color="white"/>
             </View>
             
           </TouchableOpacity>
@@ -187,7 +186,7 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
       {!additionalPages && mainViewVisible && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { width: satellites ? '77%' : '100%' }]}>
+            <View style={[styles.mainButtonContainer, { width: satellites ? mainButtonWidth : '100%' }]}>
               <TouchableOpacity
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
@@ -267,11 +266,14 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
                         <Text
                           style={[
                             textStyles(labelFontSize, labelColor),
-                            { fontFamily: 'Poppins-Regular', marginBottom: -6, },
+                            { fontFamily: 'Poppins-Regular' },
                           ]}
+                          numberOfLines={1} 
+                          ellipsizeMode='tail'
                         >
                           {label} 
                         </Text>
+                        {showLabelTwo && ( 
                         <Text
                           style={[
                             textStyles(labelFontSize, labelColor),
@@ -280,6 +282,7 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
                         >
                           {labeltwo}
                         </Text>
+                        )}
                       </>
                     )}
                   </View>
@@ -295,7 +298,7 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { height: buttonHeight, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, { marginLeft: satelliteSectionMarginLeft, width: satelliteSectionWidth, height: buttonHeight, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
                 {renderSatellites()}
               </View>
             )}
@@ -322,10 +325,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     zIndex: 1000,
   },
-  satelliteSection: {
-    width: '33.33%', 
+  satelliteSection: { 
     borderRadius: 0,
-    marginLeft: -20,
     paddingLeft: 0,  
     alignItems: 'center',
     justifyContent: 'center',
@@ -337,8 +338,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     borderRadius: '50%',
     borderWidth: 1.8, 
-    borderColor: 'black',  
-    backgroundColor: 'lightgray',
+    borderColor: 'transparent',  
+    backgroundColor: 'transparent',
   },
   additionalSatelliteSection: {
     flexDirection: 'row', 

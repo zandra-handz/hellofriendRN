@@ -9,8 +9,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "config": {
-        "usesNonExemptEncryption": false,
-        "supportsTablet": true
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
@@ -18,7 +17,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.badrainbowz.sampleproject"
+      "package": "com.badrainbowz.sampleproject",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk"
+        }
+      }
     },
     "splash": {
       "image": "./assets/splash.png",

@@ -3,7 +3,10 @@ import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import InputSearchAddress from '../components/InputSearchAddress';
+import MapWithoutLocations from '../components/MapWithoutLocations';
 import MapWithLocations from '../components/MapWithLocations';
+
+
 import ItemLocationSingle from '../components/ItemLocationSingle';
 import { useLocationList } from '../context/LocationListContext';
 
@@ -42,18 +45,21 @@ const ScreenLocationSearch = ({ route, navigation }) => {
             horizontal
             keyExtractor={(item, index) => `additional-satellite-${index}`}
             renderItem={({ item }) => (
-                <ItemLocationSingle locationObject={item} />
+                <ItemLocationSingle locationObject={item} spacer={50} color="white" />
             )}
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+            ListFooterComponent={<View style={{ width: 300 }} />} // Add blank space at the end of the list
+    
         />
     ), [locationList, onViewableItemsChanged]);
 
     return (
-        <GestureHandlerRootView style={styles.modalContainer}>
-            <View style={styles.modalContent}> 
+        <GestureHandlerRootView style={styles.container}> 
                 <View style={styles.mapContainer}>
+                    <View style={{zIndex: 2, position: 'absolute', width: '100%'}}>
                     <InputSearchAddress />
+                    </View> 
                     <MapWithLocations locations={locationList} />
                 </View>
                 {locationList && (
@@ -61,57 +67,36 @@ const ScreenLocationSearch = ({ route, navigation }) => {
                         <Text style={styles.categoryText}>{category}</Text>
                         {renderAdditionalSatellites()}
                     </View>
-                )}
-            </View>
+                )} 
         </GestureHandlerRootView>
     );
 };
 
 const styles = StyleSheet.create({
-    modalContainer: {
-        flex: 1,
-        backgroundColor: 'transparent',
-    },
-    modalContent: {
-        flex: 1,
-        backgroundColor: 'black',
-        justifyContent: 'space-around',
-        alignContent: 'center',
-        borderRadius: 0,
-        padding: 0,
-        paddingTop: 0,
+    container: {
+      flex: 1,
+      backgroundColor: 'transparent',
     },
     mapContainer: {
-        flex: 1,
-        marginTop: 0,
-        zIndex: -1,
-    },
-    closeButton: {
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        zIndex: 1,
-    },
-    closeText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: 'white',
+      flex: 1, // This ensures it takes up available space
+      justifyContent: 'flex-start',
     },
     additionalSatelliteSection: {
-        flexDirection: 'column',
-        marginVertical: 0,
-        height: 90,
-        borderRadius: 30,
-        backgroundColor: 'black',
+      flexDirection: 'column',
+      height: 90, // Adjust as needed
+      borderRadius: 0,
+      paddingHorizontal: 10,
+      backgroundColor: 'black',
     },
     categoryText: {
-        fontSize: 18,
-        color: 'white',
-        fontFamily: 'Poppins-Regular',
-        marginLeft: 20,
-        marginBottom: 0,
-        textTransform: 'uppercase',
+      fontSize: 18,
+      color: 'white',
+      fontFamily: 'Poppins-Regular',
+      marginLeft: 20,
+      marginBottom: 0,
+      textTransform: 'uppercase',
     },
-});
+  });
+  
 
 export default ScreenLocationSearch;

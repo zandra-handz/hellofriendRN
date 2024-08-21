@@ -59,84 +59,69 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
     navigation.navigate('AddFriend');
 };
 
-  return (
-    <View style={[styles.container, themeStyles.container]}>
-      {isLoading && (
-        <View style={styles.loadingTextContainer}>
-        <Text style={styles.loadingTextBold}>Welcome back, {authUserState.user.username}!</Text>
-        </View>
+const navigateSignInScreen = () => {
+  navigation.navigate('Signin');
+};
 
-      )}
-      {!isLoading &&(
+return ( 
+  <View style={[styles.container, themeStyles.container]}>
+    {authUserState.authenticated && authUserState.user ? (
       <>
-      <ModalGen
-        modalVisible={modal1Visible}
-        setModalVisible={setModal1Visible}
-        headerTitle={selectedFriend ? `Add hello for ${selectedFriend.name}` : 'Add hello'}
-        headerRightComponent={<FriendSelect />}
-        buttons={[
-          { text: 'Confirm', onPress: () => console.log('Confirm button pressed!') },
-          { text: 'Cancel', onPress: () => setModal1Visible(false) }
-        ]}
-      >
-        <QuickAddHello onClose={() => setModal1Visible(false)} />
-      </ModalGen>
-      <ModalGen
-        modalVisible={modal2Visible}
-        setModalVisible={setModal2Visible}
-        headerTitle={selectedFriend ? `Add image for ${selectedFriend.name}` : 'Add image'}
-        headerRightComponent={<FriendSelect />}
-        buttons={[
-          { text: 'Confirm', onPress: () => console.log('Confirm button pressed!') },
-          { text: 'Cancel', onPress: () => setModal2Visible(false) }
-        ]}
-      >
-        <QuickAddImage onClose={() => setModal2Visible(false)} />
-      </ModalGen>
-      <ModalGen
-        modalVisible={modal3Visible}
-        setModalVisible={setModal3Visible}
-        headerTitle={selectedFriend ? `Add moment to give ${selectedFriend.name}` : 'Add moment'}
-        headerRightComponent={<FriendSelect />}
-        buttons={[
-          { text: 'Confirm', onPress: () => console.log('Confirm button pressed!') },
-          { text: 'Cancel', onPress: () => setModal3Visible(false) }
-        ]}
-      >
-        <QuickAddThought onClose={() => setModal3Visible(false)} />
-      </ModalGen>
+        {isLoading ? (
+          <View style={styles.loadingTextContainer}>
+            <Text style={styles.loadingTextBold}>
+              Welcome back, {authUserState.user.username}!
+            </Text>
+          </View>
+        ) : (
+          <>
+            {mainAppButton && (
+              <TouchableOpacity 
+                style={styles.navigationButton} 
+                onPress={() => navigation.navigate('Home')}
+              >
+                <Ionicons name="calendar" size={24} color="white" />
+                <Text style={styles.navigationButtonText}>main app</Text>
+              </TouchableOpacity>
+            )}
 
-      <ModalGen
-        modalVisible={modalSettingsVisible}
-        setModalVisible={setModalSettingsVisible}
-        headerTitle="Settings"
-        buttons={[
-          { text: 'Close', onPress: () => setModalSettingsVisible(false) }
-        ]}
-      >
-        <ActionPageSettings />
-      </ModalGen>
-      {mainAppButton && (
-      <TouchableOpacity style={styles.navigationButton} onPress={() => navigation.navigate('Home')}>
-        <Ionicons name="calendar" size={24} color="white" />
-        <Text style={styles.navigationButtonText}>main app</Text>
-      </TouchableOpacity>
-      )}
-
-      <View style={styles.buttonContainer}>
-        <ActionPageUpcomingButton/>
-        <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
-        <ActionScreenButtonAddImage onPress={navigateToAddImageScreen }/>
-        <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen}/>
- 
-          <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} />
-     
+            <View style={styles.buttonContainer}>
+              <View style={{height: 146, width: '100%'}}>   
+                <ActionPageUpcomingButton/>
+              </View>
+              <View style={{height: 140, width: '100%'}}>  
+                <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
+              </View>
+              <View style={{height: 140, width: '100%'}}> 
+                <ActionScreenButtonAddImage onPress={navigateToAddImageScreen }/>
+              </View>
+              <View style={{height: 140, width: '100%'}}> 
+                <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen}/>
+              </View>
+              <View style={{height: 140, width: '100%'}}> 
+                <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} />
+              </View>
+            </View>
+            <View style={styles.footerContainer}>  
+            <HelloFriendFooter />
+            </View>
+          </>
+        )}
+      </>
+    ) : (
+      <View style={styles.signInContainer}>
+        <Text style={styles.signInPrompt}>Please sign in to continue.</Text>
+        <TouchableOpacity 
+          style={styles.signInButton} 
+          onPress={navigateSignInScreen}
+        >
+          <Text style={styles.signInButtonText}>Sign In</Text>
+        </TouchableOpacity>
       </View>
-      <HelloFriendFooter />
-    </>
     )}
-    </View>
-  );
+  </View>
+);
+
 };
 
 const styles = StyleSheet.create({
@@ -181,12 +166,18 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   buttonContainer: {
-    height: '90%',
+    height: '90.5%',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginHorizontal: 10,
-    paddingBottom: 6, 
+    paddingBottom: 0, 
     paddingTop: 0,
+  },
+  footerContainer: {
+    position: 'absolute',
+    width: '100%', 
+    bottom: 0,
+
   },
 });
 

@@ -106,7 +106,7 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
             title={''}
             onPress={toggleModal}
             iconName="refresh" 
-            backgroundColor={friendLightColor}
+            backgroundColor={'transparent'}
             color={refreshButtonColor}
             style={{
               width: 70,  
@@ -153,9 +153,9 @@ const styles = StyleSheet.create({
     height: 'auto',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 4,
+    padding: 6,
     paddingHorizontal: 10,
-    borderRadius: 10, 
+    borderRadius: 20, 
   },
   displaySelectedContainer: {
     alignItems: 'left',   
@@ -163,8 +163,8 @@ const styles = StyleSheet.create({
   },
   displaySelected: {
     color: 'black',
-    fontFamily: 'Poppins-Bold',
-    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 18,
     zIndex: 2,
   },
   selectorButtonContainer: {

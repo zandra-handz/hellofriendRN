@@ -12,7 +12,7 @@ import CoffeeShopStoreSimpleSvg from '../assets/svgs/coffee-shop-store-simple';
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemLocationSingle = ({ locationObject, locationWidth, locationHeight, spacer=30 }) => {
+const ItemLocationSingle = ({ locationObject, locationWidth=30, locationHeight=30, spacer=30 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [locationTittle, setLocationTitle] = useState(null);
 
