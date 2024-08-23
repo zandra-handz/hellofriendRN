@@ -24,10 +24,9 @@ const LoadingPage = ({
   spinnerType = 'wander',
 }) => {
 
-  if (!loading) return null;
-
-  // Get the spinner component based on the spinnerType prop
-  const Spinner = spinners[spinnerType] || Circle; // Default to Circle if spinnerType is invalid
+  if (!loading) return null; 
+  
+  const Spinner = spinners[spinnerType] || Circle;  
 
   return (
     <View style={styles.container}>

@@ -1,69 +1,95 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Animated } from 'react-native';
+import LoadingPage from '../components/LoadingPage';
 
 const AlertSuccessFail = ({
   isVisible,
   message,
   onClose,
   tryAgain = true,
-  onRetry,
-  isFetching = false,
+  onRetry, 
   autoClose = false,
-  timeToAutoClose = 3000, // Default to 3 seconds
-  type = 'success' // Can be 'success' or 'failure'
+  saveStatus,
+  timeToAutoClose = 3000,
+  type = 'success',
+  spinnerType = 'circle',
 }) => {
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
   useEffect(() => {
-    if (autoClose && isVisible) {
+    if (autoClose && isVisible && type === 'saving') {
       const timer = setTimeout(() => {
-        onClose();
+        handleClose();
       }, timeToAutoClose);
-      return () => clearTimeout(timer); // Clean up timer on component unmount
+      return () => clearTimeout(timer);
     }
-  }, [autoClose, isVisible, timeToAutoClose, onClose]);
+  }, [autoClose, isVisible, timeToAutoClose, type]);
+
+  const handleClose = () => {
+    if (type === 'saving') {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 500, // Fade out duration
+        useNativeDriver: true,
+      }).start(() => {
+        fadeAnim.setValue(1); // Reset fadeAnim value after the fade out
+        onClose(); // Call onClose after fade out completes
+      });
+    } else {
+      onClose(); // Immediately close the modal without animation
+    }
+  };
 
   if (!isVisible) return null;
 
   return (
-    <Modal visible={isVisible} animationType="slide" transparent={true}>
+    <Modal visible={isVisible} animationType="none" transparent={true}>
       <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-        {type === 'success' && (
-            <> 
-            <View style={styles.headerContainer}>
-                <Text style={styles.headerText}>
-                    Success
-                </Text> 
-            </View>
-            <Text style={styles.message}>{message}</Text>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={onClose} style={type === 'success' ? styles.successButton : styles.failureButton}>
-                    <Text style={styles.buttonText}>Close</Text>
-                </TouchableOpacity>
-            </View>
+        <Animated.View style={[styles.modalContent, type === 'saving' && { opacity: fadeAnim }]}>
+          {type === 'saving' && (
+            <>
+              <View style={styles.headerContainer}>
+                <Text style={styles.headerText}>Please wait</Text>
+              </View>
+              <View style={{ flex: 1, maxHeight: 100, paddingBottom: 20 }}>
+                <LoadingPage loading={saveStatus} spinnerType={spinnerType} />
+              </View>
+              <View style={styles.bottomSpacerContainer}></View>
             </>
-        )} 
-        {type === 'failure' && (
-            <> 
-            <View style={styles.headerContainer}>
-                <Text style={styles.headerText}>
-                    Error
-                </Text> 
-            </View>
-            <Text style={styles.message}>{message}</Text>
-            <View style={styles.buttonContainer}>
-                {tryAgain && onRetry && (
-                    <TouchableOpacity onPress={onRetry} style={styles.retryButton}>
-                        <Text style={styles.buttonText}>Try Again</Text>
-                    </TouchableOpacity>
-                  )}
-                <TouchableOpacity onPress={onClose} style={styles.failureButton}>
-                    <Text style={styles.buttonText}>Close</Text>
+          )}
+          {type === 'success' && (
+            <>
+              <View style={styles.headerContainer}>
+                <Text style={styles.headerText}>Success</Text>
+              </View>
+              <Text style={styles.message}>{message}</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={onClose} style={styles.successButton}>
+                  <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>
               </View>
             </>
-            )}
-          </View>
-        </View> 
+          )}
+          {type === 'failure' && (
+            <>
+              <View style={styles.headerContainer}>
+                <Text style={styles.headerText}>Error</Text>
+              </View>
+              <Text style={styles.message}>{message}</Text>
+              <View style={styles.buttonContainer}>
+                {tryAgain && onRetry && (
+                  <TouchableOpacity onPress={onRetry} style={styles.retryButton}>
+                    <Text style={styles.buttonText}>Try Again</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity onPress={onClose} style={styles.failureButton}>
+                  <Text style={styles.buttonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </Animated.View>
+      </View>
     </Modal>
   );
 };
@@ -78,6 +104,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '80%',
     padding: 20,
+    minHeight: 224,
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
@@ -94,8 +121,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: 'center',
   },
+  bottomSpacerContainer: {
+    width: '100%',
+    marginTop: 20,
+  },
   successButton: {
-    backgroundColor: '#4CAF50', // Green background for success
+    backgroundColor: '#4CAF50',
     padding: 10,
     borderRadius: 20,
     width: '100%',
@@ -103,7 +134,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   failureButton: {
-    backgroundColor: '#f44336', // Red background for failure
+    backgroundColor: '#f44336',
     padding: 10,
     borderRadius: 20,
     width: '100%',
@@ -118,7 +149,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   retryButton: {
-    backgroundColor: '#f44336', // Red background for failure
+    backgroundColor: '#f44336',
     padding: 10,
     borderRadius: 20,
     width: '100%',

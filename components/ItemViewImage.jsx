@@ -1,31 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, Text, TouchableOpacity, TextInput, Button, ScrollView } from 'react-native';
-import AlertImage from '../components/AlertImage';
+import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
+import ItemViewFooter from './ItemViewFooter'; 
+import AlertImage from '../components/AlertImage';
 import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
-
-
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
-
-
+import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
+import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import { updateFriendImage, deleteFriendImage } from '../api';
-import ItemViewFooter from './ItemViewFooter'; // Import your ItemViewFooter component
-import * as FileSystem from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
+
+import AlertConfirm from '../components/AlertConfirm'; 
+import AlertSuccessFail from '../components/AlertSuccessFail';
 
 const ItemViewImage = ({ image, onClose }) => {
   const { selectedFriend } = useSelectedFriend();
-  const { updateImage, deleteImage } = useImageList();
+  const { imageList, setUpdateImagesTrigger } = useImageList();
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(true);
+  const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
+
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [isFailModalVisible, setFailModalVisible] = useState(false);
+  
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (image) {
       setTitle(image.title);
-      console.log('Image data:', image);
+      const index = imageList.findIndex(img => img.id === image.id);
+      setCurrentIndex(index);
     }
   }, [image]);
 
@@ -42,151 +49,175 @@ const ItemViewImage = ({ image, onClose }) => {
   const handleUpdate = async () => {
     try {
       await updateFriendImage(image.friendId, image.id, { title });
-      updateImage(image.id);
-      setIsEditing(false); // Reset editing state
+      setIsEditing(false); 
       onClose();
     } catch (error) {
       console.error('Error updating image:', error);
     }
   };
 
+  const toggleModal = () => {
+    setConfirmDeleteModalVisible(!isConfirmDeleteModalVisible);
+  };
+
   const handleDelete = async () => {
     try {
-      await deleteFriendImage(selectedFriend.id, image.id);
-      deleteImage(image.id); // Delete image from imageList context
-      closeModal(); // Close modal after deletion
+      setIsDeleting(true);
+      const imageToDelete = imageList[currentIndex];  // Get the correct image to delete based on currentIndex
+      await deleteFriendImage(selectedFriend.id, imageToDelete.id);  // Delete the correct image
+      setSuccessModalVisible(true);  
     } catch (error) {
+      setFailModalVisible(true);
       console.error('Error deleting image:', error);
+    } finally {
+      setConfirmDeleteModalVisible(false);
+      setIsDeleting(false);
     }
   };
 
-  const handleShare = async () => {
-    if (!image.image) {
-      console.error('Error: Image URL is null or undefined');
-      return;
-    }
+  const successOk = () => {
+    setUpdateImagesTrigger(prev => !prev);
+    setSuccessModalVisible(false);
+  };
 
-    const fileUri = FileSystem.documentDirectory + (image.title || 'shared_image') + '.jpg';
+  const failOk = () => { 
+    setFailModalVisible(false);
+  };
 
-    try {
-      const { uri } = await FileSystem.downloadAsync(image.image, fileUri);
-      await Sharing.shareAsync(uri);
-
-      // Add a delay to ensure the share sheet completes its process
-      setTimeout(async () => {
-        try {
-          await deleteFriendImage(selectedFriend.id, image.id);
-          deleteImage(image.id);
-          closeModal();
-        } catch (error) {
-          console.error('Error deleting shared image:', error);
-        }
-      }, 500); // Delay in milliseconds, adjust as necessary
-
-    } catch (error) {
-      console.error('Error sharing image:', error);
+  const goToPreviousImage = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prevIndex => prevIndex - 1);
     }
   };
+
+  const goToNextImage = () => {
+    if (currentIndex < imageList.length - 1) {
+      setCurrentIndex(prevIndex => prevIndex + 1);
+    }
+  };
+
+  useEffect(() => {
+    setTitle(imageList[currentIndex]?.title || '');
+  }, [currentIndex]);
 
   return (
-    <AlertImage
-      isModalVisible={isModalVisible}
-      toggleModal={closeModal}
-      modalContent={
-        image ? (
-          <View style={[styles.modalContainer, {backgroundColor: 'transparent'}]}>
-
+    <>
+      <AlertImage
+        isModalVisible={isModalVisible}
+        toggleModal={closeModal}
+        modalContent={
+          imageList[currentIndex] ? (
+            <View style={styles.modalContainer}>
               <View style={styles.container}>
-              <View style={styles.headerContainer}>
-
-                <View style={styles.infoContainer}>
-                
-                <View style={styles.detailsColumn}>
-                <View style={styles.detailRow}>
-                <Text style={styles.name}>{image.title}</Text>
-                </View>
-                <View style={styles.detailRow}>
-                <Text style={styles.name}>{image.id}</Text>
-                </View>
-                <View style={styles.detailRow}>
-                <View style={styles.modalImageContainer}>
-                  <Image
-                    source={{ uri: image.image }}
-                    style={styles.modalImage}
-                  />
-                </View>
-                
-
-
-
-
-                </View>
+                <View style={styles.headerContainer}>
+                  <View style={styles.infoContainer}>
+                    <View style={styles.detailsColumn}>
+                      <Text style={styles.name}>{imageList[currentIndex].title}</Text>
+                      <View style={styles.modalImageContainer}>
+                        <Image
+                          source={{ uri: imageList[currentIndex].image }}
+                          style={styles.modalImage}
+                        />
+                      </View>
+                    </View>
                   </View>
                 </View>
-              </View>
+                <View style={styles.navigationContainer}>
+                  <TouchableOpacity 
+                    onPress={goToPreviousImage} 
+                    disabled={currentIndex === 0}
+                    style={styles.arrowButton}
+                  >
+                    <ArrowLeftCircleOutlineSvg width={40} height={40} color={currentIndex === 0 ? 'gray' : 'black'} />
+                  </TouchableOpacity>
 
-              </View>
-              <View style={styles.buttonContainer}> 
-              <View style={styles.footerContainer}>
-              <ItemViewFooter
-                  buttons={[
-                    { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color='black'/>, onPress: handleEdit },
-                    { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete },
-                    { label: 'Share', icon: <TrashOutlineSvg width={24} height={24} color="black" />, onPress: handleShare },
-                  ]}
-                  maxButtons={2} 
-                  showLabels={false}
-                />
+                  <TouchableOpacity 
+                    onPress={goToNextImage} 
+                    disabled={currentIndex === imageList.length - 1}
+                    style={styles.arrowButton}
+                  >
+                    <ArrowRightCircleOutlineSvg width={40} height={40} color={currentIndex === imageList.length - 1 ? 'gray' : 'black'} />
+                  </TouchableOpacity>
                 </View>
-              <ButtonSendImageToFriend onPress={handleShare} friendName={selectedFriend.name} /> 
+                <View style={styles.buttonContainer}>
+                  <ItemViewFooter
+                    buttons={[
+                      { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color='black' />, onPress: handleEdit },
+                      { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: toggleModal },
+                    ]}
+                    maxButtons={2} 
+                    showLabels={false}
+                  />
+                  <ButtonSendImageToFriend onPress={handleUpdate} friendName={selectedFriend.name} />
+                </View>
               </View>
-          </View>
-        ) : null
-      }
-      modalTitle="View Image"
-     
-    />
+            </View>
+          ) : null
+        }
+        modalTitle="View Image"
+      />
+
+      <AlertConfirm
+        fixedHeight={true}
+        height={330}
+        isModalVisible={isConfirmDeleteModalVisible}
+        questionText="Delete image? (This can't be reversed!)"
+        isFetching={isDeleting}
+        useSpinner={true}
+        toggleModal={toggleModal}
+        headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>{imageList[currentIndex].title}</Text>}
+        onConfirm={() => handleDelete()} 
+        onCancel={toggleModal}
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
+
+      <AlertSuccessFail
+        isVisible={isSuccessModalVisible}
+        message='Image has been deleted.'
+        onClose={successOk}
+        type='success'
+      />
+
+      <AlertSuccessFail
+        isVisible={isFailModalVisible}
+        message='Error deleting image.'
+        onClose={failOk}
+        tryAgain={false} 
+        isFetching={isDeleting}
+        type='failure'
+      />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   modalContainer: {
-    flex: 1, 
+    flex: 1,
+  },
+  container: {
+    flex: 1,
   },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 2,
   },
-  name: {
-    fontSize: 20,
-    fontFamily: 'Poppins-Bold',
-    flex: 1,
-  },
   infoContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 6,
-
     backgroundColor: 'transparent',
   },
-  detailsColumn: { 
+  detailsColumn: {
     flex: 1,
     flexDirection: 'column',
     marginRight: 4,
   },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  container: {
+  name: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold',
     flex: 1,
-    padding: 0,
   },
   modalImageContainer: {
     width: '100%',
@@ -201,30 +232,26 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     borderRadius: 10,
   },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 10,
+  navigationContainer: {
+    flexDirection: 'row', 
+    position: 'absolute',
+    width: '100%', 
+    top: '40%',
+    justifyContent: 'space-between',
+    marginBottom: 0,
   },
-  input: {
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 8,
-  },
-  footerContainer: {
-    flexDirection: 'row',
+  arrowButton: {
+    padding: 10, 
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', 
+    borderRadius: 30, 
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10, // Add some padding if needed
-    backgroundColor: 'transparent', // Temporary background for debugging
   },
-  
-  buttonContainer: { 
+  buttonContainer: {
     position: 'absolute',
     bottom: 0,
     flexDirection: 'column',
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
   },
 });
 

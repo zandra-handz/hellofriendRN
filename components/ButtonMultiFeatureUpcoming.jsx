@@ -312,8 +312,10 @@ const ButtonMultiFeatureUpcoming = ({
                         <Text
                           style={[
                             textStyles(labelFontSize, labelColor),
-                            { fontFamily: 'Poppins-Regular'},
+                            { fontFamily: 'Poppins-Regular' },
                           ]}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
                         >
                           {label}
                         </Text>

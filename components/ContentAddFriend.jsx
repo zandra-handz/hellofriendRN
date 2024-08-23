@@ -9,13 +9,9 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 
-import FormFriendCreate from '../forms/FormFriendCreate';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import AlertList from '../components/AlertList';
 import AlertSuccessFail from '../components/AlertSuccessFail';
-
-import LoadingPage from '../components/LoadingPage';
-
+ 
 import { useNavigation } from '@react-navigation/native';
 
  
@@ -73,17 +69,9 @@ const ContentAddFriend = ({ size = 14, family = 'Poppins-Regular', color = "blac
     const friendTotal = friendList.length;
     
     
-    
-
-
 
     const friendNameRef = useRef(null);
-    const effortRef = useRef(null);
-    const priorityRef = useRef(null); 
-    const momentInputRef = useRef(null); // Reference for the Thought Capsule input field
-    const categoryInputRef = useRef(null); // Reference for the Category input field
-
-    
+    const effortRef = useRef(null); 
     
     const navigateToMainScreen = () => {
         navigation.navigate('hellofriend');

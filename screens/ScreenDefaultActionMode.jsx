@@ -17,6 +17,8 @@ import ActionScreenButtonAddMoment from '../components/ActionScreenButtonAddMome
 import ActionScreenButtonAddImage from '../components/ActionScreenButtonAddImage';
 import ActionScreenButtonAddHello from '../components/ActionScreenButtonAddHello';
 import ActionScreenButtonAddFriend from '../components/ActionScreenButtonAddFriend';
+import ActionScreenButtonAddLocation from '../components/ActionScreenButtonAddLocation';
+
 
 import ButtonLottieAnimationSatellites from '../components/ButtonLottieAnimationSatellites'; // Make sure to import the correct component
 import ActionPageSettings from '../components/ActionPageSettings';
@@ -57,11 +59,15 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 
   const navigateToAddFriendScreen = () => {
     navigation.navigate('AddFriend');
+  };
+
+  const navigateToAddLocationScreen = () => {
+    navigation.navigate('LocationSearch');
 };
 
-const navigateSignInScreen = () => {
-  navigation.navigate('Signin');
-};
+  const navigateSignInScreen = () => {
+    navigation.navigate('Signin');
+  };
 
 return ( 
   <View style={[styles.container, themeStyles.container]}>
@@ -98,9 +104,17 @@ return (
               <View style={{height: 140, width: '100%'}}> 
                 <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen}/>
               </View>
+              {selectedFriend && (
+              <View style={{height: 140, width: '100%'}}> 
+                <ActionScreenButtonAddLocation onPress={navigateToAddLocationScreen} />
+              </View>
+               )}
+              {!selectedFriend && (
               <View style={{height: 140, width: '100%'}}> 
                 <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} />
               </View>
+               )}
+
             </View>
             <View style={styles.footerContainer}>  
             <HelloFriendFooter />

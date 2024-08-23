@@ -2,40 +2,51 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Image, TextInput, Alert } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
- 
-import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
+import { createFriendImage } from '../api';  
+
 import * as ImagePicker from 'expo-image-picker';
-import { createFriendImage } from '../api'; // Import your API function
+import PickerBinary from '../components/PickerBinary';
+import InputSingleValue from '../components/InputSingleValue';
+import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
+
+import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
+
+import CameraCuteSvg from '../assets/svgs/camera-cute.svg';
+import UploadCurlySvg from '../assets/svgs/upload-curly.svg';
+import PhotosTwoSvg from '../assets/svgs/photos-two.svg';
+
+
+
+import AlertYesNo from '../components/AlertYesNo';  
+import AlertConfirm from '../components/AlertConfirm'; 
+import AlertSuccessFail from '../components/AlertSuccessFail';
+
+
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
 
-import PickerBinary from '../components/PickerBinary';
-import InputSingleValue from '../components/InputSingleValue';
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
-import CameraCuteSvg from '../assets/svgs/camera-cute.svg';
-import UploadCurlySvg from '../assets/svgs/upload-curly.svg';
-
-import PhotosTwoSvg from '../assets/svgs/photos-two.svg';
-
-
-import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 
 const ContentAddImage = () => {
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const [ canContinue, setCanContinue ] = useState('');
-    
-  const { setUpdateImagesTrigger } = useImageList();
+  
   const [imageUri, setImageUri] = useState(null);
   const [imageTitle, setImageTitle] = useState('');
   const [imageCategory, setImageCategory] = useState('Misc');
   const [firstSectionTitle, setFirstSectionTitle] = useState('Friend: ');
 
-  const imageTitleRef = useRef(null);
-  const imageCategoryRef = useRef(null);
-  const navigation = useNavigation();
+  const imageTitleRef = useRef(null); 
+
+  const [ saveInProgress, setSaveInProgress ] = useState(false);
+
+  const [isSavingModalVisible, setSavingModalVisible] = useState(false);
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [isFailModalVisible, setFailModalVisible] = useState(false);
+  
+  const { setUpdateImagesTrigger } = useImageList();
+  
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
@@ -67,8 +78,6 @@ const ContentAddImage = () => {
       setImageUri(result.assets[0].uri);
     }
   };
-
-
 
   useEffect(() => {
     if (imageTitleRef) {
@@ -113,6 +122,8 @@ const ContentAddImage = () => {
 
 
   const handleSave = async () => {
+    setSaveInProgress(true);
+    setSavingModalVisible(true);
     if (imageUri && imageTitle.trim() && selectedFriend && authUserState.user) {
       try { 
         const formData = new FormData(); 
@@ -134,21 +145,32 @@ const ContentAddImage = () => {
         console.log('FormData before sending:', formData);
   
         const response = await createFriendImage(selectedFriend.id, formData);
-        console.log('Image created successfully:', response);
-   
-        setImageUri(null);
-        setImageTitle('');
-        setImageCategory('Misc');
-        setUpdateImagesTrigger(prev => !prev);  
+        setSuccessModalVisible(true); 
+
+        
       } catch (error) {
-        console.error('Error creating image:', error);
-        Alert.alert('Error', 'Error creating image.');
+        console.error('Error creating image:', error); 
+        setFailModalVisible(true);
+
       }
-    } else {
-      Alert.alert('Error', 'Image, title, friend, and user are required.');
-    }
+    } 
+    setSavingModalVisible(false);
+    setSaveInProgress(false);
   };
  
+
+  const successOk = () => {
+    setImageUri(null);
+    setImageTitle('');
+    setImageCategory('Misc');
+    setUpdateImagesTrigger(prev => !prev);   
+    setSuccessModalVisible(false);
+};
+
+const failOk = () => { 
+    setFailModalVisible(false);
+};
+  
  
 
 
@@ -234,6 +256,31 @@ const ContentAddImage = () => {
             </View> 
             )}
       </View>
+
+      <AlertSuccessFail
+            isVisible={isSavingModalVisible}
+            autoclose={true}
+            type='saving'
+            saveStatus={saveInProgress}
+        />
+ 
+
+      <AlertSuccessFail
+            isVisible={isSuccessModalVisible}
+            message={`Image uploaded!`}
+            onClose={successOk}
+            type='success'
+        />
+
+        <AlertSuccessFail
+            isVisible={isFailModalVisible}
+            message={`Could not upload image.`}
+            onClose={failOk}
+            tryAgain={false}
+            onRetry={handleSave}
+            isFetching={saveInProgress}
+            type='failure'
+        />
     </View>
   );
 };

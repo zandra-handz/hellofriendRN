@@ -1,16 +1,13 @@
-// ContentAddMoment.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import EnterMoment from '../components/EnterMoment';
-import EnterMomentCategory from '../components/EnterMomentCategory';
+ 
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
-
-import { saveThoughtCapsule } from '../api';
+ 
 import { fetchTypeChoices, saveHello } from '../api';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
@@ -28,19 +25,18 @@ import { useLocationList } from '../context/LocationListContext';
 
 import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
 import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
-import CoffeeCupPaperSolid from '../assets/svgs/coffee-cup-paper-solid';
 import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
 import CelebrationSparkOutlineSvg from '../assets/svgs/celebration-spark-outline';
 
-import AlertYesNo from '../components/AlertYesNo'; // Import the AlertSingleInput component
-import AlertConfirm from '../components/AlertConfirm'; // Import the AlertSingleInput component
+import AlertYesNo from '../components/AlertYesNo';  
+import AlertConfirm from '../components/AlertConfirm'; 
 
 import AlertSuccessFail from '../components/AlertSuccessFail';
 
-import LoadingPage from '../components/LoadingPage';
-
-
 const ContentAddHello = () => {
+
+  const navigation = useNavigation();
+
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend, friendDashboardData, setFriend } = useSelectedFriend();
   const [helloDate, setHelloDate] = useState(new Date());
@@ -65,17 +61,12 @@ const ContentAddHello = () => {
   const [deleteChoice, setDeleteChoice ] = useState(false);
   
   const [ saveInProgress, setSaveInProgress ] = useState(false);
-    
-  
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
   const [isFailModalVisible, setFailModalVisible] = useState(false);
 
-  
-  const [successMessage, setSuccessMessage] = useState('');
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
   
-  
-  const navigation = useNavigation();
+
 
   const handleDeleteChoiceToggle = (isToggledYes) => {
     setDeleteChoice(isToggledYes ? true : false);
@@ -219,11 +210,8 @@ const ContentAddHello = () => {
           thought_capsules_shared: momentsDictionary,
           delete_all_unshared_capsules: deleteChoice ? true : false,
         };
-  
-        console.log("saving hello with data: ", requestData);
-        const response = await saveHello(requestData);
-        console.log(response.data);
         
+        const response = await saveHello(requestData);
         setSuccessModalVisible(true); 
         setUpdateTrigger((prev) => !prev);
       }
