@@ -2,9 +2,9 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
  
-
-import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
  
+import ShareOutlineLongSvg from '../assets/svgs/share-outline-long.svg';
+import ShareArrowOutlineSvg from '../assets/svgs/share-arrow-outline.svg';  
 
 const ButtonSendImageToFriend = ({ onPress, friendName }) => { 
 
@@ -27,11 +27,11 @@ const ButtonSendImageToFriend = ({ onPress, friendName }) => {
                     showGradient={true}  
                     showShape={true}  
                     shapePosition="right"
-                    shapeSource={DistanceDottedSvg}  
-                    shapeWidth={86}
-                    shapeHeight={86}
-                    shapePositionValue={-4}
-                    shapePositionValueVertical={-14}
+                    shapeSource={ShareArrowOutlineSvg}  
+                    shapeWidth={56}
+                    shapeHeight={56}
+                    shapePositionValue={6}
+                    shapePositionValueVertical={4}
                     showIcon={false}  
                     /> 
         </View>

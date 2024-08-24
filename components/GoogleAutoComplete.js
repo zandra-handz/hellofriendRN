@@ -16,7 +16,7 @@ function MyComponent() {
             onChangeText={handleTextChange}
             placeholder="Location..."
           />
-          <ScrollView style={{ maxHeight: 100 }}>
+          <ScrollView style={{ maxHeight: 300 }}>
             {locationResults.map((el, i) => (
               <LocationItem
                 {...el}

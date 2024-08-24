@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, Image, StyleSheet, Text } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
+
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+
 import ItemViewFooter from './ItemViewFooter'; 
 import AlertImage from '../components/AlertImage';
 import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
-import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
-import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
+
+import FooterActionButtons from '../components/FooterActionButtons';
+
+
+
 import { updateFriendImage, deleteFriendImage } from '../api';
 
 import AlertConfirm from '../components/AlertConfirm'; 
 import AlertSuccessFail from '../components/AlertSuccessFail';
 
+import NavigationArrows from '../components/NavigationArrows';
+
 const ItemViewImage = ({ image, onClose }) => {
   const { selectedFriend } = useSelectedFriend();
-  const { imageList, setUpdateImagesTrigger } = useImageList();
+  const { imageList, deleteImage, setUpdateImagesTrigger } = useImageList();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(null);
@@ -60,11 +69,39 @@ const ItemViewImage = ({ image, onClose }) => {
     setConfirmDeleteModalVisible(!isConfirmDeleteModalVisible);
   };
 
+
+  const handleShare = async () => {
+    if (!imageList[currentIndex].image) {
+      console.error('Error: Image URL is null or undefined');
+      return;
+    }
+
+    const fileUri = FileSystem.documentDirectory + (imageList[currentIndex].title  || 'shared_image') + '.jpg';
+    const message = "Check out this image!"; 
+
+    try {
+      const { uri } = await FileSystem.downloadAsync(imageList[currentIndex].image, fileUri);
+      await Sharing.shareAsync(uri);
+  
+      setTimeout(async () => {
+        try { 
+          setConfirmDeleteModalVisible(true); 
+        } catch (error) {
+          console.error('Error deleting shared image:', error);
+        }
+      }, 500);  
+
+    } catch (error) {
+      console.error('Error sharing image:', error);
+    }
+  };
+
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
       const imageToDelete = imageList[currentIndex];  // Get the correct image to delete based on currentIndex
-      await deleteFriendImage(selectedFriend.id, imageToDelete.id);  // Delete the correct image
+      await deleteFriendImage(selectedFriend.id, imageList[currentIndex].id);
+
       setSuccessModalVisible(true);  
     } catch (error) {
       setFailModalVisible(true);
@@ -76,8 +113,10 @@ const ItemViewImage = ({ image, onClose }) => {
   };
 
   const successOk = () => {
+    deleteImage(imageList[currentIndex].image);
     setUpdateImagesTrigger(prev => !prev);
     setSuccessModalVisible(false);
+    closeModal();
   };
 
   const failOk = () => { 
@@ -122,23 +161,12 @@ const ItemViewImage = ({ image, onClose }) => {
                     </View>
                   </View>
                 </View>
-                <View style={styles.navigationContainer}>
-                  <TouchableOpacity 
-                    onPress={goToPreviousImage} 
-                    disabled={currentIndex === 0}
-                    style={styles.arrowButton}
-                  >
-                    <ArrowLeftCircleOutlineSvg width={40} height={40} color={currentIndex === 0 ? 'gray' : 'black'} />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity 
-                    onPress={goToNextImage} 
-                    disabled={currentIndex === imageList.length - 1}
-                    style={styles.arrowButton}
-                  >
-                    <ArrowRightCircleOutlineSvg width={40} height={40} color={currentIndex === imageList.length - 1 ? 'gray' : 'black'} />
-                  </TouchableOpacity>
-                </View>
+                <NavigationArrows 
+                  currentIndex={currentIndex}
+                  imageListLength={imageList.length}
+                  onPrevPress={goToPreviousImage}
+                  onNextPress={goToNextImage}
+                />
                 <View style={styles.buttonContainer}>
                   <ItemViewFooter
                     buttons={[
@@ -148,9 +176,16 @@ const ItemViewImage = ({ image, onClose }) => {
                     maxButtons={2} 
                     showLabels={false}
                   />
-                  <ButtonSendImageToFriend onPress={handleUpdate} friendName={selectedFriend.name} />
                 </View>
               </View>
+              <FooterActionButtons
+                    height='5%'
+                    bottom={30}
+                    backgroundColor='white'
+                    buttons={[
+                      <ButtonSendImageToFriend onPress={handleShare} friendName={selectedFriend.name} />
+                    ]}
+                  />
             </View>
           ) : null
         }
@@ -161,7 +196,7 @@ const ItemViewImage = ({ image, onClose }) => {
         fixedHeight={true}
         height={330}
         isModalVisible={isConfirmDeleteModalVisible}
-        questionText="Delete image? (This can't be reversed!)"
+        questionText="Delete image?"
         isFetching={isDeleting}
         useSpinner={true}
         toggleModal={toggleModal}
@@ -231,27 +266,10 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginBottom: 0,
     borderRadius: 10,
-  },
-  navigationContainer: {
-    flexDirection: 'row', 
-    position: 'absolute',
-    width: '100%', 
-    top: '40%',
-    justifyContent: 'space-between',
-    marginBottom: 0,
-  },
-  arrowButton: {
-    padding: 10, 
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', 
-    borderRadius: 30, 
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 0,
+  },  
+  buttonContainer: {  
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
 });
 

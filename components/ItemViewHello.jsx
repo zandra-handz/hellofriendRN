@@ -5,6 +5,9 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemViewFooter from '../components/ItemViewFooter';
 import ItemArchivedMomentMulti from '../components/ItemArchivedMomentMulti'; // Import ItemArchivedMomentMulti component
+import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
+import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
+
 
 const ItemViewHello = ({ hello, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -62,13 +65,15 @@ const ItemViewHello = ({ hello, onClose }) => {
                   <Button title="Cancel" onPress={() => setIsEditing(false)} />
                 </>
               ) : (
+                <View style={styles.buttonContainer}>
                 <ItemViewFooter
                   buttons={[
-                    { label: 'Edit', icon: 'edit', color: 'blue', onPress: handleEdit },
-                    { label: 'Delete', icon: 'trash-alt', color: 'red', onPress: handleDelete },
-                    { label: 'Share', icon: 'share', color: 'green', onPress: handleDelete }, // Adjust onPress actions as needed
+                    { label: '', icon: <EditOutlineSvg width={34} height={34} color='black' />, onPress: handleEdit },
+                    { label: '', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete },
+                    { label: '', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete }, // Adjust onPress actions as needed
                   ]}
                 />
+                </View>
               )}
             </View>
           </View>
@@ -84,7 +89,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   archivedMomentsContainer: {
     width: '100%',
@@ -96,6 +100,12 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     height: '100%',
     maxHeight: '100%',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
 });
 

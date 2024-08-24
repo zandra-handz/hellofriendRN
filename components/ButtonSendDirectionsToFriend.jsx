@@ -6,6 +6,9 @@ import HelloFriendInvite from '../components/HelloFriendInvite';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
 
+
+
+
 import AlertImage from '../components/AlertImage';
  
 import { useSelectedFriend } from '../context/SelectedFriendContext';

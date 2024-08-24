@@ -5,6 +5,8 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemViewFooter from './ItemViewFooter';
 
+import NavigationArrows from '../components/NavigationArrows';
+
 
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
@@ -17,14 +19,15 @@ const ItemViewMoment = ({ moment, onClose }) => {
 
   const { selectedFriend } = useSelectedFriend();
   const { capsuleList, setCapsuleList } = useCapsuleList();
-   
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [title, setTitle] = useState(null); 
 
   useEffect(() => {
     if (moment) {
-
-      console.log('Moment data:', moment);
-    }
+    setTitle(moment.typedCategory);
+    const index = capsuleList.findIndex(mom => mom.id === moment.id);
+    setCurrentIndex(index);
+  }
   }, [moment]);
 
   const handleEdit = () => {
@@ -55,17 +58,36 @@ const ItemViewMoment = ({ moment, onClose }) => {
     }
   };
 
+  const goToPreviousMoment = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prevIndex => prevIndex - 1);
+    }
+  };
+
+  const goToNextMoment = () => {
+    if (currentIndex < capsuleList.length - 1) {
+      setCurrentIndex(prevIndex => prevIndex + 1);
+    }
+  };
+
+  useEffect(() => {
+    setTitle(capsuleList[currentIndex]?.typedCategory || '');
+  }, [currentIndex]);
+
+
   return (
     <View> 
     <AlertImage
       isModalVisible={isModalVisible}
       toggleModal={closeModal}
       modalContent={
-       moment ? (
+        capsuleList[currentIndex] ? (
         <View style={styles.momentContainer}> 
           <Text style={styles.momentText}>
-            {moment.capsule
-            }</Text>
+            {
+              capsuleList[currentIndex].capsule
+            }
+            </Text>
         
           {isEditing ? (
             <>
@@ -78,6 +100,12 @@ const ItemViewMoment = ({ moment, onClose }) => {
 
             </>
           )}
+            <NavigationArrows 
+              currentIndex={currentIndex}
+              imageListLength={capsuleList.length}
+              onPrevPress={goToPreviousMoment}
+              onNextPress={goToNextMoment}
+            />
             <View style={styles.buttonContainer}> 
               <View style={styles.footerContainer}>
               <ItemViewFooter

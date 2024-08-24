@@ -34,14 +34,12 @@ const HelloFriendInvite = ({ size = 14, family = 'Poppins-Regular', color = "bla
     const handleSend = () => {
         // Create the final message with the editedMessage at the front
         const finalMessage = `${editedMessage} On ${selectedDay}, ${selectedLocation?.title} is open ${hoursForDay}. Here are directions: ${message}`;
-        
-        // Open the SMS application with the final message
+         
         Linking.openURL(`sms:?body=${encodeURIComponent(finalMessage)}`);
     };
 
     return (
-        <View style={styles.container}>
-            {/* Location information card */}
+        <View style={styles.container}> 
             <View style={styles.locationContainer}>
                 <Text style={styles.locationTitle}>{selectedLocation?.title}</Text>
                 <Text style={styles.locationAddress}>{selectedLocation?.address}</Text>

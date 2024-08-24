@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Button, ScrollView } from 'react-native';
+import { View, StyleSheet, Button } from 'react-native';
  
 import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
-
-import LoadingPage from '../components/LoadingPage';
  
 import FormLocationQuickCreate from '../forms/FormLocationQuickCreate';  
 import ItemViewLocationDetails from './ItemViewLocationDetails';  
@@ -23,7 +21,7 @@ import { useAuthUser } from '../context/AuthUserContext';
 const ItemViewLocation = ({ location, onClose }) => {
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-  const { locationList, setLocationList, setSelectedLocation, loadingAdditionalDetails, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+  const { locationList, setLocationList, setSelectedLocation, addLocationToFaves, removeLocationFromFaves } = useLocationList();
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
   const [isTemp, setIsTemp] = useState(false);
@@ -39,20 +37,15 @@ const ItemViewLocation = ({ location, onClose }) => {
     if (location && location.id) {
       setIsTemp(String(location.id).startsWith('temp'));
     }
-  }, [location]);
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+  }, [location]); 
 
   const handleSave = async (newLocation) => {
     try {
       if (isTemp) { 
-        const newLocationWithId = { ...newLocation, id: Date.now().toString() }; // Generate a unique ID for the new location
+        const newLocationWithId = { ...newLocation, id: Date.now().toString() }; 
         setLocationList([...locationList, newLocationWithId]);
-        setIsEditing(false); // Optionally close editing mode after saving
-      } else {
-        // If the location is not temporary, update or add the location to the friend's favorites
+        setIsEditing(false); 
+      } else { 
         if (selectedFriend && location) {
           const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
           addLocationToFaves(location.id);
@@ -62,8 +55,7 @@ const ItemViewLocation = ({ location, onClose }) => {
           if (friendDashboardData && friendDashboardData.length > 0) {
             friendDashboardData[0].friend_faves = updatedFaves;
             console.log(friendDashboardData);
-            updateFriendDashboardData(friendDashboardData);
-            console.log('Location added to friend\'s favorites.');
+            updateFriendDashboardData(friendDashboardData); 
           }
         }
         onClose();
@@ -77,27 +69,7 @@ const ItemViewLocation = ({ location, onClose }) => {
     setIsModalVisible(false);
     setIsEditing(false);
     onClose();
-  };
-
-  const handleUpdate = async () => {
-    try {
-      if (selectedFriend && location) {
-        const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
-        addLocationToFaves(location.id);
-        const updatedFaves = response;
-        console.log(updatedFaves);
-
-        if (friendDashboardData && friendDashboardData.length > 0) {
-          friendDashboardData[0].friend_faves = updatedFaves;
-          updateFriendDashboardData(friendDashboardData);
-          console.log('Location added to friend\'s favorites.');
-        }
-      }
-      onClose();
-    } catch (error) {
-      console.error('Error adding location to favorites in handleUpdate:', error);
-    }
-  };
+  }; 
 
   const handleDelete = async () => {
     try {
@@ -122,14 +94,14 @@ const ItemViewLocation = ({ location, onClose }) => {
 
   const getLocationTitle = (location) => {
     try {
-      let title = location.title || 'Unknown Location'; // Default title if location.title is undefined
+      let title = location.title || 'Unknown Location';  
       if (location.id && String(location.id).startsWith('temp')) {
         title += ' (unsaved)';
       }
       return title;
     } catch (error) {
       console.error('Error getting location title:', error);
-      return location.title; // Fallback title in case of an error
+      return location.title;  
     }
   };
 
