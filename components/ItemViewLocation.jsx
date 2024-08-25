@@ -12,6 +12,7 @@ import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFr
 import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
 
 import FooterActionButtons from '../components/FooterActionButtons';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
 
@@ -160,16 +161,7 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1,
     padding: 0, 
-  }, 
-  buttonContainer: {
-    height: '16%',
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-
-  },
+  },  
 });
 
 export default ItemViewLocation;

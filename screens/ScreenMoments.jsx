@@ -19,7 +19,7 @@ const ScreenMoments = ({ route, navigation }) => {
                 <ScrollView>
                     {isCapsuleListReady ? (
                         <>  
-                        <ItemMomentMultiPlain height={40} width={40} columns={1} singleLineScroll={false} horizontal={false} newestFirst={false} svgColor='black' />
+                        <ItemMomentMultiPlain height={40} width={40} columns={3} singleLineScroll={false} newestFirst={false} svgColor='black' />
                             
                         </>
                         

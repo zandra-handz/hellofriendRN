@@ -15,7 +15,7 @@ const FormatDate = ({
   yearAsTimePassed = false,
   commas = false,
 }) => {
-  if (!date) return <Text style={styles.text}>N/A</Text>;
+  if (!date) return <Text style={styles.text}></Text>;
 
   // Use moment.js to parse and format the date
   const formattedDate = moment(date);
@@ -23,7 +23,7 @@ const FormatDate = ({
   const dateYear = formattedDate.year();
 
   // Check if the date is valid
-  if (!formattedDate.isValid()) return <Text style={styles.text}>N/A</Text>;
+  if (!formattedDate.isValid()) return <Text style={styles.text}></Text>;
 
   let displayText = '';
   let shouldAddComma = false;

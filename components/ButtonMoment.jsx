@@ -6,7 +6,8 @@ import ThoughtBubbleIconPinkHeartSvg from '../assets/svgs/thought-bubble-icon-pi
 import FormatDate from '../components/FormatDate';
 
 const ButtonMoment = ({
-  onPress,
+  //Border can be turned on by setting width in styles
+  onPress,  
   moment,
   iconSize = 12,
   size = 12,
@@ -57,7 +58,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,  
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 10,
+    justifyContent: 'space-between',
     borderColor: 'black',
   },
   disabledContainer: {
@@ -67,34 +69,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', 
     width: '100%', 
-    padding: 20,
+    padding: 10,
+    paddingTop: 4,
+    overflow: 'hidden',
     borderRadius: 20, 
     flexWrap: 'wrap', // Allow wrapping of children
     backgroundColor: 'transparent', // Optional: make sure background is set to avoid overlap issues
   },
-  momentText: {
-    fontFamily: 'Poppins-Bold',
+  momentText: { 
+    fontFamily: 'Poppins-Regular',
     marginLeft: 8,
-    flexWrap: 'wrap', // Ensure text wrapping inside the text container
+    flexWrap: 'wrap',   
+    height: '80%',
   },
   textWrapper: {
-    flex: 1, // Take up the remaining space in the container
-    flexShrink: 1, // Ensure it doesn't overflow its container
+    flex: 1, 
+    flexShrink: 1,  
   },
   iconContainer: { 
     alignItems: 'left', 
-    borderRadius: 20,
-    flex: .1,
+    justifyContent: 'flex-start',
+    left: -10,
+    top: -20, 
+    borderRadius: 20, 
+    width: '8%',
     height: '100%',
   },
-  creationDateSection: {   
+  creationDateSection: {    
+    position: 'absolute', 
+    bottom: 0, 
     backgroundColor: 'transparent',
-    alignItems: 'flex-end', 
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    width: '100%',
   },
-  creationDateTextContainer: {
-    width: '33.3%',
-    padding: 10,
-    justifyContent: 'center',
+  creationDateTextContainer: {  
+    paddingBottom: 10,
+    paddingRight: 10, 
     backgroundColor: 'transparent',
     borderRadius: 20,
   },

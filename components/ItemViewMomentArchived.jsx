@@ -1,26 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Button } from 'react-native';
+import { View, Image, StyleSheet, Text, TouchableOpacity, TextInput, Button } from 'react-native';
 import AlertImage from '../components/AlertImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemViewFooter from './ItemViewFooter';
+
 import NavigationArrows from '../components/NavigationArrows';
+
+
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
 
-const ItemViewMoment = ({ archived = false, moment, onClose }) => {
+
+const ItemViewMomentArchived = ({ moment, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
+  const [includeTag, setIncludeTag] = useState(false);
 
   const { selectedFriend } = useSelectedFriend();
+  const { capsuleList, setCapsuleList } = useCapsuleList();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [title, setTitle] = useState(null); 
+
+  useEffect(() => {
+    if (moment) {
+    setTitle(moment.typedCategory);
+    const index = capsuleList.findIndex(mom => mom.id === moment.id);
+    setCurrentIndex(index);
+  }
+  }, [moment]);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
 
   const closeModal = () => {
     setIsModalVisible(false);
     setIsEditing(false);
     onClose();
-  };
-
-  const handleEdit = () => {
-    setIsEditing(true);
   };
 
   const handleUpdate = async () => {
@@ -41,68 +58,86 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
     }
   };
 
+  const goToPreviousMoment = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prevIndex => prevIndex - 1);
+    }
+  };
+
+  const goToNextMoment = () => {
+    if (currentIndex < capsuleList.length - 1) {
+      setCurrentIndex(prevIndex => prevIndex + 1);
+    }
+  };
+
+  useEffect(() => {
+    setTitle(capsuleList[currentIndex]?.typedCategory || '');
+  }, [currentIndex]);
+
+
   return (
-    <View>
-      <AlertImage
-        isModalVisible={isModalVisible}
-        toggleModal={closeModal}
-        modalContent={
-          <View style={styles.momentContainer}>
-            <Text style={styles.momentText}>
-              {archived ? moment.capsule : moment.capsule}
+    <View> 
+    <AlertImage
+      isModalVisible={isModalVisible}
+      toggleModal={closeModal}
+      modalContent={
+        capsuleList[currentIndex] ? (
+        <View style={styles.momentContainer}> 
+          <Text style={styles.momentText}>
+            {
+              capsuleList[currentIndex].capsule
+            }
             </Text>
+        
+          {isEditing ? (
+            <>
+              <Button title="Update" onPress={handleUpdate} />
+              <Button title="Cancel" onPress={() => setIsEditing(false)} />
+            </>
+          ) : (
+            <>
+              <Text style={styles.modalText}> </Text>
 
-            {isEditing ? (
-              <>
-                <Button title="Update" onPress={handleUpdate} />
-                <Button title="Cancel" onPress={() => setIsEditing(false)} />
-              </>
-            ) : (
-              <>
-                <Text style={styles.modalText}></Text>
-              </>
-            )}
-
-            {!archived && moment.typedCategory && (
-              <NavigationArrows
-                currentIndex={0}
-                imageListLength={1} // Placeholder; since `archived` is true, this is not used
-                onPrevPress={() => {}}
-                onNextPress={() => {}}
-              />
-            )}
-
-            <View style={styles.buttonContainer}>
+            </>
+          )}
+            <NavigationArrows 
+              currentIndex={currentIndex}
+              imageListLength={capsuleList.length}
+              onPrevPress={goToPreviousMoment}
+              onNextPress={goToNextMoment}
+            />
+            <View style={styles.buttonContainer}> 
               <View style={styles.footerContainer}>
-                <ItemViewFooter
+              <ItemViewFooter
                   buttons={[
-                    { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color='black' />, onPress: handleEdit },
+                    { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color='black'/>, onPress: handleEdit },
                     { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete },
                     { label: 'Share', icon: <TrashOutlineSvg width={24} height={24} color="black" />, onPress: handleEdit },
                   ]}
-                  maxButtons={3}
+                  maxButtons={3} 
                   showLabels={false}
                 />
+                </View> 
               </View>
-            </View>
-          </View>
-        }
-        modalTitle={moment.typedCategory || moment.typed_category}
-      />
-    </View>
-  );
+        </View>
+      ) : null
+    }
+    modalTitle={moment.typedCategory}
+  />
+  </View>
+);
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-  },
+    padding: 20,  
+  }, 
   categoryTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-  },
+  }, 
   modalText: {
     fontSize: 16,
     marginBottom: 10,
@@ -123,12 +158,13 @@ const styles = StyleSheet.create({
     height: '100%',
     padding: 10,
     borderRadius: 20,
-    borderWidth: 0.8,
+    borderWidth: .8,
     borderColor: 'gray',
   },
   momentText: {
     fontFamily: 'Poppins-Regular',
     fontSize: 13,
+
   },
   tagContainer: {
     flexDirection: 'row',
@@ -145,12 +181,13 @@ const styles = StyleSheet.create({
     padding: 10, // Add some padding if needed
     backgroundColor: 'transparent', // Temporary background for debugging
   },
-  buttonContainer: {
+  
+  buttonContainer: { 
     position: 'absolute',
-    bottom: 0,
+    bottom: 0, 
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', 
   },
 });
 
-export default ItemViewMoment;
+export default ItemViewMomentArchived;

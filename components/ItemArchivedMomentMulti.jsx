@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
-import Svg, { Image } from 'react-native-svg';
+
 import { useCapsuleList } from '../context/CapsuleListContext';
 import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg';
+import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -12,11 +13,11 @@ const ItemArchivedMomentMulti = ({
     singleLineScroll = true,
     columns = 3,
     showCategoryHeader = false,
-    width = 100,
-    height = 100,
+    width = 70,
+    height = 70,
     limit,
     newestFirst = true,
-    svgColor = 'black',
+    svgColor = 'gray',
     includeCategoryTitle = false
 }) => {
     const { capsuleList } = useCapsuleList();

@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Button } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, Button } from 'react-native';
 import AlertImage from '../components/AlertImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useCapsuleList } from '../context/CapsuleListContext';
-import ItemViewFooter from '../components/ItemViewFooter';
-import ItemArchivedMomentMulti from '../components/ItemArchivedMomentMulti'; // Import ItemArchivedMomentMulti component
-import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
-import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
-
+import { useCapsuleList } from '../context/CapsuleListContext'; 
+import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain'; // Import ItemMomentMultiPlain component
+ 
+import FooterActionButtons from '../components/FooterActionButtons';
+import ButtonReuseMoments from '../components/ButtonReuseMoments';
 
 const ItemViewHello = ({ hello, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
+  const [isReselectMomentsModalVisible, setReselectMomentsModalVisible] = useState(false);
   const { selectedFriend } = useSelectedFriend();
   const { capsuleList, setCapsuleList } = useCapsuleList();
 
@@ -20,6 +20,10 @@ const ItemViewHello = ({ hello, onClose }) => {
       console.log('Hello data:', hello);
     }
   }, [hello]);
+
+  const toggleReselectModal = () => {
+    setReselectMomentsModalVisible(!isReselectMomentsModalVisible);
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -32,8 +36,7 @@ const ItemViewHello = ({ hello, onClose }) => {
   };
 
   const handleUpdate = async () => {
-    try {
-      // Perform update action
+    try { 
       onClose();
     } catch (error) {
       console.error('Error updating moment:', error);
@@ -41,8 +44,7 @@ const ItemViewHello = ({ hello, onClose }) => {
   };
 
   const handleDelete = async () => {
-    try {
-      // Perform delete action
+    try { 
       onClose();
     } catch (error) {
       console.error('Error deleting moment:', error);
@@ -58,28 +60,25 @@ const ItemViewHello = ({ hello, onClose }) => {
           <View style={styles.container}>
             <Text>{hello.locationName}</Text>
             <View style={styles.archivedMomentsContainer}>
-              <ItemArchivedMomentMulti archivedMomentData={hello.pastCapsules} horizontal={false} singleLineScroll={false} />
-              {isEditing ? (
-                <>
-                  <Button title="Update" onPress={handleUpdate} />
-                  <Button title="Cancel" onPress={() => setIsEditing(false)} />
-                </>
-              ) : (
-                <View style={styles.buttonContainer}>
-                <ItemViewFooter
-                  buttons={[
-                    { label: '', icon: <EditOutlineSvg width={34} height={34} color='black' />, onPress: handleEdit },
-                    { label: '', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete },
-                    { label: '', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete }, // Adjust onPress actions as needed
-                  ]}
-                />
-                </View>
-              )}
-            </View>
+              <ScrollView>
+
+
+             
+              <ItemMomentMultiPlain passInData={true} data={hello.pastCapsules} singleLineScroll={false} />
+              </ScrollView> 
+            </View> 
+            <FooterActionButtons
+              height='6%'
+              bottom={16} 
+              backgroundColor='white'
+              buttons={[
+                <ButtonReuseMoments onPress={toggleReselectModal} />, 
+              ]}
+            />
           </View>
         ) : null
       }
-      modalTitle={hello.type}
+      modalTitle={`View hello with ${selectedFriend.name}!`}
     />
   );
 };
@@ -90,19 +89,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  archivedMomentsContainer: {
+  archivedMomentsContainer: { 
+    flex: 1,
     width: '100%',
-    backgroundColor: 'transparent',
-    justifyContent: 'space-around',
-    alignContent: 'center',
-    borderRadius: 0,
-    padding: 4,
-    paddingTop: 50,
-    height: '100%',
-    maxHeight: '100%',
+    backgroundColor: 'transparent',  
+    borderRadius: 0, 
   },
-  buttonContainer: {
-    position: 'absolute',
+  buttonContainer: { 
     bottom: 0,
     flexDirection: 'column',
     justifyContent: 'space-between',
