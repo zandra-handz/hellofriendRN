@@ -166,6 +166,7 @@ const ActionFriendPageHelloes = ({
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 || overrideView ? (
           <ButtonLottieAnimationSatellitesHelloes
+            buttonHeight={buttonHeight}
             onPress={() => {}}
             navigateToFirstPage={navigateToFirstPage}
             firstItem={mainHello ? mainHello : 'Loading...'}
@@ -191,11 +192,6 @@ const ActionFriendPageHelloes = ({
             showGradient={true}
             lightColor={lightColor}
             darkColor={darkColor}
-            shapePosition="right"
-            shapeSource={require('../assets/shapes/greenfloral.png')}
-            shapeWidth={340}
-            shapeHeight={340}
-            shapePositionValue={-154}
             showIcon={false}
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
@@ -210,6 +206,7 @@ const ActionFriendPageHelloes = ({
           />
         ) : (
           <ButtonLottieAnimationSatellitesHelloes
+            buttonHeight={buttonHeight}
             onPress={() => {}}
             navigateToFirstPage={navigateToFirstPage}
             firstItem={mainHello ? mainHello.date : 'Loading...'}

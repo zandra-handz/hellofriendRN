@@ -56,6 +56,7 @@ const ContentAddHello = () => {
  
   const [firstSectionTitle, setFirstSectionTitle] = useState('Friend: ');
   const [momentsSelected, setMomentsSelected] = useState([]);
+  
   const [isDeleteChoiceModalVisible, setDeleteChoiceModalVisible] = useState(false);
   
   const [deleteChoice, setDeleteChoice ] = useState(false);

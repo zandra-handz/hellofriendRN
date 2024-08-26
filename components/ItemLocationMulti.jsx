@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 2,
+        
         backgroundColor: 'transparent',
         justifyContent: 'center',
         alignContent: 'center',
@@ -162,6 +163,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     imageRow: {
+        
         justifyContent: 'space-between',
     }, 
 });

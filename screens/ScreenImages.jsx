@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
-import { useCapsuleList } from '../context/CapsuleListContext';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+
 import { useImageList } from '../context/ImageListContext';
-import ItemMomentMulti from '../components/ItemMomentMulti';
 import ItemImageMulti from '../components/ItemImageMulti';
 
 const ScreenImages = ({ route, navigation }) => {

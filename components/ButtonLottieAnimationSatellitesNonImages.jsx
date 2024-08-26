@@ -34,7 +34,7 @@ const ButtonLottieAnimationSatellitesNonImages = ({
   showIcon = false,
   showShape = true,
   shapePosition = 'left',
-  shapeSource = require('../assets/shapes/greenleaf.png'),
+  shapeSource,
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134,

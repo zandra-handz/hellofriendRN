@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
-import Svg, { Image } from 'react-native-svg'; // Import SVG and Image components from react-native-svg
+import { View, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
+
 import ItemViewMoment from '../components/ItemViewMoment'; 
 import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
-import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg'; // Import the SVG
 
 import { FlashList } from "@shopify/flash-list"; 
-
 import { useCapsuleList } from '../context/CapsuleListContext';
 
 const windowWidth = Dimensions.get('window').width;

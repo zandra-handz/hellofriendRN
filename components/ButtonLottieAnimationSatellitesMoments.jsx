@@ -35,7 +35,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
   showIcon = false,
   showShape = true,
   shapePosition = 'left',
-  shapeSource = require('../assets/shapes/greenleaf.png'),
+  shapeSource,
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134,
@@ -238,8 +238,10 @@ const ButtonLottieAnimationSatellitesMoments = ({
                           />
                         )}
                         {isCapsuleListReady && (
+                          <View style={{flex: 1}}> 
                           <ItemMomentMulti width={240} height={240} limit={3} viewSortedList={false} horizontal={true} singleLineScroll={true} newestFirst={true}/> 
-                        )}
+                          </View>
+                       )}
                       </>
                     )}
                   </View>

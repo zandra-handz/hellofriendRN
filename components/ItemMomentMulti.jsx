@@ -17,6 +17,7 @@ const ItemMomentMulti = ({
   limit,
   newestFirst = true,
   svgColor = 'white',
+  containerWidth = 320, // Width for friend focus page button
   includeCategoryTitle = false,
   viewSortedList = true // Boolean prop to determine view mode
 }) => {
@@ -100,7 +101,7 @@ const ItemMomentMulti = ({
   const generateUniqueKey = (item) => `${item.id}-${item.capsule}`;
 
   return (
-    <View style={{ minHeight: 2 }}>
+    <View style={[styles.container, { width: containerWidth, minHeight: 2 }]}>
       {viewSortedList && (
         <View style={styles.controlPanel}>
           <TouchableOpacity onPress={handleExpandAll} style={styles.controlButton}>
@@ -167,9 +168,11 @@ const ItemMomentMulti = ({
                 </View>
               </View>
             </TouchableOpacity>
-          )}
-          numColumns={columns}
+          )} 
+          numColumns={horizontal && !singleLineScroll ? 3 : 1}
+          horizontal={horizontal && singleLineScroll}
           columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
+          contentContainerStyle={horizontal && !singleLineScroll ? null : styles.imageContainer}
           estimatedItemSize={100}
         />
       )}
@@ -182,6 +185,10 @@ const ItemMomentMulti = ({
 };
 
 const styles = StyleSheet.create({
+  container: {
+     
+    width: 320,
+},
   relativeContainer: {
     position: 'relative',
   },

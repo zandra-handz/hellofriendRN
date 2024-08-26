@@ -27,20 +27,11 @@ const ItemHelloSingle = ({ helloObject, helloWidth, helloHeight }) => {
   if (!helloObject) {
     return null; 
   }
-
-  const dynamicStyles = {
-    hello: {
-      width: helloWidth || windowWidth / 3 - 80,
-      height: helloHeight || windowWidth / 3 - 80,
-      margin: 5,
-      borderRadius: 10,
-    },
-  };
-
+ 
   return (
     <View style={styles.helloContainer}>
       <TouchableOpacity onPress={openModal}>
-      <IconDynamicHelloType selectedChoice={helloObject.type} svgHeight={28} svgWidth={28} svgColor="white"/>
+      <IconDynamicHelloType selectedChoice={helloObject.type} svgHeight={24} svgWidth={24} svgColor="white"/>
                             
 
         <Text> </Text>
@@ -55,11 +46,10 @@ const ItemHelloSingle = ({ helloObject, helloWidth, helloHeight }) => {
 
 const styles = StyleSheet.create({
   helloContainer: {
-    padding: 0,
+    padding: 0, 
     marginHorizontal: 20,
-    width: '100%',
-    background: 'white', 
-    height: '100%',
+    marginBottom: 8,
+    width: '100%',  
     flex: 1, 
   },
   modalContainer: {
@@ -92,10 +82,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 8,
     width: '100%',
-  },
-  icon: {
-    marginHorizontal: 10,
-  },
+  }, 
 });
 
 export default ItemHelloSingle;

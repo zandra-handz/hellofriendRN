@@ -1,10 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { View, StyleSheet } from 'react-native';
 import ButtonSignOut from './ButtonSignOut';
 import ButtonSettings from './ButtonSettings';
-import ButtonInfo from './ButtonInfo'; // Import the ButtonInfo component
-import AlertMicro from './AlertMicro';
+import ButtonInfo from './ButtonInfo';
 import AlertConfirm from './AlertConfirm';
 import ButtonToActionMode from './ButtonToActionMode';
 import { useNavigationState } from '@react-navigation/native';

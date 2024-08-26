@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
-import SelectMenu from '../components/SelectMenu';
-import Button from '../components/Button'; // Import your Button component
 import AlertList from '../components/AlertList';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
@@ -11,7 +9,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import RowItemFriendSelect from '../components/RowItemFriendSelect';
 import ButtonToggleSize from '../components/ButtonToggleSize';
-import LoadingPage from '../components/LoadingPage';
 
 const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring to get props
   const { gradientColors } = useGlobalStyle();

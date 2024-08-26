@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
-import SpeechRectCartoonishSvg from '../assets/svgs/speech-rect-cartoonish.svg';//height={360} width={360}
-import MaximizeSquareSolidSvg from '../assets/svgs/maximize-square-solid.svg';  
 import MaximizeOutlineSvg from '../assets/svgs/maximize-outline.svg';  
 
 import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';

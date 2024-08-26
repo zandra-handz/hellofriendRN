@@ -1,4 +1,3 @@
-// App.js
 
 import React, { useEffect } from 'react';
 import TopLevelNavigationHandler from './TopLevelNavigationHandler'; // Adjust import path if necessary
@@ -14,14 +13,11 @@ import { CapsuleListProvider } from './context/CapsuleListContext';
 import { ImageListProvider } from './context/ImageListContext';
 import { SelectedFriendProvider } from './context/SelectedFriendContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import * as Font from 'expo-font'; // Import expo-font
+import * as Font from 'expo-font'; 
 import { useGlobalStyle } from './context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
 
-
-// Import screens and components
-import FriendSelect from './data/FriendSelect';
-import HelloFriendHeader from './components/HelloFriendHeader';
+ 
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
 import ScreenDefaultActionMode from './screens/ScreenDefaultActionMode';
 import ScreenMoments from './screens/ScreenMoments';
@@ -30,14 +26,12 @@ import ScreenHelloes from './screens/ScreenHelloes';
 import ScreenLocations from './screens/ScreenLocations';
 import ScreenLocationSearch from './screens/ScreenLocationSearch';
 import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch';
-import Tabs from './components/Tabs';
 import Signin from './screens/Signin';
 import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
 
 import ScreenAddMoment from './screens/ScreenAddMoment';
 import ScreenAddFriend from './screens/ScreenAddFriend';
 import ScreenAddImage from './screens/ScreenAddImage';
-
 import ScreenAddHello from './screens/ScreenAddHello';
 
 async function loadFonts() {
@@ -126,21 +120,6 @@ export const Layout = () => {
                   headerShown: true,
                 }}
               />
-              <Stack.Screen
-                name="Home"
-                component={Tabs}
-                options={{
-                  header: (props) => (
-                    <HelloFriendHeader
-                      {...props}
-                      handleSignOutPress={handleSignOutPress}
-                      additionalElements={[
-                        <FriendSelect key="friendSelect" />,
-                      ]}
-                    />
-                  ),
-                }}
-              /> 
               <Stack.Screen
                 name="FriendFocus"
                 component={ScreenFriendFocus}

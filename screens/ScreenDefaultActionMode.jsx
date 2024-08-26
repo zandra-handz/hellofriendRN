@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import ModalGen from '../components/ModalGen';
-import FriendSelect from '../data/FriendSelect';
 
-import QuickAddHello from '../speeddial/QuickAddHello';
-import QuickAddImage from '../speeddial/QuickAddImage';
-import QuickAddThought from '../speeddial/QuickAddThought';
 import { useAuthUser } from '../context/AuthUserContext';
-
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
 
 import ActionScreenButtonAddMoment from '../components/ActionScreenButtonAddMoment';
 import ActionScreenButtonAddImage from '../components/ActionScreenButtonAddImage';
@@ -20,10 +13,7 @@ import ActionScreenButtonAddFriend from '../components/ActionScreenButtonAddFrie
 import ActionScreenButtonAddLocation from '../components/ActionScreenButtonAddLocation';
 
 
-import ButtonLottieAnimationSatellites from '../components/ButtonLottieAnimationSatellites'; // Make sure to import the correct component
-import ActionPageSettings from '../components/ActionPageSettings';
-import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; // Import the new component
-import ActionFriendPageLocations from '../components/ActionFriendPageLocations'; // Import the new component
+import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; 
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 

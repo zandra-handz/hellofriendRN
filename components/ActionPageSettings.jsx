@@ -2,10 +2,8 @@ import React, { useEffect } from 'react';
 import { View, Text, AccessibilityInfo } from 'react-native';
 import ActionPageBase from './ActionPageBase';
 import SectionAccessibilitySettings from './SectionAccessibilitySettings';
-import { useAuthUser } from '../context/AuthUserContext';
 
-const ActionPageSettings = ({ visible, onClose }) => {
-  const { authUserState } = useAuthUser();
+const ActionPageSettings = ({ visible, onClose }) => { 
 
   const UserSettings = () => (
     <View>

@@ -1,9 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';
-import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
-import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
-import ArrowFullScreenOutlineSvg from '../assets/svgs/arrow-full-screen-outline.svg';
+import { View, StyleSheet } from 'react-native'; 
 
 const IconDynamicBase = ({ icons, choices, selectedChoice, svgWidth = 50, svgHeight = 50, svgColor = 'black' }) => {
   const adjustLists = (icons, choices) => {
@@ -49,7 +45,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   iconContainer: {
-    margin: 8,
+    margin: 0,
   },
 });
 

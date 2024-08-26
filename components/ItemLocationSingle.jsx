@@ -57,11 +57,13 @@ const styles = StyleSheet.create({
     flex: 1,  
     alignContent: 'center',
     justifyContent: 'center',
+    
   },
   relativeContainer: {  
     position: 'relative',
     width: '100%',
     height: '100%',  
+    
      
   },
   bubbleContainer: {

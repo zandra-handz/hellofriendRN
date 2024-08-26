@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Button } from 'react-native';
 import AlertImage from '../components/AlertImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemViewFooter from './ItemViewFooter';
 import NavigationArrows from '../components/NavigationArrows';
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
@@ -10,8 +11,20 @@ import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
 const ItemViewMoment = ({ archived = false, moment, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
+  const { capsuleList, setCapsuleList } = useCapsuleList();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [title, setTitle] = useState(null); 
 
   const { selectedFriend } = useSelectedFriend();
+
+
+  useEffect(() => {
+    if (moment) {
+    setTitle(moment.typedCategory);
+    const index = capsuleList.findIndex(mom => mom.id === moment.id);
+    setCurrentIndex(index);
+  }
+  }, [moment]);
 
   const closeModal = () => {
     setIsModalVisible(false);
@@ -21,6 +34,18 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
 
   const handleEdit = () => {
     setIsEditing(true);
+  };
+
+  const goToPreviousMoment = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prevIndex => prevIndex - 1);
+    }
+  };
+
+  const goToNextMoment = () => {
+    if (currentIndex < capsuleList.length - 1) {
+      setCurrentIndex(prevIndex => prevIndex + 1);
+    }
   };
 
   const handleUpdate = async () => {
@@ -41,16 +66,28 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
     }
   };
 
+  useEffect(() => {
+    setTitle(capsuleList[currentIndex]?.typedCategory || '');
+  }, [currentIndex]);
+
   return (
     <View>
       <AlertImage
         isModalVisible={isModalVisible}
         toggleModal={closeModal}
         modalContent={
-          <View style={styles.momentContainer}>
-            <Text style={styles.momentText}>
-              {archived ? moment.capsule : moment.capsule}
-            </Text>
+          capsuleList[currentIndex] ? (
+            <View style={{flex: 1}}>
+            <View style={styles.momentContainer}>
+              <Text style={styles.categoryTitle}>
+                {capsuleList[currentIndex].typedCategory}
+                
+                </Text> 
+              <Text style={styles.momentText}>
+                {
+                  capsuleList[currentIndex].capsule
+                }
+                </Text>
 
             {isEditing ? (
               <>
@@ -62,17 +99,20 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
                 <Text style={styles.modalText}></Text>
               </>
             )}
+            
+           
+          </View>
+           {!archived && moment.typedCategory && (
 
-            {!archived && moment.typedCategory && (
-              <NavigationArrows
-                currentIndex={0}
-                imageListLength={1} // Placeholder; since `archived` is true, this is not used
-                onPrevPress={() => {}}
-                onNextPress={() => {}}
-              />
+            <NavigationArrows 
+              currentIndex={currentIndex}
+              imageListLength={capsuleList.length}
+              onPrevPress={goToPreviousMoment}
+              onNextPress={goToNextMoment}
+            />
             )}
 
-            <View style={styles.buttonContainer}>
+            <View style={{width: '100%'}}>
               <View style={styles.footerContainer}>
                 <ItemViewFooter
                   buttons={[
@@ -80,14 +120,15 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
                     { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: handleDelete },
                     { label: 'Share', icon: <TrashOutlineSvg width={24} height={24} color="black" />, onPress: handleEdit },
                   ]}
-                  maxButtons={3}
+                  maxButtons={2}
                   showLabels={false}
                 />
               </View>
             </View>
-          </View>
+            </View>
+          ) : null
         }
-        modalTitle={moment.typedCategory || moment.typed_category}
+        modalTitle='View moment'
       />
     </View>
   );
@@ -99,9 +140,16 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   categoryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 20,
+    paddingVertical: 20,
+    fontFamily: 'Poppins-Bold', 
+  },
+  momentText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 16,
+    padding: 20,
+    borderRadius: 30,
+    backgroundColor: 'lightgray',
   },
   modalText: {
     fontSize: 16,
@@ -113,23 +161,16 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 10,
     borderRadius: 8,
-  },
-  icon: {
-    marginHorizontal: 10,
-  },
+  }, 
   momentContainer: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    width: '100%', 
     padding: 10,
     borderRadius: 20,
     borderWidth: 0.8,
     borderColor: 'gray',
-  },
-  momentText: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 13,
-  },
+    justifyContent: 'flex-start',
+  }, 
   tagContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -138,18 +179,16 @@ const styles = StyleSheet.create({
   tagLabel: {
     fontSize: 16,
   },
-  footerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10, // Add some padding if needed
-    backgroundColor: 'transparent', // Temporary background for debugging
+  footerContainer: { 
+    justifyContent: 'space-between', 
+    width: '100%',
+    padding: 10,  
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 0,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
+    bottom: 0,  
+   
+    width: '100%', 
   },
 });
 

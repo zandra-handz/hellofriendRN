@@ -1,10 +1,7 @@
  
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import ResultsMidpointFinds from '../components/ResultsMidpointFinds';
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native'; 
 import { useAuthUser } from '../context/AuthUserContext';
 import ContentAddFriend from '../components/ContentAddFriend';
 import { Picker } from '@react-native-picker/picker';
@@ -17,8 +14,6 @@ const ScreenAddFriend = ({includeBottomButton = false}) => {
  
 
 
-     
-     
 
     return (
         <View style={styles.container}> 

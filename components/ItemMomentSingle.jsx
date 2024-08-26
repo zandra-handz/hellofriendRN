@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import Svg, { Image } from 'react-native-svg'; // Import SVG and Image components from react-native-svg
+
 import ItemViewMoment from '../components/ItemViewMoment';
 import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg'; // Import the SVG
 
@@ -8,8 +8,7 @@ const windowWidth = Dimensions.get('window').width;
 
 const ItemMomentSingle = ({ momentObject, momentWidth, momentHeight, svgColor='white' }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [momentText, setMomentText] = useState(null);
-  const [momentCategory, setMomentCategory] = useState(null);
+  const [momentText, setMomentText] = useState(null); 
 
   useEffect(() => {
     if (momentObject && momentObject.capsule) {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View, Modal, Text, Button } from 'react-native';
-import { FontAwesome5 } from 'react-native-vector-icons';
+import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
+
 
 const AlertFormSubmit = ({
   isModalVisible,

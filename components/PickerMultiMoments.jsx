@@ -4,6 +4,7 @@ import { CheckBox } from 'react-native-elements'; // For checkboxes
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonMoment from '../components/ButtonMoment';
+import ButtonMomentHelloes from '../components/ButtonMomentHelloes';
 
 const PickerMultiMoments = ({ 
     onMomentSelect, 
@@ -113,7 +114,7 @@ const PickerMultiMoments = ({
             {selectedMoments.length > 0 ? (
               selectedMoments.map((item, index) => (
                 <View key={index} style={styles.itemContainer}> 
-                  <ButtonMoment  
+                  <ButtonMomentHelloes  
                     moment={item}
                     iconSize={26}
                     size={14}

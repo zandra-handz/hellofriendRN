@@ -41,7 +41,7 @@ const ScreenOnboardingIntermediary = ({ finalizingData, resetFinalizingData }) =
                 capsule: finalizingData.thoughtCapsule,
             });
 
-            // This will update the Next Meet as well
+            
             await updateFriendSugSettings({
                 user: authUserState.user.id,
                 friend: friendResponse.id,  
@@ -51,13 +51,13 @@ const ScreenOnboardingIntermediary = ({ finalizingData, resetFinalizingData }) =
 
             setAlertType('success');
             setAlertMessage(`${finalizingData.friendName} has been added to your friend's list!`); // Modified success message
-            setAlertVisible(true); // Show success alert
-            resetFinalizingData(); // Reset finalizingData after saving
+            setAlertVisible(true); 
+            resetFinalizingData();  
         } catch (error) {
             console.error('Failed to save data:', error);
             setAlertType('error');
             setAlertMessage('Failed to save data. Please try again.');
-            setAlertVisible(true); // Show alert on failure
+            setAlertVisible(true); 
         } finally {
             setLoading(false);
         }
@@ -66,9 +66,10 @@ const ScreenOnboardingIntermediary = ({ finalizingData, resetFinalizingData }) =
     const handleAlertClose = () => {
         setAlertVisible(false);
         if (alertType === 'success') {
-            navigation.navigate('Complete'); // Navigate to 'Complete' page on success
+            navigation.navigate('Complete'); 
         } else {
-            navigation.goBack('ScreenOnboardingTwo'); // Navigate back to 'ScreenOnboardingTwo' on failure
+            navigation.goBack('ScreenOnboardingTwo');
+        
         }
     };
 

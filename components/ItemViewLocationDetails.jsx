@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+
 import { useLocationList } from '../context/LocationListContext';
-import { useAuthUser } from '../context/AuthUserContext';
-import CardHours from './CardHours'; // Adjust the import path as needed
+import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
 import SectionCustomerReviews from '../components/SectionCustomerReviews';
 import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
@@ -14,7 +13,7 @@ import StylingRating from '../components/StylingRating';
 
 const ItemViewLocationDetails = ({ location, unSaved }) => {
   const { selectedLocation, additionalDetails, loadingAdditionalDetails } = useLocationList();
-  const { authUserState } = useAuthUser(); // Access authentication context
+
 
 
 
@@ -34,7 +33,7 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
         )}
         {!loadingAdditionalDetails && (
         <>
-        <Text style={styles.name}>{additionalDetails.name}</Text>
+        <Text style={styles.name}> {additionalDetails.name}</Text>
         <ButtonSaveLocation saveable={unSaved} />
         </> 
         )}

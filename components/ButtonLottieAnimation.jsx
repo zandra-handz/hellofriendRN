@@ -27,7 +27,7 @@ const ButtonLottieAnimation = ({
   direction = { x: 1, y: 0 },
   showShape = true,
   shapePosition = 'left',
-  shapeSource = require('../assets/shapes/greenleaf.png'), // Default shape
+  shapeSource, // Default shape
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134, // Default value

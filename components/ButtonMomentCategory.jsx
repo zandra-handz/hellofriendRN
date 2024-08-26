@@ -1,32 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import AlertImage from '../components/AlertImage';
-import { useAuthUser } from '../context/AuthUserContext';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useLocationList } from '../context/LocationListContext';
-import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
+
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
-import SelectorUserAddress from '../components/SelectorUserAddress';
 
 
 
 import HelloFriendInvite from '../components/HelloFriendInvite';
 
-import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; // Import the SVG
-import SpeechBubbleEllipsisSolidSvg from '../assets/svgs/speech-bubble-ellipsis-solid.svg'; // Import the SVG
-import ThoughtBubbleSvg from '../assets/svgs/thought-bubble.svg'; // Import the SVG
+
 import ThoughtBubbleTwoSolidSvg from '../assets/svgs/thought-bubble-two-solid.svg'; // Import the SVG
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 
-import InputConsiderTheDrive from './InputConsiderTheDrive';
-
-import { Ionicons } from '@expo/vector-icons';
-import QuickAddHello from '../speeddial/QuickAddHello';
 
 const ButtonMomentCategory = ({onPress, categoryText, momentCount}) => {
-    const { authUserState } = useAuthUser();
-    const { selectedFriend, friendDashboardData, friendColorTheme } = useSelectedFriend();
-    const { selectedLocation } = useLocationList();
+
+    const { friendColorTheme } = useSelectedFriend();
+   
     const [ isModalVisible, setIsModalVisible ] = useState(false);
     const [lightColor, setLightColor] = useState('black');
     const [darkColor, setDarkColor] = useState('black');
@@ -71,30 +63,24 @@ const ButtonMomentCategory = ({onPress, categoryText, momentCount}) => {
             <ButtonLottieAnimationSvg
                 onPress={onPress}
                 preLabel = {momentCount}
-                preLabelFontSize = {18} // Font size for pre-label
-                preLabelColor='white' // Color for pre-label text
+                preLabelFontSize = {18} 
+                preLabelColor='white'  
                 label={categoryText}
                 height={46}
                 radius={10}
                 fontMargin={3}
-                animationSource={require("../assets/anims/heartinglobe.json")}
                 rightSideAnimation={false}
                 labelFontSize={17} 
                 animationWidth={234}
                 animationHeight={234}
                 labelContainerMarginHorizontal={4}
                 animationMargin={-64}
-                showGradient={true} // Add this if you want to show the gradient
+                showGradient={true}
                 lightColor={lightColor}
                 darkColor={darkColor}
-                showShape={true} // Ensure this is true to display the SVG shape
+                showShape={true} 
                 shapePosition="right"
-                shapeSource={ThoughtBubbleTwoSolidSvg} // Pass the SVG component here
-                shapeWidth={72}
-                shapeHeight={72}
-                shapePositionValue={-14}
-                shapePositionValueVertical={-10}
-                shapeSource={ThoughtBubbleOutlineSvg} // Pass the SVG component here
+                shapeSource={ThoughtBubbleOutlineSvg} 
                 shapeWidth={66}
                 shapeHeight={66}
                 shapePositionValue={-4}
@@ -103,7 +89,7 @@ const ButtonMomentCategory = ({onPress, categoryText, momentCount}) => {
                 shapeLabelColor='white'
                 shapeLabelFontSize={24}
                 shapeLabelPositionRight='95%' 
-                showIcon={false} // Ensure this is set as needed
+                showIcon={false} 
                 />
 
             </View>

@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useLocationList } from '../context/LocationListContext';
-import { useAuthUser } from '../context/AuthUserContext';
-import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
 
-import PushPinOutlineSvg from '../assets/svgs/push-pin-outline.svg'; // Import the SVG
+import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; 
+import PushPinOutlineSvg from '../assets/svgs/push-pin-outline.svg';  
+import FavoriteProfileSvg from '../assets/svgs/favorite-profile.svg';  
 
-import FavoriteProfileSvg from '../assets/svgs/favorite-profile.svg'; // Import the SVG
-
-import ContentConfirmLocationPin from '../components/ContentConfirmLocationPin';
-
-import AlertMicro from '../components/AlertMicro';
 import AlertConfirm from '../components/AlertConfirm';
 import AlertSmall from '../components/AlertSmall';
 import InputAddLocationQuickSave from '../components/InputAddLocationQuickSave';
 import MenuLocationOptions from '../components/MenuLocationOptions';
-import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; // Adjust the import path as needed
+import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
+
+import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useLocationList } from '../context/LocationListContext';
+import { useAuthUser } from '../context/AuthUserContext';
 
 
 const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {

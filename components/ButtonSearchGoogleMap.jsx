@@ -1,29 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import AlertImage from '../components/AlertImage';
-import { useAuthUser } from '../context/AuthUserContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useLocationList } from '../context/LocationListContext';
-import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import SearchMapSvg from '../assets/svgs/search-map.svg';
 
 import CompareTravel from '../components/CompareTravel';
 
 
-import { Ionicons } from '@expo/vector-icons';
-import QuickAddHello from '../speeddial/QuickAddHello';
-import AlarmClockGeoSvg from '../assets/svgs/alarm-clock-geo.svg'; // Import the SVG
-import LocationsOnMapSvg from '../assets/svgs/locations-on-map.svg'; // Import the SVG
-import LocationsOnMapColoredSvg from '../assets/svgs/locations-on-map-colored.svg'; // Import the SVG
-
 
 
 
 const ButtonSearchGoogleMap = ({ onPress }) => {
-    const { authUserState } = useAuthUser();
-    const { selectedFriend } = useSelectedFriend();
-    const { selectedLocation } = useLocationList();
     const [ isModalVisible, setIsModalVisible ] = useState(false);
 
     const openModal = () => setIsModalVisible(true);

@@ -11,15 +11,13 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
-            onPanResponderMove: (evt, gestureState) => {
-                // Detect a significant downward swipe
-                if (gestureState.dy > 50) { // Customize the threshold as needed
+            onPanResponderMove: (evt, gestureState) => { 
+                if (gestureState.dy > 50) {  
                     onClose();
                 }
             },
             onPanResponderRelease: (evt, gestureState) => {
-                // Final check when the touch is released
-                if (gestureState.dy > 50) { // Customize the threshold as needed
+                if (gestureState.dy > 50) {  
                     onClose();
                 }
             },

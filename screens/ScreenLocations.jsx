@@ -1,40 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
-import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 import ButtonSearchGoogleMap from '../components/ButtonSearchGoogleMap';
 import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
 
-import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
+import ItemLocationMulti from '../components/ItemLocationMulti';
 
 import { useLocationList } from '../context/LocationListContext';
 
-import { useNavigation } from '@react-navigation/native';
 
-import ItemLocationMulti from '../components/ItemLocationMulti';
-import ItemImageMulti from '../components/ItemImageMulti';
-import ActionFriendPageGoogleMap from '../components/ActionFriendPageGoogleMap';
 
 const ScreenLocations = ({ route, navigation}) => {
 
 
-    const { locationList, faveLocationList } = useLocationList();
+    const { locationList } = useLocationList();
     const [isLocationListReady, setIsLocationListReady] = useState(false);
-    const [isMapModalVisible, setIsMapModalVisible] = useState(false);
-  
+
     const navigateToLocationSearchScreen = () => {
         navigation.navigate('LocationSearch');
 
     };
 
 
-    const handleMapScreen = () => {
-        setIsMapModalVisible(true); // Set modal visible when fullscreen button is pressed
-      };
-    
-      const closeModal = () => {
-        setIsMapModalVisible(false); // Close the modal
-      };
+
 
     useEffect(() => {
         if (locationList.length > 0) {
@@ -54,10 +42,7 @@ const ScreenLocations = ({ route, navigation}) => {
                         
                     ) : (
                         <Text>Loading...</Text>
-                    )}
-                    <ActionFriendPageGoogleMap
-                    isModalVisible={isMapModalVisible}
-                    toggleModal={closeModal} onClose={closeModal} />
+                    )} 
                         
                 </ScrollView>
             </View>

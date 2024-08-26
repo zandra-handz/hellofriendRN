@@ -38,7 +38,7 @@ const ButtonLottieAnimationSatellitesLocations = ({
   showIcon = false,
   showShape = true,
   shapePosition = 'left',
-  shapeSource = require('../assets/shapes/greenleaf.png'),
+  shapeSource,
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134,
@@ -313,13 +313,14 @@ svgContainer: {
   },
   additionalSatelliteSection: {
     flexDirection: 'column',
-    marginVertical: 0, 
+    marginVertical: 0,  
     backgroundColor: 'black',
+  
   },
   categoryTextContainer: { 
     width: 300,  
     marginLeft: 10, 
-    height: 46,
+    height: 42,
     marginBottom: 0,
     justifyContent: 'center',
     whiteSpace: 'nowrap', 
@@ -328,10 +329,10 @@ svgContainer: {
   categoryText: {
     fontSize: 14,
     color: 'white',
-    fontFamily: 'Poppins-Bold', 
+    fontFamily: 'Poppins-Regular', 
     textTransform: 'uppercase',
     overflow: 'hidden',
-    maxHeight: 20,
+    maxHeight: 18,
     whiteSpace: 'nowrap', // This property may not be supported in React Native, so adjust using maxWidth or width
     textOverflow: 'ellipsis', // This property may not be supported in React Native, so adjust using maxWidth or width
   

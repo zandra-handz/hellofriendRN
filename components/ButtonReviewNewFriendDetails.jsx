@@ -10,19 +10,12 @@ import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import CompareTravel from '../components/CompareTravel';
 
 
-import { Ionicons } from '@expo/vector-icons';
-import QuickAddHello from '../speeddial/QuickAddHello';
-import AlarmClockGeoSvg from '../assets/svgs/alarm-clock-geo.svg'; // Import the SVG
-import LocationsOnMapSvg from '../assets/svgs/locations-on-map.svg'; // Import the SVG
 import LocationsOnMapColoredSvg from '../assets/svgs/locations-on-map-colored.svg'; // Import the SVG
 
 
 
 
-const ButtonReviewNewFriendDetails = () => {
-    const { authUserState } = useAuthUser();
-    const { selectedFriend } = useSelectedFriend();
-    const { selectedLocation } = useLocationList();
+const ButtonReviewNewFriendDetails = () => { 
     const [ isModalVisible, setIsModalVisible ] = useState(false);
 
     const openModal = () => setIsModalVisible(true);
@@ -31,15 +24,7 @@ const ButtonReviewNewFriendDetails = () => {
 
 
     return (
-        <View style={styles.container}>
-        <AlertImage
-            isModalVisible={isModalVisible} 
-            toggleModal={closeModal} 
-            modalContent={<CompareTravel/>}
-            modalTitle={'Compare travel times'}
-
-        > 
-      </AlertImage> 
+        <View style={styles.container}> 
 
             <ButtonLottieAnimationSvg
                 onPress={openModal}

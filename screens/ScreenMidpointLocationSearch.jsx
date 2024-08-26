@@ -3,14 +3,12 @@ import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import ResultsMidpointFinds from '../components/ResultsMidpointFinds';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
-import { useAuthUser } from '../context/AuthUserContext';
-import { useLocationList } from '../context/LocationListContext';
+import { useAuthUser } from '../context/AuthUserContext'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import SelectorAddressBase from '../components/SelectorAddressBase';
 import PickerSimpleButtons from '../components/PickerSimpleButtons';
 
-const ScreenMidpointLocationSearch = () => {
-    const { selectedLocation } = useLocationList();
+const ScreenMidpointLocationSearch = () => { 
     const { authUserState } = useAuthUser();
     const { friendDashboardData } = useSelectedFriend();
     const [selectedUserAddress, setSelectedUserAddress] = useState(null);

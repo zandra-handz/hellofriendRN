@@ -100,11 +100,13 @@ const ItemViewMomentArchived = ({ moment, onClose }) => {
 
             </>
           )}
+
+          
             <NavigationArrows 
-              currentIndex={currentIndex}
+              currentIndex={0}
               imageListLength={capsuleList.length}
-              onPrevPress={goToPreviousMoment}
-              onNextPress={goToNextMoment}
+              onPrevPress={() => {}}
+              onNextPress={() => {}}
             />
             <View style={styles.buttonContainer}> 
               <View style={styles.footerContainer}>

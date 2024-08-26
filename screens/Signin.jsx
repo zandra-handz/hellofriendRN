@@ -218,19 +218,9 @@ const Signin = () => {
               <>
                 <ButtonColorHighlight
                   onPress={handleAuthentication}
-                  title={isSignIn ? "Sign in" : "Create account"}
-                  shapeSource={require('../assets/shapes/colorfultriangles.png')}
-                  shapeWidth={200}
-                  shapeHeight={200}
-                  shapePosition="left"
-                  shapePositionValue={-74}
-                  shapePositionVerticalValue={-60}
-                  shapeSource={require('../assets/shapes/redheadcoffee.png')}
-                  shapeWidth={200}
-                  shapeHeight={200}
-                  shapePosition="left"
-                  shapePositionValue={-34}
-                  shapePositionVerticalValue={-40}
+                  title={isSignIn ? "Sign in" : "Create account"} 
+
+
                   shapeSource={require('../assets/shapes/coffeecupdarkheart.png')}
                   shapeWidth={190}
                   shapeHeight={190}

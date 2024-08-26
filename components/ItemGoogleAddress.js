@@ -2,8 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 const ItemGoogleAddress = ({ description, fetchDetails }) => {
-  const handlePress = () => {
-    // Handle press action, such as fetching details
+  const handlePress = () => { 
     if (fetchDetails) {
       fetchDetails(description);
     }

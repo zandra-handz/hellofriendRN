@@ -7,7 +7,7 @@ import ItemHelloMulti from '../components/ItemHelloMulti'; // Import the ItemIma
  
 const ButtonLottieAnimationSatellitesHelloes = ({
   onPress,
-  buttonHeight = 60,
+  buttonHeight,
   buttonRadius = 10,
   isLoading = false,
   loadingMessage = '',
@@ -37,7 +37,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
   showIcon = false,
   showShape = true,
   shapePosition = 'left',
-  shapeSource = require('../assets/shapes/greenleaf.png'),
+  shapeSource,
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134,
@@ -160,7 +160,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
         horizontal
         keyExtractor={(item, index) => `additional-satellite-${index}`}
         renderItem={({ item }) => (
-          <ItemHelloSingle helloObject={item}  helloHeight={28} helloWidth={28}/>
+          <ItemHelloSingle helloObject={item}  helloHeight={20} helloWidth={20}/>
         )}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={{
@@ -262,7 +262,7 @@ const ButtonLottieAnimationSatellitesHelloes = ({
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { height:'buttonHeight', borderRadius: buttonRadius, backgroundColor: satelliteSectionBackgroundColor, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, { height: buttonHeight, borderRadius: buttonRadius, backgroundColor: satelliteSectionBackgroundColor, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
                 
                 
                 {renderSatellites()}
@@ -274,9 +274,12 @@ const ButtonLottieAnimationSatellitesHelloes = ({
       {additionalPages && (
         <View style={[styles.additionalSatelliteSection, {height:buttonHeight, borderRadius: buttonRadius }]}>
           {additionalPagesCategorize && (
-            <Text style={styles.categoryText}>{category}</Text>
-          )}
+            <View style={styles.categoryTextContainer}>
+              <Text style={styles.categoryText}>{category}</Text>
+            </View>
+          )} 
           {renderAdditionalSatellites()}
+           
         </View>
       )}
     </View>
@@ -307,17 +310,26 @@ const styles = StyleSheet.create({
   additionalSatelliteSection: {
     flexDirection: 'column',
     marginVertical: 0, 
-    backgroundColor: 'black',
+    backgroundColor: 'black', 
+    width: '100%',
   },
   categoryText: {
     fontSize: 14, 
     color: 'white',
-    fontFamily: 'Poppins-Bold', 
+    fontFamily: 'Poppins-Regular', 
     textTransform: 'uppercase',
     overflow: 'hidden',
-    maxHeight: 20,
+    maxHeight: 18,
     whiteSpace: 'nowrap', // This property may not be supported in React Native, so adjust using maxWidth or width
     textOverflow: 'ellipsis',
+  },
+  categoryTextContainer: { 
+    width: 300,  
+    marginLeft: 10, 
+    height: 42,
+    marginBottom: 0,
+    justifyContent: 'center',
+    whiteSpace: 'nowrap', 
   },
 });
 

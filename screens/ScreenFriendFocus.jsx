@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
-import ModalGen from '../components/ModalGen';
-import FriendSelect from '../data/FriendSelect';
-import QuickAddHello from '../speeddial/QuickAddHello';
-import QuickAddImage from '../speeddial/QuickAddImage';
-import QuickAddThought from '../speeddial/QuickAddThought';
+import { View, Text,  StyleSheet } from 'react-native';
+  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
-import ButtonLottieAnimationSatellites from '../components/ButtonLottieAnimationSatellites'; // Make sure to import the correct component
-import ActionPageSettings from '../components/ActionPageSettings';
-import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; // Import the new component
+
 import ActionFriendPageHeader from '../components/ActionFriendPageHeader'; // Import the new component
 import ActionFriendPageMoments from '../components/ActionFriendPageMoments'; // Import the new component
 import ActionFriendPageImages from '../components/ActionFriendPageImages'; // Import the new component
@@ -19,7 +12,6 @@ import ActionFriendPageLocations from '../components/ActionFriendPageLocations';
 
 
 import HelloFriendFooter from '../components/HelloFriendFooter';
-import { Ionicons } from '@expo/vector-icons';
 
 const ScreenFriendFocus = () => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
@@ -31,7 +23,7 @@ const ScreenFriendFocus = () => {
   const buttonMargin = 10;
 
   const pageHeaderHeightTall = 220;
-  const pageHeaderHeight = 170; 
+  const pageHeaderHeight = 168; 
 
   const headerTextColor = 'white';
   const inactiveIconColor = 'white';
@@ -64,7 +56,7 @@ const ScreenFriendFocus = () => {
             </View>
 
             <View style={{marginHorizontal: buttonMargin}}>
-            <ActionFriendPageHelloes topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={60} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'LAST HELLO'} />
+            <ActionFriendPageHelloes topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={72} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'LAST HELLO'} />
             </View>
             <HelloFriendFooter /> 
             </View>  
