@@ -62,7 +62,7 @@ const InputSearchAddress = () => {
         minLength={2}
         autoFocus={true}
         returnKeyType={'search'}
-        listViewDisplayed={listViewDisplayed} // Pass boolean value directly
+        listViewDisplayed={listViewDisplayed}  
         fetchDetails={true}
         keepResultsAfterBlur={true}
         onPress={handlePress}

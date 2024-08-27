@@ -5,6 +5,11 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import ButtonDirections from '../components/ButtonDirections';
 
+
+import { GOOGLE_API_KEY } from '@env';
+
+
+
 const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -44,7 +49,7 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
 
       <View style={styles.hintContainer}>
         {selectedAddress && (
-          <ButtonDirections address={selectedAddress.address} />
+          <ButtonDirections address={selectedAddress.address} size={15} />
         )}
         <Text style={styles.hintText}>
           {selectedAddress ? '' : 'No address selected'}
@@ -52,7 +57,7 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
         <FontAwesome
           name={isEditingAddress ? 'pencil' : 'check-circle'}
           size={24}
-          color="#007BFF"
+          color="limegreen"
           onPress={() => setIsEditingAddress(prev => !prev)}
           style={styles.icon}
         />
@@ -89,7 +94,7 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
                 style={styles.searchButton}
                 onPress={() => setShowAddressOptions(true)}
               >
-                <FontAwesome name="search" size={24} color="#007BFF" />
+                <FontAwesome name="search" size={24} color="limegreen" />
               </TouchableOpacity>
             </View>
 
@@ -116,7 +121,7 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
                     }}
                     fetchDetails={true}
                     query={{
-                      key: 'YOUR_GOOGLE_MAPS_API_KEY', // Replace with your actual Google Maps API key
+                      key: GOOGLE_API_KEY,
                       language: 'en',
                     }}
                     debounce={300}
@@ -124,7 +129,7 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
                       textInputContainer: styles.textInputContainer,
                       textInput: styles.textInput,
                       predefinedPlacesDescription: {
-                        color: '#007BFF',
+                        color: 'limegreen',
                       },
                     }}
                   />
@@ -223,7 +228,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 20,
-    backgroundColor: '#007BFF',
+    backgroundColor: 'limegreen',
     padding: 10,
     borderRadius: 5,
   },

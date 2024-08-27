@@ -1,19 +1,14 @@
  
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native'; 
-import { useAuthUser } from '../context/AuthUserContext';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';  
 import ContentAddFriend from '../components/ContentAddFriend';
-import { Picker } from '@react-native-picker/picker';
-import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
+
 import ButtonReviewNewFriendDetails from '../components/ButtonReviewNewFriendDetails';
 
-
 const ScreenAddFriend = ({includeBottomButton = false}) => { 
-    const { authUserState } = useAuthUser();
+   
  
-
-
 
     return (
         <View style={styles.container}> 
@@ -39,27 +34,7 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         paddingBottom: 10,
-    },
-    inputLabel: {
-        color: 'black',
-        fontFamily: 'Poppins-Bold',
-        fontSize: 16,
-        marginVertical: 10,
-    },
-    textInput: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 20,
-        fontFamily: 'Poppins-Regular',
-        color: 'black',
-        paddingHorizontal: 10,
-    },
-    picker: {
-        height: 50,
-        width: '100%',
-        color: 'black',
-    },
+    },  
     bottomContainer: {
         height: '12%', 
         padding: 0,

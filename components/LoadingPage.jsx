@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   loadingTextBold: {
     fontSize: 20,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Bold',
     textAlign: 'center',
   },
 });

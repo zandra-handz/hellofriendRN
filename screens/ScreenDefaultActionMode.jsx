@@ -17,6 +17,8 @@ import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton';
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import { Ionicons } from '@expo/vector-icons';
 
+import LoadingPage from '../components/LoadingPage';
+
 const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   
   const { themeStyles } = useGlobalStyle(); 
@@ -62,25 +64,19 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 return ( 
   <View style={[styles.container, themeStyles.container]}>
     {authUserState.authenticated && authUserState.user ? (
-      <>
-        {isLoading ? (
-          <View style={styles.loadingTextContainer}>
-            <Text style={styles.loadingTextBold}>
-              Welcome back, {authUserState.user.username}!
-            </Text>
-          </View>
-        ) : (
-          <>
-            {mainAppButton && (
-              <TouchableOpacity 
-                style={styles.navigationButton} 
-                onPress={() => navigation.navigate('Home')}
-              >
-                <Ionicons name="calendar" size={24} color="white" />
-                <Text style={styles.navigationButtonText}>main app</Text>
-              </TouchableOpacity>
-            )}
-
+      <>  
+          {isLoading && (  
+          <LoadingPage 
+            loading={isLoading}
+            includeLabel={true}
+            label='Updating next helloes'
+            spinnerSize={70}
+            color='lightgreen'
+            spinnerType='wander'
+          />  
+          )}
+          {!isLoading && (  
+            <>
             <View style={styles.buttonContainer}>
               <View style={{height: 146, width: '100%'}}>   
                 <ActionPageUpcomingButton/>
@@ -105,13 +101,14 @@ return (
               </View>
                )}
 
-            </View>
-            <View style={styles.footerContainer}>  
-            <HelloFriendFooter />
-            </View>
+                </View>
+                <View style={styles.footerContainer}>  
+                <HelloFriendFooter />
+                </View>
           </>
-        )}
-      </>
+          )}
+          </>
+        
     ) : (
       <View style={styles.signInContainer}>
         <Text style={styles.signInPrompt}>Please sign in to continue.</Text>

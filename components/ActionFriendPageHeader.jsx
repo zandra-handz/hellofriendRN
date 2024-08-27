@@ -67,8 +67,6 @@ const ActionFriendPageHeader = ({
         <LoadingPage 
           loading={loadingNewFriend}
           spinnerSize={70}
-          color='lightgreen'
-          spinnerType='wander'
         />
       </View>
     )}

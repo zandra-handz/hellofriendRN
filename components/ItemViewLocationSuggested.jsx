@@ -1,59 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import AlertImage from '../components/AlertImage';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useLocationList } from '../context/LocationListContext';
-import { useAuthUser } from '../context/AuthUserContext';
+import AlertLocation from '../components/AlertLocation';
 
-import ItemViewFooter from './ItemViewFooter';
-import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; // Adjust the import path as needed
+import { addToFriendFavesLocations} from '../api'; 
 
-import FormLocationQuickCreate from '../forms/FormLocationQuickCreate'; // Adjust the import path as needed
 import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
 import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
 import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
-
+import FooterActionButtons from '../components/FooterActionButtons';
+ 
+import { useLocationList } from '../context/LocationListContext';
+ 
 const ItemViewLocationSuggested = ({ onClose }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(true);
-  const { authUserState } = useAuthUser();
-  const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-  const { locationList, setLocationList, selectedLocation, setSelectedLocation, additionalDetails, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+  const [ setIsEditing] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(true);  
+  const { selectedLocation } = useLocationList();
   
-  const [isTemp, setIsTemp] = useState(false);
+  const [isTemp ] = useState(false);
 
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleSave = async (newLocation) => {
-    try {
-      if (isTemp) { 
-        const newLocationWithId = { ...newLocation, id: Date.now().toString() }; // Generate a unique ID for the new location
-        setLocationList([...locationList, newLocationWithId]);
-        setIsEditing(false); // Optionally close editing mode after saving
-      } else {
-        // If the location is not temporary, update or add the location to the friend's favorites
-        if (selectedFriend && selectedLocation) {
-          const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, selectedLocation.id);
-          addLocationToFaves(selectedLocation.id);
-          const updatedFaves = response;
-          console.log(updatedFaves);
-
-          if (friendDashboardData && friendDashboardData.length > 0) {
-            friendDashboardData[0].friend_faves = updatedFaves;
-            console.log(friendDashboardData);
-            updateFriendDashboardData(friendDashboardData);
-            console.log('Location added to friend\'s favorites.');
-          }
-        }
-        onClose();
-      }
-    } catch (error) {
-      console.error('Error saving new location in handleSave:', error);
-    }
-  };
 
   const closeModal = () => {
     setIsModalVisible(false);
@@ -61,97 +26,33 @@ const ItemViewLocationSuggested = ({ onClose }) => {
     onClose();
   };
 
-  const handleUpdate = async () => {
-    try {
-      if (selectedFriend && selectedLocation) {
-        const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, selectedLocation.id);
-        addLocationToFaves(selectedLocation.id);
-        const updatedFaves = response;
-        console.log(updatedFaves);
-
-        if (friendDashboardData && friendDashboardData.length > 0) {
-          friendDashboardData[0].friend_faves = updatedFaves;
-          updateFriendDashboardData(friendDashboardData);
-          console.log('Location added to friend\'s favorites.');
-        }
-      }
-      onClose();
-    } catch (error) {
-      console.error('Error adding location to favorites in handleUpdate:', error);
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      if (selectedFriend && selectedLocation) {
-        const response = await removeFromFriendFavesLocations(authUserState.user.id, selectedFriend.id, selectedLocation.id);
-        removeLocationFromFaves(selectedLocation.id);
-        const updatedFaves = response;
-
-        if (friendDashboardData && friendDashboardData.length > 0) {
-          friendDashboardData[0].friend_faves = updatedFaves;
-          updateFriendDashboardData(friendDashboardData);
-          console.log('Location removed from friend\'s favorites.');
-        }
-
-        console.log('Location removed from friend\'s favorites.');
-      }
-      onClose();
-    } catch (error) {
-      console.error('Error removing location from favorites in handleUpdate:', error);
-    }
-  };
-
-  const getLocationTitle = (location) => {
-    try {
-      let title = location.title || 'Unknown Location'; // Default title if location.title is undefined
-      if (location.id && String(location.id).startsWith('temp')) {
-        title += ' (unsaved)';
-      }
-      return title;
-    } catch (error) {
-      console.error('Error getting location title:', error);
-      return location.title; // Fallback title in case of an error
-    }
-  };
 
   return (
-    <AlertImage
+    <AlertLocation
       isModalVisible={isModalVisible}
       toggleModal={closeModal}
       modalContent={
         selectedLocation ? (
-          <View style={styles.modalContainer}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.modalContainer}> 
               <View style={styles.container}>
-                {isEditing ? (
-                  <>
-                    {isTemp ? (
-                      <FormLocationQuickCreate 
-                        title={selectedLocation.title} 
-                        address={selectedLocation.address} 
-                        onLocationCreate={handleSave} 
-                      />
-                    ) : (
-                      <>
-                        <Button title="Save" onPress={handleSave} />
-                        <Button title="Cancel" onPress={() => setIsEditing(false)} />
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <> 
-                    <ItemViewLocationDetails location={selectedLocation} unSaved={isTemp} />
-                  </>
-                )}
+                <> 
+                  <ItemViewLocationDetails location={selectedLocation} unSaved={isTemp} />
+                </>
               </View>
-              <ButtonCalculateAndCompareTravel />
-              <ButtonSendDirectionsToFriend /> 
-            </ScrollView>
+              <FooterActionButtons
+              height='9%'
+              bottom={66} 
+              backgroundColor='white'
+              buttons={[
+                <ButtonCalculateAndCompareTravel />,
+                <ButtonSendDirectionsToFriend />,
+              ]}
+            />
+           
           </View>
         ) : null
       }
-      modalTitle={selectedLocation ? "View location" : null}
+      modalTitle={selectedLocation ? "View search result" : null}
     />
   );
 };
@@ -159,62 +60,12 @@ const ItemViewLocationSuggested = ({ onClose }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
+    width: '100%',
+  }, 
   container: { 
     flex: 1,
     padding: 0, 
-  },
-  footerContainer: {
-    justifyContent: 'left',
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 0, 
-  },
-  imageContainer: {
-    padding: 10,
-    width: '100%',
-    flex: 1,
-  },
-  categoryTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  imageRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'left',
-  },
-  modalImage: {
-    width: '100%',
-    height: 300,
-    resizeMode: 'cover',
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  input: {
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 8,
-  },
-  icon: {
-    marginHorizontal: 10,
-  },
-  tagContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  tagLabel: {
-    fontSize: 16,
-  },
+  },    
 });
 
 export default ItemViewLocationSuggested;

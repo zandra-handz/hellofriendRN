@@ -17,13 +17,13 @@ const PickerDate = ({
   labelStyle,
   buttonStyle,
   includeContainer = false,
-  inline =false, // New prop to control layout
+  inline =false,  
 }) => {
   return (
     <View
       style={[
         includeContainer ? [styles.locationContainer, containerStyle] : undefined,
-        inline && styles.inlineContainer, // Apply inline styles if `inline` is true
+        inline && styles.inlineContainer,  
       ]}
     >
       <View style={inline ? styles.inlineContent : undefined}>
@@ -66,11 +66,11 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   inlineContainer: {
-    flexDirection: 'row', // Display items in a row for inline layout
+    flexDirection: 'row', 
     alignItems: 'center',
   },
   inlineContent: {
-    flexDirection: 'row', // Keep content in a row
+    flexDirection: 'row', 
     alignItems: 'center',
     flex: 1,
     width: '100%',
@@ -78,16 +78,14 @@ const styles = StyleSheet.create({
   locationTitle: {
     fontSize: 17,
     fontFamily: 'Poppins-Bold',
-    marginRight: 10, // Space between text and button
+    marginRight: 10,  
   },
-  datePickerButton: {
-    marginVertical: 0,  
-    // Default styles for the button
-    borderRadius: 20, // Ensure the button has rounded corners
-    backgroundColor: 'gray', // Default background color
+  datePickerButton: { 
+    borderRadius: 20, 
+    backgroundColor: 'gray', 
   },
   flexButton: {
-    flex: 1, // Make button fill remaining space
+    flex: 1,  
     alignItems: 'center',
     justifyContent: 'center',
     
@@ -96,7 +94,7 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
-    color: '#fff', // Text color inside the button
+    color: '#fff', 
     padding: 10,
     borderRadius: 20,
   },

@@ -45,6 +45,13 @@ const ScreenMidpointLocationSearch = () => {
                 />
             ) : (
                 <View style={styles.mainContainer}>
+
+                    <Text style={styles.inputLabel}>Search Keyword</Text>
+                    <TextInput
+                        style={styles.textInput}
+                        value={searchKeyword}
+                        onChangeText={setSearchKeyword}
+                    />
                     <PickerSimpleButtons
                         name="radius (meters)"
                         selectedOption={radius}
@@ -59,12 +66,7 @@ const ScreenMidpointLocationSearch = () => {
                         onValueChange={(itemValue) => setLength(itemValue)}
                     />
 
-                    <Text style={styles.inputLabel}>Search Keyword</Text>
-                    <TextInput
-                        style={styles.textInput}
-                        value={searchKeyword}
-                        onChangeText={setSearchKeyword}
-                    />
+
 
                     <SelectorAddressBase
                         addresses={authUserState.user.addresses}
@@ -86,13 +88,9 @@ const ScreenMidpointLocationSearch = () => {
                         label={`Find midpoints`}
                         height={54}
                         radius={16}
-                        fontMargin={3}
-                        animationSource={require("../assets/anims/heartinglobe.json")}
-                        rightSideAnimation={false}
+                        fontMargin={3}  
                         labelFontSize={22}
-                        labelColor="white"
-                        animationWidth={234}
-                        animationHeight={234}
+                        labelColor="white" 
                         labelContainerMarginHorizontal={4}
                         animationMargin={-64}
                         showGradient={true}
