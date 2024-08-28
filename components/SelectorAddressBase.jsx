@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import ButtonDirections from '../components/ButtonDirections';
-
-
+import AlertList from '../components/AlertList';
+import RowItemAddressSelect from '../components/RowItemAddressSelect';
+import PickerSimpleAddressBase from '../components/PickerSimpleAddressBase';
 import { GOOGLE_API_KEY } from '@env';
-
 
 
 const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
@@ -15,24 +15,29 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [showAddressOptions, setShowAddressOptions] = useState(false);
   const [localAddressOptions, setLocalAddressOptions] = useState([]);
+  const [makeInvisible, setMakeInvisible] = useState(false);
 
   useEffect(() => {
     if (addresses && addresses.length > 0) {
-      const options = addresses.map((address) => ({
-        label: address.title,
-        value: {
-          address: address.address,
+      const options = addresses.map((address) => {
+        const uniqueKey = `${address.title}-${address.coordinates ? address.coordinates.join(',') : `${address.latitude},${address.longitude}`}`;
+    
+        return {
+          key: uniqueKey,
           label: address.title,
-          lat: address.coordinates ? address.coordinates[0] : address.latitude,
-          lng: address.coordinates ? address.coordinates[1] : address.longitude,
-        },
-      }));
+          value: {
+            address: address.address,
+            label: address.title,
+            lat: address.coordinates ? address.coordinates[0] : address.latitude,
+            lng: address.coordinates ? address.coordinates[1] : address.longitude,
+          },
+        };
+      });
       setLocalAddressOptions(options);
       console.log('SelectorAddressBase options: ',options);
-
-      // Default to the first address if available
+ 
       setSelectedAddress(options[0].value);
-      onAddressSelect(options[0].value); // Automatically select the first address
+      onAddressSelect(options[0].value);  
     }
     console.log(addresses);
   }, [addresses]);
@@ -44,18 +49,22 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
   };
 
   return (
+    <>
     <View style={styles.container}>
       <Text style={styles.cardTitle}>{contextTitle}</Text>
 
       <View style={styles.hintContainer}>
+      <View style={{borderRadius: 20, width: '100%', padding: 10, borderWidth: 1, borderColor: '#ccc'}}>
+          
         {selectedAddress && (
           <ButtonDirections address={selectedAddress.address} size={15} />
         )}
         <Text style={styles.hintText}>
           {selectedAddress ? '' : 'No address selected'}
         </Text>
+        </View>
         <FontAwesome
-          name={isEditingAddress ? 'pencil' : 'check-circle'}
+          name={isEditingAddress ? 'pencil' : 'pencil'}
           size={24}
           color="limegreen"
           onPress={() => setIsEditingAddress(prev => !prev)}
@@ -101,8 +110,8 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
             <Modal
               animationType="slide"
               transparent={true}
-              visible={showAddressOptions}
-              onRequestClose={() => setShowAddressOptions(false)}
+              visible={makeInvisible}
+              onRequestClose={() => setMakeInvisible(false)}
             >
               <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
@@ -153,24 +162,60 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
         </View>
       </Modal>
     </View>
+    <AlertList
+        fixedHeight={true}
+        height={700}
+        isModalVisible={isEditingAddress} 
+        useSpinner={false}
+        toggleModal={() => setIsEditingAddress(false)}
+        headerContent={<Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18 }}>Select Address</Text>}
+        content={
+        <PickerSimpleAddressBase
+          name="Saved"
+          selectedOption={selectedAddress ? selectedAddress.label : null}
+          options={localAddressOptions.map(option => ({
+            label: option.value.address,
+            value: option.key
+          }))}
+          onValueChange={(itemValue) => {
+            const newAddress = localAddressOptions.find(option => option.key === itemValue)?.value;
+            setSelectedAddress(newAddress);
+            onAddressSelect(newAddress);
+            setIsEditingAddress(false);
+          }}
+        />
+
+          }
+        onCancel={() => setShowAddressOptions(false)}
+        confirmText="Reset All"
+        cancelText="Back"
+      />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    flexDirection: 'column',
+    padding: 0, 
+    borderRadius: 20,
+    marginBottom: 8,
+    height: 50,
+    width: '100%',
+    backgroundColor: 'pink',
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    marginBottom: 10, 
   },
   hintContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
+    width: '90%',
+    justifyContent: 'space-between',
   },
   hintText: {
     fontSize: 16,
@@ -193,7 +238,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addressText: {
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: 20,
   },
   searchIconContainer: {

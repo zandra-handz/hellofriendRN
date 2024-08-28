@@ -21,18 +21,18 @@ const InputAnyValue = ({ value, setValue, placeholder, errorMessage, isError }) 
 
 const styles = StyleSheet.create({
     sectionContainer: {
-        marginVertical: 8,
+        marginBottom: 8,
     },
     inputContainer: {
         justifyContent: 'center',
         width: '100%',
-        marginVertical: 10,
+        marginVertical: 4,
     },
     textInput: {
         borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 20,
-        fontSize: 18,
+        fontSize: 16,
         padding: 10,
         fontFamily: 'Poppins-Regular',
     },

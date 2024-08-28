@@ -54,9 +54,13 @@ export const AuthUserProvider = ({ children }) => {
     const handleSignin = async (username, password) => {
         const result = await signin(username, password);
         if (!result.error) {
-            await SecureStore.setItemAsync(TOKEN_KEY, result.data.access);
-            const currentUserData = await fetchUser(result.data.access);
-
+            const token = result.data.access;
+            const tokenExpiry = new Date().getTime() + 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+            await SecureStore.setItemAsync(TOKEN_KEY, token);
+            await SecureStore.setItemAsync('tokenExpiry', String(tokenExpiry));
+    
+            const currentUserData = await fetchUser(token);
+    
             if (currentUserData) {
                 setAuthUserState(prevState => ({
                     ...prevState,
@@ -72,7 +76,7 @@ export const AuthUserProvider = ({ children }) => {
                     credentials: {
                         ...prevState.credentials,
                         id: currentUserData.id,
-                        token: result.data.access,
+                        token: token,
                     },
                     authenticated: true,
                     loading: false, // Sign-in process is complete
@@ -95,6 +99,7 @@ export const AuthUserProvider = ({ children }) => {
         }
         return result;
     };
+    
 
     const handleSignout = async () => {
         const result = await signout();
@@ -122,7 +127,10 @@ export const AuthUserProvider = ({ children }) => {
     useEffect(() => {
         const initializeAuthState = async () => {
             const token = await SecureStore.getItemAsync(TOKEN_KEY);
-            if (token) {
+            const tokenExpiry = await SecureStore.getItemAsync('tokenExpiry');
+            const currentTime = new Date().getTime();
+    
+            if (token && tokenExpiry && currentTime < parseInt(tokenExpiry)) {
                 const currentUserData = await fetchUser(token);
                 if (currentUserData) {
                     setAuthUserState(prevState => ({
@@ -157,11 +165,11 @@ export const AuthUserProvider = ({ children }) => {
             } else {
                 setAuthUserState(prevState => ({
                     ...prevState,
-                    loading: false, // No token, loading is complete
+                    loading: false, // No token or token expired, loading is complete
                 }));
             }
         };
-
+    
         initializeAuthState();
     }, []);
 

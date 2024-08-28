@@ -1,9 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-// Import your SVG components
-import CoffeeCupPaperSolid from '../assets/svgs/coffee-cup-paper-solid';
-import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
 
 const PickerMenuOptions = ({
   options = [],

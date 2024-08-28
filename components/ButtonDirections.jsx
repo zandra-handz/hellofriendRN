@@ -10,7 +10,13 @@ const ButtonDirections = ({ address, size = 14, family = 'Poppins-Regular', colo
   return (
     <TouchableOpacity onPress={handlePress} style={[styles.container, style]}>
       <FontAwesome5 name="map-marker-alt" size={size} color={color} />
-      <Text style={[styles.address, { fontSize: size, color: color, fontFamily: family }]}>{address}</Text>
+      <Text
+        style={[styles.address, { fontSize: size, color: color, fontFamily: family }]}
+        numberOfLines={1}
+        ellipsizeMode="tail"
+      >
+        {address}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -20,9 +26,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 0,
+    width: '100%',
   },
   address: {
     marginLeft: 8,
+    flexShrink: 1, // This allows the text to shrink and accommodate ellipsis
   },
 });
 

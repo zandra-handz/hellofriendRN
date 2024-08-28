@@ -1,8 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import AlertConfirm from '../components/AlertConfirm';
+
 import AlertList from '../components/AlertList';
 import RowItemFriendDelete from '../components/RowItemFriendDelete';
 import { useSelectedFriend } from '../context/SelectedFriendContext';

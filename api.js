@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 
 export const API_URL = 'https://ac67e9fa-7838-487d-a3bc-e7a176f4bfbf-dev.e1-us-cdp-2.choreoapis.dev/hellofriend/hellofriend/rest-api-be2/v1.0/';
 
@@ -14,6 +15,139 @@ export const setAuthHeader = (token) => {
     }
 };
 
+export const signout = async () => {
+    try {
+        await SecureStore.deleteItemAsync('accessToken');
+        await SecureStore.deleteItemAsync('refreshToken');
+        setAuthHeader(null); 
+        console.log("API signout: Authorization header cleared");
+        return true;
+    } catch (e) {
+        console.log("API signout error", e);
+        return false;
+    }
+};
+
+// Function to handle token refresh
+const refreshToken = async () => {
+    const refreshToken = await SecureStore.getItemAsync('refreshToken');
+    if (!refreshToken) throw new Error('No refresh token available');
+
+    try {
+        const response = await axios.post('/users/token/refresh/', { refresh: refreshToken });
+        const newAccessToken = response.data.access;
+        await SecureStore.setItemAsync('accessToken', newAccessToken);
+        setAuthHeader(newAccessToken);
+        return newAccessToken;
+    } catch (error) {
+        console.error('Error refreshing token:', error);
+        throw error;
+    }
+};
+
+// Track failed refresh attempts
+let failedRefreshCount = 0;
+const maxFailedAttempts = 3;
+
+// Flag to prevent multiple refresh attempts
+let isRefreshing = false;
+let failedQueue = [];
+const processQueue = (error, token = null) => {
+    failedQueue.forEach(prom => {
+        if (token) {
+            prom.resolve(token);
+        } else {
+            prom.reject(error);
+        }
+    });
+    failedQueue = [];
+};
+
+axios.interceptors.request.use(
+    async (config) => {
+        try {
+            const token = await SecureStore.getItemAsync('accessToken');
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+                console.log('Token attached to request:', token);
+            } else {
+                console.log('No token found, no Authorization header added.');
+            }
+            return config;
+        } catch (error) {
+            console.error('Error in request interceptor:', error);
+            return Promise.reject(error);
+        }
+    },
+    (error) => {
+        console.error('Error in request interceptor:', error);
+        return Promise.reject(error);
+    }
+);
+
+axios.interceptors.response.use(
+    (response) => {
+        console.log('Response received:', response);
+        return response;
+    },
+    async (error) => {
+        const { config, response } = error;
+        const status = response ? response.status : null;
+
+        console.log('Error response status:', status);
+
+        if (status === 401) {
+            console.log('401 Unauthorized error, attempting to refresh token.');
+
+            const originalRequest = config;
+
+            if (isRefreshing) {
+                return new Promise((resolve, reject) => {
+                    failedQueue.push({ resolve, reject });
+                })
+                .then(token => {
+                    originalRequest.headers['Authorization'] = `Bearer ${token}`;
+                    return axios(originalRequest);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
+            }
+
+            isRefreshing = true;
+
+            try {
+                const newAccessToken = await refreshToken();
+                console.log('New access token obtained:', newAccessToken);
+
+                setAuthHeader(newAccessToken);
+                processQueue(null, newAccessToken);
+
+                originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                
+                failedRefreshCount = 0; // Reset the failed attempts counter on success
+                return axios(originalRequest);
+            } catch (err) {
+                processQueue(err, null);
+                console.error('Error refreshing token:', err);
+
+                failedRefreshCount += 1; // Increment the failed attempts counter
+
+                if (failedRefreshCount >= maxFailedAttempts) {
+                    await signout(); // Sign out the user after max failed attempts
+                }
+
+                return Promise.reject(err);
+            } finally {
+                isRefreshing = false;
+            }
+        }
+
+        console.error('Non-401 error:', error);
+        return Promise.reject(error);
+    }
+);
+
 export const signup = async (username, email, password) => {
     try {
         return await axios.post('/users/sign-up/', { username, email, password });
@@ -26,7 +160,9 @@ export const signin = async (username, password) => {
     try {
         const result = await axios.post('/users/token/', { username, password });
         console.log("API signin result: ", result);
-        setAuthHeader(result.data.access); 
+        await SecureStore.setItemAsync('accessToken', result.data.access);
+        await SecureStore.setItemAsync('refreshToken', result.data.refresh);
+        setAuthHeader(result.data.access);
         return result;
     } catch (e) {
         return { error: true, msg: e.response.data.msg };
@@ -46,18 +182,17 @@ export const getCurrentUser = async () => {
 };
 
 
-export const signout = async () => {
+export const refreshAccessToken = async (refreshToken) => {
     try {
-        
-        setAuthHeader(null); 
-        console.log("API signout: Authorization header cleared");
-        return true;
+        const response = await axios.post('/users/token/refresh/', { refresh: refreshToken });
+        const newAccessToken = response.data.access;
+        setAuthHeader(newAccessToken);
+        return response;
     } catch (e) {
-        console.log("API signout error", e);
-        return false;
+        return { error: true, msg: e.response.data.msg };
     }
 };
-
+ 
 
 export const fetchFriendList = async () => {
     try {
