@@ -109,7 +109,7 @@ export const LocationListProvider = ({ children }) => {
             lat: parseFloat(selectedLocation.latitude),
             lon: parseFloat(selectedLocation.longitude),
           });
-          console.log('Fetched additional details:', details);
+          console.log('Fetched additional location details...');
           setAdditionalDetails(details);
           setLoadingAdditionalDetails(false);
         } else {

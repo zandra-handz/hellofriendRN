@@ -6,16 +6,18 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonColorHighlight from '../components/ButtonColorHighlight';
 import { useFonts } from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage'; 
-import Logo from '../components/Logo'; // Import the Logo component
+import Logo from '../components/Logo'; 
 import { LinearGradient } from 'expo-linear-gradient'; 
+
+const TOKEN_KEY = 'my-jwt';
 
 const Signin = () => {
   const { themeStyles, gradientColors } = useGlobalStyle();
   const { darkColor, lightColor } = gradientColors;
-
+  const { authUserState } = useAuthUser();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +25,7 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const { onSignin, onSignup } = useAuthUser();
+  const { onSignin, onSignup, onSignOut, reInitialize, fetchUser } = useAuthUser();
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const emailInputRef = useRef(null);
@@ -50,13 +52,18 @@ const Signin = () => {
 
   const checkIfSignedIn = async () => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
+      const token = await SecureStore.getItemAsync(TOKEN_KEY);
       if (token) {
-        // navigation.navigate('Home');
+        console.log(token);
+        reInitialize(); 
+
       }
     } catch (error) {
-      console.error('Error checking authentication status:', error);
+      console.error('Not signed in', error);
     }
+    console.log('Authenticated:', authUserState?.authenticated);
+    console.log('App Setup Complete:', authUserState.user?.app_setup_complete);
+    
   };
 
   const handleAuthentication = async () => {
@@ -108,14 +115,13 @@ const Signin = () => {
     return null; // Or any other loading indicator if fonts are not yet loaded
   }
 
-  return ( 
-        <LinearGradient
-          colors={[darkColor, lightColor]} // Gradient colors
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }} // Direction of the gradient
-          style={[styles.container, themeStyles.signinContainer]}
-        >
-       
+  return (
+    <LinearGradient
+      colors={[darkColor, lightColor]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={[styles.container, themeStyles.signinContainer]}
+    >
       {loading && (
         <LoadingPage loading={loading} spinnerType='circle' />
       )}
@@ -219,8 +225,6 @@ const Signin = () => {
                 <ButtonColorHighlight
                   onPress={handleAuthentication}
                   title={isSignIn ? "Sign in" : "Create account"} 
-
-
                   shapeSource={require('../assets/shapes/coffeecupdarkheart.png')}
                   shapeWidth={190}
                   shapeHeight={190}
@@ -256,9 +260,7 @@ const Signin = () => {
           </View>
         </>
       )}
-         
-      </LinearGradient> 
-       
+    </LinearGradient>
   );
 };
 

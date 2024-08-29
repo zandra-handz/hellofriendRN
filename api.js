@@ -29,21 +29,36 @@ export const signout = async () => {
 };
 
 // Function to handle token refresh
-const refreshToken = async () => {
+export const refreshToken = async () => {
+    console.log('Calling refresh token');
     const refreshToken = await SecureStore.getItemAsync('refreshToken');
     if (!refreshToken) throw new Error('No refresh token available');
+    
+    console.log(`Existing refresh token: ${refreshToken}`);
 
     try {
+        console.log('Sending request to refresh token');
         const response = await axios.post('/users/token/refresh/', { refresh: refreshToken });
+        console.log('Received response:', response);
         const newAccessToken = response.data.access;
+        console.log(`New access token: ${newAccessToken}`);
+    
         await SecureStore.setItemAsync('accessToken', newAccessToken);
-        setAuthHeader(newAccessToken);
+    
+        // Optionally, update token expiry
+        const decodedToken = jwtDecode(newAccessToken);
+        const newTokenExpiry = new Date(decodedToken.exp * 1000).getTime();
+        console.log(`New token expiry: ${newTokenExpiry}`);
+        await SecureStore.setItemAsync('tokenExpiry', String(newTokenExpiry));
+    
         return newAccessToken;
     } catch (error) {
         console.error('Error refreshing token:', error);
         throw error;
     }
+    
 };
+
 
 // Track failed refresh attempts
 let failedRefreshCount = 0;
@@ -65,88 +80,66 @@ const processQueue = (error, token = null) => {
 
 axios.interceptors.request.use(
     async (config) => {
-        try {
-            const token = await SecureStore.getItemAsync('accessToken');
-            if (token) {
-                config.headers['Authorization'] = `Bearer ${token}`;
-                console.log('Token attached to request:', token);
-            } else {
-                console.log('No token found, no Authorization header added.');
-            }
-            return config;
-        } catch (error) {
-            console.error('Error in request interceptor:', error);
-            return Promise.reject(error);
+        // Attach the access token to the request
+        const token = await SecureStore.getItemAsync('accessToken');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
         }
+        return config;
     },
     (error) => {
-        console.error('Error in request interceptor:', error);
         return Promise.reject(error);
     }
 );
 
 axios.interceptors.response.use(
     (response) => {
-        console.log('Response received:', response);
+        // Return the response if no error
         return response;
     },
     async (error) => {
         const { config, response } = error;
         const status = response ? response.status : null;
 
-        console.log('Error response status:', status);
-
         if (status === 401) {
-            console.log('401 Unauthorized error, attempting to refresh token.');
+            // Only handle token refresh if it's not already in progress
+            if (!isRefreshing) {
+                isRefreshing = true;
 
-            const originalRequest = config;
+                try {
+                    // Try to refresh the token
+                    const newAccessToken = await refreshToken();
+                    setAuthHeader(newAccessToken);
 
-            if (isRefreshing) {
-                return new Promise((resolve, reject) => {
-                    failedQueue.push({ resolve, reject });
-                })
-                .then(token => {
-                    originalRequest.headers['Authorization'] = `Bearer ${token}`;
-                    return axios(originalRequest);
-                })
-                .catch(err => {
+                    // Update the original request with the new access token
+                    config.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+                    // Retry the original request with the new access token
+                    return axios(config);
+                } catch (err) {
+                    // Sign out if refresh token is invalid or expired
+                    await signout();
                     return Promise.reject(err);
-                });
-            }
-
-            isRefreshing = true;
-
-            try {
-                const newAccessToken = await refreshToken();
-                console.log('New access token obtained:', newAccessToken);
-
-                setAuthHeader(newAccessToken);
-                processQueue(null, newAccessToken);
-
-                originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                
-                failedRefreshCount = 0; // Reset the failed attempts counter on success
-                return axios(originalRequest);
-            } catch (err) {
-                processQueue(err, null);
-                console.error('Error refreshing token:', err);
-
-                failedRefreshCount += 1; // Increment the failed attempts counter
-
-                if (failedRefreshCount >= maxFailedAttempts) {
-                    await signout(); // Sign out the user after max failed attempts
+                } finally {
+                    isRefreshing = false;
+                    processQueue(null, newAccessToken); // Process any pending requests
                 }
-
-                return Promise.reject(err);
-            } finally {
-                isRefreshing = false;
             }
+
+            // Handle multiple refresh requests
+            return new Promise((resolve, reject) => {
+                failedQueue.push({ resolve, reject });
+            }).then((token) => {
+                config.headers['Authorization'] = `Bearer ${token}`;
+                return axios(config);
+            }).catch((err) => Promise.reject(err));
         }
 
-        console.error('Non-401 error:', error);
+        // Handle other errors
         return Promise.reject(error);
     }
 );
+
 
 export const signup = async (username, email, password) => {
     try {
@@ -160,8 +153,7 @@ export const signin = async (username, password) => {
     try {
         const result = await axios.post('/users/token/', { username, password });
         console.log("API signin result: ", result);
-        await SecureStore.setItemAsync('accessToken', result.data.access);
-        await SecureStore.setItemAsync('refreshToken', result.data.refresh);
+     
         setAuthHeader(result.data.access);
         return result;
     } catch (e) {
@@ -216,7 +208,7 @@ export const fetchFriendAddresses = async (friendId) => {
 
 
 export const addFriendAddress = async (friendId, addressData) => {
-    console.log('addFriendAddress', {addressData}); 
+    
     try {  
       const response = await axios.post(`/friends/${friendId}/addresses/add/`, addressData); // Include friendId in the URL
       return response.data;
@@ -230,7 +222,6 @@ export const addFriendAddress = async (friendId, addressData) => {
   export const deleteFriendAddress = async (friendId, addressId) => {
     try {
         const response = await axios.delete(`/friends/${friendId}/address/${addressId}/`);
-        console.log('Address deleted successfully');
         return response.data;
     } catch (error) {
         console.error('Error deleting user address:', error);
@@ -253,9 +244,8 @@ export const addUserAddress = async (userId, addressData) => {
 
   export const deleteUserAddress = async (userId, title) => {
     try { 
-      console.log('deleteUserAddress payload: ', {userId, title});
       const response = await axios.post(`/users/${userId}/addresses/delete/`, title); // Pass addressData directly
-      console.log('Address deleted successfully');
+      
       return response.data;
     } catch (error) {
       console.error('Error deleting user address:', error);
@@ -278,10 +268,9 @@ export const validateAddress = async (userId, address) => {
 
 export const GetTravelComparisons = async (locationData) => {
       try {
-
-        console.log(locationData);
+ 
         const response = await axios.post(`/friends/places/`, locationData);
-        console.log('Consider the Drive Response:', response.data);
+        console.log('Consider the Drive Response', response.data);
         return response.data;
       } catch (error) {
         console.error('Error submitting addresses:', error); 
@@ -290,8 +279,7 @@ export const GetTravelComparisons = async (locationData) => {
 
 export const SearchForMidpointLocations = async (locationData) => {
     try {
-
-      console.log(locationData);
+ 
       const response = await axios.post(`/friends/places/near-midpoint/`, locationData);
       console.log('Search for Midpoint Response:', response.data);
       return response.data.suggested_places;
@@ -332,7 +320,7 @@ export const updateUserProfile = async (userId, firstName, lastName, dateOfBirth
 export const fetchFriendDashboard = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/dashboard/`);
-        console.log('fetchFriendDashboard Id sent:', friendId);
+        console.log('fetchFriendDashboard fetched successfully' );
         return response.data;
     } catch (error) {
         console.error('Error fetching friend dashboard data:', error);
@@ -351,7 +339,7 @@ export const remixAllNextHelloes = async (userId) => {
 };
 
 export const addToFriendFavesLocations = async (userId, friendId, locationId) => {
-    console.log(`favorite locations add call, ${userId}, ${friendId}, ${locationId}`);
+
     try {
         const response = await axios.patch(`/friends/${friendId}/faves/add/location/`, {
             
@@ -370,7 +358,7 @@ export const addToFriendFavesLocations = async (userId, friendId, locationId) =>
 
 
 export const removeFromFriendFavesLocations = async (userId, friendId, locationId) => {
-    console.log(`favorite locations add call, ${userId}, ${friendId}, ${locationId}`);
+    
     try {
         const response = await axios.patch(`/friends/${friendId}/faves/remove/location/`, {
             user: userId,
@@ -386,6 +374,7 @@ export const removeFromFriendFavesLocations = async (userId, friendId, locationI
 
 export const updateFriendFavesColorThemeSetting = async (userId, friendId, setting) => {
     console.log(`color theme setting call, ${userId}, ${friendId}, ${setting}`);
+    
     try {
         const response = await axios.patch(`/friends/${friendId}/faves/`, {
             
@@ -442,7 +431,7 @@ export const updateFriendFavesColorTheme = async (userId, friendId, darkColor, l
 export const fetchUpcomingHelloes = async () => {
     try {
         const response = await axios.get('/friends/upcoming/');
-        console.log("Upcoming called: ", response.data);
+        console.log("fetchUpcomingHelloes successful");
         return response.data;
     } catch (error) {
         console.error('Error fetching upcoming helloes:', error);
@@ -482,7 +471,7 @@ export const fetchPastHelloes = async (friendId) => {
         const response = await axios.get(`/friends/${friendId}/helloes/`);
         if (response && response.data) {
             const helloesData = response.data;
-            console.log('pastHelloes data: ', helloesData);
+            console.log('(api) fetchPastHelloes successful');
 
             const formattedHelloesList = helloesData.map(hello => ({
                 id: hello.id,
@@ -527,7 +516,7 @@ export const saveThoughtCapsule = async (requestData) => {
 
 
 export const saveHello = async (requestData) => {
-    console.log('data sent to saveHello: ', requestData);
+
     try {
         const response = await axios.post(`/friends/${requestData.friend}/helloes/add/`, requestData);
         console.log('response from saveHello endpoint: ', response);
@@ -583,10 +572,8 @@ export const fetchAllLocations = async () => {
 };
 
 export const createLocation = async (locationData) => {
-    try {
-        console.log('createLocation payload: ', locationData);
+    try { 
         const response = await axios.post('/friends/locations/add/', locationData);
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('Error creating location:', error, locationData);
@@ -610,7 +597,6 @@ export const updateLocation = async (locationId, locationData) => {
     console.log('updateLocation payload in api file: ', locationData);
     try {
         const response = await axios.patch(`friends/location/${locationId}/`, locationData);
-        console.log(response);
         return response.data;
     } catch (error) {
         console.error('Error updating location:', error);
@@ -701,7 +687,7 @@ export const updateAppSetup = async () => {
 export const fetchFriendImagesByCategory = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/images/by-category/`);
-        console.log("images/: ", response);
+        console.log("(api) fetchFriendImagesByCategory successful");
         return response.data;
     } catch (error) {
         console.error('Error fetching friend images by category:', error);
@@ -786,17 +772,15 @@ export const fetchTypeChoices = async () => {
 
 export const fetchLocationDetails = async (locationData) => {
     try {
-        
-      console.log('Location data to get details for: ', locationData);
-  
+         
       const response = await axios.post('/friends/places/get-details/', locationData);
   
-      // Handle the response data as needed
-      console.log('fetchLocationDetails response: ', response.data);
+      console.log('(api) fetchLocationDetails successful ');
       return response.data;
   
     } catch (error) {
       console.error('Error fetching location details:', error.message);
-      throw error; // Re-throw the error to be handled by the calling code
+      throw error; 
+      
     }
   };

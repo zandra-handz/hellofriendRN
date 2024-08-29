@@ -168,3 +168,6 @@ npm i reanimated-color-picker
 eas cli   or something (?)
 
  npm install react-native-dotenv
+
+// trying to work out why my token is invalid after like a minute
+ npm install jwt-decode
