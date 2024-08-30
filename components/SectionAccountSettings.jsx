@@ -115,28 +115,9 @@ const SectionAccountSettings = () => {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Manual Light/Dark Mode</Text>
-        <ToggleButton value={manualTheme} onToggle={toggleManualTheme} />
-      </View>
-      {manualTheme && (  
-      <View style={styles.row}>
-        <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Light/Dark</Text>
-        <ToggleButton value={manualDarkMode} onToggle={toggleLightDark} />
-      </View>
-      )} 
-
-      <AlertMicro
-        isModalVisible={showAlert}
-        toggleModal={() => setShowAlert(false)}
-        modalContent={
-          <Text>
-            Please enable the screen reader in your device settings to use this feature.
-          </Text>
-        }
-        modalTitle="Screen Reader Required"
-      />
+       <Text>Delete</Text>
+ 
+      </View> 
     </View>
   );
 };

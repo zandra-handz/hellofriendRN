@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -15,7 +15,7 @@ import ActionScreenButtonAddLocation from '../components/ActionScreenButtonAddLo
 
 import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; 
 import HelloFriendFooter from '../components/HelloFriendFooter';
-import { Ionicons } from '@expo/vector-icons';
+
 
 import LoadingPage from '../components/LoadingPage';
 
@@ -25,16 +25,7 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 
   const { authUserState } = useAuthUser();
   const { selectedFriend } = useSelectedFriend();
-  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const [modal1Visible, setModal1Visible] = useState(false);
-  const [modal2Visible, setModal2Visible] = useState(false);
-  const [modal3Visible, setModal3Visible] = useState(false);
-  const [modalSettingsVisible, setModalSettingsVisible] = useState(false);
-
-  const openModal1 = () => setModal1Visible(true);
-  const openModal2 = () => setModal2Visible(true);
-  const openModal3 = () => setModal3Visible(true);
-  const openModalSettings = () => setModalSettingsVisible(true);
+  const { isLoading } = useUpcomingHelloes();
 
 
   const navigateToAddMomentScreen = () => {
@@ -111,13 +102,7 @@ return (
         
     ) : (
       <View style={styles.signInContainer}>
-        <Text style={styles.signInPrompt}>Please sign in to continue.</Text>
-        <TouchableOpacity 
-          style={styles.signInButton} 
-          onPress={navigateSignInScreen}
-        >
-          <Text style={styles.signInButtonText}>Sign In</Text>
-        </TouchableOpacity>
+
       </View>
     )}
   </View>
@@ -127,45 +112,8 @@ return (
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#f0f0f0', 
-    backgroundColor: 'black',
-  },
-  loadingTextContainer: {
-    flex: 1, 
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 10,
-    paddingBottom: 6, 
-    paddingTop: 0,
-  },
-  loadingText: {
-    fontSize: 28,
-    fontFamily: 'Poppins-Regular',
-
-  },
-  loadingTextBold: {
-    fontSize: 22,
-    fontFamily: 'Poppins-Bold',
-
-  },
-  navigationButton: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    padding: 15,
-    backgroundColor: '#292929',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10000,
-  },
-  navigationButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginLeft: 5,
-  },
+    flex: 1,  
+  },   
   buttonContainer: {
     height: '90.5%',
     alignItems: 'center',

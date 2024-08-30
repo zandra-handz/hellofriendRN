@@ -45,7 +45,7 @@ export const AuthUserProvider = ({ children }) => {
                     token: result.data.token,
                 },
                 authenticated: false,
-                loading: false, // Signup process is complete
+                loading: false, 
             });
             await SecureStore.setItemAsync(TOKEN_KEY, String(result.data.token));
         }
@@ -62,7 +62,8 @@ export const AuthUserProvider = ({ children }) => {
             await SecureStore.setItemAsync(TOKEN_KEY, token);
             await SecureStore.setItemAsync('refreshToken', refreshToken);
             await SecureStore.setItemAsync('tokenExpiry', String(tokenExpiry));
-    
+            
+            console.log('handle sign in in context tokens stored:', token);
             const currentUserData = await fetchUser();
             if (currentUserData) {
                 setAuthUserState(prevState => ({
@@ -238,6 +239,7 @@ export const AuthUserProvider = ({ children }) => {
                     // Token has expired
                     console.log('Token has expired.');
                     await SecureStore.deleteItemAsync(TOKEN_KEY);
+                    await SecureStore.deleteItemAsync('refreshToken');
                     await SecureStore.deleteItemAsync('tokenExpiry');
         
                     try {

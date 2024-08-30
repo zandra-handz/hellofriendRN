@@ -3,15 +3,11 @@ import { StyleSheet, AccessibilityInfo } from 'react-native';
 import { useAuthUser } from './AuthUserContext';
 import { updateUserAccessibilitySettings } from '../api';
 import { useColorScheme } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 
-// Create context
 const GlobalStyleContext = createContext();
 
-// Custom hook to use the context
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
-// Provider component
 export const GlobalStyleProvider = ({ children }) => {
     const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
     const colorScheme = useColorScheme();
@@ -171,14 +167,28 @@ const lightThemeStyles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 10,
     },
+    footerContainer: {
+        backgroundColor: 'white',
+        borderTopWidth: 0,
+        borderColor: 'black',
+    },
     gradientContainer: {
         ...StyleSheet.absoluteFillObject,
         flex: 1,
     },
     divider: {
+        width: 1,
         backgroundColor: 'gray',
     },
     footerText: {
+        fontFamily: 'Poppins-Bold',
+        fontSize: 14,
+        color: 'black',
+    },
+    upcomingNavIcon: {
+        color: 'black',
+    },
+    upcomingNavText: {
         fontFamily: 'Poppins-Bold',
         fontSize: 14,
         color: 'black',
@@ -199,6 +209,7 @@ const darkThemeStyles = StyleSheet.create({
     signinContainer: {
         backgroundColor: 'black',
     },
+
     signinText: {
         color: 'white',
         fontFamily: 'Poppins-Bold',
@@ -226,19 +237,26 @@ const darkThemeStyles = StyleSheet.create({
         tintColor: 'black',
     },
     container: {
-        backgroundColor: '#001a00',
+        backgroundColor: '#050604',
         shadowColor: '#000000',
         shadowOffset: { width: 0, height: -5 },
         shadowOpacity: 0.8,
         shadowRadius: 8,
         elevation: 10,
     },
+    footerContainer: {
+        backgroundColor: 'black',
+        borderTopWidth: .4,
+        borderColor: '#ccc',
+    },
+
     gradientContainer: {
         ...StyleSheet.absoluteFillObject,
         flex: 1,
     },
     divider: {
-        backgroundColor: 'lightgray',
+        width: .4,
+        backgroundColor: '#ccc',
     },
     footerText: {
         fontFamily: 'Poppins-Bold',
@@ -248,8 +266,16 @@ const darkThemeStyles = StyleSheet.create({
     footerIcon: {
         color: 'white',
     },
+    UpcomingNavText: {
+        fontFamily: 'Poppins-Bold',
+        fontSize: 14,
+        color: 'white',
+    },
+    upcomingNavIcon: {
+        color: 'white',
+    },
     header: {
-        backgroundColor: '#222',
+        backgroundColor: 'black',
         borderBottomColor: 'darkgray',
         borderBottomWidth: 1,
     },

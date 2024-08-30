@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text,  StyleSheet } from 'react-native';
   
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -9,12 +9,13 @@ import ActionFriendPageImages from '../components/ActionFriendPageImages'; // Im
 import ActionFriendPageHelloes from '../components/ActionFriendPageHelloes'; // Import the new component
 import ActionFriendPageLocations from '../components/ActionFriendPageLocations'; // Import the new component
 
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import HelloFriendFooter from '../components/HelloFriendFooter';
 
 const ScreenFriendFocus = () => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { themeStyles } = useGlobalStyle(); 
 
   const headers = true;
   const insideHeaders = true;
@@ -33,7 +34,7 @@ const ScreenFriendFocus = () => {
 
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, themeStyles.container]}>
       {loadingNewFriend && (
         <View style={styles.loadingTextContainer}>
         <Text style={styles.loadingTextBold}>Loading data for {selectedFriend.name}!</Text>

@@ -2,6 +2,8 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+
 
 const ButtonToActionMode = ({ 
   iconName = 'arrow-left', 
@@ -10,6 +12,7 @@ const ButtonToActionMode = ({
   label = 'Back', 
   fAIcon = false 
 }) => {
+  const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
 
   const navigateToScreen = () => {
@@ -21,19 +24,16 @@ const ButtonToActionMode = ({
       return (
         <FontAwesome 
           name={iconName} 
-          size={28} 
-          color="black" 
-          style={styles.icon} 
+          size={28}  
+          style={themeStyles.footerIcon} 
         />
       );
-    } else {
-      // Using MaterialIcons as default
+    } else { 
       return (
         <FontAwesome 
           name={iconName} 
-          size={28} 
-          color="black" 
-          style={styles.icon} 
+          size={28}  
+          style={themeStyles.footerIcon}
         />
       );
     }
@@ -42,7 +42,7 @@ const ButtonToActionMode = ({
   return (
     <TouchableOpacity onPress={navigateToScreen} style={styles.buttonContainer}>
       {renderIcon()}
-      {!iconOnly && <Text style={styles.label}>{label}</Text>}
+      {!iconOnly && <Text style={themeStyles.footerText}>{label}</Text>}
     </TouchableOpacity>
   );
 };

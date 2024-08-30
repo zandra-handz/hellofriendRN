@@ -6,12 +6,13 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import ActionFriendPageHeader from './ActionFriendPageHeader';
 import ButtonArrowSvgAndLabel from '../components/ButtonArrowSvgAndLabel';
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ActionPageUpcomingButton = ({ onPress }) => {
   const { authUserState, userAppSettings } = useAuthUser();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { selectedFriend, setFriend } = useSelectedFriend();
+  const { themeStyles } = useGlobalStyle();
  
   
   let mainHello = null;
@@ -94,6 +95,7 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             animationWidth={234}
             animationHeight={234}
             lightColor="black"
+            darkColor="black"
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             shapePosition="right"

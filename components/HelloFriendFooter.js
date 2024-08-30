@@ -15,7 +15,7 @@ export default function HelloFriendFooter() {
     const { themeStyles } = useGlobalStyle(); // Get the theme styles from context
 
     return (
-        <View style={[styles.container, themeStyles.container]}>
+        <View style={[styles.container, themeStyles.footerContainer]}>
             {isOnActionPage ? (
                 <View style={styles.section}>
                     <ButtonSignOut
@@ -46,7 +46,7 @@ export default function HelloFriendFooter() {
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: 'row',
+        flexDirection: 'row', 
         height: 64,
         width: '100%',
         marginBottom: 0,
@@ -57,14 +57,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    divider: {
-        width: 1,
+    divider: { 
         marginVertical: 10,
-    },
-    footerText: {
-        fontSize: 16,
-        textAlign: 'center',
-        fontWeight: 'bold',
-        marginTop: 4,
     },
 });

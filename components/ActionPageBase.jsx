@@ -42,8 +42,8 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
         fontSize: adjustFontSize(fontSize),
         ...(globalStyles.highContrast && {
             textShadowColor: 'rgba(0, 0, 0, 0.75)',
-            textShadowOffset: { width: 2, height: 2 },
-            textShadowRadius: 1,
+            textShadowOffset: { width: 0, height: 0 },
+            textShadowRadius: 0,
         }),
     });
 

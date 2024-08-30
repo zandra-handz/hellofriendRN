@@ -1,12 +1,15 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ItemViewFooter = ({ buttons, maxButtons, showLabels }) => {
-  // Limit the number of buttons displayed based on maxButtons prop
+  
+  const { themeStyles } = useGlobalStyle(); 
+
   const displayedButtons = maxButtons ? buttons.slice(0, maxButtons) : buttons;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, themeStyles.footerContainer]}>
       {displayedButtons.map((button, index) => (
         <TouchableOpacity
           key={index}
@@ -25,8 +28,7 @@ const ItemViewFooter = ({ buttons, maxButtons, showLabels }) => {
 
 const styles = StyleSheet.create({
   container: { 
-    flexDirection: 'row',
-    backgroundColor: 'transparent',
+    flexDirection: 'row', 
     justifyContent: 'space-between',
     alignContent: 'center', 
     height: 40,
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
   },
   iconContainer: {
-    marginHorizontal: 0,
+    marginHorizontal: 0, 
   },
 });
 

@@ -17,7 +17,7 @@ const TOKEN_KEY = 'my-jwt';
 const Signin = () => {
   const { themeStyles, gradientColors } = useGlobalStyle();
   const { darkColor, lightColor } = gradientColors;
-  const { authUserState } = useAuthUser();
+  const [showSignIn, setShowSignIn ] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,7 +46,7 @@ const Signin = () => {
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { 
     checkIfSignedIn();
   }, []);
 
@@ -56,15 +56,17 @@ const Signin = () => {
       if (token) {
         console.log(token);
         reInitialize(); 
-
+        // Optionally, handle any other logic needed after re-initialization
+      } else {
+        // No token found, show sign in
+        setShowSignIn(true);
       }
-    } catch (error) {
-      console.error('Not signed in', error);
+    } catch (error) { 
+      console.error('Error checking sign-in status', error);
+      // Handle errors as necessary
     }
-    console.log('Authenticated:', authUserState?.authenticated);
-    console.log('App Setup Complete:', authUserState.user?.app_setup_complete);
-    
   };
+  
 
   const handleAuthentication = async () => {
     setLoading(true);
@@ -146,6 +148,7 @@ const Signin = () => {
             allowFontScaling={true}
           >
             a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
+            
             <TouchableOpacity
               onPress={toggleMode}
               accessible={true}
@@ -156,6 +159,7 @@ const Signin = () => {
             </TouchableOpacity>
           </Text>
 
+          {showSignIn && (
           <View style={styles.form} accessible={true} accessibilityLabel="Form container">
             {!isSignIn && (
               <TextInput
@@ -258,6 +262,7 @@ const Signin = () => {
               </>
             )}
           </View>
+           )}
         </>
       )}
     </LinearGradient>

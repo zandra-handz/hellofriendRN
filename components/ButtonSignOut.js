@@ -34,8 +34,8 @@ const ButtonSignOut = ({
 
   return (
     <>
-      <TouchableOpacity onPress={handleSignOutPress} style={[styles.buttonContainer, themeStyles.footerIcon]}>
-        <LogoutOutlineSvg width={30} height={30} style={styles.icon} />
+      <TouchableOpacity onPress={handleSignOutPress} style={styles.buttonContainer}>
+        <LogoutOutlineSvg width={30} height={30} style={themeStyles.footerIcon}  />
         {!iconOnly && <Text style={[styles.label, themeStyles.footerText]}>{label}</Text>}
       </TouchableOpacity>
 
@@ -62,8 +62,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
-    marginRight: 8, 
-    color: 'black'
+    marginRight: 8,  
   },
   label: { 
     fontFamily: 'Poppins-Bold',

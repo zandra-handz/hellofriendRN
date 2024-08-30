@@ -1,13 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
 import ActionPageBase from './ActionPageBase';
 import SectionAccessibilitySettings from './SectionAccessibilitySettings';
 import SectionFriendSettings from './SectionFriendSettings';
 import SectionAccountSettings from './SectionAccountSettings';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import SettingsOutlineSvg from '../assets/svgs/settings-outline.svg';
-import { useAuthUser } from '../context/AuthUserContext';
-
+ 
 const ButtonSettings = () => {
   const [isModalVisible, setModalVisible] = React.useState(false);
 
@@ -15,8 +14,7 @@ const ButtonSettings = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const { themeStyles } = useGlobalStyle();
-  const { authUserState } = useAuthUser();
+  const { themeStyles } = useGlobalStyle(); 
 
   React.useEffect(() => {
     if (isModalVisible) {
@@ -35,9 +33,7 @@ const ButtonSettings = () => {
   return (
     <>
       <TouchableOpacity style={styles.section} onPress={toggleModal}>
-        <SettingsOutlineSvg width={30} height={30
-          
-        } style={themeStyles.footerIcon} />
+        <SettingsOutlineSvg width={30} height={30} style={themeStyles.footerIcon} />
         <Text style={themeStyles.footerText}>Settings</Text>
       </TouchableOpacity>
 

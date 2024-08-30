@@ -15,7 +15,6 @@ import { SelectedFriendProvider } from './context/SelectedFriendContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font'; 
 import { useGlobalStyle } from './context/GlobalStyleContext';
-import { useNavigation } from '@react-navigation/native';
 
  
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';

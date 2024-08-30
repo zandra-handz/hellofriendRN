@@ -15,7 +15,7 @@ import { useLocationList } from '../context/LocationListContext';
 const ScreenLocationSearch = ({ route, navigation }) => {
     const { locationList, selectedLocation, setSelectedLocation } = useLocationList();
     const [category, setCategory] = useState(null);
-
+    const [scrollSavedLocations] = useState(false); //for me to turn off to test performance without it
     useEffect(() => {
         console.log('Selected Location Changed:', selectedLocation);
     }, [selectedLocation]);
@@ -42,6 +42,8 @@ const ScreenLocationSearch = ({ route, navigation }) => {
     }).current;
 
     const renderAdditionalSatellites = useCallback(() => (
+        <>
+        {scrollSavedLocations && ( 
         <FlatList
             data={locationList}
             horizontal
@@ -54,6 +56,8 @@ const ScreenLocationSearch = ({ route, navigation }) => {
             ListFooterComponent={<View style={{ width: 300 }} />} // Add blank space at the end of the list
     
         />
+        )}
+        </>
     ), [locationList, onViewableItemsChanged]);
 
     return (
@@ -86,10 +90,11 @@ const styles = StyleSheet.create({
     },
     additionalSatelliteSection: {
       flexDirection: 'column',
+      
       height: 90, // Adjust as needed
       borderRadius: 0,
       paddingHorizontal: 10,
-      backgroundColor: 'black',
+      backgroundColor: 'transparent',
     },
     categoryText: {
       fontSize: 18,
