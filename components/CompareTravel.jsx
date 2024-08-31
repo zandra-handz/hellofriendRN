@@ -11,7 +11,7 @@ import ResultsTravelComparison from '../components/ResultsTravelComparison';
 const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black", style }) => {
     const { selectedLocation } = useLocationList();
     const { authUserState } = useAuthUser();
-    const { selectedFriend, friendDashboardData } = useSelectedFriend(); // Access selected friend data
+    const { friendDashboardData } = useSelectedFriend(); // Access selected friend data
     const [message, setMessage] = useState('');
     const [editedMessage, setEditedMessage] = useState('');
     const [triggerFetch, setTriggerFetch] = useState(false);

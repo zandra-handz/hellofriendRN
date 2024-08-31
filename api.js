@@ -132,6 +132,7 @@ export const signup = async (username, email, password) => {
 };
 
 export const signin = async (username, password) => {
+    console.log(username);
     try {
         const result = await axios.post('/users/token/', { username, password });
         console.log("API signin result: ", result);
@@ -542,6 +543,7 @@ export const fetchAllLocations = async () => {
         const formattedLocations = response.data.map(location => ({
             id: location.id,
             address: location.address,
+            zipCode: location.zip_code,
             latitude: location.latitude,
             longitude: location.longitude,
             notes: location.notes,

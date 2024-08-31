@@ -1,6 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
 import { useLocationList } from '../context/LocationListContext';
 import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
@@ -9,68 +8,81 @@ import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
 import ButtonDirections from '../components/ButtonDirections';
 import ButtonSaveLocation from '../components/ButtonSaveLocation';
 import StylingRating from '../components/StylingRating';
- 
 
 const ItemViewLocationDetails = ({ location, unSaved }) => {
-  const { selectedLocation, additionalDetails, loadingAdditionalDetails } = useLocationList();
+  const { selectedLocation, clearAdditionalDetails, additionalDetails, loadingAdditionalDetails, updateAdditionalDetails } = useLocationList();
+  const [refreshing, setRefreshing] = useState(false);
 
 
 
+  
+  const handleRefresh = () => {
+    if (selectedLocation && selectedLocation.id) {
+      setRefreshing(true);
+      updateAdditionalDetails(selectedLocation).finally(() => {
+        setRefreshing(false);
+      });
+    }
 
-  if (!additionalDetails) {
-    return (
-      <View style={[styles.noDataContainer, {backgroundColor: 'transparent'}]}>
-        <Text style={styles.noDataText}></Text>
-      </View>
-    );
-  }
+  };
 
   return (
-    <ScrollView style={styles.container}> 
+    <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
-        {loadingAdditionalDetails && (
-          <Text style={styles.name}>{selectedLocation.title} </Text>
-        )}
-        {!loadingAdditionalDetails && (
-        <>
-        <Text style={styles.name}> {additionalDetails.name}</Text>
+        <Text style={styles.name}>
+          {additionalDetails ? additionalDetails.name : location.title}
+        </Text>
         <ButtonSaveLocation saveable={unSaved} />
-        </> 
-        )}
       </View>
-      <View style={styles.infoContainer}>
-        <View style={styles.detailsColumn}>
-          <View style={styles.detailRow}>
-            <ButtonDirections address={additionalDetails.address} />
-          </View>
-          <View style={styles.detailRow}>
-            <ButtonPhoneNumber phoneNumber={additionalDetails.phone} />
-            <View
-              style={[
-                styles.statusContainer,
-                additionalDetails.hours?.open_now ? styles.openNowContainer : styles.closedContainer,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.statusText,
-                  additionalDetails.hours?.open_now ? styles.openNowText : styles.closedText,
-                ]}
-              >
-                {additionalDetails.hours?.open_now ? 'Open' : 'Closed'}
-              </Text>
+      <Button
+        title={refreshing ? 'Refreshing...' : 'Load Details'}
+        onPress={handleRefresh}
+        disabled={refreshing}
+        style={styles.refreshButton}
+      />
+      {loadingAdditionalDetails ? (
+        <Text style={styles.loadingText}>Loading details...</Text>
+      ) : additionalDetails ? (
+        <>
+          <View style={styles.infoContainer}>
+            <View style={styles.detailsColumn}>
+              <View style={styles.detailRow}>
+                <ButtonDirections address={additionalDetails.address} />
+              </View>
+              <View style={styles.detailRow}>
+                <ButtonPhoneNumber phoneNumber={additionalDetails.phone} />
+                <View
+                  style={[
+                    styles.statusContainer,
+                    additionalDetails.hours?.open_now ? styles.openNowContainer : styles.closedContainer,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.statusText,
+                      additionalDetails.hours?.open_now ? styles.openNowText : styles.closedText,
+                    ]}
+                  >
+                    {additionalDetails.hours?.open_now ? 'Open' : 'Closed'}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.detailRow}>
+                <StylingRating rating={additionalDetails.rating} />
+              </View>
             </View>
+            {additionalDetails.hours && <CardHours hours={additionalDetails.hours.weekday_text} />}
           </View>
-          <View style={styles.detailRow}>
-            <StylingRating rating={additionalDetails.rating} />
-          </View>
+
+          <SectionLocationImages photos={additionalDetails.photos} />
+
+          <SectionCustomerReviews reviews={additionalDetails.reviews} />
+        </>
+      ) : (
+        <View style={styles.noDataContainer}>
+          <Text style={styles.noDataText}>No additional details available.</Text>
         </View>
-        {additionalDetails.hours && <CardHours hours={additionalDetails.hours.weekday_text} />}
-      </View>
-
-      <SectionLocationImages photos={additionalDetails.photos} />
-
-      <SectionCustomerReviews reviews={additionalDetails.reviews} />
+      )}
     </ScrollView>
   );
 };
@@ -119,7 +131,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 14,
     marginLeft: 4,
-  }, 
+  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -160,6 +172,15 @@ const styles = StyleSheet.create({
   },
   closedText: {
     color: 'red',
+  },
+  refreshButton: {
+    marginVertical: 10,
+    alignSelf: 'center',
+  },
+  loadingText: {
+    alignSelf: 'center',
+    fontSize: 16,
+    color: 'gray',
   },
 });
 

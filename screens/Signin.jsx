@@ -17,7 +17,7 @@ const TOKEN_KEY = 'my-jwt';
 const Signin = () => {
   const { themeStyles, gradientColors } = useGlobalStyle();
   const { darkColor, lightColor } = gradientColors;
-  const [showSignIn, setShowSignIn ] = useState(false);
+  const [showSignIn, setShowSignIn ] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

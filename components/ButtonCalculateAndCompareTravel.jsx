@@ -6,8 +6,7 @@ import CompareTravel from '../components/CompareTravel';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import LocationsOnMapColoredSvg from '../assets/svgs/locations-on-map-colored.svg'; // Import the SVG
 
-import AlertImage from '../components/AlertImage';
-import AlertLocation from '../components/AlertLocation';
+import AlertImage from '../components/AlertImage'; 
 
 
 

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
- 
-import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
- 
-import FormLocationQuickCreate from '../forms/FormLocationQuickCreate';  
+import { View, StyleSheet } from 'react-native';
+
+import { addToFriendFavesLocations } from '../api'; 
+
 import ItemViewLocationDetails from './ItemViewLocationDetails';  
 
 import AlertLocation from '../components/AlertLocation';
@@ -13,23 +12,20 @@ import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCom
 
 import FooterActionButtons from '../components/FooterActionButtons';
 
-import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
-import { useAuthUser } from '../context/AuthUserContext';
 
 
 const ItemViewLocation = ({ location, onClose }) => {
-  const { authUserState } = useAuthUser();
-  const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-  const { locationList, setLocationList, setSelectedLocation, addLocationToFaves, removeLocationFromFaves } = useLocationList();
-  const [isEditing, setIsEditing] = useState(false);
+  const { clearAdditionalDetails, selectedLocation, setSelectedLocation, addLocationToFaves } = useLocationList();
   const [isModalVisible, setIsModalVisible] = useState(true);
   const [isTemp, setIsTemp] = useState(false);
 
   useEffect(() => {
     if (location) {
+      clearAdditionalDetails();
       setSelectedLocation(location);
       console.log('Location data:', location);
+
     }
   }, [location]);
 
@@ -39,31 +35,6 @@ const ItemViewLocation = ({ location, onClose }) => {
     }
   }, [location]); 
 
-  const handleSave = async (newLocation) => {
-    try {
-      if (isTemp) { 
-        const newLocationWithId = { ...newLocation, id: Date.now().toString() }; 
-        setLocationList([...locationList, newLocationWithId]);
-        
-      } else { 
-        if (selectedFriend && location) {
-          const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
-          addLocationToFaves(location.id);
-          const updatedFaves = response;
-          console.log(updatedFaves);
-
-          if (friendDashboardData && friendDashboardData.length > 0) {
-            friendDashboardData[0].friend_faves = updatedFaves;
-            console.log(friendDashboardData);
-            updateFriendDashboardData(friendDashboardData); 
-          }
-        }
-        onClose();
-      }
-    } catch (error) {
-      console.error('Error saving new location in handleSave:', error);
-    }
-  };
 
   const closeModal = () => {
     setIsModalVisible(false); 
@@ -82,7 +53,9 @@ const ItemViewLocation = ({ location, onClose }) => {
           <View style={styles.modalContainer}> 
               <View style={styles.container}> 
                   <> 
+                  {selectedLocation && ( 
                     <ItemViewLocationDetails location={location} unSaved={isTemp} />
+                  )}
                   </>
                 
               </View>

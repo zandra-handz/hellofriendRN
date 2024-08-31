@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext'; // Import the AuthUser context
 import { useUpcomingHelloes } from './UpcomingHelloesContext';
-import { fetchAllLocations, fetchLocationDetails } from '../api'; // Import the API methods
+import { fetchAllLocations, fetchLocationDetails, updateLocation } from '../api'; // Import the API methods
 
 const LocationListContext = createContext();
 
@@ -17,139 +17,139 @@ export const LocationListProvider = ({ children }) => {
   const [loadingAdditionalDetails, setLoadingAdditionalDetails] = useState(false);
   const [isTemp, setIsTemp] = useState(false);
   const [isFave, setIsFave] = useState(false);
-  const { authUserState } = useAuthUser(); 
+  const { authUserState } = useAuthUser();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes(); // Access isLoading from UpcomingHelloesContext
 
-  const extractZipCode = (address) => { 
+  const extractZipCode = (address) => {
     const zipCodePattern = /(?:\b\d{5}(?:-\d{4})?\b)/;
     const cleanedAddress = address.replace(/^\d+\s*/, '');
     const match = cleanedAddress.match(zipCodePattern);
-    const zipCode = match ? match[0] : null; 
-    return zipCode;
+    return match ? match[0] : null;
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      // Check if upcomingHelloes is available and not loading
-      if (upcomingHelloes) {
-        console.log('Fetching location list from API');
+      if (upcomingHelloes && !isLoading) {  // Wait until upcomingHelloes is loaded
         setLoadingSelectedLocation(true);
         try {
           const locationData = await fetchAllLocations();
-          const updatedLocationData = locationData.map(location => {
-            const zipCode = extractZipCode(location.address);
+          
+          // Using Promise.all to handle async operations inside map
+          const updatedLocationData = await Promise.all(locationData.map(async location => {
+            let zipCode = location.zipCode;
+            
+            // Extract zip code only if it's null
+            if (!zipCode) {
+              zipCode = extractZipCode(location.address);
+
+              if (zipCode) {
+                const newLocationData = {
+                  zip_code: zipCode,
+                  user: authUserState.user.id,
+                };
+
+                const response = await updateLocation(location.id, newLocationData);
+                console.log('Response from updating location:', response);
+              }
+            }
+
             return {
               ...location,
               zipCode,
             };
-          });
-  
-          console.log('Setting location list state');
+          }));
+
           setLocationList(updatedLocationData);
-          setLoadingSelectedLocation(true);
-  
+          setLoadingSelectedLocation(false);
+
           if (updatedLocationData.length > 0) {
-            console.log('Setting selected location');
             setSelectedLocation(updatedLocationData[0]);
           } else {
             setSelectedLocation(null);
           }
-  
+
         } catch (error) {
           console.error('Error fetching location list:', error);
-          setLoadingSelectedLocation(false); // Ensure loading state is reset on error
+          setLoadingSelectedLocation(false);  // Set to false on error
         }
       }
     };
-  
-    // Run fetchData only if authenticated, upcomingHelloes is loaded, and not loading
-    if (upcomingHelloes) {
+
+    if (authUserState.authenticated && !isLoading) { // Ensure that the locations only fetch after upcomingHelloes has loaded
       fetchData();
     } else {
-      console.log('Clearing location list and selected location due to authentication or loading state');
       setLocationList([]);
-      setSelectedLocation(null); // Clear selectedLocation if not authenticated or if data is still loading
+      setSelectedLocation(null); // Clear selectedLocation if not authenticated
     }
-  }, [upcomingHelloes]); // Dependencies
+  }, [authUserState.authenticated, isLoading, upcomingHelloes]); // Include isLoading in dependencies
   
   useEffect(() => {
-    console.log('useEffect: Updating selected location');
-    if (locationList.length > 0 && !selectedLocation) {
+    if (locationList.length > 0) {
       setSelectedLocation(locationList[0]);
     }
   }, [locationList]);
 
   useEffect(() => {
-    console.log('useEffect: Updating validated location list');
     setValidatedLocationList(locationList.filter(location => location.validatedAddress));
   }, [locationList]);
 
   useEffect(() => {
-    console.log('useEffect: Updating isTemp state');
     if (selectedLocation && selectedLocation.id) {
-      const tempStatus = String(selectedLocation.id).startsWith('temp');
-      setIsTemp(tempStatus);
-      console.log(`isTemp set to: ${tempStatus}`);
+      setIsTemp(String(selectedLocation.id).startsWith('temp'));
     } else {
       setIsTemp(false);
     }
   }, [selectedLocation]);
 
   useEffect(() => {
-    console.log('useEffect: Updating isFave state');
     if (selectedLocation && faveLocationList.length > 0) {
-      const faveStatus = faveLocationList.some(location => location.id === selectedLocation.id);
-      setIsFave(faveStatus);
-      console.log(`isFave set to: ${faveStatus}`);
+      setIsFave(faveLocationList.some(location => location.id === selectedLocation.id));
     } else {
       setIsFave(false);
     }
   }, [selectedLocation, faveLocationList]);
 
   useEffect(() => {
-    console.log('useEffect: Setting temp location list');
     setTempLocationList(locationList.filter(location => String(location.id).startsWith('temp')));
   }, [locationList]);
 
   useEffect(() => {
-    console.log('useEffect: Setting saved location list');
     setSavedLocationList(locationList.filter(location => !(String(location.id).startsWith('temp'))));
   }, [locationList]);
 
-  useEffect(() => {
-    if (!selectedLocation) return; // Early exit if no selected location
-  
-    console.log('Fetching additional location details');
-    const updateAdditionalDetails = async () => {
-      setLoadingAdditionalDetails(true);
-      try {
+  const updateAdditionalDetails = async (location) => {
+    setLoadingAdditionalDetails(true);
+    try {
+      if (location && location.id) { 
         const details = await fetchLocationDetails({
-          address: encodeURIComponent(`${selectedLocation.title} ${selectedLocation.address}`),
-          lat: parseFloat(selectedLocation.latitude),
-          lon: parseFloat(selectedLocation.longitude),
+          address: encodeURIComponent(`${location.title} ${location.address}`),
+          lat: parseFloat(location.latitude),
+          lon: parseFloat(location.longitude),
         });
-        console.log('Additional location details fetched');
+        console.log('Fetched additional location details...');
         setAdditionalDetails(details);
-      } catch (err) {
-        console.error('Error fetching location details:', err);
+      } else {
+        console.log('No location provided. Resetting additional details.');
         setAdditionalDetails(null);
-      } finally {
-        setLoadingAdditionalDetails(false);
       }
-    };
-  
-    updateAdditionalDetails();
-  }, [selectedLocation]);
-  
+      setLoadingAdditionalDetails(false);
+    } catch (err) {
+      console.error('Error fetching location details:', err);
+      setAdditionalDetails(null);
+      setLoadingAdditionalDetails(false);
+    }
+  };
+
+  const clearAdditionalDetails = () => {
+    setAdditionalDetails(null);
+  };
 
   const populateFaveLocationsList = (locationIds) => {
-    console.log('populateFaveLocationsList called with IDs:', locationIds);
     const favoriteLocations = locationList.filter(location => locationIds.includes(location.id));
     setFaveLocationList(favoriteLocations);
   };
 
   const addLocationToFaves = (locationId) => {
-    console.log('addLocationToFaves called with ID:', locationId);
     const location = locationList.find(loc => loc.id === locationId);
     if (location && !faveLocationList.some(loc => loc.id === locationId)) {
       setFaveLocationList([...faveLocationList, location]);
@@ -157,7 +157,6 @@ export const LocationListProvider = ({ children }) => {
   };
 
   const removeLocationFromFaves = (locationId) => {
-    console.log('removeLocationFromFaves called with ID:', locationId);
     const updatedFaves = faveLocationList.filter(loc => loc.id !== locationId);
     setFaveLocationList(updatedFaves);
   };
@@ -179,7 +178,9 @@ export const LocationListProvider = ({ children }) => {
       loadingSelectedLocation,
       loadingAdditionalDetails,
       isTemp, 
-      isFave 
+      isFave,
+      updateAdditionalDetails, // Add this function to the context value
+      clearAdditionalDetails // Add this function to the context value
     }}>
       {children}
     </LocationListContext.Provider>
