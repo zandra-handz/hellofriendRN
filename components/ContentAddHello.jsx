@@ -28,8 +28,7 @@ import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
 import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
 import CelebrationSparkOutlineSvg from '../assets/svgs/celebration-spark-outline';
 
-import AlertYesNo from '../components/AlertYesNo';  
-import AlertConfirm from '../components/AlertConfirm'; 
+import AlertYesNo from '../components/AlertYesNo';   
 
 import AlertSuccessFail from '../components/AlertSuccessFail';
 
@@ -51,10 +50,8 @@ const ContentAddHello = () => {
   const [selectedLocation, setSelectedLocation] = useState('Select location');
   const [existingLocationId, setExistingLocationId ] = useState('');
   const [customLocation, setCustomLocation ] = useState('');
-  
-  const { capsuleList, setCapsuleList } = useCapsuleList();
  
-  const [firstSectionTitle, setFirstSectionTitle] = useState('Friend: ');
+  const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
   const [momentsSelected, setMomentsSelected] = useState([]);
   
   const [isDeleteChoiceModalVisible, setDeleteChoiceModalVisible] = useState(false);
@@ -85,7 +82,7 @@ const ContentAddHello = () => {
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
-      setFirstSectionTitle('Friend: ');
+      setFirstSectionTitle('For: ');
     }
   }, [selectedFriend, loadingNewFriend]);
 
@@ -235,12 +232,7 @@ const ContentAddHello = () => {
 const failOk = () => { 
     setFailModalVisible(false);
 };
-  
- 
-
-  const handleDelete = (id) => {
-    setCapsuleList(capsuleList.filter(capsule => capsule.id !== id));
-  };
+   
 
   return (
     <View style={styles.container}>
@@ -250,7 +242,7 @@ const failOk = () => {
         <View style={styles.selectFriendContainer}>
         <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
 
-          <FriendSelectModalVersion width='82%' />
+          <FriendSelectModalVersion width='88%' />
         </View> 
         <View style={styles.typeChoicesContainer}>
             <PickerMenuOptions

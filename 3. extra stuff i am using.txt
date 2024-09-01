@@ -171,3 +171,11 @@ eas cli   or something (?)
 
 // trying to work out why my token is invalid after like a minute
  npm install jwt-decode
+
+// NOPE this doesn't work with expo, this only works with native code
+npm install react-native-fast-image
+
+// NOPE didn't work? 
+npm install expo-fast-image
+
+npm install expo-image

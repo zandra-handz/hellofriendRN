@@ -42,10 +42,10 @@ const IconDynamicBase = ({ icons, choices, selectedChoice, svgWidth = 50, svgHei
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap', 
   },
   iconContainer: {
-    margin: 0,
+    margin: 0, 
   },
 });
 

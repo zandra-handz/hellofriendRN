@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
 import { useLocationList } from '../context/LocationListContext';
 import CardHours from './CardHours';  
@@ -10,7 +10,7 @@ import ButtonSaveLocation from '../components/ButtonSaveLocation';
 import StylingRating from '../components/StylingRating';
 
 const ItemViewLocationDetails = ({ location, unSaved }) => {
-  const { selectedLocation, clearAdditionalDetails, additionalDetails, loadingAdditionalDetails, updateAdditionalDetails } = useLocationList();
+  const { selectedLocation, additionalDetails, loadingAdditionalDetails, updateAdditionalDetails } = useLocationList();
   const [refreshing, setRefreshing] = useState(false);
 
 

@@ -22,6 +22,7 @@ const ActionScreenButtonAddMoment = ({ onPress }) => {
      
             labelContainerMarginHorizontal={4}
             animationMargin={50}
+            animationTopMargin={30}
             shapePosition="right"   
             shapeSource={require("../assets/shapes/fairymagic.png")}
             shapeWidth={540}

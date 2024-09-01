@@ -53,8 +53,7 @@ const ItemLocationSingle = ({ locationObject, locationWidth=30, locationHeight=3
 };
 
 const styles = StyleSheet.create({
-  imageContainer: {  
-    flex: 1,  
+  imageContainer: {   
     alignContent: 'center',
     justifyContent: 'center',
     

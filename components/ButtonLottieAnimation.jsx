@@ -21,6 +21,7 @@ const ButtonLottieAnimation = ({
   animationHeight = 40,
   fontMargin = 10,
   animationMargin = 0,
+  animationTopMargin = 28,
   showGradient = true,
   darkColor = '#4caf50',
   lightColor = 'rgb(160, 241, 67)',
@@ -140,7 +141,7 @@ const ButtonLottieAnimation = ({
                 source={animationSource}
                 loop
                 autoPlay
-                style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
+                style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin, marginTop: animationTopMargin }}
                 onError={(error) => console.error('Error rendering animation:', error)}
               />
             )}

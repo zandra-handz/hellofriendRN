@@ -5,7 +5,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 import ActionFriendPageHeader from '../components/ActionFriendPageHeader'; // Import the new component
 import ActionFriendPageMoments from '../components/ActionFriendPageMoments'; // Import the new component
-import ActionFriendPageImages from '../components/ActionFriendPageImages'; // Import the new component
+import ComposerFriendViewImages from '../components/ComposerFriendViewImages'; // Import the new component
 import ActionFriendPageHelloes from '../components/ActionFriendPageHelloes'; // Import the new component
 import ActionFriendPageLocations from '../components/ActionFriendPageLocations'; // Import the new component
 
@@ -50,7 +50,7 @@ const ScreenFriendFocus = () => {
               <ActionFriendPageLocations topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={74} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'LOCATIONS'} />
             </View>
             <View style={{marginHorizontal: buttonMargin}}>
-            <ActionFriendPageImages topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={64} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'IMAGES'}/> 
+            <ComposerFriendViewImages topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={64} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'IMAGES'}/> 
             </View>
             <View style={{marginHorizontal: buttonMargin}}>
             <ActionFriendPageMoments topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={260} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'MOMENTS'}/> 
@@ -58,6 +58,7 @@ const ScreenFriendFocus = () => {
 
             <View style={{marginHorizontal: buttonMargin}}>
             <ActionFriendPageHelloes topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={72} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'LAST HELLO'} />
+            
             </View>
             <HelloFriendFooter /> 
             </View>  

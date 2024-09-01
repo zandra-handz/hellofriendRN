@@ -23,7 +23,7 @@ const ScreenImages = ({ route, navigation }) => {
                         </>
                         
                     ) : (
-                        <Text>Loading...</Text>
+                        <Text></Text>
                     )}
                 </ScrollView>
             </View> )

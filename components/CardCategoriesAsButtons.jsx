@@ -25,8 +25,6 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
     }
   }, [selectedFriend, friendDashboardData]);
 
- 
-
   useEffect(() => {
     if (categoryLimit) {
       console.log(categoryLimit);
@@ -171,6 +169,8 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
                 styles.categoryText,
                 selectedCategory === null && styles.selectedCategoryText
               ]}
+              numberOfLines={1} // Ensures text is on a single line
+              ellipsizeMode='end' // Adds ellipsis at the end if text overflows
             >
               All Categories
             </Text>
@@ -194,6 +194,8 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
                   styles.categoryText,
                   selectedCategory === index && styles.selectedCategoryText
                 ]}
+                numberOfLines={1} // Ensures text is on a single line
+                ellipsizeMode='end' // Adds ellipsis at the end if text overflows
               >
                 {category}
               </Text>
@@ -251,6 +253,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     margin: 4,
+    maxWidth: 120, // Set the max width of the button
+    overflow: 'hidden', // Ensures text does not overflow the button
   },
   selectedCategoryButton: {
     backgroundColor: '#d4edda',
@@ -258,27 +262,30 @@ const styles = StyleSheet.create({
   categoryText: {
     fontFamily: 'Poppins-Regular',
     fontSize: 14,
-  },
-  selectedCategoryText: {
-    color: 'green',
-    fontFamily: 'Poppins-Bold',
-  },
-  capsulesContainer: {
-    marginTop: 0,
-    height: 120,
-    backgroundColor: '#fff',
-    borderRadius: 8,
+    color: 'black',
+    // Ensure text does not wrap
+    textAlign: 'center',
     overflow: 'hidden',
   },
-  capsulesText: {
-    fontFamily: 'Poppins-Regular',
+  selectedCategoryText: {
+    color: '#155724',
     fontSize: 14,
-    margin: 5,
+    fontFamily: 'Poppins-Bold',
   },
   noCategoriesText: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 14,
-    color: 'gray',
+    fontSize: 16,
+    color: '#999',
+    textAlign: 'center',
+    width: '100%',
+  },
+  capsulesContainer: {
+    flex: 1,
+    width: '100%',
+    paddingHorizontal: 10,
+  },
+  capsulesText: {
+    fontSize: 16,
+    marginVertical: 5,
   },
   modalContainer: {
     flex: 1,
@@ -287,10 +294,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '90%',
+    width: '80%',
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
+    alignItems: 'center',
   },
 });
 

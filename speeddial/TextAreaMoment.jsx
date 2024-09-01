@@ -1,16 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 import MaximizeOutlineSvg from '../assets/svgs/maximize-outline.svg';  
-
 import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
-
 import ModalMomentFocus from '../components/ModalMomentFocus'; // Import the new component
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const TextAreaMoment = ({ onInputChange, initialText, placeholderText, maxButtonColor='black', autoFocus, width = '100%', editMode = true, onScreenChange }) => {
+const TextAreaMoment = ({ 
+  onInputChange, 
+  initialText, 
+  placeholderText, 
+  maxButtonColor='black', 
+  autoFocus, 
+  width = '100%', 
+  editMode = true,  
+  resetText = false,  // Add resetText prop
+}) => {
   const [textInput, setTextInput] = useState(initialText || '');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const textareaRef = useRef();
+  const [resetAutoFocus, setAutoFocus] = useState(false);
   const { themeStyles } = useGlobalStyle();
 
   useEffect(() => {
@@ -18,6 +26,14 @@ const TextAreaMoment = ({ onInputChange, initialText, placeholderText, maxButton
       textareaRef.current.focus();
     }
   }, [autoFocus]);
+
+  useEffect(() => {
+    if (resetText) {
+      console.log('reset text area text');
+      setTextInput(''); // Clear the text input when resetText is true
+      setAutoFocus(true);
+    }
+  }, [resetText]); // Trigger this effect when resetText changes
 
   const handleInputChange = (text) => {
     setTextInput(text);
@@ -83,7 +99,6 @@ const TextAreaMoment = ({ onInputChange, initialText, placeholderText, maxButton
     </KeyboardAvoidingView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

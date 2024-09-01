@@ -1,50 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import BaseFriendViewLocations from '../components/BaseFriendViewLocations';
-import { useLocationList } from '../context/LocationListContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { View, StyleSheet, Text  } from 'react-native';
 
+import BaseFriendViewImages from '../components/BaseFriendViewImages';
+
+import PhotoSolidSvg from '../assets/svgs/photo-solid.svg';
 import TogglerActionButton from '../components/TogglerActionButton';
+import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
+
+import { useImageList } from '../context/ImageListContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useNavigation } from '@react-navigation/native';
-import MagGlassSimpleSvg from '../assets/svgs/mag-glass-simple.svg';
-import MapPinOutlineSvg from '../assets/svgs/map-pin-outline.svg';
-import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
 
 
-const ActionFriendPageLocations = ({ 
-  includeHeader=false, 
-  headerText='MEET UP PLACES', 
+const ComposerFriendViewImages = ({ 
+  onPress, 
+  includeHeader=true, 
+  headerText='IMAGES',
   headerTextColor='white',
   headerFontFamily='Poppins-Bold',
   headerTextSize=15, 
   headerInside=false,
-  buttonHeight=80,
-  buttonRadius=10,
+  buttonHeight=70,
+  buttonRadius=20,
   headerHeight=30,
-  marginLeft=16,
   justifyIconContent='center',
   inactiveIconColor='white',
   topIconSize=30,
   bottomIconSize=30
 
-}) => {
+}) => { 
 
   const navigation = useNavigation();
+  const { imageList } = useImageList(); 
+  const { friendColorTheme } = useSelectedFriend(); 
 
-  const { friendColorTheme } = useSelectedFriend();
-  const { locationList } = useLocationList(); 
-  
-  const [showSecondButton, setShowSecondButton] = useState(false);
-  const [lightColor, setLightColor] = useState('black');
-  const [darkColor, setDarkColor] = useState('black');
-
-
+  const [ lightColor, setLightColor ] = useState(null);
+  const [ darkColor, setDarkColor ] = useState(null);
+ 
+ 
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
   const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
-
-  let mainLocation = null;
-  let satelliteLocations = [];
-  let satellitesFirstPage = 1; 
 
 
   useEffect(() => {
@@ -62,28 +57,13 @@ const ActionFriendPageLocations = ({
       setDarkColor('gray');
     }
   }, [friendColorTheme]);
-
-  const navigateToLocationScreen = ({ onPress }) =>  {
-    navigation.navigate('Locations');
-    if (onPress) onPress();
-  };
-
-  if (locationList.length > 0) {
-    mainLocation = locationList[0];
-    satelliteLocations = locationList.slice(1);
-    additionalSatelliteCount = satelliteLocations.length - satellitesFirstPage;
-  }
- 
-  const navigateToFirstPage = () => {
-    setShowSecondButton(false);
-  };
-
-  const handleNext = () => {
-    setShowSecondButton(true); 
-  };
   
-   
 
+  const navigateToImagesScreen = () => {
+    navigation.navigate('Images'); 
+    if (onPress) onPress(); 
+}; 
+  
   return (
     <View style={[styles.container, {backgroundColor: calculatedBackgroundColor, borderRadius: buttonRadius }]}>
       <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
@@ -93,68 +73,49 @@ const ActionFriendPageLocations = ({
             {headerText}
           </Text>
         </View>
-
       )}
       <View style={styles.containerInnerRow}> 
         <View style={[styles.containerHeaderInside, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius }]}>
           {includeHeader && headerInside && (
             <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
-            <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
+                      <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
           </View>
           )}
 
-      <View style={{ flex: 1, zIndex: 1 }}>
-          <BaseFriendViewLocations 
+      <View style={{ flex: 1 }}>
+          <BaseFriendViewImages 
             buttonHeight={buttonHeight}
-            buttonRadius={buttonRadius}  
-            allItems={locationList ? locationList : 'Loading...'}
-            additionalText={mainLocation ? mainLocation.title : ''}
-            fontMargin={3} 
-            labelFontSize={16}
-            labelColor="white" 
+            buttonRadius={buttonRadius}
+            headerSvg={<PhotoSolidSvg width={28} height={28} color="white" />}
+            allItems={imageList ? imageList : `No images`}
+            fontMargin={3}  
             showGradient={true}
             lightColor={lightColor}
             darkColor={darkColor}  
-            satellites={!showSecondButton}
-            satelliteSectionPosition="right"
-            satelliteCount={satellitesFirstPage}
-            satelliteLocations={satelliteLocations}
-            satellitesOrientation="horizontal"
-            satelliteHeight="60%"
-            additionalPages={showSecondButton}
-            additionalSatellites={locationList}
-            satelliteOnPress={(location) => handlePress(location)} 
-          />
-        </View>
+          /> 
+      </View>
       </View>
       
-
-      <TogglerActionButton
-        showSecondButton={showSecondButton}
-        handleNext={handleNext}
-        navigateToFirstPage={navigateToFirstPage}
-        handleFullScreen={navigateToLocationScreen}
-        navigateToLocationScreen={navigateToLocationScreen}
+      <TogglerActionButton  
+        navigateToLocationScreen={navigateToImagesScreen}
         height={calculatedButtonHeight}
-        borderRadius={buttonRadius} 
-        marginLeft={marginLeft}
+        borderRadius={buttonRadius}
         justifyContent={justifyIconContent}
+        marginLeft={16} 
         backgroundColor={friendColorTheme.darkColor}
         topIconSize={topIconSize}
         bottomIconSize={bottomIconSize}
         iconColor={inactiveIconColor}
         highlightIconColor={friendColorTheme.lightColor}
-        firstPageTopSvg={MagGlassSimpleSvg}
-        firstPageBottomSvg={MapPinOutlineSvg}
-        secondPageTopSvg={MagGlassSimpleSvg}
-        secondPageBottomSvg={ScrollOutlineSvg}
+        oneButtonOnly={true}
+        firstPageTopSvg={GridViewOutlineSvg} 
       />
-      </View>
     </View> 
-       
-    </View>
+  </View>
+
+  </View>
   );
 };
 
@@ -163,7 +124,7 @@ const styles = StyleSheet.create({
     width: '100%',  
     overflow: 'hidden',
     flexDirection: 'row',
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   containerInner: {
     flexDirection: 'column',
@@ -172,7 +133,7 @@ const styles = StyleSheet.create({
   },
   containerHeaderInside: { 
     flexDirection: 'column',  
-    marginBottom: 20, 
+    marginBottom: 20,
     flex: 1,
     zIndex: 1,
 
@@ -185,16 +146,13 @@ const styles = StyleSheet.create({
   },
   headerContainer: { 
     textAlign: 'left', 
-    justifyContent: 'center', 
-    height: 70,
-    marginBottom: -3,
-    color: 'black',
-    zIndex: 0,
+    justifyContent: 'center',
+    paddingLeft: 0,  
   
   },
-  headerText: {
+  headerText: { 
     marginLeft: 10,
   },
 });
 
-export default ActionFriendPageLocations;
+export default ComposerFriendViewImages;

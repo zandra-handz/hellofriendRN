@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity, Text } from 'react-native';
-import ButtonLottieAnimationSatellitesHelloes from './ButtonLottieAnimationSatellitesHelloes';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import BaseFriendViewHelloes from './BaseFriendViewHelloes';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -28,18 +28,18 @@ const ActionFriendPageHelloes = ({
   justifyIconContent='center',
   inactiveIconColor='white',
   topIconSize=30,
-  bottomIconSize=30
+  bottomIconSize=30,
+  daysText='',
 
  }) => {
   
   const navigation = useNavigation();
   
-  const { selectedFriend, setFriend, friendDashboardData, friendColorTheme } = useSelectedFriend(); 
-  const [helloesList, setHelloesList] = useState([]);
-  const [isFSModalVisible, setIsFSModalVisible] = useState(false);
+  const { selectedFriend, friendDashboardData, friendColorTheme } = useSelectedFriend(); 
+  const [helloesList, setHelloesList] = useState([]); 
   const [ lightColor, setLightColor ] = useState(null);
   const [ darkColor, setDarkColor ] = useState(null);
-  const [ iconBackgroundColor, setIconBackgroundColor ] = useState(null);
+  const [ iconBackgroundColor ] = useState(null);
 
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
   const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
@@ -91,15 +91,11 @@ const ActionFriendPageHelloes = ({
 
 
   
-  let mainHello = null;
-  let mainHelloType = null;
-  let mainHelloDetails = [];
+  let mainHello = null; 
   let satelliteHelloes = [];
   let satellitesFirstPage = 1;
   let additionalSatelliteCount = null;
-  let additionalHelloes = [];
-
-  let overrideView = true;
+  let additionalHelloes = []; 
 
   if (helloesList.length > 0) {
     mainHello = helloesList[0];
@@ -116,24 +112,14 @@ const ActionFriendPageHelloes = ({
   }
 
   const [showSecondButton, setShowSecondButton] = useState(false);
-  const opacityAnim = new Animated.Value(1);
+ 
 
   const navigateToFirstPage = () => {
-    setShowSecondButton(false);
-    Animated.timing(opacityAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    setShowSecondButton(false); 
   };
 
   const handleNext = () => {
-    setShowSecondButton(true);
-    Animated.timing(opacityAnim, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    setShowSecondButton(true); 
   };
   
 
@@ -143,16 +129,12 @@ const ActionFriendPageHelloes = ({
       {includeHeader && !headerInside && (
         <View style={[styles.headerContainer, { height: headerHeight}]}>
           <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-          
             {headerText}
           </Text>
         </View>
 
       )}
       <View style={styles.containerInnerRow}> 
-
-
-
         <View style={[styles.containerHeaderInside, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius }]}>
           
           {includeHeader && headerInside && (
@@ -163,36 +145,22 @@ const ActionFriendPageHelloes = ({
           </View>
           )}
 
-      <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
-        {additionalSatelliteCount > 0 || overrideView ? (
-          <ButtonLottieAnimationSatellitesHelloes
+      <View style={{ flex: 1 }}>
+          <BaseFriendViewHelloes
             buttonHeight={buttonHeight}
             onPress={() => {}}
-            navigateToFirstPage={navigateToFirstPage}
-            firstItem={mainHello ? mainHello : 'Loading...'}
+            navigateToFirstPage={navigateToFirstPage} 
             allItems={helloesList ? helloesList : 'Loading...'}
-            subHeaderText={mainHello ? mainHello.locationName : 'Loading...'}
-            
             additionalText={
-              mainHello && friendDashboardData.length > 0 && friendDashboardData[0].days_since_words !== undefined
+              friendDashboardData.length > 0 && friendDashboardData[0].days_since_words
                 ? `${friendDashboardData[0].days_since_words}`
                 : ''
             }
-            typeIcon={mainHello ? <IconDynamicHelloType selectedChoice={mainHello.type} svgHeight={40} svgWidth={40} /> : null}
-            fontMargin={3}
-            animationSource={require('../assets/anims/heartinglobe.json')}
-            rightSideAnimation={false}
-            labelFontSize={16}
-            labelColor="white"
-            animationWidth={234}
-            animationHeight={234} 
-            labelContainerMarginHorizontal={4}
-            animationMargin={-64}
-            showShape={false}
+            typeIcon={friendDashboardData.length > 0 ? <IconDynamicHelloType selectedChoice={friendDashboardData[0].previous_meet_type} svgHeight={40} svgWidth={40} /> : null}
+            fontMargin={3}   
             showGradient={true}
             lightColor={lightColor}
-            darkColor={darkColor}
-            showIcon={false}
+            darkColor={darkColor} 
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteSectionBackgroundColor={iconBackgroundColor}
@@ -203,55 +171,8 @@ const ActionFriendPageHelloes = ({
             additionalPages={showSecondButton}
             additionalSatellites={helloesList}
             satelliteOnPress={(hello) => handlePress(hello)} 
-          />
-        ) : (
-          <ButtonLottieAnimationSatellitesHelloes
-            buttonHeight={buttonHeight}
-            onPress={() => {}}
-            navigateToFirstPage={navigateToFirstPage}
-            firstItem={mainHello ? mainHello.date : 'Loading...'}
-            allItems={helloesList ? helloesList : 'Loading...'}
-            subHeaderText={mainHello ? mainHello.locationName: 'Loading...'}
-            
-            additionalText={
-              mainHello && friendDashboardData.length > 0 && friendDashboardData[0].days_since !== undefined
-                ? friendDashboardData[0].days_since === 1
-                  ? `${friendDashboardData[0].days_since} day ago`
-                  : `${friendDashboardData[0].days_since} days ago`
-                : ''
-            }
-            typeIcon={mainHello ? <IconDynamicHelloType selectedChoice={mainHello.type} svgWidth={40} svgHeight={40} /> : null}
-            fontMargin={3}
-            animationSource={require('../assets/anims/heartinglobe.json')}
-            rightSideAnimation={false}
-            labelFontSize={16}
-            labelColor="white"
-            animationWidth={234}
-            animationHeight={234}
-            showGradient={true}
-            lightColor={lightColor}
-            darkColor={darkColor}
-            labelContainerMarginHorizontal={4}
-            animationMargin={-64}
-            showShape={false}
-            shapePosition="right"
-            shapeSource={require('../assets/shapes/funkycoloredpattern.png')}
-            shapeWidth={340}
-            shapeHeight={340}
-            shapePositionValue={-154}
-            showIcon={false}
-            satellites={!showSecondButton}
-            satelliteSectionPosition="right"
-            satelliteSectionBackgroundColor={iconBackgroundColor}
-            satelliteCount={satellitesFirstPage}
-            satelliteHellos={satelliteHelloes}
-            satellitesOrientation="horizontal"
-            satelliteHeight="60%"
-            additionalPages={false}
-            satelliteOnPress={(hello) => handlePress(hello)} 
-          />
-        )}
-      </Animated.View>
+          /> 
+      </View>
 
       </View>
 

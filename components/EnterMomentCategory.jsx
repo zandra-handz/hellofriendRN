@@ -73,8 +73,7 @@ const EnterMomentCategory = ({ userEntryCapsule, viewOldStyle=false }) => {
     setCategoryInput('');
   };
 
-  const onSave = async (data) => {
-    // Update unique categories after saving a new category
+  const onSave = async (data) => { 
     const updatedCategories = [...uniqueCategories, data.typedCategory];
     setUniqueCategories(updatedCategories);
   };

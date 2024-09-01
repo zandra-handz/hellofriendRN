@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+
 import EnterMoment from '../components/EnterMoment'; 
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -10,7 +10,8 @@ import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api';
 import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
-
+import AlertSuccessFail from '../components/AlertSuccessFail';
+import AlertConfirm from '../components/AlertConfirm'; 
 
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 
@@ -19,21 +20,24 @@ const ContentAddMoment = () => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { capsuleList, setCapsuleList } = useCapsuleList();
   const [ momentEditMode, setMomentEditMode] = useState(false);
-  const [firstSectionTitle, setFirstSectionTitle] = useState('Friend: ');
+  const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
   const [textInput, setTextInput] = useState('');
   const [categoryInput, setCategoryInput] = useState('');
   const [categoryCapsules, setCategoryCapsules ] = useState([]);
   const [uniqueCategories, setUniqueCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [userEntryCapsule, setUserEntryCapsule] = useState('');
  
-  
-  const navigation = useNavigation();
+  const [isConfirmModalVisible, setConfirmModalVisible ] = useState(false);
+  const [ saveInProgress, setSaveInProgress ] = useState(false);
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [isFailModalVisible, setFailModalVisible] = useState(false);
+
+   
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
-      setFirstSectionTitle('Friend: ');
+      setFirstSectionTitle('For: ');
     }
   }, [selectedFriend, loadingNewFriend]);
 
@@ -41,6 +45,10 @@ const ContentAddMoment = () => {
     console.log(screenState); 
     setMomentEditMode(screenState);
   };
+
+  const toggleModal = () => {
+    setConfirmModalVisible(!isConfirmModalVisible);
+};
  
 
 
@@ -69,8 +77,13 @@ const ContentAddMoment = () => {
     setUserEntryCapsule(text);
   };
 
+  const resetTextInput = () => {
+    setTextInput('');
+    setUserEntryCapsule('');
+  };
 
   const handleSave = async () => {
+    setSaveInProgress(true); 
     try {
       if (selectedFriend) {
         const requestData = {
@@ -90,21 +103,34 @@ const ContentAddMoment = () => {
   
         // Add the new capsule to the front of the list
         setCapsuleList(prevCapsules => [newCapsule, ...prevCapsules]);
-  
-        setTextInput('');
+   
+        resetTextInput();
+        setSelectedCategory('');
         setCategoryInput('');
-        setSuccessMessage('Capsule saved successfully!');
+
+        setSuccessModalVisible(true); 
       }
     } catch (error) {
       console.error('Error saving capsule:', error);
+      setFailModalVisible(true); 
+    } finally {
+      toggleModal()
+      setSaveInProgress(false); 
     }
   };
-  
- 
 
-  const handleDelete = (id) => {
-    setCapsuleList(capsuleList.filter(capsule => capsule.id !== id));
-  };
+  
+
+  const successOk = () => {   
+    setSuccessModalVisible(false);
+};
+
+const failOk = () => { 
+    setFailModalVisible(false);
+};
+   
+  
+  
 
   return (
     <View style={styles.container}>
@@ -114,7 +140,7 @@ const ContentAddMoment = () => {
         <View style={styles.selectFriendContainer}>
         <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
 
-          <FriendSelectModalVersion width='82%' />
+          <FriendSelectModalVersion width='88%' />
         </View>
 
         <View style={styles.locationContainer}>
@@ -124,6 +150,7 @@ const ContentAddMoment = () => {
             placeholderText="Enter moment here..."
             handleNextScreen={() => {}}  
             onScreenChange={handleMomentToggle} 
+            resetText={isSuccessModalVisible}
           />
         </View> 
         {userEntryCapsule && selectedFriend && !momentEditMode && ( 
@@ -138,7 +165,7 @@ const ContentAddMoment = () => {
         {userEntryCapsule && selectedCategory && ( 
                 <View style={styles.bottomButtonContainer}>  
                     <ButtonLottieAnimationSvg
-                        onPress={handleSave}
+                        onPress={toggleModal}
                         preLabel=''
                         label={`Add moment`}
                         height={54}
@@ -165,6 +192,36 @@ const ContentAddMoment = () => {
             </View> 
             )}
       </View>
+      <AlertConfirm
+          fixedHeight={true}
+          height={224}
+          isModalVisible={isConfirmModalVisible}
+          questionText=""
+          isFetching={saveInProgress}
+          useSpinner={true}
+          toggleModal={toggleModal}
+          headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>Save moment?</Text>}
+          onConfirm={() => handleSave()} 
+          onCancel={toggleModal}
+          confirmText="Yes!"
+          cancelText="Cancel"
+      />
+      <AlertSuccessFail
+            isVisible={isSuccessModalVisible}
+            message={`Moment has been saved!`}
+            onClose={successOk}
+            type='success'
+        />
+
+        <AlertSuccessFail
+            isVisible={isFailModalVisible}
+            message={`Could not save moment.`}
+            onClose={failOk}
+            tryAgain={false}
+            onRetry={handleSave}
+            isFetching={saveInProgress}
+            type='failure'
+        />
     </View>
   );
 };

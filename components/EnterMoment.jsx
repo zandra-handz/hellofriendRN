@@ -6,13 +6,13 @@ const EnterMoment = ({
   handleInputChange,
   textInput, 
   placeholderText,
-  buttonBackgroundColor='black',
-  handleNextScreen,
-  onScreenChange, // New prop for notifying parent of screen changes
+  buttonBackgroundColor='black', 
+  onScreenChange, 
+  resetText=false, 
 }) => {
   const [isFirstScreen, setIsFirstScreen] = useState(true);
+  const [resetTextAreaText, setResetTextAreaText] = useState(false);
 
-  // Notify parent of screen state changes
   useEffect(() => {
     if (onScreenChange) {
       onScreenChange(isFirstScreen);
@@ -25,7 +25,22 @@ const EnterMoment = ({
 
   const handleBackScreenClick = () => {
     setIsFirstScreen(true);
-  };
+  }; 
+
+  useEffect(() => {
+    if (resetText) {
+      setResetTextAreaText(true); 
+      console.log('reset text in EnterMoment');
+     
+    }
+  }, [resetText]);
+
+  useEffect(() => {
+    if (resetTextAreaText) {
+      setIsFirstScreen(true);
+      setResetTextAreaText(false); 
+    }
+  }, [resetTextAreaText]);
 
   return (
     <View style={styles.container}>
@@ -37,6 +52,7 @@ const EnterMoment = ({
             placeholderText={placeholderText}
             autoFocus={true}
             closeModal={onScreenChange}
+            resetText={resetTextAreaText} // Pass resetTextAreaText instead of resetText
           />
           {textInput && (
           <View style={styles.nextButtonContainer}> 
@@ -45,7 +61,6 @@ const EnterMoment = ({
             </TouchableOpacity>
           </View>
            )}
-           
         </View>
       ) : (
         <View>
@@ -55,6 +70,7 @@ const EnterMoment = ({
             placeholderText={placeholderText}
             autoFocus={false}
             editMode={false}
+            resetText={resetTextAreaText} // Pass resetTextAreaText instead of resetText
           />
           <View style={styles.editButtonContainer}> 
             <TouchableOpacity style={[styles.nextButton, {backgroundColor: buttonBackgroundColor}]} onPress={handleBackScreenClick}>
@@ -78,7 +94,6 @@ const styles = StyleSheet.create({
   enteredTextContainer: {
     width: '100%',
     padding: 10, 
-    
   },
   enteredText: { 
     fontSize: 16,
@@ -107,7 +122,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   nextButton: {
-    
     paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 20,

@@ -32,10 +32,6 @@ const ItemHelloSingle = ({ helloObject, helloWidth, helloHeight }) => {
     <View style={styles.helloContainer}>
       <TouchableOpacity onPress={openModal}>
       <IconDynamicHelloType selectedChoice={helloObject.type} svgHeight={24} svgWidth={24} svgColor="white"/>
-                            
-
-        <Text> </Text>
-      
       </TouchableOpacity>
       {isModalVisible && (
         <ItemViewHello hello={helloObject} onClose={closeModal} />
@@ -49,8 +45,7 @@ const styles = StyleSheet.create({
     padding: 0, 
     marginHorizontal: 20,
     marginBottom: 8,
-    width: '100%',  
-    flex: 1, 
+    width: '100%',   
   },
   modalContainer: {
     flex: 1,

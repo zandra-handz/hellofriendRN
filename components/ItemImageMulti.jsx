@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
-import { View, FlatList, Image, StyleSheet, Dimensions, TouchableOpacity, Modal } from 'react-native';
+import { View,  StyleSheet, Dimensions, TouchableOpacity, Modal } from 'react-native';
 import ItemViewImage from '../components/ItemViewImage'; // Import your ItemViewImage component
 import { useImageList } from '../context/ImageListContext';
-import { FlashList } from "@shopify/flash-list"; 
+import { FlashList } from "@shopify/flash-list";  
+import { Image } from 'expo-image'; 
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true, width, height, containerWidth='100%', borderRadius = 10 }) => {
-  const { imageList } = useImageList();
-  const [images, setImages] = useState(imageData);
+const ItemImageMulti = ({ horizontal = true, singleLineScroll = true, width, height, containerWidth='100%', borderRadius = 10 }) => {
+  const { imageList } = useImageList();  
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState('');
+  const [ isEditing, setIsEditing] = useState(false);
+ 
 
   const openModal = (image) => {
-    setSelectedImage(image);
-    setTitle(image.title); 
+    setSelectedImage(image); 
     setIsModalVisible(true);
   };
 
   const closeModal = () => {
     setSelectedImage(null);
     setIsModalVisible(false);
-    setIsEditing(false); // Reset editing state
+    setIsEditing(false);  
   };
 
   return (
@@ -35,16 +34,20 @@ const ItemImageMulti = ({ imageData, horizontal = true, singleLineScroll = true,
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => openModal(item)}>
             
-            <Image 
-              source={{ uri: item.image }} 
-              style={[styles.image, { borderRadius: borderRadius, width: width || windowWidth / 3 - 20, height: height || windowWidth / 3 - 20 }]} 
-            />  
+            <Image
+              style={[styles.image, { borderRadius: borderRadius, width: width || windowWidth / 3 - 20, height: height || windowWidth / 3 - 20 }]}
+              source={{ uri: item.image }}
+              contentFit="cover" // Adjust contentFit as needed
+            />
           </TouchableOpacity>
         )}
         numColumns={horizontal && !singleLineScroll ? 3 : 1}
-        columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
-        contentContainerStyle={horizontal && !singleLineScroll ? null : styles.imageContainer}
+        columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null} 
         estimatedItemSize={100}
+        showsHorizontalScrollIndicator={false}
+
+  // Optional: Customize scroll indicator insets if needed
+       scrollIndicatorInsets={{ right: 1 }}
       />
 
       <Modal visible={isModalVisible} onRequestClose={closeModal} transparent>
@@ -60,13 +63,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent', 
     
     height: '100%', 
-  },
-
-  imageContainer: {
-    flexDirection: 'row', 
-    
-   
-  },
+  }, 
   imageRow: {
     flex: 1, 
     justifyContent: 'space-between',

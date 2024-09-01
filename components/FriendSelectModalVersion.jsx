@@ -52,7 +52,6 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
     }
   }, [friendColorTheme]);
 
-  const friendTotal = (friendList ? friendList.length : 0);
 
   const toggleModal = () => {
     setIsFriendMenuModalVisible(!isFriendMenuModalVisible);
@@ -75,28 +74,32 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
     }
   }, [selectedFriend, loadingNewFriend]);
 
-  const handleSelectFriend = (itemId) => {
-    // Find the friend item by id
+  const handleSelectFriend = (itemId) => { 
     const selectedOption = friendList.find(friend => friend.id === itemId);
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
     console.log("Friend selected: ", selectedFriend);
-    setForceUpdate(prevState => !prevState); // Toggle forceUpdate to trigger re-render
+    setForceUpdate(prevState => !prevState);  
     toggleModal();
   };
 
   return (
     <>
       <LinearGradient
-        colors={[friendDarkColor, friendLightColor]} // Gradient colors
+        colors={[friendDarkColor, friendLightColor]}  
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }} // Direction of the gradient
-        style={[styles.container, { width }]} // Apply width here
+        end={{ x: 1, y: 1 }}  
+        style={[styles.container, { width }]} 
       >  
         <View style={styles.displaySelectedContainer}>
-          <Text style={[styles.displaySelected, textStyles(18, 'white')]}>
-            {displayName}
-          </Text>
+        <Text
+          style={[styles.displaySelected, textStyles(18, 'white')]}
+          numberOfLines={1}  
+          ellipsizeMode='tail'  
+        >
+          {displayName}
+        </Text>
+
         </View>
         <View style={styles.selectorButtonContainer}>
           <ButtonToggleSize
@@ -121,7 +124,7 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
         isFetching={loadingNewFriend}
         useSpinner={true}
         toggleModal={toggleModal}
-        headerContent={<Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18 }}>{displayName}</Text>}
+        headerContent={<Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18 }}>Select friend</Text>}
         content={
           <FlatList
             data={friendList}

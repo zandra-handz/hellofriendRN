@@ -51,7 +51,7 @@ const AlertYesNo = ({
   };
 
   return (
-    <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+    <Modal visible={isModalVisible} animationType="fade" transparent={false}>
       <View style={styles.modalContainer}>
         <View style={[styles.modalContent, fixedHeight && { height }]}>
           {headerContent && <View style={styles.headerContainer}>{headerContent}</View>}

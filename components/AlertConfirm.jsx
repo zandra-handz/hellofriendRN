@@ -18,7 +18,7 @@ const AlertConfirm = ({
   type = 'success', // Can be 'success' or 'failure'
 }) => {
   return (
-    <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+    <Modal visible={isModalVisible} animationType="fade" transparent={true}>
       <View style={styles.modalContainer}>
         <View style={[styles.modalContent, fixedHeight && { height }]}> 
           {headerContent && <View style={styles.headerContainer}>{headerContent}</View>}

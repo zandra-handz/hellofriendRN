@@ -35,7 +35,7 @@ const ContentAddImage = () => {
   const [imageUri, setImageUri] = useState(null);
   const [imageTitle, setImageTitle] = useState('');
   const [imageCategory, setImageCategory] = useState('Misc');
-  const [firstSectionTitle, setFirstSectionTitle] = useState('Friend: ');
+  const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
 
   const imageTitleRef = useRef(null); 
 
@@ -50,7 +50,7 @@ const ContentAddImage = () => {
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
-      setFirstSectionTitle('Friend: ');
+      setFirstSectionTitle('For: ');
     }
   }, [selectedFriend, loadingNewFriend]);
 
@@ -183,7 +183,7 @@ const failOk = () => {
         <View style={styles.selectFriendContainer}>
         <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
 
-          <FriendSelectModalVersion width='82%' />
+          <FriendSelectModalVersion width='88%' />
         </View>
         {imageUri && (
           <View style={styles.previewContainer}> 
