@@ -5,9 +5,9 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 import ActionFriendPageHeader from '../components/ActionFriendPageHeader'; // Import the new component
 import ActionFriendPageMoments from '../components/ActionFriendPageMoments'; // Import the new component
-import ComposerFriendViewImages from '../components/ComposerFriendViewImages'; // Import the new component
-import ActionFriendPageHelloes from '../components/ActionFriendPageHelloes'; // Import the new component
-import ActionFriendPageLocations from '../components/ActionFriendPageLocations'; // Import the new component
+import ComposerFriendImages from '../components/ComposerFriendImages'; // Import the new component
+import ComposerFriendHelloes from '../components/ComposerFriendHelloes'; // Import the new component
+import ComposerFriendLocations from '../components/ComposerFriendLocations'; 
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
@@ -32,6 +32,8 @@ const ScreenFriendFocus = () => {
   const topIconSize = 28;
   const bottomIconSize = 28;
 
+  const momentsBottomIconSize = 30;
+
 
   return (
     <View style={[styles.container, themeStyles.container]}>
@@ -47,17 +49,17 @@ const ScreenFriendFocus = () => {
             <ActionFriendPageHeader buttonHeight={pageHeaderHeight} headerRadius={radius} headerTopRadius={topRadius}/>
             </View>
             <View style={{marginHorizontal: buttonMargin}}>
-              <ActionFriendPageLocations topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={74} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'LOCATIONS'} />
+              <ComposerFriendLocations topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={74} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'LOCATIONS'} />
             </View>
             <View style={{marginHorizontal: buttonMargin}}>
-            <ComposerFriendViewImages topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={64} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'IMAGES'}/> 
+            <ComposerFriendImages topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={64} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'IMAGES'}/> 
             </View>
             <View style={{marginHorizontal: buttonMargin}}>
-            <ActionFriendPageMoments topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={260} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'MOMENTS'}/> 
+            <ActionFriendPageMoments topIconSize={topIconSize} bottomIconSize={momentsBottomIconSize} buttonHeight={260} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'MOMENTS'}/> 
             </View>
 
             <View style={{marginHorizontal: buttonMargin}}>
-            <ActionFriendPageHelloes topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={72} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'LAST HELLO'} />
+            <ComposerFriendHelloes topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={72} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'LAST HELLO'} />
             
             </View>
             <HelloFriendFooter /> 

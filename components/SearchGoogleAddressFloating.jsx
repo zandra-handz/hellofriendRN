@@ -2,40 +2,22 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useLocationList } from '../context/LocationListContext'; // Adjust the import path as necessary
-import ItemViewLocation from '../components/ItemViewLocation';
 import { GOOGLE_API_KEY } from '@env';
 
-const SearchBarGoogleAddress = () => {
-  const { locationList, setLocationList, setSelectedLocation, selectedLocation } = useLocationList();
-  
+const SearchGoogleAddressFloating = ({ onAddressSelect }) => {
   const [listViewDisplayed, setListViewDisplayed] = useState(true);
-  const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
-
   const googlePlacesRef = useRef(null);
-
-  const generateTemporaryId = () => {
-    return `temp_${Date.now()}`;
-  };
 
   const handlePress = (data, details = null) => {
     if (details) {
-      const { lat, lng } = details.geometry.location;
-      const newLocation = {
-        id: generateTemporaryId(),
+      const newAddress = {
         address: details.formatted_address,
-        latitude: lat,
-        longitude: lng,
-        notes: '',
+        latitude: details.geometry.location.lat,
+        longitude: details.geometry.location.lng,
         title: details.name || 'Search',
-        validatedAddress: true,
-        friendsCount: 0,
-        friends: [],
       };
 
-      setLocationList([newLocation, ...locationList]);
-      setSelectedLocation(newLocation);
-      setIsLocationModalVisible(true);
+      onAddressSelect(newAddress);
     }
     setListViewDisplayed(false);
   };
@@ -45,10 +27,6 @@ const SearchBarGoogleAddress = () => {
       googlePlacesRef.current?.setAddressText('');
     }
   }, [listViewDisplayed]);
-
-  const closeModal = () => {
-    setIsLocationModalVisible(false);
-  };
 
   return (
     <View style={styles.container}>
@@ -78,33 +56,31 @@ const SearchBarGoogleAddress = () => {
           <FontAwesome5 name="search" size={22} color="gray" style={styles.searchIcon} />
         )}
       />
-      {selectedLocation && isLocationModalVisible && (
-        <ItemViewLocation location={selectedLocation} onClose={closeModal} />
-      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    padding: 0,
-    zIndex: 1,
+    flex: 1, 
+    padding: 0, 
+    width: '100%', 
   },
   textInputContainer: {
-    backgroundColor: 'transparent',
-    width: '100%',
+    flexGrow: 1,
+    backgroundColor: 'transparent',   
     marginTop: 0,
+    alignContent: 'center',
     borderTopWidth: 0,
     borderBottomWidth: 0,
-    paddingRight: 2,
+    paddingRight: 2, 
+    minWidth: 290,
   },
   textInput: {
     height: 50,
     borderColor: 'black',
     borderWidth: 1.4,
-    width: '100%',
+    width: '100%',  
     borderRadius: 30,
     paddingHorizontal: 10,
   },
@@ -126,4 +102,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchBarGoogleAddress;
+export default SearchGoogleAddressFloating;

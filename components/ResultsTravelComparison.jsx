@@ -88,7 +88,7 @@ const ResultsTravelComparison = ({
         {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
         {travelTimeResultsView && !isLoading ? renderComparisonResults() : null}
         {!travelTimeResultsView && !isLoading && (
-          <Text style={styles.message}>No travel time results available.</Text>
+          <Text style={styles.message}></Text>
         )}
       </View>
     );

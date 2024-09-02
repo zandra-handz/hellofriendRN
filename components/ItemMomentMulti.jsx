@@ -1,197 +1,180 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, Dimensions, FlatList } from 'react-native';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { useCapsuleList } from '../context/CapsuleListContext';
-import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Assuming you're using this for icons
+import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg'; 
 import ItemViewMoment from '../components/ItemViewMoment';
+import { GestureHandlerRootView, TapGestureHandler, LongPressGestureHandler, State } from 'react-native-gesture-handler';
 
-
-const windowWidth = Dimensions.get('window').width;
-
-const ItemMomentMulti = ({ 
-  horizontal = true,
-  singleLineScroll = true,
-  columns = 3, 
+const ItemMomentMulti = ({  
   width = 100,
   height = 100,
+  spacer = 20,
   limit,
   newestFirst = true,
   svgColor = 'white',
-  containerWidth = 320, // Width for friend focus page button
-  includeCategoryTitle = false,
-  viewSortedList = true // Boolean prop to determine view mode
+  containerWidth = 320,
+  includeCategoryTitle = true,
+  svgOpacity = 0.3,
+  textOpacity = 0.3,
 }) => {
-  const { sortedByCategory, newestFirst: newestFirstList } = useCapsuleList();
+  const { newestFirst: newestFirstList } = useCapsuleList();
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState({}); // Track expanded categories
-  const [expandAll, setExpandAll] = useState(true); // State for control panel
+  const [lastTap, setLastTap] = useState(0);
+  const [momentAnimations, setMomentAnimations] = useState({});
+  const [opacityState, setOpacityState] = useState({});  
 
-  // Determine the list to display based on viewSortedList prop
-  const listToDisplay = viewSortedList ? sortedByCategory : (newestFirst ? newestFirstList : []);
-
-  // Set moments state based on the listToDisplay and limit
+  const listToDisplay = newestFirst ? newestFirstList : [];
   const moments = useMemo(() => listToDisplay.slice(0, limit), [listToDisplay, limit]);
 
-  // Group moments by category
-  const groupedMoments = useMemo(() => {
-    return moments.reduce((acc, moment) => {
-      const category = moment.typedCategory || 'Uncategorized';
-      (acc[category] = acc[category] || []).push(moment);
-      return acc;
-    }, {});
-  }, [moments]);
+  useEffect(() => { 
+    const animations = {};
+    const opacityStates = {};
+    moments.forEach(moment => {
+      animations[moment.id] = {
+        svgOpacity: new Animated.Value(svgOpacity),
+        textOpacity: new Animated.Value(textOpacity),
+      };
+      opacityStates[moment.id] = svgOpacity;  
+    });
+    setMomentAnimations(animations);
+    setOpacityState(opacityStates);
+  }, [moments, svgOpacity, textOpacity]);
 
-  // Initialize expandedCategories only when using sorted list
-  useEffect(() => {
-    if (viewSortedList) {
-      const initialExpandedCategories = Object.keys(groupedMoments).reduce((acc, category) => {
-        acc[category] = expandAll;
-        return acc;
-      }, {});
-      setExpandedCategories(initialExpandedCategories);
-    }
-  }, [groupedMoments, viewSortedList, expandAll]);
-
-  const handleToggleCategory = (category) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
-  };
-
-  const handleExpandAll = () => {
-    setExpandAll(true);
-    setExpandedCategories(Object.keys(groupedMoments).reduce((acc, category) => {
-      acc[category] = true;
-      return acc;
-    }, {}));
-  };
-
-  const handleCollapseAll = () => {
-    setExpandAll(false);
-    setExpandedCategories(Object.keys(groupedMoments).reduce((acc, category) => {
-      acc[category] = false;
-      return acc;
-    }, {}));
-  };
-
-  const openModal = (moment) => {
+  const openModal = useCallback((moment) => {
     setSelectedMoment(moment);
     setIsModalVisible(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setSelectedMoment(null);
     setIsModalVisible(false);
-  };
+  }, []);
 
-  const calculateFontSize = (width) => width * 0.06;
-
+  const calculateFontSize = (width) => width * 0.055;
   const calculateBubbleContainerDimensions = (width, height) => ({
-    width: width * .96,
-    height: height * 0.58,
+    width: width * 0.94,
+    height: height * 0.56,
   });
 
-  const calculateLeftPadding = (bubbleWidth) => bubbleWidth * 0.06;
-
+  const calculateLeftPadding = (bubbleWidth) => bubbleWidth * 0.08;
   const bubbleContainerDimensions = calculateBubbleContainerDimensions(width, height);
-
-  // Unique key generator function
   const generateUniqueKey = (item) => `${item.id}-${item.capsule}`;
 
+  const handleDoubleTap = useCallback((moment) => {
+    console.log('Double tap detected');
+    setOpacityState(prevState => {
+      const newOpacityState = {};
+      const newMomentAnimations = { ...momentAnimations };
+      
+      moments.forEach(m => {
+        newOpacityState[m.id] = svgOpacity;
+        Animated.timing(newMomentAnimations[m.id].svgOpacity, {
+          toValue: svgOpacity,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+        Animated.timing(newMomentAnimations[m.id].textOpacity, {
+          toValue: svgOpacity,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      });
+ 
+      const newOpacity = prevState[moment.id] === .9 ? svgOpacity : .9;
+      newOpacityState[moment.id] = newOpacity;
+      Animated.timing(newMomentAnimations[moment.id].svgOpacity, {
+        toValue: newOpacity,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+      Animated.timing(newMomentAnimations[moment.id].textOpacity, {
+        toValue: newOpacity,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+
+      return newOpacityState;
+    });
+  }, [momentAnimations, moments, svgOpacity]);
+
+  const handleLongPress = useCallback((moment) => {
+    console.log('Long press detected');
+    openModal(moment);
+  }, [openModal]);
+
+  const handleTap = useCallback((event, moment) => {
+    if (event.nativeEvent.state === State.END) {
+      const currentTime = new Date().getTime();
+      const tapDelay = 300; // Time delay to distinguish between single and double tap
+
+      if (lastTap && (currentTime - lastTap) < tapDelay) {
+        handleDoubleTap(moment);
+      } else {
+        handleDoubleTap(moment); // Handle single tap if needed
+      }
+
+      setLastTap(currentTime);
+    }
+  }, [handleDoubleTap, lastTap]);
+
   return (
-    <View style={[styles.container, { width: containerWidth, minHeight: 2 }]}>
-      {viewSortedList && (
-        <View style={styles.controlPanel}>
-          <TouchableOpacity onPress={handleExpandAll} style={styles.controlButton}>
-            <Icon name="expand-all" size={24} color="black" />
-            <Text style={styles.controlButtonText}>Expand All</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleCollapseAll} style={styles.controlButton}>
-            <Icon name="collapse-all" size={24} color="black" />
-            <Text style={styles.controlButtonText}>Collapse All</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+    <GestureHandlerRootView style={{ width: containerWidth, minHeight: 2 }}>
+      <FlashList
+        data={moments}
+        horizontal
+        keyExtractor={(moment) => generateUniqueKey(moment)}
+        renderItem={({ item: moment }) => {
+          const animation = momentAnimations[moment.id] || { svgOpacity: new Animated.Value(svgOpacity), textOpacity: new Animated.Value(textOpacity) };
 
-      {viewSortedList && Object.keys(groupedMoments).map(category => (
-        <View key={category}>
-          <TouchableOpacity
-            style={styles.categoryButton}
-            onPress={() => handleToggleCategory(category)}
-          >
-            <Text style={styles.categoryButtonText}>{category}</Text>
-          </TouchableOpacity>
-          {expandedCategories[category] && (
-            <FlatList
-              data={groupedMoments[category]}
-              keyExtractor={(moment) => generateUniqueKey(moment)}
-              renderItem={({ item: moment }) => (
-                <TouchableOpacity onPress={() => openModal(moment)}>
-                  <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
-                    <BubbleChatSquareSolidSvg width={width} height={height} color={svgColor} style={styles.svgImage} />
-                    <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
-                      <Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.2 }]}>{moment.capsule}</Text>
-                      {includeCategoryTitle && (
-                        <View style={[styles.categoryCircle, { backgroundColor: 'green' }]}>
-                          <Text style={styles.categoryText}>{moment.typedCategory}</Text>
-                        </View>
-                      )}
+          return (
+            <View style={{ paddingRight: spacer }}>
+              <LongPressGestureHandler
+                onHandlerStateChange={(event) => {
+                  if (event.nativeEvent.state === State.ACTIVE) {
+                    handleLongPress(moment);
+                  }
+                }}
+                minDurationMs={500} // Duration for long press
+              > 
+                  <TapGestureHandler
+                    onHandlerStateChange={(event) => handleTap(event, moment)}
+                    numberOfTaps={1}
+                  >
+                    <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
+                      <Animated.View style={{ opacity: animation.svgOpacity }}>
+                        <BubbleChatSquareSolidSvg width={width} height={height} color={svgColor} />
+                      </Animated.View>
+                      <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
+                        <Animated.Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.21, opacity: animation.textOpacity }]} numberOfLines={7}>
+                          {moment.capsule} 
+                          </Animated.Text>
+                        {includeCategoryTitle && (
+                          <View style={[styles.categoryCircle, { backgroundColor: 'transparent' }]}>
+                            <Animated.Text style={[styles.categoryText, {fontSize: calculateFontSize(width * .8), opacity: animation.textOpacity}]} numberOfLines={1}>Cat: {moment.typedCategory}</Animated.Text>
+                          </View>
+                        )} 
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              )}
-              numColumns={columns}
-              columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
-              estimatedItemSize={100}
-            />
-          )}
-        </View>
-      ))}
-
-      {!viewSortedList && (
-        <FlatList
-          data={moments}
-          keyExtractor={(moment) => generateUniqueKey(moment)}
-          renderItem={({ item: moment }) => (
-            <TouchableOpacity onPress={() => openModal(moment)}>
-              <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
-                <BubbleChatSquareSolidSvg width={width} height={height} color={svgColor} style={styles.svgImage} />
-                <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
-                  <Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.2 }]}>{moment.capsule}</Text>
-                  {includeCategoryTitle && (
-                    <View style={[styles.categoryCircle, { backgroundColor: 'green' }]}>
-                      <Text style={styles.categoryText}>{moment.typedCategory}</Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-            </TouchableOpacity>
-          )} 
-          numColumns={horizontal && !singleLineScroll ? 3 : 1}
-          horizontal={horizontal && singleLineScroll}
-          columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
-          contentContainerStyle={horizontal && !singleLineScroll ? null : styles.imageContainer}
-          estimatedItemSize={100}
-        />
-      )}
-
+                  </TapGestureHandler> 
+              </LongPressGestureHandler>
+            </View>
+          );
+        }}
+        estimatedItemSize={width * 1.1}
+        showsHorizontalScrollIndicator={false}
+        scrollIndicatorInsets={{ right: 1 }}
+      />
       {isModalVisible && (
-          <ItemViewMoment moment={selectedMoment} onClose={closeModal} />
+        <ItemViewMoment moment={selectedMoment} onClose={closeModal} />
       )}
-    </View>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-     
-    width: 320,
-},
-  relativeContainer: {
-    position: 'relative',
-  },
+  relativeContainer: {},
   bubbleContainer: {
     position: 'absolute',
     justifyContent: 'flex-start',
@@ -203,20 +186,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     textAlign: 'left',
   },
-  imageContainer: {
-    flexDirection: 'row',
-    backgroundColor: 'transparent',
-  },
-  imageRow: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  image: {
-    margin: 5,
-    borderRadius: 10,
-    color: 'white',
-    backgroundColor: 'white',
-  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -225,46 +194,21 @@ const styles = StyleSheet.create({
   },
   categoryCircle: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    width: 24,
+    bottom: -50,
+    right: 12,
+    width: 106,
     height: 24,
     borderRadius: 12,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'right', 
+    textAlign: 'right',
   },
   categoryText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  categoryButton: {
-    backgroundColor: 'transparent',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    alignItems: 'left',
-  },
-  categoryButtonText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-  },
-  controlPanel: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: '#f1f1f1',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  controlButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  controlButtonText: {
-    marginLeft: 5,
-    fontSize: 16,
+    color: 'black', 
     fontFamily: 'Poppins-Regular',
+    textTransform: 'uppercase',
+    overflow: 'hidden', 
+    textAlign: 'right',
   },
 });
 

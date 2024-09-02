@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import BaseFriendViewHelloes from './BaseFriendViewHelloes';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useNavigation } from '@react-navigation/native';
 
 import { fetchPastHelloes } from '../api';
 
+import BaseFriendViewHelloes from './BaseFriendViewHelloes';
 import IconDynamicHelloType from '../components/IconDynamicHelloType';
-
 import TogglerActionButton from '../components/TogglerActionButton';
-
 import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
 import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
 
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-const ActionFriendPageHelloes = ({ 
+import { useNavigation } from '@react-navigation/native';
+
+const ComposerFriendHelloes = ({ 
   onPress,
   includeHeader=true, 
   headerText='HELLOES',
@@ -28,42 +27,22 @@ const ActionFriendPageHelloes = ({
   justifyIconContent='center',
   inactiveIconColor='white',
   topIconSize=30,
-  bottomIconSize=30,
-  daysText='',
+  bottomIconSize=30, 
 
  }) => {
   
   const navigation = useNavigation();
   
-  const { selectedFriend, friendDashboardData, friendColorTheme } = useSelectedFriend(); 
-  const [helloesList, setHelloesList] = useState([]); 
-  const [ lightColor, setLightColor ] = useState(null);
-  const [ darkColor, setDarkColor ] = useState(null);
+  const { selectedFriend, friendDashboardData, friendColorTheme, calculatedThemeColors } = useSelectedFriend(); 
+  const [helloesList, setHelloesList] = useState([]);  
+  const [isFetchingHelloes, setFetchingHelloes] = useState(false);
   const [ iconBackgroundColor ] = useState(null);
-
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
-  const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
-
-
-  useEffect(() => {
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
-      if(friendColorTheme.invertGradient) {
-        setLightColor(friendColorTheme.darkColor || 'gray');
-        setDarkColor(friendColorTheme.lightColor || 'white');
-      } else {
-        setLightColor(friendColorTheme.lightColor || 'white');
-        setDarkColor(friendColorTheme.darkColor || 'gray');
-      };
-    }
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
-      setLightColor('white');
-      setDarkColor('gray');
-    }
-  }, [friendColorTheme]);
-
+  const calculatedBackgroundColor = headerInside ? calculatedThemeColors.lightColor : 'transparent';
 
   useEffect(() => {
     const fetchData = async () => {
+        setFetchingHelloes(true);
         try {
             if (selectedFriend) {
                 const helloes = await fetchPastHelloes(selectedFriend.id);
@@ -75,41 +54,17 @@ const ActionFriendPageHelloes = ({
             }
         } catch (error) {
             console.error('Error fetching helloes list:', error);
+        } finally {
+          setFetchingHelloes(false);
         }
     };
-
     fetchData();
 }, [selectedFriend]);
-
-
 
   const navigateToHelloesScreen = () => {
     navigation.navigate('Helloes'); 
     if (onPress) onPress(); 
   };
-
-
-
-  
-  let mainHello = null; 
-  let satelliteHelloes = [];
-  let satellitesFirstPage = 1;
-  let additionalSatelliteCount = null;
-  let additionalHelloes = []; 
-
-  if (helloesList.length > 0) {
-    mainHello = helloesList[0];
-    mainHelloType = helloesList[0].type;
-    
-    satelliteHelloes = helloesList.slice(1);
-    additionalSatelliteCount = satelliteHelloes.length - satellitesFirstPage;
-
-    if (additionalSatelliteCount > 0) {
-      additionalHelloes = helloesList.slice(satellitesFirstPage + 1);
-    } else {
-      additionalHelloes = null;
-    }
-  }
 
   const [showSecondButton, setShowSecondButton] = useState(false);
  
@@ -132,13 +87,12 @@ const ActionFriendPageHelloes = ({
             {headerText}
           </Text>
         </View>
-
       )}
       <View style={styles.containerInnerRow}> 
-        <View style={[styles.containerHeaderInside, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius }]}>
+        <View style={[styles.containerHeaderInside, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius }]}>
           
           {includeHeader && headerInside && (
-            <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
+            <View style={[styles.headerContainer, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
                       <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
@@ -148,7 +102,8 @@ const ActionFriendPageHelloes = ({
       <View style={{ flex: 1 }}>
           <BaseFriendViewHelloes
             buttonHeight={buttonHeight}
-            onPress={() => {}}
+            buttonRadius={buttonRadius} 
+            isFetching={isFetchingHelloes}
             navigateToFirstPage={navigateToFirstPage} 
             allItems={helloesList ? helloesList : 'Loading...'}
             additionalText={
@@ -159,18 +114,11 @@ const ActionFriendPageHelloes = ({
             typeIcon={friendDashboardData.length > 0 ? <IconDynamicHelloType selectedChoice={friendDashboardData[0].previous_meet_type} svgHeight={40} svgWidth={40} /> : null}
             fontMargin={3}   
             showGradient={true}
-            lightColor={lightColor}
-            darkColor={darkColor} 
-            satellites={!showSecondButton}
-            satelliteSectionPosition="right"
-            satelliteSectionBackgroundColor={iconBackgroundColor}
-            satelliteCount={satellitesFirstPage}
-            satelliteHellos={satelliteHelloes}
-            satellitesOrientation="horizontal"
-            satelliteHeight="60%"
-            additionalPages={showSecondButton}
-            additionalSatellites={helloesList}
-            satelliteOnPress={(hello) => handlePress(hello)} 
+            lightColor={calculatedThemeColors.lightColor}
+            darkColor={calculatedThemeColors.darkColor} 
+            satellites={!showSecondButton} 
+            satelliteSectionBackgroundColor={iconBackgroundColor} 
+            additionalPages={showSecondButton}  
           /> 
       </View>
 
@@ -238,4 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActionFriendPageHelloes;
+export default ComposerFriendHelloes;

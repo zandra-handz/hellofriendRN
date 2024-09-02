@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
-const PickerSimpleAddressBase = ({ name, selectedOption, options, onValueChange, isScrollable = false }) => {
+const PickerSimpleAddressBase = ({ selectedOption, options, onValueChange, isScrollable = false }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Select {name}</Text>
+      <Text style={styles.label}></Text>
       {isScrollable ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollViewContainer}>
           {options.map((option, index) => (

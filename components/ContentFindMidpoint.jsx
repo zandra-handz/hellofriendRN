@@ -66,11 +66,11 @@ const ContentFindMidpoint = () => {
                         onValueChange={(itemValue) => setLength(itemValue)}
                     />
 
-
                     <View style={{height: 100}}>
                     <SelectorAddressBase
                         addresses={authUserState.user.addresses}
                         onAddressSelect={setSelectedUserAddress}
+                        currentAddressOption={true}
                         contextTitle="My Address"
                     />
                     </View>

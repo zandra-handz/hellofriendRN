@@ -16,6 +16,10 @@ export const SelectedFriendProvider = ({ children }) => {
     lightColor: null,
     darkColor: null,
   });
+  const [calculatedThemeColors, setCalculatedThemeColors] = useState({
+    lightColor: 'white',
+    darkColor: 'gray',
+  });
   const [loadingNewFriend, setLoadingNewFriend] = useState(false);
 
   useEffect(() => {
@@ -55,6 +59,28 @@ export const SelectedFriendProvider = ({ children }) => {
     }
   }, [selectedFriend]);
 
+
+  useEffect(() => {
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
+      if(friendColorTheme.invertGradient) {
+        setCalculatedThemeColors({
+          lightColor: friendColorTheme.darkColor || 'gray',
+          darkColor: friendColorTheme.lightColor || 'white',
+        });
+      } else {
+        setCalculatedThemeColors({
+          lightColor: friendColorTheme.lightColor || 'white',
+          darkColor: friendColorTheme.darkColor || 'gray',
+        });
+      }
+    } else {
+      setCalculatedThemeColors({
+        lightColor: 'white',
+        darkColor: 'gray',
+      });
+    }
+  }, [friendColorTheme]);
+
   useEffect(() => {
     setSelectedFriend(null);
   }, [authUserState]);
@@ -88,6 +114,7 @@ export const SelectedFriendProvider = ({ children }) => {
       friendDashboardData, 
       friendColorTheme,
       setFriendColorTheme,
+      calculatedThemeColors,
       loadingNewFriend,
       updateFriendDashboardData,
       updateFriendColorTheme,

@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, Button } from 'react-native';
 import { SearchForMidpointLocations } from '../api';
 import CardMidpointLocation from '../components/CardMidpointLocation';
-import ItemViewLocation from '../components/ItemViewLocation'; 
+
 
 
 const ResultsMidpointFinds = ({ 
     userAddress, 
-    friendAddress, 
-    destinationLocation, 
+    friendAddress,  
     search,
     radius,
     length,
@@ -41,7 +40,6 @@ const ResultsMidpointFinds = ({
                     const results = await SearchForMidpointLocations(locationData);
                     console.log('Search for Midpoint Response:', results);
 
-                    // Set results without sorting initially
                     setMidpointLocationResults(results || []);
                 } catch (error) {
                     console.error("Error getting midpoint locations:", error);
@@ -73,8 +71,7 @@ const ResultsMidpointFinds = ({
     };
 
     const handleSortChange = (order) => {
-        setSortOrder(order);
-        // Sort data and update state when sort order changes
+        setSortOrder(order); 
         setMidpointLocationResults(prevResults => sortData(prevResults, order));
     };
 
@@ -88,7 +85,7 @@ const ResultsMidpointFinds = ({
                 <FlatList
                     data={midpointLocationResults}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleSaveLocation(item)}>
+                        <View>
                             <CardMidpointLocation
                                 fullLocationData={item}
                                 name={item.name}
@@ -100,7 +97,7 @@ const ResultsMidpointFinds = ({
                                 timeDifference={item.time_difference}
                                 distanceDifference={item.distance_difference}
                             />
-                        </TouchableOpacity>
+                        </View>
                     )}
                     keyExtractor={(item, index) => index.toString()}
                 />

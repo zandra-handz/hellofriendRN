@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import LocationRoundOutlineSvg from '../assets/svgs/location-round-outline.svg';
-
+import ItemViewLocation from '../components/ItemViewLocation';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import ItemViewLocation from '../components/ItemViewLocation';
- 
 
 const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height = 160  }) => {
     const { friendDashboardData } = useSelectedFriend();
@@ -21,28 +19,18 @@ const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height =
         }
     }, [locationList, friendDashboardData]);
 
-
-    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [selectNewLocation, setSelectNewLocation] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const openModal = (location) => {
-        setSelectedLocation(location);
+        setSelectNewLocation(location);
         setIsModalVisible(true);
     };
 
     const closeModal = () => {
-        setSelectedLocation(null);
+        setSelectNewLocation(null);
         setIsModalVisible(false);
     };
- 
-
-    const calculateBubbleContainerDimensions = (width, height) => {
-        return {
-            width: width * 0.8,
-            height: height * 0.33,
-        };
-    };
-
  
  
     return (
@@ -68,11 +56,8 @@ const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height =
             scrollIndicatorInsets={{ right: 1 }}
             />
         )}
-
-
-
             {isModalVisible && (
-                <ItemViewLocation location={selectedLocation} onClose={closeModal} />
+                <ItemViewLocation location={selectNewLocation} onClose={closeModal} />
             )}
         </View>
     );
@@ -87,22 +72,6 @@ const styles = StyleSheet.create({
     relativeContainer: {
         marginHorizontal: 2,
         position: 'relative',  
-    },
-    bubbleContainer: {
-        
-        position: 'absolute',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        zIndex: 1,
-    },
-    bubbleText: {
-        color: 'transparent',
-        fontFamily: 'Poppins-Bold',
-        textAlign: 'left',
-    }, 
-    imageRow: {
-        flex: 1,
-        justifyContent: 'space-between',
     },  
 });
 

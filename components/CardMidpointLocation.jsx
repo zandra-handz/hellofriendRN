@@ -1,99 +1,80 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { fetchLocationDetails } from '../api'; // Adjust the import path as needed
-import { useAuthUser } from '../context/AuthUserContext';
-import { useLocationList } from '../context/LocationListContext'; // Adjust the import path as necessary
-
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Button } from 'react-native';
 import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
 import ButtonDirections from '../components/ButtonDirections';
 import ButtonMakeTempLocation from '../components/ButtonMakeTempLocation';
 import StylingRating from '../components/StylingRating';
 
 const CardMidpointLocation = ({ fullLocationData, id, unSaved=true, name, address, mydistance, frienddistance, mytraveltime, friendtraveltime, timeDifference, distanceDifference }) => {
-  const { authUserState } = useAuthUser(); // Access authentication context
+
   const [details, setDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Start with false since we are not loading by default
   const [error, setError] = useState(null); 
 
-  const showLeftPlaceholder = false;
-  const showRightPlaceholder = false;
-
-  useEffect(() => { 
-    console.log(frienddistance);
-  }, [frienddistance]);
-
-  useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        if (name && address) {
-          const locationData = {
-            address: encodeURIComponent(`${name} ${address}`),
-          };
-
-          // Fetch location details using user ID and address or coordinates
-          const fetchedDetails = await fetchLocationDetails(locationData);
-          setDetails(fetchedDetails);
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchDetails = async () => {
+    try {
+      setLoading(true);
+      setError(null); // Reset error state
+      if (name && address) {
+        const locationData = {
+          address: encodeURIComponent(`${name} ${address}`),
+        };
+        const fetchedDetails = await fetchLocationDetails(locationData);
+        setDetails(fetchedDetails);
       }
-    };
-
-    fetchDetails();
-  }, [name, address]);
-
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}> 
-      {showLeftPlaceholder && (
-      <View style={styles.iconPlaceholderContainer}>
-        <View style={styles.iconPlaceholder} />
-      </View>
-      )} 
       <View style={styles.contentContainer}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.name}>{details.name}</Text> 
-        <ButtonMakeTempLocation location={fullLocationData} />
-      </View>
-        <StylingRating rating={details.rating} starSize={10} /> 
+        <View style={styles.headerContainer}>
+          <Text style={styles.name}>{name}</Text> 
+          <ButtonMakeTempLocation location={fullLocationData} />
+        </View>
         
-        <ButtonDirections address={details.address} />
-        <ButtonPhoneNumber phoneNumber={details.phone}/>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : details ? (
+          <>
+            <StylingRating rating={details.rating} starSize={10} /> 
+            <ButtonDirections address={details.address} />
+            <ButtonPhoneNumber phoneNumber={details.phone} />
+          </>
+        ) : (
+          <Button title="Load Details" onPress={fetchDetails} />
+        )}
+
         <View style={styles.bottomBar}>
           <Text style={styles.iconButton}>me: {mytraveltime} | {mydistance.toFixed(2)} mi</Text>
           <Text style={styles.iconButton}>friend: {friendtraveltime} | {frienddistance.toFixed(2)} mi</Text>
-         
         </View>
         <View style={styles.bottomBar}>
-        
           <Text style={styles.iconButton}>time difference: {timeDifference.toFixed(2)}</Text>
           <Text style={styles.iconButton}>distance difference: {distanceDifference.toFixed(2)}</Text>
-       
         </View>
+        
         {error && (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>Error: {error}</Text>
           </View>
         )}
-        {!details && !error && (
+        
+        {!details && !error && !loading && (
           <View style={styles.noDataContainer}>
-            <Text style={styles.noDataText}>No details available</Text>
+            <Text style={styles.noDataText}></Text>
           </View>
         )}
       </View>
-      {showRightPlaceholder && (
-      <View style={styles.rightPlaceholderContainer}>
-        <View style={styles.rightPlaceholder} />
-      </View>
-      )}
     </View>
   );
 };
+ 
 
 const styles = StyleSheet.create({
   container: {

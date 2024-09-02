@@ -10,6 +10,7 @@ const BaseFriendViewHelloes = ({
 
   buttonHeight,
   buttonRadius = 10,
+  isFetching,
   allItems,
   additionalText = '',
   additionalTextFontSize = 16,
@@ -20,10 +21,8 @@ const BaseFriendViewHelloes = ({
   darkColor = 'black',
   lightColor = '#C0C0C0',
   direction = { x: 1, y: 0 },
-  satellites = false,
-  satelliteSectionPosition = 'left',
-  satelliteSectionBackgroundColor = 'black',
-  satellitesOrientation = 'horizontal',
+  satellites = false, 
+  satelliteSectionBackgroundColor = 'black', 
   additionalPages = false,
   additionalPagesCategorize = true,
 }) => {
@@ -74,12 +73,12 @@ const BaseFriendViewHelloes = ({
             <View
               style={[
                 styles.mainButtonContainer,
-                { height: buttonHeight, width: satellites ? '100%' : '100%' },
+                { height: buttonHeight, width: '100%'},
               ]}
             >
               <View
                 style={{
-                  flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
+                  flexDirection: 'row',
                   width: '100%',
                   height: buttonHeight,
                   padding: 10,
@@ -125,7 +124,7 @@ const BaseFriendViewHelloes = ({
                     height: buttonHeight,
                     borderRadius: buttonRadius,
                     backgroundColor: satelliteSectionBackgroundColor,
-                    flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column',
+                    flexDirection: 'row',
                   },
                 ]}
               >
@@ -142,7 +141,11 @@ const BaseFriendViewHelloes = ({
               <Text style={styles.categoryText}>{category}</Text>
             </View>
           )} 
-          {renderAdditionalSatellites()} 
+          {allItems && !isFetching && (
+          <>
+            {renderAdditionalSatellites()} 
+          </>
+          )}
         </View>
       )}
     </View>
@@ -167,7 +170,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     marginVertical: 0,
     backgroundColor: 'black',
-    
     width: '100%',
   },
   categoryText: {

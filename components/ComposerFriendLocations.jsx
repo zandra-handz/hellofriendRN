@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import BaseFriendViewLocations from '../components/BaseFriendViewLocations';
 import { useLocationList } from '../context/LocationListContext';
@@ -10,8 +10,7 @@ import MagGlassSimpleSvg from '../assets/svgs/mag-glass-simple.svg';
 import MapPinOutlineSvg from '../assets/svgs/map-pin-outline.svg';
 import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
 
-
-const ActionFriendPageLocations = ({ 
+const ComposerFriendLocations = ({ 
   includeHeader=false, 
   headerText='MEET UP PLACES', 
   headerTextColor='white',
@@ -31,48 +30,16 @@ const ActionFriendPageLocations = ({
 
   const navigation = useNavigation();
 
-  const { friendColorTheme } = useSelectedFriend();
+  const { friendColorTheme, calculatedThemeColors } = useSelectedFriend();
   const { locationList } = useLocationList(); 
-  
   const [showSecondButton, setShowSecondButton] = useState(false);
-  const [lightColor, setLightColor] = useState('black');
-  const [darkColor, setDarkColor] = useState('black');
-
-
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
-  const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
-
-  let mainLocation = null;
-  let satelliteLocations = [];
-  let satellitesFirstPage = 1; 
-
-
-  useEffect(() => {
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
-      if(friendColorTheme.invertGradient) {
-        setLightColor(friendColorTheme.darkColor || 'gray');
-        setDarkColor(friendColorTheme.lightColor || 'white');
-      } else {
-        setLightColor(friendColorTheme.lightColor || 'white');
-        setDarkColor(friendColorTheme.darkColor || 'gray');
-      };
-    }
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
-      setLightColor('white');
-      setDarkColor('gray');
-    }
-  }, [friendColorTheme]);
+  const calculatedBackgroundColor = headerInside ? calculatedThemeColors.lightColor : 'transparent';
 
   const navigateToLocationScreen = ({ onPress }) =>  {
     navigation.navigate('Locations');
     if (onPress) onPress();
   };
-
-  if (locationList.length > 0) {
-    mainLocation = locationList[0];
-    satelliteLocations = locationList.slice(1);
-    additionalSatelliteCount = satelliteLocations.length - satellitesFirstPage;
-  }
  
   const navigateToFirstPage = () => {
     setShowSecondButton(false);
@@ -82,8 +49,6 @@ const ActionFriendPageLocations = ({
     setShowSecondButton(true); 
   };
   
-   
-
   return (
     <View style={[styles.container, {backgroundColor: calculatedBackgroundColor, borderRadius: buttonRadius }]}>
       <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
@@ -96,9 +61,9 @@ const ActionFriendPageLocations = ({
 
       )}
       <View style={styles.containerInnerRow}> 
-        <View style={[styles.containerHeaderInside, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius }]}>
+        <View style={[styles.containerHeaderInside, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius }]}>
           {includeHeader && headerInside && (
-            <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
+            <View style={[styles.headerContainer, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
             <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
@@ -109,51 +74,37 @@ const ActionFriendPageLocations = ({
           <BaseFriendViewLocations 
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius}  
-            allItems={locationList ? locationList : 'Loading...'}
-            additionalText={mainLocation ? mainLocation.title : ''}
-            fontMargin={3} 
-            labelFontSize={16}
-            labelColor="white" 
+            allItems={locationList ? locationList : 'Loading...'} 
             showGradient={true}
-            lightColor={lightColor}
-            darkColor={darkColor}  
-            satellites={!showSecondButton}
-            satelliteSectionPosition="right"
-            satelliteCount={satellitesFirstPage}
-            satelliteLocations={satelliteLocations}
-            satellitesOrientation="horizontal"
-            satelliteHeight="60%"
-            additionalPages={showSecondButton}
-            additionalSatellites={locationList}
-            satelliteOnPress={(location) => handlePress(location)} 
+            lightColor={calculatedThemeColors.lightColor}
+            darkColor={calculatedThemeColors.darkColor} 
+            satellites={!showSecondButton}  
+            additionalPages={showSecondButton} 
+         />
+        </View>
+        </View>
+          <TogglerActionButton
+            showSecondButton={showSecondButton}
+            handleNext={handleNext}
+            navigateToFirstPage={navigateToFirstPage}
+            handleFullScreen={navigateToLocationScreen}
+            navigateToLocationScreen={navigateToLocationScreen}
+            height={calculatedButtonHeight}
+            borderRadius={buttonRadius} 
+            marginLeft={marginLeft}
+            justifyContent={justifyIconContent}
+            backgroundColor={friendColorTheme.darkColor}
+            topIconSize={topIconSize}
+            bottomIconSize={bottomIconSize}
+            iconColor={inactiveIconColor}
+            highlightIconColor={friendColorTheme.lightColor}
+            firstPageTopSvg={MagGlassSimpleSvg}
+            firstPageBottomSvg={MapPinOutlineSvg}
+            secondPageTopSvg={MagGlassSimpleSvg}
+            secondPageBottomSvg={ScrollOutlineSvg}
           />
         </View>
-      </View>
-      
-
-      <TogglerActionButton
-        showSecondButton={showSecondButton}
-        handleNext={handleNext}
-        navigateToFirstPage={navigateToFirstPage}
-        handleFullScreen={navigateToLocationScreen}
-        navigateToLocationScreen={navigateToLocationScreen}
-        height={calculatedButtonHeight}
-        borderRadius={buttonRadius} 
-        marginLeft={marginLeft}
-        justifyContent={justifyIconContent}
-        backgroundColor={friendColorTheme.darkColor}
-        topIconSize={topIconSize}
-        bottomIconSize={bottomIconSize}
-        iconColor={inactiveIconColor}
-        highlightIconColor={friendColorTheme.lightColor}
-        firstPageTopSvg={MagGlassSimpleSvg}
-        firstPageBottomSvg={MapPinOutlineSvg}
-        secondPageTopSvg={MagGlassSimpleSvg}
-        secondPageBottomSvg={ScrollOutlineSvg}
-      />
-      </View>
-    </View> 
-       
+      </View> 
     </View>
   );
 };
@@ -197,4 +148,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActionFriendPageLocations;
+export default ComposerFriendLocations;

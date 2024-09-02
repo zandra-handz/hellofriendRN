@@ -1,62 +1,30 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';  
+import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import ItemLocationSingle from '../components/ItemLocationSingle';
 import ItemLocationFavesHorizontal from '../components/ItemLocationFavesHorizontal'; 
-
-import { FlashList } from '@shopify/flash-list';
+import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';  
 
 const BaseFriendViewLocations = ({ 
   buttonHeight = 90,
   buttonRadius = 10, 
-  allItems,     
-  backgroundColor = 'transparent', 
+  allItems,      
   showGradient = true,
   darkColor = 'black',
-  lightColor = '#C0C0C0',
-  direction = { x: 1, y: 0 },   
-  satellites = false,
-  satelliteSectionPosition = 'right',
-  satelliteCount = 3, 
-  satelliteLocations = [],  
+  lightColor = '#C0C0C0',    
   additionalPages = false,
   additionalPagesCategorize = true, 
 }) => {
+
   const [category, setCategory] = useState(null);
-
-
+  
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
       const topItem = viewableItems[0].item;
       setCategory(topItem.title);   
     }
-  }).current; 
- 
-  const adjustFontSize = (fontSize) => {
-    return fontSize;
-  };
-
-  const textStyles = (fontSize, color) => ({
-    fontSize: adjustFontSize(fontSize),
-    color,
-  });
- 
-  const renderSatellites = () => {
-    if (!satellites || satelliteLocations.length === 0) {
-      return null;
-    }
-
-    const numSatellites = Math.min(satelliteCount, satelliteLocations.length);
-    const satellitesArray = [];
-
-    for (let i = 0; i < numSatellites; i++) {
-      satellitesArray.push(
-        <ItemLocationSingle key={`satellite-${i}`} locationObject={null}  />
-      );
-    }
-    return satellitesArray;
-  };
+  }).current;  
 
   const renderAdditionalSatellites = useCallback(() => {
     return (
@@ -72,110 +40,90 @@ const BaseFriendViewLocations = ({
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50,
         }}
-        ListFooterComponent={<View style={{ width: 283 }} />} // Add blank space at the end of the list
+        ListFooterComponent={<View style={{ width: 283 }} />}
       />
-
     );
   }, [allItems, onViewableItemsChanged]);
 
   return (
     <View style={styles.container}>
-      {!additionalPages && (
-        <View style={{ }}>
-          <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.mainButtonContainer, { height: buttonHeight, width: satellites ? '100%' : '100%' }]}>
-            <View
-              style={{
-                flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
-                width: '100%',
-                height: buttonHeight,
-                padding: 10,
-                borderRadius: buttonRadius,
-                alignItems: 'center',
-                overflow: 'hidden',
-                backgroundColor: showGradient ? 'transparent' : backgroundColor,
-              }}
-            >
-                {showGradient && (
-                  <LinearGradient
-                    colors={[darkColor, lightColor]}
-                    start={{ x: 0, y: 0 }}
-                    end={direction}
-                    style={StyleSheet.absoluteFillObject}
-                  />
-                )} 
-                <View style={{ flexDirection: 'row', paddingHorizontal: 5, paddingBottom: 0, paddingTop: 6, flex: 1, width: '100%' }}>
-                
-                <View style={styles.svgContainer}>
-                <PushPinSolidSvg width={20} height={20} color="white" />
-                </View>
-                  <View style={{ width: '100%', flexDirection: 'row' }}>
-                  
-                        <View> 
-                          <ItemLocationFavesHorizontal containerWidth={254} width={31} height={31}/> 
-                        </View>
-                  </View> 
-                </View>
-              </View>
-            </View> 
+    {additionalPages ? (
+      <View style={[styles.additionalSatelliteSection, { borderRadius: buttonRadius, height: buttonHeight }]}>
+        {additionalPagesCategorize && (
+          <View style={styles.categoryTextContainer}>
+            <Text style={styles.categoryText}>{category}</Text>
+          </View>
+        )}
+        {renderAdditionalSatellites()}
+      </View>
+    ) : (
+      <View style={[styles.mainButtonContainer, { height: buttonHeight }]}>
+        <View style={[styles.mainButtonContent, { borderRadius: buttonRadius }]}>
+          {showGradient && (
+            <LinearGradient
+              colors={[darkColor, lightColor]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={StyleSheet.absoluteFillObject}
+            />
+          )}
+          <View style={styles.iconAndLocationContainer}>
+            <View style={styles.svgContainer}>
+              <PushPinSolidSvg width={20} height={20} color="white" />
+            </View>
+            <ItemLocationFavesHorizontal containerWidth={254} width={31} height={31} />
           </View>
         </View>
-      )}
-      {additionalPages && (
-        <View style={[styles.additionalSatelliteSection, {borderRadius: buttonRadius, height: buttonHeight}]}>
-          {additionalPagesCategorize && (
-            <View style={styles.categoryTextContainer}>
-              <Text style={styles.categoryText}>{category}</Text>
-            </View>
-          )}
-          {renderAdditionalSatellites()}
-        </View>
-      )}
-    </View>
-  );
+      </View>
+    )}
+  </View>
+);
 };
-  
-const styles = StyleSheet.create({ 
-  container: {
-    flex: 1,
-  },
-svgContainer: {
-    marginRight: 40,
-},
-  satelliteSection: {
-    width: '0%',
-    height: 0,
-    paddingLeft: 8, 
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    backgroundColor: 'white',
-  },
-  additionalSatelliteSection: {
-    flexDirection: 'column',
-    marginVertical: 0,  
-    backgroundColor: 'black',
-  
-  },
-  categoryTextContainer: { 
-    width: 300,  
-    marginLeft: 10, 
-    height: 42,
-    marginBottom: 0,
-    justifyContent: 'center',
-    whiteSpace: 'nowrap', 
-  },
 
-  categoryText: {
-    fontSize: 14,
-    color: 'white',
-    fontFamily: 'Poppins-Regular', 
-    textTransform: 'uppercase',
-    overflow: 'hidden',
-    maxHeight: 18,
-    whiteSpace: 'nowrap', // This property may not be supported in React Native, so adjust using maxWidth or width
-    textOverflow: 'ellipsis', // This property may not be supported in React Native, so adjust using maxWidth or width
-  
-  },
+const styles = StyleSheet.create({
+container: {
+  flex: 1,
+},
+mainButtonContainer: {
+  width: '100%',
+},
+mainButtonContent: {
+  flexDirection: 'row',
+  width: '100%',
+  height: '100%',
+  padding: 10,
+  alignItems: 'center',
+  overflow: 'hidden',
+},
+iconAndLocationContainer: {
+  flexDirection: 'row',
+  paddingHorizontal: 5,
+  paddingTop: 6,
+  flex: 1,
+  width: '100%',
+},
+svgContainer: {
+  marginRight: 40,
+},
+additionalSatelliteSection: {
+  flexDirection: 'column',
+  backgroundColor: 'black',
+},
+categoryTextContainer: {
+  width: 300,
+  marginLeft: 10,
+  height: 42,
+  justifyContent: 'center',
+},
+categoryText: {
+  fontSize: 14,
+  color: 'white',
+  fontFamily: 'Poppins-Regular',
+  textTransform: 'uppercase',
+  overflow: 'hidden',
+  maxHeight: 18,
+  textOverflow: 'ellipsis',
+},
 });
 
 export default BaseFriendViewLocations;

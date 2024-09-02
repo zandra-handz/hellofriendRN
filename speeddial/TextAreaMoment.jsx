@@ -76,7 +76,7 @@ const TextAreaMoment = ({
           ) : (
             <Text
               style={[styles.input, { width: width }]}
-              numberOfLines={4}
+              numberOfLines={8}
             >
               {textInput || placeholderText}
             </Text>
@@ -99,6 +99,7 @@ const TextAreaMoment = ({
     </KeyboardAvoidingView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -109,23 +110,28 @@ const styles = StyleSheet.create({
     paddingBottom: 40, // Increased padding to ensure space above the keyboard
   },
   backgroundSvgContainer: {
-    width: '100%',  
+    width: '100%',
     marginTop: 90,
     marginLeft: 14,
   },
   input: {
-    position: 'absolute', 
+    position: 'absolute',
     zIndex: 2,
-    top: 30, 
+    top: 48,
+    left: 84,  
+    right: 14, 
     backgroundColor: 'transparent',
-    borderRadius: 20,    
-    paddingLeft: 94, 
-    paddingRight: 30,
+    borderRadius: 20,
+    paddingLeft: 10,
+    paddingRight: 10,
     borderWidth: 0,
     fontFamily: 'Poppins-Regular',
     fontSize: 16,
     color: 'black',
-    height: '70%',
+    height: '76%',
+    textAlignVertical: 'top',  
+    overflow: 'hidden',  
+    maxWidth: '60%',  
   },
   inputActive: {
     zIndex: 1,
@@ -134,9 +140,9 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   maxButtonContainer: {
-    position: 'absolute', 
+    position: 'absolute',
     top: 30,
-    right: 14, 
+    right: 14,
     borderRadius: 20,
     padding: 20,
     alignItems: 'center',

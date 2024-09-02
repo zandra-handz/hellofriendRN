@@ -67,6 +67,7 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
             <SelectorAddressBase
                 addresses={authUserState.user.addresses}
                 onAddressSelect={handleUserAddressSelect}
+                currentAddressOption={true}
                 contextTitle="My Address"
             /> 
             

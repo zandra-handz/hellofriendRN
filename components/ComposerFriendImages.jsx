@@ -12,7 +12,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useNavigation } from '@react-navigation/native';
 
 
-const ComposerFriendViewImages = ({ 
+const ComposerFriendImages = ({ 
   onPress, 
   includeHeader=true, 
   headerText='IMAGES',
@@ -32,32 +32,10 @@ const ComposerFriendViewImages = ({
 
   const navigation = useNavigation();
   const { imageList } = useImageList(); 
-  const { friendColorTheme } = useSelectedFriend(); 
+  const { friendColorTheme, calculatedThemeColors } = useSelectedFriend(); 
 
-  const [ lightColor, setLightColor ] = useState(null);
-  const [ darkColor, setDarkColor ] = useState(null);
- 
- 
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
-  const calculatedBackgroundColor = headerInside ? lightColor : 'transparent';
-
-
-  useEffect(() => {
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
-      if(friendColorTheme.invertGradient) {
-        setLightColor(friendColorTheme.darkColor || 'gray');
-        setDarkColor(friendColorTheme.lightColor || 'white');
-      } else {
-        setLightColor(friendColorTheme.lightColor || 'white');
-        setDarkColor(friendColorTheme.darkColor || 'gray');
-      };
-    }
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
-      setLightColor('white');
-      setDarkColor('gray');
-    }
-  }, [friendColorTheme]);
-  
+  const calculatedBackgroundColor = headerInside ? calculatedThemeColors.lightColor : 'transparent';
 
   const navigateToImagesScreen = () => {
     navigation.navigate('Images'); 
@@ -75,9 +53,9 @@ const ComposerFriendViewImages = ({
         </View>
       )}
       <View style={styles.containerInnerRow}> 
-        <View style={[styles.containerHeaderInside, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius }]}>
+        <View style={[styles.containerHeaderInside, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius }]}>
           {includeHeader && headerInside && (
-            <View style={[styles.headerContainer, { backgroundColor: lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
+            <View style={[styles.headerContainer, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
                       <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
@@ -92,8 +70,8 @@ const ComposerFriendViewImages = ({
             allItems={imageList ? imageList : `No images`}
             fontMargin={3}  
             showGradient={true}
-            lightColor={lightColor}
-            darkColor={darkColor}  
+            lightColor={calculatedThemeColors.lightColor}
+            darkColor={calculatedThemeColors.darkColor}  
           /> 
       </View>
       </View>
@@ -155,4 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ComposerFriendViewImages;
+export default ComposerFriendImages;

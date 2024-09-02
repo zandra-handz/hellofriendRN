@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Picker } from '@react-native-picker/picker';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import ButtonDirections from '../components/ButtonDirections';
-import AlertList from '../components/AlertList';
-import RowItemAddressSelect from '../components/RowItemAddressSelect';
-import PickerSimpleAddressBase from '../components/PickerSimpleAddressBase';
+import React, { useState, useEffect } from 'react'; 
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import * as Location from 'expo-location'; // Import from expo-location
+import Geocoder from 'react-native-geocoding';
 import { GOOGLE_API_KEY } from '@env';
+import ButtonDirections from '../components/ButtonDirections';
+import SelectAddressModalVersion from '../components/SelectAddressModalVersion';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+// Initialize Geocoder with your Google Maps API key
+Geocoder.init(GOOGLE_API_KEY);
 
-const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
+const SelectorAddressBase = ({ addresses, currentAddressOption, onAddressSelect, contextTitle }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [showAddressOptions, setShowAddressOptions] = useState(false);
   const [localAddressOptions, setLocalAddressOptions] = useState([]);
-  const [makeInvisible, setMakeInvisible] = useState(false);
 
   useEffect(() => {
     if (addresses && addresses.length > 0) {
@@ -34,161 +33,97 @@ const SelectorAddressBase = ({ addresses, onAddressSelect, contextTitle }) => {
         };
       });
       setLocalAddressOptions(options);
-      console.log('SelectorAddressBase options: ',options);
- 
       setSelectedAddress(options[0].value);
       onAddressSelect(options[0].value);  
     }
-    console.log(addresses);
   }, [addresses]);
 
-  const handleAddressSelect = (address) => {
-    setSelectedAddress(address);
-    onAddressSelect(address);
-    setShowAddressOptions(false);
+  const handleUseCurrentLocation = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Error', 'Permission to access location was denied');
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      const { latitude, longitude } = location.coords;
+      
+      const response = await Geocoder.from(latitude, longitude);
+      const address = response.results[0].formatted_address;
+
+      const newAddress = {
+        address: address,
+        latitude: latitude,
+        longitude: longitude,
+        title: 'Current Location',
+      };
+
+      setSelectedAddress(newAddress);
+      onAddressSelect(newAddress);
+    } catch (error) {
+      Alert.alert('Error', 'Unable to get current location.');
+    }
   };
 
   return (
     <>
-    <View style={styles.container}>
-      <Text style={styles.cardTitle}>{contextTitle}</Text>
-
-      <View style={styles.hintContainer}>
-      <View style={{borderRadius: 20, width: '100%', padding: 10, borderWidth: 1, borderColor: '#ccc'}}>
-          
-        {selectedAddress && (
-          <ButtonDirections address={selectedAddress.address} size={15} />
-        )}
-        <Text style={styles.hintText}>
-          {selectedAddress ? '' : 'No address selected'}
-        </Text>
+      <View style={styles.container}>
+        <View style={{flexDirection: 'row',  alignContent: 'center'}}>
+        <Text style={styles.cardTitle}>{contextTitle}</Text>
+          {currentAddressOption && ( 
+          <TouchableOpacity style={{marginHorizontal: 10, marginTop: 4 }} onPress={handleUseCurrentLocation}>
+            <Text style={{fontFamily: 'Poppins-Regular', fontSize: 12 }}>
+              Use current location?
+            </Text>
+          </TouchableOpacity>
+          )}
         </View>
-        <FontAwesome
-          name={isEditingAddress ? 'pencil' : 'pencil'}
-          size={24}
-          color="limegreen"
-          onPress={() => setIsEditingAddress(prev => !prev)}
-          style={styles.icon}
-        />
-      </View>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isEditingAddress}
-        onRequestClose={() => setIsEditingAddress(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.addressText}>{selectedAddress ? selectedAddress.label : ''}</Text>
-            
-            <View style={styles.searchIconContainer}>
-              <View style={styles.pickerContainer}>
-                <Text style={styles.hardcodedLabel}>Saved Addresses</Text>
-                <Picker
-                  selectedValue={selectedAddress ? selectedAddress.label : null}
-                  style={styles.picker}
-                  onValueChange={(itemValue) => {
-                    const newAddress = localAddressOptions.find(option => option.label === itemValue).value;
-                    setSelectedAddress(newAddress);
-                    onAddressSelect(newAddress);
-                  }}
-                >
-                  {localAddressOptions.map(option => (
-                    <Picker.Item key={option.label} label={option.label} value={option.label} />
-                  ))}
-                </Picker>
-              </View>
-              <TouchableOpacity
-                style={styles.searchButton}
-                onPress={() => setShowAddressOptions(true)}
-              >
-                <FontAwesome name="search" size={24} color="limegreen" />
-              </TouchableOpacity>
-            </View>
-
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={makeInvisible}
-              onRequestClose={() => setMakeInvisible(false)}
-            >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  <GooglePlacesAutocomplete
-                    placeholder="Search"
-                    keepResultsAfterBlur={true}
-                    onPress={(data, details = null) => {
-                      const address = {
-                        title: data.description,
-                        address: data.description,
-                        label: data.description,
-                        lat: details.geometry.location.lat,
-                        lng: details.geometry.location.lng,
-                      };
-                      handleAddressSelect(address);
-                    }}
-                    fetchDetails={true}
-                    query={{
-                      key: GOOGLE_API_KEY,
-                      language: 'en',
-                    }}
-                    debounce={300}
-                    styles={{
-                      textInputContainer: styles.textInputContainer,
-                      textInput: styles.textInput,
-                      predefinedPlacesDescription: {
-                        color: 'limegreen',
-                      },
-                    }}
-                  />
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={() => setShowAddressOptions(false)}
-                  >
-                    <Text style={styles.closeButtonText}>Close</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setIsEditingAddress(false)}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
+        <View style={styles.hintContainer}>
+          <View style={{borderRadius: 20, width: '100%', padding: 10, borderWidth: 1, borderColor: '#ccc'}}>
+            {selectedAddress && (
+              <ButtonDirections address={selectedAddress.address} size={15} />
+            )}
+            {!selectedAddress && (
+              <Text style={{fontFamily: 'Poppins-Regular', fontSize: 15}}>No addresses saved</Text>
+            )}
+            <Text style={styles.hintText}>
+              {selectedAddress ? '' : 'No address selected'}
+            </Text>
           </View>
+          {addresses.length > 0 && ( 
+          <FontAwesome
+            name="pencil"
+            size={24}
+            color="limegreen"
+            onPress={() => setIsEditingAddress(prev => !prev)}
+            style={styles.icon}
+          /> 
+          )}
+          {addresses.length === 0 && ( 
+          <FontAwesome
+            name="search"
+            size={24}
+            color="limegreen"
+            onPress={() => setIsEditingAddress(prev => !prev)}
+            style={styles.icon}
+          /> 
+          )}
         </View>
-      </Modal>
-    </View>
-    <AlertList
-        fixedHeight={true}
-        height={700}
-        isModalVisible={isEditingAddress} 
-        useSpinner={false}
-        toggleModal={() => setIsEditingAddress(false)}
-        headerContent={<Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18 }}>Select Address</Text>}
-        content={
-        <PickerSimpleAddressBase
-          name="Saved"
-          selectedOption={selectedAddress ? selectedAddress.label : null}
-          options={localAddressOptions.map(option => ({
-            label: option.value.address,
-            value: option.key
-          }))}
-          onValueChange={(itemValue) => {
-            const newAddress = localAddressOptions.find(option => option.key === itemValue)?.value;
-            setSelectedAddress(newAddress);
-            onAddressSelect(newAddress);
-            setIsEditingAddress(false);
-          }}
-        />
 
-          }
-        onCancel={() => setShowAddressOptions(false)}
-        confirmText="Reset All"
-        cancelText="Back"
+    </View>
+      
+      <SelectAddressModalVersion
+        isEditingAddress={isEditingAddress}
+        setIsEditingAddress={setIsEditingAddress}
+        localAddressOptions={localAddressOptions}
+        selectedAddress={selectedAddress}
+        onAddressSelect={(address) => {
+          setSelectedAddress(address);
+          onAddressSelect(address);
+        }}
+        setShowAddressOptions={setShowAddressOptions}
       />
     </>
   );
@@ -202,8 +137,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 8,
     height: 50,
-    width: '100%',
-    backgroundColor: 'pink',
+    width: '100%', 
   },
   cardTitle: {
     fontSize: 16,
@@ -223,19 +157,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginLeft: 10,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    width: '90%',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
   },
   addressText: {
     fontSize: 16,

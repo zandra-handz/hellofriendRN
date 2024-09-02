@@ -2,7 +2,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import InputSearchAddress from '../components/InputSearchAddress';
 
 import SearchBarGoogleAddress from '../components/SearchBarGoogleAddress';
 
