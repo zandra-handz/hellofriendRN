@@ -1,6 +1,6 @@
 
 import React, { useRef, useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Image, TextInput, Alert } from 'react-native';
+import { View, StyleSheet,Text, Image } from 'react-native';
 
 import { createFriendImage } from '../api';  
 
@@ -9,16 +9,13 @@ import PickerBinary from '../components/PickerBinary';
 import InputSingleValue from '../components/InputSingleValue';
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
+import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 
 import CameraCuteSvg from '../assets/svgs/camera-cute.svg';
 import UploadCurlySvg from '../assets/svgs/upload-curly.svg';
 import PhotosTwoSvg from '../assets/svgs/photos-two.svg';
 
-
-
-import AlertYesNo from '../components/AlertYesNo';  
-import AlertConfirm from '../components/AlertConfirm'; 
+ 
 import AlertSuccessFail from '../components/AlertSuccessFail';
 
 
@@ -228,21 +225,16 @@ const failOk = () => {
 
         {selectedFriend && canContinue && imageUri && ( 
                 <View style={styles.bottomButtonContainer}>  
-                    <ButtonLottieAnimationSvg
+                    <ButtonBottomActionBase
                         onPress={handleSave}
                         preLabel=''
                         label={`Upload image`}
                         height={54}
                         radius={16}
-                        fontMargin={3}
-                        animationSource={require("../assets/anims/heartinglobe.json")}
-                        rightSideAnimation={false}
+                        fontMargin={3} 
                         labelFontSize={22}
-                        labelColor="white"
-                        animationWidth={234}
-                        animationHeight={234}
-                        labelContainerMarginHorizontal={4}
-                        animationMargin={-64}
+                        labelColor="white" 
+                        labelContainerMarginHorizontal={4} 
                         showGradient={true}
                         showShape={true}
                         shapePosition="right"
@@ -250,8 +242,7 @@ const failOk = () => {
                         shapeWidth={90}
                         shapeHeight={90}
                         shapePositionValue={-14}
-                        shapePositionValueVertical={-10}
-                        showIcon={false}
+                        shapePositionValueVertical={-10} 
                     />
             </View> 
             )}

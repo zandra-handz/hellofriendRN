@@ -4,14 +4,12 @@ import AlertImage from '../components/AlertImage';
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
+import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 
 
 
 import HelloFriendInvite from '../components/HelloFriendInvite';
-
-
-import ThoughtBubbleTwoSolidSvg from '../assets/svgs/thought-bubble-two-solid.svg'; // Import the SVG
+ 
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 
 
@@ -60,7 +58,7 @@ const ButtonMomentCategory = ({onPress, categoryText, momentCount}) => {
             <View style={styles.buttonContainer}> 
 
 
-            <ButtonLottieAnimationSvg
+            <ButtonBottomActionBase
                 onPress={onPress}
                 preLabel = {momentCount}
                 preLabelFontSize = {18} 

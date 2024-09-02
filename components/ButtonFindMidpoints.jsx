@@ -1,33 +1,29 @@
-// ButtonFindMidpoints.js
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
-import TwoCirclesCommonSvg from '../assets/svgs/two-circles-common.svg'; // Import the SVG
-import ThreeLocationsSvg from '../assets/svgs/three-locations.svg'; // Import the SVG
+import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
+import TwoCirclesCommonSvg from '../assets/svgs/two-circles-common.svg'; 
+import ThreeLocationsSvg from '../assets/svgs/three-locations.svg'; 
+ 
 
 const ButtonFindMidpoints = ({ onPress }) => {
     const navigation = useNavigation();
 
     const navigateToMidpointSearch = () => {
-        navigation.navigate('MidpointLocationSearch'); // Navigate to the 'MidpointLocationSearch' screen
-        if (onPress) onPress(); // Call the onPress function to close the modal
+        navigation.navigate('MidpointLocationSearch');  
+        if (onPress) onPress();  
     };
 
     return (
         <View style={styles.container}>
-            <ButtonLottieAnimationSvg
+            <ButtonBottomActionBase
                 onPress={navigateToMidpointSearch}
                 preLabel=''
                 label={`Search For Midpoints`}
                 height={64}
                 radius={16}
-                fontMargin={3}
-                animationSource={require("../assets/anims/heartinglobe.json")}
-                rightSideAnimation={false}
-                labelFontSize={22}
-                animationWidth={234}
-                animationHeight={234}
+                fontMargin={3} 
+                labelFontSize={22} 
                 labelContainerMarginHorizontal={4}
                 animationMargin={-64}
                 showGradient={true}
@@ -37,8 +33,7 @@ const ButtonFindMidpoints = ({ onPress }) => {
                 shapeWidth={100}
                 shapeHeight={100}
                 shapePositionValue={0}
-                shapePositionValueVertical={0}
-                showIcon={false}
+                shapePositionValueVertical={0} 
                 showTopLevelShape={true}
                 TopLevelShapeSvg={ThreeLocationsSvg}
                 topLevelShapeWidth={40}

@@ -3,8 +3,8 @@ import { View, StyleSheet } from 'react-native';
 
 import CompareTravel from '../components/CompareTravel';
 
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
-import LocationsOnMapColoredSvg from '../assets/svgs/locations-on-map-colored.svg'; // Import the SVG
+import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
+import LocationsOnMapColoredSvg from '../assets/svgs/locations-on-map-colored.svg'; 
 
 import AlertImage from '../components/AlertImage'; 
 
@@ -29,15 +29,11 @@ const ButtonCalculateAndCompareTravel = () => {
       </AlertImage> 
 
             
-            <ButtonLottieAnimationSvg 
+            <ButtonBottomActionBase
                 onPress={openModal} 
                 preLabel = ''
                 label="Compare Travel Times" 
-                fontMargin={3}
-                animationSource={require("../assets/anims/heartinglobe.json")}
-                rightSideAnimation={false}  
-                animationWidth={234}
-                animationHeight={234}
+                fontMargin={3}  
                 labelContainerMarginHorizontal={4}
                 animationMargin={-64}
                 showGradient={true} 
@@ -47,8 +43,7 @@ const ButtonCalculateAndCompareTravel = () => {
                 shapeWidth={110}
                 shapeHeight={110}
                 shapePositionValue={-14}
-                shapePositionValueVertical={-23}
-                showIcon={false}  
+                shapePositionValueVertical={-23} 
                 />
 
             </View> 

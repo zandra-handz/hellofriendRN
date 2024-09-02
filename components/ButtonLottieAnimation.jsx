@@ -1,19 +1,19 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 const ButtonLottieAnimation = ({
   onPress,
   label,
   height = 134,
   radius = 30,
-  preLabel = 'new', // Default pre-label text
+  preLabel = 'new',
   animationSource,
   rightSideAnimation = false,
-  preLabelFontSize = 18, // Font size for pre-label
-  preLabelColor = 'white', // Color for pre-label text
+  preLabelFontSize = 18,
+  preLabelColor = 'white',
   labelFontSize = 20,
   labelColor = 'black',
   backgroundColor = 'transparent',
@@ -28,16 +28,19 @@ const ButtonLottieAnimation = ({
   direction = { x: 1, y: 0 },
   showShape = true,
   shapePosition = 'left',
-  shapeSource, // Default shape
+  shapeSource,
   shapeWidth = 260,
   shapeHeight = 260,
-  shapePositionValue = -134, // Default value
+  shapePositionValue = -134,
   shapePositionValueVertical = null,
-  labelContainerMarginHorizontal = 0, // Default margin for label container
-  showIcon = true, // New property to show/hide Lottie icon
+  labelContainerMarginHorizontal = 0,
+  showIcon = true,
+  borderWidth = 2, // New prop for inner border width 
 }) => {
   const lottieViewRef = useRef(null);
-  const globalStyles = useGlobalStyle(); // Get the global styles
+  const globalStyles = useGlobalStyle();
+  const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+  const [ borderColor, setBorderColor ] = useState('transparent');
 
   useEffect(() => {
     if (lottieViewRef.current && animationSource) {
@@ -48,6 +51,15 @@ const ButtonLottieAnimation = ({
       }
     }
   }, [animationSource]);
+
+  useEffect(() => {
+    if (selectedFriend && calculatedThemeColors && !loadingNewFriend) {
+      setBorderColor(calculatedThemeColors.lightColor);
+    } else {
+      setBorderColor('transparent');
+    }
+
+  }, [selectedFriend, loadingNewFriend, calculatedThemeColors]);
 
   const getShapeStyle = () => {
     switch (shapePosition) {
@@ -82,13 +94,15 @@ const ButtonLottieAnimation = ({
         flexDirection: 'row',
         width: '100%',
         height: height,
-        padding: 10,
+        padding: borderWidth, // Apply padding equal to the border width
         marginBottom: 2,
         borderRadius: radius,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        overflow: 'hidden', // Ensure the gradient and shape stay within rounded borders
+        overflow: 'hidden',
         backgroundColor: showGradient ? 'transparent' : backgroundColor,
+        borderWidth: borderWidth, // Set the border width
+        borderColor: borderColor, // Set the border color
       }}
       onPress={onPress}
     >
@@ -109,9 +123,8 @@ const ButtonLottieAnimation = ({
             position: 'absolute',
             width: shapeWidth,
             height: shapeHeight,
-            
-            ...getShapeStyle(), 
-            top: shapePositionValueVertical
+            ...getShapeStyle(),
+            top: shapePositionValueVertical,
           }}
           resizeMode="contain"
         />

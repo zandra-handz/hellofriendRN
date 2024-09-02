@@ -11,7 +11,7 @@ const ActionScreenButtonAddMoment = ({ onPress }) => {
             <ButtonLottieAnimation
             onPress={onPress}
             label="MOMENT"
-            fontMargin={3}
+            fontMargin={6}
             animationSource={require("../assets/anims/lightbulbsimple.json")}
             rightSideAnimation={true}
             showIcon={true}
@@ -19,8 +19,7 @@ const ActionScreenButtonAddMoment = ({ onPress }) => {
             labelColor="white"
             animationWidth={234}
             animationHeight={234}
-     
-            labelContainerMarginHorizontal={4}
+            labelContainerMarginHorizontal={6}
             animationMargin={50}
             animationTopMargin={30}
             shapePosition="right"   

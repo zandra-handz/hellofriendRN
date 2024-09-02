@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; // Import the SVG
+import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
+import CompassCuteSvg from '../assets/svgs/compass-cute.svg';  
 import { useAuthUser } from '../context/AuthUserContext';
 import { useLocationList } from '../context/LocationListContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext'; // Import the context
-import SelectorAddressBase from '../components/SelectorAddressBase'; // Import the base component
+import { useSelectedFriend } from '../context/SelectedFriendContext'; 
+import SelectorAddressBase from '../components/SelectorAddressBase'; 
 import ResultsTravelComparison from '../components/ResultsTravelComparison';
 
-const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black", style }) => {
+const CompareTravel = () => {
     const { selectedLocation } = useLocationList();
     const { authUserState } = useAuthUser();
     const { friendDashboardData } = useSelectedFriend(); // Access selected friend data
@@ -28,8 +28,7 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
             setEditedMessage('Plan details are not available.');
         }
     }, [selectedLocation, authUserState.user.username]);
-
-    // Handle address selection
+ 
     const handleUserAddressSelect = (address) => {
         setSelectedUserAddress(address);
         console.log('Selected User Address:', address);
@@ -39,8 +38,7 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
         setSelectedFriendAddress(address);
         console.log('Selected Friend Address:', address);
     };
-
-    // Trigger fetch for travel comparison
+ 
     const handleCalculate = () => {
         setTriggerFetch(prev => !prev);
     };
@@ -88,19 +86,15 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
 
             <View style={{position: 'absolute', width: '100%', bottom: 0}}>
 
-            <ButtonLottieAnimationSvg
+            <ButtonBottomActionBase
                 onPress={handleCalculate}
                 preLabel=''
                 label={`Calculate times`}
                 height={54}
                 radius={16}
-                fontMargin={3}
-                animationSource={require("../assets/anims/heartinglobe.json")}
-                rightSideAnimation={false}
+                fontMargin={3} 
                 labelFontSize={22}
-                labelColor="white"
-                animationWidth={234}
-                animationHeight={234}
+                labelColor="white" 
                 labelContainerMarginHorizontal={4}
                 animationMargin={-64}
                 showGradient={true}
@@ -110,8 +104,7 @@ const CompareTravel = ({ size = 14, family = 'Poppins-Regular', color = "black",
                 shapeWidth={100}
                 shapeHeight={100}
                 shapePositionValue={-14}
-                shapePositionValueVertical={-10}
-                showIcon={false}
+                shapePositionValueVertical={-10} 
             />
         </View>
         </View>

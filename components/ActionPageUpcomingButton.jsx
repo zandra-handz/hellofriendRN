@@ -6,13 +6,13 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import ActionFriendPageHeader from './ActionFriendPageHeader';
 import ButtonArrowSvgAndLabel from '../components/ButtonArrowSvgAndLabel';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const ActionPageUpcomingButton = ({ onPress }) => {
+import LizardSvg from '../assets/svgs/lizard';
+ 
+const ActionPageUpcomingButton = () => {
   const { authUserState, userAppSettings } = useAuthUser();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { selectedFriend, setFriend } = useSelectedFriend();
-  const { themeStyles } = useGlobalStyle();
+  const { selectedFriend, setFriend } = useSelectedFriend(); 
  
   
   let mainHello = null;
@@ -48,21 +48,11 @@ const ActionPageUpcomingButton = ({ onPress }) => {
   }, [selectedFriend]);
 
   const navigateToFirstPage = () => {
-    setShowSecondButton(false);
-    Animated.timing(opacityAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    setShowSecondButton(false); 
   };
 
   const handleNext = () => {
-    setShowSecondButton(true);
-    Animated.timing(opacityAnim, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    setShowSecondButton(true); 
   };
 
   const handlePress = (hello) => {
@@ -86,24 +76,18 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             headerText={mainHello ? 'UP NEXT' : ''}
             label={mainHello ? mainHello.friend.name : `Hi ${authUserState.user.username}!`}
             additionalText={mainHello ? mainHello.future_date_in_words : ''}
-            
-            fontMargin={3}
-            animationSource={require('../assets/anims/heartinglobe.json')}
-            rightSideAnimation={false}
             labelFontSize={30}
             labelColor="white"
-            animationWidth={234}
-            animationHeight={234}
             lightColor="black"
             darkColor="black"
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             shapePosition="right"
-            shapeSource={require('../assets/shapes/funkycoloredpattern.png')}
+            shapeSource={<LizardSvg width={150} height={150} color="white"/>}
+            
             shapeWidth={340}
             shapeHeight={340}
-            shapePositionValue={-154}
-            showIcon={false}
+            shapePositionValue={-154} 
             satellites={!showSecondButton}
             satelliteSectionPosition="right"
             satelliteCount={satellitesFirstPage}
@@ -132,7 +116,8 @@ const ActionPageUpcomingButton = ({ onPress }) => {
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
             shapePosition="right"
-            shapeSource={require('../assets/shapes/funkycoloredpattern.png')}
+            shapeSource={<LizardSvg width={150} height={150} color="white"/>}
+            
             shapeWidth={340}
             shapeHeight={340}
             shapePositionValue={-154}

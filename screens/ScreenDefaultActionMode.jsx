@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { useAuthUser } from '../context/AuthUserContext';
@@ -24,8 +24,28 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   const { themeStyles } = useGlobalStyle(); 
 
   const { authUserState } = useAuthUser();
-  const { selectedFriend } = useSelectedFriend();
-  const { isLoading } = useUpcomingHelloes();
+  const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+  const { isLoading } = useUpcomingHelloes(); 
+  const [ borderColor, setBorderColor ] = useState('transparent');
+  const [ backgroundColor, setBackgroundColor ] = useState('transparent');
+
+
+  const borderWidth = 0;
+  const borderRadius = 34;
+
+  useEffect(() => {
+    if (selectedFriend && !loadingNewFriend) {
+      setBorderColor(calculatedThemeColors.lightColor);
+      setBackgroundColor(calculatedThemeColors.darkColor);
+    } else { 
+      setBorderColor('transparent');
+      setBackgroundColor('black');
+    }
+    
+
+  }, [selectedFriend, loadingNewFriend, calculatedThemeColors])
+
+   
 
 
   const navigateToAddMomentScreen = () => {
@@ -53,7 +73,20 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   };
 
 return ( 
-  <View style={[styles.container, themeStyles.container]}>
+  <View 
+  style={[
+    styles.selectorContainer, 
+    selectedFriend && !loadingNewFriend 
+      ? { backgroundColor: backgroundColor } 
+      : {}
+  ]}
+>
+    <View 
+      style={[
+        styles.container, 
+        themeStyles.container, 
+      ]}
+    >
     {authUserState.authenticated && authUserState.user ? (
       <>  
           {isLoading && (  
@@ -72,22 +105,28 @@ return (
               <View style={{height: 146, width: '100%'}}>   
                 <ActionPageUpcomingButton/>
               </View>
-              <View style={{height: 140, width: '100%'}}>  
+              <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
+                
                 <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
+
               </View>
-              <View style={{height: 140, width: '100%'}}> 
+              <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
+                
                 <ActionScreenButtonAddImage onPress={navigateToAddImageScreen }/>
               </View>
-              <View style={{height: 140, width: '100%'}}> 
+              <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
+                
                 <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen}/>
               </View>
               {selectedFriend && (
-              <View style={{height: 140, width: '100%'}}> 
+              <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
+                
                 <ActionScreenButtonAddLocation onPress={navigateToAddLocationScreen} />
               </View>
                )}
               {!selectedFriend && (
-              <View style={{height: 140, width: '100%'}}> 
+               <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
+                
                 <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} />
               </View>
                )}
@@ -106,19 +145,26 @@ return (
       </View>
     )}
   </View>
+  </View>
 );
 
 };
 
 const styles = StyleSheet.create({
+  selectorContainer: {
+    flex: 1,
+
+  },
   container: {
     flex: 1,  
+ 
   },   
   buttonContainer: {
     height: '90.5%',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginHorizontal: 10,
+
     paddingBottom: 0, 
     paddingTop: 0,
   },

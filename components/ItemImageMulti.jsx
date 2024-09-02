@@ -37,7 +37,7 @@ const ItemImageMulti = ({ horizontal = true, singleLineScroll = true, width, hei
             <Image
               style={[styles.image, { borderRadius: borderRadius, width: width || windowWidth / 3 - 20, height: height || windowWidth / 3 - 20 }]}
               source={{ uri: item.image }}
-              contentFit="cover" // Adjust contentFit as needed
+              contentFit="cover"  
             />
           </TouchableOpacity>
         )}

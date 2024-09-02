@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
 
-const InputAnyValue = ({ value, setValue, placeholder, errorMessage, isError }) => {
+const InputAnyValue = forwardRef(({ value, setValue, placeholder, errorMessage, isError }, ref) => {
     return (
         <View style={styles.sectionContainer}>
             <View style={styles.inputContainer}>
                 <TextInput
+                    ref={ref}
                     style={[styles.textInput, isError && styles.errorInput]}
                     value={value}
                     placeholder={placeholder}
@@ -17,7 +18,7 @@ const InputAnyValue = ({ value, setValue, placeholder, errorMessage, isError }) 
             </View>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     sectionContainer: {

@@ -1,43 +1,41 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import AlertImage from '../components/AlertImage';
+ 
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
-import SearchMapSvg from '../assets/svgs/search-map.svg';
 
-import CompareTravel from '../components/CompareTravel';
-
-
+ 
+ 
 
 
+const ButtonReviewNewFriendDetails = () => { 
+    const [ isModalVisible, setIsModalVisible ] = useState(false);
 
-const ButtonSearchGoogleMap = ({ onPress }) => {
+    const openModal = () => setIsModalVisible(true);
+
+    const closeModal = () => setIsModalVisible(false);
+
 
     return (
-        <View style={styles.container}>
-
-            <View style={styles.buttonContainer}>
+        <View style={styles.container}> 
 
             <ButtonBottomActionBase
-                onPress={onPress}
+                onPress={openModal}
                 preLabel = ''
-                label="Search Map"
+                label="Review"
                 height={64}
                 radius={16}
                 fontMargin={3} 
                 labelFontSize={22}  
-                labelContainerMarginHorizontal={4}
-                animationMargin={-64}
+                labelContainerMarginHorizontal={4} 
                 showGradient={true}  
                 showShape={true}  
                 shapePosition="right"
-                shapeSource={SearchMapSvg}  
+                shapeSource={LocationsOnMapColoredSvg}  
                 shapeWidth={110}
                 shapeHeight={110}
-                shapePositionValue={-8}
-                shapePositionValueVertical={-20} 
+                shapePositionValue={-14}
+                shapePositionValueVertical={-23}  
                 />
-
-            </View>
         </View>
 
     );
@@ -58,4 +56,4 @@ const styles = StyleSheet.create({
     },
   });
 
-  export default ButtonSearchGoogleMap;
+  export default ButtonReviewNewFriendDetails;

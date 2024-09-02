@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Linking } from 'react-native';
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; // Import the SVG
+import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
+import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; 
 
 import { useAuthUser } from '../context/AuthUserContext';
 import { useLocationList } from '../context/LocationListContext';
 import CardHoursAsButtons from '../components/CardHoursAsButtons';
 
-const HelloFriendInvite = ({ size = 14, family = 'Poppins-Regular', color = "black", style }) => {
+const HelloFriendInvite = () => {
     const { selectedLocation } = useLocationList();
     const { authUserState } = useAuthUser();
     const [message, setMessage] = useState('');
@@ -59,21 +59,16 @@ const HelloFriendInvite = ({ size = 14, family = 'Poppins-Regular', color = "bla
                 />
             </View>
 
-            <ButtonLottieAnimationSvg
+            <ButtonBottomActionBase
                 onPress={handleSend}
                 preLabel=''
                 label={`Send this Location`}
                 height={54}
                 radius={16}
-                fontMargin={3}
-                animationSource={require("../assets/anims/heartinglobe.json")}
-                rightSideAnimation={false}
+                fontMargin={3} 
                 labelFontSize={22}
-                labelColor="white"
-                animationWidth={234}
-                animationHeight={234}
-                labelContainerMarginHorizontal={4}
-                animationMargin={-64}
+                labelColor="white" 
+                labelContainerMarginHorizontal={4} 
                 showGradient={true}
                 showShape={true}
                 shapePosition="right"
@@ -81,8 +76,7 @@ const HelloFriendInvite = ({ size = 14, family = 'Poppins-Regular', color = "bla
                 shapeWidth={100}
                 shapeHeight={100}
                 shapePositionValue={-14}
-                shapePositionValueVertical={-10}
-                showIcon={false}
+                shapePositionValueVertical={-10} 
             />
         </View>
     );

@@ -1,65 +1,46 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
 
 
 
-const ButtonLottieAnimationSvg = ({ 
+const ButtonBottomActionBase = ({ 
   onPress,
   label,
   height = 58,
   radius = 12,
-  labelFontSize = 22,
-  preLabel = '', // Default pre-label text
-  animationSource,
-  rightSideAnimation = false,
-  preLabelFontSize = 18, // Font size for pre-label
-  preLabelColor = 'white', // Color for pre-label text
+  labelFontSize = 22, 
   labelColor = 'white',
-  backgroundColor = 'transparent',
-  animationWidth = 40,
-  animationHeight = 40,
-  fontMargin = 10,
-  animationMargin = 0,
+  backgroundColor = 'transparent', 
+  fontMargin = 10, 
   showGradient = true,
   darkColor = '#4caf50',
   lightColor = 'rgb(160, 241, 67)',
   direction = { x: 1, y: 0 },
   showShape = true,
   shapePosition = 'left',
-  shapeSource: ShapeSvg, // Expecting an SVG component
+  shapeSource: ShapeSvg,  
   shapeWidth = 260,
   shapeHeight = 260,
-  shapePositionValue = -134, // Default value
+  shapePositionValue = -134,  
   shapePositionValueVertical = null,
-  labelContainerMarginHorizontal = 0, // Default margin for label container
-  showIcon = true, // New property to show/hide Lottie icon
-  showTopLevelShape = false, // New prop to show/hide the top-level SVG
-  TopLevelShapeSvg, // Expecting an SVG component
+  labelContainerMarginHorizontal = 0,  
+  showTopLevelShape = false,  
+  TopLevelShapeSvg, 
   topLevelShapeWidth = 100,
   topLevelShapeHeight = 100,
   topLevelShapePositionValue = -134,
   topLevelShapePositionValueVertical = 0,
-  shapeLabel = '', // New prop for shape label
-  shapeLabelFontSize = 16, // Font size for shape label
-  shapeLabelColor = 'black', // Color for shape label
+  shapeLabel = '',  
+  shapeLabelFontSize = 16, 
+  shapeLabelColor = 'black', 
   shapeLabelPositionRight = '93%'
   
-}) => {
-  const lottieViewRef = useRef(null);
+}) => { 
   const globalStyles = useGlobalStyle(); // Get the global styles
 
-  useEffect(() => {
-    if (lottieViewRef.current && animationSource) {
-      try {
-        lottieViewRef.current.play();
-      } catch (error) {
-        console.error('Error playing animation:', error);
-      }
-    }
-  }, [animationSource]);
+
 
   const getShapeStyle = () => {
     switch (shapePosition) {
@@ -106,9 +87,9 @@ const ButtonLottieAnimationSvg = ({
         borderRadius: radius,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        overflow: 'hidden', // Ensure the gradient and shape stay within rounded borders
-        backgroundColor: showGradient ? 'transparent' : backgroundColor,
-        position: 'relative', // Ensure children can be absolutely positioned
+        overflow: 'hidden', 
+         backgroundColor: showGradient ? 'transparent' : backgroundColor,
+        position: 'relative',  
       }}
       onPress={onPress}
     >
@@ -162,55 +143,7 @@ const ButtonLottieAnimationSvg = ({
         </Text>
       )}
       <View style={{ flexDirection: 'row', marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
-        {rightSideAnimation ? (
-          <>
-            <Text
-              style={[
-                textStyles(preLabelFontSize, preLabelColor),
-                { fontFamily: 'Pacifico-Regular', marginRight: fontMargin },
-              ]}
-            >
-              {preLabel}
-            </Text>
-            <Text
-              style={[
-                textStyles(labelFontSize, labelColor),
-                { fontFamily: 'Poppins-Light', marginRight: fontMargin },
-              ]}
-            >
-              {label}
-            </Text>
-            {showIcon && animationSource && (
-              <LottieView
-                ref={lottieViewRef}
-                source={animationSource}
-                loop
-                autoPlay
-                style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
-                onError={(error) => console.error('Error rendering animation:', error)}
-              />
-            )}
-          </>
-        ) : (
-          <>
-            {showIcon && animationSource && (
-              <LottieView
-                ref={lottieViewRef}
-                source={animationSource}
-                loop
-                autoPlay
-                style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
-                onError={(error) => console.error('Error rendering animation:', error)}
-              />
-            )}
-            <Text
-              style={[
-                textStyles(preLabelFontSize, preLabelColor),
-                { fontFamily: 'Pacifico-Regular', marginRight: fontMargin, marginBottom: 15 },
-              ]}
-            >
-              {preLabel}
-            </Text>
+          <>  
             <Text
               style={[
                 textStyles(labelFontSize, labelColor),
@@ -219,11 +152,10 @@ const ButtonLottieAnimationSvg = ({
             >
               {label}
             </Text>
-          </>
-        )}
+          </> 
       </View>
     </TouchableOpacity>
   );
 };
 
-export default ButtonLottieAnimationSvg;
+export default ButtonBottomActionBase;

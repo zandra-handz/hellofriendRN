@@ -82,7 +82,7 @@ const ItemMomentMulti = ({
         }).start();
       });
  
-      const newOpacity = prevState[moment.id] === .9 ? svgOpacity : .9;
+      const newOpacity = prevState[moment.id] === 1 ? svgOpacity : 1;
       newOpacityState[moment.id] = newOpacity;
       Animated.timing(newMomentAnimations[moment.id].svgOpacity, {
         toValue: newOpacity,

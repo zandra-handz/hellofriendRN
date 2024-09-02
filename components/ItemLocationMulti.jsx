@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, Modal, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import ItemViewLocation from '../components/ItemViewLocation';
 import CardMicroLocation from '../components/CardMicroLocation';
 import { useLocationList } from '../context/LocationListContext';
@@ -7,13 +7,10 @@ import { FlashList } from "@shopify/flash-list";
 import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
-import LocationHeartOutlineSvg from '../assets/svgs/location-heart-outline.svg';
+ 
+ 
 
-
-const windowWidth = Dimensions.get('window').width;
-
-const ItemLocationMulti = ({
-    locationData,
+const ItemLocationMulti = ({ 
     horizontal = true,
     singleLineScroll = true,
     width = 200,
@@ -143,7 +140,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 2,
-        
         backgroundColor: 'transparent',
         justifyContent: 'center',
         alignContent: 'center',

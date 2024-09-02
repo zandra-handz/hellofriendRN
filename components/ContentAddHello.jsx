@@ -5,11 +5,11 @@ import { useNavigation } from '@react-navigation/native';
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
-import { useCapsuleList } from '../context/CapsuleListContext';
+
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
  
 import { fetchTypeChoices, saveHello } from '../api';
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
+import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';
@@ -313,19 +313,14 @@ const failOk = () => {
           </View> 
         {helloDate && ( 
                 <View style={styles.bottomButtonContainer}>  
-                    <ButtonLottieAnimationSvg
+                    <ButtonBottomActionBase
                         onPress={() => setDeleteChoiceModalVisible(true)}
                         preLabel=''
                         label={`Add hello`}
                         height={54}
-                        radius={16}
-                        fontMargin={3}
-                        animationSource={require("../assets/anims/heartinglobe.json")}
-                        rightSideAnimation={false}
+                        radius={16} 
                         labelFontSize={22}
-                        labelColor="white"
-                        animationWidth={234}
-                        animationHeight={234}
+                        labelColor="white" 
                         labelContainerMarginHorizontal={4}
                         animationMargin={-64}
                         showGradient={true}
@@ -335,8 +330,7 @@ const failOk = () => {
                         shapeWidth={100}
                         shapeHeight={100}
                         shapePositionValue={-14}
-                        shapePositionValueVertical={-10}
-                        showIcon={false}
+                        shapePositionValueVertical={-10} 
                     />
             </View> 
             )}

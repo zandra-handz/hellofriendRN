@@ -35,7 +35,7 @@ const ActionScreenButtonAddHello = ({ onPress }) => {
       borderRadius: 30,
       overflow: 'hidden',
       flexDirection: 'row',
-      alignItems: 'center',
+      alignItems: 'center', 
     }, 
   });
   

@@ -1,35 +1,24 @@
-// Multi feature buttons include options for a Lottie animation (L/R/Center), a background gradient, and a PNG background image (L/R/Center)
-// Multi page functionality is a work in progress
-
-import React, { useEffect, useRef, useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Image, View, Dimensions, Animated, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
+import React, { useRef, useState } from 'react';
+import { TouchableOpacity, Text, StyleSheet, View, Dimensions, Animated, FlatList } from 'react-native';
+import { FlashList } from "@shopify/flash-list"; 
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import UICalendarPageDynamic from '../components/UICalendarPageDynamic';
+ 
 import ButtonCalendarDateSvgAndLabel from '../components/ButtonCalendarDateSvgAndLabel';
-
-import { Ionicons } from '@expo/vector-icons';
-
+ 
 const ButtonMultiFeatureUpcoming = ({
   onPress,
-  isLoading = false,
-  loadingMessage = 'Welcome back!',
+  isLoading = false, 
   headerText = 'UP NEXT',
   label,
-  additionalText = '',
-  animationSource,
-  rightSideAnimation = false,
+  additionalText = '', 
   preLabelFontSize = 18,
   preLabelColor = 'white',
   labelFontSize = 22,
   labelColor = 'black',
   additionalTextFontSize = 16,
   additionalTextColor = 'white',
-  backgroundColor = 'transparent',
-  animationWidth = 40,
-  animationHeight = 40,
+  backgroundColor = 'transparent', 
   showGradient = true,
   darkColor = 'black',
   lightColor = 'black',
@@ -37,8 +26,7 @@ const ButtonMultiFeatureUpcoming = ({
   satelliteDarkColor = 'darkgrey',
   satelliteLightColor = 'darkgrey',
   direction = { x: 1, y: 0 },
-  showSatelliteHeader = false,
-  showIcon = false,
+  showSatelliteHeader = false, 
   showShape = true,
   shapePosition = 'left',
   shapeSource,
@@ -54,67 +42,14 @@ const ButtonMultiFeatureUpcoming = ({
   satelliteOnPress,
   additionalPages = false, // New prop for additional pages
   additionalSatellites = [], // New prop for additional satellites
-}) => {
-  const lottieViewRef = useRef(null);
+}) => { 
   const globalStyles = useGlobalStyle();
-  const { width } = Dimensions.get('window');
-  const navigation = useNavigation();
-  const [showEmptyContainer, setShowEmptyContainer] = useState(false);
+  const { width } = Dimensions.get('window'); 
+ 
   const [mainViewVisible, setMainViewVisible] = useState(true);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
-    if (lottieViewRef.current && animationSource) {
-      try {
-        lottieViewRef.current.play();
-      } catch (error) {
-        console.error('Error playing animation:', error);
-      }
-    }
-  }, [animationSource]);
-
-  useEffect(() => {
-    if (isLoading) { 
-      animateLoadingIndicator();
-    } else {
-      // Reset animation to full opacity
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 0,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [isLoading]);
-
-  const animateLoadingIndicator = () => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(fadeAnim, {
-          toValue: 0.0,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  };
-
-  const getShapeStyle = () => {
-    switch (shapePosition) {
-      case 'left':
-        return { left: shapePositionValue };
-      case 'center':
-        return { left: '33.33%' };
-      case 'right':
-        return { right: shapePositionValue };
-      default:
-        return { left: 0 };
-    }
-  };
+ 
 
   const adjustFontSize = (fontSize) => {
     return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
@@ -140,19 +75,14 @@ const ButtonMultiFeatureUpcoming = ({
     return match ? match[1].slice(0, 3).toUpperCase() : ''; 
   };
 
-  const extractDay = (dateString) => {
-    const match = dateString.match(/^\w+/); 
-    return match ? match[0].slice(0, 3).toUpperCase() : '';  
-};
-  
+ 
   
 
   const satelliteWidth = (width / 3) / satelliteCount;
 
   const renderSatellites = () => {
     const satellitesArray = [];
-
-    // Render satellite hellos
+ 
     if (satelliteHellos && satelliteHellos.length > 0) {
       const numSatellites = Math.min(satelliteCount, satelliteHellos.length);
 
@@ -194,9 +124,9 @@ const ButtonMultiFeatureUpcoming = ({
   };
 
   const renderAdditionalSatellites = () => (
-    <FlatList
+    <FlashList
       data={additionalSatellites}
-      horizontal
+      horizontal={true}
       keyExtractor={(item, index) => `satellite-${index}`}
       renderItem={({ item }) => (
         <TouchableOpacity
@@ -222,7 +152,12 @@ const ButtonMultiFeatureUpcoming = ({
            
         
         </TouchableOpacity>
-      )}
+      )} 
+      estimatedItemSize={54}
+      showsHorizontalScrollIndicator={false}
+
+// Optional: Customize scroll indicator insets if needed
+     scrollIndicatorInsets={{ right: 1 }}
     />
   );
 
@@ -255,16 +190,9 @@ const ButtonMultiFeatureUpcoming = ({
                   />
                 )}
                 {showShape && (
-                  <Image
-                    source={shapeSource}
-                    style={{
-                      position: 'absolute',
-                      width: shapeWidth,
-                      height: shapeHeight,
-                      ...getShapeStyle(),
-                    }}
-                    resizeMode="contain"
-                  />
+                  <View style={{position: 'absolute', right: -34, top: -55, transform: [{ rotate: '240deg' }] }}>
+                    {shapeSource}
+                  </View> 
                 )}
                 <View style={{ flexDirection: 'column', paddingHorizontal: 5, paddingBottom: 8, paddingTop: 8, flex: 1 }}>
                   <Text
@@ -276,39 +204,7 @@ const ButtonMultiFeatureUpcoming = ({
                     {headerText}
                   </Text>
                   <View style={{ flexDirection: 'row' }}>
-                    {rightSideAnimation ? (
                       <>
-                        <Text
-                          style={[
-                            textStyles(labelFontSize, labelColor),
-                            { fontFamily: 'Poppins-Light' },
-                          ]}
-                        >
-                          {label}
-                        </Text>
-                        {showIcon && animationSource && (
-                          <LottieView
-                            ref={lottieViewRef}
-                            source={animationSource}
-                            loop
-                            autoPlay
-                            style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
-                            onError={(error) => console.error('Error rendering animation:', error)}
-                          />
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {showIcon && animationSource && (
-                          <LottieView
-                            ref={lottieViewRef}
-                            source={animationSource}
-                            loop
-                            autoPlay
-                            style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
-                            onError={(error) => console.error('Error rendering animation:', error)}
-                          />
-                        )}
                         <Text
                           style={[
                             textStyles(labelFontSize, labelColor),
@@ -319,8 +215,7 @@ const ButtonMultiFeatureUpcoming = ({
                         >
                           {label}
                         </Text>
-                      </>
-                    )}
+                      </> 
                   </View>
                   <Text
                     style={[

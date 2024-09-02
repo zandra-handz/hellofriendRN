@@ -8,7 +8,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api';
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
+import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
 import AlertSuccessFail from '../components/AlertSuccessFail';
 import AlertConfirm from '../components/AlertConfirm'; 
@@ -100,8 +100,7 @@ const ContentAddMoment = () => {
           typedCategory: response.typed_category,
           capsule: response.capsule,
         };
-  
-        // Add the new capsule to the front of the list
+   
         setCapsuleList(prevCapsules => [newCapsule, ...prevCapsules]);
    
         resetTextInput();
@@ -164,21 +163,16 @@ const failOk = () => {
         )}
         {userEntryCapsule && selectedCategory && ( 
                 <View style={styles.bottomButtonContainer}>  
-                    <ButtonLottieAnimationSvg
+                    <ButtonBottomActionBase
                         onPress={toggleModal}
                         preLabel=''
                         label={`Add moment`}
                         height={54}
                         radius={16}
-                        fontMargin={3}
-                        animationSource={require("../assets/anims/heartinglobe.json")}
-                        rightSideAnimation={false}
+                        fontMargin={3} 
                         labelFontSize={22}
-                        labelColor="white"
-                        animationWidth={234}
-                        animationHeight={234}
-                        labelContainerMarginHorizontal={4}
-                        animationMargin={-64}
+                        labelColor="white" 
+                        labelContainerMarginHorizontal={4} 
                         showGradient={true}
                         showShape={true}
                         shapePosition="right"
@@ -186,8 +180,7 @@ const failOk = () => {
                         shapeWidth={100}
                         shapeHeight={100}
                         shapePositionValue={-14}
-                        shapePositionValueVertical={-10}
-                        showIcon={false}
+                        shapePositionValueVertical={-10} 
                     />
             </View> 
             )}

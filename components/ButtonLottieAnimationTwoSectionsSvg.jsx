@@ -1,11 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Image, View, Dimensions, Animated, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, View, Dimensions, FlatList } from 'react-native';
+
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext'; 
-import PersonalConnectionsSvg from '../assets/svgs/personal-connections.svg';
 
 import ProfileTwoUsersSvg from '../assets/svgs/profile-two-users.svg';
 
@@ -14,29 +11,25 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
   buttonHeight=140,
   borderTopRadius=30,
   borderRadius=30,
-  headerText = '',
+  headerText = '', 
   mainButtonWidth = '77%',
   label,
   labeltwo = '',
   showLabelTwo=true,
-  additionalText = '',
-  animationSource,
-  rightSideAnimation = false,
+  additionalText = '', 
   preLabelFontSize = 28,
   preLabelColor = 'white',
   labelFontSize = 16,
   labelColor = 'black',
   additionalTextFontSize = 16,
   additionalTextColor = 'white',
-  backgroundColor = 'transparent',
-  animationWidth = 40,
-  animationHeight = 40,
+  backgroundColor = 'transparent', 
   showGradient = true,
   darkColor = 'black',
   lightColor = '#C0C0C0',
-  direction = { x: 1, y: 0 },
-  showIcon = false,
+  direction = { x: 1, y: 0 }, 
   showShape = true,
+  showSecondShape = false,
   shapePosition = 'left',
   shapeWidth = 260,
   shapeHeight = 260,
@@ -51,58 +44,17 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
   satelliteHellos = [],
   satelliteOnPress,
   additionalPages = false,
-  additionalSatellites = [],
-  isLoading = false, 
+  additionalSatellites = [], 
   svgColor='white',
   SourceSvg: SourceSvg,
-}) => {
-  const lottieViewRef = useRef(null);
+  SourceSecondSvg: SourceSecondSvg,
+}) => { 
   const globalStyles = useGlobalStyle();
-  const { width } = Dimensions.get('window');
-  const navigation = useNavigation();
-  const [showEmptyContainer, setShowEmptyContainer] = useState(false);
-  const [mainViewVisible, setMainViewVisible] = useState(true);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend } = useSelectedFriend();
-
-  useEffect(() => {
-    if (lottieViewRef.current && animationSource) {
-      try {
-        lottieViewRef.current.play();
-      } catch (error) {
-        console.error('Error playing animation:', error);
-      }
-    }
-  }, [animationSource]);
-
-  useEffect(() => {
-    if (isLoading || loadingNewFriend) { 
-      animateLoadingIndicator();
-    } else { 
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 0,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [isLoading, loadingNewFriend]);
-
-  const animateLoadingIndicator = () => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(fadeAnim, {
-          toValue: 0.2,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  };
+  const { width } = Dimensions.get('window'); 
+  const mainViewVisible = true;
+ 
+ 
+ 
 
   const getShapeStyle = () => {
     switch (shapePosition) {
@@ -135,8 +87,7 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
 
   const renderSatellites = () => {
     const satellitesArray = [];
-
-    // Render satellite hellos
+ 
     if (satelliteHellos && satelliteHellos.length > 0) {
       const numSatellites = Math.min(satelliteCount, satelliteHellos.length);
 
@@ -182,9 +133,9 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
   );
 
   return (
-    <View style={[styles.container, { borderBottomRightRadius: borderRadius, borderBottomLeftRadius: borderRadius, borderTopRightRadius: borderTopRadius, borderTopLeftRadius: borderTopRadius}]}>
+    <View style={[styles.container, { borderColor: lightColor, borderBottomRightRadius: borderRadius, borderBottomLeftRadius: borderRadius, borderTopRightRadius: borderTopRadius, borderTopLeftRadius: borderTopRadius}]}>
       {!additionalPages && mainViewVisible && (
-        <Animated.View style={{ opacity: fadeAnim }}>
+        <View>
           <View style={{ flexDirection: 'row' }}>
             <View style={[styles.mainButtonContainer, { width: satellites ? mainButtonWidth : '100%' }]}>
               <TouchableOpacity
@@ -218,51 +169,26 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
                   {SourceSvg && <SourceSvg color={svgColor} width={shapeWidth} height={shapeHeight} style={getShapeStyle()} />}
                   </View>
                 )}
+                {showSecondShape && (
+                  <View style={{position: 'absolute', right: -66, top: -66, transform: [{ rotate: '240deg' }] }}>
+                  
+                  {SourceSecondSvg && <SourceSecondSvg color={svgColor} width={180} height={180} />}
+                  </View>
+                )}
                 <View style={{ flexDirection: 'column', paddingHorizontal: 5, paddingBottom: 8, paddingTop: 8, flex: 1 }}>
                   <Text
                     style={[
                       textStyles(preLabelFontSize, preLabelColor),
                       { fontFamily: 'Poppins-Regular', width: '70%', marginBottom: -6 },
                     ]}
-                    numberOfLines={1} // Ensure text does not wrap
-                    ellipsizeMode='tail' // Display ellipsis at the end
+                    numberOfLines={1}  
+                    ellipsizeMode='tail' 
                   >
                     {headerText}
                   </Text>
                   <View style={{ flexDirection: 'column' }}>
-                    {rightSideAnimation ? (
-                      <>
-                        <Text
-                          style={[
-                            textStyles(labelFontSize, labelColor),
-                            { fontFamily: 'Poppins-Light' },
-                          ]}
-                        >
-                          {label}
-                        </Text>
-                        {showIcon && animationSource && (
-                          <LottieView
-                            ref={lottieViewRef}
-                            source={animationSource}
-                            loop
-                            autoPlay
-                            style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
-                            onError={(error) => console.error('Error rendering animation:', error)}
-                          />
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {showIcon && animationSource && (
-                          <LottieView
-                            ref={lottieViewRef}
-                            source={animationSource}
-                            loop
-                            autoPlay
-                            style={{ width: animationWidth, height: animationHeight, marginHorizontal: animationMargin }}
-                            onError={(error) => console.error('Error rendering animation:', error)}
-                          />
-                        )}
+
+                      <> 
                         <Text
                           style={[
                             textStyles(labelFontSize, labelColor),
@@ -284,7 +210,6 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
                         </Text>
                         )}
                       </>
-                    )}
                   </View>
                   <Text
                     style={[
@@ -303,7 +228,7 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
               </View>
             )}
           </View>
-        </Animated.View>
+        </View>
       )}
       {additionalPages && (
         <View style={[styles.additionalSatelliteSection, { height: buttonHeight }]}>
@@ -318,7 +243,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     marginBottom: 0, 
-    overflow: 'hidden',
+    overflow: 'hidden', 
   },
   mainButtonContainer: {
     alignItems: 'center',

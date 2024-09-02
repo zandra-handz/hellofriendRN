@@ -7,37 +7,18 @@ import AlertPanelBottom from './AlertPanelBottom';
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage';
 import ButtonArrowSvgAndLabel from '../components/ButtonArrowSvgAndLabel';
+import LizardSvg from '../assets/svgs/lizard';
 
-const ActionFriendPageHeader = ({ 
-  onPress,
+const ActionFriendPageHeader = ({  
   buttonHeight=140,
   headerRadius=30, 
-  headerTopRadius=0,
-  svgColor='white',
+  headerTopRadius=0, 
   Deselector=false }) => {
 
   const navigation = useNavigation();
 
-  const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend, setFriend } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData, friendColorTheme, calculatedThemeColors, loadingNewFriend, setFriend } = useSelectedFriend();
   const [showProfile, setShowProfile] = useState(false); 
-  const [lightColor, setLightColor] = useState('black');
-  const [darkColor, setDarkColor] = useState('black');
-
-  useEffect(() => {
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
-      if(friendColorTheme.invertGradient) {
-        setLightColor(friendColorTheme.darkColor || 'gray');
-        setDarkColor(friendColorTheme.lightColor || 'white');
-      } else {
-        setLightColor(friendColorTheme.lightColor || 'white');
-        setDarkColor(friendColorTheme.darkColor || 'gray');
-      };
-    }
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme == false) {
-      setLightColor('white');
-      setDarkColor('gray');
-    }
-  }, [friendColorTheme]);
 
 
   const handleDeselect = () => {
@@ -60,7 +41,7 @@ const ActionFriendPageHeader = ({
     };
  
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {borderWidth: 0, borderRadius: headerRadius, borderColor: selectedFriend && !loadingNewFriend? calculatedThemeColors.darkColor : 'transparent'}]}>
       {loadingNewFriend && (
       <View style={styles.loadingContainer}>
 
@@ -75,6 +56,8 @@ const ActionFriendPageHeader = ({
         <ButtonArrowSvgAndLabel 
           direction='profile'
           screenSide='left'
+          setProfileIconColor={true}
+          profileIconColor={[calculatedThemeColors.lightColor, calculatedThemeColors.darkColor]}
           label='view'
           onPress={navigateBackToFriendFocus}
           /> 
@@ -88,9 +71,10 @@ const ActionFriendPageHeader = ({
           borderTopRadius={Deselector ? 30 : headerTopRadius}
           preLabelFontSize={Deselector ? 18 : 28}
           mainButtonWidth={Deselector ? '84%' : '77%'}
-          headerText={Deselector ? 'SELECTED' : selectedFriend ? selectedFriend.name : ''}
+          headerText={Deselector ? 'SELECTED:' : selectedFriend ? selectedFriend.name : ''}
+          preLabelColor={Deselector && calculatedThemeColors ? calculatedThemeColors.lightColor : 'white'}
           navigateToFirstPage={false} 
-          labelColor="white"
+          labelColor={'white'}
           labelFontSize={Deselector? 30 : 17}
           label={Deselector? selectedFriend ? selectedFriend.name : '' : 'Say hello on '}
           additionalTextSize={16}
@@ -105,13 +89,15 @@ const ActionFriendPageHeader = ({
           animationMargin={-64}
           shapePosition="right"
           showGradient={true}
-          lightColor={Deselector ? 'black' : lightColor}
-          darkColor={Deselector ? 'black' : darkColor}
+          lightColor={Deselector ? 'black' : calculatedThemeColors.lightColor}
+          darkColor={Deselector ? 'black' : calculatedThemeColors.darkColor}
           SourceSvg={MeetingWithAFriendOutlineSvg}
-          svgColor={darkColor}
+          SourceSecondSvg={LizardSvg}
+          svgColor={calculatedThemeColors.darkColor}
           shapeWidth={190}
           shapeHeight={190}
           showShape={Deselector? false : true} 
+          showSecondShape={false} // lizard
           shapePositionValue={-214}
           showIcon={false}
           satellites={Deselector} // Toggle satellite section based on Deselector
@@ -142,6 +128,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
+    borderWidth: 0,  
   },  
   loadingContainer: {
     width: '100%',

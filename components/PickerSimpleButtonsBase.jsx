@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
-const PickerSimpleButtonsBase = ({ name, selectedOption, options, onValueChange, isScrollable = false }) => {
+const PickerSimpleButtonsBase = ({ name, selectedOption, options, onValueChange, isScrollable = false, defaultOption }) => {
+  // Local state to manage the currently selected option
+  const [currentSelection, setCurrentSelection] = useState(selectedOption);
+
+  // Update the current selection if defaultOption changes
+  useEffect(() => {
+    if (defaultOption && options.includes(defaultOption)) {
+      setCurrentSelection(defaultOption);
+    }
+  }, [defaultOption, options]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Select {name}</Text>
@@ -12,14 +22,17 @@ const PickerSimpleButtonsBase = ({ name, selectedOption, options, onValueChange,
               key={index}
               style={[
                 styles.button,
-                selectedOption === option && styles.selectedButton
+                currentSelection === option && styles.selectedButton
               ]}
-              onPress={() => onValueChange(option)}
+              onPress={() => {
+                setCurrentSelection(option);
+                onValueChange(option);
+              }}
             >
               <Text
                 style={[
                   styles.buttonText,
-                  selectedOption === option && styles.selectedButtonText
+                  currentSelection === option && styles.selectedButtonText
                 ]}
               >
                 {option}
@@ -34,14 +47,17 @@ const PickerSimpleButtonsBase = ({ name, selectedOption, options, onValueChange,
               key={index}
               style={[
                 styles.button,
-                selectedOption === option && styles.selectedButton
+                currentSelection === option && styles.selectedButton
               ]}
-              onPress={() => onValueChange(option)}
+              onPress={() => {
+                setCurrentSelection(option);
+                onValueChange(option);
+              }}
             >
               <Text
                 style={[
                   styles.buttonText,
-                  selectedOption === option && styles.selectedButtonText
+                  currentSelection === option && styles.selectedButtonText
                 ]}
               >
                 {option}
@@ -73,19 +89,18 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#ffffff',
-    borderRadius: 5,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 20,
     paddingVertical: 6,
     paddingHorizontal: 14,
     margin: 3,
     alignItems: 'center',
     justifyContent: 'center',
-     // Ensure buttons have a minimum width
+    // Ensure buttons have a minimum width
   },
   selectedButton: {
-    backgroundColor: '#d4edda',  
+    backgroundColor: '#d4edda',
   },
   buttonText: {
     fontSize: 13,
@@ -94,7 +109,7 @@ const styles = StyleSheet.create({
   },
   selectedButtonText: {
     color: 'green',
-    fontFamily: 'Poppins-Bold', 
+    fontFamily: 'Poppins-Bold',
   },
 });
 

@@ -269,6 +269,7 @@ const darkThemeStyles = StyleSheet.create({
     UpcomingNavText: {
         fontFamily: 'Poppins-Bold',
         fontSize: 14,
+        textAlign: 'center',
         color: 'white',
     },
     upcomingNavIcon: {

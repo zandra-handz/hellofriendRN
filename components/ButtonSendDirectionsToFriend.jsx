@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 
 import HelloFriendInvite from '../components/HelloFriendInvite';
 
-import ButtonLottieAnimationSvg from '../components/ButtonLottieAnimationSvg';
+import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
 
 
@@ -32,28 +32,22 @@ const ButtonSendDirectionsToFriend = () => {
         > 
       </AlertImage>
  
-            <ButtonLottieAnimationSvg
+            <ButtonBottomActionBase
                 onPress={openModal}
                 preLabel = ''
                 label={`Send ${selectedFriend.name} This Location`}
                 height={58}
                 radius={12}
                 labelFontSize={22} 
-                fontMargin={3}
-                animationSource={require("../assets/anims/heartinglobe.json")}
-                rightSideAnimation={false} 
-                animationWidth={234}
-                animationHeight={234}
-                labelContainerMarginHorizontal={4}
-                animationMargin={-64} 
+                fontMargin={3}  
+                labelContainerMarginHorizontal={4} 
                 showShape={true}  
                 shapePosition="right"
                 shapeSource={DistanceDottedSvg} 
                 shapeWidth={86}
                 shapeHeight={86}
                 shapePositionValue={-4}
-                shapePositionValueVertical={-14}
-                showIcon={false} 
+                shapePositionValueVertical={-14} 
                 />
  
         </View>

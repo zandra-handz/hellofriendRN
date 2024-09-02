@@ -12,20 +12,20 @@ const ActionScreenButtonAddImage = ({ onPress }) => {
                 onPress={onPress}
                 label="IMAGE"
                 showIcon={false}
-                fontMargin={3}
+                fontMargin={6}
                 animationSource={require("../assets/anims/goldspinningstar.json")}
                 rightSideAnimation={true}
                 labelFontSize={30}
                 labelColor="white"
                 animationWidth={80}
                 animationHeight={80}
-                labelContainerMarginHorizontal={-6}
+                labelContainerMarginHorizontal={6}
                 animationMargin={20}
                 shapePosition="right"
                 shapeSource={require("../assets/shapes/chatmountain.png")}
                 shapeWidth={150}
                 shapeHeight={150}
-                shapePositionValueVertical={-5}
+                shapePositionValueVertical={-6}
                 shapePositionValue={-24}
             />
         </View>
