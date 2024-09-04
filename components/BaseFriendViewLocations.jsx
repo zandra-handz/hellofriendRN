@@ -41,6 +41,7 @@ const BaseFriendViewLocations = ({
           itemVisiblePercentThreshold: 50,
         }}
         ListFooterComponent={<View style={{ width: 283 }} />}
+      
       />
     );
   }, [allItems, onViewableItemsChanged]);

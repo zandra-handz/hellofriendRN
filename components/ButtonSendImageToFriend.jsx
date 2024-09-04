@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
- 
+
 import ShareArrowOutlineSvg from '../assets/svgs/share-arrow-outline.svg';  
 
 const ButtonSendImageToFriend = ({ onPress, friendName }) => { 

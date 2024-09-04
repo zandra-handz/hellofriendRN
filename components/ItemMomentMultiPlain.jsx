@@ -1,42 +1,34 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity } from 'react-native';
-import { CheckBox } from 'react-native-elements'; // Import CheckBox
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { useCapsuleList } from '../context/CapsuleListContext';
+import React, { useState, useMemo } from 'react';
+import { View, FlatList, StyleSheet, Dimensions, Text, ScrollView } from 'react-native';
+import ButtonMomentCategory from '../components/ButtonMomentCategory';
 import ButtonMoment from '../components/ButtonMoment';
 import ButtonMomentChat from '../components/ButtonMomentChat';
+import ButtonControlPanel from '../components/ButtonControlPanel';
+import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemViewMoment from '../components/ItemViewMoment';
-import ButtonMomentCategory from '../components/ButtonMomentCategory';
+import { CheckBox } from 'react-native-elements';
 
 const windowWidth = Dimensions.get('window').width;
 
-const ItemMomentMultiPlain = ({ 
+const ItemMomentMultiPlain = ({
   passInData = false,
   data = [],
-  horizontal = true,
-  singleLineScroll = true,
-  columns = 3, 
   limit,
-  newestFirst = true,
-  svgColor = 'white',
+  svgColor = 'gray',
   includeCategoryTitle = false,
   viewSortedList = true,
 }) => {
   const { sortedByCategory, newestFirst: newestFirstList } = useCapsuleList();
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState({});
+  const [expandedCategory, setExpandedCategory] = useState(null);
+  const [showCheckboxes, setShowCheckboxes] = useState(passInData);
+  const [showSVG, setShowSVG] = useState(false);
   const [expandAll, setExpandAll] = useState(false);
-  const [useSvgButton, setUseSvgButton] = useState(true); // State for button type
-  const [selectedMoments, setSelectedMoments] = useState([]); // State for selected moments
-  const [showCheckboxes, setShowCheckboxes] = useState(passInData); // State for showing checkboxes
+  const [selectedMoments, setSelectedMoments] = useState([]);
 
-  const listToDisplay = passInData ? data : (viewSortedList ? sortedByCategory : (newestFirst ? newestFirstList : []));
+  const listToDisplay = passInData ? data : (viewSortedList ? sortedByCategory : newestFirstList);
   const moments = useMemo(() => listToDisplay.slice(0, limit), [listToDisplay, limit]);
-
-  useEffect(() => {
-    console.log(sortedByCategory);
-  }, [sortedByCategory]);
 
   const groupedMoments = useMemo(() => {
     return moments.reduce((acc, moment) => {
@@ -44,39 +36,20 @@ const ItemMomentMultiPlain = ({
       (acc[category] = acc[category] || []).push(moment);
       return acc;
     }, {});
-  }, [moments]);
-
-  useEffect(() => {
-    if (viewSortedList) {
-      const initialExpandedCategories = Object.keys(groupedMoments).reduce((acc, category) => {
-        acc[category] = expandAll;
-        return acc;
-      }, {});
-      setExpandedCategories(initialExpandedCategories);
-    }
-  }, [groupedMoments, viewSortedList, expandAll]);
+  }, [moments, passInData]);
 
   const handleToggleCategory = (category) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
+    setExpandedCategory(prev => (prev === category ? null : category));
   };
 
   const handleExpandAll = () => {
     setExpandAll(true);
-    setExpandedCategories(Object.keys(groupedMoments).reduce((acc, category) => {
-      acc[category] = true;
-      return acc;
-    }, {}));
+    setExpandedCategory(null);
   };
 
   const handleCollapseAll = () => {
     setExpandAll(false);
-    setExpandedCategories(Object.keys(groupedMoments).reduce((acc, category) => {
-      acc[category] = false;
-      return acc;
-    }, {}));
+    setExpandedCategory(null);
   };
 
   const openModal = (moment) => {
@@ -89,67 +62,54 @@ const ItemMomentMultiPlain = ({
     setIsModalVisible(false);
   };
 
-  const generateUniqueKey = (item) => `${item.id}-${item.capsule}`;
-
-  // Calculate button width dynamically based on useSvgButton state
-  const getButtonWidth = () => {
-    if (!useSvgButton) return windowWidth - 20; // Full width when not using svg button
-    if (singleLineScroll) return 200; // Width for horizontal scroll
-    return (windowWidth - 20) / columns; // Calculate width based on columns
+  const handleToggleCheckboxes = () => {
+    setShowCheckboxes(prev => !prev);
   };
 
-  // Dynamically adjust height based on singleLineScroll
-  const getItemHeight = () => {
-    if (singleLineScroll) return 140; // Fixed height for horizontal scroll
-    return 'auto'; // Auto height for vertical scroll
+  const handleSwitchView = () => {
+    setShowSVG(prev => !prev);
   };
-
-  // Determine columns based on useSvgButton state
-  const effectiveColumns = useSvgButton ? columns : 1; // Override columns when not using svg button
 
   const toggleSelectMoment = (moment) => {
     let updatedSelectedMoments;
-  
     if (selectedMoments.includes(moment)) {
       updatedSelectedMoments = selectedMoments.filter((m) => m !== moment);
     } else {
       updatedSelectedMoments = [...selectedMoments, moment];
     }
-  
     setSelectedMoments(updatedSelectedMoments);
-    
-    // Log the currently selected moments
-    console.log('Selected Moments:', updatedSelectedMoments);
   };
 
   const renderMomentItem = ({ item: moment }) => {
     const isSelected = selectedMoments.includes(moment);
-  
-    return ( 
 
-      <View style={[styles.momentContainer, {minHeight: getItemHeight(), width: getButtonWidth()} ]}>
+    return (
+      <View style={styles.momentContainer}>
         {showCheckboxes && (
-          <>
           <CheckBox
-            key={moment.id} // Added key here
-            title={moment.name} // Assuming `moment` has a `name` property
+            key={moment.id}
             checked={isSelected}
-            onPress={() => toggleSelectMoment(moment)} // Updated to toggle selection
-            containerStyle={[styles.checkboxContainer, {paddingTop: 0, height: getItemHeight(), width: getButtonWidth() - 20}]}
+            onPress={() => toggleSelectMoment(moment)}
+            containerStyle={styles.checkboxContainer}
             textStyle={styles.checkboxText}
           />
-
-          </>
         )}
         <View style={styles.momentContent}>
-          {useSvgButton ? (
-            <View style={{ width: '100%', height: 110, marginBottom: 10 }}>
-              <ButtonMomentChat onPress={() => openModal(moment)} moment={moment} size={124} color={svgColor} />
-            </View>
+          {showSVG ? (
+            <ButtonMomentChat
+              moment={moment}
+              onPress={() => openModal(moment)}
+              disabled={false}
+              sameStyleForDisabled={true}
+              svgColor={svgColor}
+            />
           ) : (
-            <View style={{ width: '100%', height: 140, marginBottom: 10 }}>
-              <ButtonMoment onPress={() => openModal(moment)} moment={moment} iconSize={26} size={12} color={svgColor} />
-            </View>
+            <ButtonMoment
+              moment={moment}
+              onPress={() => openModal(moment)}
+              disabled={false}
+              sameStyleForDisabled={true}
+            />
           )}
           {includeCategoryTitle && (
             <View style={styles.categoryCircle}>
@@ -160,74 +120,81 @@ const ItemMomentMultiPlain = ({
       </View>
     );
   };
-  
-  return (
-    <View>
-      <View style={styles.controlPanel}>
-        <TouchableOpacity onPress={handleExpandAll} style={styles.controlButton}>
-          <Icon name="expand" size={24} color="black" />
-          <Text style={styles.controlButtonText}>Expand</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleCollapseAll} style={styles.controlButton}>
-          <Icon name="compress" size={24} color="black" />
-          <Text style={styles.controlButtonText}>Collapse</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setUseSvgButton(prev => !prev)} style={styles.controlButton}>
-          <Icon name="exchange" size={24} color="black" />
-          <Text style={styles.controlButtonText}>{useSvgButton ? "Switch" : "Switch"}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setShowCheckboxes(prev => !prev)} style={styles.controlButton}>
-          <Icon name={showCheckboxes ? "check-square-o" : "square-o"} size={24} color="black" />
-          <Text style={styles.controlButtonText}>{showCheckboxes ? "Reuse" : "Reuse"}</Text>
-        </TouchableOpacity>
-      </View>
 
-      {viewSortedList && Object.keys(groupedMoments).map(category => (
-        <View key={category}>  
-          <ButtonMomentCategory 
+  const renderMomentChatItem = ({ item: moment }) => {
+    return (
+      <View style={[styles.momentContainer, { width: windowWidth / 3 }]}>
+        <ButtonMomentChat
+          moment={moment}
+          onPress={() => openModal(moment)}
+          disabled={false}
+          sameStyleForDisabled={true}
+          svgColor={svgColor}
+        />
+      </View>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <ButtonControlPanel
+        onCollapseAll={handleCollapseAll}
+        onSwitchView={handleSwitchView}
+        onToggleCheckboxes={handleToggleCheckboxes}
+        showCheckboxes={showCheckboxes}
+        showSVG={showSVG}
+      />
+
+      <View style={styles.categoryButtonsContainer}>
+        {Object.keys(groupedMoments).map((category) => (
+          <ButtonMomentCategory
+            key={category}
             onPress={() => handleToggleCategory(category)}
             categoryText={category}
             momentCount={groupedMoments[category].length}
-          />  
-          {expandedCategories[category] && (
-            <View> 
-              <FlatList
-                data={groupedMoments[category]}  // Correctly pass data for each category
-                keyExtractor={(moment) => generateUniqueKey(moment)}
-                renderItem={renderMomentItem}
-                horizontal={horizontal && singleLineScroll}
-                numColumns={singleLineScroll ? 1 : effectiveColumns}  // Adjust based on singleLineScroll and useSvgButton
-                columnWrapperStyle={!singleLineScroll && effectiveColumns > 1 ? styles.imageRow : null}
-                estimatedItemSize={100}
-                showsHorizontalScrollIndicator={false}
-                key={`${effectiveColumns}-${useSvgButton}-${showCheckboxes}`} // Add showCheckboxes to key to force re-render
-                ListFooterComponent={<View style={{ height: 60 }} />} 
-              />
-            </View>
-          )}
-        </View>
-      ))}
+          />
+        ))}
+      </View>
 
-      {!viewSortedList && (
-        <FlatList
-          data={moments}
-          keyExtractor={(moment) => generateUniqueKey(moment)}
-          renderItem={renderMomentItem}
-          horizontal={horizontal && singleLineScroll}
-          numColumns={singleLineScroll ? 1 : effectiveColumns}
-          columnWrapperStyle={!singleLineScroll && effectiveColumns > 1 ? styles.imageRow : null}
-          estimatedItemSize={100}
-          showsHorizontalScrollIndicator={false}
-          key={`${effectiveColumns}-${useSvgButton}-${showCheckboxes}`} // Add showCheckboxes to key to force re-render
-        />
-      )}
+      <ScrollView style={styles.contentContainer}>
+        {Object.keys(groupedMoments).map((category) => (
+          <View key={category} style={styles.categoryWrapper}>
+            {(expandAll || expandedCategory === category) && (
+              <View style={styles.flatListContainer}>
+                <FlatList
+                  key={showSVG ? 'chat' : 'moment'}
+                  data={groupedMoments[category]}
+                  renderItem={showSVG ? renderMomentChatItem : renderMomentItem}
+                  keyExtractor={(item) => item.id.toString()}
+                  numColumns={showSVG ? 3 : 1}
+                  showsVerticalScrollIndicator={false}
+                  columnWrapperStyle={showSVG ? styles.imageRow : undefined}
+                />
+              </View>
+            )}
+          </View>
+        ))}
 
-      {selectedMoment && (
-        <ItemViewMoment 
-          archived={passInData}
-          isModalVisible={isModalVisible}
-          moment={selectedMoment}
+        {!Object.keys(groupedMoments).length && (
+          <View style={styles.flatListContainer}>
+            <FlatList
+              key={showSVG ? 'chat-empty' : 'moment-empty'}
+              data={moments}
+              renderItem={showSVG ? renderMomentChatItem : renderMomentItem}
+              keyExtractor={(item) => item.id.toString()}
+              numColumns={showSVG ? 3 : 1}
+              showsVerticalScrollIndicator={false}
+              columnWrapperStyle={showSVG ? styles.imageRow : undefined}
+            />
+          </View>
+        )}
+      </ScrollView>
+
+      {isModalVisible && selectedMoment && (
+        <ItemViewMoment
+          isVisible={isModalVisible}
           onClose={closeModal}
+          moment={selectedMoment}
         />
       )}
     </View>
@@ -235,32 +202,37 @@ const ItemMomentMultiPlain = ({
 };
 
 const styles = StyleSheet.create({
-  controlPanel: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-    
-    backgroundColor: '#f0f0f0',
+  container: {
+    flex: 1, 
+    width: '100%',
+    justifyContent: 'space-between',// Adjust paddingTop based on header height
   },
-  controlButton: {
-    flexDirection: 'row',
+  categoryButtonsContainer: {
+    paddingHorizontal: 10,
+    paddingTop: 20,
+    borderWidth:1,
+    borderRadius: 20,
+    borderColor: 'black',
+  },
+  contentContainer: {
     flex: 1,
-    height: 70,
-    alignItems: 'center',
+    backgroundColor: 'black',
+    height: 460,
   },
-  controlButtonText: {
-    
-  
-    marginLeft: 5,
-    fontSize: 16,
-    color: 'black',
+  categoryWrapper: {
+    marginBottom: 4,
+  },
+  flatListContainer: {
+    height: 450,
   },
   momentContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: '100%',
+    borderWidth: 1,
+    backgroundColor: 'gray',
+    borderRadius: 30,
+    padding: 0,
   },
   momentContent: {
-    flex: 1,
     alignItems: 'center',
   },
   categoryCircle: {
@@ -277,23 +249,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  overlay: {
-    
-  },
   checkboxContainer: {
-    margin: 0,
-    padding: 0,
-    position: 'absolute', 
+    position: 'absolute',
     zIndex: 2,
-    bottom: 34,
-    backgroundColor: 'transparent',
+    top: 10,
+    right: 10,
   },
   checkboxText: {
-    fontSize: 16,
     color: 'black',
   },
   imageRow: {
-    justifyContent: 'flex-start',
+    justifyContent: 'space-around',
   },
 });
 

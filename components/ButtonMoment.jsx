@@ -5,11 +5,10 @@ import SpeechBubbleIconHeartSvg from '../assets/svgs/speech-bubble-icon-heart.sv
 import FormatDate from '../components/FormatDate';
 
 const ButtonMoment = ({
-  //Border can be turned on by setting width in styles
   onPress,  
   moment,
   iconSize = 12,
-  size = 12,
+  size = 14,
   color = "black",
   style,
   disabled = false,
@@ -27,7 +26,7 @@ const ButtonMoment = ({
     >
       <View style={styles.iconAndMomentContainer}>
         <View style={styles.iconContainer}>
-          <SpeechBubbleIconHeartSvg width={iconSize} height={iconSize} color={color} />
+          {/* Icon component here if needed */}
         </View>
         <View style={styles.textWrapper}>
           <Text style={[styles.momentText, { fontSize: size, color: color }]}>
@@ -55,56 +54,54 @@ const ButtonMoment = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,  
-    borderWidth: 1,
-    borderRadius: 10,
-    justifyContent: 'space-between',
+    borderBottomWidth: .6,
+    borderRadius: 0,
     borderColor: 'black',
+    flexDirection: 'column',
+    
+    margin: 0,
+    // Removed flex and fixed height constraints to allow natural height adjustment
   },
   disabledContainer: {
     opacity: 0.5, // Visual indication of disabled state
   },
   iconAndMomentContainer: {
     flexDirection: 'row',
-    alignItems: 'center', 
-    width: '100%', 
-    padding: 10,
+    alignItems: 'center',
+    width: '100%',
+    padding: 0,
     paddingTop: 4,
-    overflow: 'hidden',
-    borderRadius: 20, 
     flexWrap: 'wrap', // Allow wrapping of children
     backgroundColor: 'transparent', // Optional: make sure background is set to avoid overlap issues
   },
   momentText: { 
     fontFamily: 'Poppins-Regular',
-    marginLeft: 8,
-    flexWrap: 'wrap',   
-    height: '80%',
+    fontSize: 14,
+    marginLeft: 10,
+    marginTop: 20,
+    marginBottom: 20,
+    flexShrink: 1,  // Allows the text to shrink if needed
   },
   textWrapper: {
     flex: 1, 
-    flexShrink: 1,  
+    // Removed fixed height
   },
   iconContainer: { 
-    alignItems: 'left', 
-    justifyContent: 'flex-start',
-    left: -10,
-    top: -20, 
-    borderRadius: 20, 
-    width: '8%',
-    height: '100%',
+    justifyContent: 'center',
+    marginRight: 0, // Adjusted margin to align the icon better with the text
+    // Removed fixed height
   },
   creationDateSection: {    
-    position: 'absolute', 
-    bottom: 0, 
     backgroundColor: 'transparent',
     justifyContent: 'flex-end',
+    alignContent: 'flex-end',
     alignItems: 'flex-end',
     width: '100%',
   },
   creationDateTextContainer: {  
     paddingBottom: 10,
     paddingRight: 10, 
+    
     backgroundColor: 'transparent',
     borderRadius: 20,
   },
