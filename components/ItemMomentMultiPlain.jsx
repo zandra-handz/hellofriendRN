@@ -1,45 +1,61 @@
-import React, { useState, useMemo } from 'react';
-import { View, FlatList, StyleSheet, Dimensions, Text, ScrollView } from 'react-native';
-import ButtonMomentCategory from '../components/ButtonMomentCategory';
+import React, { useState, useMemo, useRef, useCallback } from 'react';
+import { View, StyleSheet, Dimensions, Text, FlatList } from 'react-native';
+import ButtonMomentCategorySmall from '../components/ButtonMomentCategorySmall';
 import ButtonMoment from '../components/ButtonMoment';
 import ButtonMomentChat from '../components/ButtonMomentChat';
 import ButtonControlPanel from '../components/ButtonControlPanel';
-import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemViewMoment from '../components/ItemViewMoment';
 import { CheckBox } from 'react-native-elements';
+import { useCapsuleList } from '../context/CapsuleListContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const windowWidth = Dimensions.get('window').width;
+const footerHeight = 100; // Set to a fixed height for footer
 
 const ItemMomentMultiPlain = ({
   passInData = false,
-  data = [],
-  limit,
   svgColor = 'gray',
   includeCategoryTitle = false,
   viewSortedList = true,
 }) => {
-  const { sortedByCategory, newestFirst: newestFirstList } = useCapsuleList();
+  const { themeStyles } = useGlobalStyle();
+  const { capsuleList } = useCapsuleList();
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null); // New state for selected category
   const [showCheckboxes, setShowCheckboxes] = useState(passInData);
   const [showSVG, setShowSVG] = useState(false);
-  const [expandAll, setExpandAll] = useState(false);
   const [selectedMoments, setSelectedMoments] = useState([]);
+  const flatListRef = useRef(null); // Ref for FlatList of moments
+  const categoryFlatListRef = useRef(null); // Ref for FlatList of categories
 
-  const listToDisplay = passInData ? data : (viewSortedList ? sortedByCategory : newestFirstList);
-  const moments = useMemo(() => listToDisplay.slice(0, limit), [listToDisplay, limit]);
+  // Use capsuleList as moments
+  const moments = capsuleList;
 
-  const groupedMoments = useMemo(() => {
+  // Create categoryStartIndices based on moments
+  const categoryStartIndices = useMemo(() => {
+    let index = 0;
     return moments.reduce((acc, moment) => {
-      const category = passInData ? (moment.typed_category || 'No category') : (moment.typedCategory || 'Uncategorized');
-      (acc[category] = acc[category] || []).push(moment);
+      const category = moment.typedCategory || 'Uncategorized';
+      if (!acc[category]) {
+        acc[category] = index;
+      }
+      index += 1;
       return acc;
     }, {});
-  }, [moments, passInData]);
+  }, [moments]);
 
   const handleToggleCategory = (category) => {
     setExpandedCategory(prev => (prev === category ? null : category));
+    setSelectedCategory(prev => (prev === category ? null : category)); // Update selected category
+    const startIndex = categoryStartIndices[category];
+    if (startIndex !== undefined) {
+      flatListRef.current?.scrollToIndex({ index: startIndex, animated: true });
+      // Scroll category buttons to selected category
+      const categoryIndex = Object.keys(categoryStartIndices).indexOf(category);
+      categoryFlatListRef.current?.scrollToIndex({ index: categoryIndex, animated: true });
+    }
   };
 
   const handleExpandAll = () => {
@@ -71,20 +87,37 @@ const ItemMomentMultiPlain = ({
   };
 
   const toggleSelectMoment = (moment) => {
-    let updatedSelectedMoments;
-    if (selectedMoments.includes(moment)) {
-      updatedSelectedMoments = selectedMoments.filter((m) => m !== moment);
-    } else {
-      updatedSelectedMoments = [...selectedMoments, moment];
-    }
+    const updatedSelectedMoments = selectedMoments.includes(moment)
+      ? selectedMoments.filter((m) => m !== moment)
+      : [...selectedMoments, moment];
     setSelectedMoments(updatedSelectedMoments);
+  };
+
+  // Determine visible items and update the selected category
+  const handleViewableItemsChanged = useCallback(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      const visibleCategory = moments.find(moment => viewableItems.some(viewable => viewable.item.id === moment.id))?.typedCategory;
+      if (visibleCategory) {
+        setSelectedCategory(visibleCategory);
+        // Scroll category buttons to visible category
+        const categoryIndex = Object.keys(categoryStartIndices).indexOf(visibleCategory);
+        if (categoryIndex !== -1) {
+          categoryFlatListRef.current?.scrollToIndex({ index: categoryIndex, animated: true });
+        }
+      }
+    }
+  }, [moments, categoryStartIndices]);
+
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50, // Adjust as needed
   };
 
   const renderMomentItem = ({ item: moment }) => {
     const isSelected = selectedMoments.includes(moment);
+    const isHighlighted = moment.typedCategory === selectedCategory;
 
     return (
-      <View style={styles.momentContainer}>
+      <View style={[styles.momentContainer, isHighlighted && styles.highlightedMoment]}>
         {showCheckboxes && (
           <CheckBox
             key={moment.id}
@@ -134,61 +167,60 @@ const ItemMomentMultiPlain = ({
       </View>
     );
   };
+ 
 
   return (
     <View style={styles.container}>
       <ButtonControlPanel
-        onCollapseAll={handleCollapseAll}
-        onSwitchView={handleSwitchView}
+        onCollapseAll={() => {}}
+        onSwitchView={() => {}}
         onToggleCheckboxes={handleToggleCheckboxes}
         showCheckboxes={showCheckboxes}
         showSVG={showSVG}
       />
 
-      <View style={styles.categoryButtonsContainer}>
-        {Object.keys(groupedMoments).map((category) => (
-          <ButtonMomentCategory
-            key={category}
-            onPress={() => handleToggleCategory(category)}
-            categoryText={category}
-            momentCount={groupedMoments[category].length}
-          />
-        ))}
+      <View style={{ width: '100%', marginVertical: 10 }}>
+        <FlatList
+          ref={categoryFlatListRef} // Attach the ref here
+          data={Object.keys(categoryStartIndices)}
+          renderItem={({ item: category }) => ( 
+            <ButtonMomentCategorySmall
+              key={category}
+              onPress={() => handleToggleCategory(category)}
+              categoryText={category}
+              momentCount={moments.filter(moment => moment.typedCategory === category).length}
+              highlighted={category === selectedCategory} // Pass highlighted prop
+            /> 
+          )}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          estimatedItemSize={100} // Adjust based on your ButtonMomentCategory size
+          style={styles.categoryButtonsContainer}
+          contentContainerStyle={{ paddingRight: 300 }} // Add extra space to the right
+        />
       </View>
 
-      <ScrollView style={styles.contentContainer}>
-        {Object.keys(groupedMoments).map((category) => (
-          <View key={category} style={styles.categoryWrapper}>
-            {(expandAll || expandedCategory === category) && (
-              <View style={styles.flatListContainer}>
-                <FlatList
-                  key={showSVG ? 'chat' : 'moment'}
-                  data={groupedMoments[category]}
-                  renderItem={showSVG ? renderMomentChatItem : renderMomentItem}
-                  keyExtractor={(item) => item.id.toString()}
-                  numColumns={showSVG ? 3 : 1}
-                  showsVerticalScrollIndicator={false}
-                  columnWrapperStyle={showSVG ? styles.imageRow : undefined}
-                />
-              </View>
-            )}
-          </View>
-        ))}
-
-        {!Object.keys(groupedMoments).length && (
-          <View style={styles.flatListContainer}>
-            <FlatList
-              key={showSVG ? 'chat-empty' : 'moment-empty'}
-              data={moments}
-              renderItem={showSVG ? renderMomentChatItem : renderMomentItem}
-              keyExtractor={(item) => item.id.toString()}
-              numColumns={showSVG ? 3 : 1}
-              showsVerticalScrollIndicator={false}
-              columnWrapperStyle={showSVG ? styles.imageRow : undefined}
-            />
-          </View>
-        )}
-      </ScrollView>
+      <View style={styles.contentContainer}>
+        <FlatList
+          ref={flatListRef} // Attach the ref here
+          data={moments}
+          renderItem={showSVG ? renderMomentChatItem : renderMomentItem}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={showSVG ? 3 : 1}
+          showsVerticalScrollIndicator={false}
+          columnWrapperStyle={showSVG ? styles.imageRow : undefined}
+          ListFooterComponent={() => <View style={{ height: 840 }} />}  // Add the footer component here
+          onViewableItemsChanged={handleViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          getItemLayout={(data, index) => ({
+            length: 100, // Adjust based on your item size
+            offset: 100 * index, // Adjust based on your item size
+            index,
+          })}
+          
+          scrollEventThrottle={16} // Adjust for performance
+        />
+      </View>
 
       {isModalVisible && selectedMoment && (
         <ItemViewMoment
@@ -203,63 +235,50 @@ const ItemMomentMultiPlain = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
     width: '100%',
-    justifyContent: 'space-between',// Adjust paddingTop based on header height
+    paddingHorizontal: 10,
+    justifyContent: 'space-between', // Adjust paddingTop based on header height
   },
   categoryButtonsContainer: {
     paddingHorizontal: 10,
-    paddingTop: 20,
-    borderWidth:1,
+    borderWidth: 1,
     borderRadius: 20,
     borderColor: 'black',
   },
   contentContainer: {
-    flex: 1,
     backgroundColor: 'black',
-    height: 460,
-  },
-  categoryWrapper: {
-    marginBottom: 4,
-  },
-  flatListContainer: {
-    height: 450,
   },
   momentContainer: {
-    width: '100%',
-    borderWidth: 1,
-    backgroundColor: 'gray',
+    padding: 0, // Reduced padding to remove extra white space
+    margin: 0,
     borderRadius: 30,
-    padding: 0,
+    backgroundColor: 'transparent',
   },
   momentContent: {
-    alignItems: 'center',
+    padding: 10,
   },
   categoryCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    justifyContent: 'center',
+    borderRadius: 20,
+    padding: 5,
+    backgroundColor: 'white',
     alignItems: 'center',
-    marginTop: 10,
+    justifyContent: 'center',
   },
   categoryText: {
+    fontSize: 12,
     color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   checkboxContainer: {
-    position: 'absolute',
-    zIndex: 2,
-    top: 10,
-    right: 10,
+    marginRight: 10,
   },
   checkboxText: {
     color: 'black',
   },
+  highlightedMoment: {
+    backgroundColor: 'lightblue', // Customize the highlight color as needed
+  },
   imageRow: {
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
   },
 });
 

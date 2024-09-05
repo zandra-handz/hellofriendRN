@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ButtonControlPanel = ({ 
   onCollapseAll, 
@@ -9,36 +10,46 @@ const ButtonControlPanel = ({
   showCheckboxes,
   showSVG // true for shapes, false for words
 }) => {
-  return (
-    <View style={styles.controlPanel}>
-      <TouchableOpacity onPress={onCollapseAll} style={styles.controlButton}>
-        <Icon name="compress" size={24} color="black" />
-        <Text style={styles.controlButtonText}>Collapse All</Text>
+
+  const { themeStyles } = useGlobalStyle();
+
+  return ( 
+    <View 
+    style={[
+    styles.controlPanel 
+    ]}
+>
+      <TouchableOpacity onPress={onCollapseAll} style={[styles.controlButton, themeStyles.footerIcon]}>
+        <Icon name="compress" size={20} style={themeStyles.footerIcon} />
+        <Text style={[styles.controlButtonText, themeStyles.footerText]}>Collapse All</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={onSwitchView} style={styles.controlButton}>
-        <Icon name={showSVG ? "object-group" : "font"} size={24} color="black" />
-        <Text style={styles.controlButtonText}>Switch</Text>
+      <TouchableOpacity onPress={onSwitchView} style={[styles.controlButton, themeStyles.footerIcon]}>
+        <Icon name={showSVG ? "object-group" : "font"} size={20}  style={themeStyles.footerIcon}/>
+        <Text style={[styles.controlButtonText, themeStyles.footerText]}>Switch</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={onToggleCheckboxes} style={styles.controlButton}>
-        <Icon name={showCheckboxes ? "check-square-o" : "square-o"} size={24} color="black" />
-        <Text style={styles.controlButtonText}>Checkboxes</Text>
+      <TouchableOpacity onPress={onToggleCheckboxes} style={[styles.controlButton, themeStyles.footerIcon]}>
+        <Icon name={showCheckboxes ? "check-square-o" : "square-o"} size={20}  style={themeStyles.footerIcon} />
+        <Text style={[styles.controlButtonText, themeStyles.footerText]}>Checkboxes</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  controlPanel: {
+  controlPanel: { 
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 10,
+    borderRadius: 30,
+    padding: 10,
+    backgroundColor: 'lightgray',
   },
   controlButton: {
     alignItems: 'center',
   },
   controlButtonText: {
-    fontSize: 16,
-    color: 'black',
+    fontSize: 11,
+    fontFamily: 'Poppins-Regular', 
   },
 });
 

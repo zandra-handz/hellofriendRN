@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import HelloFriendFooter from '../components/HelloFriendFooter';
 
 const ScreenMoments = ({ route, navigation }) => {
+    const { themeStyles } = useGlobalStyle(); 
     const { capsuleList } = useCapsuleList();
     const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
 
@@ -15,29 +17,39 @@ const ScreenMoments = ({ route, navigation }) => {
     }, [capsuleList]);
 
     return ( 
-            <View style={styles.container}> 
-                <ScrollView>
+        <View 
+            style={[
+            styles.container, 
+            themeStyles.container, 
+            ]}
+        >
+                <View style={{flex: 1, width: '100%'}}>
                     {isCapsuleListReady ? (
                         <>  
-                        <ItemMomentMultiPlain height={40} width={40} columns={3} singleLineScroll={false} newestFirst={false} svgColor='black' />
+                        <ItemMomentMultiPlain height={40} width={40} columns={3} singleLineScroll={false} newestFirst={false} svgColor={themeStyles.footerIcon} />
                             
                         </>
                         
                     ) : (
                         <Text>Loading...</Text>
                     )}
-                </ScrollView>
-            </View> )
+                </View>
+                <View style={{width: '100%', position: 'absolute', bottom: 0}}> 
+                <HelloFriendFooter />
+                </View>
+            </View> 
+            )
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'white',
-        padding: 10,
+    container: { 
+        flex: 1,  
+        padding: 0,
+        justifyContent: 'space-between',
     },
     mainContainer: {
         flex: 1,
+        justifyContent: 'space-between',
     },
     modalContainer: {
         flex: 1,

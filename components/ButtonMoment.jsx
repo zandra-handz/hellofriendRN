@@ -9,7 +9,7 @@ const ButtonMoment = ({
   moment,
   iconSize = 12,
   size = 14,
-  color = "black",
+  color = "white",
   style,
   disabled = false,
   sameStyleForDisabled = false, // New prop to control style
@@ -25,8 +25,7 @@ const ButtonMoment = ({
       disabled={disabled} // Disable the button interaction
     >
       <View style={styles.iconAndMomentContainer}>
-        <View style={styles.iconContainer}>
-          {/* Icon component here if needed */}
+        <View style={styles.iconContainer}> 
         </View>
         <View style={styles.textWrapper}>
           <Text style={[styles.momentText, { fontSize: size, color: color }]}>
@@ -37,6 +36,7 @@ const ButtonMoment = ({
       <View style={styles.creationDateSection}>
         <View style={styles.creationDateTextContainer}>
           <FormatDate 
+            color='white'
             date={moment.created} 
             fontSize={12} 
             month={true} 
@@ -54,10 +54,12 @@ const ButtonMoment = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: .6,
-    borderRadius: 0,
-    borderColor: 'black',
+    borderBottomWidth: .2,
+    borderRadius: 30,
+    marginBottom: 4,
+    borderColor: '#ccc',
     flexDirection: 'column',
+    backgroundColor: '#666',
     
     margin: 0,
     // Removed flex and fixed height constraints to allow natural height adjustment
@@ -69,17 +71,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    padding: 0,
-    paddingTop: 4,
+    padding: 10,
+    paddingTop: 10,
     flexWrap: 'wrap', // Allow wrapping of children
     backgroundColor: 'transparent', // Optional: make sure background is set to avoid overlap issues
   },
   momentText: { 
     fontFamily: 'Poppins-Regular',
-    fontSize: 14,
-    marginLeft: 10,
-    marginTop: 20,
-    marginBottom: 20,
+    fontSize: 14, 
+    margin: 10, 
     flexShrink: 1,  // Allows the text to shrink if needed
   },
   textWrapper: {
