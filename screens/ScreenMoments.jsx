@@ -4,9 +4,13 @@ import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import HelloFriendFooter from '../components/HelloFriendFooter';
+import { LinearGradient } from 'expo-linear-gradient'; 
+import  { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const ScreenMoments = ({ route, navigation }) => {
-    const { themeStyles } = useGlobalStyle(); 
+    const { themeStyles, gradientColors } = useGlobalStyle();
+    const {calculatedThemeColors} = useSelectedFriend();
+    const { darkColor, lightColor } = gradientColors;
     const { capsuleList } = useCapsuleList();
     const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
 
@@ -17,12 +21,13 @@ const ScreenMoments = ({ route, navigation }) => {
     }, [capsuleList]);
 
     return ( 
-        <View 
-            style={[
-            styles.container, 
-            themeStyles.container, 
-            ]}
-        >
+        
+        <LinearGradient
+        colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.container, themeStyles.signinContainer]}
+      >
                 <View style={{flex: 1, width: '100%'}}>
                     {isCapsuleListReady ? (
                         <>  
@@ -33,11 +38,8 @@ const ScreenMoments = ({ route, navigation }) => {
                     ) : (
                         <Text>Loading...</Text>
                     )}
-                </View>
-                <View style={{width: '100%', position: 'absolute', bottom: 0}}> 
-                <HelloFriendFooter />
-                </View>
-            </View> 
+                </View> 
+            </LinearGradient> 
             )
 };
 

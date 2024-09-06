@@ -24,7 +24,7 @@ const ScreenFriendFocus = () => {
   const buttonMargin = 10;
 
   const pageHeaderHeightTall = 220;
-  const pageHeaderHeight = 168; 
+  const pageHeaderHeight = 134;  // was 168 but I got tired of it
 
   const headerTextColor = 'white';
   const inactiveIconColor = 'white';

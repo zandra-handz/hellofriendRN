@@ -167,6 +167,12 @@ const lightThemeStyles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 10,
     },
+    genericTextBackground: {
+        backgroundColor: 'white',
+    },
+    genericText: {
+        color: 'black',
+    },
     footerContainer: {
         backgroundColor: 'white',
         borderTopWidth: 0,
@@ -243,6 +249,13 @@ const darkThemeStyles = StyleSheet.create({
         shadowOpacity: 0.8,
         shadowRadius: 8,
         elevation: 10,
+    },
+    genericTextBackground: {
+        backgroundColor: 'black',
+    },
+    genericText: {
+        color: 'white',
+
     },
     footerContainer: {
         backgroundColor: 'black',

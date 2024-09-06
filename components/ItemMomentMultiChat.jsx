@@ -1,18 +1,18 @@
 import React, { useState, useMemo, useRef, useCallback } from 'react';
-import { View, StyleSheet, Dimensions, Text, FlatList, Animated } from 'react-native';
+import { View, StyleSheet, Dimensions, Text, FlatList } from 'react-native';
 import ButtonMomentCategorySmall from '../components/ButtonMomentCategorySmall';
-import ButtonMoment from '../components/ButtonMoment'; 
-import ButtonCheckboxControl from '../components/ButtonCheckboxControl';
+import ButtonMoment from '../components/ButtonMoment';
+import ButtonMomentChat from '../components/ButtonMomentChat';
+import ButtonControlPanel from '../components/ButtonControlPanel';
 import ItemViewMoment from '../components/ItemViewMoment';
 import { CheckBox } from 'react-native-elements';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const windowWidth = Dimensions.get('window').width;
-const footerHeight = 800; // Set to a fixed height for footer
+const footerHeight = 100; // Set to a fixed height for footer
 
-const ItemMomentMultiPlain = ({
+const ItemMomentMultiChat = ({
   passInData = false,
   svgColor = 'gray',
   includeCategoryTitle = false,
@@ -20,20 +20,20 @@ const ItemMomentMultiPlain = ({
 }) => {
   const { themeStyles } = useGlobalStyle();
   const { capsuleList } = useCapsuleList();
-  const { calculatedThemeColors } = useSelectedFriend();
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [expandedCategory, setExpandedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null); // New state for selected category
   const [showCheckboxes, setShowCheckboxes] = useState(passInData);
+  const [showSVG, setShowSVG] = useState(false);
   const [selectedMoments, setSelectedMoments] = useState([]);
-  const flatListRef = useRef(null);
-  const categoryFlatListRef = useRef(null);
-  const [categoryButtonPressed, setCategoryButtonPressed] = useState(false);
-  const timerRef = useRef(null);
+  const flatListRef = useRef(null); // Ref for FlatList of moments
+  const categoryFlatListRef = useRef(null); // Ref for FlatList of categories
 
   // Use capsuleList as moments
   const moments = capsuleList;
 
+  // Create categoryStartIndices based on moments
   const categoryStartIndices = useMemo(() => {
     let index = 0;
     return moments.reduce((acc, moment) => {
@@ -47,44 +47,25 @@ const ItemMomentMultiPlain = ({
   }, [moments]);
 
   const handleToggleCategory = (category) => {
-    setCategoryButtonPressed(true);
-    setSelectedCategory(prev => (prev === category ? null : category));
+    setExpandedCategory(prev => (prev === category ? null : category));
+    setSelectedCategory(prev => (prev === category ? null : category)); // Update selected category
     const startIndex = categoryStartIndices[category];
     if (startIndex !== undefined) {
       flatListRef.current?.scrollToIndex({ index: startIndex, animated: true });
-
+      // Scroll category buttons to selected category
       const categoryIndex = Object.keys(categoryStartIndices).indexOf(category);
       categoryFlatListRef.current?.scrollToIndex({ index: categoryIndex, animated: true });
     }
-    setCategoryButtonPressed(false);
   };
 
-  const DELAY = 64;
+  const handleExpandAll = () => {
+    setExpandAll(true);
+    setExpandedCategory(null);
+  };
 
-  const handleViewableItemsChanged = useCallback(({ viewableItems }) => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    if (viewableItems.length > 0 && !categoryButtonPressed) {
-      const visibleCategory = moments.find(moment => viewableItems.some(viewable => viewable.item.id === moment.id))?.typedCategory;
-
-      if (visibleCategory) {
-        timerRef.current = setTimeout(() => {
-          setSelectedCategory(visibleCategory);
-          console.log('set selected category');
-
-          const categoryIndex = Object.keys(categoryStartIndices).indexOf(visibleCategory);
-          if (categoryIndex !== -1 && !categoryButtonPressed) {
-            categoryFlatListRef.current?.scrollToIndex({ index: categoryIndex, animated: true });
-          }
-        }, DELAY);
-      }
-    }
-  }, [moments, categoryStartIndices, categoryButtonPressed]);
-
-  const viewabilityConfig = {
-    itemVisiblePercentThreshold: 60,
+  const handleCollapseAll = () => {
+    setExpandAll(false);
+    setExpandedCategory(null);
   };
 
   const openModal = (moment) => {
@@ -101,6 +82,10 @@ const ItemMomentMultiPlain = ({
     setShowCheckboxes(prev => !prev);
   };
 
+  const handleSwitchView = () => {
+    setShowSVG(prev => !prev);
+  };
+
   const toggleSelectMoment = (moment) => {
     const updatedSelectedMoments = selectedMoments.includes(moment)
       ? selectedMoments.filter((m) => m !== moment)
@@ -108,12 +93,31 @@ const ItemMomentMultiPlain = ({
     setSelectedMoments(updatedSelectedMoments);
   };
 
+  // Determine visible items and update the selected category
+  const handleViewableItemsChanged = useCallback(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      const visibleCategory = moments.find(moment => viewableItems.some(viewable => viewable.item.id === moment.id))?.typedCategory;
+      if (visibleCategory) {
+        setSelectedCategory(visibleCategory);
+        // Scroll category buttons to visible category
+        const categoryIndex = Object.keys(categoryStartIndices).indexOf(visibleCategory);
+        if (categoryIndex !== -1) {
+          categoryFlatListRef.current?.scrollToIndex({ index: categoryIndex, animated: true });
+        }
+      }
+    }
+  }, [moments, categoryStartIndices]);
+
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50, // Adjust as needed
+  };
+
   const renderMomentItem = ({ item: moment }) => {
     const isSelected = selectedMoments.includes(moment);
     const isHighlighted = moment.typedCategory === selectedCategory;
-  
+
     return (
-      <View style={[styles.momentContainer, isHighlighted && styles.highlightedMoment, {backgroundColor: calculatedThemeColors.lightColor}]}>
+      <View style={[styles.momentContainer, isHighlighted && styles.highlightedMoment]}>
         {showCheckboxes && (
           <CheckBox
             key={moment.id}
@@ -123,65 +127,98 @@ const ItemMomentMultiPlain = ({
             textStyle={styles.checkboxText}
           />
         )}
-        <Animated.View style={[styles.momentContent, !isHighlighted && styles.fadedOut]}>
-          <ButtonMoment
-            moment={moment}
-            onPress={() => openModal(moment)}
-            disabled={false}
-            sameStyleForDisabled={true}
-          />
+        <View style={styles.momentContent}>
+          {showSVG ? (
+            <ButtonMomentChat
+              moment={moment}
+              onPress={() => openModal(moment)}
+              disabled={false}
+              sameStyleForDisabled={true}
+              svgColor={svgColor}
+            />
+          ) : (
+            <ButtonMoment
+              moment={moment}
+              onPress={() => openModal(moment)}
+              disabled={false}
+              sameStyleForDisabled={true}
+            />
+          )}
           {includeCategoryTitle && (
             <View style={styles.categoryCircle}>
               <Text style={styles.categoryText}>{moment.typedCategory}</Text>
             </View>
           )}
-        </Animated.View>
+        </View>
       </View>
     );
   };
-  
+
+  const renderMomentChatItem = ({ item: moment }) => {
+    return (
+      <View style={[styles.momentContainer, { width: windowWidth / 3 }]}>
+        <ButtonMomentChat
+          moment={moment}
+          onPress={() => openModal(moment)}
+          disabled={false}
+          sameStyleForDisabled={true}
+          svgColor={svgColor}
+        />
+      </View>
+    );
+  };
+ 
 
   return (
     <View style={styles.container}>
-      <ButtonCheckboxControl 
+      <ButtonControlPanel
+        onCollapseAll={() => {}}
+        onSwitchView={() => {}}
         onToggleCheckboxes={handleToggleCheckboxes}
-        showCheckboxes={showCheckboxes} 
+        showCheckboxes={showCheckboxes}
+        showSVG={showSVG}
       />
 
-      <View style={{ width: '100%', marginBottom: 20 }}>
+      <View style={{ width: '100%', marginVertical: 10 }}>
         <FlatList
-          ref={categoryFlatListRef}
+          ref={categoryFlatListRef} // Attach the ref here
           data={Object.keys(categoryStartIndices)}
-          renderItem={({ item: category }) => (
+          renderItem={({ item: category }) => ( 
             <ButtonMomentCategorySmall
               key={category}
               onPress={() => handleToggleCategory(category)}
               categoryText={category}
               momentCount={moments.filter(moment => moment.typedCategory === category).length}
-              highlighted={category === selectedCategory}
-            />
+              highlighted={category === selectedCategory} // Pass highlighted prop
+            /> 
           )}
           horizontal
           showsHorizontalScrollIndicator={false}
-          estimatedItemSize={100}
+          estimatedItemSize={100} // Adjust based on your ButtonMomentCategory size
           style={styles.categoryButtonsContainer}
-          contentContainerStyle={{ paddingRight: 300 }}
+          contentContainerStyle={{ paddingRight: 300 }} // Add extra space to the right
         />
       </View>
 
       <View style={styles.contentContainer}>
         <FlatList
-          ref={flatListRef}
+          ref={flatListRef} // Attach the ref here
           data={moments}
-          renderItem={renderMomentItem}
+          renderItem={showSVG ? renderMomentChatItem : renderMomentItem}
           keyExtractor={(item) => item.id.toString()}
-          numColumns={1}
+          numColumns={showSVG ? 3 : 1}
           showsVerticalScrollIndicator={false}
-          columnWrapperStyle={undefined}
-          ListFooterComponent={() => <View style={{ height: footerHeight }} />}
+          columnWrapperStyle={showSVG ? styles.imageRow : undefined}
+          ListFooterComponent={() => <View style={{ height: 840 }} />}  // Add the footer component here
           onViewableItemsChanged={handleViewableItemsChanged}
           viewabilityConfig={viewabilityConfig}
-          scrollEventThrottle={16}
+          getItemLayout={(data, index) => ({
+            length: 100, // Adjust based on your item size
+            offset: 100 * index, // Adjust based on your item size
+            index,
+          })}
+          
+          scrollEventThrottle={16} // Adjust for performance
         />
       </View>
 
@@ -200,28 +237,25 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingHorizontal: 10,
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', // Adjust paddingTop based on header height
   },
   categoryButtonsContainer: {
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderRadius: 30,
-    paddingVertical: 12,
+    borderRadius: 20,
     borderColor: 'black',
+  },
+  contentContainer: {
     backgroundColor: 'black',
   },
-  contentContainer: {},
   momentContainer: {
-    padding: 0,
-    marginBottom: 8,
-    borderRadius: 40,
+    padding: 0, // Reduced padding to remove extra white space
+    margin: 0,
+    borderRadius: 30,
     backgroundColor: 'transparent',
   },
   momentContent: {
-    padding: 2,
-  },
-  fadedOut: {
-    opacity: 0.5, // Adjust the faded effect here
+    padding: 10,
   },
   categoryCircle: {
     borderRadius: 20,
@@ -240,11 +274,12 @@ const styles = StyleSheet.create({
   checkboxText: {
     color: 'black',
   },
-  highlightedMoment: { 
+  highlightedMoment: {
+    backgroundColor: 'lightblue', // Customize the highlight color as needed
   },
   imageRow: {
     justifyContent: 'space-between',
   },
 });
 
-export default ItemMomentMultiPlain;
+export default ItemMomentMultiChat;

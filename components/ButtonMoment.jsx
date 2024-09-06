@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import SpeechBubbleIconHeartSvg from '../assets/svgs/speech-bubble-icon-heart.svg';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import FormatDate from '../components/FormatDate';
 
@@ -8,18 +9,23 @@ const ButtonMoment = ({
   onPress,  
   moment,
   iconSize = 12,
-  size = 14,
-  color = "white",
+  size = 15,
+  color = "#ccc",
   style,
   disabled = false,
   sameStyleForDisabled = false, // New prop to control style
 }) => {
+
+  const { themeStyles } = useGlobalStyle();
+
+
   return (
     <TouchableOpacity 
       style={[
-        styles.container, 
+        styles.container, themeStyles.genericTextBackground,
         style, 
-        !sameStyleForDisabled && disabled && styles.disabledContainer // Apply disabled style only if sameStyleForDisabled is false
+        !sameStyleForDisabled && disabled && styles.disabledContainer,
+        // Apply disabled style only if sameStyleForDisabled is false
       ]}
       onPress={!disabled ? onPress : null} // Disable onPress if the button is disabled
       disabled={disabled} // Disable the button interaction
@@ -28,15 +34,14 @@ const ButtonMoment = ({
         <View style={styles.iconContainer}> 
         </View>
         <View style={styles.textWrapper}>
-          <Text style={[styles.momentText, { fontSize: size, color: color }]}>
+          <Text style={[styles.momentText, themeStyles.genericText, { fontSize: size }]}>
             {moment.capsule}
           </Text>
         </View>
       </View>
       <View style={styles.creationDateSection}>
         <View style={styles.creationDateTextContainer}>
-          <FormatDate 
-            color='white'
+          <FormatDate  
             date={moment.created} 
             fontSize={12} 
             month={true} 
@@ -55,11 +60,11 @@ const ButtonMoment = ({
 const styles = StyleSheet.create({
   container: {
     borderBottomWidth: .2,
-    borderRadius: 30,
-    marginBottom: 4,
+    borderRadius: 40,
+    marginBottom: 0,
+    padding: 20,
     borderColor: '#ccc',
-    flexDirection: 'column',
-    backgroundColor: '#666',
+    flexDirection: 'column', 
     
     margin: 0,
     // Removed flex and fixed height constraints to allow natural height adjustment
@@ -71,15 +76,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    padding: 10,
-    paddingTop: 10,
+    padding: 0,
+    paddingTop: 4,
     flexWrap: 'wrap', // Allow wrapping of children
     backgroundColor: 'transparent', // Optional: make sure background is set to avoid overlap issues
   },
   momentText: { 
-    fontFamily: 'Poppins-Regular',
-    fontSize: 14, 
-    margin: 10, 
+    fontFamily: 'Poppins-Regular', 
+    margin: 8, 
     flexShrink: 1,  // Allows the text to shrink if needed
   },
   textWrapper: {

@@ -64,19 +64,19 @@ export const SelectedFriendProvider = ({ children }) => {
     if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
       if(friendColorTheme.invertGradient) {
         setCalculatedThemeColors({
-          lightColor: friendColorTheme.darkColor || 'gray',
-          darkColor: friendColorTheme.lightColor || 'white',
+          lightColor: friendColorTheme.darkColor || '#a0f143',
+          darkColor: friendColorTheme.lightColor || '#4caf50',
         });
       } else {
         setCalculatedThemeColors({
-          lightColor: friendColorTheme.lightColor || 'white',
-          darkColor: friendColorTheme.darkColor || 'gray',
+          lightColor: friendColorTheme.lightColor || '#a0f143',
+          darkColor: friendColorTheme.darkColor || '#4caf50',
         });
       }
     } else {
       setCalculatedThemeColors({
-        lightColor: 'white',
-        darkColor: 'gray',
+        lightColor: '#a0f143',
+        darkColor: '#4caf50',
       });
     }
   }, [friendColorTheme]);

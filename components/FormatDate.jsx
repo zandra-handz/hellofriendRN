@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import moment from 'moment'; // Ensure moment.js is installed
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const FormatDate = ({
   date,
-  fontSize = 14,
-  color = 'black',
+  fontSize = 14, 
   month = false,
   monthAbr = false,
   dayAsNumber = false,
@@ -16,14 +16,15 @@ const FormatDate = ({
   yearAsTimePassed = false,
   commas = false,
 }) => {
-  if (!date) return <Text style={styles.text}></Text>;
+  const { themeStyles } = useGlobalStyle();
 
+  if (!date) return <Text style={[styles.text, themeStyles.genericText]}></Text>;
  
   const formattedDate = moment(date);
   const currentYear = moment().year();
   const dateYear = formattedDate.year();
  
-  if (!formattedDate.isValid()) return <Text style={styles.text}></Text>;
+  if (!formattedDate.isValid()) return <Text style={[styles.text, themeStyles.genericText]}></Text>;
 
   let displayText = '';
   let shouldAddComma = false;
@@ -76,7 +77,7 @@ const FormatDate = ({
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.text, { color: color, fontSize: fontSize }]}>{displayText}</Text>
+      <Text style={[styles.text, themeStyles.genericText, { fontSize: fontSize }]}>{displayText}</Text>
     </View>
   );
 };
