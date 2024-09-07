@@ -37,7 +37,7 @@ export const SelectedFriendProvider = ({ children }) => {
         const data = Array.isArray(dashboardData) ? dashboardData[0] : dashboardData;
 
         const colorThemeData = {
-          useFriendColorTheme: data.friend_faves.use_friend_color_theme || null,
+          useFriendColorTheme: data.friend_faves.use_friend_color_theme || false,
           invertGradient: data?.friend_faves?.second_color_option || false,
           lightColor: data?.friend_faves?.light_color || null,
           darkColor: data?.friend_faves?.dark_color || null,

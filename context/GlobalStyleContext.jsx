@@ -128,7 +128,7 @@ export const GlobalStyleProvider = ({ children }) => {
     );
 };
 
-// Light Theme Styles
+
 const lightThemeStyles = StyleSheet.create({
     signinContainer: {
         backgroundColor: 'white',
@@ -173,6 +173,15 @@ const lightThemeStyles = StyleSheet.create({
     genericText: {
         color: 'black',
     },
+    modalContainer: {
+        backgroundColor: 'white',
+    },
+    modalText: {
+        color: 'black',
+    },
+    modalIconColor: {
+        color: 'black',
+    },
     footerContainer: {
         backgroundColor: 'white',
         borderTopWidth: 0,
@@ -210,7 +219,7 @@ const lightThemeStyles = StyleSheet.create({
     headerTextColor: 'black',
 });
 
-// Dark Theme Styles
+
 const darkThemeStyles = StyleSheet.create({
     signinContainer: {
         backgroundColor: 'black',
@@ -256,6 +265,15 @@ const darkThemeStyles = StyleSheet.create({
     genericText: {
         color: 'white',
 
+    },
+    modalContainer: {
+        backgroundColor: '#2B2B2B',
+    },
+    modalText: {
+        color: 'white',
+    },
+    modalIconColor: {
+        color: 'white',
     },
     footerContainer: {
         backgroundColor: 'black',

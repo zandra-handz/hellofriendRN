@@ -3,6 +3,8 @@ import { View, StyleSheet } from 'react-native';
 import ButtonSignOut from './ButtonSignOut';
 import ButtonSettings from './ButtonSettings';
 import ButtonInfo from './ButtonInfo';
+import ButtonData from './ButtonData';
+import ButtonColors from '../components/ButtonColors';
 import AlertConfirm from './AlertConfirm';
 import ButtonToActionMode from './ButtonToActionMode';
 import { useNavigationState } from '@react-navigation/native';
@@ -19,16 +21,14 @@ export default function HelloFriendFooter() {
             {isOnActionPage ? (
                 <View style={styles.section}>
                     <ButtonSignOut
-                        icon="logout"
-                        iconOnly={false}
-                        label="Logout"
+                        icon="logout"  
                         confirmationAlert={true}
                         modal={AlertConfirm}
                     />
                 </View>
             ) : (
                 <View style={styles.section}>
-                    <ButtonToActionMode iconName="arrow-left" navigateScreen="hellofriend" />
+                    <ButtonData />
                 </View>
             )}
 
@@ -37,8 +37,14 @@ export default function HelloFriendFooter() {
             <ButtonSettings />
 
             <View style={[styles.divider, themeStyles.divider]} />
-     
-            <ButtonInfo />
+            <> 
+            {isOnActionPage ? (
+                <ButtonInfo />
+            ): (
+                <ButtonColors />
+            )}
+            </>
+            
 
         </View>
     );
@@ -47,7 +53,7 @@ export default function HelloFriendFooter() {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row', 
-        height: 64,
+        height: 54,
         width: '100%',
         marginBottom: 0,
         padding: 10,

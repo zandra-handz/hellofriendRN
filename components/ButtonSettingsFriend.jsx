@@ -1,33 +1,49 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
-import ActionPageInfo from './ActionPageInfo'; // Import the ActionPageInfo component
-import InfoOutlineSvg from '../assets/svgs/info-outline.svg'; // Import the SVG icon
-import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const ButtonInfo = ({label=null}) => {
+import PaintRollerSvg from '../assets/svgs/paint-roller.svg'; // Import the SVG icon
+
+import AlertPanelBottom from './AlertPanelBottom';
+
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
+
+
+const ButtonSettingsFriend = ({label=null}) => {
   const { themeStyles } = useGlobalStyle();
+  const { selectedFriend, friendDashboardData, friendColorTheme, calculatedThemeColors, loadingNewFriend, setFriend } = useSelectedFriend();
+  const [showProfile, setShowProfile] = useState(false); 
+  
+  
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
+  const handlePress = () => {
+    setShowProfile(!showProfile);
+  };
+
   React.useEffect(() => {
-    if (isModalVisible) {
+    if (showProfile) {
       AccessibilityInfo.announceForAccessibility('Information opened');
     }
-  }, [isModalVisible]);
+  }, [showProfile]);
 
   return (
     <>
-      <TouchableOpacity style={styles.section} onPress={toggleModal}>
-        <InfoOutlineSvg width={24} height={24} style={themeStyles.footerIcon} />
+      <TouchableOpacity style={styles.section} onPress={handlePress}>
+        <PaintRollerSvg width={26} height={26} style={themeStyles.footerIcon} />
         {label && ( 
         <Text style={themeStyles.footerText}>Info</Text>
         )}
       </TouchableOpacity>
-
-      <ActionPageInfo visible={isModalVisible} onClose={toggleModal} />
+      <AlertPanelBottom
+        visible={showProfile}
+        profileData={selectedFriend}
+        onClose={() => setShowProfile(false)}
+      />
     </>
   );
 };
@@ -49,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ButtonInfo;
+export default ButtonSettingsFriend;

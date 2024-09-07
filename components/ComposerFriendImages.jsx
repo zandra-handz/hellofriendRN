@@ -8,8 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 const ComposerFriendImages = ({ 
   onPress, 
   buttonHeight = 70,
-  buttonRadius = 20,
-  headerHeight = 30,
+  buttonRadius = 20, 
   justifyIconContent = 'center',
   inactiveIconColor = 'white',
   topIconSize = 30,

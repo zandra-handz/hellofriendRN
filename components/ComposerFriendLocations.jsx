@@ -35,7 +35,7 @@ const ComposerFriendLocations = ({
   const { locationList } = useLocationList(); 
   const [showSecondButton, setShowSecondButton] = useState(false);
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
-  const calculatedBackgroundColor = headerInside ? calculatedThemeColors.lightColor : 'transparent';
+  const calculatedBackgroundColor = headerInside ? oneBackgroundColor : 'transparent';
 
   const navigateToLocationScreen = ({ onPress }) =>  {
     navigation.navigate('Locations');

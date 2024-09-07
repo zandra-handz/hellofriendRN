@@ -1,12 +1,10 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useCapsuleList } from '../context/CapsuleListContext';
-import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg'; 
 import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
-
-import ItemViewMoment from '../components/ItemViewMoment';
 import { GestureHandlerRootView, TapGestureHandler, LongPressGestureHandler, State } from 'react-native-gesture-handler';
+import ItemViewMoment from '../components/ItemViewMoment';
 
 const ItemMomentMulti = ({  
   width = 100,
@@ -17,32 +15,72 @@ const ItemMomentMulti = ({
   svgColor = 'white',
   containerWidth = 320,
   includeCategoryTitle = true,
+  lastIndex = 3, 
   svgOpacity = 0.3,
-  textOpacity = 0.3,
+  textOpacity = 0.3, 
+  slideShow = true,  
+  Interval = 6000,
 }) => {
   const { newestFirst: newestFirstList } = useCapsuleList();
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lastTap, setLastTap] = useState(0);
+  const [ slideShowInterval, setSlideShowInterval] = useState(0);
+  const [notFirst, setNotFirst ] = useState(false);
   const [momentAnimations, setMomentAnimations] = useState({});
-  const [opacityState, setOpacityState] = useState({});  
-
+  const [currentIndex, setCurrentIndex] = useState(lastIndex); 
   const listToDisplay = newestFirst ? newestFirstList : [];
   const moments = useMemo(() => listToDisplay.slice(0, limit), [listToDisplay, limit]);
 
-  useEffect(() => { 
+  useEffect(() => {
     const animations = {};
-    const opacityStates = {};
     moments.forEach(moment => {
       animations[moment.id] = {
         svgOpacity: new Animated.Value(svgOpacity),
         textOpacity: new Animated.Value(textOpacity),
       };
-      opacityStates[moment.id] = svgOpacity;  
     });
     setMomentAnimations(animations);
-    setOpacityState(opacityStates);
   }, [moments, svgOpacity, textOpacity]);
+
+  useEffect(() => {
+    if (moments.length > 0 && lastIndex !== undefined) {
+      setSelectedMoment(moments[lastIndex] || moments[moments.length - 1]);
+      setCurrentIndex(lastIndex || moments.length - 1);
+    
+    }
+  }, [moments, lastIndex]);
+
+  useEffect(() => {
+    if (slideShow && moments.length > 0) {
+     
+      const intervalId = setInterval(() => {
+        setCurrentIndex(prevIndex => {
+          const nextIndex = (prevIndex + 1) % moments.length;
+          setSelectedMoment(moments[nextIndex]);
+          
+          Object.keys(momentAnimations).forEach(id => {
+            const animation = momentAnimations[id];
+            Animated.timing(animation.svgOpacity, {
+              toValue: id === moments[nextIndex].id ? 1 : svgOpacity,
+              duration: 300,
+              useNativeDriver: true,
+            }).start();
+            Animated.timing(animation.textOpacity, {
+              toValue: id === moments[nextIndex].id ? 1 : textOpacity,
+              duration: 300,
+              useNativeDriver: true,
+            }).start();
+          });
+          setNotFirst(true);
+          setSlideShowInterval(Interval);
+          return nextIndex;
+        });
+      }, slideShowInterval);
+  
+      return () => clearInterval(intervalId);
+    }
+  }, [slideShow, moments, slideShowInterval, momentAnimations, svgOpacity, textOpacity]);
 
   const openModal = useCallback((moment) => {
     setSelectedMoment(moment);
@@ -65,56 +103,40 @@ const ItemMomentMulti = ({
   const generateUniqueKey = (item) => `${item.id}-${item.capsule}`;
 
   const handleDoubleTap = useCallback((moment) => {
-    console.log('Double tap detected');
     setOpacityState(prevState => {
       const newOpacityState = {};
-      const newMomentAnimations = { ...momentAnimations };
-      
-      moments.forEach(m => {
-        newOpacityState[m.id] = svgOpacity;
-        Animated.timing(newMomentAnimations[m.id].svgOpacity, {
-          toValue: svgOpacity,
+      Object.keys(momentAnimations).forEach(id => {
+        const animation = momentAnimations[id];
+        const newOpacity = id === moment.id ? (prevState[moment.id] === 1 ? svgOpacity : 1) : svgOpacity;
+        newOpacityState[id] = newOpacity;
+        Animated.timing(animation.svgOpacity, {
+          toValue: newOpacity,
           duration: 300,
           useNativeDriver: true,
         }).start();
-        Animated.timing(newMomentAnimations[m.id].textOpacity, {
-          toValue: svgOpacity,
+        Animated.timing(animation.textOpacity, {
+          toValue: newOpacity,
           duration: 300,
           useNativeDriver: true,
         }).start();
       });
- 
-      const newOpacity = prevState[moment.id] === 1 ? svgOpacity : 1;
-      newOpacityState[moment.id] = newOpacity;
-      Animated.timing(newMomentAnimations[moment.id].svgOpacity, {
-        toValue: newOpacity,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(newMomentAnimations[moment.id].textOpacity, {
-        toValue: newOpacity,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-
       return newOpacityState;
     });
-  }, [momentAnimations, moments, svgOpacity]);
+  }, [momentAnimations, svgOpacity]);
 
   const handleLongPress = useCallback((moment) => {
-    console.log('Long press detected');
     openModal(moment);
   }, [openModal]);
 
   const handleTap = useCallback((event, moment) => {
     if (event.nativeEvent.state === State.END) {
       const currentTime = new Date().getTime();
-      const tapDelay = 300; // Time delay to distinguish between single and double tap
+      const tapDelay = 300; 
 
       if (lastTap && (currentTime - lastTap) < tapDelay) {
         handleDoubleTap(moment);
       } else {
-        handleDoubleTap(moment); // Handle single tap if needed
+        handleDoubleTap(moment); 
       }
 
       setLastTap(currentTime);
@@ -138,28 +160,28 @@ const ItemMomentMulti = ({
                     handleLongPress(moment);
                   }
                 }}
-                minDurationMs={500} // Duration for long press
-              > 
-                  <TapGestureHandler
-                    onHandlerStateChange={(event) => handleTap(event, moment)}
-                    numberOfTaps={1}
-                  >
-                    <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
-                      <Animated.View style={{ opacity: animation.svgOpacity }}>
-                        <ThoughtBalloonLightBlueSvg width={width} height={height} color={svgColor} />
-                      </Animated.View>
-                      <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
-                        <Animated.Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.21, opacity: animation.textOpacity }]} numberOfLines={7}>
-                          {moment.capsule} 
-                          </Animated.Text>
-                        {includeCategoryTitle && (
-                          <View style={[styles.categoryCircle, { backgroundColor: 'transparent' }]}>
-                            <Animated.Text style={[styles.categoryText, {fontSize: calculateFontSize(width * .8), opacity: animation.textOpacity}]} numberOfLines={1}>Cat: {moment.typedCategory}</Animated.Text>
-                          </View>
-                        )} 
-                      </View>
+                minDurationMs={500} 
+              >
+                <TapGestureHandler
+                  onHandlerStateChange={(event) => handleTap(event, moment)}
+                  numberOfTaps={1}
+                >
+                  <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
+                    <Animated.View style={{ opacity: animation.svgOpacity }}>
+                      <ThoughtBalloonLightBlueSvg width={width} height={height} color={svgColor} />
+                    </Animated.View>
+                    <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
+                      <Animated.Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.21, opacity: animation.textOpacity }]} numberOfLines={7}>
+                        {moment.capsule}
+                      </Animated.Text>
+                      {includeCategoryTitle && (
+                        <View style={[styles.categoryCircle, { backgroundColor: 'transparent' }]}>
+                          <Animated.Text style={[styles.categoryText, {fontSize: calculateFontSize(width * .8), opacity: animation.textOpacity}]} numberOfLines={1}>Cat: {moment.typedCategory}</Animated.Text>
+                        </View>
+                      )}
                     </View>
-                  </TapGestureHandler> 
+                  </View>
+                </TapGestureHandler>
               </LongPressGestureHandler>
             </View>
           );
@@ -168,6 +190,17 @@ const ItemMomentMulti = ({
         showsHorizontalScrollIndicator={false}
         scrollIndicatorInsets={{ right: 1 }}
       />
+      <View style={[styles.containerBelow, { width: containerWidth }]}>
+        {selectedMoment && notFirst && (  
+          <Text 
+            style={styles.selectedMomentDisplayText} 
+            numberOfLines={5} 
+            ellipsizeMode='tail'
+          >
+            {selectedMoment.capsule}
+          </Text>
+        )}
+      </View>
       {isModalVisible && (
         <ItemViewMoment moment={selectedMoment} onClose={closeModal} />
       )}
@@ -184,33 +217,46 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   bubbleText: {
-    color: 'black',
+    color: 'transparent',
     fontFamily: 'Poppins-Regular',
     textAlign: 'left',
+  },
+  selectedMomentDisplayText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    color: 'white',
   },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   categoryCircle: {
     position: 'absolute',
-    bottom: -50,
-    right: 12,
-    width: 106,
-    height: 24,
-    borderRadius: 12,
+    bottom: 0,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#d3d3d3',
     justifyContent: 'center',
-    alignItems: 'right', 
-    textAlign: 'right',
+    alignItems: 'center',
   },
   categoryText: {
-    color: 'black', 
-    fontFamily: 'Poppins-Regular',
-    textTransform: 'uppercase',
-    overflow: 'hidden', 
-    textAlign: 'right',
+    color: 'transparent',
+    textAlign: 'center',
+    fontFamily: 'Poppins-Bold',
+  },
+  containerBelow: {
+    position: 'absolute',
+  
+    top: 74,
+    height: 100,
+    width: '100%',
+    paddingHorizontal: 10,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

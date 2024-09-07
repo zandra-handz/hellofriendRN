@@ -69,7 +69,7 @@ const ActionFriendPageMoments = ({
 
 
 
-      <View style={[styles.containerHeaderInside, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius }]}>
+      <View style={[styles.containerHeaderInside, { backgroundColor: 'transparent', borderTopRightRadius: buttonRadius }]}>
           {includeHeader && headerInside && (
             <View style={[styles.headerContainer, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
             <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
@@ -81,7 +81,7 @@ const ActionFriendPageMoments = ({
           <ButtonLottieAnimationSatellitesMoments
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius} 
-            headerText='LAST ADDED'
+            headerText=''
             allItems={capsuleList ? capsuleList : 'Loading...'}
             showGradient={true}
             lightColor={oneBackgroundColor}

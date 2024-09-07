@@ -3,7 +3,7 @@ import { Text, StyleSheet, View } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import ItemHelloSingle from '../components/ItemHelloSingle';
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 
 const BaseFriendViewHelloes = ({
@@ -17,7 +17,8 @@ const BaseFriendViewHelloes = ({
   additionalTextColor = 'white',
   typeIcon = null,
   backgroundColor = 'transparent',
-  showGradient = true,
+  secondPageBackgroundColor = 'transparent',
+  showGradient = false,
   darkColor = 'black',
   lightColor = '#C0C0C0',
   direction = { x: 1, y: 0 },
@@ -27,6 +28,7 @@ const BaseFriendViewHelloes = ({
   additionalPagesCategorize = true,
 }) => {
   const [category, setCategory] = useState(null);
+  const { themeStyles } = useGlobalStyle();
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
@@ -66,7 +68,7 @@ const BaseFriendViewHelloes = ({
   }, [allItems, onViewableItemsChanged]);
 
   return (
-    <View style={styles.container}>
+    <View style={[themeStyles.genericBackground, {borderRadius: buttonRadius}]}>
       {!additionalPages && (
         <View>
           <View style={{ flexDirection: 'row' }}>
@@ -135,7 +137,7 @@ const BaseFriendViewHelloes = ({
         </View>
       )}
       {additionalPages && (
-        <View style={[styles.additionalSatelliteSection, { height: buttonHeight, borderRadius: buttonRadius }]}>
+        <View style={[styles.additionalSatelliteSection, { height: buttonHeight, borderRadius: buttonRadius, backgroundColor: secondPageBackgroundColor}]}>
           {additionalPagesCategorize && (
             <View style={styles.categoryTextContainer}>
               <Text style={styles.categoryText}>{category}</Text>
@@ -160,16 +162,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     backgroundColor: 'transparent',
-    shadowColor: '#000',
+    shadowColor: '#000', 
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.5,
     shadowRadius: 12,
     elevation: 0,
   },
   additionalSatelliteSection: {
-    flexDirection: 'column',
-    marginVertical: 0,
-    backgroundColor: 'black',
+    flexDirection: 'column', 
     width: '100%',
   },
   categoryText: {

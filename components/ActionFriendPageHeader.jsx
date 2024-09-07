@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Animated  } from 'react-native';
 import ButtonLottieAnimationTwoSectionsSvg from '../components/ButtonLottieAnimationTwoSectionsSvg';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import MeetingWithAFriendOutlineSvg from '../assets/svgs/meeting-with-a-friend-outline.svg';
+
 import AlertPanelBottom from './AlertPanelBottom';
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage';
@@ -65,7 +65,7 @@ const ActionFriendPageHeader = ({
       {friendDashboardData && (
       <Animated.View style={{ flex: 1 }}>
         <ButtonLottieAnimationTwoSectionsSvg
-          onPress={handlePress}
+           onPress={Deselector ? handlePress : null} 
           buttonHeight={Deselector ? 140 : buttonHeight}
           borderRadius={headerRadius}
           borderTopRadius={Deselector ? 30 : headerTopRadius}
@@ -91,7 +91,7 @@ const ActionFriendPageHeader = ({
           showGradient={true}
           lightColor={Deselector ? 'black' : 'transparent'}
           darkColor={Deselector ? 'black' : 'transparent'}
-          SourceSvg={MeetingWithAFriendOutlineSvg}
+          SourceSvg={null}
           SourceSecondSvg={LizardSvg}
           svgColor={calculatedThemeColors.darkColor}
           shapeWidth={190}

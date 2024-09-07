@@ -7,8 +7,7 @@ import ByeSvg from '../assets/svgs/bye.svg';
 import AlertConfirm from '../components/AlertConfirm';
 
 const ButtonSignOut = ({ 
-  iconOnly = false, 
-  label = 'Sign Out', 
+  label=null, 
   confirmationAlert = true 
 }) => {
   const { onSignOut } = useAuthUser();
@@ -35,8 +34,10 @@ const ButtonSignOut = ({
   return (
     <>
       <TouchableOpacity onPress={handleSignOutPress} style={styles.buttonContainer}>
-        <LogoutOutlineSvg width={30} height={30} style={themeStyles.footerIcon}  />
-        {!iconOnly && <Text style={[styles.label, themeStyles.footerText]}>{label}</Text>}
+        <LogoutOutlineSvg width={26} height={26} style={themeStyles.footerIcon}  />
+        {label && (
+        <Text style={[styles.label, themeStyles.footerText]}>Sign out</Text>
+        )}
       </TouchableOpacity>
 
       {confirmationAlert && (

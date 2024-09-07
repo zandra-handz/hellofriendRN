@@ -24,6 +24,7 @@ const ScreenFriendFocus = () => {
   const topRadius = 20;
   const radius = 20;
   const buttonMargin = 10;
+  const oneBackgroundColor = 'slate';
 
   const pageHeaderHeightTall = 220;
   const pageHeaderHeight = 134;  // was 168 but I got tired of it
@@ -52,23 +53,71 @@ const ScreenFriendFocus = () => {
       {!loadingNewFriend && (
         <>
             <View style={styles.buttonContainer}>
-            <View style={{marginHorizontal: buttonMargin}}> 
-            <ActionFriendPageHeader buttonHeight={pageHeaderHeight} headerRadius={radius} headerTopRadius={topRadius}/>
-            </View>
-            <View style={{marginHorizontal: buttonMargin}}>
-              <ComposerFriendLocations topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={74} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'LOCATIONS'} />
-            </View>
-            <View style={{marginHorizontal: buttonMargin}}>
-            <ComposerFriendImages topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={58} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'IMAGES'}/> 
-            </View>
-            <View style={{marginHorizontal: buttonMargin}}>
-            <ActionFriendPageMoments topIconSize={topIconSize} bottomIconSize={momentsBottomIconSize} buttonHeight={260} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'MOMENTS'}/> 
+            <View style={{ marginHorizontal: buttonMargin }}>
+              <ActionFriendPageHeader 
+                buttonHeight={pageHeaderHeight} 
+                headerRadius={radius} 
+                headerTopRadius={topRadius} 
+              />
             </View>
 
-            <View style={{marginHorizontal: buttonMargin}}>
-            <ComposerFriendHelloes topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={72} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'LAST HELLO'} />
-            
+            <View style={{ marginHorizontal: buttonMargin }}>
+              <ComposerFriendLocations 
+                topIconSize={topIconSize} 
+                bottomIconSize={bottomIconSize} 
+                buttonHeight={74} 
+                buttonRadius={radius} 
+                inactiveIconColor={inactiveIconColor} 
+                oneBackgroundColor={oneBackgroundColor}
+                headerHeight={30} 
+                includeHeader={false} 
+                headerInside={false} 
+                headerText={'LOCATIONS'} 
+              />
             </View>
+
+            <View style={{ marginHorizontal: buttonMargin }}>
+              <ComposerFriendImages 
+                topIconSize={topIconSize} 
+                bottomIconSize={bottomIconSize} 
+                buttonHeight={58} 
+                buttonRadius={radius} 
+                inactiveIconColor={inactiveIconColor} 
+                oneBackgroundColor={oneBackgroundColor} 
+              /> 
+            </View>
+
+            <View style={{ marginHorizontal: buttonMargin }}>
+              <ActionFriendPageMoments 
+                topIconSize={topIconSize} 
+                bottomIconSize={momentsBottomIconSize} 
+                buttonHeight={240} 
+                buttonRadius={radius} 
+                inactiveIconColor={inactiveIconColor} 
+                oneBackgroundColor={oneBackgroundColor}
+                headerHeight={30} 
+                includeHeader={headers} 
+                headerInside={false} 
+                headerText={'MOMENTS'} 
+              /> 
+            </View>
+
+            <View style={{ marginHorizontal: buttonMargin }}>
+              <ComposerFriendHelloes 
+                topIconSize={topIconSize} 
+                bottomIconSize={bottomIconSize} 
+                buttonHeight={82} 
+                buttonRadius={radius} 
+                showGradient={false}
+                inactiveIconColor={inactiveIconColor} 
+                oneBackgroundColor={oneBackgroundColor}
+                headerHeight={30} 
+                includeHeader={headers} 
+                headerInside={false} 
+                headerText={'LAST HELLO'} 
+              />
+            </View>
+
             <HelloFriendFooter /> 
             </View>  
             </>

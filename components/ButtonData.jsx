@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
-import ActionPageInfo from './ActionPageInfo'; // Import the ActionPageInfo component
-import InfoOutlineSvg from '../assets/svgs/info-outline.svg'; // Import the SVG icon
+import ActionPageInfo from './ActionPageInfo';  
+import PaintRollerSvg from '../assets/svgs/paint-roller.svg';  
+import HeartbeatLifelineArrowSvg from '../assets/svgs/heartbeat-lifeline-arrow.svg';  
+
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const ButtonInfo = ({label=null}) => {
+const ButtonData = ({label=null}) => {
   const { themeStyles } = useGlobalStyle();
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -21,7 +23,7 @@ const ButtonInfo = ({label=null}) => {
   return (
     <>
       <TouchableOpacity style={styles.section} onPress={toggleModal}>
-        <InfoOutlineSvg width={24} height={24} style={themeStyles.footerIcon} />
+        <HeartbeatLifelineArrowSvg width={38} height={38} style={themeStyles.footerIcon} />
         {label && ( 
         <Text style={themeStyles.footerText}>Info</Text>
         )}
@@ -49,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ButtonInfo;
+export default ButtonData;

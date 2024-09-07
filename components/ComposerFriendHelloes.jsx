@@ -34,7 +34,7 @@ const ComposerFriendHelloes = ({
   
   const navigation = useNavigation();
   
-  const { selectedFriend, friendDashboardData, friendColorTheme, calculatedThemeColors } = useSelectedFriend(); 
+  const { selectedFriend, friendDashboardData, calculatedThemeColors } = useSelectedFriend(); 
   const [helloesList, setHelloesList] = useState([]);  
   const [isFetchingHelloes, setFetchingHelloes] = useState(false);
   const [ iconBackgroundColor ] = useState(null);
@@ -90,7 +90,7 @@ const ComposerFriendHelloes = ({
         </View>
       )}
       <View style={styles.containerInnerRow}> 
-        <View style={[styles.containerHeaderInside, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius }]}>
+        <View style={[styles.containerHeaderInside, { backgroundColor: 'transparent', borderTopRightRadius: buttonRadius }]}>
           
           {includeHeader && headerInside && (
             <View style={[styles.headerContainer, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
@@ -100,10 +100,12 @@ const ComposerFriendHelloes = ({
           </View>
           )}
 
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, borderRadius: 30}}>
           <BaseFriendViewHelloes
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius} 
+            backgroundColor={oneBackgroundColor}
+            secondPageBackgroundColor={oneBackgroundColor}
             isFetching={isFetchingHelloes}
             navigateToFirstPage={navigateToFirstPage} 
             allItems={helloesList ? helloesList : 'Loading...'}
@@ -118,7 +120,7 @@ const ComposerFriendHelloes = ({
             lightColor={oneBackgroundColor}
             darkColor={oneBackgroundColor} 
             satellites={!showSecondButton} 
-            satelliteSectionBackgroundColor={iconBackgroundColor} 
+            satelliteSectionBackgroundColor={oneBackgroundColor} 
             additionalPages={showSecondButton}  
           /> 
       </View>
