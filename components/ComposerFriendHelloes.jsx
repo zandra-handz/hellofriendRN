@@ -28,6 +28,7 @@ const ComposerFriendHelloes = ({
   inactiveIconColor='white',
   topIconSize=30,
   bottomIconSize=30, 
+  oneBackgroundColor='black', //#2B2B2B
 
  }) => {
   
@@ -38,7 +39,7 @@ const ComposerFriendHelloes = ({
   const [isFetchingHelloes, setFetchingHelloes] = useState(false);
   const [ iconBackgroundColor ] = useState(null);
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
-  const calculatedBackgroundColor = headerInside ? calculatedThemeColors.lightColor : 'transparent';
+  const calculatedBackgroundColor = headerInside ? oneBackgroundColor : 'transparent';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,10 +90,10 @@ const ComposerFriendHelloes = ({
         </View>
       )}
       <View style={styles.containerInnerRow}> 
-        <View style={[styles.containerHeaderInside, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius }]}>
+        <View style={[styles.containerHeaderInside, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius }]}>
           
           {includeHeader && headerInside && (
-            <View style={[styles.headerContainer, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
+            <View style={[styles.headerContainer, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
                       <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
@@ -114,8 +115,8 @@ const ComposerFriendHelloes = ({
             typeIcon={friendDashboardData.length > 0 ? <IconDynamicHelloType selectedChoice={friendDashboardData[0].previous_meet_type} svgHeight={40} svgWidth={40} /> : null}
             fontMargin={3}   
             showGradient={true}
-            lightColor={calculatedThemeColors.lightColor}
-            darkColor={calculatedThemeColors.darkColor} 
+            lightColor={oneBackgroundColor}
+            darkColor={oneBackgroundColor} 
             satellites={!showSecondButton} 
             satelliteSectionBackgroundColor={iconBackgroundColor} 
             additionalPages={showSecondButton}  
@@ -134,11 +135,12 @@ const ComposerFriendHelloes = ({
         borderRadius={buttonRadius}
         justifyContent={justifyIconContent}
         marginLeft={16} 
-        backgroundColor={friendColorTheme.darkColor}
+        backgroundColor={oneBackgroundColor}
         topIconSize={topIconSize}
         bottomIconSize={bottomIconSize}
         iconColor={inactiveIconColor}
-        highlightIconColor={friendColorTheme.lightColor}
+        highlightIconColor={calculatedThemeColors.darkColor}
+        useBottomButtonOnly={true}
         firstPageTopSvg={GridViewOutlineSvg}
         firstPageBottomSvg={ScrollOutlineSvg}
         secondPageTopSvg={GridViewOutlineSvg}

@@ -45,8 +45,7 @@ const ItemImageMulti = ({ horizontal = true, singleLineScroll = true, width, hei
         columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null} 
         estimatedItemSize={100}
         showsHorizontalScrollIndicator={false}
-
-  // Optional: Customize scroll indicator insets if needed
+ 
        scrollIndicatorInsets={{ right: 1 }}
       />
 
@@ -58,15 +57,10 @@ const ItemImageMulti = ({ horizontal = true, singleLineScroll = true, width, hei
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1,
+  container: {  
     backgroundColor: 'transparent', 
-    
-    height: '100%', 
   }, 
-  imageRow: {
-    flex: 1, 
-    justifyContent: 'space-between',
+  imageRow: {   
     
   },  
   image: { 

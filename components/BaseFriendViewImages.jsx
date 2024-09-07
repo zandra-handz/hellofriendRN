@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react'; 
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';  
 import ItemImageMulti from '../components/ItemImageMulti';  
 import { useImageList } from '../context/ImageListContext';
+import PhotoSolidSvg from '../assets/svgs/photo-solid.svg'; // Import the SVG
+
 
 const BaseFriendViewImages = ({
   buttonHeight = 136,
-  buttonRadius = 10, 
-  headerSvg = null,
-  allItems,   
+  buttonRadius = 10,  
   backgroundColor = 'transparent', 
   showGradient = true,
   darkColor = 'black',
   lightColor = '#C0C0C0',
-  direction = { x: 1, y: 0 },     
+  direction = { x: 1, y: 0 },
+  buttonComponent = null, // New prop for button component
 }) => {  
   const { imageList } = useImageList();
   const [isImageListReady, setIsImageListReady] = useState(false);
@@ -24,59 +26,59 @@ const BaseFriendViewImages = ({
     }
   }, [imageList]);
 
-  return (
-    <View style={styles.container}>  
-      <View style={{ flexDirection: 'row' }}>
-        <View style={[styles.mainButtonContainer, { height: buttonHeight, borderRadius: buttonRadius, width: '100%' }]}>
-          <View style={{
-              flexDirection: 'row',
-              width: '100%',
-              height: buttonHeight,
-              padding: 6,
-              borderRadius: buttonRadius, 
-              overflow: 'hidden',
-              backgroundColor: showGradient ? 'transparent' : backgroundColor,
-            }}
-          >
-            {showGradient && (
-              <LinearGradient
-                colors={[darkColor, lightColor]}
-                start={{ x: 0, y: 0 }}
-                end={direction}
-                style={StyleSheet.absoluteFillObject}
-              />
-            )}
-            <View style={[styles.mainSection, { height: buttonHeight, width: '100%', borderRadius: buttonRadius }]}>
-              <View style={styles.svgContainer}>
-                {headerSvg}
-              </View>
-              <View style={{ flexDirection: 'row' }}>
-                {isImageListReady && (
-                  <View style={{ flex: 1 }}> 
-                    <ItemImageMulti imageData={allItems} width={40} height={40} containerWidth={254} borderRadius={buttonRadius} /> 
-                  </View>
-                )} 
-              </View>
-            </View>
-          </View>
-        </View>
+  return (  
+    <View style={[styles.container, { backgroundColor: showGradient ? 'transparent' : backgroundColor, height: buttonHeight, borderRadius: buttonRadius }]}>
+      {showGradient && (
+        <LinearGradient
+          colors={[darkColor, lightColor]}
+          start={{ x: 0, y: 0 }}
+          end={direction}
+          style={StyleSheet.absoluteFillObject}
+        />
+      )}
+      <View style={styles.headerContainer}> 
+          <PhotoSolidSvg width={68} height={68} color="white" />
+
+      </View> 
+      <View style={styles.contentContainer}>
+        {isImageListReady && (
+          <ItemImageMulti imageData={imageList} width={50} height={50} containerWidth={254} borderRadius={10} />
+        )}
       </View>
-    </View>
+      {buttonComponent && (
+        <View style={styles.buttonContainer}>
+          {buttonComponent}
+        </View>
+      )}
+    </View>  
   );
 };
 
 const styles = StyleSheet.create({ 
-  mainSection: {
+  container: {
     flexDirection: 'row',
-    paddingHorizontal: 10, 
-    paddingTop: 5,
-    paddingBottom: 4, 
-    flex: 1 
+    alignItems: 'center',
+    width: '100%',
+    position: 'relative',
+    borderRadius: 10, // Ensure this matches buttonRadius if set dynamically
+    overflow: 'hidden', // Add this to handle overflow
   },
-  svgContainer: {
-    paddingTop: 7,
-    marginRight: 30,   
-},   
+  headerContainer: {
+    paddingLeft: 10,
+    marginRight: 10, // Adjust this to control space between SVG and content
+    
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentContainer: {
+    flex: 1, // Takes the remaining space in the row
+    justifyContent: 'center', // Vertically centers content
+  },
+  buttonContainer: {
+    marginLeft: 10, // Space between content and action button
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default BaseFriendViewImages;

@@ -24,7 +24,8 @@ const ComposerFriendLocations = ({
   justifyIconContent='center',
   inactiveIconColor='white',
   topIconSize=30,
-  bottomIconSize=30
+  bottomIconSize=30,
+  oneBackgroundColor='black', //#2B2B2B
 
 }) => {
 
@@ -76,8 +77,8 @@ const ComposerFriendLocations = ({
             buttonRadius={buttonRadius}  
             allItems={locationList ? locationList : 'Loading...'} 
             showGradient={true}
-            lightColor={calculatedThemeColors.lightColor}
-            darkColor={calculatedThemeColors.darkColor} 
+            lightColor={oneBackgroundColor}
+            darkColor={oneBackgroundColor} 
             satellites={!showSecondButton}  
             additionalPages={showSecondButton} 
          />
@@ -93,11 +94,11 @@ const ComposerFriendLocations = ({
             borderRadius={buttonRadius} 
             marginLeft={marginLeft}
             justifyContent={justifyIconContent}
-            backgroundColor={friendColorTheme.darkColor}
+            backgroundColor={oneBackgroundColor}
             topIconSize={topIconSize}
             bottomIconSize={bottomIconSize}
             iconColor={inactiveIconColor}
-            highlightIconColor={friendColorTheme.lightColor}
+            highlightIconColor={calculatedThemeColors.darkColor}
             firstPageTopSvg={MagGlassSimpleSvg}
             firstPageBottomSvg={MapPinOutlineSvg}
             secondPageTopSvg={MagGlassSimpleSvg}

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text,  StyleSheet } from 'react-native';
   
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { LinearGradient } from 'expo-linear-gradient'; 
 
 import ActionFriendPageHeader from '../components/ActionFriendPageHeader'; // Import the new component
 import ActionFriendPageMoments from '../components/ActionFriendPageMoments'; // Import the new component
@@ -14,8 +15,9 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import HelloFriendFooter from '../components/HelloFriendFooter';
 
 const ScreenFriendFocus = () => {
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeStyles } = useGlobalStyle(); 
+  const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+
+  const { themeStyles, gradientColors } = useGlobalStyle(); 
 
   const headers = true;
   const insideHeaders = true;
@@ -36,7 +38,12 @@ const ScreenFriendFocus = () => {
 
 
   return (
-    <View style={[styles.container, themeStyles.container]}>
+    <LinearGradient
+    colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
+    style={[styles.container, themeStyles.signinContainer]}
+  >
       {loadingNewFriend && (
         <View style={styles.loadingTextContainer}>
         <Text style={styles.loadingTextBold}>Loading data for {selectedFriend.name}!</Text>
@@ -52,7 +59,7 @@ const ScreenFriendFocus = () => {
               <ComposerFriendLocations topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={74} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'LOCATIONS'} />
             </View>
             <View style={{marginHorizontal: buttonMargin}}>
-            <ComposerFriendImages topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={64} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'IMAGES'}/> 
+            <ComposerFriendImages topIconSize={topIconSize} bottomIconSize={bottomIconSize} buttonHeight={58} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={false} headerInside={false} headerText={'IMAGES'}/> 
             </View>
             <View style={{marginHorizontal: buttonMargin}}>
             <ActionFriendPageMoments topIconSize={topIconSize} bottomIconSize={momentsBottomIconSize} buttonHeight={260} buttonRadius={radius} inactiveIconColor={inactiveIconColor} headerHeight={30} includeHeader={headers} headerInside={insideHeaders} headerText={'MOMENTS'}/> 
@@ -66,14 +73,14 @@ const ScreenFriendFocus = () => {
             </View>  
             </>
       )}
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#2B2B2B',
     paddingVertical: 0,
   }, 
   loadingTextContainer: {

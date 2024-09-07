@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet, Animated } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import BubbleChatSquareSolidSvg from '../assets/svgs/bubble-chat-square-solid.svg'; 
+import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
+
 import ItemViewMoment from '../components/ItemViewMoment';
 import { GestureHandlerRootView, TapGestureHandler, LongPressGestureHandler, State } from 'react-native-gesture-handler';
 
@@ -54,11 +56,11 @@ const ItemMomentMulti = ({
 
   const calculateFontSize = (width) => width * 0.055;
   const calculateBubbleContainerDimensions = (width, height) => ({
-    width: width * 0.94,
-    height: height * 0.56,
+    width: width * 0.78,
+    height: height * 0.9,
   });
 
-  const calculateLeftPadding = (bubbleWidth) => bubbleWidth * 0.08;
+  const calculateLeftPadding = (bubbleWidth) => bubbleWidth * 0.26;
   const bubbleContainerDimensions = calculateBubbleContainerDimensions(width, height);
   const generateUniqueKey = (item) => `${item.id}-${item.capsule}`;
 
@@ -144,7 +146,7 @@ const ItemMomentMulti = ({
                   >
                     <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
                       <Animated.View style={{ opacity: animation.svgOpacity }}>
-                        <BubbleChatSquareSolidSvg width={width} height={height} color={svgColor} />
+                        <ThoughtBalloonLightBlueSvg width={width} height={height} color={svgColor} />
                       </Animated.View>
                       <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
                         <Animated.Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.21, opacity: animation.textOpacity }]} numberOfLines={7}>

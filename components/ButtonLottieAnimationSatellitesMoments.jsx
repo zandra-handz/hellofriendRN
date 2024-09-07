@@ -88,7 +88,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
                       <> 
                         {isCapsuleListReady && (
                           <View style={{flex: 1}}> 
-                            <ItemMomentMulti width={240} height={240} limit={3} horizontal={true} singleLineScroll={true} newestFirst={true}/> 
+                            <ItemMomentMulti width={56} height={56} limit={4} horizontal={true} singleLineScroll={true} newestFirst={true}/> 
                           </View>
                        )}
                       </> 

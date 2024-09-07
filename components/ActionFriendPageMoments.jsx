@@ -28,6 +28,7 @@ const ActionFriendPageMoments = ({
   inactiveIconColor='white',
   topIconSize=30,
   bottomIconSize=30,
+  oneBackgroundColor='black', //#2B2B2B
 
 
 }) => {
@@ -38,7 +39,7 @@ const ActionFriendPageMoments = ({
   const [showSecondButton, setShowSecondButton] = useState(false);
  
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
-  const calculatedBackgroundColor = headerInside ? calculatedThemeColors.lightColor : 'transparent';
+  const calculatedBackgroundColor = headerInside ? '#2B2B2B' : 'transparent';
 
   const navigateToMomentsScreen = () => {
     navigation.navigate('Moments');
@@ -68,9 +69,9 @@ const ActionFriendPageMoments = ({
 
 
 
-      <View style={[styles.containerHeaderInside, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius }]}>
+      <View style={[styles.containerHeaderInside, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius }]}>
           {includeHeader && headerInside && (
-            <View style={[styles.headerContainer, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
+            <View style={[styles.headerContainer, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
             <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
@@ -83,8 +84,8 @@ const ActionFriendPageMoments = ({
             headerText='LAST ADDED'
             allItems={capsuleList ? capsuleList : 'Loading...'}
             showGradient={true}
-            lightColor={calculatedThemeColors.lightColor}
-            darkColor={calculatedThemeColors.darkColor}   
+            lightColor={oneBackgroundColor}
+            darkColor={oneBackgroundColor} 
             additionalPages={showSecondButton} 
           />
         </View>
@@ -100,10 +101,11 @@ const ActionFriendPageMoments = ({
         borderRadius={buttonRadius}
         justifyContent={justifyIconContent}
         marginLeft={16} 
-        backgroundColor={friendColorTheme.darkColor}
+        backgroundColor={oneBackgroundColor}
         topIconSize={topIconSize}
         bottomIconSize={bottomIconSize}
         iconColor={inactiveIconColor}
+        oneButtonOnly={true}
         highlightIconColor={friendColorTheme.lightColor}
         firstPageTopSvg={GridViewOutlineSvg}
         firstPageBottomSvg={ScrollOutlineSvg}

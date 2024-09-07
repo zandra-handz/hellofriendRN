@@ -38,10 +38,11 @@ const ItemMomentMultiPlain = ({
     let index = 0;
     return moments.reduce((acc, moment) => {
       const category = moment.typedCategory || 'Uncategorized';
-      if (!acc[category]) {
+      if (acc[category] === undefined) {
         acc[category] = index;
       }
       index += 1;
+      console.log(index);
       return acc;
     }, {});
   }, [moments]);
@@ -51,6 +52,7 @@ const ItemMomentMultiPlain = ({
     setSelectedCategory(prev => (prev === category ? null : category));
     const startIndex = categoryStartIndices[category];
     if (startIndex !== undefined) {
+      console.log('startIndex: ', startIndex);
       flatListRef.current?.scrollToIndex({ index: startIndex, animated: true });
 
       const categoryIndex = Object.keys(categoryStartIndices).indexOf(category);

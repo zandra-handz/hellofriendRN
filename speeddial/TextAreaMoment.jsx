@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 import MaximizeOutlineSvg from '../assets/svgs/maximize-outline.svg';  
 import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
+
 import ModalMomentFocus from '../components/ModalMomentFocus'; // Import the new component
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
