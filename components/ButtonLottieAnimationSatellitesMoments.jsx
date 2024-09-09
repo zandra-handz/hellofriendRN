@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
-import { LinearGradient } from 'expo-linear-gradient';
+import { FlashList } from '@shopify/flash-list'; 
 import ItemMomentSingle from '../components/ItemMomentSingle';
 import ItemMomentMulti from '../components/ItemMomentMulti'; 
 import { useCapsuleList } from '../context/CapsuleListContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ButtonLottieAnimationSatellitesMoments = ({
   buttonHeight = 270,
@@ -12,9 +12,10 @@ const ButtonLottieAnimationSatellitesMoments = ({
   headerText = 'LAST ADDED', 
   allItems,      
   additionalPages = false,
-  additionalPagesCategorize = true, 
+  additionalPagesCategorize = true,  
 }) => { 
 
+  const { themeStyles } = useGlobalStyle();
   const [category, setCategory] = useState(null);
   const { capsuleList } = useCapsuleList();
   const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
@@ -30,9 +31,11 @@ const ButtonLottieAnimationSatellitesMoments = ({
     if (capsuleList.length > 0) {
       setIsCapsuleListReady(true);
     }
-  }, [capsuleList]);   
+  }, [capsuleList]);
 
- 
+  // Generate a unique key based on themeStyles or other dynamic properties
+  const itemMomentMultiKey = `item-moment-multi-${themeStyles.friendFocusSectionIcon.color}`;
+
   const renderAdditionalSatellites = useCallback(() => {
     return (
       <FlashList
@@ -40,11 +43,9 @@ const ButtonLottieAnimationSatellitesMoments = ({
         horizontal
         keyExtractor={(item, index) => `additional-satellite-${index}`}
         renderItem={({ item }) => (
-          <> 
           <View style={{paddingRight: 20 }}>
-          <ItemMomentSingle momentObject={item} momentWidth={240} momentHeight={240}/>
+            <ItemMomentSingle momentObject={item} momentWidth={240} momentHeight={240}/>
           </View>
-          </>
         )}
         estimatedItemSize={250}  
         onViewableItemsChanged={onViewableItemsChanged}
@@ -60,7 +61,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
     <View style={styles.container}>
       {!additionalPages && ( 
           <View style={{ flexDirection: 'row' }}>
-            <View style={[styles.mainButtonContainer, { height: buttonHeight,   width:'100%' }]}>
+            <View style={[styles.mainButtonContainer, { height: buttonHeight, width:'100%' }]}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -72,16 +73,23 @@ const ButtonLottieAnimationSatellitesMoments = ({
                 }} 
               > 
                 <View style={[styles.mainSection, {height: buttonHeight, width: '100%', borderRadius: buttonRadius }]}>
-                <Text style={styles.categoryText}>{headerText}</Text>
-                  <View style={{ flexDirection: 'row' }}>
-                      <> 
-                        {isCapsuleListReady && (
-                          <View style={{flex: 1}}> 
-                            <ItemMomentMulti width={50} height={50} containerWidth={300} limit={4} horizontal={true} singleLineScroll={true} newestFirst={true}/> 
-                          </View>
-                       )}
-                      </> 
-                  </View> 
+                  <Text style={styles.categoryText}>{headerText}</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                      {isCapsuleListReady && (
+                        <View style={{flex: 1}}> 
+                          <ItemMomentMulti 
+                            key={itemMomentMultiKey} 
+                            width={50} 
+                            height={50} 
+                            containerWidth={300} 
+                            limit={4} 
+                            horizontal={true} 
+                            singleLineScroll={true} 
+                            newestFirst={true}
+                          /> 
+                        </View>
+                     )}
+                    </View> 
                 </View>
               </View>
             </View> 
@@ -89,10 +97,8 @@ const ButtonLottieAnimationSatellitesMoments = ({
       )}
       {additionalPages && (
         <View style={[styles.additionalSatelliteSection, {height: buttonHeight, borderRadius: buttonRadius }]}>
-          
           {additionalPagesCategorize && (
             <Text style={styles.categoryText}>Category: {category}</Text>
-          
           )}
           {renderAdditionalSatellites()}
         </View>
@@ -100,7 +106,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
     </View>
   );
 };
-  
+
 const styles = StyleSheet.create({ 
   container: {
     flex: 1,
@@ -125,7 +131,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     maxHeight: 20,
     whiteSpace: 'nowrap',
-     textOverflow: 'ellipsis',
+    textOverflow: 'ellipsis',
   },
 });
 

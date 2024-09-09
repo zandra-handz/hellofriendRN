@@ -2,7 +2,6 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useCapsuleList } from '../context/CapsuleListContext';
-import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 import { GestureHandlerRootView, TapGestureHandler, LongPressGestureHandler, State } from 'react-native-gesture-handler';
 import ItemViewMoment from '../components/ItemViewMoment';
@@ -31,7 +30,10 @@ const ItemMomentMulti = ({
   const [currentIndex, setCurrentIndex] = useState(lastIndex); 
   const listToDisplay = newestFirst ? newestFirstList : [];
   const moments = useMemo(() => listToDisplay.slice(0, limit), [listToDisplay, limit]);
+  const [ iconStyle, setIconStyle ] = useState([]);
+  const [stop, setStop ] =useState(false);
   const { themeStyles } = useGlobalStyle();
+  
 
   useEffect(() => {
     const animations = {};
@@ -42,7 +44,17 @@ const ItemMomentMulti = ({
       };
     });
     setMomentAnimations(animations);
-  }, [moments, svgOpacity, textOpacity]);
+    console.log('useEffect for setting momentAnimations');
+  }, [moments, svgOpacity, themeStyles, textOpacity]);
+
+
+  useEffect(() => {
+    console.log('themeStyles changed!');
+    setCurrentIndex(3);
+    setIconStyle(themeStyles.friendFocusSectionIcon);
+    setStop(false);
+    
+  }, [themeStyles]);
 
   useEffect(() => {
     if (moments.length > 0 && lastIndex !== undefined) {
@@ -53,7 +65,8 @@ const ItemMomentMulti = ({
   }, [moments, lastIndex]);
 
   useEffect(() => {
-    if (slideShow && moments.length > 0) {
+    console.log('useEffect for intervals for animation triggered');
+    if (slideShow && moments.length > 0 ) {
      
       const intervalId = setInterval(() => {
         setCurrentIndex(prevIndex => {
@@ -75,6 +88,7 @@ const ItemMomentMulti = ({
           });
           setNotFirst(true);
           setSlideShowInterval(Interval);
+          console.log('nextIndex: ', nextIndex);
           return nextIndex;
         });
       }, slideShowInterval);
@@ -170,8 +184,13 @@ const ItemMomentMulti = ({
                   numberOfTaps={1}
                 >
                   <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
-                    <Animated.View style={{ opacity: animation.svgOpacity }}>
-                      <ThoughtBubbleOutlineSvg width={width} height={height} style={themeStyles.friendFocusSectionIcon} />
+                    <Animated.View style={{ opacity: animation.svgOpacity}}>
+                    <ThoughtBubbleOutlineSvg
+                      key={themeStyles.friendFocusSectionIcon.color} // Use color as the key
+                      width={width}
+                      height={height}
+                      color={themeStyles.friendFocusSectionIcon.color}
+                    />
                     </Animated.View>
                     <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
                       <Animated.Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.21, opacity: animation.textOpacity }]} numberOfLines={7}>
@@ -258,7 +277,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     backgroundColor: 'rgba(0,0,0,0.0)',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center', 
   },
 });
 
