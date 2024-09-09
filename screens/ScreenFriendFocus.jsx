@@ -23,11 +23,11 @@ const ScreenFriendFocus = () => {
   const insideHeaders = true;
   const topRadius = 20;
   const radius = 20;
-  const buttonMargin = 10;
-  const oneBackgroundColor = 'slate';
+  const buttonMargin = 4;
+  const oneBackgroundColor = 'black';
 
   const pageHeaderHeightTall = 220;
-  const pageHeaderHeight = 134;  // was 168 but I got tired of it
+  const pageHeaderHeight = 134;  
 
   const headerTextColor = 'white';
   const inactiveIconColor = 'white';
@@ -61,65 +61,72 @@ const ScreenFriendFocus = () => {
               />
             </View>
 
-            <View style={{ marginHorizontal: buttonMargin }}>
+          <View style={styles.sectionsContainer}> 
+            <View style={{ marginTop: 8, marginHorizontal: buttonMargin }}>
               <ComposerFriendLocations 
                 topIconSize={topIconSize} 
                 bottomIconSize={bottomIconSize} 
-                buttonHeight={74} 
+                buttonHeight={72} 
                 buttonRadius={radius} 
                 inactiveIconColor={inactiveIconColor} 
                 oneBackgroundColor={oneBackgroundColor}
                 headerHeight={30} 
                 includeHeader={false} 
                 headerInside={false} 
-                headerText={'LOCATIONS'} 
+                headerText={'PINNED'} 
               />
             </View>
 
-            <View style={{ marginHorizontal: buttonMargin }}>
+            <View style={{ marginHorizontal: buttonMargin, marginTop: 4 }}>
               <ComposerFriendImages 
                 topIconSize={topIconSize} 
                 bottomIconSize={bottomIconSize} 
-                buttonHeight={58} 
+                buttonHeight={56} 
+                headerHeight={40}
                 buttonRadius={radius} 
+                includeHeader={true}
+                headerInside={true}
                 inactiveIconColor={inactiveIconColor} 
-                oneBackgroundColor={oneBackgroundColor} 
+                oneBackgroundColor={'transparent'} 
               /> 
             </View>
 
-            <View style={{ marginHorizontal: buttonMargin }}>
+            <View style={{ marginTop: 4, marginHorizontal: buttonMargin }}>
               <ActionFriendPageMoments 
                 topIconSize={topIconSize} 
                 bottomIconSize={momentsBottomIconSize} 
-                buttonHeight={240} 
+                buttonHeight={236} 
                 buttonRadius={radius} 
                 inactiveIconColor={inactiveIconColor} 
                 oneBackgroundColor={oneBackgroundColor}
                 headerHeight={30} 
                 includeHeader={headers} 
-                headerInside={false} 
+                headerInside={true} 
                 headerText={'MOMENTS'} 
               /> 
             </View>
+            </View>
 
-            <View style={{ marginHorizontal: buttonMargin }}>
+            <View style={{ marginTop: 10, marginHorizontal: buttonMargin }}>
               <ComposerFriendHelloes 
                 topIconSize={topIconSize} 
                 bottomIconSize={bottomIconSize} 
-                buttonHeight={82} 
+                buttonHeight={52} 
                 buttonRadius={radius} 
                 showGradient={false}
                 inactiveIconColor={inactiveIconColor} 
-                oneBackgroundColor={oneBackgroundColor}
-                headerHeight={30} 
+                oneBackgroundColor={'transparent'}
+                headerHeight={24} 
                 includeHeader={headers} 
                 headerInside={false} 
                 headerText={'LAST HELLO'} 
               />
             </View>
+            </View>
+           
 
             <HelloFriendFooter /> 
-            </View>  
+            
             </>
       )}
     </LinearGradient>
@@ -132,6 +139,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#2B2B2B',
     paddingVertical: 0,
   }, 
+  sectionsContainer: {
+    width: '100%',
+    borderRadius: 20,
+    paddingBottom: 8,
+    backgroundColor: 'rgba(41, 41, 41, 0.2)',  // Semi-transparent background
+  },
   loadingTextContainer: {
     flex: 1, 
     alignItems: 'center',
@@ -171,8 +184,9 @@ const styles = StyleSheet.create({
     flex: 1, 
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginHorizontal: 0, 
+    marginHorizontal: 0,  
     paddingTop: 0, 
+    paddingBottom: 10,
   },
 
 });

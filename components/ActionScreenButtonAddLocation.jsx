@@ -9,7 +9,7 @@ const ActionScreenButtonAddLocation = ({ onPress }) => {
         <View style={styles.container}>
             <ButtonLottieAnimation
             onPress={onPress}
-            label="LOCATION"
+            label="NEW LOCATION"
 
             animationSource={require("../assets/anims/heartsinglecircle.json")}
             rightSideAnimation={false}

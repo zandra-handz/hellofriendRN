@@ -5,8 +5,7 @@ import ButtonSettings from './ButtonSettings';
 import ButtonInfo from './ButtonInfo';
 import ButtonData from './ButtonData';
 import ButtonColors from '../components/ButtonColors';
-import AlertConfirm from './AlertConfirm';
-import ButtonToActionMode from './ButtonToActionMode';
+import AlertConfirm from './AlertConfirm'; 
 import { useNavigationState } from '@react-navigation/native';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the context hook
 
@@ -53,10 +52,11 @@ export default function HelloFriendFooter() {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row', 
-        height: 54,
+        height: 46,
         width: '100%',
         marginBottom: 0,
-        padding: 10,
+        padding: 8,
+        paddingTop: 12,
     },
     section: { 
         flex: 1,
@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     divider: { 
-        marginVertical: 10,
+        marginVertical: 6,
     },
 });

@@ -34,7 +34,7 @@ const ButtonSignOut = ({
   return (
     <>
       <TouchableOpacity onPress={handleSignOutPress} style={styles.buttonContainer}>
-        <LogoutOutlineSvg width={26} height={26} style={themeStyles.footerIcon}  />
+        <LogoutOutlineSvg width={25} height={25} style={themeStyles.footerIcon}  />
         {label && (
         <Text style={[styles.label, themeStyles.footerText]}>Sign out</Text>
         )}

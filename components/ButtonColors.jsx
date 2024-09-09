@@ -28,7 +28,7 @@ const ButtonColors = () => {
   return (
     <>
       <TouchableOpacity style={styles.section} onPress={handlePress}>
-        <PaintRollerSvg width={26} height={26} style={themeStyles.footerIcon} />
+        <PaintRollerSvg width={25} height={25} style={themeStyles.footerIcon} />
 
       </TouchableOpacity>
       <ModalColorTheme

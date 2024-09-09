@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const TogglerActionButton = ({ 
     showSecondButton, 
@@ -7,14 +8,14 @@ const TogglerActionButton = ({
     navigateToFirstPage, 
     handleFullScreen, 
     navigateToLocationScreen,
+    transparentBackground=false,
     height=90,
     borderRadius=20,
-    justifyContent='center',
-    marginLeft=16,
-    backgroundColor='lightgray', 
+    justifyContent='center', 
     topIconSize=30,
-    bottomIconSize=30,
-    iconColor='black',
+    bottomIconSize=30, 
+    useManualIconColor=false,
+    manualIconColor='white',
     highlightIconColor='red',
     oneButtonOnly=false,
     useBottomButtonOnly=false, // New prop to control bottom button only
@@ -23,23 +24,42 @@ const TogglerActionButton = ({
     secondPageTopSvg: SecondPageTopSvg, 
     secondPageBottomSvg: SecondPageBottomSvg
 }) => {
-  const negativeMarginLeft = -marginLeft;
+  const { themeStyles} = useGlobalStyle();
+
+  const containerStyle = transparentBackground
+  ? { backgroundColor: 'transparent' } // If transparent, apply transparent background
+  : themeStyles.friendFocusSection; // Otherwise, apply theme style
+
+  const iconStyle = useManualIconColor
+  ? { color: manualIconColor } // If transparent, apply transparent background
+  : themeStyles.friendFocusSectionIcon; // Otherwise, apply theme style
+
+
 
   return (
-    <View style={[styles.arrowContainer, { justifyContent: justifyContent, marginLeft: negativeMarginLeft, backgroundColor: backgroundColor, borderTopRightRadius: borderRadius, borderBottomRightRadius: borderRadius, height: height }]}>
+    <View style={[
+      styles.arrowContainer, 
+      { 
+        justifyContent: justifyContent, 
+        borderTopRightRadius: borderRadius, 
+        borderBottomRightRadius: borderRadius, 
+        height: height 
+      },
+      containerStyle
+    ]}>
       {!showSecondButton ? (
         <>
           {!useBottomButtonOnly && (
             <TouchableOpacity onPress={navigateToLocationScreen} style={styles.arrowButton}>
-              <View style={[styles.svgContainer, {marginLeft: marginLeft}]}>
-                {FirstPageTopSvg && <FirstPageTopSvg width={topIconSize} height={topIconSize} color={iconColor} style={styles.SvgFSImage} />}
+              <View style={[styles.svgContainer]}>
+                {FirstPageTopSvg && <FirstPageTopSvg width={topIconSize} height={topIconSize} style={[styles.SvgFSImage, iconStyle]} />}
               </View>
             </TouchableOpacity>
           )}
           {!oneButtonOnly && (
             <TouchableOpacity onPress={handleNext} style={styles.arrowButton}>
               <View style={styles.svgContainer}>
-                {FirstPageBottomSvg && <FirstPageBottomSvg width={bottomIconSize} height={bottomIconSize} color={iconColor} style={styles.SvgImage} />}
+                {FirstPageBottomSvg && <FirstPageBottomSvg width={bottomIconSize} height={bottomIconSize}  style={[styles.SvgFSImage, iconStyle]}/>}
               </View>
             </TouchableOpacity>
           )}
@@ -48,14 +68,14 @@ const TogglerActionButton = ({
         <>
           {!useBottomButtonOnly && (
             <TouchableOpacity onPress={handleFullScreen} style={styles.arrowButton}>
-              <View style={[styles.svgContainer, {marginLeft: marginLeft}]}>
-                {SecondPageTopSvg && <SecondPageTopSvg width={topIconSize} height={topIconSize} color={iconColor} style={styles.SvgFSImage} />}
+              <View style={[styles.svgContainer]}>
+                {SecondPageTopSvg && <SecondPageTopSvg width={topIconSize} height={topIconSize}  style={[styles.SvgFSImage, iconStyle]} />}
               </View>
             </TouchableOpacity>
           )}
           {!oneButtonOnly && (
             <TouchableOpacity onPress={navigateToFirstPage} style={styles.arrowButton}>
-              <View style={[styles.svgContainer, {marginLeft: marginLeft}]}>
+              <View style={[styles.svgContainer]}>
                 {SecondPageBottomSvg && <SecondPageBottomSvg width={bottomIconSize} height={bottomIconSize} color={highlightIconColor} style={styles.SvgImage} />}
               </View>
             </TouchableOpacity>
@@ -69,7 +89,7 @@ const TogglerActionButton = ({
 const styles = StyleSheet.create({
   arrowContainer: {
     flexDirection: 'column', 
-    width: 74,
+    width: 34,
     marginRight: 0, 
     backgroundColor: 'black', 
     alignContent: 'center',
@@ -79,9 +99,10 @@ const styles = StyleSheet.create({
   },
   arrowButton: {  
   },
-  svgContainer: { 
-    marginLeft: 16,
+  svgContainer: {  
     padding: 3,
+    paddingLeft: 10,
+    paddingRight: 10,
     width: '100%',
     alignItems: 'center', 
     overflow: 'hidden',

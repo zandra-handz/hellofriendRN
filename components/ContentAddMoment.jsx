@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
@@ -30,10 +29,9 @@ const ContentAddMoment = () => {
  
   const [isConfirmModalVisible, setConfirmModalVisible ] = useState(false);
   const [ saveInProgress, setSaveInProgress ] = useState(false);
-  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
-  const [isFailModalVisible, setFailModalVisible] = useState(false);
-
-   
+  const [alertModalVisible, setAlertModalVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState(true); // Tracks if the last operation was successful or failed
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
@@ -48,23 +46,17 @@ const ContentAddMoment = () => {
 
   const toggleModal = () => {
     setConfirmModalVisible(!isConfirmModalVisible);
-};
- 
-
+  };
 
   const handleCategorySelect = (category, capsulesForCategory) => {
     setSelectedCategory(category);
     setCategoryCapsules(capsulesForCategory); 
-
-    console.log('Category selected in parent:', category);
-    console.log('Capsules for selected category in parent:', capsulesForCategory);
   };
 
   useEffect(() => {
     if (selectedCategory) {
         console.log('category in parent:', selectedCategory);
     }
-
   }, [selectedCategory]);
 
   useEffect(() => { 
@@ -107,38 +99,31 @@ const ContentAddMoment = () => {
         setSelectedCategory('');
         setCategoryInput('');
 
-        setSuccessModalVisible(true); 
+        setAlertMessage('Moment has been saved!');
+        setIsSuccess(true); // Successful save
       }
     } catch (error) {
       console.error('Error saving capsule:', error);
-      setFailModalVisible(true); 
+      setAlertMessage('Could not save moment.');
+      setIsSuccess(false); // Failed save
     } finally {
-      toggleModal()
       setSaveInProgress(false); 
+      setAlertModalVisible(true); // Show the modal after attempt
+      toggleModal();
     }
   };
 
+  const closeAlertModal = () => {
+    setAlertModalVisible(false);
+  };
   
-
-  const successOk = () => {   
-    setSuccessModalVisible(false);
-};
-
-const failOk = () => { 
-    setFailModalVisible(false);
-};
-   
-  
-  
-
   return (
     <View style={styles.container}>
       <View style={styles.mainContainer}>
         <Text style={styles.locationTitle}> </Text>
 
         <View style={styles.selectFriendContainer}>
-        <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
-
+          <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
           <FriendSelectModalVersion width='88%' />
         </View>
 
@@ -149,72 +134,67 @@ const failOk = () => {
             placeholderText="Enter moment here..."
             handleNextScreen={() => {}}  
             onScreenChange={handleMomentToggle} 
-            resetText={isSuccessModalVisible}
+            resetText={alertModalVisible && isSuccess}
           />
         </View> 
         {userEntryCapsule && selectedFriend && !momentEditMode && ( 
           <View style={styles.categoryContainer}>
             <>
             <Text style={styles.locationTitle}>Category: {selectedCategory}</Text>
-            
                 <CardCategoriesAsButtons onCategorySelect={handleCategorySelect}/> 
             </> 
-        </View>
+          </View>
         )}
         {userEntryCapsule && selectedCategory && ( 
-                <View style={styles.bottomButtonContainer}>  
-                    <ButtonBottomActionBase
-                        onPress={toggleModal}
-                        preLabel=''
-                        label={`Add moment`}
-                        height={54}
-                        radius={16}
-                        fontMargin={3} 
-                        labelFontSize={22}
-                        labelColor="white" 
-                        labelContainerMarginHorizontal={4} 
-                        showGradient={true}
-                        showShape={true}
-                        shapePosition="right"
-                        shapeSource={CompassCuteSvg}
-                        shapeWidth={100}
-                        shapeHeight={100}
-                        shapePositionValue={-14}
-                        shapePositionValueVertical={-10} 
-                    />
-            </View> 
-            )}
+          <View style={styles.bottomButtonContainer}>  
+            <ButtonBottomActionBase
+              onPress={toggleModal}
+              preLabel=''
+              label={`Add moment`}
+              height={54}
+              radius={16}
+              fontMargin={3} 
+              labelFontSize={22}
+              labelColor="white" 
+              labelContainerMarginHorizontal={4} 
+              showGradient={true}
+              showShape={true}
+              shapePosition="right"
+              shapeSource={CompassCuteSvg}
+              shapeWidth={100}
+              shapeHeight={100}
+              shapePositionValue={-14}
+              shapePositionValueVertical={-10} 
+            />
+          </View> 
+        )}
       </View>
-      <AlertConfirm
-          fixedHeight={true}
-          height={224}
-          isModalVisible={isConfirmModalVisible}
-          questionText=""
-          isFetching={saveInProgress}
-          useSpinner={true}
-          toggleModal={toggleModal}
-          headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>Save moment?</Text>}
-          onConfirm={() => handleSave()} 
-          onCancel={toggleModal}
-          confirmText="Yes!"
-          cancelText="Cancel"
-      />
-      <AlertSuccessFail
-            isVisible={isSuccessModalVisible}
-            message={`Moment has been saved!`}
-            onClose={successOk}
-            type='success'
-        />
 
-        <AlertSuccessFail
-            isVisible={isFailModalVisible}
-            message={`Could not save moment.`}
-            onClose={failOk}
-            tryAgain={false}
-            onRetry={handleSave}
-            isFetching={saveInProgress}
-            type='failure'
-        />
+      <AlertConfirm
+        fixedHeight={true}
+        height={224}
+        isModalVisible={isConfirmModalVisible}
+        questionText=""
+        isFetching={saveInProgress}
+        useSpinner={true}
+        toggleModal={toggleModal}
+        headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>Save moment?</Text>}
+        onConfirm={handleSave} 
+        onCancel={toggleModal}
+        confirmText="Yes!"
+        cancelText="Cancel"
+      />
+
+      <AlertSuccessFail
+        isVisible={alertModalVisible}
+        message={alertMessage}
+        onClose={closeAlertModal}
+        isSuccess={isSuccess} // Indicates success or failure
+        tryAgain={!isSuccess}
+        onRetry={handleSave}
+        isFetching={saveInProgress}
+        type='both' // Set to 'both' to handle success and failure in the same modal
+      />
     </View>
   );
 };
@@ -274,54 +254,13 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily: 'Poppins-Bold',
   },
-  locationAddress: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Regular',
-  },
-  cardContainer: {
-    marginVertical: 10,
-  },
-  previewContainer: {
-    marginVertical: 10,
-  },
-  previewTitle: {
-    fontSize: 15,
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 5,
-  },
-  inputContainer: {
-    justifyContent: 'center',
-    width: '100%',
-    marginVertical: 10,
-  },
-  textInput: {
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    fontSize: 18,
-    padding: 10,
-    borderRadius: 20,
-    fontFamily: 'Poppins-Regular',
-  },
-  dateText: { 
-    fontSize: 16,
-    marginVertical: 14,
-    fontFamily: 'Poppins-Bold',
-    backgroundColor: 'gray',
-    padding: 10,
-    borderRadius: 20,
-  },
   bottomButtonContainer: {
-    height: '12%', 
-    padding: 0,
-    paddingTop: 40,
-    top: 660,
-    paddingHorizontal: 10,  
-    position: 'absolute', 
-    zIndex: 1,
-    bottom: 0, 
-    right: 0,
+    position: 'absolute',
+    width: '100%',
+    bottom: 0,
     left: 0,
+    height: 72,
+    paddingHorizontal: 10,
   },
 });
 

@@ -7,11 +7,12 @@ const AlertSuccessFail = ({
   message,
   onClose,
   tryAgain = true,
-  onRetry, 
+  onRetry,
   autoClose = false,
   saveStatus,
+  isFetching = false,  // New prop for spinner/loading state
   timeToAutoClose = 3000,
-  type = 'success',
+  type = 'success',  // Can be 'success', 'failure', 'saving', or 'both'
   spinnerType = 'circle',
 }) => {
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -46,6 +47,7 @@ const AlertSuccessFail = ({
     <Modal visible={isVisible} animationType="none" transparent={true}>
       <View style={styles.modalContainer}>
         <Animated.View style={[styles.modalContent, type === 'saving' && { opacity: fadeAnim }]}>
+          
           {type === 'saving' && (
             <>
               <View style={styles.headerContainer}>
@@ -57,6 +59,7 @@ const AlertSuccessFail = ({
               <View style={styles.bottomSpacerContainer}></View>
             </>
           )}
+
           {type === 'success' && (
             <>
               <View style={styles.headerContainer}>
@@ -70,6 +73,7 @@ const AlertSuccessFail = ({
               </View>
             </>
           )}
+
           {type === 'failure' && (
             <>
               <View style={styles.headerContainer}>
@@ -83,6 +87,28 @@ const AlertSuccessFail = ({
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity onPress={onClose} style={styles.failureButton}>
+                  <Text style={styles.buttonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+
+          {type === 'both' && (
+            <>
+              <View style={styles.headerContainer}>
+                <Text style={styles.headerText}></Text>
+              </View>
+              <Text style={styles.message}>{message}</Text>
+              <View style={styles.buttonContainer}>
+                {isFetching && (
+                  <LoadingPage loading={isFetching} spinnerType={spinnerType} />
+                )}
+                {tryAgain && onRetry && (
+                  <TouchableOpacity onPress={onRetry} style={styles.retryButton}>
+                    <Text style={styles.buttonText}>Try Again</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity onPress={onClose} style={styles.successButton}>
                   <Text style={styles.buttonText}>Close</Text>
                 </TouchableOpacity>
               </View>

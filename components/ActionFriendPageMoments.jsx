@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Animated, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text} from 'react-native';
 import ButtonLottieAnimationSatellitesMoments from './ButtonLottieAnimationSatellitesMoments';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import TogglerActionButton from '../components/TogglerActionButton';
 
@@ -18,8 +19,8 @@ const ActionFriendPageMoments = ({
   includeHeader=true, 
   headerText='MOMENTS', 
   headerTextColor='white',
-  headerFontFamily='Poppins-Regular',
-  headerTextSize=15, 
+  headerFontFamily='Poppins-Bold',
+  headerTextSize=16, 
   headerInside=false,
   buttonHeight=260,
   buttonRadius=20,
@@ -33,13 +34,14 @@ const ActionFriendPageMoments = ({
 
 }) => {
 
+  const { themeStyles } = useGlobalStyle();
+
   const navigation = useNavigation();
-  const { friendColorTheme, calculatedThemeColors } = useSelectedFriend();
+  const { friendColorTheme } = useSelectedFriend();
   const { capsuleList } = useCapsuleList();
   const [showSecondButton, setShowSecondButton] = useState(false);
  
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
-  const calculatedBackgroundColor = headerInside ? '#2B2B2B' : 'transparent';
 
   const navigateToMomentsScreen = () => {
     navigation.navigate('Moments');
@@ -55,29 +57,26 @@ const ActionFriendPageMoments = ({
   };
  
   return (
-    <View style={[styles.container, {backgroundColor: calculatedBackgroundColor, borderRadius: buttonRadius }]}>
-      <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
-      {includeHeader && !headerInside && (
-        <View style={[styles.headerContainer, { height: headerHeight}]}>
-          <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-            {headerText}
-          </Text>
-        </View>
-
-      )}
-      <View style={styles.containerInnerRow}> 
-
-
-
-      <View style={[styles.containerHeaderInside, { backgroundColor: 'transparent', borderTopRightRadius: buttonRadius }]}>
-          {includeHeader && headerInside && (
-            <View style={[styles.headerContainer, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
+    <View style={[styles.container, themeStyles.friendFocusSection, { borderRadius: buttonRadius }]}>
+      <View style={[styles.containerInner, { borderRadius: buttonRadius }]}>
+        {includeHeader && !headerInside && (
+          <View style={[styles.headerContainer, { height: headerHeight }]}>
             <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
           </View>
-          )}
-      <View style={{ flex: 1, zIndex: 1 }}>
+        )} 
+
+      <View style={styles.containerInnerRow}>
+          <View style={[styles.containerHeaderInside,  { backgroundColor: 'transparent', borderTopRightRadius: buttonRadius }]}>
+            {includeHeader && headerInside && (
+              <View style={[styles.headerContainer, themeStyles.friendFocusSection, { borderTopRightRadius: buttonRadius, height: headerHeight  }]}>
+                <Text style={[styles.headerText, themeStyles.friendFocusSectionText, { fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
+                  {headerText}
+                </Text>
+              </View>
+            )} 
+
           <ButtonLottieAnimationSatellitesMoments
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius} 
@@ -87,8 +86,7 @@ const ActionFriendPageMoments = ({
             lightColor={oneBackgroundColor}
             darkColor={oneBackgroundColor} 
             additionalPages={showSecondButton} 
-          />
-        </View>
+          /> 
       </View>
 
       <TogglerActionButton
@@ -98,10 +96,11 @@ const ActionFriendPageMoments = ({
         handleFullScreen={navigateToMomentsScreen}
         navigateToLocationScreen={navigateToMomentsScreen}
         height={calculatedButtonHeight}
+        transparentBackground={true}
         borderRadius={buttonRadius}
         justifyContent={justifyIconContent}
         marginLeft={16} 
-        backgroundColor={oneBackgroundColor}
+        backgroundColor={'transparent'}
         topIconSize={topIconSize}
         bottomIconSize={bottomIconSize}
         iconColor={inactiveIconColor}
@@ -125,6 +124,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 10,
+    paddingRight: 6,
   },
   containerInner: {
     flexDirection: 'column',
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
   },
   containerHeaderInside: { 
     flexDirection: 'column',  
-    marginBottom: 20,
+    marginBottom: 0,
     flex: 1,
     zIndex: 1,
 
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
   
   },
   headerText: { 
-    marginLeft: 10,
+    marginLeft: 0,
   },
 });
 

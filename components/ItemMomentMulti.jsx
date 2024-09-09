@@ -3,18 +3,18 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
+import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 import { GestureHandlerRootView, TapGestureHandler, LongPressGestureHandler, State } from 'react-native-gesture-handler';
 import ItemViewMoment from '../components/ItemViewMoment';
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 const ItemMomentMulti = ({  
   width = 100,
   height = 100,
   spacer = 20,
-  limit,
-  newestFirst = true,
-  svgColor = 'white',
+  limit, 
+  newestFirst = true, 
   containerWidth = 320,
-  includeCategoryTitle = true,
+  includeCategoryTitle = false,
   lastIndex = 3, 
   svgOpacity = 0.3,
   textOpacity = 0.3, 
@@ -31,6 +31,7 @@ const ItemMomentMulti = ({
   const [currentIndex, setCurrentIndex] = useState(lastIndex); 
   const listToDisplay = newestFirst ? newestFirstList : [];
   const moments = useMemo(() => listToDisplay.slice(0, limit), [listToDisplay, limit]);
+  const { themeStyles } = useGlobalStyle();
 
   useEffect(() => {
     const animations = {};
@@ -134,9 +135,11 @@ const ItemMomentMulti = ({
       const tapDelay = 300; 
 
       if (lastTap && (currentTime - lastTap) < tapDelay) {
-        handleDoubleTap(moment);
+        console.log(`handleDoubleTap`);
+        //handleDoubleTap(moment); handledoubletap not working with automated slideshow yet
       } else {
-        handleDoubleTap(moment); 
+        console.log(`handleDoubleTap`);
+        //handleDoubleTap(moment); 
       }
 
       setLastTap(currentTime);
@@ -168,7 +171,7 @@ const ItemMomentMulti = ({
                 >
                   <View style={[styles.relativeContainer, { width, height, marginRight: 10 }]}>
                     <Animated.View style={{ opacity: animation.svgOpacity }}>
-                      <ThoughtBalloonLightBlueSvg width={width} height={height} color={svgColor} />
+                      <ThoughtBubbleOutlineSvg width={width} height={height} style={themeStyles.friendFocusSectionIcon} />
                     </Animated.View>
                     <View style={[styles.bubbleContainer, bubbleContainerDimensions, { paddingLeft: calculateLeftPadding(bubbleContainerDimensions.width) }]}>
                       <Animated.Text style={[styles.bubbleText, { fontSize: calculateFontSize(width), top: bubbleContainerDimensions.height * 0.21, opacity: animation.textOpacity }]} numberOfLines={7}>
@@ -193,8 +196,8 @@ const ItemMomentMulti = ({
       <View style={[styles.containerBelow, { width: containerWidth }]}>
         {selectedMoment && notFirst && (  
           <Text 
-            style={styles.selectedMomentDisplayText} 
-            numberOfLines={5} 
+            style={[styles.selectedMomentDisplayText, themeStyles.friendFocusSectionText]} 
+            numberOfLines={6} 
             ellipsizeMode='tail'
           >
             {selectedMoment.capsule}
@@ -249,12 +252,11 @@ const styles = StyleSheet.create({
   },
   containerBelow: {
     position: 'absolute',
-  
     top: 74,
     height: 100,
     width: '100%',
-    paddingHorizontal: 10,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    paddingHorizontal: 0,
+    backgroundColor: 'rgba(0,0,0,0.0)',
     justifyContent: 'center',
     alignItems: 'center',
   },

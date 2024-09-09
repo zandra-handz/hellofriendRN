@@ -173,6 +173,15 @@ const lightThemeStyles = StyleSheet.create({
     genericText: {
         color: 'black',
     },
+    friendFocusSection: {
+        backgroundColor: 'white',
+    },
+    friendFocusSectionText: {
+        color: 'black',
+    },
+    friendFocusSectionIcon: {
+        color: 'black',
+    },
     modalContainer: {
         backgroundColor: 'white',
     },
@@ -264,7 +273,15 @@ const darkThemeStyles = StyleSheet.create({
     },
     genericText: {
         color: 'white',
-
+    },
+    friendFocusSection: {
+        backgroundColor: 'black',
+    },
+    friendFocusSectionText: {
+        color: 'white',
+    },
+    friendFocusSectionIcon: {
+        color: 'white',
     },
     modalContainer: {
         backgroundColor: '#2B2B2B',

@@ -1,23 +1,21 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
-import { LinearGradient } from 'expo-linear-gradient';
+import { FlashList } from '@shopify/flash-list'; 
 import ItemLocationSingle from '../components/ItemLocationSingle';
 import ItemLocationFavesHorizontal from '../components/ItemLocationFavesHorizontal'; 
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';  
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const BaseFriendViewLocations = ({ 
   buttonHeight = 90,
   buttonRadius = 10, 
-  allItems,      
-  showGradient = true,
-  darkColor = 'black',
-  lightColor = '#C0C0C0',    
+  allItems,          
   additionalPages = false,
   additionalPagesCategorize = true, 
 }) => {
 
   const [category, setCategory] = useState(null);
+  const { themeStyles } = useGlobalStyle();
   
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
@@ -60,19 +58,12 @@ const BaseFriendViewLocations = ({
     ) : (
       <View style={[styles.mainButtonContainer, { height: buttonHeight }]}>
         <View style={[styles.mainButtonContent, { borderRadius: buttonRadius }]}>
-          {showGradient && (
-            <LinearGradient
-              colors={[darkColor, lightColor]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={StyleSheet.absoluteFillObject}
-            />
-          )}
+ 
           <View style={styles.iconAndLocationContainer}>
             <View style={styles.svgContainer}>
-              <PushPinSolidSvg width={20} height={20} color="white" />
+              <PushPinSolidSvg width={20} height={20} style={themeStyles.friendFocusSectionIcon} />
             </View>
-            <ItemLocationFavesHorizontal containerWidth={254} width={31} height={31} />
+            <ItemLocationFavesHorizontal containerWidth={296} width={31} height={31} style={themeStyles.friendFocusSectionIcon} />
           </View>
         </View>
       </View>
@@ -104,7 +95,7 @@ iconAndLocationContainer: {
   width: '100%',
 },
 svgContainer: {
-  marginRight: 40,
+  marginRight: 20,
 },
 additionalSatelliteSection: {
   flexDirection: 'column',

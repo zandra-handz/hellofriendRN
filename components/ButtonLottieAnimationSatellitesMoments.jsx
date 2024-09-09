@@ -10,10 +10,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
   buttonHeight = 270,
   buttonRadius = 10, 
   headerText = 'LAST ADDED', 
-  allItems,   
-  showGradient = true,
-  darkColor = 'black',
-  lightColor = '#C0C0C0',   
+  allItems,      
   additionalPages = false,
   additionalPagesCategorize = true, 
 }) => { 
@@ -73,22 +70,14 @@ const ButtonLottieAnimationSatellitesMoments = ({
                   alignItems: 'center',
                   overflow: 'hidden', 
                 }} 
-              >
-                {showGradient && (
-                  <LinearGradient
-                    colors={[darkColor, lightColor]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={StyleSheet.absoluteFillObject}
-                  />
-                )} 
+              > 
                 <View style={[styles.mainSection, {height: buttonHeight, width: '100%', borderRadius: buttonRadius }]}>
                 <Text style={styles.categoryText}>{headerText}</Text>
                   <View style={{ flexDirection: 'row' }}>
                       <> 
                         {isCapsuleListReady && (
                           <View style={{flex: 1}}> 
-                            <ItemMomentMulti width={56} height={56} limit={4} horizontal={true} singleLineScroll={true} newestFirst={true}/> 
+                            <ItemMomentMulti width={50} height={50} containerWidth={300} limit={4} horizontal={true} singleLineScroll={true} newestFirst={true}/> 
                           </View>
                        )}
                       </> 
@@ -118,8 +107,8 @@ const styles = StyleSheet.create({
   },
   mainSection: {
     flexDirection: 'column',
-    paddingHorizontal: 10,
-    paddingVertical: 10,   
+    paddingHorizontal: 18,
+    paddingVertical: 0,   
   }, 
   additionalSatelliteSection: {
     flexDirection: 'column',

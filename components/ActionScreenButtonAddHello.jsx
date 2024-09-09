@@ -8,9 +8,8 @@ const ActionScreenButtonAddHello = ({ onPress }) => {
         <View style={styles.container}>
             <ButtonLottieAnimation
                 onPress={onPress}
-                label="HELLO"
-                showIcon={false}
-                fontMargin={3}
+                label="NEW HELLO"
+                showIcon={false} 
                 animationSource={require("../assets/anims/heartinglobe.json")}
                 rightSideAnimation={false}
                 labelFontSize={30}

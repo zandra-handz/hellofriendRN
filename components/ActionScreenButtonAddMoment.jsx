@@ -9,8 +9,7 @@ const ActionScreenButtonAddMoment = ({ onPress }) => {
         <View style={styles.container}>
             <ButtonLottieAnimation
             onPress={onPress}
-            label="MOMENT"
-            fontMargin={6}
+            label="NEW MOMENT" 
             animationSource={require("../assets/anims/lightbulbsimple.json")}
             rightSideAnimation={true}
             showIcon={true}
@@ -19,7 +18,7 @@ const ActionScreenButtonAddMoment = ({ onPress }) => {
             animationWidth={234}
             animationHeight={234}
             labelContainerMarginHorizontal={6}
-            animationMargin={50}
+            animationMargin={0}
             animationTopMargin={30}
             shapePosition="right"   
             shapeSource={require("../assets/shapes/fairymagic.png")}

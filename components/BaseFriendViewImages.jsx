@@ -1,22 +1,18 @@
 import React from 'react'; 
 import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';  
+import { StyleSheet, View } from 'react-native';  
 import ItemImageMulti from '../components/ItemImageMulti';  
 import { useImageList } from '../context/ImageListContext';
 import PhotoSolidSvg from '../assets/svgs/photo-solid.svg'; // Import the SVG
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 
 const BaseFriendViewImages = ({
   buttonHeight = 136,
-  buttonRadius = 10,  
-  backgroundColor = 'transparent', 
-  showGradient = true,
-  darkColor = 'black',
-  lightColor = '#C0C0C0',
-  direction = { x: 1, y: 0 },
-  buttonComponent = null, // New prop for button component
+  buttonRadius = 10,   
+  buttonComponent = null, 
 }) => {  
+  const { themeStyles } = useGlobalStyle();
   const { imageList } = useImageList();
   const [isImageListReady, setIsImageListReady] = useState(false);
 
@@ -27,24 +23,21 @@ const BaseFriendViewImages = ({
   }, [imageList]);
 
   return (  
-    <View style={[styles.container, { backgroundColor: showGradient ? 'transparent' : backgroundColor, height: buttonHeight, borderRadius: buttonRadius }]}>
-      {showGradient && (
-        <LinearGradient
-          colors={[darkColor, lightColor]}
-          start={{ x: 0, y: 0 }}
-          end={direction}
-          style={StyleSheet.absoluteFillObject}
-        />
-      )}
+    <View style={[styles.container, themeStyles.friendFocusSection, { height: buttonHeight, borderRadius: buttonRadius }]}>
+ 
+    <View style={{ width: '90%', flexDirection: 'row', borderRadius: buttonRadius, height: buttonHeight, justifyContent: 'space-between', backgroundColor: 'transparent'}}> 
+        
       <View style={styles.headerContainer}> 
-          <PhotoSolidSvg width={68} height={68} color="white" />
+          <PhotoSolidSvg width={68} height={68} style={themeStyles.friendFocusSectionIcon} />
 
       </View> 
-      <View style={styles.contentContainer}>
+      <View style={[styles.contentContainer]}>
+     
         {isImageListReady && (
-          <ItemImageMulti imageData={imageList} width={50} height={50} containerWidth={254} borderRadius={10} />
+          <ItemImageMulti imageData={imageList} width={50} height={50} containerWidth={262} borderRadius={10} />
         )}
       </View>
+      </View> 
       {buttonComponent && (
         <View style={styles.buttonContainer}>
           {buttonComponent}
@@ -58,7 +51,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%',
+    width: '100%', 
     position: 'relative',
     borderRadius: 10, // Ensure this matches buttonRadius if set dynamically
     overflow: 'hidden', // Add this to handle overflow
@@ -72,12 +65,13 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1, // Takes the remaining space in the row
-    justifyContent: 'center', // Vertically centers content
+    justifyContent: 'center',  
   },
   buttonContainer: {
-    marginLeft: 10, // Space between content and action button
+    paddingRight: 10, // Space between content and action button
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
 });
 

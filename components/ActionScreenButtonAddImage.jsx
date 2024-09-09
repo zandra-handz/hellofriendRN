@@ -10,9 +10,8 @@ const ActionScreenButtonAddImage = ({ onPress }) => {
         <View style={styles.container}>
             <ButtonLottieAnimation
                 onPress={onPress}
-                label="IMAGE"
-                showIcon={false}
-                fontMargin={6}
+                label="NEW IMAGE"
+                showIcon={false} 
                 animationSource={require("../assets/anims/goldspinningstar.json")}
                 rightSideAnimation={true}
                 labelFontSize={30}

@@ -16,7 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 const ComposerFriendHelloes = ({ 
   onPress,
   includeHeader=true, 
-  headerText='HELLOES',
+  headerText='LAST HELLO',
   headerTextColor='white',
   headerFontFamily='Poppins-Regular',
   headerTextSize=15, 
@@ -24,6 +24,7 @@ const ComposerFriendHelloes = ({
   buttonHeight=70,
   buttonRadius=20,
   headerHeight=30,
+  textTransform='uppercase',
   justifyIconContent='center',
   inactiveIconColor='white',
   topIconSize=30,
@@ -37,9 +38,13 @@ const ComposerFriendHelloes = ({
   const { selectedFriend, friendDashboardData, calculatedThemeColors } = useSelectedFriend(); 
   const [helloesList, setHelloesList] = useState([]);  
   const [isFetchingHelloes, setFetchingHelloes] = useState(false);
-  const [ iconBackgroundColor ] = useState(null);
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
   const calculatedBackgroundColor = headerInside ? oneBackgroundColor : 'transparent';
+  const [category, setCategory] = useState(''); // new state to track the category
+
+  const handleCategoryChange = (newCategory) => {
+    setCategory(newCategory);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,9 +89,19 @@ const ComposerFriendHelloes = ({
       <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
       {includeHeader && !headerInside && (
         <View style={[styles.headerContainer, { height: headerHeight}]}>
-          <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-            {headerText}
-          </Text>
+         {!showSecondButton && (
+              <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
+           
+              {headerText}
+              </Text>
+            )}
+        
+            {showSecondButton && (
+              <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize, textTransform: textTransform }]}>
+           
+            Hello: {category}
+            </Text>
+            )} 
         </View>
       )}
       <View style={styles.containerInnerRow}> 
@@ -102,6 +117,7 @@ const ComposerFriendHelloes = ({
 
       <View style={{ flex: 1, borderRadius: 30}}>
           <BaseFriendViewHelloes
+            onCategoryChange={handleCategoryChange}
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius} 
             backgroundColor={oneBackgroundColor}
@@ -114,7 +130,7 @@ const ComposerFriendHelloes = ({
                 ? `${friendDashboardData[0].days_since_words}`
                 : ''
             }
-            typeIcon={friendDashboardData.length > 0 ? <IconDynamicHelloType selectedChoice={friendDashboardData[0].previous_meet_type} svgHeight={40} svgWidth={40} /> : null}
+            typeIcon={friendDashboardData.length > 0 ? <IconDynamicHelloType selectedChoice={friendDashboardData[0].previous_meet_type} svgHeight={32} svgWidth={32} /> : null}
             fontMargin={3}   
             showGradient={true}
             lightColor={oneBackgroundColor}
@@ -135,9 +151,12 @@ const ComposerFriendHelloes = ({
         navigateToLocationScreen={navigateToHelloesScreen}
         height={calculatedButtonHeight}
         borderRadius={buttonRadius}
+        transparentBackground={true}
         justifyContent={justifyIconContent}
         marginLeft={16} 
         backgroundColor={oneBackgroundColor}
+        useManualIconColor={true}
+        manualIconColor="white"
         topIconSize={topIconSize}
         bottomIconSize={bottomIconSize}
         iconColor={inactiveIconColor}
@@ -187,6 +206,9 @@ const styles = StyleSheet.create({
   },
   headerText: { 
     marginLeft: 10,
+    fontFamily: 'Poppins-Regular',
+    transform: 'uppercase',
+    overflow: 'hidden',
   },
 });
 

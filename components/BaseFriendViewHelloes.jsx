@@ -22,8 +22,9 @@ const BaseFriendViewHelloes = ({
   darkColor = 'black',
   lightColor = '#C0C0C0',
   direction = { x: 1, y: 0 },
-  satellites = false, 
-  satelliteSectionBackgroundColor = 'black', 
+  satellites = false,  
+  onCategoryChange,
+  satelliteSectionBackgroundColor = 'transparent', 
   additionalPages = false,
   additionalPagesCategorize = true,
 }) => {
@@ -34,6 +35,9 @@ const BaseFriendViewHelloes = ({
     if (viewableItems.length > 0) {
       const topItem = viewableItems[0].item;
       setCategory(topItem.date);
+      if (onCategoryChange) {
+        onCategoryChange(topItem.date); // Pass the category to the parent
+      }
     }
   }).current;
 
@@ -53,14 +57,17 @@ const BaseFriendViewHelloes = ({
       horizontal
       keyExtractor={(item, index) => `additional-satellite-${index}`}
       renderItem={({ item }) => (
-        <ItemHelloSingle helloObject={item} helloHeight={20} helloWidth={20} />
+        <View style={{marginBottom: -10, paddingRight: 14}}> 
+        <ItemHelloSingle helloObject={item} svgHeight={24} svgWidth={24} />
+        </View>
       )}
-      estimatedItemSize={20} // Estimate the height/width of each item for optimization
+      estimatedItemSize={29} // Estimate the height/width of each item for optimization
       
       onViewableItemsChanged={onViewableItemsChanged}
       viewabilityConfig={{
         itemVisiblePercentThreshold: 50,
       }} 
+      showsHorizontalScrollIndicator={false} 
       ListFooterComponent={<View style={{ width: 283 }} />}
     /> 
 
@@ -83,8 +90,9 @@ const BaseFriendViewHelloes = ({
                   flexDirection: 'row',
                   width: '100%',
                   height: buttonHeight,
-                  padding: 10,
-                  paddingBottom: 2,
+                  paddingHorizontal: 10,
+                  alignContent: 'center',
+                  alignItems: 'center', 
                   borderRadius: buttonRadius,
                   overflow: 'hidden',
                   backgroundColor: showGradient ? 'transparent' : backgroundColor,
@@ -100,17 +108,14 @@ const BaseFriendViewHelloes = ({
                 )}
                 <View
                   style={{
-                    flexDirection: 'column',
-                    paddingHorizontal: 5,
-                    paddingBottom: 8,
-                    paddingTop: 8,
+                    flexDirection: 'column', 
                     flex: 1,
                   }}
                 >
                   <Text
                     style={[
                       textStyles(additionalTextFontSize, additionalTextColor),
-                      { textAlign: 'left', marginVertical: 4, marginBottom: 2 },
+                      { textAlign: 'left' },
                     ]}
                   >
                     {additionalText}
@@ -124,8 +129,8 @@ const BaseFriendViewHelloes = ({
                   styles.satelliteSection,
                   {
                     height: buttonHeight,
-                    borderRadius: buttonRadius,
-                    backgroundColor: satelliteSectionBackgroundColor,
+                    width: 50,
+                    borderRadius: buttonRadius, 
                     flexDirection: 'row',
                   },
                 ]}
@@ -140,7 +145,7 @@ const BaseFriendViewHelloes = ({
         <View style={[styles.additionalSatelliteSection, { height: buttonHeight, borderRadius: buttonRadius, backgroundColor: secondPageBackgroundColor}]}>
           {additionalPagesCategorize && (
             <View style={styles.categoryTextContainer}>
-              <Text style={styles.categoryText}>{category}</Text>
+              <Text style={styles.categoryText}> </Text>
             </View>
           )} 
           {allItems && !isFetching && (
@@ -156,24 +161,21 @@ const BaseFriendViewHelloes = ({
 
 const styles = StyleSheet.create({
   satelliteSection: {
-    width: '24%',
-    marginLeft: -70,
+    width: '24%', 
+    marginLeft: -50,
     paddingLeft: 0,
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    backgroundColor: 'transparent',
-    shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 0,
+    backgroundColor: 'transparent', 
   },
   additionalSatelliteSection: {
+    paddingHorizontal: 6,
     flexDirection: 'column', 
+    justifyContent: 'center',
     width: '100%',
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: 12,
     color: 'white',
     fontFamily: 'Poppins-Regular',
     textTransform: 'uppercase',
@@ -183,8 +185,10 @@ const styles = StyleSheet.create({
   },
   categoryTextContainer: {
     width: 300,
+    top: -8,
+    position: 'absolute',
     marginLeft: 10,
-    height: 42,
+    height: 30,
     marginBottom: 0,
     justifyContent: 'center',
   },

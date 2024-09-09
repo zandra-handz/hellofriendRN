@@ -21,7 +21,7 @@ const ButtonInfo = ({label=null}) => {
   return (
     <>
       <TouchableOpacity style={styles.section} onPress={toggleModal}>
-        <InfoOutlineSvg width={24} height={24} style={themeStyles.footerIcon} />
+        <InfoOutlineSvg width={23} height={23} style={themeStyles.footerIcon} />
         {label && ( 
         <Text style={themeStyles.footerText}>Info</Text>
         )}

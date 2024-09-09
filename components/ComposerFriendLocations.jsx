@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import BaseFriendViewLocations from '../components/BaseFriendViewLocations';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import TogglerActionButton from '../components/TogglerActionButton';
 import { useNavigation } from '@react-navigation/native';
@@ -12,10 +13,9 @@ import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
 
 const ComposerFriendLocations = ({ 
   includeHeader=false, 
-  headerText='MEET UP PLACES', 
-  headerTextColor='white',
+  headerText='MEET UP PLACES',  
   headerFontFamily='Poppins-Bold',
-  headerTextSize=15, 
+  headerTextSize=16, 
   headerInside=false,
   buttonHeight=80,
   buttonRadius=10,
@@ -24,19 +24,17 @@ const ComposerFriendLocations = ({
   justifyIconContent='center',
   inactiveIconColor='white',
   topIconSize=30,
-  bottomIconSize=30,
-  oneBackgroundColor='black', //#2B2B2B
+  bottomIconSize=30, 
 
 }) => {
 
   const navigation = useNavigation();
-
-  const { friendColorTheme, calculatedThemeColors } = useSelectedFriend();
+  const { themeStyles } = useGlobalStyle();
+  const { calculatedThemeColors } = useSelectedFriend();
   const { locationList } = useLocationList(); 
   const [showSecondButton, setShowSecondButton] = useState(false);
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
-  const calculatedBackgroundColor = headerInside ? oneBackgroundColor : 'transparent';
-
+ 
   const navigateToLocationScreen = ({ onPress }) =>  {
     navigation.navigate('Locations');
     if (onPress) onPress();
@@ -51,39 +49,39 @@ const ComposerFriendLocations = ({
   };
   
   return (
-    <View style={[styles.container, {backgroundColor: calculatedBackgroundColor, borderRadius: buttonRadius }]}>
-      <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
-      {includeHeader && !headerInside && (
-        <View style={[styles.headerContainer, { height: headerHeight}]}>
-          <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-            {headerText}
-          </Text>
-        </View>
-
-      )}
-      <View style={styles.containerInnerRow}> 
-        <View style={[styles.containerHeaderInside, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius }]}>
-          {includeHeader && headerInside && (
-            <View style={[styles.headerContainer, { backgroundColor: calculatedThemeColors.lightColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
-            <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
+    <View style={[styles.container, themeStyles.friendFocusSection, { borderRadius: buttonRadius }]}>
+      <View style={[styles.containerInner, { borderRadius: buttonRadius }]}>
+        {includeHeader && !headerInside && (
+          <View style={[styles.headerContainer, { height: headerHeight }]}>
+            <Text style={[styles.headerText, themeStyles.friendFocusSectionText, {  fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
               {headerText}
             </Text>
           </View>
-          )}
+        )}
+        <View style={styles.containerInnerRow}>
+          <View style={[styles.containerHeaderInside,  { backgroundColor: 'transparent', borderTopRightRadius: buttonRadius }]}>
+            {includeHeader && headerInside && (
+              <View style={[styles.headerContainer, themeStyles.friendFocusSection, { borderTopRightRadius: buttonRadius, height: headerHeight  }]}>
+                <Text style={[styles.headerText, themeStyles.friendFocusSectionText, { fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
+                  {headerText}
+                </Text>
+              </View>
+            )} 
 
-      <View style={{ flex: 1, zIndex: 1 }}>
+      <View style={{ flex: 1, zIndex: 1, width: '99%' }}>
           <BaseFriendViewLocations 
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius}  
             allItems={locationList ? locationList : 'Loading...'} 
-            showGradient={true}
-            lightColor={oneBackgroundColor}
-            darkColor={oneBackgroundColor} 
+ 
             satellites={!showSecondButton}  
             additionalPages={showSecondButton} 
          />
         </View>
         </View>
+        <View style={{paddingRight: 5}}>
+
+      
           <TogglerActionButton
             showSecondButton={showSecondButton}
             handleNext={handleNext}
@@ -91,19 +89,22 @@ const ComposerFriendLocations = ({
             handleFullScreen={navigateToLocationScreen}
             navigateToLocationScreen={navigateToLocationScreen}
             height={calculatedButtonHeight}
-            borderRadius={buttonRadius} 
+            transparentBackground={true}
+            borderRadius={0} 
             marginLeft={marginLeft}
             justifyContent={justifyIconContent}
-            backgroundColor={oneBackgroundColor}
+            backgroundColor={'transparent'}
             topIconSize={topIconSize}
             bottomIconSize={bottomIconSize}
             iconColor={inactiveIconColor}
             highlightIconColor={calculatedThemeColors.darkColor}
+            oneButtonOnly={false}
             firstPageTopSvg={MagGlassSimpleSvg}
             firstPageBottomSvg={MapPinOutlineSvg}
             secondPageTopSvg={MagGlassSimpleSvg}
             secondPageBottomSvg={ScrollOutlineSvg}
           />
+          </View>
         </View>
       </View> 
     </View>
@@ -138,9 +139,7 @@ const styles = StyleSheet.create({
   headerContainer: { 
     textAlign: 'left', 
     justifyContent: 'center', 
-    height: 70,
-    marginBottom: -3,
-    color: 'black',
+    marginBottom: -3, 
     zIndex: 0,
   
   },

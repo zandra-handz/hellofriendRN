@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import LocationRoundOutlineSvg from '../assets/svgs/location-round-outline.svg';
+import LocationFavoriteSvg from '../assets/svgs/location-favorite.svg';
+import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
+
 import ItemViewLocation from '../components/ItemViewLocation';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height = 160  }) => {
+const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height = 160 , style }) => {
     const { friendDashboardData } = useSelectedFriend();
     const { locationList, faveLocationList, populateFaveLocationsList } = useLocationList();
     const [isFaveLocationReady, setIsFaveLocationReady] = useState(false);
@@ -43,10 +46,10 @@ const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height =
             renderItem={({ item: location }) => (
                 <TouchableOpacity onPress={() => openModal(location)}>
                 <View style={[styles.relativeContainer, { width, height }]}>
-                    <LocationRoundOutlineSvg 
+                    <LocationHeartSolidSvg 
                         width={width * 0.8} 
                         height={height * 0.8}  
-                        color={'white'}  
+                        style={style? style : null}
                         /> 
                 </View>
                 </TouchableOpacity>

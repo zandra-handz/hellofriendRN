@@ -25,7 +25,7 @@ const ButtonData = ({label=null}) => {
       <TouchableOpacity style={styles.section} onPress={toggleModal}>
         <HeartbeatLifelineArrowSvg width={38} height={38} style={themeStyles.footerIcon} />
         {label && ( 
-        <Text style={themeStyles.footerText}>Info</Text>
+        <Text style={themeStyles.footerText}>Config</Text>
         )}
       </TouchableOpacity>
 

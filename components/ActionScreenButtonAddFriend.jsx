@@ -12,7 +12,7 @@ const ActionScreenButtonAddFriend = ({ onPress }) => {
         <View style={styles.container}>
             <ButtonLottieAnimation
             onPress={onPress}
-            label="FRIEND"
+            label="NEW FRIEND"
 
             animationSource={require("../assets/anims/heartsinglecircle.json")}
             rightSideAnimation={false}

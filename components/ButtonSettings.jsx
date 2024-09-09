@@ -35,7 +35,7 @@ const ButtonSettings = ({label=null}) => {
   return (
     <>
       <TouchableOpacity style={styles.section} onPress={toggleModal}>
-        <GearsTwoBiggerCircleSvg width={34} height={34} style={themeStyles.footerIcon} />
+        <GearsTwoBiggerCircleSvg width={32} height={32} style={themeStyles.footerIcon} />
         {label && ( 
         <Text style={themeStyles.footerText}>Settings</Text>
         )}
