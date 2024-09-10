@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Button, FlatList, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Button, FlatList } from 'react-native';
 import { CheckBox } from 'react-native-elements'; // For checkboxes
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import ButtonMoment from '../components/ButtonMoment';
 import ButtonMomentHelloes from '../components/ButtonMomentHelloes';
 
 const PickerMultiMoments = ({ 
     onMomentSelect, 
-    containerText='Moments shared',
+    containerText = 'Moments shared',
     showAllCategories = true, 
-    showInModal = true,
-    singleLineScroll = false // New prop to control single line scroll
+    showInModal = true, 
 }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -26,19 +24,14 @@ const PickerMultiMoments = ({
   const { capsuleList } = useCapsuleList();
 
   useEffect(() => {
-    // Calculate and log percentage
     if (capsuleList.length > 0) {
       const totalCount = capsuleList.length;
       const selectedCount = selectedMoments.length;
       const percentage = calculatePercentage(selectedCount, totalCount);
       setSelectionPercentage(percentage);
     }
-
-    // Log the total number of items in capsuleList
-    console.log('Total Number of Items in Capsule List:', capsuleList.length);
-
-    if (selectedFriend) { 
-      setSelectedCategory(null);  
+    if (selectedFriend) {
+      setSelectedCategory(null);
       fetchCategoryLimitData();
     }
   }, [selectedFriend, friendDashboardData, capsuleList, selectedMoments]);
@@ -67,7 +60,6 @@ const PickerMultiMoments = ({
     setSelectedCategory(category);
     const items = capsuleList.filter(capsule => capsule.typedCategory === category);
     setCategoryItems(items);
-    console.log('Total Number of Items in Selected Category:', items.length); // Log number of items in selected category
     if (showInModal) {
       setModalVisible(true);
     }
@@ -80,16 +72,10 @@ const PickerMultiMoments = ({
         ? prevSelectedMoments.filter(selectedItem => selectedItem !== item)
         : [...prevSelectedMoments, item];
 
-      // Log the updated selection, count of selected items, and percentage
-      console.log('Updated Selected Moments:', updatedSelection);
-      console.log('Number of Selected Items:', updatedSelection.length);
-      console.log('Percentage of Selected Items:', calculatePercentage(updatedSelection.length, capsuleList.length));
-
       return updatedSelection;
     });
   };
 
-  // Function to calculate the percentage
   const calculatePercentage = (selectedCount, totalCount) => {
     return totalCount > 0 ? Math.round((selectedCount / totalCount) * 100) : 0;
   };
@@ -100,7 +86,7 @@ const PickerMultiMoments = ({
     }
   }, [selectedMoments]);
 
-  const visibleCategories = showAllCategories ? categories : categories.slice(0, 5); // Example limit for demonstration
+  const visibleCategories = showAllCategories ? categories : categories.slice(0, 5);
 
   return (
     <View style={styles.container}>
@@ -110,31 +96,30 @@ const PickerMultiMoments = ({
           
       <View style={styles.contentContainer}> 
         <View style={styles.selectedItemsContainer}> 
-          <ScrollView> 
-            {selectedMoments.length > 0 ? (
-              selectedMoments.map((item, index) => (
-                <View key={index} style={styles.itemContainer}> 
-                  <ButtonMomentHelloes  
-                    moment={item}
-                    iconSize={26}
-                    size={14}
-                    color={'black'}
-                    disabled={true}
-                    sameStyleForDisabled={true}
-                  />
-                </View>
-              ))
-            ) : (
-              <Text style={styles.noItemsText}>No items selected</Text>
+          <FlatList
+            data={selectedMoments}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.itemContainer}>
+                <ButtonMomentHelloes  
+                  moment={item}
+                  iconSize={26}
+                  size={14}
+                  color={'black'}
+                  disabled={true}
+                  sameStyleForDisabled={true}
+                />
+              </View>
             )}
-          </ScrollView>
+            ListEmptyComponent={() => <Text style={styles.noItemsText}>No items selected</Text>}
+          />
         </View>
 
         <View style={styles.selectionContainer}>
           <Text style={styles.title}>Select from:</Text>
           <FlatList
             data={visibleCategories}
-            horizontal={true} // Enable horizontal scrolling
+            horizontal={true}
             renderItem={({ item }) => (
               <TouchableOpacity 
                 style={styles.categoryButton} 
@@ -143,11 +128,10 @@ const PickerMultiMoments = ({
                 <Text style={styles.categoryButtonText}>{item}</Text>
               </TouchableOpacity>
             )}
-            keyExtractor={(item, index) => index.toString()} // Provide a unique key for each item
-            showsHorizontalScrollIndicator={false} // Hide scroll indicator for better UX
+            keyExtractor={(item, index) => index.toString()}
+            showsHorizontalScrollIndicator={false}
           />
         </View>
- 
       </View>
 
       {showInModal && (
@@ -159,9 +143,11 @@ const PickerMultiMoments = ({
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>{selectedCategory}</Text>
-              <ScrollView>
-                {categoryItems.map((item, index) => (
-                  <View key={index} style={styles.checkboxContainer}>
+              <FlatList
+                data={categoryItems}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.checkboxContainer}>
                     <CheckBox
                       checked={selectedMoments.includes(item)}
                       onPress={() => handleCheckboxChange(item)}
@@ -169,8 +155,8 @@ const PickerMultiMoments = ({
                     />
                     <Text style={styles.itemText}>{item.capsule}</Text>  
                   </View>
-                ))}
-              </ScrollView>
+                )}
+              />
               <Button title="Close" onPress={() => setModalVisible(false)} />
             </View>
           </View>
@@ -197,7 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: 'lightgray',
     padding: 10,
-    height: 300, // Ensure this height is sufficient for scrolling
+    height: 200, 
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 20,
@@ -205,12 +191,7 @@ const styles = StyleSheet.create({
   selectedItemsTitle: {
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
-    marginBottom: 10,
-  },
-  selectedItemText: {
-    fontSize: 16,
-    color: 'black',
-    marginBottom: 5,
+    marginBottom: 4,
   },
   noItemsText: {
     fontSize: 16,
@@ -218,19 +199,19 @@ const styles = StyleSheet.create({
   },
   selectionContainer: {
     flexDirection: 'row',
-    alignItems: 'center', // Align items vertically
+    alignItems: 'center',
   },
   categoryButton: {
-    backgroundColor: '#f0f0f0', // Adjust as needed to match the original
-    paddingVertical: 6, // Adjust padding for better button height
+    backgroundColor: '#f0f0f0',
+    paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 20,
     margin: 5,
-    shadowColor: '#000', // Add shadow for button elevation
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 2, // For Android shadow
+    elevation: 2,
   },
   categoryButtonText: {
     fontSize: 14,

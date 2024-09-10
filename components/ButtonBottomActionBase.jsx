@@ -3,8 +3,6 @@ import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
 
-
-
 const ButtonBottomActionBase = ({ 
   onPress,
   label,
@@ -35,12 +33,10 @@ const ButtonBottomActionBase = ({
   shapeLabel = '',  
   shapeLabelFontSize = 16, 
   shapeLabelColor = 'black', 
-  shapeLabelPositionRight = '93%'
-  
+  shapeLabelPositionRight = '93%',
+  disabled = false // Add the disabled prop
 }) => { 
   const globalStyles = useGlobalStyle(); // Get the global styles
-
-
 
   const getShapeStyle = () => {
     switch (shapePosition) {
@@ -88,12 +84,12 @@ const ButtonBottomActionBase = ({
         alignItems: 'center',
         justifyContent: 'flex-start',
         overflow: 'hidden', 
-         backgroundColor: showGradient ? 'transparent' : backgroundColor,
+        backgroundColor: disabled ? '#A9A9A9' : showGradient ? 'transparent' : backgroundColor, // Gray background if disabled
         position: 'relative',  
       }}
-      onPress={onPress}
+      onPress={!disabled ? onPress : null} // Disable the button press when disabled
     >
-      {showGradient && (
+      {!disabled && showGradient && (
         <LinearGradient
           colors={[darkColor, lightColor]}
           start={{ x: 0, y: 0 }}
@@ -103,7 +99,7 @@ const ButtonBottomActionBase = ({
           }}
         />
       )}
-      {showShape && ShapeSvg && (
+      {showShape && ShapeSvg && !disabled && (
         <ShapeSvg
           width={shapeWidth}
           height={shapeHeight}
@@ -114,7 +110,7 @@ const ButtonBottomActionBase = ({
           }}
         />
       )}
-      {showTopLevelShape && TopLevelShapeSvg && (
+      {showTopLevelShape && TopLevelShapeSvg && !disabled && (
         <TopLevelShapeSvg
           width={topLevelShapeWidth}
           height={topLevelShapeHeight}
@@ -124,7 +120,7 @@ const ButtonBottomActionBase = ({
           }}
         />
       )} 
-      {shapeLabel && (
+      {shapeLabel && !disabled && (
         <Text
           style={[
             textStyles(shapeLabelFontSize, shapeLabelColor),
@@ -143,16 +139,14 @@ const ButtonBottomActionBase = ({
         </Text>
       )}
       <View style={{ flexDirection: 'row', marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
-          <>  
-            <Text
-              style={[
-                textStyles(labelFontSize, labelColor),
-                { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
-              ]}
-            >
-              {label}
-            </Text>
-          </> 
+        <Text
+          style={[
+            textStyles(labelFontSize, disabled ? 'white' : labelColor), // White label color if disabled
+            { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
+          ]}
+        >
+          {label}
+        </Text>
       </View>
     </TouchableOpacity>
   );

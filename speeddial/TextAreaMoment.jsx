@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
+
 import MaximizeOutlineSvg from '../assets/svgs/maximize-outline.svg';  
+
 import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
 
 import ModalMomentFocus from '../components/ModalMomentFocus'; // Import the new component
@@ -17,6 +19,7 @@ const TextAreaMoment = ({
   resetText = false,  // Add resetText prop
 }) => {
   const [textInput, setTextInput] = useState(initialText || '');
+  
   const [isModalVisible, setIsModalVisible] = useState(false);
   const textareaRef = useRef();
   const [resetAutoFocus, setAutoFocus] = useState(false);

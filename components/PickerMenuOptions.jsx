@@ -6,34 +6,26 @@ const PickerMenuOptions = ({
   options = [],
   onSelectOption,
   selectedOption,
-  containerText = 'Select an option',
-  containerStyle,
+  containerText = 'Select an option', 
   buttonStyle,
-  buttonTextStyle,
-  includeContainer = false,
-  layout = 'row', // New prop to control layout
-  useSvg = false, // New prop to toggle between text and SVG
+  widthForHorizontal='80%',
+  buttonTextStyle,  
+  useSvg = false, 
   svgColor = 'black',
-  svgIcons = [], // Array of SVG components
-  labels = [], // Array of labels to be shown with SVGs (optional)
-  labelPosition = 'below', // New prop to control label position
-  inline = false, // New prop for inline layout
+  svgIcons = [], 
+  labels = [], 
+  labelPosition = 'below',  
 }) => {
   return (
-    <View
-      style={[
-        includeContainer ? [styles.container, containerStyle] : undefined,
-        inline && styles.inlineContainer, // Apply inline styles if `inline` is true
-      ]}
-    >
-      <View style={inline ? styles.inlineContent : undefined}>
-        <Text style={[styles.containerText, inline && styles.inlineText]}>
+    <View style={styles.container}>
+      <View style={styles.innerContainer}>
+        <Text style={[styles.containerText, styles.inlineText]}>
           {containerText}
         </Text>
         {options.length === 0 ? (
           <Text style={styles.noOptionsText}>No options available</Text>
         ) : (
-          <View style={[styles.optionsContainer, layout === 'row' && styles.rowLayout]}>
+          <View style={[styles.optionsContainer, {width: widthForHorizontal}]}>
             {options.map((option, index) => (
               <TouchableOpacity
                 key={index}
@@ -53,7 +45,7 @@ const PickerMenuOptions = ({
                       {labelPosition === 'beside' && labels[index] && (
                         <Text style={styles.optionLabel}>{labels[index]}</Text>
                       )}
-                      {React.createElement(svgIcons[index], { width: 30, height: 30, color: svgColor })}
+                      {React.createElement(svgIcons[index], { width: 24, height: 24, color: svgColor })}
                       {labelPosition === 'below' && labels[index] && (
                         <Text style={styles.optionLabel}>{labels[index]}</Text>
                       )}
@@ -81,44 +73,36 @@ const PickerMenuOptions = ({
 
 const styles = StyleSheet.create({
   container: { 
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    marginVertical: 8,
-  },
-  inlineContainer: {
-    flexDirection: 'row', // Display items in a row for inline layout
-    alignItems: 'center',
-  },
-  inlineContent: {
-    flexDirection: 'row', // Keep content in a row
-    alignItems: 'center',
-    flex: 1,
     width: '100%',
+    alignContent: 'center',
+    flex: 1,  
+  },
+  innerContainer: {
+    flex: 1,
+    flexDirection: 'row', 
+    alignItems: 'center',
+    justifyContent: 'space-between', 
+    alignContent: 'center', 
+    width: '100%', 
   },
   containerText: {
     fontSize: 17,
     fontFamily: 'Poppins-Bold',
-    marginRight: 10, // Space between text and options
+    marginRight: 10,  
   },
   inlineText: {
-    flex: 1, // Allow text to fill available space
+    flex: 1, 
   },
-  optionsContainer: {
-    flexDirection: 'column', // Default layout is column
-  },
-  rowLayout: {
-    flexDirection: 'row', // Override to display options in a row
-    flexWrap: 'wrap', // Allows wrapping of buttons if they exceed container width
-  },
+  optionsContainer: {  
+    paddingHorizontal: 4,
+    justifyContent: 'space-between', 
+    flexDirection: 'row',  
+    flexWrap: 'wrap',
+  }, 
   optionButton: {
-    padding: 10,
-    paddingBottom: 6,
+    paddingHorizontal: 10,
+    paddingBottom: 2,
+    paddingTop: 6,
     borderRadius: 20,
     marginVertical: 4,
     alignItems: 'center',
@@ -126,8 +110,7 @@ const styles = StyleSheet.create({
   selectedOptionButton: {
     backgroundColor: '#d4edda',
   },
-  optionText: {
-    fontSize: 16,
+  optionText: { 
     fontFamily: 'Poppins-Regular',
   },
   selectedOptionText: {
@@ -135,17 +118,20 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
   },
   optionContent: {
-    flexDirection: 'row', // Default layout for beside
-    alignItems: 'center',
+    flexDirection: 'row', 
+    width: '100%', 
   },
   labelBelow: {
-    flexDirection: 'column', // Change to column if labels are below
+    width: '100%',
+    flexDirection: 'column', 
     alignItems: 'center', 
+    textAlign: 'center',
+
     
   },
   optionLabel: {
-    marginRight: 14, // Space between label and SVG for beside position
-    fontSize: 14,
+    textAlign: 'center',
+    fontSize: 13,
     fontFamily: 'Poppins-Regular', 
   
     

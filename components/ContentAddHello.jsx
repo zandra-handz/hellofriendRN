@@ -8,28 +8,21 @@ import { useAuthUser } from '../context/AuthUserContext';
 
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
  
-import { fetchTypeChoices, saveHello } from '../api';
-import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
-import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
-import LocationSolidSvg from '../assets/svgs/location-solid.svg';
+import { saveHello } from '../api';
 
 import PickerMultiMoments from '../components/PickerMultiMoments';
 
-import PickerDate from '../components/PickerDate';
-import PickerMenuOptions from '../components/PickerMenuOptions';
-import PickerComplexList from '../components/PickerComplexList';
+import TextAreaBase from '../components/TextAreaBase';
 
-import { useLocationList } from '../context/LocationListContext';
+import PickerDate from '../components/PickerDate'; 
+import PickerHelloType from '../components/PickerHelloType';
+import PickerHelloLocation from '../components/PickerHelloLocation'; 
 
 
-import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
-import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
-import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
-import CelebrationSparkOutlineSvg from '../assets/svgs/celebration-spark-outline';
+import ButtonBottomSaveHello from '../components/ButtonBottomSaveHello';
 
+ 
 import AlertYesNo from '../components/AlertYesNo';   
-
 import AlertSuccessFail from '../components/AlertSuccessFail';
 
 const ContentAddHello = () => {
@@ -38,16 +31,16 @@ const ContentAddHello = () => {
 
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend, friendDashboardData, setFriend } = useSelectedFriend();
+  
   const [helloDate, setHelloDate] = useState(new Date());
+  const [additionalNotes, setAdditionalNotes] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [typeChoices, setTypeChoices] = useState([]);
+  const [typeChoices, setTypeChoices] = useState(["via text or social media", "in person", "happenstance", "unspecified"]);
+  
   const [selectedTypeChoice, setSelectedTypeChoice] = useState(null);
   const [selectedTypeChoiceText, setSelectedTypeChoiceText] = useState(null);
-  const [locationModalVisible, setLocationModalVisible] = useState(false);
-  const { locationList, faveLocationList,populateFaveLocationsList, savedLocationList } = useLocationList();
-  const [isLocationListReady, setIsLocationListReady] = useState(false);
-    
-  const [selectedLocation, setSelectedLocation] = useState('Select location');
+
+  const [selectedHelloLocation, setSelectedHelloLocation] = useState('Select location');
   const [existingLocationId, setExistingLocationId ] = useState('');
   const [customLocation, setCustomLocation ] = useState('');
  
@@ -56,11 +49,12 @@ const ContentAddHello = () => {
   
   const [isDeleteChoiceModalVisible, setDeleteChoiceModalVisible] = useState(false);
   
-  const [deleteChoice, setDeleteChoice ] = useState(false);
+  const [deleteChoice, setDeleteChoice ] = useState(false); 
   
   const [ saveInProgress, setSaveInProgress ] = useState(false);
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
   const [isFailModalVisible, setFailModalVisible] = useState(false);
+
 
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
   
@@ -76,9 +70,19 @@ const ContentAddHello = () => {
 
 };
 
+const handleNotesInputChange = (text) => {
+  setAdditionalNotes(text);
+};
+
+const resetAdditionalNotes = () => {
+  setAdditionalNotes('');
+};
+
   useEffect(() => {
     console.log(deleteChoice);
   }, [deleteChoice]);
+ 
+
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
@@ -86,60 +90,6 @@ const ContentAddHello = () => {
     }
   }, [selectedFriend, loadingNewFriend]);
 
-
-  useEffect(() => {
-    if (loadingNewFriend) {
-        setIsLocationListReady(false); 
-    } else {
-      setIsLocationListReady(true)
-    };
-  }, [loadingNewFriend]);
-
-  useEffect(() => {
-        if (friendDashboardData && friendDashboardData.length > 0) {
-            const favoriteLocationIds = friendDashboardData[0]?.friend_faves?.locations || [];
-
-            console.log('favorite location IDs: ', favoriteLocationIds);
-            populateFaveLocationsList(favoriteLocationIds);
-
-        }
-    }, [locationList, friendDashboardData]);
-
-  useEffect(() => {
-        console.log('Favorite Locations:', faveLocationList); // Logging faveLocationList
-    }, [faveLocationList]);
-
-  useEffect(() => {
-    if (locationList.length > 0) {
-        setIsLocationListReady(true);
-    }
-  }, [locationList]);
-
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const typeChoices = await fetchTypeChoices();
-        console.log("typeChoices: ", typeChoices);
-        setTypeChoices(typeChoices);
-      } catch (error) {
-        console.error('Error fetching type choices:', error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const svgIcons = [
-    PhoneChatMessageHeartSvg, 
-    CoffeeMugSolidHeart,
-    CelebrationSparkOutlineSvg,
-    CoffeeMugFancySteamSvg, 
-  ];
-
-  const labels = [
-    'digital', 'in person', 'surprise', 'N/A'
-  ];
 
   const handleTypeChoiceChange = (index) => {
     setSelectedTypeChoice(index);
@@ -150,16 +100,16 @@ const ContentAddHello = () => {
 
   const handleLocationChange = (item) => {
     if (item && item.id) { 
-      setSelectedLocation(item.title);
+      setSelectedHelloLocation(item.title);
       setExistingLocationId(item.id);
       setCustomLocation(null);
     } else { 
       if (item) { 
-      setSelectedLocation(item);
+      setSelectedHelloLocation(item);
       setCustomLocation(item);
       setExistingLocationId(null);
       } else {
-        setSelectedLocation('None');
+        setSelectedHelloLocation('None');
       }
     }
   };
@@ -179,11 +129,6 @@ const ContentAddHello = () => {
     console.log(dateWithoutTime); 
 };
   
- 
-
- 
-
-
   const handleSave = async () => {
     setDeleteChoiceModalVisible(false);
     setSaveInProgress(true); 
@@ -203,6 +148,7 @@ const ContentAddHello = () => {
           friend: selectedFriend.id, 
           type: selectedTypeChoiceText,
           typed_location: customLocation,
+          additional_notes: additionalNotes,
           location: existingLocationId,
           date: formattedDate,
           thought_capsules_shared: momentsDictionary,
@@ -236,8 +182,7 @@ const failOk = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.mainContainer}>
-        <Text style={styles.locationTitle}> </Text>
+      <View style={styles.mainContainer}> 
 
         <View style={styles.selectFriendContainer}>
         <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
@@ -245,53 +190,38 @@ const failOk = () => {
           <FriendSelectModalVersion width='88%' />
         </View> 
         <View style={styles.typeChoicesContainer}>
-            <PickerMenuOptions
-                options={typeChoices}
-                containerText='Type:'
-                onSelectOption={handleTypeChoiceChange}
-                selectedOption={selectedTypeChoice}
-                containerStyle={styles.locationContainer}
-                buttonStyle={styles.optionButton}
-                buttonTextStyle={styles.optionText}
-                useSvg={true}
-                svgIcons={svgIcons}
-                inline={true}
-                labels={labels}
+            <PickerHelloType  
+                containerText='Type: '
+                selectedTypeChoice={selectedTypeChoice} 
+                onTypeChoiceChange={handleTypeChoiceChange}  
+                useSvg={true} 
          />
             </View>
+           
+            <View style={styles.locationContainer}> 
             {(selectedTypeChoice === 1 || selectedTypeChoice === 2) && (
-            <View style={styles.locationContainer}>
-            {isLocationListReady && (
-            <PickerComplexList 
-                containerText='Location: '
-                inline={true}
-                modalHeader='Select Location'
-                allowCustomEntry={true}
-                primaryOptions={faveLocationList}
-                primaryOptionsHeader='Pinned'
-                primaryIcon={LocationHeartSolidSvg}
-                secondaryOptions={savedLocationList}
-                secondaryOptionsHeader='All Saved'
-                secondaryIcon={LocationSolidSvg}
-                objects={true} 
-                onLabelChange={handleLocationChange}
-                label={selectedLocation}
-                modalVisible={locationModalVisible}
-                setModalVisible={setLocationModalVisible}
-                containerStyle={styles.locationContainer}
-                buttonStyle={styles.optionButton}
-                buttonTextStyle={styles.optionText}  
-         />
-          )}
+                <PickerHelloLocation  
+                    onLocationChange={handleLocationChange}
+                    selectedLocation={selectedHelloLocation} 
+              /> 
+              )}
             </View>
-            )}
+           
+
+          <View style={styles.notesContainer}>
+            <TextAreaBase 
+              containerText={'Additional notes:'}
+              onInputChange={handleNotesInputChange}
+              placeholderText={''}
+            />
+
+            </View>
             
             <View style={styles.momentsContainer}> 
             <PickerMultiMoments
               onMomentSelect={handleMomentSelect}
              />
           </View>
-
 
 
 
@@ -304,37 +234,27 @@ const failOk = () => {
                 maximumDate={new Date()}
                 onChange={onChangeDate}
                 showDatePicker={showDatePicker}
-                setShowDatePicker={setShowDatePicker}
-                dateTextStyle={styles.dateText}
-                containerStyle={styles.dateContainer}
+                setShowDatePicker={setShowDatePicker}  
                 labelStyle={styles.locationTitle} 
                 inline={true}
             />
-          </View> 
-        {helloDate && ( 
-                <View style={styles.bottomButtonContainer}>  
-                    <ButtonBottomActionBase
-                        onPress={() => setDeleteChoiceModalVisible(true)}
-                        preLabel=''
-                        label={`Add hello`}
-                        height={54}
-                        radius={16} 
-                        labelFontSize={22}
-                        labelColor="white" 
-                        labelContainerMarginHorizontal={4}
-                        animationMargin={-64}
-                        showGradient={true}
-                        showShape={true}
-                        shapePosition="right"
-                        shapeSource={CompassCuteSvg}
-                        shapeWidth={100}
-                        shapeHeight={100}
-                        shapePositionValue={-14}
-                        shapePositionValueVertical={-10} 
-                    />
-            </View> 
-            )}
-      </View>
+          </View>  
+            {helloDate && selectedFriend && (selectedTypeChoice !== null) ? (
+              <View style={styles.bottomButtonContainer}>  
+                <ButtonBottomSaveHello
+                  onPress={setDeleteChoiceModalVisible} 
+                  disabled={false}
+                />
+              </View>
+            ) : (
+              <View style={styles.bottomButtonContainer}>  
+                <ButtonBottomSaveHello
+                  onPress={setDeleteChoiceModalVisible} 
+                  disabled={true}
+                />
+            </View>
+          )} 
+        </View>
       <AlertYesNo
           isModalVisible={isDeleteChoiceModalVisible}
           isFetching={saveInProgress}
@@ -370,40 +290,23 @@ const failOk = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 0,
-    justifyContent: 'space-between',
+    flex: 1, 
   },
   mainContainer: {
-    flex: 1,
-    padding: 0,
+    flex: 1, 
     justifyContent: 'space-between',
     paddingBottom: 68,
   },
-  typeChoicesContainer: { 
-    borderRadius: 8,
-    top: 12, 
+  typeChoicesContainer: {  
+    borderRadius: 8, 
     width: '100%',
-    padding: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.0,
-    shadowRadius: 0,
-    elevation: 0,
-    marginVertical: 10, 
-    height: 90,
+    paddingVertical: 10, 
+    height: 60,  
   },
   locationContainer: {  
     borderRadius: 8, 
-    width: '100%',
-    padding: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.0,
-    shadowRadius: 0,
-    elevation: 0,
-    marginVertical: 0, 
-    height: 90,
+    width: '100%', 
+    height: 42,
   },
   dateContainer: {  
     borderRadius: 8, 
@@ -415,27 +318,31 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 0,
     marginVertical: 10, 
-    height: 360,
+    height: 60,
+  },
+  notesContainer: { 
+    backgroundColor: '#fff',
+    width: '100%', 
+    borderRadius: 8,
+    padding: 0,
+    minHeight: 140, 
   },
   momentsContainer: { 
     backgroundColor: '#fff',
     width: '100%', 
     borderRadius: 8,
     padding: 0,
-    minHeight: 400, 
+    minHeight: 280, 
   },
-  selectFriendContainer: {
-    position: 'absolute',
-    flexDirection: 'row',
-    top: 0,  
+  selectFriendContainer: { 
+    flexDirection: 'row', 
     borderRadius: 8,
     justifyContent: 'space-between',
     alignContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     width: '100%',
-    marginVertical: 8,
-    height:' auto',
+    marginVertical: 8, 
     zIndex: 1, 
   },
   locationTitle: {

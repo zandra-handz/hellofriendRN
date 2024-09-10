@@ -471,6 +471,7 @@ export const fetchPastHelloes = async (friendId) => {
                 typedLocation: hello.typed_location,
                 locationName: hello.location_name,
                 location: hello.location, 
+                additionalNotes: hello.additional_notes,
                 pastCapsules: hello.thought_capsules_shared
                     ? Object.keys(hello.thought_capsules_shared).map(key => ({
                           id: key,
@@ -478,7 +479,7 @@ export const fetchPastHelloes = async (friendId) => {
                           typed_category: hello.thought_capsules_shared[key].typed_category,
                       }))
                     : []
-            }));
+            })); 
 
             return formattedHelloesList; 
         } else {

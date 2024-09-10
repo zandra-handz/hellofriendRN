@@ -81,22 +81,21 @@ const styles = StyleSheet.create({
     marginRight: 10,  
   },
   datePickerButton: { 
-    borderRadius: 20, 
-    backgroundColor: 'gray', 
+    borderRadius: 20,
+    backgroundColor: 'gray',
+    padding: 8,
+    alignItems: 'center',
+    flex: 1,
   },
   flexButton: {
     flex: 1,  
-    alignItems: 'center',
-    justifyContent: 'center',
     
   
   },
   dateText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: '#fff', 
-    padding: 10,
-    borderRadius: 20,
+    fontSize: 15,
+    fontFamily: 'Poppins-Regular',
+    color: '#fff',  
   },
 });
 

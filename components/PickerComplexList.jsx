@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 20,
     backgroundColor: 'gray',
-    padding: 10,
+    padding: 8,
     alignItems: 'center',
     flex: 1,
   },
@@ -225,8 +225,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
+    fontSize: 15,
+    fontFamily: 'Poppins-Regular',
     color: '#fff',
   },
   modalContainer: {
