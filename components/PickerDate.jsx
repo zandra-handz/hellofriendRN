@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const PickerDate = ({
   value,
@@ -12,22 +13,23 @@ const PickerDate = ({
   onChange,
   showDatePicker,
   setShowDatePicker,
-  dateTextStyle,
-  containerStyle,
-  labelStyle,
+  dateTextStyle, 
   buttonStyle,
   includeContainer = false,
   inline =false,  
 }) => {
+  
+  const { themeStyles } = useGlobalStyle();
+  
   return (
     <View
       style={[
-        includeContainer ? [styles.locationContainer, containerStyle] : undefined,
+        includeContainer ? [styles.locationContainer] : undefined,
         inline && styles.inlineContainer,  
       ]}
     >
       <View style={inline ? styles.inlineContent : undefined}>
-        <Text style={[styles.locationTitle, labelStyle]}>
+        <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>
           {containerText}
         </Text>
         <TouchableOpacity

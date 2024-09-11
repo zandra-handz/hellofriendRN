@@ -1,7 +1,11 @@
 import React, { useRef } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+
 
 const InputAddFriendName = ({ friendName, setFriendName, isFriendNameUnique, setIsFriendNameUnique, setRevealRest, friendList }) => {
+    
+    const { themeStyles } = useGlobalStyle();
     const friendNameRef = useRef(null);
 
     const handleFriendNameChange = (text) => {
@@ -10,29 +14,26 @@ const InputAddFriendName = ({ friendName, setFriendName, isFriendNameUnique, set
         const isUnique = !friendList.some(friend => friend.name.toLowerCase() === text.toLowerCase());
 
         if (isUnique && text.length) {
-            setIsFriendNameUnique(true);
-            console.log('The value is unique.');
+            setIsFriendNameUnique(true); 
         } else {
             setIsFriendNameUnique(false);
-            setRevealRest(false); 
-            console.log('The value is already in the friend list.');
+            setRevealRest(false);  
         }
     };
 
     const setVisibility = () => {
         if (isFriendNameUnique) {
-            setRevealRest(true);
-            console.log('Reveal rest of the form'); 
+            setRevealRest(true); 
         }
     };
 
     return (
         <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Enter friend's name</Text>
+            <Text style={[styles.sectionTitle, themeStyles.subHeaderText]}>Enter friend's name</Text>
             <View style={styles.inputContainer}>
                 <TextInput
                     ref={friendNameRef}
-                    style={[styles.textInput, !isFriendNameUnique && friendName.length > 0 && styles.errorInput]}
+                    style={[styles.textInput, themeStyles.input, !isFriendNameUnique && friendName.length > 0 && styles.errorInput]}
                     value={friendName}
                     placeholder="Name" 
                     onChangeText={handleFriendNameChange}
@@ -59,8 +60,7 @@ const styles = StyleSheet.create({
         width: '100%',
         marginVertical: 10,
     },
-    textInput: {
-        borderColor: '#ddd',
+    textInput: { 
         borderWidth: 1,
         borderRadius: 20,
         fontSize: 18,

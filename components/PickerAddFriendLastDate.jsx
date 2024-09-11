@@ -18,19 +18,17 @@ const PickerAddFriendLastDate = ({ friendDate, setFriendDate, showDatePicker, se
     };
 
     return (
-        <View>
+        <View style={styles.dateContainer}>
             <PickerDate
                 value={friendDate}
                 mode="date"
                 display="default"
+                containerText="Last hello: "
                 maximumDate={new Date()}
                 onChange={onChangeDate}
                 showDatePicker={showDatePicker}
-                setShowDatePicker={setShowDatePicker}
-                dateTextStyle={styles.dateText}
-                containerStyle={styles.sectionContainer}
-                labelStyle={styles.sectionTitle}
-                buttonStyle={styles.datePickerButton}
+                setShowDatePicker={setShowDatePicker}  
+                inline={true}
             />
         </View>
     );
@@ -42,6 +40,22 @@ const styles = StyleSheet.create({
         marginVertical: 14,
         fontFamily: 'Poppins-Regular',
     },
+    dateContainer: {  
+        borderRadius: 8, 
+        width: '100%',
+        padding: 0,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.0,
+        shadowRadius: 0,
+        elevation: 0,
+        marginVertical: 10, 
+        height: 60,
+      },
+      label: {
+        fontSize: 17,
+        fontFamily: 'Poppins-Bold',
+      },
 });
 
 export default PickerAddFriendLastDate;

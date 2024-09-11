@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const MessagePage = ({
   message = 'Nothing here',
@@ -8,10 +9,13 @@ const MessagePage = ({
   textColor = 'black',
   fontSize = 20,
 }) => {
+
+  const {themeStyles } = useGlobalStyle();
+
   return (
-    <View style={[styles.container, includeBackground && { backgroundColor }]}>
-      <View style={styles.textContainer}>
-        <Text style={[styles.messageText, { color: textColor, fontSize }]}>
+    <View style={[styles.container, themeStyles.genericTextBackground]}>
+      <View style={[styles.textContainer]}>
+        <Text style={[styles.messageText, themeStyles.genericText, { fontSize }]}>
           {message}
         </Text>
       </View>

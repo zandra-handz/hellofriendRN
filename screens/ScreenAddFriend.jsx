@@ -3,12 +3,16 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';  
 import ContentAddFriend from '../components/ContentAddFriend';
+
+import { useGlobalStyle } from '../context/GlobalStyleContext';
  
 const ScreenAddFriend = () => { 
+
+    const { themeStyles } = useGlobalStyle();
    
 
     return (
-        <View style={styles.container}> 
+        <View style={[styles.container, themeStyles.container]}> 
             <View style={styles.mainContainer}> 
                 <ContentAddFriend />
             </View> 

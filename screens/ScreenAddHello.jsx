@@ -2,14 +2,17 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
  
 import ContentAddHello from '../components/ContentAddHello';
  
  
 const ScreenAddHello = () => { 
+
+    const {themeStyles} = useGlobalStyle();
  
     return (
-        <View style={styles.container}> 
+        <View style={[styles.container, themeStyles.container]}> 
             <View style={styles.mainContainer}> 
                 <ContentAddHello />
             </View> 

@@ -173,6 +173,20 @@ const lightThemeStyles = StyleSheet.create({
     genericText: {
         color: 'black',
     },
+    subHeaderText: {
+        color: 'black',
+
+    },
+    input: {
+        color: 'black',
+        borderWidth: 1,
+        borderColor: 'lightgray',
+        backgroundColor: 'white',
+        placeholderTextColor: 'lightgray',
+    },
+    borderColor: {
+        color: 'white',
+    },
     friendFocusSection: {
         backgroundColor: 'white',
     },
@@ -273,6 +287,24 @@ const darkThemeStyles = StyleSheet.create({
     },
     genericText: {
         color: 'white',
+    },
+    subHeaderText: {
+        color: 'white',
+    },
+    inputContainer: {
+        borderWidth: 1,
+        borderColor: 'white',
+
+    },
+    input: {
+        color: 'white',
+        borderWidth: 1,
+        borderColor: 'white',
+        backgroundColor: 'black',
+        placeholderTextColor: 'white',
+    },
+    borderColor: {
+        color: 'black',
     },
     friendFocusSection: {
         backgroundColor: 'black',

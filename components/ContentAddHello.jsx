@@ -234,8 +234,7 @@ const failOk = () => {
                 maximumDate={new Date()}
                 onChange={onChangeDate}
                 showDatePicker={showDatePicker}
-                setShowDatePicker={setShowDatePicker}  
-                labelStyle={styles.locationTitle} 
+                setShowDatePicker={setShowDatePicker}   
                 inline={true}
             />
           </View>  

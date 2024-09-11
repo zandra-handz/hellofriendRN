@@ -1,13 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import SliderInputOnboarding from '../onboarding/SliderInputOnboarding';
+import SliderBase from '../components/SliderBase';
 
-const SliderAddFriendEffort = ({ friendEffort, setFriendEffort }) => (
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+
+const SliderAddFriendEffort = ({ friendEffort, setFriendEffort }) => {
+    const { themeStyles } = useGlobalStyle();
+    
+    
+    return ( 
     <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Effort needed to maintain friendship</Text>
-        <SliderInputOnboarding
+        <Text style={[styles.sectionTitle, themeStyles.subHeaderText]}>Effort needed to maintain friendship</Text>
+        <SliderBase
             value={friendEffort}
             onValueChange={setFriendEffort}
+            labelStyle={themeStyles.subHeaderText}
             min={1}
             max={5}
             messages={{
@@ -19,7 +26,8 @@ const SliderAddFriendEffort = ({ friendEffort, setFriendEffort }) => (
             }}
         />
     </View>
-);
+    );
+};
 
 const styles = StyleSheet.create({
     sectionContainer: {

@@ -1,13 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import SliderInputOnboarding from '../onboarding/SliderInputOnboarding';
+import SliderBase from '../components/SliderBase';
 
-const SliderAddFriendPriority = ({ friendPriority, setFriendPriority }) => (
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+
+
+const SliderAddFriendPriority = ({ friendPriority, setFriendPriority }) => {
+    
+    const { themeStyles } = useGlobalStyle();
+    
+    return (
     <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Priority placed on friendship</Text>
-        <SliderInputOnboarding
+        <Text style={[styles.sectionTitle, themeStyles.subHeaderText]}>Priority placed on friendship</Text>
+        <SliderBase
             value={friendPriority}
             onValueChange={setFriendPriority}
+            labelStyle={themeStyles.subHeaderText}
             min={1}
             max={3}
             messages={{
@@ -18,6 +26,8 @@ const SliderAddFriendPriority = ({ friendPriority, setFriendPriority }) => (
         />
     </View>
 );
+
+};
 
 const styles = StyleSheet.create({
     sectionContainer: {

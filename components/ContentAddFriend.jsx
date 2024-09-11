@@ -115,12 +115,9 @@ const ContentAddFriend = () => {
     return (
         <View style={styles.container}>
            {isFriendLimitReached && (
-            <View style={{flex: 1, marginHorizontal: 30}}> 
+            <View style={{flex: 1, marginHorizontal: 0}}> 
                 <MessagePage 
                     message="Sorry! You have already added the max amount of friends." 
-                    includeBackground={true} 
-                    backgroundColor="white"  
-                    textColor="black"  
                     fontSize={20}  
                     />
             </View>
@@ -150,12 +147,16 @@ const ContentAddFriend = () => {
                         setFriendPriority={setFriendPriority}
                     />
 
-                    <PickerAddFriendLastDate
-                        friendDate={friendDate}
-                        setFriendDate={setFriendDate}
-                        showDatePicker={showDatePicker}
-                        setShowDatePicker={setShowDatePicker}
-                    />
+                    <View style={{width: '100%', height: 50}}>
+
+                        <PickerAddFriendLastDate
+                            friendDate={friendDate}
+                            setFriendDate={setFriendDate}
+                            showDatePicker={showDatePicker}
+                            setShowDatePicker={setShowDatePicker}
+                        />  
+                    </View>
+
                     <ButtonMediumAddFriend
                         friendName={friendName}
                         toggleReviewModal={toggleReviewModal}
