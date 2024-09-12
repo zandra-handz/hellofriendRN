@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Button, FlatList } from 'react-native';
-import { CheckBox } from 'react-native-elements'; // For checkboxes
+import { CheckBox } from 'react-native-elements';  
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonMomentHelloes from '../components/ButtonMomentHelloes';
@@ -11,10 +12,11 @@ const PickerMultiMoments = ({
     showAllCategories = true, 
     showInModal = true, 
 }) => {
+  const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [selectedMoments, setSelectedMoments] = useState([]); // For selected checkboxes
-  const [categoryItems, setCategoryItems] = useState([]); // For items under selected category
+  const [selectedMoments, setSelectedMoments] = useState([]);
+  const [categoryItems, setCategoryItems] = useState([]);  
   const [categoryLimit, setCategoryLimit] = useState('');
   const [remainingCategories, setRemainingCategories] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -90,12 +92,29 @@ const PickerMultiMoments = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.selectedItemsTitle}>
+      <Text style={[styles.selectedItemsTitle, themeStyles.subHeaderText]}>
         {containerText} ({selectionPercentage}%)
       </Text>
+      <View style={styles.selectionContainer}>
+          <Text style={[styles.title, themeStyles.genericText]}>Select from:</Text>
+          <FlatList
+            data={visibleCategories}
+            horizontal={true}
+            renderItem={({ item }) => (
+              <TouchableOpacity 
+                style={styles.categoryButton} 
+                onPress={() => handleCategoryPress(item)}
+              >
+                <Text style={styles.categoryButtonText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
           
       <View style={styles.contentContainer}> 
-        <View style={styles.selectedItemsContainer}> 
+        <View style={[styles.selectedItemsContainer, themeStyles.genericTextBackgroundShadeTwo]}> 
           <FlatList
             data={selectedMoments}
             keyExtractor={(item, index) => index.toString()}
@@ -115,23 +134,7 @@ const PickerMultiMoments = ({
           />
         </View>
 
-        <View style={styles.selectionContainer}>
-          <Text style={styles.title}>Select from:</Text>
-          <FlatList
-            data={visibleCategories}
-            horizontal={true}
-            renderItem={({ item }) => (
-              <TouchableOpacity 
-                style={styles.categoryButton} 
-                onPress={() => handleCategoryPress(item)}
-              >
-                <Text style={styles.categoryButtonText}>{item}</Text>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+
       </View>
 
       {showInModal && (
@@ -171,8 +174,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
   },
-  contentContainer: {
-    padding: 0,
+  contentContainer: { 
   },
   title: {
     fontSize: 14,
@@ -180,13 +182,12 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   selectedItemsContainer: {
-    marginBottom: 10,
-    backgroundColor: 'lightgray',
-    padding: 10,
+    marginBottom: 10, 
     height: 200, 
+    padding: 10, 
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 20,
+    borderColor: 'dimgray',
   },
   selectedItemsTitle: {
     fontSize: 16,

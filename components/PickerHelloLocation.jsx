@@ -11,13 +11,12 @@ import PickerComplexList from '../components/PickerComplexList';
 
 import { useLocationList } from '../context/LocationListContext';
 
-
 const PickerHelloLocation = ({
 
     selectedLocation, 
     onLocationChange
 
-    }) => {
+    }) => { 
 
     const [locationModalVisible, setLocationModalVisible] = useState(false);
     const { locationList, faveLocationList,populateFaveLocationsList, savedLocationList } = useLocationList();

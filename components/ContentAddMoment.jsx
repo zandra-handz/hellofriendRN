@@ -100,12 +100,12 @@ const ContentAddMoment = () => {
         setCategoryInput('');
 
         setAlertMessage('Moment has been saved!');
-        setIsSuccess(true); // Successful save
+        setIsSuccess(true); 
       }
     } catch (error) {
       console.error('Error saving capsule:', error);
       setAlertMessage('Could not save moment.');
-      setIsSuccess(false); // Failed save
+      setIsSuccess(false);  
     } finally {
       setSaveInProgress(false); 
       setAlertModalVisible(true); // Show the modal after attempt

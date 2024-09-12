@@ -21,7 +21,6 @@ import PickerHelloLocation from '../components/PickerHelloLocation';
 
 import ButtonBottomSaveHello from '../components/ButtonBottomSaveHello';
 
- 
 import AlertYesNo from '../components/AlertYesNo';   
 import AlertSuccessFail from '../components/AlertSuccessFail';
 
@@ -319,15 +318,13 @@ const styles = StyleSheet.create({
     marginVertical: 10, 
     height: 60,
   },
-  notesContainer: { 
-    backgroundColor: '#fff',
+  notesContainer: {  
     width: '100%', 
     borderRadius: 8,
     padding: 0,
     minHeight: 140, 
   },
-  momentsContainer: { 
-    backgroundColor: '#fff',
+  momentsContainer: {  
     width: '100%', 
     borderRadius: 8,
     padding: 0,

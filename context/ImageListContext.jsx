@@ -18,6 +18,7 @@ export const useImageList = () => {
 export const ImageListProvider = ({ children }) => {
     const { selectedFriend } = useSelectedFriend();
     const [imageList, setImageList] = useState([]);
+    const [imageCount, setImageCount ] = useState(0);
     const [isImageContextLoading, setIsImageContextLoading] = useState(true);
     const [updateImagesTrigger, setUpdateImagesTrigger] = useState(false); // Introducing updateTrigger state
     
@@ -47,6 +48,7 @@ export const ImageListProvider = ({ children }) => {
                     });
 
                     setImageList(flattenedImages);
+                    setImageCount(flattenedImages.length);
                 } catch (error) {
                     console.error('Error fetching friend images by category:', error);
                 } finally {
@@ -66,6 +68,11 @@ export const ImageListProvider = ({ children }) => {
         );
     };
 
+    const updateCount = () => {
+        setImageCount(imageList.length);
+
+    };
+
     const deleteImage = (id) => {
         setImageList(prevList => prevList.filter(image => image.id !== id));
     };
@@ -73,6 +80,7 @@ export const ImageListProvider = ({ children }) => {
     return (
         <ImageListContext.Provider value={{ 
             imageList, 
+            imageCount,
             setImageList, 
             updateImage, 
             deleteImage,

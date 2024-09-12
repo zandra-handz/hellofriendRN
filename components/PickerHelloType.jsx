@@ -23,7 +23,6 @@ const PickerHelloType = ({
         'digital', 'in person', 'surprise', 'N/A'
       ];
 
-
     const svgIcons = [
         PhoneChatMessageHeartSvg, 
         CoffeeMugSolidHeart,

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, ScrollView } from 'react-native';
 import AlertSingleInput from './AlertSingleInput'; // Import the AlertSingleInput component
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
+
 
 const PickerComplexList = ({
   label = 'Select Label',
@@ -20,17 +22,16 @@ const PickerComplexList = ({
   setModalVisible,
   inline = false,
   primaryIcon: PrimaryIcon,
-  secondaryIcon: SecondaryIcon,
-  primaryIconColor = 'black',
-  secondaryIconColor = 'black',
+  secondaryIcon: SecondaryIcon, 
   iconSize = 34,
-  allowCustomEntry = false, // New prop for allowing custom entry
+  allowCustomEntry = false,  
 }) => {
+
+  const { themeStyles } = useGlobalStyle();
   const [isCustomModalVisible, setCustomModalVisible] = useState(false);
   const [customValue, setCustomValue] = useState('');
 
-  // Include the custom value in the options list if it's allowed
-  const allOptions = allowCustomEntry && customValue ? [...primaryOptions, ...secondaryOptions, customValue] : [...primaryOptions, ...secondaryOptions];
+
 
   const combinedOptions = [
     { type: `${primaryOptionsHeader}`, data: primaryOptions, icon: PrimaryIcon },
@@ -92,7 +93,7 @@ const PickerComplexList = ({
     >
       <View style={[styles.content, inline && styles.inlineContent]}>
         {inline && (
-          <Text style={[styles.containerText, inline && styles.inlineText]}>
+          <Text style={[styles.containerText, themeStyles.subHeaderText, inline && styles.inlineText]}>
             {containerText}
           </Text>
         )}

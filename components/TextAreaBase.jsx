@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
-
+import ModalHelloNotesFocus from '../components/ModalHelloNotesFocus';
 import MaximizeOutlineSvg from '../assets/svgs/maximize-outline.svg';  
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -9,8 +9,7 @@ const TextAreaBase = ({
     containerText='hi',
     onInputChange, 
     initialText='', 
-    placeholderText='Please set placeholder text',  
-    maxButtonColor='black',
+    placeholderText='Please set placeholder text',   
     width='100%',
     editMode=true, 
     resetText=false,
@@ -19,7 +18,7 @@ const TextAreaBase = ({
     const { themeStyles } = useGlobalStyle();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [textInput, setTextInput] = useState(initialText || '');
-    const [isEditMode, setIsEditMode] = useState(editMode);  // New state to track current mode (edit or display)
+    const [isEditMode, setIsEditMode] = useState(editMode);  
     const textareaRef = useRef();
 
     useEffect(() => {
@@ -34,7 +33,7 @@ const TextAreaBase = ({
     };
 
     const dynamicInputStyle = textInput.length > 0 
-        ? [styles.input, styles.inputActive] 
+        ? [styles.input, styles.inputActive, themeStyles.genericText] 
         : styles.input;
 
     const handleOpenModal = () => {
@@ -59,13 +58,13 @@ const TextAreaBase = ({
         <KeyboardAvoidingView
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 140 : 40} // Adjust this value as needed
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 140 : 40} 
         >
-            <Text style={styles.title}>
+            <Text style={[styles.title, themeStyles.subHeaderText]}>
                 {containerText}
             </Text>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={styles.inner}>
+                <View style={[styles.inner, themeStyles.genericTextBackgroundShadeTwo]}>
                     {isEditMode ? (
                     <TextInput
                         style={[dynamicInputStyle, { width: width }]}
@@ -74,7 +73,7 @@ const TextAreaBase = ({
                         onChangeText={handleInputChange}
                         placeholder={placeholderText}
                         ref={textareaRef}
-                        onKeyPress={handleKeyPress}  // Detect "Enter" key press
+                        onKeyPress={handleKeyPress} 
                     />
                     ) : (
                     <Text
@@ -91,17 +90,23 @@ const TextAreaBase = ({
                         <Text style={styles.toggleButtonText}>
                             {isEditMode ? 'Done' : 'Edit'}
                         </Text>
-                       
                     </TouchableOpacity>
                   )}
                     {isEditMode && (
                     <TouchableOpacity onPress={handleOpenModal} style={styles.maxButtonContainer}>
-                        <MaximizeOutlineSvg height={30} width={30} color={maxButtonColor} />
+                        <MaximizeOutlineSvg height={30} width={30} color={themeStyles.genericIcon.color} />
                     </TouchableOpacity>
                     )}
 
                 </View>
             </TouchableWithoutFeedback>
+          <ModalHelloNotesFocus
+            isModalVisible={isModalVisible}
+            handleCloseModal={handleCloseModal}
+            textInput={textInput}
+            handleInputChange={handleInputChange}
+            placeholderText={placeholderText}
+          />
         </KeyboardAvoidingView>
     );
 };

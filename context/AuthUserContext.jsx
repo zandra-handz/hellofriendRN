@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import * as Notifications from 'expo-notifications';
 import { signup, signin, signout, refreshToken, getCurrentUser } from '../api';
 import jwtDecode from 'jwt-decode';
 
@@ -51,6 +52,60 @@ export const AuthUserProvider = ({ children }) => {
         }
         return result;
     };
+
+
+    const registerForNotifications = async () => {
+        if (userAppSettings?.receive_notifications) {
+            try {
+                const { status: existingStatus } = await Notifications.getPermissionsAsync();
+                let finalStatus = existingStatus;
+    
+                if (existingStatus !== 'granted') {
+                    const { status } = await Notifications.requestPermissionsAsync();
+                    finalStatus = status;
+                }
+    
+                if (finalStatus !== 'granted') {
+                    console.error('Failed to get push token, permission not granted');
+                    return;
+                }
+    
+                const token = (await Notifications.getExpoPushTokenAsync()).data;
+                console.log('Expo Push Token:', token);
+    
+                await SecureStore.setItemAsync('pushToken', token);
+    
+                await Notifications.scheduleNotificationAsync({
+                    content: {
+                        title: "Notifications Enabled",
+                        body: "Notifications for hellofriend are now enabled!",
+                        sound: 'default',
+                    },
+                    trigger: null, // Trigger immediately
+                });
+    
+                return token;
+            } catch (error) {
+                console.error('Failed to get push token or send notification:', error);
+            }
+        } else {
+            console.log('Push notifications disabled in user settings');
+    
+            await SecureStore.deleteItemAsync('pushToken');
+    
+            return null;
+        }
+    };
+    
+    
+    useEffect(() => {
+        if (userAppSettings) {
+            // Only call registerForNotifications if notifications setting is true
+            if (userAppSettings.receive_notifications) {
+                registerForNotifications();
+            }
+        }
+    }, [userAppSettings]);
  
 
     const handleSignin = async (username, password) => {
@@ -89,6 +144,7 @@ export const AuthUserProvider = ({ children }) => {
                     ...prevSettings,
                     ...currentUserData.settings, // Merge with existing settings
                 }));
+                
             } else {
                 setAuthUserState(prevState => ({
                     ...prevState,
@@ -107,6 +163,7 @@ export const AuthUserProvider = ({ children }) => {
     const handleSignout = async () => {
         const result = await signout();
         await SecureStore.deleteItemAsync(TOKEN_KEY);
+        await SecureStore.deleteItemAsync('pushToken');
         setAuthUserState({
             user: null,
             credentials: {
@@ -241,6 +298,7 @@ export const AuthUserProvider = ({ children }) => {
                     await SecureStore.deleteItemAsync(TOKEN_KEY);
                     await SecureStore.deleteItemAsync('refreshToken');
                     await SecureStore.deleteItemAsync('tokenExpiry');
+                    await SecureStore.deleteItemAsync('pushToken');
         
                     try {
                         const newAccessToken = await refreshToken();

@@ -25,6 +25,7 @@ export const CapsuleListProvider = ({ children }) => {
   const [capsuleList, setCapsuleList] = useState([]);
   const [sortedByCategory, setSortedByCategory] = useState([]);
   const [newestFirst, setNewestFirst] = useState([]);
+  const [capsuleCount, setCapsuleCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,10 +33,13 @@ export const CapsuleListProvider = ({ children }) => {
         if (selectedFriend) {
           const capsules = await fetchThoughtCapsules(selectedFriend.id);
           setCapsuleList(capsules || []); // Set capsules or empty array if none
+          setCapsuleCount(capsules.length);
+          console.log(capsules.length);
           console.log("fetchData Capsule List context: ", capsules);
         } else {
           
           setCapsuleList([]);
+          setCapsuleCount(0);
         }
       } catch (error) {
         console.error('Error fetching capsule list:', error);
@@ -48,14 +52,16 @@ export const CapsuleListProvider = ({ children }) => {
   useEffect(() => {
     sortByCategory();
     sortNewestFirst();
+    updateCount();
   }, [capsuleList]);
 
 
   const removeCapsules = (capsuleIdsToRemove) => {
     setCapsuleList(prevCapsules => {
       return prevCapsules.filter(capsule => !capsuleIdsToRemove.includes(capsule.id));
-    });
-  };
+    }); 
+    console.log(capsuleCount);
+    }; 
 
   const updateCapsule = (updatedCapsule) => {
     setCapsuleList(prevCapsules => {
@@ -63,11 +69,16 @@ export const CapsuleListProvider = ({ children }) => {
         capsule.id === updatedCapsule.id ? updatedCapsule : capsule
       );
     });
+    setCapsuleCount(prevCount => prevCount + 1);
+  };
+
+  const updateCount = () => {
+    setCapsuleCount(capsuleList.length);
+    console.log('updated Capsule list count');
   };
 
   const sortByCategory = () => {
-    const sorted = [...capsuleList].sort((a, b) => {
-      // First, compare by category
+    const sorted = [...capsuleList].sort((a, b) => { 
       if (a.typedCategory < b.typedCategory) return -1;
       if (a.typedCategory > b.typedCategory) return 1;
   
@@ -86,6 +97,7 @@ export const CapsuleListProvider = ({ children }) => {
   return (
     <CapsuleListContext.Provider value={{ 
       capsuleList, 
+      capsuleCount,
       sortedByCategory,
       newestFirst,
       setCapsuleList, 

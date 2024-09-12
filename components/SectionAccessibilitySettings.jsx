@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import * as Notifications from 'expo-notifications';
+import * as SecureStore from 'expo-secure-store';
+import axios from 'axios';
 import { useAuthUser } from '../context/AuthUserContext';
 import { updateUserAccessibilitySettings } from '../api';
 import ToggleButton from '../components/ToggleButton';
@@ -14,7 +17,7 @@ const SectionAccessibilitySettings = () => {
   const [receiveNotifications, setReceiveNotifications] = useState(false);
   const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false); // Local state for screen reader
   const [manualTheme, setManualTheme] = useState(false);
-  const [manualDarkMode, setManualDarkMode ] = useState(false);
+  const [manualDarkMode, setManualDarkMode] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
@@ -24,7 +27,7 @@ const SectionAccessibilitySettings = () => {
       setSimplifyAppForFocus(userAppSettings.simplify_app_for_focus);
       setReceiveNotifications(userAppSettings.receive_notifications);
       setIsScreenReaderEnabled(userAppSettings.screen_reader); // Initialize local state with screen reader status
-      // Determine manualTheme based on manual_dark_mode
+
       if (userAppSettings.manual_dark_mode === null) {
         setManualTheme(false);
       } else {
@@ -57,7 +60,6 @@ const SectionAccessibilitySettings = () => {
     updateSetting({ large_text: newValue });
   };
 
-
   const toggleSimplifyAppForFocus = () => {
     const newValue = !simplifyAppForFocus;
     setSimplifyAppForFocus(newValue);
@@ -70,20 +72,18 @@ const SectionAccessibilitySettings = () => {
     updateSetting({ receive_notifications: newValue });
   };
 
-  // Sets manual_dark_mode field on backend to null again, but state to false
   const toggleManualTheme = () => {
     const newValue = !manualTheme;
     if (newValue === true) {
       updateSetting({ manual_dark_mode: false }); 
-
     };
     if (newValue === false) {
       updateSetting({ manual_dark_mode: null });
       setManualDarkMode(false);
-
     };
     setManualTheme(newValue); 
   };
+ 
 
   const toggleLightDark = () => {
     const newValue = !manualDarkMode;
@@ -111,6 +111,58 @@ const SectionAccessibilitySettings = () => {
       console.error('Error toggling screen reader:', error);
     }
   };
+
+  const getPushToken = async () => {
+    try {
+      const token = await SecureStore.getItemAsync('pushToken');
+      if (token) {
+        return token;
+      } else {
+        console.log('No push token found in SecureStore');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error retrieving push token:', error);
+      return null;
+    }
+  };
+  
+
+
+
+  const sendTestNotification = async () => {
+    const expoPushToken = await getPushToken();
+    if (!expoPushToken) {
+      console.log('No Expo push token available.');
+      return;
+    }
+  
+    const message = {
+      to: expoPushToken,
+      sound: 'default',
+      title: 'Test Notification',
+      body: 'This is a test notification sent from the client side!',
+      data: { extraData: 'Test data' },
+    };
+  
+    try {
+      console.log('Sending notification with message:', message);
+      const response = await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(message),
+      });
+      const responseJson = await response.json();
+      console.log('Test notification response:', responseJson);
+    } catch (error) {
+      console.error('Error sending test notification:', error);
+    }
+  };
+  
+
 
   return (
     <View style={styles.container}>
@@ -151,8 +203,9 @@ const SectionAccessibilitySettings = () => {
         <Text style={styles.label}>Screen Reader</Text>
         <ToggleButton value={isScreenReaderEnabled} onToggle={toggleScreenReader} />
       </View>
-      
-      {/* Alert message component */}
+
+      <Button title="Send Test Notification" onPress={sendTestNotification} />
+
       <AlertMicro
         isModalVisible={showAlert}
         toggleModal={() => setShowAlert(false)}

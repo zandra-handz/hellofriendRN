@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const PickerMenuOptions = ({
   options = [],
@@ -10,16 +10,18 @@ const PickerMenuOptions = ({
   buttonStyle,
   widthForHorizontal='80%',
   buttonTextStyle,  
-  useSvg = false, 
-  svgColor = 'black',
+  useSvg = false,  
   svgIcons = [], 
   labels = [], 
   labelPosition = 'below',  
 }) => {
+
+  const { themeStyles } = useGlobalStyle();
+
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
-        <Text style={[styles.containerText, styles.inlineText]}>
+        <Text style={[styles.containerText, themeStyles.genericText, styles.inlineText]}>
           {containerText}
         </Text>
         {options.length === 0 ? (
@@ -30,8 +32,9 @@ const PickerMenuOptions = ({
               <TouchableOpacity
                 key={index}
                 style={[
-                  styles.optionButton,
+                  styles.optionButton, themeStyles.genericIcon,
                   selectedOption === index && styles.selectedOptionButton,
+                  themeStyles.selectedIconBorder,
                   buttonStyle,
                 ]}
                 onPress={() => onSelectOption(index)}
@@ -43,11 +46,11 @@ const PickerMenuOptions = ({
                   {useSvg && svgIcons[index] ? (
                     <>
                       {labelPosition === 'beside' && labels[index] && (
-                        <Text style={styles.optionLabel}>{labels[index]}</Text>
+                        <Text style={[styles.optionLabel, themeStyles.genericText]}>{labels[index]}</Text>
                       )}
-                      {React.createElement(svgIcons[index], { width: 24, height: 24, color: svgColor })}
+                      {React.createElement(svgIcons[index], { width: 24, height: 24, color: themeStyles.genericIcon.color })}
                       {labelPosition === 'below' && labels[index] && (
-                        <Text style={styles.optionLabel}>{labels[index]}</Text>
+                        <Text style={[styles.optionLabel, themeStyles.genericText]}>{labels[index]}</Text>
                       )}
                     </>
                   ) : (
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedOptionButton: {
-    backgroundColor: '#d4edda',
+    borderWidth: 1, 
   },
   optionText: { 
     fontFamily: 'Poppins-Regular',

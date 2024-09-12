@@ -16,7 +16,7 @@ const TextAreaMoment = ({
   autoFocus, 
   width = '100%', 
   editMode = true,  
-  resetText = false,  // Add resetText prop
+  resetText = false,   
 }) => {
   const [textInput, setTextInput] = useState(initialText || '');
   
@@ -34,10 +34,10 @@ const TextAreaMoment = ({
   useEffect(() => {
     if (resetText) {
       console.log('reset text area text');
-      setTextInput(''); // Clear the text input when resetText is true
+      setTextInput(''); 
       setAutoFocus(true);
     }
-  }, [resetText]); // Trigger this effect when resetText changes
+  }, [resetText]);  
 
   const handleInputChange = (text) => {
     setTextInput(text);
@@ -51,8 +51,7 @@ const TextAreaMoment = ({
   const handleCloseModal = () => {
     setIsModalVisible(false);
   };
-
-  // Determine the style based on whether textInput is empty or not
+ 
   const dynamicInputStyle = textInput.length > 0 
     ? [styles.input, styles.inputActive] 
     : styles.input;

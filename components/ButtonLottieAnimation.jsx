@@ -3,8 +3,8 @@ import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 const ButtonLottieAnimation = ({
   onPress,
   label,

@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import BaseFriendViewImages from '../components/BaseFriendViewImages';
 import TogglerActionButton from '../components/TogglerActionButton';
 import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
+import { useImageList } from '../context/ImageListContext';
 import { useNavigation } from '@react-navigation/native';
+import { useAuthUser } from '../context/AuthUserContext';
 
 const ComposerFriendImages = ({
   onPress,
@@ -24,8 +25,11 @@ const ComposerFriendImages = ({
   headerFontFamily = 'Poppins-Bold',
   headerTextSize = 16, 
 }) => {
+  const { userAppSettings } = useAuthUser();
   const navigation = useNavigation();
   const { themeStyles } = useGlobalStyle();
+  const { imageCount } = useImageList();
+  const [ count, setCount ] = useState('');
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
 
   const navigateToImageScreen = () => {
@@ -33,13 +37,22 @@ const ComposerFriendImages = ({
     if (onPress) onPress();
   };
 
+  useEffect(() => {
+    if ( userAppSettings && userAppSettings.simplify_app_for_focus) {
+      setCount('');
+    } else { 
+      setCount(`(${imageCount})`);
+    } 
+  }, [userAppSettings.simplify_app_for_focus]);
+
+
   return (
     <View style={[styles.container, themeStyles.friendFocusSection, { borderRadius: buttonRadius }]}>
       <View style={[styles.containerInner, { borderRadius: buttonRadius }]}>
         {includeHeader && !headerInside && (
           <View style={[styles.headerContainer, { height: headerHeight }]}>
             <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-              {headerText}
+              {headerText} {count}
             </Text>
           </View>
         )}
@@ -48,7 +61,7 @@ const ComposerFriendImages = ({
             {includeHeader && headerInside && (
               <View style={[styles.headerContainer, themeStyles.friendFocusSection, { borderTopRightRadius: buttonRadius, height: headerHeight  }]}>
                 <Text style={[styles.headerText, themeStyles.friendFocusSectionText, { fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-                  {headerText}
+                  {headerText} {count}
                 </Text>
               </View>
             )} 

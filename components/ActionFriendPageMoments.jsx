@@ -38,7 +38,7 @@ const ActionFriendPageMoments = ({
 
   const navigation = useNavigation();
   const { friendColorTheme } = useSelectedFriend();
-  const { capsuleList } = useCapsuleList();
+  const { capsuleList, capsuleCount } = useCapsuleList();
   const [showSecondButton, setShowSecondButton] = useState(false);
  
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
@@ -72,7 +72,7 @@ const ActionFriendPageMoments = ({
             {includeHeader && headerInside && (
               <View style={[styles.headerContainer, themeStyles.friendFocusSection, { borderTopRightRadius: buttonRadius, height: headerHeight  }]}>
                 <Text style={[styles.headerText, themeStyles.friendFocusSectionText, { fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-                  {headerText}
+                  {headerText} ({capsuleCount})
                 </Text>
               </View>
             )} 

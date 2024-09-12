@@ -170,8 +170,17 @@ const lightThemeStyles = StyleSheet.create({
     genericTextBackground: {
         backgroundColor: 'white',
     },
+    genericTextBackgroundShadeTwo: {
+        backgroundColor: 'white',
+    },
     genericText: {
         color: 'black',
+    },
+    genericIcon: {
+        color: 'black',
+    },
+    selectedIconBorder: {
+        borderColor: 'darkgreen', 
     },
     subHeaderText: {
         color: 'black',
@@ -285,8 +294,17 @@ const darkThemeStyles = StyleSheet.create({
     genericTextBackground: {
         backgroundColor: 'black',
     },
+    genericTextBackgroundShadeTwo: {
+        backgroundColor: '#2B2B2B',
+    },
     genericText: {
         color: 'white',
+    },
+    genericIcon: {
+        color: 'white',
+    },
+    selectedIconBorder: {
+        borderColor: '#d4edda', 
     },
     subHeaderText: {
         color: 'white',

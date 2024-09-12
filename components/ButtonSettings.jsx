@@ -5,8 +5,7 @@ import SectionAccessibilitySettings from './SectionAccessibilitySettings';
 import SectionFriendSettings from './SectionFriendSettings';
 import SectionAccountSettings from './SectionAccountSettings';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import SettingsOutlineSvg from '../assets/svgs/settings-outline.svg';
-import GearsTwoSvg from '../assets/svgs/gears-two.svg';
+
 import GearsTwoBiggerCircleSvg from '../assets/svgs/gears-two-bigger-circle.svg';
  
 const ButtonSettings = ({label=null}) => {
@@ -54,7 +53,7 @@ const ButtonSettings = ({label=null}) => {
 
 const styles = StyleSheet.create({
   section: {
-    flex: 1, // Divide space equally
+    flex: 1, 
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
