@@ -116,6 +116,7 @@ const SectionAccessibilitySettings = () => {
     try {
       const token = await SecureStore.getItemAsync('pushToken');
       if (token) {
+        
         return token;
       } else {
         console.log('No push token found in SecureStore');
@@ -127,7 +128,7 @@ const SectionAccessibilitySettings = () => {
     }
   };
   
-
+ 
 
 
   const sendTestNotification = async () => {
@@ -156,7 +157,7 @@ const SectionAccessibilitySettings = () => {
         body: JSON.stringify(message),
       });
       const responseJson = await response.json();
-      console.log('Test notification response:', responseJson);
+      console.log('Test notification response:', responseJson); // Log the response
     } catch (error) {
       console.error('Error sending test notification:', error);
     }

@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import TopLevelNavigationHandler from './TopLevelNavigationHandler'; // Adjust import path if necessary
-
+import { Alert } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
@@ -14,6 +14,7 @@ import { ImageListProvider } from './context/ImageListContext';
 import { SelectedFriendProvider } from './context/SelectedFriendContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font'; 
+import * as Notifications from 'expo-notifications'; 
 import { useGlobalStyle } from './context/GlobalStyleContext';
 
  
@@ -45,6 +46,17 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   useEffect(() => {
     loadFonts();
+
+
+      const notificationSubscription = Notifications.addNotificationReceivedListener(notification => {
+        console.log('Notification received in foreground:', notification);
+        Alert.alert(
+          notification.request.content.title,
+          notification.request.content.body
+        );
+      });
+        // Clean up subscription on unmount
+        return () => notificationSubscription.remove();
   }, []);
 
   return (

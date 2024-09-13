@@ -180,5 +180,13 @@ npm install expo-fast-image
 
 npm install expo-image
 
+// For expo notifications
 npm install expo-notifications
+
+npm install expo-constants
+npm install expo-device
+
+npm install firebase
+
+
 

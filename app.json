@@ -29,6 +29,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "notification": { 
+      "icon": "./assets/shapes/lizard.png",
+      "color": "#ffffff",
+      "androidMode": "default",
+      "androidCollapsedTitle": "New Notification"
+    },
     "assetBundlePatterns": [
       "**/*"
     ],

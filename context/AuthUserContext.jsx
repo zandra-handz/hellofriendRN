@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import * as Notifications from 'expo-notifications';
-import { signup, signin, signout, refreshToken, getCurrentUser } from '../api';
+import { signup, signin, signout, refreshToken, getCurrentUser, updateUserAccessibilitySettings } from '../api';
 import jwtDecode from 'jwt-decode';
 
 const TOKEN_KEY = 'my-jwt';
@@ -74,14 +74,16 @@ export const AuthUserProvider = ({ children }) => {
                 console.log('Expo Push Token:', token);
     
                 await SecureStore.setItemAsync('pushToken', token);
-    
+                await updateUserAccessibilitySettings(authUserState.user.id, { expo_push_token: token});
+
+
                 await Notifications.scheduleNotificationAsync({
                     content: {
                         title: "Notifications Enabled",
                         body: "Notifications for hellofriend are now enabled!",
                         sound: 'default',
                     },
-                    trigger: null, // Trigger immediately
+                    trigger: null,  
                 });
     
                 return token;
@@ -97,15 +99,34 @@ export const AuthUserProvider = ({ children }) => {
         }
     };
     
+    const removeNotificationPermissions = async () => {
+        try {
+            // Delete the push token stored in SecureStore
+            await SecureStore.deleteItemAsync('pushToken');
+            await updateUserAccessibilitySettings(authUserState.user.id, {expo_push_token: null});
+
+    
+            // Expo does not provide a direct method to revoke notifications permissions,
+            // so you have to handle the revocation through your app logic.
+            // Ensure notifications are not sent by your server or backend.
+    
+            console.log('Notification permissions removed and token cleared.');
+        } catch (error) {
+            console.error('Failed to remove notification permissions:', error);
+        }
+    };
     
     useEffect(() => {
-        if (userAppSettings) {
-            // Only call registerForNotifications if notifications setting is true
+        if (userAppSettings) { 
             if (userAppSettings.receive_notifications) {
                 registerForNotifications();
+            } else {
+                removeNotificationPermissions();
             }
         }
     }, [userAppSettings]);
+
+    
  
 
     const handleSignin = async (username, password) => {
