@@ -8,7 +8,7 @@ import ToggleButton from '../components/ToggleButton';
 import AlertMicro from '../components/AlertMicro'; 
 
 const SectionAccessibilitySettings = () => {
-  const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
+  const { authUserState, userAppSettings, updateUserSettings, registerForNotifications, removeNotificationPermissions } = useAuthUser();
   const [highContrastMode, setHighContrastMode] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [simplifyAppForFocus, setSimplifyAppForFocus] = useState(false);
@@ -46,6 +46,22 @@ const SectionAccessibilitySettings = () => {
     }
   };
 
+  const updateNotificationSettingAndToken = async (setting) => {
+    try {
+      const newSettings = { ...userAppSettings, ...setting };
+      await updateUserAccessibilitySettings(authUserState.user.id, setting);
+      updateUserSettings(newSettings);
+      console.log('User settings updated successfully');
+    } catch (error) {
+      console.error('Error updating user settings:', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log('hi! i am a test');
+
+  }, [userAppSettings.receive_notifications]);
+
   const toggleHighContrastMode = () => {
     const newValue = !highContrastMode;
     setHighContrastMode(newValue);
@@ -66,8 +82,27 @@ const SectionAccessibilitySettings = () => {
 
   const toggleReceiveNotifications = () => {
     const newValue = !receiveNotifications;
-    setReceiveNotifications(newValue);
-    updateSetting({ receive_notifications: newValue });
+    if (newValue) {
+      console.log('Turning notifications on from setting menu. Toggled to: ', newValue);
+      try {
+        registerForNotifications();
+        setReceiveNotifications(newValue);
+
+      } catch (error) {
+        console.log('Error turning notifications on', error);
+      };
+
+    } else {
+      console.log('Turning notifications off from settings menu. Toggled to: ', newValue);
+      try {  
+      removeNotificationPermissions();
+      setReceiveNotifications(newValue);
+      } catch (error) {
+        console.log('Error turning notifications off: ', error);
+      };
+
+    }; 
+    //updateSetting({ receive_notifications: newValue });
   };
 
   const toggleManualTheme = () => {

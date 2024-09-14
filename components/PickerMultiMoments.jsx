@@ -23,7 +23,7 @@ const PickerMultiMoments = ({
   const [selectionPercentage, setSelectionPercentage] = useState(0); // State for selection percentage
 
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { capsuleList } = useCapsuleList();
+  const { capsuleList, preAddedTracker } = useCapsuleList();
 
   useEffect(() => {
     if (capsuleList.length > 0) {
@@ -31,12 +31,21 @@ const PickerMultiMoments = ({
       const selectedCount = selectedMoments.length;
       const percentage = calculatePercentage(selectedCount, totalCount);
       setSelectionPercentage(percentage);
+      
     }
     if (selectedFriend) {
       setSelectedCategory(null);
       fetchCategoryLimitData();
     }
   }, [selectedFriend, friendDashboardData, capsuleList, selectedMoments]);
+
+  useEffect(() => { 
+    console.log('Use effect to set moments when preAddedTracker updates');
+    const initialSelectedMoments = capsuleList.filter(capsule => preAddedTracker.includes(capsule.id));
+    setSelectedMoments(initialSelectedMoments);
+
+  }, [preAddedTracker]);
+
 
   const fetchCategoryLimitData = async () => {
     try {

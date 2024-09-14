@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { View, StyleSheet, Dimensions, Text, FlatList, Animated } from 'react-native';
 import ButtonMomentCategorySmall from '../components/ButtonMomentCategorySmall';
 import ButtonMoment from '../components/ButtonMoment'; 
@@ -6,20 +6,18 @@ import ButtonCheckboxControl from '../components/ButtonCheckboxControl';
 import ItemViewMoment from '../components/ItemViewMoment';
 import { CheckBox } from 'react-native-elements';
 import { useCapsuleList } from '../context/CapsuleListContext';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-const windowWidth = Dimensions.get('window').width;
+import { updateThoughtCapsules } from '../api';
+ 
 const footerHeight = 800; // Set to a fixed height for footer
 
 const ItemMomentMultiPlain = ({
-  passInData = false,
-  svgColor = 'gray',
-  includeCategoryTitle = false,
-  viewSortedList = true,
-}) => {
-  const { themeStyles } = useGlobalStyle();
-  const { capsuleList } = useCapsuleList();
+  passInData = false, 
+  includeCategoryTitle = false, 
+}) => { 
+  const { capsuleList, sortedByCategory, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
+  const { selectedFriend } = useSelectedFriend();
   const { calculatedThemeColors } = useSelectedFriend();
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -32,7 +30,17 @@ const ItemMomentMultiPlain = ({
   const timerRef = useRef(null);
 
   // Use capsuleList as moments
-  const moments = capsuleList;
+  const moments = sortedByCategory;
+
+  useEffect(() => { 
+    console.log('Use effect to set moments when preAddedTracker updates');
+    const initialSelectedMoments = capsuleList.filter(capsule => preAddedTracker.includes(capsule.id));
+    setSelectedMoments(initialSelectedMoments);
+
+  }, [preAddedTracker]);
+
+
+ 
 
   const categoryStartIndices = useMemo(() => {
     let index = 0;
@@ -102,11 +110,54 @@ const ItemMomentMultiPlain = ({
   const handleToggleCheckboxes = () => {
     setShowCheckboxes(prev => !prev);
   };
+ 
+
+  const handlePreSave = async () => { 
+    const selectedIds = new Set(selectedMoments.map(moment => moment.id));
+ 
+    const capsulesToUpdate = selectedMoments.map(moment => ({
+        id: moment.id,
+        fieldsToUpdate: { pre_added_to_hello: true }
+    })); 
+    const idsToUpdateFalse = preAddedTracker.filter(id => !selectedIds.has(id));
+    const idsToUpdateTrue = selectedMoments.map(moment => moment.id);
+    
+    const capsulesToUpdateFalse = idsToUpdateFalse.map(id => ({
+        id: id,
+        fieldsToUpdate: { pre_added_to_hello: false }
+    }));
+ 
+    const allCapsulesToUpdate = [...capsulesToUpdate, ...capsulesToUpdateFalse];
+   
+    console.log('Payload to update moments: ', allCapsulesToUpdate);
+    try { 
+        const updatedData = await updateThoughtCapsules(selectedFriend.id, allCapsulesToUpdate);
+
+        // Optionally, handle the response data (e.g., update state or UI)
+        console.log('Updated thought capsules:', updatedData);
+        updatePreAdded(idsToUpdateTrue, idsToUpdateFalse);
+    
+        setShowCheckboxes(prev => !prev);
+    } catch (error) {
+        console.error('Error during pre-save:', error);
+    }
+};
+ 
+
+  const updatePreAddTracker = (promote, demote) => {
+    console.log('to promote!', promote);
+    console.log('to demote', demote );
+
+    updatePreAdded(promote, demote);
+    
+  };
+
 
   const toggleSelectMoment = (moment) => {
     const updatedSelectedMoments = selectedMoments.includes(moment)
       ? selectedMoments.filter((m) => m !== moment)
       : [...selectedMoments, moment];
+      console.log('updating selected moments!');
     setSelectedMoments(updatedSelectedMoments);
   };
 
@@ -148,6 +199,8 @@ const ItemMomentMultiPlain = ({
       <ButtonCheckboxControl 
         onToggleCheckboxes={handleToggleCheckboxes}
         showCheckboxes={showCheckboxes} 
+        selectedMoments={selectedMoments}
+        onSave={handlePreSave}
       />
 
       <View style={{ width: '100%', marginBottom: 20 }}>

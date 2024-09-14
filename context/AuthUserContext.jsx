@@ -139,7 +139,7 @@ export const AuthUserProvider = ({ children }) => {
                 removeNotificationPermissions();
             }
         }
-    }, [userAppSettings]);
+    }, []);
 
     
  
@@ -398,6 +398,8 @@ export const AuthUserProvider = ({ children }) => {
         onSignOut: handleSignout,
         fetchUser: fetchUser,
         reInitialize: reInitialize,
+        registerForNotifications: registerForNotifications,
+        removeNotificationPermissions: removeNotificationPermissions,
         authUserState,
         userAppSettings,
         updateUserSettings,

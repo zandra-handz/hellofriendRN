@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import HelloFriendFooter from '../components/HelloFriendFooter';
+ 
 import { LinearGradient } from 'expo-linear-gradient'; 
 
 import  { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -12,8 +12,6 @@ const ScreenMoments = ({ route, navigation }) => {
     const { themeStyles, gradientColors } = useGlobalStyle();
     
     const {calculatedThemeColors} = useSelectedFriend();
-    
-    const { darkColor, lightColor } = gradientColors;
     const { capsuleList } = useCapsuleList();
     const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
 

@@ -17,7 +17,7 @@ import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 const ContentAddMoment = () => {
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { capsuleList, setCapsuleList } = useCapsuleList();
+  const { capsuleList, setCapsuleList, sortByCategory } = useCapsuleList();
   const [ momentEditMode, setMomentEditMode] = useState(false);
   const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
   const [textInput, setTextInput] = useState('');
@@ -91,10 +91,12 @@ const ContentAddMoment = () => {
           id: response.id,
           typedCategory: response.typed_category,
           capsule: response.capsule,
+          created: response.created_on,
+          
         };
    
         setCapsuleList(prevCapsules => [newCapsule, ...prevCapsules]);
-   
+        
         resetTextInput();
         setSelectedCategory('');
         setCategoryInput('');

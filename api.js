@@ -436,18 +436,19 @@ export const fetchUpcomingHelloes = async () => {
 export const fetchThoughtCapsules = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/thoughtcapsules/`);
-        if (response) {
-            const capsuleData = response.data;
-            const formattedCapsuleList = capsuleData.map(capsule => ({
+        if (response && response.data) {
+            // Process the response data
+            const capsules = response.data.map(capsule => ({
                 id: capsule.id,
-                typedCategory: capsule.typed_category,
+                typedCategory: capsule.typed_category || 'Uncategorized',
                 capsule: capsule.capsule,
                 created: capsule.created_on,
+                preAdded: capsule.pre_added_to_hello,
             }));
-            return formattedCapsuleList;
+            return capsules;
         } else {
             console.log("fetchThoughtCapsules: no capsules added yet");
-            return;
+            return []; // Return an empty array if no capsules
         }
     } catch (error) {
         console.error('Error fetching thought capsules: ', error);
@@ -529,6 +530,35 @@ export const deleteThoughtCapsule = async (friendId, capsuleId) => {
         return response.data;
     } catch (error) {
         console.error('Error deleting thought capsule:', error);
+        throw error;
+    }
+};
+
+export const updateThoughtCapsule = async (friendId, capsuleId, capsuleData) => {
+    try {
+        const response = await axios.patch(`/friends/${friendId}/thoughtcapsules/${capsuleId}/`, capsuleData);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating thought capsule:', error);
+        throw error;
+    }
+};
+
+export const updateThoughtCapsules = async (friendId, capsulesAndChanges) => {
+    try {
+        
+        const capsuleData = { 
+                capsules: capsulesAndChanges.map(capsule => ({
+                id: capsule.id,
+                fields_to_update: capsule.fieldsToUpdate
+        })) };
+
+        console.log('updateThoughtCapsules payload data: ', capsuleData);
+
+        const response = await axios.patch(`/friends/${friendId}/thoughtcapsules/batch-update/`, capsuleData);
+        return response.data;
+    } catch (error) {
+        console.error('Error batch-updating thought capsules:', error);
         throw error;
     }
 };
