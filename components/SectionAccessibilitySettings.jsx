@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import * as Notifications from 'expo-notifications';
-import * as SecureStore from 'expo-secure-store';
-import axios from 'axios';
+import * as SecureStore from 'expo-secure-store'; 
 import { useAuthUser } from '../context/AuthUserContext';
 import { updateUserAccessibilitySettings } from '../api';
 import ToggleButton from '../components/ToggleButton';
-import AlertMicro from '../components/AlertMicro'; // Assuming AlertMicro component is located here
+import AlertMicro from '../components/AlertMicro'; 
 
 const SectionAccessibilitySettings = () => {
   const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
@@ -131,38 +129,6 @@ const SectionAccessibilitySettings = () => {
  
 
 
-  const sendTestNotification = async () => {
-    const expoPushToken = await getPushToken();
-    if (!expoPushToken) {
-      console.log('No Expo push token available.');
-      return;
-    }
-  
-    const message = {
-      to: expoPushToken,
-      sound: 'default',
-      title: 'Test Notification',
-      body: 'This is a test notification sent from the client side!',
-      data: { extraData: 'Test data' },
-    };
-  
-    try {
-      console.log('Sending notification with message:', message);
-      const response = await fetch('https://exp.host/--/api/v2/push/send', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(message),
-      });
-      const responseJson = await response.json();
-      console.log('Test notification response:', responseJson); // Log the response
-    } catch (error) {
-      console.error('Error sending test notification:', error);
-    }
-  };
-  
 
 
   return (
@@ -204,9 +170,7 @@ const SectionAccessibilitySettings = () => {
         <Text style={styles.label}>Screen Reader</Text>
         <ToggleButton value={isScreenReaderEnabled} onToggle={toggleScreenReader} />
       </View>
-
-      <Button title="Send Test Notification" onPress={sendTestNotification} />
-
+ 
       <AlertMicro
         isModalVisible={showAlert}
         toggleModal={() => setShowAlert(false)}

@@ -50,6 +50,7 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
   SourceSecondSvg: SourceSecondSvg,
 }) => { 
   const globalStyles = useGlobalStyle();
+  const { themeStyles } = useGlobalStyle()
   const { width } = Dimensions.get('window'); 
   const mainViewVisible = true;
  
@@ -223,7 +224,7 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
               </TouchableOpacity>
             </View>
             {satellites && (
-              <View style={[styles.satelliteSection, { marginLeft: satelliteSectionMarginLeft, width: satelliteSectionWidth, height: buttonHeight, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
+              <View style={[styles.satelliteSection, themeStyles.genericTextBackgroundShadeTwo, { marginLeft: satelliteSectionMarginLeft, width: satelliteSectionWidth, height: buttonHeight, flexDirection: satellitesOrientation === 'horizontal' ? 'row' : 'column' }]}>
                 {renderSatellites()}
               </View>
             )}
@@ -254,8 +255,7 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     paddingLeft: 0,  
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'darkgrey',
+    justifyContent: 'center', 
   },
   satelliteButton: { 
     alignItems: 'center',  

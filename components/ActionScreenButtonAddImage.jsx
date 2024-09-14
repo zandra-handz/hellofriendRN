@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ActionScreenButtonAddImage = ({ onPress }) => {
 

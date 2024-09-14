@@ -63,7 +63,7 @@ const BaseFriendViewLocations = ({
             <View style={styles.svgContainer}>
               <PushPinSolidSvg width={20} height={20} style={themeStyles.friendFocusSectionIcon} />
             </View>
-            <ItemLocationFavesHorizontal containerWidth={296} width={31} height={31} style={themeStyles.friendFocusSectionIcon} />
+            <ItemLocationFavesHorizontal containerWidth={296} width={31} height={31} />
           </View>
         </View>
       </View>

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
-import LocationRoundOutlineSvg from '../assets/svgs/location-round-outline.svg';
-import LocationFavoriteSvg from '../assets/svgs/location-favorite.svg';
+import { FlashList } from '@shopify/flash-list'; 
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 
 import ItemViewLocation from '../components/ItemViewLocation';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height = 160 , style }) => {
+const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height = 160 }) => {
+    const { themeStyles } = useGlobalStyle();
     const { friendDashboardData } = useSelectedFriend();
     const { locationList, faveLocationList, populateFaveLocationsList } = useLocationList();
     const [isFaveLocationReady, setIsFaveLocationReady] = useState(false);
@@ -49,7 +49,7 @@ const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height =
                     <LocationHeartSolidSvg 
                         width={width * 0.8} 
                         height={height * 0.8}  
-                        style={style? style : null}
+                        style={themeStyles.friendFocusSectionIcon}
                         /> 
                 </View>
                 </TouchableOpacity>

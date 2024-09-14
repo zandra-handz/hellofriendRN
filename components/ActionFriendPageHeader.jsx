@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Animated  } from 'react-native';
 import ButtonLottieAnimationTwoSectionsSvg from '../components/ButtonLottieAnimationTwoSectionsSvg';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import AlertPanelBottom from './AlertPanelBottom';
 import { useNavigation } from '@react-navigation/native';
@@ -16,6 +17,7 @@ const ActionFriendPageHeader = ({
   Deselector=false }) => {
 
   const navigation = useNavigation();
+  const { themeStyles } = useGlobalStyle();
 
   const { selectedFriend, friendDashboardData, friendColorTheme, calculatedThemeColors, loadingNewFriend, setFriend } = useSelectedFriend();
   const [showProfile, setShowProfile] = useState(false); 
@@ -65,7 +67,7 @@ const ActionFriendPageHeader = ({
       {friendDashboardData && (
       <Animated.View style={{ flex: 1 }}>
         <ButtonLottieAnimationTwoSectionsSvg
-           onPress={Deselector ? handlePress : null} 
+          onPress={Deselector ? handlePress : null} 
           buttonHeight={Deselector ? 140 : buttonHeight}
           borderRadius={headerRadius}
           borderTopRadius={Deselector ? 30 : headerTopRadius}
@@ -89,8 +91,8 @@ const ActionFriendPageHeader = ({
           animationMargin={-64}
           shapePosition="right"
           showGradient={true}
-          lightColor={Deselector ? 'black' : 'transparent'}
-          darkColor={Deselector ? 'black' : 'transparent'}
+          lightColor={Deselector ?themeStyles.genericTextBackground.backgroundColor : 'transparent'}
+          darkColor={Deselector ? themeStyles.genericTextBackground.backgroundColor : 'transparent'}
           SourceSvg={null}
           SourceSecondSvg={LizardSvg}
           svgColor={calculatedThemeColors.darkColor}

@@ -9,6 +9,21 @@ import jwtDecode from 'jwt-decode';
 const TOKEN_KEY = 'my-jwt';
 
 const AuthUserContext = createContext({});
+ 
+
+ //async function clearSecureStore() {
+   // await SecureStore.deleteItemAsync('my-jwt');
+   // await SecureStore.deleteItemAsync('tokenExpiry');
+   // await SecureStore.deleteItemAsync('refreshToken');
+   // await SecureStore.deleteItemAsync('pushToken');
+   // Replace 'my-jwt' with your actual key
+   //this only partially worked and then i ran
+    // Remove-Item -Recurse -Force .\node_modules
+    // npm install
+
+// }
+
+// clearSecureStore().catch(console.error);
 
 export const useAuthUser = () => useContext(AuthUserContext);
 

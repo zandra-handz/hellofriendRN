@@ -66,7 +66,7 @@ const ScreenFriendFocus = () => {
               <ComposerFriendLocations 
                 topIconSize={topIconSize} 
                 bottomIconSize={bottomIconSize} 
-                buttonHeight={72} 
+                buttonHeight={74} 
                 buttonRadius={radius} 
                 inactiveIconColor={inactiveIconColor} 
                 oneBackgroundColor={oneBackgroundColor}
