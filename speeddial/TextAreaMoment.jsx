@@ -2,24 +2,23 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 
 import MaximizeOutlineSvg from '../assets/svgs/maximize-outline.svg';  
-
-import ThoughtBalloonLightBlueSvg from '../assets/svgs/thought-balloon-light-blue.svg';
+import ThoughtBubbleOutlineEditedSvg from '../assets/svgs/thought-bubble-outline-edited.svg'; // Import the SVG
 
 import ModalMomentFocus from '../components/ModalMomentFocus'; // Import the new component
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const TextAreaMoment = ({ 
   onInputChange, 
   initialText, 
-  placeholderText, 
-  maxButtonColor='black', 
+  placeholderText,  
   autoFocus, 
   width = '100%', 
   editMode = true,  
   resetText = false,   
 }) => {
   const [textInput, setTextInput] = useState(initialText || '');
-  
+  const { calculatedThemeColors } = useSelectedFriend();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const textareaRef = useRef();
   const [resetAutoFocus, setAutoFocus] = useState(false);
@@ -56,29 +55,29 @@ const TextAreaMoment = ({
     ? [styles.input, styles.inputActive] 
     : styles.input;
 
-  return (
+  return ( 
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 140 : 40} // Adjust this value as needed
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 140 : 40}  
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.inner}>
-          <View style={styles.backgroundSvgContainer}>
-            <ThoughtBalloonLightBlueSvg color='lightgray' height={410} width={410} />
+        <View style={styles.inner}> 
+          <View style={{width: '100%', flex: 1}}>
+            <ThoughtBubbleOutlineEditedSvg color={themeStyles.genericTextBackgroundShadeTwo.backgroundColor} width={420} height={500} />
           </View>
           {editMode ? (
             <TextInput
-              style={[dynamicInputStyle, { width: width }]}
+              style={[dynamicInputStyle, themeStyles.genericText, { width: width }]}
               multiline={true}
               value={textInput}
               onChangeText={handleInputChange}
-              placeholder={placeholderText}
+              placeholder={placeholderText} 
               ref={textareaRef}
             />
           ) : (
             <Text
-              style={[styles.input, { width: width }]}
+              style={[styles.input, themeStyles.genericText, { width: width }]}
               numberOfLines={8}
             >
               {textInput || placeholderText}
@@ -86,7 +85,7 @@ const TextAreaMoment = ({
           )}
           {editMode && (
             <TouchableOpacity onPress={handleOpenModal} style={styles.maxButtonContainer}>
-              <MaximizeOutlineSvg height={30} width={30} color={maxButtonColor} />
+              <MaximizeOutlineSvg height={30} width={30} color={calculatedThemeColors.darkColor} />
             </TouchableOpacity>
           )}
         </View>
@@ -99,29 +98,23 @@ const TextAreaMoment = ({
         handleInputChange={handleInputChange}
         placeholderText={placeholderText}
       />
-    </KeyboardAvoidingView>
+    </KeyboardAvoidingView> 
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: {   
+    
   },
-  inner: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingBottom: 40, // Increased padding to ensure space above the keyboard
-  },
-  backgroundSvgContainer: {
-    width: '100%',
-    marginTop: 90,
-    marginLeft: 14,
-  },
+  inner: {       
+    height: 400,  
+    justifyContent: 'center',  
+    }, 
   input: {
     position: 'absolute',
     zIndex: 2,
-    top: 48,
-    left: 84,  
+    top: 80,
+    left: 38,  
     right: 14, 
     backgroundColor: 'transparent',
     borderRadius: 20,
@@ -129,18 +122,16 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     borderWidth: 0,
     fontFamily: 'Poppins-Regular',
-    fontSize: 16,
-    color: 'black',
-    height: '76%',
+    fontSize: 16, 
+    height: '36%',
     textAlignVertical: 'top',  
     overflow: 'hidden',  
-    maxWidth: '60%',  
+    maxWidth: '76%',  
   },
   inputActive: {
     zIndex: 1,
     fontFamily: 'Poppins-Regular',
-    fontSize: 16,
-    color: 'black',
+    fontSize: 16, 
   },
   maxButtonContainer: {
     position: 'absolute',

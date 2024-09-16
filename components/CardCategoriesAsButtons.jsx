@@ -3,10 +3,13 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Button } f
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonSingleInput from '../components/ButtonSingleInput';
+import  { useGlobalStyle } from '../context/GlobalStyleContext';
+
 
 const DOUBLE_PRESS_DELAY = 300; // Time delay to detect double press
 
 const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, showInModal = true }) => {
+  const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
@@ -154,7 +157,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
       <View style={styles.categoriesContainer}>
         {showAllCategories && (
           <TouchableOpacity
@@ -235,17 +238,18 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
+  container: { 
     width: '100%', 
-    borderRadius: 8,
-    padding: 0, 
+    borderRadius: 10,
+    padding: 0,
+    borderWidth: 1, 
+    padding: 10,
   },
   categoriesContainer: {
     flexDirection: 'row',
     width: '100%',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'space-around', 
     marginBottom: 10, 
   },
   categoryButton: {

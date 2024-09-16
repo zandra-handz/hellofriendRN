@@ -171,7 +171,7 @@ const lightThemeStyles = StyleSheet.create({
         backgroundColor: 'white',
     },
     genericTextBackgroundShadeTwo: {
-        backgroundColor: 'white',
+        backgroundColor: '#ccc',
     },
     genericText: {
         color: 'black',
@@ -189,9 +189,14 @@ const lightThemeStyles = StyleSheet.create({
     input: {
         color: 'black',
         borderWidth: 1,
+        borderRadius: 20,
+        padding: 10,
+        width: '100%',
         borderColor: 'lightgray',
         backgroundColor: 'white',
         placeholderTextColor: 'lightgray',
+        fontFamily: 'Poppins-Regular',
+        fontSize: 16,
     },
     borderColor: {
         color: 'white',
@@ -319,7 +324,13 @@ const darkThemeStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'white',
         backgroundColor: 'black',
-        placeholderTextColor: 'white',
+        placeholderTextColor: 'white', 
+        borderWidth: 1,
+        borderRadius: 20,
+        padding: 10,
+        width: '100%', 
+        fontFamily: 'Poppins-Regular',
+        fontSize: 16,
     },
     borderColor: {
         color: 'black',

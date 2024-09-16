@@ -5,7 +5,7 @@ import AlertSingleInput from './AlertSingleInput'; // Adjust the import path as 
 
 const ButtonSingleInput = ({ title = '', onInputValueChange }) => {
   const [isModalVisible, setModalVisible] = useState(false);
-
+  
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -20,7 +20,7 @@ const ButtonSingleInput = ({ title = '', onInputValueChange }) => {
 
   const handleCancel = () => {
     console.log('Modal canceled');
-    toggleModal(); // Close the modal
+    toggleModal();  
   };
 
   return (
@@ -30,7 +30,7 @@ const ButtonSingleInput = ({ title = '', onInputValueChange }) => {
           onPress={toggleModal} 
           style={[styles.editButton, { width: title ? 'auto' : 40 }]}
         >
-          {/* Render Text only if title is not an empty string */}
+       
           {title.length > 0 ? (
             <Text style={styles.buttonText}>{title}</Text>
           ) : (
@@ -43,11 +43,12 @@ const ButtonSingleInput = ({ title = '', onInputValueChange }) => {
           toggleModal={toggleModal}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
-          questionText="Please enter your input:"
+          questionText="Enter new category:"
           confirmText="Submit"
           cancelText="Cancel"
           onInputChange={(value) => console.log('Input value changed:', value)} // Optional: Handle input change if needed
-        />
+          maxLength={50} //max length of Category model on backend as of 9/15/2024
+       />
       </View>
     </>
   );

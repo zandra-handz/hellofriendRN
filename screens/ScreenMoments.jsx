@@ -3,14 +3,13 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
- 
+
 import { LinearGradient } from 'expo-linear-gradient'; 
 
 import  { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const ScreenMoments = ({ route, navigation }) => {
-    const { themeStyles, gradientColors } = useGlobalStyle();
-    
+    const { themeStyles, gradientColors } = useGlobalStyle(); 
     const {calculatedThemeColors} = useSelectedFriend();
     const { capsuleList } = useCapsuleList();
     const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);

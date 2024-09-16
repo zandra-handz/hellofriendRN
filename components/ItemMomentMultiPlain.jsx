@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
-import { View, StyleSheet, Dimensions, Text, FlatList, Animated } from 'react-native';
+import { View, StyleSheet, Text, FlatList, Animated } from 'react-native';
 import ButtonMomentCategorySmall from '../components/ButtonMomentCategorySmall';
 import ButtonMoment from '../components/ButtonMoment'; 
 import ButtonCheckboxControl from '../components/ButtonCheckboxControl';
@@ -8,6 +8,7 @@ import { CheckBox } from 'react-native-elements';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { updateThoughtCapsules } from '../api';
  
 const footerHeight = 800; // Set to a fixed height for footer
@@ -16,6 +17,7 @@ const ItemMomentMultiPlain = ({
   passInData = false, 
   includeCategoryTitle = false, 
 }) => { 
+  const { themeStyles } = useGlobalStyle();
   const { capsuleList, sortedByCategory, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
   const { calculatedThemeColors } = useSelectedFriend();
@@ -28,8 +30,7 @@ const ItemMomentMultiPlain = ({
   const categoryFlatListRef = useRef(null);
   const [categoryButtonPressed, setCategoryButtonPressed] = useState(false);
   const timerRef = useRef(null);
-
-  // Use capsuleList as moments
+ 
   const moments = sortedByCategory;
 
   useEffect(() => { 
@@ -38,8 +39,6 @@ const ItemMomentMultiPlain = ({
     setSelectedMoments(initialSelectedMoments);
 
   }, [preAddedTracker]);
-
-
  
 
   const categoryStartIndices = useMemo(() => {
@@ -142,16 +141,7 @@ const ItemMomentMultiPlain = ({
         console.error('Error during pre-save:', error);
     }
 };
- 
-
-  const updatePreAddTracker = (promote, demote) => {
-    console.log('to promote!', promote);
-    console.log('to demote', demote );
-
-    updatePreAdded(promote, demote);
-    
-  };
-
+  
 
   const toggleSelectMoment = (moment) => {
     const updatedSelectedMoments = selectedMoments.includes(moment)
@@ -174,6 +164,8 @@ const ItemMomentMultiPlain = ({
             onPress={() => toggleSelectMoment(moment)}
             containerStyle={styles.checkboxContainer}
             textStyle={styles.checkboxText}
+            checkedColor={themeStyles.genericText.color} // Set checked color here
+            uncheckedColor={calculatedThemeColors.darkColor} 
           />
         )}
         <Animated.View style={[styles.momentContent, !isHighlighted && styles.fadedOut]}>
@@ -201,6 +193,7 @@ const ItemMomentMultiPlain = ({
         showCheckboxes={showCheckboxes} 
         selectedMoments={selectedMoments}
         onSave={handlePreSave}
+        buttonColor={calculatedThemeColors.lightColor}
       />
 
       <View style={{ width: '100%', marginBottom: 20 }}>

@@ -17,8 +17,8 @@ export const SelectedFriendProvider = ({ children }) => {
     darkColor: null,
   });
   const [calculatedThemeColors, setCalculatedThemeColors] = useState({
-    lightColor: 'white',
-    darkColor: 'gray',
+    lightColor: '#a0f143',
+    darkColor: '#4caf50',
   });
   const [loadingNewFriend, setLoadingNewFriend] = useState(false);
 
@@ -55,6 +55,7 @@ export const SelectedFriendProvider = ({ children }) => {
     if (selectedFriend) {
       fetchFriendDashboardData(selectedFriend.id);
     } else {
+      setFriendColorTheme(null);
       setFriendDashboardData(null);
     }
   }, [selectedFriend]);

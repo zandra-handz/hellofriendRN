@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const ButtonBottomActionBase = ({ 
   onPress,
@@ -36,8 +37,9 @@ const ButtonBottomActionBase = ({
   shapeLabelPositionRight = '93%',
   disabled = false // Add the disabled prop
 }) => { 
-  const globalStyles = useGlobalStyle(); // Get the global styles
-
+  const globalStyles = useGlobalStyle();  
+  const { themeStyles } = useGlobalStyle();
+  const { calculatedThemeColors } = useSelectedFriend();
   const getShapeStyle = () => {
     switch (shapePosition) {
       case 'left':
@@ -91,7 +93,7 @@ const ButtonBottomActionBase = ({
     >
       {!disabled && showGradient && (
         <LinearGradient
-          colors={[darkColor, lightColor]}
+          colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
           start={{ x: 0, y: 0 }}
           end={direction}
           style={{
@@ -103,6 +105,7 @@ const ButtonBottomActionBase = ({
         <ShapeSvg
           width={shapeWidth}
           height={shapeHeight}
+          color={'black'}
           style={{
             position: 'absolute',
             ...getShapeStyle(), 

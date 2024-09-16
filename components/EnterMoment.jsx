@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import TextAreaMoment from '../speeddial/TextAreaMoment';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const EnterMoment = ({ 
   handleInputChange,
@@ -12,6 +13,7 @@ const EnterMoment = ({
 }) => {
   const [isFirstScreen, setIsFirstScreen] = useState(true);
   const [resetTextAreaText, setResetTextAreaText] = useState(false);
+  const { themeStyles } = useGlobalStyle();
 
   useEffect(() => {
     if (onScreenChange) {
@@ -56,7 +58,7 @@ const EnterMoment = ({
           />
           {textInput && (
           <View style={styles.nextButtonContainer}> 
-            <TouchableOpacity style={[styles.nextButton, {backgroundColor: buttonBackgroundColor}]} onPress={handleNextScreenClick}>
+            <TouchableOpacity style={[styles.nextButton, themeStyles.genericTextBackgroundShadeTwo]} onPress={handleNextScreenClick}>
               <Text style={styles.nextButtonText}>Done</Text>
             </TouchableOpacity>
           </View>
@@ -73,7 +75,7 @@ const EnterMoment = ({
             resetText={resetTextAreaText} // Pass resetTextAreaText instead of resetText
           />
           <View style={styles.editButtonContainer}> 
-            <TouchableOpacity style={[styles.nextButton, {backgroundColor: buttonBackgroundColor}]} onPress={handleBackScreenClick}>
+            <TouchableOpacity style={[styles.nextButton, themeStyles.genericTextBackgroundShadeTwo]} onPress={handleBackScreenClick}>
               <Text style={styles.nextButtonText}>Edit</Text>
             </TouchableOpacity>
           </View>
@@ -84,32 +86,17 @@ const EnterMoment = ({
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center', 
-    height: 300,
+  container: {   
+    justifyContent: 'center',   
     flexDirection: 'row',
-  }, 
-  enteredTextContainer: {
-    width: '100%',
-    padding: 10, 
-  },
-  enteredText: { 
-    fontSize: 16,
-    marginBottom: 10,
-    fontFamily: 'Poppins-Bold',
-    width: '100%', 
-  },
+  },  
   nextButtonContainer: { 
     width: '100%', 
     position: 'absolute',
     zIndex: 1,
-    bottom: 4,
-    right: -154,
-    alignItems: 'center',
-    alignContent: 'center',
-    justifyContent: 'center',
+    bottom: 60,
+    right: -134,
+    alignItems: 'center', 
   },
   editButtonContainer: { 
     width: '100%', 
@@ -122,17 +109,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   nextButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
     borderRadius: 20,
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 0,
     width: 'auto',
   },
   nextButtonText: {
     color: '#fff',
     fontFamily: 'Poppins-Bold',
-    fontSize: 16,
+    fontSize: 14,
   },
 });
 

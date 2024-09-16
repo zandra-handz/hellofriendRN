@@ -149,13 +149,13 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: 'row', 
     height: 'auto',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 6,
+    padding: 4,
     paddingHorizontal: 10,
-    borderRadius: 20, 
+    borderRadius: 12, 
   },
   displaySelectedContainer: {
     alignItems: 'left',   

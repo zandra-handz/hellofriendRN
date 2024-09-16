@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, StyleSheet, View, Modal, Text, TextInput } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { TouchableOpacity, StyleSheet, View, Modal, Text, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import LoadingPage from '../components/LoadingPage';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const AlertSingleInput = ({
   isModalVisible,
+  autoFocus = true,
   isFetching,
   useSpinner = false,
   toggleModal,
@@ -15,53 +17,75 @@ const AlertSingleInput = ({
   confirmText = 'OK',
   cancelText = 'Nevermind',
   fixedHeight = false,
-  height = 200, // Default height value
-  type = 'success', // Can be 'success' or 'failure'
+  height = 200,
+  type = 'success',
+  maxLength = 100,
 }) => {
+  const { themeStyles } = useGlobalStyle();
   const [inputValue, setInputValue] = useState('');
+  const [inputError, setInputError] = useState('');
+  const inputRef = useRef(null);
 
-  const handleConfirm = () => {
-    if (onConfirm) {
-      onConfirm(inputValue); // Pass the input value to the parent
+  useEffect(() => {
+    if (isModalVisible && autoFocus) { 
+      
+      setTimeout(() => {
+        inputRef?.current?.focus();
+      }, 100);  //might be risking the keyboard opening too early (=not seeming to open at all) with this small of a delay?
     }
-    toggleModal(); // Close the modal
+  }, [isModalVisible, autoFocus]);
+
+  const handleConfirm = () => { 
+    if ((inputValue.length <= maxLength) && onConfirm) {
+      onConfirm(inputValue);
+    }
+    toggleModal();
   };
 
   const handleInputChange = (value) => {
-    setInputValue(value);
+    setInputValue(value); 
     if (onInputChange) {
-      onInputChange(value); // Notify parent about the input change
+      onInputChange(value);
     }
   };
 
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-      <View style={styles.modalContainer}>
-        <View style={[styles.modalContent, fixedHeight && { height }]}>
-          {headerContent && <View style={styles.headerContainer}>{headerContent}</View>}
-          {useSpinner && isFetching ? (
-            <LoadingPage loading={isFetching} spinnerType='circle' />
-          ) : (
-            <View style={styles.contentContainer}>
-              {questionText && <Text style={styles.questionText}>{questionText}</Text>}
-              <TextInput
-                style={styles.input}
-                value={inputValue}
-                onChangeText={handleInputChange}
-                placeholder="Type here..."
-              />
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={handleConfirm} style={styles.confirmButton}>
-                  <Text style={styles.buttonText}>{confirmText}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={onCancel} style={[styles.cancelButton, type === 'success' && styles.successCancelButton]}>
-                  <Text style={styles.buttonText}>{cancelText}</Text>
-                </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.modalContainer}>
+          <View style={[styles.modalContent, themeStyles.genericTextBackgroundShadeTwo, fixedHeight && { height }]}>
+            {headerContent && <View style={styles.headerContainer}>{headerContent}</View>}
+            {useSpinner && isFetching ? (
+              <LoadingPage loading={isFetching} spinnerType='circle' />
+            ) : (
+              <View style={styles.contentContainer}>
+                {questionText && <Text style={[styles.questionText, themeStyles.genericText]}>{questionText}</Text>}
+                <TextInput
+                  ref={inputRef}
+                  style={[styles.input, themeStyles.input]}
+                  value={inputValue}
+                  onChangeText={handleInputChange}
+                  placeholder="Type here..."
+                  maxLength={maxLength}
+                  onSubmitEditing={handleConfirm}
+                /> 
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    onPress={handleConfirm}
+                    style={[styles.confirmButton, !inputValue && styles.buttonDisabled]}
+                    disabled={!inputValue}
+                  >
+                    <Text style={styles.buttonText}>{confirmText}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={onCancel} style={[styles.cancelButton, type === 'success' && styles.successCancelButton]}>
+                    <Text style={styles.buttonText}>{cancelText}</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
+            )}
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };
@@ -76,7 +100,6 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '80%',
     padding: 20,
-    backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
   },
@@ -90,12 +113,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
   },
   input: {
-    width: '100%',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
+    width: '100%',  
+    marginBottom: 10,
+  },
+  inputError: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginBottom: 10,
   },
   contentContainer: {
     width: '100%',
@@ -113,6 +140,9 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
+  buttonDisabled: {
+    backgroundColor: 'darkgray', // Gray color for disabled state
+  },
   cancelButton: {
     backgroundColor: 'green',
     padding: 10,
@@ -123,6 +153,9 @@ const styles = StyleSheet.create({
   },
   successCancelButton: {
     backgroundColor: '#388E3C',
+  },
+  buttonDisabled: {
+    backgroundColor: '#d3d3d3',
   },
   buttonText: {
     color: 'white',

@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const InputSingleValue = ({ valueRef, handleValueChange, label = 'label', placeholder = 'placeholder', inline=false }) => {
     const [value, setValue] = useState('');
+    const { themeStyles } = useGlobalStyle();
 
     const onChangeText = (newValue) => {
         setValue(newValue);
-        handleValueChange(newValue); // Notify parent of the change
+        handleValueChange(newValue);  
     };
 
     return (
-        <View style={styles.locationContainer}>
-            <Text style={styles.locationTitle}>
+        <View style={styles.container}>
+            <Text style={styles.title}>
                 {label}
             </Text>
             <View style={styles.inputContainer}>
@@ -28,20 +30,15 @@ const InputSingleValue = ({ valueRef, handleValueChange, label = 'label', placeh
 };
 
 const styles = StyleSheet.create({
-    locationContainer: {
+    container: {
 
         flexDirection: 'row', 
-        alignItems: 'center',
-
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        padding: 0, 
-        marginVertical: 0,
+        alignItems: 'center', 
+        borderRadius: 8, 
     },
-    locationTitle: {
+    title: {
 
         marginRight: 10,
-
         fontSize: 16,
         fontFamily: 'Poppins-Bold',
 

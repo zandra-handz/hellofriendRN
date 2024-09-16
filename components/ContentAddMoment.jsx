@@ -6,15 +6,18 @@ import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
-import { saveThoughtCapsule } from '../api';
-import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
+import { saveThoughtCapsule } from '../api'; 
+
 import AlertSuccessFail from '../components/AlertSuccessFail';
 import AlertConfirm from '../components/AlertConfirm'; 
+import  { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 
+import ButtonBottomSaveMoment from '../components/ButtonBottomSaveMoment';
+
 const ContentAddMoment = () => {
+  const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { capsuleList, setCapsuleList, sortByCategory } = useCapsuleList();
@@ -120,12 +123,10 @@ const ContentAddMoment = () => {
   };
   
   return (
-    <View style={styles.container}>
-      <View style={styles.mainContainer}>
-        <Text style={styles.locationTitle}> </Text>
+    <View style={styles.container}> 
 
         <View style={styles.selectFriendContainer}>
-          <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
+          <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>{firstSectionTitle}</Text>
           <FriendSelectModalVersion width='88%' />
         </View>
 
@@ -142,35 +143,26 @@ const ContentAddMoment = () => {
         {userEntryCapsule && selectedFriend && !momentEditMode && ( 
           <View style={styles.categoryContainer}>
             <>
-            <Text style={styles.locationTitle}>Category: {selectedCategory}</Text>
+            <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>Selected Category: {selectedCategory}</Text>
                 <CardCategoriesAsButtons onCategorySelect={handleCategorySelect}/> 
             </> 
           </View>
-        )}
-        {userEntryCapsule && selectedCategory && ( 
-          <View style={styles.bottomButtonContainer}>  
-            <ButtonBottomActionBase
-              onPress={toggleModal}
-              preLabel=''
-              label={`Add moment`}
-              height={54}
-              radius={16}
-              fontMargin={3} 
-              labelFontSize={22}
-              labelColor="white" 
-              labelContainerMarginHorizontal={4} 
-              showGradient={true}
-              showShape={true}
-              shapePosition="right"
-              shapeSource={CompassCuteSvg}
-              shapeWidth={100}
-              shapeHeight={100}
-              shapePositionValue={-14}
-              shapePositionValueVertical={-10} 
-            />
-          </View> 
-        )}
-      </View>
+        )} 
+        {userEntryCapsule && selectedCategory ? (   
+              <View style={styles.bottomButtonContainer}>  
+              <ButtonBottomSaveMoment
+                onPress={toggleModal} 
+                disabled={false}
+              />
+            </View>
+          ) : (
+            <View style={styles.bottomButtonContainer}>  
+              <ButtonBottomSaveMoment
+                onPress={toggleModal} 
+                disabled={true}
+              />
+          </View>
+        )} 
 
       <AlertConfirm
         fixedHeight={true}
@@ -202,67 +194,32 @@ const ContentAddMoment = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: { 
     flex: 1,
-    padding: 0,
-    justifyContent: 'space-between',
+    padding: 0, 
+    justifyContent: 'space-between',  
+  }, 
+  locationContainer: {   
+    width: '100%',      
   },
-  mainContainer: {
-    flex: 1,
-    padding: 0,
-    justifyContent: 'space-between',
-    paddingBottom: 68,
-  },
-  locationContainer: { 
-    borderRadius: 8,
-    top: 70,
-    position: 'absolute',
-    width: '100%',
-    padding: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.0,
-    shadowRadius: 0,
-    elevation: 0,
-    marginVertical: 10, 
-    height: 360,
-  },
-  categoryContainer: { 
-    backgroundColor: '#fff',
+  categoryContainer: {  
     width: '100%', 
     borderRadius: 8,
-    padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    paddingVertical: 10, 
   },
-  selectFriendContainer: {
-    position: 'absolute',
-    flexDirection: 'row',
-    top: 0, 
-    borderRadius: 8,
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: '100%',
-    marginVertical: 8,
-    height:' auto',
-    zIndex: 1, 
+  selectFriendContainer: { 
+    flexDirection: 'row',  
+    justifyContent: 'space-between', 
+    alignItems: 'center',  
+    width: '100%',   
+    marginBottom: 0, 
   },
   locationTitle: {
     fontSize: 17,
     fontFamily: 'Poppins-Bold',
   },
-  bottomButtonContainer: {
-    position: 'absolute',
-    width: '100%',
-    bottom: 0,
-    left: 0,
-    height: 72,
-    paddingHorizontal: 10,
+  bottomButtonContainer: { 
+    width: '100%',  
   },
 });
 
