@@ -2,6 +2,7 @@ import React from 'react';
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; 
 
+
 const ButtonBottomSaveHello = ({ onPress, disabled }) => {
     return (
         <ButtonBottomActionBase
@@ -16,8 +17,7 @@ const ButtonBottomSaveHello = ({ onPress, disabled }) => {
             showGradient={true} // Default gradient visibility
             darkColor='#4caf50' // Default dark gradient color
             lightColor='rgb(160, 241, 67)' // Default light gradient color
-            showShape={true} // Default shape visibility
-            shapeSource={CompassCuteSvg}
+            showShape={true} 
             shapeWidth={100}
             shapeHeight={100}
             shapePosition="right"

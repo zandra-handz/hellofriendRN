@@ -4,6 +4,8 @@ import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonSingleInput from '../components/ButtonSingleInput';
 import  { useGlobalStyle } from '../context/GlobalStyleContext';
+import ButtonColorBGSmall from '../components/ButtonColorBGSmall';
+
 
 
 const DOUBLE_PRESS_DELAY = 300; // Time delay to detect double press
@@ -23,8 +25,8 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
 
   useEffect(() => {
     if (selectedFriend) {
-      setSelectedCategory(null); // Reset selectedCategory when selectedFriend changes
-      fetchCategoryLimitData();
+      setSelectedCategory(null);
+       fetchCategoryLimitData();
     }
   }, [selectedFriend, friendDashboardData]);
 
@@ -101,12 +103,10 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
     const isDoublePress = now - lastPress.current < DOUBLE_PRESS_DELAY;
     lastPress.current = now;
 
-    if (isDoublePress) {
-      // Double press detected
+    if (isDoublePress) { 
       setSelectedCategory(categoryIndex);
       setModalVisible(true);
-    } else {
-      // Single press detected
+    } else { 
       const category = categories[categoryIndex];
       const capsulesForCategory = capsuleList.filter(capsule => capsule.typedCategory === category);
       
@@ -172,8 +172,8 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
                 styles.categoryText,
                 selectedCategory === null && styles.selectedCategoryText
               ]}
-              numberOfLines={1} // Ensures text is on a single line
-              ellipsizeMode='end' // Adds ellipsis at the end if text overflows
+              numberOfLines={1}  
+              ellipsizeMode='end' 
             >
               All Categories
             </Text>
@@ -183,26 +183,18 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
           <Text style={styles.noCategoriesText}>Please enter a category</Text>
         ) : (
           categories.map((category, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.categoryButton,
-                selectedCategory === index && styles.selectedCategoryButton
-              ]}
-              onPress={() => handleCategoryPress(index)}
-              onLongPress={() => handleCategoryPress(index)} // For testing
-            >
-              <Text
-                style={[
-                  styles.categoryText,
-                  selectedCategory === index && styles.selectedCategoryText
-                ]}
-                numberOfLines={1} // Ensures text is on a single line
-                ellipsizeMode='end' // Adds ellipsis at the end if text overflows
-              >
-                {category}
-              </Text>
-            </TouchableOpacity>
+            <View style={{paddingBottom: 12}}>
+            <ButtonColorBGSmall
+            key={index}
+            title={category}
+            useLightColor={false}
+            onPress={() => handleCategoryPress(index)}
+            textStyle={[
+              styles.categoryText,
+              selectedCategory === index && styles.selectedCategoryText
+            ]}
+          />
+          </View>
           ))
         )}
         {remainingCategories !== null && remainingCategories > 0 && (
@@ -240,7 +232,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
 const styles = StyleSheet.create({
   container: { 
     width: '100%', 
-    borderRadius: 10,
+    borderRadius: 30,
     padding: 0,
     borderWidth: 1, 
     padding: 10,
@@ -250,7 +242,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexWrap: 'wrap',
     justifyContent: 'space-around', 
-    marginBottom: 10, 
+    marginBottom: 0, 
   },
   categoryButton: {
     padding: 10,
@@ -264,7 +256,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#d4edda',
   },
   categoryText: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Bold',
     fontSize: 14,
     color: 'black',
     // Ensure text does not wrap
@@ -272,7 +264,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   selectedCategoryText: {
-    color: '#155724',
+    color: 'white',
     fontSize: 14,
     fontFamily: 'Poppins-Bold',
   },

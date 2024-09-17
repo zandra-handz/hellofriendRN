@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import AlertSingleInput from './AlertSingleInput'; // Adjust the import path as needed
+import AlertSingleInput from './AlertSingleInput';  
+import ButtonColorBGSmall from '../components/ButtonColorBGSmall';
+
 
 const ButtonSingleInput = ({ title = '', onInputValueChange }) => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -13,9 +15,9 @@ const ButtonSingleInput = ({ title = '', onInputValueChange }) => {
   const handleConfirm = (inputValue) => {
     console.log('Input value from modal:', inputValue);
     if (onInputValueChange) {
-      onInputValueChange(inputValue); // Pass the input value up to the parent
+      onInputValueChange(inputValue);
     }
-    toggleModal(); // Close the modal
+    toggleModal();  
   };
 
   const handleCancel = () => {
@@ -26,17 +28,13 @@ const ButtonSingleInput = ({ title = '', onInputValueChange }) => {
   return (
     <>
       <View> 
-        <TouchableOpacity 
+        <ButtonColorBGSmall 
           onPress={toggleModal} 
-          style={[styles.editButton, { width: title ? 'auto' : 40 }]}
+          title={title.length > 0 ? title : ''} 
+          textStyle={{ fontSize: 14, fontFamily: 'Poppins-Regular', color: 'white' }}
         >
-       
-          {title.length > 0 ? (
-            <Text style={styles.buttonText}>{title}</Text>
-          ) : (
-            <FontAwesome5 name="plus" size={12} color="white" />
-          )}
-        </TouchableOpacity>
+          {title.length === 0 && <FontAwesome5 name="plus" size={12} color="white" />} 
+        </ButtonColorBGSmall>
 
         <AlertSingleInput
           isModalVisible={isModalVisible}

@@ -13,6 +13,9 @@ const ModalMomentFocus = ({ isModalVisible, handleCloseModal, textInput, handleI
       isVisible={isModalVisible}
       onBackdropPress={handleCloseModal}
       style={styles.modal}
+      animationIn="slideInRight"    // Animation for sliding in from the right
+      animationOut="slideOutRight"  // Animation for sliding out to the right
+      useNativeDriver={true}   
     > 
       <LinearGradient
           colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]} 

@@ -247,7 +247,7 @@ const ItemMomentMultiPlain = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingHorizontal: 10,
+    paddingHorizontal: 4,
     justifyContent: 'space-between',
   },
   categoryButtonsContainer: {

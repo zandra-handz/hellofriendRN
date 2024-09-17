@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
-
+import ButtonColorBGSmall from '../components/ButtonColorBGSmall';
 
 
 const ButtonCheckboxControl = ({ 
@@ -33,16 +33,23 @@ const ButtonCheckboxControl = ({
       <Text style={[styles.controlButtonText, themeStyles.footerText]}>Hello mode?</Text>
       <Icon name={showCheckboxes ? "check-square-o" : "square-o"} size={20} style={[styles.checkbox, themeStyles.footerIcon]} />
     </TouchableOpacity>
-    {!showCheckboxes && ( 
-      <TouchableOpacity onPress={handleGoToHelloScreen} style={[styles.saveButton, themeStyles.footerIcon, { backgroundColor: buttonColor}]}> 
-        <Text style={[styles.controlButtonText, themeStyles.footerText]}>Go to Hello</Text>
-      </TouchableOpacity>
-    )}
-    {showCheckboxes && ( 
-      <TouchableOpacity onPress={onSave} style={[styles.saveButton, themeStyles.footerIcon, { backgroundColor: buttonColor}]}> 
-        <Text style={[styles.controlButtonText, themeStyles.footerText]}>Save</Text>
-      </TouchableOpacity>
-    )}
+    {!showCheckboxes && (
+          <ButtonColorBGSmall 
+            onPress={handleGoToHelloScreen} 
+            title="Go to Hello" 
+            backgroundColor={buttonColor} 
+            textStyle={themeStyles.footerText}
+          />
+        )}
+
+        {showCheckboxes && (
+          <ButtonColorBGSmall 
+            onPress={onSave} 
+            title="Save" 
+            backgroundColor={buttonColor} 
+            textStyle={themeStyles.footerText}
+          />
+        )}
 
       </View>
     </View>
@@ -58,6 +65,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderRadius: 30,
     paddingTop: 16,
+    paddingHorizontal: 2,
     backgroundColor: 'transparent',
   },
   controlButton: {
@@ -66,13 +74,14 @@ const styles = StyleSheet.create({
   },
   saveButton: {  
     paddingHorizontal: 10,
-    paddingVertical: 2,
+    paddingVertical: 0,
     borderRadius: 20,
     justifyContent: 'center',
   },
   checkbox: {
     paddingLeft: 10,  
     paddingBottom: 2,
+    paddingRight: 1,
   },
   controlButtonText: {
     fontSize: 11,

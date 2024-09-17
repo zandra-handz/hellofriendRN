@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
+import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
 import { LinearGradient } from 'expo-linear-gradient'; 
 
 import  { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -33,10 +33,12 @@ const ScreenMoments = ({ route, navigation }) => {
                         <>  
                         <ItemMomentMultiPlain height={40} width={40} columns={3} singleLineScroll={false} newestFirst={false} svgColor={themeStyles.footerIcon} />
                             
+                      
+                        <ButtonGoToAddMoment buttonColor={calculatedThemeColors.darkColor}/>
                         </>
                         
                     ) : (
-                        <Text>Loading...</Text>
+                        <Text></Text>
                     )}
                 </View> 
             </LinearGradient> 

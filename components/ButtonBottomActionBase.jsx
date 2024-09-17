@@ -3,6 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import AddOutlineSvg from '../assets/svgs/add-outline.svg';
 
 const ButtonBottomActionBase = ({ 
   onPress,
@@ -19,7 +20,7 @@ const ButtonBottomActionBase = ({
   direction = { x: 1, y: 0 },
   showShape = true,
   shapePosition = 'left',
-  shapeSource: ShapeSvg,  
+  shapeSource: ShapeSvg,   
   shapeWidth = 260,
   shapeHeight = 260,
   shapePositionValue = -134,  
@@ -106,6 +107,18 @@ const ButtonBottomActionBase = ({
           width={shapeWidth}
           height={shapeHeight}
           color={'black'}
+          style={{
+            position: 'absolute',
+            ...getShapeStyle(), 
+            top: shapePositionValueVertical,
+          }}
+        />
+      )}
+      {showShape && !ShapeSvg && !disabled && (
+        <AddOutlineSvg
+          width={shapeWidth}
+          height={shapeHeight}
+          color={'white'}
           style={{
             position: 'absolute',
             ...getShapeStyle(), 

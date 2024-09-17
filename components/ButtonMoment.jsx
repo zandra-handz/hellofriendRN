@@ -7,10 +7,8 @@ import FormatDate from '../components/FormatDate';
 
 const ButtonMoment = ({
   onPress,  
-  moment,
-  iconSize = 12,
-  size = 15,
-  color = "#ccc",
+  moment, 
+  size = 15, 
   style,
   disabled = false,
   sameStyleForDisabled = false, // New prop to control style
@@ -62,7 +60,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: .2,
     borderRadius: 40,
     marginBottom: 0,
-    padding: 20,
+    padding: 16,
     borderColor: '#ccc',
     flexDirection: 'column', 
     
@@ -104,7 +102,7 @@ const styles = StyleSheet.create({
   },
   creationDateTextContainer: {  
     paddingBottom: 10,
-    paddingRight: 10, 
+    paddingRight: 8, 
     
     backgroundColor: 'transparent',
     borderRadius: 20,

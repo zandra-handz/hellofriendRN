@@ -16,7 +16,7 @@ import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 
 import ButtonBottomSaveMoment from '../components/ButtonBottomSaveMoment';
 
-const ContentAddMoment = () => {
+const ContentAddMoment = ( {friendFixed=false}) => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
@@ -125,10 +125,12 @@ const ContentAddMoment = () => {
   return (
     <View style={styles.container}> 
 
+        {friendFixed == false && (
         <View style={styles.selectFriendContainer}>
           <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>{firstSectionTitle}</Text>
           <FriendSelectModalVersion width='88%' />
         </View>
+        )}
 
         <View style={styles.locationContainer}>
           <EnterMoment
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
   },
   selectFriendContainer: { 
     flexDirection: 'row',  
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',  
     alignItems: 'center',  
     width: '100%',   
     marginBottom: 0, 

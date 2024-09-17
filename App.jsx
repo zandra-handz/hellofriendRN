@@ -30,6 +30,7 @@ import Signin from './screens/Signin';
 import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
 
 import ScreenAddMoment from './screens/ScreenAddMoment';
+import ScreenAddMomentFriendFixed from './screens/ScreenAddMomentFriendFixed';
 import ScreenAddFriend from './screens/ScreenAddFriend';
 import ScreenAddImage from './screens/ScreenAddImage';
 import ScreenAddHello from './screens/ScreenAddHello';
@@ -190,6 +191,14 @@ export const Layout = () => {
               <Stack.Screen
                 name="AddMoment"
                 component={ScreenAddMoment}
+                options={{
+                  headerShown: true,
+                  title: 'Add new moment',
+                }}
+              />
+              <Stack.Screen
+                name="AddMomentFriendFixed"
+                component={ScreenAddMomentFriendFixed}
                 options={{
                   headerShown: true,
                   title: 'Add new moment',

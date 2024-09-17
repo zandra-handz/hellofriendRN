@@ -1,6 +1,5 @@
 import React from 'react'; 
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; 
 
 const ButtonBottomSaveMoment = ({ onPress, disabled }) => {
     return (
@@ -16,8 +15,7 @@ const ButtonBottomSaveMoment = ({ onPress, disabled }) => {
             showGradient={true}  
             darkColor='#4caf50'  
             lightColor='rgb(160, 241, 67)'  
-            showShape={true}  
-            shapeSource={CompassCuteSvg}
+            showShape={true}   
             shapeWidth={100}
             shapeHeight={100}
             shapePosition="right"
