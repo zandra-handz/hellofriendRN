@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import * as SecureStore from 'expo-secure-store'; 
+import { Text } from 'react-native'; 
 import { useAuthUser } from '../context/AuthUserContext';
-import { updateUserAccessibilitySettings } from '../api';
-import ToggleButton from '../components/ToggleButton';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { updateUserAccessibilitySettings } from '../api'; 
+import BaseModalFooterSection from '../components/BaseModalFooterSection';
+import BaseRowModalFooter from '../components/BaseRowModalFooter';
 import AlertMicro from '../components/AlertMicro'; 
+import LoadingPage from '../components/LoadingPage';
 
 const SectionAccessibilitySettings = () => {
-  const { authUserState, userAppSettings, updateUserSettings, registerForNotifications, removeNotificationPermissions } = useAuthUser();
+  const { authUserState, userAppSettings, userNotificationSettings, updateUserSettings, setNotificationsInContext, registerForNotifications, removeNotificationPermissions } = useAuthUser();
+  const { themeStyles } = useGlobalStyle();
   const [highContrastMode, setHighContrastMode] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [simplifyAppForFocus, setSimplifyAppForFocus] = useState(false);
   const [receiveNotifications, setReceiveNotifications] = useState(false);
-  const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false); // Local state for screen reader
+  const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false); 
   const [manualTheme, setManualTheme] = useState(false);
   const [manualDarkMode, setManualDarkMode] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [ isMakingCall, setIsMakingCall ] = useState(false);
 
   useEffect(() => {
     if (userAppSettings) {
@@ -24,7 +27,7 @@ const SectionAccessibilitySettings = () => {
       setLargeText(userAppSettings.large_text);
       setSimplifyAppForFocus(userAppSettings.simplify_app_for_focus);
       setReceiveNotifications(userAppSettings.receive_notifications);
-      setIsScreenReaderEnabled(userAppSettings.screen_reader); // Initialize local state with screen reader status
+      setIsScreenReaderEnabled(userAppSettings.screen_reader);  
 
       if (userAppSettings.manual_dark_mode === null) {
         setManualTheme(false);
@@ -36,6 +39,7 @@ const SectionAccessibilitySettings = () => {
   }, [userAppSettings]);
 
   const updateSetting = async (setting) => {
+    setIsMakingCall(true);
     try {
       const newSettings = { ...userAppSettings, ...setting };
       await updateUserAccessibilitySettings(authUserState.user.id, setting);
@@ -43,25 +47,11 @@ const SectionAccessibilitySettings = () => {
       console.log('User settings updated successfully');
     } catch (error) {
       console.error('Error updating user settings:', error);
+    } finally {
+      setIsMakingCall(false);
     }
   };
-
-  const updateNotificationSettingAndToken = async (setting) => {
-    try {
-      const newSettings = { ...userAppSettings, ...setting };
-      await updateUserAccessibilitySettings(authUserState.user.id, setting);
-      updateUserSettings(newSettings);
-      console.log('User settings updated successfully');
-    } catch (error) {
-      console.error('Error updating user settings:', error);
-    }
-  };
-
-  useEffect(() => {
-    console.log('hi! i am a test');
-
-  }, [userAppSettings.receive_notifications]);
-
+ 
   const toggleHighContrastMode = () => {
     const newValue = !highContrastMode;
     setHighContrastMode(newValue);
@@ -81,28 +71,10 @@ const SectionAccessibilitySettings = () => {
   };
 
   const toggleReceiveNotifications = () => {
-    const newValue = !receiveNotifications;
-    if (newValue) {
-      console.log('Turning notifications on from setting menu. Toggled to: ', newValue);
-      try {
-        registerForNotifications();
-        setReceiveNotifications(newValue);
-
-      } catch (error) {
-        console.log('Error turning notifications on', error);
-      };
-
-    } else {
-      console.log('Turning notifications off from settings menu. Toggled to: ', newValue);
-      try {  
-      removeNotificationPermissions();
-      setReceiveNotifications(newValue);
-      } catch (error) {
-        console.log('Error turning notifications off: ', error);
-      };
-
-    }; 
-    //updateSetting({ receive_notifications: newValue });
+    const newValue = !receiveNotifications; 
+    updateSetting({ receive_notifications: newValue });
+    setNotificationsInContext(newValue);
+    setReceiveNotifications(userNotificationSettings);
   };
 
   const toggleManualTheme = () => {
@@ -117,7 +89,6 @@ const SectionAccessibilitySettings = () => {
     setManualTheme(newValue); 
   };
  
-
   const toggleLightDark = () => {
     const newValue = !manualDarkMode;
     setManualDarkMode(newValue);
@@ -130,82 +101,89 @@ const SectionAccessibilitySettings = () => {
       return;
     }
 
-    const newValue = !isScreenReaderEnabled; // Toggle local state
-    setIsScreenReaderEnabled(newValue); // Update local state immediately
+    const newValue = !isScreenReaderEnabled;  
+    setIsScreenReaderEnabled(newValue); 
 
     try {
       await updateUserAccessibilitySettings(authUserState.user.id, { screen_reader: newValue });
-
       const updatedSettings = { ...userAppSettings, screen_reader: newValue };
       updateUserSettings(updatedSettings);
-
       console.log(`Screen reader ${newValue ? 'enabled' : 'disabled'} successfully`);
     } catch (error) {
       console.error('Error toggling screen reader:', error);
     }
   };
-
-  const getPushToken = async () => {
-    try {
-      const token = await SecureStore.getItemAsync('pushToken');
-      if (token) {
-        
-        return token;
-      } else {
-        console.log('No push token found in SecureStore');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error retrieving push token:', error);
-      return null;
-    }
-  };
-  
  
-
-
-
 
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Manual Light/Dark Mode</Text>
-        <ToggleButton value={manualTheme} onToggle={toggleManualTheme} />
-      </View>
-      {manualTheme && (  
-      <View style={styles.row}>
-        <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Light/Dark</Text>
-        <ToggleButton value={manualDarkMode} onToggle={toggleLightDark} />
-      </View>
-      )}
-      <View style={styles.row}>
-        <FontAwesome5 name="adjust" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>High Contrast Mode</Text>
-        <ToggleButton value={highContrastMode} onToggle={toggleHighContrastMode} />
-      </View>
-      <View style={styles.row}>
-        <FontAwesome5 name="text-height" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Large Text</Text>
-        <ToggleButton value={largeText} onToggle={toggleLargeText} />
-      </View>
-      <View style={styles.row}>
-        <FontAwesome5 name="bell" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Simplify App For Focus</Text>
-        <ToggleButton value={simplifyAppForFocus} onToggle={toggleSimplifyAppForFocus} />
-      </View>
-      <View style={styles.row}>
-        <FontAwesome5 name="bell" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Receive Notifications</Text>
-        <ToggleButton value={receiveNotifications} onToggle={toggleReceiveNotifications} />
-      </View>
-      <View style={styles.row}>
-        <FontAwesome5 name="volume-up" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Screen Reader</Text>
-        <ToggleButton value={isScreenReaderEnabled} onToggle={toggleScreenReader} />
-      </View>
- 
+    <BaseModalFooterSection isMakingCall={isMakingCall} LoadingComponent={LoadingPage} themeStyles={themeStyles}>
+          
+      <BaseRowModalFooter 
+        iconName='adjust' 
+        iconSize={20}
+        useToggle={true}
+        label='Manual Light/Dark Mode' 
+        value={manualTheme}
+        onTogglePress={toggleManualTheme}  
+      />   
+
+      {manualTheme && ( 
+
+        <BaseRowModalFooter 
+          iconName='adjust' 
+          iconSize={20}
+          useToggle={true}
+          label='Light/Dark' 
+          value={manualDarkMode}
+          onTogglePress={toggleLightDark}  
+          />  
+      )} 
+
+      <BaseRowModalFooter 
+        iconName='adjust' 
+        iconSize={20}
+        useToggle={true}
+        label='High Contrast Mode' 
+        value={highContrastMode}
+        onTogglePress={toggleHighContrastMode}  
+      />  
+
+      <BaseRowModalFooter 
+        iconName='text-height' 
+        iconSize={20}
+        useToggle={true}
+        label='Large Text' 
+        value={largeText}
+        onTogglePress={toggleLargeText}  
+      />  
+
+      <BaseRowModalFooter 
+        iconName='bell' 
+        iconSize={20}
+        useToggle={true}
+        label='Simplify App For Focus' 
+        value={simplifyAppForFocus}
+        onTogglePress={toggleSimplifyAppForFocus}
+      />  
+
+      <BaseRowModalFooter 
+        iconName='bell' 
+        iconSize={20}
+        useToggle={true}
+        label='Receive Notifications' 
+        value={receiveNotifications}
+        onTogglePress={toggleReceiveNotifications} 
+      />   
+
+      <BaseRowModalFooter 
+        iconName='volume-up' 
+        iconSize={20}
+        useToggle={true}
+        label='Screen Reader' 
+        value={isScreenReaderEnabled}
+        onTogglePress={toggleScreenReader}
+      />        
+   
       <AlertMicro
         isModalVisible={showAlert}
         toggleModal={() => setShowAlert(false)}
@@ -216,31 +194,8 @@ const SectionAccessibilitySettings = () => {
         }
         modalTitle="Screen Reader Required"
       />
-    </View>
+    </BaseModalFooterSection>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    paddingBottom: 20,
-    width: '100%',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    justifyContent: 'space-evenly',
-    width: '100%',
-    height: 40,
-  },
-  icon: {
-    marginRight: 10,
-  },
-  label: {
-    fontSize: 16,
-    width: '60%',
-  },
-});
 
 export default SectionAccessibilitySettings;

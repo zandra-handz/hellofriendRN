@@ -1,148 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useAuthUser } from '../context/AuthUserContext';
-import { updateUserAccessibilitySettings } from '../api';
-import ToggleButton from '../components/ToggleButton';
-import AlertMicro from '../components/AlertMicro'; // Assuming AlertMicro component is located here
+import ButtonResetHelloes from '../components/ButtonResetHelloes';
+import ButtonManageFriends from '../components/ButtonManageFriends';
+
+
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const SectionAccountSettings = () => {
-  const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
-  const [highContrastMode, setHighContrastMode] = useState(false);
-  const [largeText, setLargeText] = useState(false);
-  const [simplifyAppForFocus, setSimplifyAppForFocus] = useState(false);
-  const [receiveNotifications, setReceiveNotifications] = useState(false);
-  const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false); // Local state for screen reader
-  const [manualTheme, setManualTheme] = useState(false);
-  const [manualDarkMode, setManualDarkMode ] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
 
-  useEffect(() => {
-    if (userAppSettings) {
-      setHighContrastMode(userAppSettings.high_contrast_mode);
-      setLargeText(userAppSettings.large_text);
-      setSimplifyAppForFocus(userAppSettings.simplify_app_for_focus);
-      setReceiveNotifications(userAppSettings.receive_notifications);
-      setIsScreenReaderEnabled(userAppSettings.screen_reader); // Initialize local state with screen reader status
-      // Determine manualTheme based on manual_dark_mode
-      if (userAppSettings.manual_dark_mode === null) {
-        setManualTheme(false);
-      } else {
-        setManualTheme(true);
-        setManualDarkMode(userAppSettings.manual_dark_mode);
-      }
-    }
-  }, [userAppSettings]);
+  const { themeStyles } = useGlobalStyle(); 
 
-  const updateSetting = async (setting) => {
-    try {
-      const newSettings = { ...userAppSettings, ...setting };
-      await updateUserAccessibilitySettings(authUserState.user.id, setting);
-      updateUserSettings(newSettings);
-      console.log('User settings updated successfully');
-    } catch (error) {
-      console.error('Error updating user settings:', error);
-    }
-  };
-
-  const toggleHighContrastMode = () => {
-    const newValue = !highContrastMode;
-    setHighContrastMode(newValue);
-    updateSetting({ high_contrast_mode: newValue });
-  };
-
-  const toggleLargeText = () => {
-    const newValue = !largeText;
-    setLargeText(newValue);
-    updateSetting({ large_text: newValue });
-  };
-
-
-  const toggleSimplifyAppForFocus = () => {
-    const newValue = !simplifyAppForFocus;
-    setSimplifyAppForFocus(newValue);
-    updateSetting({ simplify_app_for_focus: newValue });
-  };
-
-  const toggleReceiveNotifications = () => {
-    const newValue = !receiveNotifications;
-    setReceiveNotifications(newValue);
-    updateSetting({ receive_notifications: newValue });
-  };
-
-  // Sets manual_dark_mode field on backend to null again, but state to false
-  const toggleManualTheme = () => {
-    const newValue = !manualTheme;
-    if (newValue === true) {
-      updateSetting({ manual_dark_mode: false }); 
-
-    };
-    if (newValue === false) {
-      updateSetting({ manual_dark_mode: null });
-      setManualDarkMode(false);
-
-    };
-    setManualTheme(newValue); 
-  };
-
-  const toggleLightDark = () => {
-    const newValue = !manualDarkMode;
-    setManualDarkMode(newValue);
-    updateSetting({ manual_dark_mode: newValue });
-  };
-
-  const toggleScreenReader = async () => {
-    if (!AccessibilityInfo.isScreenReaderEnabled()) {
-      setShowAlert(true);
-      return;
-    }
-
-    const newValue = !isScreenReaderEnabled; // Toggle local state
-    setIsScreenReaderEnabled(newValue); // Update local state immediately
-
-    try {
-      await updateUserAccessibilitySettings(authUserState.user.id, { screen_reader: newValue });
-
-      const updatedSettings = { ...userAppSettings, screen_reader: newValue };
-      updateUserSettings(updatedSettings);
-
-      console.log(`Screen reader ${newValue ? 'enabled' : 'disabled'} successfully`);
-    } catch (error) {
-      console.error('Error toggling screen reader:', error);
-    }
-  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-       <Text>Delete</Text>
- 
+    <View style={[styles.container, themeStyles.modalContainer]}>
+      <View style={styles.accountSettingsRow}>
+        <View style={{ flexDirection: 'row' }}>
+          <FontAwesome5 name="wrench" size={20} style={[styles.icon, themeStyles.modalIconColor]}  />
+          <Text style={[styles.sectionTitle, themeStyles.modalText]}>Settings</Text> 
+        </View>
+        <ButtonManageFriends />
+      </View>  
+      <View style={styles.accountSettingsRow}> 
+        <View style={{ flexDirection: 'row' }}>
+         <FontAwesome5 name="trash" size={22} style={[styles.icon, themeStyles.modalIconColor]}  />
+          <Text style={[styles.sectionTitle, themeStyles.modalText]}>Delete Account</Text> 
+        </View>
+        <ButtonResetHelloes />
       </View> 
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    paddingBottom: 20,
+  container: { 
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    padding: 0, // changed this from ModalColorTheme
     width: '100%',
+    alignSelf: 'flex-start', 
   },
-  row: {
+  accountSettingsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    justifyContent: 'space-evenly',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     width: '100%',
-    height: 40,
-  },
+    flexWrap: 'wrap',
+    marginBottom: 8,
+  },  
   icon: {
     marginRight: 10,
+    marginLeft: 2,
   },
-  label: {
+  sectionTitle: {
     fontSize: 16,
-    width: '60%',
-  },
+    fontFamily: 'Poppins-Regular',
+    marginLeft: 5,
+    marginRight: 10,
+  },  
 });
 
 export default SectionAccountSettings;

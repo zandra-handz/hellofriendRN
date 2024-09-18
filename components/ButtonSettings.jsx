@@ -9,13 +9,14 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import GearsTwoBiggerCircleSvg from '../assets/svgs/gears-two-bigger-circle.svg';
  
 const ButtonSettings = ({label=null}) => {
+  const { themeStyles } = useGlobalStyle(); 
   const [isModalVisible, setModalVisible] = React.useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const { themeStyles } = useGlobalStyle(); 
+  
 
   React.useEffect(() => {
     if (isModalVisible) {
@@ -29,7 +30,7 @@ const ButtonSettings = ({label=null}) => {
     { title: 'Account', content: <SectionAccountSettings /> }, 
   ];
 
-  const footerContent = "© badrainbowz 2024";
+  const footerContent = "© Badrainbowz Studio 2024";
 
   return (
     <>

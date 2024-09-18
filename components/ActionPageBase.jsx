@@ -1,12 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, AccessibilityInfo, PanResponder } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, AccessibilityInfo, PanResponder } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useAuthUser } from '../context/AuthUserContext';
 
 const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footerContent }) => {
-    const globalStyles = useGlobalStyle();
-    const { userAppSettings } = useAuthUser();
+    const globalStyles = useGlobalStyle(); 
+    const { themeStyles } = useGlobalStyle();
 
     const panResponder = useRef(
         PanResponder.create({
@@ -50,7 +49,7 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
     return (
         <Modal transparent={true} visible={visible} animationType="slide" presentationStyle="overFullScreen">
             <View style={styles.overlay} {...panResponder.panHandlers}>
-                <View style={styles.container}>
+            <View style={[styles.container, themeStyles.modalContainer]}>
                     <TouchableOpacity
                         accessible={true}
                         accessibilityRole="button"
@@ -63,28 +62,29 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
                         <FontAwesome5 name="times" size={14} color="white" solid={false} />
                         </View>
                     </TouchableOpacity>
-                    <ScrollView
-                        contentContainerStyle={styles.scrollContainer}
-                        showsVerticalScrollIndicator={false}
-                        accessible={true}
-                        accessibilityRole="adjustable"
-                        accessibilityLabel="Modal Content"
-                        importantForAccessibility="yes"
-                    >
-                        {sections.map((section, index) => (
-                            <View key={index} style={styles.section}>
-                                <Text style={[styles.sectionTitle, textStyles(18)]}>{section.title}</Text>
-                                
-                                {section.content}
-                                <View style={styles.divider}></View>
-                            </View>
-                        ))}
-                        {showFooter && (
-                            <View style={styles.footer}>
-                                <Text style={[styles.footerText, textStyles(16)]}>{footerContent}</Text>
-                            </View>
-                        )}
-                    </ScrollView>
+                    <View
+    style={styles.innerContainer}
+    accessible={true}
+    accessibilityRole="adjustable"
+    accessibilityLabel="Modal Content"
+    importantForAccessibility="yes"
+>
+    {sections.map((section, index) => (
+        <View key={index} style={styles.section}>
+            <View style={styles.subTitleRow}> 
+                <Text style={[styles.modalSubTitle, themeStyles.modalText]}>{section.title}</Text>
+            </View>
+            {section.content}
+            <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
+        </View>
+    ))}
+    {showFooter && (
+        <View style={styles.footer}>
+            <Text style={[styles.footerText, themeStyles.genericText]}>{footerContent}</Text>
+        </View>
+    )}
+</View>
+
                 </View>
             </View>
         </Modal>
@@ -95,16 +95,26 @@ const styles = StyleSheet.create({
     overlay: {
         flex: 1,
         justifyContent: 'flex-end',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      },
+      containerCover: {
+        flex: 1,
+        justifyContent: 'flex-end',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    container: {
-        backgroundColor: 'white',
-        borderTopLeftRadius:  0,
-        borderTopRightRadius: 0,
-        padding: 12,
+      },
+      container: { 
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: 20,
         width: '100%',
-        maxHeight: '100%',
-    },
+        alignSelf: 'flex-start', 
+      },
+      subTitleRow: {
+        flexDirection: 'row',
+        alignContent: 'center', 
+        alignItems: 'center',
+        marginBottom: 20, //lowered this from ModalColorTheme
+      },
     closeButton: {
         flex: 1,
         position: 'absolute',
@@ -127,31 +137,24 @@ const styles = StyleSheet.create({
     section: {
         marginBottom: 10,
     },
-    sectionTitle: {
-        fontFamily: 'Poppins-Bold',
-        fontSize: 14,
-        marginBottom: 8,
-    },
-    titleDivider: {
-        borderBottomWidth: 1,
-        borderBottomColor: 'black',
-        marginBottom: 8,
-    },
+    modalSubTitle: {
+        fontSize: 17,
+        fontFamily: 'Poppins-Bold',  
+      }, 
     divider: {
-        borderBottomWidth: 1,
-        borderBottomColor: 'black',
-        marginBottom: 8,
+        marginVertical: 10,
+        borderBottomWidth: 1,  
     },
-    scrollContainer: {
-        paddingBottom: 10,
+    innerContainer: { 
     },
-    footer: {
-        borderTopWidth: 1,
-        borderTopColor: 'black',
+    footer: {  
         paddingTop: 10,
         alignItems: 'center',
     },
-    footerText: {},
+    footerText: {
+        fontFamily: 'Poppins-Bold',
+        fontSize: 12,
+    },
 });
 
 export default ActionPageBase;

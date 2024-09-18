@@ -1,77 +1,62 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useAuthUser } from '../context/AuthUserContext';
-import { updateUserAccessibilitySettings} from '../api';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'; 
 import ButtonResetHelloes from '../components/ButtonResetHelloes';
 import ButtonManageFriends from '../components/ButtonManageFriends';
-import AlertMicro from '../components/AlertMicro'; // Assuming AlertMicro component is located here
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-import PersonalConnectionsSvg from '../assets/svgs/personal-connections.svg';
 
 const SectionFriendSettings = () => {
-  const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
-  const [highContrastMode, setHighContrastMode] = useState(false);
-  const [largeText, setLargeText] = useState(false);
-  const [simplifyAppForFocus, setSimplifyAppForFocus] = useState(false);
-  const [receiveNotifications, setReceiveNotifications] = useState(false);
-  const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false); // Local state for screen reader
-  const [manualTheme, setManualTheme] = useState(false);
-  const [manualDarkMode, setManualDarkMode ] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
 
-  const [isAllFriendsModalVisible, setIsAllFriendsModalVisible ] = useState(false);
+  const { themeStyles } = useGlobalStyle(); 
 
   
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <FontAwesome5 name="users" size={20} color="black" style={styles.icon} />
-        <Text style={styles.label}>Manage friends</Text> 
+    <View style={[styles.container, themeStyles.modalContainer]}>
+      <View style={styles.friendSettingsRow}>
+        <View style={{ flexDirection: 'row' }}>
+          <FontAwesome5 name="users" size={20} style={[styles.icon, themeStyles.modalIconColor]}  />
+          <Text style={[styles.sectionTitle, themeStyles.modalText]}>Manage friends</Text> 
+        </View>
         <ButtonManageFriends />
       </View>  
-      <View style={styles.row}> 
-        <FontAwesome5 name="recycle" size={22} color="black" style={styles.icon} />
-        <Text style={styles.label}>Reset All</Text> 
+      <View style={styles.friendSettingsRow}> 
+        <View style={{ flexDirection: 'row' }}>
+         <FontAwesome5 name="recycle" size={22} style={[styles.icon, themeStyles.modalIconColor]}  />
+          <Text style={[styles.sectionTitle, themeStyles.modalText]}>Reset All</Text> 
+        </View>
         <ButtonResetHelloes />
       </View> 
-      
-      
-      <AlertMicro
-        isModalVisible={showAlert}
-        toggleModal={() => setShowAlert(false)}
-        modalContent={
-          <Text>
-            Please enable the screen reader in your device settings to use this feature.
-          </Text>
-        }
-        modalTitle="Screen Reader Required"
-      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    paddingBottom: 20,
+  container: { 
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    padding: 0, // changed this from ModalColorTheme
     width: '100%',
+    alignSelf: 'flex-start', 
   },
-  row: {
+  friendSettingsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    justifyContent: 'space-evenly',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     width: '100%',
-    height: 40,
-  },
+    flexWrap: 'wrap',
+    marginBottom: 8,
+  },  
   icon: {
     marginRight: 10,
+    marginLeft: 2,
   },
-  label: {
+  sectionTitle: {
     fontSize: 16,
-    width: '60%',
-  },
+    fontFamily: 'Poppins-Regular',
+    marginLeft: 5,
+    marginRight: 10,
+  },  
 });
 
 export default SectionFriendSettings;

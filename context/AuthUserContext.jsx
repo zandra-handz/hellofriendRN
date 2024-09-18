@@ -40,6 +40,7 @@ export const AuthUserProvider = ({ children }) => {
         loading: true,  // Add loading state
     });
     const [userAppSettings, setUserAppSettings] = useState(null);
+    const [ userNotificationSettings, setUserNotificationSettings ] = useState(null);
 
     const fetchUser = async (token) => {
         try {
@@ -68,9 +69,16 @@ export const AuthUserProvider = ({ children }) => {
         return result;
     };
 
+    const setNotificationsInContext = async (value) => { 
+            setUserNotificationSettings(value);
+            console.log('set notifications in context');
+
+
+    };
+
 
     const registerForNotifications = async () => {
-        if (userAppSettings?.receive_notifications) {
+        if (userAppSettings && userNotificationSettings) {
             try {
                 const { status: existingStatus } = await Notifications.getPermissionsAsync();
                 let finalStatus = existingStatus;
@@ -115,31 +123,46 @@ export const AuthUserProvider = ({ children }) => {
     };
     
     const removeNotificationPermissions = async () => {
-        try {
-            // Delete the push token stored in SecureStore
-            await SecureStore.deleteItemAsync('pushToken');
-            await updateUserAccessibilitySettings(authUserState.user.id, {expo_push_token: null});
+        if (userAppSettings) {
+            try {
+                // Delete the push token stored in SecureStore
+                await SecureStore.deleteItemAsync('pushToken');
+                await updateUserAccessibilitySettings(authUserState.user.id, {expo_push_token: null});
 
-    
-            // Expo does not provide a direct method to revoke notifications permissions,
-            // so you have to handle the revocation through your app logic.
-            // Ensure notifications are not sent by your server or backend.
-    
-            console.log('Notification permissions removed and token cleared.');
-        } catch (error) {
-            console.error('Failed to remove notification permissions:', error);
-        }
+        
+                // Expo does not provide a direct method to revoke notifications permissions,
+                // so you have to handle the revocation through your app logic.
+                // Ensure notifications are not sent by your server or backend.
+        
+                console.log('Notification permissions removed and token cleared.');
+            } catch (error) {
+                console.error('Failed to remove notification permissions:', error);
+            }
+        };
     };
     
+
+    //set Notification settings initially using backend data
     useEffect(() => {
         if (userAppSettings) { 
             if (userAppSettings.receive_notifications) {
+                setUserNotificationSettings(true); 
+
+            } else {
+                setUserNotificationSettings(false); 
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (userNotificationSettings == true) {  
                 registerForNotifications();
             } else {
                 removeNotificationPermissions();
             }
-        }
-    }, []);
+         
+    }, [userNotificationSettings]);
+
 
     
  
@@ -402,6 +425,7 @@ export const AuthUserProvider = ({ children }) => {
         removeNotificationPermissions: removeNotificationPermissions,
         authUserState,
         userAppSettings,
+        setNotificationsInContext: setNotificationsInContext,
         updateUserSettings,
     };
 

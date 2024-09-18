@@ -1,6 +1,6 @@
 // Opens a modal
 import React, { useState } from 'react';
-import { Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
+import { StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
 
 import PaintRollerSvg from '../assets/svgs/paint-roller.svg'; // Import the SVG icon
  
