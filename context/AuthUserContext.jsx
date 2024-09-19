@@ -4,7 +4,10 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import * as Notifications from 'expo-notifications';
 import { signup, signin, signout, refreshToken, getCurrentUser, updateUserAccessibilitySettings } from '../api';
-import jwtDecode from 'jwt-decode';
+import jwtDecode from 'jwt-decode'; 
+import * as Device from 'expo-device';
+import Constants from "expo-constants";
+import { Platform } from 'react-native';
 
 const TOKEN_KEY = 'my-jwt';
 
@@ -68,100 +71,88 @@ export const AuthUserProvider = ({ children }) => {
         }
         return result;
     };
+ 
 
-    const setNotificationsInContext = async (value) => { 
-            setUserNotificationSettings(value);
-            console.log('set notifications in context');
-
-
-    };
-
-
-    const registerForNotifications = async () => {
-        if (userAppSettings && userNotificationSettings) {
-            try {
-                const { status: existingStatus } = await Notifications.getPermissionsAsync();
-                let finalStatus = existingStatus;
-    
-                if (existingStatus !== 'granted') {
-                    const { status } = await Notifications.requestPermissionsAsync();
-                    finalStatus = status;
-                }
-    
-                if (finalStatus !== 'granted') {
-                    console.error('Failed to get push token, permission not granted');
-                    return;
-                }
-    
-                const token = (await Notifications.getExpoPushTokenAsync()).data;
-                console.log('Expo Push Token:', token);
-    
-                await SecureStore.setItemAsync('pushToken', token);
-                await updateUserAccessibilitySettings(authUserState.user.id, { expo_push_token: token});
-
-
-                await Notifications.scheduleNotificationAsync({
-                    content: {
-                        title: "Notifications Enabled",
-                        body: "Notifications for hellofriend are now enabled!",
-                        sound: 'default',
-                    },
-                    trigger: null,  
-                });
-    
-                return token;
-            } catch (error) {
-                console.error('Failed to get push token or send notification:', error);
-            }
-        } else {
-            console.log('Push notifications disabled in user settings');
-    
-            await SecureStore.deleteItemAsync('pushToken');
-    
-            return null;
+    const registerForNotifications = async () => { 
+        if (Platform.OS === "android") {
+            await Notifications.setNotificationChannelAsync("default", {
+                name: "default",
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: "#FF231F7C",
+            });
         }
-    };
-    
-    const removeNotificationPermissions = async () => {
-        if (userAppSettings) {
+
+        if (Device.isDevice) {
+            const { status: existingStatus } =
+                await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== "granted") {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+
+            if (finalStatus !== "granted") {
+                throw new Error(
+                    "Permission not granted to get push token for push notification"
+                );
+            }
+
+            const projectId =
+                Constants?.expoConfig?.extra?.eas?.projectId ??
+                Constants?.easConfig?.projectId;
+            if (!projectId) {
+                throw new Error("Project ID not found");
+            }
             try {
+                const pushTokenString = (
+                    await Notifications.getExpoPushTokenAsync({
+                        projectId,
+                    })
+                ).data;
+                console.log('hi!', pushTokenString);
+                await SecureStore.setItemAsync('pushToken', pushTokenString);
+            
+                // Update the user accessibility settings
+                await updateUserAccessibilitySettings(authUserState.user.id, { receive_notifications: true, expo_push_token: pushTokenString });
+        
+                return pushTokenString;
+            } catch (e) {
+                throw new Error(`${e}`);
+            }
+             
+        } else {
+            throw new Error("Must use physical device for push notifications");
+        }
+    }
+ 
+    
+    const removeNotificationPermissions = async () => { 
+        try {
+            // Ensure the user is authenticated before trying to access their ID
+            if (authUserState.user) {
                 // Delete the push token stored in SecureStore
                 await SecureStore.deleteItemAsync('pushToken');
-                await updateUserAccessibilitySettings(authUserState.user.id, {expo_push_token: null});
-
-        
-                // Expo does not provide a direct method to revoke notifications permissions,
-                // so you have to handle the revocation through your app logic.
-                // Ensure notifications are not sent by your server or backend.
-        
+                await updateUserAccessibilitySettings(authUserState.user.id, { receive_notifications: true, expo_push_token: null });
+    
                 console.log('Notification permissions removed and token cleared.');
-            } catch (error) {
-                console.error('Failed to remove notification permissions:', error);
+            } else {
+                console.log('No user is signed in, skipping notification permissions removal.');
             }
-        };
+        } catch (error) {
+            console.error('Failed to remove notification permissions:', error);
+        } 
     };
     
-
-    //set Notification settings initially using backend data
     useEffect(() => {
-        if (userAppSettings) { 
-            if (userAppSettings.receive_notifications) {
-                setUserNotificationSettings(true); 
-
-            } else {
-                setUserNotificationSettings(false); 
-            }
+        console.log(userNotificationSettings);
+        if (userNotificationSettings?.receive_notifications === true) {  
+            registerForNotifications();
+        } else {
+            removeNotificationPermissions();
         }
-    }, []);
-
-    useEffect(() => {
-        if (userNotificationSettings == true) {  
-                registerForNotifications();
-            } else {
-                removeNotificationPermissions();
-            }
-         
     }, [userNotificationSettings]);
+    
 
 
     
@@ -203,6 +194,10 @@ export const AuthUserProvider = ({ children }) => {
                     ...prevSettings,
                     ...currentUserData.settings, // Merge with existing settings
                 }));
+                setUserNotificationSettings(prevSettings => ({
+                    ...prevSettings,
+                    receive_notifications: currentUserData.settings.receive_notifications, // Update only the receive_notifications value
+                }));
                 
             } else {
                 setAuthUserState(prevState => ({
@@ -222,7 +217,7 @@ export const AuthUserProvider = ({ children }) => {
     const handleSignout = async () => {
         const result = await signout();
         await SecureStore.deleteItemAsync(TOKEN_KEY);
-        await SecureStore.deleteItemAsync('pushToken');
+        await SecureStore.deleteItemAsync('pushToken'); // Clear push token on sign out
         setAuthUserState({
             user: null,
             credentials: {
@@ -230,9 +225,10 @@ export const AuthUserProvider = ({ children }) => {
                 token: null,
             },
             authenticated: false,
-            loading: false, // Signout process is complete
+            loading: false,
         });
         setUserAppSettings(null);
+        setUserNotificationSettings(null); // Clear notification settings on sign out
         return result;
     };
 
@@ -241,6 +237,15 @@ export const AuthUserProvider = ({ children }) => {
             ...prevSettings,
             ...newSettings,
         }));
+    };
+
+    const updateUserNotificationSettings = (receiveNotificationsValue) => {
+        if (userNotificationSettings) {
+        setUserNotificationSettings(prevSettings => ({
+            ...prevSettings,
+            receive_notifications: receiveNotificationsValue,  // Update only the receive_notifications value
+        }));
+        }
     };
 
     useEffect(() => {
@@ -276,6 +281,10 @@ export const AuthUserProvider = ({ children }) => {
                     setUserAppSettings(prevSettings => ({
                         ...prevSettings,
                         ...currentUserData.settings, // Merge with existing settings
+                    }));
+                    setUserNotificationSettings(prevSettings => ({
+                        ...prevSettings,
+                        receive_notifications: currentUserData.settings.receive_notifications, // Update only the receive_notifications value
                     }));
                 } else {
                     setAuthUserState(prevState => ({
@@ -344,6 +353,10 @@ export const AuthUserProvider = ({ children }) => {
                         setUserAppSettings(prevSettings => ({
                             ...prevSettings,
                             ...currentUserData.settings,
+                        }));
+                        setUserNotificationSettings(prevSettings => ({
+                            ...prevSettings,
+                            receive_notifications: currentUserData.settings.receive_notifications, // Update only the receive_notifications value
                         }));
                     } else {
                         setAuthUserState(prevState => ({
@@ -425,8 +438,8 @@ export const AuthUserProvider = ({ children }) => {
         removeNotificationPermissions: removeNotificationPermissions,
         authUserState,
         userAppSettings,
-        setNotificationsInContext: setNotificationsInContext,
         updateUserSettings,
+        updateUserNotificationSettings,
     };
 
     return <AuthUserContext.Provider value={value}>{children}</AuthUserContext.Provider>;

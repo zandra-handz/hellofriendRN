@@ -12,12 +12,9 @@
         "usesNonExemptEncryption": false
       }
     },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
+    "android": {  
       "package": "com.badrainbowz.sampleproject",
+      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyBAW09hdzlszciQ4fTiZjfxcVMlEkF5Iqk"
@@ -28,13 +25,7 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },
-    "notification": { 
-      "icon": "./assets/shapes/lizard.png",
-      "color": "#ffffff",
-      "androidMode": "default",
-      "androidCollapsedTitle": "New Notification"
-    },
+    }, 
     "assetBundlePatterns": [
       "**/*"
     ],

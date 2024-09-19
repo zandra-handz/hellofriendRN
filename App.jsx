@@ -34,6 +34,7 @@ import ScreenAddMomentFriendFixed from './screens/ScreenAddMomentFriendFixed';
 import ScreenAddFriend from './screens/ScreenAddFriend';
 import ScreenAddImage from './screens/ScreenAddImage';
 import ScreenAddHello from './screens/ScreenAddHello';
+ 
 
 async function loadFonts() {
   await Font.loadAsync({
@@ -47,6 +48,8 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   useEffect(() => {
     loadFonts();
+
+ 
 
 
       const notificationSubscription = Notifications.addNotificationReceivedListener(notification => {

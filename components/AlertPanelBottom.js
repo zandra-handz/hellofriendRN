@@ -6,6 +6,7 @@ import FormFriendColorThemeUpdate from '../forms/FormFriendColorThemeUpdate';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { fetchFriendAddresses, deleteFriendAddress, updateFriendFavesColorThemeSetting, updateFriendFavesColorThemeGradientDirection} from '../api';
+
 import ToggleButton from '../components/ToggleButton';
 import ButtonAddress from './ButtonAddress';
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; // Import the SVG
@@ -13,15 +14,14 @@ import ArtistColorPaletteSvg from '../assets/svgs/artist-color-palette.svg';
 import AlertFormSubmit from '../components/AlertFormSubmit';
 
 const AlertPanelBottom = ({ visible, profileData, onClose }) => {
-  const { authUserState } = useAuthUser();
-  const [editMode, setEditMode] = useState(false);
-  const [differentEditScreen, setDifferentEditScreen] = useState(false);
+  const { authUserState } = useAuthUser(); 
   const { selectedFriend, friendColorTheme, setFriendColorTheme, updateFriendColorTheme } = useSelectedFriend();
   const [friendAddresses, setFriendAddresses] = useState(null);
+  
   const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
+  
   const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false);
-  const [isGradientDirectionModalVisible, setIsGradientDirectionModalVisible] = useState(false);
-
+ 
   const formRef = useRef(null); // Create ref using useRef
 
   const [useFriendColorTheme, setUseFriendColorTheme] = useState(false);
@@ -151,6 +151,9 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
                 </TouchableOpacity>
                 
               </View> 
+
+
+              
               <View style={styles.addressRow}>
                 <FontAwesome5 name="palette" size={20} color="black" style={[styles.icon, styles.mapIcon]} />
                 <Text style={styles.sectionTitle}>Color Theme</Text>

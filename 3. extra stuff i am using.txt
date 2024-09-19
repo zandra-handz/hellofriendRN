@@ -185,8 +185,10 @@ npm install expo-notifications
 
 npm install expo-constants
 npm install expo-device
+ 
 
-npm install firebase
+npm install firebase @react-native-firebase/app @react-native-firebase/messaging
+
 
 
 

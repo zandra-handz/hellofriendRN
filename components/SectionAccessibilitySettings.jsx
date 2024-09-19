@@ -9,7 +9,7 @@ import AlertMicro from '../components/AlertMicro';
 import LoadingPage from '../components/LoadingPage';
 
 const SectionAccessibilitySettings = () => {
-  const { authUserState, userAppSettings, userNotificationSettings, updateUserSettings, setNotificationsInContext, registerForNotifications, removeNotificationPermissions } = useAuthUser();
+  const { authUserState,  removeNotificationPermissions, registerForNotifications, userAppSettings, updateUserNotificationSettings, userNotificationSettings, updateUserSettings } = useAuthUser();
   const { themeStyles } = useGlobalStyle();
   const [highContrastMode, setHighContrastMode] = useState(false);
   const [largeText, setLargeText] = useState(false);
@@ -72,9 +72,15 @@ const SectionAccessibilitySettings = () => {
 
   const toggleReceiveNotifications = () => {
     const newValue = !receiveNotifications; 
-    updateSetting({ receive_notifications: newValue });
-    setNotificationsInContext(newValue);
-    setReceiveNotifications(userNotificationSettings);
+    console.log(newValue);
+    //updateUserNotificationSettings(newValue); 
+    setReceiveNotifications(newValue);
+    if (newValue) {
+      registerForNotifications();
+    } else {
+      removeNotificationPermissions();
+    };
+ 
   };
 
   const toggleManualTheme = () => {

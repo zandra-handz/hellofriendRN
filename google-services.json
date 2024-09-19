@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "721298495436",
+    "project_id": "hellofriendnotifs",
+    "storage_bucket": "hellofriendnotifs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721298495436:android:5f64d61d9f7cfbe8786f69",
+        "android_client_info": {
+          "package_name": "com.badrainbowz.sampleproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgo6BHn3LZNavQGycTk-v7epX5KqymkxI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
