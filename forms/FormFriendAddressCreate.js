@@ -24,21 +24,27 @@ const FormFriendAddressCreate = forwardRef(({ friendId }, ref) => { // Forward r
         friend: friendId,
         user: authUserState.user.id,
       };
-
+  
       await addFriendAddress(friendId, addressData); // Pass friendId to the function
-
+  
       setAddress('');
       setTitle('');
-
+  
       setShowSaveMessage(true);
       setTimeout(() => {
         setShowSaveMessage(false);
       }, 3000);
+  
+      // Return true for success
+      return true;
     } catch (error) {
       console.error('Error adding friend address:', error);
+  
+      // Return false for failure
+      return false;
     }
   };
-
+  
   return (
     <View style={styles.container} ref={formRef}>
       {showSaveMessage && <Text style={styles.saveMessage}>Address added successfully!</Text>}

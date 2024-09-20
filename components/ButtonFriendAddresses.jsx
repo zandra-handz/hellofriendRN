@@ -3,15 +3,16 @@ import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
 import GearsTwoBiggerCircleSvg from '../assets/svgs/gears-two-bigger-circle.svg';
  
-import PaintRollerSvg from '../assets/svgs/paint-roller.svg'; // Import the SVG icon
- 
+
 import ModalFriendAddresses from '../components/ModalFriendAddresses';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 
-const ButtonFriendAddresses = () => {
+const ButtonFriendAddresses = ({
+  label=false
+}) => {
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   const [showProfile, setShowProfile] = useState(false); 
@@ -28,7 +29,7 @@ const ButtonFriendAddresses = () => {
 
   return (
     <>
-      <TouchableOpacity style={styles.section} onPress={toggleModal}>
+      <TouchableOpacity style={styles.section} onPress={handlePress}>
         <GearsTwoBiggerCircleSvg width={32} height={32} style={themeStyles.footerIcon} />
         {label && ( 
         <Text style={themeStyles.footerText}>Settings</Text>

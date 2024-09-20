@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import ButtonSignOut from './ButtonSignOut';
 import ButtonSettings from './ButtonSettings';
+import ButtonFriendAddresses from '../components/ButtonFriendAddresses';
 import ButtonInfo from './ButtonInfo';
 import ButtonData from './ButtonData';
 import ButtonColors from '../components/ButtonColors'; 
@@ -32,8 +33,13 @@ export default function HelloFriendFooter() {
             )}
 
             <View style={[styles.divider, themeStyles.divider]} />
-        
+            <>
+            {isOnActionPage ? (
                 <ButtonSettings /> 
+            ): (
+                <ButtonFriendAddresses /> 
+            )}
+            </>
 
             <View style={[styles.divider, themeStyles.divider]} />
             <> 

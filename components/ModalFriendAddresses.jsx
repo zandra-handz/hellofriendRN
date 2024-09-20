@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
- 
+ import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -11,6 +11,9 @@ import AlertFormSubmit from '../components/AlertFormSubmit';
 import LoadingPage from '../components/LoadingPage';
 import BaseModalFooter from '../components/BaseModalFooter';
 import BaseRowModalFooter from '../components/BaseRowModalFooter';
+import RowExpFriendAddAddresses from '../components/RowExpFriendAddAddresses';
+
+import ButtonAddFriendAddresses from '../components/ButtonAddFriendAddresses';
 
 const ModalFriendAddresses = ({ visible, onClose }) => {
   const { authUserState } = useAuthUser();
@@ -26,8 +29,8 @@ const ModalFriendAddresses = ({ visible, onClose }) => {
     setIsAddressModalVisible(true);
   };
 
-  const closeColorThemeModal = () => {
-    setIsColorThemeModalVisible(false);
+  const closeAddressModal = () => {
+    setIsAddressModalVisible(false);
   };
 
   useEffect(() => {
@@ -44,15 +47,6 @@ const ModalFriendAddresses = ({ visible, onClose }) => {
     }
   }, [visible, selectedFriend]);
 
-
-  const handleDeleteAddress = async (addressId) => {
-    try {
-      await deleteFriendAddress(selectedFriend.id, addressId);
-      fetchAddresses(); // Refresh addresses after deletion
-    } catch (error) {
-      console.error('Error deleting address:', error);
-    }
-  };
  
  
   return (
@@ -64,51 +58,30 @@ const ModalFriendAddresses = ({ visible, onClose }) => {
       themeStyles={themeStyles}
     >
       <View style={styles.headerRow}>
-        <FontAwesome5 name="location" size={20} style={[styles.headerIcon, themeStyles.modalIconColor]} />
+        <FontAwesome5 name="map" size={20} style={[styles.headerIcon, themeStyles.modalIconColor]} />
         {selectedFriend?.name && (
           <Text style={[styles.modalTitle, themeStyles.modalText]}>
             Starting Addresses for {selectedFriend.name}
           </Text>
         )}
-      </View>
-
- 
+      </View> 
+          <RowExpFriendAddAddresses /> 
 
           <BaseRowModalFooter 
             iconName='palette' 
             iconSize={20}
             label='Addresses' 
             useToggle={false}
-            useCustom={true}
-            customLabel={'Add new'}
-            onCustomPress={toggleAddressModal} 
+            useCustom={false}
+            useAltButton={true}
+            altIsSimpleText={false}
+            altButtonComplete={<ButtonAddFriendAddresses/>}
+            onAltButtonPress={toggleAddressModal} 
+            //altButtonComplete={<ButtonResetHelloes />} 
           />  
-
-            <View style={[styles.addressRow, {marginLeft: 34}]}>
-            {friendAddresses &&
-                friendAddresses.map((friendAddress, index) => (
-                <View key={index} style={styles.addressSection}>
-                    <ButtonAddress address={friendAddress} onDelete={() => handleDeleteAddress(friendAddress.id)} />
-                </View>
-                ))}
-            </View>
+ 
     
-            <AlertFormSubmit
-                isModalVisible={isAddressModalVisible}
-                toggleModal={closeAddressModal}
-                headerContent={<PushPinSolidSvg width={18} height={18} color='black' />}
-                questionText={'Add starting origin for friend?'}
-                formBody={<FormFriendAddressCreate friendId={selectedFriend.id} ref={formRef} />}
-                onConfirm={() => {
-                    if (formRef.current) {
-                    formRef.current.submit(); // Call submit method on the form
-                    }
-                    closeAddressModal(); // Close the modal after submission
-                }}
-                onCancel={closeAddressModal}
-                confirmText="Add"
-                cancelText="Nevermind"
-                />
+ 
 
 
     
@@ -129,6 +102,10 @@ const styles = StyleSheet.create({
   modalTitle: { 
     fontSize: 17, 
     fontFamily: 'Poppins-Bold' 
+  },
+  icon: {
+    alignContent: 'center',
+    paddingHorizontal: 4,
   },
  
 

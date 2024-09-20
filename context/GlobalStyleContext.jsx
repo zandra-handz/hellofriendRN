@@ -217,7 +217,18 @@ const lightThemeStyles = StyleSheet.create({
         color: 'black',
     },
     modalIconColor: {
-        color: 'black',
+        color: 'black', 
+    },
+    toggleButtonColor: {
+        backgroundColor: '#ccc',
+    },
+    toggleOn: {
+        backgroundColor: '#4cd137',
+
+    },
+    toggleOff: {
+        backgroundColor: '#dcdde1',
+        
     },
     footerContainer: {
         backgroundColor: 'white',
@@ -351,7 +362,16 @@ const darkThemeStyles = StyleSheet.create({
         color: 'white',
     },
     modalIconColor: {
-        color: 'white',
+        color: 'white', 
+    },
+    toggleButtonColor: {
+        backgroundColor: '#ccc',
+    },
+    toggleOn: {
+        backgroundColor: '#4cd137',
+    },
+    toggleOff: {
+        backgroundColor: '#dcdde1',  
     },
     footerContainer: {
         backgroundColor: 'black',

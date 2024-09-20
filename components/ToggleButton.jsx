@@ -3,6 +3,7 @@ import { TouchableOpacity, Animated, StyleSheet, Easing } from 'react-native';
 
 const ToggleButton = ({ value, onToggle }) => {
   const [bounceAnim] = useState(new Animated.Value(value ? 20 : 0));
+ 
 
   useEffect(() => {
     const newValue = value ? 20 : 0;

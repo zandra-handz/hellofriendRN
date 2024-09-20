@@ -130,6 +130,7 @@ const SectionAccessibilitySettings = () => {
         useToggle={true}
         label='Manual Light/Dark Mode' 
         value={manualTheme}
+        useAltButton={false}
         onTogglePress={toggleManualTheme}  
       />   
 

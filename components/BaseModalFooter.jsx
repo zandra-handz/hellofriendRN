@@ -9,32 +9,28 @@ const BaseModalFooter = ({
   isMakingCall,
   LoadingComponent,
   themeStyles,
-  topOfSpinnerContainer=50
+  topOfSpinnerContainer = 50,
 }) => {
   return (
     <Modal transparent={true} visible={visible} animationType="slide" presentationStyle="overFullScreen">
       <View style={styles.overlay}>
         <View style={[styles.container, themeStyles.modalContainer]}>
-          {/* Loading Spinner Overlay */}
           {isMakingCall && (
-            <View style={[themeStyles.modalContainer, styles.loadingOverlay, {top: topOfSpinnerContainer}]} />
+            <View style={[themeStyles.modalContainer, styles.loadingOverlay, { top: topOfSpinnerContainer }]} />
           )}
-
-          {/* Spinner in action */}
           {isMakingCall && (
-            <View style={[styles.loadingContainer, {top: topOfSpinnerContainer}]}>
-              <LoadingComponent loading={true} spinnerSize={60} spinnerType='circle' />
+            <View style={[styles.loadingContainer, { top: topOfSpinnerContainer }]}>
+              <LoadingComponent loading={true} spinnerSize={60} spinnerType="circle" />
             </View>
           )}
-
           <View style={{ zIndex: 0 }}>
-            {/* Close button */}
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <FontAwesome5 name="times" size={20} style={[styles.icon, themeStyles.modalIconColor]} />
             </TouchableOpacity>
-
-            {/* Modal content passed as children */}
-            {children}
+            {/* Use a wrapping View to allow for dynamic height */}
+            <View style={styles.contentContainer}>
+              {children}
+            </View>
           </View>
         </View>
       </View>
@@ -46,7 +42,7 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.0)',
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
   },
   container: {
     borderTopLeftRadius: 20,
@@ -62,7 +58,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   loadingOverlay: {
-    position: 'absolute', 
+    position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
@@ -71,7 +67,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   loadingContainer: {
-    position: 'absolute', 
+    position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
@@ -79,10 +75,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 2,
   },
+  contentContainer: {
+    // Add padding or margin if needed
+    paddingBottom: 20, // Adjust as necessary for spacing
+  },
   icon: {
     marginRight: 10,
     marginLeft: 2,
   },
 });
+
 
 export default BaseModalFooter;

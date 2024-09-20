@@ -1,6 +1,6 @@
-import React from 'react';
-import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
-
+import React, { useEffect, useRef } from 'react';
+import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const AlertFormSubmit = ({
   isModalVisible,
@@ -11,27 +11,42 @@ const AlertFormSubmit = ({
   onConfirm,
   onCancel,
   confirmText = 'OK',
-  cancelText = 'Nevermind'
+  cancelText = 'Nevermind',
+  showButtons = true // New prop to control button visibility
 }) => {
+  const { themeStyles } = useGlobalStyle();
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity of 0
+
+  useEffect(() => {
+    // Trigger fade-in animation when modal becomes visible
+    Animated.timing(fadeAnim, {
+      toValue: isModalVisible ? 1 : 0,
+      duration: 300, // Duration of fade effect
+      useNativeDriver: true,
+    }).start();
+  }, [isModalVisible]);
+
   return (
-    <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}> 
-          {headerContent && <View style={styles.headerContainer}>{headerContent}</View>}
-          {questionText && <Text style={styles.questionText}>{questionText}</Text>}
-          <View style={styles.formBodyContainer}> 
-            {formBody}
-          </View>
+    <Modal transparent={true} visible={isModalVisible} animationType="none">
+      <Animated.View style={[styles.modalContainer, { opacity: fadeAnim }]}>
+        <View style={[styles.modalContent, themeStyles.genericTextBackground, { borderColor: themeStyles.genericTextBackgroundShadeTwo.backgroundColor }]}> 
+          {headerContent && <View style={[styles.headerContainer, themeStyles.genericText]}>{headerContent}</View>}
+          {questionText && <Text style={[styles.questionText, themeStyles.genericText]}>{questionText}</Text>}
+          <View style={styles.formBodyContainer}>
+            {formBody}  
+          </View> 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
-              <Text style={styles.buttonText}>{confirmText}</Text>
-            </TouchableOpacity>
+            {showButtons && (
+              <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
+                <Text style={styles.buttonText}>{confirmText}</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
               <Text style={styles.buttonText}>{cancelText}</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </Animated.View>
     </Modal>
   );
 };
@@ -41,21 +56,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 1)', // Slightly transparent background
   },
   modalContent: {
     width: '80%',
     padding: 20,
+    borderWidth: 2,
+    borderColor: 'white',
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
     position: 'relative',  
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    zIndex: 1,
   },
   headerContainer: {
     marginBottom: 20,
@@ -69,7 +80,6 @@ const styles = StyleSheet.create({
   formBodyContainer: { 
     width: '100%',  
     marginBottom: 10,
-    position: 'relative',
   },
   buttonContainer: {
     flexDirection: 'column',
@@ -84,7 +94,7 @@ const styles = StyleSheet.create({
     width: '100%', 
   },
   cancelButton: {
-    backgroundColor: 'green',
+    backgroundColor: '#f44336',
     width: '100%',
     borderRadius: 20, 
     padding: 10, 
@@ -96,7 +106,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     fontFamily: 'Poppins-Bold',
-
   },
 });
 

@@ -4,7 +4,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ButtonResetHelloes from '../components/ButtonResetHelloes';
 import ButtonManageFriends from '../components/ButtonManageFriends';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
+import BaseRowModalFooter from '../components/BaseRowModalFooter';
 
 const SectionFriendSettings = () => {
 
@@ -16,6 +16,7 @@ const SectionFriendSettings = () => {
       <View style={styles.friendSettingsRow}>
         <View style={{ flexDirection: 'row' }}>
           <FontAwesome5 name="users" size={20} style={[styles.icon, themeStyles.modalIconColor]}  />
+          
           <Text style={[styles.sectionTitle, themeStyles.modalText]}>Manage friends</Text> 
         </View>
         <ButtonManageFriends />
@@ -23,6 +24,7 @@ const SectionFriendSettings = () => {
       <View style={styles.friendSettingsRow}> 
         <View style={{ flexDirection: 'row' }}>
          <FontAwesome5 name="recycle" size={22} style={[styles.icon, themeStyles.modalIconColor]}  />
+          
           <Text style={[styles.sectionTitle, themeStyles.modalText]}>Reset All</Text> 
         </View>
         <ButtonResetHelloes />

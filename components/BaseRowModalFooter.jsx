@@ -8,11 +8,15 @@ const BaseRowModalFooter = ({
     iconName, 
     iconSize,
     label, 
-    useToggle, 
+    useToggle=true, 
     value, 
     onTogglePress, 
     useAltButton=false, 
     onAltButtonPress, 
+    altIsSimpleText=false,
+    altButtonText='Alt Bt Txt',
+    altButtonOther,
+    altButtonComplete,
     useCustom=false,
     customLabel, 
     onCustomPress  }) => {
@@ -34,9 +38,26 @@ const BaseRowModalFooter = ({
         {useToggle && !useAltButton && (
           <ToggleButton value={value} onToggle={onTogglePress} />
         )}
-        {useAltButton && onAltPress && (
-          <></>
-        )}
+        {useAltButton && !useToggle && (
+          <>
+          {altIsSimpleText && altButtonText && (
+           <TouchableOpacity onPress={onAltButtonPress} style={styles.customButton}>
+              <Text>{altButtonText}</Text>
+            </TouchableOpacity>
+          )}
+          {!altIsSimpleText && altButtonOther && (
+            <TouchableOpacity onPress={onAltButtonPress} style={[styles.altButton, themeStyles.modalIconColor]}>
+              {altButtonOther ? <View>{altButtonOther}</View> : null}
+            </TouchableOpacity>
+          )}
+
+          {!altIsSimpleText && altButtonComplete  && (
+            <View>{altButtonComplete ? altButtonComplete : null}</View>
+          )}
+
+
+          </>
+        )}   
       </>
     </View>
   );
@@ -66,6 +87,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc', 
     paddingVertical: 4, 
     paddingHorizontal: 8,
+  }, 
+
+  altButton: {
+    borderRadius: 15, 
+    paddingVertical: 4, 
+    alignContent: 'center',
+    paddingHorizontal: 10,
   },
 });
 
