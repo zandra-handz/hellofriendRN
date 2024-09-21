@@ -22,8 +22,7 @@ const AlertSingleInput = ({
   maxLength = 100,
 }) => {
   const { themeStyles } = useGlobalStyle();
-  const [inputValue, setInputValue] = useState('');
-  const [inputError, setInputError] = useState('');
+  const [inputValue, setInputValue] = useState(''); 
   const inputRef = useRef(null);
 
   useEffect(() => {

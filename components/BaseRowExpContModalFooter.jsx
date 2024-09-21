@@ -3,13 +3,15 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import your context hook
 import ToggleButton from '../components/ToggleButton';
+import ButtonToggleSize from '../components/ButtonToggleSize';
+
 
 const BaseRowExpContModalFooter = ({
     iconName,
     iconSize,
     label,
     useToggle = true,
-    value, // This should control the expanded state
+    value,
     onTogglePress,
     useAltButton = false,
     onAltButtonPress,
@@ -20,7 +22,7 @@ const BaseRowExpContModalFooter = ({
     useCustom = false,
     customLabel,
     onCustomPress,
-    children, // Content to toggle
+    children,  
 }) => {
     const { themeStyles } = useGlobalStyle();
 
@@ -57,9 +59,12 @@ const BaseRowExpContModalFooter = ({
                                 </TouchableOpacity>
                             )}
                             {!altIsSimpleText && altButtonOther && (
-                                <TouchableOpacity onPress={handleToggleExpand} style={[styles.altButton, themeStyles.modalIconColor]}>
-                                    {altButtonOther ? <View>{altButtonOther}</View> : null}
-                                </TouchableOpacity>
+                                <ButtonToggleSize
+                                    title={''}
+                                    onPress={onTogglePress}
+                                    iconName={altButtonOther}
+                                    style={styles.buttonToggleSize}
+                                /> 
                             )}
                             {!altIsSimpleText && altButtonComplete && (
                                 <View>{altButtonComplete ? altButtonComplete : null}</View>
@@ -80,11 +85,13 @@ const BaseRowExpContModalFooter = ({
 const styles = StyleSheet.create({
     container: {
         marginBottom: 8,
+        
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        
     },
     icon: {
         marginRight: 10,
@@ -100,6 +107,12 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         paddingHorizontal: 8,
     },
+    buttonToggleSize: {
+        backgroundColor: '#e63946',
+        width: 70,
+        height: 35,
+        borderRadius: 20,
+    },
     altButton: {
         borderRadius: 15,
         paddingVertical: 4,
@@ -108,9 +121,8 @@ const styles = StyleSheet.create({
     },
     content: {
         marginTop: 8,
-        padding: 10,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 10,
+        padding: 0, 
+        borderRadius: 10, 
     },
 });
 

@@ -6,27 +6,52 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { fetchFriendAddresses, deleteFriendAddress } from '../api';
 import ButtonAddress from './ButtonAddress';
 import AlertSuccessFail from '../components/AlertSuccessFail';
-import ButtonToggleSize from '../components/ButtonToggleSize';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import LoadingPage from '../components/LoadingPage';
 
-const SectionFriendAddAddresses = ({ title }) => {
+const SectionFriendAddAddresses = ({ toggleClose }) => {
     const { selectedFriend } = useSelectedFriend();
     const [friendAddresses, setFriendAddresses] = useState([]);
-    const [toggleAddressForm, setToggleAddressForm] = useState(false);
+    const [isFormVisible, setIsFormVisible] = useState(false); // Toggle form visibility
     const formRef = useRef(null);
+    const [ isMakingCall, setIsMakingCall ] = useState(true);
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isFailModalVisible, setFailModalVisible] = useState(false);
+    const [refetch, triggerRefetch] = useState(false);
+    const { themeStyles } = useGlobalStyle();
 
     useEffect(() => {
         const fetchAddresses = async () => {
+            setIsMakingCall(true);
             try {
                 const data = await fetchFriendAddresses(selectedFriend.id);
                 setFriendAddresses(data);
             } catch (error) {
                 console.error('Error fetching friend addresses:', error);
+            } finally {
+                setIsMakingCall(false);
             }
         };
         fetchAddresses();
     }, [selectedFriend]);
+
+    useEffect(() => {
+        if (refetch) { 
+            const fetchAddresses = async () => {
+                setIsMakingCall(true);
+                try {
+                    const data = await fetchFriendAddresses(selectedFriend.id);
+                    setFriendAddresses(data);
+                } catch (error) {
+                    console.error('Error fetching friend addresses:', error);
+                } finally {
+                    setIsMakingCall(false);
+                }
+            };
+            fetchAddresses();
+            triggerRefetch(false);
+        }
+    }, [refetch]);
 
     const handleDeleteAddress = async (addressId) => {
         try {
@@ -35,10 +60,6 @@ const SectionFriendAddAddresses = ({ title }) => {
         } catch (error) {
             console.error('Error deleting address:', error);
         }
-    };
-
-    const handleToggleAddressForm = () => {
-        setToggleAddressForm(prevState => !prevState);
     };
 
     const handleConfirm = async () => {
@@ -54,39 +75,57 @@ const SectionFriendAddAddresses = ({ title }) => {
     };
 
     const handleCancel = () => {
-        setToggleAddressForm(false);
+        setIsFormVisible(false);
         formRef.current.reset(); // Ensure reset is available in the form
     };
 
-    const successOk = () => setSuccessModalVisible(false);
+    const successOk = () => {
+        setSuccessModalVisible(false);
+        toggleClose();
+        triggerRefetch(true);
+    };
+    
     const failOk = () => setFailModalVisible(false);
 
+    // Function to toggle the form visibility
+    const toggleFormVisibility = () => {
+        setIsFormVisible(!isFormVisible);
+    };
+
     return (
-        <View style={styles.container}>
-            <ButtonToggleSize
-                title={title}
-                onPress={handleToggleAddressForm}
-                iconName="map"
-                style={styles.buttonToggleSize}
-            />
-            {toggleAddressForm && (
-                <View style={styles.addressSection}>
-                    <LocationOutlineSvg width={28} height={28} color='black' />
-                    <View>
-                        {friendAddresses.length > 0 ? (
-                            <View style={[styles.addressRow, { marginLeft: 34 }]}>
-                                {friendAddresses.map((friendAddress, index) => (
-                                    <View key={index} style={styles.addressSection}>
-                                        <ButtonAddress
-                                            address={friendAddress}
-                                            onDelete={() => handleDeleteAddress(friendAddress.id)}
-                                        />
-                                    </View>
-                                ))}
+        <View style={styles.addressSection}>
+            <View style={styles.header}>
+                <LocationOutlineSvg width={38} height={38} style={themeStyles.modalIconColor} />
+            </View>
+            <View style={{ minHeight: 70 }}> 
+                <LoadingPage 
+                    loading={isMakingCall}
+                    spinnerSize={50}
+                    spinnerType={'circle'}
+                />
+    
+                <View style={styles.addressRow}>
+                    {friendAddresses.length > 0 &&
+                        friendAddresses.map((friendAddress, index) => (
+                            <View key={index} style={styles.addressItem}>
+                                <ButtonAddress
+                                    address={friendAddress}
+                                    onDelete={() => handleDeleteAddress(friendAddress.id)}
+                                />
                             </View>
-                        ) : (
-                            <Text>No addresses available.</Text>
-                        )}
+                        ))
+                    }
+                    {!isMakingCall && ( 
+                    <View style={styles.addressItem}>
+                        <TouchableOpacity onPress={toggleFormVisibility} style={styles.toggleButton}>
+                            <Text style={styles.buttonText}>{isFormVisible ? 'Hide Form' : 'Add New'}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    )}
+                </View>
+    
+                {isFormVisible && (
+                    <>
                         <FormFriendAddressCreate friendId={selectedFriend.id} ref={formRef} />
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity onPress={handleConfirm} style={styles.confirmButton}>
@@ -96,9 +135,10 @@ const SectionFriendAddAddresses = ({ title }) => {
                                 <Text style={styles.buttonText}>Cancel</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
-                </View>
-            )}
+                    </>
+                )}
+            </View>
+    
             <AlertSuccessFail
                 isVisible={isSuccessModalVisible}
                 message='Address added!'
@@ -115,29 +155,40 @@ const SectionFriendAddAddresses = ({ title }) => {
         </View>
     );
 };
+    
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         padding: 16,
     },
-    buttonToggleSize: {
-        backgroundColor: '#e63946',
-        width: 70,
-        height: 35,
-        borderRadius: 20,
+    header: {
+        width: '100%',
+        alignItems: 'center',
+        paddingBottom: 20,
     },
     addressRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
-    addressSection: { 
+    addressSection: {
+        marginTop: 10, 
+    },
+    addressItem: {
         marginBottom: 10,
+        marginRight: 20,
     },
     buttonContainer: { 
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 10,
+    },
+    toggleButton: {
+        backgroundColor: '#4cd137',
+        paddingHorizontal: 12,
+        paddingVertical: 5,
+        alignContent: 'center',
+        borderRadius: 20,  
+        justifyContent: 'center',
     },
     confirmButton: {
         backgroundColor: '#4CAF50',
@@ -154,7 +205,8 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: 'white',
-        textAlign: 'center',
+        fontFamily: 'Poppins-Bold',
+        textAlign: 'center', 
     },
 });
 

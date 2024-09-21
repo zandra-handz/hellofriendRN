@@ -1,69 +1,76 @@
 import React, { useState, forwardRef, useImperativeHandle, useRef } from 'react';
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
-import { addFriendAddress } from '../api'; // Import the addFriendAddress function
+import { View, TextInput, StyleSheet, Text } from 'react-native';
+import { addFriendAddress } from '../api';
 import { useAuthUser } from '../context/AuthUserContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const FormFriendAddressCreate = forwardRef(({ friendId }, ref) => { // Forward ref and receive friendId as a prop
+const FormFriendAddressCreate = forwardRef(({ friendId }, ref) => {
   const { authUserState } = useAuthUser();
   const [address, setAddress] = useState('');
   const [title, setTitle] = useState('');
   const [showSaveMessage, setShowSaveMessage] = useState(false);
-  const formRef = useRef();
-
-  // Expose submit method
+  const { themeStyles } = useGlobalStyle();
+  
   useImperativeHandle(ref, () => ({
     submit: handleSubmit,
+    reset: handleReset,
   }));
 
   const handleSubmit = async () => {
-    console.log({ friendId });
     try {
       const addressData = {
-        title: title,
-        address: address,
+        title,
+        address,
         friend: friendId,
         user: authUserState.user.id,
       };
   
-      await addFriendAddress(friendId, addressData); // Pass friendId to the function
-  
-      setAddress('');
-      setTitle('');
+      await addFriendAddress(friendId, addressData);
+      handleReset(); 
   
       setShowSaveMessage(true);
       setTimeout(() => {
         setShowSaveMessage(false);
       }, 3000);
   
-      // Return true for success
-      return true;
+      return true;  
     } catch (error) {
       console.error('Error adding friend address:', error);
-  
-      // Return false for failure
-      return false;
+      return false; 
     }
+  };
+
+
+  const handleReset = () => {
+    setAddress('');
+    setTitle('');
   };
   
   return (
-    <View style={styles.container} ref={formRef}>
+    <View style={styles.container}>
       {showSaveMessage && <Text style={styles.saveMessage}>Address added successfully!</Text>}
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
-          placeholder="Enter Address"
-          value={address}
-          onChangeText={setAddress}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Title"
+          style={themeStyles.input}
+          placeholder="Nickname for location" 
+          placeholderTextColor="lightgray"
+          maxLength={100}
           value={title}
           onChangeText={setTitle}
         />
       </View>
+      
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={themeStyles.input}
+          placeholder="Address"
+          placeholderTextColor="lightgray"
+          value={address}
+          maxLength={200}
+          onChangeText={setAddress}
+        />
+      </View>
+
     </View>
   );
 });
@@ -79,16 +86,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    marginTop: 10, // Add some spacing between input fields
-  },
-  input: { 
-    borderColor: 'black',
-    fontFamily: 'Poppins-Bold',
-    fontSize: 16,
-    borderWidth: 1, 
-    textAlign: 'center', 
-    borderRadius: 20,
-    padding: 10,
+    marginTop: 10,
   },
 });
 

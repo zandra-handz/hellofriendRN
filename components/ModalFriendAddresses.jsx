@@ -6,8 +6,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { fetchFriendAddresses, deleteFriendAddress, updateFriendFavesColorThemeSetting, updateFriendFavesColorThemeGradientDirection} from '../api';
-import ButtonAddress from './ButtonAddress';
-import AlertFormSubmit from '../components/AlertFormSubmit';
+
 import LoadingPage from '../components/LoadingPage';
 import BaseModalFooter from '../components/BaseModalFooter';
 import BaseRowModalFooter from '../components/BaseRowModalFooter';
@@ -16,36 +15,19 @@ import RowExpFriendAddAddresses from '../components/RowExpFriendAddAddresses';
 import ButtonAddFriendAddresses from '../components/ButtonAddFriendAddresses';
 
 const ModalFriendAddresses = ({ visible, onClose }) => {
-  const { authUserState } = useAuthUser();
+ 
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend  } = useSelectedFriend();
-  const [friendAddresses, setFriendAddresses] = useState(null);
+
   const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
   
   const [isMakingCall, setIsMakingCall] = useState(false);
-  const formRef = useRef(null);
+ 
+  const secondRow = false;
 
   const toggleAddressModal = () => {
     setIsAddressModalVisible(true);
   };
-
-  const closeAddressModal = () => {
-    setIsAddressModalVisible(false);
-  };
-
-  useEffect(() => {
-    if (visible) {
-      const fetchAddresses = async () => {
-        try {
-          const data = await fetchFriendAddresses(selectedFriend.id);
-          setFriendAddresses(data);
-        } catch (error) {
-          console.error('Error fetching friend addresses:', error);
-        }
-      };
-      fetchAddresses();
-    }
-  }, [visible, selectedFriend]);
 
  
  
@@ -58,15 +40,16 @@ const ModalFriendAddresses = ({ visible, onClose }) => {
       themeStyles={themeStyles}
     >
       <View style={styles.headerRow}>
-        <FontAwesome5 name="map" size={20} style={[styles.headerIcon, themeStyles.modalIconColor]} />
+        <FontAwesome5 name="wrench" size={20} style={[styles.headerIcon, themeStyles.modalIconColor]} />
         {selectedFriend?.name && (
           <Text style={[styles.modalTitle, themeStyles.modalText]}>
-            Starting Addresses for {selectedFriend.name}
+            Settings for {selectedFriend.name}
           </Text>
         )}
       </View> 
           <RowExpFriendAddAddresses /> 
 
+          {secondRow && ( 
           <BaseRowModalFooter 
             iconName='palette' 
             iconSize={20}
@@ -79,6 +62,7 @@ const ModalFriendAddresses = ({ visible, onClose }) => {
             onAltButtonPress={toggleAddressModal} 
             //altButtonComplete={<ButtonResetHelloes />} 
           />  
+        )}
  
     
  

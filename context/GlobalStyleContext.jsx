@@ -196,6 +196,7 @@ const lightThemeStyles = StyleSheet.create({
         backgroundColor: 'white',
         placeholderTextColor: 'lightgray',
         fontFamily: 'Poppins-Regular',
+        textAlign: 'left',
         fontSize: 16,
     },
     borderColor: {
@@ -335,12 +336,13 @@ const darkThemeStyles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'white',
         backgroundColor: 'black',
-        placeholderTextColor: 'white', 
+        placeholderTextColor: 'darkgray', 
         borderWidth: 1,
         borderRadius: 20,
         padding: 10,
         width: '100%', 
         fontFamily: 'Poppins-Regular',
+        textAlign: 'left',
         fontSize: 16,
     },
     borderColor: {
