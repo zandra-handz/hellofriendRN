@@ -1,66 +1,35 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import FormFriendAddressCreate from '../forms/FormFriendAddressCreate';
+ 
 import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { fetchFriendAddresses, deleteFriendAddress } from '../api';
+import { useAuthUser } from '../context/AuthUserContext';
+
+import FormUserAddressCreate from '../forms/FormUserAddressCreate';
 import ButtonAddress from './ButtonAddress';
+import { deleteUserAddress } from '../api';
+
 import AlertSuccessFail from '../components/AlertSuccessFail';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LoadingPage from '../components/LoadingPage';
 
-const SectionFriendAddAddresses = ({ toggleClose }) => {
-    const { selectedFriend } = useSelectedFriend();
-    const [friendAddresses, setFriendAddresses] = useState([]);
+const SectionUserAddAddresses = ({ toggleClose }) => {   
+
+    const { authUserState, userAddresses, removeAddress} = useAuthUser();
+    
     const [isFormVisible, setIsFormVisible] = useState(false); // Toggle form visibility
     const formRef = useRef(null);
-    const [ isMakingCall, setIsMakingCall ] = useState(true);
+    const [ isMakingCall, setIsMakingCall ] = useState(false);
     const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
     const [isFailModalVisible, setFailModalVisible] = useState(false);
     const [refetch, triggerRefetch] = useState(false);
     const { themeStyles } = useGlobalStyle();
+ 
 
-    useEffect(() => {
-        const fetchAddresses = async () => {
-            setIsMakingCall(true);
-            try {
-                const data = await fetchFriendAddresses(selectedFriend.id);
-                setFriendAddresses(data);
-            } catch (error) {
-                console.error('Error fetching friend addresses:', error);
-            } finally {
-                setIsMakingCall(false);
-            }
-        };
-        fetchAddresses();
-    }, [selectedFriend]);
+   useEffect(() => {
+    console.log(userAddresses); 
+    console.log('loggin');
 
-    useEffect(() => {
-        if (refetch) { 
-            const fetchAddresses = async () => {
-                setIsMakingCall(true);
-                try {
-                    const data = await fetchFriendAddresses(selectedFriend.id);
-                    setFriendAddresses(data);
-                } catch (error) {
-                    console.error('Error fetching friend addresses:', error);
-                } finally {
-                    setIsMakingCall(false);
-                }
-            };
-            fetchAddresses();
-            triggerRefetch(false);
-        }
-    }, [refetch]);
-
-    const handleDeleteAddress = async (addressId) => {
-        try {
-            await deleteFriendAddress(selectedFriend.id, addressId);
-            fetchAddresses(); // Refresh addresses after deletion
-        } catch (error) {
-            console.error('Error deleting address:', error);
-        }
-    };
+   }, []);
 
     const handleConfirm = async () => {
         if (formRef.current) {
@@ -89,12 +58,31 @@ const SectionFriendAddAddresses = ({ toggleClose }) => {
  
     const toggleFormVisibility = () => {
         setIsFormVisible(!isFormVisible);
+    }; 
+
+    // Includes a temporary 502 detector (call still works) until I fix the backend call
+    const handleDeleteAddress = async (title) => {
+        const result = await deleteUserAddress(authUserState.user.id, { title });
+    
+        if (result.success) {
+            removeAddress(title);
+        } else { 
+            console.error('Error deleting address:', result.message);
+             
+            if (result.message.includes('502')) {
+                console.warn('Received 502 error, proceeding to remove address:', title);
+                removeAddress(title);
+            }
+        }
     };
+    
+
 
     return (
         <View style={styles.addressSection}>
             <View style={styles.header}>
                 <LocationOutlineSvg width={38} height={38} style={themeStyles.modalIconColor} />
+            
             </View>
             <View style={{ minHeight: 70 }}> 
                 <LoadingPage 
@@ -104,12 +92,12 @@ const SectionFriendAddAddresses = ({ toggleClose }) => {
                 />
     
                 <View style={styles.addressRow}>
-                    {friendAddresses.length > 0 &&
-                        friendAddresses.map((friendAddress, index) => (
+                    {userAddresses.addresses.length > 0 &&
+                        userAddresses.addresses.map((addressData, index) => (
                             <View key={index} style={styles.addressItem}>
-                                <ButtonAddress
-                                    address={friendAddress}
-                                    onDelete={() => handleDeleteAddress(friendAddress.id)}
+                                <ButtonAddress 
+                                    address={addressData} 
+                                    onDelete={handleDeleteAddress} 
                                 />
                             </View>
                         ))
@@ -125,7 +113,7 @@ const SectionFriendAddAddresses = ({ toggleClose }) => {
     
                 {isFormVisible && (
                     <>
-                        <FormFriendAddressCreate friendId={selectedFriend.id} ref={formRef} />
+                        <FormUserAddressCreate userId={authUserState.user.id} ref={formRef} />
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity onPress={handleConfirm} style={styles.confirmButton}>
                                 <Text style={styles.buttonText}>Add Address</Text>
@@ -209,4 +197,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SectionFriendAddAddresses;
+export default SectionUserAddAddresses;

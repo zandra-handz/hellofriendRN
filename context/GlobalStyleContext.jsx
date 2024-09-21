@@ -233,8 +233,14 @@ const lightThemeStyles = StyleSheet.create({
     },
     footerContainer: {
         backgroundColor: 'white',
-        borderTopWidth: 0,
+        borderTopWidth: .4,
         borderColor: 'black',
+    },
+    headerContainer: {
+        backgroundColor: 'white',
+        borderBottomWidth: .4,
+        borderColor: 'black',
+        
     },
     gradientContainer: {
         ...StyleSheet.absoluteFillObject,
@@ -249,6 +255,15 @@ const lightThemeStyles = StyleSheet.create({
         fontSize: 14,
         color: 'black',
     },
+    footerIcon: {
+        color: 'black',
+    },
+    headerText: { 
+        color: 'black',
+    },
+    headerIcon: {
+        color: 'black',
+    },
     upcomingNavIcon: {
         color: 'black',
     },
@@ -256,10 +271,7 @@ const lightThemeStyles = StyleSheet.create({
         fontFamily: 'Poppins-Bold',
         fontSize: 14,
         color: 'black',
-    },
-    footerIcon: {
-        color: 'black',
-    },
+    }, 
     header: {
         backgroundColor: 'white',
         borderBottomColor: 'gray',
@@ -380,6 +392,11 @@ const darkThemeStyles = StyleSheet.create({
         borderTopWidth: .4,
         borderColor: '#ccc',
     },
+    headerContainer: {
+        backgroundColor: 'black',
+        borderBottomWidth: .4,
+        borderColor: '#ccc',
+    },
 
     gradientContainer: {
         ...StyleSheet.absoluteFillObject,
@@ -395,6 +412,12 @@ const darkThemeStyles = StyleSheet.create({
         color: 'white',
     },
     footerIcon: {
+        color: 'white',
+    },
+    headerText: { 
+        color: 'white',
+    },
+    headerIcon: {
         color: 'white',
     },
     UpcomingNavText: {

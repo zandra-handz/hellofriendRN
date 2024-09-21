@@ -7,6 +7,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonCalendarDateSvgAndLabel from '../components/ButtonCalendarDateSvgAndLabel';
  
 const ButtonMultiFeatureUpcoming = ({
+  height,
   onPress,
   isLoading = false, 
   headerText = 'UP NEXT',
@@ -27,12 +28,8 @@ const ButtonMultiFeatureUpcoming = ({
   satelliteLightColor = 'darkgrey',
   direction = { x: 1, y: 0 },
   showSatelliteHeader = false, 
-  showShape = true,
-  shapePosition = 'left',
-  shapeSource,
-  shapeWidth = 260,
-  shapeHeight = 260,
-  shapePositionValue = -134,
+  showShape = true, 
+  shapeSource, 
   satellites = false,
   satelliteSectionPosition = 'right',
   satelliteCount = 2,
@@ -162,7 +159,7 @@ const ButtonMultiFeatureUpcoming = ({
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {height: height}]}>
       {!additionalPages && mainViewVisible && (
         <Animated.View style={{ opacity: fadeAnim }}>
           <View style={{ flexDirection: 'row' }}>
@@ -172,7 +169,7 @@ const ButtonMultiFeatureUpcoming = ({
                 style={{
                   flexDirection: satelliteSectionPosition === 'right' ? 'row' : 'row-reverse',
                   width: '100%',
-                  height: 140,
+                  height: height,
                   padding: 10,
                   borderRadius: 30,
                   alignItems: 'center',
@@ -265,8 +262,7 @@ const ButtonMultiFeatureUpcoming = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    marginBottom: 0,
+    width: '100%',  
     borderRadius: 30,
     overflow: 'hidden',
   },
@@ -276,8 +272,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   satelliteSection: {
-    width: '33.33%',
-    height: 140,
+    width: '33.33%', 
     borderRadius: 0,
     marginLeft: -20,
     paddingLeft: 0,  
@@ -291,8 +286,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',  
   },
   additionalSatelliteSection: {
-    flexDirection: 'row',
-    height: 140,
+    flexDirection: 'row', 
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',

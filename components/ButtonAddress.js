@@ -24,6 +24,7 @@ const ButtonAddress = ({
   };
 
   const handleDelete = () => {
+    console.log(address.title);
     onDelete(address.title);
     toggleMenu();
   };

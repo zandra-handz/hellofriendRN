@@ -235,14 +235,27 @@ export const addUserAddress = async (userId, addressData) => {
 
   export const deleteUserAddress = async (userId, title) => {
     try { 
-      const response = await axios.post(`/users/${userId}/addresses/delete/`, title); // Pass addressData directly
-      
-      return response.data;
+        const response = await axios.post(`/users/${userId}/addresses/delete/`, title); 
+
+        if (response.status === 200) {
+            console.log('Address deleted successfully');
+            return { success: true }; 
+        }
+
+        return { success: false, message: 'Unexpected response status.' };
     } catch (error) {
-      console.error('Error deleting user address:', error);
-      throw error;
+        console.error('Error deleting user address:', error);
+
+        // Check if error response is available and get the status
+        if (error.response) {
+            return { success: false, message: `Request failed with status code ${error.response.status}` };
+        }
+        
+        return { success: false, message: 'Network error or other issue.' };
     }
-  }; 
+};
+
+  
 
 export const validateAddress = async (userId, address) => {
     try {

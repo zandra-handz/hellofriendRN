@@ -10,7 +10,7 @@ import PickerSimpleButtonsBase from '../components/PickerSimpleButtonsBase';
 import InputMidpointKeyword from '../components/InputMidpointKeyword';
 
 const ContentFindMidpoint = () => { 
-    const { authUserState } = useAuthUser();
+    const { authUserState, userAddresses } = useAuthUser();
     const { friendDashboardData } = useSelectedFriend();
     const [selectedUserAddress, setSelectedUserAddress] = useState(null);
     const [selectedFriendAddress, setSelectedFriendAddress] = useState(null);
@@ -20,10 +20,9 @@ const ContentFindMidpoint = () => {
     const [searchKeyword, setSearchKeyword] = useState('');
     const [triggerFetch, setTriggerFetch] = useState(false);
 
-    const inputRef = useRef(null);  // Create a ref for the input
+    const inputRef = useRef(null);  
 
-    useEffect(() => {
-        // Focus the input when the component mounts
+    useEffect(() => { 
         if (inputRef.current) {
             inputRef.current.focus();
         }
@@ -74,7 +73,7 @@ const ContentFindMidpoint = () => {
                     />
                     <View style={{height: 100}}>
                         <SelectorAddressBase
-                            addresses={authUserState.user.addresses}
+                            addresses={userAddresses.addresses}
                             onAddressSelect={setSelectedUserAddress}
                             currentAddressOption={true}
                             contextTitle="My Address"

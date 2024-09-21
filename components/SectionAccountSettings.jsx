@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ButtonResetHelloes from '../components/ButtonResetHelloes';
-import ButtonManageFriends from '../components/ButtonManageFriends';
+ 
+import BaseModalFooterSection from '../components/BaseModalFooterSection';
+import BaseRowModalFooter from '../components/BaseRowModalFooter';
+import LoadingPage from '../components/LoadingPage';
+
+import RowExpUserAddAddresses from '../components/RowExpUserAddAddresses';
+import ButtonAddUserAddresses from '../components/ButtonAddUserAddresses';
 
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -10,17 +16,35 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 const SectionAccountSettings = () => {
 
   const { themeStyles } = useGlobalStyle(); 
+  const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
+  
+  const [ isMakingCall, setIsMakingCall ] = useState(false);
 
+  const toggleAddressModal = () => {
+    setIsAddressModalVisible(true);
+  };
+
+  const showExpandableAddresses = false;
 
   return (
-    <View style={[styles.container, themeStyles.modalContainer]}>
-      <View style={styles.accountSettingsRow}>
-        <View style={{ flexDirection: 'row' }}>
-          <FontAwesome5 name="wrench" size={20} style={[styles.icon, themeStyles.modalIconColor]}  />
-          <Text style={[styles.sectionTitle, themeStyles.modalText]}>Settings</Text> 
-        </View>
-        <ButtonManageFriends />
-      </View>  
+    <BaseModalFooterSection isMakingCall={isMakingCall} LoadingComponent={LoadingPage} themeStyles={themeStyles}>
+          <BaseRowModalFooter 
+            iconName='map' 
+            iconSize={20}
+            label='My Addresses' 
+            useToggle={false}
+            useCustom={false}
+            useAltButton={true}
+            altIsSimpleText={false}
+            altButtonComplete={<ButtonAddUserAddresses/>}
+            onAltButtonPress={toggleAddressModal} 
+            //altButtonComplete={<ButtonResetHelloes />} 
+          />  
+
+          {showExpandableAddresses && (
+            <RowExpUserAddAddresses /> 
+          )}
+ 
       <View style={styles.accountSettingsRow}> 
         <View style={{ flexDirection: 'row' }}>
          <FontAwesome5 name="trash" size={22} style={[styles.icon, themeStyles.modalIconColor]}  />
@@ -28,7 +52,8 @@ const SectionAccountSettings = () => {
         </View>
         <ButtonResetHelloes />
       </View> 
-    </View>
+
+      </BaseModalFooterSection>
   );
 };
 

@@ -1,11 +1,11 @@
-import React, { useState, forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { View, TextInput, StyleSheet, Text } from 'react-native';
 import { addFriendAddress } from '../api';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const FormFriendAddressCreate = forwardRef(({ friendId }, ref) => {
-  const { authUserState } = useAuthUser();
+  const { authUserState, addAddress } = useAuthUser();
   const [address, setAddress] = useState('');
   const [title, setTitle] = useState('');
   const [showSaveMessage, setShowSaveMessage] = useState(false);

@@ -13,9 +13,9 @@ const DOUBLE_PRESS_DELAY = 300; // Time delay to detect double press
 const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, showInModal = true }) => {
   const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [categories, setCategories] = useState([]);
+
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { capsuleList } = useCapsuleList();
+  const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
   const [categoryLimit, setCategoryLimit] = useState('');
   const [remainingCategories, setRemainingCategories] = useState(null);
   const [newCategoryEntered, setNewCategoryEntered] = useState(false);
@@ -29,28 +29,34 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
        fetchCategoryLimitData();
     }
   }, [selectedFriend, friendDashboardData]);
-
-  useEffect(() => {
-    if (categoryLimit) {
-      console.log(categoryLimit);
-      console.log(remainingCategories);
-    }
-  }, [categoryLimit, remainingCategories]);
+ 
 
   const fetchCategoryLimitData = async () => {
+    console.log('category names: ', categoryNames);
+    console.log('category counts: ', categoryCount);
     try {
       if (friendDashboardData && friendDashboardData.length > 0) {
         const firstFriendData = friendDashboardData[0];
-        const categoryLimitResponse = firstFriendData.suggestion_settings.category_limit_formula;
-        const categoryActivationsLeft = firstFriendData.category_activations_left;
+        const categoryLimitResponse = firstFriendData.suggestion_settings.category_limit_formula; 
         const categoryLimitValue = parseInt(categoryLimitResponse);
         setCategoryLimit(categoryLimitValue);
-        setRemainingCategories(categoryActivationsLeft);
+        setRemainingCategories(categoryLimit - categoryCount);
       }
     } catch (error) {
       console.error('Error fetching initial data:', error);
     }
   };
+
+  useEffect(() => {
+    setRemainingCategories(categoryLimit - categoryCount); 
+
+  }, [categoryCount, categoryLimit]);
+
+  useEffect(() => {
+    console.log('remaining categories updated: ', remainingCategories);
+
+  }, [remainingCategories]);
+ 
 
   const getMostCapsulesCategory = () => {
     if (capsuleList.length === 0) return null;
@@ -70,18 +76,16 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
     return mostCapsulesCategories[Math.floor(Math.random() * mostCapsulesCategories.length)];
   };
 
-  useEffect(() => {
-    const uniqueCategories = [...new Set(capsuleList.map(capsule => capsule.typedCategory))];
-    setCategories(uniqueCategories);
+  useEffect(() => { 
 
-    if (uniqueCategories.length > 0) {
+    if (categoryCount > 0) {
       const mostCapsulesCategory = getMostCapsulesCategory();
       if (mostCapsulesCategory) {
-        const categoryIndex = uniqueCategories.indexOf(mostCapsulesCategory);
+        const categoryIndex = categoryNames.indexOf(mostCapsulesCategory);
         setSelectedCategory(categoryIndex);
       }
     }
-  }, [capsuleList]);
+  }, [capsuleList, categoryCount, categoryNames]);
 
   useEffect(() => {
     if (onCategorySelect) {
@@ -89,31 +93,30 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
         console.log('Please enter a category');
         onCategorySelect(null, []);
       } else {
-        const category = categories[selectedCategory];
+        const category = selectedCategory;
         const capsulesForCategory = capsuleList.filter(capsule => capsule.typedCategory === category);
         onCategorySelect(category, capsulesForCategory);
         console.log('Selected category:', category);
         console.log('Capsules for selected category:', capsulesForCategory);
       }
     }
-  }, [selectedCategory, showAllCategories, categories]);
+  }, [selectedCategory]);
 
-  const handleCategoryPress = (categoryIndex) => {
+  const handleCategoryPress = (category) => {
     const now = Date.now();
     const isDoublePress = now - lastPress.current < DOUBLE_PRESS_DELAY;
     lastPress.current = now;
 
     if (isDoublePress) { 
-      setSelectedCategory(categoryIndex);
+      setSelectedCategory(category);
       setModalVisible(true);
-    } else { 
-      const category = categories[categoryIndex];
+    } else {  
       const capsulesForCategory = capsuleList.filter(capsule => capsule.typedCategory === category);
       
-      console.log('Clicked category index:', categoryIndex);
+      console.log('Clicked category index:', category);
       console.log('Category name:', category);
       console.log('Capsules for category:', capsulesForCategory);
-      setSelectedCategory(categoryIndex);
+      setSelectedCategory(category);
     }
   };
 
@@ -129,12 +132,11 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
   };
 
   const handleNewCategory = (newCategory) => { 
-    const updatedCategories = categories.length > 0 
-      ? [...categories.slice(0, -1), newCategory] 
+    const updatedCategories = categoryCount > 0 
+      ? [...categoryNames.slice(0, -1), newCategory] 
       : [newCategory];
-  
-    setCategories(updatedCategories);
-    setSelectedCategory(updatedCategories.length - 1); 
+   
+    setSelectedCategory(newCategory); 
     onCategorySelect(newCategory, []);  
     setNewCategoryEntered(true);
   };
@@ -147,7 +149,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
         </Text>
       ));
     } else {
-      return capsuleList.filter(capsule => capsule.typedCategory === categories[selectedCategory])
+      return capsuleList.filter(capsule => capsule.typedCategory === selectedCategory)
         .map((capsule, index) => (
           <Text key={index} style={styles.capsulesText}>
             {capsule.capsule}
@@ -179,23 +181,24 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
             </Text>
           </TouchableOpacity>
         )}
-        {categories.length === 0 ? (
+        {categoryCount === 0 ? (
           <Text style={styles.noCategoriesText}>Please enter a category</Text>
         ) : (
-          categories.map((category, index) => (
-            <View style={{paddingBottom: 12}}>
-            <ButtonColorBGSmall
-            key={index}
-            title={category}
-            useLightColor={false}
-            onPress={() => handleCategoryPress(index)}
-            textStyle={[
-              styles.categoryText,
-              selectedCategory === index && styles.selectedCategoryText
-            ]}
-          />
-          </View>
+          categoryNames.map((category) => (
+            <View key={category} style={{ paddingBottom: 12 }}>
+              <ButtonColorBGSmall
+                key={category}
+                title={category}
+                useLightColor={false}
+                onPress={() => handleCategoryPress(category)}
+                textStyle={[
+                  styles.categoryText,
+                  selectedCategory === category && styles.selectedCategoryText
+                ]}
+              />
+            </View>
           ))
+          
         )}
         {remainingCategories !== null && remainingCategories > 0 && (
           <ButtonSingleInput onInputValueChange={handleNewCategory} title={`Add new (${remainingCategories} left)`}/>

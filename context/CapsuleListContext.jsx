@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSelectedFriend } from './SelectedFriendContext'; // Adjust the import path as needed
 import { fetchThoughtCapsules, updateThoughtCapsule } from '../api';
 
+ 
 const CapsuleListContext = createContext({ 
   capsuleList: [], 
   setCapsuleList: () => {}, 
@@ -26,6 +27,8 @@ export const CapsuleListProvider = ({ children }) => {
   const [sortedByCategory, setSortedByCategory] = useState([]);
   const [newestFirst, setNewestFirst] = useState([]);
   const [capsuleCount, setCapsuleCount] = useState(0);
+  const [categoryCount, setCategoryCount] = useState(0);
+  const [categoryNames, setCategoryNames] = useState([]);
   const [ preAddedTracker, setPreAddedTracker ] = useState([]);
 
   useEffect(() => {
@@ -131,9 +134,17 @@ const updateCapsules = (capsuleIdsToUpdate, updatedCapsules) => {
       // If categories are the same, compare by date (newest first)
       return new Date(b.created) - new Date(a.created);
     });
-    setSortedByCategory(sorted);
-    console.log("Sorted by Category: ", sorted);
-  };
+ 
+  const uniqueCategories = [...new Set(sorted.map(item => item.typedCategory))];
+ 
+  setCategoryCount(uniqueCategories.length);
+  setCategoryNames(uniqueCategories); // Assuming you have a state for category names
+  setSortedByCategory(sorted);
+
+  console.log("Sorted by Category: ", sorted);
+  console.log('Category count: ', categoryCount);
+  console.log("Unique Categories: ", uniqueCategories);
+  }; 
 
 
   useEffect(() => { 
@@ -156,6 +167,8 @@ const updateCapsules = (capsuleIdsToUpdate, updatedCapsules) => {
     <CapsuleListContext.Provider value={{ 
       capsuleList, 
       capsuleCount,
+      categoryCount,
+      categoryNames,
       sortedByCategory,
       newestFirst,
       preAddedTracker,

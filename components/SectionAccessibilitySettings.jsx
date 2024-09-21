@@ -190,7 +190,7 @@ const SectionAccessibilitySettings = () => {
         value={isScreenReaderEnabled}
         onTogglePress={toggleScreenReader}
       />        
-   
+
       <AlertMicro
         isModalVisible={showAlert}
         toggleModal={() => setShowAlert(false)}

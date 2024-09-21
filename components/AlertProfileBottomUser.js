@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, TextInput } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
 import { useAuthUser } from '../context/AuthUserContext';
 
 import { deleteUserAddress, updateUserProfile } from '../api';
+
 import SpecialFormattingBirthday from './SpecialFormattingBirthday';
 import FormUserAddressCreate from '../forms/FormUserAddressCreate';
 import ButtonAddress from './ButtonAddress';
@@ -16,8 +18,6 @@ const AlertProfileBottomUser = ({ visible, profileData, onClose }) => {
     const [lastName, setLastName] = useState(authUserState.user.profile.last_name);
     const [dateOfBirth, setDateOfBirth] = useState(authUserState.user.profile.date_of_birth);
     const [gender, setGender] = useState(authUserState.user.profile.gender);
-    const [address, setAddress] = useState('');
-    const [addressTitle, setAddressTitle] = useState('');
     const [userAddresses, setUserAddresses] = useState(authUserState.user.addresses);
 
     const toggleEditMode = () => {

@@ -36,6 +36,8 @@ import ScreenAddImage from './screens/ScreenAddImage';
 import ScreenAddHello from './screens/ScreenAddHello';
  
 
+import HellofriendHeader from './components/HellofriendHeader';
+
 async function loadFonts() {
   await Font.loadAsync({
     'Poppins-Light': require('./assets/fonts/Poppins-Light.ttf'),
@@ -133,6 +135,7 @@ export const Layout = () => {
                 component={ScreenDefaultActionMode}
                 options={{
                   headerShown: true,
+                  header: () => <HellofriendHeader />
                 }}
               />
               <Stack.Screen

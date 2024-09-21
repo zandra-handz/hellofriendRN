@@ -180,7 +180,7 @@ const ButtonLottieAnimationTwoSectionsSvg = ({
                   <Text
                     style={[
                       textStyles(preLabelFontSize, preLabelColor),
-                      { fontFamily: 'Poppins-Regular', width: '70%', marginBottom: -6 },
+                      { fontFamily: 'Poppins-Regular', width: '90%', marginBottom: -6 },
                     ]}
                     numberOfLines={1}  
                     ellipsizeMode='tail' 

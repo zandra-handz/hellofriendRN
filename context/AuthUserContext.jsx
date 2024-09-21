@@ -44,6 +44,7 @@ export const AuthUserProvider = ({ children }) => {
     });
     const [userAppSettings, setUserAppSettings] = useState(null);
     const [ userNotificationSettings, setUserNotificationSettings ] = useState(null);
+    const [ userAddresses, setUserAddresses ] = useState(null);
 
     const fetchUser = async (token) => {
         try {
@@ -154,8 +155,7 @@ export const AuthUserProvider = ({ children }) => {
     }, [userNotificationSettings]);
     
 
-
-    
+ 
  
 
     const handleSignin = async (username, password) => {
@@ -197,7 +197,17 @@ export const AuthUserProvider = ({ children }) => {
                 setUserNotificationSettings(prevSettings => ({
                     ...prevSettings,
                     receive_notifications: currentUserData.settings.receive_notifications, // Update only the receive_notifications value
-                }));
+                })); 
+                  
+                setUserAddresses(prevSettings => ({
+                    ...prevSettings,
+                    addresses: Object.keys(currentUserData.addresses).map(key => ({
+                      title: currentUserData.addresses[key].title,
+                      address: currentUserData.addresses[key].address,
+                      coordinates: currentUserData.addresses[key].coordinates,
+                    })), // Add the new addresses array under the 'addresses' key
+                  }));
+                  
                 
             } else {
                 setAuthUserState(prevState => ({
@@ -229,6 +239,7 @@ export const AuthUserProvider = ({ children }) => {
         });
         setUserAppSettings(null);
         setUserNotificationSettings(null); // Clear notification settings on sign out
+        setUserAddresses(null);
         return result;
     };
 
@@ -246,6 +257,32 @@ export const AuthUserProvider = ({ children }) => {
             receive_notifications: receiveNotificationsValue,  // Update only the receive_notifications value
         }));
         }
+    };
+
+    const updateUserAddresses = (newSettings) => {
+        setUserAddresses(prevSettings => ({
+            ...prevSettings,
+            ...newSettings,
+        }));
+    };
+
+    const addAddress = (title, address, coordinates = null) => {
+        const newAddress = {
+            title,
+            address,
+            coordinates,
+        };
+    
+        updateUserAddresses({
+            addresses: [...(userAddresses.addresses || []), newAddress],
+        });
+    };
+    
+    // Function to remove an address by title (or you could use an ID or some other identifier)
+    const removeAddress = (addressTitle) => {
+        updateUserAddresses({
+            addresses: userAddresses.addresses.filter(address => address.title !== addressTitle),
+        });
     };
 
     useEffect(() => {
@@ -286,6 +323,15 @@ export const AuthUserProvider = ({ children }) => {
                         ...prevSettings,
                         receive_notifications: currentUserData.settings.receive_notifications, // Update only the receive_notifications value
                     }));
+                    setUserAddresses(prevSettings => ({
+                        ...prevSettings,
+                        addresses: Object.keys(currentUserData.addresses).map(key => ({
+                          title: currentUserData.addresses[key].title,
+                          address: currentUserData.addresses[key].address,
+                          coordinates: currentUserData.addresses[key].coordinates,
+                        })), // Add the new addresses array under the 'addresses' key
+                      }));
+                      
                 } else {
                     setAuthUserState(prevState => ({
                         ...prevState,
@@ -358,6 +404,15 @@ export const AuthUserProvider = ({ children }) => {
                             ...prevSettings,
                             receive_notifications: currentUserData.settings.receive_notifications, // Update only the receive_notifications value
                         }));
+                        setUserAddresses(prevSettings => ({
+                            ...prevSettings,
+                            addresses: Object.keys(currentUserData.addresses).map(key => ({
+                              title: currentUserData.addresses[key].title,
+                              address: currentUserData.addresses[key].address,
+                              coordinates: currentUserData.addresses[key].coordinates,
+                            })), // Add the new addresses array under the 'addresses' key
+                          }));
+                          
                     } else {
                         setAuthUserState(prevState => ({
                             ...prevState,
@@ -438,7 +493,11 @@ export const AuthUserProvider = ({ children }) => {
         removeNotificationPermissions: removeNotificationPermissions,
         authUserState,
         userAppSettings,
+        userAddresses,
         updateUserSettings,
+        updateUserAddresses,
+        addAddress,
+        removeAddress,
         updateUserNotificationSettings,
     };
 

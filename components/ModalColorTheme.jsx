@@ -151,7 +151,8 @@ const styles = StyleSheet.create({
   },
   modalTitle: { 
     fontSize: 17, 
-    fontFamily: 'Poppins-Bold' 
+    fontFamily: 'Poppins-Bold',
+    width: '80%',
   },
  
 

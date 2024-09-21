@@ -33,6 +33,11 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   const borderWidth = 0;
   const borderRadius = 34;
 
+  const buttonHeight = 130;
+  const headerHeight = 150;
+
+  const paddingAboveTopButton = 10;
+
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
       setBorderColor(calculatedThemeColors.lightColor);
@@ -101,39 +106,22 @@ return (
           )}
           {!isLoading && (  
             <>
-            <View style={styles.buttonContainer}>
-              <View style={{height: 146, width: '100%'}}>   
-                <ActionPageUpcomingButton/>
-              </View>
-              <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
-                
-                <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen}/>
+            <View style={[styles.buttonContainer, {paddingTop: paddingAboveTopButton}]}>  
+              <ActionPageUpcomingButton height={headerHeight}/> 
+              <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen} height={buttonHeight}/>
 
-              </View>
-              <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
-                
-                <ActionScreenButtonAddImage onPress={navigateToAddImageScreen }/>
-              </View>
-              <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
-                
-                <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen}/>
-              </View>
+              <ActionScreenButtonAddImage onPress={navigateToAddImageScreen} height={buttonHeight}/>
+ 
+              <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen} height={buttonHeight}/>
+          
               {selectedFriend && (
-              <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
-                
-                <ActionScreenButtonAddLocation onPress={navigateToAddLocationScreen} />
-              </View>
+                <ActionScreenButtonAddLocation onPress={navigateToAddLocationScreen} height={buttonHeight} />
                )}
-              {!selectedFriend && (
-               <View style={{height: 140, borderWidth: borderWidth, borderColor: borderColor, borderRadius: borderRadius, width: '100%'}}>  
-                
-                <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} />
-              </View>
-               )}
-
-                </View>
-                <View style={styles.footerContainer}>  
-                <HelloFriendFooter />
+              {!selectedFriend && ( 
+                <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} height={buttonHeight}/>
+      
+               )} 
+                <HelloFriendFooter /> 
                 </View>
           </>
           )}
@@ -157,16 +145,16 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,  
+    justifyContent: 'space-between',
  
   },   
-  buttonContainer: {
-    height: '90.5%',
+  buttonContainer: {   
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginHorizontal: 10,
+    marginHorizontal: 4,
 
-    paddingBottom: 0, 
-    paddingTop: 0,
+    paddingBottom: 0,  
   },
   footerContainer: {
     position: 'absolute',

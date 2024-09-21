@@ -2,11 +2,12 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
 
-const ActionScreenButtonAddHello = ({ onPress }) => {
+const ActionScreenButtonAddHello = ({ onPress, height=134 }) => {
 
     return (
         <View style={styles.container}>
             <ButtonLottieAnimation
+                height={height}
                 onPress={onPress}
                 label="NEW HELLO"
                 showIcon={false} 

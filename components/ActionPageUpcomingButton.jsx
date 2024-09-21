@@ -10,7 +10,7 @@ import ButtonArrowSvgAndLabel from '../components/ButtonArrowSvgAndLabel';
 
 import LizardSvg from '../assets/svgs/lizard';
  
-const ActionPageUpcomingButton = () => {
+const ActionPageUpcomingButton = ({height=140}) => {
   const { authUserState, userAppSettings } = useAuthUser();
   
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
@@ -66,12 +66,13 @@ const ActionPageUpcomingButton = () => {
   return (
     <>
  
-    <View style={styles.container}>
+    <View style={[styles.container, {height: height}]}>
 
       {!selectedFriend && (
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 ? (
           <ButtonMultiFeatureUpcoming
+            height={height}
             onPress={() => handlePress(mainHello)}
             isLoading={isLoading} 
             navigateToFirstPage={navigateToFirstPage}
@@ -102,6 +103,7 @@ const ActionPageUpcomingButton = () => {
           />
         ) : (
           <ButtonMultiFeatureUpcoming
+            height={height}
             onPress={() => handlePress(mainHello)}
             navigateToFirstPage={navigateToFirstPage}
             headerText={mainHello ? 'UP NEXT' : ''}
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     width: '100%',
-    height: 140,
+    height: '100%',
     marginBottom: 0,
     borderRadius: 30,
     overflow: 'hidden',

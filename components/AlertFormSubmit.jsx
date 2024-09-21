@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'column',
     justifyContent: 'space-between',
-    width: '100%', 
+    width: '100%',  
   },
   confirmButton: {
     backgroundColor: '#4CAF50',

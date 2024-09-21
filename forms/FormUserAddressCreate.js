@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
-import { addUserAddress } from '../api'; // Import the addUserAddress function
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
+import { View, TextInput, StyleSheet, Text } from 'react-native';
+import { useAuthUser } from '../context/AuthUserContext';
+import { addUserAddress } from '../api';  
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const FormUserAddressCreate = ({ userId }) => {
+const FormUserAddressCreate = forwardRef(({ userId }, ref) => {
+  const { addAddress } = useAuthUser();
+  const { themeStyles } = useGlobalStyle();
   const [address, setAddress] = useState('');
   const [title, setTitle] = useState('');
   const [showSaveMessage, setShowSaveMessage] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    submit: handleSubmit,
+    reset: handleReset,
+  }));
 
   const handleSubmit = async () => {
     try {
@@ -13,56 +22,70 @@ const FormUserAddressCreate = ({ userId }) => {
         title: title,
         address: address,
       };
-      await addUserAddress(userId, addressData);
-      
-      setAddress('');
-      setTitle(''); 
+      response = await addUserAddress(userId, addressData);
+      console.log('handleSubmit add user address in form reponse:', response);
+      addAddress(title, address);
+      handleReset(); 
       
       setShowSaveMessage(true);
       setTimeout(() => {
         setShowSaveMessage(false);
       }, 3000); 
+
+      return true;
+
     } catch (error) {
       console.error('Error adding address:', error); 
+      return false;
     }
+  };
+
+    const handleReset = () => {
+    setAddress('');
+    setTitle('');
   };
 
   return (
     <View style={styles.container}>
       {showSaveMessage && <Text style={styles.saveMessage}>Address added successfully!</Text>}
-      <TextInput
-        style={styles.input}
-        placeholder="Address"
-        value={address}
-        onChangeText={setAddress}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Title"
-        value={title}
-        onChangeText={setTitle}
-      />
-      <Button title="Add Address" onPress={handleSubmit} />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={themeStyles.input}
+          placeholder="Nickname for location" 
+          placeholderTextColor="lightgray"
+          maxLength={100}
+          value={title}
+          onChangeText={setTitle}
+        />
+      </View>
+      
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={themeStyles.input}
+          placeholder="Address"
+          placeholderTextColor="lightgray"
+          value={address}
+          maxLength={200}
+          onChangeText={setAddress}
+        />
+      </View>
     </View>
   );
-};
+});
+
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-    paddingHorizontal: 0,
-  }, 
+  container: { 
+    justifyContent: 'center', 
+    width: '100%',
+  },
   saveMessage: {
     color: 'green',
     marginBottom: 10,
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 10,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+  inputContainer: {
+    width: '100%',
+    marginTop: 10,
   },
 });
 
