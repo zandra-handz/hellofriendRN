@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import CalendarAddOutlineSvg from '../assets/svgs/calendar-add-outline.svg';
 
 const PickerDate = ({
   value,
@@ -12,11 +13,10 @@ const PickerDate = ({
   maximumDate,
   onChange,
   showDatePicker,
-  setShowDatePicker,
-  dateTextStyle, 
-  buttonStyle,
+  setShowDatePicker, 
   includeContainer = false,
   inline =false,  
+  buttonHeight='auto',
 }) => {
   
   const { themeStyles } = useGlobalStyle();
@@ -34,10 +34,15 @@ const PickerDate = ({
         </Text>
         <TouchableOpacity
           onPress={() => setShowDatePicker(true)}
-          style={[styles.datePickerButton, buttonStyle, inline && styles.flexButton]}
+          style={[styles.datePickerButton, {height: buttonHeight}, inline && styles.flexButton]}
         >
-          <Text style={[styles.dateText, dateTextStyle]}>
-            {moment(value).format('MMMM Do YYYY')}
+            <View style={{paddingRight: 8}}>
+            <CalendarAddOutlineSvg height={30} width={30} color='white' />
+            </View>
+
+          <Text style={[styles.dateText]}>
+ 
+            {moment(value).format('MMM D YYYY')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -56,11 +61,9 @@ const PickerDate = ({
 };
 
 const styles = StyleSheet.create({
-  locationContainer: {
-    backgroundColor: '#fff',
+  locationContainer: { 
     borderRadius: 8,
-    padding: 10,
-    shadowColor: '#000',
+    padding: 10, 
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -79,23 +82,31 @@ const styles = StyleSheet.create({
   },
   locationTitle: {
     fontSize: 17,
-    fontFamily: 'Poppins-Bold',
-    marginRight: 10,  
+    fontFamily: 'Poppins-Bold',  
   },
   datePickerButton: { 
-    borderRadius: 20,
+    borderRadius: 10,
+    width: '100%',
+    justifyContent: 'flex-start',
+    textAlign: 'center',
+    alignContent: 'center', 
     backgroundColor: 'gray',
-    padding: 8,
+    padding: 6, 
     alignItems: 'center',
+    flexDirection: 'row',
     flex: 1,
   },
   flexButton: {
-    flex: 1,  
-    
+    flex: 1,   
   
   },
   dateText: {
     fontSize: 15,
+    width: '100%',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+
     fontFamily: 'Poppins-Regular',
     color: '#fff',  
   },

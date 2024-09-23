@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -13,6 +13,15 @@ const ScreenMoments = ({ route, navigation }) => {
     const {calculatedThemeColors} = useSelectedFriend();
     const { capsuleList } = useCapsuleList();
     const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
+    const [triggerUpdate, setTriggerUpdate] = useState(false); // State to trigger update
+    const [checkboxesParent, setCheckboxesParent] = useState(false);
+
+    const toggleCheckboxesParent = () => {
+        console.log('checkbox toggle tracker in parent: ', checkboxesParent);
+        setCheckboxesParent(!checkboxesParent);
+        
+
+    };
 
     useEffect(() => {
         if (capsuleList.length > 0) {
@@ -20,18 +29,54 @@ const ScreenMoments = ({ route, navigation }) => {
         }
     }, [capsuleList]);
 
+    useEffect(() => {
+        
+        if (checkboxesParent !==false) {
+        const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+            e.preventDefault();
+
+
+
+            Alert.alert(
+                '',
+                'Do you want to save your changes before leaving?',
+                [
+                    { 
+                        text: 'Yes', 
+                        style: 'destructive',
+                        onPress: () => {
+                            setTriggerUpdate(prev => !prev); // Trigger the save function
+                            navigation.dispatch(e.data.action); // Navigate away
+                        }
+                    },
+                    { 
+                        text: 'No', 
+                        style: 'default',
+                        onPress: () => navigation.dispatch(e.data.action) // Navigate away without saving
+                    }
+                ]
+            );
+        
+        });
+
+        return unsubscribe;
+    };
+    }, [navigation, checkboxesParent]);
+
     return ( 
         
         <LinearGradient
-        colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[styles.container, themeStyles.signinContainer]}
-      >
+            colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[styles.container, themeStyles.signinContainer]}
+        >
                 <View style={{flex: 1, width: '100%'}}>
                     {isCapsuleListReady ? (
                         <>  
-                        <ItemMomentMultiPlain height={40} width={40} columns={3} singleLineScroll={false} newestFirst={false} svgColor={themeStyles.footerIcon} />
+                        <ItemMomentMultiPlain 
+                            triggerUpdate={triggerUpdate} 
+                            parentCheckboxesTracker={toggleCheckboxesParent} />
                             
                       
                         <ButtonGoToAddMoment buttonColor={calculatedThemeColors.darkColor}/>

@@ -36,7 +36,7 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   const buttonHeight = 130;
   const headerHeight = 150;
 
-  const paddingAboveTopButton = 10;
+  const paddingAboveTopButton = 16;  
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
@@ -141,7 +141,6 @@ return (
 const styles = StyleSheet.create({
   selectorContainer: {
     flex: 1,
-
   },
   container: {
     flex: 1,  
@@ -152,16 +151,8 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginHorizontal: 4,
-
-    paddingBottom: 0,  
-  },
-  footerContainer: {
-    position: 'absolute',
-    width: '100%', 
-    bottom: 0,
-
-  },
+    marginHorizontal: 4, 
+  }, 
 });
 
 export default ScreenDefaultActionMode;

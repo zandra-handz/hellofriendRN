@@ -14,17 +14,18 @@ const PickerComplexList = ({
   secondaryOptionsHeader,
   objects = false,
   containerText = 'Select an option',
-  containerStyle,
-  buttonStyle,
-  buttonTextStyle,
+  containerStyle, 
+  buttonRadius=10,
   includeContainer = false,
   modalVisible = false,
   setModalVisible,
   inline = false,
+  noBackground = false,
   primaryIcon: PrimaryIcon,
   secondaryIcon: SecondaryIcon, 
   iconSize = 34,
   allowCustomEntry = false,  
+  buttonHeight='auto',
 }) => {
 
   const { themeStyles } = useGlobalStyle();
@@ -92,19 +93,25 @@ const PickerComplexList = ({
       ]}
     >
       <View style={[styles.content, inline && styles.inlineContent]}>
-        {inline && (
+        {inline && noBackground && (
           <Text style={[styles.containerText, themeStyles.subHeaderText, inline && styles.inlineText]}>
             {containerText}
           </Text>
-        )}
+        )} 
         <TouchableOpacity
-          style={[styles.button, buttonStyle, inline && styles.inlineButton]}
+          style={[styles.button, {borderRadius: buttonRadius, height: buttonHeight}]}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={[styles.buttonText, buttonTextStyle]}>
-            {label}
-          </Text>
-        </TouchableOpacity>
+          
+          <View style={styles.buttonInner}>
+          {inline && !noBackground && (  
+            <View style={{alignContent: 'center', paddingRight: 10}}> 
+            {containerText}
+            </View>
+          )} 
+            <Text style={[styles.buttonText]}>{label}</Text> 
+          </View>
+        </TouchableOpacity> 
       </View>
 
       {modalVisible && (
@@ -185,16 +192,7 @@ const PickerComplexList = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    marginVertical: 8,
+  container: {   
   },
   inlineContainer: {
     flexDirection: 'row',
@@ -211,22 +209,27 @@ const styles = StyleSheet.create({
   },
   containerText: {
     fontSize: 17,
-    fontFamily: 'Poppins-Bold',
-    marginRight: 10,
+    height: '100%', 
+    fontFamily: 'Poppins-Bold', 
   },
   inlineText: {},
-  button: {
-    borderRadius: 20,
+  button: { 
     backgroundColor: 'gray',
-    padding: 8,
-    alignItems: 'center',
-    flex: 1,
-  },
-  inlineButton: {
-    flex: 1,
+    padding: 6,
+    alignItems: 'center', 
+    justifyContent: 'space-between',
+    width: '100%',
+    flexDirection: 'row',
+  }, 
+  buttonInner: {
+    width: '100%', 
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
   },
   buttonText: {
     fontSize: 15,
+    justifyContent: 'flex-start',
+    width: '100%', 
     fontFamily: 'Poppins-Regular',
     color: '#fff',
   },

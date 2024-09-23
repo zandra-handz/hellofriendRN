@@ -22,8 +22,13 @@ const ButtonCheckboxControl = ({
   }, [selectedMoments]); 
 
   const handleGoToHelloScreen = () => {
+    onSave();
     navigation.navigate('AddHello');
   };
+  const handleGoToHelloScreenNoSave = () => {
+    onSave();
+    navigation.navigate('AddHello');
+  }; 
 
   return ( 
     <View style={styles.controlPanel}>
@@ -35,7 +40,7 @@ const ButtonCheckboxControl = ({
     </TouchableOpacity>
     {!showCheckboxes && (
           <ButtonColorBGSmall 
-            onPress={handleGoToHelloScreen} 
+            onPress={handleGoToHelloScreenNoSave} 
             title="Go to Hello" 
             backgroundColor={buttonColor} 
             textStyle={themeStyles.footerText}
@@ -44,8 +49,8 @@ const ButtonCheckboxControl = ({
 
         {showCheckboxes && (
           <ButtonColorBGSmall 
-            onPress={onSave} 
-            title="Save" 
+            onPress={handleGoToHelloScreen} 
+            title="Go to Hello" 
             backgroundColor={buttonColor} 
             textStyle={themeStyles.footerText}
           />

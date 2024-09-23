@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const PickerMenuOptions = ({
   options = [],
@@ -17,6 +18,7 @@ const PickerMenuOptions = ({
 }) => {
 
   const { themeStyles } = useGlobalStyle();
+  const { calculatedThemeColors } = useSelectedFriend();3
 
   return (
     <View style={styles.container}>
@@ -32,10 +34,10 @@ const PickerMenuOptions = ({
               <TouchableOpacity
                 key={index}
                 style={[
-                  styles.optionButton, themeStyles.genericIcon,
-                  selectedOption === index && styles.selectedOptionButton,
+                  styles.optionButton, themeStyles.genericIcon, themeStyles.genericTextBackgroundShadeTwo,
+                  selectedOption === index && [styles.selectedOptionButton,  {backgroundColor : calculatedThemeColors.darkColor}],
                   themeStyles.selectedIconBorder,
-                  buttonStyle,
+                  buttonStyle
                 ]}
                 onPress={() => onSelectOption(index)}
               >
@@ -90,28 +92,25 @@ const styles = StyleSheet.create({
   },
   containerText: {
     fontSize: 17,
-    fontFamily: 'Poppins-Bold',
-    marginRight: 10,  
+    fontFamily: 'Poppins-Bold', 
   },
   inlineText: {
     flex: 1, 
   },
   optionsContainer: {  
-    paddingHorizontal: 4,
     justifyContent: 'space-between', 
     flexDirection: 'row',  
     flexWrap: 'wrap',
   }, 
-  optionButton: {
-    paddingHorizontal: 10,
-    paddingBottom: 2,
-    paddingTop: 6,
-    borderRadius: 20,
-    marginVertical: 4,
+  optionButton: {  
+    minWidth: 96,
+    paddingBottom: 10,
+    paddingTop: 10,
+    borderRadius: 30, 
     alignItems: 'center',
   },
   selectedOptionButton: {
-    borderWidth: 1, 
+    borderWidth: 0,  
   },
   optionText: { 
     fontFamily: 'Poppins-Regular',
@@ -133,8 +132,9 @@ const styles = StyleSheet.create({
     
   },
   optionLabel: {
+    paddingTop: 4,
     textAlign: 'center',
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: 'Poppins-Regular', 
   
     

@@ -2,7 +2,17 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const ButtonToggleSize = ({ title, onPress, textButton=false, text='Go', iconName, iconSize=24, backgroundColor='#4cd137', color = 'white' }) => {
+const ButtonToggleSize = ({ 
+  title, 
+  onPress, 
+  textButton=false, 
+  text='Go', 
+  useSvg=false,
+  Svg,
+  iconName, 
+  iconSize=24, 
+  backgroundColor='#4cd137', 
+  color = 'white' }) => {
   return (
     <TouchableOpacity
       style={[styles.container, {backgroundColor: backgroundColor}]}
@@ -13,7 +23,13 @@ const ButtonToggleSize = ({ title, onPress, textButton=false, text='Go', iconNam
     >
       <View style={styles.content}>
         <Text style={[styles.text]}>{title}</Text>
+        {!useSvg && (  
         <Icon name={iconName} size={iconSize} color={color} />
+        )}
+        {useSvg && (
+          <Svg height={iconSize} width={iconSize} color={color}/>
+        
+        )}
         {textButton && <Text style={styles.text}>{text}</Text>}
       </View>
     </TouchableOpacity>

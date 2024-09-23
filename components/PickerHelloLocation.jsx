@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';
 
@@ -10,15 +9,21 @@ import LocationSolidSvg from '../assets/svgs/location-solid.svg';
 import PickerComplexList from '../components/PickerComplexList';
 
 import { useLocationList } from '../context/LocationListContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const PickerHelloLocation = ({
 
     selectedLocation, 
-    onLocationChange
+    modalVisible,
+    setModalVisible,
+    onLocationChange,
+    label='',
+    buttonRadius=10,
+    buttonHeight='auto'
 
     }) => { 
-
-    const [locationModalVisible, setLocationModalVisible] = useState(false);
+        
+    const { themeStyles } = useGlobalStyle();
     const { locationList, faveLocationList,populateFaveLocationsList, savedLocationList } = useLocationList();
     const [isLocationListReady, setIsLocationListReady] = useState(false);
     const { friendDashboardData, loadingNewFriend } = useSelectedFriend();
@@ -46,7 +51,8 @@ const PickerHelloLocation = ({
         <> 
         {isLocationListReady && (
         <PickerComplexList 
-            containerText='Location: '
+            containerText={
+            <LocationSolidSvg width={20} height={20} color='white' />}
             inline={true}
             modalHeader='Select Location'
             allowCustomEntry={true}
@@ -59,8 +65,10 @@ const PickerHelloLocation = ({
             objects={true} 
             onLabelChange={onLocationChange}
             label={selectedLocation}
-            modalVisible={locationModalVisible}
-            setModalVisible={setLocationModalVisible} 
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible} 
+            buttonRadius={buttonRadius}
+            buttonHeight={buttonHeight}
         />
         )}
         </>

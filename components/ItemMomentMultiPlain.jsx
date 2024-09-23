@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
-import { View, StyleSheet, Text, FlatList, Animated } from 'react-native';
+
+import { View, StyleSheet, Text, FlatList, Animated, Alert } from 'react-native';
 import ButtonMomentCategorySmall from '../components/ButtonMomentCategorySmall';
 import ButtonMoment from '../components/ButtonMoment'; 
 import ButtonCheckboxControl from '../components/ButtonCheckboxControl';
@@ -15,7 +16,9 @@ const footerHeight = 800; // Set to a fixed height for footer
 
 const ItemMomentMultiPlain = ({
   passInData = false, 
+  triggerUpdate = false,
   includeCategoryTitle = false, 
+  parentCheckboxesTracker,
 }) => { 
   const { themeStyles } = useGlobalStyle();
   const { capsuleList, sortedByCategory, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
@@ -39,7 +42,12 @@ const ItemMomentMultiPlain = ({
     setSelectedMoments(initialSelectedMoments);
 
   }, [preAddedTracker]);
- 
+
+  useEffect(() => {
+    if (triggerUpdate) {
+        handlePreSave(); // Call your save function here when triggered
+    }
+}, [triggerUpdate]);
 
   const categoryStartIndices = useMemo(() => {
     let index = 0;
@@ -107,40 +115,70 @@ const ItemMomentMultiPlain = ({
   };
 
   const handleToggleCheckboxes = () => {
+    console.log(showCheckboxes);
+    
+    if (showCheckboxes) { 
+      Alert.alert(
+        '', // Title of the alert
+        'Do you want to save your changes?', // Message of the alert
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => console.log('Cancel Pressed'), // Optional action for cancel
+          },
+          {
+            text: 'OK',
+            onPress: () => handlePreSave(), // Optional action for OK
+          },
+        ]
+      );
+    }
+  
+    // Toggle the checkbox visibility state
     setShowCheckboxes(prev => !prev);
+    parentCheckboxesTracker();
   };
+  
  
 
-  const handlePreSave = async () => { 
+  const handlePreSave = async () => {
+    // Check if there are no selected moments
+    if (selectedMoments.length === 0) {
+        console.log('No moments selected to update.');
+        return; // Early return or you can handle this case differently
+    }
+
     const selectedIds = new Set(selectedMoments.map(moment => moment.id));
- 
+
     const capsulesToUpdate = selectedMoments.map(moment => ({
         id: moment.id,
         fieldsToUpdate: { pre_added_to_hello: true }
-    })); 
+    }));
+
     const idsToUpdateFalse = preAddedTracker.filter(id => !selectedIds.has(id));
     const idsToUpdateTrue = selectedMoments.map(moment => moment.id);
-    
+
     const capsulesToUpdateFalse = idsToUpdateFalse.map(id => ({
         id: id,
         fieldsToUpdate: { pre_added_to_hello: false }
     }));
- 
+
     const allCapsulesToUpdate = [...capsulesToUpdate, ...capsulesToUpdateFalse];
-   
+
     console.log('Payload to update moments: ', allCapsulesToUpdate);
-    try { 
+    try {
         const updatedData = await updateThoughtCapsules(selectedFriend.id, allCapsulesToUpdate);
 
         // Optionally, handle the response data (e.g., update state or UI)
         console.log('Updated thought capsules:', updatedData);
         updatePreAdded(idsToUpdateTrue, idsToUpdateFalse);
-    
-        setShowCheckboxes(prev => !prev);
+
     } catch (error) {
         console.error('Error during pre-save:', error);
     }
 };
+
   
 
   const toggleSelectMoment = (moment) => {

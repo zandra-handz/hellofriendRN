@@ -13,22 +13,16 @@ const ScreenAddHello = () => {
  
     return (
         <View style={[styles.container, themeStyles.container]}> 
-            <View style={styles.mainContainer}> 
-                <ContentAddHello />
-            </View> 
+            <ContentAddHello /> 
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: 'white',
-        padding: 10,
-    },
-    mainContainer: {
-        flex: 1,
-        paddingBottom: 10,
+        flex: 1,  
+        justifyContent: 'space-between',
+        paddingHorizontal: 4, 
     }, 
 });
 

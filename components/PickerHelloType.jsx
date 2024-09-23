@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState } from 'react'; 
+import { View} from 'react-native';
 import PickerMenuOptions from '../components/PickerMenuOptions';
 
 import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
@@ -13,15 +13,15 @@ const PickerHelloType = ({
     selectedTypeChoice, 
     onTypeChoiceChange, 
     useSvg=true,
-    widthInPercentage='84%'
+    labels=['digital', 'in person', 'surprise', 'N/A'],
+    widthInPercentage='84%',
+    height=40
     
     }) => {
 
     const [typeChoices, setTypeChoices] = useState(["via text or social media", "in person", "happenstance", "unspecified"]);
   
-    const labels = [
-        'digital', 'in person', 'surprise', 'N/A'
-      ];
+   
 
     const svgIcons = [
         PhoneChatMessageHeartSvg, 
@@ -32,6 +32,7 @@ const PickerHelloType = ({
 
 
    return ( 
+          <View style={{height: height}}> 
             <PickerMenuOptions
                 options={typeChoices}
                 widthForHorizontal={widthInPercentage}
@@ -42,36 +43,11 @@ const PickerHelloType = ({
                 svgIcons={svgIcons} 
                 labels={labels}
             /> 
+          </View>
 
    );
 };
 
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 0,
-      justifyContent: 'space-between',
-    },
-    mainContainer: {
-      flex: 1,
-      padding: 0,
-      justifyContent: 'space-between',
-      paddingBottom: 68,
-    },
-    typeChoicesContainer: {  
-      borderRadius: 8,
-      top: 22, 
-      width: '100%',
-      padding: 0,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.0,
-      shadowRadius: 0,
-      elevation: 0,
-      marginVertical: 0, 
-      height: 90,  
-    },
-});
+ 
 
 export default PickerHelloType;

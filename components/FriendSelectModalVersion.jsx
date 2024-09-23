@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import AlertList from '../components/AlertList';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
+import ProfileTwoUsersSvg from '../assets/svgs/profile-two-users.svg';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -93,7 +94,7 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
       >  
         <View style={styles.displaySelectedContainer}>
         <Text
-          style={[styles.displaySelected, textStyles(18, 'white')]}
+          style={[styles.displaySelected, textStyles(20, 'white')]}
           numberOfLines={1}  
           ellipsizeMode='tail'  
         >
@@ -105,7 +106,9 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
           <ButtonToggleSize
             title={''}
             onPress={toggleModal}
-            iconName="refresh" 
+            iconName="user" 
+            useSvg={true}
+            Svg={ProfileTwoUsersSvg}
             backgroundColor={'transparent'}
             color={refreshButtonColor}
             style={{
@@ -150,13 +153,12 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', 
-    height: 'auto',
+    height: 50,
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 0,
-    marginBottom: 14,
+    alignItems: 'center', 
     paddingHorizontal: 10,
-    borderRadius: 12, 
+
+    borderRadius: 22, 
   },
   displaySelectedContainer: {
     alignItems: 'left',   
@@ -172,9 +174,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     flex: 0.4, 
   },
-  row: {
-    padding: 0,
-    marginBottom: 0, 
+  row: { 
     borderRadius: 5,
   },
 });

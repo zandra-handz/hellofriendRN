@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
  
 import { saveHello } from '../api';
@@ -24,9 +24,13 @@ import ButtonBottomSaveHello from '../components/ButtonBottomSaveHello';
 import AlertYesNo from '../components/AlertYesNo';   
 import AlertSuccessFail from '../components/AlertSuccessFail';
 
+import LoadingPage from '../components/LoadingPage';
+
 const ContentAddHello = () => {
 
   const navigation = useNavigation();
+
+  const { themeStyles } = useGlobalStyle();
 
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend, friendDashboardData, setFriend } = useSelectedFriend();
@@ -42,7 +46,9 @@ const ContentAddHello = () => {
   const [selectedHelloLocation, setSelectedHelloLocation] = useState('Select location');
   const [existingLocationId, setExistingLocationId ] = useState('');
   const [customLocation, setCustomLocation ] = useState('');
- 
+  const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [showLocationPicker, setShowLocationPicker] = useState(false);  
+
   const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
   const [momentsSelected, setMomentsSelected] = useState([]);
   
@@ -82,19 +88,27 @@ const resetAdditionalNotes = () => {
   }, [deleteChoice]);
  
 
-
-  useEffect(() => {
-    if (selectedFriend && !loadingNewFriend) {
-      setFirstSectionTitle('For: ');
-    }
-  }, [selectedFriend, loadingNewFriend]);
-
-
   const handleTypeChoiceChange = (index) => {
-    setSelectedTypeChoice(index);
-    setSelectedTypeChoiceText(`${typeChoices[index]}`);
-    console.log(`Selected type: ${typeChoices[index]}`);
+    
+    
+    setSelectedTypeChoice(index); 
+    setSelectedTypeChoiceText(`${typeChoices[index]}`); 
+    console.log(`Hello type selected: ${typeChoices[index]}`);
+
+    if (index === 1 || index === 2) {
+      console.log('open location modal');
+
+      toggleLocationModal(); 
+    } else {
+      setSelectedHelloLocation('None'); 
+    };
     console.log(index);
+  };
+
+  const toggleLocationModal = () => {
+  
+    setLocationModalVisible(!locationModalVisible);
+    console.log('location modal toggled');
   };
 
   const handleLocationChange = (item) => {
@@ -183,28 +197,52 @@ const failOk = () => {
     <View style={styles.container}>
       <View style={styles.mainContainer}> 
 
-        <View style={styles.selectFriendContainer}>
-        <Text style={styles.locationTitle}>{firstSectionTitle}</Text>
+        <View style={styles.selectFriendContainer}> 
 
-          <FriendSelectModalVersion width='88%' />
+          <FriendSelectModalVersion width='100%' />
         </View> 
         <View style={styles.typeChoicesContainer}>
             <PickerHelloType  
-                containerText='Type: '
+                containerText=''
                 selectedTypeChoice={selectedTypeChoice} 
                 onTypeChoiceChange={handleTypeChoiceChange}  
                 useSvg={true} 
+                widthInPercentage='100%'
          />
             </View>
-           
-            <View style={styles.locationContainer}> 
-            {(selectedTypeChoice === 1 || selectedTypeChoice === 2) && (
-                <PickerHelloLocation  
-                    onLocationChange={handleLocationChange}
-                    selectedLocation={selectedHelloLocation} 
-              /> 
-              )}
+
+            {!selectedTypeChoiceText &&  ( 
+            <View style={{ height: '69%'}}>
             </View>
+          )}
+          {selectedTypeChoiceText && ( 
+          <>
+           <View style={{flexDirection: 'row'}}>  
+            <View style={[styles.locationContainer, {paddingRight: 3}]}> 
+              <PickerHelloLocation 
+                    buttonHeight={56}
+                    buttonRadius={10}
+                    onLocationChange={handleLocationChange}
+                    modalVisible={locationModalVisible}
+                    setModalVisible={setLocationModalVisible}
+                    selectedLocation={selectedHelloLocation} 
+              />  
+              </View> 
+              <View style={[styles.locationContainer, {paddingLeft: 3}]}> 
+              <PickerDate
+                buttonHeight={56}
+                value={helloDate}
+                mode="date"
+                display="default"
+                containerText=""
+                maximumDate={new Date()}
+                onChange={onChangeDate}
+                showDatePicker={showDatePicker}
+                setShowDatePicker={setShowDatePicker}   
+                inline={true}
+            />
+            </View>
+            </View> 
            
 
           <View style={styles.notesContainer}>
@@ -221,37 +259,25 @@ const failOk = () => {
               onMomentSelect={handleMomentSelect}
              />
           </View>
-
-
-
-          <View style={styles.dateContainer}> 
-            <PickerDate
-                value={helloDate}
-                mode="date"
-                display="default"
-                containerText="Date: "
-                maximumDate={new Date()}
-                onChange={onChangeDate}
-                showDatePicker={showDatePicker}
-                setShowDatePicker={setShowDatePicker}   
-                inline={true}
-            />
-          </View>  
+          </>
+           )}
+         
+         
             {helloDate && selectedFriend && (selectedTypeChoice !== null) ? (
-              <View style={styles.bottomButtonContainer}>  
+              <View>  
                 <ButtonBottomSaveHello
                   onPress={setDeleteChoiceModalVisible} 
                   disabled={false}
                 />
               </View>
             ) : (
-              <View style={styles.bottomButtonContainer}>  
+              <View>  
                 <ButtonBottomSaveHello
                   onPress={setDeleteChoiceModalVisible} 
                   disabled={true}
                 />
             </View>
-          )} 
+          )}  
         </View>
       <AlertYesNo
           isModalVisible={isDeleteChoiceModalVisible}
@@ -292,91 +318,41 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1, 
-    justifyContent: 'space-between',
-    paddingBottom: 68,
+    justifyContent: 'space-between', 
   },
-  typeChoicesContainer: {  
-    borderRadius: 8, 
-    width: '100%',
-    paddingVertical: 10, 
-    height: 60,  
-  },
-  locationContainer: {  
-    borderRadius: 8, 
+  typeChoicesContainer: {   
     width: '100%', 
-    height: 42,
   },
-  dateContainer: {  
-    borderRadius: 8, 
-    width: '100%',
-    padding: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.0,
-    shadowRadius: 0,
-    elevation: 0,
-    marginVertical: 10, 
-    height: 60,
+  locationContainer: {   
+    width: '50%',   
+  },
+  dateContainer: {   
+    width: '50%',     
   },
   notesContainer: {  
-    width: '100%', 
-    borderRadius: 8,
-    padding: 0,
+    width: '100%',  
     minHeight: 140, 
   },
   momentsContainer: {  
-    width: '100%', 
-    borderRadius: 8,
-    padding: 0,
+    width: '100%',   
     minHeight: 280, 
   },
   selectFriendContainer: { 
-    flexDirection: 'row', 
-    borderRadius: 8,
-    justifyContent: 'space-between',
-    alignContent: 'center',
+    flexDirection: 'row',  
+    justifyContent: 'space-between', 
     alignItems: 'center',
-    flexDirection: 'row',
-    width: '100%',
-    marginVertical: 8, 
-    zIndex: 1, 
+    textAlign: 'center', 
+    width: '100%',   
   },
   locationTitle: {
     fontSize: 17,
     fontFamily: 'Poppins-Bold',
-  },
-  locationAddress: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Regular',
-  },
-  cardContainer: {
-    marginVertical: 10,
-  },
-  previewContainer: {
-    marginVertical: 10,
-  },
-  previewTitle: {
-    fontSize: 15,
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 5,
-  },
+  },   
   inputContainer: {
     justifyContent: 'center',
     width: '100%',
     marginVertical: 10,
-  }, 
-  bottomButtonContainer: {
-    height: '12%', 
-    padding: 0,
-    paddingTop: 40,
-    top: 660,
-    paddingHorizontal: 10,  
-    position: 'absolute', 
-    zIndex: 1,
-    bottom: 0, 
-    right: 0,
-    left: 0,
-  },
+  },  
 });
 
 export default ContentAddHello;

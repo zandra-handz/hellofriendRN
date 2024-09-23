@@ -21,11 +21,11 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     padding: 10,
-    paddingTop: 64, 
+    paddingTop: 0, //FOR TEST BUILD: 0 For dev: 54
     paddingHorizontal: 10, 
     alignItems: 'center',  
     justifyContent: 'space-between',
-    height: 110,
+    height: 56,//FOR TEST BUILD: 60 (or 56?) //For dev: 110
   },
   headerText: {
     fontSize: 20,

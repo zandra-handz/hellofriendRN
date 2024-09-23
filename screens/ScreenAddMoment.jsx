@@ -13,9 +13,7 @@ const ScreenAddMoment = ( ) => {
      
     return (
         <View style={[styles.container, themeStyles.container]}> 
-            <View style={styles.mainContainer}> 
-                <ContentAddMoment />
-            </View> 
+            <ContentAddMoment />
         </View>
     );
 };
@@ -24,11 +22,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1, 
         padding: 10,
-    },
-    mainContainer: {
-        flex: 1,
         paddingBottom: 10,
-    },    
+    }, 
 });
 
 export default ScreenAddMoment;
