@@ -15,12 +15,17 @@ const ScreenMoments = ({ route, navigation }) => {
     const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
     const [triggerUpdate, setTriggerUpdate] = useState(false); // State to trigger update
     const [checkboxesParent, setCheckboxesParent] = useState(false);
+    const [ changesParent, setChangesParent ] = useState(false);
 
     const toggleCheckboxesParent = () => {
         console.log('checkbox toggle tracker in parent: ', checkboxesParent);
         setCheckboxesParent(!checkboxesParent);
-        
 
+    };
+
+    const checkChangesParent = () => {
+        console.log('changetoggle tracker in parent: ', checkboxesParent);
+        setChangesParent(!changesParent);
     };
 
     useEffect(() => {
@@ -31,7 +36,7 @@ const ScreenMoments = ({ route, navigation }) => {
 
     useEffect(() => {
         
-        if (checkboxesParent !==false) {
+        if (checkboxesParent !== false && changesParent) {
         const unsubscribe = navigation.addListener('beforeRemove', (e) => {
             e.preventDefault();
 
@@ -61,7 +66,7 @@ const ScreenMoments = ({ route, navigation }) => {
 
         return unsubscribe;
     };
-    }, [navigation, checkboxesParent]);
+    }, [navigation, checkboxesParent,changesParent]);
 
     return ( 
         
@@ -76,8 +81,8 @@ const ScreenMoments = ({ route, navigation }) => {
                         <>  
                         <ItemMomentMultiPlain 
                             triggerUpdate={triggerUpdate} 
-                            parentCheckboxesTracker={toggleCheckboxesParent} />
-                            
+                            parentCheckboxesTracker={toggleCheckboxesParent} 
+                            parentChangesTracker={checkChangesParent} />
                       
                         <ButtonGoToAddMoment buttonColor={calculatedThemeColors.darkColor}/>
                         </>

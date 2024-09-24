@@ -19,6 +19,7 @@ const ItemMomentMultiPlain = ({
   triggerUpdate = false,
   includeCategoryTitle = false, 
   parentCheckboxesTracker,
+  parentChangesTracker,
 }) => { 
   const { themeStyles } = useGlobalStyle();
   const { capsuleList, sortedByCategory, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
@@ -29,6 +30,8 @@ const ItemMomentMultiPlain = ({
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showCheckboxes, setShowCheckboxes] = useState(passInData);
   const [selectedMoments, setSelectedMoments] = useState([]);
+  const [selectedMomentsAlreadySaved, setSelectedMomentsAlreadySaved] = useState([]);
+  const [ changeDetected, setChangeDetected ] = useState(false);
   const flatListRef = useRef(null);
   const categoryFlatListRef = useRef(null);
   const [categoryButtonPressed, setCategoryButtonPressed] = useState(false);
@@ -40,8 +43,53 @@ const ItemMomentMultiPlain = ({
     console.log('Use effect to set moments when preAddedTracker updates');
     const initialSelectedMoments = capsuleList.filter(capsule => preAddedTracker.includes(capsule.id));
     setSelectedMoments(initialSelectedMoments);
+    setSelectedMomentsAlreadySaved(initialSelectedMoments);
 
   }, [preAddedTracker]);
+
+
+
+  useEffect(() => {
+    console.log(selectedMoments.length);
+  
+    const selectedMomentIds = selectedMoments.map(moment => moment.id);
+    const selectedMomentsSet = new Set(selectedMomentIds);
+  
+    const selectedMomentAlreadySavedIds = selectedMomentsAlreadySaved.map(moment => moment.id);
+    const selectedMomentsAlreadySavedSet = new Set(selectedMomentAlreadySavedIds);
+  
+    console.log(selectedMomentsSet === selectedMomentsAlreadySavedSet); // This will always be false as two sets are different objects.
+    console.log(selectedMomentsSet);
+    console.log(selectedMomentsAlreadySavedSet);
+    console.log(selectedMomentsAlreadySaved.length);
+  
+    // Symmetric difference implementation
+    const symmetricDifference = (setA, setB) => {
+      const difference = new Set(setA);
+      for (let elem of setB) {
+        if (difference.has(elem)) {
+          difference.delete(elem);
+        } else {
+          difference.add(elem);
+        }
+      }
+      return difference;
+    };
+  
+    const resultSymmetricDifference = symmetricDifference(selectedMomentsSet, selectedMomentsAlreadySavedSet);
+    
+   
+    const hasChanges = resultSymmetricDifference.size > 0;
+    console.log('difference: ', resultSymmetricDifference);
+    console.log('hasChanges: ', hasChanges);
+   
+    setChangeDetected(hasChanges);
+    parentChangesTracker(hasChanges);
+
+  }, [selectedMoments, selectedMomentsAlreadySaved]);
+  
+
+  
 
   useEffect(() => {
     if (triggerUpdate) {
@@ -117,29 +165,45 @@ const ItemMomentMultiPlain = ({
   const handleToggleCheckboxes = () => {
     console.log(showCheckboxes);
     
-    if (showCheckboxes) { 
+    if (showCheckboxes && changeDetected) { 
       Alert.alert(
-        '', // Title of the alert
-        'Do you want to save your changes?', // Message of the alert
+        '',  
+        'Do you want to save your changes?',  
         [
           {
             text: 'Cancel',
             style: 'cancel',
-            onPress: () => console.log('Cancel Pressed'), // Optional action for cancel
+            onPress: () => handleToggleNoSave(), // Optional action for cancel
           },
           {
             text: 'OK',
-            onPress: () => handlePreSave(), // Optional action for OK
+            onPress: () => handleToggleSave(), // Optional action for OK
           },
+
         ]
       );
+    } else {
+      setShowCheckboxes(prev => !prev);
+      parentCheckboxesTracker();
     }
+   
+  };
   
-    // Toggle the checkbox visibility state
+  const handleToggleNoSave = () => {
+    setSelectedMoments(selectedMomentsAlreadySaved);
+    setShowCheckboxes(prev => !prev);
+    parentCheckboxesTracker();
+
+  };
+
+
+  const handleToggleSave = async () => {
+    await handlePreSave(); // Make sure handlePreSave finishes before proceeding
+    // Any additional actions that should occur after pre-save is complete
+    
     setShowCheckboxes(prev => !prev);
     parentCheckboxesTracker();
   };
-  
  
 
   const handlePreSave = async () => {
@@ -173,6 +237,8 @@ const ItemMomentMultiPlain = ({
         // Optionally, handle the response data (e.g., update state or UI)
         console.log('Updated thought capsules:', updatedData);
         updatePreAdded(idsToUpdateTrue, idsToUpdateFalse);
+
+
 
     } catch (error) {
         console.error('Error during pre-save:', error);

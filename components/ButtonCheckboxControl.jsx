@@ -9,7 +9,7 @@ import ButtonColorBGSmall from '../components/ButtonColorBGSmall';
 const ButtonCheckboxControl = ({ 
   onToggleCheckboxes, 
   showCheckboxes,
-  selectedMoments,
+  selectedMoments, 
   onSave,
   buttonColor,
 }) => {

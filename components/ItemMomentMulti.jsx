@@ -34,6 +34,7 @@ const ItemMomentMulti = ({
   const [ iconStyle, setIconStyle ] = useState([]);
   const [stop, setStop ] =useState(false);
   const { themeStyles } = useGlobalStyle();
+ 
   
 
   useEffect(() => {
