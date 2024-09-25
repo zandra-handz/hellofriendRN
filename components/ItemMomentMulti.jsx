@@ -7,6 +7,8 @@ import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg';
 import { GestureHandlerRootView, TapGestureHandler, LongPressGestureHandler, State } from 'react-native-gesture-handler';
 import ItemViewMoment from '../components/ItemViewMoment';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useFocusEffect } from '@react-navigation/native';
+
 const ItemMomentMulti = ({  
   width = 100,
   height = 100,
@@ -20,6 +22,7 @@ const ItemMomentMulti = ({
   textOpacity = 0.3, 
   slideShow = true,  
   Interval = 6000,
+  pauseAnimation = false,
 }) => {
   const { newestFirst: newestFirstList } = useCapsuleList();
   const [selectedMoment, setSelectedMoment] = useState(null);
@@ -68,7 +71,12 @@ const ItemMomentMulti = ({
 
   useEffect(() => {
     console.log('useEffect for intervals for animation triggered');
-    if (slideShow && moments.length > 0 ) {
+    
+    if (pauseAnimation || !slideShow || moments.length === 0) {
+      return;  // If paused or slideshow is disabled, don't start the interval
+    }
+
+    if (slideShow && moments.length > 0 && pauseAnimation == false ) {
      
       const intervalId = setInterval(() => {
         setCurrentIndex(prevIndex => {
@@ -97,7 +105,7 @@ const ItemMomentMulti = ({
   
       return () => clearInterval(intervalId);
     }
-  }, [slideShow, moments, slideShowInterval, momentAnimations, svgOpacity, textOpacity]);
+  }, [slideShow, moments, slideShowInterval, pauseAnimation, momentAnimations, svgOpacity, textOpacity]);
 
   const openModal = useCallback((moment) => {
     setSelectedMoment(moment);
@@ -108,6 +116,11 @@ const ItemMomentMulti = ({
     setSelectedMoment(null);
     setIsModalVisible(false);
   }, []);
+
+  useEffect(() => {
+    console.log('hhhhhhhhhhhhhhhhhhhhillo',pauseAnimation);
+
+  }, [pauseAnimation]);
 
   const calculateFontSize = (width) => width * 0.055;
   const calculateBubbleContainerDimensions = (width, height) => ({

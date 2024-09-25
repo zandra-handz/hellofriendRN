@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text} from 'react-native';
 import ButtonLottieAnimationSatellitesMoments from './ButtonLottieAnimationSatellitesMoments';
 import { useCapsuleList } from '../context/CapsuleListContext';
@@ -12,7 +12,7 @@ import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
 import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
 
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const ActionFriendPageMoments = ({ 
   onPress, 
@@ -29,7 +29,7 @@ const ActionFriendPageMoments = ({
   inactiveIconColor='white',
   topIconSize=30,
   bottomIconSize=30,
-  oneBackgroundColor='black', //#2B2B2B
+  oneBackgroundColor='black', //#2B2B2B 
 
 
 }) => {
@@ -40,13 +40,31 @@ const ActionFriendPageMoments = ({
   const { friendColorTheme } = useSelectedFriend();
   const { capsuleList, capsuleCount } = useCapsuleList();
   const [showSecondButton, setShowSecondButton] = useState(false);
- 
+  const [isAnimationPaused, setIsAnimationPaused ] = useState(false);
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
 
   const navigateToMomentsScreen = () => {
+    pauseAnimation();
+    console.log('go to moments');
     navigation.navigate('Moments');
     if (onPress) onPress();
   };
+ 
+  const pauseAnimation = () => {
+    setIsAnimationPaused(true);
+
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsAnimationPaused(false);
+    }, [])
+  );
+
+  useEffect(() =>{
+
+    console.log('is animation paused', isAnimationPaused);
+  }, [isAnimationPaused]);
 
   const navigateToFirstPage = () => {
     setShowSecondButton(false); 
@@ -86,6 +104,7 @@ const ActionFriendPageMoments = ({
             lightColor={oneBackgroundColor}
             darkColor={oneBackgroundColor} 
             additionalPages={showSecondButton} 
+            pauseAnimation={isAnimationPaused}
           /> 
       </View>
 

@@ -10,11 +10,15 @@ const ButtonCheckboxControl = ({
   onToggleCheckboxes, 
   showCheckboxes,
   selectedMoments, 
+  isSaving,
   onSave,
   buttonColor,
 }) => {
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
+
+
+  const noHello = true;
 
 
   useEffect(() => {
@@ -34,11 +38,11 @@ const ButtonCheckboxControl = ({
     <View style={styles.controlPanel}>
 
     <View style={{justifyContent: 'space-between', width: '100%', height: '100%', alignItems: 'flex-end', flexDirection: 'column'}}>   
-    <TouchableOpacity onPress={onToggleCheckboxes} style={[styles.controlButton, themeStyles.footerIcon]}>
-      <Text style={[styles.controlButtonText, themeStyles.footerText]}>Hello mode?</Text>
+    <TouchableOpacity onPress={!isSaving ? onToggleCheckboxes : null} style={[styles.controlButton, themeStyles.footerIcon]}>
+      <Text style={[styles.controlButtonText, themeStyles.footerText]}>{showCheckboxes ? "hello mode" : "hello mode"}</Text>
       <Icon name={showCheckboxes ? "check-square-o" : "square-o"} size={20} style={[styles.checkbox, themeStyles.footerIcon]} />
     </TouchableOpacity>
-    {!showCheckboxes && (
+    {!showCheckboxes && !noHello && (
           <ButtonColorBGSmall 
             onPress={handleGoToHelloScreenNoSave} 
             title="Go to Hello" 

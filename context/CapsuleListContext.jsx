@@ -7,7 +7,8 @@ const CapsuleListContext = createContext({
   capsuleList: [], 
   setCapsuleList: () => {}, 
   removeCapsules: () => {}, 
-  updateCapsule: () => {}
+  updateCapsule: () => {},
+  categoryStartIndices: {}
 });
 
 export const useCapsuleList = () => {
@@ -30,6 +31,7 @@ export const CapsuleListProvider = ({ children }) => {
   const [categoryCount, setCategoryCount] = useState(0);
   const [categoryNames, setCategoryNames] = useState([]);
   const [ preAddedTracker, setPreAddedTracker ] = useState([]);
+  const [categoryStartIndices, setCategoryStartIndices] = useState({}); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,21 +132,28 @@ const updateCapsules = (capsuleIdsToUpdate, updatedCapsules) => {
     const sorted = [...capsuleList].sort((a, b) => { 
       if (a.typedCategory < b.typedCategory) return -1;
       if (a.typedCategory > b.typedCategory) return 1;
-  
-      // If categories are the same, compare by date (newest first)
-      return new Date(b.created) - new Date(a.created);
+      return new Date(b.created) - new Date(a.created); // Newest first if categories are the same
     });
- 
-  const uniqueCategories = [...new Set(sorted.map(item => item.typedCategory))];
- 
-  setCategoryCount(uniqueCategories.length);
-  setCategoryNames(uniqueCategories); // Assuming you have a state for category names
-  setSortedByCategory(sorted);
 
-  console.log("Sorted by Category: ", sorted);
-  console.log('Category count: ', categoryCount);
-  console.log("Unique Categories: ", uniqueCategories);
-  }; 
+    // Get unique categories
+    const uniqueCategories = [...new Set(sorted.map(item => item.typedCategory))];
+    setCategoryCount(uniqueCategories.length);
+    setCategoryNames(uniqueCategories); // Assuming you have a state for category names
+    setSortedByCategory(sorted);
+
+    // Calculate category start indices
+    const startIndices = {};
+    let index = 0;
+    for (const category of uniqueCategories) {
+      startIndices[category] = index;
+      index += sorted.filter(item => item.typedCategory === category).length; // Count items in category
+    }
+    setCategoryStartIndices(startIndices); // Set the calculated indices
+
+    console.log("Sorted by Category: ", sorted);
+    console.log('Category count: ', categoryCount);
+    console.log("Unique Categories: ", uniqueCategories);
+  };
 
 
   useEffect(() => { 
@@ -169,6 +178,7 @@ const updateCapsules = (capsuleIdsToUpdate, updatedCapsules) => {
       capsuleCount,
       categoryCount,
       categoryNames,
+      categoryStartIndices,
       sortedByCategory,
       newestFirst,
       preAddedTracker,
@@ -178,7 +188,8 @@ const updateCapsules = (capsuleIdsToUpdate, updatedCapsules) => {
       updateCapsule, 
       updateCapsules,
       sortByCategory,
-      sortNewestFirst
+      sortNewestFirst,
+      
       }}>
       {children}
     </CapsuleListContext.Provider>

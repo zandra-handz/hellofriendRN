@@ -5,6 +5,7 @@ import ItemMomentSingle from '../components/ItemMomentSingle';
 import ItemMomentMulti from '../components/ItemMomentMulti'; 
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ButtonLottieAnimationSatellitesMoments = ({
   buttonHeight = 270,
@@ -12,7 +13,8 @@ const ButtonLottieAnimationSatellitesMoments = ({
   headerText = 'LAST ADDED', 
   allItems,      
   additionalPages = false,
-  additionalPagesCategorize = true,  
+  additionalPagesCategorize = true, 
+  pauseAnimation=false, 
 }) => { 
 
   const { themeStyles } = useGlobalStyle();
@@ -32,6 +34,11 @@ const ButtonLottieAnimationSatellitesMoments = ({
       setIsCapsuleListReady(true);
     }
   }, [capsuleList]);
+
+  useEffect(() => {
+    console.log(pauseAnimation);
+
+  }, [pauseAnimation]);
 
   // Generate a unique key based on themeStyles or other dynamic properties
   const itemMomentMultiKey = `item-moment-multi-${themeStyles.friendFocusSectionIcon.color}`;
@@ -86,6 +93,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
                             horizontal={true} 
                             singleLineScroll={true} 
                             newestFirst={true}
+                            pauseAnimation={pauseAnimation}
                           /> 
                         </View>
                      )}

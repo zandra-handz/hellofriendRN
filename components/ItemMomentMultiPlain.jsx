@@ -11,6 +11,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { updateThoughtCapsules } from '../api';
+import LoadingPage from '../components/LoadingPage';
  
 const footerHeight = 800; // Set to a fixed height for footer
 
@@ -20,9 +21,11 @@ const ItemMomentMultiPlain = ({
   includeCategoryTitle = false, 
   parentCheckboxesTracker,
   parentChangesTracker,
+  checkForChangesTrigger,
+  navigation,
 }) => { 
   const { themeStyles } = useGlobalStyle();
-  const { capsuleList, sortedByCategory, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
+  const { capsuleList, sortedByCategory, categoryStartIndices, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
   const { calculatedThemeColors } = useSelectedFriend();
   const [selectedMoment, setSelectedMoment] = useState(null);
@@ -36,7 +39,11 @@ const ItemMomentMultiPlain = ({
   const categoryFlatListRef = useRef(null);
   const [categoryButtonPressed, setCategoryButtonPressed] = useState(false);
   const timerRef = useRef(null);
+
+  const [isMakingCall, setIsMakingCall] = useState(false);
  
+
+  
   const moments = sortedByCategory;
 
   useEffect(() => { 
@@ -48,20 +55,12 @@ const ItemMomentMultiPlain = ({
   }, [preAddedTracker]);
 
 
-
-  useEffect(() => {
-    console.log(selectedMoments.length);
-  
+  const checkForChanges = (selectedMoments, selectedMomentsAlreadySaved) => {
     const selectedMomentIds = selectedMoments.map(moment => moment.id);
     const selectedMomentsSet = new Set(selectedMomentIds);
   
     const selectedMomentAlreadySavedIds = selectedMomentsAlreadySaved.map(moment => moment.id);
     const selectedMomentsAlreadySavedSet = new Set(selectedMomentAlreadySavedIds);
-  
-    console.log(selectedMomentsSet === selectedMomentsAlreadySavedSet); // This will always be false as two sets are different objects.
-    console.log(selectedMomentsSet);
-    console.log(selectedMomentsAlreadySavedSet);
-    console.log(selectedMomentsAlreadySaved.length);
   
     // Symmetric difference implementation
     const symmetricDifference = (setA, setB) => {
@@ -78,18 +77,23 @@ const ItemMomentMultiPlain = ({
   
     const resultSymmetricDifference = symmetricDifference(selectedMomentsSet, selectedMomentsAlreadySavedSet);
     
-   
     const hasChanges = resultSymmetricDifference.size > 0;
     console.log('difference: ', resultSymmetricDifference);
     console.log('hasChanges: ', hasChanges);
-   
-    setChangeDetected(hasChanges);
+
     parentChangesTracker(hasChanges);
-
-  }, [selectedMoments, selectedMomentsAlreadySaved]);
+    
+    return hasChanges; // Return the result
+  };
   
 
+  useEffect(() => {  
+        const hasChanges = checkForChanges(selectedMoments, selectedMomentsAlreadySaved);
+        parentChangesTracker(hasChanges);
+        console.log('trigger in child triggered!');
+        console.log(hasChanges);
   
+}, [checkForChangesTrigger]); 
 
   useEffect(() => {
     if (triggerUpdate) {
@@ -97,18 +101,50 @@ const ItemMomentMultiPlain = ({
     }
 }, [triggerUpdate]);
 
-  const categoryStartIndices = useMemo(() => {
-    let index = 0;
-    return moments.reduce((acc, moment) => {
-      const category = moment.typedCategory || 'Uncategorized';
-      if (acc[category] === undefined) {
-        acc[category] = index;
-      }
-      index += 1;
-      console.log(index);
-      return acc;
-    }, {});
-  }, [moments]);
+useEffect(() => {
+  const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+    const hasChanges = checkForChanges(selectedMoments, selectedMomentsAlreadySaved);
+
+    if (showCheckboxes && hasChanges) {
+      // Prevent the default behavior of leaving the screen
+      e.preventDefault();
+
+      // Show the alert
+      Alert.alert(
+        '',
+        'Do you want to save your changes?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => handleToggleNoSave(),
+          },
+          {
+            text: 'OK',
+            onPress: async () => {
+              await handleToggleSave();
+              navigation.dispatch(e.data.action); // Navigate after saving
+            },
+          },
+        ]
+      );
+    } else {
+      setShowCheckboxes(prev => !prev);
+      parentCheckboxesTracker();
+    }
+  });
+
+  return unsubscribe; // Cleanup
+}, [navigation, selectedMoments, selectedMomentsAlreadySaved, showCheckboxes]);
+
+// Timer cleanup
+useEffect(() => {
+  return () => clearTimeout(timerRef.current);
+}, []);
+
+
+
+
 
   const handleToggleCategory = (category) => {
     setCategoryButtonPressed(true);
@@ -162,10 +198,15 @@ const ItemMomentMultiPlain = ({
     setIsModalVisible(false);
   };
 
+  
+
   const handleToggleCheckboxes = () => {
     console.log(showCheckboxes);
-    
-    if (showCheckboxes && changeDetected) { 
+
+    // Call checkForChanges to determine if there are any changes
+    const hasChanges = checkForChanges(selectedMoments, selectedMomentsAlreadySaved);
+
+    if (showCheckboxes && hasChanges) { 
       Alert.alert(
         '',  
         'Do you want to save your changes?',  
@@ -179,15 +220,14 @@ const ItemMomentMultiPlain = ({
             text: 'OK',
             onPress: () => handleToggleSave(), // Optional action for OK
           },
-
         ]
       );
     } else {
       setShowCheckboxes(prev => !prev);
       parentCheckboxesTracker();
     }
-   
-  };
+};
+
   
   const handleToggleNoSave = () => {
     setSelectedMoments(selectedMomentsAlreadySaved);
@@ -208,6 +248,7 @@ const ItemMomentMultiPlain = ({
 
   const handlePreSave = async () => {
     // Check if there are no selected moments
+    setIsMakingCall(true);
     if (selectedMoments.length === 0) {
         console.log('No moments selected to update.');
         return; // Early return or you can handle this case differently
@@ -230,12 +271,9 @@ const ItemMomentMultiPlain = ({
 
     const allCapsulesToUpdate = [...capsulesToUpdate, ...capsulesToUpdateFalse];
 
-    console.log('Payload to update moments: ', allCapsulesToUpdate);
     try {
         const updatedData = await updateThoughtCapsules(selectedFriend.id, allCapsulesToUpdate);
 
-        // Optionally, handle the response data (e.g., update state or UI)
-        console.log('Updated thought capsules:', updatedData);
         updatePreAdded(idsToUpdateTrue, idsToUpdateFalse);
 
 
@@ -243,6 +281,7 @@ const ItemMomentMultiPlain = ({
     } catch (error) {
         console.error('Error during pre-save:', error);
     }
+    setIsMakingCall(false);
 };
 
   
@@ -296,8 +335,10 @@ const ItemMomentMultiPlain = ({
         onToggleCheckboxes={handleToggleCheckboxes}
         showCheckboxes={showCheckboxes} 
         selectedMoments={selectedMoments}
+        isSaving={isMakingCall}
         onSave={handlePreSave}
         buttonColor={calculatedThemeColors.lightColor}
+      
       />
 
       <View style={{ width: '100%', marginBottom: 20 }}>
@@ -321,7 +362,16 @@ const ItemMomentMultiPlain = ({
         />
       </View>
 
-      <View style={styles.contentContainer}>
+      <View style={styles.contentContainer}> 
+        <View style={styles.loadingContainer}>
+         
+        <LoadingPage 
+        loading={isMakingCall}  
+        color={calculatedThemeColors.lightColor}
+        spinnerType='swing'
+        /> 
+         </View> 
+        {!isMakingCall && ( 
         <FlatList
           ref={flatListRef}
           data={moments}
@@ -333,8 +383,9 @@ const ItemMomentMultiPlain = ({
           ListFooterComponent={() => <View style={{ height: footerHeight }} />}
           onViewableItemsChanged={handleViewableItemsChanged}
           viewabilityConfig={viewabilityConfig}
-          scrollEventThrottle={16}
+          scrollEventThrottle={8}
         />
+        )}
       </View>
 
       {isModalVisible && selectedMoment && (
@@ -351,10 +402,12 @@ const ItemMomentMultiPlain = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    flex: 1,
     paddingHorizontal: 4,
     justifyContent: 'space-between',
   },
   categoryButtonsContainer: {
+    
     paddingHorizontal: 10,
     borderWidth: 1,
     borderRadius: 30,
@@ -362,12 +415,23 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     backgroundColor: 'black',
   },
-  contentContainer: {},
+  contentContainer: { 
+    height: '100%',
+    width: '100%',
+    alignContent: 'right',
+    alignItems: 'right',
+    justifyContent: 'flex-start',
+  },
   momentContainer: {
     padding: 0,
     marginBottom: 8,
     borderRadius: 40,
     backgroundColor: 'transparent',
+  },
+  loadingContainer: { 
+      position: 'absolute',
+      top: 90,
+      width: '100%',
   },
   momentContent: {
     padding: 2,
