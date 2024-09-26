@@ -1,10 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import MessageAddOutlineSvg from '../assets/svgs/message-add-outline.svg';
 import MessageAddSolidSvg from '../assets/svgs/message-add-solid.svg';
-import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg';
-import AddOutlineSvg from '../assets/svgs/add-outline.svg';
-
+ 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -42,10 +39,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',  
     position: 'absolute',
     flexWrap: 'wrap',
-    width: 100,
+    width: 73, 
     alignContent: 'center',
     justifyContent: 'center',
-    right: 2,
+    right: 10,
     bottom: 20,
     zIndex: 1,
   },

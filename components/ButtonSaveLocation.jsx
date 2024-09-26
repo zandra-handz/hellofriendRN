@@ -15,7 +15,7 @@ import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../ap
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { authUserState } = useAuthUser();
@@ -25,6 +25,7 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModal2Visible, setModal2Visible] = useState(false);
     const [isMenuVisible, setMenuVisible] = useState(false);
+    const { themeStyles } = useGlobalStyle();
 
     const handlePress = () => {
         setModalVisible(true);

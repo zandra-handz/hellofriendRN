@@ -37,27 +37,31 @@ const ButtonCheckboxControl = ({
   return ( 
     <View style={styles.controlPanel}>
 
-    <View style={{justifyContent: 'space-between', width: '100%', height: '100%', alignItems: 'flex-end', flexDirection: 'column'}}>   
+    <View style={{justifyContent: 'flex-end', width: '100%', height: '100%', alignItems: 'flex-end', flexDirection: 'row'}}>   
     <TouchableOpacity onPress={!isSaving ? onToggleCheckboxes : null} style={[styles.controlButton, themeStyles.footerIcon]}>
       <Text style={[styles.controlButtonText, themeStyles.footerText]}>{showCheckboxes ? "hello mode" : "hello mode"}</Text>
       <Icon name={showCheckboxes ? "check-square-o" : "square-o"} size={20} style={[styles.checkbox, themeStyles.footerIcon]} />
     </TouchableOpacity>
     {!showCheckboxes && !noHello && (
+      <View style={{paddingLeft: 10 }}>
           <ButtonColorBGSmall 
             onPress={handleGoToHelloScreenNoSave} 
             title="Go to Hello" 
             backgroundColor={buttonColor} 
             textStyle={themeStyles.footerText}
           />
+        </View>
         )}
 
         {showCheckboxes && (
+          <View style={{paddingLeft: 10 }}>
           <ButtonColorBGSmall 
             onPress={handleGoToHelloScreen} 
             title="Go to Hello" 
             backgroundColor={buttonColor} 
             textStyle={themeStyles.footerText}
           />
+          </View>
         )}
 
       </View>
@@ -70,7 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center', 
-    height: '7.8%',
+    height: '5.4%',
     marginBottom: 20,
     borderRadius: 30,
     paddingTop: 16,

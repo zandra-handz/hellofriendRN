@@ -58,7 +58,7 @@ const ButtonMoment = ({
 const styles = StyleSheet.create({
   container: {
     borderBottomWidth: .2,
-    borderRadius: 40,
+    borderRadius: 30,
     marginBottom: 0,
     padding: 16,
     borderColor: '#ccc',
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     padding: 0,
-    paddingTop: 4,
+    paddingTop: 0,
     flexWrap: 'wrap', // Allow wrapping of children
     backgroundColor: 'transparent', // Optional: make sure background is set to avoid overlap issues
   },
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   creationDateTextContainer: {  
-    paddingBottom: 10,
+    paddingBottom: 2,
     paddingRight: 8, 
     
     backgroundColor: 'transparent',

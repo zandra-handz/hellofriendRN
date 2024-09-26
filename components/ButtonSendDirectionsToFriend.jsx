@@ -6,9 +6,6 @@ import HelloFriendInvite from '../components/HelloFriendInvite';
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
 
-
-
-
 import AlertImage from '../components/AlertImage';
  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -56,10 +53,8 @@ const ButtonSendDirectionsToFriend = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      width: '100%',
-      backgroundColor: 'transparent',
+    container: {  
+      width: '100%',  
     },    
   });
 

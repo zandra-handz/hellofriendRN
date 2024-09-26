@@ -52,10 +52,8 @@ const ButtonCalculateAndCompareTravel = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      width: '100%',
-      backgroundColor: 'transparent',
+    container: { 
+      width: '100%', 
     }, 
   });
 

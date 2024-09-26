@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
 import { useLocationList } from '../context/LocationListContext';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LoadingPage from '../components/LoadingPage';
 
 const AlertLocation = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
   const { selectedLocation, setSelectedLocation, loadingAdditionalDetails } = useLocationList();
   const [useSpinner, setUseSpinner] = useState(true);
-
+  const { themeStyles } = useGlobalStyle();
   // Define a function to handle closing the modal and resetting the location
   const handleCloseModal = () => {
     setSelectedLocation(null); // Reset the selected location
@@ -17,13 +17,13 @@ const AlertLocation = ({ isModalVisible, toggleModal, modalContent, modalTitle }
 
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
+       
+        <View style={[styles.modalContent, themeStyles.genericTextBackground]}>
           <View style={styles.header}>
             <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
-              <Ionicons name="arrow-back" size={23} color="black" /> 
+              <Ionicons name="arrow-back" size={23} color={themeStyles.modalIconColor.color} /> 
             </TouchableOpacity>
-            {modalTitle && <Text style={styles.modalTitle}>{modalTitle}</Text>}
+            {modalTitle && <Text style={[styles.modalTitle, themeStyles.genericText]}>{modalTitle}</Text>}
           </View>
 
           {loadingAdditionalDetails && useSpinner ? (
@@ -38,27 +38,17 @@ const AlertLocation = ({ isModalVisible, toggleModal, modalContent, modalTitle }
           ) : (
             <View style={styles.modalBody}>{modalContent}</View>
           )}
-        </View>
-      </View>
+        </View> 
     </Modal>
   );
 };
 
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-  },
+const styles = StyleSheet.create({ 
   modalContent: {
     width: '100%',
-    padding: 10,
-    backgroundColor: 'white',
-    borderRadius: 0,
-    height: '100%',
-    position: 'relative',
-    bottom: 0,
+    flex: 1,
+    padding: 4,  
+    flex: 1, 
   },
   header: {
     flexDirection: 'row', // Align items horizontally
@@ -75,7 +65,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginTop: 4,
     textAlign: 'left',
-    flex: 1, // Take up remaining space
+    flex: 1,  
   },
   loadingWrapper: {
     flex: 1,
@@ -83,7 +73,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalBody: {
-    flex: 1,
+    flex: 1, 
+    width: '100%',
     justifyContent: 'center',
   },
 });

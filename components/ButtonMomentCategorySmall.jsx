@@ -37,9 +37,9 @@ const ButtonMomentCategorySmall = ({ onPress, categoryText, momentCount, highlig
                     label={categoryText}
                     height={36}
                     radius={20}
-                    fontMargin={3}
-                    labelFontSize={12}
-                    labelContainerMarginHorizontal={6}
+                    fontMargin={0}
+                    labelFontSize={14}
+                    labelContainerMarginHorizontal={0}
                     showGradient={true}
                     lightColor={useFriendColors ? calculatedThemeColors.lightColor : '#a0f143'}
                     darkColor={useFriendColors ? calculatedThemeColors.darkColor : '#4caf50'}
@@ -63,14 +63,13 @@ const ButtonMomentCategorySmall = ({ onPress, categoryText, momentCount, highlig
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'transparent',
-        marginRight: 10,
+        backgroundColor: 'transparent', 
         borderRadius: 20, // Match the radius of the button
     },
     buttonContainer: {
         height: 36,
         alignItems: 'center',
-        width: 100,
+        width: 'auto',
     },
 });
 

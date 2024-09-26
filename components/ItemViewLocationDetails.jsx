@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
 import { useLocationList } from '../context/LocationListContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
 import SectionCustomerReviews from '../components/SectionCustomerReviews';
@@ -12,7 +13,7 @@ import StylingRating from '../components/StylingRating';
 const ItemViewLocationDetails = ({ location, unSaved }) => {
   const { selectedLocation, additionalDetails, loadingAdditionalDetails, updateAdditionalDetails } = useLocationList();
   const [refreshing, setRefreshing] = useState(false);
-
+  const { themeStyles } = useGlobalStyle();
 
 
   
@@ -27,9 +28,9 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.name}>
+        <Text style={[styles.name, {color: themeStyles.genericText.color}]}>
           {additionalDetails ? additionalDetails.name : location.title}
         </Text>
         <ButtonSaveLocation saveable={unSaved} />
@@ -83,7 +84,7 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
           <Text style={styles.noDataText}>No additional details available.</Text>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 };
 

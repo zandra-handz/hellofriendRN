@@ -8,12 +8,12 @@ import ItemViewMoment from '../components/ItemViewMoment';
 import { CheckBox } from 'react-native-elements';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-
+import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { updateThoughtCapsules } from '../api';
 import LoadingPage from '../components/LoadingPage';
  
-const footerHeight = 800; // Set to a fixed height for footer
+const footerHeight = 670; // Set to a fixed height for footer
 
 const ItemMomentMultiPlain = ({
   passInData = false, 
@@ -25,16 +25,16 @@ const ItemMomentMultiPlain = ({
   navigation,
 }) => { 
   const { themeStyles } = useGlobalStyle();
-  const { capsuleList, sortedByCategory, categoryStartIndices, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
+  const { capsuleList, sortedByCategory, categoryNames, categoryStartIndices, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
   const { calculatedThemeColors } = useSelectedFriend();
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(categoryNames[0]);
   const [showCheckboxes, setShowCheckboxes] = useState(passInData);
   const [selectedMoments, setSelectedMoments] = useState([]);
   const [selectedMomentsAlreadySaved, setSelectedMomentsAlreadySaved] = useState([]);
-  const [ changeDetected, setChangeDetected ] = useState(false);
+
   const flatListRef = useRef(null);
   const categoryFlatListRef = useRef(null);
   const [categoryButtonPressed, setCategoryButtonPressed] = useState(false);
@@ -45,6 +45,10 @@ const ItemMomentMultiPlain = ({
 
   
   const moments = sortedByCategory;
+
+  useEffect(() => {
+     setSelectedCategory(categoryNames[0]);
+  }, []);
 
   useEffect(() => { 
     console.log('Use effect to set moments when preAddedTracker updates');
@@ -117,7 +121,10 @@ useEffect(() => {
           {
             text: 'Cancel',
             style: 'cancel',
-            onPress: () => handleToggleNoSave(),
+            onPress: async () => {
+              handleToggleNoSave();
+              navigation.dispatch(e.data.action);
+            },
           },
           {
             text: 'OK',
@@ -143,7 +150,10 @@ useEffect(() => {
 }, []);
 
 
+useEffect(() => {
+  console.log(selectedCategory);
 
+}, [selectedCategory]);
 
 
   const handleToggleCategory = (category) => {
@@ -160,7 +170,7 @@ useEffect(() => {
     setCategoryButtonPressed(false);
   };
 
-  const DELAY = 64;
+  const DELAY = 0; //previously when using flatlist for moments: 64
 
   const handleViewableItemsChanged = useCallback(({ viewableItems }) => {
     if (timerRef.current) {
@@ -172,8 +182,7 @@ useEffect(() => {
 
       if (visibleCategory) {
         timerRef.current = setTimeout(() => {
-          setSelectedCategory(visibleCategory);
-          console.log('set selected category');
+          setSelectedCategory(visibleCategory); 
 
           const categoryIndex = Object.keys(categoryStartIndices).indexOf(visibleCategory);
           if (categoryIndex !== -1 && !categoryButtonPressed) {
@@ -330,7 +339,7 @@ useEffect(() => {
   
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}> 
       <ButtonCheckboxControl 
         onToggleCheckboxes={handleToggleCheckboxes}
         showCheckboxes={showCheckboxes} 
@@ -341,26 +350,33 @@ useEffect(() => {
       
       />
 
-      <View style={{ width: '100%', marginBottom: 20 }}>
-        <FlatList
-          ref={categoryFlatListRef}
-          data={Object.keys(categoryStartIndices)}
-          renderItem={({ item: category }) => (
-            <ButtonMomentCategorySmall
-              key={category}
-              onPress={() => handleToggleCategory(category)}
-              categoryText={category}
-              momentCount={moments.filter(moment => moment.typedCategory === category).length}
-              highlighted={category === selectedCategory}
-            />
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          estimatedItemSize={100}
-          style={styles.categoryButtonsContainer}
-          contentContainerStyle={{ paddingRight: 300 }}
-        />
-      </View>
+      <View style={styles.categoryButtonsContainer}>
+
+      {categoryStartIndices && moments && (
+ 
+      <FlashList
+        ref={categoryFlatListRef}
+        data={Object.keys(categoryStartIndices)}
+        renderItem={({ item: category }) => (
+          <View style={{width: 110,  height: 40, paddingRight: 10, position: 'relative'}}>
+          <ButtonMomentCategorySmall
+            key={category}
+            onPress={() => handleToggleCategory(category)}
+            categoryText={category}
+            momentCount={moments.filter(moment => moment.typedCategory === category).length}
+            highlighted={category === selectedCategory}
+          />
+          
+          </View>
+        )}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        estimatedItemSize={200}   
+        contentContainerStyle={{ paddingRight: 300 }}
+      /> 
+      )}
+    </View> 
+      
 
       <View style={styles.contentContainer}> 
         <View style={styles.loadingContainer}>
@@ -371,21 +387,23 @@ useEffect(() => {
         spinnerType='swing'
         /> 
          </View> 
-        {!isMakingCall && ( 
-        <FlatList
-          ref={flatListRef}
-          data={moments}
-          renderItem={renderMomentItem}
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={1}
-          showsVerticalScrollIndicator={false}
-          columnWrapperStyle={undefined}
-          ListFooterComponent={() => <View style={{ height: footerHeight }} />}
-          onViewableItemsChanged={handleViewableItemsChanged}
-          viewabilityConfig={viewabilityConfig}
-          scrollEventThrottle={8}
-        />
+        {!isMakingCall && selectedCategory && ( 
+        <FlashList
+            ref={flatListRef}  // Attach the ref to FlashList
+            data={moments}  // Your data source
+            renderItem={renderMomentItem}  // Render each item
+            extraData={{ selectedCategory, selectedMoments, showCheckboxes }}
+            keyExtractor={(item) => item.id.toString()}  // Ensure unique keys
+            numColumns={1}  // Single column
+            showsVerticalScrollIndicator={false}
+            estimatedItemSize={200}  // Adjust the item size based on your content
+            ListFooterComponent={() => <View style={{ height: footerHeight }} />}  // Optional footer
+            onViewableItemsChanged={handleViewableItemsChanged}  // Handle viewable items
+            viewabilityConfig={viewabilityConfig}  // Viewability configuration
+            scrollEventThrottle={16}  // Throttle the scroll event for performance
+          />
         )}
+        
       </View>
 
       {isModalVisible && selectedMoment && (
@@ -402,18 +420,21 @@ useEffect(() => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    minHeight: 2,
     flex: 1,
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
     justifyContent: 'space-between',
   },
   categoryButtonsContainer: {
-    
-    paddingHorizontal: 10,
+    minHeight: 2,
+    paddingHorizontal: 14, 
     borderWidth: 1,
+    width: '100%',
     borderRadius: 30,
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderColor: 'black',
     backgroundColor: 'black',
+    marginBottom: 10,
   },
   contentContainer: { 
     height: '100%',
@@ -425,7 +446,7 @@ const styles = StyleSheet.create({
   momentContainer: {
     padding: 0,
     marginBottom: 8,
-    borderRadius: 40,
+    borderRadius: 30,
     backgroundColor: 'transparent',
   },
   loadingContainer: { 
