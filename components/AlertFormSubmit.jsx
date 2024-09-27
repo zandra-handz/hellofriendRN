@@ -1,27 +1,32 @@
 import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import LoadingPage from '../components/LoadingPage';
 
 const AlertFormSubmit = ({
-  isModalVisible,
-  toggleModal,
+  isModalVisible, 
   headerContent,
   questionText,
+  isMakingCall,
   formBody,
+  formHeight=400,
   onConfirm,
   onCancel,
   confirmText = 'OK',
   cancelText = 'Nevermind',
-  showButtons = true // New prop to control button visibility
+  showButtons = true  
 }) => {
   const { themeStyles } = useGlobalStyle();
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity of 0
 
-  useEffect(() => {
-    // Trigger fade-in animation when modal becomes visible
+
+  const confirmColor = '#4CAF50';
+  const cancelColor = 'darkgreen';
+
+  useEffect(() => { 
     Animated.timing(fadeAnim, {
       toValue: isModalVisible ? 1 : 0,
-      duration: 300, // Duration of fade effect
+      duration: 300,  
       useNativeDriver: true,
     }).start();
   }, [isModalVisible]);
@@ -32,19 +37,39 @@ const AlertFormSubmit = ({
         <View style={[styles.modalContent, themeStyles.genericTextBackground, { borderColor: themeStyles.genericTextBackgroundShadeTwo.backgroundColor }]}> 
           {headerContent && <View style={[styles.headerContainer, themeStyles.genericText]}>{headerContent}</View>}
           {questionText && <Text style={[styles.questionText, themeStyles.genericText]}>{questionText}</Text>}
+          
+          <View style={[styles.fullBodyContainer, {height: formHeight}]}>  
+          {isMakingCall && ( 
+            <LoadingPage
+              loading={isMakingCall}
+            />
+
+
+          )}
+          {!isMakingCall && ( 
+          <>  
           <View style={styles.formBodyContainer}>
             {formBody}  
           </View> 
-          <View style={styles.buttonContainer}>
-            {showButtons && (
-              <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
-                <Text style={styles.buttonText}>{confirmText}</Text>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
-              <Text style={styles.buttonText}>{cancelText}</Text>
-            </TouchableOpacity>
+
+          </>
+          )}
           </View>
+        <View style={styles.buttonContainer}>
+
+        {!isMakingCall && ( 
+        <>
+        <TouchableOpacity onPress={onCancel} style={[styles.bottomButton, {backgroundColor: cancelColor}]}>
+          <Text style={styles.buttonText}>{cancelText}</Text>
+        </TouchableOpacity>
+        {showButtons && (
+          <TouchableOpacity onPress={onConfirm} style={[styles.bottomButton, {backgroundColor: confirmColor}]}>
+            <Text style={styles.buttonText}>{confirmText}</Text>
+          </TouchableOpacity>
+        )}
+        </>
+        )}
+        </View>
         </View>
       </Animated.View>
     </Modal>
@@ -56,51 +81,51 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 1)', // Slightly transparent background
+    backgroundColor: 'rgba(0, 0, 0, 1)',  
   },
   modalContent: {
-    width: '80%',
-    padding: 20,
-    borderWidth: 2,
-    borderColor: 'white',
-    backgroundColor: 'white',
+    width: '90%',
+    padding: 10,
+    borderWidth: 2, 
     borderRadius: 20,
-    alignItems: 'center',
-    position: 'relative',  
+    alignItems: 'center', 
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   headerContainer: {
-    marginBottom: 20,
+    paddingTop: 10,
   },
-  questionText: {
-    fontSize: 20,
-    marginBottom: 20,
+  questionText: { 
+    width: '100%',
+    fontSize: 20, 
     textAlign: 'center',
     fontFamily: 'Poppins-Regular',
   },
   formBodyContainer: { 
-    width: '100%',  
-    marginBottom: 10,
+    width: '100%',   
   },
   buttonContainer: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',  
+    height: '8%',
+    alignItems: 'center',
+    alignContent: 'center',
   },
-  confirmButton: {
+  fullBodyContainer: { 
+    width: '100%',  
+    paddingVertical: 20,
+
+  },
+  bottomButton: {
     backgroundColor: '#4CAF50',
     padding: 10,
     borderRadius: 20, 
     marginVertical: 6,
-    width: '100%', 
-  },
-  cancelButton: {
-    backgroundColor: '#f44336',
-    width: '100%',
-    borderRadius: 20, 
-    padding: 10, 
-    marginVertical: 6, 
-    alignItems: 'center',
-  },
+    height: 45,
+    width: '49%', 
+     
+  }, 
   buttonText: {
     color: 'white',
     fontSize: 16,

@@ -9,6 +9,8 @@ import FavoriteProfileSvg from '../assets/svgs/favorite-profile.svg';
 import AlertConfirm from '../components/AlertConfirm';
 import AlertSmall from '../components/AlertSmall';
 import InputAddLocationQuickSave from '../components/InputAddLocationQuickSave';
+import ModalAddNewLocation from '../components/ModalAddNewLocation';
+
 import MenuLocationOptions from '../components/MenuLocationOptions';
 import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
 
@@ -19,7 +21,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { authUserState } = useAuthUser();
-    const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
+    const { selectedFriend, calculatedThemeColors, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
     const { locationList, setLocationList, selectedLocation, isTemp, isFave, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
     const [isATemp, setIsTemp ] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
@@ -113,8 +115,7 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
               if (friendDashboardData && friendDashboardData.length > 0) {
                 friendDashboardData[0].friend_faves = updatedFaves;
                 console.log(friendDashboardData);
-                updateFriendDashboardData(friendDashboardData);
-                console.log('Location added to friend\'s favorites.');
+                updateFriendDashboardData(friendDashboardData); 
               }
             }
             onClose();
@@ -136,8 +137,8 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
         <View>
             {selectedLocation && isTemp && (
                 <TouchableOpacity onPress={handlePress} style={[styles.container, style]}> 
-                    <FontAwesome5 name="save" size={iconSize} /> 
-                    <Text style={[styles.saveText, { fontSize: size, color: color, fontFamily: family }]}> SAVE</Text>
+                    <FontAwesome5 name="save" size={iconSize} color={themeStyles.modalIconColor.color} /> 
+                    <Text style={[styles.saveText, { fontSize: size, color: themeStyles.genericText.color, fontFamily: family }]}> SAVE</Text>
                 </TouchableOpacity>
             )}
 
@@ -146,14 +147,14 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
 
                     <View style={styles.iconContainer}>
                     {!isFave && (
-                    <PushPinOutlineSvg width={18} height={18} color='black' onPress={toggleModal2}/>
+                    <PushPinOutlineSvg width={18} height={18} color={calculatedThemeColors.darkColor} onPress={toggleModal2}/>
                     )}
                     {isFave && (
-                    <FavoriteProfileSvg width={28} height={28} color='black' onPress={toggleModal2}/>
+                    <FavoriteProfileSvg width={28} height={28} color={calculatedThemeColors.lightColor} onPress={toggleModal2}/>
                     )}
                     </View>
                     <View style={styles.iconContainer}>
-                    <FontAwesome5 name="ellipsis-v" size={iconSize} onPress={toggleMenu} />
+                    <FontAwesome5 name="ellipsis-v" size={iconSize} color={calculatedThemeColors.lightColor}  onPress={toggleMenu} />
                     </View>
                 </View>
             )}
@@ -173,19 +174,15 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
                     />
                 </View>
             </Modal>
- 
-            <AlertSmall
-                isModalVisible={isModalVisible}
-                toggleModal={closeModal}
-                modalContent={
-                    <InputAddLocationQuickSave
-                        onClose={closeModal}
-                        title={selectedLocation.title}
-                        address={selectedLocation.address}
-                    />
-                }
-                modalTitle={'Save Location'}
+
+            <ModalAddNewLocation 
+                isVisible={isModalVisible}
+                close={closeModal}
+                title={selectedLocation.title}
+                address={selectedLocation.address}
             />
+ 
+           
             <AlertConfirm
                 isModalVisible={isModal2Visible}
                 toggleModal={closeModal2} 
@@ -205,7 +202,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10,
+        padding: 2,
     }, 
     iconContainer: {
         margin: 4,

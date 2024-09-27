@@ -1,7 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FormFriendColorThemeUpdate from '../forms/FormFriendColorThemeUpdate';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -11,6 +13,7 @@ import {
 } from '../api'; 
 import ArtistColorPaletteSvg from '../assets/svgs/artist-color-palette.svg';
 import AlertFormSubmit from '../components/AlertFormSubmit';
+import ModalFormColorTheme from '../components/ModalFormColorTheme';
 import LoadingPage from '../components/LoadingPage';
 import BaseModalFooter from '../components/BaseModalFooter';
 import BaseRowModalFooter from '../components/BaseRowModalFooter';
@@ -120,21 +123,10 @@ const ModalColorTheme = ({ visible, onClose }) => {
           /> 
 
 
-      <AlertFormSubmit
-        isModalVisible={isColorThemeModalVisible}
-        toggleModal={closeColorThemeModal}
-        headerContent={<ArtistColorPaletteSvg width={38} height={38} color='black' />}
-        questionText="Update color theme for friend dashboard?"
-        formBody={<FormFriendColorThemeUpdate ref={formRef} />}
-        onConfirm={() => {
-          if (formRef.current) {
-            formRef.current.submit();
-          }
-          closeColorThemeModal();
-        }}
-        onCancel={closeColorThemeModal}
-        confirmText="Update"
-        cancelText="Nevermind"
+      <ModalFormColorTheme
+        isVisible={isColorThemeModalVisible} 
+        formRef={formRef}
+        close={closeColorThemeModal} 
       />
     </BaseModalFooter>
   );

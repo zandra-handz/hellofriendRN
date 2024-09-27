@@ -804,6 +804,17 @@ export const fetchTypeChoices = async () => {
     }
 };
 
+export const fetchParkingChoices = async () => {
+    try {
+        const response = await axios.get('friends/dropdown/location-parking-type-choices/');
+        console.log('fetchParkingChoices: ', response.data.type_choices);
+        return response.data.type_choices;
+    } catch (error) {
+        console.error('Error fetching parking choices:', error);
+        throw error;
+    }
+};
+
 
 
 export const fetchLocationDetails = async (locationData) => {
