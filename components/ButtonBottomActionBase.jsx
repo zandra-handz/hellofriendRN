@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
+import { useGlobalStyle } from '../context/GlobalStyleContext';  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import AddOutlineSvg from '../assets/svgs/add-outline.svg';
 
@@ -14,9 +14,7 @@ const ButtonBottomActionBase = ({
   labelColor = 'white',
   backgroundColor = 'transparent', 
   fontMargin = 10, 
-  showGradient = true,
-  darkColor = '#4caf50',
-  lightColor = 'rgb(160, 241, 67)',
+  showGradient = true, 
   direction = { x: 1, y: 0 },
   showShape = true,
   shapePosition = 'left',
@@ -36,11 +34,11 @@ const ButtonBottomActionBase = ({
   shapeLabelFontSize = 16, 
   shapeLabelColor = 'black', 
   shapeLabelPositionRight = '93%',
-  disabled = false // Add the disabled prop
+  disabled = false  
 }) => { 
-  const globalStyles = useGlobalStyle();  
-  const { themeStyles } = useGlobalStyle();
+  const globalStyles = useGlobalStyle();   
   const { calculatedThemeColors } = useSelectedFriend();
+  
   const getShapeStyle = () => {
     switch (shapePosition) {
       case 'left':
@@ -90,7 +88,7 @@ const ButtonBottomActionBase = ({
         backgroundColor: disabled ? '#A9A9A9' : showGradient ? 'transparent' : backgroundColor, // Gray background if disabled
         position: 'relative',  
       }}
-      onPress={!disabled ? onPress : null} // Disable the button press when disabled
+      onPress={!disabled ? onPress : null}  
     >
       {!disabled && showGradient && (
         <LinearGradient
@@ -155,14 +153,16 @@ const ButtonBottomActionBase = ({
         </Text>
       )}
       <View style={{ flexDirection: 'row', marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
-        <Text
-          style={[
-            textStyles(labelFontSize, disabled ? 'white' : labelColor), // White label color if disabled
-            { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
-          ]}
-        >
-          {label}
-        </Text>
+      <Text
+        style={[
+          textStyles(labelFontSize, disabled ? 'white' : labelColor), // White label color if disabled
+          { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
+        ]}
+        numberOfLines={1}          
+        ellipsizeMode="tail"      
+      >
+        {label}
+      </Text>
       </View>
     </TouchableOpacity>
   );

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import { useLocationList } from '../context/LocationListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import CardHours from './CardHours';  
@@ -15,7 +15,10 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
   const [refreshing, setRefreshing] = useState(false);
   const { themeStyles } = useGlobalStyle();
 
+  useEffect(() => {
+    console.log('location passed in to location details: ', location);
 
+  }, [location]);
   
   const handleRefresh = () => {
     if (selectedLocation && selectedLocation.id) {
@@ -101,8 +104,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 18,
-    fontFamily: 'Poppins-Bold',
-    textTransform: 'uppercase',
+    fontFamily: 'Poppins-Regular', 
     flex: 1,
   },
   infoContainer: {

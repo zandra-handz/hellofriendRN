@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Text } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
@@ -11,9 +11,6 @@ import AlertImage from '../components/AlertImage';
 import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
-
-import FooterActionButtons from '../components/FooterActionButtons';
-
 
 
 import { updateFriendImage, deleteFriendImage } from '../api';
@@ -24,6 +21,7 @@ import AlertSuccessFail from '../components/AlertSuccessFail';
 import NavigationArrows from '../components/NavigationArrows';
 
 const ItemViewImage = ({ image, onClose }) => {
+  const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   const { imageList, deleteImage, setUpdateImagesTrigger } = useImageList();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -146,46 +144,34 @@ const ItemViewImage = ({ image, onClose }) => {
         toggleModal={closeModal}
         modalContent={
           imageList[currentIndex] ? (
-            <View style={styles.modalContainer}>
-              <View style={styles.container}>
+            <View style={styles.modalContainer}> 
                 <View style={styles.headerContainer}>
-                  <View style={styles.infoContainer}>
-                    <View style={styles.detailsColumn}>
-                      <Text style={styles.name}>{imageList[currentIndex].title}</Text>
-                      <View style={styles.modalImageContainer}>
+                <Text style={[styles.imageTitle, themeStyles.subHeaderText]}>{imageList[currentIndex].title}</Text>
+                      
+                  </View>
+                   
+                      <View style={[styles.modalImageContainer, themeStyles.textGenericBackgroundShadeTwo]}>
                         <Image
                           source={{ uri: imageList[currentIndex].image }}
                           style={styles.modalImage}
                         />
-                      </View>
-                    </View>
-                  </View>
-                </View>
+                      </View> 
                 <NavigationArrows 
                   currentIndex={currentIndex}
                   imageListLength={imageList.length}
                   onPrevPress={goToPreviousImage}
                   onNextPress={goToNextImage}
-                />
-                <View style={styles.buttonContainer}>
+                /> 
                   <ItemViewFooter
                     buttons={[
-                      { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color='black' />, onPress: handleEdit },
-                      { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: toggleModal },
+                      { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: handleEdit },
+                      { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: toggleModal },
                     ]}
                     maxButtons={2} 
                     showLabels={false}
-                  />
-                </View>
-              </View>
-              <FooterActionButtons
-                    height='5%'
-                    bottom={30}
-                    backgroundColor='white'
-                    buttons={[
-                      <ButtonSendImageToFriend onPress={handleShare} friendName={selectedFriend.name} />
-                    ]}
-                  />
+                  /> 
+                  <ButtonSendImageToFriend onPress={handleShare} friendName={selectedFriend.name} />
+                    
             </View>
           ) : null
         }
@@ -229,36 +215,25 @@ const ItemViewImage = ({ image, onClose }) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-  },
-  container: {
-    flex: 1,
-  },
+    width: '100%', 
+    justifyContent: 'space-between',
+  }, 
   headerContainer: {
+    height: '6%',
+    paddingHorizontal: 4,
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 6,
-    backgroundColor: 'transparent',
-  },
-  detailsColumn: {
-    flex: 1,
-    flexDirection: 'column',
-    marginRight: 4,
-  },
-  name: {
-    fontSize: 20,
+    alignItems: 'center', 
+  },  
+  imageTitle: {
+    paddingVertical: 10,
+    fontSize: 18,
     fontFamily: 'Poppins-Bold',
     flex: 1,
   },
   modalImageContainer: {
-    width: '100%',
-    height: '80%',
-    marginBottom: 10,
-    borderRadius: 10,
+    width: '100%', 
+    height: '80%', 
+    borderRadius: 20,
   },
   modalImage: {
     width: '100%',

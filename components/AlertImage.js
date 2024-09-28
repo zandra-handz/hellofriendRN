@@ -1,21 +1,22 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
-
-import { FontAwesome5 } from 'react-native-vector-icons';
-import ArrowBackSharpOutlineSvg from '../assets/svgs/arrow-back-sharp-outline.svg';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';  
 
 
 const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
+  
+  const { themeStyles } = useGlobalStyle();
+  
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
       <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
+        <View style={[styles.modalContent, themeStyles.genericTextBackground]}>
           <View style={styles.header}>
             <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-              <Ionicons name="arrow-back" size={23} color="black" /> 
+              <Ionicons name="arrow-back" size={23} color={themeStyles.modalIconColor.color} /> 
             </TouchableOpacity>
-            {modalTitle && <Text style={styles.modalTitle}>{modalTitle}</Text>}
+            {modalTitle && <Text style={[styles.modalTitle, themeStyles.subHeaderText]}>{modalTitle}</Text>}
           </View>
           {modalContent}
         </View>
@@ -34,20 +35,19 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '100%',
-    padding: 10,
-    backgroundColor: 'white',
+    padding: 4, 
     borderRadius: 0,
-    height: '100%',
-    position: 'relative',
-    bottom: 0,
+    height: '100%', 
+    flex: 1,
+    justifyContent: 'space-between',
+    
   },
   header: {
-    flexDirection: 'row', // Align items horizontally
-    alignItems: 'center', // Center items vertically
-    marginBottom: 10, // Space below the header
+    flexDirection: 'row', 
+    alignItems: 'center',  
   },
   closeButton: {
-    paddingRight: 30, // Space between button and title
+    paddingRight: 30,  
     paddingLeft: 7,
     paddingTop: 5,
   },
@@ -56,17 +56,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginTop: 4,
     textAlign: 'left',
-    flex: 1, // Take up remaining space
-  },
-  loadingWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalBody: {
-    flex: 1,
-    justifyContent: 'center',
-  },
+    flex: 1, 
+  }, 
 });
  
 

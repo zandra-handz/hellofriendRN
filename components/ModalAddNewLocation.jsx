@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
- 
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import ArtistColorPaletteSvg from '../assets/svgs/artist-color-palette.svg';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import ShopAddOutlineSvg from '../assets/svgs/shop-add-outline.svg';
 import AlertFormSubmit from '../components/AlertFormSubmit';
 import FormLocationQuickCreate from '../forms/FormLocationQuickCreate'; // Import the location creation form component

@@ -590,6 +590,7 @@ export const fetchAllLocations = async () => {
             zipCode: location.zip_code,
             latitude: location.latitude,
             longitude: location.longitude,
+            parking: location.parking_score,
             notes: location.notes,
             title: location.title,
             notes: location.personal_experience_info,

@@ -9,7 +9,7 @@ const ItemViewFooter = ({ buttons, maxButtons, showLabels }) => {
   const displayedButtons = maxButtons ? buttons.slice(0, maxButtons) : buttons;
 
   return (
-    <View style={[styles.container, themeStyles.footerContainer]}>
+    <View style={styles.container}>
       {displayedButtons.map((button, index) => (
         <TouchableOpacity
           key={index}
@@ -19,7 +19,7 @@ const ItemViewFooter = ({ buttons, maxButtons, showLabels }) => {
           <View style={styles.iconContainer}>
             {button.icon}
           </View>
-          {showLabels !== false && <Text>{button.label}</Text>}
+          {showLabels !== false && <Text style={themeStyles.genericText}>{button.label}</Text>}
         </TouchableOpacity>
       ))}
     </View>

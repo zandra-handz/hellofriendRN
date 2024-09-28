@@ -11,7 +11,7 @@ const ButtonSendImageToFriend = ({ onPress, friendName }) => {
                 <ButtonBottomActionBase
                     onPress={onPress}
                     preLabel = ''
-                    label={`Send ${friendName} This Image`}
+                    label={`Send to ${friendName}`}
                     height={64}
                     radius={16}
                     fontMargin={3} 
@@ -32,10 +32,8 @@ const ButtonSendImageToFriend = ({ onPress, friendName }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      width: '100%',
-      backgroundColor: 'transparent',
+    container: { 
+      width: '100%', 
     },    
   });
 

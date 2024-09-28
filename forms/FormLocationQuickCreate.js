@@ -1,6 +1,8 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import { CheckBox } from 'react-native-elements';
+import PickerParkingType from '../components/PickerParkingType';
+
 import { createLocation, fetchParkingChoices } from '../api';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useLocationList } from '../context/LocationListContext';
@@ -13,7 +15,14 @@ const FormLocationQuickCreate = forwardRef((props, ref) => {
   const { friendList } = useFriendList();
   const { locationList, setLocationList } = useLocationList();
   const { themeStyles } = useGlobalStyle();
-
+  const [parkingType, setParkingType] = useState(null);
+  const [parkingTypeText, setParkingTypeText] = useState(null);
+  const [typeChoices, setTypeChoices] = useState(['location has free parking lot', 
+    'free parking lot nearby', 
+    'street parking', 
+    'fairly stressful or unreliable street parking',
+    'no parking whatsoever',
+    'unspecified']);
   const [personalExperience, setPersonalExperience] = useState('');
   const [customTitle, setCustomTitle] = useState(null);
   const [selectedFriends, setSelectedFriends] = useState([]);
@@ -39,6 +48,21 @@ const FormLocationQuickCreate = forwardRef((props, ref) => {
     submit: handleSubmit,
   }));
 
+ 
+  
+  const onParkingTypeChange = (index) => {
+    
+    setParkingType(index); 
+    setParkingTypeText(`${typeChoices[index]}`); 
+    console.log(`Parking type selected: ${typeChoices[index]}`);
+ 
+    console.log(index);
+  };
+
+  useEffect(() => {
+    console.log(parkingType); 
+  }, [parkingType]);
+
   const handleFriendSelect = (friendId) => {
     const updatedFriends = selectedFriends.includes(friendId)
       ? selectedFriends.filter(id => id !== friendId)
@@ -55,6 +79,7 @@ const FormLocationQuickCreate = forwardRef((props, ref) => {
         friends: selectedFriends.map(id => Number(id)),
         title: title,
         address: address,
+        parking_score: parkingTypeText,
         custom_title: trimmedCustomTitle,
         personal_experience_info: personalExperience,
         user: authUserState.user.id, 
@@ -90,6 +115,12 @@ const FormLocationQuickCreate = forwardRef((props, ref) => {
         onChangeText={setCustomTitle}
         placeholder='Optional custom title' 
         placeholderTextColor='darkgray'
+      />
+
+      <PickerParkingType 
+        containerText=''
+        selectedTypeChoice={parkingType}
+        onTypeChoiceChange={onParkingTypeChange}
       />
 
       <TextInput
