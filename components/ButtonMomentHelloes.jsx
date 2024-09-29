@@ -1,23 +1,27 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import SpeechBubbleIconHeartSvg from '../assets/svgs/speech-bubble-icon-heart.svg';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import FormatDate from '../components/FormatDate';
 
 const ButtonMomentHelloes = ({
   onPress,
   moment,
-  iconSize = 12,
-  size = 12,
-  color = "black",
+  iconSize = 12,  
   style,
   disabled = false,
-  sameStyleForDisabled = false, // New prop to control style
+  sameStyleForDisabled = false,
+  includeDate= true, // New prop to control style
 }) => {
+
+  const { themeStyles } = useGlobalStyle();
+
   return (
     <TouchableOpacity 
       style={[
         styles.container, 
+        themeStyles.genericTextBackgroundShadeTwo,
         style, 
         !sameStyleForDisabled && disabled && styles.disabledContainer // Apply disabled style only if sameStyleForDisabled is false
       ]}
@@ -26,14 +30,16 @@ const ButtonMomentHelloes = ({
     >
       <View style={styles.iconAndMomentContainer}>
         <View style={styles.iconContainer}>
-          <SpeechBubbleIconHeartSvg width={iconSize} height={iconSize} color={color} />
+          <SpeechBubbleIconHeartSvg width={iconSize} height={iconSize} color={themeStyles.modalIconColor.color} />
         </View>
         <View style={styles.textWrapper}>
-          <Text style={[styles.momentText, { fontSize: size, color: color }]}>
+          <Text style={[styles.momentText, themeStyles.genericText]}>
             {moment.capsule}
           </Text>
         </View>
       </View>
+      
+      {includeDate && ( 
       <View style={styles.creationDateSection}>
         <View style={styles.creationDateTextContainer}>
           <FormatDate 
@@ -48,6 +54,7 @@ const ButtonMomentHelloes = ({
           />
         </View>
       </View>
+      )}
     </TouchableOpacity>
   );
 };
@@ -58,6 +65,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     borderColor: 'black',
+    paddingVertical: 10,
   },
   disabledContainer: {
     opacity: 0.5, // Visual indication of disabled state
@@ -66,14 +74,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', 
     width: '100%', 
-    padding: 20,
+    padding: 0,
     borderRadius: 20, 
     flexWrap: 'wrap', // Allow wrapping of children
     backgroundColor: 'transparent', // Optional: make sure background is set to avoid overlap issues
   },
   momentText: {
-    fontFamily: 'Poppins-Bold',
-    marginLeft: 8,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14, 
+    paddingRight: 6,
     flexWrap: 'wrap', // Ensure text wrapping inside the text container
   },
   textWrapper: {
@@ -82,8 +91,9 @@ const styles = StyleSheet.create({
   },
   iconContainer: { 
     alignItems: 'left', 
-    borderRadius: 20,
-    flex: .1,
+    paddingLeft: 4,
+    borderRadius: 0,
+    flex: .11,
     height: '100%',
   },
   creationDateSection: {   

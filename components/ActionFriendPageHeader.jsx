@@ -33,6 +33,8 @@ const ActionFriendPageHeader = ({
     navigation.navigate('FriendFocus');
   };
 
+  
+
     // Function to handle button press based on Deselector
     const handlePress = () => {
       if (Deselector) {
@@ -49,7 +51,7 @@ const ActionFriendPageHeader = ({
 
         <LoadingPage 
           loading={loadingNewFriend}
-          spinnerSize={70}
+          spinnerSize={70} 
         />
       </View>
     )}

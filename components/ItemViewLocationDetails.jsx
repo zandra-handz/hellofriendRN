@@ -33,7 +33,7 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={[styles.name, {color: themeStyles.genericText.color}]}>
+        <Text style={[styles.itemTitle, {color: themeStyles.genericText.color}]}>
           {additionalDetails ? additionalDetails.name : location.title}
         </Text>
         <ButtonSaveLocation saveable={unSaved} />
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 2, 
   },
-  name: {
+  itemTitle: {
     fontSize: 18,
     fontFamily: 'Poppins-Regular', 
     flex: 1,

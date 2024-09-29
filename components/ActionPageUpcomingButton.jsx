@@ -4,6 +4,8 @@ import ButtonMultiFeatureUpcoming from './ButtonMultiFeatureUpcoming';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
+import { useNavigation } from '@react-navigation/native';
+
 import ActionFriendPageHeader from './ActionFriendPageHeader';
 import ButtonArrowSvgAndLabel from '../components/ButtonArrowSvgAndLabel';
 
@@ -14,7 +16,7 @@ const ActionPageUpcomingButton = ({height=140}) => {
   const { authUserState, userAppSettings } = useAuthUser();
   
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { selectedFriend, setFriend } = useSelectedFriend(); 
+  const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend(); 
  
   
   let mainHello = null;
@@ -41,6 +43,7 @@ const ActionPageUpcomingButton = ({height=140}) => {
   }
 
   const [showSecondButton, setShowSecondButton] = useState(false);
+  const navigation = useNavigation();
   const opacityAnim = new Animated.Value(1);
 
 
@@ -57,11 +60,26 @@ const ActionPageUpcomingButton = ({height=140}) => {
     setShowSecondButton(true); 
   };
 
+  const navigateToFriendFocus = () => {
+    navigation.navigate('FriendFocus');
+  };
+
+  useEffect(() => {
+    if (selectedFriend && !loadingNewFriend) {
+    //navigateToFriendFocus();
+    console.log('here is where I was navigating to friend focus screen from main');
+    }
+
+  }, [loadingNewFriend]);
+
   const handlePress = (hello) => {
     const { id, name } = hello.friend; 
     const selectedFriend = id === null ? null : { id: id, name: name }; 
     setFriend(selectedFriend);  
+
   };
+
+  
 
   return (
     <>

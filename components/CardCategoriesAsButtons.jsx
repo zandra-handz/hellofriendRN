@@ -10,7 +10,7 @@ import ButtonColorBGSmall from '../components/ButtonColorBGSmall';
 
 const DOUBLE_PRESS_DELAY = 300; // Time delay to detect double press
 
-const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, showInModal = true }) => {
+const CardCategoriesAsButtons = ({ onCategorySelect, onParentSave, showAllCategories = false, showInModal = true }) => {
   const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -140,6 +140,16 @@ const CardCategoriesAsButtons = ({ onCategorySelect, showAllCategories = false, 
     onCategorySelect(newCategory, []);  
     setNewCategoryEntered(true);
   };
+
+
+  useEffect(() => {
+    if (newCategoryEntered) {
+      onParentSave();
+      setNewCategoryEntered(false);
+
+    };
+
+  }, [newCategoryEntered]);
   
   const renderCapsules = () => {
     if (selectedCategory === null) {

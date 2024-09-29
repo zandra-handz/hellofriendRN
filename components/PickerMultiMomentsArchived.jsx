@@ -10,8 +10,7 @@ const PickerMultiMomentsArchived = ({
     archivedMoments,
     containerText = 'Reuse moments ',
     showAllCategories = true, 
-    showInModal = true,
-    singleLineScroll = false,
+    showInModal = true, 
     onCancel // Add this prop
 }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);

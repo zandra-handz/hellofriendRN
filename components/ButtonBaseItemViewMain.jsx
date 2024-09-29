@@ -1,10 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the global style context
-
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 const ButtonBaseItemViewMain = ({ 
+
+ 
   onPress,
   label,
   height = 58,
@@ -21,9 +23,7 @@ const ButtonBaseItemViewMain = ({
   animationHeight = 40,
   fontMargin = 10,
   animationMargin = 0,
-  showGradient = true,
-  darkColor = '#4caf50',
-  lightColor = 'rgb(160, 241, 67)',
+  showGradient = true, 
   direction = { x: 1, y: 0 },
   showShape = true,
   shapePosition = 'left',
@@ -46,8 +46,17 @@ const ButtonBaseItemViewMain = ({
   shapeLabelPositionRight = '93%',
   disabled = false // New prop to control disabled state
 }) => {
+  const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
   const lottieViewRef = useRef(null);
   const globalStyles = useGlobalStyle(); // Get the global styles
+  const [ lightColor, setLightColor ] = useState('rgb(160, 241, 67)')
+  const [ darkColor, setDarkColor ] = useState('#4caf50');
+
+  useEffect(() => {
+    setLightColor(calculatedThemeColors.lightColor);
+    setDarkColor(calculatedThemeColors.darkColor);
+
+  }, [selectedFriend, calculatedThemeColors]);
 
   useEffect(() => {
     if (lottieViewRef.current && animationSource) {

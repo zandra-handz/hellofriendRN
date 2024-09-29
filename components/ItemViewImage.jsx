@@ -164,11 +164,15 @@ const ItemViewImage = ({ image, onClose }) => {
                 /> 
                   <ItemViewFooter
                     buttons={[
-                      { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: handleEdit },
-                      { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: toggleModal },
+                      { label: 'Edit', buttonIconSize: 34, buttonPurpose: 'edit', icon: <EditOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: handleEdit },
+                      { label: 'Delete', buttonIconSize: 34, buttonPurpose: 'delete', icon: <TrashOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: toggleModal },
+                      { label: 'Edit', buttonIconSize: 34, buttonPurpose: 'edit', icon: <EditOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: handleEdit },
+                      { label: 'Delete', buttonIconSize: 34, buttonPurpose: 'delete', icon: <TrashOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: toggleModal },
                     ]}
-                    maxButtons={2} 
+                    maxButtons={4} 
                     showLabels={false}
+                    alignment='right'
+                    padding={40}
                   /> 
                   <ButtonSendImageToFriend onPress={handleShare} friendName={selectedFriend.name} />
                     

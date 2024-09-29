@@ -42,7 +42,7 @@ const ButtonSingleInput = ({ title = '', onInputValueChange }) => {
           onConfirm={handleConfirm}
           onCancel={handleCancel}
           questionText="Enter new category:"
-          confirmText="Submit"
+          confirmText="Save moment"
           cancelText="Cancel"
           onInputChange={(value) => console.log('Input value changed:', value)} // Optional: Handle input change if needed
           maxLength={50} //max length of Category model on backend as of 9/15/2024

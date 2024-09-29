@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView } from 'react-native';
-import { useCapsuleList } from '../context/CapsuleListContext';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonMomentHelloes from '../components/ButtonMomentHelloes';
+import ButtonColorBGSmall from '../components/ButtonColorBGSmall';
 
 const ViewMultiMomentsArchived = ({ 
     archivedMoments, 
     containerText = 'Moments shared', 
-    showAllCategories = true,
-    singleLineScroll = false,
-    reuseButtonOnPress // Prop for the Reuse? button
+    showAllCategories = true, 
+    reuseButtonOnPress  
 }) => {
+
   const [selectedCategory, setSelectedCategory] = useState('All Moments');
   const [categories, setCategories] = useState([]);
   const [categoryItems, setCategoryItems] = useState({});
-
-  const { selectedFriend } = useSelectedFriend();
-  const { capsuleList } = useCapsuleList();
+  const { themeStyles } = useGlobalStyle();
+  const { selectedFriend, calculatedThemeColors } = useSelectedFriend(); 
 
   useEffect(() => {
     if (selectedFriend) { 
@@ -57,44 +57,56 @@ const ViewMultiMomentsArchived = ({
 
   const visibleCategories = showAllCategories ? categories : categories.slice(0, 5);
 
+  const renderMomentItem = ({ item }) => (
+    <View style={styles.itemContainer}> 
+      <ButtonMomentHelloes  
+        includeDate={false}
+        moment={item}
+        iconSize={26}
+        size={14} 
+        disabled={true}
+        sameStyleForDisabled={true}
+      />
+    </View>
+  );
+
+  const renderCategoryGroup = ({ item }) => (
+    <View>
+      <Text style={[styles.categoryGroupTitle, themeStyles.subHeaderText]}>{item}</Text>
+      <FlatList
+        data={categoryItems[item]}
+        renderItem={renderMomentItem}
+        keyExtractor={(momentItem, idx) => `${item}-${idx}`}
+      />
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <Text style={styles.selectedItemsTitle}>
+        <Text style={[styles.selectedItemsTitle, themeStyles.subHeaderText]}>
           {containerText} ({archivedMoments.length})
         </Text>
-        {reuseButtonOnPress && (
-          <TouchableOpacity 
-            style={styles.reuseButton} 
-            onPress={reuseButtonOnPress}
-          >
-            <Text style={styles.reuseButtonText}>Reuse?</Text>
-          </TouchableOpacity>
-        )}
       </View>
 
-      <View style={styles.selectionContainer}>
-        <Text style={styles.title}>View by category:</Text>
+      <View style={[styles.selectionContainer, {backgroundColor: calculatedThemeColors.lightColor}]}>
+        <Text style={[styles.title, themeStyles.genericText]}>View: </Text>
+       
         <FlatList
           data={visibleCategories}
           horizontal={true}
-          renderItem={({ item }) => (
-            <TouchableOpacity 
-              style={[
-                styles.categoryButton,
-                selectedCategory === item && styles.selectedCategoryButton,
-              ]}
-              onPress={() => handleCategoryPress(item)}
-            >
-              <Text
-                style={[
+          renderItem={({ item }) => ( 
+            <View style={{paddingRight: 6}}>
+              <ButtonColorBGSmall 
+                onPress={() => handleCategoryPress(item)}
+                useLightColor={selectedCategory === item}
+                title={item}
+                textStyle={[
                   styles.categoryButtonText,
                   selectedCategory === item && styles.selectedCategoryButtonText,
                 ]}
-              >
-                {item}
-              </Text>
-            </TouchableOpacity>
+              />  
+            </View>
           )}
           keyExtractor={(item, index) => index.toString()}
           showsHorizontalScrollIndicator={false}
@@ -107,33 +119,24 @@ const ViewMultiMomentsArchived = ({
         </TouchableOpacity>
       </View>
 
-      <View style={styles.contentContainer}> 
-        <View style={styles.selectedItemsContainer}> 
-          <ScrollView> 
-            {Object.keys(categoryItems).length > 0 ? (
-              Object.keys(categoryItems).map((category, index) => (
-                <View key={index}>
-                  <Text style={styles.categoryGroupTitle}>{category}</Text>
-                  {categoryItems[category].map((item, idx) => (
-                    <View key={idx} style={styles.itemContainer}> 
-                      <ButtonMomentHelloes  
-                        moment={item}
-                        iconSize={26}
-                        size={14}
-                        color={'black'}
-                        disabled={true}
-                        sameStyleForDisabled={true}
-                      />
-                    </View>
-                  ))}
-                </View>
-              ))
-            ) : (
-              <Text style={styles.noItemsText}>No items available</Text>
-            )}
-          </ScrollView>
-        </View>
+      <View style={[styles.contentContainer, themeStyles.genericTextBackground, {borderColor: calculatedThemeColors.lightColor}]}> 
+        <FlatList
+          data={Object.keys(categoryItems)}
+          renderItem={renderCategoryGroup}
+          keyExtractor={(item, index) => item.toString()}
+          ListEmptyComponent={<Text style={styles.noItemsText}>No moments</Text>}
+        />
       </View>
+      <View style={{width: '100%', height: 'auto', flexDirection: 'row', justifyContent: 'flex-end'}}>
+        {reuseButtonOnPress && (
+            <TouchableOpacity 
+              style={[styles.reuseButton, {backgroundColor: calculatedThemeColors.lightColor}]} 
+              onPress={reuseButtonOnPress}
+            >
+              <Text style={styles.reuseButtonText}>Reuse?</Text>
+            </TouchableOpacity>
+          )}
+        </View>
     </View>
   );
 };
@@ -141,35 +144,39 @@ const ViewMultiMomentsArchived = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
+    flexDirection: 'column',
+    width: '100%',  
+    justifyContent: 'space-between',  
   },
   topContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 0,
+    alignContent: 'center', 
+    height: 'auto',
   },
-  contentContainer: {
-    padding: 0,
+  contentContainer: {  
+    paddingVertical: 10,
+    paddingHorizontal: 8, 
+    height: 290,
+    borderWidth: .4, 
+    borderRadius: 20,
   },
   title: {
     fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-    marginBottom: 2,
+    fontFamily: 'Poppins-Bold', 
+    paddingLeft: 8,
+    paddingRight: 6,
   },
-  selectedItemsContainer: {
-    marginBottom: 10,
-    backgroundColor: 'transparent',
-    padding: 10,
+  selectedItemsContainer: { 
+    paddingVertical: 10,
     height: 300,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    borderWidth: 1, 
     borderRadius: 20,
   },
   selectedItemsTitle: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 10,
+    fontFamily: 'Poppins-Bold', 
   },
   noItemsText: {
     fontSize: 16,
@@ -178,67 +185,47 @@ const styles = StyleSheet.create({
   selectionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  categoryButton: {
-    backgroundColor: '#f0f0f0',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingVertical: 6, 
     borderRadius: 20,
-    margin: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  selectedCategoryButton: {
-    backgroundColor: '#FF7F50', // Match card component's selected styling
-  },
+  },  
   categoryButtonText: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: 13,
+    color: 'white',
     fontFamily: 'Poppins-Regular',
   },
   selectedCategoryButtonText: {
-    color: 'white', // Match card component's selected text color
+    color: 'white',
+    fontFamily: 'Poppins-Bold',
   },
   viewAllButton: {
-    backgroundColor: '#FFD700',
-    paddingVertical: 8,
+    backgroundColor: 'darkgray',
+    paddingVertical: 2,
     paddingHorizontal: 15,
-    borderRadius: 25,
-    margin: 10,
-    shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 3,
+    borderRadius: 25, 
   },
   viewAllButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
-    fontFamily: 'Poppins-Regular',
+    fontSize: 14, 
+    color: 'white',
+    fontFamily: 'Poppins-Bold',
   },
   categoryGroupTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 15,
+    fontFamily: 'Poppins-Bold',
+    marginBottom: 4,
   },
   itemContainer: {
     marginBottom: 10,
   },
   reuseButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 6,
+    paddingVertical: 2,
     paddingHorizontal: 12,
-    borderRadius: 20,
-    margin: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
+    borderRadius: 20, 
+    textAlign: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',   
+
   },
   reuseButtonText: {
     fontSize: 14,
@@ -248,3 +235,4 @@ const styles = StyleSheet.create({
 });
 
 export default ViewMultiMomentsArchived;
+ 

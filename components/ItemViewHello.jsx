@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, ScrollView, Button } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import AlertImage from '../components/AlertImage';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useCapsuleList } from '../context/CapsuleListContext'; 
-import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain'; // Import ItemMomentMultiPlain component
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 import PickerMultiMomentsArchived from '../components/PickerMultiMomentsArchived';
 import ViewMultiMomentsArchived from '../components/ViewMultiMomentsArchived';
-
-import NavigationArrows from '../components/NavigationArrows';
-
-import FooterActionButtons from '../components/FooterActionButtons';
+import DisplayHelloNotes from '../components/DisplayHelloNotes';
+ 
 import ButtonReuseMoments from '../components/ButtonReuseMoments';
 
 const ItemViewHello = ({ hello, onClose }) => {
+  const { themeStyles } = useGlobalStyle();
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
   const [isReselectMomentsModalVisible, setReselectMomentsModalVisible] = useState(false);
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
   const { capsuleList, setCapsuleList } = useCapsuleList();
-  const [showCheckboxVersion, setShowCheckboxVersion ] = useState(false);
   const [momentsToSave, setMomentsToSave] = useState(false);
 
   const [momentsSelected, setMomentsSelected] = useState([]);
@@ -81,18 +79,23 @@ const ItemViewHello = ({ hello, onClose }) => {
         hello ? (
           <View style={styles.container}>
             <View style={styles.headerContainer}>
-              <Text style={styles.name} >{hello.date}</Text> 
-            </View>
-            <View style={styles.infoContainer}>
-              <View style={styles.detailsColumn}>
-                <View style={styles.detailRow}>
-                <Text style={styles.detailsText}> {hello.type}</Text> 
-                </View>
-                <View style={styles.detailRow}>
-                <Text style={styles.detailsText}>@ {hello.locationName} </Text> 
-                </View>
+              <View style={styles.itemTitleContainer}>
+                <Text style={[styles.itemTitle, themeStyles.subHeaderText]} >{hello.date}</Text> 
               </View>
-            </View>  
+              <View style={styles.infoContainer}> 
+                <View style={styles.detailRow}>
+                  <Text style={[styles.detailsText, themeStyles.genericText]}> {hello.type}</Text> 
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={[styles.detailsText, themeStyles.genericText]}>@ {hello.locationName} </Text> 
+                </View> 
+                <View style={styles.notesRow}> 
+                  <DisplayHelloNotes 
+                    notes={hello.additionalNotes}
+                    borderColor={calculatedThemeColors.lightColor} />
+                </View>
+              </View>  
+            </View>
 
             {!isReselectMomentsModalVisible && ( 
             <View style={styles.momentsContainer}> 
@@ -110,30 +113,16 @@ const ItemViewHello = ({ hello, onClose }) => {
               onCancel={toggleReselectModal}
              />
           </View>
-          )}
-          {showCheckboxVersion && (  
-            <View style={styles.archivedMomentsContainer}>
-              <ScrollView> 
-              <ItemMomentMultiPlain passInData={true} data={hello.pastCapsules} singleLineScroll={false} />
-              </ScrollView> 
-            </View> 
-          )}
-            <FooterActionButtons
-              height='7%'
-              bottom={15} 
-              backgroundColor='white'
-              buttons={[
+          )} 
                 <ButtonReuseMoments 
                   onPress={toggleReselectModal} 
                   momentsData={momentsSelected}
                   disabled={!momentsToSave} 
-                  />, 
-              ]}
-            />
+                  /> 
           </View>
         ) : null
       }
-      modalTitle={`View hello with ${selectedFriend.name}!`}
+      modalTitle={`Helloes for ${selectedFriend.name}`}
     />
   );
 };
@@ -141,61 +130,49 @@ const ItemViewHello = ({ hello, onClose }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between',
-    paddingBottom: 84,
-  },
-  headerContainer: {
-    flexDirection: 'row',  
-    textAlign: 'left',
     width: '100%',
-    backgroundColor: 'transparent', 
-    marginBottom: 2, 
+    justifyContent: 'space-between', 
+    paddingHorizontal: 2,
+  }, 
+  headerContainer: { 
+    width: '100%',
+    textAlign: 'left',   
   },
-  name: {
+  itemTitleContainer: {
+    width: '100%',
+    paddingTop: 20,  
+    },
+  itemTitle: {
     fontSize: 18,
-    fontFamily: 'Poppins-Bold',
-    textTransform: 'uppercase', 
-    width: '100%',
-    flex: 1,
+    fontFamily: 'Poppins-Bold',   
   },
   detailsText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Regular', 
-    width: '100%',
-    flex: 1,
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',  
   },
   infoContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 6,
-  },
-  detailsColumn: {
-    flex: 1,
-    flexDirection: 'column',
-    marginRight: 4,
-  },
+    flexDirection: 'column', 
+    alignItems: 'flex-start', 
+  }, 
   detailRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  archivedMomentsContainer: { 
-    flex: 1,
+    alignItems: 'center', 
     width: '100%',
-    backgroundColor: 'transparent',  
-    borderRadius: 0, 
   },
-  buttonContainer: { 
-    bottom: 0,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
+  notesRow: {
+    paddingTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center', 
+    width: '100%',
   },
-    momentsContainer: { 
-    backgroundColor: '#fff',
+  archivedMomentsContainer: {  
+    width: '100%',  
+    height: 410, 
+  }, 
+    momentsContainer: {  
+    height: 410,
     width: '100%', 
-    borderRadius: 8,
-    padding: 0,
-    minHeight: 400, 
+    borderRadius: 8,  
   },
 });
 

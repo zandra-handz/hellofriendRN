@@ -8,33 +8,29 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api'; 
 
-import AlertSuccessFail from '../components/AlertSuccessFail';
-import AlertConfirm from '../components/AlertConfirm'; 
 import  { useGlobalStyle } from '../context/GlobalStyleContext';
 
+import LoadingPage from '../components/LoadingPage';
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
-
 import ButtonBottomSaveMoment from '../components/ButtonBottomSaveMoment';
 
 const ContentAddMoment = ( {friendFixed=false}) => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { capsuleList, setCapsuleList, sortByCategory } = useCapsuleList();
+  const { setCapsuleList } = useCapsuleList(); // NEED THIS TO ADD NEW 
   const [ momentEditMode, setMomentEditMode] = useState(false);
   const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
-  const [textInput, setTextInput] = useState('');
-  const [categoryInput, setCategoryInput] = useState('');
-  const [categoryCapsules, setCategoryCapsules ] = useState([]);
-  const [uniqueCategories, setUniqueCategories] = useState([]);
+  const [textInput, setTextInput] = useState('');   
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [userEntryCapsule, setUserEntryCapsule] = useState('');
- 
-  const [isConfirmModalVisible, setConfirmModalVisible ] = useState(false);
+  const [userEntryCapsule, setUserEntryCapsule] = useState(''); 
   const [ saveInProgress, setSaveInProgress ] = useState(false);
-  const [alertModalVisible, setAlertModalVisible] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [isSuccess, setIsSuccess] = useState(true); // Tracks if the last operation was successful or failed
+  const [ resultMessage, setResultMessage ] = useState(null);
+  const [gettingResultMessage, setGettingResultMessage ] = useState(null);
+  
+  const [clearText, setClearText] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(true);  
+  const delayForResultsMessage = 1000;
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
@@ -47,25 +43,11 @@ const ContentAddMoment = ( {friendFixed=false}) => {
     setMomentEditMode(screenState);
   };
 
-  const toggleModal = () => {
-    setConfirmModalVisible(!isConfirmModalVisible);
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category); 
   };
-
-  const handleCategorySelect = (category, capsulesForCategory) => {
-    setSelectedCategory(category);
-    setCategoryCapsules(capsulesForCategory); 
-  };
-
-  useEffect(() => {
-    if (selectedCategory) {
-        console.log('category in parent:', selectedCategory);
-    }
-  }, [selectedCategory]);
-
-  useEffect(() => { 
-    const categories = [...new Set(capsuleList.map(capsule => capsule.typedCategory))];
-    setUniqueCategories(categories);
-  }, [capsuleList]);
+  
 
   const handleInputChange = (text) => {
     setTextInput(text);
@@ -79,6 +61,7 @@ const ContentAddMoment = ( {friendFixed=false}) => {
 
   const handleSave = async () => {
     setSaveInProgress(true); 
+    setGettingResultMessage(true);
     try {
       if (selectedFriend) {
         const requestData = {
@@ -101,36 +84,59 @@ const ContentAddMoment = ( {friendFixed=false}) => {
         setCapsuleList(prevCapsules => [newCapsule, ...prevCapsules]);
         
         resetTextInput();
-        setSelectedCategory('');
-        setCategoryInput('');
+        setSelectedCategory(''); 
 
-        setAlertMessage('Moment has been saved!');
+        setResultMessage('Moment saved!');
+        setGettingResultMessage(true);
         setIsSuccess(true); 
+        let timeout;
+        // Set a timeout to turn gettingResultsMessage to false after 3 seconds
+        timeout = setTimeout(() => {
+          setGettingResultMessage(false);
+        }, delayForResultsMessage);  
+        return () => clearTimeout(timeout);
+        
       }
     } catch (error) {
-      console.error('Error saving capsule:', error);
-      setAlertMessage('Could not save moment.');
-      setIsSuccess(false);  
+      setResultMessage('Error! Could not save moment');
+      setGettingResultMessage(true);
+      let timeout;
+  
+      timeout = setTimeout(() => {
+        setGettingResultMessage(false);
+      }, delayForResultsMessage);  
+      return () => clearTimeout(timeout);
     } finally {
-      setSaveInProgress(false); 
-      setAlertModalVisible(true); // Show the modal after attempt
-      toggleModal();
+      setSaveInProgress(false);  
+      setClearText(true);
+      
+ 
     }
-  };
-
-  const closeAlertModal = () => {
-    setAlertModalVisible(false);
-  };
+  }; 
+ 
   
   return (
     <View style={styles.container}> 
-
-        {friendFixed == false && (
-        <View style={styles.selectFriendContainer}>
-          <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>{firstSectionTitle}</Text>
-          <FriendSelectModalVersion width='88%' />
-        </View>
+        {gettingResultMessage && (
+          <View style={styles.loadingWrapper}>
+          <LoadingPage
+            loading={saveInProgress}
+            resultsMessage={resultMessage}
+            spinnnerType='wander'
+            includeLabel={true}
+            label="Saving moment..."
+          />
+          </View>
         )}
+
+        {!gettingResultMessage && (  
+          <>
+          {friendFixed == false && (
+          <View style={styles.selectFriendContainer}>
+            <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>{firstSectionTitle}</Text>
+            <FriendSelectModalVersion width='88%' />
+          </View>
+          )}
 
         <View style={styles.locationContainer}>
           <EnterMoment
@@ -139,58 +145,34 @@ const ContentAddMoment = ( {friendFixed=false}) => {
             placeholderText="Enter moment here..."
             handleNextScreen={() => {}}  
             onScreenChange={handleMomentToggle} 
-            resetText={alertModalVisible && isSuccess}
+            resetText={clearText && isSuccess}
           />
         </View> 
         {userEntryCapsule && selectedFriend && !momentEditMode && ( 
           <View style={styles.categoryContainer}>
             <>
             <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>Selected Category: {selectedCategory}</Text>
-                <CardCategoriesAsButtons onCategorySelect={handleCategorySelect}/> 
+                <CardCategoriesAsButtons onCategorySelect={handleCategorySelect} onParentSave={handleSave}/> 
             </> 
           </View>
         )} 
+        </>
+      )}
         {userEntryCapsule && selectedCategory ? (   
               <View style={styles.bottomButtonContainer}>  
               <ButtonBottomSaveMoment
-                onPress={toggleModal} 
+                onPress={handleSave} 
                 disabled={false}
               />
             </View>
           ) : (
             <View style={styles.bottomButtonContainer}>  
               <ButtonBottomSaveMoment
-                onPress={toggleModal} 
+                onPress={[() => {}]} 
                 disabled={true}
               />
           </View>
         )} 
-
-      <AlertConfirm
-        fixedHeight={true}
-        height={224}
-        isModalVisible={isConfirmModalVisible}
-        questionText=""
-        isFetching={saveInProgress}
-        useSpinner={true}
-        toggleModal={toggleModal}
-        headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>Save moment?</Text>}
-        onConfirm={handleSave} 
-        onCancel={toggleModal}
-        confirmText="Yes!"
-        cancelText="Cancel"
-      />
-
-      <AlertSuccessFail
-        isVisible={alertModalVisible}
-        message={alertMessage}
-        onClose={closeAlertModal}
-        isSuccess={isSuccess} // Indicates success or failure
-        tryAgain={!isSuccess}
-        onRetry={handleSave}
-        isFetching={saveInProgress}
-        type='both' // Set to 'both' to handle success and failure in the same modal
-      />
     </View>
   );
 };
@@ -201,6 +183,11 @@ const styles = StyleSheet.create({
     padding: 0, 
     justifyContent: 'space-between',  
   }, 
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   locationContainer: {   
     width: '100%',      
   },

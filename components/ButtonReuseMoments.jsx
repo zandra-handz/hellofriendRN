@@ -12,7 +12,7 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api';
 
-const ButtonReuseMoments = ({ onPress, momentsData, disabled }) => {
+const ButtonReuseMoments = ({ momentsData, disabled }) => {
     
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
@@ -165,10 +165,8 @@ const ButtonReuseMoments = ({ onPress, momentsData, disabled }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      width: '100%',
-      backgroundColor: 'transparent',
+    container: { 
+      width: '100%', 
     }, 
   });
 

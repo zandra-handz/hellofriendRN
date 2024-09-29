@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
  
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
@@ -13,7 +13,7 @@ import { saveHello } from '../api';
 import PickerMultiMoments from '../components/PickerMultiMoments';
 
 import TextAreaBase from '../components/TextAreaBase';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 import PickerDate from '../components/PickerDate'; 
 import PickerHelloType from '../components/PickerHelloType';
 import PickerHelloLocation from '../components/PickerHelloLocation'; 
@@ -29,12 +29,11 @@ import LoadingPage from '../components/LoadingPage';
 const ContentAddHello = () => {
 
   const navigation = useNavigation();
-
-  const { themeStyles } = useGlobalStyle();
+ 
 
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, loadingNewFriend, friendDashboardData, setFriend } = useSelectedFriend();
-  
+  const { selectedFriend, setFriend } = useSelectedFriend();
+  const { themeStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
   const [additionalNotes, setAdditionalNotes] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -47,27 +46,27 @@ const ContentAddHello = () => {
   const [existingLocationId, setExistingLocationId ] = useState('');
   const [customLocation, setCustomLocation ] = useState('');
   const [locationModalVisible, setLocationModalVisible] = useState(false);
-  const [showLocationPicker, setShowLocationPicker] = useState(false);  
-
-  const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
+ 
   const [momentsSelected, setMomentsSelected] = useState([]);
   
   const [isDeleteChoiceModalVisible, setDeleteChoiceModalVisible] = useState(false);
   
-  const [deleteChoice, setDeleteChoice ] = useState(false); 
+  const [deleteMoments, setDeleteMoments ] = useState(false); 
   
   const [ saveInProgress, setSaveInProgress ] = useState(false);
-  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
-  const [isFailModalVisible, setFailModalVisible] = useState(false);
-
-
+  
+  const [ resultMessage, setResultMessage ] = useState(null);
+  const [gettingResultMessage, setGettingResultMessage ] = useState(null);
+  
+   
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
   
+  const delayForResultsMessage = 1000;
 
+ 
 
-  const handleDeleteChoiceToggle = (isToggledYes) => {
-    setDeleteChoice(isToggledYes ? true : false);
-    console.log('Toggle state:', isToggledYes ? 'Yes' : 'No');
+  const toggleDeleteMoments = () => {
+    setDeleteMoments(!deleteMoments);
   };
 
   const navigateToMainScreen = () => {
@@ -81,11 +80,7 @@ const handleNotesInputChange = (text) => {
 
 const resetAdditionalNotes = () => {
   setAdditionalNotes('');
-};
-
-  useEffect(() => {
-    console.log(deleteChoice);
-  }, [deleteChoice]);
+}; 
  
 
   const handleTypeChoiceChange = (index) => {
@@ -143,8 +138,8 @@ const resetAdditionalNotes = () => {
 };
   
   const handleSave = async () => {
-    setDeleteChoiceModalVisible(false);
     setSaveInProgress(true); 
+    setGettingResultMessage(true);
 
     try {
       if (selectedFriend) {
@@ -165,38 +160,62 @@ const resetAdditionalNotes = () => {
           location: existingLocationId,
           date: formattedDate,
           thought_capsules_shared: momentsDictionary,
-          delete_all_unshared_capsules: deleteChoice ? true : false,
+          delete_all_unshared_capsules: deleteMoments ? true : false,
         };
         
-        const response = await saveHello(requestData);
-        setSuccessModalVisible(true); 
-        setUpdateTrigger((prev) => !prev);
+        await saveHello(requestData); 
+        
+        setUpdateTrigger((prev) => !prev); 
+        setResultMessage('Hello saved!');
+        setGettingResultMessage(true);
+         
+
+        let timeout;
+        // Set a timeout to turn gettingResultsMessage to false after 3 seconds
+        timeout = setTimeout(() => {
+          setGettingResultMessage(false);
+          setFriend(null);
+          navigateToMainScreen();
+        }, delayForResultsMessage);  
+        
+        return () => clearTimeout(timeout);
+
       }
     } catch (error) {
-      console.error('Error saving hello: ', error);
-      setFailModalVisible(true);
+      setResultMessage('Error! Could not save message');
+      setGettingResultMessage(true);
+      let timeout;
+  
+      timeout = setTimeout(() => {
+        setGettingResultMessage(false);
+      }, delayForResultsMessage);  
+      return () => clearTimeout(timeout);
     } finally {
       setSaveInProgress(false); 
     };
     
   };
-
-  const successOk = () => {
-    setUpdateTrigger(prev => !prev); 
-    setFriend(null);
-    navigateToMainScreen();
-    setSuccessModalVisible(false);
-};
-
-const failOk = () => { 
-    setFailModalVisible(false);
-};
+ 
    
 
   return (
-    <View style={styles.container}>
-      <View style={styles.mainContainer}> 
+    <View style={styles.container}> 
 
+        {gettingResultMessage && (
+          <View style={styles.loadingWrapper}>
+          <LoadingPage
+            loading={saveInProgress}
+            resultsMessage={resultMessage}
+            spinnnerType='wander'
+            includeLabel={true}
+            label="Saving hello..."
+          />
+          </View>
+        )}
+
+
+        {!gettingResultMessage && ( 
+        <> 
         <View style={styles.selectFriendContainer}> 
 
           <FriendSelectModalVersion width='100%' />
@@ -259,6 +278,15 @@ const failOk = () => {
               onMomentSelect={handleMomentSelect}
              />
           </View>
+          <View style={styles.deleteRemainingContainer}>
+            <TouchableOpacity onPress={toggleDeleteMoments} style={[styles.controlButton, themeStyles.footerIcon]}>
+              <Text style={[styles.controlButtonText, themeStyles.footerText]}>{ "Delete unused moments"}</Text>
+              <Icon name={deleteMoments ? "check-square-o" : "square-o"} size={20} style={[styles.checkbox, themeStyles.footerIcon]} />
+            </TouchableOpacity>
+
+
+
+          </View>
           </>
            )}
          
@@ -266,48 +294,20 @@ const failOk = () => {
             {helloDate && selectedFriend && (selectedTypeChoice !== null) ? (
               <View>  
                 <ButtonBottomSaveHello
-                  onPress={setDeleteChoiceModalVisible} 
+                  onPress={handleSave} 
                   disabled={false}
                 />
               </View>
             ) : (
               <View>  
                 <ButtonBottomSaveHello
-                  onPress={setDeleteChoiceModalVisible} 
+                  onPress={[() => {}]} 
                   disabled={true}
                 />
             </View>
           )}  
-        </View>
-      <AlertYesNo
-          isModalVisible={isDeleteChoiceModalVisible}
-          isFetching={saveInProgress}
-          useSpinner={true}
-          toggleModal={() => setDeleteChoiceModalVisible(false)}
-          headerContent={<Text>Adding hello</Text>}
-          questionText="Do you want to clear out all unshared moments?"
-          onConfirm={handleSave}
-          onToggle={handleDeleteChoiceToggle}
-          onCancel={() => setDeleteChoiceModalVisible(false)}
-          confirmText="Save hello"
-          cancelText="Go back"
-        />
-          <AlertSuccessFail
-            isVisible={isSuccessModalVisible}
-            message={`Hello has been added!`}
-            onClose={successOk}
-            type='success'
-        />
-
-        <AlertSuccessFail
-            isVisible={isFailModalVisible}
-            message={`Could not add Hello.`}
-            onClose={failOk}
-            tryAgain={false}
-            onRetry={handleSave}
-            isFetching={saveInProgress}
-            type='failure'
-        />
+          </>  
+        )}
     </View>
   );
 };
@@ -315,10 +315,12 @@ const failOk = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
-  },
-  mainContainer: {
-    flex: 1, 
     justifyContent: 'space-between', 
+  }, 
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   typeChoicesContainer: {   
     width: '100%', 
@@ -352,7 +354,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     marginVertical: 10,
-  },  
+  }, 
+  deleteRemainingContainer: {
+    
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    width: '100%',
+    height: 30, 
+
+  },
+  checkbox: {
+    paddingLeft: 10,  
+    paddingBottom: 2,
+    paddingRight: 1,
+  },
+  controlButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  controlButtonText: {
+    fontSize: 11,
+    fontFamily: 'Poppins-Regular', 
+    justifyContent: 'center',
+    alignItems: 'center', 
+    alignContent: 'center',
+  },
 });
 
 export default ContentAddHello;
