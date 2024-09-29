@@ -79,10 +79,10 @@ const CardCategoriesAsButtons = ({ onCategorySelect, onParentSave, showAllCatego
   useEffect(() => { 
 
     if (categoryCount > 0) {
-      const mostCapsulesCategory = getMostCapsulesCategory();
+      const mostCapsulesCategory = getMostCapsulesCategory(); 
       if (mostCapsulesCategory) {
-        const categoryIndex = categoryNames.indexOf(mostCapsulesCategory);
-        setSelectedCategory(categoryIndex);
+     
+        setSelectedCategory(mostCapsulesCategory);
       }
     }
   }, [capsuleList, categoryCount, categoryNames]);

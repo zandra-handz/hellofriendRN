@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import TextAreaMoment from '../speeddial/TextAreaMoment';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const EnterMoment = ({ 
   handleInputChange,
   textInput, 
-  placeholderText,
-  buttonBackgroundColor='black', 
+  placeholderText, 
   onScreenChange, 
   resetText=false, 
 }) => {
   const [isFirstScreen, setIsFirstScreen] = useState(true);
   const [resetTextAreaText, setResetTextAreaText] = useState(false);
   const { themeStyles } = useGlobalStyle();
+  const { calculatedThemeColors } = useSelectedFriend();
 
   useEffect(() => {
     if (onScreenChange) {
@@ -58,7 +59,7 @@ const EnterMoment = ({
           />
           {textInput && (
           <View style={styles.nextButtonContainer}> 
-            <TouchableOpacity style={[styles.nextButton, themeStyles.genericTextBackgroundShadeTwo]} onPress={handleNextScreenClick}>
+            <TouchableOpacity style={[styles.nextButton, {backgroundColor: calculatedThemeColors.darkColor}]} onPress={handleNextScreenClick}>
               <Text style={styles.nextButtonText}>Done</Text>
             </TouchableOpacity>
           </View>
@@ -76,7 +77,7 @@ const EnterMoment = ({
           />
           <View style={styles.editButtonContainer}> 
             <TouchableOpacity style={[styles.nextButton, themeStyles.genericTextBackgroundShadeTwo]} onPress={handleBackScreenClick}>
-              <Text style={styles.nextButtonText}>Edit</Text>
+              <Text style={styles.editButtonText}>Edit</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -94,8 +95,8 @@ const styles = StyleSheet.create({
     width: '100%', 
     position: 'absolute',
     zIndex: 1,
-    bottom: 60,
-    right: -134,
+    bottom: 80,
+    right: -158,
     alignItems: 'center', 
   },
   editButtonContainer: { 
@@ -116,10 +117,15 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     width: 'auto',
   },
-  nextButtonText: {
-    color: '#fff',
+  editButtonText: {
+    color: 'darkgray',
     fontFamily: 'Poppins-Bold',
-    fontSize: 14,
+    fontSize: 15,
+  },
+  nextButtonText: {
+    color: 'black',
+    fontFamily: 'Poppins-Bold',
+    fontSize: 15,
   },
 });
 

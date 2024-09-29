@@ -8,8 +8,7 @@ const ButtonBottomSaveHello = ({ onPress, disabled }) => {
         <ButtonBottomActionBase
             onPress={() => onPress(true)} // Pass the onPress handler directly
             label={`Add hello`}
-            height={54}
-            radius={16} 
+            height={54} 
             labelFontSize={22}
             labelColor="white" // Set default label color
             labelContainerMarginHorizontal={4}

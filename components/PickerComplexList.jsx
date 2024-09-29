@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList, ScrollView } from 'react-native';
-import AlertSingleInput from './AlertSingleInput'; // Import the AlertSingleInput component
+import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
+import AlertSingleInput from './AlertSingleInput';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
-
 
 const PickerComplexList = ({
   label = 'Select Label',
@@ -15,7 +14,7 @@ const PickerComplexList = ({
   objects = false,
   containerText = 'Select an option',
   containerStyle, 
-  buttonRadius=10,
+  buttonRadius = 10,
   includeContainer = false,
   modalVisible = false,
   setModalVisible,
@@ -25,14 +24,12 @@ const PickerComplexList = ({
   secondaryIcon: SecondaryIcon, 
   iconSize = 34,
   allowCustomEntry = false,  
-  buttonHeight='auto',
+  buttonHeight = 'auto',
 }) => {
 
   const { themeStyles } = useGlobalStyle();
   const [isCustomModalVisible, setCustomModalVisible] = useState(false);
   const [customValue, setCustomValue] = useState('');
-
-
 
   const combinedOptions = [
     { type: `${primaryOptionsHeader}`, data: primaryOptions, icon: PrimaryIcon },
@@ -85,6 +82,17 @@ const PickerComplexList = ({
     );
   };
 
+  const renderSection = ({ item }) => (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>{item.type}</Text>
+      <FlatList
+        data={item.data}
+        keyExtractor={(item) => (objects ? item.id.toString() : item)}
+        renderItem={renderOptionItem}
+      />
+    </View>
+  );
+
   return (
     <View
       style={[
@@ -97,18 +105,17 @@ const PickerComplexList = ({
           <Text style={[styles.containerText, themeStyles.subHeaderText, inline && styles.inlineText]}>
             {containerText}
           </Text>
-        )} 
+        )}
         <TouchableOpacity
-          style={[styles.button, {borderRadius: buttonRadius, height: buttonHeight}]}
+          style={[styles.button, { borderRadius: buttonRadius, height: buttonHeight }]}
           onPress={() => setModalVisible(true)}
         >
-          
           <View style={styles.buttonInner}>
-          {inline && !noBackground && (  
-            <View style={{alignContent: 'center', paddingRight: 10}}> 
-            {containerText}
-            </View>
-          )} 
+            {inline && !noBackground && (  
+              <View style={{ alignContent: 'center', paddingRight: 10 }}> 
+                {containerText}
+              </View>
+            )}
             <Text style={[styles.buttonText]}>{label}</Text> 
           </View>
         </TouchableOpacity> 
@@ -132,30 +139,26 @@ const PickerComplexList = ({
                   <Text style={styles.customEntryText}>Manual entry?</Text>
                 </TouchableOpacity>
               )}
-              
-              <ScrollView style={styles.scrollView}>
-                {combinedOptions.map((section) => (
-                  <View key={section.type} style={styles.section}>
-                    <Text style={styles.sectionTitle}>{section.type}</Text>
-                    <FlatList
-                      data={section.data}
-                      keyExtractor={(item) => (objects ? item.id.toString() : item)}
-                      renderItem={renderOptionItem}
-                    />
-                  </View>
-                ))}
-                {allowCustomEntry && customValue && (
-                  <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Custom Entry</Text>
-                    <TouchableOpacity
-                      style={styles.optionButton}
-                      onPress={() => handleSelectLabel(customValue)}
-                    >
-                      <Text style={styles.optionText}>{customValue}</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </ScrollView>
+
+              <FlatList
+                style={styles.scrollView}
+                data={combinedOptions}
+                keyExtractor={(item) => item.type}
+                renderItem={renderSection}
+              />
+
+              {allowCustomEntry && customValue && (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Custom Entry</Text>
+                  <TouchableOpacity
+                    style={styles.optionButton}
+                    onPress={() => handleSelectLabel(customValue)}
+                  >
+                    <Text style={styles.optionText}>{customValue}</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
               <View style={styles.modalFooter}>
                 <TouchableOpacity
                   style={[styles.closeButton, styles.footerButton]}
@@ -192,8 +195,7 @@ const PickerComplexList = ({
 };
 
 const styles = StyleSheet.create({
-  container: {   
-  },
+  container: {},
   inlineContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -315,12 +317,14 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   customEntryButton: {
-    marginVertical: 10,
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: 'lightblue',
+    borderRadius: 20,
   },
   customEntryText: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Poppins-Bold',
-    color: 'blue',
   },
 });
 

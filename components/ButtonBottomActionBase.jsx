@@ -9,7 +9,7 @@ const ButtonBottomActionBase = ({
   onPress,
   label,
   height = 58,
-  radius = 12,
+  radius = 16,
   labelFontSize = 22, 
   labelColor = 'white',
   backgroundColor = 'transparent', 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -32,7 +32,7 @@ const ModalMomentFocus = ({ isModalVisible, handleCloseModal, textInput, handleI
             autoFocus={true}
           />
           <TouchableOpacity onPress={handleCloseModal} style={[styles.closeButton, {backgroundColor: calculatedThemeColors.darkColor}]}>
-            <Text style={[styles.closeButtonText, {color: calculatedThemeColors.lightColor}]}>Minimize</Text>
+            <Text style={[styles.closeButtonText, {color: calculatedThemeColors.lightColor}]}>Back</Text>
           </TouchableOpacity>
         </LinearGradient> 
     </Modal>

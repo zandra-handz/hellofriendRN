@@ -20,10 +20,7 @@ import PickerHelloLocation from '../components/PickerHelloLocation';
 
 
 import ButtonBottomSaveHello from '../components/ButtonBottomSaveHello';
-
-import AlertYesNo from '../components/AlertYesNo';   
-import AlertSuccessFail from '../components/AlertSuccessFail';
-
+ 
 import LoadingPage from '../components/LoadingPage';
 
 const ContentAddHello = () => {
@@ -49,19 +46,17 @@ const ContentAddHello = () => {
  
   const [momentsSelected, setMomentsSelected] = useState([]);
   
-  const [isDeleteChoiceModalVisible, setDeleteChoiceModalVisible] = useState(false);
-  
   const [deleteMoments, setDeleteMoments ] = useState(false); 
   
   const [ saveInProgress, setSaveInProgress ] = useState(false);
   
   const [ resultMessage, setResultMessage ] = useState(null);
-  const [gettingResultMessage, setGettingResultMessage ] = useState(null);
+  const [ gettingResultMessage, setGettingResultMessage ] = useState(null);
   
+  const delayForResultsMessage = 2000;
    
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
-  
-  const delayForResultsMessage = 1000;
+   
 
  
 
@@ -73,6 +68,15 @@ const ContentAddHello = () => {
     navigation.navigate('hellofriend');
 
 };
+
+useEffect(() => {
+  if (!selectedFriend && updateTrigger) {
+    setUpdateTrigger((prev) => !prev);  
+    navigation.navigate('hellofriend'); 
+
+  };
+
+}, [selectedFriend, updateTrigger]);
 
 const handleNotesInputChange = (text) => {
   setAdditionalNotes(text);
@@ -164,19 +168,21 @@ const resetAdditionalNotes = () => {
         };
         
         await saveHello(requestData); 
-        
-        setUpdateTrigger((prev) => !prev); 
+
         setResultMessage('Hello saved!');
-        setGettingResultMessage(true);
+        setGettingResultMessage(true); 
+        
          
 
-        let timeout;
-        // Set a timeout to turn gettingResultsMessage to false after 3 seconds
+        let timeout; 
         timeout = setTimeout(() => {
-          setGettingResultMessage(false);
+          setGettingResultMessage(false); 
+          setUpdateTrigger((prev) => !prev);  
           setFriend(null);
-          navigateToMainScreen();
+          
         }, delayForResultsMessage);  
+ 
+
         
         return () => clearTimeout(timeout);
 
@@ -193,6 +199,8 @@ const resetAdditionalNotes = () => {
     } finally {
       setSaveInProgress(false); 
     };
+
+    setSaveInProgress(false);
     
   };
  

@@ -12,10 +12,8 @@ const ScreenAddImage = () => {
     const {themeStyles} = useGlobalStyle();
      
     return (
-        <View style={[styles.container, themeStyles.container]}> 
-            <View style={styles.mainContainer}> 
-                <ContentAddImage />
-            </View>
+        <View style={[styles.container, themeStyles.container]}>  
+                <ContentAddImage /> 
         </View>
     );
 };
@@ -23,12 +21,8 @@ const ScreenAddImage = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
-        padding: 10,
-    },
-    mainContainer: {
-        flex: 1,
-        paddingBottom: 10,
-    },  
+        padding: 4,
+    }, 
 });
 
 export default ScreenAddImage;

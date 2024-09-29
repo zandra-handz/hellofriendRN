@@ -6,8 +6,7 @@ const ButtonBottomSaveMoment = ({ onPress, disabled }) => {
         <ButtonBottomActionBase
             onPress={() => onPress(true)}  
             label={`Add moment`}
-            height={54}
-            radius={16} 
+            height={54} 
             labelFontSize={22}
             labelColor="white"  
             labelContainerMarginHorizontal={4}

@@ -99,8 +99,10 @@ const ScreenMoments = ({ route, navigation }) => {
                             trigger={trigger} // Pass the trigger variable
                             navigation={navigation}
                         />
+                        {!checkboxesParent && ( 
                         <ButtonGoToAddMoment buttonColor={calculatedThemeColors.darkColor} />
-                    </>
+                        )}
+                        </>
                 ) : (
                     <Text></Text>
                 )}

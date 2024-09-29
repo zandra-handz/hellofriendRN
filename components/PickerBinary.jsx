@@ -1,55 +1,57 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const PickerBinary = ({
   LeftSvg,
   RightSvg,
-  leftLabel = '', // Add leftLabel prop
-  rightLabel = '', // Add rightLabel prop
-  leftLabelPosition = 'below', // Add leftLabelPosition prop
-  rightLabelPosition = 'below', // Add rightLabelPosition prop
+  leftLabel = '', 
+  rightLabel = '', 
+  leftLabelPosition = 'below',  
+  rightLabelPosition = 'below', 
   evenSplit = true,
   leftProportion = 0.5,
   rightProportion = 0.5,
   onPressLeft,
   onPressRight,
-  containerText = '', // Add containerText prop
-}) => {
-  // Adjust proportions to ensure they sum to 1 if evenSplit is false
+  containerText = '',  
+}) => { 
   const totalProportion = evenSplit ? 1 : leftProportion + rightProportion;
-  const leftWidth = (evenSplit ? 0.5 : leftProportion / totalProportion) * 100 + '%';
-  const rightWidth = (evenSplit ? 0.5 : rightProportion / totalProportion) * 100 + '%';
+  const leftWidth = (evenSplit ? 0.49 : leftProportion / totalProportion) * 100 + '%';
+  const rightWidth = (evenSplit ? 0.49 : rightProportion / totalProportion) * 100 + '%';
+  const { themeStyles } = useGlobalStyle();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.containerText}>{containerText}</Text>
-      <View style={styles.contentContainer}>
+      <Text style={[styles.containerText, themeStyles.subHeaderText]}>{containerText}</Text>
+      <View style={[styles.contentContainer]}>
         <TouchableOpacity
-          style={[styles.side, { width: leftWidth }]}
+          style={[styles.side, themeStyles.genericTextBackgroundShadeTwo, { borderColor: themeStyles.genericTextBackground, width: leftWidth }]}
+          
           onPress={onPressLeft}
         >
           {leftLabel && leftLabelPosition === 'above' && (
-            <Text style={styles.label}>{leftLabel}</Text>
+            <Text style={[styles.label, themeStyles.subHeaderText]}>{leftLabel}</Text>
           )}
           <View style={styles.iconContainer}>
-            <LeftSvg width="70%" height="70%" />
+            <LeftSvg width="70%" height="70%" color={themeStyles.modalIconColor.color}/>
           </View>
           {leftLabel && leftLabelPosition === 'below' && (
-            <Text style={styles.label}>{leftLabel}</Text>
+            <Text style={[styles.label, themeStyles.subHeaderText]}>{leftLabel}</Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.side, { width: rightWidth }]}
+          style={[styles.side, themeStyles.genericTextBackgroundShadeTwo, { borderColor: themeStyles.genericTextBackground, width: rightWidth }]}
           onPress={onPressRight}
         >
           {rightLabel && rightLabelPosition === 'above' && (
-            <Text style={styles.label}>{rightLabel}</Text>
+            <Text style={[styles.label, themeStyles.subHeaderText]}>{rightLabel}</Text>
           )}
           <View style={styles.iconContainer}>
-            <RightSvg width="70%" height="70%" />
+            <RightSvg width="70%" height="70%" color={themeStyles.modalIconColor.color} />
           </View>
           {rightLabel && rightLabelPosition === 'below' && (
-            <Text style={styles.label}>{rightLabel}</Text>
+            <Text style={[styles.label, themeStyles.subHeaderText]}>{rightLabel}</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -61,29 +63,27 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     borderRadius: 10,
-    overflow: 'hidden',
-    backgroundColor: '#fff',
+    overflow: 'hidden', 
     padding: 5,
   },
   containerText: {
     fontSize: 18,
     fontFamily: 'Poppins-Bold',
     textAlign: 'left',
-    marginVertical: 10,
-    color: 'black', // Adjust text color as needed
+    marginVertical: 10, 
   },
   contentContainer: {
     flexDirection: 'row',
     width: '100%',
+    justifyContent: 'space-between',
   },
-  side: {
-    flex: 1,
+  side: {  
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0', // Adjust as needed
-    paddingVertical: 10,
-    borderColor: '#ddd',
-    borderWidth: 1,
+    alignItems: 'center', 
+    paddingVertical: 10, 
+    borderWidth: 0,
+    height: '90%', 
+    borderRadius: 20,
   },
   iconContainer: {
     width: '70%',
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   label: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Poppins-Bold',
     color: 'black',
     textAlign: 'center',

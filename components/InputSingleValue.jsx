@@ -13,15 +13,18 @@ const InputSingleValue = ({ valueRef, handleValueChange, label = 'label', placeh
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>
+            {label && (
+            <Text style={[styles.title, themeStyles.subHeaderText]}>
                 {label}
             </Text>
-            <View style={styles.inputContainer}>
+             )}
+            <View style={[styles.inputContainer]}>
                 <TextInput
                     ref={valueRef}
-                    style={styles.textInput}
+                    style={[styles.textInput, themeStyles.genericText, themeStyles.genericTextBackgroundShadeTwo, {borderColor: themeStyles.genericTextBackground}]}
                     value={value}
                     placeholder={placeholder}
+                    placeholderTextColor={'darkgray'}
                     onChangeText={onChangeText} // Update internal state and notify parent
                 />
             </View>
@@ -33,8 +36,7 @@ const styles = StyleSheet.create({
     container: {
 
         flexDirection: 'row', 
-        alignItems: 'center', 
-        borderRadius: 8, 
+        alignItems: 'center',   
     },
     title: {
 
@@ -47,17 +49,16 @@ const styles = StyleSheet.create({
         
         flex: 1,
         justifyContent: 'center',
-        width: '100%',
-        marginVertical: 0,
+        width: '100%', 
     },
-    textInput: {
-        borderColor: '#ddd',
-        borderWidth: 1,
+    textInput: { 
+        borderBottomWidth: 1,
         borderRadius: 8,
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        borderRadius: 20,
+        fontSize: 18,
+        paddingHorizontal: 12,
+        paddingTop: 10,
+        paddingBottom: 2,
+        borderRadius: 4,
         fontFamily: 'Poppins-Regular',
     },
 });

@@ -11,17 +11,14 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import RowItemFriendSelect from '../components/RowItemFriendSelect';
 import ButtonToggleSize from '../components/ButtonToggleSize';
 
-const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring to get props
+const FriendSelectModalVersion = ({ width = '60%' }) => {  
   const { gradientColors } = useGlobalStyle();
-  const globalStyles = useGlobalStyle(); 
-  const { darkColor, lightColor } = gradientColors;
-  const { selectedFriend, setFriend, friendColorTheme, loadingNewFriend } = useSelectedFriend();
+  const globalStyles = useGlobalStyle();  
+  const { selectedFriend, setFriend, calculatedThemeColors, friendColorTheme, loadingNewFriend } = useSelectedFriend();
   const { friendList } = useFriendList();
   const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] = useState(false);
-  const [forceUpdate, setForceUpdate] = useState(false); // State to force re-render
-  const [displayName, setDisplayName] = useState(null);
-  const [friendLightColor, setFriendLightColor] = useState('white');
-  const [friendDarkColor, setFriendDarkColor] = useState('white');
+  const [forceUpdate, setForceUpdate] = useState(false);  
+  const [displayName, setDisplayName] = useState(null); 
   const [refreshButtonColor, setRefreshButtonColor ] = useState('white');
 
   const adjustFontSize = (fontSize) => {
@@ -38,20 +35,7 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
     }),
   });
 
-  useEffect(() => {
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
-      if (friendColorTheme.invertGradient) {
-        setFriendLightColor(friendColorTheme.darkColor || darkColor);
-        setFriendDarkColor(friendColorTheme.lightColor || lightColor);
-      } else {
-        setFriendLightColor(friendColorTheme.lightColor || darkColor);
-        setFriendDarkColor(friendColorTheme.darkColor || lightColor);
-      }
-    } else {
-      setFriendLightColor(lightColor);
-      setFriendDarkColor(darkColor);
-    }
-  }, [friendColorTheme]);
+ 
 
 
   const toggleModal = () => {
@@ -87,7 +71,7 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
   return (
     <>
       <LinearGradient
-        colors={[friendDarkColor, friendLightColor]}  
+        colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}  
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}  
         style={[styles.container, { width }]} 
@@ -153,12 +137,13 @@ const FriendSelectModalVersion = ({ width = '60%' }) => { // Use destructuring t
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', 
-    height: 50,
+    height: 48,
     justifyContent: 'space-between',
     alignItems: 'center', 
     paddingHorizontal: 10,
 
     borderRadius: 22, 
+    borderRadius: 16,
   },
   displaySelectedContainer: {
     alignItems: 'left',   

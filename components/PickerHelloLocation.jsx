@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';
-
 
 import PickerComplexList from '../components/PickerComplexList';
 
