@@ -14,7 +14,7 @@ const PickerComplexList = ({
   objects = false,
   containerText = 'Select an option',
   containerStyle, 
-  buttonRadius = 10,
+  buttonRadius = 24,
   includeContainer = false,
   modalVisible = false,
   setModalVisible,
@@ -107,7 +107,7 @@ const PickerComplexList = ({
           </Text>
         )}
         <TouchableOpacity
-          style={[styles.button, { borderRadius: buttonRadius, height: buttonHeight }]}
+          style={[styles.button, themeStyles.genericTextBackgroundShadeTwo, { borderRadius: buttonRadius, height: buttonHeight }]}
           onPress={() => setModalVisible(true)}
         >
           <View style={styles.buttonInner}>
@@ -215,13 +215,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold', 
   },
   inlineText: {},
-  button: { 
-    backgroundColor: 'gray',
-    padding: 6,
-    alignItems: 'center', 
-    justifyContent: 'space-between',
+  button: {  
     width: '100%',
+    justifyContent: 'flex-start',
+    textAlign: 'center',
+    alignContent: 'center', 
+    padding: 2,
+    paddingLeft: 10,  
+    alignItems: 'center',
     flexDirection: 'row',
+    flex: 1,
   }, 
   buttonInner: {
     width: '100%', 

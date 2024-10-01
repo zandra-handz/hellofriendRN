@@ -50,7 +50,7 @@ const ScreenFriendFocus = () => {
         <Text style={styles.loadingTextBold}>Loading data for {selectedFriend.name}!</Text>
         </View>
       )}
-      {!loadingNewFriend && (
+      {!loadingNewFriend && selectedFriend && (
         <>
             <View style={styles.buttonContainer}>
             <View style={{ marginHorizontal: buttonMargin }}>

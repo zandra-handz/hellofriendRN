@@ -22,7 +22,7 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
   
   const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false);
  
-  const formRef = useRef(null); // Create ref using useRef
+  const formRef = useRef(null);  
 
   const [useFriendColorTheme, setUseFriendColorTheme] = useState(false);
   const [invertGradientDirection, setInvertGradientDirection] = useState(false);
@@ -126,11 +126,13 @@ const AlertPanelBottom = ({ visible, profileData, onClose }) => {
     <Modal transparent={true} visible={visible} animationType="slide" presentationStyle="overFullScreen">
       <View style={styles.overlay}>
         <View style={styles.container}>
+        
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <FontAwesome5 name="times" size={20} color="black" solid={false} />
           </TouchableOpacity>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View>
+              
               <View style={styles.row}>
                 <FontAwesome5 name="user" size={20} color="black" style={styles.icon} />
                 <Text style={styles.modalTitle}>Settings for {selectedFriend.name}</Text>

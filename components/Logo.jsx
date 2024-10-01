@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
+
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const Logo = ({
@@ -11,8 +11,7 @@ const Logo = ({
   shapePositionValue = 0,
   shapePositionVerticalValue = 0,
 }) => {
-  const { themeStyles, gradientColors } = useGlobalStyle();
-  const { darkColor, lightColor } = gradientColors;
+  const { themeStyles, gradientColors } = useGlobalStyle(); 
 
   const getShapeStyle = () => {
     let positionStyle = {};
@@ -63,7 +62,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center', 
   },
   shape: {
     position: 'absolute',

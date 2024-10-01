@@ -12,6 +12,9 @@ import LoadingPage from '../components/LoadingPage';
 import Logo from '../components/Logo'; 
 import { LinearGradient } from 'expo-linear-gradient'; 
 
+//a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
+            
+
 const TOKEN_KEY = 'my-jwt';
 
 const Signin = () => {
@@ -129,6 +132,7 @@ const Signin = () => {
       )}
       {!loading && (
         <>
+        <View style={{width: '100%'}}>
           <Logo
             shapeSource={require('../assets/shapes/lizard.png')}
             shapePosition="right"
@@ -139,25 +143,8 @@ const Signin = () => {
             accessible={true}
             accessibilityLabel="App Logo"
             accessibilityHint="This is the logo of the app"
-          />
-          <Text
-            style={[styles.appDescription, themeStyles.signInAppDescription]}
-            accessible={true}
-            accessibilityLabel="App description"
-            accessibilityHint="Description of the app functionality"
-            allowFontScaling={true}
-          >
-            a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
-            
-            <TouchableOpacity
-              onPress={toggleMode}
-              accessible={true}
-              accessibilityLabel="Toggle sign in and sign up mode"
-              accessibilityHint="Toggles between sign in and sign up forms"
-            >
-              <FontAwesome name="arrow-right" size={16} color="transparent" />
-            </TouchableOpacity>
-          </Text>
+          /> 
+        </View>
 
           {showSignIn && (
           <View style={styles.form} accessible={true} accessibilityLabel="Form container">
@@ -279,12 +266,13 @@ const styles = StyleSheet.create({
     height: 'auto',
     borderWidth: 1,
     padding: 10,
-    borderRadius: 20,
+    paddingTop: 14,
+    borderRadius: 10,
     alignContent: 'center',
     justifyContent: 'center',
     backgroundColor: '#fff',
     fontFamily: 'Poppins-Regular',
-    fontSize: 18,
+    fontSize: 20,
     color: 'black',
   },
   inputFocused: {
@@ -292,12 +280,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   container: {
-    flex: 1,
+    flex: 1, 
+    paddingTop: 60,
+    backgroundColor: 'blue',
     justifyContent: "center",
+    flexDirection: 'column',
     alignItems: "center",
     width: "100%",
-    padding: 20,
-    backgroundColor: 'white',
+    padding: 4, 
     fontFamily: 'Poppins-Regular',
   },
   title: {

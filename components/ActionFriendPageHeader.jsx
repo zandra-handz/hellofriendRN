@@ -3,8 +3,7 @@ import { View, StyleSheet, Animated  } from 'react-native';
 import ButtonLottieAnimationTwoSectionsSvg from '../components/ButtonLottieAnimationTwoSectionsSvg';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
-import AlertPanelBottom from './AlertPanelBottom';
+ 
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage';
 import ButtonArrowSvgAndLabel from '../components/ButtonArrowSvgAndLabel';
@@ -116,12 +115,7 @@ const ActionFriendPageHeader = ({
         />
       </Animated.View>
        )}
-
-      <AlertPanelBottom
-        visible={showProfile}
-        profileData={selectedFriend}
-        onClose={() => setShowProfile(false)}
-      />
+ 
     </View>
   );
 };

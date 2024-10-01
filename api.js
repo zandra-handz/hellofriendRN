@@ -17,11 +17,11 @@ export const setAuthHeader = (token) => {
 
 
 const refreshToken = async () => {
-    const refreshToken = await SecureStore.getItemAsync('refreshToken');
-    if (!refreshToken) throw new Error('No refresh token available');
+    const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
+    if (!storedRefreshToken) throw new Error('No refresh token available');
 
     try {
-        const response = await axios.post('/users/token/refresh/', { refresh: refreshToken });
+        const response = await axios.post('/users/token/refresh/', { refresh: storedRefreshToken });
         const newAccessToken = response.data.access;
 
         await SecureStore.setItemAsync('accessToken', newAccessToken);

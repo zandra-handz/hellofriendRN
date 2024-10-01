@@ -139,6 +139,7 @@ const lightThemeStyles = StyleSheet.create({
     },
     signInAppDescription: {
         fontColor: 'black', 
+        fontFamily: 'Poppins-Regular',
         fontSize: 16,
     },
     signinInput: {

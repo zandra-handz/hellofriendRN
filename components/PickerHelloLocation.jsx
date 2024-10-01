@@ -14,8 +14,7 @@ const PickerHelloLocation = ({
     selectedLocation, 
     modalVisible,
     setModalVisible,
-    onLocationChange,
-    label='',
+    onLocationChange, 
     buttonRadius=10,
     buttonHeight='auto'
 

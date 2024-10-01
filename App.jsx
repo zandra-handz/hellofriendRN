@@ -247,7 +247,10 @@ export const Layout = () => {
         ) : (
           <Stack.Screen 
             name="Signin" 
-            component={Signin} />
+            component={Signin}
+            options={{
+              headerShown: false,
+            }} />
         )}
       </Stack.Navigator>
       </TopLevelNavigationHandler>

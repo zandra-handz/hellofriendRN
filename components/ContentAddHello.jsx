@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
  
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
@@ -43,9 +43,7 @@ const ContentAddHello = () => {
   const [existingLocationId, setExistingLocationId ] = useState('');
   const [customLocation, setCustomLocation ] = useState('');
   const [locationModalVisible, setLocationModalVisible] = useState(false);
- 
   const [momentsSelected, setMomentsSelected] = useState([]);
-  
   const [deleteMoments, setDeleteMoments ] = useState(false); 
   
   const [ saveInProgress, setSaveInProgress ] = useState(false);
@@ -224,31 +222,37 @@ const resetAdditionalNotes = () => {
 
         {!gettingResultMessage && ( 
         <> 
-        <View style={styles.selectFriendContainer}> 
 
-          <FriendSelectModalVersion width='100%' />
-        </View> 
-        <View style={styles.typeChoicesContainer}>
-            <PickerHelloType  
-                containerText=''
-                selectedTypeChoice={selectedTypeChoice} 
-                onTypeChoiceChange={handleTypeChoiceChange}  
-                useSvg={true} 
-                widthInPercentage='100%'
-         />
+        <View style={{width: '100%', flexDirection: 'column', justifyContent: 'space-between', height: 130}}> 
+        
+          <View style={styles.selectFriendContainer}> 
+            <FriendSelectModalVersion width='100%' />
+          </View> 
+
+            <View style={styles.typeChoicesContainer}>
+                <PickerHelloType  
+                    containerText=''
+                    selectedTypeChoice={selectedTypeChoice} 
+                    onTypeChoiceChange={handleTypeChoiceChange}  
+                    useSvg={true} 
+                    widthInPercentage='100%'
+            />
             </View>
 
             {!selectedTypeChoiceText &&  ( 
             <View style={{ height: '69%'}}>
             </View>
-          )}
+            )}
+          </View>
+
           {selectedTypeChoiceText && ( 
           <>
+          <View style={{height: 10}}/>
            <View style={{flexDirection: 'row'}}>  
             <View style={[styles.locationContainer, {paddingRight: 3}]}> 
               <PickerHelloLocation 
-                    buttonHeight={56}
-                    buttonRadius={10}
+                    buttonHeight={40}
+                    buttonRadius={24}
                     onLocationChange={handleLocationChange}
                     modalVisible={locationModalVisible}
                     setModalVisible={setLocationModalVisible}
@@ -256,30 +260,30 @@ const resetAdditionalNotes = () => {
               />  
               </View> 
               <View style={[styles.locationContainer, {paddingLeft: 3}]}> 
-              <PickerDate
-                buttonHeight={56}
-                value={helloDate}
-                mode="date"
-                display="default"
-                containerText=""
-                maximumDate={new Date()}
-                onChange={onChangeDate}
-                showDatePicker={showDatePicker}
-                setShowDatePicker={setShowDatePicker}   
-                inline={true}
-            />
-            </View>
+                <PickerDate
+                  buttonHeight={40}
+                  value={helloDate}
+                  mode="date"
+                  display="default"
+                  containerText=""
+                  maximumDate={new Date()}
+                  onChange={onChangeDate}
+                  showDatePicker={showDatePicker}
+                  setShowDatePicker={setShowDatePicker}   
+                  inline={true}
+                />
+              </View>
             </View> 
            
 
-          <View style={styles.notesContainer}>
-            <TextAreaBase 
-              containerText={'Additional notes:'}
-              onInputChange={handleNotesInputChange}
-              placeholderText={''}
-            />
-
-            </View>
+            <View style={styles.notesContainer}>
+              <TextAreaBase 
+                containerText={'Additional notes:'}
+                onInputChange={handleNotesInputChange}
+                placeholderText={''}
+              />
+              </View>
+ 
             
             <View style={styles.momentsContainer}> 
             <PickerMultiMoments
@@ -331,6 +335,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   typeChoicesContainer: {   
+    height: 70, 
     width: '100%', 
   },
   locationContainer: {   
@@ -342,17 +347,15 @@ const styles = StyleSheet.create({
   notesContainer: {  
     width: '100%',  
     minHeight: 140, 
+    paddingTop: 20,
   },
   momentsContainer: {  
     width: '100%',   
     minHeight: 280, 
   },
-  selectFriendContainer: { 
-    flexDirection: 'row',  
-    justifyContent: 'space-between', 
-    alignItems: 'center',
-    textAlign: 'center', 
-    width: '100%',   
+  selectFriendContainer: {   
+    height: 70,
+    width: '100%',    
   },
   locationTitle: {
     fontSize: 17,

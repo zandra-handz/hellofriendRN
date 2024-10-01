@@ -34,7 +34,7 @@ const PickerDate = ({
         </Text>
         <TouchableOpacity
           onPress={() => setShowDatePicker(true)}
-          style={[styles.datePickerButton, {height: buttonHeight}, inline && styles.flexButton]}
+          style={[styles.datePickerButton, themeStyles.genericTextBackgroundShadeTwo, {height: buttonHeight}, inline && styles.flexButton]}
         >
             <View style={{paddingRight: 8}}>
             <CalendarAddOutlineSvg height={30} width={30} color='white' />
@@ -63,11 +63,7 @@ const PickerDate = ({
 const styles = StyleSheet.create({
   locationContainer: { 
     borderRadius: 8,
-    padding: 10, 
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    padding: 10,  
     marginVertical: 8,
   },
   inlineContainer: {
@@ -76,8 +72,7 @@ const styles = StyleSheet.create({
   },
   inlineContent: {
     flexDirection: 'row', 
-    alignItems: 'center',
-    flex: 1,
+    alignItems: 'center', 
     width: '100%',
   },
   locationTitle: {
@@ -90,8 +85,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     textAlign: 'center',
     alignContent: 'center', 
-    backgroundColor: 'gray',
-    padding: 6, 
+    borderRadius: 24,
+    padding: 2,
+    paddingLeft: 10,  
     alignItems: 'center',
     flexDirection: 'row',
     flex: 1,
