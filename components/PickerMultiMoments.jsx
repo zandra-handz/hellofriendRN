@@ -5,6 +5,8 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonMomentHelloes from '../components/ButtonMomentHelloes';
+import ModalSelectMoments from '../components/ModalSelectMoments';
+import AddOutlineSvg from '../assets/svgs/add-outline.svg';
 
 const PickerMultiMoments = ({ 
     onMomentSelect, 
@@ -22,8 +24,17 @@ const PickerMultiMoments = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [selectionPercentage, setSelectionPercentage] = useState(0); // State for selection percentage
 
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
+  const [isMomentSelectModalVisible, setIsMomentSelectModalVisible] = useState(false);
+  const { selectedFriend, friendDashboardData, calculatedThemeColors } = useSelectedFriend();
   const { capsuleList, preAddedTracker } = useCapsuleList();
+
+
+  const useScrollingCategorySelector = false; 
+
+  const closeMomentSelectModal = () => setIsMomentSelectModalVisible(false);
+
+  const toggleMomentSelectModal = () => setIsMomentSelectModalVisible(true);
+
 
   useEffect(() => {
     if (capsuleList.length > 0) {
@@ -37,7 +48,7 @@ const PickerMultiMoments = ({
       setSelectedCategory(null);
       fetchCategoryLimitData();
     }
-  }, [selectedFriend, friendDashboardData, capsuleList, selectedMoments]);
+  }, [selectedFriend, friendDashboardData, capsuleList]);
 
   useEffect(() => { 
     console.log('Use effect to set moments when preAddedTracker updates');
@@ -76,6 +87,12 @@ const PickerMultiMoments = ({
     }
   };
 
+  const handleCategoryPressInModal = (category) => {
+    setSelectedCategory(category);
+    const items = capsuleList.filter(capsule => capsule.typedCategory === category);
+    setCategoryItems(items); 
+  };
+
   const handleCheckboxChange = (item) => {
     setSelectedMoments(prevSelectedMoments => {
       const isItemSelected = prevSelectedMoments.includes(item);
@@ -101,26 +118,41 @@ const PickerMultiMoments = ({
 
   return (
     <View style={styles.container}>
+      <View style={{flexDirection: 'row', alignItems: 'center', alignContent: 'center', width: '100%'}}> 
       <Text style={[styles.selectedItemsTitle, themeStyles.subHeaderText]}>
-        {containerText} ({selectionPercentage}%)
+        {containerText} ({selectedMoments.length}/{capsuleList.length})
       </Text>
+    
+      {!useScrollingCategorySelector && (
+        <TouchableOpacity onPress={toggleMomentSelectModal}>
+          <View style={{paddingLeft: 6, alignItems: 'center', paddingBottom: 5, alignContent: 'center'}}>
+            <AddOutlineSvg height={30} width={30} color={themeStyles.modalIconColor.color}/>
+          </View>
+        </TouchableOpacity>
+      
+        
+      )}
+      </View>
+
+      {useScrollingCategorySelector && ( 
       <View style={styles.selectionContainer}>
-          <Text style={[styles.title, themeStyles.genericText]}>Select from:</Text>
+          <Text style={[styles.title, themeStyles.genericText]}>add:</Text>
           <FlatList
             data={visibleCategories}
             horizontal={true}
             renderItem={({ item }) => (
               <TouchableOpacity 
-                style={styles.categoryButton} 
+                style={[styles.categoryButton]} 
                 onPress={() => handleCategoryPress(item)}
               >
-                <Text style={styles.categoryButtonText}>{item}</Text>
+                <Text style={[styles.categoryButtonText, themeStyles.genericText]}>{item}</Text>
               </TouchableOpacity>
             )}
             keyExtractor={(item, index) => index.toString()}
             showsHorizontalScrollIndicator={false}
           />
         </View>
+        )}
           
       <View style={styles.contentContainer}> 
         <View style={[styles.selectedItemsContainer, themeStyles.genericTextBackgroundShadeTwo]}> 
@@ -139,7 +171,7 @@ const PickerMultiMoments = ({
                 />
               </View>
             )}
-            ListEmptyComponent={() => <Text style={styles.noItemsText}>No items selected</Text>}
+            ListEmptyComponent={() => <Text style={styles.noItemsText}>None</Text>}
           />
         </View>
 
@@ -173,8 +205,66 @@ const PickerMultiMoments = ({
             </View>
           </View>
         </Modal>
+                  
       )}
+      <ModalSelectMoments
+        isVisible={isMomentSelectModalVisible} 
+        formBody={
+          <>
+          <View style={styles.selectionContainer}>
+          <Text style={[styles.title, themeStyles.genericText]}>add:</Text>
+          <FlatList
+            data={visibleCategories}
+            horizontal={true}
+            renderItem={({ item }) => (
+              <TouchableOpacity 
+                style={styles.categoryButton} 
+                onPress={() => handleCategoryPressInModal(item)}
+              >
+                <Text style={[styles.categoryButtonText, themeStyles.genericText]}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+        <View style={styles.selectMomentListContainer}>
+        <View style={styles.momentModalContainer}>
+              <Text style={[styles.momentModalTitle, themeStyles.subHeaderText]}>{selectedCategory}</Text>
+              <FlatList
+                data={categoryItems}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.momentCheckboxContainer}>
+                  
+                    <View style={styles.momentItemTextContainer}>
+                    
+                    <View style={{height: '100%'}}>
+                    <CheckBox
+                      checked={selectedMoments.includes(item)}
+                      onPress={() => handleCheckboxChange(item)}
+                      containerStyle={{ margin: 0, padding: 0 }}
+                      checkedColor={calculatedThemeColors.darkColor} // Change this to your desired checked color
+                      uncheckedColor={calculatedThemeColors.lightColor}
+                    />
+                    </View>
+                    <View style={{width: '86%'}}>
+                    <Text style={[styles.momentItemText, themeStyles.genericText]}>{item.capsule}</Text>  
+                    </View>
+                    </View>
+                  </View>
+                )}
+              /> 
+            </View> 
+
+        </View>
+        </>
+
+        }
+        close={closeMomentSelectModal} 
+      />
     </View>
+
   );
 };
 
@@ -192,41 +282,43 @@ const styles = StyleSheet.create({
   },
   selectedItemsContainer: {
     marginBottom: 10, 
-    height: 200, 
+    height: 240, 
     padding: 10, 
-    borderWidth: 1,
+    borderWidth: 0,
     borderRadius: 20,
     borderColor: 'dimgray',
   },
   selectedItemsTitle: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 4,
+    fontFamily: 'Poppins-Bold', 
   },
   noItemsText: {
     fontSize: 16,
+    fontFamily: 'Poppins-Regular',
     color: 'gray',
   },
   selectionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  categoryButton: {
-    backgroundColor: '#f0f0f0',
+  selectMomentListContainer: {
+    height: '92%',
+    width: '100%',
+    borderRadius: 20,
+    borderTopRightWidth: .6,
+    borderColor: 'darkgray', 
+
+  },
+  categoryButton: { 
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 20,
-    margin: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
+    margin: 5, 
   },
   categoryButtonText: {
     fontSize: 14,
     fontFamily: 'Poppins-Bold',
-    color: 'black',
+    color: 'white',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -259,6 +351,41 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 16,
     marginLeft: 10,
+  },
+  momentModalContainer: {
+    width: '100%', 
+    borderRadius: 10,
+    padding: 0,
+    alignItems: 'center',
+  },
+  momentModalTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Bold',
+    marginBottom: 6,
+  },
+  momentCheckboxContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 0, 
+    padding: 0,
+    marginLeft: -10,
+  },
+  momentItemTextContainer: {
+    flexDirection: 'row', // Allows text to wrap
+     // Ensures text wraps to the next line
+    alignItems: 'flex-start', // Aligns text to the top
+    marginBottom: 20,
+    paddingBottom: 20, 
+    width: '100%', // Takes full width of the container
+    borderBottomWidth: .4, // Add bottom border
+    borderBottomColor: '#fff', // White color for the border
+  }, 
+  momentItemText: {
+    fontSize: 13, 
+    fontFamily: 'Poppins-Regular',
+    marginLeft: 0, 
+    width: '100%',
   },
 });
 

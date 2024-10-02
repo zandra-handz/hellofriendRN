@@ -278,7 +278,7 @@ const resetAdditionalNotes = () => {
 
             <View style={styles.notesContainer}>
               <TextAreaBase 
-                containerText={'Additional notes:'}
+                containerText={'Add notes?'}
                 onInputChange={handleNotesInputChange}
                 placeholderText={''}
               />
@@ -350,7 +350,8 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   momentsContainer: {  
-    width: '100%',   
+    width: '100%', 
+    paddingTop: 10,   
     minHeight: 280, 
   },
   selectFriendContainer: {   

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import SpeechBubbleIconHeartSvg from '../assets/svgs/speech-bubble-icon-heart.svg';
+
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import FormatDate from '../components/FormatDate';
@@ -41,9 +42,9 @@ const ButtonMoment = ({
         <View style={styles.creationDateTextContainer}>
           <FormatDate  
             date={moment.created} 
-            fontSize={12} 
+            fontSize={11} 
             month={true} 
-            monthAbr={false} 
+            monthAbr={true} 
             dayAsNumber={true} 
             year={true} 
             noOutputIfCurrentYear={true} 
@@ -59,8 +60,7 @@ const styles = StyleSheet.create({
   container: {
     borderBottomWidth: .2,
     borderRadius: 30,
-    marginBottom: 0,
-    padding: 16,
+    padding: 12,  
     borderColor: '#ccc',
     flexDirection: 'column', 
     
@@ -93,12 +93,13 @@ const styles = StyleSheet.create({
     marginRight: 0, // Adjusted margin to align the icon better with the text
     // Removed fixed height
   },
-  creationDateSection: {    
+  creationDateSection: {   
+    borderRadius: 20,
     backgroundColor: 'transparent',
     justifyContent: 'flex-end',
     alignContent: 'flex-end',
     alignItems: 'flex-end',
-    width: '100%',
+    width: '100%',  
   },
   creationDateTextContainer: {  
     paddingBottom: 2,

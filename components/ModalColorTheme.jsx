@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FormFriendColorThemeUpdate from '../forms/FormFriendColorThemeUpdate';
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
@@ -11,8 +10,7 @@ import {
   updateFriendFavesColorThemeSetting,
   updateFriendFavesColorThemeGradientDirection,
 } from '../api'; 
-import ArtistColorPaletteSvg from '../assets/svgs/artist-color-palette.svg';
-import AlertFormSubmit from '../components/AlertFormSubmit';
+ 
 import ModalFormColorTheme from '../components/ModalFormColorTheme';
 import LoadingPage from '../components/LoadingPage';
 import BaseModalFooter from '../components/BaseModalFooter';

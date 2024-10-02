@@ -1,6 +1,5 @@
 import React from 'react'; 
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; 
 
 
 const ButtonBottomSaveHello = ({ onPress, disabled }) => {

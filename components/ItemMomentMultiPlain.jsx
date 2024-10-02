@@ -256,23 +256,30 @@ useEffect(() => {
  
 
   const handlePreSave = async () => {
+
+    if (selectedMoments.length === 0 && selectedMomentsAlreadySaved.length === 0) {
+      console.log('No moments selected to update.');
+      return; // Early return or you can handle this case differently
+   }
     // Check if there are no selected moments
     setIsMakingCall(true);
-    if (selectedMoments.length === 0) {
-        console.log('No moments selected to update.');
-        return; // Early return or you can handle this case differently
-    }
 
     const selectedIds = new Set(selectedMoments.map(moment => moment.id));
+    
+    const idsToUpdateFalse = preAddedTracker.filter(id => !selectedIds.has(id));
+    const idsToUpdateTrue = selectedMoments.map(moment => moment.id);
 
+
+    if (selectedMoments.length === 0 && !idsToUpdateFalse) {
+      console.log('No moments selected to update.');
+      return; // Early return or you can handle this case differently
+   }
     const capsulesToUpdate = selectedMoments.map(moment => ({
         id: moment.id,
         fieldsToUpdate: { pre_added_to_hello: true }
     }));
 
-    const idsToUpdateFalse = preAddedTracker.filter(id => !selectedIds.has(id));
-    const idsToUpdateTrue = selectedMoments.map(moment => moment.id);
-
+ 
     const capsulesToUpdateFalse = idsToUpdateFalse.map(id => ({
         id: id,
         fieldsToUpdate: { pre_added_to_hello: false }
@@ -281,11 +288,9 @@ useEffect(() => {
     const allCapsulesToUpdate = [...capsulesToUpdate, ...capsulesToUpdateFalse];
 
     try {
-        const updatedData = await updateThoughtCapsules(selectedFriend.id, allCapsulesToUpdate);
+         await updateThoughtCapsules(selectedFriend.id, allCapsulesToUpdate);
 
-        updatePreAdded(idsToUpdateTrue, idsToUpdateFalse);
-
-
+        updatePreAdded(idsToUpdateTrue, idsToUpdateFalse); 
 
     } catch (error) {
         console.error('Error during pre-save:', error);
@@ -318,6 +323,7 @@ useEffect(() => {
             textStyle={styles.checkboxText}
             checkedColor={themeStyles.genericText.color} // Set checked color here
             uncheckedColor={calculatedThemeColors.darkColor} 
+            size={24} 
           />
         )}
         <Animated.View style={[styles.momentContent, !isHighlighted && styles.fadedOut]}>
@@ -422,7 +428,7 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: 2,
     flex: 1,
-    paddingHorizontal: 2,
+    paddingHorizontal: 1,
     justifyContent: 'space-between',
   },
   categoryButtonsContainer: {
@@ -445,9 +451,8 @@ const styles = StyleSheet.create({
   },
   momentContainer: {
     padding: 0,
-    marginBottom: 8,
-    borderRadius: 30,
-    backgroundColor: 'transparent',
+    marginBottom: 4,
+    borderRadius: 30, 
   },
   loadingContainer: { 
       position: 'absolute',
@@ -471,8 +476,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'black',
   },
-  checkboxContainer: {
-    marginRight: 10,
+  checkboxContainer: { 
+    padding: 4, 
+    marginBottom: -2,    
+    width: '100%', 
+    paddingRight: 20,
+    borderRadius: 20, 
+    flexDirection: 'row', 
+    justifyContent: 'flex-end', 
+    zIndex: 1,
+    
   },
   checkboxText: {
     color: 'black',

@@ -116,7 +116,9 @@ const PickerComplexList = ({
                 {containerText}
               </View>
             )}
-            <Text style={[styles.buttonText]}>{label}</Text> 
+            <Text style={[styles.buttonText]} numberOfLines={1} ellipsizeMode="tail">
+            {label}
+          </Text>
           </View>
         </TouchableOpacity> 
       </View>
@@ -226,8 +228,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
   }, 
-  buttonInner: {
-    width: '100%', 
+  buttonInner: { 
+    width: '80%',
     flexDirection: 'row', 
     justifyContent: 'space-between',
   },
