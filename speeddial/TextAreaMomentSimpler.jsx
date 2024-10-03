@@ -8,7 +8,7 @@ import ModalMomentFocus from '../components/ModalMomentFocus'; // Import the new
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-const TextAreaMoment = ({ 
+const TextAreaMomentSimpler = ({ 
   onInputChange, 
   initialText, 
   placeholderText,  
@@ -18,7 +18,7 @@ const TextAreaMoment = ({
   resetText = false,   
 }) => {
   const [textInput, setTextInput] = useState(initialText || '');
-  const { calculatedThemeColors } = useSelectedFriend();
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const textareaRef = useRef();
   const [resetAutoFocus, setAutoFocus] = useState(false);
@@ -51,15 +51,7 @@ const TextAreaMoment = ({
   const handleInputChange = (text) => {
     setTextInput(text);
     onInputChange(text);
-  };
-
-  const handleOpenModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleCloseModal = () => { 
-    setIsModalVisible(false);
-  };
+  }; 
  
   const dynamicInputStyle = textInput.length > 0 
     ? [styles.input, styles.inputActive] 
@@ -93,23 +85,10 @@ const TextAreaMoment = ({
             >
               {textInput || placeholderText}
             </Text>
-          )}
-          {editMode && (
-            <TouchableOpacity onPress={handleOpenModal} style={styles.maxButtonContainer}>
-              <MaximizeOutlineSvg height={30} width={30} color={calculatedThemeColors.darkColor} />
-            </TouchableOpacity>
-          )}
+          )} 
         </View>
       </TouchableWithoutFeedback>
-      
-      <ModalMomentFocus
-        autoFocus={autoFocus}
-        isModalVisible={isModalVisible}
-        handleCloseModal={handleCloseModal}
-        textInput={textInput}
-        handleInputChange={handleInputChange}
-        placeholderText={placeholderText}
-      />
+       
     </KeyboardAvoidingView> 
   );
 };
@@ -161,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TextAreaMoment;
+export default TextAreaMomentSimpler;

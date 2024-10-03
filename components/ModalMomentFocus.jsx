@@ -7,6 +7,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const ModalMomentFocus = ({ isModalVisible, handleCloseModal, textInput, handleInputChange, placeholderText }) => {
   const { calculatedThemeColors } = useSelectedFriend();
+  
 
   return (
     <Modal

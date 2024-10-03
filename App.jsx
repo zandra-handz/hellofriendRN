@@ -28,6 +28,8 @@ import ScreenLocationSearch from './screens/ScreenLocationSearch';
 import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch';
 import Signin from './screens/Signin';
 import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
+import ScreenMomentFocus from './screens/ScreenMomentFocus'; 
+
 
 import ScreenAddMoment from './screens/ScreenAddMoment';
 import ScreenAddMomentFriendFixed from './screens/ScreenAddMomentFriendFixed';
@@ -144,6 +146,14 @@ export const Layout = () => {
                 options={{
                   headerShown: true,
                   title: 'View friend',
+                }}
+              />
+              <Stack.Screen
+                name="MomentFocus"
+                component={ScreenMomentFocus}
+                options={{
+                  headerShown: true,
+                  title: 'Write moment',
                 }}
               />
               <Stack.Screen

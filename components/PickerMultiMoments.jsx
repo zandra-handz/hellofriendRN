@@ -231,6 +231,7 @@ const PickerMultiMoments = ({
         <View style={styles.selectMomentListContainer}>
         <View style={styles.momentModalContainer}>
               <Text style={[styles.momentModalTitle, themeStyles.subHeaderText]}>{selectedCategory}</Text>
+              
               <FlatList
                 data={categoryItems}
                 keyExtractor={(item, index) => index.toString()}

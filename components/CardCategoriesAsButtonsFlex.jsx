@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet} from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet, Modal, Button } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonSingleInput from '../components/ButtonSingleInput';
 import  { useGlobalStyle } from '../context/GlobalStyleContext';
-import ButtonAddCategory from '../components/ButtonAddCategory'
+import ButtonColorBGSmall from '../components/ButtonColorBGSmall';
 import AlertFormSubmit from '../components/AlertFormSubmit';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 import AddOutlineSvg from '../assets/svgs/add-outline.svg'; // Import the SVG
-import ButtonBottomSaveMomentToCategory from './ButtonBottomSaveMomentToCategory';
+
 
 const DOUBLE_PRESS_DELAY = 300; // Time delay to detect double press
 
-const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onParentSave, showAllCategories = false, showInModal = true }) => {
+const CardCategoriesAsButtonsFlex = ({ onCategorySelect, momentTextForDisplay, onParentSave, showAllCategories = false, showInModal = true }) => {
   const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [ selectedCategoryCapsules, setSelectedCategoryCapsules ] = useState(null);
-  const { selectedFriend, friendDashboardData, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData } = useSelectedFriend();
   const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
   const [categoryLimit, setCategoryLimit] = useState('');
   const [remainingCategories, setRemainingCategories] = useState(null);
@@ -48,7 +48,6 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
       console.error('Error fetching initial data:', error);
     }
   };
- 
 
   useEffect(() => {
     setRemainingCategories(categoryLimit - categoryCount); 
@@ -183,120 +182,112 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   }, [selectedCategoryCapsules]);
 
   return (
-    <View style={[styles.container]}>
-      {friendDashboardData && categoryNames && (
-        <>
-          <View style={{ flexDirection: 'row', paddingBottom: 10, alignContent: 'center', alignItems: 'center', textAlign: 'left' }}>
-            <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>
-              {`Categories (${categoryCount} / ${friendDashboardData[0].suggestion_settings.category_limit_formula})`}
+    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
+      <View style={styles.categoriesContainer}>
+        {showAllCategories && (
+          <TouchableOpacity
+            style={[
+              styles.categoryButton,
+              selectedCategory === null && styles.selectedCategoryButton
+            ]}
+            onPress={handleAllCategoriesPress}
+          >
+            <Text
+              style={[
+                styles.categoryText,
+                selectedCategory === null && styles.selectedCategoryText
+              ]}
+              numberOfLines={1}  
+              ellipsizeMode='end' 
+            >
+              All Categories
             </Text>
-  
-            {remainingCategories !== null && remainingCategories > 0 && (
-              <View style={{ paddingLeft: 8 }}>
-                <ButtonAddCategory onInputValueChange={handleNewCategory} width={32} height={32} />
-              </View>
-            )}
-          </View>
-  
-          <View style={[styles.categoriesContainer, themeStyles.genericTextBackgroundShadeTwo]}>
-            {showAllCategories && (
-              <TouchableOpacity
-                style={[
-                  styles.categoryButton,
-                  selectedCategory === null && styles.selectedCategoryButton,
+          </TouchableOpacity>
+        )}
+        {categoryCount === 0 ? (
+          <Text style={styles.noCategoriesText}>Please enter a category</Text>
+        ) : (
+          categoryNames.map((category) => (
+            <View key={category} style={{ paddingBottom: 12 }}>
+              <ButtonColorBGSmall
+                key={category}
+                title={category}
+                useLightColor={false}
+                onPress={() => handleCategoryPress(category)}
+                textStyle={[
+                  styles.categoryText,
+                  selectedCategory === category && styles.selectedCategoryText
                 ]}
-                onPress={handleAllCategoriesPress}
-              >
-                <Text
-                  style={[
-                    styles.categoryText,
-                    selectedCategory === null && styles.selectedCategoryText,
-                  ]}
-                  numberOfLines={1}
-                  ellipsizeMode='end'
-                >
-                  All Categories
-                </Text>
-              </TouchableOpacity>
-            )}
-            {categoryCount === 0 ? (
-              <Text style={styles.noCategoriesText}>Please enter a category</Text>
-            ) : (
-              <View style={{ height: '100%', width: '100%' }}>
-                <FlatList
-                  data={categoryNames}
-                  keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
-                  renderItem={({ item }) => (
-                    <View key={item} style={{ paddingBottom: 2, width: '100%' }}>
-                      <ButtonBottomSaveMomentToCategory
-                        onPress={() => handleCategoryPress(item)} // Use 'item' as the category name
-                        label={item}
-                        selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
-                      />
-                    </View>
-                  )}
-                />
-              </View>
-            )}
-          </View>
-  
-          {!showInModal && (
-            <View style={styles.capsulesContainer}>
-              <ScrollView>
-                {renderCapsules()}
-              </ScrollView>
+              />
             </View>
-          )}
-          {showInModal && (
-            <AlertFormSubmit
-              isModalVisible={modalVisible}
-              headerContent={
-                <ThoughtBubbleOutlineSvg width={38} height={38} color={themeStyles.modalIconColor.color} />
-              }
-              questionIsSubTitle={false}
-              questionText={`${momentTextForDisplay}`}
-              saveMoment={true}
-              onCancel={() => setModalVisible(false)}
-              onConfirm={onParentSave}
-              confirmText={'Add to category'}
-              cancelText={'Cancel'}
-              formHeight={300}
-              formBody={
-                <View style={styles.selectMomentListContainer}>
-                  <View style={{ height: 40, paddingBottom: 30, flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center' }}>
-                    <AddOutlineSvg width={42} height={42} color={themeStyles.modalIconColor.color} />
+          ))
+          
+        )}
+        {remainingCategories !== null && remainingCategories > 0 && (
+          <ButtonSingleInput onInputValueChange={handleNewCategory} title={`Add new (${remainingCategories} left)`}/>
+        )}
+      </View>
+      {!showInModal && (
+        <View style={styles.capsulesContainer}>
+          <ScrollView> 
+            {renderCapsules()}
+          </ScrollView>
+        </View>
+      )}
+      {showInModal && (
+        <AlertFormSubmit
+          isModalVisible={modalVisible}
+          headerContent={
+            <ThoughtBubbleOutlineSvg width={38} height={38} color={themeStyles.modalIconColor.color} />
+          }
+          questionIsSubTitle={false}
+          questionText={`${momentTextForDisplay}`}
+          onCancel={() => setModalVisible(false)}
+          onConfirm={onParentSave}
+          confirmText={'Add to category'}
+          cancelText={'Back'}
+          formHeight={430}
+          formBody={
+            <View style={styles.selectMomentListContainer}> 
+           
+              <View style={{height: 'auto', paddingBottom: 20, flexDirection: 'row', alignItems: 'center',alignContent: 'center', justifyContent: 'center'}}> 
+              <AddOutlineSvg width={42} height={42} color={themeStyles.modalIconColor.color} />
+          
+</View>
+
+              
+              <View style={styles.momentModalContainer}>
+              <Text style={[styles.momentModalTitle, themeStyles.subHeaderText]}>{selectedCategory}</Text>
+              <FlatList
+                data={selectedCategoryCapsules}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.momentCheckboxContainer}>
+                  
+                  <View style={styles.momentItemTextContainer}>
+                    
+                  <View style={{height: '100%'}}>
+                    <View style={styles.checkboxContainer}>
+                      <ThoughtBubbleOutlineSvg height={24} width={24} color={themeStyles.modalIconColor.color}/> 
+                    </View>
                   </View>
-  
-                  <View style={[styles.momentModalContainer, themeStyles.genericTextBackgroundShadeTwo]}>
-                    <Text style={[styles.momentModalTitle, themeStyles.subHeaderText]}>{selectedCategory}</Text>
-                    <FlatList
-                      data={selectedCategoryCapsules}
-                      keyExtractor={(item, index) => index.toString()}
-                      renderItem={({ item }) => (
-                        <View style={styles.momentCheckboxContainer}>
-                          <View style={styles.momentItemTextContainer}>
-                            <View style={{ height: '100%' }}>
-                              <View style={styles.checkboxContainer}>
-                                <ThoughtBubbleOutlineSvg height={24} width={24} color={themeStyles.modalIconColor.color} />
-                              </View>
-                            </View>
-                            <View style={{ width: '86%' }}>
-                              <Text style={[styles.momentItemText, themeStyles.genericText]}>{item.capsule}</Text>
-                            </View>
-                          </View>
-                        </View>
-                      )}
-                    />
+                    <View style={{width: '86%'}}>
+                    <Text style={[styles.momentItemText, themeStyles.genericText]}>{item.capsule}</Text>  
+                    </View>
+                    </View>
                   </View>
-                </View>
-              }
-            />
-          )}
-        </>
+                )}
+              />  
+            </View>
+          </View>
+
+
+          }
+        /> 
       )}
     </View>
   );
-};  
+};
 
 const styles = StyleSheet.create({
   container: { 
@@ -304,18 +295,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 0,
     borderWidth: 1, 
-    paddingVertical: 10,
-    height: 'auto',
-    maxHeight: 300,
+    padding: 10,
   },
   categoriesContainer: {
     flexDirection: 'row',
     width: '100%',
-    borderRadius: 10,
     flexWrap: 'wrap',
     justifyContent: 'space-around', 
     marginBottom: 0, 
-    maxHeight: 180,
   },
   categoryButton: {
     padding: 10,
@@ -371,16 +358,20 @@ const styles = StyleSheet.create({
   },
 
   selectMomentListContainer: {
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    height: '100%',
-    width: '100%', 
+    height: '92%',
+    width: '100%',
     borderRadius: 20,
     borderTopRightWidth: .6,
-    borderColor: 'darkgray',   
+    borderColor: 'darkgray', 
 
   },
-   
+  
+  momentModalContainer: {
+    width: '100%', 
+    borderRadius: 10,
+    padding: 0,
+    alignItems: 'center',
+  },
   momentModalTitle: {
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
@@ -397,7 +388,6 @@ const styles = StyleSheet.create({
     marginBottom: 0, 
     paddingTop: 4,
     paddingRight: 10,
-    paddingLeft: 6,
   },
   momentItemTextContainer: {
     flexDirection: 'row', // Allows text to wrap
@@ -419,10 +409,6 @@ const styles = StyleSheet.create({
     width: '100%',
     
   }, 
-  locationTitle: {
-    fontSize: 17,
-    fontFamily: 'Poppins-Bold',
-  },
   momentItemText: {
     fontSize: 13, 
     fontFamily: 'Poppins-Regular', 
@@ -433,16 +419,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular', 
     width: '100%',
   },
-  momentModalContainer: { 
-    
+  momentModalContainer: {
     width: '100%', 
     borderRadius: 10,
     padding: 0,
-    height: 'auto',
-    maxHeight: 220,
+    height: '96%',
     alignItems: 'center',
   },
 
 });
 
-export default CardCategoriesAsButtons;
+export default CardCategoriesAsButtonsFlex;

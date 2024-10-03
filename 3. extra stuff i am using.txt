@@ -190,5 +190,10 @@ npm install expo-device
 npm install firebase @react-native-firebase/app @react-native-firebase/messaging
 
 
+// NO GOT ANDROID MESSAGE. THINK THIS DOESN'T WORK WITH EXPO
+npm install @react-native-community/blur
+
+expo install expo-blur
+
 
 

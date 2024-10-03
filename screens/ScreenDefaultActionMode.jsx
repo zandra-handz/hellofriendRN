@@ -54,7 +54,7 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 
 
   const navigateToAddMomentScreen = () => {
-    navigation.navigate('AddMoment');
+    navigation.navigate('MomentFocus');
   };
 
   const navigateToAddImageScreen = () => {

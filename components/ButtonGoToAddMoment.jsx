@@ -4,7 +4,7 @@ import MessageAddSolidSvg from '../assets/svgs/message-add-solid.svg';
  
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
-
+//AddMomentFriendFixed
 
 
 const ButtonGoToAddMoment = ({   
@@ -17,7 +17,7 @@ const ButtonGoToAddMoment = ({
 
  
   const handleGoToMomentScreen = () => {
-    navigation.navigate('AddMomentFriendFixed');
+    navigation.navigate('MomentFocus');
   };
 
   return ( 

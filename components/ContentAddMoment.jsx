@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState  } from 'react';
+import { View, StyleSheet } from 'react-native';
 
 import EnterMoment from '../components/EnterMoment'; 
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
@@ -14,16 +14,16 @@ import LoadingPage from '../components/LoadingPage';
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 import ButtonBottomSaveMoment from '../components/ButtonBottomSaveMoment';
 
-const ContentAddMoment = ( {friendFixed=false}) => {
+const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScreen}) => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { setCapsuleList } = useCapsuleList(); // NEED THIS TO ADD NEW 
-  const [ momentEditMode, setMomentEditMode] = useState(false);
-  const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
-  const [textInput, setTextInput] = useState('');   
+  const [ momentEditMode, setMomentEditMode] = useState(false); 
+  const [textInput, setTextInput] = useState(momentText);
+
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [userEntryCapsule, setUserEntryCapsule] = useState(''); 
+  const [userEntryCapsule, setUserEntryCapsule] = useState(momentText); 
   const [ saveInProgress, setSaveInProgress ] = useState(false);
   const [ resultMessage, setResultMessage ] = useState(null);
   const [gettingResultMessage, setGettingResultMessage ] = useState(null);
@@ -32,11 +32,8 @@ const ContentAddMoment = ( {friendFixed=false}) => {
   const [isSuccess, setIsSuccess] = useState(true);  
   const delayForResultsMessage = 1000;
 
-  useEffect(() => {
-    if (selectedFriend && !loadingNewFriend) {
-      setFirstSectionTitle('For: ');
-    }
-  }, [selectedFriend, loadingNewFriend]);
+  const noMainSaveButton = true;
+ 
 
   const handleMomentToggle = (screenState) => {
     console.log(screenState); 
@@ -52,6 +49,9 @@ const ContentAddMoment = ( {friendFixed=false}) => {
   const handleInputChange = (text) => {
     setTextInput(text);
     setUserEntryCapsule(text);
+    if (updateTextInFocusScreen) {
+    updateTextInFocusScreen(text);
+    };
   };
 
   const resetTextInput = () => {
@@ -133,11 +133,10 @@ const ContentAddMoment = ( {friendFixed=false}) => {
           <>
           {friendFixed == false && (
           <View style={styles.selectFriendContainer}>
-            <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>{firstSectionTitle}</Text>
-            <FriendSelectModalVersion width='88%' />
+            <FriendSelectModalVersion width='100%' />
           </View>
           )}
-
+        { selectedFriend && (  
         <View style={styles.locationContainer}>
           <EnterMoment
             handleInputChange={handleInputChange}
@@ -148,16 +147,19 @@ const ContentAddMoment = ( {friendFixed=false}) => {
             resetText={clearText && isSuccess}
           />
         </View> 
+        )}
         {userEntryCapsule && selectedFriend && !momentEditMode && ( 
           <View style={styles.categoryContainer}>
-            <>
-            <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>Selected Category: {selectedCategory}</Text>
-                <CardCategoriesAsButtons onCategorySelect={handleCategorySelect} onParentSave={handleSave}/> 
+            <> 
+             <CardCategoriesAsButtons onCategorySelect={handleCategorySelect} momentTextForDisplay={textInput} onParentSave={handleSave}/> 
             </> 
           </View>
         )} 
         </>
       )}
+
+        {! noMainSaveButton && (
+          <>
         {userEntryCapsule && selectedCategory ? (   
               <View style={styles.bottomButtonContainer}>  
               <ButtonBottomSaveMoment
@@ -173,6 +175,8 @@ const ContentAddMoment = ( {friendFixed=false}) => {
               />
           </View>
         )} 
+        </>
+      )}
     </View>
   );
 };

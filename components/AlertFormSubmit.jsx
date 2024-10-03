@@ -1,27 +1,32 @@
 import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 import LoadingPage from '../components/LoadingPage';
+import ButtonBottomSaveMoment from './ButtonBottomSaveMoment';
 
 const AlertFormSubmit = ({
   isModalVisible, 
   headerContent,
   questionText,
+  questionIsSubTitle=true,
   isMakingCall,
   formBody,
   formHeight=400,
   onConfirm,
   onCancel,
+  saveMoment=false,
+  confirmColor= '#4CAF50',
+  cancelColor='darkgreen',
   confirmText = 'OK',
   cancelText = 'Nevermind',
   showButtons = true  
 }) => {
   const { themeStyles } = useGlobalStyle();
+  const { calculatedThemeColors } = useSelectedFriend();
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity of 0
 
-
-  const confirmColor = '#4CAF50';
-  const cancelColor = 'darkgreen';
+  
 
   useEffect(() => { 
     Animated.timing(fadeAnim, {
@@ -35,9 +40,20 @@ const AlertFormSubmit = ({
     <Modal transparent={true} visible={isModalVisible} animationType="none">
       <Animated.View style={[styles.modalContainer, { opacity: fadeAnim }]}>
         <View style={[styles.modalContent, themeStyles.genericTextBackground, { borderColor: themeStyles.genericTextBackgroundShadeTwo.backgroundColor }]}> 
-          {headerContent && <View style={[styles.headerContainer, themeStyles.genericText]}>{headerContent}</View>}
-          {questionText && <Text style={[styles.questionText, themeStyles.genericText]}>{questionText}</Text>}
           
+          {headerContent && <View style={[styles.headerContainer, themeStyles.genericText]}>{headerContent}</View>}
+          {saveMoment && ( 
+            <TouchableOpacity onPress={onCancel} style={[styles.topButton, {position: 'absolute', zIndex: 1, top: 4, left: 4, backgroundColor: calculatedThemeColors.lightColor}]}>
+              <Text style={styles.buttonText}>{cancelText}</Text>
+            </TouchableOpacity>
+            )}
+          {questionText && 
+          
+          <View style={ questionIsSubTitle ? styles.questionIsSubTitleContainer : styles.questionContainer}>
+          <Text style={[ ( questionIsSubTitle? styles.questionIsSubTitleText : styles.questionText), themeStyles.genericText]}
+                numberOfLines={10} ellipsizeMode='tail'>{questionText}</Text>
+          </View>
+          }  
           <View style={[styles.fullBodyContainer, {height: formHeight}]}>  
           {isMakingCall && ( 
             <LoadingPage
@@ -59,13 +75,25 @@ const AlertFormSubmit = ({
 
         {!isMakingCall && ( 
         <>
-        <TouchableOpacity onPress={onCancel} style={[styles.bottomButton, {backgroundColor: cancelColor}]}>
+        {!saveMoment && ( 
+        <TouchableOpacity onPress={onCancel} style={[styles.bottomButton, {backgroundColor: calculatedThemeColors.lightColor}]}>
           <Text style={styles.buttonText}>{cancelText}</Text>
         </TouchableOpacity>
+        )}
+
+
         {showButtons && (
-          <TouchableOpacity onPress={onConfirm} style={[styles.bottomButton, {backgroundColor: confirmColor}]}>
+          <>
+          {!saveMoment && (  
+          <TouchableOpacity onPress={onConfirm} style={[styles.bottomButton, {backgroundColor: calculatedThemeColors.darkColor}]}>
             <Text style={styles.buttonText}>{confirmText}</Text>
           </TouchableOpacity>
+           )}
+           
+           {saveMoment && (
+            <ButtonBottomSaveMoment onPress={onConfirm} />
+           )}
+           </>
         )}
         </>
         )}
@@ -95,12 +123,36 @@ const styles = StyleSheet.create({
   headerContainer: {
     paddingTop: 10,
   },
+  questionIsSubTitleContainer: { 
+    paddingTop: 10,
+    width: '100%',  
+    justifyContent: 'center',  
+    flexWrap: 'wrap', 
+  },
+  questionContainer: { 
+    paddingTop: 10,
+    width: '100%',  
+    justifyContent: 'center',  
+    flexWrap: 'wrap',
+    height: 'auto',  
+  },
+  questionIsSubTitleText: {
+    width: '100%',
+    fontSize: 20, 
+    textAlign: 'center',  
+    fontFamily: 'Poppins-Regular',
+         
+    overflow: 'hidden',    
+  },
   questionText: { 
     width: '100%',
     fontSize: 20, 
-    textAlign: 'center',
+    textAlign: 'left',  // Change to 'left' for a left-aligned wrap
     fontFamily: 'Poppins-Regular',
+    flexShrink: 1,    
+    height: 300,   // Allow text to shrink if needed
   },
+
   formBodyContainer: { 
     width: '100%',   
   },
@@ -114,7 +166,7 @@ const styles = StyleSheet.create({
   },
   fullBodyContainer: { 
     width: '100%',  
-    paddingVertical: 20,
+    paddingBottom: 20,
 
   },
   bottomButton: {
@@ -126,9 +178,16 @@ const styles = StyleSheet.create({
     width: '49%', 
      
   }, 
+  topButton: { 
+    padding: 10,
+    borderRadius: 20, 
+    paddingVertical: 2, 
+
+     
+  }, 
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'center',
     fontFamily: 'Poppins-Bold',
   },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import TextAreaMoment from '../speeddial/TextAreaMoment';
+import TextAreaMomentSimpler from '../speeddial/TextAreaMomentSimpler';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
@@ -11,7 +11,7 @@ const EnterMoment = ({
   onScreenChange, 
   resetText=false, 
 }) => {
-  const [isFirstScreen, setIsFirstScreen] = useState(true);
+  const [isFirstScreen, setIsFirstScreen] = useState(false);
   const [resetTextAreaText, setResetTextAreaText] = useState(false);
   const { themeStyles } = useGlobalStyle();
   const { calculatedThemeColors } = useSelectedFriend();
@@ -49,7 +49,7 @@ const EnterMoment = ({
     <View style={styles.container}>
       {isFirstScreen ? (
         <View>
-          <TextAreaMoment
+          <TextAreaMomentSimpler
             onInputChange={handleInputChange}
             initialText={textInput}
             placeholderText={placeholderText}
@@ -67,7 +67,7 @@ const EnterMoment = ({
         </View>
       ) : (
         <View>
-          <TextAreaMoment
+          <TextAreaMomentSimpler
             onInputChange={handleInputChange}
             initialText={textInput}
             placeholderText={placeholderText}
