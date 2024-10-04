@@ -195,5 +195,11 @@ npm install @react-native-community/blur
 
 expo install expo-blur
 
+npm install color-contrast-checker
+
+//PER GPTY THIS IS MOST PROFESSIONAL/STANDARD?
+npm install tinycolor2
+
+
 
 

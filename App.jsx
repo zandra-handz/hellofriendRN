@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import TopLevelNavigationHandler from './TopLevelNavigationHandler'; // Adjust import path if necessary
-import { Alert } from 'react-native';
+import { Alert, StatusBar } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
@@ -16,8 +16,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font'; 
 import * as Notifications from 'expo-notifications'; 
 import { useGlobalStyle } from './context/GlobalStyleContext';
-
  
+
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
 import ScreenDefaultActionMode from './screens/ScreenDefaultActionMode';
 import ScreenMoments from './screens/ScreenMoments';
@@ -39,6 +39,8 @@ import ScreenAddHello from './screens/ScreenAddHello';
  
 
 import HellofriendHeader from './components/HellofriendHeader';
+import HeaderWriteMoment from './components/HeaderWriteMoment';
+import HeaderPickCategory from './components/HeaderPickCategory';
 
 async function loadFonts() {
   await Font.loadAsync({
@@ -69,6 +71,8 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
+      
       <AuthUserProvider>
         <GlobalStyleProvider>
           <UpcomingHelloesProvider>
@@ -85,7 +89,7 @@ export default function App() {
             </FriendListProvider>
           </UpcomingHelloesProvider>
         </GlobalStyleProvider>
-      </AuthUserProvider>
+      </AuthUserProvider> 
     </GestureHandlerRootView>
   );
 }
@@ -108,8 +112,10 @@ export const Layout = () => {
         screenOptions={{
           headerShown: true,
           headerStyle: themeStyles.header,  
-          headerTintColor: themeStyles.headerTextColor,  
+          headerTintColor: themeStyles.headerTextColor, 
+          contentContainerStyle: { flexGrow: 1 }, 
           cardStyle: { backgroundColor: 'transparent' }, 
+          
           cardStyleInterpolator: ({ current: { progress } }) => ({
             cardStyle: {
               opacity: progress.interpolate({
@@ -153,7 +159,7 @@ export const Layout = () => {
                 component={ScreenMomentFocus}
                 options={{
                   headerShown: true,
-                  title: 'Write moment',
+                  header: () => <HeaderWriteMoment />
                 }}
               />
               <Stack.Screen
@@ -204,14 +210,39 @@ export const Layout = () => {
                   title: 'Find midpoint locations',
                 }}
               />
-              <Stack.Screen
-                name="AddMoment"
-                component={ScreenAddMoment}
-                options={{
-                  headerShown: true,
-                  title: 'Add new moment',
-                }}
-              />
+      <Stack.Screen
+        name="AddMoment"
+        component={ScreenAddMoment}
+        options={{ 
+            headerShown: true,
+            header: () => <HeaderPickCategory />,
+       
+          cardStyleInterpolator: ({ current, layouts }) => {
+            const translateX = current.progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [layouts.screen.width, 0], // Move in from the right
+            });
+
+            const scale = current.progress.interpolate({
+              inputRange: [0, 1],
+              outputRange: [1.2, 1], // Scale down from 120% to 100%
+            });
+
+            return {
+              cardStyle: {
+                transform: [
+                  { translateX }, // Apply translation
+                  { scale },      // Apply scaling
+                ],
+                opacity: current.progress.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0, 0.5, 1], // Fade in smoothly
+                }),
+              },
+            };
+          },
+        }}
+      />
               <Stack.Screen
                 name="AddMomentFriendFixed"
                 component={ScreenAddMomentFriendFixed}

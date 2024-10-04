@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useFriendList } from './FriendListContext';
 import { useAuthUser } from './AuthUserContext';  
 import { fetchFriendDashboard } from '../api'; 
+import tinycolor from 'tinycolor2';
 
 const SelectedFriendContext = createContext({});
 
@@ -60,24 +61,85 @@ export const SelectedFriendProvider = ({ children }) => {
     }
   }, [selectedFriend]);
 
+  const getFontColor = (baseColor, targetColor, isInverted) => {
+    let fontColor = targetColor; // Start with the target color
+  
+    // Check if the targetColor is readable on the baseColor
+    if (!tinycolor.isReadable(baseColor, targetColor, { level: 'AA', size: 'small' })) {
+      // If targetColor is not readable, fallback to black or white based on isInverted
+      fontColor = isInverted ? 'white' : 'black';
+  
+      if (!tinycolor.isReadable(baseColor, fontColor, { level: 'AA', size: 'small' })) {
+        // If not readable, switch to the opposite color
+        fontColor = fontColor === 'white' ? 'black' : 'white';
+      }
+    }
+  
+    return fontColor; // Return the determined font color
+  };
+
+  const getFontColorSecondary = (baseColor, targetColor, isInverted) => {
+    let fontColorSecondary = baseColor; // Start with the base color
+  
+    // Check if the targetColor is readable on the baseColor
+    if (!tinycolor.isReadable(targetColor, baseColor, { level: 'AA', size: 'small' })) {
+      // If not readable, switch to black or white based on isInverted
+      fontColorSecondary = isInverted ? 'black' : 'white';
+  
+      if (!tinycolor.isReadable(targetColor, fontColorSecondary, { level: 'AA', size: 'small' })) {
+        // If not readable, switch to the opposite color
+        fontColorSecondary = fontColorSecondary === 'black' ? 'white' : 'black';
+      }
+    }
+  
+    return fontColorSecondary; // Return the determined secondary font color
+  };
+  
+  
+
 
   useEffect(() => {
     if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
-      if(friendColorTheme.invertGradient) {
+      const lightColor = friendColorTheme.lightColor || '#a0f143';
+      const darkColor = friendColorTheme.darkColor || '#4caf50';
+
+      if (friendColorTheme.invertGradient) {
         setCalculatedThemeColors({
           lightColor: friendColorTheme.darkColor || '#a0f143',
           darkColor: friendColorTheme.lightColor || '#4caf50',
+          fontColor: getFontColor(
+            friendColorTheme.lightColor || '#a0f143', // baseColor
+            friendColorTheme.darkColor || '#4caf50', // targetColor
+            true // isInverted
+          ),
+          fontColorSecondary: getFontColorSecondary(
+            friendColorTheme.lightColor || '#a0f143', // baseColor
+            friendColorTheme.darkColor || '#4caf50', // targetColor
+            true // isInverted
+          ),
         });
       } else {
         setCalculatedThemeColors({
           lightColor: friendColorTheme.lightColor || '#a0f143',
           darkColor: friendColorTheme.darkColor || '#4caf50',
+          fontColor: getFontColor(
+            friendColorTheme.darkColor || '#a0f143', // baseColor
+            friendColorTheme.lightColor || '#4caf50', // targetColor
+            false // isInverted
+          ),
+          fontColorSecondary: getFontColorSecondary(
+            friendColorTheme.darkColor || '#a0f143', // baseColor
+            friendColorTheme.lightColor || '#4caf50', // targetColor
+            false // isInverted
+          ),
         });
       }
     } else {
       setCalculatedThemeColors({
         lightColor: '#a0f143',
         darkColor: '#4caf50',
+        fontColor: '#a0f143',
+        fontColorSecondary: '#4caf50',
       });
     }
   }, [friendColorTheme]);

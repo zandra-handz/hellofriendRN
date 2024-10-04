@@ -93,10 +93,10 @@ const styles = StyleSheet.create({
   },  
   nextButtonContainer: { 
     width: '100%', 
-    position: 'absolute',
-    zIndex: 1,
-    bottom: 80,
-    right: -158,
+    flexDirection: 'row', 
+    flex: 1,
+    zIndex: 1, 
+    bottom: 70, 
     alignItems: 'center', 
   },
   editButtonContainer: { 
@@ -110,11 +110,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   nextButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 20,
+    paddingVertical: 0, 
+    borderRadius: 0,
+    justifyContent: 'center',
+    height: 36,
+    width: '100%',
+    flex: 1,
     alignItems: 'center',
-    marginBottom: 0,
+    alignContent: 'center', 
     width: 'auto',
   },
   editButtonText: {
@@ -122,7 +125,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     fontSize: 15,
   },
-  nextButtonText: {
+  nextButtonText: { 
     color: 'black',
     fontFamily: 'Poppins-Bold',
     fontSize: 15,

@@ -20,12 +20,12 @@ const HellofriendHeader = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
-    padding: 10,
-    paddingTop: 0, //FOR TEST BUILD: 0 For dev: 54
+    padding: 12,
+    paddingTop: 66, //FOR TEST BUILD: 0 For dev: 66
     paddingHorizontal: 10, 
     alignItems: 'center',  
     justifyContent: 'space-between',
-    height: 56,//FOR TEST BUILD: 60 (or 56?) //For dev: 110
+    height: 110,//FOR TEST BUILD: 60 (or 56?) //For dev: 110
   },
   headerText: {
     fontSize: 20,

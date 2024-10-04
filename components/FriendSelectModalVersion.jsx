@@ -5,7 +5,7 @@ import AlertList from '../components/AlertList';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 import ProfileTwoUsersSvg from '../assets/svgs/profile-two-users.svg';
-
+import LoadingPage from '../components/LoadingPage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import RowItemFriendSelect from '../components/RowItemFriendSelect';
@@ -29,9 +29,9 @@ const FriendSelectModalVersion = ({ width = '60%' }) => {
     fontSize: adjustFontSize(fontSize),
     color,
     ...(globalStyles.highContrast && {
-      textShadowColor: 'rgba(0, 0, 0, 0.75)',
-      textShadowOffset: { width: 2, height: 2 },
-      textShadowRadius: 1,
+      textShadowColor: 'rgba(0, 0, 0, 0.0)',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: 0,
     }),
   });
 
@@ -70,20 +70,34 @@ const FriendSelectModalVersion = ({ width = '60%' }) => {
 
   return (
     <>
+    
       <LinearGradient
         colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}  
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}  
         style={[styles.container, { width }]} 
       >  
+
         <View style={styles.displaySelectedContainer}>
+        {loadingNewFriend && (
+          <View style={styles.loadingWrapper}>
+          <LoadingPage
+            loading={loadingNewFriend} 
+            spinnnerType='wander'
+            spinnerSize={30}
+            includeLabel={false} 
+          />
+          </View>
+        )}
+        {!loadingNewFriend && ( 
         <Text
-          style={[styles.displaySelected, textStyles(20, 'white')]}
+          style={[styles.displaySelected, textStyles(17, calculatedThemeColors.fontColorSecondary)]}
           numberOfLines={1}  
           ellipsizeMode='tail'  
         >
           {displayName}
         </Text>
+        )}
 
         </View>
         <View style={styles.selectorButtonContainer}>
@@ -94,9 +108,9 @@ const FriendSelectModalVersion = ({ width = '60%' }) => {
             useSvg={true}
             Svg={ProfileTwoUsersSvg}
             backgroundColor={'transparent'}
-            color={refreshButtonColor}
+            color={calculatedThemeColors.fontColorSecondary}
             style={{
-              width: 70,  
+              width: 'auto',  
               height: 35,  
               borderRadius: 20, 
             }}
@@ -137,27 +151,34 @@ const FriendSelectModalVersion = ({ width = '60%' }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', 
-    height: 48,
-    justifyContent: 'space-between',
+    height: 40,
+    justifyContent: 'flex-end',
     alignItems: 'center', 
-    paddingHorizontal: 10,
+    padding: 2,
 
     borderRadius: 22, 
-    borderRadius: 16,
+    borderRadius: 0,
+  },
+  loadingWrapper: {
+    flex: 1,
+    paddingRight: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   displaySelectedContainer: {
-    alignItems: 'left',   
+    alignItems: 'flex-end',
+    width: '100%',   
     flex: 1,
   },
   displaySelected: {
     color: 'black',
     fontFamily: 'Poppins-Regular',
-    fontSize: 18,
+    fontSize: 16,
     zIndex: 2,
   },
   selectorButtonContainer: {
     alignItems: 'flex-end',
-    flex: 0.4, 
+     
   },
   row: { 
     borderRadius: 5,

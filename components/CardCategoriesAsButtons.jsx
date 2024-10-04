@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet} from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import ButtonSingleInput from '../components/ButtonSingleInput';
+ 
 import  { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonAddCategory from '../components/ButtonAddCategory'
 import AlertFormSubmit from '../components/AlertFormSubmit';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 import AddOutlineSvg from '../assets/svgs/add-outline.svg'; // Import the SVG
 import ButtonBottomSaveMomentToCategory from './ButtonBottomSaveMomentToCategory';
+import LoadingPage from '../components/LoadingPage';
 
 const DOUBLE_PRESS_DELAY = 300; // Time delay to detect double press
 
@@ -184,7 +185,18 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
 
   return (
     <View style={[styles.container]}>
-      {friendDashboardData && categoryNames && (
+        {loadingNewFriend && (
+          <View style={styles.loadingWrapper}>
+          <LoadingPage
+            loading={loadingNewFriend} 
+            spinnnerType='wander'
+            spinnerSize={60}
+            includeLabel={false} 
+          />
+          </View>
+        )}
+      
+      {friendDashboardData && categoryNames && !loadingNewFriend && (
         <>
           <View style={{ flexDirection: 'row', paddingBottom: 10, alignContent: 'center', alignItems: 'center', textAlign: 'left' }}>
             <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>
@@ -307,6 +319,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     height: 'auto',
     maxHeight: 300,
+  },
+  loadingWrapper: {
+    flex: 1,
+    paddingRight: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   categoriesContainer: {
     flexDirection: 'row',

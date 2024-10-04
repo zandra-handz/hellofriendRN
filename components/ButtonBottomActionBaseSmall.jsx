@@ -68,9 +68,9 @@ const ButtonBottomActionBaseSmall = ({
     fontSize: adjustFontSize(fontSize),
     color,
     ...(globalStyles.highContrast && {
-      textShadowColor: 'rgba(0, 0, 0, 0.75)',
-      textShadowOffset: { width: 2, height: 2 },
-      textShadowRadius: 1,
+      textShadowColor: 'rgba(0, 0, 0, 0.0)',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: 0,
     }),
   });
 
@@ -172,7 +172,7 @@ const ButtonBottomActionBaseSmall = ({
       <Text
         style={[
           textStyles(labelFontSize, disabled ? 'white' : labelColor), // White label color if disabled
-          { fontFamily: 'Poppins-Bold', marginRight: fontMargin },
+          { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
         ]}
         numberOfLines={1}          
         ellipsizeMode="tail"      

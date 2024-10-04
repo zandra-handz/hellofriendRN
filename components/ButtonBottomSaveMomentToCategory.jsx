@@ -7,7 +7,7 @@ const ButtonBottomSaveMomentToCategory = ({ onPress, label, selected }) => {
             onPress={() => onPress(true)}  
             label={label}
             height={40} 
-            radius={8}
+            radius={0}
             labelFontSize={16}
             labelColor="white"  
             labelContainerMarginHorizontal={4}

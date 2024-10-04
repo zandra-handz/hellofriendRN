@@ -5,6 +5,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useNavigation } from '@react-navigation/native';
 
+import ArrowRightCircleOutline from '../assets/svgs/arrow-right-circle-outline.svg';
+
 const ContentMomentFocus = ({ placeholderText }) => {
   const { calculatedThemeColors } = useSelectedFriend();
   const navigation = useNavigation();
@@ -43,7 +45,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
           style={styles.blurView}>
         <TextInput
-          style={[styles.modalTextInput, { borderColor: calculatedThemeColors.darkColor }]}
+          style={[styles.modalTextInput, { borderColor: calculatedThemeColors.darkColor, color: calculatedThemeColors.fontColor }]}
           multiline={true}
           value={textInput}
           onChangeText={setTextInput} // Directly update textInput using setTextInput
@@ -56,24 +58,26 @@ const ContentMomentFocus = ({ placeholderText }) => {
         {textInput && (
         <TouchableOpacity
           onPress={handleGoToMomentScreen}
-          style={[styles.closeButton, { backgroundColor: calculatedThemeColors.darkColor }]}
+          style={[styles.closeButton, { flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: calculatedThemeColors.darkColor }]}
         >
-          <Text style={[styles.closeButtonText, { color: calculatedThemeColors.lightColor }]}>
-            Done
+          <Text style={[styles.closeButtonText, { paddingRight: 10, color: calculatedThemeColors.fontColor }]}>
+            Pick category
           </Text>
+          <ArrowRightCircleOutline height={34} width={34} color={calculatedThemeColors.fontColor} />
 
         </TouchableOpacity>
          )}
         {!textInput && (
         <TouchableOpacity
-          onPress={() => {}}
-          style={[styles.closeButton, { backgroundColor: calculatedThemeColors.darkColor }]}
-        >
-          <Text style={[styles.closeButtonText, { color: calculatedThemeColors.lightColor }]}>
-            Done
-          </Text>
+        onPress={() => {}}
+        style={[styles.closeButton, { flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: calculatedThemeColors.darkColor }]}
+      >
+        <Text style={[styles.closeButtonText, { paddingRight: 10, color: calculatedThemeColors.darkColor }]}>
+          Pick category
+        </Text>
+        <ArrowRightCircleOutline height={34} width={34} color={calculatedThemeColors.darkColor} />
 
-        </TouchableOpacity>
+      </TouchableOpacity>
          )}
       </View>
       </LinearGradient>
@@ -117,13 +121,13 @@ const styles = StyleSheet.create({
   closeButton: { 
     marginTop: 20,
     borderRadius: 0, 
-    padding: 6, 
+    padding: 4, 
     height: 'auto',  
     
     alignItems: 'center',
   },
   closeButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Poppins-Bold',
   },
 });

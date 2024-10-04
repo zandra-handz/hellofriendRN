@@ -7,7 +7,6 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api'; 
-import HelloFriendFooter from '../components/HelloFriendFooter';
 
 import  { useGlobalStyle } from '../context/GlobalStyleContext';
 
@@ -15,7 +14,7 @@ import LoadingPage from '../components/LoadingPage';
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 import ButtonBottomSaveMoment from '../components/ButtonBottomSaveMoment';
 
-const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScreen}) => {
+const ContentAddMomentBubble = ( {friendFixed=false, momentText, updateTextInFocusScreen}) => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
@@ -34,7 +33,6 @@ const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScre
   const delayForResultsMessage = 1000;
 
   const noMainSaveButton = true;
-  const viewAndEditMomentAsBubble = false;
  
 
   const handleMomentToggle = (screenState) => {
@@ -138,7 +136,7 @@ const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScre
             <FriendSelectModalVersion width='100%' />
           </View>
           )}
-        { selectedFriend  && (  
+        { selectedFriend && (  
         <View style={styles.locationContainer}>
           <EnterMoment
             handleInputChange={handleInputChange}
@@ -159,7 +157,7 @@ const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScre
         )} 
         </>
       )}
-        <HelloFriendFooter /> 
+
         {! noMainSaveButton && (
           <>
         {userEntryCapsule && selectedCategory ? (   
@@ -177,11 +175,8 @@ const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScre
               />
           </View>
         )} 
-        
-       
         </>
-       
-      )} 
+      )}
     </View>
   );
 };
@@ -221,4 +216,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ContentAddMoment;
+export default ContentAddMomentBubble;
