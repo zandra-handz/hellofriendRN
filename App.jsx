@@ -41,6 +41,8 @@ import ScreenAddHello from './screens/ScreenAddHello';
 import HellofriendHeader from './components/HellofriendHeader';
 import HeaderWriteMoment from './components/HeaderWriteMoment';
 import HeaderPickCategory from './components/HeaderPickCategory';
+import HeaderFriendFocus from './components/HeaderFriendFocus';
+import HeaderBase from './components/HeaderBase';
 
 async function loadFonts() {
   await Font.loadAsync({
@@ -151,7 +153,7 @@ export const Layout = () => {
                 component={ScreenFriendFocus}
                 options={{
                   headerShown: true,
-                  title: 'View friend',
+                  header: () => <HeaderFriendFocus />,
                 }}
               />
               <Stack.Screen
@@ -167,7 +169,7 @@ export const Layout = () => {
                 component={ScreenMoments}
                 options={{
                   headerShown: true,
-                  title: 'All moments',
+                  header: () => <HeaderBase headerTitle='Moments' />,
                 }}
               />
               <Stack.Screen
@@ -175,7 +177,7 @@ export const Layout = () => {
                 component={ScreenImages}
                 options={{
                   headerShown: true,
-                  title: 'All images',
+                  header: () => <HeaderBase headerTitle='Images' />,
                 }}
               />
               <Stack.Screen
@@ -183,7 +185,7 @@ export const Layout = () => {
                 component={ScreenHelloes}
                 options={{
                   headerShown: true,
-                  title: 'Archived helloes',
+                  header: () => <HeaderBase headerTitle='Helloes history' />,
                 }}
               />
               <Stack.Screen
@@ -191,7 +193,7 @@ export const Layout = () => {
                 component={ScreenLocations}
                 options={{
                   headerShown: true,
-                  title: 'All locations',
+                  header: () => <HeaderBase headerTitle='All locations' />,
                 }}
               />
               <Stack.Screen
@@ -199,7 +201,7 @@ export const Layout = () => {
                 component={ScreenLocationSearch}
                 options={{
                   headerShown: true,
-                  title: 'Search locations',
+                  header: () => <HeaderBase headerTitle='Search locations' />,
                 }}
               />
               <Stack.Screen
@@ -207,7 +209,7 @@ export const Layout = () => {
                 component={ScreenMidpointLocationSearch}
                 options={{
                   headerShown: true,
-                  title: 'Find midpoint locations',
+                  header: () => <HeaderBase headerTitle='Find midpoint locations' />,
                 }}
               />
       <Stack.Screen
@@ -248,7 +250,7 @@ export const Layout = () => {
                 component={ScreenAddMomentFriendFixed}
                 options={{
                   headerShown: true,
-                  title: 'Add new moment',
+                  header: () => <HeaderBase headerTitle='Write moment' />,
                 }}
               />
               <Stack.Screen
@@ -256,7 +258,7 @@ export const Layout = () => {
                 component={ScreenAddImage}
                 options={{
                   headerShown: true,
-                  title: 'Upload memes and photos',
+                  header: () => <HeaderBase headerTitle='Upload' />,
                 }}
               />
               <Stack.Screen
@@ -264,7 +266,7 @@ export const Layout = () => {
                 component={ScreenAddHello}
                 options={{
                   headerShown: true,
-                  title: 'Record new hello',
+                  header: () => <HeaderBase headerTitle='Add hello' />,
                 }}
               />
               <Stack.Screen
@@ -272,7 +274,7 @@ export const Layout = () => {
                 component={ScreenAddFriend}
                 options={{
                   headerShown: true,
-                  title: 'Add new friend',
+                  header: () => <HeaderBase headerTitle='Add new friend' />,
                 }}
               />
             </>

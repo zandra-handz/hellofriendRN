@@ -11,19 +11,20 @@ import ComposerFriendHelloes from '../components/ComposerFriendHelloes'; // Impo
 import ComposerFriendLocations from '../components/ComposerFriendLocations'; 
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import ButtonPanelFriendFocus from '../components/ButtonPanelFriendFocus';
 
 import HelloFriendFooter from '../components/HelloFriendFooter';
 
 const ScreenFriendFocus = () => {
-  const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
 
   const { themeStyles, gradientColors } = useGlobalStyle(); 
 
   const headers = true;
   const insideHeaders = true;
   const topRadius = 20;
-  const radius = 20;
-  const buttonMargin = 4;
+  const radius = 14;
+  const buttonMargin = 0;
   const oneBackgroundColor = 'black';
 
   const pageHeaderHeightTall = 220;
@@ -36,6 +37,8 @@ const ScreenFriendFocus = () => {
   const bottomIconSize = 28;
 
   const momentsBottomIconSize = 30;
+
+  const showOriginalHeader = false;
 
 
   return (
@@ -53,61 +56,33 @@ const ScreenFriendFocus = () => {
       {!loadingNewFriend && selectedFriend && (
         <>
             <View style={styles.buttonContainer}>
-            <View style={{ marginHorizontal: buttonMargin }}>
-              <ActionFriendPageHeader 
-                buttonHeight={pageHeaderHeight} 
-                headerRadius={radius} 
-                headerTopRadius={topRadius} 
-              />
-            </View>
+            <View style={{flexDirection: 'column', height: 100, justifyContent: 'center', alignContent: 'center',  width: '100%'}}>
+            <View style={{height: 40, paddingHorizontal: 10, paddingHorizontal: 10,justifyContent: 'center' }}>
+              <Text style={[styles.friendNameText, themeStyles.subHeaderText, {color: calculatedThemeColors.fontColor}]}>
+                {selectedFriend ? selectedFriend.name : ''}
+              </Text>
 
-          <View style={styles.sectionsContainer}> 
-            <View style={{ marginTop: 8, marginHorizontal: buttonMargin }}>
-              <ComposerFriendLocations 
-                topIconSize={topIconSize} 
-                bottomIconSize={bottomIconSize} 
-                buttonHeight={74} 
-                buttonRadius={radius} 
-                inactiveIconColor={inactiveIconColor} 
-                oneBackgroundColor={oneBackgroundColor}
-                headerHeight={30} 
-                includeHeader={false} 
-                headerInside={false} 
-                headerText={'PINNED'} 
-              />
             </View>
+            
+            
+            <View style={{height: 40, paddingHorizontal: 10,justifyContent: 'center' }}>
+              <Text style={[styles.headerText, themeStyles.subHeaderText, {color: calculatedThemeColors.fontColor}]}>
+                Say hello on {friendDashboardData ? `${friendDashboardData[0].future_date_in_words}!` : ' '}
+          
+              </Text>
 
-            <View style={{ marginHorizontal: buttonMargin, marginTop: 4 }}>
-              <ComposerFriendImages 
-                topIconSize={topIconSize} 
-                bottomIconSize={bottomIconSize} 
-                buttonHeight={56} 
-                headerHeight={40}
-                buttonRadius={radius} 
-                includeHeader={true}
-                headerInside={true}
-                inactiveIconColor={inactiveIconColor} 
-                oneBackgroundColor={'transparent'} 
-              /> 
             </View>
+          </View>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+            
+            <View style={{ marginHorizontal: buttonMargin, paddingTop: 20, height: 74, width: '100%' }}>
 
-            <View style={{ marginTop: 4, marginHorizontal: buttonMargin }}>
-              <ActionFriendPageMoments 
-                topIconSize={topIconSize} 
-                bottomIconSize={momentsBottomIconSize} 
-                buttonHeight={236} 
-                buttonRadius={radius} 
-                inactiveIconColor={inactiveIconColor} 
-                oneBackgroundColor={oneBackgroundColor}
-                headerHeight={30} 
-                includeHeader={headers} 
-                headerInside={true} 
-                headerText={'MOMENTS'} 
-              /> 
-            </View>
-            </View>
-
-            <View style={{ marginTop: 10, marginHorizontal: buttonMargin }}>
+            <ButtonPanelFriendFocus />
+            </View> 
+             </View>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+            
+            <View style={{ marginTop: 36, marginHorizontal: buttonMargin, width: '100%' }}>
               <ComposerFriendHelloes 
                 topIconSize={topIconSize} 
                 bottomIconSize={bottomIconSize} 
@@ -122,6 +97,62 @@ const ScreenFriendFocus = () => {
                 headerText={'LAST HELLO'} 
               />
             </View>
+            </View>
+
+          <View style={styles.sectionsContainer}> 
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+          
+            { showOriginalHeader && ( 
+            <View style={{ marginTop: 8, width: '0%',height: '0%', marginHorizontal: buttonMargin }}>
+              <ComposerFriendLocations 
+                topIconSize={topIconSize} 
+                bottomIconSize={bottomIconSize} 
+                buttonHeight={84} 
+                buttonRadius={radius} 
+                inactiveIconColor={inactiveIconColor} 
+                oneBackgroundColor={oneBackgroundColor}
+                headerHeight={30} 
+                includeHeader={false} 
+                headerInside={false} 
+                headerText={'PINNED'} 
+              />
+            </View>
+            )}
+            </View>
+            
+
+            <View style={{ marginHorizontal: buttonMargin, marginTop: 4 }}>
+              <ComposerFriendImages 
+                topIconSize={topIconSize} 
+                bottomIconSize={bottomIconSize} 
+                buttonHeight={56} 
+                headerHeight={44}
+                buttonRadius={radius} 
+                includeHeader={true}
+                headerInside={true}
+                inactiveIconColor={inactiveIconColor} 
+                oneBackgroundColor={'transparent'} 
+              /> 
+            </View>
+
+            <View style={{ marginTop: 4, marginHorizontal: buttonMargin }}>
+              <ActionFriendPageMoments 
+                topIconSize={topIconSize} 
+                bottomIconSize={momentsBottomIconSize} 
+                buttonHeight={246} 
+                buttonRadius={radius} 
+                inactiveIconColor={inactiveIconColor} 
+                oneBackgroundColor={oneBackgroundColor}
+                headerHeight={34} 
+                includeHeader={headers} 
+                headerInside={true} 
+                headerText={'MOMENTS'} 
+              /> 
+            </View>
+
+            </View>
+
+
             </View>
            
 
@@ -139,10 +170,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#2B2B2B',
     paddingVertical: 0,
   }, 
+  friendNameText: {
+    fontSize: 28,
+    fontFamily: 'Poppins-Regular',
+
+  },
+  headerText: {
+    fontSize: 20,
+    fontFamily: 'Poppins-Regular',
+
+  },
   sectionsContainer: {
     width: '100%',
-    borderRadius: 20,
-    paddingBottom: 8,
+    borderRadius: 0,
+    paddingBottom: 0, 
+    paddingVertical: 10,
+    paddingHorizontal: 2,
     backgroundColor: 'rgba(41, 41, 41, 0.2)',  // Semi-transparent background
   },
   loadingTextContainer: {
@@ -186,7 +229,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 0,  
     paddingTop: 0, 
-    paddingBottom: 10,
+    paddingBottom: 14,
+    
   },
 
 });

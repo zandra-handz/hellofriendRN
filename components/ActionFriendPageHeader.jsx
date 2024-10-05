@@ -19,6 +19,8 @@ const ActionFriendPageHeader = ({
   const { themeStyles } = useGlobalStyle();
 
   const { selectedFriend, friendDashboardData, friendColorTheme, calculatedThemeColors, loadingNewFriend, setFriend } = useSelectedFriend();
+  
+  
   const [showProfile, setShowProfile] = useState(false); 
 
 
@@ -82,6 +84,7 @@ const ActionFriendPageHeader = ({
           label={Deselector? selectedFriend ? selectedFriend.name : '' : 'Say hello on '}
           additionalTextSize={16}
           additionalText={friendDashboardData ? `${friendDashboardData[0].future_date_in_words}` : ' '}
+          
           showLabelTwo={false}
           fontMargin={3}
           animationSource={require('../assets/anims/heartinglobe.json')}
