@@ -17,6 +17,7 @@ const ActionPageUpcomingButton = ({height=140}) => {
   
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend(); 
+  const [ showActionFriendPageHeader, setShowActionFriendPageHeader] = useState(true);
  
   
   let mainHello = null;
@@ -49,15 +50,27 @@ const ActionPageUpcomingButton = ({height=140}) => {
 
   useEffect(() => {
     setShowSecondButton(false);
+    if (selectedFriend) {
+      setShowActionFriendPageHeader(true);
+
+    };
 
   }, [selectedFriend]);
 
   const navigateToFirstPage = () => {
+    setShowActionFriendPageHeader(true);
     setShowSecondButton(false); 
   };
 
   const handleNext = () => {
     setShowSecondButton(true); 
+    setShowActionFriendPageHeader(false);
+  };
+
+  const handleDeselect = () => {
+    setFriend(null);
+
+
   };
 
   const navigateToFriendFocus = () => {
@@ -86,7 +99,8 @@ const ActionPageUpcomingButton = ({height=140}) => {
  
     <View style={[styles.container, {height: height}]}>
 
-      {!selectedFriend && (
+    {(!selectedFriend || (selectedFriend && !showActionFriendPageHeader)) && (
+
       <Animated.View style={{ opacity: opacityAnim, flex: 1 }}>
         {additionalSatelliteCount > 0 ? (
           <ButtonMultiFeatureUpcoming
@@ -157,8 +171,8 @@ const ActionPageUpcomingButton = ({height=140}) => {
       </Animated.View>
       )} 
 
-      {selectedFriend &&(
-        <ActionFriendPageHeader Deselector={true} />
+      {selectedFriend && showActionFriendPageHeader && (
+        <ActionFriendPageHeader Deselector={true} handleNext={handleNext} handleDeselect={handleDeselect} />
       )}
 
       {!showSecondButton && additionalSatelliteCount > 0 && (

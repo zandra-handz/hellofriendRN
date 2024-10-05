@@ -3,13 +3,13 @@ import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 
-const ButtonColorBGSmall = ({ onPress, useLightColor=true, title, textStyle }) => {
+const ButtonColorBGSmall = ({ onPress, useLightColor=true, title, textStyle, textColor }) => {
 
     const { calculatedThemeColors } = useSelectedFriend();
   
     return (
     <TouchableOpacity onPress={onPress} style={[styles.button, { backgroundColor: useLightColor ? calculatedThemeColors.lightColor : calculatedThemeColors.darkColor }]}>
-      <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+      <Text style={[styles.buttonText, textStyle, {color: textColor }]}>{title}</Text>
     </TouchableOpacity>
   );
 };

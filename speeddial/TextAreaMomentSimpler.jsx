@@ -54,7 +54,7 @@ const TextAreaMomentSimpler = ({
   }; 
  
   const dynamicInputStyle = textInput.length > 0 
-    ? [styles.input, styles.inputActive] 
+    ? [styles.inputActive] 
     : styles.input;
 
   return ( 
@@ -65,13 +65,13 @@ const TextAreaMomentSimpler = ({
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
        
-        <View style={styles.inner}> 
+        <View style={styles.inner}>  
           <View style={{width: '100%', flex: 1}}>
-            <ThoughtBubbleOutlineEditedSvg color={themeStyles.modalIconColor.color} width={420} height={500} />
-          </View>
+            <ThoughtBubbleOutlineEditedSvg color={!editMode ? themeStyles.modalIconColor.color : 'transparent'} width={430} height={510} />
+          </View> 
           {editMode ? (
             <TextInput
-              style={[dynamicInputStyle, themeStyles.genericText, { width: width }]}
+              style={[dynamicInputStyle, themeStyles.genericText, { width: '100%' }]}
               multiline={true}
               value={textInput}
               onChangeText={handleInputChange}
@@ -113,16 +113,32 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     borderWidth: 0,
     fontFamily: 'Poppins-Regular',
-    fontSize: 16, 
-    height: '36%',
+    fontSize: 18, 
+    height: '40%',
     textAlignVertical: 'top',  
     overflow: 'hidden',  
-    maxWidth: '76%',  
+    maxWidth: '87%',  
   },
   inputActive: {
     zIndex: 1,
     fontFamily: 'Poppins-Regular',
-    fontSize: 16, 
+    fontSize: 18, 
+    position: 'absolute',
+    zIndex: 2,
+    top: 20,
+    left: 20,  
+    right: 20, 
+    backgroundColor: 'transparent',
+    borderRadius: 20,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderWidth: 0,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 18, 
+    height: '68%',
+    textAlignVertical: 'top',  
+    overflow: 'hidden',  
+    maxWidth: '87%', 
   },
   maxButtonContainer: {
     position: 'absolute',

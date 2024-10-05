@@ -234,21 +234,32 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
             {categoryCount === 0 ? (
               <Text style={styles.noCategoriesText}>Please enter a category</Text>
             ) : (
-              <View style={{ height: '100%', width: '100%' }}>
-                <FlatList
-                  data={categoryNames}
-                  keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
-                  renderItem={({ item }) => (
-                    <View key={item} style={{ paddingBottom: 2, width: '100%' }}>
-                      <ButtonBottomSaveMomentToCategory
-                        onPress={() => handleCategoryPress(item)} // Use 'item' as the category name
-                        label={item}
-                        selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
-                      />
-                    </View>
-                  )}
-                />
-              </View>
+<View style={{ 
+  flexDirection: 'column', 
+  justifyContent: 'flex-end', // Align items to the bottom of the container
+  height: '100%', 
+  width: '100%' 
+}}>
+  <FlatList
+    data={categoryNames}
+    keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
+    renderItem={({ item }) => (
+      <View key={item} style={{ paddingBottom: 2, width: '100%' }}>
+        <ButtonBottomSaveMomentToCategory
+          onPress={() => handleCategoryPress(item)} // Use 'item' as the category name
+          label={item}
+          selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
+        />
+      </View>
+    )}
+    // Set the FlatList's contentContainerStyle to push items to the bottom
+    contentContainerStyle={{
+      flexGrow: 1, // Allow the FlatList to grow and fill space
+      justifyContent: 'flex-end', // Push items to the bottom
+    }}
+  />
+</View>
+
             )}
           </View>
   
@@ -316,9 +327,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 0,
     borderWidth: 1, 
-    paddingVertical: 10,
-    height: 'auto',
-    maxHeight: 300,
+    paddingTop: 10,   
+    height: 180, 
   },
   loadingWrapper: {
     flex: 1,
@@ -326,15 +336,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  categoriesContainer: {
-    flexDirection: 'row',
+  categoriesContainer: { 
     width: '100%',
     borderRadius: 10,
     flexWrap: 'wrap',
-    justifyContent: 'space-around', 
-    marginBottom: 0, 
-    maxHeight: 180,
+    justifyContent: 'space-around',  
+    maxHeight: 170, // Set only maxHeight, remove fixed height
+    height: 'auto', // Optional, ensures it grows with content
+    flex: 1, // Allows it to grow to fill available space, if necessary
   },
+  
   categoryButton: {
     padding: 10,
     paddingVertical: 8,

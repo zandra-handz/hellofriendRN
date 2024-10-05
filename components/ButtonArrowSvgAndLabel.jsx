@@ -3,9 +3,10 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import ProfileCircleSvg from '../assets/svgs/ProfileCircleSvg'; // Import ProfileCircleSvg
+import ProfileTwoUsers from '../assets/svgs/profile-two-users';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const ButtonArrowSvgAndLabel = ({ direction = 'right', label, onPress, setProfileIconColor = false, profileIconColor, screenSide = 'left' }) => {
+const ButtonArrowSvgAndLabel = ({icon = 'arrow', direction = 'right', label, onPress, setProfileIconColor = false, profileIconColor, screenSide = 'left' }) => {
   
   const { themeStyles } = useGlobalStyle();
 
@@ -32,17 +33,22 @@ const ButtonArrowSvgAndLabel = ({ direction = 'right', label, onPress, setProfil
         </Text>
       </View>
       <View style={styles.svgContainer}>
-        {direction === 'right' ? (
-          <ArrowRightCircleOutlineSvg width={46} height={46} style={[styles.SvgImage, themeStyles.upcomingNavIcon]} />
-        ) : direction === 'left' ? (
-          <ArrowLeftCircleOutlineSvg width={46} height={46} style={[styles.SvgImage, themeStyles.upcomingNavIcon]} />
+      {direction === 'right' ? (
+        icon === 'two-users' ? (
+          <ProfileTwoUsers width={36} height={36} style={[styles.SvgImage, themeStyles.upcomingNavIcon]} />
         ) : (
-          renderProfileIcon()
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-};
+          <ArrowRightCircleOutlineSvg width={46} height={46} style={[styles.SvgImage, themeStyles.upcomingNavIcon]} />
+        )
+      ) : direction === 'left' ? (
+        <ArrowLeftCircleOutlineSvg width={46} height={46} style={[styles.SvgImage, themeStyles.upcomingNavIcon]} />
+      ) : (
+        renderProfileIcon()
+      )}
+
+            </View>
+          </TouchableOpacity>
+        );
+      };
 
 const styles = StyleSheet.create({
   arrowButton: {

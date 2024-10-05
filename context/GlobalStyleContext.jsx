@@ -11,6 +11,7 @@ export const useGlobalStyle = () => useContext(GlobalStyleContext);
 export const GlobalStyleProvider = ({ children }) => {
     const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
     const colorScheme = useColorScheme();
+    const [ nonCustomHeaderPage, setNonCustomHeaderPage ] = useState(false);
 
     // Default state
     const [styles, setStyles] = useState({
@@ -18,7 +19,7 @@ export const GlobalStyleProvider = ({ children }) => {
         highContrast: false,
         screenReader: false,
         receiveNotifications: false,
-        theme: colorScheme || 'light',
+        theme: colorScheme || 'light', 
         gradientColors: {
             darkColor: '#4caf50',
             lightColor: '#a0f143',
@@ -27,6 +28,7 @@ export const GlobalStyleProvider = ({ children }) => {
     });
 
     useEffect(() => {
+ 
         if (authUserState.authenticated && userAppSettings) {
             const determineTheme = () => {
                 if (userAppSettings.manual_dark_mode !== null) {
@@ -122,7 +124,7 @@ export const GlobalStyleProvider = ({ children }) => {
     const themeStyles = styles.theme === 'dark' ? darkThemeStyles : lightThemeStyles;
 
     return (
-        <GlobalStyleContext.Provider value={{ ...styles, themeStyles }}>
+        <GlobalStyleContext.Provider value={{ ...styles, themeStyles, nonCustomHeaderPage, setNonCustomHeaderPage }}>
             {children}
         </GlobalStyleContext.Provider>
     );

@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
 import ButtonColorBGSmall from '../components/ButtonColorBGSmall';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 
 const ButtonCheckboxControl = ({ 
@@ -16,6 +17,7 @@ const ButtonCheckboxControl = ({
 }) => {
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
+  const { calculatedThemeColors } = useSelectedFriend();
 
 
   const noHello = true;
@@ -39,8 +41,8 @@ const ButtonCheckboxControl = ({
 
     <View style={{justifyContent: 'flex-end', width: '100%', height: '100%', alignItems: 'flex-end', flexDirection: 'row'}}>   
     <TouchableOpacity onPress={!isSaving ? onToggleCheckboxes : null} style={[styles.controlButton, themeStyles.footerIcon]}>
-      <Text style={[styles.controlButtonText, themeStyles.footerText]}>{showCheckboxes ? "hello mode" : "hello mode"}</Text>
-      <Icon name={showCheckboxes ? "check-square-o" : "square-o"} size={20} style={[styles.checkbox, themeStyles.footerIcon]} />
+      <Text style={[styles.controlButtonText, themeStyles.footerText, {color: calculatedThemeColors.fontColor}]}>{showCheckboxes ? "hello mode" : "hello mode"}</Text>
+      <Icon name={showCheckboxes ? "check-square-o" : "square-o"} size={20} style={[styles.checkbox, themeStyles.footerIcon, {color: calculatedThemeColors.fontColor}]} />
     </TouchableOpacity>
     {!showCheckboxes && !noHello && (
       <View style={{paddingLeft: 10 }}>
@@ -48,7 +50,8 @@ const ButtonCheckboxControl = ({
             onPress={handleGoToHelloScreenNoSave} 
             title="Go to Hello" 
             backgroundColor={buttonColor} 
-            textStyle={themeStyles.footerText}
+            textStyle={[themeStyles.footerText]}
+            textColor={calculatedThemeColors.fontColorSecondary}
           />
         </View>
         )}

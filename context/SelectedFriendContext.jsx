@@ -138,8 +138,8 @@ export const SelectedFriendProvider = ({ children }) => {
       setCalculatedThemeColors({
         lightColor: '#a0f143',
         darkColor: '#4caf50',
-        fontColor: '#a0f143',
-        fontColorSecondary: '#4caf50',
+        fontColor: 'black',
+        fontColorSecondary: 'black',
       });
     }
   }, [friendColorTheme]);
@@ -148,13 +148,13 @@ export const SelectedFriendProvider = ({ children }) => {
     setSelectedFriend(null);
   }, [authUserState]);
 
-  useEffect(() => {
-    console.log('Selected friend being set:', selectedFriend);
-  }, [selectedFriend]);
+  //useEffect(() => {
+   // console.log('Selected friend being set:', selectedFriend);
+  //}, [selectedFriend]);
 
-  useEffect(() => {
-    console.log('Friend color theme updated:', friendColorTheme); // Add this line
-  }, [friendColorTheme]);
+  //useEffect(() => {
+  //  console.log('Friend color theme updated:', friendColorTheme); // Add this line
+  //}, [friendColorTheme]);
 
   const updateFriendDashboardData = (newData) => {
     setFriendDashboardData(newData);

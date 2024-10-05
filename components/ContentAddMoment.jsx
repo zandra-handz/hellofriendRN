@@ -160,28 +160,7 @@ const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScre
         </>
       )}
         <HelloFriendFooter /> 
-        {! noMainSaveButton && (
-          <>
-        {userEntryCapsule && selectedCategory ? (   
-              <View style={styles.bottomButtonContainer}>  
-              <ButtonBottomSaveMoment
-                onPress={handleSave} 
-                disabled={false}
-              />
-            </View>
-          ) : (
-            <View style={styles.bottomButtonContainer}>  
-              <ButtonBottomSaveMoment
-                onPress={[() => {}]} 
-                disabled={true}
-              />
-          </View>
-        )} 
-        
-       
-        </>
-       
-      )} 
+ 
     </View>
   );
 };
@@ -203,7 +182,7 @@ const styles = StyleSheet.create({
   categoryContainer: {  
     width: '100%', 
     borderRadius: 8,
-    paddingVertical: 10, 
+    paddingTop: 10, 
   },
   selectFriendContainer: { 
     flexDirection: 'row',  

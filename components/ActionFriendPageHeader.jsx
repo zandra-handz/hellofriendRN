@@ -13,7 +13,10 @@ const ActionFriendPageHeader = ({
   buttonHeight=140,
   headerRadius=30, 
   headerTopRadius=0, 
-  Deselector=false }) => {
+  Deselector=false,
+  handleNext,
+ handleDeselect,
+ }) => {
 
   const navigation = useNavigation();
   const { themeStyles } = useGlobalStyle();
@@ -24,11 +27,7 @@ const ActionFriendPageHeader = ({
   const [showProfile, setShowProfile] = useState(false); 
 
 
-  const handleDeselect = () => {
-    if (Deselector) {
-      setFriend(null);
-    }
-  };
+
 
   const navigateBackToFriendFocus = () => {
     navigation.navigate('FriendFocus');
@@ -55,20 +54,11 @@ const ActionFriendPageHeader = ({
           spinnerSize={70} 
         />
       </View>
-    )}
-      {Deselector && !loadingNewFriend && friendDashboardData && (
-        
-        <ButtonArrowSvgAndLabel 
-          direction='profile'
-          screenSide='left'
-          setProfileIconColor={true}
-          profileIconColor={[calculatedThemeColors.lightColor, calculatedThemeColors.darkColor]}
-          label='view'
-          onPress={navigateBackToFriendFocus}
-          /> 
-      )}
+    )} 
+    
       {friendDashboardData && (
-      <Animated.View style={{ flex: 1 }}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <Animated.View style={{ flex: 1, flexDirection: 'row', width: '40%'}}>
         <ButtonLottieAnimationTwoSectionsSvg
           onPress={Deselector ? handlePress : null} 
           buttonHeight={Deselector ? 140 : buttonHeight}
@@ -77,7 +67,7 @@ const ActionFriendPageHeader = ({
           preLabelFontSize={Deselector ? 18 : 28}
           mainButtonWidth={Deselector ? '84%' : '77%'}
           headerText={Deselector ? 'SELECTED:' : selectedFriend ? selectedFriend.name : ''}
-          preLabelColor={Deselector && calculatedThemeColors ? calculatedThemeColors.lightColor : 'white'}
+          preLabelColor={Deselector && calculatedThemeColors ? 'white' : 'white'}
           navigateToFirstPage={false} 
           labelColor={'white'}
           labelFontSize={Deselector? 30 : 17}
@@ -110,16 +100,26 @@ const ActionFriendPageHeader = ({
           satelliteSectionPosition="right"
           satelliteSectionWidth={Deselector ? '28%' : '33.33%'}
           satelliteSectionMarginLeft={Deselector ? -22 : -20}
-          satelliteCount={Deselector ? 2 : 0} // Show two satellites if Deselector is true
+          //removed deselector button by setting 2 : 0 to 0 : 0 below:
+          satelliteCount={Deselector ? 0 : 0} // Show two satellites if Deselector is true
           satelliteHellos={Deselector ? [{ label: 'Deselect', onPress: handleDeselect }] : []} // Satellite button to reset the selected friend
           satellitesOrientation="vertical" // Adjust orientation if needed
           satelliteHeight="20%" // Adjust height if needed
           satelliteOnPress={handleDeselect} 
         />
+           
       </Animated.View>
+      
+      <ButtonArrowSvgAndLabel 
+      direction='right'
+      icon='two-users'
+      screenSide='right'
+      label='swap'
+      onPress={handleNext}
+      /> 
+      </View>
        )}
- 
-    </View>
+    </View> 
   );
 };
 

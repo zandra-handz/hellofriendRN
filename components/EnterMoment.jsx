@@ -60,7 +60,7 @@ const EnterMoment = ({
           {textInput && (
           <View style={styles.nextButtonContainer}> 
             <TouchableOpacity style={[styles.nextButton, {backgroundColor: calculatedThemeColors.darkColor}]} onPress={handleNextScreenClick}>
-              <Text style={styles.nextButtonText}>Done</Text>
+              <Text style={[styles.nextButtonText, {color: calculatedThemeColors.fontColor}]}>Done</Text>
             </TouchableOpacity>
           </View>
            )}

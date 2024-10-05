@@ -9,7 +9,7 @@ import FormatDate from '../components/FormatDate';
 const ButtonMoment = ({
   onPress,  
   moment, 
-  size = 15, 
+  size = 16, 
   style,
   disabled = false,
   sameStyleForDisabled = false, // New prop to control style
@@ -57,10 +57,9 @@ const ButtonMoment = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    borderBottomWidth: .2,
+  container: { 
     borderRadius: 30,
-    padding: 12,  
+    padding: 16,  
     borderColor: '#ccc',
     flexDirection: 'column', 
     
@@ -83,6 +82,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular', 
     margin: 8, 
     flexShrink: 1,  // Allows the text to shrink if needed
+    lineHeight: 24,
   },
   textWrapper: {
     flex: 1, 

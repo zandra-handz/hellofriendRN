@@ -34,7 +34,7 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   const borderRadius = 34;
 
   const buttonHeight = 130;
-  const headerHeight = 150;
+  const headerHeight = 140;
 
   const paddingAboveTopButton = 16;  
 

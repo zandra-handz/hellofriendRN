@@ -82,7 +82,7 @@ const ButtonBottomActionBaseSmall = ({
         height: height,
         padding: 0,
         paddingHorizontal: 10,
-        marginBottom: 2,
+        marginBottom: 1,
         borderRadius: radius,
         alignItems: 'center',
         justifyContent: 'flex-start',
@@ -128,11 +128,23 @@ const ButtonBottomActionBaseSmall = ({
           }}
         />
       )}
-      {showShape && !ShapeSvg && !disabled && (
+      {showShape && !ShapeSvg && !disabled && !selected && (
         <AddOutlineSvg
           width={shapeWidth}
           height={shapeHeight}
-          color={'white'}
+          color={calculatedThemeColors.fontColorSecondary}
+          style={{
+            position: 'absolute',
+            ...getShapeStyle(), 
+            top: shapePositionValueVertical,
+          }}
+        />
+      )}
+            {showShape && !ShapeSvg && !disabled && selected  &&(
+        <AddOutlineSvg
+          width={shapeWidth}
+          height={shapeHeight}
+          color={calculatedThemeColors.fontColor}
           style={{
             position: 'absolute',
             ...getShapeStyle(), 
@@ -171,7 +183,7 @@ const ButtonBottomActionBaseSmall = ({
       <View style={{ flexDirection: 'row', marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
       <Text
         style={[
-          textStyles(labelFontSize, disabled ? 'white' : labelColor), // White label color if disabled
+          textStyles(labelFontSize, disabled ? 'white' : (selected ? calculatedThemeColors.fontColor : calculatedThemeColors.fontColorSecondary )), // White label color if disabled
           { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
         ]}
         numberOfLines={1}          

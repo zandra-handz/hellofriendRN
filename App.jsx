@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import TopLevelNavigationHandler from './TopLevelNavigationHandler'; // Adjust import path if necessary
-import { Alert, StatusBar } from 'react-native';
+import { Alert, StatusBar, useColorScheme } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
@@ -44,6 +44,9 @@ import HeaderPickCategory from './components/HeaderPickCategory';
 import HeaderFriendFocus from './components/HeaderFriendFocus';
 import HeaderBase from './components/HeaderBase';
 
+
+import PhoneStatusBar from './components/PhoneStatusBar';
+
 async function loadFonts() {
   await Font.loadAsync({
     'Poppins-Light': require('./assets/fonts/Poppins-Light.ttf'),
@@ -71,15 +74,18 @@ export default function App() {
         return () => notificationSubscription.remove();
   }, []);
 
+
+  const colorScheme = useColorScheme();
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
-      
+    <GestureHandlerRootView style={{ flex: 1 }}> 
       <AuthUserProvider>
         <GlobalStyleProvider>
+        
           <UpcomingHelloesProvider>
             <FriendListProvider>
               <SelectedFriendProvider>
+              <PhoneStatusBar />
                 <CapsuleListProvider>
                   <ImageListProvider>
                     <LocationListProvider>
