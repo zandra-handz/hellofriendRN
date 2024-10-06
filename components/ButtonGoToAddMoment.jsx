@@ -1,17 +1,18 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import MessageAddSolidSvg from '../assets/svgs/message-add-solid.svg';
- 
+import { useSelectedFriend } from '../context/SelectedFriendContext'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
 //AddMomentFriendFixed
 
 
 const ButtonGoToAddMoment = ({   
-  buttonColor="white",
+  buttonColor="black",
 }) => {
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
+  const { calculatedThemeColors } = useSelectedFriend();
 
   const viewSvg = true;
 
@@ -22,12 +23,12 @@ const ButtonGoToAddMoment = ({
 
   return ( 
     <View style={styles.container}> 
-      <TouchableOpacity onPress={handleGoToMomentScreen} style={[styles.circleButton, themeStyles.footerIcon, { backgroundColor: buttonColor}]}> 
+      <TouchableOpacity onPress={handleGoToMomentScreen} style={[styles.circleButton, themeStyles.footerIcon, { backgroundColor: calculatedThemeColors.darkColor}]}> 
         {!viewSvg && (  
         <Text style={[styles.controlButtonText, themeStyles.footerText]}>Add moment</Text>
         )}
         {viewSvg && (  
-        <MessageAddSolidSvg width={48} height={48} color="white" />
+        <MessageAddSolidSvg width={48} height={48} color={calculatedThemeColors.fontColor} />
         )}
       </TouchableOpacity>  
       </View> 

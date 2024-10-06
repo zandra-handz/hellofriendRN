@@ -6,6 +6,7 @@ import { GOOGLE_API_KEY } from '@env';
 import ButtonDirections from '../components/ButtonDirections';
 import SelectAddressModalVersion from '../components/SelectAddressModalVersion';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 // Initialize Geocoder with your Google Maps API key
 Geocoder.init(GOOGLE_API_KEY);
@@ -15,6 +16,7 @@ const SelectorAddressBase = ({ addresses, currentAddressOption, onAddressSelect,
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [showAddressOptions, setShowAddressOptions] = useState(false);
   const [localAddressOptions, setLocalAddressOptions] = useState([]);
+  const { themeStyles } = useGlobalStyle();
 
   useEffect(() => {
     if (addresses && addresses.length > 0) {
@@ -72,8 +74,8 @@ const SelectorAddressBase = ({ addresses, currentAddressOption, onAddressSelect,
         <View style={{flexDirection: 'row',  alignContent: 'center'}}>
         <Text style={styles.cardTitle}>{contextTitle}</Text>
           {currentAddressOption && ( 
-          <TouchableOpacity style={{marginHorizontal: 10, marginTop: 4 }} onPress={handleUseCurrentLocation}>
-            <Text style={{fontFamily: 'Poppins-Regular', fontSize: 12 }}>
+          <TouchableOpacity style={{marginHorizontal: 10, marginTop:3 }} onPress={handleUseCurrentLocation}>
+            <Text style={{fontFamily: 'Poppins-Regular', fontSize: 13 }}>
               Use current location?
             </Text>
           </TouchableOpacity>
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 8,
     height: 50,
-    width: '100%', 
+    width: '100%',  
   },
   cardTitle: {
     fontSize: 16,
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
   },
   addressText: {
     fontSize: 16,
-    marginBottom: 20,
+    marginBottom: 20, 
   },
   searchIconContainer: {
     flexDirection: 'row',
@@ -190,7 +192,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: '#ddd',
     borderBottomWidth: 1,
-    paddingLeft: 10,
+    paddingLeft: 10, 
   },
   closeButton: {
     marginTop: 20,

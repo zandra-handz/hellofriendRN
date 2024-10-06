@@ -21,7 +21,7 @@ const ScreenAddImage = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
-        padding: 4,
+        padding: 0,
     }, 
 });
 

@@ -60,8 +60,7 @@ const ScreenAddHello = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,  
-        justifyContent: 'space-between',
-        paddingHorizontal: 4, 
+        justifyContent: 'space-between', 
     }, 
 });
 

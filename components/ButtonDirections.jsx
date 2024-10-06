@@ -13,9 +13,9 @@ const ButtonDirections = ({ address, size = 16, style }) => {
 
   return (
     <TouchableOpacity onPress={handlePress} style={[styles.container, style]}>
-      <FontAwesome5 name="map-marker-alt" size={size} color={themeStyles.modalIconColor.color} />
+      <FontAwesome5 name="map-marker-alt" size={size} color={'black'} />
       <Text
-        style={[styles.address, { fontSize: size, color: themeStyles.genericText.color}]}
+        style={[styles.address, { fontSize: size, color: 'black'}]}
         numberOfLines={1}
         ellipsizeMode="tail"
       >
