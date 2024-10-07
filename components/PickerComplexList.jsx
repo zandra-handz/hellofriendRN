@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
+
 import AlertSingleInput from './AlertSingleInput';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 

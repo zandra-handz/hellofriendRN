@@ -13,9 +13,18 @@ const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    if (selectedFriend && calculatedThemeColors.lightColor !== themeStyles.genericTextBackground.backgroundColor) {
+
     setProfileIconColor([calculatedThemeColors.lightColor, calculatedThemeColors.darkColor]);
+    
+    } else {
+      console.log(themeStyles.genericTextBackground.backgroundColor);
+      console.log(calculatedThemeColors.lightColor);
+      setProfileIconColor([themeStyles.genericText.color, themeStyles.genericText.color]);
+    }
     renderProfileIcon();
-  }, [selectedFriend, calculatedThemeColors]);
+
+  }, [selectedFriend, themeStyles, calculatedThemeColors]);
 
   const navigateToFriendFocus = () => {
     if (selectedFriend) {
@@ -38,8 +47,7 @@ const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
   };
 //to restore gradient: [1] - [0]
   const renderProfileIcon = () => {
-    if (selectedFriend) {
-      if (Array.isArray(profileIconColor) && profileIconColor.length === 2) {
+    if (Array.isArray(profileIconColor) && profileIconColor.length === 2) {
         return (
           <View style={{ flexDirection: 'row' }}>
             
@@ -49,10 +57,7 @@ const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
             </Text>
           </View>
         );
-      }
-    } else {
-      return <ProfileCircleSvg width={32} height={32} color={themeStyles.genericText.color} />;
-    }
+      } 
   };
 
   return (

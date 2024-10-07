@@ -12,7 +12,8 @@ const ItemLocationTempMulti = ({
     singleLineScroll = true,
     width = 70,
     height = 70,
-    columns = 4, 
+    containerHeight = 80,
+    columns = 3, 
     showBigSvg = false,
 }) => {
     const { tempLocationList } = useLocationList();
@@ -31,7 +32,7 @@ const ItemLocationTempMulti = ({
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {height: containerHeight}]}>
 
             <Text style={styles.headerText}>Recently viewed</Text>
             
@@ -43,6 +44,7 @@ const ItemLocationTempMulti = ({
                 keyExtractor={(location) => location.id.toString()}
                 renderItem={({ item: location }) => (
                     <View style={{marginRight: 20}}>
+                    {horizontal && (
                     <CardMicroLocation
                         location={location}
                         width={width}
@@ -51,6 +53,8 @@ const ItemLocationTempMulti = ({
                         onPress={() => openModal(location)}
                         SvgComponent={LocationOutlineSvg}
                     />
+                    )}
+                    
                  
                     </View>
                 )}
@@ -76,8 +80,7 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 2,
         backgroundColor: 'transparent',
-        minHeight: 2,
-        height: 100,
+        minHeight: 2, 
     },
     headerText: {
         color: 'black',
@@ -93,6 +96,7 @@ const styles = StyleSheet.create({
     },
     imageRow: {
         justifyContent: 'space-between',
+        width: '100%',
     }, 
 });
 

@@ -171,7 +171,7 @@ const lightThemeStyles = StyleSheet.create({
         elevation: 10,
     },
     genericTextBackground: {
-        backgroundColor: 'white',
+        backgroundColor: '#ffffff',
     },
     genericTextBackgroundShadeTwo: {
         backgroundColor: '#ccc',
@@ -324,7 +324,7 @@ const darkThemeStyles = StyleSheet.create({
         elevation: 10,
     },
     genericTextBackground: {
-        backgroundColor: 'black',
+        backgroundColor: '#000000',
     },
     genericTextBackgroundShadeTwo: {
         backgroundColor: '#2B2B2B',

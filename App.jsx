@@ -43,6 +43,7 @@ import HeaderWriteMoment from './components/HeaderWriteMoment';
 import HeaderPickCategory from './components/HeaderPickCategory';
 import HeaderFriendFocus from './components/HeaderFriendFocus';
 import HeaderBase from './components/HeaderBase';
+import HeaderLocations from './components/HeaderLocations';
 
 
 import PhoneStatusBar from './components/PhoneStatusBar';
@@ -199,7 +200,7 @@ export const Layout = () => {
                 component={ScreenLocations}
                 options={{
                   headerShown: true,
-                  header: () => <HeaderBase headerTitle='All locations' />,
+                  header: () => <HeaderLocations />,
                 }}
               />
               <Stack.Screen

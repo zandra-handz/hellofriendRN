@@ -8,13 +8,14 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import InfoOutline from '../assets/svgs/info-outline.svg';
 import { useNavigation } from '@react-navigation/native';
+import SearchBar from '../components/SearchBar';
 
 
 
-const HeaderBase = ({
+const HeaderBaseWithSearch = ({
     headerTitle='Header title here',
-    rightIcon='info',
-    rightIconOnPress,
+    componentData,
+    dataFieldToSearch, 
 }) => {
 
     const { authUserState } = useAuthUser();
@@ -30,8 +31,7 @@ const HeaderBase = ({
     <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: calculatedThemeColors.darkColor}]}>
       <View style={{flexDirection: 'row', width: '60%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
         <TouchableOpacity onPress={handleNavigateBack}>
-        <ArrowLeftCircleOutline height={30} width={30}   color={calculatedThemeColors.fontColor}/>
-
+            <ArrowLeftCircleOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
         </TouchableOpacity> 
         <Text 
   style={[
@@ -48,7 +48,9 @@ const HeaderBase = ({
 
 
       </View> 
-      <InfoOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
+      {componentData && (
+      <SearchBar data={componentData} searchKey={dataFieldToSearch} />
+      )}
       
     </View>
   );
@@ -76,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeaderBase;
+export default HeaderBaseWithSearch;

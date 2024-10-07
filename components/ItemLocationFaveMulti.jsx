@@ -11,8 +11,9 @@ const ItemLocationFaveMulti = ({
     singleLineScroll = false,
     width = 70,
     height = 70,
-    columns = 4, 
+    columns = 3, 
     showBigSvg = false,
+    containerHeight = 150,
 }) => {
     const { faveLocationList } = useLocationList();
     const [selectedLocation, setSelectedLocation] = useState(null);
@@ -29,7 +30,7 @@ const ItemLocationFaveMulti = ({
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, {height: containerHeight}]}>
             <Text style={styles.headerText}>Pinned</Text>
             <FlashList
                 data={faveLocationList}
@@ -67,10 +68,8 @@ const ItemLocationFaveMulti = ({
 const styles = StyleSheet.create({
     container: {  
         width: '100%',
-        paddingHorizontal: 2,
-        backgroundColor: 'transparent',
-        minHeight: 2,
-        height: 150,
+        paddingHorizontal: 2, 
+        minHeight: 2, 
     },
     headerText: {
         color: 'black',
