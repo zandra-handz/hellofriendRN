@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import CardMicroLocation from '../components/CardMicroLocation';
 import { useLocationList } from '../context/LocationListContext';
-import { FlashList } from "@shopify/flash-list";
+import { useSelectedFriend } from '../context/SelectedFriendContext';
+
+import { FlashList } from '@shopify/flash-list';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
+
+import ButtonLocation from '../components/ButtonLocation'; 
 import ItemViewLocation from '../components/ItemViewLocation';
 
 const ItemLocationFaveMulti = ({ 
@@ -12,43 +16,42 @@ const ItemLocationFaveMulti = ({
     width = 70,
     height = 70,
     columns = 3, 
-    showBigSvg = false,
-    containerHeight = 150,
+    showBigSvg = false, 
 }) => {
-    const { faveLocationList } = useLocationList();
-    const [selectedLocation, setSelectedLocation] = useState(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const { friendDashboardData } = useSelectedFriend();
+    const { locationList, faveLocationList, populateFaveLocationsList } = useLocationList();
+    const [isFaveLocationReady, setIsFaveLocationReady] = useState(false);
 
-    const openModal = (location) => {
-        setSelectedLocation(location);
-        setIsModalVisible(true);
-    };
+    useEffect(() => {
+        if (friendDashboardData && friendDashboardData.length > 0) {
+            const favoriteLocationIds = friendDashboardData[0]?.friend_faves?.locations || [];
+            populateFaveLocationsList(favoriteLocationIds);
+            setIsFaveLocationReady(true);
+        }
+    }, [locationList, friendDashboardData]);
 
-    const closeModal = () => { 
-        setSelectedLocation(null);
-        setIsModalVisible(false);
-    };
+  
 
     return (
-        <View style={[styles.container, {height: containerHeight}]}>
-            <Text style={styles.headerText}>Pinned</Text>
+        <View style={[styles.container]}>
+            {isFaveLocationReady && faveLocationList.length > 0 && (
+            <>
+            <Text style={styles.headerText}>Favorites</Text>
             <FlashList
                 data={faveLocationList}
                 horizontal={horizontal && singleLineScroll}
                 keyExtractor={(location) => location.id.toString()}
                 renderItem={({ item: location }) => (
-                    <View style={{marginRight: 20}}>
-                    <CardMicroLocation
-                        location={location}
-                        width={width}
-                        height={height}
-                        showBigSvg={showBigSvg}
-                        onPress={() => openModal(location)}
-                        SvgComponent={LocationHeartSolidSvg}
+                    <>
+                   
+                    {!horizontal && (
+                    <ButtonLocation 
+                        location={location}    
+                        textColor={'pink'}
                         iconColor={'pink'}
-                        colorScheme={'pink'}
-                    />
-                    </View>
+                        icon={LocationHeartSolidSvg} />
+                    )}
+                    </>
                 )}
                 numColumns={horizontal && !singleLineScroll ? columns : 1}
                 columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
@@ -58,8 +61,8 @@ const ItemLocationFaveMulti = ({
                 scrollIndicatorInsets={{ right: 1 }}
             />
 
-            {isModalVisible && (
-                <ItemViewLocation location={selectedLocation} onClose={closeModal} />
+
+            </>
             )}
         </View>
     );
@@ -70,6 +73,7 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 2, 
         minHeight: 2, 
+        height: '100%',
     },
     headerText: {
         color: 'black',

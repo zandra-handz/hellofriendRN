@@ -5,6 +5,8 @@ import { useLocationList } from '../context/LocationListContext';
 import { FlashList } from "@shopify/flash-list";
 import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
 import ItemViewLocation from '../components/ItemViewLocation';
+import ButtonLocation from '../components/ButtonLocation'; 
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 
 const ItemLocationTempMulti = ({ 
@@ -17,6 +19,7 @@ const ItemLocationTempMulti = ({
     showBigSvg = false,
 }) => {
     const { tempLocationList } = useLocationList();
+    const { themeStyles } = useGlobalStyle();
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
  
@@ -32,12 +35,13 @@ const ItemLocationTempMulti = ({
     };
 
     return (
-        <View style={[styles.container, {height: containerHeight}]}>
+        <View style={[styles.container]}>
 
-            <Text style={styles.headerText}>Recently viewed</Text>
+            <Text style={[styles.headerText, themeStyles.subHeaderText]}>Recently viewed</Text>
             
             {tempLocationList.length > 0 && (
             <>   
+
             <FlashList
                 data={tempLocationList}
                 horizontal={horizontal && singleLineScroll}
@@ -53,6 +57,13 @@ const ItemLocationTempMulti = ({
                         onPress={() => openModal(location)}
                         SvgComponent={LocationOutlineSvg}
                     />
+                    )}
+                        {!horizontal && (
+                        <ButtonLocation 
+                            location={location} 
+                            onPress={() => openModal(location)}  
+                            icon={LocationOutlineSvg} />
+
                     )}
                     
                  
@@ -81,9 +92,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 2,
         backgroundColor: 'transparent',
         minHeight: 2, 
+        height: '100%',
     },
-    headerText: {
-        color: 'black',
+    headerText: { 
         fontFamily: 'Poppins-Bold',
         fontSize: 16,
         marginTop: 4,

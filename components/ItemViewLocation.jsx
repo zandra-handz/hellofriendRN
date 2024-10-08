@@ -8,52 +8,51 @@ import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCom
 import { useLocationList } from '../context/LocationListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const ItemViewLocation = ({ location, onClose }) => {
-  const { themeStyles } = useGlobalStyle();
-  const { clearAdditionalDetails, selectedLocation, setSelectedLocation } = useLocationList();
-  const [isModalVisible, setIsModalVisible] = useState(true);
-  const [isTemp, setIsTemp] = useState(false);
+const ItemViewLocation = ({ location, onClose, isModalVisible }) => {
+    const { themeStyles } = useGlobalStyle();
+    const { clearAdditionalDetails, selectedLocation, setSelectedLocation } = useLocationList();
+    const [isTemp, setIsTemp] = useState(false);
 
-  useEffect(() => {
-    if (location) {
-      clearAdditionalDetails();
-      setSelectedLocation(location);
-      console.log('Location data:', location);
-    }
-  }, [location]);
+    useEffect(() => {
+        if (location) {
+            clearAdditionalDetails();
+            setSelectedLocation(location);
+            console.log('Location data:', location);
+        }
+    }, [location]);
 
-  useEffect(() => {
-    if (location && location.id) {
-      setIsTemp(String(location.id).startsWith('temp'));
-    }
-  }, [location]); 
+    useEffect(() => {
+        if (location && location.id) {
+            setIsTemp(String(location.id).startsWith('temp'));
+        }
+    }, [location]); 
 
-  const closeModal = () => {
-    setIsModalVisible(false); 
-    onClose();
-  }; 
+    const closeModal = () => {
+        onClose();
+    }; 
 
-  return (
-    <AlertLocation
-      isModalVisible={isModalVisible}
-      toggleModal={closeModal}
-      modalContent={
-        location ? (
-          <View style={[styles.modalContainer, themeStyles.genericTextBackground]}> 
-            {selectedLocation && ( 
-              <ItemViewLocationDetails location={location} unSaved={isTemp} />
-            )}
-            <View style={styles.buttonContainer}>
-              <ButtonCalculateAndCompareTravel />
-              <ButtonSendDirectionsToFriend />
-            </View>
-          </View>
-        ) : null
-      }
-      modalTitle={location ? "View location" : null}
-    /> 
-  );
+    return (
+        <AlertLocation
+            isModalVisible={isModalVisible} // Use the passed prop here
+            toggleModal={closeModal}
+            modalContent={
+                location ? (
+                    <View style={[styles.modalContainer, themeStyles.genericTextBackground]}> 
+                        {selectedLocation && ( 
+                            <ItemViewLocationDetails location={location} unSaved={isTemp} />
+                        )}
+                        <View style={styles.buttonContainer}>
+                            <ButtonCalculateAndCompareTravel />
+                            <ButtonSendDirectionsToFriend />
+                        </View>
+                    </View>
+                ) : null
+            }
+            modalTitle={location ? "View location" : null}
+        /> 
+    );
 };
+
 
 const styles = StyleSheet.create({
   modalContainer: {

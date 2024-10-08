@@ -1,42 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import ItemViewLocation from '../components/ItemViewLocation';
 
-
-const ButtonLocation = ({ location, onPress, icon: Icon, iconSize = 34 }) => {
-
+const ButtonLocation = ({ location, icon: Icon, iconSize = 34 }) => {
   const { themeStyles } = useGlobalStyle();
-  const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
 
-  const renderOptionItem = (location) => {
-    return (
+  const [ isModalVisible, setIsModalVisible ] = useState(false);
+
+  const toggleModal = () => {
+    console.log('modal in button location toggled');
+    console.log('location in button location: ', location);
+    setIsModalVisible(true);
+
+
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+
+  };
+
+
+  return (
+    <View>
       <TouchableOpacity
         style={styles.optionButton}
-        onPress={onPress}
+        onPress={toggleModal}
       >
         {Icon && (
           <View style={styles.iconContainer}>
             <Icon width={iconSize} height={iconSize} color={themeStyles.genericText.color} />
           </View>
         )}
-        <View style={styles.textContainer}> 
-          {typeof location === 'object' && location !== null ? (
-            <>
-              <Text style={[styles.optionTitleText, themeStyles.genericText]}>{location.title}</Text>
-              <Text style={[styles.optionText, themeStyles.genericText]}>{location.address}</Text>
-            </>
-          ) : ( 
-            <Text style={[styles.optionText, themeStyles.genericText]}>{location}</Text>
-          )}
+        <View style={styles.textContainer}>
+          <Text style={[styles.optionTitleText, themeStyles.genericText]}>{location.title}</Text>
+          <Text style={[styles.optionText, themeStyles.genericText]}>{location.address}</Text>
         </View>
       </TouchableOpacity>
-    );
-  };
-
-  return (
-    <View> 
-      {renderOptionItem(location)}
+      
+      {isModalVisible && (
+        <ItemViewLocation 
+          isModalVisible={true}
+          location={location} 
+          onClose={closeModal} 
+        />
+      )}
     </View>
   );
 };
@@ -64,7 +74,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginRight: 10,
     justifyContent: 'center',
-    
   },
   textContainer: {
     flex: 1,

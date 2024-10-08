@@ -6,6 +6,7 @@ import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import ItemViewLocation from '../components/ItemViewLocation';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height = 160 }) => {
@@ -39,6 +40,7 @@ const ItemLocationFavesHorizontal = ({ containerWidth=260, width = 160, height =
     return (
         <View style={[styles.container, {width: containerWidth}]}>
             {isFaveLocationReady && faveLocationList.length > 0 && (
+            
             <FlashList
             data={faveLocationList}
             horizontal

@@ -144,10 +144,13 @@ export const LocationListProvider = ({ children }) => {
     setAdditionalDetails(null);
   };
 
-  const populateFaveLocationsList = (locationIds) => {
+const populateFaveLocationsList = (locationIds) => {
     const favoriteLocations = locationList.filter(location => locationIds.includes(location.id));
-    setFaveLocationList(favoriteLocations);
-  };
+    if (JSON.stringify(faveLocationList) !== JSON.stringify(favoriteLocations)) {
+        setFaveLocationList(favoriteLocations);
+    }
+};
+
 
   const addLocationToFaves = (locationId) => {
     const location = locationList.find(loc => loc.id === locationId);

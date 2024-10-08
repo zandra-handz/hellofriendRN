@@ -8,7 +8,11 @@ const HeaderLocations = () => {
         const { locationList } = useLocationList();
 
         return(
+            <> 
+            {locationList && ( 
             <HeaderBaseWithSearch headerTitle="Locations" componentData={locationList} dataFieldToSearch={'title'} />
+            )}
+            </>
         );
 
 };

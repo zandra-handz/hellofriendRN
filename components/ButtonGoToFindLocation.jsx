@@ -69,8 +69,7 @@ const ButtonGoToFindLocation = () => {
           <MapSearchOutlineSvg width={32} height={32} color={calculatedThemeColors.fontColor} />
         </TouchableOpacity>
       </Animated.View>
-
-      {/* Main Button */}
+ 
       <TouchableOpacity
         onPress={toggleButtons}
         style={[
@@ -103,7 +102,7 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f', // Optional: set a background color
+    backgroundColor: '#f0f',  
   },
   smallCircleButton: {
     position: 'absolute',
@@ -112,7 +111,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ccc', // Customize color for small buttons
+    backgroundColor: '#ccc',  
   },
 });
 

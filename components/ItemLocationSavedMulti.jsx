@@ -6,8 +6,7 @@ import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';
 import ItemViewLocation from '../components/ItemViewLocation';
-import ButtonLocation from '../components/ButtonLocation';
-import SearchBar from '../components/SearchBar';
+import ButtonLocation from '../components/ButtonLocation'; 
 
 const ItemLocationSavedMulti = ({ 
     horizontal = true,
@@ -16,8 +15,7 @@ const ItemLocationSavedMulti = ({
     width = 70,
     height = 70,
     columns = 3, 
-    showBigSvg = false,
-    containerHeight = 220, 
+    showBigSvg = false, 
 
 }) => {
     const { savedLocationList } = useLocationList();
@@ -37,14 +35,14 @@ const ItemLocationSavedMulti = ({
     };
 
     return (
-        <View style={[styles.container, {height: containerHeight}]}>
+        <View style={[styles.container, {height: '100%'}]}>
             <Text style={[styles.headerText, themeStyles.genericText]}>Saved</Text>
             <FlashList
                 data={savedLocationList}
                 horizontal={horizontal && singleLineScroll}
                 keyExtractor={(location) => location.id.toString()}
                 renderItem={({ item: location }) => (
-                    <View style={{marginRight: 20}}>
+                    <>
                     {horizontal && ( 
                         <CardMicroLocation
                             location={location}
@@ -61,12 +59,10 @@ const ItemLocationSavedMulti = ({
                         <ButtonLocation 
                             location={location} 
                             onPress={() => openModal(location)} 
-                            textColor={titleColor}
-                            iconColor={titleColor}
                             icon={LocationSolidSvg} />
 
                     )}
-                    </View>
+                    </>
                 )}
                 numColumns={horizontal && !singleLineScroll ? columns : 1}
                 columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
@@ -89,6 +85,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         width: '100%',
         minHeight: 2,
+        height: '100%',
     },
     headerText: {
         color: 'black',

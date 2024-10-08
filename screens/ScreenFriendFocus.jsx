@@ -102,22 +102,7 @@ const ScreenFriendFocus = () => {
           <View style={styles.sectionsContainer}> 
             <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
           
-            { showOriginalHeader && ( 
-            <View style={{ marginTop: 8, width: '0%',height: '0%', marginHorizontal: buttonMargin }}>
-              <ComposerFriendLocations 
-                topIconSize={topIconSize} 
-                bottomIconSize={bottomIconSize} 
-                buttonHeight={84} 
-                buttonRadius={radius} 
-                inactiveIconColor={inactiveIconColor} 
-                oneBackgroundColor={oneBackgroundColor}
-                headerHeight={30} 
-                includeHeader={false} 
-                headerInside={false} 
-                headerText={'PINNED'} 
-              />
-            </View>
-            )}
+
             </View>
             
 

@@ -6,7 +6,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
-import InfoOutline from '../assets/svgs/info-outline.svg';
+
 import { useNavigation } from '@react-navigation/native';
 import SearchBar from '../components/SearchBar';
 
