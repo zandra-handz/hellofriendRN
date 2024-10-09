@@ -10,16 +10,15 @@ import ButtonDirections from '../components/ButtonDirections';
 import ButtonSaveLocation from '../components/ButtonSaveLocation';
 import StylingRating from '../components/StylingRating';
 
-const ItemViewLocationDetails = ({ location, unSaved }) => {
+const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
   const { selectedLocation, additionalDetails, loadingAdditionalDetails, updateAdditionalDetails } = useLocationList();
   const [refreshing, setRefreshing] = useState(false);
   const { themeStyles } = useGlobalStyle();
 
   useEffect(() => {
     console.log('location passed in to location details: ', location);
-
   }, [location]);
-  
+
   const handleRefresh = () => {
     if (selectedLocation && selectedLocation.id) {
       setRefreshing(true);
@@ -27,14 +26,16 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
         setRefreshing(false);
       });
     }
-
   };
+
+  // Check if location is null or undefined and safely access title
+  const title = additionalDetails?.name || (location && location.title ? location.title : "Location not available");
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={[styles.itemTitle, {color: themeStyles.genericText.color}]}>
-          {additionalDetails ? additionalDetails.name : location.title}
+        <Text style={[styles.itemTitle, { color: themeStyles.genericText.color }]}>
+          {title}
         </Text>
         <ButtonSaveLocation saveable={unSaved} />
       </View>
@@ -79,7 +80,6 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
           </View>
 
           <SectionLocationImages photos={additionalDetails.photos} />
-
           <SectionCustomerReviews reviews={additionalDetails.reviews} />
         </>
       ) : (
@@ -89,7 +89,7 @@ const ItemViewLocationDetails = ({ location, unSaved }) => {
       )}
     </View>
   );
-};
+}; 
 
 const styles = StyleSheet.create({
   container: {

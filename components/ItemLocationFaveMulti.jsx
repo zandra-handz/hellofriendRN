@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import CardMicroLocation from '../components/CardMicroLocation';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import { FlashList } from '@shopify/flash-list';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 
-import ButtonLocation from '../components/ButtonLocation'; 
-import ItemViewLocation from '../components/ItemViewLocation';
+import ButtonLocation from '../components/ButtonLocation';  
 
 const ItemLocationFaveMulti = ({ 
     horizontal = true,
@@ -18,8 +18,10 @@ const ItemLocationFaveMulti = ({
     columns = 3, 
     showBigSvg = false, 
 }) => {
+    const { themeStyles } = useGlobalStyle();
     const { friendDashboardData } = useSelectedFriend();
     const { locationList, faveLocationList, populateFaveLocationsList } = useLocationList();
+    
     const [isFaveLocationReady, setIsFaveLocationReady] = useState(false);
 
     useEffect(() => {
@@ -36,7 +38,7 @@ const ItemLocationFaveMulti = ({
         <View style={[styles.container]}>
             {isFaveLocationReady && faveLocationList.length > 0 && (
             <>
-            <Text style={styles.headerText}>Favorites</Text>
+            <Text style={[styles.headerText, themeStyles.subHeaderText]}>Favorites</Text>
             <FlashList
                 data={faveLocationList}
                 horizontal={horizontal && singleLineScroll}

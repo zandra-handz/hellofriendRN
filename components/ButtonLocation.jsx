@@ -1,33 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import ItemViewLocation from '../components/ItemViewLocation';
 
-const ButtonLocation = ({ location, icon: Icon, iconSize = 34 }) => {
+const ButtonLocation = ({ location, onPress, icon: Icon, iconSize = 34 }) => {
   const { themeStyles } = useGlobalStyle();
-
-  const [ isModalVisible, setIsModalVisible ] = useState(false);
-
-  const toggleModal = () => {
-    console.log('modal in button location toggled');
-    console.log('location in button location: ', location);
-    setIsModalVisible(true);
-
-
-  };
-
-  const closeModal = () => {
-    setIsModalVisible(false);
-
-  };
-
 
   return (
     <View>
       <TouchableOpacity
         style={styles.optionButton}
-        onPress={toggleModal}
+        onPress={onPress} // Call the passed in onPress function
       >
         {Icon && (
           <View style={styles.iconContainer}>
@@ -39,14 +21,6 @@ const ButtonLocation = ({ location, icon: Icon, iconSize = 34 }) => {
           <Text style={[styles.optionText, themeStyles.genericText]}>{location.address}</Text>
         </View>
       </TouchableOpacity>
-      
-      {isModalVisible && (
-        <ItemViewLocation 
-          isModalVisible={true}
-          location={location} 
-          onClose={closeModal} 
-        />
-      )}
     </View>
   );
 };

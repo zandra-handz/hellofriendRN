@@ -86,6 +86,7 @@ export const LocationListProvider = ({ children }) => {
   useEffect(() => {
     if (locationList.length > 0) {
       setSelectedLocation(locationList[0]);
+      console.log('selected location set in context');
     }
   }, [locationList]);
 

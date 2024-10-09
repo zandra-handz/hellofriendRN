@@ -174,13 +174,14 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
                     />
                 </View>
             </Modal>
-
+            {selectedLocation && ( 
             <ModalAddNewLocation 
                 isVisible={isModalVisible}
                 close={closeModal}
                 title={selectedLocation.title}
                 address={selectedLocation.address}
             />
+            )}
  
            
             <AlertConfirm

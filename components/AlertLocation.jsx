@@ -12,6 +12,7 @@ const AlertLocation = ({ isModalVisible, toggleModal, modalContent, modalTitle }
   // Define a function to handle closing the modal and resetting the location
   const handleCloseModal = () => {
     setSelectedLocation(null); // Reset the selected location
+    console.log('handleCloseModal in AlertLocation');
     toggleModal(); // Toggle the modal visibility
   };
 

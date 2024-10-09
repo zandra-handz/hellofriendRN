@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import AlertImage from '../components/AlertImage';
+import { View, StyleSheet } from 'react-native'; 
 import AlertLocation from '../components/AlertLocation';
 
-import { addToFriendFavesLocations} from '../api'; 
 
 import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
 import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
@@ -13,7 +11,7 @@ import FooterActionButtons from '../components/FooterActionButtons';
 import { useLocationList } from '../context/LocationListContext';
  
 const ItemViewLocationSuggested = ({ onClose }) => {
-  const [ setIsEditing] = useState(false);
+  const [ isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);  
   const { selectedLocation } = useLocationList();
   

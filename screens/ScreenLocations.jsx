@@ -9,6 +9,8 @@ import ItemLocationFaveMulti from '../components/ItemLocationFaveMulti';
 import ItemLocationSavedMulti from '../components/ItemLocationSavedMulti';
 import ItemLocationTempMulti from '../components/ItemLocationTempMulti';
 import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
+import CustomTabBar from '../components/CustomTabBar';
+
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useLocationList } from '../context/LocationListContext';
@@ -58,34 +60,32 @@ const ScreenLocations = ({ route, navigation }) => {
       {isLocationListReady && (
         <>
           <Tab.Navigator
-            screenOptions={({ route }) => ({
-              tabBarLabelStyle: { 
-                fontSize: 15, 
-                fontFamily: 'Poppins-Bold',
-                textTransform: 'capitalize',
-              },
-              tabBarStyle: { 
-                backgroundColor: calculatedThemeColors.darkColor, 
-                elevation: 0, 
-                paddingTop: 10,
-                shadowOpacity: 0, 
-                borderTopWidth: 0,
-              },
-              tabBarActiveTintColor: calculatedThemeColors.fontColor,
-              tabBarInactiveTintColor: calculatedThemeColors.fontColor,
-              tabBarIcon: ({ color, size }) => {
-                let iconName;
-                if (route.name === `${selectedFriend.name}`) {
-                  iconName = 'star'; // Example icon for Favorites
-                } else if (route.name === 'Others') {
-                  iconName = 'folder'; // Example icon for Saved Locations
-                } else if (route.name === 'Recent') {
-                  iconName = 'time'; // Example icon for Recently Viewed
-                }
-                return <Ionicons name={iconName} size={size} color={color} />;
-              },
-            })}
-          >
+          tabBar={props => <CustomTabBar {...props} />}
+          screenOptions={({ route }) => ({
+            tabBarStyle: {
+              backgroundColor: calculatedThemeColors.darkColor,
+              position: 'absolute',
+              flexDirection: 'row',
+              top: 0, 
+              elevation: 0,
+              shadowOpacity: 0,
+              borderTopWidth: 0, 
+            },
+            tabBarActiveTintColor: calculatedThemeColors.fontColor,
+            tabBarInactiveTintColor: calculatedThemeColors.fontColor,
+            tabBarIcon: ({ color }) => {
+              let iconName;
+              if (route.name === `${selectedFriend.name}`) {
+                iconName = 'star';
+              } else if (route.name === 'Others') {
+                iconName = 'location';
+              } else if (route.name === 'Recent') {
+                iconName = 'time';
+              }
+              return <Ionicons name={iconName} size={18} color={calculatedThemeColors.fontColor} />;
+            },
+          })}
+        >
             <Tab.Screen name={`${selectedFriend.name}`} component={FavoritesScreen} />
             <Tab.Screen name="Others" component={SavedLocationsScreen} />
             <Tab.Screen name="Recent" component={RecentlyViewedScreen} />

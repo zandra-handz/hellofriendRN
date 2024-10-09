@@ -245,6 +245,10 @@ const lightThemeStyles = StyleSheet.create({
         borderColor: 'black',
         
     },
+    headerContainerNoBorder: {
+        backgroundColor: 'white', 
+        
+    },
     gradientContainer: {
         ...StyleSheet.absoluteFillObject,
         flex: 1,
@@ -399,6 +403,10 @@ const darkThemeStyles = StyleSheet.create({
         backgroundColor: 'black',
         borderBottomWidth: .4,
         borderColor: '#ccc',
+    },
+    headerContainerNoBorder: {
+        backgroundColor: 'black', 
+        
     },
 
     gradientContainer: {

@@ -28,7 +28,7 @@ const HeaderBaseWithSearch = ({
       };
 
   return (
-    <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: calculatedThemeColors.darkColor}]}>
+    <View style={[styles.headerContainer, themeStyles.headerContainerNoBorder, {backgroundColor: calculatedThemeColors.darkColor}]}>
       <View style={{flexDirection: 'row', width: '60%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
         <TouchableOpacity onPress={handleNavigateBack}>
             <ArrowLeftCircleOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',  
     justifyContent: 'space-between',
     height: 110,//FOR TEST BUILD: 60 (or 56?) //For dev: 110
+
   },
   headerText: {
     fontSize: 18,

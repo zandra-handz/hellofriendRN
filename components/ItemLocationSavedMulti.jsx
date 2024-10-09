@@ -16,21 +16,19 @@ const ItemLocationSavedMulti = ({
     height = 70,
     columns = 3, 
     showBigSvg = false, 
-
 }) => {
     const { savedLocationList } = useLocationList();
     const { themeStyles } = useGlobalStyle();
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
-   
 
     const openModal = (location) => {
         setSelectedLocation(location);
+        console.log('setting location in ItemLocationSavedMulti');
         setIsModalVisible(true);
     };
 
-    const closeModal = () => { 
-        setSelectedLocation(null);
+    const closeModal = () => {  
         setIsModalVisible(false);
     };
 
@@ -43,25 +41,24 @@ const ItemLocationSavedMulti = ({
                 keyExtractor={(location) => location.id.toString()}
                 renderItem={({ item: location }) => (
                     <>
-                    {horizontal && ( 
-                        <CardMicroLocation
-                            location={location}
-                            width={width}
-                            height={height}
-                            showBigSvg={showBigSvg}
-                            onPress={() => openModal(location)}
-                            SvgComponent={LocationSolidSvg}
-                            iconColor={'lightblue'}
-                            colorScheme={'green'}
-                        />
-                    )}
-                    {!horizontal && (
-                        <ButtonLocation 
-                            location={location} 
-                            onPress={() => openModal(location)} 
-                            icon={LocationSolidSvg} />
-
-                    )}
+                        {horizontal ? (
+                            <CardMicroLocation
+                                location={location}
+                                width={width}
+                                height={height}
+                                showBigSvg={showBigSvg}
+                                onPress={() => openModal(location)}
+                                SvgComponent={LocationSolidSvg}
+                                iconColor={'lightblue'}
+                                colorScheme={'green'}
+                            />
+                        ) : (
+                            <ButtonLocation 
+                                location={location} 
+                                onPress={() => openModal(location)} 
+                                icon={LocationSolidSvg} 
+                            />
+                        )}
                     </>
                 )}
                 numColumns={horizontal && !singleLineScroll ? columns : 1}
@@ -72,9 +69,10 @@ const ItemLocationSavedMulti = ({
                 scrollIndicatorInsets={{ right: 1 }}
             />
 
-            {isModalVisible && (
-                <ItemViewLocation location={selectedLocation} onClose={closeModal} />
-            )}
+{isModalVisible && selectedLocation && (
+    <ItemViewLocation location={selectedLocation} onClose={closeModal} />
+)}
+
         </View>
     );
 };
@@ -93,11 +91,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginTop: 4,
         marginBottom: 6,
-    },
-    imageContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
     },
     imageRow: {
         justifyContent: 'space-between',
