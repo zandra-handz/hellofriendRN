@@ -29,6 +29,7 @@ import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch
 import Signin from './screens/Signin';
 import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
 import ScreenMomentFocus from './screens/ScreenMomentFocus'; 
+import ScreenLocation from './screens/ScreenLocation';
 
 
 import ScreenAddMoment from './screens/ScreenAddMoment';
@@ -44,6 +45,7 @@ import HeaderPickCategory from './components/HeaderPickCategory';
 import HeaderFriendFocus from './components/HeaderFriendFocus';
 import HeaderBase from './components/HeaderBase';
 import HeaderLocations from './components/HeaderLocations';
+import HeaderLocationSingle from './components/HeaderLocationSingle';
 
 
 import PhoneStatusBar from './components/PhoneStatusBar';
@@ -201,6 +203,14 @@ export const Layout = () => {
                 options={{
                   headerShown: true,
                   header: () => <HeaderLocations />,
+                }}
+              />
+              <Stack.Screen
+                name="Location"
+                component={ScreenLocation}
+                options={{
+                  headerShown: true,
+                  header: () => <HeaderLocationSingle />,
                 }}
               />
               <Stack.Screen

@@ -1,7 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import SpeechBubbleIconHeartSvg from '../assets/svgs/speech-bubble-icon-heart.svg';
-
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import FormatDate from '../components/FormatDate';
@@ -23,8 +21,7 @@ const ButtonMoment = ({
       style={[
         styles.container, themeStyles.genericTextBackground,
         style, 
-        !sameStyleForDisabled && disabled && styles.disabledContainer,
-        // Apply disabled style only if sameStyleForDisabled is false
+        !sameStyleForDisabled && disabled && styles.disabledContainer, 
       ]}
       onPress={!disabled ? onPress : null} // Disable onPress if the button is disabled
       disabled={disabled} // Disable the button interaction

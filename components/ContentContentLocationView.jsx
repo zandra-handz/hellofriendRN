@@ -2,17 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { useLocationList } from '../context/LocationListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
 import SectionCustomerReviews from '../components/SectionCustomerReviews';
 import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
 import ButtonDirections from '../components/ButtonDirections';
-import ButtonSaveLocation from '../components/ButtonSaveLocation';
+
+import DisplayParkingScore from '../components/DisplayParkingScore';
+import DisplayLocationNotes from '../components/DisplayLocationNotes';
+
 import StylingRating from '../components/StylingRating';
 
-const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
+const ContentContentLocationView = ({ location = {}, unSaved }) => {
   const { selectedLocation, additionalDetails, loadingAdditionalDetails, updateAdditionalDetails } = useLocationList();
-  
+  const { calculatedThemeColors } = useSelectedFriend();
   const [refreshing, setRefreshing] = useState(false);
   const { themeStyles } = useGlobalStyle();
 
@@ -29,17 +33,31 @@ const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
     }
   };
 
-  // Check if location is null or undefined and safely access title
-  const title = additionalDetails?.name || (location && location.title ? location.title : "Location not available");
-
+ 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={[styles.itemTitle, { color: themeStyles.genericText.color }]}>
-          {title}
-        </Text>
-        <ButtonSaveLocation saveable={unSaved} />
-      </View>
+    <View style={styles.container}> 
+        <View style={styles.infoContainer}>
+          
+          <View style={styles.detailsColumn}> 
+          <View style={styles.detailRow}>
+            <View style={{height: 'auto', alignItems: 'center', justifyContent: 'center', width: '100%'}}>
+              
+          <ButtonDirections address={selectedLocation.address} buttonColor={'blue'} fontColor={calculatedThemeColors.fontColor} backgroundColor={calculatedThemeColors.darkColor} />
+
+            </View> 
+          </View> 
+          <View style={styles.detailRow}> 
+            <DisplayParkingScore parkingScore={selectedLocation.parking} size={18}/>
+           
+
+          </View> 
+            <View style={styles.detailRow}>
+              <DisplayLocationNotes notes={selectedLocation.notes} />
+              
+            </View>
+          </View>
+        </View>
+
       <Button
         title={refreshing ? 'Refreshing...' : 'Load Details'}
         onPress={handleRefresh}
@@ -57,6 +75,7 @@ const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
               </View>
               <View style={styles.detailRow}>
                 <ButtonPhoneNumber phoneNumber={additionalDetails.phone} />
+                
                 <View
                   style={[
                     styles.statusContainer,
@@ -96,7 +115,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 0,
-    paddingHorizontal: 2,
+    paddingHorizontal: 0,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -105,8 +124,9 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     fontSize: 18,
-    fontFamily: 'Poppins-Regular', 
-    flex: 1,
+    fontFamily: 'Poppins-Regular',  
+    paddingTop: 10,
+    paddingBottom: 4,
   },
   infoContainer: {
     flexDirection: 'row',
@@ -116,7 +136,7 @@ const styles = StyleSheet.create({
   detailsColumn: {
     flex: 1,
     flexDirection: 'column',
-    marginRight: 4,
+    marginRight: 0,
   },
   detailRow: {
     flexDirection: 'row',
@@ -188,4 +208,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemViewLocationDetails;
+export default ContentContentLocationView;

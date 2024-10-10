@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import CardMicroLocation from '../components/CardMicroLocation';
-import { useLocationList } from '../context/LocationListContext';
+import { useLocationList } from '../context/LocationListContext'; 
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import LocationSolidSvg from '../assets/svgs/location-solid.svg';
-import ItemViewLocation from '../components/ItemViewLocation';
+import LocationSolidSvg from '../assets/svgs/location-solid.svg'; 
 import ButtonLocation from '../components/ButtonLocation'; 
 
 const ItemLocationSavedMulti = ({ 
@@ -16,7 +15,7 @@ const ItemLocationSavedMulti = ({
     height = 70,
     columns = 3, 
     showBigSvg = false, 
-}) => {
+}) => { 
     const { savedLocationList } = useLocationList();
     const { themeStyles } = useGlobalStyle();
     const [selectedLocation, setSelectedLocation] = useState(null);
@@ -24,13 +23,9 @@ const ItemLocationSavedMulti = ({
 
     const openModal = (location) => {
         setSelectedLocation(location);
-        console.log('setting location in ItemLocationSavedMulti');
-        setIsModalVisible(true);
+        console.log('setting location in ItemLocationSavedMulti'); 
     };
-
-    const closeModal = () => {  
-        setIsModalVisible(false);
-    };
+ 
 
     return (
         <View style={[styles.container, {height: '100%'}]}>
@@ -56,6 +51,8 @@ const ItemLocationSavedMulti = ({
                             <ButtonLocation 
                                 location={location} 
                                 onPress={() => openModal(location)} 
+                                iconColor={themeStyles.genericText.color}
+                                color={themeStyles.genericText.color}
                                 icon={LocationSolidSvg} 
                             />
                         )}
@@ -68,10 +65,7 @@ const ItemLocationSavedMulti = ({
                 showsVerticalScrollIndicator={false}
                 scrollIndicatorInsets={{ right: 1 }}
             />
-
-{isModalVisible && selectedLocation && (
-    <ItemViewLocation location={selectedLocation} onClose={closeModal} />
-)}
+ 
 
         </View>
     );

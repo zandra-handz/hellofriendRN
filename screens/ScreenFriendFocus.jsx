@@ -23,7 +23,7 @@ const ScreenFriendFocus = () => {
   const headers = true;
   const insideHeaders = true;
   const topRadius = 20;
-  const radius = 14;
+  const radius = 2;
   const buttonMargin = 0;
   const oneBackgroundColor = 'black';
 
@@ -110,8 +110,8 @@ const ScreenFriendFocus = () => {
               <ComposerFriendImages 
                 topIconSize={topIconSize} 
                 bottomIconSize={bottomIconSize} 
-                buttonHeight={56} 
-                headerHeight={44}
+                buttonHeight={64} 
+                headerHeight={52}
                 buttonRadius={radius} 
                 includeHeader={true}
                 headerInside={true}
@@ -120,7 +120,7 @@ const ScreenFriendFocus = () => {
               /> 
             </View>
 
-            <View style={{ marginTop: 4, marginHorizontal: buttonMargin }}>
+            <View style={{ marginTop: 0, borderTopWidth: .4, borderColor: themeStyles.genericText.color, marginHorizontal: buttonMargin }}>
               <ActionFriendPageMoments 
                 topIconSize={topIconSize} 
                 bottomIconSize={momentsBottomIconSize} 
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     paddingBottom: 0, 
     paddingVertical: 10,
-    paddingHorizontal: 2,
+    paddingHorizontal: 0,
     backgroundColor: 'rgba(41, 41, 41, 0.2)',  // Semi-transparent background
   },
   loadingTextContainer: {

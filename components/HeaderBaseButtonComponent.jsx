@@ -11,11 +11,10 @@ import { useNavigation } from '@react-navigation/native';
 
 
 
-const HeaderBase = ({
+const HeaderBaseButtonComponent = ({
     headerTitle='Header title here',
+    buttonComponent: ButtonComponent,
     
-    rightIcon='info',
-    rightIconOnPress,
 }) => {
 
     const { authUserState } = useAuthUser();
@@ -49,8 +48,9 @@ const HeaderBase = ({
 
 
       </View> 
-      <InfoOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
       
+      {ButtonComponent && <ButtonComponent />}
+         
     </View>
   );
 };
@@ -77,4 +77,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeaderBase;
+export default HeaderBaseButtonComponent;

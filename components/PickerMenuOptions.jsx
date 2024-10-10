@@ -18,12 +18,12 @@ const PickerMenuOptions = ({
 }) => {
 
   const { themeStyles } = useGlobalStyle();
-  const { calculatedThemeColors } = useSelectedFriend();3
+  const { calculatedThemeColors } = useSelectedFriend();
 
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
-        <Text style={[styles.containerText, themeStyles.genericText, styles.inlineText]}>
+        <Text style={[styles.containerText, styles.inlineText, {color: calculatedThemeColors.fontColor}]}>
           {containerText}
         </Text>
         {options.length === 0 ? (
@@ -48,11 +48,11 @@ const PickerMenuOptions = ({
                   {useSvg && svgIcons[index] ? (
                     <>
                       {labelPosition === 'beside' && labels[index] && (
-                        <Text style={[styles.optionLabel, themeStyles.genericText]}>{labels[index]}</Text>
+                        <Text style={[styles.optionLabel, {color: calculatedThemeColors.fontColor}]}>{labels[index]}</Text>
                       )}
-                      {React.createElement(svgIcons[index], { width: 24, height: 24, color: themeStyles.genericIcon.color })}
+                      {React.createElement(svgIcons[index], { width: 24, height: 24, color: calculatedThemeColors.fontColor })}
                       {labelPosition === 'below' && labels[index] && (
-                        <Text style={[styles.optionLabel, themeStyles.genericText]}>{labels[index]}</Text>
+                        <Text style={[styles.optionLabel, {color: calculatedThemeColors.fontColor}]}>{labels[index]}</Text>
                       )}
                     </>
                   ) : (
@@ -104,9 +104,9 @@ const styles = StyleSheet.create({
   }, 
   optionButton: {  
     minWidth: 96,
-    paddingBottom: 10,
-    paddingTop: 10,
-    borderRadius: 30, 
+    paddingBottom: 4,
+    paddingTop: 8,
+    borderRadius: 20, 
     alignItems: 'center',
   },
   selectedOptionButton: {

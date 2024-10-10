@@ -15,6 +15,7 @@ import SearchBar from '../components/SearchBar';
 const HeaderBaseWithSearch = ({
     headerTitle='Header title here',
     componentData,
+    onPress,
     dataFieldToSearch, 
 }) => {
 
@@ -49,7 +50,7 @@ const HeaderBaseWithSearch = ({
 
       </View> 
       {componentData && (
-      <SearchBar data={componentData} searchKey={dataFieldToSearch} />
+      <SearchBar data={componentData} onPress={onPress} searchKey={dataFieldToSearch} />
       )}
       
     </View>

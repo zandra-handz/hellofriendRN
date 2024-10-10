@@ -6,9 +6,7 @@ import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';
 import PushPinOutlineSvg from '../assets/svgs/push-pin-outline.svg';  
 import FavoriteProfileSvg from '../assets/svgs/favorite-profile.svg';  
 
-import AlertConfirm from '../components/AlertConfirm';
-import AlertSmall from '../components/AlertSmall';
-import InputAddLocationQuickSave from '../components/InputAddLocationQuickSave';
+import AlertConfirm from '../components/AlertConfirm'; 
 import ModalAddNewLocation from '../components/ModalAddNewLocation';
 
 import MenuLocationOptions from '../components/MenuLocationOptions';
@@ -147,14 +145,14 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
 
                     <View style={styles.iconContainer}>
                     {!isFave && (
-                    <PushPinOutlineSvg width={18} height={18} color={calculatedThemeColors.darkColor} onPress={toggleModal2}/>
+                    <PushPinSolidSvg width={20} height={20} color={calculatedThemeColors.fontColor} onPress={toggleModal2}/>
                     )}
                     {isFave && (
                     <FavoriteProfileSvg width={28} height={28} color={calculatedThemeColors.lightColor} onPress={toggleModal2}/>
                     )}
                     </View>
                     <View style={styles.iconContainer}>
-                    <FontAwesome5 name="ellipsis-v" size={iconSize} color={calculatedThemeColors.lightColor}  onPress={toggleMenu} />
+                    <FontAwesome5 name="ellipsis-v" size={24} color={calculatedThemeColors.fontColor}  onPress={toggleMenu} />
                     </View>
                 </View>
             )}
@@ -203,11 +201,11 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 2,
+        paddingRight: 2,
     }, 
     iconContainer: {
-        margin: 4,
-        marginLeft: 14,
+        margin: 0,
+        marginLeft: 18,
 
     },
     saveText: {

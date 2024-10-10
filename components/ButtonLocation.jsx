@@ -1,24 +1,41 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useNavigation } from '@react-navigation/native';
 
-const ButtonLocation = ({ location, onPress, icon: Icon, iconSize = 34 }) => {
+const ButtonLocation = ({ location, onPress, color = 'white',  iconColor = 'white', icon: Icon, iconSize = 34 }) => {
   const { themeStyles } = useGlobalStyle();
+  const navigation = useNavigation(); 
+ 
+  
+
+  const handleGoToLocationViewScreen = () => { 
+    navigation.navigate('Location', { location: location });
+    
+  }; 
+
+  const handlePress = async () => {
+    await onPress();
+    handleGoToLocationViewScreen();
+
+
+  };
 
   return (
     <View>
       <TouchableOpacity
         style={styles.optionButton}
-        onPress={onPress} // Call the passed in onPress function
+        onPress={handlePress} // Call the passed in onPress function
       >
         {Icon && (
           <View style={styles.iconContainer}>
-            <Icon width={iconSize} height={iconSize} color={themeStyles.genericText.color} />
+            
+            <Icon width={iconSize} height={iconSize} color={iconColor} />
           </View>
         )}
         <View style={styles.textContainer}>
-          <Text style={[styles.optionTitleText, themeStyles.genericText]}>{location.title}</Text>
-          <Text style={[styles.optionText, themeStyles.genericText]}>{location.address}</Text>
+          <Text style={[styles.optionTitleText, {color: color}]}>{location.title}</Text>
+          <Text style={[styles.optionText, {color: color}]}>{location.address}</Text>
         </View>
       </TouchableOpacity>
     </View>

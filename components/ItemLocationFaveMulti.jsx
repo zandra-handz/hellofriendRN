@@ -19,8 +19,8 @@ const ItemLocationFaveMulti = ({
     showBigSvg = false, 
 }) => {
     const { themeStyles } = useGlobalStyle();
-    const { friendDashboardData } = useSelectedFriend();
-    const { locationList, faveLocationList, populateFaveLocationsList } = useLocationList();
+    const { calculatedThemeColors, friendDashboardData } = useSelectedFriend();
+    const { locationList, faveLocationList, setSelectedLocation, populateFaveLocationsList } = useLocationList();
     
     const [isFaveLocationReady, setIsFaveLocationReady] = useState(false);
 
@@ -31,6 +31,13 @@ const ItemLocationFaveMulti = ({
             setIsFaveLocationReady(true);
         }
     }, [locationList, friendDashboardData]);
+
+    const openModal = (location) => {
+        setSelectedLocation(location);
+        console.log('setting location in ItemLocationFaveMulti'); 
+    };
+
+
 
   
 
@@ -49,8 +56,9 @@ const ItemLocationFaveMulti = ({
                     {!horizontal && (
                     <ButtonLocation 
                         location={location}    
-                        textColor={'pink'}
-                        iconColor={'pink'}
+                        onPress={() => openModal(location)} 
+                        iconColor={calculatedThemeColors.darkColor}
+                        color={themeStyles.genericText.color}
                         icon={LocationHeartSolidSvg} />
                     )}
                     </>

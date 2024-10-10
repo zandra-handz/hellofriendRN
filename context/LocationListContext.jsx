@@ -64,8 +64,10 @@ export const LocationListProvider = ({ children }) => {
 
           if (updatedLocationData.length > 0) {
             setSelectedLocation(updatedLocationData[0]);
+            console.log('context set selected location initially');
           } else {
             setSelectedLocation(null);
+            console.log('context did not set selected location initially');
           }
 
         } catch (error) {
@@ -84,11 +86,16 @@ export const LocationListProvider = ({ children }) => {
   }, [authUserState.authenticated, isLoading, upcomingHelloes]); // Include isLoading in dependencies
   
   useEffect(() => {
-    if (locationList.length > 0) {
+    if (selectedLocation) {
+      return;
+    }
+    //checking for if the loading state is false prevents this effect from setting selected location before the initial data load then goes on to
+    if (locationList.length > 0 && loadingSelectedLocation === false) {
       setSelectedLocation(locationList[0]);
       console.log('selected location set in context');
+    
     }
-  }, [locationList]);
+  }, [locationList, selectedLocation]);
 
   useEffect(() => {
     setValidatedLocationList(locationList.filter(location => location.validatedAddress));
