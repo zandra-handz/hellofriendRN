@@ -6,8 +6,9 @@ const ButtonBottomSaveMomentToCategory = ({ onPress, label, selected }) => {
         <ButtonBottomActionBaseSmall
             onPress={() => onPress(true)}  
             label={label}
-            height={40} 
-            radius={0}
+            fontFamily={'Poppins-Bold'}
+            height={50} 
+            radius={10}
             labelFontSize={16}
             labelColor="white"  
             labelContainerMarginHorizontal={4}

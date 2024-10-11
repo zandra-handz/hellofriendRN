@@ -17,8 +17,9 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [ selectedCategoryCapsules, setSelectedCategoryCapsules ] = useState(null);
-  const { selectedFriend, friendDashboardData, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, calculatedThemeColors, friendDashboardData, loadingNewFriend } = useSelectedFriend();
   const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
+  const [containerHeight, setContainerHeight ] = useState(0);
   const [categoryLimit, setCategoryLimit] = useState('');
   const [remainingCategories, setRemainingCategories] = useState(null);
   const [newCategoryEntered, setNewCategoryEntered] = useState(false);
@@ -37,6 +38,16 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   const fetchCategoryLimitData = async () => {
     console.log('category names: ', categoryNames);
     console.log('category counts: ', categoryCount);
+
+    if (categoryCount < 1) {
+      setContainerHeight(100);
+    } else if (categoryCount > 8) {
+      setContainerHeight(800);
+    } else {
+      setContainerHeight(100 * categoryCount);
+    };
+
+    
     try {
       if (friendDashboardData && friendDashboardData.length > 0) {
         const firstFriendData = friendDashboardData[0];
@@ -143,6 +154,17 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
     setNewCategoryEntered(true);
   };
 
+  useEffect(() => {
+    if (categoryCount < 1) {
+      setContainerHeight(100);
+    } else if (categoryCount > 8) {
+      setContainerHeight(800);
+    } else {
+      setContainerHeight(100 * categoryCount);
+    };
+
+  }, [categoryCount]);
+
 
   useEffect(() => {
     if (newCategoryEntered) {
@@ -184,7 +206,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   }, [selectedCategoryCapsules]);
 
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, {maxHeight: containerHeight}]}>
         {loadingNewFriend && (
           <View style={styles.loadingWrapper}>
           <LoadingPage
@@ -199,13 +221,13 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
       {friendDashboardData && categoryNames && !loadingNewFriend && (
         <>
           <View style={{ flexDirection: 'row', paddingBottom: 10, alignContent: 'center', alignItems: 'center', textAlign: 'left' }}>
-            <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>
+            <Text style={[styles.locationTitle,  themeStyles.subHeaderText]}>
               {`Categories (${categoryCount} / ${friendDashboardData[0].suggestion_settings.category_limit_formula})`}
             </Text>
   
             {remainingCategories !== null && remainingCategories > 0 && (
               <View style={{ paddingLeft: 8 }}>
-                <ButtonAddCategory onInputValueChange={handleNewCategory} width={32} height={32} />
+                <ButtonAddCategory color={themeStyles.subHeaderText.color} onInputValueChange={handleNewCategory} width={32} height={32} />
               </View>
             )}
           </View>
@@ -244,7 +266,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
     data={categoryNames}
     keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
     renderItem={({ item }) => (
-      <View key={item} style={{ paddingBottom: 2, width: '100%' }}>
+      <View key={item} style={{ paddingBottom: 10, width: '100%' }}>
         <ButtonBottomSaveMomentToCategory
           onPress={() => handleCategoryPress(item)} // Use 'item' as the category name
           label={item}
@@ -255,7 +277,8 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
     // Set the FlatList's contentContainerStyle to push items to the bottom
     contentContainerStyle={{
       flexGrow: 1, // Allow the FlatList to grow and fill space
-      justifyContent: 'flex-end', // Push items to the bottom
+      justifyContent: 'space-around', // Push items to the bottom
+      maxHeight: containerHeight,
     }}
   />
 </View>
@@ -324,11 +347,14 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
 const styles = StyleSheet.create({
   container: { 
     width: '100%', 
-    borderRadius: 10,
+    borderRadius: 20, 
     padding: 0,
-    borderWidth: 1, 
-    paddingTop: 10,   
-    height: 180, 
+    borderWidth: .8, 
+    paddingTop: 10, 
+    padding: 10,  
+    flex: 1, 
+    alignContent: 'center',   
+    height: 'auto',
   },
   loadingWrapper: {
     flex: 1,
@@ -338,20 +364,18 @@ const styles = StyleSheet.create({
   },
   categoriesContainer: { 
     width: '100%',
-    borderRadius: 10,
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',  
-    maxHeight: 170, // Set only maxHeight, remove fixed height
-    height: 'auto', // Optional, ensures it grows with content
+    borderRadius: 20,
+    flexWrap: 'wrap',  // Change this to flex-start 
     flex: 1, // Allows it to grow to fill available space, if necessary
+  
   },
   
   categoryButton: {
     padding: 10,
     paddingVertical: 8,
     borderRadius: 20,
-    margin: 4,
-    maxWidth: 120, // Set the max width of the button
+    margin: 4, 
+    height: 140,
     overflow: 'hidden', // Ensures text does not overflow the button
   },
   selectedCategoryButton: {

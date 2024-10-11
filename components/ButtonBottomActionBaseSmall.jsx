@@ -8,6 +8,7 @@ import AddOutlineSvg from '../assets/svgs/add-outline.svg';
 const ButtonBottomActionBaseSmall = ({ 
   onPress,
   label,
+  fontFamily='Poppins-Regular',
   height = 58,
   radius = 16,
   selected=false,
@@ -184,7 +185,7 @@ const ButtonBottomActionBaseSmall = ({
       <Text
         style={[
           textStyles(labelFontSize, disabled ? 'white' : (selected ? calculatedThemeColors.fontColor : calculatedThemeColors.fontColorSecondary )), // White label color if disabled
-          { fontFamily: 'Poppins-Regular', marginRight: fontMargin },
+          { fontFamily: fontFamily, marginRight: fontMargin },
         ]}
         numberOfLines={1}          
         ellipsizeMode="tail"      

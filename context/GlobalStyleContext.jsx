@@ -242,7 +242,7 @@ const lightThemeStyles = StyleSheet.create({
     headerContainer: {
         backgroundColor: 'white',
         borderBottomWidth: .4,
-        borderColor: 'black',
+        borderColor: 'transparent',
         
     },
     headerContainerNoBorder: {
@@ -402,7 +402,7 @@ const darkThemeStyles = StyleSheet.create({
     headerContainer: {
         backgroundColor: 'black',
         borderBottomWidth: .4,
-        borderColor: '#ccc',
+        borderColor: 'transparent',
     },
     headerContainerNoBorder: {
         backgroundColor: 'black', 

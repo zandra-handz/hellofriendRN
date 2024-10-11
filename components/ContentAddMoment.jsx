@@ -3,16 +3,21 @@ import { View, StyleSheet } from 'react-native';
 
 import EnterMoment from '../components/EnterMoment'; 
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 import { useAuthUser } from '../context/AuthUserContext';
+
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api'; 
+
 import HelloFriendFooter from '../components/HelloFriendFooter';
 
 import  { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import LoadingPage from '../components/LoadingPage';
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
+
 import ButtonBottomSaveMoment from '../components/ButtonBottomSaveMoment';
 
 const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScreen}) => {
@@ -20,10 +25,12 @@ const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScre
   const { authUserState } = useAuthUser(); 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { setCapsuleList } = useCapsuleList(); // NEED THIS TO ADD NEW 
+  
   const [ momentEditMode, setMomentEditMode] = useState(false); 
   const [textInput, setTextInput] = useState(momentText);
 
   const [selectedCategory, setSelectedCategory] = useState('');
+  
   const [userEntryCapsule, setUserEntryCapsule] = useState(momentText); 
   const [ saveInProgress, setSaveInProgress ] = useState(false);
   const [ resultMessage, setResultMessage ] = useState(null);
@@ -154,6 +161,7 @@ const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScre
           <View style={styles.categoryContainer}>
             <> 
              <CardCategoriesAsButtons onCategorySelect={handleCategorySelect} momentTextForDisplay={textInput} onParentSave={handleSave}/> 
+           
             </> 
           </View>
         )} 
