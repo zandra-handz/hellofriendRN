@@ -1,7 +1,10 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-export const API_URL = 'https://ac67e9fa-7838-487d-a3bc-e7a176f4bfbf-dev.e1-us-cdp-2.choreoapis.dev/hellofriend/hellofriend/rest-api-be2/v1.0/';
+//export const API_URL = 'https://ac67e9fa-7838-487d-a3bc-e7a176f4bfbf-dev.e1-us-cdp-2.choreoapis.dev/hellofriend/hellofriend/rest-api-be2/v1.0/';
+
+//export const API_URL = 'http://167.99.233.148:8000/';
+export const API_URL = 'https://badrainbowz.com/';
 
 
 axios.defaults.baseURL = API_URL;
@@ -132,15 +135,29 @@ export const signup = async (username, email, password) => {
 };
 
 export const signin = async (username, password) => {
-    console.log(username);
+    console.log("Signing in with username:", username);
     try {
         const result = await axios.post('/users/token/', { username, password });
-        console.log("API signin result: ", result);
-     
-        setAuthHeader(result.data.access);
-        return result;
+        console.log("API response received:", result);
+        
+        if (result.data && result.data.access) {
+            console.log("Access token:", result.data.access);
+            setAuthHeader(result.data.access); // Assuming setAuthHeader is defined elsewhere
+            return result;
+        } else {
+            throw new Error("Unexpected response format");
+        }
     } catch (e) {
-        return { error: true, msg: e.response.data.msg };
+        console.error("Error during signin:", e); // Log the full error object
+        // Check if e.response exists before accessing its properties
+        if (e.response) {
+            console.log("Server responded with:", e.response.data);
+            return { error: true, msg: e.response.data.msg || 'Unknown error occurred' };
+        } else {
+            // Handle network errors or other unexpected errors
+            console.log("Network error or server not reachable");
+            return { error: true, msg: 'Network error or server not reachable' };
+        }
     }
 };
 

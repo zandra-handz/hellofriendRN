@@ -7,3 +7,11 @@ npm start
 install expo app on phone if do not have already
 scan QR code to view app on phone
 
+
+ADDED LATER: to check machine for SSH keys
+
+ls ~/.ssh
+
+to get a key:
+
+cat ~/.ssh/[id_key.pub]
