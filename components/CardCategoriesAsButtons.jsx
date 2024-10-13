@@ -11,7 +11,10 @@ import AddOutlineSvg from '../assets/svgs/add-outline.svg'; // Import the SVG
 import ButtonBottomSaveMomentToCategory from './ButtonBottomSaveMomentToCategory';
 import LoadingPage from '../components/LoadingPage';
 
-const DOUBLE_PRESS_DELAY = 300; // Time delay to detect double press
+import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
+
+
+const LONG_PRESS_DELAY = 200; // Time threshold for long press in milliseconds
 
 const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onParentSave, showAllCategories = false, showInModal = true }) => {
   const { themeStyles } = useGlobalStyle();
@@ -25,7 +28,8 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   const [newCategoryEntered, setNewCategoryEntered] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const lastPress = useRef(0);
+  const longPressTimeout = useRef(null); // Ref to store the timeout ID
+  const hasLongPressed = useRef(false); // To track whether it was a long press
 
   useEffect(() => {
     if (selectedFriend) {
@@ -114,24 +118,30 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
       }
     }
   }, [selectedCategory]);
-
+ 
   const handleCategoryPress = (category) => {
-    const now = Date.now();
-    const isDoublePress = now - lastPress.current < DOUBLE_PRESS_DELAY;
-    lastPress.current = now;
+    setSelectedCategory(category);
+    hasLongPressed.current = false; // Reset long press tracking
 
-    if (isDoublePress) { 
-      onParentSave();
-    } else {  
+    // Start the timeout for detecting a long press
+    longPressTimeout.current = setTimeout(() => {
+      // Long press logic: opens modal
+      hasLongPressed.current = true;
+      setModalVisible(true);
+    }, LONG_PRESS_DELAY);
+  };
+
+  const handlePressOut = (category) => {
+    
+    clearTimeout(longPressTimeout.current); // Clear the timeout
+
+    // If long press didn't happen, treat it as a single press
+    if (!hasLongPressed.current) {
       setSelectedCategory(category);
-      setModalVisible(true); 
-      //console.log('Clicked category index:', category);
-      //console.log('Category name:', category);
-      //console.log('Capsules for category:', capsulesForCategory);
-      
-      setSelectedCategory(category);
+      onParentSave(); // Call single press logic (save)
     }
   };
+  
 
   const handleAllCategoriesPress = () => {
     console.log('Clicked All Categories');
@@ -268,7 +278,8 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
     renderItem={({ item }) => (
       <View key={item} style={{ paddingBottom: 10, width: '100%' }}>
         <ButtonBottomSaveMomentToCategory
-          onPress={() => handleCategoryPress(item)} // Use 'item' as the category name
+          onPress={() => handlePressOut(item)} // Use 'item' as the category name
+          onLongPress={() => handleCategoryPress(item)}
           label={item}
           selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
         />
@@ -297,7 +308,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
             <AlertFormSubmit
               isModalVisible={modalVisible}
               headerContent={
-                <ThoughtBubbleOutlineSvg width={38} height={38} color={themeStyles.modalIconColor.color} />
+                <ThoughtBubbleOutlineSvg width={38} height={38} color={'transparent'} />
               }
               questionIsSubTitle={false}
               questionText={`${momentTextForDisplay}`}
@@ -306,6 +317,10 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
               onConfirm={onParentSave}
               confirmText={'Add to category'}
               cancelText={'Cancel'}
+              useSvgForCancelInstead={
+                <ArrowLeftCircleOutline height={34} width={34} color={themeStyles.genericText.color} />
+
+              }
               formHeight={300}
               formBody={
                 <View style={styles.selectMomentListContainer}>
@@ -403,7 +418,7 @@ const styles = StyleSheet.create({
   capsulesContainer: {
     flex: 1,
     width: '100%',
-    paddingHorizontal: 10,
+    paddingHorizontal: 10, 
   },
   capsulesText: {
     fontSize: 16,
@@ -435,6 +450,7 @@ const styles = StyleSheet.create({
   },
    
   momentModalTitle: {
+    paddingTop: 10,
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
     marginBottom: 6,
@@ -491,8 +507,9 @@ const styles = StyleSheet.create({
     width: '100%', 
     borderRadius: 10,
     padding: 0,
-    height: 'auto',
-    maxHeight: 220,
+    
+    height: 480,
+    maxHeight: '80&',
     alignItems: 'center',
   },
 

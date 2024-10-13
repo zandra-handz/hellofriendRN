@@ -16,6 +16,7 @@ const AlertFormSubmit = ({
   onConfirm,
   onCancel,
   saveMoment=false,
+  useSvgForCancelInstead,
   confirmColor= '#4CAF50',
   cancelColor='darkgreen',
   confirmText = 'OK',
@@ -42,16 +43,26 @@ const AlertFormSubmit = ({
         <View style={[styles.modalContent, themeStyles.genericTextBackground, { borderColor: themeStyles.genericTextBackgroundShadeTwo.backgroundColor }]}> 
           
           {headerContent && <View style={[styles.headerContainer, themeStyles.genericText]}>{headerContent}</View>}
-          {saveMoment && ( 
+          {saveMoment && (
+            <>
+            {!useSvgForCancelInstead && ( 
             <TouchableOpacity onPress={onCancel} style={[styles.topButton, {position: 'absolute', zIndex: 1, top: 4, left: 4, backgroundColor: calculatedThemeColors.lightColor}]}>
               <Text style={styles.buttonText}>{cancelText}</Text>
             </TouchableOpacity>
+            )}  
+            {useSvgForCancelInstead && ( 
+            <TouchableOpacity onPress={onCancel} style={[styles.topButton, {position: 'absolute', zIndex: 1, top: 4, left: 4}]}>
+              <Text style={themeStyles.genericText}>{useSvgForCancelInstead}</Text>
+            </TouchableOpacity>
+            )} 
+            </>
+
             )}
           {questionText && 
           
           <View style={ questionIsSubTitle ? styles.questionIsSubTitleContainer : styles.questionContainer}>
           <Text style={[ ( questionIsSubTitle? styles.questionIsSubTitleText : styles.questionText), themeStyles.genericText]}
-                numberOfLines={10} ellipsizeMode='tail'>{questionText}</Text>
+                numberOfLines={1} ellipsizeMode='tail'>{questionText}</Text>
           </View>
           }  
           <View style={[styles.fullBodyContainer, {height: formHeight}]}>  

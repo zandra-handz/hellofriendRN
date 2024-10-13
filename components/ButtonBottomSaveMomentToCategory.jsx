@@ -1,10 +1,11 @@
 import React from 'react'; 
-import ButtonBottomActionBaseSmall from '../components/ButtonBottomActionBaseSmall';
+import ButtonBottomActionBaseSmallLongPress from '../components/ButtonBottomActionBaseSmallLongPress';
 
-const ButtonBottomSaveMomentToCategory = ({ onPress, label, selected }) => {
+const ButtonBottomSaveMomentToCategory = ({ onPress, onLongPress, label, selected }) => {
     return (
-        <ButtonBottomActionBaseSmall
+        <ButtonBottomActionBaseSmallLongPress
             onPress={() => onPress(true)}  
+            onLongPress={onLongPress}
             label={label}
             fontFamily={'Poppins-Bold'}
             height={50} 

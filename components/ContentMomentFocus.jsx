@@ -39,11 +39,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
   const [isSuccess, setIsSuccess] = useState(true);  
   const delayForResultsMessage = 1000;
 
-
-  // Function to handle navigation to 'AddMoment' screen, passing textInput value
-  const handleGoToMomentScreen = () => {
-    navigation.navigate('AddMoment', { momentText: textInput, handleTextUpdate: handleTextUpdate });
-  };
+ 
 
   const handleTextUpdate = (momentText) => {
     setTextInput(momentText);

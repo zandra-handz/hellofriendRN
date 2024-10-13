@@ -8,7 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const ScreenMoments = ({ route, navigation }) => {
-    const { themeStyles, gradientColors } = useGlobalStyle(); 
+    const { themeStyles } = useGlobalStyle(); 
     const { calculatedThemeColors } = useSelectedFriend();
     const { capsuleList } = useCapsuleList();
     const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
@@ -104,7 +104,10 @@ const ScreenMoments = ({ route, navigation }) => {
                         )}
                         </>
                 ) : (
-                    <Text></Text>
+                    <>  
+                    <ButtonGoToAddMoment buttonColor={calculatedThemeColors.darkColor} />
+                 
+                    </>
                 )}
             </View> 
         </LinearGradient> 
