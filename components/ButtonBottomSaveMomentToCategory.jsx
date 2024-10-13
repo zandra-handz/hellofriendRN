@@ -4,13 +4,13 @@ import ButtonBottomActionBaseSmallLongPress from '../components/ButtonBottomActi
 const ButtonBottomSaveMomentToCategory = ({ onPress, onLongPress, label, selected }) => {
     return (
         <ButtonBottomActionBaseSmallLongPress
-            onPress={() => onPress(true)}  
+            onPress={onPress}  
             onLongPress={onLongPress}
             label={label}
             fontFamily={'Poppins-Bold'}
-            height={50} 
-            radius={10}
-            labelFontSize={16}
+            height={54} 
+            radius={4}
+            labelFontSize={17}
             labelColor="white"  
             labelContainerMarginHorizontal={4}
             animationMargin={-64}
@@ -18,8 +18,8 @@ const ButtonBottomSaveMomentToCategory = ({ onPress, onLongPress, label, selecte
             darkColor='#4caf50'  
             lightColor='rgb(160, 241, 67)'  
             showShape={true}   
-            shapeWidth={30}
-            shapeHeight={30}
+            shapeWidth={44}
+            shapeHeight={44}
             shapePosition="right"
             shapePositionValue={10}
             shapePositionValueVertical={4}

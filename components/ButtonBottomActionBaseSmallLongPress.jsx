@@ -92,8 +92,8 @@ const ButtonBottomActionBaseSmallLongPress = ({
         backgroundColor: disabled ? '#A9A9A9' : showGradient ? 'transparent' : backgroundColor, // Gray background if disabled
         position: 'relative',  
       }}
-      onPress={!disabled ? onPress : null}  
-      onLongPress={!disabled ? onLongPress : null}
+      onPress={onPress}  
+      onLongPress={onLongPress}
     >
       {!disabled && showGradient && (
         <>

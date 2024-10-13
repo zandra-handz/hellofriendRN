@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import PickerMenuOptions from '../components/PickerMenuOptions';
+
 import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
 import PushPinOutlineSvg from '../assets/svgs/push-pin-outline';
 import LocationHeartOutlineSvg from '../assets/svgs/location-heart-outline';

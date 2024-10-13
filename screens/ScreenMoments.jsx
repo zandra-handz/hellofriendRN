@@ -100,12 +100,12 @@ const ScreenMoments = ({ route, navigation }) => {
                             navigation={navigation}
                         />
                         {!checkboxesParent && ( 
-                        <ButtonGoToAddMoment buttonColor={calculatedThemeColors.darkColor} />
+                        <ButtonGoToAddMoment />
                         )}
                         </>
                 ) : (
                     <>  
-                    <ButtonGoToAddMoment buttonColor={calculatedThemeColors.darkColor} />
+                    <ButtonGoToAddMoment />
                  
                     </>
                 )}

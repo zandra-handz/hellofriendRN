@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import ButtonGoToAddImage from '../components/ButtonGoToAddImage';
 import { useImageList } from '../context/ImageListContext';
 import ItemImageMulti from '../components/ItemImageMulti';
 
 const ScreenImages = ({ route, navigation }) => {
     const { imageList } = useImageList();
+    const { themeStyles } = useGlobalStyle();
     const [isImageListReady, setIsImageListReady] = useState(false);
 
     useEffect(() => {
@@ -15,7 +17,7 @@ const ScreenImages = ({ route, navigation }) => {
     }, [imageList]);
 
     return ( 
-            <View style={styles.container}> 
+            <View style={[styles.container, themeStyles.genericTextBackground]}> 
                 <ScrollView>
                     {isImageListReady ? (
                         <>  
@@ -26,13 +28,13 @@ const ScreenImages = ({ route, navigation }) => {
                         <Text></Text>
                     )}
                 </ScrollView>
+                <ButtonGoToAddImage />
             </View> )
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: 'white',
+        flex: 1, 
         padding: 20,
     },
     mainContainer: {

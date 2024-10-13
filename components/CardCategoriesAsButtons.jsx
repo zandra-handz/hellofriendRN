@@ -13,9 +13,7 @@ import LoadingPage from '../components/LoadingPage';
 
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 
-
-const LONG_PRESS_DELAY = 200; // Time threshold for long press in milliseconds
-
+ 
 const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onParentSave, showAllCategories = false, showInModal = true }) => {
   const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -27,9 +25,8 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   const [remainingCategories, setRemainingCategories] = useState(null);
   const [newCategoryEntered, setNewCategoryEntered] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [ pressedOnce, setPressedOnce ] = useState(false);
 
-  const longPressTimeout = useRef(null); // Ref to store the timeout ID
-  const hasLongPressed = useRef(false); // To track whether it was a long press
 
   useEffect(() => {
     if (selectedFriend) {
@@ -43,12 +40,12 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
     console.log('category names: ', categoryNames);
     console.log('category counts: ', categoryCount);
 
-    if (categoryCount < 1) {
-      setContainerHeight(100);
+    if (categoryCount < 3) {
+      setContainerHeight(200);
     } else if (categoryCount > 8) {
       setContainerHeight(800);
     } else {
-      setContainerHeight(100 * categoryCount);
+      setContainerHeight(80 * categoryCount);
     };
 
     
@@ -120,26 +117,39 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   }, [selectedCategory]);
  
   const handleCategoryPress = (category) => {
-    setSelectedCategory(category);
-    hasLongPressed.current = false; // Reset long press tracking
+    setSelectedCategory(category); 
+    setModalVisible(true);
+    console.log('SELECTED CATEGORY!!!');
+  };
 
-    // Start the timeout for detecting a long press
-    longPressTimeout.current = setTimeout(() => {
-      // Long press logic: opens modal
-      hasLongPressed.current = true;
-      setModalVisible(true);
-    }, LONG_PRESS_DELAY);
+  const toggleSaveable = () => {
+    setPressedOnce(prev => !prev);
+      
+
   };
 
   const handlePressOut = (category) => {
-    
-    clearTimeout(longPressTimeout.current); // Clear the timeout
+     
+      if (category === selectedCategory && pressedOnce) {
+        handleSave();
+        console.log('SAVED IN HANDLEPRESSOUT!!!');
+        setPressedOnce(false); 
 
-    // If long press didn't happen, treat it as a single press
-    if (!hasLongPressed.current) {
-      setSelectedCategory(category);
-      onParentSave(); // Call single press logic (save)
-    }
+      } else {
+        setSelectedCategory(category);
+        setPressedOnce(true);
+
+      }; 
+      
+  };
+
+  const handleSave = () => {
+    if (selectedCategory) {
+      console.log('no save');
+      onParentSave();
+
+    };
+
   };
   
 
@@ -165,12 +175,12 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   };
 
   useEffect(() => {
-    if (categoryCount < 1) {
-      setContainerHeight(100);
+    if (categoryCount < 3) {
+      setContainerHeight(200);
     } else if (categoryCount > 8) {
       setContainerHeight(800);
     } else {
-      setContainerHeight(100 * categoryCount);
+      setContainerHeight(80 * categoryCount);
     };
 
   }, [categoryCount]);
@@ -205,18 +215,21 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
 
   useEffect(() => {
     setSelectedCategoryCapsules(capsuleList.filter(capsule => capsule.typedCategory === selectedCategory)
-  );
+  ); 
 
   }, [selectedCategory]);
 
   useEffect(() => {
 
-    console.log(selectedCategoryCapsules);
+    console.log('selected capsules: ', selectedCategoryCapsules);
 
   }, [selectedCategoryCapsules]);
 
   return (
-    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, {maxHeight: containerHeight}]}>
+    <View style={[themeStyles.genericTextBackgroundShadeTwo, {flex: 1}]}>
+
+    
+    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, {maxHeight: containerHeight, minHeight: 140}]}>
         {loadingNewFriend && (
           <View style={styles.loadingWrapper}>
           <LoadingPage
@@ -276,10 +289,11 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
     data={categoryNames}
     keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
     renderItem={({ item }) => (
-      <View key={item} style={{ paddingBottom: 10, width: '100%' }}>
+      <View key={item} style={{ paddingBottom: 4, width: '100%' }}>
         <ButtonBottomSaveMomentToCategory
-          onPress={() => handlePressOut(item)} // Use 'item' as the category name
-          onLongPress={() => handleCategoryPress(item)}
+          onPress={() => handlePressOut(item)} // Correct way to pass the function
+          onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
+
           label={item}
           selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
         />
@@ -353,20 +367,24 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
               }
             />
           )}
+
         </>
+
       )}
-    </View>
+    </View> 
+
+  </View>
   );
 };  
 
 const styles = StyleSheet.create({
   container: { 
     width: '100%', 
-    borderRadius: 20, 
+    borderRadius: 2, 
     padding: 0,
-    borderWidth: .8, 
-    paddingTop: 10, 
-    padding: 10,  
+    borderWidth: 0,   
+    paddingVertical: 10,
+    paddingHorizontal: 2,
     flex: 1, 
     alignContent: 'center',   
     height: 'auto',
@@ -488,7 +506,9 @@ const styles = StyleSheet.create({
     width: '100%',
     
   }, 
-  locationTitle: {
+  locationTitle: {  
+    paddingVertical: 6,
+    paddingHorizontal: 10,
     fontSize: 17,
     fontFamily: 'Poppins-Bold',
   },

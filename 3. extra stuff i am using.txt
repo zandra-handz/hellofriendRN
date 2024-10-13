@@ -201,5 +201,10 @@ npm install color-contrast-checker
 npm install tinycolor2
 
 
+//Digital Ocean Spaces won't allow too-large uploads
+npm install react-native-fs
+
+
+
 
 
