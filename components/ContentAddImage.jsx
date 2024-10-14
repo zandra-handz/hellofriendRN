@@ -3,6 +3,7 @@ import { View, StyleSheet, Image, KeyboardAvoidingView, Platform } from 'react-n
 
 import { createFriendImage } from '../api';  
 
+import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import PickerBinary from '../components/PickerBinary';
 import InputSingleValue from '../components/InputSingleValue';
@@ -95,61 +96,78 @@ const ContentAddImage = () => {
     }
   };
 
-  const handleSave = async () => {
-    setSaveInProgress(true);
-    setGettingResultMessage(true);
-  
-    if (imageUri && imageTitle.trim() && selectedFriend && authUserState.user) {
-      try {
-        // Resize the image using expo-image-manipulator
-        const manipResult = await ImageManipulator.manipulateAsync(
-          imageUri,
-          [{ resize: { width: 800, height: 600 } }], // Resize to the desired dimensions
-          { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG } // Set quality and format
-        );
-  
-        const formData = new FormData();
-        const fileType = manipResult.uri.split('.').pop(); // Extract file type from URI
-        
-        formData.append('image', {
-          uri: manipResult.uri,
-          name: `image.${fileType}`,
-          type: `image/${fileType}`,
-        });
-        formData.append('title', imageTitle.trim());
-        formData.append('image_category', imageCategory.trim());
-        formData.append('image_notes', '');
-        formData.append('friend', selectedFriend.id);
-        formData.append('user', authUserState.user.id);
-        formData.append('thought_capsules', '');
-  
-        await createFriendImage(selectedFriend.id, formData);
-  
-        setResultMessage('Image saved!');
-  
-        let timeout;
-        timeout = setTimeout(() => {
-          setGettingResultMessage(false);
-          handleModalClose();
-        }, delayForResultsMessage);
-        return () => clearTimeout(timeout);
-  
-      } catch (error) {
-        console.error('Error saving image:', error);
-        setResultMessage('Error! Could not save image');
-        setGettingResultMessage(true);
-        let timeout = setTimeout(() => {
-          setGettingResultMessage(false);
-        }, delayForResultsMessage);
-        return () => clearTimeout(timeout);
-      } finally {
-        setSaveInProgress(false);
-      }
-    }
-  
-    setSaveInProgress(false);
-  };
+ 
+const resizeImage = async (imageUri) => {
+  // Get the original dimensions of the image
+  const imageInfo = await FileSystem.getInfoAsync(imageUri);
+  const { width: originalWidth, height: originalHeight } = await ImageManipulator.manipulateAsync(
+    imageUri,
+    []
+  ).then(result => result);
 
+  const targetWidth = 800; // Desired width
+  const aspectRatio = originalHeight / originalWidth; // Calculate aspect ratio
+  const targetHeight = Math.round(targetWidth * aspectRatio); // Adjust height based on aspect ratio
+
+  const manipResult = await ImageManipulator.manipulateAsync(
+    imageUri,
+    [{ resize: { width: targetWidth, height: targetHeight } }], // Apply proportional resize
+    { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG } // Set quality and format
+  );
+
+  return manipResult;
+};
+
+const handleSave = async () => {
+  setSaveInProgress(true);
+  setGettingResultMessage(true);
+
+  if (imageUri && imageTitle.trim() && selectedFriend && authUserState.user) {
+    try { 
+      // Resize the image before saving
+      const manipResult = await resizeImage(imageUri); // Use resizeImage function here
+
+      const formData = new FormData();
+      const fileType = manipResult.uri.split('.').pop(); // Extract file type from URI
+
+      formData.append('image', {
+        uri: manipResult.uri,
+        name: `image.${fileType}`,
+        type: `image/${fileType}`,
+      });
+      formData.append('title', imageTitle.trim());
+      formData.append('image_category', imageCategory.trim());
+      formData.append('image_notes', '');
+      formData.append('friend', selectedFriend.id);
+      formData.append('user', authUserState.user.id);
+      formData.append('thought_capsules', '');
+
+      await createFriendImage(selectedFriend.id, formData);
+
+      setResultMessage('Image saved!');
+
+      let timeout;
+      timeout = setTimeout(() => {
+        setGettingResultMessage(false);
+        handleModalClose();
+      }, delayForResultsMessage);
+      return () => clearTimeout(timeout);
+
+    } catch (error) {
+      console.error('Error saving image:', error);
+      setResultMessage('Error! Could not save image');
+      setGettingResultMessage(true);
+      let timeout = setTimeout(() => {
+        setGettingResultMessage(false);
+      }, delayForResultsMessage);
+      return () => clearTimeout(timeout);
+    } finally {
+      setSaveInProgress(false);
+    }
+  }
+
+  setSaveInProgress(false);
+};
   
 
   const handleModalClose = () => { 
