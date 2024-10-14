@@ -18,10 +18,8 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
-
-import ImageResizer from 'react-native-image-resizer';
+ 
 import * as ImageManipulator from 'expo-image-manipulator';
-
 
 
 const ContentAddImage = () => {
@@ -112,6 +110,7 @@ const ContentAddImage = () => {
   
         const formData = new FormData();
         const fileType = manipResult.uri.split('.').pop(); // Extract file type from URI
+        
         formData.append('image', {
           uri: manipResult.uri,
           name: `image.${fileType}`,
