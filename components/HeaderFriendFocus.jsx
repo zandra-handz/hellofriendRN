@@ -56,11 +56,11 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     padding: 10,
-    paddingTop: 66, //FOR TEST BUILD: 12 For dev: 66
+    paddingTop: 56, //FOR TEST BUILD: 12 For dev: 66
     paddingHorizontal: 10, 
     alignItems: 'center',  
     justifyContent: 'space-between',
-    height: 110,//FOR TEST BUILD: 60 (or 56?) //For dev: 110
+    height: 100,//FOR TEST BUILD: 60 (or 56?) //For dev: 110
   },
   headerText: {
     fontSize: 18,

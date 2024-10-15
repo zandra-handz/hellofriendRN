@@ -1,6 +1,5 @@
-// Opens a modal
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
+import { TouchableOpacity, AccessibilityInfo } from 'react-native';
 
 import PaintRollerSvg from '../assets/svgs/paint-roller.svg'; // Import the SVG icon
  
@@ -27,7 +26,7 @@ const ButtonColors = () => {
 
   return (
     <>
-      <TouchableOpacity style={styles.section} onPress={handlePress}>
+      <TouchableOpacity onPress={handlePress}>
         <PaintRollerSvg width={25} height={25} style={themeStyles.footerIcon} />
 
       </TouchableOpacity>
@@ -39,20 +38,5 @@ const ButtonColors = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  section: {
-    flex: 1,  
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 16, 
-    fontFamily: 'Poppins-Bold',
-    textAlign: 'center', 
-    marginTop: 4,  
-  },
-});
 
 export default ButtonColors;

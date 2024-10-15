@@ -24,19 +24,17 @@ const HellofriendHeader = () => {
 
   return (
     <View style={[styles.headerContainer, themeStyles.headerContainer]}>
-      {/* Left Section */}
+    
       <View style={styles.leftSection}>
         <View style={styles.userProfile}>
           <ButtonFriendProfileCircle /> 
         </View>
       </View>
- 
-      {/* Center Section */}
+  
       <View style={styles.middleSection}>
         <Text style={[styles.logoText, themeStyles.headerText]}>HF</Text>
-      </View>
- 
-      {/* Right Section */}
+      </View> 
+
       <View style={styles.rightSection}>
         <View style={styles.userProfile}>
           <Text style={[styles.usernameText, themeStyles.headerText]}>
@@ -53,12 +51,12 @@ const HellofriendHeader = () => {
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
-    padding: 0,
-    paddingTop: 30, // Adjust as needed
-    paddingHorizontal: 20,
+    padding: 10,
+    paddingTop: 66, // Adjust as needed
+    paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 120, // Adjust as needed
+    height: 100, // Adjust as needed
   },
   leftSection: {
     flex: 1,
@@ -78,7 +76,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
   },
   logoText: {
-    fontSize: 24,
+    fontSize: 22,
     paddingVertical: 2,
     fontFamily: 'Poppins-Regular',
   },

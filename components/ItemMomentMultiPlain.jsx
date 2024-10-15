@@ -12,6 +12,9 @@ import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { updateThoughtCapsules } from '../api';
 import LoadingPage from '../components/LoadingPage';
+
+import { Dimensions } from 'react-native';
+
  
 const footerHeight = 670; // Set to a fixed height for footer
 
@@ -384,7 +387,7 @@ useEffect(() => {
     </View> 
       
 
-      <View style={styles.contentContainer}> 
+    <View style={{ height: Dimensions.get("screen").height-100, width: Dimensions.get("screen").width }}>
         <View style={styles.loadingContainer}>
          
         <LoadingPage 
@@ -394,6 +397,7 @@ useEffect(() => {
         /> 
          </View> 
         {!isMakingCall && selectedCategory && ( 
+        
         <FlashList
             ref={flatListRef}  // Attach the ref to FlashList
             data={moments}  // Your data source
@@ -427,6 +431,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     minHeight: 2,
+    minWidth: 2,
     flex: 1,
     paddingHorizontal: 1,
     justifyContent: 'space-between',
@@ -443,7 +448,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   contentContainer: { 
-    height: '100%',
+    flex: 1, 
+    minHeight: 2,
+    minWidth: 2,
     width: '100%',
     alignContent: 'right',
     alignItems: 'right',
@@ -451,6 +458,7 @@ const styles = StyleSheet.create({
   },
   momentContainer: {
     padding: 0,
+    width: '100%',
     marginBottom: 4,
     borderRadius: 30, 
   },

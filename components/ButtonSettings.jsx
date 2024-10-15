@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, StyleSheet, TouchableOpacity, AccessibilityInfo } from 'react-native';
+import { TouchableOpacity, AccessibilityInfo } from 'react-native';
 import ActionPageBase from './ActionPageBase';
 import SectionAccessibilitySettings from './SectionAccessibilitySettings';
 import SectionFriendSettings from './SectionFriendSettings';
@@ -8,7 +8,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import GearsTwoBiggerCircleSvg from '../assets/svgs/gears-two-bigger-circle.svg';
  
-const ButtonSettings = ({label=null}) => {
+const ButtonSettings = () => {
   const { themeStyles } = useGlobalStyle(); 
   const [isModalVisible, setModalVisible] = React.useState(false);
 
@@ -34,11 +34,8 @@ const ButtonSettings = ({label=null}) => {
 
   return (
     <>
-      <TouchableOpacity style={styles.section} onPress={toggleModal}>
+      <TouchableOpacity onPress={toggleModal}>
         <GearsTwoBiggerCircleSvg width={32} height={32} style={themeStyles.footerIcon} />
-        {label && ( 
-        <Text style={themeStyles.footerText}>Settings</Text>
-        )}
       </TouchableOpacity>
 
       <ActionPageBase
@@ -50,23 +47,6 @@ const ButtonSettings = ({label=null}) => {
       />
     </>
   );
-};
-
-const styles = StyleSheet.create({
-  section: {
-    flex: 1, 
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 16,
-    color: 'black',  
-    fontFamily: 'Poppins-Bold',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    marginTop: 4, // Add some margin to separate the icon from the text
-  },
-});
+}; 
 
 export default ButtonSettings;

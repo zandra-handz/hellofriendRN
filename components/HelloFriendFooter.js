@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
 import ButtonSignOut from './ButtonSignOut';
 import ButtonSettings from './ButtonSettings';
 import ButtonFriendAddresses from '../components/ButtonFriendAddresses';
@@ -10,14 +10,33 @@ import AlertConfirm from './AlertConfirm';
 import { useNavigationState } from '@react-navigation/native';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the context hook
 
+import { Dimensions } from 'react-native';
+
 export default function HelloFriendFooter() {
     const navigationState = useNavigationState(state => state);
     const currentRouteName = navigationState.routes[navigationState.index]?.name;
     const isOnActionPage = currentRouteName === 'hellofriend';
     const { themeStyles } = useGlobalStyle();  
+    const [footerHeight, setFooterHeight] = useState(Dimensions.get('window').height * 0.074);
+    
+    useEffect(() => {
+        const handleResize = () => {
+            const { height } = Dimensions.get('window');
+            setFooterHeight(height * 0.074); // Update footer height on resize
+        };
+
+        const subscription = Dimensions.addEventListener('change', handleResize);
+        return () => subscription?.remove(); // Clean up the listener
+    }, []);
 
     return (
-        <View style={[styles.container, themeStyles.footerContainer]}>
+        <View
+        style={[
+            styles.container,
+            themeStyles.footerContainer,
+            { height: footerHeight, paddingBottom: Platform.OS === 'ios' ? 10 : 0 } // Dynamic padding
+        ]}
+    >
             {isOnActionPage ? (
                 <View style={styles.section}>
                     <ButtonSignOut
@@ -34,20 +53,26 @@ export default function HelloFriendFooter() {
 
             <View style={[styles.divider, themeStyles.divider]} />
             <>
-            {isOnActionPage ? (
-                <ButtonSettings /> 
-            ): (
-                <ButtonFriendAddresses /> 
-            )}
+
+            <View style={styles.section}>
+                
+            {isOnActionPage ? ( 
+                    <ButtonSettings />  
+                ): ( 
+                    <ButtonFriendAddresses />  
+                )}
+            </View>
             </>
 
             <View style={[styles.divider, themeStyles.divider]} />
             <> 
-            {isOnActionPage ? (
-                <ButtonInfo />
-            ): (
-                <ButtonColors />
-            )}
+            <View style={styles.section}>
+                {isOnActionPage ? ( 
+                    <ButtonInfo /> 
+                ): ( 
+                    <ButtonColors /> 
+                )}
+            </View>
             </>
             
 
@@ -57,19 +82,21 @@ export default function HelloFriendFooter() {
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: 'row', 
-        height: 46,
+        flexDirection: 'row',  
         width: '100%',
-        marginBottom: 0,
-        padding: 8,
-        paddingTop: 12,
+        position: 'absolute',
+        bottom: 0, 
+        zIndex: 1,
     },
     section: { 
         flex: 1,
-        justifyContent: 'center',
+        flexDirection: 'column',
         alignItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',  
     },
     divider: { 
-        marginVertical: 6,
+        marginVertical: 10,
+        backgroundColor: 'transparent',
     },
 });

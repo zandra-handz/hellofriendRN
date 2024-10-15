@@ -8,8 +8,14 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "bundleIdentifier": "com.badrainbowz.sampleproject",  
+      "buildNumber": "1.0.0",                        
+      "supportsTablet": true,                                
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to show your current position on the map." // Example permission
+      },
       "config": {
-        "usesNonExemptEncryption": false
+        "usesNonExemptEncryption": false                 
       }
     },
     "android": {  

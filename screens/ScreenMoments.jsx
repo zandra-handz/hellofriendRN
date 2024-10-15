@@ -89,7 +89,7 @@ const ScreenMoments = ({ route, navigation }) => {
             end={{ x: 1, y: 1 }}
             style={[styles.container, themeStyles.signinContainer]}
         >
-            <View style={{ flex: 1, width: '100%' }}>
+            <View style={{ flex: 1}}>
                 {isCapsuleListReady ? (
                     <>  
                         <ItemMomentMultiPlain 
@@ -116,7 +116,8 @@ const ScreenMoments = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
     container: { 
-        flex: 1,  
+        flex: 1,
+        width: '100%',  
         padding: 0,
         justifyContent: 'space-between',
     },

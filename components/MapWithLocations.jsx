@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
 import { useLocationList } from '../context/LocationListContext';
@@ -51,7 +51,7 @@ const MapWithLocations = ({ locations }) => {
     <View style={styles.container}>
       {initialRegion && (
         <MapView
-          provider={PROVIDER_GOOGLE}
+        {...(Platform.OS === 'android' && { provider: PROVIDER_GOOGLE })}
           ref={mapRef}
           style={styles.map}
           initialRegion={initialRegion}

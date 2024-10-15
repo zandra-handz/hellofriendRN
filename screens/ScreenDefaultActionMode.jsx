@@ -15,7 +15,7 @@ import ActionScreenButtonAddLocation from '../components/ActionScreenButtonAddLo
 
 import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; 
 import HelloFriendFooter from '../components/HelloFriendFooter';
-
+import { Dimensions } from 'react-native';
 
 import LoadingPage from '../components/LoadingPage';
 
@@ -28,15 +28,21 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
   const { isLoading } = useUpcomingHelloes(); 
   const [ borderColor, setBorderColor ] = useState('transparent');
   const [ backgroundColor, setBackgroundColor ] = useState('transparent');
+  const [buttonHeight, setButtonHeight] = useState(Dimensions.get('window').height * 0.15);
 
-
+  const [footerHeight, setFooterHeight] = useState(Dimensions.get('window').height * 0.078);
   const borderWidth = 0;
   const borderRadius = 34;
 
-  const buttonHeight = 130;
+  const buttonHeight2 = 120;
   const headerHeight = 140;
 
   const paddingAboveTopButton = 16;  
+
+ 
+  const handleFooterHeightChange = (height) => {
+    setFooterHeight(height); // Update footer height
+  };
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
@@ -106,8 +112,8 @@ return (
           )}
           {!isLoading && (  
             <>
-            <View style={[styles.buttonContainer, {paddingTop: paddingAboveTopButton}]}>  
-              <ActionPageUpcomingButton height={headerHeight}/> 
+            <View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10}]}>  
+              <ActionPageUpcomingButton height={buttonHeight}/> 
               <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen} height={buttonHeight}/>
 
               <ActionScreenButtonAddImage onPress={navigateToAddImageScreen} height={buttonHeight}/>
@@ -150,6 +156,7 @@ const styles = StyleSheet.create({
   buttonContainer: {   
     height: '100%',
     alignItems: 'center',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     marginHorizontal: 4, 
   }, 

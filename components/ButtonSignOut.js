@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LogoutOutlineSvg from '../assets/svgs/logout-outline.svg';
@@ -33,11 +33,8 @@ const ButtonSignOut = ({
 
   return (
     <>
-      <TouchableOpacity onPress={handleSignOutPress} style={styles.buttonContainer}>
+      <TouchableOpacity onPress={handleSignOutPress}>
         <LogoutOutlineSvg width={25} height={25} style={themeStyles.footerIcon}  />
-        {label && (
-        <Text style={[styles.label, themeStyles.footerText]}>Sign out</Text>
-        )}
       </TouchableOpacity>
 
       {confirmationAlert && (
@@ -55,21 +52,6 @@ const ButtonSignOut = ({
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  buttonContainer: {
-    flex: 1, // Divide space equally
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  icon: {
-    marginRight: 8,  
-  },
-  label: { 
-    fontFamily: 'Poppins-Bold',
-    fontSize: 13,
-    color: 'black',
-  },
-});
+ 
 
 export default ButtonSignOut;
