@@ -1,9 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+
 
 const ButtonsOnboardingNav = ({ showPrevButton, showNextButton, onPrevPress, onNextPress, iconColor }) => {
     const pulseAnimation = useRef(new Animated.Value(1)).current;
+    const { themeStyles, gradientColors } = useGlobalStyle();
+    const { darkColor, lightColor } = gradientColors;
 
     useEffect(() => {
         if (iconColor === 'hotpink' && showNextButton) { // Only start the animation if the button is active and not disabled
@@ -25,7 +29,7 @@ const ButtonsOnboardingNav = ({ showPrevButton, showNextButton, onPrevPress, onN
     }, [iconColor, showNextButton]); // Re-run the effect whenever iconColor or showNextButton changes
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container]}>
             {showPrevButton && (
                 <TouchableOpacity onPress={onPrevPress}>
                     <FontAwesome name="angle-left" size={46} color="black" />
@@ -50,15 +54,16 @@ const ButtonsOnboardingNav = ({ showPrevButton, showNextButton, onPrevPress, onN
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
+        justifyContent: 'space-between',  
+        width: '100%',  
+        zIndex: 1, 
     },
     nextButton: {
         borderWidth: 0,
         borderRadius: 5,
     },
     disabledButton: {
-        backgroundColor: 'transparent', // Light gray color
+        backgroundColor: 'transparent',  
     },
     pulsatingIcon: {
         alignItems: 'center',

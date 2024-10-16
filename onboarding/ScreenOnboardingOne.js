@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, Animated, Easing } from 'reac
 import { useAuthUser } from '../context/AuthUserContext';
 import { useNavigation } from '@react-navigation/native';  
 import { FontAwesome } from '@expo/vector-icons'; 
-import ButtonColorHighlight from '../components/ButtonColorHighlight';
-import AlertPopUp from '../components/AlertPopUp'; // Import AlertPopUp component
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { LinearGradient } from 'expo-linear-gradient'; 
 
 const PulsatingArrow = () => {
     const pulseAnimation = useRef(new Animated.Value(1)).current;
+
 
     useEffect(() => {
         const pulse = () => {
@@ -33,12 +34,16 @@ const PulsatingArrow = () => {
 
     return (
         <Animated.View style={{ transform: [{ scale: pulseAnimation }] }}>
-            <FontAwesome name="angle-right" size={46} color="hotpink" />
+            <FontAwesome name="angle-right" size={46} color="black" />
         </Animated.View>
     );
 };
 
 const ScreenOnboardingOne = ({ messageContent }) => { // Receive messageContent as props
+    const { themeStyles, gradientColors } = useGlobalStyle();
+    
+    const { darkColor, lightColor } = gradientColors;
+    
     const { authUserState } = useAuthUser();
     const navigation = useNavigation(); 
     const [showAlert, setShowAlert] = useState(false); // State for alert visibility
@@ -49,33 +54,36 @@ const ScreenOnboardingOne = ({ messageContent }) => { // Receive messageContent 
     };
 
     return (
-        <View style={styles.container}> 
+        <LinearGradient
+            colors={[darkColor, lightColor]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[styles.container, themeStyles.signinContainer]}
+            > 
             <Text style={styles.title}>Hi {authUserState.user.username}!</Text>
             <Text style={styles.message}>{messageContent}</Text> 
-            
-            <View style={styles.buttonContainer}> 
+             
                 <TouchableOpacity onPress={goToNextScreen}>
                     <PulsatingArrow />
-                </TouchableOpacity>
-            </View>
-
-        </View>
+                </TouchableOpacity> 
+ 
+        </LinearGradient>  
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        width: '100%',
+        height: '100%',
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
+        alignItems: 'center', 
         paddingHorizontal: 20, // Add horizontal padding
     },
     buttonContainer: {
         flexDirection: 'row', // Arrange buttons horizontally
         justifyContent: 'flex-end', // Align button to the right
-        width: '100%', // Take up 100% width of the container
-        marginTop: 0,
+        width: '100%',  
     },
     alertButton: {
         marginTop: 20,
@@ -89,8 +97,7 @@ const styles = StyleSheet.create({
     },
     alertButtonText: {
         color: 'white',
-    },
-    footerContainer: { backgroundColor: '#333333' },
+    }, 
     title: {
         fontSize: 40,
         fontWeight: 'bold',

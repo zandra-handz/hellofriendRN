@@ -1,20 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, Button, View, StyleSheet } from 'react-native';
+import { Text, Button, View, StyleSheet, Platform, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ButtonsOnboardingNav from './ButtonsOnboardingNav';
 import InputOnboarding from './InputOnboarding'; // Importing the custom input component
 import { useFriendList } from '../context/FriendListContext'; // Importing useFriendList hook
 import { fetchFriendList } from '../api'; // Importing the function to fetch the friend list
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { LinearGradient } from 'expo-linear-gradient'; 
+
 
 const ScreenOnboardingTwo = ({ onChange }) => {
+    const { themeStyles, gradientColors } = useGlobalStyle();
+    const { darkColor, lightColor } = gradientColors;
     const navigation = useNavigation();
     const { friendList, setFriendList } = useFriendList(); // Accessing friendList from context
     const [friendName, setFriendName] = useState('');
     const inputRef = useRef(null); // Reference for the input field
 
-    useEffect(() => { 
-        inputRef.current.focus();
+
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            inputRef.current?.focus();
+        }, 500); // Add a slight delay to ensure the component is rendered
+    
+        return () => clearTimeout(timer); // Cleanup the timer on unmount
     }, []);
+    
 
     const goToNextScreen = async () => { 
         try {
@@ -52,64 +64,75 @@ const ScreenOnboardingTwo = ({ onChange }) => {
  
 
     return (
-        <View style={styles.container}>
-            <View style={styles.content}> 
-                <View style={styles.inputContainer}>
-                    <Text style={styles.message}>Please enter your friend's name.</Text>
+
+
+        <LinearGradient
+        colors={[darkColor, lightColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.container, themeStyles.signinContainer]}
+        >  
+            <View style={[styles.inputContainer, {backgroundColor: 'transparent'}]}>
+                    <View>
+                    <Text style={styles.message}>1. Please enter the name of a friend you'd like to add.</Text>
                     <InputOnboarding
                         inputRef={inputRef}
                         value={friendName}
                         onChangeText={handleFriendNameChange}
                         
-                        placeholder="Friend's Name"
+                        placeholder="Name"
                         maxLength={30} // Limit to 30 characters
                         onSubmitEditing={handleSubmitEditing}
-                    />
-                </View> 
-            </View>
-            <View style={styles.bottom}>
-                <ButtonsOnboardingNav
+                    />  
+                    
+                        
+                    </View>
+
+
+            </View> 
+          
+            <View style={styles.footerContainer}>
+            <ButtonsOnboardingNav
                     showPrevButton={true}
                     showNextButton={friendName.trim().length > 0}
                     onPrevPress={goToPrevScreen}
                     onNextPress={goToNextScreen}
                     iconColor={friendName.trim().length > 0 ? 'hotpink' : 'gray'}
-                />
+                    /> 
+ 
             </View>
-        </View>
+
+
+        </LinearGradient>
+ 
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,  
-        backgroundColor: 'white',
-        paddingHorizontal: 10,
+        flex: 1,   
+        width: '100%',   
+        height: '100%',
     },
-    content: {
-        flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
+
     inputContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        width: '100%',
-        marginTop: 30,
-        marginBottom: 30,
-    },
-    bottom: {
-        paddingBottom: 20,
-    },
+        paddingTop: 20, 
+        width: '100%',  
+    }, 
     completeButtonContainer: {
         alignItems: 'center',
-        width: '100%',
-        marginTop: 20,
+        width: '100%', 
+    },
+    footerContainer: {
+        bottom: 60,
+        position: 'absolute',
+
     },
     message: {
         fontSize: 20,
-        textAlign: 'center',
-        marginBottom: 20,
+        textAlign: 'left',
+        paddingBottom: 20,
+        paddingHorizontal: 10,
         fontFamily: 'Poppins-Regular',
     }, 
 });

@@ -109,11 +109,6 @@ export const Layout = () => {
   const { themeStyles } = useGlobalStyle(); 
   const { authUserState, onSignOut } = useAuthUser();
 
-
-  const handleSignOutPress = () => {
-    console.log("Sign Out button pressed");
-    onSignOut();
-  };
  
 
   return (

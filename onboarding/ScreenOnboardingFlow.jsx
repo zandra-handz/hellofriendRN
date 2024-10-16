@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext'; // Importing useFriendList hook
-import { Button, View, StyleSheet } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+
+import { Button, View, StyleSheet, Platform, KeyboardAvoidingView } from 'react-native';
 import HelloFriendFooter from '../components/HelloFriendFooter';
+import HelloFriendFooterOneButton from '../components/HelloFriendFooterOneButton';
+
 import ProgressBarOnboarding from './ProgressBarOnboarding';
 import ButtonSpecialAlert from '../components/ButtonSpecialAlert';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import PhoneStatusBar from '../components/PhoneStatusBar';
+
 
 import ScreenOnboardingOne from './ScreenOnboardingOne';
 import ScreenOnboardingTwo from './ScreenOnboardingTwo';
@@ -15,21 +22,23 @@ import ScreenOnboardingFive from './ScreenOnboardingFive';
 import ScreenOnboardingIntermediary from './ScreenOnboardingIntermediary'; // Import the intermediary component
 import ScreenOnboardingComplete from './ScreenOnboardingComplete';
 import Animated, { Transition, Transitioning } from 'react-native-reanimated';
-
+import { LinearGradient } from 'expo-linear-gradient'; 
 
 const Stack = createNativeStackNavigator();
 
 
 const HeaderProgress = ({ percentage }) => {
-    return (
+    return ( 
         <View style={styles.progressBarContainer}>
             <ProgressBarOnboarding percentage={percentage} />
-        </View>
+        </View> 
     );
 };
 
 
 const ScreenOnboardingFlow = () => {
+    const { themeStyles, gradientColors } = useGlobalStyle();
+    const { darkColor, lightColor } = gradientColors;
     const { friendList } = useFriendList();
     const [finalizingData, setFinalizingData] = useState({});
     const { authUserState, onSignOut } = useAuthUser();
@@ -70,30 +79,33 @@ const ScreenOnboardingFlow = () => {
 
     const resetFinalizingData = () => {
         setFinalizingData(null); // Reset finalizingData to null
-    };
-    const renderCompleteButton = () => {
-        if (friendList.length > 0) {
-            return (
-                <View style={styles.completeButtonContainer}>
-                    <Button
-                        title="Complete"
-                        onPress={handleGoToCompletePage}
-                        color="hotpink"
-                    />
-                </View>
-            );
-        }
-        return null;
-    };
+    }; 
 
     return (
         <>
-            <Stack.Navigator>
+        <LinearGradient
+        colors={[darkColor, lightColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.container, themeStyles.signinContainer]}
+        > 
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0} // adjust the offset for iOS status bar
+        >
+
+            <Stack.Navigator
+            screenOptions={{
+                cardStyle: {
+                    backgroundColor: 'transparent', // Set your desired background color
+                },
+            }}>
             <Stack.Screen
                 name="One"
                 component={({ route }) => {
                     const { friendList } = useFriendList(); // Retrieve friendList from context
-                    const messageContent = friendList.length > 0 ? "Your account is ready! You can add more friends here, or add them later." : "Thanks for signing up! Please add your first friend to start using hellofriend.";
+                    const messageContent = friendList.length > 0 ? "Your account is ready!" : "Thanks for signing up! Please add your first friend to start using hellofriend.";
 
                     return <ScreenOnboardingOne messageContent={messageContent} />;
                 }} 
@@ -106,13 +118,7 @@ const ScreenOnboardingFlow = () => {
                                 )}
                                 {friendList.length > 0 && (
                                     <>
-                                        <HeaderProgress percentage={1} {...props} />
-                                        <View style={styles.completeButtonContainer}>
-                                            <ButtonSpecialAlert
-                                                title="Finialize account"
-                                                onPress={() => navigation.navigate('Complete')}
-                                            />
-                                        </View>
+                                        <HeaderProgress percentage={1} {...props} /> 
                                     </>
                                 )}
                             </View>
@@ -135,12 +141,7 @@ const ScreenOnboardingFlow = () => {
                                 {friendList.length > 0 && (
                                 <>
                                 <HeaderProgress percentage={1} {...props} />
-                                    <View style={styles.completeButtonContainer}>
-                                        <ButtonSpecialAlert
-                                            title="Finialize account"
-                                            onPress={() => navigation.navigate('Complete')}
-                                        />
-                                    </View>
+                                  
                                 </>
                                 )}
                             </View>
@@ -167,12 +168,7 @@ const ScreenOnboardingFlow = () => {
                                 {friendList.length > 0 && (
                                 <>
                                 <HeaderProgress percentage={1} {...props} />
-                                    <View style={styles.completeButtonContainer}>
-                                        <ButtonSpecialAlert
-                                            title="Finialize account"
-                                            onPress={() => navigation.navigate('Complete')}
-                                        />
-                                    </View>
+                        
                                 </>
                                 )}
                             </View>
@@ -285,13 +281,12 @@ const ScreenOnboardingFlow = () => {
                     borderWidth={4} 
                 />
             </View>
-        </View>
-        <View style={styles.footerContainer}>
-            <HelloFriendFooter />
-        </View>
+        </View> 
             <View style={styles.footerContainer}>
-                <HelloFriendFooter />
+                <HelloFriendFooterOneButton buttonText={'Finish'}onPress={() => navigation.navigate('Complete')} />
             </View>
+        </KeyboardAvoidingView>
+        </LinearGradient>
         </>
     );
 };
@@ -299,18 +294,17 @@ const ScreenOnboardingFlow = () => {
 const styles = StyleSheet.create({ 
     container: {
         flex: 1,
-        height: '100%',
-        backgroundColor: 'white',
+        height: '100%', 
+        width: '100%',  
     },
     progressBarContainer: {
-        marginTop: 66,
+        marginTop: 0,
     },
 
     completeButtonContainer: {  
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
-        marginRight: 10, 
-        backgroundColor: 'white',
+        marginRight: 10,  
     },
 
     completeButton: {
@@ -321,7 +315,7 @@ const styles = StyleSheet.create({
     exitButtonContainer: {
         marginTop: 0,
     },
-    footerContainer: { backgroundColor: '#333333' },
+    footerContainer: { backgroundColor: 'transparent' },
 });
 
 export default ScreenOnboardingFlow;

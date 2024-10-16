@@ -4,8 +4,7 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import ButtonColorHighlight from '../components/ButtonColorHighlight';
-import { useFonts } from 'expo-font';
-import { FontAwesome } from '@expo/vector-icons';
+import { useFonts } from 'expo-font'; 
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage'; 

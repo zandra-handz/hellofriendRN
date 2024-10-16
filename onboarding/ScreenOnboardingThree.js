@@ -4,11 +4,17 @@ import { useNavigation } from '@react-navigation/native';
 import ButtonsOnboardingNav from './ButtonsOnboardingNav';
 import SliderInputOnboarding from './SliderInputOnboarding'; // Importing the SliderInputOnboarding component
 import MessageOnboardingNote from './MessageOnboardingNote'; // Importing the MessageOnboardingNote component
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { LinearGradient } from 'expo-linear-gradient'; 
+
+
 
 const ScreenOnboardingThree = ({ onEffortChange, onPriorityChange }) => {
     const navigation = useNavigation();
     const friendEffortInputRef = useRef(null);
     const friendPriorityInputRef = useRef(null);
+    const { themeStyles, gradientColors } = useGlobalStyle();
+    const { darkColor, lightColor } = gradientColors;
 
     const [friendEffort, setFriendEffort] = useState(3); // Initialize with default values
     const [friendPriority, setFriendPriority] = useState(2);
@@ -54,10 +60,15 @@ const ScreenOnboardingThree = ({ onEffortChange, onPriorityChange }) => {
     };
 
     return (
-        <View style={styles.container}>
+
+        <LinearGradient
+        colors={[darkColor, lightColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.container, themeStyles.signinContainer]}
+        >   
             <View style={styles.content}> 
-                
-                {/* Container for friend's effort slider */}
+                 
                 <View style={styles.sliderContainer}>
                     <SliderInputOnboarding
                         value={friendEffort}
@@ -71,11 +82,10 @@ const ScreenOnboardingThree = ({ onEffortChange, onPriorityChange }) => {
                             4: 'Concerted (check in every two weeks)',
                             5: 'A frankly tenacious amount (check in every few days)'
                         }}
-                        label="Effort needed to maintain this friendship"
+                        label="2. Effort needed to maintain this friendship"
                     />
                 </View>
-
-                {/* Container for friend's priority slider */}
+ 
                 <View style={styles.sliderContainer}>
                     <SliderInputOnboarding
                         value={friendPriority}
@@ -87,7 +97,7 @@ const ScreenOnboardingThree = ({ onEffortChange, onPriorityChange }) => {
                             2: 'Medium',
                             3: 'Unworried'
                         }}
-                        label="Priority given to this friendship"
+                        label="3. Priority given to this friendship"
                     />
                 </View>
 
@@ -98,7 +108,7 @@ const ScreenOnboardingThree = ({ onEffortChange, onPriorityChange }) => {
                     marginBottom={20}
                 />
             </View>
-            <View style={styles.bottom}>
+            <View style={styles.footerContainer}>
                 <ButtonsOnboardingNav
                     showPrevButton={true}
                     showNextButton={true}
@@ -107,7 +117,7 @@ const ScreenOnboardingThree = ({ onEffortChange, onPriorityChange }) => {
                     iconColor={iconColor}
                 />
             </View>
-        </View>
+        </LinearGradient>
     );
 };
 
@@ -115,16 +125,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
+        alignItems: 'center', 
         paddingHorizontal: 10,
         height: '100%',
     },
     content: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20,
+        justifyContent: 'flex-start',
+        alignItems: 'center', 
     },
     title: {
         fontSize: 40,
@@ -134,12 +142,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     sliderContainer: {
-        marginTop: 20,
-        marginBottom: 70,
+        marginTop: 0,
+        marginBottom: 60,
         width: '100%',
     },
-    bottom: {
-        paddingBottom: 20,
+    footerContainer: {
+        bottom: 60,
+        position: 'absolute',
+
     },
 });
 

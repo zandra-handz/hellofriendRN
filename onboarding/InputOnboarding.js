@@ -1,37 +1,39 @@
 import React, { forwardRef } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const InputOnboarding = forwardRef(({ value, onChangeText, placeholder, onFocus, onBlur, style, isFocused, inputRef, maxLength }, ref) => {
-    return (
-        <View>
+    
+    const { themeStyles } = useGlobalStyle();
+
+    return ( 
             <TextInput
                 ref={inputRef || ref} // Using inputRef if provided, otherwise fallback to ref
                 style={[
-                    styles.input,
+                    styles.input, themeStyles.signinInput,
                     (isFocused || value.trim().length > 0) ? styles.inputFocused : null,
                     style
                 ]}
                 value={value}
-                onChangeText={onChangeText}
                 placeholder={placeholder}
+                onChangeText={onChangeText}
+                placeholderTextColor={themeStyles.signinInput.placeholderTextColor} 
                 onFocus={onFocus}
                 onBlur={onBlur}
                 maxLength={maxLength} // Add maxLength prop
-            />
-        </View>
+            /> 
     );
 });
 
 const styles = StyleSheet.create({
     input: {
-        height: 44,
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 20,
-        backgroundColor: '#fff',
+        height: 'auto',
+        borderWidth: .4,
+        padding: 16,
+        borderRadius: 10, 
         width: '100%',
-        fontFamily: 'Poppins-Regular',
-        color: 'black', 
+        fontSize: 18,
+        fontFamily: 'Poppins-Regular', 
     },
     inputFocused: {
         borderColor: '#ff69b4',  

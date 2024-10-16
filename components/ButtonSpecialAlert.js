@@ -1,9 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import { TouchableOpacity, Text, Animated } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome from @expo/vector-icons
+import { FontAwesome } from '@expo/vector-icons'; 
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const ButtonSpecialAlert = ({ onPress, title }) => {
+const ButtonSpecialAlert = ({ onPress, title, size }) => {
   const sparkleValue = useRef(new Animated.Value(0)).current;
+  const {themeStyles } = useGlobalStyle();
 
   useEffect(() => {
     Animated.loop(
@@ -38,7 +40,7 @@ const ButtonSpecialAlert = ({ onPress, title }) => {
       onPress={onPress}
       style={{
         flexDirection: 'row',
-        backgroundColor: 'white',
+        backgroundColor: 'transparent',
         paddingVertical: 10,
         paddingHorizontal: 10,
         borderRadius: 10,
@@ -46,9 +48,13 @@ const ButtonSpecialAlert = ({ onPress, title }) => {
         justifyContent: 'center',
       }}
     >
-      <Text style={{ color: 'black', fontWeight: 'bold', marginRight: 10 }}>{title}</Text>
+      {title && (
+
+     
+      <Text style={{ color: themeStyles.subHeaderText, fontWeight: 'bold', marginRight: 10 }}>{title}</Text>
+      )}
       <Animated.View style={{ opacity: sparkleOpacity }}> 
-        <FontAwesome name="magic" size={20} color="black" />
+        <FontAwesome name="magic" size={size} color={themeStyles.modalIconColor.color} />
       </Animated.View>
     </TouchableOpacity>
   );
