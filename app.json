@@ -10,7 +10,8 @@
     "ios": {
       "bundleIdentifier": "com.badrainbowz.sampleproject",  
       "buildNumber": "1.0.0",                        
-      "supportsTablet": true,                                
+      "supportsTablet": true, 
+      "googleServicesFile": "./GoogleService-Info.plist",                               
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app uses your location to show your current position on the map." // Example permission
       },
@@ -40,7 +41,17 @@
     },
     "plugins": [
       "expo-secure-store",
-      "expo-font"
+      "expo-font",
+      "@react-native-firebase/app",  
+     "@react-native-firebase/messaging",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {

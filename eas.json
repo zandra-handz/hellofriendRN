@@ -20,6 +20,12 @@
       "env": {
         "GOOGLE_API_KEY": "AIzaSyArVY_-EOJjalOpYmc-XSIk-vmPvr9qnKs"
       }
+    },
+    "test": {
+      "env": {
+        "GOOGLE_API_KEY": "AIzaSyArVY_-EOJjalOpYmc-XSIk-vmPvr9qnKs"
+      },
+      "distribution": "internal"
     }
   },
   "submit": {

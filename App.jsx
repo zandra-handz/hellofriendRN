@@ -1,7 +1,7 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import TopLevelNavigationHandler from './TopLevelNavigationHandler'; // Adjust import path if necessary
-import { Alert, StatusBar, useColorScheme } from 'react-native';
+import { Alert, View, Text, useColorScheme } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
@@ -60,8 +60,17 @@ async function loadFonts() {
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
   useEffect(() => {
-    loadFonts();
+        // Load fonts and set loading status
+        const fetchFonts = async () => {
+          await loadFonts();
+          setFontsLoaded(true);
+        };
+    
+        fetchFonts();
 
  
 
@@ -79,6 +88,15 @@ export default function App() {
 
 
   const colorScheme = useColorScheme();
+
+    // If fonts or other resources are not ready, show a loading placeholder
+    if (!fontsLoaded) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20 }}>Loading...</Text>
+        </View>
+      );
+    }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}> 
