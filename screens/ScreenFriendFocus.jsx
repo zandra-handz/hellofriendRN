@@ -65,13 +65,15 @@ const ScreenFriendFocus = () => {
             </View>
             
             
-            <View style={{height: 40, paddingHorizontal: 10,justifyContent: 'center' }}>
-              <Text style={[styles.headerText, themeStyles.subHeaderText, {color: calculatedThemeColors.fontColor}]}>
-                Say hello on {friendDashboardData ? `${friendDashboardData[0].future_date_in_words}!` : ' '}
-          
-              </Text>
-
-            </View>
+            <View style={{ height: 40, paddingHorizontal: 10, justifyContent: 'center', width: '100%' }}>
+            <Text
+              style={[styles.headerText, themeStyles.subHeaderText, { color: calculatedThemeColors.fontColor }]}
+              numberOfLines={2} // Allows a maximum of 2 lines (you can adjust this value as needed)
+              ellipsizeMode="tail" // Adds "..." if the text is too long
+            >
+              Say hello on {friendDashboardData ? `${friendDashboardData[0].future_date_in_words}!` : ' '}
+            </Text>
+          </View>
           </View>
             <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
             

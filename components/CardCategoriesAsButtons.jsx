@@ -6,6 +6,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import  { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonAddCategory from '../components/ButtonAddCategory'
 import AlertFormSubmit from '../components/AlertFormSubmit';
+
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 import AddOutlineSvg from '../assets/svgs/add-outline.svg'; // Import the SVG
 import ButtonBottomSaveMomentToCategory from './ButtonBottomSaveMomentToCategory';

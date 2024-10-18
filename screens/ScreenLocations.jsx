@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   sectionContainer: {
+    paddingTop: 24,
     width: '100%',
     flex: 1,
   },

@@ -15,18 +15,16 @@ const FriendListContext = createContext({
 export const useFriendList = () => useContext(FriendListContext);
 
 export const FriendListProvider = ({ children }) => {
-  const { authUserState } = useAuthUser(); // Get authentication state
-
+  const { authUserState } = useAuthUser();  
   const [friendList, setFriendList] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (authUserState.authenticated) {
-          // Fetch friend list data only if user is authenticated
-          const friendData = await fetchFriendList();
-          // Extract and set the friend list
-          const friendList = friendData.map(friend => ({ id: friend.id, name: friend.name }));
+        if (authUserState.authenticated) { 
+          const friendData = await fetchFriendList(); 
+          const friendList = friendData.map(friend => ({ id: friend.id, name: friend.name, darkColor: friend.theme_color_dark, lightColor: friend.theme_light_color }));
+          
           setFriendList(friendList);
         }
       } catch (error) {
@@ -65,13 +63,26 @@ export const FriendListProvider = ({ children }) => {
     });
   }; 
 
+  const updateFriendListColors = (friendId, darkColor, lightColor) => {
+    setFriendList(prevFriendList => {
+      prevFriendList.forEach(friend => {
+        if (friend.id === friendId) {
+          // Directly update the colors in the original list
+          friend.darkColor = darkColor;  // Set darkColor, even if null
+          friend.lightColor = lightColor;  // Set lightColor, even if null
+        }
+      });
+      return prevFriendList;  // No need to create a new array
+    });
+  };
   return (
     <FriendListContext.Provider value={{
       friendList,
       setFriendList,
       addToFriendList,
       removeFromFriendList,
-      updateFriend
+      updateFriend,
+      updateFriendListColors
     }}>
       {children}
     </FriendListContext.Provider>

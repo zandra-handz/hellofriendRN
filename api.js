@@ -204,6 +204,7 @@ export const fetchFriendList = async () => {
     }
 };
 
+
 export const fetchFriendAddresses = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/addresses/all/`);

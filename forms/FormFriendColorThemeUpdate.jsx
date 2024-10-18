@@ -4,6 +4,7 @@ import ColorPicker, { Panel1, HueSlider } from 'reanimated-color-picker'; // Cor
 import { updateFriendFavesColorTheme } from '../api'; // Import the updateFriendFavesColorTheme function
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 
@@ -13,7 +14,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
   const [darkColor, setDarkColor] = useState(friendColorTheme.darkColor || '#000000'); // Default to black
   const [lightColor, setLightColor] = useState(friendColorTheme.lightColor || '#FFFFFF'); // Default to white
   const [showSaveMessage, setShowSaveMessage] = useState(false);
-
+  const { updateFriendListColors } = useFriendList();
   const [ isMakingCall, setIsMakingCall ] = useState(false);
   const { themeStyles } = useGlobalStyle();
 
@@ -46,6 +47,8 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
       });
 
       setShowSaveMessage(true);
+      //Update friendlist data to show colors even when friend is not selected
+      updateFriendListColors(selectedFriend.id, darkColor, lightColor);
       
       setTimeout(() => {
         setShowSaveMessage(false);

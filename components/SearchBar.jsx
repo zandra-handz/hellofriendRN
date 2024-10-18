@@ -53,10 +53,10 @@ const SearchBar = ({ data, onPress, searchKey }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    zIndex: 2,
+  container: { 
     position: 'relative',
-    width: '40%',
+    width: '100%',
+    zIndex: 0,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     top: 50,
     right: 0, 
     backgroundColor: '#fff',
-    zIndex: 3,
+    
     maxHeight: 300,
     borderRadius: 20,
     shadowColor: '#000',
@@ -88,10 +88,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 5,
     width: '100%', // Change to 100% for better alignment
+    zIndex: 3,
   },
   dropdownList: {
     paddingHorizontal: 10,
     borderRadius: 20,
+    zIndex: 3,
   },
   itemContainer: {
     paddingVertical: 10,

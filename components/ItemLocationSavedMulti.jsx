@@ -19,8 +19,7 @@ const ItemLocationSavedMulti = ({
     const { savedLocationList } = useLocationList();
     const { themeStyles } = useGlobalStyle();
     const [selectedLocation, setSelectedLocation] = useState(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-
+   
     const openModal = (location) => {
         setSelectedLocation(location);
         console.log('setting location in ItemLocationSavedMulti'); 

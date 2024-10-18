@@ -7,13 +7,14 @@ import AlertList from '../components/AlertList';
 import RowItemFriendDelete from '../components/RowItemFriendDelete';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-const RowItemFriendSelect = ({ friend }) => {
-    const { selectedFriend } = useSelectedFriend();
+const ButtonSelectFriend = ({ friend }) => {
+    const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
     const { themeStyles } = useGlobalStyle();  
     const [isFriendDetailsModalVisible, setIsFriendDetailsModalVisible] = useState(false);
-    const [ rowColor, setRowColor ] = useState(friend.darkColor || 'gray');
+    const [ rowColor, setRowColor ] = useState(themeStyles.genericTextBackgroundShadeTwo.backgroundColor || 'transparent');
     const [ lightColor, setLightColor ] = useState(friend.lightColor || 'gray');
     const [ darkColor, setDarkColor ] = useState(friend.darkColor || 'gray');
+    const [ textColor, setTextColor ] = useState(themeStyles.genericText.color);
 
     const toggleFriendDetailsModal = () => {
         setIsFriendDetailsModalVisible(true);
@@ -21,12 +22,14 @@ const RowItemFriendSelect = ({ friend }) => {
     };
 
     useEffect(() => {
-        if (selectedFriend) {
-            console.log(friend.darkColor);
+        if (selectedFriend && calculatedThemeColors) { 
             if (friend.id === selectedFriend.id) {
-                setRowColor('limegreen');
+                setRowColor(calculatedThemeColors.darkColor);
+                setLightColor(calculatedThemeColors.fontColor);
+                setDarkColor(calculatedThemeColors.fontColor);
+                setTextColor(calculatedThemeColors.fontColor);
             } else {
-                setRowColor('transparent');
+                setRowColor(themeStyles.genericTextBackgroundShadeTwo.backgroundColor || 'transparent');
             }
         };
 
@@ -34,12 +37,10 @@ const RowItemFriendSelect = ({ friend }) => {
 
     //to restore gradient: [1] - [0]
   const renderProfileIcon = () => { 
-        return (
-          <View style={{ flexDirection: 'row' }}>
+        return ( 
             
-            <ProfileCircleSvg width={32} height={32} startColor={darkColor || 'black'} endColor={lightColor || 'black'} />
-             
-          </View>
+            <ProfileCircleSvg width={40} height={40} startColor={darkColor || 'black'} endColor={darkColor || 'black'} />
+              
         ); 
   };
 
@@ -51,17 +52,17 @@ const RowItemFriendSelect = ({ friend }) => {
     };
     
     return (
-        <View style={[styles.row, {backgroundColor: rowColor}]}>
-            <Text style={[styles.name, themeStyles.genericText]}>{friend.name}</Text> 
-            <TouchableOpacity onPress={toggleFriendDetailsModal}>
+        <View style={[styles.row, {backgroundColor: rowColor, borderColor: textColor}]}>
+           
                 <View style={styles.iconContainer}> 
                     {renderProfileIcon()}
                 
                 </View>
-            </TouchableOpacity>
+                
+            <Text numberOfLines={1} style={[styles.name, {color: textColor}]}>{friend.name}</Text> 
+             
             <AlertList
-                    fixedHeight={true}
-                    height={230}
+                    fixedHeight={true} 
                     isModalVisible={isFriendDetailsModalVisible}
                     content={
                         <View>
@@ -87,22 +88,27 @@ const RowItemFriendSelect = ({ friend }) => {
 
 const styles = StyleSheet.create({
     row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 10,
-        paddingHorizontal: 20, 
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: 10,  
         width: '100%',
-        marginBottom: 4,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        backgroundColor: 'gray',
-        borderRadius: 20,
+        height: 90,
+        textAlign: 'center',
+
+          
+        borderWidth: 0, 
+        borderRadius: 10, 
     },
     name: {
+        alignSelf: 'center', 
         fontSize: 14,
-        fontFamily: 'Poppins-Bold',
+        fontFamily: 'Poppins-Regular',
     },
     iconContainer: {
+        paddingBottom: 6, 
+        width: '100%',
+        alignItems: 'center',
 
     },
     button: {
@@ -110,4 +116,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default RowItemFriendSelect;
+export default ButtonSelectFriend;

@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';  
-
+import HeaderBase from '../components/HeaderBase';
 
 const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
   
@@ -10,6 +10,7 @@ const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) =
   
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+      <HeaderBase />
       <View style={styles.modalContainer}>
         <View style={[styles.modalContent, themeStyles.genericTextBackground]}>
           <View style={styles.header}>
@@ -27,7 +28,7 @@ const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) =
 
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  modalContainer: { 
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',

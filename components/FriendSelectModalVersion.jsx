@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-
-import AlertList from '../components/AlertList';
+import { View, Text, StyleSheet,  TouchableOpacity } from 'react-native';
+import SearchBar from '../components/SearchBar';
+import AlertList from '../components/AlertList'; 
+import { FlashList } from '@shopify/flash-list';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 import ProfileTwoUsersSvg from '../assets/svgs/profile-two-users.svg';
 import LoadingPage from '../components/LoadingPage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import RowItemFriendSelect from '../components/RowItemFriendSelect';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
+import ButtonSelectFriend from '../components/ButtonSelectFriend';
 import ButtonToggleSize from '../components/ButtonToggleSize';
 
+import { Dimensions } from 'react-native';
+
 const FriendSelectModalVersion = ({ width = '60%' }) => {  
-  const { gradientColors } = useGlobalStyle();
+  const { themeStyles, gradientColors } = useGlobalStyle();
   const globalStyles = useGlobalStyle();  
   const { selectedFriend, setFriend, calculatedThemeColors, friendColorTheme, loadingNewFriend } = useSelectedFriend();
   const { friendList } = useFriendList();
@@ -61,6 +64,15 @@ const FriendSelectModalVersion = ({ width = '60%' }) => {
 
   const handleSelectFriend = (itemId) => { 
     const selectedOption = friendList.find(friend => friend.id === itemId);
+    const selectedFriend = selectedOption || null;
+    setFriend(selectedFriend);
+    console.log("Friend selected: ", selectedFriend);
+    setForceUpdate(prevState => !prevState);  
+    toggleModal();
+  };
+
+  const handleSelectFriendSearch = (item) => { 
+    const selectedOption = friendList.find(friend => friend === item);
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
     console.log("Friend selected: ", selectedFriend);
@@ -118,27 +130,37 @@ const FriendSelectModalVersion = ({ width = '60%' }) => {
         </View> 
       </LinearGradient>
 
-      <AlertList
-        fixedHeight={true}
-        height={700}
+      <AlertList 
+        includeBottomButtons={false}
         isModalVisible={isFriendMenuModalVisible}
         isFetching={loadingNewFriend}
         useSpinner={true}
+        questionText={'Switch friend'}
         toggleModal={toggleModal}
-        headerContent={<Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18 }}>Select friend</Text>}
-        content={
-          <FlatList
-            data={friendList}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity 
-                onPress={() => handleSelectFriend(item.id)} 
-                style={styles.row}
-              >
-                <RowItemFriendSelect friend={item} />
-              </TouchableOpacity>
-            )}
-          />
+        headerContent={<ProfileTwoUsersSvg width={42} height={42} color={themeStyles.modalIconColor.color} />}
+        includeSearch={true}
+        searchData={friendList}
+        searchField={'name'}
+        searchOnPress={handleSelectFriendSearch}
+        content={ 
+          <FlashList
+          data={friendList}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity 
+              onPress={() => handleSelectFriend(item.id)} 
+              style={styles.friendContainer}  // Adjust styles accordingly
+            >
+              <ButtonSelectFriend friend={item} />
+            </TouchableOpacity>
+          )}
+          numColumns={3} 
+          estimatedItemSize={100}  
+          contentContainerStyle={styles.listContent}  
+          showsVerticalScrollIndicator={false} 
+          // Optional: Add styling for the content container
+        /> 
+        
         }
         onCancel={toggleModal}
         confirmText="Reset All"
@@ -156,8 +178,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     padding: 2,
 
-    borderRadius: 22, 
-    borderRadius: 0,
+    borderRadius: 0, 
   },
   loadingWrapper: {
     flex: 1,
@@ -180,8 +201,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
      
   },
+  friendContainer: {
+    flex: 1,  // Make sure it takes up the full available space per column
+    margin: 4,  // Optional: Adjust margin to control space around each item
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: Dimensions.get('window').width / 3 - 20,  // Divide by 3 to spread items evenly
+  },
   row: { 
     borderRadius: 5,
+  },
+  listContent: { 
   },
 });
 

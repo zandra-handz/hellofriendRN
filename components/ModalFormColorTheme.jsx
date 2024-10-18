@@ -17,6 +17,7 @@ const ModalFormColorTheme = ({
             isModalVisible={isVisible} 
             isMakingCall={isMakingCall}
             headerContent={<ArtistColorPaletteSvg width={38} height={38} color={themeStyles.modalIconColor.color} />}
+            
             questionText="Update color theme"
             formBody={
                 <FormFriendColorThemeUpdate

@@ -50,7 +50,9 @@ const HeaderBaseWithSearch = ({
 
       </View> 
       {componentData && (
+      <View style={{width: '40%'}}>
       <SearchBar data={componentData} onPress={onPress} searchKey={dataFieldToSearch} />
+      </View>
       )}
       
     </View>

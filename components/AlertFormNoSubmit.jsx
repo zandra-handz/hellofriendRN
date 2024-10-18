@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated } from 'react-native';
 import { useGlobalStyle} from '../context/GlobalStyleContext';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 
 const AlertFormNoSubmit = ({
   isModalVisible, 
@@ -27,6 +29,7 @@ const AlertFormNoSubmit = ({
   return (
     <Modal transparent={true} visible={isModalVisible} animationType="none">
       <Animated.View style={[styles.modalContainer, { opacity: fadeAnim }]}>
+        
         <View style={[styles.modalContent, themeStyles.genericTextBackground, { borderColor: themeStyles.genericTextBackgroundShadeTwo.backgroundColor }]}> 
           {headerContent && <View style={[styles.headerContainer, themeStyles.genericText]}>{headerContent}</View>}
           {questionText && <Text style={[styles.questionText, themeStyles.genericText]}>{questionText}</Text>}

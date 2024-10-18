@@ -4,6 +4,7 @@ import { useLocationList } from '../context/LocationListContext';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LoadingPage from '../components/LoadingPage';
+import HeaderBase from '../components/HeaderBase';
 
 const AlertLocation = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
   const { selectedLocation, setSelectedLocation, loadingAdditionalDetails } = useLocationList();
@@ -18,6 +19,7 @@ const AlertLocation = ({ isModalVisible, toggleModal, modalContent, modalTitle }
 
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+      <HeaderBase />
        
         <View style={[styles.modalContent, themeStyles.genericTextBackground]}>
           <View style={styles.header}>

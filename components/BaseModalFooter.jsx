@@ -23,11 +23,10 @@ const BaseModalFooter = ({
               <LoadingComponent loading={true} spinnerSize={60} spinnerType="circle" />
             </View>
           )}
-          <View style={{ zIndex: 0 }}>
+          <View style={{ zIndex: 2 }}>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <FontAwesome5 name="times" size={20} style={[styles.icon, themeStyles.modalIconColor]} />
-            </TouchableOpacity>
-            {/* Use a wrapping View to allow for dynamic height */}
+            </TouchableOpacity> 
             <View style={styles.contentContainer}>
               {children}
             </View>
@@ -55,7 +54,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -6,
     right: 0,
-    padding: 10,
+    padding: 10,  
+    zIndex: 1,
   },
   loadingOverlay: {
     position: 'absolute',
