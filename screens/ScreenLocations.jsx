@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons'; // Example icon library
+
+
+import { Ionicons } from '@expo/vector-icons'; 
 
 import ButtonSearchGoogleMap from '../components/ButtonSearchGoogleMap';
 import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
@@ -15,8 +17,7 @@ import CustomTabBar from '../components/CustomTabBar';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-
-// Create the Bottom Tab Navigator
+ 
 const Tab = createBottomTabNavigator();
 
 const ScreenLocations = ({ route, navigation }) => {

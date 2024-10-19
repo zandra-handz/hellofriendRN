@@ -17,13 +17,14 @@ export const useFriendList = () => useContext(FriendListContext);
 export const FriendListProvider = ({ children }) => {
   const { authUserState } = useAuthUser();  
   const [friendList, setFriendList] = useState([]);
+  const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (authUserState.authenticated) { 
           const friendData = await fetchFriendList(); 
-          const friendList = friendData.map(friend => ({ id: friend.id, name: friend.name, darkColor: friend.theme_color_dark, lightColor: friend.theme_light_color }));
+          const friendList = friendData.map(friend => ({ id: friend.id, name: friend.name, darkColor: friend.theme_color_dark, lightColor: friend.theme_color_light}));
           
           setFriendList(friendList);
         }
@@ -34,6 +35,12 @@ export const FriendListProvider = ({ children }) => {
 
     fetchData();
   }, [authUserState.authenticated]);  
+
+
+  const getThemeAheadOfLoading = (loadingFriend) => {
+    
+    setThemeAheadOfLoading({lightColor: loadingFriend.lightColor, darkColor: loadingFriend.darkColor});
+  };
 
 
   const addToFriendList = (newFriend) => {
@@ -79,6 +86,9 @@ export const FriendListProvider = ({ children }) => {
     <FriendListContext.Provider value={{
       friendList,
       setFriendList,
+      themeAheadOfLoading,
+      setThemeAheadOfLoading,
+      getThemeAheadOfLoading,
       addToFriendList,
       removeFromFriendList,
       updateFriend,

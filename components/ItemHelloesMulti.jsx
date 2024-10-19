@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import CardMicroLocation from '../components/CardMicroLocation';
+import { View, Text, StyleSheet } from 'react-native'; 
 import { useLocationList } from '../context/LocationListContext'; 
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import LocationSolidSvg from '../assets/svgs/location-solid.svg'; 
-import ButtonLocation from '../components/ButtonLocation'; 
+import LocationSolidSvg from '../assets/svgs/location-solid.svg';  
+import ButtonHello from '../components/ButtonHello';
 
-const ItemLocationSavedMulti = ({ 
+const ItemHelloesMulti = ({ 
+    helloesData,
+    onPress, 
     horizontal = true,
     singleLineScroll = false, 
     width = 70,
@@ -27,28 +28,26 @@ const ItemLocationSavedMulti = ({
 
     return (
         <View style={[styles.container, {height: '100%'}]}>
-            <Text style={[styles.headerText, themeStyles.genericText]}>Saved</Text>
+            <Text style={[styles.headerText, themeStyles.genericText]}>Helloes</Text>
             <FlashList
-                data={savedLocationList}
+                data={helloesData}
                 horizontal={horizontal && singleLineScroll}
-                keyExtractor={(location) => location.id.toString()}
-                renderItem={({ item: location }) => (
+                keyExtractor={(hello) => hello.id.toString()}
+                renderItem={({ item: hello }) => (
                     <>
                         {horizontal ? (
-                            <CardMicroLocation
-                                location={location}
-                                width={width}
-                                height={height}
-                                showBigSvg={showBigSvg}
-                                onPress={() => openModal(location)}
-                                SvgComponent={LocationSolidSvg}
-                                iconColor={'lightblue'}
-                                colorScheme={'green'}
+                            <ButtonHello
+                                hello={hello} 
+                                onPress={() => {onPress(hello)}} 
+                                iconColor={themeStyles.genericText.color}
+                                color={themeStyles.genericText.color}
+                                icon={LocationSolidSvg} 
                             />
+                             
                         ) : (
-                            <ButtonLocation 
-                                location={location} 
-                                onPress={() => openModal(location)} 
+                            <ButtonHello
+                                hello={hello} 
+                                onPress={() => {onPress(hello)}} 
                                 iconColor={themeStyles.genericText.color}
                                 color={themeStyles.genericText.color}
                                 icon={LocationSolidSvg} 
@@ -89,4 +88,4 @@ const styles = StyleSheet.create({
     }, 
 });
 
-export default ItemLocationSavedMulti;
+export default ItemHelloesMulti;

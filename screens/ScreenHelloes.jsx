@@ -1,40 +1,152 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
- 
-import { useImageList } from '../context/ImageListContext'; 
-import ItemImageMulti from '../components/ItemImageMulti';
+import { View, Text, StyleSheet } from 'react-native';
+//<Tab.Screen name="Recent" component={HelloesScreen} />
+import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { fetchPastHelloes } from '../api'; 
+import ItemViewHello from '../components/ItemViewHello';
+import { Ionicons } from '@expo/vector-icons'; 
+  
+import ItemHelloesMulti from '../components/ItemHelloesMulti';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const ScreenHelloes = ({ route, navigation }) => {
-    const { imageList } = useImageList();
-    const [isImageListReady, setIsImageListReady] = useState(false);
+import CustomTabBar from '../components/CustomTabBar';
+
+
+const Tab = createBottomTabNavigator();
+
+
+const ScreenHelloes = ({ route, navigation }) => { 
+    const { themeStyles } = useGlobalStyle();
+    const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
+    const [isFetchingHelloes, setFetchingHelloes] = useState(false);
+    const [helloesList, setHelloesList] = useState([]);
+    const [helloesInPersonList, setHelloesInPersonList] = useState([]);const [isModalVisible, setIsModalVisible] = useState(false);
+    const [ selectedHello, setSelectedHello ] = useState(null);
+  
+
 
     useEffect(() => {
-        if (imageList.length > 0) {
-            setIsImageListReady(true);
-        }
-    }, [imageList]);
+        const fetchData = async () => {
+            setFetchingHelloes(true);
+            try {
+                if (selectedFriend) {
+                    const helloes = await fetchPastHelloes(selectedFriend.id);
+                    
+                    setHelloesList(helloes);
+    
+                    // Filter helloes with type 'in person' and set the filtered list
+                    const inPersonList = helloes.filter(hello => hello.type === 'in person');
+                    setHelloesInPersonList(inPersonList);
+                } else { 
+                    setHelloesList([]);
+                    setHelloesInPersonList([]);
+                }
+            } catch (error) {
+                console.error('Error fetching helloes list:', error);
+            } finally {
+                setFetchingHelloes(false);
+            }
+        };
+    
+        fetchData();
+    }, [selectedFriend]);
+
+    
+
+    const onPress = (hello) => { 
+         if (hello) {
+             setSelectedHello(hello); 
+             setIsModalVisible(true);
+         } else {
+             console.log('This hello is not in the list.');
+         }
+     };
+
+     const onClose = () => {
+        setIsModalVisible(false);
+      };
+
+
+    const HelloesScreen = () => (
+        
+        <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
+          <ItemHelloesMulti onPress={onPress} helloesData={helloesList} horizontal={false} />
+        </View>
+      );
+
+      const HelloesInPersonScreen = () => (
+        
+        <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
+          <ItemHelloesMulti onPress={onPress} helloesData={helloesInPersonList} horizontal={false} />
+        </View>
+      );
+
+
+ 
 
     return ( 
-            <View style={styles.container}> 
-                <ScrollView>
-                    {isImageListReady ? (
+        <View style={[styles.container]}>
+                    {helloesList && helloesInPersonList && !isFetchingHelloes ? (
                         <>  
-                        <ItemImageMulti height={120} width={120} singleLineScroll={false} />
+                        <Tab.Navigator
+                            tabBar={props => <CustomTabBar {...props} />}
+                            screenOptions={({ route }) => ({
+                                tabBarStyle: {
+                                backgroundColor: calculatedThemeColors.darkColor,
+                                position: 'absolute',
+                                flexDirection: 'row',
+                                top: 0, 
+                                elevation: 0,
+                                shadowOpacity: 0,
+                                borderTopWidth: 0, 
+                                },
+                                tabBarActiveTintColor: calculatedThemeColors.fontColor,
+                                tabBarInactiveTintColor: calculatedThemeColors.fontColor,
+                                tabBarIcon: ({ color }) => {
+                                let iconName;
+                                if (route.name === `${selectedFriend.name}`) {
+                                    iconName = 'star';
+                                } else if (route.name === 'Others') {
+                                    iconName = 'location';
+                                } else if (route.name === 'Recent') {
+                                    iconName = 'time';
+                                }
+                                return <Ionicons name={iconName} size={18} color={calculatedThemeColors.fontColor} />;
+                                },
+                            })}
+                            >
+                                <Tab.Screen name="In person" component={HelloesInPersonScreen} />
+                                <Tab.Screen name="All" component={HelloesScreen} />
+                            </Tab.Navigator>
+
+
+                            {isModalVisible && selectedHello && (
+                                <ItemViewHello hello={selectedHello} onClose={onClose} />
+                            )}
+
+                        
+                        
+
                         </>
                         
                     ) : (
                         <Text>Loading...</Text>
-                    )}
-                </ScrollView>
+                    )} 
             </View> )
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: 'white',
-        padding: 20,
+        flex: 1, 
+        width: '100%',
+        justifyContent: 'space-between',
     },
+    sectionContainer: {
+        paddingTop: 24,
+        width: '100%',
+        flex: 1,
+      },
     mainContainer: {
         flex: 1,
     },

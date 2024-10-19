@@ -66,7 +66,7 @@ const AlertList = ({
                                 <View style={styles.lastSection}>
                                     {!includeBottomButtons && includeSearch && (
                                         <View style={{width: '90%'}}>
-                                        <SearchBar data={searchData} onPress={searchOnPress} searchKey={searchField}/>  
+                                        <SearchBar data={searchData} onPress={searchOnPress} searchKeys={searchField}/>  
                                         </View>
                                     )}
                                 </View>

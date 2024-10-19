@@ -19,8 +19,7 @@ const ComposerFriendHelloes = ({
   headerText='LAST HELLO',
   headerTextColor='white',
   headerFontFamily='Poppins-Regular',
-  headerTextSize=15, 
-  headerInside=false,
+  headerTextSize=15,  
   buttonHeight=70,
   buttonRadius=20,
   headerHeight=30,
@@ -38,8 +37,9 @@ const ComposerFriendHelloes = ({
   const { selectedFriend, friendDashboardData, calculatedThemeColors } = useSelectedFriend(); 
   const [helloesList, setHelloesList] = useState([]);  
   const [isFetchingHelloes, setFetchingHelloes] = useState(false);
-  const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
-  const calculatedBackgroundColor = headerInside ? oneBackgroundColor : 'transparent';
+  
+  const calculatedButtonHeight = buttonHeight;
+  const calculatedBackgroundColor = 'transparent';
   const [category, setCategory] = useState(''); // new state to track the category
 
   const handleCategoryChange = (newCategory) => {
@@ -87,7 +87,7 @@ const ComposerFriendHelloes = ({
   return (
     <View style={[styles.container, {backgroundColor: calculatedBackgroundColor, borderRadius: buttonRadius }]}>
       <View style={[styles.containerInner, {borderRadius: buttonRadius}]}>
-      {includeHeader && !headerInside && (
+      {includeHeader && (
         <View style={[styles.headerContainer, { height: headerHeight}]}>
          {!showSecondButton && (
               <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
@@ -107,13 +107,7 @@ const ComposerFriendHelloes = ({
       <View style={styles.containerInnerRow}> 
         <View style={[styles.containerHeaderInside, { backgroundColor: 'transparent', borderTopRightRadius: buttonRadius }]}>
           
-          {includeHeader && headerInside && (
-            <View style={[styles.headerContainer, { backgroundColor: oneBackgroundColor, borderTopRightRadius: buttonRadius, height: headerHeight}]}>
-                      <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-              {headerText}
-            </Text>
-          </View>
-          )}
+
 
       <View style={{ flex: 1, borderRadius: 30}}>
           <BaseFriendViewHelloes

@@ -43,8 +43,9 @@ import HellofriendHeader from './components/HellofriendHeader';
 import HeaderWriteMoment from './components/HeaderWriteMoment';
 import HeaderPickCategory from './components/HeaderPickCategory';
 import HeaderFriendFocus from './components/HeaderFriendFocus';
-import HeaderBase from './components/HeaderBase';
+import HeaderBase from './components/HeaderBase'; 
 import HeaderLocations from './components/HeaderLocations';
+import HeaderHelloes from './components/HeaderHelloes';
 import HeaderLocationSingle from './components/HeaderLocationSingle';
 
 
@@ -207,7 +208,7 @@ export const Layout = () => {
                 component={ScreenHelloes}
                 options={{
                   headerShown: true,
-                  header: () => <HeaderBase headerTitle='Helloes history' />,
+                  header: () => <HeaderHelloes />,
                 }}
               />
               <Stack.Screen

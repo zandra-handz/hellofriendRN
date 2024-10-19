@@ -40,7 +40,7 @@ const HeaderLocations = () => {
         return(
             <> 
             {locationList && ( 
-            <HeaderBaseWithSearch headerTitle="Locations" onPress={handlePress} componentData={locationList} dataFieldToSearch={'title'} />
+            <HeaderBaseWithSearch headerTitle="Locations" onPress={handlePress} componentData={locationList} dataFieldToSearch={['title', 'address']} />
             )}
             </>
         );

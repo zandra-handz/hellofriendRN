@@ -5,6 +5,9 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
+import FriendSelectModalVersionButtonOnly from './FriendSelectModalVersionButtonOnly';
+
+
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import InfoOutline from '../assets/svgs/info-outline.svg';
 import { useNavigation } from '@react-navigation/native';
@@ -16,7 +19,7 @@ const HeaderFriendFocus = () => {
 
     const { authUserState } = useAuthUser();
     const { themeStyles } = useGlobalStyle();
-    const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
+    const { selectedFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
     const navigation = useNavigation();
 
     const handleNavigateBack = () => {
@@ -24,6 +27,8 @@ const HeaderFriendFocus = () => {
       };
 
   return (
+    <>
+    {!loadingNewFriend && ( 
     <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: calculatedThemeColors.darkColor}]}>
       <View style={{flexDirection: 'row', width: '60%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
         <TouchableOpacity onPress={handleNavigateBack}>
@@ -46,9 +51,11 @@ const HeaderFriendFocus = () => {
 
 
       </View> 
-      <InfoOutline height={30} width={30}   color={calculatedThemeColors.fontColor}/>
-      
+      <FriendSelectModalVersionButtonOnly width='20%' iconSize={40} includeLabel={false} />
+   
     </View>
+  )}
+  </>
   );
 };
 

@@ -28,7 +28,7 @@ const BaseFriendViewImages = ({
     <View style={{ width: '90%', flexDirection: 'row', borderRadius: buttonRadius, height: buttonHeight, justifyContent: 'space-between', backgroundColor: 'transparent'}}> 
         
       <View style={styles.headerContainer}> 
-          <PhotoSolidSvg width={68} height={68} style={themeStyles.friendFocusSectionIcon} />
+          <PhotoSolidSvg width={50} height={50} style={themeStyles.friendFocusSectionIcon} />
 
       </View> 
       <View style={[styles.contentContainer]}>
