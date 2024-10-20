@@ -3,18 +3,16 @@ import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, Touc
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthUser } from '../context/AuthUserContext';
-
+import { useFriendList } from '../context/FriendListContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api'; 
 
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useNavigation } from '@react-navigation/native';
+
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
-
 import LoadingPage from '../components/LoadingPage';
-
 import ArrowRightCircleOutline from '../assets/svgs/arrow-right-circle-outline.svg';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 
@@ -23,11 +21,10 @@ const ContentMomentFocus = ({ placeholderText }) => {
   const { selectedFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
   const { setCapsuleList } = useCapsuleList(); // NEED THIS TO ADD NEW 
   const { authUserState } = useAuthUser(); 
-
-  const navigation = useNavigation();
+  const { themeAheadOfLoading } = useFriendList();
+   
   const [textInput, setTextInput] = useState('');
-  const textareaRef = useRef(); 
-  const [resetAutoFocus, setAutoFocus] = useState(false);
+  const textareaRef = useRef();  
   const [ showCategories, setShowCategories ] = useState(false); 
   const [selectedCategory, setSelectedCategory] = useState('');
 
@@ -35,17 +32,31 @@ const ContentMomentFocus = ({ placeholderText }) => {
   const [ resultMessage, setResultMessage ] = useState(null);
   const [gettingResultMessage, setGettingResultMessage ] = useState(null);
   
+  const [gradientColorOne, setGradientColorOne ] = useState(calculatedThemeColors.darkColor);
+  const [gradientColorTwo, setGradientColorTwo ] = useState(calculatedThemeColors.lightColor);
+  
+
   const [clearText, setClearText] = useState(false);
   const [isSuccess, setIsSuccess] = useState(true);  
   const delayForResultsMessage = 1000;
 
+
+  useEffect(() => {
+    if (loadingNewFriend) {
+      setGradientColorOne(themeAheadOfLoading.darkColor);
+      setGradientColorTwo(themeAheadOfLoading.lightColor);
+
+    } else {
+
+      setGradientColorOne(calculatedThemeColors.darkColor);
+      setGradientColorTwo(calculatedThemeColors.lightColor);
+
+    };
+
+  }, [selectedFriend, loadingNewFriend]);
+
  
-
-  const handleTextUpdate = (momentText) => {
-    setTextInput(momentText);
-
-  }; 
-
+ 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category); 
   };
@@ -141,7 +152,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
       
       <LinearGradient
-        colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
+        colors={[gradientColorOne, gradientColorTwo]} 
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.container}
@@ -156,17 +167,16 @@ const ContentMomentFocus = ({ placeholderText }) => {
           </View>
           {showCategories && (
             <>
-      <View style={styles.displayTextContainer}>
-        <Text
-          style={[styles.displayText, { borderColor: calculatedThemeColors.darkColor, color: calculatedThemeColors.fontColor }]}
-          numberOfLines={4} // Set this to the number of lines you want to allow
-          ellipsizeMode="tail" // This will add ellipses at the end if text is too long
-        >
-          
-          {textInput} 
-        </Text>
-
-      </View>
+            <View style={styles.displayTextContainer}>
+              <Text
+                style={[styles.displayText, { borderColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor, color: calculatedThemeColors.fontColor }]}
+                numberOfLines={4} // Set this to the number of lines you want to allow
+                ellipsizeMode="tail" // This will add ellipses at the end if text is too long
+              >
+                
+                {textInput} 
+              </Text>
+            </View>
         <TouchableOpacity
           onPress={toggleCategoryView}
           style={[styles.backButton, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'transparent' }]}
@@ -184,7 +194,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
           ellipsizeMode="tail" // This will add ellipses at the end if text is too long
         >
           
-          ({textInput.length}/3000) 
+          ({textInput.length}/10000) 
         </Text>
           
         </TouchableOpacity>
@@ -192,7 +202,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
          )}
           {!showCategories && ( 
           <TextInput
-            style={[styles.modalTextInput, { borderColor: calculatedThemeColors.darkColor, color: calculatedThemeColors.fontColor }]}
+            style={[styles.modalTextInput, { borderColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor, color: calculatedThemeColors.fontColor }]}
             multiline={true}
             value={textInput}
             onChangeText={setTextInput} // Directly update textInput using setTextInput
@@ -201,7 +211,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
             ref={textareaRef}
           />
       )}
-            {showCategories && selectedFriend && (
+        {showCategories && selectedFriend && (
         <View style={styles.categoryContainer}>
         <> 
         <CardCategoriesAsButtons onCategorySelect={handleCategorySelect} momentTextForDisplay={textInput} onParentSave={handleSave}/> 
@@ -212,23 +222,24 @@ const ContentMomentFocus = ({ placeholderText }) => {
       )}
         </BlurView>
         <View style={styles.buttonContainer}>  
-        {textInput && !loadingNewFriend && selectedFriend && !showCategories && (
+        {textInput && selectedFriend && !showCategories && (
         <TouchableOpacity
           onPress={toggleCategoryView}
-          style={[styles.closeButton, { flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: calculatedThemeColors.darkColor }]}
-        >
-          <Text style={[styles.closeButtonText, { paddingRight: 10, color: calculatedThemeColors.fontColor }]}>
+          style={[styles.closeButton, { flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor }]}
+        >  
+          <Text style={[styles.closeButtonText, { paddingRight: 10, color: loadingNewFriend ? 'transparent' : calculatedThemeColors.fontColor }]}>
             Pick category
           </Text>
-          <ArrowRightCircleOutline height={34} width={34} color={calculatedThemeColors.fontColor} />
-
+            
+          <ArrowRightCircleOutline height={34} width={34} color={loadingNewFriend ? 'transparent' : calculatedThemeColors.fontColor} />
+           
         </TouchableOpacity>
          )}
 
         {!textInput && (
         <TouchableOpacity
         onPress={() => {}}
-        style={[styles.closeButton, { flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: calculatedThemeColors.darkColor }]}
+        style={[styles.closeButton, { flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor }]}
       >
         <Text style={[styles.closeButtonText, { paddingRight: 10, color: calculatedThemeColors.darkColor }]}>
           Pick category
@@ -266,6 +277,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',  
     alignItems: 'center',  
     width: '100%',  
+    height: 40,
   },
   blurView: {
     overflow: 'hidden',
@@ -316,7 +328,7 @@ const styles = StyleSheet.create({
 
   },
   buttonContainer: {
-    heigght: 'auto',
+    height: 'auto',
     width: '100%', 
   },
   categoryContainer: {  
@@ -326,21 +338,13 @@ const styles = StyleSheet.create({
     maxHeight: '90%',
     borderRadius: 8,
     paddingTop: 10, 
-  },
-  closeButton: { 
-    marginTop: 20,
-    borderRadius: 0, 
-    padding: 4, 
-    height: 'auto',  
-    
-    alignItems: 'center',
-  },
+  }, 
   closeButtonText: {
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
   },
   closeButton: { 
-    marginTop: 20,
+    marginTop: 14,
     borderRadius: 0, 
     padding: 4, 
     height: 'auto',  

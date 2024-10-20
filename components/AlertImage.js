@@ -1,8 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
+import { StyleSheet, View, Modal, Dimensions } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import Ionicons from 'react-native-vector-icons/Ionicons';  
-import HeaderBase from '../components/HeaderBase';
+import HeaderBaseItemView from '../components/HeaderBaseItemView';
+
+const { height: screenHeight } = Dimensions.get('window'); // Get screen height
 
 const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
   
@@ -10,15 +11,15 @@ const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) =
   
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-      <HeaderBase />
+      <HeaderBaseItemView onBackPress={toggleModal} headerTitle={modalTitle} />
       <View style={styles.modalContainer}>
-        <View style={[styles.modalContent, themeStyles.genericTextBackground]}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-              <Ionicons name="arrow-back" size={23} color={themeStyles.modalIconColor.color} /> 
-            </TouchableOpacity>
-            {modalTitle && <Text style={[styles.modalTitle, themeStyles.subHeaderText]}>{modalTitle}</Text>}
-          </View>
+        <View 
+          style={[
+            styles.modalContent, 
+            themeStyles.genericTextBackground, 
+            { maxHeight: screenHeight * 0.9, paddingBottom: 30 } // Modal content takes up 80% of screen height
+          ]}
+        >
           {modalContent}
         </View>
       </View>
@@ -26,22 +27,22 @@ const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) =
   );
 };
 
-
 const styles = StyleSheet.create({
   modalContainer: { 
     flex: 1,
+    width: '100%', 
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    zIndex: 1,
   },
   modalContent: {
-    width: '100%',
+    width: '100%', 
     padding: 4, 
     borderRadius: 0,
-    height: '100%', 
+    flexDirection: 'column',
     flex: 1,
     justifyContent: 'space-between',
-    
   },
   header: {
     flexDirection: 'row', 
@@ -60,6 +61,5 @@ const styles = StyleSheet.create({
     flex: 1, 
   }, 
 });
- 
 
 export default AlertImage;

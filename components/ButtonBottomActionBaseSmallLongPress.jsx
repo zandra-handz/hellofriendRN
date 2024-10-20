@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import AddOutlineSvg from '../assets/svgs/add-outline.svg';
+import ArrowForwardDoubleSvg from '../assets/svgs/arrow-forward-double.svg';
 
 const ButtonBottomActionBaseSmallLongPress = ({ 
   onPress,
@@ -135,7 +136,7 @@ const ButtonBottomActionBaseSmallLongPress = ({
         <AddOutlineSvg
           width={shapeWidth}
           height={shapeHeight}
-          color={calculatedThemeColors.fontColorSecondary}
+          color={'transparent'}
           style={{
             position: 'absolute',
             ...getShapeStyle(), 
@@ -144,7 +145,7 @@ const ButtonBottomActionBaseSmallLongPress = ({
         />
       )}
             {showShape && !ShapeSvg && !disabled && selected  &&(
-        <AddOutlineSvg
+        <ArrowForwardDoubleSvg
           width={shapeWidth}
           height={shapeHeight}
           color={calculatedThemeColors.fontColor}
@@ -187,11 +188,12 @@ const ButtonBottomActionBaseSmallLongPress = ({
       <Text
         style={[
           textStyles(labelFontSize, disabled ? 'white' : (selected ? calculatedThemeColors.fontColor : calculatedThemeColors.fontColorSecondary )), // White label color if disabled
-          { fontFamily: fontFamily, marginRight: fontMargin },
+          { fontFamily: selected ? 'Poppins-Bold' : fontFamily, marginRight: fontMargin },
         ]}
         numberOfLines={1}          
         ellipsizeMode="tail"      
       >
+        {selected ? `Selected: ` : null}
         {label}
       </Text>
       </View>

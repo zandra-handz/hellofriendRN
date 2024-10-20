@@ -17,11 +17,14 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
   const { themeStyles, gradientColors } = useGlobalStyle();
   const globalStyles = useGlobalStyle();  
   const { selectedFriend, setFriend, calculatedThemeColors, friendColorTheme, loadingNewFriend } = useSelectedFriend();
-  const { friendList } = useFriendList();
+  const { friendList, getThemeAheadOfLoading, themeAheadOfLoading } = useFriendList();
   const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);  
   const [displayName, setDisplayName] = useState(null); 
   const [refreshButtonColor, setRefreshButtonColor ] = useState('white');
+  const [gradientColorOne, setGradientColorOne ] = useState(calculatedThemeColors.darkColor);
+  const [gradientColorTwo, setGradientColorTwo ] = useState(calculatedThemeColors.lightColor);
+  
 
   const adjustFontSize = (fontSize) => {
     return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
@@ -49,6 +52,9 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
       setDisplayName('Loading friend...');
       
       setRefreshButtonColor('white');
+      setGradientColorOne(themeAheadOfLoading.darkColor);
+      setGradientColorTwo(themeAheadOfLoading.lightColor);
+
     } else {
       if (selectedFriend && selectedFriend.name) {
         setDisplayName(selectedFriend.name);
@@ -58,6 +64,8 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
         setDisplayName('Select friend');
         setRefreshButtonColor('black');
       }
+      setGradientColorOne(calculatedThemeColors.darkColor);
+      setGradientColorTwo(calculatedThemeColors.lightColor);
     }
   }, [selectedFriend, loadingNewFriend]);
 
@@ -65,6 +73,7 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
     const selectedOption = friendList.find(friend => friend.id === itemId);
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
+    getThemeAheadOfLoading(selectedFriend);
     console.log("Friend selected: ", selectedFriend);
     setForceUpdate(prevState => !prevState);  
     toggleModal();
@@ -74,16 +83,16 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
     const selectedOption = friendList.find(friend => friend === item);
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
+    getThemeAheadOfLoading(selectedFriend);
     console.log("Friend selected: ", selectedFriend);
     setForceUpdate(prevState => !prevState);  
     toggleModal();
   };
-
   return (
     <>
     
       <LinearGradient
-        colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}  
+        colors={[gradientColorOne, gradientColorTwo]}  
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}  
         style={[styles.container, { width }]} 
@@ -94,12 +103,14 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
           <View style={styles.loadingWrapper}>
           <LoadingPage
             loading={loadingNewFriend} 
-            spinnnerType='wander'
+            spinnerType='flow'
             spinnerSize={30}
+            color={gradientColorOne}
             includeLabel={false} 
           />
           </View>
         )}
+ 
         {!loadingNewFriend && includeLabel && ( 
         <Text
           style={[styles.displaySelected, textStyles(17, calculatedThemeColors.fontColorSecondary)]}
@@ -111,7 +122,9 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
         )}
 
         </View>
-        <View style={styles.selectorButtonContainer}>
+       
+           
+        <View style={styles.selectorButtonContainer}> 
           <ButtonToggleSize
             title={''}
             onPress={toggleModal}
@@ -119,14 +132,14 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
             useSvg={true}
             Svg={ProfileTwoUsersSvg}
             backgroundColor={'transparent'}
-            color={calculatedThemeColors.fontColorSecondary}
+            color={loadingNewFriend? 'transparent' : calculatedThemeColors.fontColorSecondary}
             style={{
               width: 'auto',  
               height: 35,  
               borderRadius: 20, 
             }}
-          />
-        </View> 
+          /> 
+        </View>  
       </LinearGradient>
 
       <AlertList 
@@ -173,6 +186,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', 
     height: 40,
+    minHeight: 40,
+    maxHeight: 40,
     justifyContent: 'flex-end',
     alignItems: 'center', 
     padding: 2,
@@ -180,8 +195,7 @@ const styles = StyleSheet.create({
     borderRadius: 0, 
   },
   loadingWrapper: {
-    flex: 1,
-    paddingRight: 40,
+    flex: 1,  
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -197,7 +211,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   selectorButtonContainer: {
-    alignItems: 'flex-end',
+    alignItems: 'flex-end',  
      
   },
   friendContainer: {

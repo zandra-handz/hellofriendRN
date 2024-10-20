@@ -6,7 +6,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
-import ItemViewFooter from './ItemViewFooter'; 
+import ItemViewFooter from '../components/ItemViewFooter'; 
 import AlertImage from '../components/AlertImage';
 import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
@@ -188,8 +188,7 @@ const ItemViewImage = ({ image, onClose }) => {
         isModalVisible={isConfirmDeleteModalVisible}
         questionText="Delete image?"
         isFetching={isDeleting}
-        useSpinner={true}
-        toggleModal={toggleModal}
+        useSpinner={true} 
         headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>{imageList[currentIndex].title}</Text>}
         onConfirm={() => handleDelete()} 
         onCancel={toggleModal}

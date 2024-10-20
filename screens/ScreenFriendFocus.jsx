@@ -1,15 +1,10 @@
 import React from 'react';
 import { View, Text,  StyleSheet, TouchableOpacity } from 'react-native';
-  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
-
 import LastHelloBanner from '../components/LastHelloBanner';
-
-import ActionFriendPageHeader from '../components/ActionFriendPageHeader'; // Import the new component
 import ActionFriendPageMoments from '../components/ActionFriendPageMoments'; // Import the new component
 import ComposerFriendImages from '../components/ComposerFriendImages'; // Import the new component
-import ComposerFriendHelloes from '../components/ComposerFriendHelloes';  
 import { useNavigation } from '@react-navigation/native';
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';

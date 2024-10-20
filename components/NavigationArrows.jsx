@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 
+const { height: screenHeight } = Dimensions.get('window');
+
 const NavigationArrows = ({ currentIndex, imageListLength, onPrevPress, onNextPress }) => {
   return (
-    <View style={styles.navigationContainer}> 
+    <View style={[styles.navigationContainer, { top: screenHeight * 0.4 }]}>
       {currentIndex > 0 ? (
         <TouchableOpacity 
           onPress={onPrevPress} 
@@ -36,12 +38,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     position: 'absolute',
     width: '100%', 
-    top: '40%',
     justifyContent: 'space-between',
-    marginBottom: 0,
+    paddingHorizontal: 20, // Adjust padding as needed to prevent overlap
   },
   arrowButton: {
-    padding: 0, 
+    padding: 10, 
     backgroundColor: 'rgba(0, 0, 0, 0.3)', 
     borderRadius: 30, 
     justifyContent: 'center',

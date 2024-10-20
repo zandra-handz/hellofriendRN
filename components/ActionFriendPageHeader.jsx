@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Animated  } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, StyleSheet, Animated} from 'react-native';
 import ButtonLottieAnimationTwoSectionsSvg from '../components/ButtonLottieAnimationTwoSectionsSvg';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -8,6 +8,8 @@ import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage';
 import ButtonArrowSvgAndLabel from '../components/ButtonArrowSvgAndLabel';
 import LizardSvg from '../assets/svgs/lizard';
+
+const DOUBLE_PRESS_DELAY = 300;
 
 const ActionFriendPageHeader = ({  
   buttonHeight=140,
@@ -23,7 +25,8 @@ const ActionFriendPageHeader = ({
 
   const { selectedFriend, friendDashboardData, friendColorTheme, calculatedThemeColors, loadingNewFriend, setFriend } = useSelectedFriend();
   
-  
+  const lastPress = useRef(0);
+  const pressTimeout = useRef(null);
   const [showProfile, setShowProfile] = useState(false); 
 
 
@@ -33,16 +36,37 @@ const ActionFriendPageHeader = ({
     navigation.navigate('FriendFocus');
   };
 
-  
+  const navigateToMoments = () => {
+    navigation.navigate('Moments');
+  };
 
-    // Function to handle button press based on Deselector
-    const handlePress = () => {
-      if (Deselector) {
-        navigateBackToFriendFocus();
-      } else {
-        setShowProfile(true);
-      }
-    };
+   
+  const handleSinglePress = () => {
+    if (Deselector) {
+      navigateBackToFriendFocus();
+    } else {
+      setShowProfile(true);
+    }
+  };
+
+  const handleDoublePress = () => {
+    console.log('Double press detected');
+    navigateToMoments();
+    // Add your double press logic here
+  };
+
+  const handlePress = () => {
+    const now = Date.now();
+    if (now - lastPress.current < DOUBLE_PRESS_DELAY) { 
+      clearTimeout(pressTimeout.current);
+      handleDoublePress();
+    } else { 
+      pressTimeout.current = setTimeout(() => {
+        handleSinglePress();
+      }, DOUBLE_PRESS_DELAY);
+    }
+    lastPress.current = now;
+  };
  
   return (
     <View style={[styles.container, {borderWidth: 0, borderRadius: headerRadius, borderColor: selectedFriend && !loadingNewFriend? calculatedThemeColors.darkColor : 'transparent'}]}>
@@ -61,7 +85,7 @@ const ActionFriendPageHeader = ({
       <Animated.View style={{ flex: 1, flexDirection: 'row', width: '40%'}}>
         <ButtonLottieAnimationTwoSectionsSvg
           onPress={Deselector ? handlePress : null} 
-          buttonHeight={Deselector ? 140 : buttonHeight}
+          buttonHeight={Deselector ? 'auto' : 'auto'}
           borderRadius={headerRadius}
           borderTopRadius={Deselector ? 30 : headerTopRadius}
           preLabelFontSize={Deselector ? 18 : 28}
@@ -89,7 +113,7 @@ const ActionFriendPageHeader = ({
           darkColor={Deselector ? 'black' : 'transparent'}
           SourceSvg={null}
           SourceSecondSvg={LizardSvg}
-          svgColor={calculatedThemeColors.darkColor}
+          svgColor={calculatedThemeColors.darkColor} 
           shapeWidth={190}
           shapeHeight={190}
           showShape={Deselector? false : false} 
@@ -98,7 +122,7 @@ const ActionFriendPageHeader = ({
           showIcon={false}
           satellites={Deselector} // Toggle satellite section based on Deselector
           satelliteSectionPosition="right"
-          satelliteSectionWidth={Deselector ? '28%' : '33.33%'}
+          satelliteSectionWidth={Deselector ? '0%' : '33.33%'}
           satelliteSectionMarginLeft={Deselector ? -22 : -20}
           //removed deselector button by setting 2 : 0 to 0 : 0 below:
           satelliteCount={Deselector ? 0 : 0} // Show two satellites if Deselector is true

@@ -205,6 +205,10 @@ npm install tinycolor2
 npm install react-native-fs
 
 
+//not sure which one will do what i want, yet
+npm install react-native-animatable-text
+
+
 
 
 

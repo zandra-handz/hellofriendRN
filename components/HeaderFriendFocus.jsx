@@ -1,29 +1,22 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-
-import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-
+import { useSelectedFriend } from '../context/SelectedFriendContext'; 
 import FriendSelectModalVersionButtonOnly from './FriendSelectModalVersionButtonOnly';
-
-
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
-import InfoOutline from '../assets/svgs/info-outline.svg';
 import { useNavigation } from '@react-navigation/native';
 // {`View profile: ${selectedFriend ? selectedFriend.name : ''}`}
 
 
 
 const HeaderFriendFocus = () => {
-
-    const { authUserState } = useAuthUser();
+ 
     const { themeStyles } = useGlobalStyle();
-    const { selectedFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
+    const { calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
     const navigation = useNavigation();
 
     const handleNavigateBack = () => {
-        navigation.goBack(); // This will navigate to the previous screen
+        navigation.goBack();  
       };
 
   return (

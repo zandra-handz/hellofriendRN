@@ -557,7 +557,7 @@ export const saveHello = async (requestData) => {
 
 export const deleteThoughtCapsule = async (friendId, capsuleId) => {
     try {
-        const response = await axios.delete(`/friends/${friendId}/thoughtcapsules/${capsuleId}/`);
+        const response = await axios.delete(`/friends/${friendId}/thoughtcapsule/${capsuleId}/`);
         return response.data;
     } catch (error) {
         console.error('Error deleting thought capsule:', error);

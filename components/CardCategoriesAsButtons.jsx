@@ -19,7 +19,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [ selectedCategoryCapsules, setSelectedCategoryCapsules ] = useState(null);
-  const { selectedFriend, calculatedThemeColors, friendDashboardData, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData, loadingNewFriend } = useSelectedFriend();
   const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
   const [containerHeight, setContainerHeight ] = useState(0);
   const [categoryLimit, setCategoryLimit] = useState('');
@@ -37,16 +37,27 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   }, [selectedFriend, friendDashboardData]);
  
 
+  useEffect(() => {
+    if (categoryCount < 3) {
+      setContainerHeight('100%');
+    } else if (categoryCount > 8) {
+      setContainerHeight('100%');
+    } else {
+      setContainerHeight(`100%`); 
+    };
+
+  }, [categoryCount]);
+
   const fetchCategoryLimitData = async () => {
     console.log('category names: ', categoryNames);
     console.log('category counts: ', categoryCount);
 
     if (categoryCount < 3) {
-      setContainerHeight(200);
+      setContainerHeight('100%');
     } else if (categoryCount > 8) {
-      setContainerHeight(800);
+      setContainerHeight('100%');
     } else {
-      setContainerHeight(80 * categoryCount);
+      setContainerHeight(`100%`); 
     };
 
     
@@ -159,32 +170,15 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
     console.log('All capsules:', capsuleList);
     setSelectedCategory(null);
   };
-
-  const handleInputValueChange = (inputValue) => {
-    setSelectedCategory(inputValue);
-    console.log('Received input value from ButtonSingleInput:', inputValue);
-  };
-
-  const handleNewCategory = (newCategory) => { 
-    const updatedCategories = categoryCount > 0 
-      ? [...categoryNames.slice(0, -1), newCategory] 
-      : [newCategory];
+ 
+  const handleNewCategory = (newCategory) => {  
    
     setSelectedCategory(newCategory); 
     onCategorySelect(newCategory, []);  
     setNewCategoryEntered(true);
   };
 
-  useEffect(() => {
-    if (categoryCount < 3) {
-      setContainerHeight(200);
-    } else if (categoryCount > 8) {
-      setContainerHeight(800);
-    } else {
-      setContainerHeight(80 * categoryCount);
-    };
 
-  }, [categoryCount]);
 
 
   useEffect(() => {
@@ -230,7 +224,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
     <View style={[themeStyles.genericTextBackgroundShadeTwo, {flex: 1}]}>
 
     
-    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, {maxHeight: containerHeight, minHeight: 140}]}>
+    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, {maxHeight: containerHeight, minHeight: 130}]}>
         {loadingNewFriend && (
           <View style={styles.loadingWrapper}>
           <LoadingPage
@@ -246,11 +240,11 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
         <>
           <View style={{ flexDirection: 'row', paddingBottom: 10, alignContent: 'center', alignItems: 'center', textAlign: 'left' }}>
             <Text style={[styles.locationTitle,  themeStyles.subHeaderText]}>
-              {`Categories (${categoryCount} / ${friendDashboardData[0].suggestion_settings.category_limit_formula})`}
+              {`CATEGORIES (${categoryCount} / ${friendDashboardData[0].suggestion_settings.category_limit_formula})`}
             </Text>
   
             {remainingCategories !== null && remainingCategories > 0 && (
-              <View style={{ paddingLeft: 8 }}>
+              <View style={{ paddingLeft: 0, paddingBottom: 5 }}>
                 <ButtonAddCategory color={themeStyles.subHeaderText.color} onInputValueChange={handleNewCategory} width={32} height={32} />
               </View>
             )}
@@ -283,15 +277,16 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
 <View style={{ 
   flexDirection: 'column', 
   justifyContent: 'flex-end', // Align items to the bottom of the container
-  height: '100%', 
+  height: 'auto', 
   width: '100%' 
 }}>
   <FlatList
     data={categoryNames}
     keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
     renderItem={({ item }) => (
-      <View key={item} style={{ paddingBottom: 4, width: '100%' }}>
+      <View key={item} style={{ paddingBottom: 2,   width: '100%' }}>
         <ButtonBottomSaveMomentToCategory
+          height={48}
           onPress={() => handlePressOut(item)} // Correct way to pass the function
           onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
 
@@ -409,7 +404,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     margin: 4, 
-    height: 140,
+    height: 130,
     overflow: 'hidden', // Ensures text does not overflow the button
   },
   selectedCategoryButton: {
@@ -511,7 +506,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 10,
     fontSize: 17,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Poppins-Regular',
   },
   momentItemText: {
     fontSize: 13, 

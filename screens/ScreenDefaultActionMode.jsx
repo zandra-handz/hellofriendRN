@@ -1,48 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-import ActionScreenButtonAddMoment from '../components/ActionScreenButtonAddMoment';
-import ActionScreenButtonAddImage from '../components/ActionScreenButtonAddImage';
-import ActionScreenButtonAddHello from '../components/ActionScreenButtonAddHello';
-import ActionScreenButtonAddFriend from '../components/ActionScreenButtonAddFriend';
-import ActionScreenButtonAddLocation from '../components/ActionScreenButtonAddLocation';
-
+import ButtonBaseLargeHorScroll from '../components/ButtonBaseLargeHorScroll';
+import ButtonBaseSpecialLarge from '../components/ButtonBaseSpecialLarge';
+import ButtonBaseSpecialLargeAnim from '../components/ButtonBaseSpecialLargeAnim';
 
 import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; 
 import HelloFriendFooter from '../components/HelloFriendFooter';
-import { Dimensions } from 'react-native';
-
 import LoadingPage from '../components/LoadingPage';
 
-const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
+const ScreenDefaultActionMode = ({ navigation }) => {
   
   const { themeStyles } = useGlobalStyle(); 
-
   const { authUserState } = useAuthUser();
   const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
   const { isLoading } = useUpcomingHelloes(); 
-  const [ borderColor, setBorderColor ] = useState('transparent');
-  const [ backgroundColor, setBackgroundColor ] = useState('transparent');
-  const [buttonHeight, setButtonHeight] = useState(Dimensions.get('window').height * 0.15);
 
-  const [footerHeight, setFooterHeight] = useState(Dimensions.get('window').height * 0.078);
-  const borderWidth = 0;
-  const borderRadius = 34;
+  const showLastButton = false;
 
-  const buttonHeight2 = 120;
-  const headerHeight = 140;
+  const [borderColor, setBorderColor] = useState('transparent');
+  const [backgroundColor, setBackgroundColor] = useState('transparent');
 
-  const paddingAboveTopButton = 16;  
-
- 
-  const handleFooterHeightChange = (height) => {
-    setFooterHeight(height); // Update footer height
-  };
+  // Calculate screen height and button height
+  const screenHeight = Dimensions.get('window').height;
+  const footerHeight = screenHeight * 0.078; // Footer height
+  const buttonContainerHeight = screenHeight - footerHeight; // Remaining height for buttons
+  const buttonHeight = buttonContainerHeight / 6; // Divide remaining height by the number of buttons (5 buttons + footer)
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
@@ -52,12 +40,7 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
       setBorderColor('transparent');
       setBackgroundColor('black');
     }
-    
-
-  }, [selectedFriend, loadingNewFriend, calculatedThemeColors])
-
-   
-
+  }, [selectedFriend, loadingNewFriend, calculatedThemeColors]);
 
   const navigateToAddMomentScreen = () => {
     navigation.navigate('MomentFocus');
@@ -77,71 +60,54 @@ const ScreenDefaultActionMode = ({ navigation, mainAppButton=false }) => {
 
   const navigateToAddLocationScreen = () => {
     navigation.navigate('LocationSearch');
-};
-
-  const navigateSignInScreen = () => {
-    navigation.navigate('Signin');
   };
 
-return ( 
-  <View 
-  style={[
-    styles.selectorContainer, 
-    selectedFriend && !loadingNewFriend 
-      ? { backgroundColor: backgroundColor } 
-      : {}
-  ]}
->
+  return ( 
     <View 
-      style={[
-        styles.container, 
-        themeStyles.container, 
+      style={[styles.selectorContainer, 
+        selectedFriend && !loadingNewFriend 
+        ? { backgroundColor: backgroundColor } 
+        : {}
       ]}
     >
-    {authUserState.authenticated && authUserState.user ? (
-      <>  
-          {isLoading && (  
-          <LoadingPage 
-            loading={isLoading}
-            includeLabel={true}
-            label='Updating next helloes'
-            spinnerSize={70}
-            color='lightgreen'
-            spinnerType='wander'
-          />  
-          )}
-          {!isLoading && (  
-            <>
-            <View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10}]}>  
-              <ActionPageUpcomingButton height={buttonHeight}/> 
-              <ActionScreenButtonAddMoment onPress={navigateToAddMomentScreen} height={buttonHeight}/>
-
-              <ActionScreenButtonAddImage onPress={navigateToAddImageScreen} height={buttonHeight}/>
- 
-              <ActionScreenButtonAddHello onPress={navigateToAddHelloScreen} height={buttonHeight}/>
-          
-              {selectedFriend && (
-                <ActionScreenButtonAddLocation onPress={navigateToAddLocationScreen} height={buttonHeight} />
-               )}
-              {!selectedFriend && ( 
-                <ActionScreenButtonAddFriend onPress={navigateToAddFriendScreen} height={buttonHeight}/>
-      
-               )} 
+      <View style={[styles.container, themeStyles.container]}>
+        {authUserState.authenticated && authUserState.user ? (
+          <>  
+            {isLoading && (  
+              <LoadingPage 
+                loading={isLoading}
+                includeLabel={true}
+                label='Updating next helloes'
+                spinnerSize={70}
+                color='lightgreen'
+                spinnerType='wander'
+              />  
+            )}
+            {!isLoading && (  
+              <View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10}]}>  
+                <ActionPageUpcomingButton height={buttonHeight}/> 
+                <ButtonBaseLargeHorScroll height={buttonHeight}/> 
+                
+                <ButtonBaseSpecialLargeAnim  onPress={navigateToAddMomentScreen} height={buttonHeight}/>
+                <ButtonBaseSpecialLarge onPress={navigateToAddImageScreen} height={buttonHeight}/>  
+                <ButtonBaseSpecialLarge label={'ADD HELLO'} onPress={navigateToAddHelloScreen} image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
+                {selectedFriend && showLastButton && (
+                  <ButtonBaseSpecialLarge label={'ADD LOCATION'} onPress={navigateToAddLocationScreen} height={buttonHeight} />
+                )}
+                {!selectedFriend && showLastButton && ( 
+                  <ButtonBaseSpecialLarge label={'ADD FRIEND'} onPress={navigateToAddFriendScreen} height={buttonHeight}/>
+                )} 
                 <HelloFriendFooter /> 
-                </View>
+              </View>
+            )}
           </>
-          )}
-          </>
-        
-    ) : (
-      <View style={styles.signInContainer}>
-
+        ) : (
+          <View style={styles.signInContainer}> 
+          </View>
+        )}
       </View>
-    )}
-  </View>
-  </View>
-);
-
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -151,14 +117,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,  
     justifyContent: 'space-between',
- 
   },   
   buttonContainer: {   
     height: '100%',
     alignItems: 'center',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    marginHorizontal: 4, 
+    marginHorizontal: 4,  
   }, 
 });
 

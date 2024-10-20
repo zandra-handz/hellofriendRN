@@ -1,30 +1,35 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+ 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import InfoOutline from '../assets/svgs/info-outline.svg';
-import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage';
-import { useFriendList } from '../context/FriendListContext';
 
+//onBackPress function instead of stack navigation, to use with modals
+
+const HeaderBaseItemView = ({
+    onBackPress,
+    headerTitle='Header title here',
+    
+    rightIcon='info',
+    rightIconOnPress,
+}) => {
+
+    const { themeAheadOfLoading } = useFriendList();
  
-
-const HeaderWriteMoment = () => {
     const { themeStyles } = useGlobalStyle();
     const { calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
-    const { themeAheadOfLoading } = useFriendList();
-    const navigation = useNavigation();
 
-    const handleNavigateBack = () => {
-        navigation.goBack();  
-      };
+
+   
 
   return (
     <> 
-    
-    <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: loadingNewFriend ? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor}]}>
-       {loadingNewFriend && themeAheadOfLoading && (
+        <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: loadingNewFriend ? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor}]}>
+        {loadingNewFriend && themeAheadOfLoading && (
           <View style={[styles.loadingWrapper, {backgroundColor: themeAheadOfLoading.darkColor}]}>
           <LoadingPage 
             loading={loadingNewFriend} 
@@ -35,22 +40,22 @@ const HeaderWriteMoment = () => {
           </View>
       )}
       {!loadingNewFriend && (
-      <>
+        <>
       <View style={{flexDirection: 'row', width: '60%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
         
-        <>
-        <TouchableOpacity onPress={handleNavigateBack}>
-          <ArrowLeftCircleOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
-
+        
+        <TouchableOpacity onPress={onBackPress}>
+          <ArrowLeftCircleOutline height={30} width={30}   color={calculatedThemeColors.fontColor}/>
         </TouchableOpacity> 
-        <Text style={[styles.headerText, themeStyles.headerText, {color: calculatedThemeColors.fontColor, paddingLeft: 20}]}>Write moment</Text>
-      </>
-       
-      </View>  
-        <InfoOutline height={30} width={30}   color={calculatedThemeColors.fontColor}/>
-     
-      </>
-      )}
+        <Text style={[
+          styles.headerText, themeStyles.headerText, { color: calculatedThemeColors.fontColor, paddingLeft: 20}
+          ]}> 
+            {headerTitle}
+        </Text> 
+      </View> 
+        <InfoOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
+    </>
+    )}
     </View> 
     </>
   );
@@ -83,4 +88,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeaderWriteMoment;
+export default HeaderBaseItemView;

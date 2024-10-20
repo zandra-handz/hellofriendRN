@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import ButtonMultiFeatureUpcoming from './ButtonMultiFeatureUpcoming';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useNavigation } from '@react-navigation/native';
@@ -72,10 +73,7 @@ const ActionPageUpcomingButton = ({height=140}) => {
 
 
   };
-
-  const navigateToFriendFocus = () => {
-    navigation.navigate('FriendFocus');
-  };
+ 
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
