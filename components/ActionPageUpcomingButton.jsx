@@ -108,6 +108,7 @@ const ActionPageUpcomingButton = ({height=140}) => {
             navigateToFirstPage={navigateToFirstPage}
             headerText={mainHello ? 'UP NEXT' : ''}
             label={mainHello ? mainHello.friend.name : `Hi ${authUserState.user.username}!`}
+            
             additionalText={mainHello ? mainHello.future_date_in_words : ''}
             labelFontSize={30}
             labelColor="white"

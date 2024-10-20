@@ -51,8 +51,7 @@ const ActionFriendPageHeader = ({
 
   const handleDoublePress = () => {
     console.log('Double press detected');
-    navigateToMoments();
-    // Add your double press logic here
+    navigateToMoments(); 
   };
 
   const handlePress = () => {

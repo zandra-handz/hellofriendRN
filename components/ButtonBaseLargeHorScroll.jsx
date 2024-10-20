@@ -1,19 +1,20 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View, Dimensions  } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, View, Dimensions  } from 'react-native';
 import { FlashList } from "@shopify/flash-list";  
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { LinearGradient } from 'expo-linear-gradient'; 
 
  
 import ButtonCalendarDateSvgAndLabel from '../components/ButtonCalendarDateSvgAndLabel';
  
 const ButtonBaseLargeHorScroll = ({
-  height, 
-  satelliteCount = 2, 
-  satelliteOnPress,  
+  height,  
+  darkColor = '#4caf50',
+  lightColor = 'rgb(160, 241, 67)',
 }) => { 
-  const globalStyles = useGlobalStyle();
+  const { themeStyles, gradientColors } = useGlobalStyle();  
   const { width } = Dimensions.get('window'); 
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { setFriend } = useSelectedFriend();
@@ -32,7 +33,8 @@ const ButtonBaseLargeHorScroll = ({
 
 
 
-  const satelliteWidth = (width / 3.5);
+  const calendarButtonWidth = (width / 5);
+  const calendarButtonHeight = (height / .6);
 
   const handlePress = (hello) => {
     const { id, name } = hello.friend; 
@@ -53,7 +55,9 @@ const ButtonBaseLargeHorScroll = ({
           <TouchableOpacity
             style={[
               styles.button,
-              { width: satelliteWidth },
+              { borderColor: 'transparent',
+                width: calendarButtonWidth,
+                height: '100%' },
             ]}
             onPress={() => handlePress(item)}
           >
@@ -61,11 +65,13 @@ const ButtonBaseLargeHorScroll = ({
               numberDate={extractNumberDate(item.future_date_in_words)}
               month={extractMonth(item.future_date_in_words)} 
               label={item.friend_name}
-              width={40} 
-              height={40} 
-              showMonth={false} 
+              showLabel={true}
+              containerHeight={'100%'}
+              width={30} 
+              height={30} 
+              showMonth={true} 
               enabled={true}  
-              color='white' 
+              color={'black'} 
               onPress={() => handlePress(item)}
             />
           </TouchableOpacity>
@@ -79,12 +85,24 @@ const ButtonBaseLargeHorScroll = ({
   
 
   return (
-    <View style={[styles.container, {height: height}]}>
+    <View style={[styles.container, {backgroundColor: 'transparent', height: height, maxHeight: 140}]}>
+      <LinearGradient
+          colors={[darkColor, lightColor]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1}}
+          style={{
+            ...StyleSheet.absoluteFillObject,
+          }}
+        />
        
-        <View style={styles.buttonContainer}>
+       <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>SOON</Text>
+        </View>
+      
+        <View style={[styles.buttonContainer, {height: calendarButtonHeight, backgroundColor: 'transparent'}]}>
          
             <>
-             
+            
           {renderUpcomingHelloes()} 
           </>  
         </View>  
@@ -94,10 +112,29 @@ const ButtonBaseLargeHorScroll = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',  
-    borderRadius: 30,
+    width: '100%',   
+    flexDirection: 'column', 
+    borderRadius: 40,
     overflow: 'hidden',
+    marginVertical: '1%',
+    borderWidth: 1,
+    borderColor: 'black',
+    paddingHorizontal: '4%',
+    paddingTop: '1%',
+    paddingBottom: '0%',
   }, 
+  headerContainer: {
+    width: '100%', 
+    paddingVertical: '0%',
+
+  },
+  headerText: {
+    fontFamily: 'Poppins-Regular',
+    paddingLeft: '3%',
+    
+    fontSize: 18,
+
+  },
   satelliteSection: {
     width: '33.33%', 
     borderRadius: 0,
@@ -113,23 +150,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',  
   },
   buttonContainer: {
-    flexDirection: 'row', 
-    backgroundColor: 'black',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 0,
+    flexDirection: 'row',   
+    flex: 1, 
+    backgroundColor: 'green', 
   },
   button: {
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center', 
-    borderRadius: 0, 
-    borderRightWidth: .8,
-    borderColor: 'darkgray', 
-    paddingTop: 30,
-    height: '100%',
-    width: 50,
+    borderRadius: 10, 
+    marginLeft: '.6%',
+    borderRightWidth: .8, 
+    paddingTop: 0,  
     backgroundColor: 'transparent',
+    backgroundColor: 'rgba(41, 41, 41, 0.1)',
 
     
   },

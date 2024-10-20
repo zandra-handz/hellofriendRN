@@ -4,13 +4,12 @@ import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-
-import ButtonLottieAnimation from '../components/ButtonLottieAnimation';
-
+ 
 const ButtonBaseSpecialLarge = ({ 
         onPress, 
         label='ADD NEW IMAGE', 
         height='100%',
+        maxHeight=100,
         imageSize=100,
         image=require("../assets/shapes/chatmountain.png"), 
         imagePositionHorizontal, 
@@ -40,7 +39,7 @@ const ButtonBaseSpecialLarge = ({
     
   
 return(
-    <TouchableOpacity onPress={onPress} style={[styles.container, {height: height}]}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, {height: height, maxHeight: maxHeight}]}>
         <LinearGradient
           colors={[darkColor, lightColor]}
           start={{ x: 0, y: 0 }}
@@ -84,10 +83,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         width: '100%',  
-        padding: '4%', 
+        padding: '5%', 
         paddingRight: '0%',
         alignContent: 'center',
-        borderRadius: 30,
+        borderRadius: 40,
+        marginVertical: '1%',
+        borderWidth: 1,
+        borderColor: 'black',
         alignItems: 'center',
         justifyContent: 'space-between',
         overflow: 'hidden',

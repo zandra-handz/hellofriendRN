@@ -10,7 +10,7 @@ import TogglerActionButton from '../components/TogglerActionButton';
 import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
  
 import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
-
+import AddOutlineSvg from '../assets/svgs/add-outline.svg';
 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
@@ -43,10 +43,10 @@ const ActionFriendPageMoments = ({
   const [isAnimationPaused, setIsAnimationPaused ] = useState(false);
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
 
-  const navigateToMomentsScreen = () => {
+  const navigateToAddMomentScreen = () => {
     pauseAnimation();
     console.log('go to moments');
-    navigation.navigate('Moments');
+    navigation.navigate('AddMoment');
     if (onPress) onPress();
   };
  
@@ -112,8 +112,8 @@ const ActionFriendPageMoments = ({
         showSecondButton={showSecondButton}
         handleNext={handleNext}
         navigateToFirstPage={navigateToFirstPage}
-        handleFullScreen={navigateToMomentsScreen}
-        navigateToLocationScreen={navigateToMomentsScreen}
+        handleFullScreen={navigateToAddMomentScreen}
+        navigateToLocationScreen={navigateToAddMomentScreen}
         height={calculatedButtonHeight}
         transparentBackground={true}
         borderRadius={buttonRadius}
@@ -125,9 +125,9 @@ const ActionFriendPageMoments = ({
         iconColor={inactiveIconColor}
         oneButtonOnly={true}
         highlightIconColor={friendColorTheme.lightColor}
-        firstPageTopSvg={GridViewOutlineSvg}
+        firstPageTopSvg={AddOutlineSvg}
         firstPageBottomSvg={ScrollOutlineSvg}
-        secondPageTopSvg={GridViewOutlineSvg}
+        secondPageTopSvg={AddOutlineSvg}
         secondPageBottomSvg={ScrollOutlineSvg}
       />
       </View>

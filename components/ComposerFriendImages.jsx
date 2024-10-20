@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import BaseFriendViewImages from '../components/BaseFriendViewImages';
 import TogglerActionButton from '../components/TogglerActionButton';
 import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
+import AddOutlineSvg from '../assets/svgs/add-outline.svg';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useImageList } from '../context/ImageListContext';
 import { useNavigation } from '@react-navigation/native';
@@ -32,8 +33,8 @@ const ComposerFriendImages = ({
   const [ count, setCount ] = useState('');
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
 
-  const navigateToImageScreen = () => {
-    navigation.navigate('Images');
+  const navigateToAddImageScreen = () => {
+    navigation.navigate('AddImage');
     if (onPress) onPress();
   };
 
@@ -72,7 +73,7 @@ const ComposerFriendImages = ({
                 showGradient={false}
                 buttonComponent={
                   <TogglerActionButton
-                    navigateToLocationScreen={navigateToImageScreen}
+                    navigateToLocationScreen={navigateToAddImageScreen}
                     height={calculatedButtonHeight}
                     borderRadius={buttonRadius}
                     justifyContent={justifyIconContent}
@@ -83,8 +84,8 @@ const ComposerFriendImages = ({
                     iconColor={inactiveIconColor}
                     highlightIconColor={backgroundColor}
                     oneButtonOnly={true}
-                    firstPageTopSvg={GridViewOutlineSvg}
-                    firstPageBottomSvg={GridViewOutlineSvg}
+                    firstPageTopSvg={AddOutlineSvg}
+                    firstPageBottomSvg={AddOutlineSvg}
                   />
                 }
               />

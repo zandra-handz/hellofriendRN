@@ -7,7 +7,7 @@ import FormatDate from '../components/FormatDate';
 const ButtonMoment = ({
   onPress,  
   moment, 
-  size = 16, 
+  size = 15, 
   style,
   disabled = false,
   sameStyleForDisabled = false, // New prop to control style
@@ -56,15 +56,14 @@ const ButtonMoment = ({
 const styles = StyleSheet.create({
   container: { 
     borderRadius: 30,
-    padding: 16,  
-    borderColor: '#ccc',
+    padding: 20,   
     flexDirection: 'column', 
     
     margin: 0,
     // Removed flex and fixed height constraints to allow natural height adjustment
   },
   disabledContainer: {
-    opacity: 0.5, // Visual indication of disabled state
+    opacity: 0.5,  
   },
   iconAndMomentContainer: {
     flexDirection: 'row',
@@ -86,9 +85,7 @@ const styles = StyleSheet.create({
     // Removed fixed height
   },
   iconContainer: { 
-    justifyContent: 'center',
-    marginRight: 0, // Adjusted margin to align the icon better with the text
-    // Removed fixed height
+    justifyContent: 'center', 
   },
   creationDateSection: {   
     borderRadius: 20,

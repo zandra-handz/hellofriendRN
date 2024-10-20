@@ -8,6 +8,7 @@ const ButtonCalendarDateSvgAndLabel = ({
   showMonth = true, 
   label = '',
   showLabel = true,
+  containerHeight=50,
   onPress, 
   width = 60, 
   height = 60, 
@@ -15,34 +16,25 @@ const ButtonCalendarDateSvgAndLabel = ({
   enabled = true // New prop to control if the button is enabled or disabled
 }) => {
   return (
+    <View style={[styles.container, {height: height}]}>
+      
     <TouchableOpacity
       onPress={enabled ? onPress : null}
       style={[styles.calendarButton, !enabled && styles.disabledButton]}
       disabled={!enabled} // Ensure button is disabled visually and functionally
     >
-      <View style={styles.textContainer}>
 
-        {showLabel && (
-          <Text 
-            style={[styles.text, { color: color, position: 'absolute', top: -24 }]}
-            numberOfLines={1} // Ensures the text is only one line
-            ellipsizeMode='tail' // Adds an ellipsis at the end if the text is too long
-          >
-            {label}
-          </Text>
-        )}
-      </View>
-      <View style={[styles.svgContainer, { width, height }]}>
+      <View style={[styles.svgContainer, { width, containerHeight }]}>
         <UICalendarPageDynamic
           numberDate={numberDate}
           month={month}
-          showMonth={false} // Hide the month inside the SVG if showMonth is true
+          showMonth={showMonth} // Hide the month inside the SVG if showMonth is true
           width={width}
           height={height}
           color={color}
         />
       </View>
-      {showMonth && !showLabel && (
+      {showMonth && (
             <Text 
                 style={[styles.monthText, { color: color, position: 'absolute', top: -20 }]}
                 numberOfLines={1} // Ensures the text is only one line
@@ -51,17 +43,37 @@ const ButtonCalendarDateSvgAndLabel = ({
             {month}
           </Text>
         )}
+              <View style={styles.textContainer}>
+
+        {showLabel && (
+          <Text 
+            style={[styles.text, { color: color, position: 'absolute', top: 30 }]}
+            numberOfLines={1} // Ensures the text is only one line
+            ellipsizeMode='tail' // Adds an ellipsis at the end if the text is too long
+          >
+            {label}
+          </Text>
+        )}
+        </View>
     </TouchableOpacity>
+    
+    </View>
     
   );
 };
 
 const styles = StyleSheet.create({
+  container: { 
+    width: '100%',
+    flexDirection: 'column'
+
+
+  },
   calendarButton: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center', 
     borderRadius: 8,
-    padding: 10,
+    paddingHorizontal: '3%',
   },
   disabledButton: {
     opacity: 0.5, // Change appearance when disabled
@@ -74,12 +86,12 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: 'Poppins-Regular',
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'center',
   },
   monthText: {
     fontFamily: 'Poppins-Bold',
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'center',
   },
   svgContainer: {

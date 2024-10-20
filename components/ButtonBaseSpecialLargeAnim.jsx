@@ -10,16 +10,17 @@ const ButtonBaseSpecialLargeAnim = ({
         onPress, 
         label='ADD MOMENT', 
         height='100%',
+        maxHeight=100,
         darkColor = '#4caf50',
         lightColor = 'rgb(160, 241, 67)',
         imageSize=540,
         image=require("../assets/shapes/fairymagic.png"), 
         imagePositionHorizontal=90, 
         imagePositionVertical=70,
-        animSize=234,
+        animSize=180,
         anim=require("../assets/anims/lightbulbsimple.json"),
-        animPositionHorizontal=-60, 
-        animPositionVertical=-34,
+        animPositionHorizontal=-48, 
+        animPositionVertical=-32,
 
     }) => {
     const lottieViewRef = useRef(null);
@@ -54,7 +55,7 @@ const ButtonBaseSpecialLargeAnim = ({
     
   
 return(
-    <TouchableOpacity onPress={onPress} style={[styles.container, {height: height}]}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, {height: height, maxHeight: maxHeight}]}>
         {anim && ( 
 
         
@@ -109,18 +110,21 @@ return(
 
 const styles = StyleSheet.create({
 
-    container: { 
-        flexDirection: 'row',
-        flex: 1,
-        width: '100%',  
-        padding: '4%', 
-        paddingRight: '0%',
-        alignContent: 'center',
-        borderRadius: 30,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        overflow: 'hidden',
-    },
+  container: {
+    flexDirection: 'row',
+    flex: 1,
+    width: '100%',  
+    padding: '5%', 
+    paddingRight: '0%',
+    alignContent: 'center',
+    borderRadius: 40,
+    marginVertical: '1%',
+    borderWidth: 1,
+    borderColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    overflow: 'hidden',
+},
 
 });
 

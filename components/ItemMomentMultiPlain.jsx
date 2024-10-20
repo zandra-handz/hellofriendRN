@@ -359,7 +359,7 @@ useEffect(() => {
       
       />
 
-      <View style={styles.categoryButtonsContainer}>
+      <View style={[styles.categoryButtonsContainer, {backgroundColor: 'rgba(41, 41, 41, 0.2)',borderColor: calculatedThemeColors.lightColor}]}>
 
       {categoryStartIndices && moments && (
  
@@ -442,9 +442,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     width: '100%',
     borderRadius: 30,
-    paddingVertical: 10,
-    borderColor: 'black',
-    backgroundColor: 'black',
+    paddingVertical: 10, 
     marginBottom: 10,
   },
   contentContainer: { 
@@ -459,7 +457,7 @@ const styles = StyleSheet.create({
   momentContainer: {
     padding: 0,
     width: '100%',
-    marginBottom: 4,
+    marginBottom: '2%',
     borderRadius: 30, 
   },
   loadingContainer: { 
@@ -471,7 +469,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   fadedOut: {
-    opacity: 0.5, // Adjust the faded effect here
+    opacity: 0.2, // Adjust the faded effect here
   },
   categoryCircle: {
     borderRadius: 20,
