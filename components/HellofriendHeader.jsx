@@ -6,6 +6,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFocusEffect } from '@react-navigation/native'; 
 import UserOutlineSvg from '../assets/svgs/user-outline';
 import LizardSvg from '../assets/svgs/lizard.svg';
+import ButtonInfo from '../components/ButtonInfo';
 import ButtonFriendProfileCircle from '../components/ButtonFriendProfileCircle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'; // Import Font Awesome
 import InfoOutline from '../assets/svgs/info-outline.svg';
@@ -54,8 +55,7 @@ const HellofriendHeader = () => {
 
       <View style={styles.rightSection}>
         <View style={styles.userProfile}> 
-            <InfoOutline height={34} width={34} color={themeStyles.headerText.color}/>
-    
+            <ButtonInfo iconSize={34} />
         </View>
       </View>
     </View>

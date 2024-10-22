@@ -77,7 +77,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.container]}
     >
-      <BlurView intensity={50} tint="light" style={StyleSheet.absoluteFill}> 
+      <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFill}> 
        
         {authUserState.authenticated && authUserState.user ? (
           <>  
