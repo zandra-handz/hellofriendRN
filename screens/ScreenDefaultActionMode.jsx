@@ -12,16 +12,15 @@ import ButtonBaseSpecialLargeAnim from '../components/ButtonBaseSpecialLargeAnim
 import ButtonBaseSpecialThreeTextAnim from '../components/ButtonBaseSpecialThreeTextAnim';
 import ButtonBaseSpecialSelectedAnim from '../components/ButtonBaseSpecialSelectedAnim';
 
-import { BlurView } from 'expo-blur';
-import ActionPageUpcomingButton from '../components/ActionPageUpcomingButton'; 
+import { BlurView } from 'expo-blur'; 
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import LoadingPage from '../components/LoadingPage';
 
 const ScreenDefaultActionMode = ({ navigation }) => {
   
-  const { themeStyles, gradientColors } = useGlobalStyle(); 
-  const darkColor = '#4caf50';
-  const lightColor ='rgb(160, 241, 67)';
+  const { themeStyles } = useGlobalStyle(); 
+  const darkColor = '#000002'; // '#4caf50';
+  const lightColor ='#163805'; //'rgb(160, 241, 67)';
   const { authUserState } = useAuthUser();
   const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
   const { isLoading } = useUpcomingHelloes(); 
@@ -40,6 +39,21 @@ const ScreenDefaultActionMode = ({ navigation }) => {
   const buttonHeight = buttonContainerHeight / 6; // Divide remaining height by the number of buttons (5 buttons + footer)
   const upcomingDatesTray = buttonHeight * .9;
   const headerHeight = buttonHeight * 1.4;
+
+  
+
+  const buttonDarkColor = '4c8e06';
+  const buttonLightColor = '#73d802';
+
+  const topButtonRadius = 40;
+  const mainButtonRadius = 40;
+  const topButtonBorderColor = 'black';
+  const mainButtonBorderColor = 'black';
+
+
+
+  
+
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
       setBorderColor(calculatedThemeColors.lightColor);
@@ -95,27 +109,27 @@ const ScreenDefaultActionMode = ({ navigation }) => {
               <View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10}]}>  
                  
 
-                <ButtonBaseSpecialLargeAnim  onPress={navigateToAddMomentScreen} height={buttonHeight}/>
-                <ButtonBaseSpecialLarge label={'ADD IMAGE'} onPress={navigateToAddImageScreen} height={buttonHeight}/>  
-                <ButtonBaseSpecialLarge label={'ADD HELLO'} onPress={navigateToAddHelloScreen} image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
+                <ButtonBaseSpecialLargeAnim  onPress={navigateToAddMomentScreen} borderRadius={topButtonRadius} borderColor={mainButtonBorderColor} height={buttonHeight} />
+                <ButtonBaseSpecialLarge label={'ADD IMAGE'}  onPress={navigateToAddImageScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} height={buttonHeight}/>  
+                <ButtonBaseSpecialLarge label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
                 
                 {selectedFriend && showLastButton && (
-                  <ButtonBaseSpecialLarge label={'ADD LOCATION'} onPress={navigateToAddLocationScreen} image={require("../assets/shapes/locationpink.png")} height={buttonHeight} />
+                  <ButtonBaseSpecialLarge label={'ADD LOCATION'}   onPress={navigateToAddLocationScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/locationpink.png")} height={buttonHeight} />
                 
                 )}
                 {!selectedFriend && showLastButton && ( 
-                  <ButtonBaseSpecialLarge label={'ADD FRIEND'} onPress={navigateToAddFriendScreen} image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
+                  <ButtonBaseSpecialLarge label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
                 )} 
                                 
                                 {!selectedFriend && (
                   
-                  <ButtonBaseSpecialThreeTextAnim  onPress={navigateToAddMomentScreen} height={headerHeight} maxHeight={200}/>
+                  <ButtonBaseSpecialThreeTextAnim  onPress={navigateToAddMomentScreen}   borderRadius={mainButtonRadius} height={headerHeight} borderColor={mainButtonBorderColor} maxHeight={200}/>
                 )}
                 {selectedFriend && (
                   
-                  <ButtonBaseSpecialSelectedAnim  onPress={navigateToAddMomentScreen} height={headerHeight} maxHeight={200}/>
+                  <ButtonBaseSpecialSelectedAnim    onPress={navigateToAddMomentScreen} borderRadius={mainButtonRadius} borderColor={mainButtonBorderColor} height={headerHeight} maxHeight={200}/>
                 )} 
-                <ButtonBaseLargeHorScroll height={upcomingDatesTray}/> 
+                <ButtonBaseLargeHorScroll height={upcomingDatesTray}   borderRadius={mainButtonRadius} borderColor={mainButtonBorderColor}/> 
                 
                 <HelloFriendFooter /> 
               </View>

@@ -18,9 +18,11 @@ const ButtonBaseSpecialSelectedAnim = ({
         header='SELECTED:',   
         height='100%',
         maxHeight=100,
+        borderRadius=20,
+        borderColor='transparent',
         darkColor = '#4caf50',
         lightColor = 'rgb(160, 241, 67)',
-        imageSize=540,
+        imageSize=0,
         image=require("../assets/shapes/fairymagic.png"), 
         imagePositionHorizontal=0, 
         imagePositionVertical=70,
@@ -105,7 +107,7 @@ const ButtonBaseSpecialSelectedAnim = ({
     
   
     return(
-        <View style={[styles.container, {height: height, maxHeight: maxHeight}]}>
+        <View style={[styles.container, {borderRadius: borderRadius, borderColor: borderColor, height: height, maxHeight: maxHeight}]}>
             <LinearGradient
               colors={[darkColor, lightColor]}
               start={{ x: 0, y: 0 }}
@@ -191,11 +193,9 @@ const ButtonBaseSpecialSelectedAnim = ({
         width: '100%',  
         padding: '5%', 
         paddingRight: '0%',
-        alignContent: 'center',
-        borderRadius: 40,
+        alignContent: 'center', 
         marginVertical: '1%',
-        borderWidth: 1,
-        borderColor: 'black',
+        borderWidth: 1, 
         alignItems: 'center',
         justifyContent: 'space-between',
         overflow: 'hidden',

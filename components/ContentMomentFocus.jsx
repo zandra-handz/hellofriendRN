@@ -42,6 +42,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
 
   useEffect(() => {
+    console.log('gradient useEffect in moment writer triggered');
     if (loadingNewFriend) {
       setGradientColorOne(themeAheadOfLoading.darkColor);
       setGradientColorTwo(themeAheadOfLoading.lightColor);
@@ -53,13 +54,13 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
     };
 
-  }, [selectedFriend, loadingNewFriend]);
+  }, [loadingNewFriend]);
 
  
  
   const handleCategorySelect = (category) => {
     setSelectedCategory(category); 
-  };
+  }; 
 
   const resetTextInput = () => {
     setTextInput(''); 

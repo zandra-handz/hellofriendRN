@@ -1,22 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
- 
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 
 const ButtonBaseSpecialLargeAnim = ({ 
         onPress, 
         label='ADD MOMENT', 
         height='100%',
+        borderRadius=20,
+        borderColor='transparent',
         maxHeight=100,
         darkColor = '#4caf50',
         lightColor = 'rgb(160, 241, 67)',
         imageSize=540,
         image=require("../assets/shapes/fairymagic.png"), 
-        imagePositionHorizontal=90, 
-        imagePositionVertical=70,
+        imagePositionHorizontal=124, 
+        imagePositionVertical=-210,
         animSize=180,
         anim=require("../assets/anims/lightbulbsimple.json"),
         animPositionHorizontal=-48, 
@@ -24,9 +24,7 @@ const ButtonBaseSpecialLargeAnim = ({
 
     }) => {
     const lottieViewRef = useRef(null);
-    const globalStyles = useGlobalStyle();
-    const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
-    const [ borderColor, setBorderColor ] = useState('transparent');
+    const globalStyles = useGlobalStyle(); 
 
       useEffect(() => {
     if (lottieViewRef.current && anim) {
@@ -37,6 +35,8 @@ const ButtonBaseSpecialLargeAnim = ({
       }
     }
   }, [anim]);
+
+  const hideAnimation = true;
 
 
     const adjustFontSize = (fontSize) => {
@@ -55,8 +55,8 @@ const ButtonBaseSpecialLargeAnim = ({
     
   
 return(
-    <TouchableOpacity onPress={onPress} style={[styles.container, {height: height, maxHeight: maxHeight}]}>
-        {anim && ( 
+    <TouchableOpacity onPress={onPress} style={[styles.container, {borderRadius: borderRadius, borderColor: borderColor, height: height, maxHeight: maxHeight}]}>
+        {anim && !hideAnimation && ( 
 
         
         <LottieView
@@ -77,27 +77,32 @@ return(
             ...StyleSheet.absoluteFillObject,
           }}
         />
-
-        <Text
+                      <Text
               style={[
-                textStyles(30, 'white'),
-                { fontFamily: 'Poppins-Regular' },
+                textStyles(24, 'black'),
+                { fontFamily: 'Poppins-Regular', paddingRight: 20 },
               ]}
             >
               {label}
             </Text>
+
+
             {image && (
-            <Image
-            source={image}
-            style={{  
+              <Image
+              source={image}
+              style={{  
+                position: 'absolute',
                 width: imageSize,
                 height: imageSize, 
                 top: imagePositionVertical,
                 right: imagePositionHorizontal,
-            }}
-            resizeMode="contain"
+                transform: [{ scaleX: -1 }], // This flips the image horizontally
+              
+              }}
+              resizeMode="contain"
             />
             )} 
+
 
 
     </TouchableOpacity>
@@ -119,10 +124,9 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     borderRadius: 40,
     marginVertical: '1%',
-    borderWidth: 1,
-    borderColor: 'black',
+    borderWidth: 1, 
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     overflow: 'hidden',
 },
 

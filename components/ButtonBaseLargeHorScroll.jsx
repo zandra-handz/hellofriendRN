@@ -11,10 +11,11 @@ import ButtonCalendarDateSvgAndLabel from '../components/ButtonCalendarDateSvgAn
  
 const ButtonBaseLargeHorScroll = ({
   height,  
+  borderRadius=20,
+  borderColor='transparent',
   darkColor = '#4caf50',
   lightColor = 'rgb(160, 241, 67)',
-}) => { 
-  const { themeStyles, gradientColors } = useGlobalStyle();  
+}) => {   
   const { width } = Dimensions.get('window'); 
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { setFriend } = useSelectedFriend();
@@ -85,7 +86,7 @@ const ButtonBaseLargeHorScroll = ({
   
 
   return (
-    <View style={[styles.container, {backgroundColor: 'transparent', height: height, maxHeight: 140}]}>
+    <View style={[styles.container, {borderRadius: borderRadius, borderColor: borderColor, height: height, maxHeight: 140}]}>
       <LinearGradient
           colors={[darkColor, lightColor]}
           start={{ x: 0, y: 0 }}
@@ -114,7 +115,6 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',   
     flexDirection: 'column', 
-    borderRadius: 40,
     overflow: 'hidden',
     marginVertical: '1%',
     borderWidth: 1,

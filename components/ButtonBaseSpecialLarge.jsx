@@ -14,14 +14,14 @@ const ButtonBaseSpecialLarge = ({
         image=require("../assets/shapes/chatmountain.png"), 
         imagePositionHorizontal, 
         imagePositionVertical,
+        borderColor='transparent',
+        borderRadius=20,
         darkColor = '#4caf50',
         lightColor = 'rgb(160, 241, 67)',
-    }) => {
-    const lottieViewRef = useRef(null);
+    }) => { 
     const globalStyles = useGlobalStyle();
     const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
-    const [ borderColor, setBorderColor ] = useState('transparent');
-
+    
 
     const adjustFontSize = (fontSize) => {
         return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
@@ -39,7 +39,7 @@ const ButtonBaseSpecialLarge = ({
     
   
 return(
-    <TouchableOpacity onPress={onPress} style={[styles.container, {height: height, maxHeight: maxHeight}]}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, {borderColor: borderColor, borderRadius: borderRadius, height: height, maxHeight: maxHeight}]}>
         <LinearGradient
           colors={[darkColor, lightColor]}
           start={{ x: 0, y: 0 }}
@@ -48,14 +48,7 @@ return(
             ...StyleSheet.absoluteFillObject,
           }}
         />
-        <Text
-              style={[
-                textStyles(30, 'white'),
-                { fontFamily: 'Poppins-Regular' },
-              ]}
-            >
-              {label}
-            </Text>
+
             {image && (
             <Image
             source={image}
@@ -68,6 +61,14 @@ return(
             resizeMode="contain"
             />
             )} 
+                    <Text
+              style={[
+                textStyles(24, 'black'),
+                { fontFamily: 'Poppins-Regular', paddingRight: 20},
+              ]}
+            >
+              {label}
+            </Text>
 
     </TouchableOpacity>
 
@@ -85,11 +86,9 @@ const styles = StyleSheet.create({
         width: '100%',  
         padding: '5%', 
         paddingRight: '0%',
-        alignContent: 'center',
-        borderRadius: 40,
+        alignContent: 'center', 
         marginVertical: '1%',
-        borderWidth: 1,
-        borderColor: 'black',
+        borderWidth: 1, 
         alignItems: 'center',
         justifyContent: 'space-between',
         overflow: 'hidden',

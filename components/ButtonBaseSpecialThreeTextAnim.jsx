@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
+import React, { useEffect, useRef} from 'react';
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
-import { useAuthUser } from '../context/AuthUserContext';
 import LoadingPage from '../components/LoadingPage';
 import LizardSvg from '../assets/svgs/lizard';
 
@@ -15,6 +14,8 @@ const ButtonBaseSpecialThreeTextAnim = ({
         header='UP NEXT',  
         height='100%',
         maxHeight=100,
+        borderRadius=20,
+        borderColor='transparent',
         darkColor = '#4caf50',
         lightColor = 'rgb(160, 241, 67)',
         imageSize=540,
@@ -26,18 +27,17 @@ const ButtonBaseSpecialThreeTextAnim = ({
         animPositionHorizontal=150, 
         animPositionVertical=-30,
 
-    }) => {
-    const { authUserState, userAppSettings } = useAuthUser();
+    }) => { 
 
-    const { upcomingHelloes, isLoading } = useUpcomingHelloes();
+    const { upcomingHelloes } = useUpcomingHelloes();
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle();
-    const { selectedFriend, setFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
-    const [ borderColor, setBorderColor ] = useState('transparent');
-    const [ nextFriend, setNextFriend ] = useState(null);
+    const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend();
+    const hideAnimation = true;
+
 
       useEffect(() => {
-    if (lottieViewRef.current && anim) {
+    if (lottieViewRef.current && anim && !hideAnimation) {
       try {
         lottieViewRef.current.play();
       } catch (error) {
@@ -61,13 +61,7 @@ const ButtonBaseSpecialThreeTextAnim = ({
         }),
       });
 
-    
-      useEffect(() => {
-        if (upcomingHelloes && upcomingHelloes[0]) {
-            setNextFriend(upcomingHelloes[0].friend.name);
-        }
-
-      }, [upcomingHelloes]);
+     
 
       const onPress = () => {
         const { id, name } = upcomingHelloes[0].friend; 
@@ -79,7 +73,7 @@ const ButtonBaseSpecialThreeTextAnim = ({
     
   
 return(
-    <View style={[styles.container, {height: height, maxHeight: maxHeight}]}>
+    <View style={[styles.container, {borderRadius: borderRadius, borderColor: borderColor, height: height, maxHeight: maxHeight}]}>
         <LinearGradient
           colors={[darkColor, lightColor]}
           start={{ x: 0, y: 0 }}
@@ -99,7 +93,7 @@ return(
 
         {!loadingNewFriend && (
             <TouchableOpacity onPress={onPress} style={{height: '100%', width: '100%'}}>
-                {anim && ( 
+                {anim && !hideAnimation && ( 
                 <LottieView
                     ref={lottieViewRef}
                     source={anim}
@@ -157,11 +151,9 @@ const styles = StyleSheet.create({
     width: '100%',  
     padding: '5%', 
     paddingRight: '0%',
-    alignContent: 'center',
-    borderRadius: 40,
+    alignContent: 'center', 
     marginVertical: '1%',
-    borderWidth: 1,
-    borderColor: 'black',
+    borderWidth: 1, 
     alignItems: 'center',
     justifyContent: 'space-between',
     overflow: 'hidden',
