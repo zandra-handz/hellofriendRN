@@ -1,8 +1,8 @@
 import React, { useState  } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import EnterMoment from '../components/EnterMoment'; 
-import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
+import EnterMoment from './EnterMoment'; 
+import FriendSelectModalVersion from './FriendSelectModalVersion';
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
@@ -11,15 +11,13 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api'; 
 
-import HelloFriendFooter from '../components/HelloFriendFooter';
+import HelloFriendFooter from './HelloFriendFooter';
 
 import  { useGlobalStyle } from '../context/GlobalStyleContext';
 
-import LoadingPage from '../components/LoadingPage';
-import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
-
-import ButtonBottomSaveMoment from '../components/ButtonBottomSaveMoment';
-
+import LoadingPage from './LoadingPage';
+import CardCategoriesAsButtons from './CardCategoriesAsButtons';
+ 
 const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScreen}) => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
@@ -39,11 +37,7 @@ const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScre
   const [clearText, setClearText] = useState(false);
   const [isSuccess, setIsSuccess] = useState(true);  
   const delayForResultsMessage = 1000;
-
-  const noMainSaveButton = true;
-  const viewAndEditMomentAsBubble = false;
  
-
   const handleMomentToggle = (screenState) => {
     console.log(screenState); 
     setMomentEditMode(screenState);
@@ -126,7 +120,7 @@ const ContentAddMoment = ( {friendFixed=false, momentText, updateTextInFocusScre
   
   return (
     <View style={styles.container}> 
-        {gettingResultMessage && (
+        {gettingResultMessage && saveInProgress && (
           <View style={styles.loadingWrapper}>
           <LoadingPage
             loading={saveInProgress}

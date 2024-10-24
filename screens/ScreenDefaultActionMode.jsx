@@ -51,7 +51,10 @@ const ScreenDefaultActionMode = ({ navigation }) => {
   const mainButtonBorderColor = 'black';
 
 
+  useEffect(() => {
+    console.log('~~~~~~~~~~~~Main screen rerendered!');
 
+  }, []);
   
 
   useEffect(() => {

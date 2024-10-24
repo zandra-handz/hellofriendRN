@@ -3,6 +3,8 @@ import { View, StyleSheet, Image, KeyboardAvoidingView, Platform } from 'react-n
 
 import { createFriendImage } from '../api';  
 
+import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import PickerBinary from '../components/PickerBinary';
@@ -11,23 +13,23 @@ import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
  
 import CameraCuteSvg from '../assets/svgs/camera-cute.svg';
 import UploadCurlySvg from '../assets/svgs/upload-curly.svg'; 
- 
-import ButtonBottomSaveImage from '../components/ButtonBottomSaveImage';
 import LoadingPage from '../components/LoadingPage';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
- 
+import { useFriendList } from '../context/FriendListContext'; 
+
 import * as ImageManipulator from 'expo-image-manipulator';
 
 
 const ContentAddImage = () => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, friendColorTheme, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
   const [canContinue, setCanContinue] = useState('');
+  const { themeAheadOfLoading } = useFriendList();
   const [imageUri, setImageUri] = useState(null);
   const [imageTitle, setImageTitle] = useState('');
   const [imageCategory, setImageCategory] = useState('Misc');
@@ -41,7 +43,6 @@ const ContentAddImage = () => {
   const [ resultMessage, setResultMessage ] = useState(null);
   const [ gettingResultMessage, setGettingResultMessage ] = useState(null);
 
-  const [modalState, setModalState] = useState({ type: '', isVisible: false });
 
   const { setUpdateImagesTrigger } = useImageList();
 
@@ -258,14 +259,17 @@ const handleSave = async () => {
   
       <View style={styles.buttonContainer}>
         {selectedFriend && canContinue && imageUri ? (  
-          <ButtonBottomSaveImage
+          <ButtonBaseSpecialSave
+            label='SAVE IMAGE'
             onPress={handleSave}
-            disabled={false}
+            darkColor={friendColorTheme.useFriendColorTheme !== false ? themeAheadOfLoading.darkColor : undefined}
+            lightColor={friendColorTheme.useFriendColorTheme !== false ? themeAheadOfLoading.lightColor : undefined}
+            isDisabled={false}
           />
         ) : (
-          <ButtonBottomSaveImage
+          <ButtonBaseSpecialSave
             onPress={() => {}}
-            disabled={true}
+            isDisabled={true}
           />
         )}
       </View>
@@ -296,8 +300,9 @@ const styles = StyleSheet.create({
     height: 'auto',
   },
   buttonContainer: {
-    paddingBottom: 0, // Ensure space above button when keyboard is open
-    
+    height: '8%',
+    width: '100%',
+    alignContent: 'center',
     justifyContent: 'flex-end',
     alignItems: 'center',
   }, 

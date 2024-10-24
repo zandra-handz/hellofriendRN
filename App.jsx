@@ -31,9 +31,7 @@ import ScreenFriendFocus from './screens/ScreenFriendFocus';
 import ScreenMomentFocus from './screens/ScreenMomentFocus'; 
 import ScreenLocation from './screens/ScreenLocation';
 
-
-import ScreenAddMoment from './screens/ScreenAddMoment';
-import ScreenAddMomentFriendFixed from './screens/ScreenAddMomentFriendFixed';
+ 
 import ScreenAddFriend from './screens/ScreenAddFriend';
 import ScreenAddImage from './screens/ScreenAddImage';
 import ScreenAddHello from './screens/ScreenAddHello';
@@ -243,47 +241,8 @@ export const Layout = () => {
                   header: () => <HeaderBase headerTitle='Find midpoint locations' />,
                 }}
               />
-      <Stack.Screen
-        name="AddMoment"
-        component={ScreenAddMoment}
-        options={{ 
-            headerShown: true,
-            header: () => <HeaderPickCategory />,
-       
-          cardStyleInterpolator: ({ current, layouts }) => {
-            const translateX = current.progress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [layouts.screen.width, 0], // Move in from the right
-            });
 
-            const scale = current.progress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1.2, 1], // Scale down from 120% to 100%
-            });
-
-            return {
-              cardStyle: {
-                transform: [
-                  { translateX }, // Apply translation
-                  { scale },      // Apply scaling
-                ],
-                opacity: current.progress.interpolate({
-                  inputRange: [0, 0.5, 1],
-                  outputRange: [0, 0.5, 1], // Fade in smoothly
-                }),
-              },
-            };
-          },
-        }}
-      />
-              <Stack.Screen
-                name="AddMomentFriendFixed"
-                component={ScreenAddMomentFriendFixed}
-                options={{
-                  headerShown: true,
-                  header: () => <HeaderBase headerTitle='Write moment' />,
-                }}
-              />
+          
               <Stack.Screen
                 name="AddImage"
                 component={ScreenAddImage}

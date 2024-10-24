@@ -29,7 +29,7 @@ const HeaderWriteMoment = () => {
           <LoadingPage 
             loading={loadingNewFriend} 
             spinnerType='flow'
-            color={themeAheadOfLoading.lightColor}
+            color={'transparent'}
             includeLabel={false} 
           />
           </View>

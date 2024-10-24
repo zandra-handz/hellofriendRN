@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+
+import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+
  
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
+import { useFriendList } from '../context/FriendListContext'; 
+
  
 import { saveHello } from '../api';
 
@@ -19,8 +24,6 @@ import PickerHelloType from '../components/PickerHelloType';
 import PickerHelloLocation from '../components/PickerHelloLocation'; 
 
 
-import ButtonBottomSaveHello from '../components/ButtonBottomSaveHello';
- 
 import LoadingPage from '../components/LoadingPage';
 
 const ContentAddHello = () => {
@@ -29,7 +32,8 @@ const ContentAddHello = () => {
  
 
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, setFriend } = useSelectedFriend();
+  const { selectedFriend, setFriend, friendColorTheme } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
   const [additionalNotes, setAdditionalNotes] = useState('');
@@ -302,22 +306,22 @@ const resetAdditionalNotes = () => {
           </>
            )}
          
-         
-            {helloDate && selectedFriend && (selectedTypeChoice !== null) ? (
-              <View>  
-                <ButtonBottomSaveHello
-                  onPress={handleSave} 
-                  disabled={false}
-                />
-              </View>
-            ) : (
-              <View>  
-                <ButtonBottomSaveHello
-                  onPress={[() => {}]} 
-                  disabled={true}
-                />
-            </View>
-          )}  
+         <View style={styles.buttonContainer}>            
+          {helloDate && selectedFriend && (selectedTypeChoice !== null) ? (
+            <ButtonBaseSpecialSave
+              label='SAVE HELLO!'
+              onPress={handleSave}
+              darkColor={friendColorTheme.useFriendColorTheme !== false ? themeAheadOfLoading.darkColor : undefined}
+              lightColor={friendColorTheme.useFriendColorTheme !== false ? themeAheadOfLoading.lightColor : undefined}
+              isDisabled={false}
+            />
+          ) : (
+            <ButtonBaseSpecialSave
+              onPress={() => {}}
+              isDisabled={true}
+            />
+          )} 
+          </View>
           </>  
         )}
     </View>
@@ -391,6 +395,13 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     alignContent: 'center',
   },
+  buttonContainer: {
+    height: '8%',
+    width: '100%',
+    alignContent: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  }, 
 });
 
 export default ContentAddHello;

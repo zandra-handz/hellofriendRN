@@ -23,9 +23,7 @@ export const SelectedFriendProvider = ({ children }) => {
   });
   const [loadingNewFriend, setLoadingNewFriend] = useState(false);
 
-  useEffect(() => {
-    console.log('Friend list:', friendList); 
-  }, [friendList]);
+
 
   useEffect(() => {
     const fetchFriendDashboardData = async (friendId) => {
@@ -99,9 +97,8 @@ export const SelectedFriendProvider = ({ children }) => {
 
 
   useEffect(() => {
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) {
-      const lightColor = friendColorTheme.lightColor || '#a0f143';
-      const darkColor = friendColorTheme.darkColor || '#4caf50';
+    console.log('FRIEND COLOR THEME CALCULATIONS TRIGGERED');
+    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) { 
 
       if (friendColorTheme.invertGradient) {
         setCalculatedThemeColors({

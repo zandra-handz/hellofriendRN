@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated } from 'react-native';
+import { StyleSheet, View, Modal, Text, Animated } from 'react-native';
 import { useGlobalStyle} from '../context/GlobalStyleContext';
 
+import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 
@@ -41,9 +42,18 @@ const AlertFormNoSubmit = ({
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={onCancel} style={[styles.bottomButton, {backgroundColor: calculatedThemeColors.darkColor}]}>
-              <Text style={styles.buttonText}>{cancelText}</Text>
-            </TouchableOpacity>
+            
+            <ButtonBaseSpecialSave 
+            label='BACK TO APP'
+            image={require("../assets/shapes/redheadcoffee.png")}
+            imageSize={100}
+            labelSize={19}
+            isDisabled={false}
+            imagePositionHorizontal={0} 
+            imagePositionVertical={12}
+            borderRadius={50}
+            onPress={onCancel}
+            /> 
           </View>
         </View>
       </Animated.View>
@@ -59,7 +69,7 @@ const styles = StyleSheet.create({
       backgroundColor: 'rgba(0, 0, 0, 0.84)',  // Slightly transparent background
     },
     modalContent: {
-      width: '92%',  // Fixed width of 80% of the screen
+      width: '94%',  // Fixed width of 80% of the screen
       minHeight: 200,  // Minimum height to prevent collapse
       padding: 10,
       borderWidth: 2,

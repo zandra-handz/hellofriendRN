@@ -46,7 +46,7 @@ const ActionFriendPageMoments = ({
   const navigateToAddMomentScreen = () => {
     pauseAnimation();
     console.log('go to moments');
-    navigation.navigate('AddMoment');
+    navigation.navigate('MomentFocus');
     if (onPress) onPress();
   };
  

@@ -18,7 +18,7 @@ import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg
 
 
 const ContentMomentFocus = ({ placeholderText }) => {
-  const { selectedFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, friendColorTheme, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
   const { setCapsuleList } = useCapsuleList(); // NEED THIS TO ADD NEW 
   const { authUserState } = useAuthUser(); 
   const { themeAheadOfLoading } = useFriendList();
@@ -31,30 +31,11 @@ const ContentMomentFocus = ({ placeholderText }) => {
   const [ saveInProgress, setSaveInProgress ] = useState(false);
   const [ resultMessage, setResultMessage ] = useState(null);
   const [gettingResultMessage, setGettingResultMessage ] = useState(null);
-  
-  const [gradientColorOne, setGradientColorOne ] = useState(calculatedThemeColors.darkColor);
-  const [gradientColorTwo, setGradientColorTwo ] = useState(calculatedThemeColors.lightColor);
-  
+   
 
   const [clearText, setClearText] = useState(false);
   const [isSuccess, setIsSuccess] = useState(true);  
   const delayForResultsMessage = 1000;
-
-
-  useEffect(() => {
-    console.log('gradient useEffect in moment writer triggered');
-    if (loadingNewFriend) {
-      setGradientColorOne(themeAheadOfLoading.darkColor);
-      setGradientColorTwo(themeAheadOfLoading.lightColor);
-
-    } else {
-
-      setGradientColorOne(calculatedThemeColors.darkColor);
-      setGradientColorTwo(calculatedThemeColors.lightColor);
-
-    };
-
-  }, [loadingNewFriend]);
 
  
  
@@ -148,16 +129,16 @@ const ContentMomentFocus = ({ placeholderText }) => {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 140 : 40}  
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 40}  
       >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
       
-      <LinearGradient
-        colors={[gradientColorOne, gradientColorTwo]} 
+        <LinearGradient
+        colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
+        end={{ x: 1, y: 1 }}  
+        style={[styles.container]} 
+      >  
         <BlurView 
           intensity={50} 
           
@@ -242,11 +223,11 @@ const ContentMomentFocus = ({ placeholderText }) => {
         onPress={() => {}}
         style={[styles.closeButton, { flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor }]}
       >
-        <Text style={[styles.closeButtonText, { paddingRight: 10, color: calculatedThemeColors.darkColor }]}>
-          Pick category
-        </Text>
-        <ArrowRightCircleOutline height={34} width={34} color={calculatedThemeColors.darkColor} />
-
+          <Text style={[styles.closeButtonText, { paddingRight: 10, color: loadingNewFriend ? 'transparent' : calculatedThemeColors.fontColor }]}>
+            Pick category
+          </Text>
+          <ArrowRightCircleOutline height={34} width={34} color={loadingNewFriend ? 'transparent' : calculatedThemeColors.fontColor} />
+           
       </TouchableOpacity>
          )}
 
@@ -266,7 +247,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
+    top: 0,
   },
   loadingWrapper: {
     flex: 1,

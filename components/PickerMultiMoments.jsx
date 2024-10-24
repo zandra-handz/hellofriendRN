@@ -26,7 +26,7 @@ const PickerMultiMoments = ({
 
   const [isMomentSelectModalVisible, setIsMomentSelectModalVisible] = useState(false);
   const { selectedFriend, friendDashboardData, calculatedThemeColors } = useSelectedFriend();
-  const { capsuleList, preAddedTracker } = useCapsuleList();
+  const { capsuleList, preAddedTracker, updatePreAddedTracker } = useCapsuleList();
 
 
   const useScrollingCategorySelector = false; 

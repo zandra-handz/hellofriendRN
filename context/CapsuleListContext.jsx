@@ -8,6 +8,7 @@ const CapsuleListContext = createContext({
   setCapsuleList: () => {}, 
   removeCapsules: () => {}, 
   updateCapsule: () => {},
+  updatePreAddedTracker: () => {},
   categoryStartIndices: {}
 });
 
@@ -34,6 +35,7 @@ export const CapsuleListProvider = ({ children }) => {
   const [categoryStartIndices, setCategoryStartIndices] = useState({}); 
 
   useEffect(() => {
+    console.log("fetching capsule data using api in context useEffect... ");
     const fetchData = async () => {
       try {
         if (selectedFriend) {
@@ -41,7 +43,9 @@ export const CapsuleListProvider = ({ children }) => {
           setCapsuleList(capsules || []); // Set capsules or empty array if none
           setCapsuleCount(capsules.length);
           console.log(capsules.length);
-          console.log("fetchData Capsule List context: ", capsules);
+          console.log("capsule data using api in context useEffect returned: ", capsules);
+          
+        
         } else {
           
           setCapsuleList([]);
@@ -57,7 +61,7 @@ export const CapsuleListProvider = ({ children }) => {
 
  
   useEffect(() => {
-    console.log('auto sort upon saving moment');
+    console.log('Autosorting capsules in Capsule List Context using a useEffect');
     sortByCategory();
     sortNewestFirst();
     updateCount(); 
@@ -156,14 +160,26 @@ const updateCapsules = (capsuleIdsToUpdate, updatedCapsules) => {
   };
 
 
-  useEffect(() => { 
-    const preAddedIds = capsuleList
-        .filter(capsule => capsule.preAdded) // Select capsules with pre_added_to_hello true
-        .map(capsule => capsule.id); // Extract their IDs
+ // useEffect(() => { 
+   // const preAddedIds = capsuleList
+     //   .filter(capsule => capsule.preAdded) // Select capsules with pre_added_to_hello true
+       // .map(capsule => capsule.id); // Extract their IDs
 
-    setPreAddedTracker(preAddedIds);
-    console.log("Pre-added Capsule IDs: ", preAddedIds);
-}, [capsuleList]);
+    //setPreAddedTracker(preAddedIds);
+    //console.log("Pre-added Capsule IDs: ", preAddedIds);
+//}, [capsuleList]);
+
+const updatePreAddedTracker = () => {
+  const preAddedIds = capsuleList.reduce((ids, capsule) => {
+    if (capsule.preAdded) {
+      ids.push(capsule.id); // Add the ID if preAdded is true
+    }
+    return ids;
+  }, []);
+
+  setPreAddedTracker(preAddedIds);
+  console.log("Pre-added Capsule IDs: ", preAddedIds);
+};
  
 
 
@@ -182,6 +198,7 @@ const updateCapsules = (capsuleIdsToUpdate, updatedCapsules) => {
       sortedByCategory,
       newestFirst,
       preAddedTracker,
+      updatePreAddedTracker,
       setCapsuleList, 
       removeCapsules, 
       updatePreAdded,

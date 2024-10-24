@@ -2,26 +2,25 @@ import React, { useEffect, useRef, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
  
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
  
-const ButtonBaseSpecialLarge = ({ 
+const ButtonBaseSpecialSave = ({ 
         onPress, 
         label='ADD NEW IMAGE', 
+        labelSize=22,
         height='100%',
         maxHeight=100,
         imageSize=100,
         image=require("../assets/shapes/chatmountain.png"), 
-        imagePositionHorizontal, 
-        imagePositionVertical,
+        imagePositionHorizontal=0, 
+        imagePositionVertical=0,
         borderColor='transparent',
-        borderRadius=20,
+        borderRadius=10,
         darkColor = '#4caf50',
         lightColor = 'rgb(160, 241, 67)',
+        isDisabled = true,
     }) => { 
-    const globalStyles = useGlobalStyle();
-    const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
-    
+    const globalStyles = useGlobalStyle(); 
 
     const adjustFontSize = (fontSize) => {
         return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
@@ -39,15 +38,17 @@ const ButtonBaseSpecialLarge = ({
     
   
 return(
-    <TouchableOpacity onPress={onPress} style={[styles.container, {borderColor: borderColor, borderRadius: borderRadius, height: height, maxHeight: maxHeight}]}>
+    <TouchableOpacity onPress={isDisabled? null : onPress} style={[styles.container, {borderColor: borderColor, borderRadius: borderRadius, height: height, maxHeight: maxHeight}]}>
+         
         <LinearGradient
-          colors={[darkColor, lightColor]}
+          colors={[isDisabled ? 'gray' : darkColor, isDisabled ? 'gray' : lightColor]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1}}
           style={{
             ...StyleSheet.absoluteFillObject,
           }}
-        />
+        /> 
+
 
             {image && (
             <Image
@@ -61,14 +62,16 @@ return(
             resizeMode="contain"
             />
             )} 
-                    <Text
+
+            <Text
               style={[
-                textStyles(24, 'black'),
+                textStyles(labelSize, 'black'),
                 { fontFamily: 'Poppins-Regular', paddingRight: 20},
               ]}
             >
               {label}
             </Text>
+
 
     </TouchableOpacity>
 
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         width: '100%',  
-        padding: '5%', 
+        padding: '1%', 
         paddingRight: '0%',
         alignContent: 'center', 
         marginVertical: '1%',
@@ -97,5 +100,5 @@ const styles = StyleSheet.create({
 });
 
 
-export default ButtonBaseSpecialLarge;
+export default ButtonBaseSpecialSave;
 

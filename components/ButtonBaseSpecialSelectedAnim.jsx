@@ -4,7 +4,6 @@ import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext'; 
-import { useAuthUser } from '../context/AuthUserContext';
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage';
 
@@ -33,17 +32,14 @@ const ButtonBaseSpecialSelectedAnim = ({
         animPositionVertical=0,
 
     }) => {
-    const { authUserState, userAppSettings } = useAuthUser();
- 
+
     const navigation = useNavigation();
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle();
     const { selectedFriend, friendDashboardData, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
  
     const lastPress = useRef(0);
-    const pressTimeout = useRef(null);
-    const [showProfile, setShowProfile] = useState(false); 
-
+    const pressTimeout = useRef(null); 
 
     const navigateBackToFriendFocus = () => {
         navigation.navigate('FriendFocus');

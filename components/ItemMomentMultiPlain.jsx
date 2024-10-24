@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 
-import { View, StyleSheet, Text, FlatList, Animated, Alert } from 'react-native';
+import { View, StyleSheet, Text, Animated, Alert } from 'react-native';
 import ButtonMomentCategorySmall from '../components/ButtonMomentCategorySmall';
 import ButtonMoment from '../components/ButtonMoment'; 
 import ButtonCheckboxControl from '../components/ButtonCheckboxControl';
@@ -28,7 +28,7 @@ const ItemMomentMultiPlain = ({
   navigation,
 }) => { 
   const { themeStyles } = useGlobalStyle();
-  const { capsuleList, sortedByCategory, categoryNames, categoryStartIndices, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
+  const { capsuleList, updatePreAddedTracker, sortedByCategory, categoryNames, categoryStartIndices, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
   const { calculatedThemeColors } = useSelectedFriend();
   const [selectedMoment, setSelectedMoment] = useState(null);
@@ -46,12 +46,21 @@ const ItemMomentMultiPlain = ({
   const [isMakingCall, setIsMakingCall] = useState(false);
  
 
+  useEffect(() => {
+    if (capsuleList) {
+      updatePreAddedTracker();
+      console.log('updated preaddedtrigger manually in itemmomentmultiplain');
+
+    };
+
+  }, []);
   
   const moments = sortedByCategory;
 
-  useEffect(() => {
-     setSelectedCategory(categoryNames[0]);
-  }, []);
+  //useEffect(() => {
+     //setSelectedCategory(categoryNames[0]);
+    // console.log('commented out this useEffect in itemviewmomentplain to get category[0] name');
+ // }, []);
 
   useEffect(() => { 
     console.log('Use effect to set moments when preAddedTracker updates');
@@ -152,11 +161,7 @@ useEffect(() => {
   return () => clearTimeout(timerRef.current);
 }, []);
 
-
-useEffect(() => {
-  console.log(selectedCategory);
-
-}, [selectedCategory]);
+ 
 
 
   const handleToggleCategory = (category) => {
@@ -271,7 +276,7 @@ useEffect(() => {
     
     const idsToUpdateFalse = preAddedTracker.filter(id => !selectedIds.has(id));
     const idsToUpdateTrue = selectedMoments.map(moment => moment.id);
-
+   
 
     if (selectedMoments.length === 0 && !idsToUpdateFalse) {
       console.log('No moments selected to update.');
@@ -294,12 +299,18 @@ useEffect(() => {
          await updateThoughtCapsules(selectedFriend.id, allCapsulesToUpdate);
 
         updatePreAdded(idsToUpdateTrue, idsToUpdateFalse); 
+       
 
     } catch (error) {
         console.error('Error during pre-save:', error);
     }
     setIsMakingCall(false);
 };
+
+useEffect(() => {
+  updatePreAddedTracker();
+
+}, [capsuleList]);
 
   
 

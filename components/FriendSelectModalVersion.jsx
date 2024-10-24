@@ -14,17 +14,13 @@ import ButtonToggleSize from '../components/ButtonToggleSize';
 import { Dimensions } from 'react-native';
 
 const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, width = '60%' }) => {  
-  const { themeStyles, gradientColors } = useGlobalStyle();
+  const { themeStyles } = useGlobalStyle(); 
   const globalStyles = useGlobalStyle();  
   const { selectedFriend, setFriend, calculatedThemeColors, friendColorTheme, loadingNewFriend } = useSelectedFriend();
   const { friendList, getThemeAheadOfLoading, themeAheadOfLoading } = useFriendList();
   const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);  
-  const [displayName, setDisplayName] = useState(null); 
-  const [refreshButtonColor, setRefreshButtonColor ] = useState('white');
-  const [gradientColorOne, setGradientColorOne ] = useState(calculatedThemeColors.darkColor);
-  const [gradientColorTwo, setGradientColorTwo ] = useState(calculatedThemeColors.lightColor);
-  
+  const [displayName, setDisplayName] = useState(selectedFriend?.name || 'Select friend');
 
   const adjustFontSize = (fontSize) => {
     return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
@@ -47,27 +43,6 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
     setIsFriendMenuModalVisible(!isFriendMenuModalVisible);
   };
 
-  useEffect(() => {
-    if (loadingNewFriend) {
-      setDisplayName('Loading friend...');
-      
-      setRefreshButtonColor('white');
-      setGradientColorOne(themeAheadOfLoading.darkColor);
-      setGradientColorTwo(themeAheadOfLoading.lightColor);
-
-    } else {
-      if (selectedFriend && selectedFriend.name) {
-        setDisplayName(selectedFriend.name);
-        
-        setRefreshButtonColor('white');
-      } else {
-        setDisplayName('Select friend');
-        setRefreshButtonColor('black');
-      }
-      setGradientColorOne(calculatedThemeColors.darkColor);
-      setGradientColorTwo(calculatedThemeColors.lightColor);
-    }
-  }, [selectedFriend, loadingNewFriend]);
 
   const handleSelectFriend = (itemId) => { 
     const selectedOption = friendList.find(friend => friend.id === itemId);
@@ -76,6 +51,7 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
     getThemeAheadOfLoading(selectedFriend);
     console.log("Friend selected: ", selectedFriend);
     setForceUpdate(prevState => !prevState);  
+    setDisplayName(selectedFriend.name);
     toggleModal();
   };
 
@@ -90,12 +66,13 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
   };
   return (
     <>
-    
+    <View style={{height: 40, width: '100%'}}>
+      
       <LinearGradient
-        colors={[gradientColorOne, gradientColorTwo]}  
+        colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}  
-        style={[styles.container, { width }]} 
+        style={[styles.container]} 
       >  
 
         <View style={styles.displaySelectedContainer}>
@@ -105,7 +82,7 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
             loading={loadingNewFriend} 
             spinnerType='flow'
             spinnerSize={30}
-            color={gradientColorOne}
+            color={friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50'}
             includeLabel={false} 
           />
           </View>
@@ -178,16 +155,23 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
         confirmText="Reset All"
         cancelText="Back"
       />
+      
+    </View>
     </>
+    
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%', 
     flexDirection: 'row', 
     height: 40,
-    minHeight: 40,
+    minHeight: 40, 
     maxHeight: 40,
+    position: 'absolute',
+    top: 0,
+    left: 0,
     justifyContent: 'flex-end',
     alignItems: 'center', 
     padding: 2,
@@ -195,14 +179,14 @@ const styles = StyleSheet.create({
     borderRadius: 0, 
   },
   loadingWrapper: {
+    height: 40,
     flex: 1,  
     justifyContent: 'center',
     alignItems: 'center',
   },
   displaySelectedContainer: {
     alignItems: 'flex-end',
-    width: '100%',   
-    flex: 1,
+    width: '100%',  
   },
   displaySelected: {
     color: 'black',
