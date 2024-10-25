@@ -5,6 +5,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
+import { useFriendList } from '../context/FriendListContext';
 
  
 import ButtonCalendarDateSvgAndLabel from '../components/ButtonCalendarDateSvgAndLabel';
@@ -19,6 +20,7 @@ const ButtonBaseLargeHorScroll = ({
   const { width } = Dimensions.get('window'); 
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { setFriend } = useSelectedFriend();
+  const { friendList, getThemeAheadOfLoading } = useFriendList();
   
   
   
@@ -38,9 +40,12 @@ const ButtonBaseLargeHorScroll = ({
   const calendarButtonHeight = (height / .6);
 
   const handlePress = (hello) => {
+    console.log('handle on press triggered ! ! ! ! ! ! ');
     const { id, name } = hello.friend; 
     const selectedFriend = id === null ? null : { id: id, name: name }; 
     setFriend(selectedFriend);  
+    const friend = friendList.find(friend => friend.id === hello.friend.id);
+    getThemeAheadOfLoading(friend);
 
   };
 
@@ -73,7 +78,7 @@ const ButtonBaseLargeHorScroll = ({
               showMonth={true} 
               enabled={true}  
               color={'black'} 
-              onPress={() => handlePress(item)}
+              onPress={() => (handlePress(item))}
             />
           </TouchableOpacity>
         )}

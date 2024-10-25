@@ -38,6 +38,7 @@ export const ImageListProvider = ({ children }) => {
                                 imagePath = imagePath.substring(7);
                             }
                             const imageUrl = imagePath;
+                            console.log('flattening image:', imagePath);
 
                             flattenedImages.push({
                                 ...image,

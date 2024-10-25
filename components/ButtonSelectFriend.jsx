@@ -6,9 +6,12 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import AlertList from '../components/AlertList';
 import RowItemFriendDelete from '../components/RowItemFriendDelete';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 
+//may need to configure friendlist theme color before using as a button
 const ButtonSelectFriend = ({ friend }) => {
     const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
+    const { getThemeAheadOfLoading, themeAheadOfLoading } = useFriendList();
     const { themeStyles } = useGlobalStyle();  
     const [isFriendDetailsModalVisible, setIsFriendDetailsModalVisible] = useState(false);
     const [ rowColor, setRowColor ] = useState(themeStyles.genericTextBackgroundShadeTwo.backgroundColor || 'transparent');

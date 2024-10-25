@@ -13,7 +13,8 @@ import ButtonBottomSaveMomentToCategory from './ButtonBottomSaveMomentToCategory
 import LoadingPage from '../components/LoadingPage';
 
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
-
+//  {`CATEGORIES (${categoryCount} / ${friendDashboardData[0].suggestion_settings.category_limit_formula})`}
+           
  
 const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onParentSave, showAllCategories = false, showInModal = true }) => {
   const { themeStyles } = useGlobalStyle();
@@ -133,12 +134,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
     setModalVisible(true);
     console.log('SELECTED CATEGORY!!!');
   };
-
-  const toggleSaveable = () => {
-    setPressedOnce(prev => !prev);
-      
-
-  };
+ 
 
   const handlePressOut = (category) => {
      
@@ -238,17 +234,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
       
       {friendDashboardData && categoryNames && !loadingNewFriend && (
         <>
-          <View style={{ flexDirection: 'row', paddingBottom: 10, alignContent: 'center', alignItems: 'center', textAlign: 'left' }}>
-            <Text style={[styles.locationTitle,  themeStyles.subHeaderText]}>
-              {`CATEGORIES (${categoryCount} / ${friendDashboardData[0].suggestion_settings.category_limit_formula})`}
-            </Text>
-  
-            {remainingCategories !== null && remainingCategories > 0 && (
-              <View style={{ paddingLeft: 0, paddingBottom: 5 }}>
-                <ButtonAddCategory color={themeStyles.subHeaderText.color} onInputValueChange={handleNewCategory} width={32} height={32} />
-              </View>
-            )}
-          </View>
+          
   
           <View style={[styles.categoriesContainer, themeStyles.genericTextBackgroundShadeTwo]}>
             {showAllCategories && (
@@ -275,16 +261,17 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
               <Text style={styles.noCategoriesText}>Please enter a category</Text>
             ) : (
 <View style={{ 
-  flexDirection: 'column', 
-  justifyContent: 'flex-end', // Align items to the bottom of the container
+  flexDirection: 'row', 
+  justifyContent: 'flex-start', // Align items to the bottom of the container
   height: 'auto', 
   width: '100%' 
 }}>
   <FlatList
     data={categoryNames}
+    horizontal={true}
     keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
     renderItem={({ item }) => (
-      <View key={item} style={{ paddingBottom: 2,   width: '100%' }}>
+      <View key={item} style={{ paddingBottom: 2,   width: 'auto' }}>
         <ButtonBottomSaveMomentToCategory
           height={48}
           onPress={() => handlePressOut(item)} // Correct way to pass the function
@@ -304,6 +291,16 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   />
 </View>
 
+
+            )}
+          </View>
+          <View style={{ flexDirection: 'row', paddingBottom: 10, alignContent: 'center', alignItems: 'center', textAlign: 'left' }}>
+         
+  
+            {remainingCategories !== null && remainingCategories > 0 && (
+              <View style={{ paddingLeft: 0, paddingBottom: 5 }}>
+                <ButtonAddCategory color={themeStyles.subHeaderText.color} onInputValueChange={handleNewCategory} width={32} height={32} />
+              </View>
             )}
           </View>
   
@@ -383,6 +380,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
     flex: 1, 
     alignContent: 'center',   
+    flexDirection: 'row',
     height: 'auto',
   },
   loadingWrapper: {
@@ -395,6 +393,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 20,
     flexWrap: 'wrap',  // Change this to flex-start 
+    flexDirection: 'column',
     flex: 1, // Allows it to grow to fill available space, if necessary
   
   },

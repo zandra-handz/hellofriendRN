@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet,  TouchableOpacity } from 'react-native';
-import SearchBar from '../components/SearchBar';
+
 import AlertList from '../components/AlertList'; 
 import { FlashList } from '@shopify/flash-list';
 import { useSelectedFriend } from '../context/SelectedFriendContext';

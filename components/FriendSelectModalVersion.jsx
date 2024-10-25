@@ -11,6 +11,10 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonSelectFriend from '../components/ButtonSelectFriend';
 import ButtonToggleSize from '../components/ButtonToggleSize';
 
+//     <LinearGradient
+//colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+
+
 import { Dimensions } from 'react-native';
 
 const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, width = '60%' }) => {  
@@ -69,7 +73,7 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
     <View style={{height: 40, width: '100%'}}>
       
       <LinearGradient
-        colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+        colors={['transparent', 'transparent']}  
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}  
         style={[styles.container]} 
@@ -81,7 +85,7 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
           <LoadingPage
             loading={loadingNewFriend} 
             spinnerType='flow'
-            spinnerSize={30}
+            spinnerSize={70}
             color={friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50'}
             includeLabel={false} 
           />

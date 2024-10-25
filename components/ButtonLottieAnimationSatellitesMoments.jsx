@@ -5,7 +5,6 @@ import ItemMomentSingle from '../components/ItemMomentSingle';
 import ItemMomentMulti from '../components/ItemMomentMulti'; 
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useFocusEffect } from '@react-navigation/native';
 
 const ButtonLottieAnimationSatellitesMoments = ({
   buttonHeight = 270,

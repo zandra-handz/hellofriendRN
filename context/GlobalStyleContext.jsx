@@ -395,12 +395,12 @@ const darkThemeStyles = StyleSheet.create({
         backgroundColor: '#dcdde1',  
     },
     footerContainer: {
-        backgroundColor: 'black',
-        borderTopWidth: .4,
-        borderColor: '#ccc',
+        backgroundColor: '#000002',
+        borderTopWidth: .2,
+        borderColor: '#4caf50',
     },
     headerContainer: {
-        backgroundColor: 'black',
+        backgroundColor: '#000002',
         borderBottomWidth: .4,
         borderColor: 'transparent',
     },

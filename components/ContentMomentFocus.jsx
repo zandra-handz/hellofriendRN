@@ -6,7 +6,7 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api'; 
-
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
@@ -22,6 +22,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
   const { setCapsuleList } = useCapsuleList(); // NEED THIS TO ADD NEW 
   const { authUserState } = useAuthUser(); 
   const { themeAheadOfLoading } = useFriendList();
+  const { themeStyles } = useGlobalStyle();
    
   const [textInput, setTextInput] = useState('');
   const textareaRef = useRef();  
@@ -32,6 +33,8 @@ const ContentMomentFocus = ({ placeholderText }) => {
   const [ resultMessage, setResultMessage ] = useState(null);
   const [gettingResultMessage, setGettingResultMessage ] = useState(null);
    
+
+  const [showCategoriesSlider, setShowCategoriesSlider ] = useState(false);
 
   const [clearText, setClearText] = useState(false);
   const [isSuccess, setIsSuccess] = useState(true);  
@@ -129,18 +132,18 @@ const ContentMomentFocus = ({ placeholderText }) => {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 40}  
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 30}  
       >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
       
         <LinearGradient
         colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}  
+        end={{ x: 1, y: 0 }}  
         style={[styles.container]} 
       >  
         <BlurView 
-          intensity={50} 
+          intensity={0} 
           
 
           style={styles.blurView}> 
@@ -183,8 +186,11 @@ const ContentMomentFocus = ({ placeholderText }) => {
         </>
          )}
           {!showCategories && ( 
+            <>  
           <TextInput
-            style={[styles.modalTextInput, { borderColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor, color: calculatedThemeColors.fontColor }]}
+            style={[styles.modalTextInput, themeStyles.genericText, { backgroundColor: themeStyles.genericTextBackground.backgroundColor, borderColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor
+              
+             }]}
             multiline={true}
             value={textInput}
             onChangeText={setTextInput} // Directly update textInput using setTextInput
@@ -192,46 +198,22 @@ const ContentMomentFocus = ({ placeholderText }) => {
             autoFocus={true}
             ref={textareaRef}
           />
-      )}
-        {showCategories && selectedFriend && (
-        <View style={styles.categoryContainer}>
-        <> 
-        <CardCategoriesAsButtons onCategorySelect={handleCategorySelect} momentTextForDisplay={textInput} onParentSave={handleSave}/> 
-           
-        </> 
-      </View>
+          
+          <TouchableOpacity onPress={() => setShowCategoriesSlider(!showCategoriesSlider)} style={{position: 'absolute', zIndex: 2, bottom: 40, right: 30}}>
+            <Text style={{color: '#ccc'}}>
+              CATEGORIES
+            </Text>
 
-      )}
+          </TouchableOpacity>
+          </>
+      )} 
         </BlurView>
-        <View style={styles.buttonContainer}>  
-        {textInput && selectedFriend && !showCategories && (
-        <TouchableOpacity
-          onPress={toggleCategoryView}
-          style={[styles.closeButton, { flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor }]}
-        >  
-          <Text style={[styles.closeButtonText, { paddingRight: 10, color: loadingNewFriend ? 'transparent' : calculatedThemeColors.fontColor }]}>
-            Pick category
-          </Text>
-            
-          <ArrowRightCircleOutline height={34} width={34} color={loadingNewFriend ? 'transparent' : calculatedThemeColors.fontColor} />
-           
-        </TouchableOpacity>
-         )}
-
-        {!textInput && (
-        <TouchableOpacity
-        onPress={() => {}}
-        style={[styles.closeButton, { flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor }]}
-      >
-          <Text style={[styles.closeButtonText, { paddingRight: 10, color: loadingNewFriend ? 'transparent' : calculatedThemeColors.fontColor }]}>
-            Pick category
-          </Text>
-          <ArrowRightCircleOutline height={34} width={34} color={loadingNewFriend ? 'transparent' : calculatedThemeColors.fontColor} />
-           
-      </TouchableOpacity>
-         )}
-
+        {textInput && showCategoriesSlider && selectedFriend && (
+        <View style={styles.buttonContainer}>   
+        <CardCategoriesAsButtons onCategorySelect={handleCategorySelect} momentTextForDisplay={textInput} onParentSave={handleSave}/> 
+ 
       </View>
+       )}
       </LinearGradient>
       </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -266,18 +248,19 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     width: '100%',
     flex: 1,
-    borderRadius: 0, 
+    borderRadius: 30, 
 
   },
   modalTextInput: { 
-    fontSize: 20,
-    fontFamily: 'Poppins-Regular',
+    fontSize: 16, 
     color: 'white',
+    alignSelf: 'center',
     padding: 24,
     textAlignVertical: 'top',
     borderWidth: 1.8,
-    borderRadius: 20,
-    width: '100%',  
+    borderRadius: 50, 
+    marginBottom: 10,
+    width: '99%',  
     flex: 1,
     height: 'auto',
   },
@@ -311,7 +294,9 @@ const styles = StyleSheet.create({
 
   },
   buttonContainer: {
-    height: 'auto',
+    height: 70, 
+    
+    marginBottom: 0,
     width: '100%', 
   },
   categoryContainer: {  
@@ -321,11 +306,7 @@ const styles = StyleSheet.create({
     maxHeight: '90%',
     borderRadius: 8,
     paddingTop: 10, 
-  }, 
-  closeButtonText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-  },
+  },  
   closeButton: { 
     marginTop: 14,
     borderRadius: 0, 
@@ -335,8 +316,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   closeButtonText: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
+    fontSize: 18,
+    fontFamily: 'Poppins-Regular',
   },
   backButton: { 
     marginTop: 0,
