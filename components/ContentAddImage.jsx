@@ -44,7 +44,7 @@ const ContentAddImage = () => {
   const [ gettingResultMessage, setGettingResultMessage ] = useState(null);
 
 
-  const { setUpdateImagesTrigger } = useImageList();
+  const { createImage } = useImageList();
 
   useEffect(() => {
     if (selectedFriend && !loadingNewFriend) {
@@ -143,7 +143,7 @@ const handleSave = async () => {
       formData.append('user', authUserState.user.id);
       formData.append('thought_capsules', '');
 
-      await createFriendImage(selectedFriend.id, formData);
+      await createImage(formData);
 
       setResultMessage('Image saved!');
 
@@ -175,8 +175,7 @@ const handleSave = async () => {
     try {
       setImageUri(null);
       setImageTitle('');
-      setImageCategory('Misc');
-      setUpdateImagesTrigger(prev => !prev);
+      setImageCategory('Misc'); 
     } catch (e) {
       console.log('Error closing image modal: ', e);
     }

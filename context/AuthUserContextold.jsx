@@ -4,7 +4,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import * as Notifications from 'expo-notifications';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
 import { signup, signin, signout, refreshToken, getCurrentUser, updateUserAccessibilitySettings } from '../api';
 import jwtDecode from 'jwt-decode'; 
 import * as Device from 'expo-device';

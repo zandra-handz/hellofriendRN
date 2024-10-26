@@ -1,9 +1,9 @@
-// ImageListContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 import { useSelectedFriend } from './SelectedFriendContext'; // Adjust the import path as needed
-import { fetchFriendImagesByCategory } from '../api'; // Adjust the import path as needed
+import { fetchFriendImagesByCategory, createFriendImage, updateFriendImage, deleteFriendImage } from '../api'; // Adjust the import path as needed
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-const ImageListContext = createContext({ imageList: [], setImageList: () => {} });
+const ImageListContext = createContext({ imageList: [], imageCount: 0, isLoading: true });
 
 export const useImageList = () => {
     const context = useContext(ImageListContext);
@@ -17,77 +17,94 @@ export const useImageList = () => {
 
 export const ImageListProvider = ({ children }) => {
     const { selectedFriend } = useSelectedFriend();
-    const [imageList, setImageList] = useState([]);
-    const [imageCount, setImageCount ] = useState(0);
-    const [isImageContextLoading, setIsImageContextLoading] = useState(true);
-    const [updateImagesTrigger, setUpdateImagesTrigger] = useState(false); // Introducing updateTrigger state
-    
+    const queryClient = useQueryClient(); // Initialize the query client
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (selectedFriend) {
-                try {
-                    setIsImageContextLoading(true);
-                    const imagesData = await fetchFriendImagesByCategory(selectedFriend.id);
-                    const flattenedImages = [];
-
-                    Object.keys(imagesData).forEach(category => {
-                        imagesData[category].forEach(image => {
-                            let imagePath = image.image;
-                            if (imagePath.startsWith('/media/')) {
-                                imagePath = imagePath.substring(7);
-                            }
-                            const imageUrl = imagePath;
-                            console.log('flattening image:', imagePath);
-
-                            flattenedImages.push({
-                                ...image,
-                                image: imageUrl,
-                                image_category: category,
-                            });
-                        });
+    // Use useQuery to fetch images based on the selectedFriend
+    const { data: imageList = [], isLoading: isImageContextLoading } = useQuery({
+        queryKey: ['friendImages', selectedFriend?.id],
+        queryFn: () => fetchFriendImagesByCategory(selectedFriend.id),
+        enabled: !!selectedFriend, // Only run query if selectedFriend is available
+        select: (imagesData) => {
+            // Flattening the images
+            const flattenedImages = [];
+            Object.keys(imagesData).forEach(category => {
+                imagesData[category].forEach(image => {
+                    let imagePath = image.image;
+                    if (imagePath.startsWith('/media/')) {
+                        imagePath = imagePath.substring(7);
+                    }
+                    flattenedImages.push({
+                        ...image,
+                        image: imagePath,
+                        image_category: category,
                     });
+                });
+            });
+            return flattenedImages;
+        },
+    });
+ 
+    const imageCount = imageList.length;
 
-                    setImageList(flattenedImages);
-                    setImageCount(flattenedImages.length);
-                } catch (error) {
-                    console.error('Error fetching friend images by category:', error);
-                } finally {
-                    setIsImageContextLoading(false);
-                }
-            } else {
-                setImageList([]);
-            }
-        };
-
-        fetchData();
-    }, [selectedFriend, updateImagesTrigger]);
+    // Mutation to update the image
+    const updateImageMutation = useMutation({
+        mutationFn: (imageData) => updateFriendImage(selectedFriend.id, imageData.id, imageData.updatedData), // Pass friendId and imageId
+        onSuccess: () => {
+            // Invalidate the query to refetch updated data
+            queryClient.invalidateQueries(['friendImages', selectedFriend?.id]);
+        },
+        onError: (error) => {
+            console.error('Error updating image:', error);
+        },
+    });
 
     const updateImage = (id, updatedData) => {
-        setImageList(prevList => 
-            prevList.map(image => image.id === id ? { ...image, ...updatedData } : image)
-        );
+        // Call the mutation with the image ID and updated data
+        updateImageMutation.mutate({ id, updatedData });
     };
 
-    const updateCount = () => {
-        setImageCount(imageList.length);
-
-    };
+    // Mutation to delete the image
+    const deleteImageMutation = useMutation({
+        mutationFn: (id) => deleteFriendImage(selectedFriend.id, id), // Pass friendId and imageId
+        onSuccess: () => {
+            // Invalidate the query to refetch updated data
+            queryClient.invalidateQueries(['friendImages', selectedFriend?.id]);
+        },
+        onError: (error) => {
+            console.error('Error deleting image:', error);
+        },
+    });
 
     const deleteImage = (id) => {
-        setImageList(prevList => prevList.filter(image => image.id !== id));
+        // Call the mutation to delete the image
+        deleteImageMutation.mutate(id);
+    };
+
+
+    const createImageMutation = useMutation({
+        mutationFn: (formData) => createFriendImage(selectedFriend.id, formData), // Use the imported function
+        onSuccess: () => {
+            // Invalidate the query to refetch updated data
+            queryClient.invalidateQueries(['friendImages', selectedFriend?.id]);
+        },
+        onError: (error) => {
+            console.error('Error creating friend image:', error);
+        },
+    });
+
+    const createImage = (formData) => {
+        // Call the mutation to create a new image
+        createImageMutation.mutate(formData);
     };
 
     return (
         <ImageListContext.Provider value={{ 
             imageList, 
             imageCount,
-            setImageList, 
+            isImageContextLoading,
             updateImage, 
             deleteImage,
-            isImageContextLoading,
-            updateImagesTrigger, 
-            setUpdateImagesTrigger,  
+            createImage,
         }}>
             {children}
         </ImageListContext.Provider>

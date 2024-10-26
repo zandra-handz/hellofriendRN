@@ -12,9 +12,6 @@ import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
 
-
-import { updateFriendImage, deleteFriendImage } from '../api';
-
 import AlertConfirm from '../components/AlertConfirm'; 
 import AlertSuccessFail from '../components/AlertSuccessFail';
 
@@ -23,7 +20,7 @@ import NavigationArrows from '../components/NavigationArrows';
 const ItemViewImage = ({ image, onClose }) => {
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
-  const { imageList, deleteImage, setUpdateImagesTrigger } = useImageList();
+  const { imageList, updateImage, deleteImage } = useImageList();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(null);
@@ -55,7 +52,7 @@ const ItemViewImage = ({ image, onClose }) => {
 
   const handleUpdate = async () => {
     try {
-      await updateFriendImage(image.friendId, image.id, { title });
+      updateImage(image.id, { title });
       setIsEditing(false); 
       onClose();
     } catch (error) {
@@ -67,14 +64,13 @@ const ItemViewImage = ({ image, onClose }) => {
     setConfirmDeleteModalVisible(!isConfirmDeleteModalVisible);
   };
 
-
   const handleShare = async () => {
-    if (!imageList[currentIndex].image) {
+    if (!imageList[currentIndex]?.image) {
       console.error('Error: Image URL is null or undefined');
       return;
     }
 
-    const fileUri = FileSystem.documentDirectory + (imageList[currentIndex].title  || 'shared_image') + '.jpg';
+    const fileUri = FileSystem.documentDirectory + (imageList[currentIndex].title || 'shared_image') + '.jpg';
     const message = "Check out this image!"; 
 
     try {
@@ -97,8 +93,13 @@ const ItemViewImage = ({ image, onClose }) => {
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
-      const imageToDelete = imageList[currentIndex];  // Get the correct image to delete based on currentIndex
-      await deleteFriendImage(selectedFriend.id, imageList[currentIndex].id);
+      const imageToDelete = imageList[currentIndex];  
+      deleteImage(imageList[currentIndex].id);
+
+      // Update currentIndex to prevent out-of-bounds access
+      if (currentIndex >= imageList.length - 1) {
+        setCurrentIndex(imageList.length - 2); // Move to the previous image
+      }
 
       setSuccessModalVisible(true);  
     } catch (error) {
@@ -111,8 +112,6 @@ const ItemViewImage = ({ image, onClose }) => {
   };
 
   const successOk = () => {
-    deleteImage(imageList[currentIndex].image);
-    setUpdateImagesTrigger(prev => !prev);
     setSuccessModalVisible(false);
     closeModal();
   };
@@ -134,7 +133,11 @@ const ItemViewImage = ({ image, onClose }) => {
   };
 
   useEffect(() => {
-    setTitle(imageList[currentIndex]?.title || '');
+    if (imageList[currentIndex]) {
+      setTitle(imageList[currentIndex].title || '');
+    } else {
+      setTitle(''); // Clear title if currentIndex is out of bounds
+    }
   }, [currentIndex]);
 
   return (
@@ -147,35 +150,30 @@ const ItemViewImage = ({ image, onClose }) => {
             <View style={styles.modalContainer}> 
                 <View style={styles.headerContainer}>
                 <Text style={[styles.imageTitle, themeStyles.subHeaderText]}>{imageList[currentIndex].title}</Text>
-                      
-                  </View>
-                   
-                      <View style={[styles.modalImageContainer, themeStyles.textGenericBackgroundShadeTwo]}>
-                        <Image
-                          source={{ uri: imageList[currentIndex].image }}
-                          style={styles.modalImage}
-                        />
-                      </View> 
+                </View>
+                <View style={[styles.modalImageContainer, themeStyles.textGenericBackgroundShadeTwo]}>
+                    <Image
+                      source={{ uri: imageList[currentIndex].image }}
+                      style={styles.modalImage}
+                    />
+                </View> 
                 <NavigationArrows 
                   currentIndex={currentIndex}
                   imageListLength={imageList.length}
                   onPrevPress={goToPreviousImage}
                   onNextPress={goToNextImage}
                 /> 
-                  <ItemViewFooter
-                    buttons={[
-                      { label: 'Edit', buttonIconSize: 34, buttonPurpose: 'edit', icon: <EditOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: handleEdit },
-                      { label: 'Delete', buttonIconSize: 34, buttonPurpose: 'delete', icon: <TrashOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: toggleModal },
-                      { label: 'Edit', buttonIconSize: 34, buttonPurpose: 'edit', icon: <EditOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: handleEdit },
-                      { label: 'Delete', buttonIconSize: 34, buttonPurpose: 'delete', icon: <TrashOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: toggleModal },
-                    ]}
-                    maxButtons={4} 
-                    showLabels={false}
-                    alignment='right'
-                    padding={40}
-                  /> 
-                  <ButtonSendImageToFriend onPress={handleShare} friendName={selectedFriend.name} />
-                    
+                <ItemViewFooter
+                  buttons={[
+                    { label: 'Edit', buttonIconSize: 34, buttonPurpose: 'edit', icon: <EditOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: handleEdit },
+                    { label: 'Delete', buttonIconSize: 34, buttonPurpose: 'delete', icon: <TrashOutlineSvg width={34} height={34} color={themeStyles.genericText.color} />, onPress: toggleModal },
+                  ]}
+                  maxButtons={4} 
+                  showLabels={false}
+                  alignment='right'
+                  padding={40}
+                /> 
+                <ButtonSendImageToFriend onPress={handleShare} friendName={selectedFriend.name} />
             </View>
           ) : null
         }
@@ -189,7 +187,7 @@ const ItemViewImage = ({ image, onClose }) => {
         questionText="Delete image?"
         isFetching={isDeleting}
         useSpinner={true} 
-        headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>{imageList[currentIndex].title}</Text>}
+        headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>{imageList[currentIndex]?.title || 'Image'}</Text>}
         onConfirm={() => handleDelete()} 
         onCancel={toggleModal}
         confirmText="Delete"

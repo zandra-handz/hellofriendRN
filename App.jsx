@@ -46,6 +46,9 @@ import HeaderLocations from './components/HeaderLocations';
 import HeaderHelloes from './components/HeaderHelloes';
 import HeaderLocationSingle from './components/HeaderLocationSingle';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 import PhoneStatusBar from './components/PhoneStatusBar';
 
@@ -99,25 +102,27 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}> 
-      <AuthUserProvider>
-        <GlobalStyleProvider>
-        
-          <UpcomingHelloesProvider>
-            <FriendListProvider>
-              <SelectedFriendProvider>
-              <PhoneStatusBar />
-                <CapsuleListProvider>
-                  <ImageListProvider>
-                    <LocationListProvider>
-                      <Layout />
-                    </LocationListProvider>
-                  </ImageListProvider> 
-                </CapsuleListProvider>
-              </SelectedFriendProvider>
-            </FriendListProvider>
-          </UpcomingHelloesProvider>
-        </GlobalStyleProvider>
-      </AuthUserProvider> 
+      <QueryClientProvider client={queryClient}>
+      
+        <AuthUserProvider>
+          <GlobalStyleProvider>
+            <UpcomingHelloesProvider>
+              <FriendListProvider>
+                <SelectedFriendProvider>
+                <PhoneStatusBar />
+                  <CapsuleListProvider>
+                    <ImageListProvider>
+                      <LocationListProvider>
+                        <Layout />
+                      </LocationListProvider>
+                    </ImageListProvider> 
+                  </CapsuleListProvider>
+                </SelectedFriendProvider>
+              </FriendListProvider>
+            </UpcomingHelloesProvider>
+          </GlobalStyleProvider>
+        </AuthUserProvider> 
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

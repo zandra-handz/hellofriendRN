@@ -40,6 +40,7 @@ export const FriendListProvider = ({ children }) => {
   const getThemeAheadOfLoading = (loadingFriend) => {
     
     setThemeAheadOfLoading({lightColor: loadingFriend.lightColor, darkColor: loadingFriend.darkColor});
+  
   };
 
 
@@ -72,16 +73,17 @@ export const FriendListProvider = ({ children }) => {
 
   const updateFriendListColors = (friendId, darkColor, lightColor) => {
     setFriendList(prevFriendList => {
-      prevFriendList.forEach(friend => {
-        if (friend.id === friendId) {
-          // Directly update the colors in the original list
-          friend.darkColor = darkColor;  // Set darkColor, even if null
-          friend.lightColor = lightColor;  // Set lightColor, even if null
-        }
-      });
-      return prevFriendList;  // No need to create a new array
+      const friend = prevFriendList.find(friend => friend.id === friendId);
+      if (friend) {
+        friend.darkColor = darkColor;
+        friend.lightColor = lightColor;
+        setThemeAheadOfLoading({lightColor: lightColor, darkColor: darkColor});
+  
+      }
+      return [...prevFriendList];  // Create a new array to trigger re-render
     });
   };
+
   return (
     <FriendListContext.Provider value={{
       friendList,

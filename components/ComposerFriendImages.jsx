@@ -53,7 +53,7 @@ const ComposerFriendImages = ({
         {includeHeader && !headerInside && (
           <View style={[styles.headerContainer, { height: headerHeight }]}>
             <Text style={[styles.headerText, { color: headerTextColor, fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-              {headerText} {count}
+              {headerText} ({imageCount})
             </Text>
           </View>
         )}
@@ -62,7 +62,7 @@ const ComposerFriendImages = ({
             {includeHeader && headerInside && (
               <View style={[styles.headerContainer, themeStyles.friendFocusSection, { borderTopRightRadius: buttonRadius, height: headerHeight  }]}>
                 <Text style={[styles.headerText, themeStyles.friendFocusSectionText, { fontFamily: headerFontFamily, fontSize: headerTextSize }]}>
-                  {headerText} {count}
+                  {headerText} ({imageCount})
                 </Text>
               </View>
             )} 
