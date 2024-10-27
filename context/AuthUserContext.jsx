@@ -1,85 +1,224 @@
 // AuthUserContext.js
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, AccessibilityInfo } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import * as Notifications from 'expo-notifications';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-import { signup, signin, signout, refreshToken, getCurrentUser, updateUserAccessibilitySettings } from '../api';
-import jwtDecode from 'jwt-decode'; 
 import * as Device from 'expo-device';
 import Constants from "expo-constants";
 import { Platform } from 'react-native';
-
-
-
-const TOKEN_KEY = 'my-jwt';
+import { signup, signin, signout, getCurrentUser, updateUserAccessibilitySettings } from '../api';
 
 const AuthUserContext = createContext({});
- 
-
- //async function clearSecureStore() {
-   // await SecureStore.deleteItemAsync('my-jwt');
-   // await SecureStore.deleteItemAsync('tokenExpiry');
-   // await SecureStore.deleteItemAsync('refreshToken');
-   // await SecureStore.deleteItemAsync('pushToken');
-   // Replace 'my-jwt' with your actual key
-   //this only partially worked and then i ran
-    // Remove-Item -Recurse -Force .\node_modules
-    // npm install
-
-// }
-
-// clearSecureStore().catch(console.error);
-
 export const useAuthUser = () => useContext(AuthUserContext);
+
+const TOKEN_KEY = 'my-jwt';
 
 export const AuthUserProvider = ({ children }) => {
     const [authUserState, setAuthUserState] = useState({
         user: null,
-        credentials: {
-            id: null,
-            username: null,
-            password: null,
-            token: null,
-        },
         authenticated: false,
-        loading: true,  // Add loading state
+        loading: true,
     });
-    const [userAppSettings, setUserAppSettings] = useState(null);
-    const [ userNotificationSettings, setUserNotificationSettings ] = useState(null);
+    const [userAppSettings, setUserAppSettings] = useState({});
+    const [userNotificationSettings, setUserNotificationSettings] = useState({});
     const [userAddresses, setUserAddresses] = useState({ addresses: [] });
     const queryClient = useQueryClient();
-    
-    const fetchUser = async (token) => {
-        try {
-            const response = await getCurrentUser();
-            return response;
-        } catch (error) {
-            console.error('Error fetching user:', error);
+
+    // Reinitialize user data function
+    const reInitialize = async () => {
+        const token = await SecureStore.getItemAsync(TOKEN_KEY);
+        if (token) {
+            const userData = await getCurrentUser();
+            if (userData) {
+                setAuthUserState(prev => ({
+                    ...prev,
+                    user: userData,
+                    authenticated: true,
+                    loading: false, 
+                }));
+                setUserAppSettings(userData.settings || {});
+                console.log('user app settings in reinitialize', userData.settings);
+                setUserNotificationSettings({
+                    receive_notifications: userData.settings?.receive_notifications || false
+                });
+                setUserAddresses({
+                    addresses: userData.addresses ? Object.values(userData.addresses) : []
+                });
+            } else {
+                // Handle case where user data is null
+                setAuthUserState(prev => ({ ...prev, authenticated: false, loading: false }));
+            }
+        } else {
+            setAuthUserState({ user: null, authenticated: false, loading: false });
+        }
+    };
+
+    useEffect(() => {
+        console.log('UUUUSEEEE EFFFFECCTT IN CONTEXXXXXXT', userAppSettings);
+
+    }, [userAppSettings]);
+
+    // Fetch current user data and update state
+    const { data: currentUserData } = useQuery({
+        queryKey: ['fetchUser'],
+        queryFn: async () => {
+            const token = await SecureStore.getItemAsync(TOKEN_KEY);
+            if (token) return await getCurrentUser();
             return null;
+        },
+        enabled: authUserState.authenticated,
+        onSuccess: (data) => {
+            if (data) {
+                setAuthUserState(prev => ({
+                    ...prev,
+                    user: data,
+                    authenticated: true,
+                    loading: false
+                }));
+                setUserAppSettings(data.settings || {});
+                console.log('user app settings', userAppSettings);
+                setUserNotificationSettings({ receive_notifications: data.settings?.receive_notifications || false });
+                
+                setUserAddresses({
+                    addresses: data.addresses ? Object.values(data.addresses) : []
+                });
+            }
+        },
+        onError: () => {
+            setAuthUserState(prev => ({ ...prev, loading: false }));
         }
-    };
+    });
 
-    const handleSignup = async (username, email, password) => {
-        const result = await signup(username, email, password);
-        if (!result.error) {
-            setAuthUserState({
-                user: null,
-                credentials: {
-                    ...authUserState.credentials,
-                    token: result.data.token,
-                },
-                authenticated: false,
-                loading: false, 
+    
+
+    useEffect(() => {
+        const fetchInitialSettings = async () => {
+            console.log('SCREEN READER CONTEXT');
+            try {
+                const isActive = await AccessibilityInfo.isScreenReaderEnabled();
+                setUserAppSettings(prevSettings => ({
+                    ...prevSettings,
+                    screen_reader: isActive,
+                }));
+            } catch (error) {
+                console.error('Error fetching initial screen reader status:', error);
+            }
+        };
+    
+        if (authUserState.authenticated && currentUserData && userAppSettings) {
+            fetchInitialSettings();
+        }
+    }, [authUserState.authenticated]);
+    
+    
+    const signinMutation = useMutation({
+        mutationFn: signin,
+        onSuccess: async (result) => {
+            // Handle successful sign-in
+            if (result.data) {
+                const { access: token, refresh } = result.data;
+                await SecureStore.setItemAsync(TOKEN_KEY, token);
+                await SecureStore.setItemAsync('refreshToken', refresh);
+                await reInitialize(); // Refetch user data after sign-in
+            }
+        },
+        onError: (error) => {
+            console.error('Sign in mutation error:', error);
+            alert("Sign-in failed: " + (error.response?.data.msg || 'Unknown error occurred'));
+        }
+    });
+    
+
+// Handle sign-in
+const onSignin = async (username, password) => {
+    try {
+        // Create an object with username and password
+        const credentials = { username, password };
+
+        // Log the credentials being passed to the mutation
+        console.log('Signing in with credentials:', credentials);
+
+        // Pass the object to mutateAsync
+        await signinMutation.mutateAsync(credentials);
+    } catch (error) {
+        console.error('Sign in error', error);
+        // Handle errors (e.g., display a message)
+    }
+};
+
+
+    const signupMutation = useMutation({
+        mutationFn: signup,
+        onSuccess: async (result) => {
+            if (result.data) {
+                await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
+                await reInitialize(); // Refetch user data after sign-up
+            }
+        }
+    });
+
+    const updateAppSettings = async (newSettings) => {
+        try {
+            await updateAppSettingsMutation.mutateAsync({
+                userId: authUserState.user.id, // User ID
+                fieldUpdates: newSettings // Pass newSettings directly as fieldUpdates
             });
-            await SecureStore.setItemAsync(TOKEN_KEY, String(result.data.token));
+        } catch (error) {
+            console.error('Error updating app settings:', error);
         }
-        return result;
     };
- 
 
-    const registerForNotifications = async () => { 
+    const updateAppSettingsMutation = useMutation({
+        mutationFn: (data) => updateUserAccessibilitySettings(data.userId, data.setting),
+        onSuccess: (data) => {
+            setUserAppSettings(data); // Assuming the API returns updated settings
+            
+            queryClient.setQueryData(['fetchUser'], (oldData) => ({
+                ...oldData,
+                settings: data.settings
+            }));
+        },
+        onError: (error) => {
+            console.error('Update app settings error:', error);
+        }
+    });
+
+    const onSignOut = async () => {
+        await signout(); // Call your signout API function
+        await SecureStore.deleteItemAsync(TOKEN_KEY); // Clear access token
+        await SecureStore.deleteItemAsync('refreshToken'); // Clear refresh token if applicable
+        await SecureStore.deleteItemAsync('pushToken'); // Clear push token if applicable
+    
+        // Reset user-related state
+        setAuthUserState({
+            user: null,
+            authenticated: false,
+            loading: false,
+            credentials: {
+                token: null,  
+            },
+        });
+     
+        setUserAppSettings(null); 
+        setUserNotificationSettings(null); 
+        setUserAddresses({ addresses: [] });  
+        queryClient.clear();
+    };
+    
+ 
+    useEffect(() => {
+        console.log('usernotifs useEffect triggered in context');
+        if (userNotificationSettings?.receive_notifications) {
+            console.log('registering for notifs');
+            registerForNotifications();
+        } else {
+            console.log('removing notifs permissions');
+            removeNotificationPermissions();
+        }
+    }, [userNotificationSettings]);
+
+
+    const registerForNotifications = async () => {
         if (Platform.OS === "android") {
             await Notifications.setNotificationChannelAsync("default", {
                 name: "default",
@@ -90,426 +229,50 @@ export const AuthUserProvider = ({ children }) => {
         }
 
         if (Device.isDevice) {
-            const { status: existingStatus } =
-                await Notifications.getPermissionsAsync();
+            const { status: existingStatus } = await Notifications.getPermissionsAsync();
             let finalStatus = existingStatus;
             if (existingStatus !== "granted") {
                 const { status } = await Notifications.requestPermissionsAsync();
                 finalStatus = status;
             }
 
-            if (finalStatus !== "granted") {
-                throw new Error(
-                    "Permission not granted to get push token for push notification"
-                );
-            }
-
-            const projectId =
-                Constants?.expoConfig?.extra?.eas?.projectId ??
-                Constants?.easConfig?.projectId;
-            if (!projectId) {
-                throw new Error("Project ID not found");
-            }
-            try {
-                const pushTokenString = (
-                    await Notifications.getExpoPushTokenAsync({
-                        projectId,
-                    })
-                ).data;
-                console.log('hi!', pushTokenString);
+            if (finalStatus === "granted") {
+                const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+                const pushTokenString = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
                 await SecureStore.setItemAsync('pushToken', pushTokenString);
-            
-                // Update the user accessibility settings
                 await updateUserAccessibilitySettings(authUserState.user.id, { receive_notifications: true, expo_push_token: pushTokenString });
-        
-                return pushTokenString;
-            } catch (e) {
-                throw new Error(`${e}`);
+                console.log(pushTokenString);
             }
-             
-        } else {
-            throw new Error("Must use physical device for push notifications");
         }
-    }
- 
-    
-    const removeNotificationPermissions = async () => { 
-        try {
-            // Ensure the user is authenticated before trying to access their ID
-            if (authUserState.user) {
-                // Delete the push token stored in SecureStore
-                await SecureStore.deleteItemAsync('pushToken');
-                await updateUserAccessibilitySettings(authUserState.user.id, { receive_notifications: true, expo_push_token: null });
-    
-                console.log('Notification permissions removed and token cleared.');
-            } else {
-                console.log('No user is signed in, skipping notification permissions removal.');
-            }
-        } catch (error) {
-            console.error('Failed to remove notification permissions:', error);
+    };
+
+    const removeNotificationPermissions = async () => {
+        await SecureStore.deleteItemAsync('pushToken');
+        if (authUserState.user) {
+            await updateUserAccessibilitySettings(authUserState.user.id, { receive_notifications: false, expo_push_token: null });
         } 
     };
-    
-    useEffect(() => {
-        console.log(userNotificationSettings);
-        if (userNotificationSettings?.receive_notifications === true) {  
-            registerForNotifications();
-        } else {
-            removeNotificationPermissions();
-        }
-    }, [userNotificationSettings]);
-    
 
- 
- 
-
-    const handleSignin = async (username, password) => {
-        const result = await signin(username, password);
-        if (!result.error) {
-            const token = result.data.access;
-            const refreshToken = result.data.refresh;
-            const tokenExpiry = new Date().getTime() + 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-            await SecureStore.setItemAsync(TOKEN_KEY, token);
-            await SecureStore.setItemAsync('refreshToken', refreshToken);
-            await SecureStore.setItemAsync('tokenExpiry', String(tokenExpiry));
-            
-            console.log('handle sign in in context tokens stored:', token);
-            const currentUserData = await fetchUser();
-            if (currentUserData) {
-                setAuthUserState(prevState => ({
-                    ...prevState,
-                    user: {
-                        id: currentUserData.id,
-                        email: currentUserData.email,
-                        addresses: currentUserData.addresses,
-                        app_setup_complete: currentUserData.app_setup_complete,
-                        profile: currentUserData.profile,
-                        settings: currentUserData.settings,
-                        username: currentUserData.username
-                    },
-                    credentials: {
-                        ...prevState.credentials,
-                        id: currentUserData.id,
-                        token: token,
-                    },
-                    authenticated: true,
-                    loading: false, // Sign-in process is complete
-                }));
-                setUserAppSettings(prevSettings => ({
-                    ...prevSettings,
-                    ...currentUserData.settings, // Merge with existing settings
-                }));
-                setUserNotificationSettings(prevSettings => ({
-                    ...prevSettings,
-                    receive_notifications: currentUserData.settings.receive_notifications, // Update only the receive_notifications value
-                })); 
-                  
-                setUserAddresses({
-                    addresses: currentUserData?.addresses && Object.keys(currentUserData.addresses).length > 0
-                        ? Object.keys(currentUserData.addresses).map(key => ({
-                            title: currentUserData.addresses[key]?.title,
-                            address: currentUserData.addresses[key]?.address,
-                            coordinates: currentUserData.addresses[key]?.coordinates,
-                        }))
-                        : [],
-                });
-                  
-                
-            } else {
-                setAuthUserState(prevState => ({
-                    ...prevState,
-                    loading: false, // Sign-in failed, loading is complete
-                }));
-            }
-        } else {
-            setAuthUserState(prevState => ({
-                ...prevState,
-                loading: false, // Sign-in error, loading is complete
-            }));
-        }
-        return result;
-    };
-    
-    const handleSignout = async () => {
-        const result = await signout();
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
-        await SecureStore.deleteItemAsync('pushToken'); // Clear push token on sign out
-        setAuthUserState({
-            user: null,
-            credentials: {
-                ...authUserState.credentials,
-                token: null,
-            },
-            authenticated: false,
-            loading: false,
-        });
-        setUserAppSettings(null);
-        setUserNotificationSettings(null); // Clear notification settings on sign out
-        setUserAddresses({ addresses: []});
-        return result;
-    };
-
-    const updateUserSettings = (newSettings) => {
-        setUserAppSettings(prevSettings => ({
-            ...prevSettings,
-            ...newSettings,
-        }));
-    };
-
-    const updateUserNotificationSettings = (receiveNotificationsValue) => {
-        if (userNotificationSettings) {
-        setUserNotificationSettings(prevSettings => ({
-            ...prevSettings,
-            receive_notifications: receiveNotificationsValue,  // Update only the receive_notifications value
-        }));
-        }
-    };
-
-    const updateUserAddresses = (newSettings) => {
-        setUserAddresses(prevSettings => ({
-            ...prevSettings,
-            ...newSettings,
-        }));
-    };
-
-    const addAddress = (title, address, coordinates = null) => {
-        const newAddress = {
-            title,
-            address,
-            coordinates,
-        };
-    
-        updateUserAddresses({
-            addresses: [...(userAddresses.addresses || []), newAddress],
-        });
-    };
-    
-    // Function to remove an address by title (or you could use an ID or some other identifier)
-    const removeAddress = (addressTitle) => {
-        updateUserAddresses({
-            addresses: userAddresses.addresses.filter(address => address.title !== addressTitle),
-        });
-    };
-
-    useEffect(() => {
-        const initializeAuthState = async () => {
-            const token = await SecureStore.getItemAsync(TOKEN_KEY);
-            const tokenExpiry = await SecureStore.getItemAsync('tokenExpiry');
-            const currentTime = new Date().toISOString();
-            const currentTimeOldOrGoBackTo = new Date().getTime();
-            console.log(currentTime);
-    
-            if (token && tokenExpiry && currentTime < parseInt(tokenExpiry)) {
-                const currentUserData = await fetchUser(token);
-                if (currentUserData) {
-                    setAuthUserState(prevState => ({
-                        ...prevState,
-                        user: {
-                            id: currentUserData.id,
-                            email: currentUserData.email,
-                            addresses: currentUserData.addresses ?  currentUserData.addresses : [],
-                            app_setup_complete: currentUserData.app_setup_complete,
-                            profile: currentUserData.profile,
-                            settings: currentUserData.settings,
-                            username: currentUserData.username
-                        },
-                        credentials: {
-                            ...prevState.credentials,
-                            id: currentUserData.id,
-                            token: token,
-                        },
-                        authenticated: true,
-                        loading: false, // Initialization complete
-                    }));
-                    setUserAppSettings(prevSettings => ({
-                        ...prevSettings,
-                        ...currentUserData.settings, // Merge with existing settings
-                    }));
-                    setUserNotificationSettings(prevSettings => ({
-                        ...prevSettings,
-                        receive_notifications: currentUserData.settings.receive_notifications, // Update only the receive_notifications value
-                    }));
-                    setUserAddresses({
-                        addresses: currentUserData?.addresses && Object.keys(currentUserData.addresses).length > 0
-                            ? Object.keys(currentUserData.addresses).map(key => ({
-                                title: currentUserData.addresses[key]?.title,
-                                address: currentUserData.addresses[key]?.address,
-                                coordinates: currentUserData.addresses[key]?.coordinates,
-                            }))
-                            : [],
-                    });
-                      
-                } else {
-                    setAuthUserState(prevState => ({
-                        ...prevState,
-                        loading: false, // Initialization failed, loading is complete
-                    }));
-                }
-            } else {
-                setAuthUserState(prevState => ({
-                    ...prevState,
-                    loading: false, // No token or token expired, loading is complete
-                }));
-            }
-        };
-    
-        initializeAuthState();
-    }, []);
-
-
-    const reInitialize = async () => {
-        try { 
-            const token = await SecureStore.getItemAsync(TOKEN_KEY);
-
-            const tokenExpiry = await SecureStore.getItemAsync('tokenExpiry'); // Assume it's a timestamp
-        
-            console.log('Token:', token);
-            console.log('Token expiry:', tokenExpiry);
-        
-            if (token && tokenExpiry) {
-                const currentTime = new Date().getTime();
-                console.log('Current time:', currentTime);
-        
-                // Convert tokenExpiry to number if it's not already
-                const tokenExpiryTime = parseInt(tokenExpiry, 10);
-                console.log('Token expiry time:', tokenExpiryTime);
-        
-                // Calculate the time difference
-                const timeDifference = tokenExpiryTime - currentTime;
-                console.log('Time difference (ms):', timeDifference);
-        
-                // Check if the token is still valid
-                if (currentTime < tokenExpiryTime) {
-                    // Token is still valid, fetch user data
-                    const currentUserData = await fetchUser(token);
-        
-                    if (currentUserData) {
-                        setAuthUserState(prevState => ({
-                            ...prevState,
-                            user: {
-                                id: currentUserData.id,
-                                email: currentUserData.email,
-                                addresses: currentUserData.addresses,
-                                app_setup_complete: currentUserData.app_setup_complete,
-                                profile: currentUserData.profile,
-                                settings: currentUserData.settings,
-                                username: currentUserData.username
-                            },
-                            credentials: {
-                                ...prevState.credentials,
-                                id: currentUserData.id,
-                                token: token,
-                            },
-                            authenticated: true,
-                            loading: false,
-                        }));
-                        setUserAppSettings(prevSettings => ({
-                            ...prevSettings,
-                            ...currentUserData.settings,
-                        }));
-                        setUserNotificationSettings(prevSettings => ({
-                            ...prevSettings,
-                            receive_notifications: currentUserData.settings.receive_notifications, // Update only the receive_notifications value
-                        }));
-                        setUserAddresses({
-                            addresses: currentUserData?.addresses && Object.keys(currentUserData.addresses).length > 0
-                                ? Object.keys(currentUserData.addresses).map(key => ({
-                                    title: currentUserData.addresses[key]?.title,
-                                    address: currentUserData.addresses[key]?.address,
-                                    coordinates: currentUserData.addresses[key]?.coordinates,
-                                }))
-                                : [],
-                        });
-                          
-                    } else {
-                        setAuthUserState(prevState => ({
-                            ...prevState,
-                            loading: false,
-                        }));
-                    }
-                } else {
-                    // Token has expired
-                    console.log('Token has expired.');
-                    await SecureStore.deleteItemAsync(TOKEN_KEY);
-                    await SecureStore.deleteItemAsync('refreshToken');
-                    await SecureStore.deleteItemAsync('tokenExpiry');
-                    await SecureStore.deleteItemAsync('pushToken');
-        
-                    try {
-                        const newAccessToken = await refreshToken();
-                        console.log('New access token:', newAccessToken);
-        
-                        if (newAccessToken) {
-                            const newDecodedToken = jwtDecode(newAccessToken);
-                            const newExpDate = new Date(newDecodedToken.exp * 1000);
-                            const newExpTime = newExpDate.getTime();
-        
-                            await SecureStore.setItemAsync(TOKEN_KEY, newAccessToken);
-                            await SecureStore.setItemAsync('tokenExpiry', String(newExpTime));
-        
-                            setAuthUserState(prevState => ({
-                                ...prevState,
-                                credentials: {
-                                    ...prevState.credentials,
-                                    token: newAccessToken,
-                                },
-                                authenticated: true,
-                                loading: false,
-                            }));
-                        } else {
-                            setAuthUserState(prevState => ({
-                                ...prevState,
-                                authenticated: false,
-                                loading: false,
-                            }));
-                        }
-                    } catch (refreshError) {
-                        console.error('Error refreshing token:', refreshError);
-                        setAuthUserState(prevState => ({
-                            ...prevState,
-                            authenticated: false,
-                            loading: false,
-                        }));
-                    }
-                }
-            } else {
-                console.log('Token or token expiry information is missing.');
-                setAuthUserState(prevState => ({
-                    ...prevState,
-                    authenticated: false,
-                    loading: false,
-                }));
-            }
-        } catch (error) {
-            console.error('Error in reInitialize:', error);
-            setAuthUserState(prevState => ({
-                ...prevState,
-                authenticated: false,
-                loading: false,
-            }));
-        }
-    };
-    
-
-    const value = {
-        onSignup: handleSignup,
-        onSignin: handleSignin,
-        onSignOut: handleSignout,
-        fetchUser: fetchUser,
-        reInitialize: reInitialize,
-        registerForNotifications: registerForNotifications,
-        removeNotificationPermissions: removeNotificationPermissions,
-        authUserState,
-        userAppSettings,
-        userAddresses,
-        updateUserSettings,
-        updateUserAddresses,
-        addAddress,
-        removeAddress,
-        updateUserNotificationSettings,
-    };
-
-    return <AuthUserContext.Provider value={value}>{children}</AuthUserContext.Provider>;
+    return (
+        <AuthUserContext.Provider value={{
+            authUserState,
+            userAppSettings,
+            userNotificationSettings,
+            userAddresses,
+            handleSignup: signupMutation.mutate,
+            onSignin, 
+            updateAppSettingsMutation, 
+            updateAppSettings,
+            signinMutation,
+            signupMutation,
+            onSignOut,
+            reInitialize, // Added to the context
+            updateUserSettings: setUserAppSettings,
+            updateUserNotificationSettings: setUserNotificationSettings,
+            addAddress: (newAddress) => setUserAddresses(prev => ({ addresses: [...prev.addresses, newAddress] })),
+            removeAddress: (title) => setUserAddresses(prev => ({ addresses: prev.addresses.filter(a => a.title !== title) })),
+        }}>
+            {children}
+        </AuthUserContext.Provider>
+    );
 };
-
-export default AuthUserContext;

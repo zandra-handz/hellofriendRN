@@ -54,7 +54,12 @@ export const SelectedFriendProvider = ({ children }) => {
     if (selectedFriend) {
       fetchFriendDashboardData(selectedFriend.id);
     } else {
-      setFriendColorTheme(null);
+      setFriendColorTheme({
+        useFriendColorTheme: null,
+        invertGradient: null,
+        lightColor: null,
+        darkColor: null,
+      });
       setFriendDashboardData(null);
     }
   }, [selectedFriend]);

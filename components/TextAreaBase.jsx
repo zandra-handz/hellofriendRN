@@ -72,6 +72,7 @@ const TextAreaBase = ({
                         value={textInput}
                         onChangeText={handleInputChange}
                         placeholder={placeholderText}
+                        placeholderTextColor='#ccc'
                         ref={textareaRef}
                         onKeyPress={handleKeyPress} 
                     />
@@ -119,33 +120,31 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 16,
-        fontFamily: 'Poppins-Bold',
+        fontFamily: 'Poppins-Regular',
         marginBottom: 4,
+        
       },
     inner: {
         flex: 1,   
         width: '100%',
         padding: 10,
-        borderWidth: 1,
-        borderRadius: 20,
+        borderTopWidth: 0,
+
+        borderRadius: 10,
         borderColor: 'dimgray',
     },
     input: { 
       zIndex: 2, 
       backgroundColor: 'transparent',
-      borderRadius: 20, 
-      fontFamily: 'Poppins-Regular',
-      fontSize: 16,
-      color: 'black',  
+      borderRadius: 20,  
+      fontSize: 16,  
       overflow: 'hidden',  
       paddingRight: 40,
         
     },
     inputActive: {
-      zIndex: 1,
-      fontFamily: 'Poppins-Regular',
-      fontSize: 16,
-      color: 'black',
+      zIndex: 1, 
+      fontSize: 16, 
     },
     displayText: {
       zIndex: 2, 
@@ -168,12 +167,12 @@ const styles = StyleSheet.create({
     },
     toggleButton: {
       position: 'absolute',
-      top: 58,
-      right: 8,
-      padding: 10,
-      paddingVertical: 8,
+      bottom: 0,
+      right: 0,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
       backgroundColor: '#ddd',
-      borderRadius: 20,
+      borderRadius: 6,
     },
     toggleButtonText: {
       fontSize: 14,

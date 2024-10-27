@@ -206,8 +206,12 @@ useEffect(() => {
   };
 
   const openModal = (moment) => {
+    if (!showCheckboxes) {
     setSelectedMoment(moment);
     setIsModalVisible(true);
+    } else {
+      toggleSelectMoment(moment);
+    }
   };
 
   const closeModal = () => {

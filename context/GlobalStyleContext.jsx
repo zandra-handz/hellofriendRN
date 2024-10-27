@@ -9,10 +9,14 @@ const GlobalStyleContext = createContext();
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
-    const { authUserState, userAppSettings, updateUserSettings } = useAuthUser();
+    const { authUserState, userAppSettings,updateAppSettingsMutation, updateUserSettings } = useAuthUser();
     const colorScheme = useColorScheme();
     const [ nonCustomHeaderPage, setNonCustomHeaderPage ] = useState(false);
 
+    useEffect(() => {
+        console.log(' U S E R A P P SE T T I N GS ', userAppSettings);
+
+    }, [userAppSettings]);
     // Default state
     const [styles, setStyles] = useState({
         fontSize: 16,
@@ -73,10 +77,13 @@ export const GlobalStyleProvider = ({ children }) => {
         }
     }, [styles.theme]);
 
+
+    //working on removing and replacing with RQ mutation directly
+    //this is mainly used in SectionSettingsAccessibility
     const updateUserAccessibility = async (updates) => {
         try {
-            await updateUserAccessibilitySettings(authUserState.user.id, updates);
-            updateUserSettings({
+            //await updateUserAccessibilitySettings(authUserState.user.id, updates);
+            updateAppSettingsMutation.mutate({
                 ...userAppSettings,
                 ...updates,
             });
@@ -90,32 +97,20 @@ export const GlobalStyleProvider = ({ children }) => {
             return;
         }
 
-        const fetchInitialScreenReaderStatus = async () => {
-            try {
-                const isActive = await AccessibilityInfo.isScreenReaderEnabled();
-                setStyles(prevStyles => ({
-                    ...prevStyles,
-                    screenReader: isActive,
-                }));
-                if (authUserState.user) {
-                    await updateUserAccessibility({ screen_reader: isActive });
-                }
-            } catch (error) {
-                console.error('Error fetching initial screen reader status:', error);
-            }
-        };
-
-        fetchInitialScreenReaderStatus();
-
         const screenReaderListener = AccessibilityInfo.addEventListener(
             'screenReaderChanged',
+            
             async isActive => {
+                
+                console.log('SCREEN READER GLOBAL STYLE');
                 if (authUserState.user) {
-                    await updateUserAccessibility({ screen_reader: isActive });
+                    updateAppSettingsMutation.mutate({
+                        userId: authUserState.user.id,
+                        setting: { screen_reader: isActive },
+                    });
                 }
             }
         );
-
         return () => {
             screenReaderListener.remove();
         };

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+import { LinearGradient } from 'expo-linear-gradient';
 
  
 import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
@@ -11,7 +11,7 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useFriendList } from '../context/FriendListContext'; 
-
+import { useNavigation } from '@react-navigation/native';
  
 import { saveHello } from '../api';
 
@@ -32,7 +32,7 @@ const ContentAddHello = () => {
  
 
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, setFriend, friendColorTheme } = useSelectedFriend();
+  const { selectedFriend, setFriend, loadingNewFriend, friendColorTheme } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
@@ -209,7 +209,12 @@ const resetAdditionalNotes = () => {
    
 
   return (
-    <View style={styles.container}> 
+           <LinearGradient
+          colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}  
+          style={[styles.container]} 
+        > 
 
         {gettingResultMessage && (
           <View style={styles.loadingWrapper}>
@@ -227,45 +232,45 @@ const resetAdditionalNotes = () => {
         {!gettingResultMessage && ( 
         <> 
 
-        <View style={{width: '100%', flexDirection: 'column', justifyContent: 'space-between', height: 130}}> 
-        
-          <View style={styles.selectFriendContainer}> 
+        <View style={{width: '100%', flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '28%'}}> 
+ 
+          <View style={[styles.selectFriendContainer, {marginBottom: '2%'}]}> 
             <FriendSelectModalVersion width='100%' />
           </View> 
 
-            <View style={styles.typeChoicesContainer}>
-                <PickerHelloType  
-                    containerText=''
-                    selectedTypeChoice={selectedTypeChoice} 
-                    onTypeChoiceChange={handleTypeChoiceChange}  
-                    useSvg={true} 
-                    widthInPercentage='100%'
-            />
-            </View>
-
-            {!selectedTypeChoiceText &&  ( 
-            <View style={{ height: '69%'}}>
-            </View>
-            )}
-          </View>
+          <View style={[styles.backColorContainer, themeStyles.genericTextBackground, {borderColor: themeAheadOfLoading.lightColor}]}>
+            
+            <View style={{height: '10%', marginVertical: '2%'}}>
+              <PickerHelloType  
+                      containerText=''
+                      selectedTypeChoice={selectedTypeChoice} 
+                      onTypeChoiceChange={handleTypeChoiceChange}  
+                      useSvg={true} 
+                      widthInPercentage='100%'
+                      height='30%'
+              /> 
+              </View>
+         
+ 
 
           {selectedTypeChoiceText && ( 
-          <>
-          <View style={{height: 10}}/>
-           <View style={{flexDirection: 'row'}}>  
-            <View style={[styles.locationContainer, {paddingRight: 3}]}> 
-              <PickerHelloLocation 
-                    buttonHeight={40}
-                    buttonRadius={24}
+          <View style={{flex: 1, width: '100%'}}>
+
+          
+           <View style={{flexDirection: 'row', marginVertical: '2%', justifyContent: 'space-between'}}>  
+            <View style={{flex: 1, marginRight: 4, width: '4%'}}>
+             <PickerHelloLocation 
+                    buttonHeight={36}
+                    buttonRadius={10}
                     onLocationChange={handleLocationChange}
                     modalVisible={locationModalVisible}
                     setModalVisible={setLocationModalVisible}
                     selectedLocation={selectedHelloLocation} 
-              />  
-              </View> 
-              <View style={[styles.locationContainer, {paddingLeft: 3}]}> 
+              />   
+              </View>
+              <View style={{flex: 1, width: '44%'}}>
                 <PickerDate
-                  buttonHeight={40}
+                  buttonHeight={36}
                   value={helloDate}
                   mode="date"
                   display="default"
@@ -280,57 +285,62 @@ const resetAdditionalNotes = () => {
             </View> 
            
 
-            <View style={styles.notesContainer}>
+            <View style={[styles.notesContainer, {marginVertical: '6%'}]}>
               <TextAreaBase 
-                containerText={'Add notes?'}
+                containerText={'NOTES'}
                 onInputChange={handleNotesInputChange}
-                placeholderText={''}
+                placeholderText={'Optional'}
               />
               </View>
  
-            
-            <View style={styles.momentsContainer}> 
+             <View style={[styles.momentsContainer, {marginVertical: '2%', flex: 1, width: '100%', height: 'auto'}]}>
             <PickerMultiMoments
               onMomentSelect={handleMomentSelect}
-             />
-          </View>
-          <View style={styles.deleteRemainingContainer}>
+             /> 
+             </View>
+          <View style={[styles.deleteRemainingContainer, {marginVertical: '2%'}]}>
             <TouchableOpacity onPress={toggleDeleteMoments} style={[styles.controlButton, themeStyles.footerIcon]}>
-              <Text style={[styles.controlButtonText, themeStyles.footerText]}>{ "Delete unused moments"}</Text>
+              <Text style={[styles.controlButtonText, {color: themeStyles.footerText.color}]}>{ "DELETE UNUSED MOMENTS"}</Text>
               <Icon name={deleteMoments ? "check-square-o" : "square-o"} size={20} style={[styles.checkbox, themeStyles.footerIcon]} />
             </TouchableOpacity>
 
 
 
           </View>
-          </>
-           )}
-         
-         <View style={styles.buttonContainer}>            
-          {helloDate && selectedFriend && (selectedTypeChoice !== null) ? (
-            <ButtonBaseSpecialSave
-              label='SAVE HELLO!'
-              onPress={handleSave}
-              darkColor={friendColorTheme.useFriendColorTheme !== false ? themeAheadOfLoading.darkColor : undefined}
-              lightColor={friendColorTheme.useFriendColorTheme !== false ? themeAheadOfLoading.lightColor : undefined}
-              isDisabled={false}
-            />
-          ) : (
-            <ButtonBaseSpecialSave
-              onPress={() => {}}
-              isDisabled={true}
-            />
-          )} 
           </View>
-          </>  
         )}
-    </View>
+         
+
+          </View>
+          
+          </View>
+          <View style={styles.buttonContainer}>            
+          {helloDate && selectedFriend && !loadingNewFriend && (selectedTypeChoice !== null) ? (
+            <ButtonBaseSpecialSave
+              label="SAVE HELLO! "
+              maxHeight={80}
+              onPress={handleSave} 
+              isDisabled={false}
+              fontFamily={'Poppins-Bold'}
+              image={require("../assets/shapes/redheadcoffee.png")}
+            
+            />
+
+          ) : (
+            null
+          )} 
+           </View>
+          </>  
+         
+        )}
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
+    width: '100%',
     justifyContent: 'space-between', 
   }, 
   loadingWrapper: {
@@ -338,9 +348,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backColorContainer: {  
+    minHeight: '98%',
+    alignContent: 'center',
+    paddingHorizontal: '4%',
+    paddingTop: '8%',
+    paddingBottom: '32%', 
+    width: '101%',
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+    borderRadius: 30,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
   typeChoicesContainer: {   
     height: 70, 
-    width: '100%', 
+    width: '100%',  
   },
   locationContainer: {   
     width: '50%',   
@@ -349,22 +374,26 @@ const styles = StyleSheet.create({
     width: '50%',     
   },
   notesContainer: {  
+    width: '100%',   
+    height: 'auto',
+    flex: 1,
+    paddingTop: 0,
+  },
+  momentsContainer: { 
+    flex: 1, 
+    width: '100%',     
+    minHeight: 100, 
+  },
+  selectFriendContainer: { 
+    flexDirection: 'row',  
+    justifyContent: 'space-between',  
+    alignItems: 'center',  
     width: '100%',  
-    minHeight: 140, 
-    paddingTop: 20,
-  },
-  momentsContainer: {  
-    width: '100%', 
-    paddingTop: 10,   
-    minHeight: 280, 
-  },
-  selectFriendContainer: {   
-    height: 70,
-    width: '100%',    
+    height: 40,
   },
   locationTitle: {
     fontSize: 17,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Poppins-Regular',
   },   
   inputContainer: {
     justifyContent: 'center',
@@ -375,8 +404,7 @@ const styles = StyleSheet.create({
     
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    width: '100%',
-    height: 30, 
+    width: '100%', 
 
   },
   checkbox: {
@@ -389,18 +417,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   controlButtonText: {
-    fontSize: 11,
+    fontSize: 15, 
     fontFamily: 'Poppins-Regular', 
     justifyContent: 'center',
     alignItems: 'center', 
     alignContent: 'center',
   },
-  buttonContainer: {
-    height: '8%',
-    width: '100%',
-    alignContent: 'center',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+  buttonContainer: { 
+    width: '104%', 
+    height: 'auto',
+    position: 'absolute',
+    bottom: -10,
+    flex: 1,
+    right: -2,
+    left: -2,
   }, 
 });
 

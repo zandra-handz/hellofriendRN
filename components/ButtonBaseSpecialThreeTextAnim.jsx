@@ -4,6 +4,7 @@ import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import LoadingPage from '../components/LoadingPage';
 import LizardSvg from '../assets/svgs/lizard';
@@ -30,6 +31,7 @@ const ButtonBaseSpecialThreeTextAnim = ({
     }) => { 
 
     const { upcomingHelloes } = useUpcomingHelloes();
+    const { friendList, getThemeAheadOfLoading } = useFriendList();
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle();
     const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend();
@@ -67,6 +69,8 @@ const ButtonBaseSpecialThreeTextAnim = ({
         const { id, name } = upcomingHelloes[0].friend; 
         const selectedFriend = id === null ? null : { id: id, name: name }; 
         setFriend(selectedFriend);  
+        const friend = friendList.find(friend => friend.id === id);
+        getThemeAheadOfLoading(friend);
     
       };
     

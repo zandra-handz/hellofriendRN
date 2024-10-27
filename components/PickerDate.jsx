@@ -37,10 +37,10 @@ const PickerDate = ({
           style={[styles.datePickerButton, themeStyles.genericTextBackgroundShadeTwo, {height: buttonHeight}, inline && styles.flexButton]}
         >
             <View style={{paddingRight: 8}}>
-            <CalendarAddOutlineSvg height={30} width={30} color='white' />
+            <CalendarAddOutlineSvg height={30} width={30} color={themeStyles.genericText.color} />
             </View>
 
-          <Text style={[styles.dateText]}>
+          <Text style={[styles.dateText, {color: themeStyles.genericText.color }]}>
  
             {moment(value).format('MMM D YYYY')}
           </Text>
@@ -84,8 +84,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'flex-start',
     textAlign: 'center',
-    alignContent: 'center', 
-    borderRadius: 24,
+    alignContent: 'center',  
     padding: 2,
     paddingLeft: 10,  
     alignItems: 'center',

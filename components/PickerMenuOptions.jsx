@@ -34,9 +34,9 @@ const PickerMenuOptions = ({
               <TouchableOpacity
                 key={index}
                 style={[
-                  styles.optionButton, themeStyles.genericIcon, themeStyles.genericTextBackgroundShadeTwo,
-                  selectedOption === index && [styles.selectedOptionButton,  {backgroundColor : calculatedThemeColors.darkColor}],
-                  themeStyles.selectedIconBorder,
+                  styles.optionButton, themeStyles.genericIcon, themeStyles.genericTextBackgroundShadeTwo, {borderColor: themeStyles.genericText.color},
+                  selectedOption === index && [styles.selectedOptionButton,  {borderWidth: 1, borderColor : calculatedThemeColors.darkColor, backgroundColor: calculatedThemeColors.darkColor}],
+                  
                   buttonStyle
                 ]}
                 onPress={() => onSelectOption(index)}
@@ -50,17 +50,27 @@ const PickerMenuOptions = ({
                       {labelPosition === 'beside' && labels[index] && (
                         <Text style={[styles.optionLabel, {color: calculatedThemeColors.fontColor}]}>{labels[index]}</Text>
                       )}
-                      {React.createElement(svgIcons[index], { width: 24, height: 24, color: calculatedThemeColors.fontColor })}
-                      {labelPosition === 'below' && labels[index] && (
-                        <Text style={[styles.optionLabel, {color: calculatedThemeColors.fontColor}]}>{labels[index]}</Text>
-                      )}
+                      {React.createElement(svgIcons[index], { width: 24, height: 24, color: selectedOption === index ? calculatedThemeColors.fontColor : themeStyles.genericText.color })}
+                      
+                      {labelPosition === 'below' && labels[index] && ( 
+                        <Text
+                          style={[
+                            styles.optionLabel,
+                            { color: selectedOption === index ? calculatedThemeColors.fontColor : themeStyles.genericText.color },
+                            selectedOption === index && styles.selectedOptionText,
+                            buttonTextStyle,
+                          ]}
+                        >
+                          {labels[index]}
+                        </Text>
+                      )} 
                     </>
                   ) : (
                     <Text
                       style={[
                         styles.optionText,
-                        selectedOption === index && styles.selectedOptionText,
-                        buttonTextStyle,
+                        selectedOption === index && styles.selectedOptionText, {color: calculatedThemeColors.fontColor},
+                        
                       ]}
                     >
                       {labels[index] || option}
@@ -92,7 +102,8 @@ const styles = StyleSheet.create({
   },
   containerText: {
     fontSize: 17,
-    fontFamily: 'Poppins-Bold', 
+    fontFamily: 'Poppins-Regular', 
+     
   },
   inlineText: {
     flex: 1, 
@@ -103,21 +114,25 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   }, 
   optionButton: {  
-    minWidth: 96,
+    minWidth: 76,
+    width: 'auto',
+    flex: 1, 
     paddingBottom: 4,
     paddingTop: 8,
-    borderRadius: 20, 
+    marginRight: 6,
+    borderRadius: 10,
+    borderWidth: 0,
+    borderColor: '#ccc', 
     alignItems: 'center',
   },
-  selectedOptionButton: {
-    borderWidth: 0,  
+  selectedOptionButton: { 
+    borderWidth: 2,
   },
   optionText: { 
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Regular', 
   },
-  selectedOptionText: {
-    color: 'green',
-    fontFamily: 'Poppins-Bold',
+  selectedOptionText: { 
+    fontFamily: 'Poppins-Regular', 
   },
   optionContent: {
     flexDirection: 'row', 
@@ -134,7 +149,7 @@ const styles = StyleSheet.create({
   optionLabel: {
     paddingTop: 4,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 14, 
     fontFamily: 'Poppins-Regular', 
   
     

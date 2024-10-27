@@ -27,7 +27,7 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const [isSignIn, setIsSignIn] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const { onSignin, onSignup, onSignOut, reInitialize, fetchUser } = useAuthUser();
+  const { onSignin, signinMutation, signupMutation, onSignup, onSignOut, reInitialize  } = useAuthUser();
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const emailInputRef = useRef(null);
@@ -70,15 +70,13 @@ const Signin = () => {
   };
   
 
-  const handleAuthentication = async () => {
-    setLoading(true);
+  const handleAuthentication = async () => { 
     let result;
     if (isSignIn) {
-      result = await onSignin(username, password);
+      signinMutation.mutate({ username, password });
     } else {
       if (password !== verifyPassword) {
-        alert("Passwords do not match!");
-        setLoading(false);
+        alert("Passwords do not match!"); 
         return;
       }
       result = await onSignup(username, email, password);
@@ -126,10 +124,10 @@ const Signin = () => {
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.signinContainer]}
     >
-      {loading && (
-        <LoadingPage loading={loading} spinnerType='circle' />
+      {signinMutation.isLoading && (
+        <LoadingPage loading={signinMutation.isLoading} spinnerType='circle' />
       )}
-      {!loading && (
+      {!signinMutation.isLoading && (
         <>
         <View style={{width: '100%'}}>
           <Logo

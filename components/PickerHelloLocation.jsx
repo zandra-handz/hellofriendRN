@@ -49,7 +49,7 @@ const PickerHelloLocation = ({
         {isLocationListReady && (
         <PickerComplexList 
             containerText={
-            <LocationSolidSvg width={20} height={20} color='white' />}
+            <LocationSolidSvg width={20} height={20} color={themeStyles.genericText.color} />}
             inline={true}
             modalHeader='Select Location'
             allowCustomEntry={true}

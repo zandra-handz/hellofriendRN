@@ -3,12 +3,18 @@ import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
  
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
+
+//to use friend colors:
+//darkColor={friendColorTheme.useFriendColorTheme != false  ? themeAheadOfLoading.darkColor : undefined}
+//lightColor={friendColorTheme.useFriendColorTheme != false ? themeAheadOfLoading.lightColor : undefined}
+              
  
 const ButtonBaseSpecialSave = ({ 
         onPress, 
         label='ADD NEW IMAGE', 
         labelSize=22,
         height='100%',
+        fontFamily='Poppins-Bold',
         maxHeight=100,
         imageSize=100,
         image=require("../assets/shapes/chatmountain.png"), 
@@ -66,7 +72,7 @@ return(
             <Text
               style={[
                 textStyles(labelSize, 'black'),
-                { fontFamily: 'Poppins-Regular', paddingRight: 20},
+                { fontFamily: fontFamily, paddingRight: 20},
               ]}
             >
               {label}

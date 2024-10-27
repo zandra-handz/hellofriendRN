@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     modalSubTitle: {
-        fontSize: 17,
-        fontFamily: 'Poppins-Bold',  
+        fontSize: 19,
+        fontFamily: 'Poppins-Regular',  
       }, 
     divider: {
         marginVertical: 10,

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -6,7 +6,7 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api'; 
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 

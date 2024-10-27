@@ -38,6 +38,7 @@ import ScreenAddHello from './screens/ScreenAddHello';
  
 
 import HellofriendHeader from './components/HellofriendHeader';
+import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
 import HeaderWriteMoment from './components/HeaderWriteMoment';
 import HeaderPickCategory from './components/HeaderPickCategory';
 import HeaderFriendFocus from './components/HeaderFriendFocus';
@@ -253,7 +254,7 @@ export const Layout = () => {
                 component={ScreenAddImage}
                 options={{
                   headerShown: true,
-                  header: () => <HeaderBase headerTitle='Upload' />,
+                  header: () => <HeaderBase headerTitle='Upload' navigateTo='Images' />,
                 }}
               />
               <Stack.Screen
@@ -261,7 +262,7 @@ export const Layout = () => {
                 component={ScreenAddHello}
                 options={{
                   headerShown: true,
-                  header: () => <HeaderBase headerTitle='Add hello' />,
+                  header: () => <HeaderBase headerTitle='Add hello' icon='heartbeat' navigateTo='Helloes' />,
                 }}
               />
               <Stack.Screen

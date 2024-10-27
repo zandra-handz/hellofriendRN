@@ -3,6 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 //<Tab.Screen name="Recent" component={HelloesScreen} />
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { fetchPastHelloes } from '../api'; 
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import ItemViewHello from '../components/ItemViewHello';
 import { Ionicons } from '@expo/vector-icons'; 
   
@@ -19,41 +21,29 @@ const Tab = createBottomTabNavigator();
 const ScreenHelloes = ({ route, navigation }) => { 
     const { themeStyles } = useGlobalStyle();
     const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
-    const [isFetchingHelloes, setFetchingHelloes] = useState(false);
-    const [helloesList, setHelloesList] = useState([]);
-    const [helloesInPersonList, setHelloesInPersonList] = useState([]);const [isModalVisible, setIsModalVisible] = useState(false);
+    //const [isFetchingHelloes, setFetchingHelloes] = useState(false);
+    //const [helloesList, setHelloesList] = useState([]);
+    //const [helloesInPersonList, setHelloesInPersonList] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const [ selectedHello, setSelectedHello ] = useState(null);
-  
+    const [helloesInPersonList, setHelloesInPersonList] = useState([]);
 
+    const { data: helloesList, isLoading, isError } = useQuery({
+        queryKey: ['pastHelloes', selectedFriend?.id],
+        queryFn: () => fetchPastHelloes(selectedFriend.id),
+        enabled: !!selectedFriend,
+        onSuccess: (data) => {
+            const inPersonList = data.filter(hello => hello.type === 'in person');
+            console.log(inPersonList);
+            setHelloesInPersonList(inPersonList);
+            
+        }
+    });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setFetchingHelloes(true);
-            try {
-                if (selectedFriend) {
-                    const helloes = await fetchPastHelloes(selectedFriend.id);
-                    
-                    setHelloesList(helloes);
-    
-                    // Filter helloes with type 'in person' and set the filtered list
-                    const inPersonList = helloes.filter(hello => hello.type === 'in person');
-                    setHelloesInPersonList(inPersonList);
-                } else { 
-                    setHelloesList([]);
-                    setHelloesInPersonList([]);
-                }
-            } catch (error) {
-                console.error('Error fetching helloes list:', error);
-            } finally {
-                setFetchingHelloes(false);
-            }
-        };
-    
-        fetchData();
-    }, [selectedFriend]);
 
     
 
+    
     const onPress = (hello) => { 
          if (hello) {
              setSelectedHello(hello); 
@@ -75,19 +65,23 @@ const ScreenHelloes = ({ route, navigation }) => {
         </View>
       );
 
-      const HelloesInPersonScreen = () => (
-        
-        <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-          <ItemHelloesMulti onPress={onPress} helloesData={helloesInPersonList} horizontal={false} />
-        </View>
-      );
+      const HelloesInPersonScreen = () => {
+        const inPersonHelloes = helloesList ? helloesList.filter(hello => hello.type === 'in person') : [];
+        console.log("In-person hello data:", inPersonHelloes); // Check filtered data
+    
+        return (
+            <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
+              <ItemHelloesMulti onPress={onPress} helloesData={inPersonHelloes} horizontal={false} />
+            </View>
+        );
+    };
 
 
  
 
     return ( 
         <View style={[styles.container]}>
-                    {helloesList && helloesInPersonList && !isFetchingHelloes ? (
+                    {helloesList && helloesInPersonList && !isLoading ? (
                         <>  
                         <Tab.Navigator
                             tabBar={props => <CustomTabBar {...props} />}
@@ -105,7 +99,7 @@ const ScreenHelloes = ({ route, navigation }) => {
                                 tabBarInactiveTintColor: calculatedThemeColors.fontColor,
                                 tabBarIcon: ({ color }) => {
                                 let iconName;
-                                if (route.name === `${selectedFriend.name}`) {
+                                if (selectedFriend && route.name === `${selectedFriend.name}`) {
                                     iconName = 'star';
                                 } else if (route.name === 'Others') {
                                     iconName = 'location';

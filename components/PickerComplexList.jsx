@@ -117,7 +117,7 @@ const PickerComplexList = ({
                 {containerText}
               </View>
             )}
-            <Text style={[styles.buttonText]} numberOfLines={1} ellipsizeMode="tail">
+            <Text style={[styles.buttonText, themeStyles.genericText]} numberOfLines={1} ellipsizeMode="tail">
             {label}
           </Text>
           </View>

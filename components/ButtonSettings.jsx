@@ -25,9 +25,9 @@ const ButtonSettings = () => {
   }, [isModalVisible]); 
 
   const sections = [
-    { title: 'Accessibility', content: <SectionAccessibilitySettings /> },
-    { title: 'Friends', content: <SectionFriendSettings /> },
-    { title: 'Account', content: <SectionAccountSettings /> }, 
+    { title: 'ACCESSIBILITY', content: <SectionAccessibilitySettings /> },
+    { title: 'FRIENDS', content: <SectionFriendSettings /> },
+    { title: 'ACCOUNT', content: <SectionAccountSettings /> }, 
   ];
 
   const footerContent = "© Badrainbowz Studio 2024";

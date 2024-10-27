@@ -1,86 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { Text } from 'react-native'; 
+import {Text} from 'react-native'; 
 import { useAuthUser } from '../context/AuthUserContext';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { updateUserAccessibilitySettings } from '../api'; 
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import BaseModalFooterSection from '../components/BaseModalFooterSection';
 import BaseRowModalFooter from '../components/BaseRowModalFooter';
 import AlertMicro from '../components/AlertMicro'; 
 import LoadingPage from '../components/LoadingPage';
 
+//fix loading spinner
+//moved creation/removal of notification tokens completely out of this into auth context
 const SectionAccessibilitySettings = () => {
-  const { authUserState,  removeNotificationPermissions, registerForNotifications, userAppSettings, updateUserNotificationSettings, userNotificationSettings, updateUserSettings } = useAuthUser();
-  const { themeStyles } = useGlobalStyle();
-  const [highContrastMode, setHighContrastMode] = useState(false);
-  const [largeText, setLargeText] = useState(false);
-  const [simplifyAppForFocus, setSimplifyAppForFocus] = useState(false);
+  const { authUserState, updateAppSettingsMutation, userAppSettings, updateUserNotificationSettings, userNotificationSettings, updateUserSettings } = useAuthUser();
+  const { themeStyles } = useGlobalStyle();  
   const [receiveNotifications, setReceiveNotifications] = useState(false);
-  const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false); 
-  const [manualTheme, setManualTheme] = useState(false);
-  const [manualDarkMode, setManualDarkMode] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [ isMakingCall, setIsMakingCall ] = useState(false);
+  const [manualTheme, setManualTheme] = useState(false);  
+  const [showAlert, setShowAlert] = useState(false); 
 
   useEffect(() => {
-    if (userAppSettings) {
-      setHighContrastMode(userAppSettings.high_contrast_mode);
-      setLargeText(userAppSettings.large_text);
-      setSimplifyAppForFocus(userAppSettings.simplify_app_for_focus);
+    if (userAppSettings) {  
       setReceiveNotifications(userAppSettings.receive_notifications);
-      setIsScreenReaderEnabled(userAppSettings.screen_reader);  
+        
 
       if (userAppSettings.manual_dark_mode === null) {
         setManualTheme(false);
       } else {
-        setManualTheme(true);
-        setManualDarkMode(userAppSettings.manual_dark_mode);
+        setManualTheme(true); 
       }
     }
-  }, [userAppSettings]);
+  }, [authUserState.authenticated]);
 
-  const updateSetting = async (setting) => {
-    setIsMakingCall(true);
+  const updateSetting = async (setting) => { 
     try {
-      const newSettings = { ...userAppSettings, ...setting };
-      await updateUserAccessibilitySettings(authUserState.user.id, setting);
-      updateUserSettings(newSettings);
-      console.log('User settings updated successfully');
+        const newSettings = { ...userAppSettings, ...setting };  
+        await updateAppSettingsMutation.mutateAsync({
+            userId: authUserState.user.id,  
+            setting: newSettings  
+        }); 
+        console.log('User settings updated successfully');
     } catch (error) {
-      console.error('Error updating user settings:', error);
-    } finally {
-      setIsMakingCall(false);
-    }
-  };
+        console.error('Error updating user settings:', error);
+    }  
+};
+
  
-  const toggleHighContrastMode = () => {
-    const newValue = !highContrastMode;
-    setHighContrastMode(newValue);
-    updateSetting({ high_contrast_mode: newValue });
+  //Managed by auth context RQ
+  const updateHighContrastMode = () => {
+    updateSetting({ high_contrast_mode: !userAppSettings.high_contrast_mode});
   };
 
-  const toggleLargeText = () => {
-    const newValue = !largeText;
-    setLargeText(newValue);
-    updateSetting({ large_text: newValue });
+  //Managed by auth context RQ
+  const updateLargeText = () => {
+    updateSetting({ large_text: !userAppSettings.large_text });
   };
 
-  const toggleSimplifyAppForFocus = () => {
-    const newValue = !simplifyAppForFocus;
-    setSimplifyAppForFocus(newValue);
-    updateSetting({ simplify_app_for_focus: newValue });
+ //Managed by auth context RQ
+  const updateSimplifyAppForFocus = () => {
+    updateSetting({ simplify_app_for_focus: !userAppSettings.simplify_app_for_focus });
+  
   };
 
-  const toggleReceiveNotifications = () => {
-    const newValue = !receiveNotifications; 
-    console.log(newValue);
-    //updateUserNotificationSettings(newValue); 
-    setReceiveNotifications(newValue);
-    if (newValue) {
-      registerForNotifications();
-    } else {
-      removeNotificationPermissions();
-    };
- 
+  const updateReceiveNotifications = () => { 
+    updateSetting({receive_notifications: !userAppSettings.receive_notifications}); 
+    updateUserNotificationSettings({receive_notifications : !userAppSettings.receive_notifications});
   };
 
   const toggleManualTheme = () => {
@@ -89,44 +70,29 @@ const SectionAccessibilitySettings = () => {
       updateSetting({ manual_dark_mode: false }); 
     };
     if (newValue === false) {
-      updateSetting({ manual_dark_mode: null });
-      setManualDarkMode(false);
+      updateSetting({ manual_dark_mode: null }); 
     };
     setManualTheme(newValue); 
   };
- 
-  const toggleLightDark = () => {
-    const newValue = !manualDarkMode;
-    setManualDarkMode(newValue);
-    updateSetting({ manual_dark_mode: newValue });
+
+
+  const updateLightDark = () => {
+    updateSetting({ manual_dark_mode: !userAppSettings.manual_dark_mode });
   };
 
-  const toggleScreenReader = async () => {
-    if (!AccessibilityInfo.isScreenReaderEnabled()) {
+  //Screen reader declares loudly that this button is enabled
+  const toggleScreenReader = async () => { 
       setShowAlert(true);
       return;
-    }
-
-    const newValue = !isScreenReaderEnabled;  
-    setIsScreenReaderEnabled(newValue); 
-
-    try {
-      await updateUserAccessibilitySettings(authUserState.user.id, { screen_reader: newValue });
-      const updatedSettings = { ...userAppSettings, screen_reader: newValue };
-      updateUserSettings(updatedSettings);
-      console.log(`Screen reader ${newValue ? 'enabled' : 'disabled'} successfully`);
-    } catch (error) {
-      console.error('Error toggling screen reader:', error);
-    }
-  };
+    };
  
 
   return (
-    <BaseModalFooterSection isMakingCall={isMakingCall} LoadingComponent={LoadingPage} themeStyles={themeStyles}>
+    <BaseModalFooterSection isMakingCall={updateAppSettingsMutation.isLoading} LoadingComponent={LoadingPage} themeStyles={themeStyles}>
           
       <BaseRowModalFooter 
         iconName='adjust' 
-        iconSize={20}
+        iconSize={16}
         useToggle={true}
         label='Manual Light/Dark Mode' 
         value={manualTheme}
@@ -138,56 +104,56 @@ const SectionAccessibilitySettings = () => {
 
         <BaseRowModalFooter 
           iconName='adjust' 
-          iconSize={20}
+          iconSize={16}
           useToggle={true}
           label='Light/Dark' 
-          value={manualDarkMode}
-          onTogglePress={toggleLightDark}  
+          value={userAppSettings.manual_dark_mode}
+          onTogglePress={updateLightDark}  
           />  
       )} 
 
       <BaseRowModalFooter 
         iconName='adjust' 
-        iconSize={20}
+        iconSize={16}
         useToggle={true}
         label='High Contrast Mode' 
-        value={highContrastMode}
-        onTogglePress={toggleHighContrastMode}  
+        value={userAppSettings.high_contrast_mode}
+        onTogglePress={updateHighContrastMode}  
       />  
 
       <BaseRowModalFooter 
         iconName='text-height' 
-        iconSize={20}
+        iconSize={16}
         useToggle={true}
         label='Large Text' 
-        value={largeText}
-        onTogglePress={toggleLargeText}  
+        value={userAppSettings.large_text}
+        onTogglePress={updateLargeText}  
       />  
 
       <BaseRowModalFooter 
         iconName='bell' 
-        iconSize={20}
+        iconSize={16}
         useToggle={true}
         label='Simplify App For Focus' 
-        value={simplifyAppForFocus}
-        onTogglePress={toggleSimplifyAppForFocus}
+        value={userAppSettings.simplify_app_for_focus}
+        onTogglePress={updateSimplifyAppForFocus}
       />  
 
       <BaseRowModalFooter 
         iconName='bell' 
-        iconSize={20}
+        iconSize={16}
         useToggle={true}
         label='Receive Notifications' 
-        value={receiveNotifications}
-        onTogglePress={toggleReceiveNotifications} 
+        value={userAppSettings.receive_notifications}
+        onTogglePress={updateReceiveNotifications} 
       />   
 
       <BaseRowModalFooter 
         iconName='volume-up' 
-        iconSize={20}
+        iconSize={16}
         useToggle={true}
         label='Screen Reader' 
-        value={isScreenReaderEnabled}
+        value={userAppSettings.screen_reader}
         onTogglePress={toggleScreenReader}
       />        
 
@@ -199,7 +165,7 @@ const SectionAccessibilitySettings = () => {
             Please enable the screen reader in your device settings to use this feature.
           </Text>
         }
-        modalTitle="Screen Reader Required"
+        modalTitle="Using Screen Reader"
       />
     </BaseModalFooterSection>
   );

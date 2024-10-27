@@ -117,7 +117,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
                 <ButtonBaseSpecialLarge label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
                 
                 {selectedFriend && showLastButton && (
-                  <ButtonBaseSpecialLarge label={'ADD LOCATION'}   onPress={navigateToAddLocationScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/locationpink.png")} height={buttonHeight} />
+                  <ButtonBaseSpecialLarge label={'ADD LOCATION'}   onPress={navigateToAddLocationScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
                 
                 )}
                 {!selectedFriend && showLastButton && ( 

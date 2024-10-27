@@ -86,7 +86,7 @@ const ScreenMoments = ({ route, navigation }) => {
         <LinearGradient
             colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+            end={{ x: 1, y: 0 }}
             style={[styles.container, themeStyles.signinContainer]}
         >
             <View style={{ flex: 1}}>

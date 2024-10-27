@@ -1,89 +1,133 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
- 
+
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
+import LizardSvg from '../assets/svgs/lizard.svg';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
-import InfoOutline from '../assets/svgs/info-outline.svg';
+import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
+import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
+import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
+import HeartbeatLifeLineArrowSvg from '../assets/svgs/heartbeat-lifeline-arrow.svg';
+import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
+ 
+
 import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import LoadingPage from '../components/LoadingPage';
 
-
-
 const HeaderBase = ({
-    headerTitle='Header title here',
-    
-    rightIcon='info',
-    rightIconOnPress,
+  headerTitle = 'Header title here',
+  rightIcon = 'info',
+  rightIconOnPress,
+  navigateTo = 'Moments',
+  icon, // Select which SVG to display
 }) => {
+  const { themeStyles } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendList();
+  const { calculatedThemeColors, loadingNewFriend, friendColorTheme } = useSelectedFriend();
+  const navigation = useNavigation();
 
-    const { themeAheadOfLoading } = useFriendList();
- 
-    const { themeStyles } = useGlobalStyle();
-    const { calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
-    const navigation = useNavigation();
+  const iconMap = {
+      arrow: ArrowLeftCircleOutline,
+      lizard: LizardSvg,
+      text: PhoneChatMessageHeartSvg,
+      coffeeSteaming: CoffeeMugFancySteamSvg,
+      thoughtBubble: ThoughtBubbleOutlineSvg,
+      heartbeat: HeartbeatLifeLineArrowSvg,
+      // Add other SVG mappings here if needed
+  };
 
-    const handleNavigateBack = () => {
-        navigation.goBack();
-      };
+  // Get the component based on the `icon` prop
+  const IconComponent = iconMap[icon] || null;
 
   return (
-    <> 
-        <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: loadingNewFriend ? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor}]}>
-        {loadingNewFriend && themeAheadOfLoading && (
-          <View style={[styles.loadingWrapper, {backgroundColor: themeAheadOfLoading.darkColor}]}>
-          <LoadingPage 
-            loading={loadingNewFriend} 
-            spinnerType='flow'
-            color={themeAheadOfLoading.lightColor}
-            includeLabel={false} 
-          />
-          </View>
-      )}
-      {!loadingNewFriend && (
-        <>
-      <View style={{flexDirection: 'row', width: '60%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
-        
-        
-        <TouchableOpacity onPress={handleNavigateBack}>
-          <ArrowLeftCircleOutline height={30} width={30}   color={calculatedThemeColors.fontColor}/>
-        </TouchableOpacity> 
-        <Text style={[
-          styles.headerText, themeStyles.headerText, { color: calculatedThemeColors.fontColor, paddingLeft: 20}
-          ]}> 
-            {headerTitle}
-        </Text> 
-      </View> 
-        <InfoOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
-    
-    </>
-    )}
-    </View> 
-    </>
+      <LinearGradient
+          colors={[
+              friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50',
+              friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)',
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.headerContainer}
+      >
+          {!loadingNewFriend && (
+              <View style={styles.headerContent}>
+                  <View style={styles.leftButtonContainer}>
+                      <TouchableOpacity onPress={() => navigation.goBack()}>
+                          <ArrowLeftCircleOutline height={30} width={30} color={calculatedThemeColors.fontColor} />
+                      </TouchableOpacity>
+                  </View>
+
+                  <Text
+                      style={[
+                          styles.headerText,
+                          themeStyles.headerText,
+                          { color: calculatedThemeColors.fontColorSecondary },
+                      ]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                  >
+                      {headerTitle}
+                  </Text>
+
+                  <View style={styles.rightIconContainer}>
+                      {IconComponent ? (
+                          <TouchableOpacity onPress={() => navigation.navigate(navigateTo)}>
+                              <IconComponent width={30} height={30} fill={calculatedThemeColors.fontColorSecondary} />
+                          </TouchableOpacity>
+                      ) : (
+                          <View style={styles.defaultIconWrapper}>
+                              <LizardSvg width={74} height={74} color={calculatedThemeColors.fontColorSecondary} style={styles.defaultIcon} />
+                          </View>
+                      )}
+                  </View>
+              </View>
+          )}
+      </LinearGradient>
   );
 };
 
+
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: 'row',
     padding: 10,
     paddingTop: 66,  
     paddingHorizontal: 10, 
-    alignItems: 'center',  
-    justifyContent: 'space-between',
     height: 110, 
   },
-  headerText: {
-    fontSize: 18,
-    paddingVertical: 2, 
-    fontFamily: 'Poppins-Bold',
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  usernameText: {
-    fontSize: 14,
-    paddingVertical: 2, 
-    fontFamily: 'Poppins-Bold',
+  leftButtonContainer: {
+    width: 40,  // Fixed width to keep it from moving
+  },
+  headerText: {
+    position: 'absolute', 
+    right: 60,  // Maintain a fixed distance from the right icon
+    fontSize: 20,
+    fontFamily: 'Poppins-Regular',
+    textTransform: 'uppercase',
+    width: '70%',  // Adjust width to prevent overlapping
+    textAlign: 'right',  // Keep the text aligned to the right
+  },
+  rightIconContainer: {
+    width: 40,
+    alignItems: 'center',
+  },
+  defaultIconWrapper: {
+    height: 44,
+    width: 90,
+    overflow: 'hidden',
+    justifyContent: 'flex-end',
+    paddingBottom: 6,
+  },
+  defaultIcon: {
+    transform: [{ rotate: '240deg' }],
   },
   loadingWrapper: {
     flex: 1,

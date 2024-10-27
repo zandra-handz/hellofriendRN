@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, Image, KeyboardAvoidingView, Platform } from 'react-native';
 
-import { createFriendImage } from '../api';  
 
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
 
@@ -19,7 +18,9 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
-import { useFriendList } from '../context/FriendListContext'; 
+import { useFriendList } from '../context/FriendListContext';  
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 import * as ImageManipulator from 'expo-image-manipulator';
 
@@ -34,6 +35,7 @@ const ContentAddImage = () => {
   const [imageTitle, setImageTitle] = useState('');
   const [imageCategory, setImageCategory] = useState('Misc');
   const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
+ 
 
   const delayForResultsMessage = 2000;
   
@@ -188,6 +190,12 @@ const handleSave = async () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Adjust if needed
     >
+      <LinearGradient
+          colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}  
+          style={{flex: 1}} 
+        > 
       {gettingResultMessage && (
         <View style={styles.loadingWrapper}>
           <LoadingPage
@@ -202,11 +210,16 @@ const handleSave = async () => {
   
       {!gettingResultMessage && (  
         <>
-        <View style={styles.selectFriendContainer}> 
+
+<       View style={{width: '100%', flex: 1, flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '28%'}}> 
+ 
+        <View style={[styles.selectFriendContainer, {marginBottom: '2%'}]}> 
           <FriendSelectModalVersion width='100%' />
         </View>
     
   
+      <View style={[styles.backColorContainer, themeStyles.genericTextBackground, {borderColor: themeAheadOfLoading.lightColor}]}>
+            
       {imageUri && (
         <>
           <View style={styles.previewContainer}>
@@ -251,29 +264,37 @@ const handleSave = async () => {
             rightLabel='Upload'
             leftLabelPosition='above'
             rightLabelPosition='above'
-            containerText="Image: "
+            containerText=""
           />
         </View>
       )}
+      </View>
   
-      <View style={styles.buttonContainer}>
+
+      
+      </View>
+      </>
+    )}
+          <View style={styles.buttonContainer}>
         {selectedFriend && canContinue && imageUri ? (  
           <ButtonBaseSpecialSave
-            label='SAVE IMAGE'
-            onPress={handleSave}
-            darkColor={friendColorTheme.useFriendColorTheme !== false ? themeAheadOfLoading.darkColor : undefined}
-            lightColor={friendColorTheme.useFriendColorTheme !== false ? themeAheadOfLoading.lightColor : undefined}
+            label='SAVE IMAGE  '
+            maxHeight={80}
+            onPress={handleSave} 
             isDisabled={false}
+            image={require("../assets/shapes/redheadcoffee.png")}
+            
           />
         ) : (
           <ButtonBaseSpecialSave
             onPress={() => {}}
-            isDisabled={true}
+            label='ADD IMAGE  '
+            isDisabled={true}  
+            
           />
         )}
       </View>
-      </>
-    )}
+    </LinearGradient>
     </KeyboardAvoidingView>
   );
   
@@ -283,6 +304,7 @@ const handleSave = async () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1, 
+    width: '100%',
     justifyContent: 'space-between',
   },
   loadingWrapper: {
@@ -293,17 +315,34 @@ const styles = StyleSheet.create({
   pickerContainer: {   
     width: '100%',    
   }, 
+  backColorContainer: {  
+    minHeight: '98%',
+    alignContent: 'center',
+    paddingHorizontal: '4%',
+    paddingTop: '8%',
+    paddingBottom: '32%', 
+    width: '101%',
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+    borderRadius: 30,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
   selectFriendContainer: { 
     justifyContent: 'center', 
     width: '100%',
     height: 'auto',
   },
-  buttonContainer: {
-    height: '8%',
-    width: '100%',
-    alignContent: 'center',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+  buttonContainer: { 
+    width: '104%', 
+    height: 'auto',
+    position: 'absolute',
+    bottom: -10,
+    flex: 1,
+    right: -2,
+    left: -2,
   }, 
   previewContainer: {
     flex: 1,
@@ -313,9 +352,9 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
 
-  previewImageContainer: {
-    padding: 20,
+  previewImageContainer: { 
     borderRadius: 10,
+    flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -323,13 +362,15 @@ const styles = StyleSheet.create({
 
   previewImage: {
     width: '100%', 
-    height: 170,
+    minHeight: 170,
+    height: 'auto',
     resizeMode: 'contain',
     borderRadius: 10,
   },
   inputContainer: { 
     width: '100%', 
-    height: 160,  
+    height: 'auto',
+    flex: 1,  
     alignContent: 'center',
     paddingBottom: 10, 
   },

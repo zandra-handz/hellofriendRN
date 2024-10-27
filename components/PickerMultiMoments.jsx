@@ -10,7 +10,7 @@ import AddOutlineSvg from '../assets/svgs/add-outline.svg';
 
 const PickerMultiMoments = ({ 
     onMomentSelect, 
-    containerText = 'Moments shared',
+    containerText = 'MOMENTS',
     showAllCategories = true, 
     showInModal = true, 
 }) => {
@@ -283,15 +283,15 @@ const styles = StyleSheet.create({
   },
   selectedItemsContainer: {
     marginBottom: 10, 
-    height: 240, 
+    height: 200, 
     padding: 10, 
     borderWidth: 0,
-    borderRadius: 20,
+    borderRadius: 10,
     borderColor: 'dimgray',
   },
   selectedItemsTitle: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold', 
+    fontFamily: 'Poppins-Regular', 
   },
   noItemsText: {
     fontSize: 16,

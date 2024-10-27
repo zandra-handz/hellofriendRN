@@ -1,15 +1,26 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native'; 
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFocusEffect } from '@react-navigation/native';  
 import LizardSvg from '../assets/svgs/lizard.svg';
+import { useFriendList } from '../context/FriendListContext';
+
 import ButtonInfo from '../components/ButtonInfo';
-import ButtonFriendProfileCircle from '../components/ButtonFriendProfileCircle';
+import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
+import { LinearGradient } from 'expo-linear-gradient';
  
-const HellofriendHeader = () => { 
+import { useNavigation } from '@react-navigation/native';
+
+const HeaderBaseMainTheme = ({ headerTitle='TITLE HERE'}) => {
+  const navigation = useNavigation();
+  const { themeAheadOfLoading } = useFriendList();
   const { themeStyles, setNonCustomHeaderPage } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, friendColorTheme, calculatedThemeColors } = useSelectedFriend();
+
+  const handleNavigateBack = () => {
+    navigation.goBack();
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -21,11 +32,18 @@ const HellofriendHeader = () => {
   );
 
   return (
-    <View style={[styles.headerContainer, themeStyles.headerContainer]}>
+    <LinearGradient
+    colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}  
+    style={[styles.headerContainer]} 
+  > 
     
       <View style={styles.leftSection}>
         <View style={styles.userProfile}>
-          <ButtonFriendProfileCircle /> 
+        <TouchableOpacity onPress={handleNavigateBack}>
+          <ArrowLeftCircleOutline height={30} width={30} color={themeStyles.genericText.color}/>
+        </TouchableOpacity> 
         </View>
       </View>
   
@@ -49,11 +67,10 @@ const HellofriendHeader = () => {
         </View> 
 
       <View style={styles.rightSection}>
-        <View style={styles.userProfile}> 
-            <ButtonInfo iconSize={34} />
-        </View>
+        <Text style={[styles.headerText, themeStyles.headerText, { paddingRight: 0}]}>{headerTitle}</Text>
+       
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -88,6 +105,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingVertical: 2,
     fontFamily: 'Poppins-Regular',
+    textTransform: 'uppercase',
   }, 
   logoText: {
     fontSize: 22, 
@@ -110,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HellofriendHeader;
+export default HeaderBaseMainTheme;

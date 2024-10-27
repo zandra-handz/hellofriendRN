@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
+    paddingTop: 2,
     marginRight: 10,
   },
   label: {

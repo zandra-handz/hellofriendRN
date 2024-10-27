@@ -30,7 +30,7 @@ const refreshToken = async () => {
         await SecureStore.setItemAsync('accessToken', newAccessToken);
         return newAccessToken;
     } catch (error) {
-        console.error('Error refreshing token:', error);
+        console.error('Error refreshing token api file:', error);
         throw error;
     }
 };
@@ -134,8 +134,8 @@ export const signup = async (username, email, password) => {
     }
 };
 
-export const signin = async (username, password) => {
-    console.log("Signing in with username:", username);
+export const signin = async ({ username, password }) => {
+    console.log("Signing in with credentials:", { username, password });
     try {
         const result = await axios.post('/users/token/', { username, password });
         console.log("API response received:", result);
@@ -160,6 +160,7 @@ export const signin = async (username, password) => {
         }
     }
 };
+
 
 export const getCurrentUser = async () => {
     try {
@@ -312,10 +313,12 @@ export const SearchForMidpointLocations = async (locationData) => {
 
 export const updateUserAccessibilitySettings = async (userId, fieldUpdates) => {
     try {
-      await axios.patch(`/users/${userId}/settings/update/`, fieldUpdates);
+        const response = await axios.patch(`/users/${userId}/settings/update/`, fieldUpdates);
+        console.log('API response:', response.data); // Log the response data
+        return response.data; // Ensure this returns the expected structure
     } catch (error) {
-      console.error('Error updating user settings:', error);
-      throw error;
+        console.error('Error updating user settings:', error);
+        throw error;
     }
   };
 

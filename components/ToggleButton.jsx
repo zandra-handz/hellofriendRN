@@ -45,7 +45,7 @@ const ToggleButton = ({ value, onToggle }) => {
 const styles = StyleSheet.create({
   container: {
     width: 50,
-    height: 30,
+    height: 24,
     borderRadius: 15,
     justifyContent: 'center',
     paddingHorizontal: 5,
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#dcdde1',
   },
   circle: {
-    width: 20,
-    height: 20,
+    width: 15,
+    height: 15,
     borderRadius: 10,
     backgroundColor: 'white',
   },

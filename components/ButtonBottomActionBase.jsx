@@ -17,6 +17,7 @@ const ButtonBottomActionBase = ({
   showGradient = true, 
   direction = { x: 1, y: 0 },
   showShape = true,
+  shapeColor='black',
   shapePosition = 'left',
   shapeSource: ShapeSvg,   
   shapeWidth = 260,
@@ -79,7 +80,8 @@ const ButtonBottomActionBase = ({
         flexDirection: 'row',
         width: '100%',
         height: height,
-        padding: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 2,
         marginBottom: 2,
         borderRadius: radius,
         alignItems: 'center',
@@ -104,7 +106,7 @@ const ButtonBottomActionBase = ({
         <ShapeSvg
           width={shapeWidth}
           height={shapeHeight}
-          color={'black'}
+          color={shapeColor}
           style={{
             position: 'absolute',
             ...getShapeStyle(), 

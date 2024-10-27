@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
-import InfoOutlineSvg from '../assets/svgs/info-outline.svg';
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage';
 import { useFriendList } from '../context/FriendListContext';
@@ -23,6 +22,10 @@ const HeaderWriteMoment = () => {
         navigation.goBack();  
       };
 
+    const handleNavigateToAllMoments = () => {
+      navigation.navigate('Moments');
+    };
+
   return (
     <> 
     
@@ -37,7 +40,7 @@ const HeaderWriteMoment = () => {
           <LoadingPage 
             loading={loadingNewFriend} 
             spinnerType='flow'
-            color={themeAheadOfLoading.lightColor}
+            color={'transparent'}//themeAheadOfLoading.lightColor
             includeLabel={false} 
           />
           </View>
@@ -46,19 +49,15 @@ const HeaderWriteMoment = () => {
       <>
       <View style={{flexDirection: 'row', width: '50%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
         
-        <>
         <TouchableOpacity onPress={handleNavigateBack}>
           <ArrowLeftCircleOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
-
         </TouchableOpacity> 
-       
-      </>
-       
       </View> 
-      <Text style={[styles.headerText, themeStyles.headerText, {color: calculatedThemeColors.secondaryFontColor, paddingRight: 0}]}>ADD MOMENT</Text>
+
+      <Text style={[styles.headerText, themeStyles.headerText, {color: calculatedThemeColors.fontColorSecondary, paddingRight: 0}]}>ADD MOMENT</Text>
        <View>
-       <TouchableOpacity onPress={() => {}}>
-       <ThoughtBubbleOutlineSvg height={30} width={30} fill={calculatedThemeColors.secondaryFontColor}/>
+       <TouchableOpacity onPress={handleNavigateToAllMoments}>
+       <ThoughtBubbleOutlineSvg height={30} width={30} fill={calculatedThemeColors.fontColorSecondary}/>
        </TouchableOpacity> 
 
        </View> 
