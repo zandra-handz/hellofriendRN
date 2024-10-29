@@ -1,3 +1,7 @@
+
+//<Text style={[styles.friendNameText, themeStyles.subHeaderText, {color: calculatedThemeColors.fontColor}]}>
+//{selectedFriend ? selectedFriend.name : ''}
+//</Text>
 import React from 'react';
 import { View, Text,  StyleSheet, TouchableOpacity } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -11,10 +15,11 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonPanelFriendFocus from '../components/ButtonPanelFriendFocus';
 import LoadingPage from '../components/LoadingPage';
 import { Dimensions } from 'react-native';
-import HelloFriendFooter from '../components/HelloFriendFooter';
+import HelloFriendFooter from '../components/HelloFriendFooter'; 
+
 
 const ScreenFriendFocus = () => {
-  const { selectedFriend, friendDashboardData, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles, gradientColors } = useGlobalStyle(); 
   const navigation = useNavigation();
@@ -45,11 +50,11 @@ const ScreenFriendFocus = () => {
 
   return (
     <LinearGradient
-    colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 1 }}
-    style={[styles.container, themeStyles.signinContainer]}
-  >
+      colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}  
+      style={styles.container} 
+    > 
       {loadingNewFriend && themeAheadOfLoading && (
           <View style={[styles.loadingWrapper, {backgroundColor: themeAheadOfLoading.lightColor}]}>
           <LoadingPage
@@ -66,11 +71,8 @@ const ScreenFriendFocus = () => {
           <View style={[styles.buttonContainer]}>
             <View style={[styles.topSectionContainer, {paddingTop: topSectionPadding, height: topSectionHeight}]}>
 
-            <View style={{flexDirection: 'column',paddingHorizontal: 10, justifyContent: 'flex-start',  width: '100%'}}>
+            <View style={{flexDirection: 'column', paddingHorizontal: 10, justifyContent: 'flex-start',  width: '100%'}}>
                <>
-                <Text style={[styles.friendNameText, themeStyles.subHeaderText, {color: calculatedThemeColors.fontColor}]}>
-                  {selectedFriend ? selectedFriend.name : ''}
-                </Text>
                 <Text
                   style={[styles.headerText, themeStyles.subHeaderText, { color: calculatedThemeColors.fontColor }]}
                   numberOfLines={2} // Allows a maximum of 2 lines (you can adjust this value as needed)
@@ -82,7 +84,7 @@ const ScreenFriendFocus = () => {
                </>
             </View>
  
-              <View style={{ marginHorizontal: buttonMargin,  zIndex: 2, top: '12%', height: '33%',  width: '100%' }}>
+              <View style={{ marginHorizontal: buttonMargin,  zIndex: 4, top: '2%', height: '23%',  width: '100%' }}>
                 
               <LastHelloBanner /> 
                 <ButtonPanelFriendFocus />
@@ -90,12 +92,13 @@ const ScreenFriendFocus = () => {
               </View>     
           </View>
 
-          <View style={[styles.bottomSectionContainer, {height: bottomSectionHeight, paddingBottom: bottomSectionPadding}]}>  
-              <TouchableOpacity onPress={navigateToMomentsScreen} style={[styles.addHelloButton, {backgroundColor: calculatedThemeColors.lightColor}]}>
+          <View style={[styles.bottomSectionContainer, {paddingBottom: bottomSectionPadding}]}>  
+
+          
+            <View style={[styles.backColorContainer, themeStyles.genericTextBackground, {borderColor: themeAheadOfLoading.lightColor}]}>
+            <TouchableOpacity onPress={navigateToMomentsScreen} style={[styles.addHelloButton, {backgroundColor: calculatedThemeColors.lightColor}]}>
                 <Text style={styles.addHelloText}>FOCUS MODE</Text>
               </TouchableOpacity>
-          
-            <View>
             <View  style={[styles.recentlyAddedButton, themeStyles.genericTextBackground]}>
                 <Text numberOfLines={1} style={[styles.recentlyAddedText, themeStyles.genericText]}>RECENTLY ADDED</Text>
               </View>
@@ -162,6 +165,7 @@ const styles = StyleSheet.create({
   },
   topSectionContainer: {
     width: '100%',  
+    flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start', 
   },
@@ -232,8 +236,22 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',  
 
 },
-addHelloButton: {
- 
+backColorContainer: {  
+  minHeight: '70%', 
+  alignContent: 'center',
+  paddingHorizontal: '4%',
+  paddingTop: '8%',
+  paddingBottom: '32%', 
+  width: '101%',
+  alignSelf: 'center',
+  borderWidth: 1,
+  borderTopRightRadius: 30,
+  borderTopLeftRadius: 30,
+  borderRadius: 30,
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+},
+addHelloButton: { 
   width: '100%',
   textAlign: 'right',
   paddingHorizontal: 10,

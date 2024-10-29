@@ -12,7 +12,7 @@ export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const { authUserState } = useAuthUser(); 
   const { friendList } = useFriendList(); 
-  //const [friendDashboardData, setFriendDashboardData] = useState(null);
+  const [friendDashboardData, setFriendDashboardData] = useState(null);
   const [friendColorTheme, setFriendColorTheme] = useState({
     useFriendColorTheme: null,
     invertGradient: null,
@@ -23,61 +23,57 @@ export const SelectedFriendProvider = ({ children }) => {
     lightColor: '#a0f143',
     darkColor: '#4caf50',
   });
-  //const [loadingNewFriend, setLoadingNewFriend] = useState(false);
+  const [loadingNewFriend, setLoadingNewFriend] = useState(false);
   const queryClient = useQueryClient();
 
 
 
+  useEffect(() => {
+    const fetchFriendDashboardData = async (friendId) => {
+      setLoadingNewFriend(true);
+      try {
+        const dashboardData = await fetchFriendDashboard(friendId);
+        console.log('Friend dashboard data:', dashboardData);
+        setFriendDashboardData(dashboardData);
 
-  const { data: friendDashboardData, isLoading, isError } = useQuery({
-    queryKey: ['friendDashboardData', selectedFriend?.id],
-    queryFn: () => fetchFriendDashboard(selectedFriend.id),
-    enabled: !!selectedFriend,
-    onSuccess: (data) => {
-      console.log('Raw data in RQ onSuccess:', data);
-      if (!data) {
-          console.log('No data received');
-          return;
+        const data = Array.isArray(dashboardData) ? dashboardData[0] : dashboardData;
+
+        const colorThemeData = {
+          useFriendColorTheme: data.friend_faves.use_friend_color_theme || false,
+          invertGradient: data?.friend_faves?.second_color_option || false,
+          lightColor: data?.friend_faves?.light_color || null,
+          darkColor: data?.friend_faves?.dark_color || null,
+        };
+        console.log('Setting color theme data:', colorThemeData); // Add this line
+        setFriendColorTheme(colorThemeData);
+
+      } catch (error) {
+        console.error('Error fetching friend dashboard data:', error);
+      } finally {
+        setLoadingNewFriend(false);
       }
+    };
+
+    if (selectedFriend) {
+      fetchFriendDashboardData(selectedFriend.id);
+    } else {
+      setFriendColorTheme({
+        useFriendColorTheme: null,
+        invertGradient: null,
+        lightColor: null,
+        darkColor: null,
+      });
+      setFriendDashboardData(null);
     }
-  });
-
-  useEffect(() => {
-    if (friendDashboardData) {
-      const lowerLayerData = Array.isArray(friendDashboardData) ? friendDashboardData[0] : friendDashboardData;
-      const colorThemeData = {
-        useFriendColorTheme: lowerLayerData?.friend_faves?.use_friend_color_theme || false,
-        invertGradient: lowerLayerData?.friend_faves?.second_color_option || false,
-        lightColor: lowerLayerData?.friend_faves?.light_color || null,
-        darkColor: lowerLayerData?.friend_faves?.dark_color || null,
-      };
-      console.log('Setting color theme data in useEffect:', colorThemeData);
-      setFriendColorTheme(colorThemeData);
-    }
-  }, [friendDashboardData]); // Depend on `friendDashboardData`
-  
-
-  const loadingNewFriend = isLoading;
-
-
-
-  useEffect(() => {
-    if (!selectedFriend) { 
-        setFriendColorTheme({
-            useFriendColorTheme: null,
-            invertGradient: null,
-            lightColor: null,
-            darkColor: null,
-        });
-    }
-}, [selectedFriend]);
-
+  }, [selectedFriend]);
 
   const getFontColor = (baseColor, targetColor, isInverted) => {
-    let fontColor = targetColor;  
-   
+    let fontColor = targetColor; // Start with the target color
+  
+    // Check if the targetColor is readable on the baseColor
     if (!tinycolor.isReadable(baseColor, targetColor, { level: 'AA', size: 'small' })) {
-       fontColor = isInverted ? 'white' : 'black';
+      // If targetColor is not readable, fallback to black or white based on isInverted
+      fontColor = isInverted ? 'white' : 'black';
   
       if (!tinycolor.isReadable(baseColor, fontColor, { level: 'AA', size: 'small' })) {
         // If not readable, switch to the opposite color
@@ -156,11 +152,17 @@ export const SelectedFriendProvider = ({ children }) => {
   useEffect(() => {
     setSelectedFriend(null);
   }, [authUserState]);
- 
+
+  //useEffect(() => {
+   // console.log('Selected friend being set:', selectedFriend);
+  //}, [selectedFriend]);
+
+  //useEffect(() => {
+  //  console.log('Friend color theme updated:', friendColorTheme); // Add this line
+  //}, [friendColorTheme]);
 
   const updateFriendDashboardData = (newData) => {
-    console.log('update');
-    //setFriendDashboardData(newData);
+    setFriendDashboardData(newData);
 
   };
 

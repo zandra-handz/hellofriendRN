@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity } from 'rea
  
 import { useLocationList } from '../context/LocationListContext';
 
-import ItemLocationMulti from '../components/ItemLocationMulti';
-import ItemImageMulti from '../components/ItemImageMulti';
+import ItemLocationMulti from '../components/ItemLocationMulti'; 
 import ActionFriendPageGoogleMap from '../components/ActionFriendPageGoogleMap';
 
 const ActionFriendPageAllLocations = ({ isModalVisible, toggleModal, onClose }) => {

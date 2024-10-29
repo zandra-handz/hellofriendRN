@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
+
 import LizardSvg from '../assets/svgs/lizard.svg';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
@@ -19,9 +20,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import LoadingPage from '../components/LoadingPage';
 
 const HeaderBase = ({
-  headerTitle = 'Header title here',
-  rightIcon = 'info',
-  rightIconOnPress,
+  headerTitle = 'Header title here', 
   navigateTo = 'Moments',
   icon, // Select which SVG to display
 }) => {
@@ -36,11 +35,9 @@ const HeaderBase = ({
       text: PhoneChatMessageHeartSvg,
       coffeeSteaming: CoffeeMugFancySteamSvg,
       thoughtBubble: ThoughtBubbleOutlineSvg,
-      heartbeat: HeartbeatLifeLineArrowSvg,
-      // Add other SVG mappings here if needed
+      heartbeat: HeartbeatLifeLineArrowSvg, 
   };
-
-  // Get the component based on the `icon` prop
+ 
   const IconComponent = iconMap[icon] || null;
 
   return (

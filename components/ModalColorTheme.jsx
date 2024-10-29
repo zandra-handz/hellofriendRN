@@ -1,10 +1,17 @@
+//  <BaseRowModalFooter 
+// iconName='palette' 
+// iconSize={20}
+// label='Invert gradient' 
+// useToggle={true}
+// value={invertGradientDirection}
+// onTogglePress={toggleColorThemeGradientDirection}
+// /> 
+
 import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import {
@@ -102,14 +109,6 @@ const ModalColorTheme = ({ visible, onClose }) => {
             onCustomPress={toggleColorThemeModal} 
           />  
 
-          <BaseRowModalFooter 
-            iconName='palette' 
-            iconSize={20}
-            label='Invert gradient' 
-            useToggle={true}
-            value={invertGradientDirection}
-            onTogglePress={toggleColorThemeGradientDirection}
-          /> 
         </>
       )}
           <BaseRowModalFooter 

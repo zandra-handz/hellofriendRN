@@ -1,3 +1,11 @@
+// old version, updateFriendDashboard is an empty function now. preserving this in case i need to revert something
+// if (friendDashboardData && friendDashboardData.length > 0) {
+//    friendDashboardData[0].friend_faves = updatedFaves;
+//    console.log(friendDashboardData);
+//    updateFriendDashboardData(friendDashboardData);
+ //   console.log('Location added to friend\'s favorites.');
+//  }
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -16,6 +24,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useLocationList } from '../context/LocationListContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { authUserState } = useAuthUser();
@@ -26,6 +35,8 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
     const [isModal2Visible, setModal2Visible] = useState(false);
     const [isMenuVisible, setMenuVisible] = useState(false);
     const { themeStyles } = useGlobalStyle();
+
+    const queryClient = useQueryClient();
 
     const handlePress = () => {
         setModalVisible(true);
@@ -85,9 +96,11 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
             console.log(updatedFaves);
 
             if (friendDashboardData && friendDashboardData.length > 0) {
-                friendDashboardData[0].friend_faves = updatedFaves;
-                console.log(friendDashboardData);
-                updateFriendDashboardData(friendDashboardData);
+                const updatedFriendDashboardData = [...friendDashboardData];
+                updatedFriendDashboardData[0].friend_faves = updatedFaves;
+              
+                 queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], updatedFriendDashboardData);
+              
                 console.log('Location added to friend\'s favorites.');
               }
             onClose();

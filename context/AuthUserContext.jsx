@@ -1,4 +1,5 @@
-// AuthUserContext.js
+
+
 import React, { createContext, useContext, useState, useEffect, AccessibilityInfo } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import * as Notifications from 'expo-notifications';
@@ -57,8 +58,7 @@ export const AuthUserProvider = ({ children }) => {
         console.log('UUUUSEEEE EFFFFECCTT IN CONTEXXXXXXT', userAppSettings);
 
     }, [userAppSettings]);
-
-    // Fetch current user data and update state
+ 
     const { data: currentUserData } = useQuery({
         queryKey: ['fetchUser'],
         queryFn: async () => {
@@ -113,13 +113,12 @@ export const AuthUserProvider = ({ children }) => {
     
     const signinMutation = useMutation({
         mutationFn: signin,
-        onSuccess: async (result) => {
-            // Handle successful sign-in
+        onSuccess: async (result) => { 
             if (result.data) {
                 const { access: token, refresh } = result.data;
                 await SecureStore.setItemAsync(TOKEN_KEY, token);
                 await SecureStore.setItemAsync('refreshToken', refresh);
-                await reInitialize(); // Refetch user data after sign-in
+                await reInitialize();  
             }
         },
         onError: (error) => {
@@ -129,20 +128,16 @@ export const AuthUserProvider = ({ children }) => {
     });
     
 
-// Handle sign-in
 const onSignin = async (username, password) => {
     try {
-        // Create an object with username and password
+        
         const credentials = { username, password };
 
-        // Log the credentials being passed to the mutation
-        console.log('Signing in with credentials:', credentials);
-
-        // Pass the object to mutateAsync
+         console.log('Signing in with credentials:', credentials);
+ 
         await signinMutation.mutateAsync(credentials);
     } catch (error) {
-        console.error('Sign in error', error);
-        // Handle errors (e.g., display a message)
+        console.error('Sign in error', error); 
     }
 };
 
