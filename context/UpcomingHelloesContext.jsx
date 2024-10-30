@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuthUser } from './AuthUserContext';
 import { fetchUpcomingHelloes } from '../api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 
 const UpcomingHelloesContext = createContext({});
 
@@ -9,33 +11,43 @@ export const useUpcomingHelloes = () => {
 };
 
 export const UpcomingHelloesProvider = ({ children }) => {
-    const { authUserState } = useAuthUser();
-    const [upcomingHelloes, setUpcomingHelloes] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
+
+
+    const { authUserState } = useAuthUser(); 
     const [updateTrigger, setUpdateTrigger] = useState(false); // Introducing updateTrigger state
     
 
-    useEffect(() => {
-        const loadUpcomingHelloes = async () => {
-            console.log("loading upcoming helloes...");
-            setIsLoading(true);
-            try {
-                const helloes = await fetchUpcomingHelloes();
-                setUpcomingHelloes(helloes);
-            } catch (error) {
-                console.error('Error loading upcoming helloes:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
 
-        if (authUserState.authenticated) {
-            loadUpcomingHelloes();
-        } else {
-            setUpcomingHelloes([]);
-            setIsLoading(false);
+    const { data: upcomingHelloes, isLoading, isError } = useQuery({
+        queryKey: ['upcomingHelloes'],
+        queryFn: () => fetchUpcomingHelloes(),
+        enabled: !!authUserState.authenticated,
+        onSuccess: (data) => {
+          console.log('Raw data in RQ onSuccess:', data);
+          if (!data) {
+              console.log('No data received');
+              return;
+          }
         }
-    }, [authUserState.authenticated, updateTrigger]); // Include updateTrigger in dependencies
+      });
+
+      useEffect(() => {
+        if (updateTrigger) {
+            queryClient.invalidateQueries(['upcomingHelloes']);
+            setUpdateTrigger(false);  
+        }
+    }, [updateTrigger, queryClient]);
+
+    useEffect(() => {
+        if (!authUserState.authenticated) {
+            console.log('upcoming helloes detecting when user is no longer authenticated!');
+            setUpdateTrigger(false); 
+            queryClient.removeQueries(['upcomingHelloes']); 
+            queryClient.clear();
+        }
+    }, [authUserState.authenticated, queryClient]);
+
 
 
     return (

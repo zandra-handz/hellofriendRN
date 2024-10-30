@@ -16,10 +16,10 @@ const LastHelloBanner = () => {
         <View style={styles.container}>
             <View style={styles.leftSection}>
                 <View style={styles.leftSectionColumn}>
-                    <Text style={[styles.title, {color: calculatedThemeColors.fontColor}]}>
+                    <Text style={[styles.title, themeStyles.genericText]}>
                         LAST HELLO
                     </Text> 
-                    <Text style={[styles.text, {color: calculatedThemeColors.fontColor}]}>{friendDashboardData[0].days_since_words}</Text>
+                    <Text style={[styles.text, themeStyles.genericText]}>{friendDashboardData[0].days_since_words}</Text>
                 </View>
                    <IconDynamicHelloType selectedChoice={friendDashboardData[0].previous_meet_type} svgHeight={30} svgWidth={30} svgColor={calculatedThemeColors.fontColor} />
               

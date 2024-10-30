@@ -6,7 +6,7 @@ import ButtonSaveLocation from '../components/ButtonSaveLocation';
 const HeaderLocationSingle = () => {
     
 
-    const { selectedLocation, additionalDetails, loadingAdditionalDetails, updateAdditionalDetails } = useLocationList();
+    const { selectedLocation, additionalDetails } = useLocationList();
   
         const title = additionalDetails?.name || (selectedLocation && selectedLocation.title ? selectedLocation.title : "Location not available");
 

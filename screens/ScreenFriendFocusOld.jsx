@@ -16,15 +16,6 @@ import ButtonPanelFriendFocus from '../components/ButtonPanelFriendFocus';
 import LoadingPage from '../components/LoadingPage';
 import { Dimensions } from 'react-native';
 import HelloFriendFooter from '../components/HelloFriendFooter'; 
-import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
-import ButtonBaseSpecialFriendFocus from '../components/ButtonBaseSpecialFriendFocus';
-import ArrowLeftCircleOutline from '../assets/svgs/arrow-right-circle-outline.svg';
-
-import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
-import PushPinOutlineSvg from '../assets/svgs/push-pin-outline';
-import LocationHeartOutlineSvg from '../assets/svgs/location-heart-outline';
-import PhotoSolidSvg from '../assets/svgs/photo-solid';
-import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline';
 
 
 const ScreenFriendFocus = () => {
@@ -52,23 +43,8 @@ const ScreenFriendFocus = () => {
   const topSectionPadding = Dimensions.get('window').height * 0.01;
   const bottomSectionPadding = Dimensions.get('window').height * 0.01;
 
-const calculatedDarkColor = friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50';
-const calculatedLightColor = friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)';
-
   const navigateToMomentsScreen = () => {
     navigation.navigate('Moments'); 
-  };
-
-  const navigateToHelloesScreen = () => {
-    navigation.navigate('Helloes'); 
-  };
-
-  const navigateToImagesScreen = () => {
-    navigation.navigate('Images'); 
-  };
-
-  const navigateToLocationsScreen = () => {
-    navigation.navigate('Locations'); 
   };
 
 
@@ -106,106 +82,55 @@ const calculatedLightColor = friendColorTheme?.useFriendColorTheme ? themeAheadO
                 </Text> 
                 
                </>
-            </View>    
+            </View>
+ 
+              <View style={{ marginHorizontal: buttonMargin,  zIndex: 4, top: '2%', height: '23%',  width: '100%' }}>
+                
+              <LastHelloBanner /> 
+                <ButtonPanelFriendFocus />
+                
+              </View>     
           </View>
 
           <View style={[styles.bottomSectionContainer, {paddingBottom: bottomSectionPadding}]}>  
- 
+
           
             <View style={[styles.backColorContainer, themeStyles.genericTextBackground, {borderColor: themeAheadOfLoading.lightColor}]}>
-      
-            <View style={{ marginHorizontal: buttonMargin,  zIndex: 4, top: '0%', height: '16%',  width: '100%' }}>
-                
-                <LastHelloBanner />  
-                  
-                </View>  
-                                   
-            <ButtonBaseSpecialFriendFocus
-            label='SEND A LOCAL'
-            image={LocationHeartOutlineSvg }
-            imageSize={80}
-            labelSize={19}
-            isDisabled={false}
-            darkColor={calculatedDarkColor}
-            lightColor={calculatedLightColor}
-            imagePositionHorizontal={0} 
-            imagePositionVertical={6}
-            borderRadius={50}
-            onPress={navigateToLocationsScreen}
-            /> 
-            <ButtonBaseSpecialFriendFocus
-            label='SEND AN IMAGE'
-            image={PhotoSolidSvg }
-            imageSize={80}
-            labelSize={19}
-            isDisabled={false}
-            darkColor={calculatedDarkColor}
-            lightColor={calculatedLightColor}
-            imagePositionHorizontal={0} 
-            imagePositionVertical={6}
-            borderRadius={50}
-            onPress={navigateToImagesScreen}
-            /> 
-            <View style={{marginTop: '4%'}}>
-               <ComposerFriendImages 
+            <TouchableOpacity onPress={navigateToMomentsScreen} style={[styles.addHelloButton, {backgroundColor: calculatedThemeColors.lightColor}]}>
+                <Text style={styles.addHelloText}>FOCUS MODE</Text>
+              </TouchableOpacity>
+            <View  style={[styles.recentlyAddedButton, themeStyles.genericTextBackground]}>
+                <Text numberOfLines={1} style={[styles.recentlyAddedText, themeStyles.genericText]}>RECENTLY ADDED</Text>
+              </View>
+          
+
+           
+              <ComposerFriendImages 
                 topIconSize={topIconSize} 
                 bottomIconSize={bottomIconSize} 
                 buttonHeight={'auto'} 
                 headerHeight={'auto'}
                 buttonRadius={radius} 
-                includeHeader={false}
+                includeHeader={true}
                 headerInside={true}
                 inactiveIconColor={inactiveIconColor} 
                 oneBackgroundColor={'transparent'} 
-              />
-              </View>
-                          <ButtonBaseSpecialFriendFocus
-            label='REVIEW MOMENTS'
-            image={ThoughtBubbleOutlineSvg }
-            imageSize={80}
-            labelSize={19}
-            isDisabled={false}
-            darkColor={calculatedDarkColor}
-            lightColor={calculatedLightColor}
-            imagePositionHorizontal={0} 
-            imagePositionVertical={6}
-            borderRadius={50}
-            onPress={navigateToMomentsScreen}
-            />  
+              />  
 
-
-
-            
-            <View style={{ marginTop: 0, borderTopWidth: 0, borderColor: themeStyles.genericText.color, marginHorizontal: buttonMargin }}>
+            <View style={{ marginTop: 0, borderTopWidth: .4, borderColor: themeStyles.genericText.color, marginHorizontal: buttonMargin }}>
               <ActionFriendPageMoments 
                 topIconSize={topIconSize} 
                 bottomIconSize={momentsBottomIconSize} 
-                buttonHeight={176} 
+                buttonHeight={276} 
                 buttonRadius={radius} 
                 inactiveIconColor={inactiveIconColor} 
                 oneBackgroundColor={oneBackgroundColor}
                 headerHeight={24} 
-                includeHeader={false} 
+                includeHeader={headers} 
                 headerInside={true} 
-                headerText={''} 
+                headerText={'MOMENTS'} 
               /> 
-            </View> 
-            <ButtonBaseSpecialFriendFocus
-            label='HELLOES HISTORY'
-            image={PhoneChatMessageHeartSvg }
-            imageSize={100}
-            labelSize={19}
-            isDisabled={false}
-            darkColor={calculatedDarkColor}
-            lightColor={calculatedLightColor}
-            imagePositionHorizontal={0} 
-            imagePositionVertical={12}
-            borderRadius={50}
-            onPress={navigateToHelloesScreen}
-            />  
-           
-             
- 
+            </View>
             </View>
 
             </View>
@@ -312,11 +237,11 @@ const styles = StyleSheet.create({
 
 },
 backColorContainer: {  
-  minHeight: '92%', 
+  minHeight: '70%', 
   alignContent: 'center',
-  paddingHorizontal: '2%',
-  paddingTop: '0%',
-  paddingBottom: '13%', 
+  paddingHorizontal: '4%',
+  paddingTop: '8%',
+  paddingBottom: '32%', 
   width: '101%',
   alignSelf: 'center',
   borderWidth: 1,

@@ -30,7 +30,7 @@ const ButtonBaseSpecialThreeTextAnim = ({
 
     }) => { 
 
-    const { upcomingHelloes } = useUpcomingHelloes();
+    const { upcomingHelloes, isLoading } = useUpcomingHelloes();
     const { friendList, getThemeAheadOfLoading } = useFriendList();
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle();
@@ -122,11 +122,11 @@ return(
                             { fontFamily: 'Poppins-Regular' },
                         ]}
                         >
-                        {upcomingHelloes && upcomingHelloes[0] ? upcomingHelloes[0].friend.name : 'No upcoming!'}
+                        {upcomingHelloes && !isLoading && upcomingHelloes[0] ? upcomingHelloes[0].friend.name : 'No upcoming!'}
                     </Text>
 
                     <Text style={styles.subtitleText}>
-                        {upcomingHelloes && upcomingHelloes[0] ? upcomingHelloes[0].future_date_in_words : ''}
+                        {upcomingHelloes && !isLoading && upcomingHelloes[0] ? upcomingHelloes[0].future_date_in_words : ''}
                     </Text>
 
                 

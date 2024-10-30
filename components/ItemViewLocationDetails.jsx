@@ -11,22 +11,20 @@ import ButtonSaveLocation from '../components/ButtonSaveLocation';
 import StylingRating from '../components/StylingRating';
 
 const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
-  const { selectedLocation, additionalDetails, loadingAdditionalDetails, updateAdditionalDetails } = useLocationList();
+  const { selectedLocation, loadingAdditionalDetails, useFetchAdditionalDetails } = useLocationList();
   
   const [refreshing, setRefreshing] = useState(false);
   const { themeStyles } = useGlobalStyle();
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     console.log('location passed in to location details: ', location);
   }, [location]);
 
+  const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(selectedLocation, isFetching);
+
   const handleRefresh = () => {
-    if (selectedLocation && selectedLocation.id) {
-      setRefreshing(true);
-      updateAdditionalDetails(selectedLocation).finally(() => {
-        setRefreshing(false);
-      });
-    }
+    setIsFetching(true); // Trigger the fetch
   };
 
   // Check if location is null or undefined and safely access title

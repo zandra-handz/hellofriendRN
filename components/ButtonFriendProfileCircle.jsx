@@ -3,21 +3,23 @@ import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ProfileCircleSvg from '../assets/svgs/ProfileCircleSvg'; // Import ProfileCircleSvg
 
+import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import LoadingPage from '../components/LoadingPage';
 
 const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
-  const { selectedFriend, friendDashboardData, setFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, friendColorTheme, friendDashboardData, setFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendList();
   const [profileIconColor, setProfileIconColor] = useState();
   const navigation = useNavigation();
 
   useEffect(() => {
     if (selectedFriend && calculatedThemeColors.lightColor !== themeStyles.genericTextBackground.backgroundColor) {
 
-    setProfileIconColor([calculatedThemeColors.lightColor, calculatedThemeColors.darkColor]);
-    
+    setProfileIconColor([friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)'] );
+     
     } else {
       console.log(themeStyles.genericTextBackground.backgroundColor);
       console.log(calculatedThemeColors.lightColor);
@@ -53,9 +55,20 @@ const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
           <View style={{ flexDirection: 'row' }}>
             
             <ProfileCircleSvg width={32} height={32} startColor={profileIconColor[0]} endColor={profileIconColor[0]} />
-            <Text style={[styles.friendText, { color: calculatedThemeColors.lightColor }]}>
-              {selectedFriend && selectedFriend.name.charAt(0)}
-            </Text>
+            
+            <View style={{
+              backgroundColor: profileIconColor[1],  // Circle color
+              borderRadius: 16,  // Half of width/height to make it circular
+              width: 32,  // Circle diameter
+              height: 32,
+              alignItems: 'center', 
+              justifyContent: 'center',
+              marginLeft: 4,  // Adjust spacing between circle and ProfileCircleSvg if needed
+          }}>
+              <Text style={[styles.friendText, { color: friendColorTheme?.useFriendColorTheme ? calculatedThemeColors.fontColorSecondary : '#4caf50' }]}>
+                  {selectedFriend && selectedFriend.name.charAt(0)}
+              </Text>
+          </View>
           </View>
         );
       } 
@@ -103,10 +116,11 @@ const styles = StyleSheet.create({
     alignContent: 'flex-start',
   },
   friendText: {
-    fontSize: 18,
-    paddingVertical: 2,
-    fontFamily: 'Poppins-Regular',
-    paddingLeft: 6,
+    fontSize: 20,
+    paddingVertical: 0,
+    alignSelf: 'center',
+    fontFamily: 'Poppins-Bold',
+    paddingLeft: 0,
   },
 });
 
