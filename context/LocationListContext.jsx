@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext'; // Import the AuthUser context
 import { useUpcomingHelloes } from './UpcomingHelloesContext';
-import { fetchAllLocations, fetchLocationDetails, updateLocation } from '../api'; // Import the API methods
+import { fetchAllLocations, fetchLocationDetails, createLocation, updateLocation } from '../api'; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
@@ -38,6 +38,43 @@ export const LocationListProvider = ({ children }) => {
   });
 
 
+  const createLocationMutation = useMutation({
+    mutationFn: (data) => createLocation(data),
+    onSuccess: (data) => {
+        // Update the location list immutably, adding the new location at the front
+        queryClient.setQueryData(['locationList'], (old) => {
+            const updatedList = old ? [data, ...old] : [data];
+            return updatedList; // Return the updated list
+        });
+
+        // Log the actual locationList after mutation
+        const actualLocationList = queryClient.getQueryData(['locationList']);
+        console.log('Actual locationList after mutation:', actualLocationList);
+    },
+});
+
+
+// Function to handle location creation
+const handleCreateLocation = async (friends, title, address, parkingTypeText, trimmedCustomTitle, personalExperience) => {
+  const locationData = {
+      friends: friends,
+      title: title,
+      address: address,
+      parking_score: parkingTypeText,
+      custom_title: trimmedCustomTitle,
+      personal_experience_info: personalExperience,
+      user: authUserState.user.id,
+  };
+
+  console.log('Payload before sending:', locationData);
+
+  try {
+    
+      await createLocationMutation.mutateAsync(locationData); // Call the mutation with the location data
+  } catch (error) {
+      console.error('Error saving location:', error);
+  }
+};
 
 
   useEffect(() => {
@@ -50,9 +87,10 @@ export const LocationListProvider = ({ children }) => {
       console.log('selected location set in context');
     
     }
-  }, [locationList]); //selectedLocation
+  }, []); //locationList, selectedLocation
  
 
+  //sets temp or fave when a location is selected
   useEffect(() => {
     if (selectedLocation && selectedLocation.id) {
       const isTemp = String(selectedLocation.id).startsWith('temp');
@@ -67,29 +105,22 @@ export const LocationListProvider = ({ children }) => {
       setIsTemp(false);
       setIsFave(false);
     }
-  }, [selectedLocation]); // Removed faveLocationList from dependencies
+  }, [selectedLocation, faveLocationList]); // Removed faveLocationList from dependencies
   //faveLocationList
 
-  useEffect(() => {
+  useEffect(() => { 
     if (locationList) {
-        const { validated, temp, saved } = locationList.reduce((acc, location) => {
+        const { validated, saved } = locationList.reduce((acc, location) => {
             if (location.validatedAddress) {
                 acc.validated.push(location);  // Add to validated list
-            }
-            if (String(location.id).startsWith('temp')) {
-                acc.temp.push(location);  // Add to temp list
-            }
+            } 
             if (!String(location.id).startsWith('temp')) {
-                acc.saved.push(location);  // Add to saved list
-                if (location.validatedAddress) {
-                    acc.validated.push(location);  // Add to validated list if also validated
-                }
+                acc.saved.push(location);
             }
             return acc;
-        }, { validated: [], temp: [], saved: [] });
+        }, { validated: [], saved: [] });
         
-        setValidatedLocationList(validated);
-        setTempLocationList(temp);
+        setValidatedLocationList(validated); 
         setSavedLocationList(saved);
     }
 }, [locationList]);
@@ -145,11 +176,14 @@ const populateFaveLocationsList = (locationIds) => {
 
   return (
     <LocationListContext.Provider value={{ 
-      locationList,
+      locationList, 
+      handleCreateLocation,
+      createLocationMutation,
       isLoading, 
       validatedLocationList, 
       faveLocationList, 
       tempLocationList,
+      setTempLocationList,
       savedLocationList,
       selectedLocation, 
       additionalDetails, 

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import { createLocation } from '../api'; // Import the createLocation function
+import { useLocationList } from '../context/LocationListContext'; // Import the createLocation function
+
 import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext';
 
 const FormLocationCreate = ({ onLocationCreate }) => {
     
   const { authUserState } = useAuthUser();
+  const { createLocation, createLocationMutation } = useLocationList();
+  
   const { friendList } = useFriendList();
 
   const [title, setTitle] = useState('');
@@ -25,17 +28,10 @@ const FormLocationCreate = ({ onLocationCreate }) => {
   };
 
   const handleSubmit = async () => {
-    try {
-      const locationData = {
-        friends: selectedFriends.map(id => Number(id)),
-        title: title,
-        address: address,
-        personal_experience_info: personalExperience,
-        user: authUserState.user.id, 
-      };
-      console.log('Payload before sending:', locationData);
-      const res = await createLocation(locationData); // Use the createLocation function from the api file
-      onLocationCreate(res);
+    try {  
+      
+      createLocation(selectedFriends, title, address, personalExperience);
+      onLocationCreate(createLocationMutation.isSuccess);
       setShowSaveMessage(true);
       setTimeout(() => {
         setShowSaveMessage(false);

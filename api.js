@@ -632,7 +632,8 @@ export const fetchAllLocations = async () => {
 export const createLocation = async (locationData) => {
     try { 
         const response = await axios.post('/friends/locations/add/', locationData);
-        return response.data;
+        console.log('API Response:', response); // Log the full response for debugging
+        return response.data; // Ensure that this is what you expect
     } catch (error) {
         console.error('Error creating location:', error, locationData);
         throw error;

@@ -5,14 +5,17 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useLocationList } from '../context/LocationListContext'; // Adjust the import path as necessary
 import ItemViewLocation from '../components/ItemViewLocation';
 import { GOOGLE_API_KEY } from '@env';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 
 const SearchBarGoogleAddress = () => {
-  const { locationList, setLocationList, setSelectedLocation, selectedLocation } = useLocationList();
+  const { locationList, setTempLocationList, tempLocationList, setSelectedLocation, selectedLocation } = useLocationList();
   
   const [listViewDisplayed, setListViewDisplayed] = useState(true);
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
-
+  const queryClient = useQueryClient();
   const googlePlacesRef = useRef(null);
+ 
 
   const generateTemporaryId = () => {
     return `temp_${Date.now()}`;
@@ -32,9 +35,11 @@ const SearchBarGoogleAddress = () => {
         friendsCount: 0,
         friends: [],
       };
-
-      setLocationList([newLocation, ...locationList]);
+ 
       setSelectedLocation(newLocation);
+      setTempLocationList((prevTempLocationList) => [newLocation, ...prevTempLocationList]);
+         
+      
       setIsLocationModalVisible(true);
     }
     setListViewDisplayed(false);
@@ -63,7 +68,7 @@ const SearchBarGoogleAddress = () => {
         keepResultsAfterBlur={true}
         onPress={handlePress}
         query={{
-          key: GOOGLE_API_KEY,
+          key: 'AIzaSyAY-lQdQaVSKpPz9h2GiX_Jde47nv3FsNg',
           language: 'en',
         }}
         styles={{

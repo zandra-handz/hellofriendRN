@@ -29,7 +29,7 @@ import { useQueryClient } from '@tanstack/react-query';
 const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { authUserState } = useAuthUser();
     const { selectedFriend, calculatedThemeColors, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-    const { locationList, setLocationList, selectedLocation, isTemp, isFave, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+    const { locationList, selectedLocation, isTemp, isFave, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
     const [isATemp, setIsTemp ] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModal2Visible, setModal2Visible] = useState(false);
@@ -112,7 +112,7 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
           if (isTemp) { 
             
             const newLocationWithId = { ...selectedLocation, id: Date.now().toString() }; // Generate a unique ID for the new location
-            setLocationList([...locationList, newLocationWithId]);
+            //setLocationList([...locationList, newLocationWithId]);
             setIsEditing(false); 
           } else {
 

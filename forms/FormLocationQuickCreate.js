@@ -13,7 +13,8 @@ const FormLocationQuickCreate = forwardRef((props, ref) => {
   const { title, address, onMakingCallChange } = props; 
   const { authUserState } = useAuthUser();
   const { friendList } = useFriendList();
-  const { locationList, setLocationList } = useLocationList();
+  const { createLocation, createLocationMutation } = useLocationList();
+   
   const { themeStyles } = useGlobalStyle();
   const [parkingType, setParkingType] = useState(null);
   const [parkingTypeText, setParkingTypeText] = useState(null);
@@ -28,6 +29,7 @@ const FormLocationQuickCreate = forwardRef((props, ref) => {
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [showSaveMessage, setShowSaveMessage] = useState(false);
   const [isMakingCall, setIsMakingCall] = useState(false); 
+const [onLocationSave, setOnLocationSave ] = useState(false);
 
   const showInHouseSaveButton = false;
 
@@ -71,35 +73,27 @@ const FormLocationQuickCreate = forwardRef((props, ref) => {
   };
 
   const handleSubmit = async () => {
-    setIsMakingCall(true); 
+    //setIsMakingCall(true); 
     const trimmedCustomTitle = customTitle?.trim() || null;
 
+    const friendArray = selectedFriends.map(id => Number(id));
+    
     try {
-      const locationData = {
-        friends: selectedFriends.map(id => Number(id)),
-        title: title,
-        address: address,
-        parking_score: parkingTypeText,
-        custom_title: trimmedCustomTitle,
-        personal_experience_info: personalExperience,
-        user: authUserState.user.id, 
-      };
+
+ 
       
-      console.log('Creating location with payload:', locationData);
+      createLocation(friendArray, title, address, parkingTypeText, trimmedCustomTitle, personalExperience);
       
-      const res = await createLocation(locationData);
-      console.log('Created location:', res);
-      
-      setLocationList(prevList => [res, ...prevList]); 
+    
       
       setShowSaveMessage(true);
       setTimeout(() => {
         setShowSaveMessage(false);
       }, 3000);
-      setIsMakingCall(false); 
+      //setIsMakingCall(false); 
     } catch (error) {
       console.error('Error creating location:', error);
-      setIsMakingCall(false); 
+      //setIsMakingCall(false); 
     }
   };
 

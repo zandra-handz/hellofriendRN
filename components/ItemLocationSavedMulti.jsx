@@ -15,7 +15,7 @@ const ItemLocationSavedMulti = ({
     columns = 3, 
     showBigSvg = false, 
 }) => { 
-    const { savedLocationList } = useLocationList();
+    const { locationList, savedLocationList } = useLocationList();
     const { themeStyles } = useGlobalStyle();
     const [selectedLocation, setSelectedLocation] = useState(null);
    
@@ -29,7 +29,7 @@ const ItemLocationSavedMulti = ({
         <View style={[styles.container, {height: '100%'}]}>
             <Text style={[styles.headerText, themeStyles.genericText]}>Saved</Text>
             <FlashList
-                data={savedLocationList}
+                data={locationList}
                 horizontal={horizontal && singleLineScroll}
                 keyExtractor={(location) => location.id.toString()}
                 renderItem={({ item: location }) => (
