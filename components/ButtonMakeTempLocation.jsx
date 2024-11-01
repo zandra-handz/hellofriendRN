@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import ItemViewLocation from '../components/ItemViewLocation'; // Import your modal component
 import ItemViewLocationSuggested from '../components/ItemViewLocationSuggested'; // Import your modal component
 
 

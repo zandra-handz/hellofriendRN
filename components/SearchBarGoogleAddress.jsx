@@ -3,14 +3,17 @@ import { View, StyleSheet } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useLocationList } from '../context/LocationListContext'; // Adjust the import path as necessary
-import ItemViewLocation from '../components/ItemViewLocation';
+
+import { useNavigation } from '@react-navigation/native';
+
+
 import { GOOGLE_API_KEY } from '@env';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 
 const SearchBarGoogleAddress = () => {
   const { locationList, setTempLocationList, tempLocationList, setSelectedLocation, selectedLocation } = useLocationList();
-  
+  const navigation = useNavigation();
   const [listViewDisplayed, setListViewDisplayed] = useState(true);
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
   const queryClient = useQueryClient();
@@ -40,10 +43,17 @@ const SearchBarGoogleAddress = () => {
       setTempLocationList((prevTempLocationList) => [newLocation, ...prevTempLocationList]);
          
       
-      setIsLocationModalVisible(true);
+      handleGoToLocationViewScreen();
     }
     setListViewDisplayed(false);
   };
+
+  const handleGoToLocationViewScreen = () => { 
+    navigation.navigate('Location', { location: selectedLocation });
+    //no need to pass in location if already selected in parent
+    //navigation.navigate('Location', { location: location });
+    
+  }; 
 
   useEffect(() => {
     if (!listViewDisplayed) {
@@ -82,10 +92,7 @@ const SearchBarGoogleAddress = () => {
         renderRightButton={() => (
           <FontAwesome5 name="search" size={22} color="gray" style={styles.searchIcon} />
         )}
-      />
-      {selectedLocation && isLocationModalVisible && (
-        <ItemViewLocation location={selectedLocation} onClose={closeModal} />
-      )}
+      /> 
     </View>
   );
 };

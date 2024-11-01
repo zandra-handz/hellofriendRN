@@ -2,14 +2,14 @@
 //<Text style={[styles.friendNameText, themeStyles.subHeaderText, {color: calculatedThemeColors.fontColor}]}>
 //{selectedFriend ? selectedFriend.name : ''}
 //</Text>
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text,  StyleSheet } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import LastHelloBanner from '../components/LastHelloBanner';
 import ActionFriendPageMoments from '../components/ActionFriendPageMoments'; // Import the new component
 import ComposerFriendImages from '../components/ComposerFriendImages'; // Import the new component
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
  import LoadingPage from '../components/LoadingPage';
@@ -28,6 +28,14 @@ const ScreenFriendFocus = () => {
   const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles, gradientColors } = useGlobalStyle(); 
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsAnimationPaused(false);
+    }, [])
+  );
+
+
   const navigation = useNavigation();
 
   const headers = true; 
@@ -51,20 +59,33 @@ const ScreenFriendFocus = () => {
 
 const calculatedDarkColor = friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50';
 const calculatedLightColor = friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)';
+const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
+  
+  useEffect(() => {
+    const handleScreenBlur = () => {
+      setIsAnimationPaused(true);
+      console.log('paused animation via blur effect');
+    };
 
-  const navigateToMomentsScreen = () => {
+    const unsubscribeBlur = navigation.addListener('blur', handleScreenBlur);
+
+    return unsubscribeBlur;
+  }, [navigation]);
+
+
+const navigateToMomentsScreen = () => { 
     navigation.navigate('Moments'); 
   };
 
-  const navigateToHelloesScreen = () => {
+  const navigateToHelloesScreen = () => { 
     navigation.navigate('Helloes'); 
   };
 
-  const navigateToImagesScreen = () => {
+  const navigateToImagesScreen = () => { 
     navigation.navigate('Images'); 
   };
 
-  const navigateToLocationsScreen = () => {
+  const navigateToLocationsScreen = () => { 
     navigation.navigate('Locations'); 
   };
 
@@ -185,6 +206,8 @@ const calculatedLightColor = friendColorTheme?.useFriendColorTheme ? themeAheadO
                 includeHeader={false} 
                 headerInside={true} 
                 headerText={''} 
+                animationPaused={isAnimationPaused}
+                onAddMomentPress={navigateToMomentsScreen}
               /> 
             </View> 
             <ButtonBaseSpecialFriendFocus

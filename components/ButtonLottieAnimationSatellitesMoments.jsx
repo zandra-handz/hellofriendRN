@@ -13,7 +13,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
   allItems,      
   additionalPages = false,
   additionalPagesCategorize = true, 
-  pauseAnimation=false, 
+  pauseAnimation=false
 }) => { 
 
   const { themeStyles } = useGlobalStyle();

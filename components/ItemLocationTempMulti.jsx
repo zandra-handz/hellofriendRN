@@ -4,7 +4,7 @@ import CardMicroLocation from '../components/CardMicroLocation';
 import { useLocationList } from '../context/LocationListContext';
 import { FlashList } from "@shopify/flash-list";
 import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
-import ItemViewLocation from '../components/ItemViewLocation';
+
 import ButtonLocation from '../components/ButtonLocation'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
@@ -78,10 +78,7 @@ const ItemLocationTempMulti = ({
             />
             </>
             )}
-
-            {isModalVisible && (
-                <ItemViewLocation location={selectedLocation} onClose={closeModal} />
-            )}
+ 
         </View>
     );
 };

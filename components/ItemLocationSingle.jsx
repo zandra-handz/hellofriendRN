@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 
-import ItemViewLocation from '../components/ItemViewLocation'; 
-
-import BubbleChatSvg from '../assets/svgs/bubble-chat.svg'; // Import the SVG
-import CoffeeBeansOutlineSvg from '../assets/svgs/coffee-beans-outline.svg';
-import CoffeeShopOutlineSvg from '../assets/svgs/coffee-shop-outline';
-import CoffeeShopColoredSvg from '../assets/svgs/coffee-shop-colored';
-import CoffeeShopStoreSimpleSvg from '../assets/svgs/coffee-shop-store-simple';
+ import CoffeeShopStoreSimpleSvg from '../assets/svgs/coffee-shop-store-simple';
 
 
 const windowWidth = Dimensions.get('window').width;
@@ -44,10 +38,7 @@ const ItemLocationSingle = ({ locationObject, locationWidth=30, locationHeight=3
             <Text style={styles.bubbleText}>{locationObject.address}</Text>
           </View>
         </View>
-      </TouchableOpacity>
-      {isModalVisible && (
-        <ItemViewLocation location={locationObject} onClose={closeModal} />
-      )}
+      </TouchableOpacity> 
     </View>
   );
 };

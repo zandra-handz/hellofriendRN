@@ -16,7 +16,7 @@ const ScreenLocation = ( ) => {
      
     return (
         <View style={[styles.container, themeStyles.container]}> 
-            <ContentLocationView location={location} />
+            <ContentLocationView />
             <ButtonGoToLocationFunctions />
         </View>
     );

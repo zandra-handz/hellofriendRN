@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
+
 import { useLocationList } from '../context/LocationListContext';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+ 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
@@ -17,8 +18,7 @@ import StylingRating from '../components/StylingRating';
 const ContentContentLocationView = () => {
   const { selectedLocation, loadingAdditionalDetails, useFetchAdditionalDetails} = useLocationList();
   const { calculatedThemeColors } = useSelectedFriend();
-  const [refreshing, setRefreshing] = useState(false);
-  const { themeStyles } = useGlobalStyle();
+  const [refreshing, setRefreshing] = useState(false); 
   const [isFetching, setIsFetching] = useState(false);
 
   
@@ -32,7 +32,7 @@ const ContentContentLocationView = () => {
 
  
   return (
-    <View style={styles.container}> 
+    <View> 
     {selectedLocation && selectedLocation.id && (
       <>
 
@@ -115,10 +115,7 @@ const ContentContentLocationView = () => {
 }; 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingVertical: 0,
-    paddingHorizontal: 0,
+  container: { 
   },
   headerContainer: {
     flexDirection: 'row',

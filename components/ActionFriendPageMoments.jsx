@@ -30,6 +30,8 @@ const ActionFriendPageMoments = ({
   topIconSize=30,
   bottomIconSize=30,
   oneBackgroundColor='black', //#2B2B2B 
+  animationPaused=true,
+  onAddMomentPress=() => {}
 
 
 }) => {
@@ -40,31 +42,12 @@ const ActionFriendPageMoments = ({
   const { friendColorTheme } = useSelectedFriend();
   const { capsuleList, capsuleCount } = useCapsuleList();
   const [showSecondButton, setShowSecondButton] = useState(false);
-  const [isAnimationPaused, setIsAnimationPaused ] = useState(false);
+  const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
+  
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
 
-  const navigateToAddMomentScreen = () => {
-    pauseAnimation();
-    console.log('go to moments');
-    navigation.navigate('MomentFocus');
-    if (onPress) onPress();
-  };
- 
-  const pauseAnimation = () => {
-    setIsAnimationPaused(true);
 
-  };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setIsAnimationPaused(false);
-    }, [])
-  );
-
-  useEffect(() =>{
-
-    console.log('is animation paused', isAnimationPaused);
-  }, [isAnimationPaused]);
+  
 
   const navigateToFirstPage = () => {
     setShowSecondButton(false); 
@@ -104,7 +87,8 @@ const ActionFriendPageMoments = ({
             lightColor={oneBackgroundColor}
             darkColor={oneBackgroundColor} 
             additionalPages={showSecondButton} 
-            pauseAnimation={isAnimationPaused}
+            pauseAnimation={animationPaused}
+            onPress={onAddMomentPress}
           /> 
       </View>
 
@@ -112,8 +96,8 @@ const ActionFriendPageMoments = ({
         showSecondButton={showSecondButton}
         handleNext={handleNext}
         navigateToFirstPage={navigateToFirstPage}
-        handleFullScreen={navigateToAddMomentScreen}
-        navigateToLocationScreen={navigateToAddMomentScreen}
+        handleFullScreen={onAddMomentPress}
+        navigateToLocationScreen={onAddMomentPress} //the active one
         height={calculatedButtonHeight}
         transparentBackground={true}
         borderRadius={buttonRadius}
