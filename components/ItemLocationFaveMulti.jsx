@@ -32,11 +32,7 @@ const ItemLocationFaveMulti = ({
         }
     }, [locationList, friendDashboardData]);
 
-    const openModal = (location) => {
-        setSelectedLocation(location);
-        console.log('setting location in ItemLocationFaveMulti'); 
-    };
-
+ 
 
 
   
@@ -55,8 +51,7 @@ const ItemLocationFaveMulti = ({
                    
                     {!horizontal && (
                     <ButtonLocation 
-                        location={location}    
-                        onPress={() => openModal(location)} 
+                        location={location}     
                         iconColor={calculatedThemeColors.darkColor}
                         color={themeStyles.genericText.color}
                         icon={LocationHeartSolidSvg} />

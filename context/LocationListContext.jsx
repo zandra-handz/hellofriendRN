@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext'; // Import the AuthUser context
-import { useUpcomingHelloes } from './UpcomingHelloesContext';
-import { fetchAllLocations, fetchLocationDetails, createLocation, updateLocation } from '../api'; // Import the API methods
+
+import { fetchAllLocations, fetchLocationDetails, createLocation, updateLocation, deleteLocation } from '../api'; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
@@ -22,9 +22,10 @@ export const LocationListProvider = ({ children }) => {
   const [isFave, setIsFave] = useState(false);
   const { authUserState } = useAuthUser(); 
   const queryClient = useQueryClient();
+  const [isDeletingLocation, setIsDeletingLocation ] = useState(false);
 
   
-  const { data: locationList, isLoading, isError } = useQuery({
+  const { data: locationList, isLoading, isFetching, isError } = useQuery({
     queryKey: ['locationList'],
     queryFn: () => fetchAllLocations(),
     enabled: !!authUserState.authenticated,
@@ -37,24 +38,33 @@ export const LocationListProvider = ({ children }) => {
     }
   });
 
+  //runs on mount only, sets selectedLocation to the first location in locationList by default
+  useEffect(() => {
+    if (selectedLocation) {
+      return;
+    }
+    //(NOT SURE IF TRU POST RQ!!) checking for if the loading state is false prevents this effect from setting selected location before the initial data load then goes on to
+    if (locationList && locationList.length > 0 && loadingSelectedLocation === false) {
+      setSelectedLocation(locationList[0]);
+      console.log('selected location set in context');
+    
+    }
+  }, []); //locationList, selectedLocation
+
 
   const createLocationMutation = useMutation({
     mutationFn: (data) => createLocation(data),
-    onSuccess: (data) => {
-        // Update the location list immutably, adding the new location at the front
-        queryClient.setQueryData(['locationList'], (old) => {
+    onSuccess: (data) => {queryClient.setQueryData(['locationList'], (old) => {
             const updatedList = old ? [data, ...old] : [data];
-            return updatedList; // Return the updated list
+            return updatedList; 
         });
-
-        // Log the actual locationList after mutation
+ 
         const actualLocationList = queryClient.getQueryData(['locationList']);
         console.log('Actual locationList after mutation:', actualLocationList);
     },
 });
 
-
-// Function to handle location creation
+ 
 const handleCreateLocation = async (friends, title, address, parkingTypeText, trimmedCustomTitle, personalExperience) => {
   const locationData = {
       friends: friends,
@@ -77,17 +87,56 @@ const handleCreateLocation = async (friends, title, address, parkingTypeText, tr
 };
 
 
-  useEffect(() => {
-    if (selectedLocation) {
-      return;
-    }
-    //checking for if the loading state is false prevents this effect from setting selected location before the initial data load then goes on to
-    if (locationList && locationList.length > 0 && loadingSelectedLocation === false) {
-      setSelectedLocation(locationList[0]);
-      console.log('selected location set in context');
+
+const RESET_DELAY = 1000; // Adjust as needed
+
+const deleteLocationMutation = useMutation({
+  mutationFn: (data) => deleteLocation(data),
+  onSuccess: (data) => {
+      // Update the cache by filtering out the deleted location
+      queryClient.setQueryData(['locationList'], (old) => {
+          const updatedList = old ? old.filter((location) => location.id !== data.id) : [];
+          return updatedList;
+      });
+      
+      // Invalidate the cache so the latest data is fetched
+      queryClient.invalidateQueries(['locationList']);
+      
+      console.log('Successfully deleted location:', data);
+  },
+  onError: (error) => {
+      console.error('Error deleting location:', error);
+  },
+  onSettled: () => {
+      // Delay resetting mutation state
+      setTimeout(() => {
+          deleteLocationMutation.reset();
+      }, RESET_DELAY);
+  },
+});
+
+
+const handleDeleteLocation = async (locationId) => {
+  setIsDeletingLocation(true);
+  const locationData = {
+      id: locationId,
+      user: authUserState.user.id,
+  };
+
+  console.log('Payload before sending:', locationData);
+
+  try {
     
-    }
-  }, []); //locationList, selectedLocation
+      await deleteLocationMutation.mutateAsync(locationId); // Call the mutation with the location data
+  } catch (error) {
+      console.error('Error saving location:', error);
+  }
+  setIsDeletingLocation(false);
+};
+
+
+
+
  
 
   //sets temp or fave when a location is selected
@@ -175,10 +224,16 @@ const populateFaveLocationsList = (locationIds) => {
   };
 
   return (
+
+    
     <LocationListContext.Provider value={{ 
       locationList, 
+      isFetching,
       handleCreateLocation,
       createLocationMutation,
+      handleDeleteLocation,
+      deleteLocationMutation,
+      isDeletingLocation,
       isLoading, 
       validatedLocationList, 
       faveLocationList, 

@@ -3,7 +3,7 @@
 //{selectedFriend ? selectedFriend.name : ''}
 //</Text>
 import React from 'react';
-import { View, Text,  StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text,  StyleSheet } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import LastHelloBanner from '../components/LastHelloBanner';
@@ -12,17 +12,14 @@ import ComposerFriendImages from '../components/ComposerFriendImages'; // Import
 import { useNavigation } from '@react-navigation/native';
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import ButtonPanelFriendFocus from '../components/ButtonPanelFriendFocus';
-import LoadingPage from '../components/LoadingPage';
+ import LoadingPage from '../components/LoadingPage';
 import { Dimensions } from 'react-native';
 import HelloFriendFooter from '../components/HelloFriendFooter'; 
-import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+ 
 import ButtonBaseSpecialFriendFocus from '../components/ButtonBaseSpecialFriendFocus';
-import ArrowLeftCircleOutline from '../assets/svgs/arrow-right-circle-outline.svg';
-
+ 
 import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
-import PushPinOutlineSvg from '../assets/svgs/push-pin-outline';
-import LocationHeartOutlineSvg from '../assets/svgs/location-heart-outline';
+ import LocationHeartOutlineSvg from '../assets/svgs/location-heart-outline';
 import PhotoSolidSvg from '../assets/svgs/photo-solid';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline';
 

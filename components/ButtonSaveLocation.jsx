@@ -29,7 +29,7 @@ import { useQueryClient } from '@tanstack/react-query';
 const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { authUserState } = useAuthUser();
     const { selectedFriend, calculatedThemeColors, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-    const { locationList, selectedLocation, isTemp, isFave, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+    const { locationList, handleDeleteLocation, deleteLocationMutation, selectedLocation, isTemp, isFave, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
     const [isATemp, setIsTemp ] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModal2Visible, setModal2Visible] = useState(false);
@@ -68,7 +68,9 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
     };
 
     const handleDelete = () => {
-        // Handle delete location
+        console.log(selectedLocation.id);
+        handleDeleteLocation(selectedLocation.id);
+        setMenuVisible(false);
     };
 
     const handleHelp = () => {

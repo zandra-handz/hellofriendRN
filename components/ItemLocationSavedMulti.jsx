@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import CardMicroLocation from '../components/CardMicroLocation';
 import { useLocationList } from '../context/LocationListContext'; 
+
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg'; 
@@ -19,11 +20,8 @@ const ItemLocationSavedMulti = ({
     const { themeStyles } = useGlobalStyle();
     const [selectedLocation, setSelectedLocation] = useState(null);
    
-    const openModal = (location) => {
-        setSelectedLocation(location);
-        console.log('setting location in ItemLocationSavedMulti'); 
-    };
- 
+   
+
 
     return (
         <View style={[styles.container, {height: '100%'}]}>
@@ -47,9 +45,7 @@ const ItemLocationSavedMulti = ({
                             />
                         ) : (
                             <ButtonLocation 
-                                location={location} 
-                                onPress={() => openModal(location)} 
-                                iconColor={themeStyles.genericText.color}
+                                location={location}  iconColor={themeStyles.genericText.color}
                                 color={themeStyles.genericText.color}
                                 icon={LocationSolidSvg} 
                             />

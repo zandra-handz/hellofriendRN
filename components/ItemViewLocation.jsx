@@ -17,7 +17,7 @@ const ItemViewLocation = ({ location, onClose, isModalVisible }) => {
         console.log('Received location:', location);
         if (location) {
             clearAdditionalDetails();
-            setSelectedLocation(location);
+            //setSelectedLocation(location);
             console.log('Setting selectedLocation to:', location);
         }
     }, [location]);

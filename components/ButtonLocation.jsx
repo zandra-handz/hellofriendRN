@@ -3,19 +3,30 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
 
+import { useLocationList } from '../context/LocationListContext'; 
+
+
 const ButtonLocation = ({ location, onPress, color = 'white',  iconColor = 'white', icon: Icon, iconSize = 34 }) => {
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation(); 
+  const { setSelectedLocation }= useLocationList();
+   
  
   
 
   const handleGoToLocationViewScreen = () => { 
     navigation.navigate('Location', { location: location });
+    //no need to pass in location if already selected in parent
+    //navigation.navigate('Location', { location: location });
     
   }; 
 
   const handlePress = async () => {
+    setSelectedLocation(location);
+    //This in press sets the location to the selectedLocation
+    if (onPress) { 
     await onPress();
+    };
     handleGoToLocationViewScreen();
 
 

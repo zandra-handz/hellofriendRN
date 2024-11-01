@@ -12,7 +12,7 @@ import ItemLocationSavedMulti from '../components/ItemLocationSavedMulti';
 import ItemLocationTempMulti from '../components/ItemLocationTempMulti';
 import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
 import CustomTabBar from '../components/CustomTabBar';
-
+import LoadingPage from '../components/LoadingPage';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useLocationList } from '../context/LocationListContext';
@@ -22,10 +22,9 @@ const Tab = createBottomTabNavigator();
 
 const ScreenLocations = ({ route, navigation }) => {
   const { themeStyles } = useGlobalStyle();
-  const { locationList } = useLocationList();
+  const { isFetching } = useLocationList();
   const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
-  const [isLocationListReady, setIsLocationListReady] = useState(false);
-
+  
   const showBottomButtons = false;
 
   const RecentlyViewedScreen = () => (
@@ -50,15 +49,17 @@ const ScreenLocations = ({ route, navigation }) => {
     navigation.navigate('LocationSearch');
   };
 
-  useEffect(() => {
-    if (locationList.length > 0) {
-      setIsLocationListReady(true);
-    }
-  }, [locationList]);
+  const iconMapping = {
+    [selectedFriend.name]: 'star',
+    Others: 'location',
+    Recent: 'time',
+  };
+  
+ 
 
   return (
-    <View style={[styles.container]}>
-      {isLocationListReady && (
+    <View style={[styles.container, themeStyles.genericTextBackground]}>
+      {!isFetching && (
         <>
           <Tab.Navigator
           tabBar={props => <CustomTabBar {...props} />}
@@ -71,26 +72,20 @@ const ScreenLocations = ({ route, navigation }) => {
               elevation: 0,
               shadowOpacity: 0,
               borderTopWidth: 0, 
-            },
+            }, 
             tabBarActiveTintColor: calculatedThemeColors.fontColor,
             tabBarInactiveTintColor: calculatedThemeColors.fontColor,
             tabBarIcon: ({ color }) => {
-              let iconName;
-              if (route.name === `${selectedFriend.name}`) {
-                iconName = 'star';
-              } else if (route.name === 'Others') {
-                iconName = 'location';
-              } else if (route.name === 'Recent') {
-                iconName = 'time';
-              }
+              const iconName = iconMapping[route.name]; // Get the icon name from the mapping
               return <Ionicons name={iconName} size={18} color={calculatedThemeColors.fontColor} />;
             },
           })}
         >
-            <Tab.Screen name={`${selectedFriend.name}`} component={FavoritesScreen} />
-            <Tab.Screen name="Others" component={SavedLocationsScreen} />
-            <Tab.Screen name="Recent" component={RecentlyViewedScreen} />
-          </Tab.Navigator>
+          <Tab.Screen name={selectedFriend.name} component={FavoritesScreen} />
+          
+          <Tab.Screen name="Others" component={SavedLocationsScreen} />
+          <Tab.Screen name="Recent" component={RecentlyViewedScreen} />
+        </Tab.Navigator>
 
           <ButtonGoToFindLocation />
           {showBottomButtons && ( 
@@ -101,6 +96,18 @@ const ScreenLocations = ({ route, navigation }) => {
           )}
         </>
       )}
+        
+      {isFetching && (
+        <View style={styles.loadingWrapper}>
+        <LoadingPage
+            loading={isFetching} 
+            spinnnerType='wander'
+            includeLabel={true}
+            label=""
+        />
+        </View>
+        )}
+    
     </View>
   );
 };
@@ -110,6 +117,11 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     justifyContent: 'space-between',
+  },
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   sectionContainer: {
     paddingTop: 24,

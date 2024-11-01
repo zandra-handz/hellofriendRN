@@ -14,16 +14,14 @@ import DisplayLocationNotes from '../components/DisplayLocationNotes';
 
 import StylingRating from '../components/StylingRating';
 
-const ContentContentLocationView = ({ location = {}, unSaved }) => {
+const ContentContentLocationView = () => {
   const { selectedLocation, loadingAdditionalDetails, useFetchAdditionalDetails} = useLocationList();
   const { calculatedThemeColors } = useSelectedFriend();
   const [refreshing, setRefreshing] = useState(false);
   const { themeStyles } = useGlobalStyle();
   const [isFetching, setIsFetching] = useState(false);
 
-  useEffect(() => {
-    console.log('location passed in to location details: ', location);
-  }, [location]);
+  
 
   const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(selectedLocation, isFetching);
 
@@ -35,6 +33,10 @@ const ContentContentLocationView = ({ location = {}, unSaved }) => {
  
   return (
     <View style={styles.container}> 
+    {selectedLocation && selectedLocation.id && (
+      <>
+
+ 
         <View style={styles.infoContainer}>
           
           <View style={styles.detailsColumn}> 
@@ -106,6 +108,8 @@ const ContentContentLocationView = ({ location = {}, unSaved }) => {
           <Text style={styles.noDataText}>No additional details available.</Text>
         </View>
       )}
+      </>
+    )}
     </View>
   );
 }; 

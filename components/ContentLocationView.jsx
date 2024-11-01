@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { useLocationList } from '../context/LocationListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ContentContentLocationView from '../components/ContentContentLocationView';
-
+ 
 
 const ContentLocationView = ({ location }) => {
     const { themeStyles } = useGlobalStyle();
-    const { clearAdditionalDetails, selectedLocation, setSelectedLocation } = useLocationList();
-    
+    const { clearAdditionalDetails, deleteLocationMutation, isDeletingLocation, selectedLocation, setSelectedLocation } = useLocationList();
+    const navigation = useNavigation();
     const [isTemp, setIsTemp] = useState(false);
 
     useEffect(() => {
         console.log('Received location:', location);
-        if (location) {
+        if (location == true) {
             clearAdditionalDetails();
             setSelectedLocation(location);
             console.log('Setting selectedLocation to:', location);
@@ -26,16 +27,29 @@ const ContentLocationView = ({ location }) => {
             setIsTemp(String(location.id).startsWith('temp'));
         }
     }, [location]); 
+
+    const navigateToLocationsScreen = () => {
+        navigation.navigate('Locations'); 
+      };
+
+    useEffect(() => {
+        if (deleteLocationMutation.isSuccess) {
+            navigateToLocationsScreen();
+        }
+
+    }, [deleteLocationMutation.isSuccess]);
  
  
 
     return (
         <>  
         {location ? (
-                <View style={[styles.modalContainer, themeStyles.genericTextBackground]}> 
-                    <ContentContentLocationView location={location} unSaved={isTemp} />
-                    <View style={styles.buttonContainer}> 
-                    </View>
+                <View style={[styles.container, themeStyles.genericTextBackground]}> 
+                      
+
+                    <ContentContentLocationView  /> 
+                    
+               
                 </View>
             ) : null
         } 
@@ -45,9 +59,14 @@ const ContentLocationView = ({ location }) => {
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  container: {
     flex: 1,  
     width: '100%', 
+  },
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonContainer: {
     height: '16%',  
