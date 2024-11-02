@@ -8,7 +8,7 @@ import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import PickerBinary from '../components/PickerBinary';
 import InputSingleValue from '../components/InputSingleValue';
-import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
+import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
  
 import CameraCuteSvg from '../assets/svgs/camera-cute.svg';
 import UploadCurlySvg from '../assets/svgs/upload-curly.svg'; 
@@ -214,7 +214,7 @@ const handleSave = async () => {
 <       View style={{width: '100%', flex: 1, flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '28%'}}> 
  
         <View style={[styles.selectFriendContainer, {marginBottom: '2%'}]}> 
-          <FriendSelectModalVersion width='100%' />
+          <FriendSelectModalVersionButtonOnly includeLabel={true} width='100%' />
         </View>
     
   
@@ -330,10 +330,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
-  selectFriendContainer: { 
-    justifyContent: 'center', 
-    width: '100%',
-    height: 'auto',
+  selectFriendContainer: {   
+    width: '100%',   
+    justifyContent: 'center',
+    minHeight: 30, 
+    maxHeight: 30,
+    height: 30,
   },
   buttonContainer: { 
     width: '104%', 

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet,  TouchableOpacity } from 'react-native';
-
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import AlertList from '../components/AlertList'; 
 import { FlashList } from '@shopify/flash-list';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -9,19 +8,16 @@ import ProfileTwoUsersSvg from '../assets/svgs/profile-two-users.svg';
 import LoadingPage from '../components/LoadingPage'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import ButtonSelectFriend from '../components/ButtonSelectFriend';
-import ButtonToggleSize from '../components/ButtonToggleSize';
 
 import { Dimensions } from 'react-native';
 
-const FriendSelectModalVersionButtonOnly = ({ includeLabel=false, iconSize=35, width = '60%' }) => {  
-  const { themeStyles, gradientColors } = useGlobalStyle();
+const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, iconSize=26, width = '60%' }) => {  
+  const { themeStyles } = useGlobalStyle();
   const globalStyles = useGlobalStyle();  
-  const { selectedFriend, setFriend, calculatedThemeColors, friendColorTheme, loadingNewFriend } = useSelectedFriend();
-  const { friendList, getThemeAheadOfLoading } = useFriendList();
+  const { selectedFriend, friendLoaded, setFriend, calculatedThemeColors, friendColorTheme, loadingNewFriend } = useSelectedFriend();
+  const { friendList, themeAheadOfLoading, getThemeAheadOfLoading } = useFriendList();
   const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] = useState(false);
-  const [forceUpdate, setForceUpdate] = useState(false);  
-  const [displayName, setDisplayName] = useState(null); 
-  const [refreshButtonColor, setRefreshButtonColor ] = useState('white');
+  //const [forceUpdate, setForceUpdate] = useState(false);  
 
   const adjustFontSize = (fontSize) => {
     return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
@@ -39,45 +35,36 @@ const FriendSelectModalVersionButtonOnly = ({ includeLabel=false, iconSize=35, w
 
  
 
-
+//kind of aggressive that it tries to refocus every time it toggles whether open or closed
+// but android is being a butt about opening the keyboard
   const toggleModal = () => {
+    if (addToPress) {
+      addToPress(); // Call it without any arguments if not needed
+    }
     setIsFriendMenuModalVisible(!isFriendMenuModalVisible);
   };
-
-  useEffect(() => {
-    if (loadingNewFriend) {
-      setDisplayName('Loading friend...');
-      
-      setRefreshButtonColor('white');
-    } else {
-      if (selectedFriend && selectedFriend.name) {
-        setDisplayName(selectedFriend.name);
-        
-        setRefreshButtonColor('white');
-      } else {
-        setDisplayName('Select friend');
-        setRefreshButtonColor('black');
-      }
-    }
-  }, [selectedFriend, loadingNewFriend]);
 
   const handleSelectFriend = (itemId) => { 
     const selectedOption = friendList.find(friend => friend.id === itemId);
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
-    getThemeAheadOfLoading(selectedFriend);
-    console.log("Friend selected: ", selectedFriend);
-    setForceUpdate(prevState => !prevState);  
-    toggleModal();
+    getThemeAheadOfLoading(selectedFriend); 
+    if (addToPress && selectedFriend) {
+      addToPress(); // Call it without any arguments if not needed
+    }
+    //setForceUpdate(prevState => !prevState);  
+    toggleModal(); 
+  
   };
+ 
 
   const handleSelectFriendSearch = (item) => { 
     const selectedOption = friendList.find(friend => friend === item);
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
-    getThemeAheadOfLoading(selectedFriend);
-    console.log("Friend selected: ", selectedFriend);
-    setForceUpdate(prevState => !prevState);  
+    getThemeAheadOfLoading(selectedFriend); 
+    //setForceUpdate(prevState => !prevState);  
+
     toggleModal();
   };
 
@@ -93,8 +80,9 @@ const FriendSelectModalVersionButtonOnly = ({ includeLabel=false, iconSize=35, w
           <View style={styles.loadingWrapper}>
           <LoadingPage
             loading={loadingNewFriend} 
-            spinnnerType='wander'
-            spinnerSize={30}
+            spinnerType='flow'
+            spinnerSize={60}
+            color={friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50'}
             includeLabel={false} 
           />
           </View>
@@ -105,26 +93,30 @@ const FriendSelectModalVersionButtonOnly = ({ includeLabel=false, iconSize=35, w
           numberOfLines={1}  
           ellipsizeMode='tail'  
         >
-          {displayName}
+          {friendLoaded && selectedFriend?.name || 'Select friend'}
         </Text>
         )}
 
         </View>
-        <View style={styles.selectorButtonContainer}>
-          <ButtonToggleSize
-            title={''}
+        <View style={[styles.selectorButtonContainer, {paddingHorizontal: '2%'}]}>
+          <TouchableOpacity
             onPress={toggleModal}
-            iconName="user" 
-            useSvg={true}
-            Svg={ProfileTwoUsersSvg}
-            backgroundColor={'transparent'}
-            color={calculatedThemeColors.fontColor}
-            style={{
-              width: 'auto',  
-              height: iconSize,  
-              borderRadius: 20, 
-            }}
-          />
+            accessible={true}
+            accessibilityRole='button'
+            accessibilityLabel='Friend selector button'
+            >
+              <View style={{ paddingHorizontal: '1%'}}>
+                <ProfileTwoUsersSvg 
+                  height={iconSize} 
+                  width={iconSize} 
+                  color={loadingNewFriend? 'transparent' : calculatedThemeColors.fontColorSecondary}
+                  />
+            
+
+              </View>
+
+          </TouchableOpacity>
+ 
         </View> 
       </View>
 
@@ -171,21 +163,19 @@ const FriendSelectModalVersionButtonOnly = ({ includeLabel=false, iconSize=35, w
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', 
-    height: 40,
+    height: 'auto',
+    maxHeight: 40,
     justifyContent: 'flex-end',
     alignItems: 'center', 
     padding: 2,
 
     borderRadius: 0, 
   },
-  loadingWrapper: {
-    flex: 1,
-    paddingRight: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+  loadingWrapper: {  
+    paddingRight: '14%',
   },
   displaySelectedContainer: {
-    alignItems: 'flex-end',
+    alignItems: 'flex-end', 
     width: '100%',   
     flex: 1,
   },

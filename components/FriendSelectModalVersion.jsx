@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet,  TouchableOpacity } from 'react-native'; 
 import AlertList from '../components/AlertList'; 
 import { FlashList } from '@shopify/flash-list';
@@ -11,21 +11,17 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonSelectFriend from '../components/ButtonSelectFriend';
 import ButtonToggleSize from '../components/ButtonToggleSize';
 
-//     <LinearGradient
-//colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
-
 
 import { Dimensions } from 'react-native';
 
-const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, width = '60%' }) => {  
+const FriendSelectModalVersion = ({ includeLabel=true, iconSize=35 }) => {  
   const { themeStyles } = useGlobalStyle(); 
   const globalStyles = useGlobalStyle();  
   const { selectedFriend, setFriend, calculatedThemeColors, friendColorTheme, loadingNewFriend } = useSelectedFriend();
   const { friendList, getThemeAheadOfLoading, themeAheadOfLoading } = useFriendList();
   const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);  
-  const [displayName, setDisplayName] = useState(selectedFriend?.name || 'Select friend');
-
+ 
   const adjustFontSize = (fontSize) => {
     return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
   };
@@ -52,10 +48,8 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
     const selectedOption = friendList.find(friend => friend.id === itemId);
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
-    getThemeAheadOfLoading(selectedFriend);
-    console.log("Friend selected: ", selectedFriend);
-    setForceUpdate(prevState => !prevState);  
-    setDisplayName(selectedFriend.name);
+    getThemeAheadOfLoading(selectedFriend); 
+    setForceUpdate(prevState => !prevState);   
     toggleModal();
   };
 
@@ -63,8 +57,7 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
     const selectedOption = friendList.find(friend => friend === item);
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
-    getThemeAheadOfLoading(selectedFriend);
-    console.log("Friend selected: ", selectedFriend);
+    getThemeAheadOfLoading(selectedFriend); 
     setForceUpdate(prevState => !prevState);  
     toggleModal();
   };
@@ -98,7 +91,7 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
           numberOfLines={1}  
           ellipsizeMode='tail'  
         >
-          {displayName}
+          {selectedFriend?.name || 'Select friend'}
         </Text>
         )}
 
@@ -116,7 +109,7 @@ const FriendSelectModalVersion = ({ includeLabel=true, includeBackground=true, w
             color={loadingNewFriend? 'transparent' : calculatedThemeColors.fontColorSecondary}
             style={{
               width: 'auto',  
-              height: 35,  
+              height: iconSize,  
               borderRadius: 20, 
             }}
           /> 

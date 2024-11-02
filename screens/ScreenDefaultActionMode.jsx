@@ -22,7 +22,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
   const darkColor = '#000002'; // '#4caf50';
   const lightColor ='#163805'; //'rgb(160, 241, 67)';
   const { authUserState } = useAuthUser();
-  const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+  const { selectedFriend, friendLoaded, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
   const { isLoading } = useUpcomingHelloes(); 
   
 
@@ -58,7 +58,7 @@ const ScreenDefaultActionMode = ({ navigation }) => {
   
 
   useEffect(() => {
-    if (selectedFriend && !loadingNewFriend) {
+    if (selectedFriend && friendLoaded && !loadingNewFriend) {
       setBorderColor(calculatedThemeColors.lightColor);
       setBackgroundColor(calculatedThemeColors.darkColor);
     } else { 
@@ -116,15 +116,15 @@ const ScreenDefaultActionMode = ({ navigation }) => {
                 <ButtonBaseSpecialLarge label={'ADD IMAGE'}  onPress={navigateToAddImageScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} height={buttonHeight}/>  
                 <ButtonBaseSpecialLarge label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
                 
-                {selectedFriend && showLastButton && (
+                {selectedFriend && friendLoaded && showLastButton && (
                   <ButtonBaseSpecialLarge label={'ADD LOCATION'}   onPress={navigateToAddLocationScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
                 
                 )}
-                {!selectedFriend && showLastButton && ( 
+                {(!selectedFriend || !friendLoaded) && showLastButton && ( 
                   <ButtonBaseSpecialLarge label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
                 )} 
                                 
-                                {!selectedFriend && (
+                {!selectedFriend && (
                   
                   <ButtonBaseSpecialThreeTextAnim  onPress={navigateToAddMomentScreen}   borderRadius={mainButtonRadius} height={headerHeight} borderColor={mainButtonBorderColor} maxHeight={200}/>
                 )}

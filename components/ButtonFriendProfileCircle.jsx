@@ -9,20 +9,17 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import LoadingPage from '../components/LoadingPage';
 
 const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
-  const { selectedFriend, friendColorTheme, friendDashboardData, setFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, friendLoaded, friendColorTheme, friendDashboardData, setFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const [profileIconColor, setProfileIconColor] = useState();
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (selectedFriend && calculatedThemeColors.lightColor !== themeStyles.genericTextBackground.backgroundColor) {
-
+    if (selectedFriend && friendLoaded && calculatedThemeColors.lightColor !== themeStyles.genericTextBackground.backgroundColor) {
     setProfileIconColor([friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)'] );
      
-    } else {
-      console.log(themeStyles.genericTextBackground.backgroundColor);
-      console.log(calculatedThemeColors.lightColor);
+    } else { 
       setProfileIconColor([themeStyles.genericText.color, themeStyles.genericText.color]);
     }
     renderProfileIcon();
@@ -57,7 +54,7 @@ const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
             <ProfileCircleSvg width={32} height={32} startColor={profileIconColor[0]} endColor={profileIconColor[0]} />
             
             <View style={{
-              backgroundColor: profileIconColor[1],  // Circle color
+              backgroundColor: friendLoaded && selectedFriend ? profileIconColor[1] : 'transparent',  // Circle color
               borderRadius: 16,  // Half of width/height to make it circular
               width: 32,  // Circle diameter
               height: 32,
@@ -66,7 +63,7 @@ const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
               marginLeft: 4,  // Adjust spacing between circle and ProfileCircleSvg if needed
           }}>
               <Text style={[styles.friendText, { color: friendColorTheme?.useFriendColorTheme ? calculatedThemeColors.fontColorSecondary : '#4caf50' }]}>
-                  {selectedFriend && selectedFriend.name.charAt(0)}
+                  {selectedFriend && friendLoaded && selectedFriend.name.charAt(0)}
               </Text>
           </View>
           </View>

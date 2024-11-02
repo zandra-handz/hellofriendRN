@@ -18,11 +18,7 @@ const ButtonBaseSpecialThreeTextAnim = ({
         borderRadius=20,
         borderColor='transparent',
         darkColor = '#4caf50',
-        lightColor = 'rgb(160, 241, 67)',
-        imageSize=540,
-        image=require("../assets/shapes/fairymagic.png"), 
-        imagePositionHorizontal=0, 
-        imagePositionVertical=70,
+        lightColor = 'rgb(160, 241, 67)', 
         animSize=100,
         anim=require("../assets/anims/arrows.json"),
         animPositionHorizontal=150, 
@@ -34,7 +30,7 @@ const ButtonBaseSpecialThreeTextAnim = ({
     const { friendList, getThemeAheadOfLoading } = useFriendList();
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle();
-    const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend();
+    const { setFriend, loadingNewFriend } = useSelectedFriend();
     const hideAnimation = true;
 
 

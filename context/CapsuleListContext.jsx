@@ -144,6 +144,7 @@ const updateCapsules = (capsuleIdsToUpdate, updatedCapsules) => {
     setCategoryCount(uniqueCategories.length);
     setCategoryNames(uniqueCategories); // Assuming you have a state for category names
     setSortedByCategory(sorted);
+    console.log('moments sorted by category: ', sorted);
 
     // Calculate category start indices
     const startIndices = {};

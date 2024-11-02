@@ -9,7 +9,7 @@ import ButtonFriendProfileCircle from '../components/ButtonFriendProfileCircle';
  
 const HellofriendHeader = () => { 
   const { themeStyles, setNonCustomHeaderPage } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, friendLoaded } = useSelectedFriend();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -30,7 +30,7 @@ const HellofriendHeader = () => {
       </View>
   
       <View style={styles.middleSection}>
-        {selectedFriend && (
+        {selectedFriend && friendLoaded && (
           <View style={{height: 44, width: 90, overflow: 'hidden', flexDirection: 'column', paddingBottom: 10, justifyContent: 'flex-end'}}>
                 <View style={{transform: [{ rotate: '240deg' }] }}>
       
@@ -41,7 +41,7 @@ const HellofriendHeader = () => {
           
 
         )}
-       {!selectedFriend && ( 
+       {(!selectedFriend || !friendLoaded) && ( 
 
         <Text style={[styles.logoText, themeStyles.headerText]}>HF</Text>
        

@@ -25,7 +25,7 @@ const PickerMultiMoments = ({
   const [selectionPercentage, setSelectionPercentage] = useState(0); // State for selection percentage
 
   const [isMomentSelectModalVisible, setIsMomentSelectModalVisible] = useState(false);
-  const { selectedFriend, friendDashboardData, calculatedThemeColors } = useSelectedFriend();
+  const { selectedFriend, loadingNewFriend, friendDashboardData, calculatedThemeColors } = useSelectedFriend();
   const { capsuleList, preAddedTracker, updatePreAddedTracker } = useCapsuleList();
 
 
@@ -113,6 +113,14 @@ const PickerMultiMoments = ({
       onMomentSelect(selectedMoments);
     }
   }, [selectedMoments]);
+
+  useEffect(() => {
+    if (loadingNewFriend) {
+      setSelectedMoments([]);
+
+    };
+
+  }, [loadingNewFriend]);
 
   const visibleCategories = showAllCategories ? categories : categories.slice(0, 5);
 

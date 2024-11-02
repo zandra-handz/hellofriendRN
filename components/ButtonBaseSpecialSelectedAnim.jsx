@@ -36,7 +36,8 @@ const ButtonBaseSpecialSelectedAnim = ({
     const navigation = useNavigation();
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle();
-    const { selectedFriend, friendDashboardData, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+    //friendLoaded = dashboard data retrieved successfully
+    const { selectedFriend, friendLoaded, friendDashboardData, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
  
     const lastPress = useRef(0);
     const pressTimeout = useRef(null); 
@@ -112,7 +113,7 @@ const ButtonBaseSpecialSelectedAnim = ({
                 ...StyleSheet.absoluteFillObject,
               }}
             />
-            {loadingNewFriend && (
+            {loadingNewFriend && !friendLoaded && (
                 <View style={styles.loadingWrapper}>
                 <LoadingPage
                     loading={loadingNewFriend} 
@@ -121,7 +122,7 @@ const ButtonBaseSpecialSelectedAnim = ({
                 </View>
             )}
     
-            {!loadingNewFriend && (
+            {!loadingNewFriend && friendLoaded && (
                 <TouchableOpacity onPress={onPress} style={{height: '100%', width: '100%'}}>
                     {anim && showAnim && ( 
                     <LottieView
@@ -148,7 +149,7 @@ const ButtonBaseSpecialSelectedAnim = ({
                                 { fontFamily: 'Poppins-Regular' },
                             ]}
                             >
-                            {selectedFriend? selectedFriend.name : 'None'}
+                            {selectedFriend && friendDashboardData? selectedFriend.name : 'None'}
                         </Text>
     
                         <Text style={styles.subtitleText}>

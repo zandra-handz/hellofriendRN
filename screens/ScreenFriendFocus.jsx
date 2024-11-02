@@ -10,6 +10,7 @@ import LastHelloBanner from '../components/LastHelloBanner';
 import ActionFriendPageMoments from '../components/ActionFriendPageMoments'; // Import the new component
 import ComposerFriendImages from '../components/ComposerFriendImages'; // Import the new component
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
  import LoadingPage from '../components/LoadingPage';
@@ -27,7 +28,7 @@ import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline';
 const ScreenFriendFocus = () => {
   const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
-  const { themeStyles, gradientColors } = useGlobalStyle(); 
+  const { themeStyles } = useGlobalStyle(); 
 
   useFocusEffect(
     React.useCallback(() => {

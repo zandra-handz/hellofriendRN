@@ -1,19 +1,21 @@
-import React, { useState, useRef } from 'react';
+// removed the onPress for right now <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
-import { BlurView } from 'expo-blur';
+
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { saveThoughtCapsule } from '../api'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
-import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
+import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 import LoadingPage from '../components/LoadingPage';
-import ArrowRightCircleOutline from '../assets/svgs/arrow-right-circle-outline.svg';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 
 
@@ -40,7 +42,58 @@ const ContentMomentFocus = ({ placeholderText }) => {
   const [isSuccess, setIsSuccess] = useState(true);  
   const delayForResultsMessage = 1000;
 
- 
+  const [categoriesHeight, setCategoriesHeight] = useState(70); // Default height
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+ // useEffect(() => {
+  //  const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+  //    setIsKeyboardVisible(true);
+  //    setCategoriesHeight(70); // Adjust this value as needed when keyboard is visible
+  //  });
+
+   // const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+   //   setIsKeyboardVisible(false);
+   //   setCategoriesHeight('50%'); // Reset height when keyboard is hidden
+   // });
+
+    // Cleanup listeners on unmount
+  //  return () => {
+  //    keyboardDidShowListener.remove();
+  //    keyboardDidHideListener.remove();
+  //  };
+ // }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, [loadingNewFriend])
+  );
+
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, []); 
+
+  const openKeyboard = () => { 
+    console.log('RUNNNNNNNNNNNNNNNNNNING');
+    if (textareaRef.current) {
+      console.log('AAHHHHH');
+      textareaRef.current.focus();
+    }
+  }; 
+
+  const toggleCategoriesSlider = () => {
+    setShowCategoriesSlider(!showCategoriesSlider);
+    if (!showCategoriesSlider) {
+   Keyboard.dismiss();
+   } else {
+      openKeyboard();
+    }
+  }
  
   const handleCategorySelect = (category) => {
     setSelectedCategory(category); 
@@ -48,13 +101,11 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
   const resetTextInput = () => {
     setTextInput(''); 
-    setSelectedCategory('');
-    setShowCategories(false);
+    setSelectedCategory(''); 
   };
   
 
-  const toggleCategoryView = () => {
-    setShowCategories(prev => !prev);
+  const toggleCategoryView = () => { 
     console.log(showCategories);
 
   };
@@ -131,8 +182,9 @@ const ContentMomentFocus = ({ placeholderText }) => {
       <>
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 30}  
+       
       >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
       
@@ -142,74 +194,40 @@ const ContentMomentFocus = ({ placeholderText }) => {
         end={{ x: 1, y: 0 }}  
         style={[styles.container]} 
       >  
-        <BlurView 
-          intensity={0} 
+        <View 
           
 
           style={styles.blurView}> 
           <View style={styles.selectFriendContainer}>
-            <FriendSelectModalVersion width='100%' />
+            <FriendSelectModalVersionButtonOnly addToPress={openKeyboard} includeLabel={true} width='100%' />
           </View>
-          {showCategories && (
-            <>
-            <View style={styles.displayTextContainer}>
-              <Text
-                style={[styles.displayText, { borderColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor, color: calculatedThemeColors.fontColor }]}
-                numberOfLines={4} // Set this to the number of lines you want to allow
-                ellipsizeMode="tail" // This will add ellipses at the end if text is too long
-              >
-                
-                {textInput} 
-              </Text>
-            </View>
-        <TouchableOpacity
-          onPress={toggleCategoryView}
-          style={[styles.backButton, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'transparent' }]}
-        >
-          <View style={{flexDirection: 'row', alignItems: 'center', alignContent: 'center'}}>
-          <ArrowLeftCircleOutline height={34} width={34} color={calculatedThemeColors.fontColor} />
+           
 
-          <Text style={[styles.closeButtonText, { paddingLeft: 10, color: calculatedThemeColors.fontColor }]}>
-            Edit moment
-          </Text>
-          </View>
-          <Text
-          style={[styles.closeButtonText, { borderColor: 'transparent', color: calculatedThemeColors.fontColor }]}
-          numberOfLines={1} // Set this to the number of lines you want to allow
-          ellipsizeMode="tail" // This will add ellipses at the end if text is too long
-        >
-          
-          ({textInput.length}/10000) 
-        </Text>
-          
-        </TouchableOpacity>
-        </>
-         )}
-          {!showCategories && ( 
+ 
             <>  
           <TextInput
-            style={[styles.modalTextInput, themeStyles.genericText, { backgroundColor: themeStyles.genericTextBackground.backgroundColor, borderColor: loadingNewFriend? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor
+            style={[styles.modalTextInput, themeStyles.genericText, { backgroundColor: themeStyles.genericTextBackground.backgroundColor, borderColor: loadingNewFriend? 'transparent' : calculatedThemeColors.darkColor
               
              }]}
             multiline={true}
             value={textInput}
+            onFocus={() => setShowCategoriesSlider(false)}
             onChangeText={setTextInput} // Directly update textInput using setTextInput
             placeholder={placeholderText}
-            autoFocus={true}
+            //autoFocus={true}
             ref={textareaRef}
           />
           
-          <TouchableOpacity onPress={() => setShowCategoriesSlider(!showCategoriesSlider)} style={{position: 'absolute', zIndex: 2, bottom: 40, right: 30}}>
+          <TouchableOpacity onPress={toggleCategoriesSlider} style={{position: 'absolute', zIndex: 2, bottom: 30, right: 30}}>
             <Text style={{color: '#ccc'}}>
               CATEGORIES
             </Text>
 
           </TouchableOpacity>
-          </>
-      )} 
-        </BlurView>
+          </> 
+        </View>
         {textInput && showCategoriesSlider && selectedFriend && (
-        <View style={styles.buttonContainer}>   
+        <View style={[styles.buttonContainer, {height: categoriesHeight}]}>   
         <CardCategoriesAsButtons onCategorySelect={handleCategorySelect} momentTextForDisplay={textInput} onParentSave={handleSave}/> 
  
       </View>
@@ -294,7 +312,7 @@ const styles = StyleSheet.create({
 
   },
   buttonContainer: {
-    height: 70, 
+    height: '10%', 
     
     marginBottom: 0,
     width: '100%', 

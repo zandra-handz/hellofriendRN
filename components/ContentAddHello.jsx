@@ -5,14 +5,16 @@ import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
 import { LinearGradient } from 'expo-linear-gradient';
 
  
-import FriendSelectModalVersion from '../components/FriendSelectModalVersion';
+import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useFriendList } from '../context/FriendListContext'; 
 import { useNavigation } from '@react-navigation/native';
- 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { saveHello } from '../api';
 
 import PickerMultiMoments from '../components/PickerMultiMoments';
@@ -29,6 +31,7 @@ import LoadingPage from '../components/LoadingPage';
 const ContentAddHello = () => {
 
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
  
 
   const { authUserState } = useAuthUser(); 
@@ -53,12 +56,48 @@ const ContentAddHello = () => {
   const [ saveInProgress, setSaveInProgress ] = useState(false);
   
   const [ resultMessage, setResultMessage ] = useState(null);
-  const [ gettingResultMessage, setGettingResultMessage ] = useState(null);
-  
-  const delayForResultsMessage = 2000;
+ 
+
    
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
    
+
+  
+  const createHelloMutation = useMutation({
+    mutationFn: (data) => saveHello(data),
+    onSuccess: (data) => {queryClient.setQueryData(['pastHelloes'], (old) => {
+            const updatedHelloes = old ? [data, ...old] : [data];
+            return updatedHelloes; 
+        });
+ 
+        const actualHelloesList = queryClient.getQueryData(['pastHelloes']);
+        console.log('Actual HelloesList after mutation:', actualHelloesList);
+    }, 
+});
+
+ 
+const handleCreateHello = async (helloData) => {
+  const hello = {
+    user: authUserState.user.id,
+    friend: helloData.friend, 
+    type: helloData.type,
+    typed_location: helloData.manualLocation,
+    additional_notes: helloData.notes,
+    location: helloData.locationId,
+    date: helloData.date,
+    thought_capsules_shared: helloData.momentsShared,
+    delete_all_unshared_capsules: deleteMoments ? true : false,
+  };
+
+  console.log('Payload before sending:', hello);
+
+  try {
+    
+    await createHelloMutation.mutateAsync(hello); // Call the mutation with the location data
+  } catch (error) {
+      console.error('Error saving hello:', error);
+  }
+};
 
  
 
@@ -70,15 +109,7 @@ const ContentAddHello = () => {
     navigation.navigate('hellofriend');
 
 };
-
-useEffect(() => {
-  if (!selectedFriend && updateTrigger) {
-    setUpdateTrigger((prev) => !prev);  
-    navigation.navigate('hellofriend'); 
-
-  };
-
-}, [selectedFriend, updateTrigger]);
+ 
 
 const handleNotesInputChange = (text) => {
   setAdditionalNotes(text);
@@ -109,7 +140,7 @@ const resetAdditionalNotes = () => {
   const toggleLocationModal = () => {
   
     setLocationModalVisible(!locationModalVisible);
-    console.log('location modal toggled');
+    
   };
 
   const handleLocationChange = (item) => {
@@ -126,7 +157,7 @@ const resetAdditionalNotes = () => {
         setSelectedHelloLocation('None');
       }
     }
-  };
+  }; 
 
   const handleMomentSelect = (selectedMoments) => {
     setMomentsSelected(selectedMoments);
@@ -143,9 +174,7 @@ const resetAdditionalNotes = () => {
     console.log(dateWithoutTime); 
 };
   
-  const handleSave = async () => {
-    setSaveInProgress(true); 
-    setGettingResultMessage(true);
+  const handleSave = async () => {  
 
     try {
       if (selectedFriend) {
@@ -157,54 +186,76 @@ const resetAdditionalNotes = () => {
             capsule: moment.capsule,
           };
         });
-        const requestData = {
-          user: authUserState.user.id,
+        const requestData = { 
           friend: selectedFriend.id, 
           type: selectedTypeChoiceText,
-          typed_location: customLocation,
-          additional_notes: additionalNotes,
-          location: existingLocationId,
+          manualLocation: customLocation,
+          notes: additionalNotes,
+          locationId: existingLocationId,
           date: formattedDate,
-          thought_capsules_shared: momentsDictionary,
-          delete_all_unshared_capsules: deleteMoments ? true : false,
+          momentsShared: momentsDictionary,
+          deleteMoments: deleteMoments ? true : false,
+        
         };
         
-        await saveHello(requestData); 
-
-        setResultMessage('Hello saved!');
-        setGettingResultMessage(true); 
-        
-         
-
-        let timeout; 
-        timeout = setTimeout(() => {
-          setGettingResultMessage(false); 
-          setUpdateTrigger((prev) => !prev);  
-          setFriend(null);
-          
-        }, delayForResultsMessage);  
- 
-
-        
-        return () => clearTimeout(timeout);
-
+        await handleCreateHello(requestData); 
       }
     } catch (error) {
-      setResultMessage('Error! Could not save message');
-      setGettingResultMessage(true);
-      let timeout;
-  
-      timeout = setTimeout(() => {
-        setGettingResultMessage(false);
-      }, delayForResultsMessage);  
-      return () => clearTimeout(timeout);
-    } finally {
-      setSaveInProgress(false); 
+      console.log('catching errors elsewhere, not sure i need this', error);  
     };
-
-    setSaveInProgress(false);
-    
   };
+
+  useEffect(() => {
+    if (createHelloMutation.isSuccess) {
+      setFriend(null);
+      setUpdateTrigger((prev) => !prev);  
+      setResultMessage('Added!'); 
+
+      let timeout;
+
+      timeout = setTimeout(() => {
+        
+        navigateToMainScreen();
+        setSaveInProgress(false);
+
+      }, 1000);
+    }
+
+  }, [createHelloMutation.isSuccess]);
+
+  //don't think this is working
+  useEffect(() => {
+
+
+    if (createHelloMutation.isLoading) { 
+
+      setSaveInProgress(true); 
+      console.log('saving'); 
+    } else {
+      setSaveInProgress(false); 
+    }
+
+  }, [createHelloMutation.isLoading]);
+
+
+useEffect(() => {
+
+  if (createHelloMutation.isError) {
+    console.log('MUTATION IS ERROR');
+    
+    setResultMessage('Something went wrong :( Please try again');
+
+    let timeout;
+
+      timeout = setTimeout(() => { 
+        
+      setSaveInProgress(false);
+      createHelloMutation.reset();
+      setResultMessage(null); 
+    }, 1000);
+  }
+
+}, [createHelloMutation.isError]);
  
    
 
@@ -215,27 +266,25 @@ const resetAdditionalNotes = () => {
           end={{ x: 1, y: 0 }}  
           style={[styles.container]} 
         > 
-
-        {gettingResultMessage && (
+ 
           <View style={styles.loadingWrapper}>
           <LoadingPage
             loading={saveInProgress}
             resultsMessage={resultMessage}
             spinnnerType='wander'
             includeLabel={true}
-            label="Saving hello..."
+            label="Saving..."
           />
-          </View>
-        )}
+          </View> 
 
 
-        {!gettingResultMessage && ( 
+        {(createHelloMutation.isIdle) && ( 
         <> 
 
         <View style={{width: '100%', flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '28%'}}> 
  
           <View style={[styles.selectFriendContainer, {marginBottom: '2%'}]}> 
-            <FriendSelectModalVersion width='100%' />
+            <FriendSelectModalVersionButtonOnly includeLabel={true} width='100%' />
           </View> 
 
           <View style={[styles.backColorContainer, themeStyles.genericTextBackground, {borderColor: themeAheadOfLoading.lightColor}]}>
@@ -384,12 +433,12 @@ const styles = StyleSheet.create({
     width: '100%',     
     minHeight: 100, 
   },
-  selectFriendContainer: { 
-    flexDirection: 'row',  
-    justifyContent: 'space-between',  
-    alignItems: 'center',  
-    width: '100%',  
-    height: 40,
+  selectFriendContainer: {   
+    width: '100%',   
+    justifyContent: 'center',
+    minHeight: 30, 
+    maxHeight: 30,
+    height: 30,
   },
   locationTitle: {
     fontSize: 17,

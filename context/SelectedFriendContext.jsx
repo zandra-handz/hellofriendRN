@@ -10,10 +10,9 @@ const SelectedFriendContext = createContext({});
 
 export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const [friendDataFetched, setFriendDataFetched ] = useState(false);
   const { authUserState } = useAuthUser(); 
-  const { friendList } = useFriendList(); 
-  //const [friendDashboardData, setFriendDashboardData] = useState(null);
-  const [friendColorTheme, setFriendColorTheme] = useState({
+  const { friendList } = useFriendList();  const [friendColorTheme, setFriendColorTheme] = useState({
     useFriendColorTheme: null,
     invertGradient: null,
     lightColor: null,
@@ -22,17 +21,20 @@ export const SelectedFriendProvider = ({ children }) => {
   const [calculatedThemeColors, setCalculatedThemeColors] = useState({
     lightColor: '#a0f143',
     darkColor: '#4caf50',
-  });
-  //const [loadingNewFriend, setLoadingNewFriend] = useState(false);
+  }); 
   const queryClient = useQueryClient();
 
 
 
 
-  const { data: friendDashboardData, isLoading, isError } = useQuery({
+  const { data: friendDashboardData, isLoading, isError, isSuccess } = useQuery({
     queryKey: ['friendDashboardData', selectedFriend?.id],
     queryFn: () => fetchFriendDashboard(selectedFriend.id),
     enabled: !!selectedFriend,
+    onError: (err) => {
+      console.error('Error fetching friend data:', err);
+      
+    },
     onSuccess: (data) => {
       console.log('Raw data in RQ onSuccess:', data);
       if (!data) {
@@ -41,6 +43,16 @@ export const SelectedFriendProvider = ({ children }) => {
       }
     }
   });
+
+  useEffect(() => {
+    if (isError) {
+      setSelectedFriend(null);
+    }
+  }, [isError]);
+
+  const loadingNewFriend = isLoading;
+  const friendLoaded = isSuccess;
+ 
 
   useEffect(() => {
     if (friendDashboardData) {
@@ -57,7 +69,8 @@ export const SelectedFriendProvider = ({ children }) => {
   }, [friendDashboardData]); // Depend on `friendDashboardData`
   
 
-  const loadingNewFriend = isLoading;
+ 
+ 
 
 
 
@@ -176,6 +189,7 @@ export const SelectedFriendProvider = ({ children }) => {
     <SelectedFriendContext.Provider value={{ 
       selectedFriend, 
       setFriend: setSelectedFriend, 
+      friendLoaded,
       friendList, 
       friendDashboardData, 
       friendColorTheme,
