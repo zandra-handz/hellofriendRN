@@ -1,214 +1,167 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useSelectedFriend } from './SelectedFriendContext'; // Adjust the import path as needed
-import { fetchThoughtCapsules, updateThoughtCapsule } from '../api';
+import React, { useEffect, createContext, useContext, useState } from 'react';
+import { useSelectedFriend } from './SelectedFriendContext';
+import { fetchThoughtCapsules, saveThoughtCapsule, updateThoughtCapsule } from '../api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
- 
-const CapsuleListContext = createContext({ 
-  capsuleList: [], 
-  setCapsuleList: () => {}, 
-  removeCapsules: () => {}, 
-  updateCapsule: () => {},
+const CapsuleListContext = createContext({
+  capsuleList: [],
+  capsuleCount: 0,
+  categoryCount: 0,
+  categoryNames: [],
+  categoryStartIndices: {},
+  sortedByCategory: [],
+  newestFirst: [],
+  preAddedTracker: [],
   updatePreAddedTracker: () => {},
-  categoryStartIndices: {}
+  removeCapsules: () => {},
+  updateCapsule: () => {},
+  updatePreAdded: () => {},
+  updateCapsules: () => {},
+  sortByCategory: () => {},
+  sortNewestFirst: () => {},
 });
 
 export const useCapsuleList = () => {
   const context = useContext(CapsuleListContext);
-
-  if (!context) {
-    throw new Error('useCapsuleList must be used within a CapsuleListProvider');
-  }
-
+  if (!context) throw new Error('useCapsuleList must be used within a CapsuleListProvider');
   return context;
 };
- 
 
 export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
-  const [capsuleList, setCapsuleList] = useState([]);
+  const queryClient = useQueryClient();
+
   const [sortedByCategory, setSortedByCategory] = useState([]);
   const [newestFirst, setNewestFirst] = useState([]);
-  const [capsuleCount, setCapsuleCount] = useState(0);
-  const [categoryCount, setCategoryCount] = useState(0);
-  const [categoryNames, setCategoryNames] = useState([]);
-  const [ preAddedTracker, setPreAddedTracker ] = useState([]);
-  const [categoryStartIndices, setCategoryStartIndices] = useState({}); 
+  const [preAddedTracker, setPreAddedTracker] = useState([]);
 
-  useEffect(() => {
-    console.log("fetching capsule data using api in context useEffect... ");
-    const fetchData = async () => {
-      try {
-        if (selectedFriend) {
-          const capsules = await fetchThoughtCapsules(selectedFriend.id);
-          setCapsuleList(capsules || []); // Set capsules or empty array if none
-          setCapsuleCount(capsules.length);
-          console.log(capsules.length);
-          console.log("capsule data using api in context useEffect returned: ", capsules);
-          
-        
-        } else {
-          
-          setCapsuleList([]);
-          setCapsuleCount(0);
-        }
-      } catch (error) {
-        console.error('Error fetching capsule list:', error);
+  // Use useQuery to fetch capsules based on the selectedFriend
+  const { data: sortedCapsuleList = [], isLoading: isCapsuleContextLoading } = useQuery({
+    queryKey: ['Moments', selectedFriend?.id],
+    queryFn: () => fetchThoughtCapsules(selectedFriend.id),
+    enabled: !!selectedFriend,
+    select: (data) => {
+      if (!data) return { capsules: [], categoryCount: 0, categoryNames: [], categoryStartIndices: {} };
+
+      const sorted = [...data].sort((a, b) => {
+        if (a.typedCategory < b.typedCategory) return -1;
+        if (a.typedCategory > b.typedCategory) return 1;
+        return new Date(b.created) - new Date(a.created);
+      });
+
+      const uniqueCategories = [...new Set(sorted.map((item) => item.typedCategory))];
+      const categoryCount = uniqueCategories.length;
+      const categoryNames = uniqueCategories;
+
+      const categoryStartIndices = {};
+      let index = 0;
+      for (const category of uniqueCategories) {
+        categoryStartIndices[category] = index;
+        index += sorted.filter((item) => item.typedCategory === category).length;
       }
+
+      return { capsules: sorted, categoryCount, categoryNames, categoryStartIndices };
+    },
+  });
+
+  const {
+    capsules = [],
+    categoryCount = 0,
+    categoryNames = [],
+    categoryStartIndices = {},
+  } = sortedCapsuleList;
+
+  const capsuleCount = capsules.length;
+
+  const updateCapsuleMutation = useMutation({
+    mutationFn: (updatedCapsule) => updateThoughtCapsule(updatedCapsule.id, updatedCapsule),
+    onSuccess: () => queryClient.invalidateQueries(['Moments', selectedFriend?.id]),
+    onError: (error) => console.error('Error updating capsule:', error),
+  });
+
+  const updateCapsule = (updatedCapsule) => updateCapsuleMutation.mutate(updatedCapsule);
+
+  const createMomentMutation = useMutation({
+    mutationFn: (data) => saveThoughtCapsule(data),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['Moments'], (old) => (old ? [data, ...old] : [data]));
+    },
+  });
+
+  const handleCreateMoment = async (momentData) => {
+    const moment = {
+      user: authUserState.user.id,
+      friend: momentData.friend,
+      typed_category: momentData.selectedCategory,
+      capsule: momentData.textInput,
     };
 
-    fetchData();
-  }, [selectedFriend]);
-
- 
-  useEffect(() => {
-    console.log('Autosorting capsules in Capsule List Context using a useEffect');
-    sortByCategory();
-    sortNewestFirst();
-    updateCount(); 
-  }, [capsuleList]);
-
+    try {
+      await createMomentMutation.mutateAsync(moment);
+    } catch (error) {
+      console.error('Error saving moment:', error);
+    }
+  };
 
   const removeCapsules = (capsuleIdsToRemove) => {
-    setCapsuleList(prevCapsules => {
-      return prevCapsules.filter(capsule => !capsuleIdsToRemove.includes(capsule.id));
-    }); 
-    console.log(capsuleCount);
-    }; 
+    queryClient.setQueryData(['thoughtCapsules', selectedFriend?.id], (oldCapsules) =>
+      oldCapsules.filter((capsule) => !capsuleIdsToRemove.includes(capsule.id))
+    );
+  };
 
-  const updateCapsule = (updatedCapsule) => {
-    setCapsuleList(prevCapsules => {
-      return prevCapsules.map(capsule => 
-        capsule.id === updatedCapsule.id ? updatedCapsule : capsule
-      );
+  const updatePreAddedTracker = () => {
+    const preAddedIds = capsules.reduce((ids, capsule) => {
+      if (capsule.preAdded) ids.push(capsule.id);
+      return ids;
+    }, []);
+    setPreAddedTracker(preAddedIds);
+  };
+
+  const sortByCategory = () => {
+    const sorted = [...capsules].sort((a, b) => {
+      if (a.typedCategory < b.typedCategory) return -1;
+      if (a.typedCategory > b.typedCategory) return 1;
+      return new Date(b.created) - new Date(a.created);
     });
-    setCapsuleCount(prevCount => prevCount + 1);
+
+    setSortedByCategory(sorted);
   };
 
   const updatePreAdded = (capsuleIdsToUpdateTrue = [], capsuleIdsToUpdateFalse = []) => {
-    
-    setCapsuleList(prevCapsules => {
-      // Create a Set for quick lookup
+    queryClient.setQueryData(['Moments', selectedFriend?.id], (prevCapsules) => {
       const trueIdsSet = new Set(capsuleIdsToUpdateTrue);
-      const falseIdsSet = new Set(capsuleIdsToUpdateFalse); 
-  
-      return prevCapsules.map(capsule => {
-        if (trueIdsSet.has(capsule.id)) {
-          return {
-            ...capsule,
-            preAdded: true
-          };
-        }
-        if (falseIdsSet.has(capsule.id)) {
-          return {
-            ...capsule,
-            preAdded: false
-          };
-        }
-        console.log('HIIIIIII', capsule);
+      const falseIdsSet = new Set(capsuleIdsToUpdateFalse);
+
+      return prevCapsules.map((capsule) => {
+        if (trueIdsSet.has(capsule.id)) return { ...capsule, preAdded: true };
+        if (falseIdsSet.has(capsule.id)) return { ...capsule, preAdded: false };
         return capsule;
       });
     });
   };
-  
 
-const updateCapsules = (capsuleIdsToUpdate, updatedCapsules) => {
-  setCapsuleList(prevCapsules => {
-    return prevCapsules.map(capsule => { 
-      if (capsuleIdsToUpdate.includes(capsule.id)) { 
-        const updatedCapsule = updatedCapsules.find(updated => updated.id === capsule.id);
-        return updatedCapsule ? updatedCapsule : capsule;
-      }
-      return capsule; 
-    });
-  });
-  console.log(capsuleCount);
-};
-
-
-  
-
-  const updateCount = () => {
-    setCapsuleCount(capsuleList.length);
-    console.log('updated Capsule list count');
-  };
-
-  const sortByCategory = () => {
-    const sorted = [...capsuleList].sort((a, b) => { 
-      if (a.typedCategory < b.typedCategory) return -1;
-      if (a.typedCategory > b.typedCategory) return 1;
-      return new Date(b.created) - new Date(a.created); // Newest first if categories are the same
-    });
-
-    // Get unique categories
-    const uniqueCategories = [...new Set(sorted.map(item => item.typedCategory))];
-    setCategoryCount(uniqueCategories.length);
-    setCategoryNames(uniqueCategories); // Assuming you have a state for category names
-    setSortedByCategory(sorted);
-    console.log('moments sorted by category: ', sorted);
-
-    // Calculate category start indices
-    const startIndices = {};
-    let index = 0;
-    for (const category of uniqueCategories) {
-      startIndices[category] = index;
-      index += sorted.filter(item => item.typedCategory === category).length; // Count items in category
-    }
-    setCategoryStartIndices(startIndices); // Set the calculated indices
-
-    console.log("Sorted by Category: ", sorted);
-    console.log('Category count: ', categoryCount);
-    console.log("Unique Categories: ", uniqueCategories);
-  };
-
-
- // useEffect(() => { 
-   // const preAddedIds = capsuleList
-     //   .filter(capsule => capsule.preAdded) // Select capsules with pre_added_to_hello true
-       // .map(capsule => capsule.id); // Extract their IDs
-
-    //setPreAddedTracker(preAddedIds);
-    //console.log("Pre-added Capsule IDs: ", preAddedIds);
-//}, [capsuleList]);
-
-const updatePreAddedTracker = () => {
-  const preAddedIds = capsuleList.reduce((ids, capsule) => {
-    if (capsule.preAdded) {
-      ids.push(capsule.id); // Add the ID if preAdded is true
-    }
-    return ids;
-  }, []);
-
-  setPreAddedTracker(preAddedIds);
-  console.log("Pre-added Capsule IDs: ", preAddedIds);
-};
- 
-
-
-  const sortNewestFirst = () => {
-    const sorted = [...capsuleList].sort((a, b) => new Date(b.created) - new Date(a.created));
-    setNewestFirst(sorted);
-  };
+  const sortNewestFirst = () => setNewestFirst([...capsules].sort((a, b) => new Date(b.created) - new Date(a.created)));
 
   return (
-    <CapsuleListContext.Provider value={{ 
-      capsuleList, 
-      capsuleCount,
-      categoryCount,
-      categoryNames,
-      categoryStartIndices,
-      sortedByCategory,
-      newestFirst,
-      preAddedTracker,
-      updatePreAddedTracker,
-      setCapsuleList, 
-      removeCapsules, 
-      updatePreAdded,
-      updateCapsule, 
-      updateCapsules,
-      sortByCategory,
-      sortNewestFirst,
-      
-      }}>
+    <CapsuleListContext.Provider
+      value={{
+        capsuleList: capsules,
+        capsuleCount,
+        categoryCount,
+        categoryNames,
+        categoryStartIndices,
+        sortedByCategory,
+        newestFirst,
+        preAddedTracker,
+        updatePreAddedTracker,
+        removeCapsules,
+        handleCreateMoment,
+        updatePreAdded,
+        updateCapsule,
+        sortByCategory,
+        sortNewestFirst,
+      }}
+    >
       {children}
     </CapsuleListContext.Provider>
   );
