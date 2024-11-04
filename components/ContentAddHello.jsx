@@ -35,7 +35,7 @@ const ContentAddHello = () => {
  
 
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, setFriend, loadingNewFriend, friendColorTheme } = useSelectedFriend();
+  const { selectedFriend, setFriend, loadingNewFriend} = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
@@ -261,7 +261,7 @@ useEffect(() => {
 
   return (
            <LinearGradient
-          colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+          colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}  
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}  
           style={[styles.container]} 

@@ -397,7 +397,26 @@ export const removeFromFriendFavesLocations = async (userId, friendId, locationI
     }
 };
 
-export const updateFriendFavesColorThemeSetting = async (userId, friendId, setting) => {
+export const updateFriendFavesColorThemeSetting = async (userId, friendId, savedDarkColor, savedLightColor) => { 
+    console.log(savedDarkColor);
+    try {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
+            
+            friend: friendId,
+            user: userId, 
+            dark_color: savedDarkColor,
+            light_color: savedLightColor,
+            use_friend_color_theme: true,
+        });
+        console.log('Color theme setting for friend updated: ', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating color theme setting for friend:', error);
+        throw error;
+    }
+};
+
+export const resetFriendFavesColorThemeToDefault = async (userId, friendId, setting) => {
     console.log(`color theme setting call, ${userId}, ${friendId}, ${setting}`);
     
     try {
@@ -405,7 +424,11 @@ export const updateFriendFavesColorThemeSetting = async (userId, friendId, setti
             
             friend: friendId,
             user: userId, 
-            use_friend_color_theme: setting,
+            dark_color: '#4caf50',
+            light_color: '#a0f143',
+            font_color: '#000000',
+            font_color_secondary: '#000000',
+            use_friend_color_theme: false,
         });
         console.log('Color theme setting for friend updated: ', response.data);
         return response.data;
@@ -433,15 +456,18 @@ export const updateFriendFavesColorThemeGradientDirection = async (userId, frien
 };
 
 
-export const updateFriendFavesColorTheme = async (userId, friendId, darkColor, lightColor) => {
-    console.log(`color theme add call, ${userId}, ${friendId}, ${darkColor}, ${lightColor}`);
+export const updateFriendFavesColorTheme = async (userId, friendId, darkColor, lightColor, fontColor, fontColorSecondary) => {
+    
     try {
         const response = await axios.patch(`/friends/${friendId}/faves/`, {
             
             friend: friendId,
             user: userId, 
             dark_color: darkColor,
-            light_color: lightColor
+            light_color: lightColor,
+            font_color: fontColor,
+            font_color_secondary: fontColorSecondary,
+            use_friend_color_theme: true,
         });
         console.log('Color theme for friend updated: ', response.data);
         return response.data;
@@ -450,6 +476,30 @@ export const updateFriendFavesColorTheme = async (userId, friendId, darkColor, l
         throw error;
     }
 };
+
+//this will update the theme colors in Friend Faves and Friend but will
+//leave the saved colors in Friend untouched, so that they can be used later
+export const resetFriendFavesColorThemeToDefaultOld = async (userId, friendId, darkColor, lightColor, fontColor, fontColorSecondary) => {
+    
+    try {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
+            
+            friend: friendId,
+            user: userId, 
+            dark_color: darkColor,
+            light_color: lightColor,
+            font_color: fontColor,
+            font_color_secondary: fontColorSecondary,
+            use_friend_color_theme: false,
+        });
+        console.log('Color theme for friend updated: ', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating color theme for friend:', error);
+        throw error;
+    }
+};
+
 
 
 

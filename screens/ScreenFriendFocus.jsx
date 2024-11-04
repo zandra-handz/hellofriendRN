@@ -26,8 +26,8 @@ import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline';
 
 
 const ScreenFriendFocus = () => {
-  const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend } = useSelectedFriend();
+  const { friendList, themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle(); 
 
   useFocusEffect(
@@ -35,6 +35,8 @@ const ScreenFriendFocus = () => {
       setIsAnimationPaused(false);
     }, [])
   );
+
+
 
 
   const navigation = useNavigation();
@@ -49,8 +51,7 @@ const ScreenFriendFocus = () => {
   const bottomIconSize = 28;
 
   const momentsBottomIconSize = 30;
-
-  const showOriginalHeader = false;
+ 
 
   const windowHeight = Dimensions.get('window').height;
   const bottomSectionHeight = windowHeight * 0.7; // Fixed 70% for bottom
@@ -58,8 +59,7 @@ const ScreenFriendFocus = () => {
   const topSectionPadding = Dimensions.get('window').height * 0.01;
   const bottomSectionPadding = Dimensions.get('window').height * 0.01;
 
-const calculatedDarkColor = friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50';
-const calculatedLightColor = friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)';
+
 const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
   
   useEffect(() => {
@@ -90,10 +90,12 @@ const navigateToMomentsScreen = () => {
     navigation.navigate('Locations'); 
   };
 
+  const currentFriend = friendList.find(friend => selectedFriend.id === friend.id);
+
 
   return (
     <LinearGradient
-      colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}  
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}  
       style={styles.container} 
@@ -117,7 +119,7 @@ const navigateToMomentsScreen = () => {
             <View style={{flexDirection: 'column', paddingHorizontal: 10, justifyContent: 'flex-start',  width: '100%'}}>
                <>
                 <Text
-                  style={[styles.headerText, themeStyles.subHeaderText, { color: calculatedThemeColors.fontColor }]}
+                  style={[styles.headerText, themeStyles.subHeaderText, { color: themeAheadOfLoading.fontColor }]}
                   numberOfLines={2} // Allows a maximum of 2 lines (you can adjust this value as needed)
                   ellipsizeMode="tail" // Adds "..." if the text is too long
                 >
@@ -145,8 +147,8 @@ const navigateToMomentsScreen = () => {
             imageSize={80}
             labelSize={19}
             isDisabled={false}
-            darkColor={calculatedDarkColor}
-            lightColor={calculatedLightColor}
+            darkColor={themeAheadOfLoading.darkColor}
+            lightColor={themeAheadOfLoading.lightColor}
             imagePositionHorizontal={0} 
             imagePositionVertical={6}
             borderRadius={50}
@@ -158,8 +160,8 @@ const navigateToMomentsScreen = () => {
             imageSize={80}
             labelSize={19}
             isDisabled={false}
-            darkColor={calculatedDarkColor}
-            lightColor={calculatedLightColor}
+            darkColor={themeAheadOfLoading.darkColor}
+            lightColor={themeAheadOfLoading.lightColor}
             imagePositionHorizontal={0} 
             imagePositionVertical={6}
             borderRadius={50}
@@ -178,14 +180,14 @@ const navigateToMomentsScreen = () => {
                 oneBackgroundColor={'transparent'} 
               />
               </View>
-                          <ButtonBaseSpecialFriendFocus
+            <ButtonBaseSpecialFriendFocus
             label='REVIEW MOMENTS'
             image={ThoughtBubbleOutlineSvg }
             imageSize={80}
             labelSize={19}
             isDisabled={false}
-            darkColor={calculatedDarkColor}
-            lightColor={calculatedLightColor}
+            darkColor={themeAheadOfLoading.darkColor}
+            lightColor={themeAheadOfLoading.lightColor}
             imagePositionHorizontal={0} 
             imagePositionVertical={6}
             borderRadius={50}
@@ -217,8 +219,8 @@ const navigateToMomentsScreen = () => {
             imageSize={100}
             labelSize={19}
             isDisabled={false}
-            darkColor={calculatedDarkColor}
-            lightColor={calculatedLightColor}
+            darkColor={themeAheadOfLoading.darkColor}
+            lightColor={themeAheadOfLoading.lightColor}
             imagePositionHorizontal={0} 
             imagePositionVertical={12}
             borderRadius={50}

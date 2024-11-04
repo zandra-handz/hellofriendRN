@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import PhotoSolidSvg from '../assets/svgs/photo-solid';
-import { useSelectedFriend } from '../context/SelectedFriendContext'; 
+import { useFriendList } from '../context/FriendListContext'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,7 +11,7 @@ const ButtonGoToAddImage = () => {
 
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
-  const { calculatedThemeColors } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
 
   const viewSvg = true;
 
@@ -22,12 +22,12 @@ const ButtonGoToAddImage = () => {
 
   return ( 
     <View style={styles.container}> 
-      <TouchableOpacity onPress={handleGoToAddImageScreen} style={[styles.circleButton, themeStyles.footerIcon, { backgroundColor: calculatedThemeColors.darkColor}]}> 
+      <TouchableOpacity onPress={handleGoToAddImageScreen} style={[styles.circleButton, themeStyles.footerIcon, { backgroundColor: themeAheadOfLoading.darkColor}]}> 
         {!viewSvg && (  
-        <Text style={[styles.controlButtonText, themeStyles.footerText]}>Add moment</Text>
+        <Text style={[styles.controlButtonText, themeStyles.footerText]}>Add image</Text>
         )}
         {viewSvg && (  
-        <PhotoSolidSvg width={46} height={46} color={calculatedThemeColors.fontColor} />
+        <PhotoSolidSvg width={46} height={46} color={themeAheadOfLoading.fontColor} />
         )}
       </TouchableOpacity>  
       </View> 

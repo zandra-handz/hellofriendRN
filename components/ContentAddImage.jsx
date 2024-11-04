@@ -28,7 +28,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 const ContentAddImage = () => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, friendColorTheme, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const [canContinue, setCanContinue] = useState('');
   const { themeAheadOfLoading } = useFriendList();
   const [imageUri, setImageUri] = useState(null);
@@ -191,7 +191,7 @@ const handleSave = async () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Adjust if needed
     >
       <LinearGradient
-          colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+          colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}  
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}  
           style={{flex: 1}} 

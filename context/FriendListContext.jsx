@@ -17,14 +17,30 @@ export const useFriendList = () => useContext(FriendListContext);
 export const FriendListProvider = ({ children }) => {
   const { authUserState } = useAuthUser();  
   const [friendList, setFriendList] = useState([]);
-  const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({});
+  const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
+    darkColor: '#4caf50',
+    lightColor: '#a0f143',
+    fontColor: 'black', 
+    fontColorSecondary: 'black'
+
+
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (authUserState.authenticated) { 
           const friendData = await fetchFriendList(); 
-          const friendList = friendData.map(friend => ({ id: friend.id, name: friend.name, darkColor: friend.theme_color_dark, lightColor: friend.theme_color_light}));
+          const friendList = friendData.map(friend => ({ 
+            id: friend.id, 
+            name: friend.name, 
+            savedDarkColor: friend.saved_color_dark,
+            savedLightColor: friend.saved_color_light,
+            darkColor: friend.theme_color_dark, 
+            lightColor: friend.theme_color_light,
+            fontColor: friend.theme_color_font,
+            fontColorSecondary: friend.theme_color_font_secondary,
+          }));
           
           setFriendList(friendList);
         }
@@ -39,7 +55,7 @@ export const FriendListProvider = ({ children }) => {
 
   const getThemeAheadOfLoading = (loadingFriend) => {
     
-    setThemeAheadOfLoading({lightColor: loadingFriend.lightColor, darkColor: loadingFriend.darkColor});
+    setThemeAheadOfLoading({lightColor: loadingFriend.lightColor, darkColor: loadingFriend.darkColor, fontColor: loadingFriend.fontColor, fontColorSecondary: loadingFriend.fontColorSecondary});
   
   };
 
@@ -71,18 +87,24 @@ export const FriendListProvider = ({ children }) => {
     });
   }; 
 
-  const updateFriendListColors = (friendId, darkColor, lightColor) => {
+  const updateFriendListColors = (friendId, darkColor, lightColor, fontColor, fontColorSecondary) => {
     setFriendList(prevFriendList => {
       const friend = prevFriendList.find(friend => friend.id === friendId);
       if (friend) {
         friend.darkColor = darkColor;
-        friend.lightColor = lightColor;
-        setThemeAheadOfLoading({lightColor: lightColor, darkColor: darkColor});
+        friend.savedDarkColor = darkColor;
+        friend.lightColor = lightColor; 
+        friend.savedLightColor = lightColor;
+        friend.fontColor = fontColor;
+        friend.fontColorSecondary = fontColorSecondary;
+        setThemeAheadOfLoading({lightColor: lightColor, darkColor: darkColor, fontColor: fontColor, fontColorSecondary: fontColorSecondary});
   
       }
       return [...prevFriendList];  // Create a new array to trigger re-render
     });
   };
+
+  
 
   return (
     <FriendListContext.Provider value={{

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text} from 'react-native';
 import ButtonLottieAnimationSatellitesMoments from './ButtonLottieAnimationSatellitesMoments';
 import { useCapsuleList } from '../context/CapsuleListContext';
@@ -8,11 +8,9 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import TogglerActionButton from '../components/TogglerActionButton';
 
 import ScrollOutlineSvg from '../assets/svgs/scroll-outline.svg';
- 
-import GridViewOutlineSvg from '../assets/svgs/grid-view-outline.svg';
+  
 import AddOutlineSvg from '../assets/svgs/add-outline.svg';
-
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+ 
 
 const ActionFriendPageMoments = ({ 
   onPress, 
@@ -37,17 +35,24 @@ const ActionFriendPageMoments = ({
 }) => {
 
   const { themeStyles } = useGlobalStyle();
-
-  const navigation = useNavigation();
+ 
   const { friendColorTheme } = useSelectedFriend();
   const { capsuleList, capsuleCount } = useCapsuleList();
-  const [showSecondButton, setShowSecondButton] = useState(false);
-  const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
+  const [showSecondButton, setShowSecondButton] = useState(false); 
+  const [newestFirst, setNewestFirst] = useState([]);
   
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
 
+ useEffect(() => {
+  console.log('newest first!', capsuleList);
+  setNewestFirst([...capsuleList].sort((a, b) => new Date(b.created) - new Date(a.created)));
 
-  
+
+}, []);
+
+useEffect(() => {
+  console.log('NEWEST FIRST!!!', newestFirst);
+}, [newestFirst]);
 
   const navigateToFirstPage = () => {
     setShowSecondButton(false); 
@@ -77,12 +82,14 @@ const ActionFriendPageMoments = ({
                 </Text>
               </View>
             )} 
+          {newestFirst && (
 
+         
           <ButtonLottieAnimationSatellitesMoments
             buttonHeight={buttonHeight}
             buttonRadius={buttonRadius} 
             headerText=''
-            allItems={capsuleList ? capsuleList : 'Loading...'}
+            allItems={newestFirst ? newestFirst : 'Loading...'}
             showGradient={true}
             lightColor={oneBackgroundColor}
             darkColor={oneBackgroundColor} 
@@ -90,6 +97,7 @@ const ActionFriendPageMoments = ({
             pauseAnimation={animationPaused}
             onPress={onAddMomentPress}
           /> 
+        )}
       </View>
 
       <TogglerActionButton

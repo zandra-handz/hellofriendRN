@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 const HeaderFriendFocus = () => {
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
-    const { selectedFriend, calculatedThemeColors, friendColorTheme, loadingNewFriend } = useSelectedFriend();
+    const { selectedFriend, loadingNewFriend } = useSelectedFriend();
     const navigation = useNavigation();
 
     const handleNavigateBack = () => {
@@ -25,16 +25,13 @@ const HeaderFriendFocus = () => {
         <>
             {!loadingNewFriend && ( 
                 <LinearGradient
-                    colors={[
-                        friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50',
-                        friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)',
-                    ]}
+                    colors={[ themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.headerContainer}
                 > 
                     <TouchableOpacity onPress={handleNavigateBack} style={styles.leftIcon}>
-                        <ArrowLeftCircleOutline height={30} width={30} color={calculatedThemeColors.fontColor} />
+                        <ArrowLeftCircleOutline height={30} width={30} color={themeAheadOfLoading.fontColor} />
                     </TouchableOpacity>
 
                     <View style={styles.centerContainer}>
@@ -43,7 +40,7 @@ const HeaderFriendFocus = () => {
                             style={[
                                 styles.headerText, 
                                 themeStyles.headerText, 
-                                { color: calculatedThemeColors.fontColor }
+                                { color: themeAheadOfLoading.fontColorSecondary }
                             ]}
                         >
                             {`${selectedFriend ? selectedFriend.name : ''}`}

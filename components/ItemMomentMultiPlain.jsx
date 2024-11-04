@@ -16,7 +16,7 @@ import LoadingPage from '../components/LoadingPage';
 import { Dimensions } from 'react-native';
 
  
-const footerHeight = 670; // Set to a fixed height for footer
+const footerHeight = 720; // Set to a fixed height for footer
 
 const ItemMomentMultiPlain = ({
   passInData = false, 
@@ -28,7 +28,7 @@ const ItemMomentMultiPlain = ({
   navigation,
 }) => { 
   const { themeStyles } = useGlobalStyle();
-  const { capsuleList, updatePreAddedTracker, sortedByCategory, categoryNames, categoryStartIndices, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
+  const { capsuleList, sortByCategory, updatePreAddedTracker, sortedByCategory, categoryNames, categoryStartIndices, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
   const { calculatedThemeColors } = useSelectedFriend();
   const [selectedMoment, setSelectedMoment] = useState(null);
@@ -48,6 +48,7 @@ const ItemMomentMultiPlain = ({
 
   useEffect(() => {
     if (capsuleList) {
+      sortByCategory();
       updatePreAddedTracker();
       console.log('updated preaddedtrigger manually in itemmomentmultiplain');
 
@@ -55,7 +56,7 @@ const ItemMomentMultiPlain = ({
 
   }, []);
   
-  const moments = sortedByCategory;
+  const moments = (sortedByCategory);
 
   //useEffect(() => {
      //setSelectedCategory(categoryNames[0]);
@@ -63,9 +64,9 @@ const ItemMomentMultiPlain = ({
  // }, []);
 
   useEffect(() => { 
-    console.log('Use effect to set moments when preAddedTracker updates');
+    console.log('Use effect to set moments when preAddedTracker updates', capsuleList);
     const initialSelectedMoments = capsuleList.filter(capsule => preAddedTracker.includes(capsule.id));
-    setSelectedMoments(initialSelectedMoments);
+    setSelectedMoments(initialSelectedMoments); 
     setSelectedMomentsAlreadySaved(initialSelectedMoments);
 
   }, [preAddedTracker]);

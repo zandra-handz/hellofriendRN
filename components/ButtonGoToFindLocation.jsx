@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import MapSearchOutlineSvg from '../assets/svgs/map-search-outline.svg';
 import ShopAddOutlineSvg from '../assets/svgs/shop-add-outline.svg';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 const ButtonGoToFindLocation = () => {
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
-  const { calculatedThemeColors } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   
   const [expanded, setExpanded] = useState(false); 
   const animation = useRef(new Animated.Value(0)).current;  
@@ -51,7 +51,7 @@ const ButtonGoToFindLocation = () => {
         ]}
       >
         <TouchableOpacity onPress={handleGoToLocationSearchScreen} style={[styles.smallCircleButton, themeStyles.footerIcon]}>
-          <MapSearchOutlineSvg width={32} height={32} color={calculatedThemeColors.fontColor} />
+          <MapSearchOutlineSvg width={32} height={32} color={themeAheadOfLoading.fontColor} />
         </TouchableOpacity>
       </Animated.View>
  
@@ -66,7 +66,7 @@ const ButtonGoToFindLocation = () => {
         ]}
       >
         <TouchableOpacity onPress={handleGoToMidpointLocationSearchScreen} style={[styles.smallCircleButton, themeStyles.footerIcon]}>
-          <MapSearchOutlineSvg width={32} height={32} color={calculatedThemeColors.fontColor} />
+          <MapSearchOutlineSvg width={32} height={32} color={themeAheadOfLoading.fontColor} />
         </TouchableOpacity>
       </Animated.View>
  
@@ -75,10 +75,10 @@ const ButtonGoToFindLocation = () => {
         style={[
           styles.circleButton,
           themeStyles.footerIcon,
-          { backgroundColor: calculatedThemeColors.darkColor },
+          { backgroundColor: themeAheadOfLoading.darkColor },
         ]}
       >
-        <ShopAddOutlineSvg width={48} height={48} color={calculatedThemeColors.fontColor} />
+        <ShopAddOutlineSvg width={48} height={48} color={themeAheadOfLoading.fontColor} />
       </TouchableOpacity>
     </View>
   );

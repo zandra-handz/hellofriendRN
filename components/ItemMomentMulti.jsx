@@ -7,14 +7,13 @@ import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg';
 import { GestureHandlerRootView, TapGestureHandler, LongPressGestureHandler, State } from 'react-native-gesture-handler';
 import ItemViewMoment from '../components/ItemViewMoment';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useFocusEffect } from '@react-navigation/native';
 
 const ItemMomentMulti = ({  
   width = 100,
   height = 100,
   spacer = 20,
   limit, 
-  newestFirst = true, 
+  newestFirst, 
   containerWidth = 320,
   includeCategoryTitle = false,
   lastIndex = 3, 
@@ -23,8 +22,7 @@ const ItemMomentMulti = ({
   slideShow = true,  
   Interval = 6000,
   pauseAnimation = false,
-}) => {
-  const { newestFirst: newestFirstList } = useCapsuleList();
+}) => { 
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [lastTap, setLastTap] = useState(0);
@@ -32,7 +30,7 @@ const ItemMomentMulti = ({
   const [notFirst, setNotFirst ] = useState(false);
   const [momentAnimations, setMomentAnimations] = useState({});
   const [currentIndex, setCurrentIndex] = useState(lastIndex); 
-  const listToDisplay = newestFirst ? newestFirstList : [];
+  const listToDisplay = newestFirst ? newestFirst : [];
   const moments = useMemo(() => listToDisplay.slice(0, limit), [listToDisplay, limit]);
   const [ iconStyle, setIconStyle ] = useState([]);
   const [stop, setStop ] =useState(false);

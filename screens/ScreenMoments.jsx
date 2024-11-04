@@ -6,8 +6,10 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 
 const ScreenMoments = ({ route, navigation }) => {
+    const { themeAheadOfLoading } = useFriendList();
     const { themeStyles } = useGlobalStyle(); 
     const { calculatedThemeColors } = useSelectedFriend();
     const { capsuleList } = useCapsuleList();
@@ -84,7 +86,7 @@ const ScreenMoments = ({ route, navigation }) => {
 
     return ( 
         <LinearGradient
-            colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
+            colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[styles.container, themeStyles.signinContainer]}

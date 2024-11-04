@@ -14,7 +14,7 @@ import { Dimensions } from 'react-native';
 const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, iconSize=26, width = '60%' }) => {  
   const { themeStyles } = useGlobalStyle();
   const globalStyles = useGlobalStyle();  
-  const { selectedFriend, friendLoaded, setFriend, calculatedThemeColors, friendColorTheme, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, friendLoaded, setFriend, loadingNewFriend } = useSelectedFriend();
   const { friendList, themeAheadOfLoading, getThemeAheadOfLoading } = useFriendList();
   const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] = useState(false);
   //const [forceUpdate, setForceUpdate] = useState(false);  
@@ -46,6 +46,7 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, ic
 
   const handleSelectFriend = (itemId) => { 
     const selectedOption = friendList.find(friend => friend.id === itemId);
+    console.log('S ELE ECCTING FRIEND', selectedOption);
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
     getThemeAheadOfLoading(selectedFriend); 
@@ -82,14 +83,14 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, ic
             loading={loadingNewFriend} 
             spinnerType='flow'
             spinnerSize={60}
-            color={friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50'}
+            color={themeAheadOfLoading.darkColor}
             includeLabel={false} 
           />
           </View>
         )}
         {!loadingNewFriend && includeLabel && ( 
         <Text
-          style={[styles.displaySelected, textStyles(17, calculatedThemeColors.fontColorSecondary)]}
+          style={[styles.displaySelected, textStyles(17, themeAheadOfLoading.fontColorSecondary)]}
           numberOfLines={1}  
           ellipsizeMode='tail'  
         >
@@ -109,7 +110,7 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, ic
                 <ProfileTwoUsersSvg 
                   height={iconSize} 
                   width={iconSize} 
-                  color={loadingNewFriend? 'transparent' : calculatedThemeColors.fontColorSecondary}
+                  color={loadingNewFriend? 'transparent' : themeAheadOfLoading.fontColorSecondary}
                   />
             
 

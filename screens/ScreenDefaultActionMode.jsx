@@ -116,11 +116,11 @@ const ScreenDefaultActionMode = ({ navigation }) => {
                 <ButtonBaseSpecialLarge label={'ADD IMAGE'}  onPress={navigateToAddImageScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} height={buttonHeight}/>  
                 <ButtonBaseSpecialLarge label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
                 
-                {selectedFriend && friendLoaded && showLastButton && (
+                {(selectedFriend || friendLoaded) && showLastButton && (
                   <ButtonBaseSpecialLarge label={'ADD LOCATION'}   onPress={navigateToAddLocationScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
                 
                 )}
-                {(!selectedFriend || !friendLoaded) && showLastButton && ( 
+                {(!selectedFriend && !friendLoaded) && showLastButton && ( 
                   <ButtonBaseSpecialLarge label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
                 )} 
                                 

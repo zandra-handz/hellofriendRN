@@ -10,11 +10,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 
 
- 
-
 const HeaderWriteMoment = () => {
     const { themeStyles } = useGlobalStyle();
-    const { calculatedThemeColors, loadingNewFriend, friendColorTheme } = useSelectedFriend();
+    const { loadingNewFriend } = useSelectedFriend();
     const { themeAheadOfLoading } = useFriendList();
     const navigation = useNavigation();
 
@@ -30,7 +28,7 @@ const HeaderWriteMoment = () => {
     <> 
     
     <LinearGradient
-        colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
+        colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}  
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}  
         style={[styles.headerContainer]} 
@@ -50,14 +48,14 @@ const HeaderWriteMoment = () => {
       <View style={{flexDirection: 'row', width: '50%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
         
         <TouchableOpacity onPress={handleNavigateBack}>
-          <ArrowLeftCircleOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
+          <ArrowLeftCircleOutline height={30} width={30} color={themeAheadOfLoading.fontColor}/>
         </TouchableOpacity> 
       </View> 
 
-      <Text style={[styles.headerText, themeStyles.headerText, {color: calculatedThemeColors.fontColorSecondary, paddingRight: 0}]}>ADD MOMENT</Text>
+      <Text style={[styles.headerText, themeStyles.headerText, {color: themeAheadOfLoading.fontColorSecondary, paddingRight: 0}]}>ADD MOMENT</Text>
        <View>
        <TouchableOpacity onPress={handleNavigateToAllMoments}>
-       <ThoughtBubbleOutlineSvg height={30} width={30} fill={calculatedThemeColors.fontColorSecondary}/>
+       <ThoughtBubbleOutlineSvg height={30} width={30} fill={themeAheadOfLoading.fontColorSecondary}/>
        </TouchableOpacity> 
 
        </View> 

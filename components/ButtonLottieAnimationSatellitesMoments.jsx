@@ -6,6 +6,8 @@ import ItemMomentMulti from '../components/ItemMomentMulti';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
+
+
 const ButtonLottieAnimationSatellitesMoments = ({
   buttonHeight = 270,
   buttonRadius = 10, 
@@ -71,8 +73,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
               <View
                 style={{
                   flexDirection: 'row',
-                  width: '100%',
-                  height: buttonHeight, 
+                  width: '100%',  
                   borderRadius: buttonRadius,
                   alignItems: 'center',
                   overflow: 'hidden', 
@@ -91,7 +92,7 @@ const ButtonLottieAnimationSatellitesMoments = ({
                             limit={4} 
                             horizontal={true} 
                             singleLineScroll={true} 
-                            newestFirst={true}
+                            newestFirst={allItems}
                             pauseAnimation={pauseAnimation}
                           /> 
                         </View>

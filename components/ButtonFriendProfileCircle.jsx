@@ -11,20 +11,30 @@ import LoadingPage from '../components/LoadingPage';
 const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
   const { selectedFriend, friendLoaded, friendColorTheme, friendDashboardData, setFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading, setThemeAheadOfLoading } = useFriendList();
   const [profileIconColor, setProfileIconColor] = useState();
   const navigation = useNavigation();
 
+
+  const handleDeselect = () => {
+    setFriend(null);
+    setThemeAheadOfLoading({lightColor: '#a0f143', darkColor: '#4caf50', fontColor: '#000000', fontColorSecondary: '#000000'});
+  
+
+
+  };
+
+
   useEffect(() => {
-    if (selectedFriend && friendLoaded && calculatedThemeColors.lightColor !== themeStyles.genericTextBackground.backgroundColor) {
-    setProfileIconColor([friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)'] );
+    if (selectedFriend && friendLoaded && themeAheadOfLoading.lightColor !== themeStyles.genericTextBackground.backgroundColor) {
+    setProfileIconColor([themeAheadOfLoading.darkColor || '#4caf50', themeAheadOfLoading.lightColor || 'rgb(160, 241, 67)'] );
      
     } else { 
       setProfileIconColor([themeStyles.genericText.color, themeStyles.genericText.color]);
     }
     renderProfileIcon();
 
-  }, [selectedFriend, themeStyles, calculatedThemeColors]);
+  }, [selectedFriend, themeStyles]);
 
   const navigateToFriendFocus = () => {
     if (selectedFriend) {
@@ -40,7 +50,7 @@ const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
       'Do you want to deselect your friend?',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Yes', onPress: () => setFriend(null) }, // Deselect friend function
+        { text: 'Yes', onPress: handleDeselect()}, // Deselect friend function
       ],
       { cancelable: true }
     );
@@ -51,10 +61,10 @@ const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
         return (
           <View style={{ flexDirection: 'row' }}>
             
-            <ProfileCircleSvg width={32} height={32} startColor={profileIconColor[0]} endColor={profileIconColor[0]} />
+            <ProfileCircleSvg width={32} height={32} startColor={themeAheadOfLoading.lightColor} endColor={themeAheadOfLoading.darkColor} />
             
             <View style={{
-              backgroundColor: friendLoaded && selectedFriend ? profileIconColor[1] : 'transparent',  // Circle color
+              backgroundColor: friendLoaded && friendDashboardData && selectedFriend ? themeAheadOfLoading.lightColor : 'transparent',  // Circle color
               borderRadius: 16,  // Half of width/height to make it circular
               width: 32,  // Circle diameter
               height: 32,
@@ -62,7 +72,7 @@ const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
               justifyContent: 'center',
               marginLeft: 4,  // Adjust spacing between circle and ProfileCircleSvg if needed
           }}>
-              <Text style={[styles.friendText, { color: friendColorTheme?.useFriendColorTheme ? calculatedThemeColors.fontColorSecondary : '#4caf50' }]}>
+              <Text style={[styles.friendText, { color: friendLoaded && friendDashboardData && selectedFriend ? themeAheadOfLoading.fontColorSecondary : 'black' }]}>
                   {selectedFriend && friendLoaded && selectedFriend.name.charAt(0)}
               </Text>
           </View>

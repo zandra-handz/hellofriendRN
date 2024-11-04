@@ -3,9 +3,11 @@ import { View, StyleSheet, Animated } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
+import { useFriendList } from '../context/FriendListContext';
 
 const ButtonMomentCategorySmall = ({ onPress, categoryText, momentCount, highlighted }) => {
     const { calculatedThemeColors } = useSelectedFriend();
+    const { themeAheadOfLoading } = useFriendList();
     const [useFriendColors, setUseFriendColors] = React.useState(true);
 
     // Create a ref for animated opacity
@@ -24,17 +26,17 @@ const ButtonMomentCategorySmall = ({ onPress, categoryText, momentCount, highlig
             styles.container,
             {
                 borderWidth: highlighted ? 2 : 1, // Border width when highlighted or not
-                borderColor: highlighted ? calculatedThemeColors.lightColor : 'transparent', // Highlighted color or transparent
+                borderColor: highlighted ? themeAheadOfLoading.lightColor : 'transparent', // Highlighted color or transparent
                 opacity: fadeAnim, // Apply animated opacity
             }
         ]}>
-            <View style={styles.buttonContainer}>
+            <View style={styles.buttonContainer}> 
                 <ButtonBottomActionBase
                     onPress={onPress}
-                    preLabel={momentCount}
+                    preLabel={momentCount || '--'}
                     preLabelFontSize={18}
                     preLabelColor='black'
-                    labelColor={calculatedThemeColors.fontColorSecondary}
+                    labelColor={themeAheadOfLoading.fontColorSecondary}
                     label={categoryText}
                     height={36}
                     radius={20}
@@ -42,8 +44,8 @@ const ButtonMomentCategorySmall = ({ onPress, categoryText, momentCount, highlig
                     labelFontSize={14}
                     labelContainerMarginHorizontal={0}
                     showGradient={true}
-                    lightColor={useFriendColors ? calculatedThemeColors.lightColor : '#a0f143'}
-                    darkColor={useFriendColors ? calculatedThemeColors.darkColor : '#4caf50'}
+                    lightColor={themeAheadOfLoading.lightColor || '#a0f143'}
+                    darkColor={themeAheadOfLoading.darkColor || '#4caf50'}
                     showShape={true}
                     shapePosition="right"
                     shapeSource={ThoughtBubbleOutlineSvg}
@@ -51,8 +53,8 @@ const ButtonMomentCategorySmall = ({ onPress, categoryText, momentCount, highlig
                     shapeHeight={40}
                     shapePositionValue={-4}
                     shapePositionValueVertical={-9}
-                    shapeLabel={momentCount}
-                    shapeLabelColor={calculatedThemeColors.fontColorSecondary}
+                    shapeLabel={momentCount || '--'}
+                    shapeLabelColor={themeAheadOfLoading.fontColorSecondary}
                     shapeColor={'black'}
                     shapeLabelFontSize={16}
                     shapeLabelPositionRight='96%'

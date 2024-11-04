@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 //<Tab.Screen name="Recent" component={HelloesScreen} />
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 import { fetchPastHelloes } from '../api'; 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -20,7 +21,8 @@ const Tab = createBottomTabNavigator();
 
 const ScreenHelloes = ({ route, navigation }) => { 
     const { themeStyles } = useGlobalStyle();
-    const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
+    const { selectedFriend } = useSelectedFriend();
+    const { themeAheadOfLoading } = useLocationList();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [ selectedHello, setSelectedHello ] = useState(null);
     const [helloesInPersonList, setHelloesInPersonList] = useState([]);
@@ -84,7 +86,7 @@ const ScreenHelloes = ({ route, navigation }) => {
                             tabBar={props => <CustomTabBar {...props} />}
                             screenOptions={({ route }) => ({
                                 tabBarStyle: {
-                                backgroundColor: calculatedThemeColors.darkColor,
+                                backgroundColor: themeAheadOfLoading.darkColor,
                                 position: 'absolute',
                                 flexDirection: 'row',
                                 top: 0, 
@@ -92,8 +94,8 @@ const ScreenHelloes = ({ route, navigation }) => {
                                 shadowOpacity: 0,
                                 borderTopWidth: 0, 
                                 },
-                                tabBarActiveTintColor: calculatedThemeColors.fontColor,
-                                tabBarInactiveTintColor: calculatedThemeColors.fontColor,
+                                tabBarActiveTintColor: themeAheadOfLoading.fontColor,
+                                tabBarInactiveTintColor: themeAheadOfLoading.fontColor,
                                 tabBarIcon: ({ color }) => {
                                 let iconName;
                                 if (selectedFriend && route.name === `${selectedFriend.name}`) {
@@ -103,7 +105,7 @@ const ScreenHelloes = ({ route, navigation }) => {
                                 } else if (route.name === 'Recent') {
                                     iconName = 'time';
                                 }
-                                return <Ionicons name={iconName} size={18} color={calculatedThemeColors.fontColor} />;
+                                return <Ionicons name={iconName} size={18} color={themeAheadOfLoading.fontColor} />;
                                 },
                             })}
                             >

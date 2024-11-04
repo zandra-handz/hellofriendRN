@@ -6,19 +6,55 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import tinycolor from 'tinycolor2';
 
 
 const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
   const { authUserState } = useAuthUser();
+  const { updateFriendListColors, themeAheadOfLoading, setThemeAheadOfLoading } = useFriendList();
   const { selectedFriend, friendColorTheme, updateFriendColorTheme } = useSelectedFriend();
-  const [darkColor, setDarkColor] = useState(friendColorTheme.darkColor || '#000000'); // Default to black
-  const [lightColor, setLightColor] = useState(friendColorTheme.lightColor || '#FFFFFF'); // Default to white
+  const [darkColor, setDarkColor] = useState(themeAheadOfLoading.darkColor || '#000000'); // Default to black
+  const [lightColor, setLightColor] = useState(themeAheadOfLoading.lightColor || '#FFFFFF'); // Default to white
   const [showSaveMessage, setShowSaveMessage] = useState(false);
-  const { updateFriendListColors } = useFriendList();
+
   const [ isMakingCall, setIsMakingCall ] = useState(false);
   const { themeStyles } = useGlobalStyle();
 
   const showInHouseSaveButton = false;
+
+
+  
+  const getFontColor = (baseColor, targetColor, isInverted) => {
+    let fontColor = targetColor;  
+   
+    if (!tinycolor.isReadable(baseColor, targetColor, { level: 'AA', size: 'small' })) {
+       fontColor = isInverted ? '#ffffff' : '#000000';
+  
+      if (!tinycolor.isReadable(baseColor, fontColor, { level: 'AA', size: 'small' })) {
+        // If not readable, switch to the opposite color
+        fontColor = fontColor === '#ffffff' ? '#000000' : '#ffffff';
+      }
+    }
+  
+    return fontColor; // Return the determined font color
+  };
+
+  const getFontColorSecondary = (baseColor, targetColor, isInverted) => {
+    let fontColorSecondary = baseColor; // Start with the base color
+  
+    // Check if the targetColor is readable on the baseColor
+    if (!tinycolor.isReadable(targetColor, baseColor, { level: 'AA', size: 'small' })) {
+      // If not readable, switch to black or white based on isInverted
+      fontColorSecondary = isInverted ? '#000000' : '#ffffff';
+  
+      if (!tinycolor.isReadable(targetColor, fontColorSecondary, { level: 'AA', size: 'small' })) {
+        // If not readable, switch to the opposite color
+        fontColorSecondary = fontColorSecondary === '#000000' ? '#ffffff' : '#000000';
+      }
+    } 
+  
+    return fontColorSecondary; // Return the determined secondary font color
+  };
 
   useEffect(() => {
     if (friendColorTheme) {
@@ -39,17 +75,34 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
 
   const handleSubmit = async () => {
     setIsMakingCall(true);
+
+    const fontColor = getFontColor(darkColor, lightColor, false);
+    const fontColorSecondary = getFontColorSecondary(darkColor, lightColor, false);
+ 
+
     try { 
-      await updateFriendFavesColorTheme(authUserState.user.id, selectedFriend.id, darkColor, lightColor);
+      await updateFriendFavesColorTheme(authUserState.user.id, selectedFriend.id, darkColor, lightColor, fontColor, fontColorSecondary);
+      //selectedFriend function, should remove eventually
       updateFriendColorTheme({
         darkColor: darkColor, 
-        lightColor: lightColor  
+        lightColor: lightColor, 
+        fontColor: fontColor,
+        fontColorSecondary: fontColorSecondary
       });
 
-      setShowSaveMessage(true);
-      //Update friendlist data to show colors even when friend is not selected
-      updateFriendListColors(selectedFriend.id, darkColor, lightColor);
+      //this one updates the friendList data for this friend
+   
+
+      setShowSaveMessage(true); 
+      updateFriendListColors(selectedFriend.id, darkColor, lightColor, fontColor, fontColorSecondary);
       
+      //updateFriendListColors also sets themeAheadOfLoading
+      //setThemeAheadOfLoading({
+      //  lightColor: lightColor, 
+      //  darkColor: darkColor, 
+      //  fontColor: fontColor, 
+      //  fontColorSecondary: fontColorSecondary,
+   // });
       setTimeout(() => {
         setShowSaveMessage(false);
       }, 3000);
