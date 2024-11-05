@@ -26,7 +26,7 @@ const HeaderBase = ({
 }) => {
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
-  const { calculatedThemeColors, loadingNewFriend, friendColorTheme } = useSelectedFriend();
+  const { loadingNewFriend, friendColorTheme } = useSelectedFriend();
   const navigation = useNavigation();
 
   const iconMap = {
@@ -54,7 +54,7 @@ const HeaderBase = ({
               <View style={styles.headerContent}>
                   <View style={styles.leftButtonContainer}>
                       <TouchableOpacity onPress={() => navigation.goBack()}>
-                          <ArrowLeftCircleOutline height={30} width={30} color={calculatedThemeColors.fontColor} />
+                          <ArrowLeftCircleOutline height={30} width={30} color={themeAheadOfLoading.fontColor} />
                       </TouchableOpacity>
                   </View>
 
@@ -62,7 +62,7 @@ const HeaderBase = ({
                       style={[
                           styles.headerText,
                           themeStyles.headerText,
-                          { color: calculatedThemeColors.fontColorSecondary },
+                          { color: themeAheadOfLoading.fontColorSecondary },
                       ]}
                       numberOfLines={1}
                       ellipsizeMode="tail"
@@ -73,11 +73,11 @@ const HeaderBase = ({
                   <View style={styles.rightIconContainer}>
                       {IconComponent ? (
                           <TouchableOpacity onPress={() => navigation.navigate(navigateTo)}>
-                              <IconComponent width={30} height={30} fill={calculatedThemeColors.fontColorSecondary} />
+                              <IconComponent width={30} height={30} fill={themeAheadOfLoading.fontColorSecondary} />
                           </TouchableOpacity>
                       ) : (
                           <View style={styles.defaultIconWrapper}>
-                              <LizardSvg width={74} height={74} color={calculatedThemeColors.fontColorSecondary} style={styles.defaultIcon} />
+                              <LizardSvg width={74} height={74} color={themeAheadOfLoading.fontColorSecondary} style={styles.defaultIcon} />
                           </View>
                       )}
                   </View>

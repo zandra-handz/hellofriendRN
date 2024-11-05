@@ -6,8 +6,7 @@ import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, Touc
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext';
-import { useCapsuleList } from '../context/CapsuleListContext';
-import { saveThoughtCapsule } from '../api'; 
+import { useCapsuleList } from '../context/CapsuleListContext'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
@@ -21,7 +20,7 @@ import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg
 
 const ContentMomentFocus = ({ placeholderText }) => {
   const { selectedFriend, friendColorTheme, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
-  const { setCapsuleList } = useCapsuleList(); // NEED THIS TO ADD NEW 
+  const { handleCreateMoment, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW 
   const { authUserState } = useAuthUser(); 
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
@@ -38,8 +37,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
   const [showCategoriesSlider, setShowCategoriesSlider ] = useState(false);
 
-  const [clearText, setClearText] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(true);  
+  const [clearText, setClearText] = useState(false); 
   const delayForResultsMessage = 1000;
 
   const [categoriesHeight, setCategoriesHeight] = useState(70); // Default height
@@ -110,75 +108,102 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
   };
 
-  const handleSave = async () => {
-    setSaveInProgress(true); 
-    setGettingResultMessage(true);
+
+
+  const handleSave = async () => { 
+
     try {
       if (selectedFriend) {
         const requestData = {
           user: authUserState.user.id,
           friend: selectedFriend.id,
-          typed_category: selectedCategory,
-          capsule: textInput,
+          selectedCategory: selectedCategory,
+          moment: textInput,
         };
   
-        const response = await saveThoughtCapsule(requestData);
+        await handleCreateMoment(requestData); 
   
-        const newCapsule = {
-          id: response.id,
-          typedCategory: response.typed_category,
-          capsule: response.capsule,
-          created: response.created_on,
-          
-        };
-   
-        setCapsuleList(prevCapsules => [newCapsule, ...prevCapsules]);
-        
-        resetTextInput();
-        setSelectedCategory(''); 
-
-        setResultMessage('Moment saved!');
-        setGettingResultMessage(true);
-        setIsSuccess(true); 
-        let timeout;
-        // Set a timeout to turn gettingResultsMessage to false after 3 seconds
-        timeout = setTimeout(() => {
-          setGettingResultMessage(false);
-        }, delayForResultsMessage);  
-        return () => clearTimeout(timeout);
-        
       }
     } catch (error) {
-      setResultMessage('Error! Could not save moment');
-      setGettingResultMessage(true);
-      let timeout;
-  
-      timeout = setTimeout(() => {
-        setGettingResultMessage(false);
-      }, delayForResultsMessage);  
-      return () => clearTimeout(timeout);
-    } finally {
-      setSaveInProgress(false);  
-      setClearText(true);
-      
- 
-    }
+      console.log('catching errors elsewhere, not sure i need this', error);  
+    };
   }; 
 
+  useEffect(() => {
+    if (createMomentMutation.isSuccess) { 
+      setResultMessage('Added!'); 
+
+      let timeout;
+
+      timeout = setTimeout(() => {
+         
+        setSaveInProgress(false);
+      }, 1000);
+
+      resetTextInput();
+      setSelectedCategory(''); 
+      createMomentMutation.reset();
+    }
+
+  }, [createMomentMutation.isSuccess]);
+
+  useEffect(() => {
+
+
+    if (createMomentMutation.isLoading) { 
+
+      setSaveInProgress(true); 
+      console.log('saving'); 
+    } else {
+      setSaveInProgress(false); 
+    }
+
+  }, [createMomentMutation.isLoading]);
+
+
+
+  useEffect(() => {
+
+    if (createMomentMutation.isError) {
+      console.log('MUTATION IS ERROR');
+      
+      setResultMessage('Something went wrong :( Please try again');
+  
+      let timeout;
+  
+        timeout = setTimeout(() => { 
+          
+        setSaveInProgress(false);
+        createMomentMutation.reset();
+        setResultMessage(null); 
+      }, 1000);
+    }
+  
+  }, [createMomentMutation.isError]);
+
   return (
-    <View style={styles.container}>
-              {gettingResultMessage && (
-          <View style={styles.loadingWrapper}>
-          <LoadingPage
-            loading={saveInProgress}
-            resultsMessage={resultMessage}
-            spinnnerType='wander'
-            includeLabel={true}
-            label="Saving moment..."
-          />
-          </View>
-        )}
-      {!gettingResultMessage && ( 
+    <LinearGradient
+    colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}  
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}  
+    style={[styles.container]} 
+  >   
+
+
+    
+    <LoadingPage
+      loading={saveInProgress}
+      resultsMessage={resultMessage}
+      spinnnerType='wander'
+      includeLabel={true}
+      label="Saving moment..."
+    />
+ 
+
+ 
+   
+ 
+      {(createMomentMutation.isIdle) && ( 
       <>
       <KeyboardAvoidingView
         style={styles.container}
@@ -188,22 +213,15 @@ const ContentMomentFocus = ({ placeholderText }) => {
       >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
       
-        <LinearGradient
-        colors={[friendColorTheme?.useFriendColorTheme ? themeAheadOfLoading.darkColor : '#4caf50', friendColorTheme?.useFriendColorTheme  ? themeAheadOfLoading.lightColor : 'rgb(160, 241, 67)']}  
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}  
+        <View 
         style={[styles.container]} 
       >  
-        <View 
+      
+        <View style={styles.blurView}> 
           
-
-          style={styles.blurView}> 
           <View style={styles.selectFriendContainer}>
             <FriendSelectModalVersionButtonOnly addToPress={openKeyboard} includeLabel={true} width='100%' />
           </View>
-           
-
- 
             <>  
           <TextInput
             style={[styles.modalTextInput, themeStyles.genericText, { backgroundColor: themeStyles.genericTextBackground.backgroundColor, borderColor: loadingNewFriend? 'transparent' : calculatedThemeColors.darkColor
@@ -217,7 +235,6 @@ const ContentMomentFocus = ({ placeholderText }) => {
             //autoFocus={true}
             ref={textareaRef}
           />
-          
           <TouchableOpacity onPress={toggleCategoriesSlider} style={{position: 'absolute', zIndex: 2, bottom: 30, right: 30}}>
             <Text style={{color: '#ccc'}}>
               CATEGORIES
@@ -232,12 +249,12 @@ const ContentMomentFocus = ({ placeholderText }) => {
  
       </View>
        )}
-      </LinearGradient>
+      </View>
       </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
       </>
       )}
-    </View>
+    </LinearGradient>
   );
 };
 

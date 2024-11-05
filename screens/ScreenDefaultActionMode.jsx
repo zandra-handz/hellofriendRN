@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 
 import { useAuthUser } from '../context/AuthUserContext';
+import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -19,10 +20,11 @@ import LoadingPage from '../components/LoadingPage';
 const ScreenDefaultActionMode = ({ navigation }) => {
   
   const { themeStyles } = useGlobalStyle(); 
+  const { themeAheadOfLoading } = useFriendList();
   const darkColor = '#000002'; // '#4caf50';
   const lightColor ='#163805'; //'rgb(160, 241, 67)';
   const { authUserState } = useAuthUser();
-  const { selectedFriend, friendLoaded, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+  const { selectedFriend, friendLoaded, loadingNewFriend } = useSelectedFriend();
   const { isLoading } = useUpcomingHelloes(); 
   
 
@@ -31,7 +33,6 @@ const ScreenDefaultActionMode = ({ navigation }) => {
   const [borderColor, setBorderColor] = useState('transparent');
   const [backgroundColor, setBackgroundColor] = useState('transparent');
 
-  // Calculate screen height and button height
   const screenHeight = Dimensions.get('window').height;
   const maxButtonHeight = 100;
   const footerHeight = screenHeight * 0.082; // Footer height
@@ -59,13 +60,13 @@ const ScreenDefaultActionMode = ({ navigation }) => {
 
   useEffect(() => {
     if (selectedFriend && friendLoaded && !loadingNewFriend) {
-      setBorderColor(calculatedThemeColors.lightColor);
-      setBackgroundColor(calculatedThemeColors.darkColor);
+      setBorderColor(themeAheadOfLoading.lightColor);
+      setBackgroundColor(themeAheadOfLoading.darkColor);
     } else { 
       setBorderColor('transparent');
       setBackgroundColor('black');
     }
-  }, [selectedFriend, loadingNewFriend, calculatedThemeColors]);
+  }, [selectedFriend, loadingNewFriend]);
 
   const navigateToAddMomentScreen = () => {
     navigation.navigate('MomentFocus');

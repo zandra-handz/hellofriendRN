@@ -40,6 +40,12 @@ export const CapsuleListProvider = ({ children }) => {
     queryKey: ['Moments', selectedFriend?.id],
     queryFn: () => fetchThoughtCapsules(selectedFriend.id),
     enabled: !!selectedFriend,
+    staleTime: 0,
+    onSuccess: (data) => {
+      // Log the moments cache right after the data is initially fetched
+      const initialCache = queryClient.getQueryData(['Moments', selectedFriend?.id]);
+      console.log('Initial moments cache after fetch:', initialCache);
+    },
     select: (data) => {
       if (!data) return { capsules: [], categoryCount: 0, categoryNames: [], categoryStartIndices: {} };
 
@@ -84,16 +90,30 @@ export const CapsuleListProvider = ({ children }) => {
   const createMomentMutation = useMutation({
     mutationFn: (data) => saveThoughtCapsule(data),
     onSuccess: (data) => {
-      queryClient.setQueryData(['Moments'], (old) => (old ? [data, ...old] : [data]));
+
+      const formattedMoment = {
+        id: data.id,
+        typedCategory: data.typed_category || 'Uncategorized',
+        capsule: data.capsule,
+        created: data.created_on,
+        preAdded: data.pre_added_to_hello,
+      }
+      queryClient.setQueryData(['Moments', selectedFriend?.id], (old) => (old ? [formattedMoment, ...old] : [formattedMoment]));
+      //queryClient.invalidateQueries({ queryKey: ['Moments', selectedFriend?.id] });
+      
+      // Log the updated moments cache
+      const updatedCache = queryClient.getQueryData(['Moments', selectedFriend?.id]);
+      console.log('Updated moments cache after saving a new moment:', updatedCache);
     },
   });
 
   const handleCreateMoment = async (momentData) => {
     const moment = {
-      user: authUserState.user.id,
+      user: momentData.user,
       friend: momentData.friend,
+
       typed_category: momentData.selectedCategory,
-      capsule: momentData.textInput,
+      capsule: momentData.moment,
     };
 
     try {
@@ -156,6 +176,7 @@ export const CapsuleListProvider = ({ children }) => {
         updatePreAddedTracker,
         removeCapsules,
         handleCreateMoment,
+        createMomentMutation,
         updatePreAdded,
         updateCapsule,
         sortByCategory,

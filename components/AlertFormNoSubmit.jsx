@@ -3,7 +3,6 @@ import { StyleSheet, View, Modal, Text, Animated } from 'react-native';
 import { useGlobalStyle} from '../context/GlobalStyleContext';
 
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 
 const AlertFormNoSubmit = ({
@@ -12,12 +11,10 @@ const AlertFormNoSubmit = ({
   questionText,
   formBody,
   formHeight = 400,
-  onCancel,
-  cancelText = 'Done', // Default button text set to 'Done'
+  onCancel, 
 }) => {
-  const { themeStyles } = useGlobalStyle(); 
-  const { calculatedThemeColors } = useSelectedFriend();
-  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity of 0
+  const { themeStyles } = useGlobalStyle();  
+  const fadeAnim = useRef(new Animated.Value(0)).current; 
 
   useEffect(() => { 
     Animated.timing(fadeAnim, {

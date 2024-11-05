@@ -16,6 +16,7 @@ import LoadingPage from '../components/LoadingPage';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useLocationList } from '../context/LocationListContext';
+import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
  
 const Tab = createBottomTabNavigator();
@@ -23,7 +24,8 @@ const Tab = createBottomTabNavigator();
 const ScreenLocations = ({ route, navigation }) => {
   const { themeStyles } = useGlobalStyle();
   const { isFetching } = useLocationList();
-  const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
+  const { selectedFriend } = useSelectedFriend();
   
   const showBottomButtons = false;
 
@@ -65,7 +67,7 @@ const ScreenLocations = ({ route, navigation }) => {
           tabBar={props => <CustomTabBar {...props} />}
           screenOptions={({ route }) => ({
             tabBarStyle: {
-              backgroundColor: calculatedThemeColors.darkColor,
+              backgroundColor: themeAheadOfLoading.darkColor,
               position: 'absolute',
               flexDirection: 'row',
               top: 0, 
@@ -73,11 +75,11 @@ const ScreenLocations = ({ route, navigation }) => {
               shadowOpacity: 0,
               borderTopWidth: 0, 
             }, 
-            tabBarActiveTintColor: calculatedThemeColors.fontColor,
-            tabBarInactiveTintColor: calculatedThemeColors.fontColor,
+            tabBarActiveTintColor: themeAheadOfLoading.fontColor,
+            tabBarInactiveTintColor: themeAheadOfLoading.fontColor,
             tabBarIcon: ({ color }) => {
               const iconName = iconMapping[route.name]; // Get the icon name from the mapping
-              return <Ionicons name={iconName} size={18} color={calculatedThemeColors.fontColor} />;
+              return <Ionicons name={iconName} size={18} color={themeAheadOfLoading.fontColor} />;
             },
           })}
         >

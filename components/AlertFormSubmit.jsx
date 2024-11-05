@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext'; 
 import LoadingPage from '../components/LoadingPage';
 import ButtonBottomSaveMoment from './ButtonBottomSaveMoment';
 
@@ -24,7 +24,7 @@ const AlertFormSubmit = ({
   showButtons = true  
 }) => {
   const { themeStyles } = useGlobalStyle();
-  const { calculatedThemeColors } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity of 0
 
   
@@ -46,7 +46,7 @@ const AlertFormSubmit = ({
           {saveMoment && (
             <>
             {!useSvgForCancelInstead && ( 
-            <TouchableOpacity onPress={onCancel} style={[styles.topButton, {position: 'absolute', zIndex: 1, top: 4, left: 4, backgroundColor: calculatedThemeColors.lightColor}]}>
+            <TouchableOpacity onPress={onCancel} style={[styles.topButton, {position: 'absolute', zIndex: 1, top: 4, left: 4, backgroundColor: themeAheadOfLoading.lightColor}]}>
               <Text style={styles.buttonText}>{cancelText}</Text>
             </TouchableOpacity>
             )}  
@@ -87,7 +87,7 @@ const AlertFormSubmit = ({
         {!isMakingCall && ( 
         <>
         {!saveMoment && ( 
-        <TouchableOpacity onPress={onCancel} style={[styles.bottomButton, {backgroundColor: calculatedThemeColors.lightColor}]}>
+        <TouchableOpacity onPress={onCancel} style={[styles.bottomButton, {backgroundColor: themeAheadOfLoading.lightColor}]}>
           <Text style={styles.buttonText}>{cancelText}</Text>
         </TouchableOpacity>
         )}
@@ -96,7 +96,7 @@ const AlertFormSubmit = ({
         {showButtons && (
           <>
           {!saveMoment && (  
-          <TouchableOpacity onPress={onConfirm} style={[styles.bottomButton, {backgroundColor: calculatedThemeColors.darkColor}]}>
+          <TouchableOpacity onPress={onConfirm} style={[styles.bottomButton, {backgroundColor: themeAheadOfLoading.darkColor}]}>
             <Text style={styles.buttonText}>{confirmText}</Text>
           </TouchableOpacity>
            )}

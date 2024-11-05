@@ -1,10 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
  
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
- 
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 const ButtonBaseSpecialLarge = ({ 
         onPress, 
         label='ADD NEW IMAGE', 
@@ -20,8 +18,6 @@ const ButtonBaseSpecialLarge = ({
         lightColor = 'rgb(160, 241, 67)',
     }) => { 
     const globalStyles = useGlobalStyle();
-    const { selectedFriend, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
-    
 
     const adjustFontSize = (fontSize) => {
         return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;

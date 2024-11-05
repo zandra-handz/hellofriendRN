@@ -46,17 +46,17 @@ const ItemMomentMultiPlain = ({
   const [isMakingCall, setIsMakingCall] = useState(false);
  
 
-  useEffect(() => {
-    if (capsuleList) {
-      sortByCategory();
-      updatePreAddedTracker();
-      console.log('updated preaddedtrigger manually in itemmomentmultiplain');
+  //useEffect(() => {
+   // if (capsuleList) {
+    //  sortByCategory();
+     // updatePreAddedTracker();
+     // console.log('updated preaddedtrigger manually in itemmomentmultiplain');
 
-    };
+   // };
 
-  }, []);
+ // }, []);
   
-  const moments = (sortedByCategory);
+  const moments = (capsuleList);
 
   //useEffect(() => {
      //setSelectedCategory(categoryNames[0]);

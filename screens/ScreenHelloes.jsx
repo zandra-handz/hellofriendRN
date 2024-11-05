@@ -22,7 +22,7 @@ const Tab = createBottomTabNavigator();
 const ScreenHelloes = ({ route, navigation }) => { 
     const { themeStyles } = useGlobalStyle();
     const { selectedFriend } = useSelectedFriend();
-    const { themeAheadOfLoading } = useLocationList();
+    const { themeAheadOfLoading } = useFriendList();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [ selectedHello, setSelectedHello ] = useState(null);
     const [helloesInPersonList, setHelloesInPersonList] = useState([]);

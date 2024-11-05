@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import AddOutlineSvg from '../assets/svgs/add-outline.svg';
+import { useFriendList } from '../context/FriendListContext';
 
 const ButtonBottomActionBase = ({ 
   onPress,
@@ -38,7 +39,7 @@ const ButtonBottomActionBase = ({
   disabled = false  
 }) => { 
   const globalStyles = useGlobalStyle();   
-  const { calculatedThemeColors } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   
   const getShapeStyle = () => {
     switch (shapePosition) {
@@ -94,7 +95,7 @@ const ButtonBottomActionBase = ({
     >
       {!disabled && showGradient && (
         <LinearGradient
-          colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]}
+          colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
           start={{ x: 0, y: 0 }}
           end={direction}
           style={{

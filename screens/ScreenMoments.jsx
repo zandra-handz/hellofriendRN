@@ -5,13 +5,11 @@ import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 
 const ScreenMoments = ({ route, navigation }) => {
     const { themeAheadOfLoading } = useFriendList();
-    const { themeStyles } = useGlobalStyle(); 
-    const { calculatedThemeColors } = useSelectedFriend();
+    const { themeStyles } = useGlobalStyle();  
     const { capsuleList } = useCapsuleList();
     const [isCapsuleListReady, setIsCapsuleListReady] = useState(false);
     const [triggerUpdate, setTriggerUpdate] = useState(false);
