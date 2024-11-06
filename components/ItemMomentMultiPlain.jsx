@@ -19,8 +19,7 @@ import { Dimensions } from 'react-native';
 const footerHeight = 720; // Set to a fixed height for footer
 
 const ItemMomentMultiPlain = ({
-  passInData = false, 
-  triggerUpdate = false,
+  passInData = false,  
   includeCategoryTitle = false, 
   parentCheckboxesTracker,
   parentChangesTracker,
@@ -28,8 +27,8 @@ const ItemMomentMultiPlain = ({
   navigation,
 }) => { 
   const { themeStyles } = useGlobalStyle();
-  const { capsuleList, sortByCategory, updatePreAddedTracker, sortedByCategory, categoryNames, categoryStartIndices, preAddedTracker, updatePreAdded, updateCapsules } = useCapsuleList();
-  const { selectedFriend } = useSelectedFriend();
+  const { capsuleList, preAdded, categoryNames, categoryStartIndices, preAddedTracker, momentsSavedToHello, updateCapsules } = useCapsuleList();
+  
   const { calculatedThemeColors } = useSelectedFriend();
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -45,31 +44,20 @@ const ItemMomentMultiPlain = ({
 
   const [isMakingCall, setIsMakingCall] = useState(false);
  
-
-  //useEffect(() => {
-   // if (capsuleList) {
-    //  sortByCategory();
-     // updatePreAddedTracker();
-     // console.log('updated preaddedtrigger manually in itemmomentmultiplain');
-
-   // };
-
- // }, []);
+ 
   
   const moments = (capsuleList);
-
-  //useEffect(() => {
-     //setSelectedCategory(categoryNames[0]);
-    // console.log('commented out this useEffect in itemviewmomentplain to get category[0] name');
- // }, []);
-
-  useEffect(() => { 
-    console.log('Use effect to set moments when preAddedTracker updates', capsuleList);
-    const initialSelectedMoments = capsuleList.filter(capsule => preAddedTracker.includes(capsule.id));
+ 
+  useEffect(() => {  
+    
+    console.log('MOMENTS SAVED TO HELLO', momentsSavedToHello);
+    console.log(preAdded);
+    const initialSelectedMoments = capsuleList.filter(capsule => preAdded.includes(capsule.id));
+    
     setSelectedMoments(initialSelectedMoments); 
     setSelectedMomentsAlreadySaved(initialSelectedMoments);
 
-  }, [preAddedTracker]);
+  }, [preAddedTracker, capsuleList]);
 
 
   const checkForChanges = (selectedMoments, selectedMomentsAlreadySaved) => {
@@ -112,17 +100,12 @@ const ItemMomentMultiPlain = ({
   
 }, [checkForChangesTrigger]); 
 
-  useEffect(() => {
-    if (triggerUpdate) {
-        handlePreSave(); // Call your save function here when triggered
-    }
-}, [triggerUpdate]);
+ 
 
 useEffect(() => {
   const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-    const hasChanges = checkForChanges(selectedMoments, selectedMomentsAlreadySaved);
 
-    if (showCheckboxes && hasChanges) {
+    if (showCheckboxes && momentsToUpdate.length > 0) {
       // Prevent the default behavior of leaving the screen
       e.preventDefault();
 
@@ -155,7 +138,7 @@ useEffect(() => {
   });
 
   return unsubscribe; // Cleanup
-}, [navigation, selectedMoments, selectedMomentsAlreadySaved, showCheckboxes]);
+}, [navigation, selectedMoments, momentsToUpdate, selectedMomentsAlreadySaved, showCheckboxes]);
 
 // Timer cleanup
 useEffect(() => {
@@ -225,10 +208,8 @@ useEffect(() => {
   const handleToggleCheckboxes = () => {
     console.log(showCheckboxes);
 
-    // Call checkForChanges to determine if there are any changes
-    const hasChanges = checkForChanges(selectedMoments, selectedMomentsAlreadySaved);
-
-    if (showCheckboxes && hasChanges) { 
+    
+    if (showCheckboxes && momentsToUpdate.length > 0) { 
       Alert.alert(
         '',  
         'Do you want to save your changes?',  
@@ -263,69 +244,63 @@ useEffect(() => {
     await handlePreSave(); // Make sure handlePreSave finishes before proceeding
     // Any additional actions that should occur after pre-save is complete
     
-    setShowCheckboxes(prev => !prev);
+    setShowCheckboxes(prev => !prev); 
     parentCheckboxesTracker();
   };
  
 
-  const handlePreSave = async () => {
-
-    if (selectedMoments.length === 0 && selectedMomentsAlreadySaved.length === 0) {
-      console.log('No moments selected to update.');
-      return; // Early return or you can handle this case differently
-   }
-    // Check if there are no selected moments
-    setIsMakingCall(true);
-
-    const selectedIds = new Set(selectedMoments.map(moment => moment.id));
-    
-    const idsToUpdateFalse = preAddedTracker.filter(id => !selectedIds.has(id));
-    const idsToUpdateTrue = selectedMoments.map(moment => moment.id);
-   
-
-    if (selectedMoments.length === 0 && !idsToUpdateFalse) {
-      console.log('No moments selected to update.');
-      return; // Early return or you can handle this case differently
-   }
-    const capsulesToUpdate = selectedMoments.map(moment => ({
-        id: moment.id,
-        fieldsToUpdate: { pre_added_to_hello: true }
-    }));
+  const handlePreSave = async () => { 
+ 
 
  
-    const capsulesToUpdateFalse = idsToUpdateFalse.map(id => ({
-        id: id,
-        fieldsToUpdate: { pre_added_to_hello: false }
-    }));
 
-    const allCapsulesToUpdate = [...capsulesToUpdate, ...capsulesToUpdateFalse];
+    if (momentsToUpdate.length === 0) {
+      console.log('No moments selected to update.');
+      return; // Early return or you can handle this case differently
+   }
+   setIsMakingCall(true);
 
     try {
-         await updateThoughtCapsules(selectedFriend.id, allCapsulesToUpdate);
+         updateCapsules(momentsToUpdate);
 
-        updatePreAdded(idsToUpdateTrue, idsToUpdateFalse); 
-       
+         setMomentsToUpdate([]);
+         
+
+
 
     } catch (error) {
         console.error('Error during pre-save:', error);
     }
     setIsMakingCall(false);
+    
+
+}; 
+
+const [momentsToUpdate, setMomentsToUpdate] = useState([]);
+
+const toggleSelectMoment = (moment) => {
+  // Check if the moment id is already in momentsToUpdate
+  const updatedMomentsToUpdate = momentsToUpdate.some((m) => m.id === moment.id)
+    ? momentsToUpdate.filter((m) => m.id !== moment.id)  // Deselect: remove the moment by id
+    : [
+        ...momentsToUpdate,
+        {
+          id: moment.id, 
+          fieldsToUpdate: { pre_added_to_hello: !moment.pre_added_to_hello }, // Toggle the pre_added_to_hello value
+        }
+      ];  // Select: add the moment with the toggled pre_added_to_hello
+
+  console.log('updating momentsToUpdate!');
+  setMomentsToUpdate(updatedMomentsToUpdate);
+  const updatedSelectedMoments = selectedMoments.includes(moment)
+  ? selectedMoments.filter((m) => m !== moment)
+  : [...selectedMoments, moment];
+  console.log('updating selected moments!');
+setSelectedMoments(updatedSelectedMoments);
 };
 
-useEffect(() => {
-  updatePreAddedTracker();
 
-}, [capsuleList]);
-
-  
-
-  const toggleSelectMoment = (moment) => {
-    const updatedSelectedMoments = selectedMoments.includes(moment)
-      ? selectedMoments.filter((m) => m !== moment)
-      : [...selectedMoments, moment];
-      console.log('updating selected moments!');
-    setSelectedMoments(updatedSelectedMoments);
-  };
+ 
 
   const renderMomentItem = ({ item: moment }) => {
     const isSelected = selectedMoments.includes(moment);

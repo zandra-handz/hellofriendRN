@@ -8,58 +8,32 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext';
 import { useCapsuleList } from '../context/CapsuleListContext'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
 import LoadingPage from '../components/LoadingPage';
-import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 
 
 const ContentMomentFocus = ({ placeholderText }) => {
-  const { selectedFriend, friendColorTheme, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
-  const { handleCreateMoment, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW 
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { handleCreateMoment, resetCreateMomentInputs, resultMessage, closeResultMessage, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW 
   const { authUserState } = useAuthUser(); 
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
    
   const [textInput, setTextInput] = useState('');
-  const textareaRef = useRef();  
-  const [ showCategories, setShowCategories ] = useState(false); 
+  const textareaRef = useRef();   
   const [selectedCategory, setSelectedCategory] = useState('');
-
-  const [ saveInProgress, setSaveInProgress ] = useState(false);
-  const [ resultMessage, setResultMessage ] = useState(null);
-  const [gettingResultMessage, setGettingResultMessage ] = useState(null);
-   
+ 
 
   const [showCategoriesSlider, setShowCategoriesSlider ] = useState(false);
-
-  const [clearText, setClearText] = useState(false); 
-  const delayForResultsMessage = 1000;
+ 
 
   const [categoriesHeight, setCategoriesHeight] = useState(70); // Default height
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
- // useEffect(() => {
-  //  const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-  //    setIsKeyboardVisible(true);
-  //    setCategoriesHeight(70); // Adjust this value as needed when keyboard is visible
-  //  });
-
-   // const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-   //   setIsKeyboardVisible(false);
-   //   setCategoriesHeight('50%'); // Reset height when keyboard is hidden
-   // });
-
-    // Cleanup listeners on unmount
-  //  return () => {
-  //    keyboardDidShowListener.remove();
-  //    keyboardDidHideListener.remove();
-  //  };
- // }, []);
+ 
 
   useFocusEffect(
     useCallback(() => {
@@ -70,16 +44,23 @@ const ContentMomentFocus = ({ placeholderText }) => {
   );
 
 
+ // useFocusEffect(
+   // useCallback(() => {
+     // if (textareaRef.current) {
+       // textareaRef.current.focus();
+     // }
+    //}, [createMomentMutation.isSuccess])
+  //);
+
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
   }, []); 
 
-  const openKeyboard = () => { 
-    console.log('RUNNNNNNNNNNNNNNNNNNING');
-    if (textareaRef.current) {
-      console.log('AAHHHHH');
+  const openKeyboard = () => {  
+    if (textareaRef.current) { 
       textareaRef.current.focus();
     }
   }; 
@@ -101,17 +82,10 @@ const ContentMomentFocus = ({ placeholderText }) => {
     setTextInput(''); 
     setSelectedCategory(''); 
   };
-  
-
-  const toggleCategoryView = () => { 
-    console.log(showCategories);
-
-  };
-
-
+   
 
   const handleSave = async () => { 
-
+ 
     try {
       if (selectedFriend) {
         const requestData = {
@@ -131,55 +105,15 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) { 
-      setResultMessage('Added!'); 
-
-      let timeout;
-
-      timeout = setTimeout(() => {
-         
-        setSaveInProgress(false);
-      }, 1000);
-
       resetTextInput();
-      setSelectedCategory(''); 
-      createMomentMutation.reset();
-    }
+      setSelectedCategory('');  
+    } 
 
   }, [createMomentMutation.isSuccess]);
-
-  useEffect(() => {
-
-
-    if (createMomentMutation.isLoading) { 
-
-      setSaveInProgress(true); 
-      console.log('saving'); 
-    } else {
-      setSaveInProgress(false); 
-    }
-
-  }, [createMomentMutation.isLoading]);
+ 
 
 
-
-  useEffect(() => {
-
-    if (createMomentMutation.isError) {
-      console.log('MUTATION IS ERROR');
-      
-      setResultMessage('Something went wrong :( Please try again');
-  
-      let timeout;
-  
-        timeout = setTimeout(() => { 
-          
-        setSaveInProgress(false);
-        createMomentMutation.reset();
-        setResultMessage(null); 
-      }, 1000);
-    }
-  
-  }, [createMomentMutation.isError]);
+ 
 
   return (
     <LinearGradient
@@ -192,10 +126,12 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
     
     <LoadingPage
-      loading={saveInProgress}
+      loading={createMomentMutation.isPending}
       resultsMessage={resultMessage}
-      spinnnerType='wander'
-      includeLabel={true}
+      spinnerType='flow'
+      color={'transparent'}
+      labelColor={themeAheadOfLoading.fontColorSecondary}
+      includeLabel={false}
       label="Saving moment..."
     />
  
@@ -203,7 +139,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
  
    
  
-      {(createMomentMutation.isIdle) && ( 
+      {closeResultMessage && ( 
       <>
       <KeyboardAvoidingView
         style={styles.container}
@@ -224,7 +160,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
           </View>
             <>  
           <TextInput
-            style={[styles.modalTextInput, themeStyles.genericText, { backgroundColor: themeStyles.genericTextBackground.backgroundColor, borderColor: loadingNewFriend? 'transparent' : calculatedThemeColors.darkColor
+            style={[styles.modalTextInput, themeStyles.genericText, { backgroundColor: themeStyles.genericTextBackground.backgroundColor, borderColor: themeAheadOfLoading.darkColor
               
              }]}
             multiline={true}

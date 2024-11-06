@@ -20,6 +20,7 @@ const LoadingPage = ({
   loading,
   includeLabel = false,
   label = 'Just a moment please!',
+  labelColor = 'white',
   resultsMessage = null, // Optional results message
   spinnerSize = 90,
   color = 'limegreen',
@@ -103,7 +104,7 @@ const LoadingPage = ({
     <View style={styles.container}>
       {includeLabel && !showResultsMessage && (
         <View style={styles.textContainer}>
-          <Text style={[styles.loadingTextBold, { color: themeStyles.genericText.color }]}>{label}</Text>
+          <Text style={[styles.loadingTextBold, { color: labelColor }]}>{label}</Text>
         </View>
       )}
       {showResultsMessage && (
@@ -117,7 +118,7 @@ const LoadingPage = ({
           ]}
         >
           <Animated.Text
-            style={[styles.loadingTextBold, { color: themeStyles.genericText.color }]}
+            style={[styles.loadingTextBold, { color: labelColor }]}
           >
             {resultsMessage}
           </Animated.Text>

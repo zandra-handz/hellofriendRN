@@ -212,6 +212,10 @@ npm install react-native-animatable-text
 MAYBE ????????????? -->
 npm install @tanstack/react-query
 
+(YES)
+
+npm install @tanstack/react-query-devtools
+
 
 
 

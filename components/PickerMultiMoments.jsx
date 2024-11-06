@@ -26,7 +26,7 @@ const PickerMultiMoments = ({
 
   const [isMomentSelectModalVisible, setIsMomentSelectModalVisible] = useState(false);
   const { selectedFriend, loadingNewFriend, friendDashboardData, calculatedThemeColors } = useSelectedFriend();
-  const { capsuleList, preAddedTracker, updatePreAddedTracker } = useCapsuleList();
+  const { capsuleList, preAddedTracker, preAdded } = useCapsuleList();
 
 
   const useScrollingCategorySelector = false; 
@@ -52,10 +52,10 @@ const PickerMultiMoments = ({
 
   useEffect(() => { 
     console.log('Use effect to set moments when preAddedTracker updates');
-    const initialSelectedMoments = capsuleList.filter(capsule => preAddedTracker.includes(capsule.id));
+    const initialSelectedMoments = capsuleList.filter(capsule => preAdded.includes(capsule.id));
     setSelectedMoments(initialSelectedMoments);
 
-  }, [preAddedTracker]);
+  }, [capsuleList]);
 
 
   const fetchCategoryLimitData = async () => {
