@@ -160,7 +160,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
           </View>
             <>  
           <TextInput
-            style={[styles.modalTextInput, themeStyles.genericText, { backgroundColor: themeStyles.genericTextBackground.backgroundColor, borderColor: themeAheadOfLoading.darkColor
+            style={[styles.modalTextInput, themeStyles.genericText, { backgroundColor: themeStyles.genericTextBackground.backgroundColor, borderColor: themeAheadOfLoading.lightColor
               
              }]}
             multiline={true}

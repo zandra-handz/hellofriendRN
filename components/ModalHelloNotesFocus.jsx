@@ -1,13 +1,12 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
-import { LinearGradient } from 'expo-linear-gradient'; 
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-
+import { LinearGradient } from 'expo-linear-gradient';  
+import { useFriendList } from '../context/FriendListContext';
 
 const ModalHelloNotesFocus = ({ isModalVisible, handleCloseModal, textInput, handleInputChange, placeholderText }) => {
   
-  const { calculatedThemeColors } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
  
   return (
     <Modal
@@ -17,21 +16,21 @@ const ModalHelloNotesFocus = ({ isModalVisible, handleCloseModal, textInput, han
     >
       <View style={styles.modalOverlay}>
         <LinearGradient
-          colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]} 
+          colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]} 
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}  
           style={styles.modalContent}
         >
           <TextInput
-            style={[styles.modalTextInput, {borderColor: calculatedThemeColors.darkColor}]}
+            style={[styles.modalTextInput, {borderColor: themeAheadOfLoading.darkColor}]}
             multiline={true}
             value={textInput}
             onChangeText={handleInputChange}
             placeholder={placeholderText}
             autoFocus={true}
           />
-          <TouchableOpacity onPress={handleCloseModal} style={[styles.closeButton, {backgroundColor: calculatedThemeColors.darkColor}]}>
-            <Text style={[styles.closeButtonText, {color: calculatedThemeColors.lightColor}]}>Minimize</Text>
+          <TouchableOpacity onPress={handleCloseModal} style={[styles.closeButton, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+            <Text style={[styles.closeButtonText, {color: themeAheadOfLoading.lightColor}]}>Minimize</Text>
           </TouchableOpacity>
         </LinearGradient>
       </View>

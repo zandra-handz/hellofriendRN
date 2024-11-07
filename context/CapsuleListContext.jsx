@@ -47,41 +47,49 @@ export const CapsuleListProvider = ({ children }) => {
     enabled: !!selectedFriend,
     staleTime: 0,
     onSuccess: (data) => {
-      // Log the moments cache right after the data is initially fetched
       const initialCache = queryClient.getQueryData(['Moments', selectedFriend?.id]);
       console.log('Initial moments cache after fetch:', initialCache);
     },
     select: (data) => {
       if (!data) return { capsules: [], categoryCount: 0, categoryNames: [], categoryStartIndices: {}, preAdded: [], momentsSavedToHello: [] };
-
+  
+      // Sort data
       const sorted = [...data].sort((a, b) => {
         if (a.typedCategory < b.typedCategory) return -1;
         if (a.typedCategory > b.typedCategory) return 1;
         return new Date(b.created) - new Date(a.created);
       });
-
-
-      const uniqueCategories = [...new Set(sorted.map((item) => item.typedCategory))];
+  
+      // Add unique index to each item
+      const sortedWithIndices = sorted.map((capsule, index) => ({
+        ...capsule,
+        uniqueIndex: index
+      }));
+  
+      // Extract unique categories and other properties
+      const uniqueCategories = [...new Set(sortedWithIndices.map((item) => item.typedCategory))];
       const categoryCount = uniqueCategories.length;
       const categoryNames = uniqueCategories;
-
+  
       const categoryStartIndices = {};
       let index = 0;
       for (const category of uniqueCategories) {
         categoryStartIndices[category] = index;
-        index += sorted.filter((item) => item.typedCategory === category).length;
+        index += sortedWithIndices.filter((item) => item.typedCategory === category).length;
       }
- 
-      const preAdded = sorted.reduce((ids, capsule) => {
+  
+      const preAdded = sortedWithIndices.reduce((ids, capsule) => {
         if (capsule.preAdded) ids.push(capsule.id);
         return ids;
       }, []);
-          
-      const momentsSavedToHello = sorted.filter(capsule => preAdded.includes(capsule.id));
-
-      return { capsules: sorted, categoryCount, categoryNames, categoryStartIndices, preAdded, momentsSavedToHello };
+  
+      const momentsSavedToHello = sortedWithIndices.filter(capsule => preAdded.includes(capsule.id));
+  
+      // Return the sorted data with unique indices and additional properties
+      return { capsules: sortedWithIndices, categoryCount, categoryNames, categoryStartIndices, preAdded, momentsSavedToHello };
     },
   });
+  
 
   const {
     capsules = [],

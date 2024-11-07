@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import CardMicroLocation from '../components/CardMicroLocation';
+import { View, Text, StyleSheet } from 'react-native';
 import { useLocationList } from '../context/LocationListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
+import { useFriendList } from '../context/FriendListContext';
 import { FlashList } from '@shopify/flash-list';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 
@@ -19,7 +18,8 @@ const ItemLocationFaveMulti = ({
     showBigSvg = false, 
 }) => {
     const { themeStyles } = useGlobalStyle();
-    const { calculatedThemeColors, friendDashboardData } = useSelectedFriend();
+    const { themeAheadOfLoading } = useFriendList();
+    const { friendDashboardData } = useSelectedFriend();
     const { locationList, faveLocationList, setSelectedLocation, populateFaveLocationsList } = useLocationList();
     
     const [isFaveLocationReady, setIsFaveLocationReady] = useState(false);
@@ -52,7 +52,7 @@ const ItemLocationFaveMulti = ({
                     {!horizontal && (
                     <ButtonLocation 
                         location={location}     
-                        iconColor={calculatedThemeColors.darkColor}
+                        iconColor={themeAheadOfLoading.darkColor}
                         color={themeStyles.genericText.color}
                         icon={LocationHeartSolidSvg} />
                     )}

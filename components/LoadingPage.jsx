@@ -32,9 +32,10 @@ const LoadingPage = ({
   const [showResultsMessage, setShowResultsMessage] = useState(false); // State for showing results message
   const { themeStyles } = useGlobalStyle();
 
-  // Create animated values for opacity and scale
+  // Create animated values for opacity, scale, and color flash
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.5)).current;
+  const colorFlash = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     let timeout;
@@ -49,24 +50,40 @@ const LoadingPage = ({
 
         // If resultsMessage is provided, show it after the spinner stops
         if (resultsMessage) {
-          // Reset the opacity and scale
+          // Reset the opacity, scale, and color flash
           opacity.setValue(0);
           scale.setValue(0.5);
+          colorFlash.setValue(0);
 
           setShowResultsMessage(true);
 
-          // Animate the opacity and scale (expand and fade in)
+          // Animate the opacity, scale, and color flash (expand and fade in with spring effect)
           Animated.parallel([
             Animated.timing(opacity, {
               toValue: 1,
               duration: 500,
               useNativeDriver: true,
             }),
-            Animated.timing(scale, {
+            Animated.spring(scale, {
               toValue: 1,
-              duration: 500,
+              friction: 5,
+              tension: 100,
               useNativeDriver: true,
             }),
+            Animated.loop(
+              Animated.sequence([
+                Animated.timing(colorFlash, {
+                  toValue: 1,
+                  duration: 500,
+                  useNativeDriver: false,
+                }),
+                Animated.timing(colorFlash, {
+                  toValue: 0,
+                  duration: 500,
+                  useNativeDriver: false,
+                }),
+              ])
+            ).start(),
           ]).start();
 
           resultsTimeout = setTimeout(() => {
@@ -93,7 +110,13 @@ const LoadingPage = ({
       clearTimeout(timeout);
       clearTimeout(resultsTimeout);
     };
-  }, [loading, delay, resultsMessage, resultsDisplayDuration, opacity, scale]);
+  }, [loading, delay, resultsMessage, resultsDisplayDuration, opacity, scale, colorFlash]);
+
+  // Interpolate the color flash animation
+  const interpolatedColor = colorFlash.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['limegreen', 'cyan'], // Customize colors here
+  });
 
   // Return null if the spinner is hidden and no resultsMessage is to be shown
   if (!showSpinner && !showResultsMessage) return null;
@@ -112,13 +135,16 @@ const LoadingPage = ({
           style={[
             styles.textContainer,
             {
-              opacity: opacity, // Apply opacity animation
-              transform: [{ scale: scale }], // Apply scale animation
+              opacity: opacity,
+              transform: [{ scale: scale }],
             },
           ]}
         >
           <Animated.Text
-            style={[styles.loadingTextBold, { color: labelColor }]}
+            style={[
+              styles.loadingTextBold,
+              { color: interpolatedColor },
+            ]}
           >
             {resultsMessage}
           </Animated.Text>
@@ -135,14 +161,14 @@ const LoadingPage = ({
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject, // Cover the entire screen
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'transparent', // Semi-transparent background
+    backgroundColor: 'transparent',
   },
   textContainer: {
     position: 'absolute',
-    top: '36%', // Position the text above the spinner, can be adjusted
+    top: '36%',
     justifyContent: 'center',
     alignItems: 'center',
   },

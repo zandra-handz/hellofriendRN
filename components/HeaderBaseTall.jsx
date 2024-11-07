@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useCapsuleList } from '../context/CapsuleListContext';
 import { useFriendList } from '../context/FriendListContext';
-
+import SearchBar from '../components/SearchBar';
+import  ItemViewMoment from '../components/ItemViewMoment';
 import LizardSvg from '../assets/svgs/lizard.svg';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
@@ -19,15 +21,21 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import LoadingPage from '../components/LoadingPage';
 
-const HeaderBase = ({
+
+const HeaderBaseTall = ({
   headerTitle = 'Header title here', 
   navigateTo = 'Moments',
   icon, // Select which SVG to display
 }) => {
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
-  const { loadingNewFriend } = useSelectedFriend();
+  const { capsuleList } = useCapsuleList();
+  const { loadingNewFriend, friendColorTheme } = useSelectedFriend();
   const navigation = useNavigation();
+
+  const [ isItemModalVisible, setItemModalVisible ] = useState(false);
+const [ selectedMoment, setSelectedMoment ] = useState(null);
+ 
 
   const iconMap = {
       arrow: ArrowLeftCircleOutline,
@@ -40,16 +48,38 @@ const HeaderBase = ({
  
   const IconComponent = iconMap[icon] || null;
 
+  const handlePress = (item) => {
+    console.log('hii', item);
+    setSelectedMoment(item);
+    setItemModalVisible(true);
+
+  };
+
+  useEffect(() => {
+    console.log(selectedMoment);
+
+  }, [selectedMoment]);
+
+  const handleClose = () => {
+    setItemModalVisible(false);
+    setSelectedMoment(null);
+
+  };
+
+
+
   return (
       <LinearGradient
           colors={[
-              themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor,
+               themeAheadOfLoading.darkColor,
+               themeAheadOfLoading.lightColor,
           ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.headerContainer}
       >
           {!loadingNewFriend && (
+            <>
               <View style={styles.headerContent}>
                   <View style={styles.leftButtonContainer}>
                       <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -81,23 +111,52 @@ const HeaderBase = ({
                       )}
                   </View>
               </View>
+              <View style={[styles.searchBarContent, {paddingTop: '1%'}]}>
+                <View style={{width: '40%', height: 38 }}>
+                    <SearchBar data={capsuleList} borderColor={themeAheadOfLoading.lightColor} onPress={handlePress} searchKeys={['capsule', 'typedCategory']} />
+                    </View>
+
+              </View>
+              
+
+              
+              </>
+              
+            
           )}
+        {isItemModalVisible && selectedMoment && (
+            <ItemViewMoment 
+            onClose={handleClose}
+            moment={selectedMoment}
+            />
+        )}
+
+
       </LinearGradient>
+      
   );
+
 };
 
 
 const styles = StyleSheet.create({
   headerContainer: {
+    flexDirection: 'column',
     padding: 10,
     paddingTop: 66,  
     paddingHorizontal: 10, 
-    height: 110, 
+    height: 150, 
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+searchBarContent: { 
+    width: '100%', 
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   leftButtonContainer: {
     width: 40,  // Fixed width to keep it from moving
@@ -132,4 +191,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeaderBase;
+export default HeaderBaseTall;

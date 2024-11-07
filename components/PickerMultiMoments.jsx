@@ -4,6 +4,7 @@ import { CheckBox } from 'react-native-elements';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 import ButtonMomentHelloes from '../components/ButtonMomentHelloes';
 import ModalSelectMoments from '../components/ModalSelectMoments';
 import AddOutlineSvg from '../assets/svgs/add-outline.svg';
@@ -15,6 +16,7 @@ const PickerMultiMoments = ({
     showInModal = true, 
 }) => {
   const { themeStyles } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendList();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedMoments, setSelectedMoments] = useState([]);
@@ -25,8 +27,8 @@ const PickerMultiMoments = ({
   const [selectionPercentage, setSelectionPercentage] = useState(0); // State for selection percentage
 
   const [isMomentSelectModalVisible, setIsMomentSelectModalVisible] = useState(false);
-  const { selectedFriend, loadingNewFriend, friendDashboardData, calculatedThemeColors } = useSelectedFriend();
-  const { capsuleList, preAddedTracker, preAdded } = useCapsuleList();
+  const { selectedFriend, loadingNewFriend, friendDashboardData } = useSelectedFriend();
+  const { capsuleList, preAdded } = useCapsuleList();
 
 
   const useScrollingCategorySelector = false; 
@@ -253,8 +255,8 @@ const PickerMultiMoments = ({
                       checked={selectedMoments.includes(item)}
                       onPress={() => handleCheckboxChange(item)}
                       containerStyle={{ margin: 0, padding: 0 }}
-                      checkedColor={calculatedThemeColors.darkColor} // Change this to your desired checked color
-                      uncheckedColor={calculatedThemeColors.lightColor}
+                      checkedColor={themeAheadOfLoading.darkColor} // Change this to your desired checked color
+                      uncheckedColor={themeAheadOfLoading.lightColor}
                     />
                     </View>
                     <View style={{width: '86%'}}>

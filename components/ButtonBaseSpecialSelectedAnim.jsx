@@ -50,13 +50,17 @@ const ButtonBaseSpecialSelectedAnim = ({
         navigation.navigate('Moments');
       };
 
+      const navigateToAddMoment = () => {
+        navigation.navigate('MomentFocus');
+      };
+
       const handleSinglePress = () => { 
-          navigateBackToFriendFocus();
+          navigateToMoments();
         };
     
       const handleDoublePress = () => {
         console.log('Double press detected');
-        navigateToMoments(); 
+        navigateToAddMoment(); 
       };
     
     const onPress = () => {

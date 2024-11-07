@@ -2,13 +2,15 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import IconDynamicHelloType from '../components/IconDynamicHelloType';
 
 
 const LastHelloBanner = () => {
 
-    const { calculatedThemeColors, friendDashboardData } = useSelectedFriend();
+    const { friendDashboardData } = useSelectedFriend();
+    const { themeAheadOfLoading } = useFriendList();
     const { themeStyles } = useGlobalStyle();
 
 
@@ -21,7 +23,7 @@ const LastHelloBanner = () => {
                     </Text> 
                     <Text style={[styles.text, themeStyles.genericText]}>{friendDashboardData[0].days_since_words}</Text>
                 </View>
-                   <IconDynamicHelloType selectedChoice={friendDashboardData[0].previous_meet_type} svgHeight={30} svgWidth={30} svgColor={calculatedThemeColors.fontColor} />
+                   <IconDynamicHelloType selectedChoice={friendDashboardData[0].previous_meet_type} svgHeight={30} svgWidth={30} svgColor={themeAheadOfLoading.fontColor} />
               
             </View>
             <View style={styles.rightSection}> 

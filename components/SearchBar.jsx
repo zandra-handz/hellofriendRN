@@ -3,10 +3,17 @@ import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Touchabl
 import Icon from 'react-native-vector-icons/Ionicons'; // Import the icon
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const SearchBar = ({ data, onPress, searchKeys }) => {  // Updated to accept `searchKeys`
+const SearchBar = ({ data, borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]); 
   const { themeStyles } = useGlobalStyle();
+
+  const handleItemPress = (item) => {
+    onPress(item);  
+    handleOutsidePress();
+    setSearchQuery('');
+  };
+
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -34,7 +41,7 @@ const SearchBar = ({ data, onPress, searchKeys }) => {  // Updated to accept `se
     setFilteredData([]); // Optionally clear the filtered results
   };
 
-  const handleOutsidePress = () => {
+  const handleOutsidePress = () => { 
     // Close the keyboard if the user taps outside
     Keyboard.dismiss();
     handleBlur(); // Also clear the search bar
@@ -43,8 +50,8 @@ const SearchBar = ({ data, onPress, searchKeys }) => {  // Updated to accept `se
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
-      <View style={styles.container}> 
-        <View style={[styles.inputContainer, themeStyles.genericTextBackground]}>
+      <View style={[styles.container, {height: '100%'}]}> 
+        <View style={[styles.inputContainer, themeStyles.genericTextBackground, {borderColor: borderColor}]}>
           <TextInput
             style={[styles.searchInput, themeStyles.genericText]}
             placeholder="Search..."
@@ -52,7 +59,7 @@ const SearchBar = ({ data, onPress, searchKeys }) => {  // Updated to accept `se
             onChangeText={handleSearch}
             onBlur={handleBlur}  // Clear when the user moves away from the input
           />
-          <Icon name="search" size={20} color={themeStyles.genericText.color} style={styles.icon} />  
+          <Icon name="search" size={18} color={themeStyles.genericText.color} style={styles.icon} />  
         </View>
     
         {searchQuery.length > 0 && (
@@ -61,7 +68,7 @@ const SearchBar = ({ data, onPress, searchKeys }) => {  // Updated to accept `se
               data={filteredData}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => onPress(item)} style={styles.itemContainer}>
+                <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
                   <Text style={styles.itemText}>
                     {searchKeys.map((key) => item[key]).join(' - ')} {/* Display all matching fields */}
                   </Text>
@@ -82,24 +89,24 @@ const styles = StyleSheet.create({
   container: { 
     position: 'relative',
     width: '100%',
+    flex: 1, 
     zIndex: 0,
   },
   inputContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#ccc',
+    alignItems: 'center', 
     borderWidth: 1,
     borderRadius: 30,
     backgroundColor: '#444',
   },
-  searchInput: {
-    height: 40,
+  searchInput: { 
     flex: 1, 
     fontFamily: 'Poppins-Regular',
     paddingHorizontal: 8, 
+    paddingVertical: 2,
   },
   icon: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 10, 
   },
   dropdownContainer: {
     position: 'absolute',

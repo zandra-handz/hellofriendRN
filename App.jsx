@@ -43,6 +43,7 @@ import HeaderWriteMoment from './components/HeaderWriteMoment';
 import HeaderPickCategory from './components/HeaderPickCategory';
 import HeaderFriendFocus from './components/HeaderFriendFocus';
 import HeaderBase from './components/HeaderBase'; 
+import HeaderBaseTall from './components/HeaderBaseTall'; 
 import HeaderLocations from './components/HeaderLocations';
 import HeaderHelloes from './components/HeaderHelloes';
 import HeaderLocationSingle from './components/HeaderLocationSingle';

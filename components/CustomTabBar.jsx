@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet, Dimensions, Text } from 'react-nati
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-
+import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const { width } = Dimensions.get('window');
@@ -11,7 +11,7 @@ const { width } = Dimensions.get('window');
 const CustomTabBar = ({ state, descriptors, navigation }) => {
 
   const { themeStyles } = useGlobalStyle();
-  const { calculatedThemeColors } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   const underlinePosition = useSharedValue(0);
   const tabWidth = width / state.routes.length; // Calculate the width of each tab
 
@@ -24,8 +24,8 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   }));
 
   return (
-    <View style={[styles.tabBar, {backgroundColor: calculatedThemeColors.darkColor}]}>
-      <Animated.View style={[styles.underline, animatedStyle, { width: tabWidth, backgroundColor: calculatedThemeColors.fontColor }]} />
+    <View style={[styles.tabBar, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+      <Animated.View style={[styles.underline, animatedStyle, { width: tabWidth, backgroundColor: themeAheadOfLoading.fontColor }]} />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
@@ -49,7 +49,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             style={styles.tabButton}
           >
             {options.tabBarIcon({ focused: isFocused })} 
-            <Text style={{ fontFamily: 'Poppins-Bold', color: isFocused ? calculatedThemeColors.fontColor : calculatedThemeColors.fontColor, marginTop: 4, marginLeft: 7 }}>
+            <Text style={{ fontFamily: 'Poppins-Bold', color: isFocused ? themeAheadOfLoading.fontColor : themeAheadOfLoading.fontColor, marginTop: 4, marginLeft: 7 }}>
               {route.name}
             </Text>
           </TouchableOpacity>

@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar, ActivityIndicator, View } from 'react-native';
+import { StatusBar } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext'; // Adjust the import path as necessary
 import tinycolor from 'tinycolor2';
-
+import { useFriendList } from '../context/FriendListContext';
 const PhoneStatusBar = () => {
-const { theme, themeStyles , nonCustomHeaderPage, setNonCustomHeaderPage} = useGlobalStyle();
-  const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
+const { theme, nonCustomHeaderPage } = useGlobalStyle();
+  const { selectedFriend } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   const [ color, setColor ] = useState('');
 
 
-  useEffect(() => {
-    console.log('theme colors updated', calculatedThemeColors);
-    console.log(theme);
-    console.log(calculatedThemeColors.darkColor);
-    console.log(nonCustomHeaderPage);
+  useEffect(() => { 
 
     if (!nonCustomHeaderPage) {
-    const backgroundColor = calculatedThemeColors.darkColor;
+    const backgroundColor = themeAheadOfLoading.darkColor;
     
     const whiteContrast = tinycolor.readability(backgroundColor, 'white');
     const blackContrast = tinycolor.readability(backgroundColor, 'black');
@@ -30,7 +27,7 @@ const { theme, themeStyles , nonCustomHeaderPage, setNonCustomHeaderPage} = useG
         const readableColor = theme == 'dark' ? null : 'black';
         setColor(readableColor);
     }
-}, [theme, nonCustomHeaderPage, calculatedThemeColors, selectedFriend]);
+}, [theme, nonCustomHeaderPage, themeAheadOfLoading, selectedFriend]);
    
   return (
     <>   

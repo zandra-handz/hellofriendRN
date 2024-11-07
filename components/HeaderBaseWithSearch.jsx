@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-
-import { useAuthUser } from '../context/AuthUserContext';
+ 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 
@@ -18,10 +18,9 @@ const HeaderBaseWithSearch = ({
     onPress,
     dataFieldToSearch, 
 }) => {
-
-    const { authUserState } = useAuthUser();
+ 
     const { themeStyles } = useGlobalStyle();
-    const { calculatedThemeColors } = useSelectedFriend();
+    const { themeAheadOfLoading } = useFriendList();
     const navigation = useNavigation();
 
     const handleNavigateBack = () => {
@@ -29,17 +28,17 @@ const HeaderBaseWithSearch = ({
       };
 
   return (
-    <View style={[styles.headerContainer, themeStyles.headerContainerNoBorder, {backgroundColor: calculatedThemeColors.darkColor}]}>
+    <View style={[styles.headerContainer, themeStyles.headerContainerNoBorder, {backgroundColor: themeAheadOfLoading.darkColor}]}>
       <View style={{flexDirection: 'row', width: '60%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
         <TouchableOpacity onPress={handleNavigateBack}>
-            <ArrowLeftCircleOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
+            <ArrowLeftCircleOutline height={30} width={30} color={themeAheadOfLoading.fontColor}/>
         </TouchableOpacity> 
         <Text 
   style={[
     styles.headerText, 
     themeStyles.headerText, 
     {
-        color: calculatedThemeColors.fontColor, 
+        color: themeAheadOfLoading.fontColor, 
         paddingLeft: 20, 
     }
   ]}
@@ -50,7 +49,7 @@ const HeaderBaseWithSearch = ({
 
       </View> 
       {componentData && (
-      <View style={{width: '40%'}}>
+      <View style={{width: '40%', flexDirection: 'row', alignContent: 'center', alignItems: 'center', height: 'auto' }}>
       <SearchBar data={componentData} onPress={onPress} searchKeys={dataFieldToSearch} />
       </View>
       )}

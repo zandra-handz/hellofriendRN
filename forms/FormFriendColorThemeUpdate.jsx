@@ -73,6 +73,14 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
     submit: handleSubmit,
   }));
 
+
+  const handleSwapColors = () => {
+    const newLightColor = darkColor;
+    const newDarkColor = lightColor;
+    setDarkColor(newDarkColor);
+    setLightColor(newLightColor);
+  };
+
   const handleSubmit = async () => {
     setIsMakingCall(true);
 
@@ -142,6 +150,9 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
           </ColorPicker>
         </View>
       </View>
+      <TouchableOpacity style={styles.swapButtonContainer} onPress={handleSwapColors}>
+        <Text style={styles.swapButtonText}>SWAP</Text>
+      </TouchableOpacity>
 
       <View style={{width: '100%'}}>
         <View style={styles.inputContainer}>
@@ -176,6 +187,18 @@ const styles = StyleSheet.create({
   },
   saveMessage: {
     color: 'green', 
+  },
+  swapButtonContainer: {
+    width: '100%',
+    textAlign: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+
+  },
+  swapButtonText: {
+    fontFamily: 'Poppins-Bold',
+    color: 'white',
   },
   inputContainer: {
     width: '100%', 

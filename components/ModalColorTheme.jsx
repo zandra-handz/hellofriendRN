@@ -94,6 +94,10 @@ const ModalColorTheme = ({ visible, onClose }) => {
     await updateColorThemeSetting(newValue);
   };
 
+  const toggleColorThemeInvertGradient = async () => {
+
+  };
+
   const toggleColorThemeGradientDirection = async () => {
     const newValue = !invertGradientDirection;
     setInvertGradientDirection(newValue);

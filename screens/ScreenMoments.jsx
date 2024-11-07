@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
 import { useGlobalStyle } from '../context/GlobalStyleContext';

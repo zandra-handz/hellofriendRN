@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
-import { View, StyleSheet, Text, Animated, Alert } from 'react-native';
+import { View, StyleSheet, Text,TouchableOpacity, Animated, Alert } from 'react-native';
 import ButtonMomentCategorySmall from '../components/ButtonMomentCategorySmall';
 import ButtonMoment from '../components/ButtonMoment'; 
 import ButtonCheckboxControl from '../components/ButtonCheckboxControl';
@@ -8,10 +8,12 @@ import ItemViewMoment from '../components/ItemViewMoment';
 import { CheckBox } from 'react-native-elements';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { updateThoughtCapsules } from '../api';
+import SpinOutlineSvg from '../assets/svgs/spin-outline.svg';
 import LoadingPage from '../components/LoadingPage';
+import SearchBar from '../components/SearchBar';
 
 import { Dimensions } from 'react-native';
 
@@ -28,8 +30,7 @@ const ItemMomentMultiPlain = ({
 }) => { 
   const { themeStyles } = useGlobalStyle();
   const { capsuleList, preAdded, categoryNames, categoryStartIndices, preAddedTracker, momentsSavedToHello, updateCapsules } = useCapsuleList();
-  
-  const { calculatedThemeColors } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();  
   const [selectedMoment, setSelectedMoment] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(categoryNames[0]);
@@ -145,6 +146,29 @@ useEffect(() => {
   return () => clearTimeout(timerRef.current);
 }, []);
 
+
+const handleScrollToItem = (moment) => {
+  const itemIndex = moment.uniqueIndex;
+  if (itemIndex !== undefined) {
+    flatListRef.current?.scrollToIndex({ index: itemIndex, animated: true });
+
+
+  }
+
+  console.log(moment);
+
+};
+
+const handleScrollToRandomItem = () => {
+  const itemIndex = Math.floor(Math.random() * moments.length);
+  if (itemIndex !== undefined) {
+    flatListRef.current?.scrollToIndex({ index: itemIndex, animated: true });
+
+
+  }
+
+};
+
  
 
 
@@ -152,8 +176,7 @@ useEffect(() => {
     setCategoryButtonPressed(true);
     setSelectedCategory(prev => (prev === category ? null : category));
     const startIndex = categoryStartIndices[category];
-    if (startIndex !== undefined) {
-      console.log('startIndex: ', startIndex);
+    if (startIndex !== undefined) { 
       flatListRef.current?.scrollToIndex({ index: startIndex, animated: true });
 
       const categoryIndex = Object.keys(categoryStartIndices).indexOf(category);
@@ -161,6 +184,8 @@ useEffect(() => {
     }
     setCategoryButtonPressed(false);
   };
+
+
 
   const DELAY = 0; //previously when using flatlist for moments: 64
 
@@ -197,6 +222,7 @@ useEffect(() => {
       toggleSelectMoment(moment);
     }
   };
+ 
 
   const closeModal = () => {
     setSelectedMoment(null);
@@ -307,7 +333,7 @@ setSelectedMoments(updatedSelectedMoments);
     const isHighlighted = moment.typedCategory === selectedCategory;
   
     return (
-      <View style={[styles.momentContainer, isHighlighted && styles.highlightedMoment, {backgroundColor: calculatedThemeColors.lightColor}]}>
+      <View style={[styles.momentContainer, isHighlighted && styles.highlightedMoment, {backgroundColor: themeAheadOfLoading.lightColor}]}>
         {showCheckboxes && (
           <CheckBox
             key={moment.id}
@@ -315,8 +341,8 @@ setSelectedMoments(updatedSelectedMoments);
             onPress={() => toggleSelectMoment(moment)}
             containerStyle={styles.checkboxContainer}
             textStyle={styles.checkboxText}
-            checkedColor={themeStyles.genericText.color} // Set checked color here
-            uncheckedColor={calculatedThemeColors.darkColor} 
+            checkedColor={themeAheadOfLoading.lightColor} // Set checked color here
+            uncheckedColor={themeStyles.genericTextBackgroundShadeTwo.color} 
             size={24} 
           />
         )}
@@ -340,17 +366,32 @@ setSelectedMoments(updatedSelectedMoments);
 
   return (
     <View style={styles.container}> 
+      <View style={[styles.searchBarContent, {marginTop: '1%'}]}>
+      
+        
+      <TouchableOpacity style={{alignContent: 'center', marginHorizontal: '1%', alignItems: 'center', flexDirection: 'row'}} onPress={handleScrollToRandomItem}>
+        <SpinOutlineSvg height={26} width={26} color={themeAheadOfLoading.fontColorSecondary}/>
+        <Text style={[styles.randomButtonText, {color: themeAheadOfLoading.fontColorSecondary}]}></Text>
+      </TouchableOpacity> 
+      <View style={{width: '40%', flexDirection: 'row', alignContent: 'center', alignItems: 'center', height: 'auto' }}>
+          <SearchBar data={moments} borderColor={'transparent'} onPress={handleScrollToItem} searchKeys={['capsule', 'typedCategory']} />
+      </View>
+
+    </View>
+    <View style={styles.checkboxControlContainer}>
+
       <ButtonCheckboxControl 
         onToggleCheckboxes={handleToggleCheckboxes}
         showCheckboxes={showCheckboxes} 
         selectedMoments={selectedMoments}
         isSaving={isMakingCall}
         onSave={handlePreSave}
-        buttonColor={calculatedThemeColors.lightColor}
+        buttonColor={themeAheadOfLoading.lightColor}
       
       />
+      </View>
 
-      <View style={[styles.categoryButtonsContainer, {backgroundColor: 'rgba(41, 41, 41, 0.2)',borderColor: calculatedThemeColors.lightColor}]}>
+      <View style={[styles.categoryButtonsContainer, {backgroundColor: 'rgba(41, 41, 41, 0.2)',borderColor: themeAheadOfLoading.lightColor}]}>
 
       {categoryStartIndices && moments && (
  
@@ -383,7 +424,7 @@ setSelectedMoments(updatedSelectedMoments);
          
         <LoadingPage 
         loading={isMakingCall}  
-        color={calculatedThemeColors.lightColor}
+        color={themeAheadOfLoading.lightColor}
         spinnerType='swing'
         /> 
          </View> 
@@ -408,8 +449,7 @@ setSelectedMoments(updatedSelectedMoments);
       </View>
 
       {isModalVisible && selectedMoment && (
-        <ItemViewMoment
-          isVisible={isModalVisible}
+        <ItemViewMoment 
           onClose={closeModal}
           moment={selectedMoment}
         />
@@ -424,8 +464,32 @@ const styles = StyleSheet.create({
     minHeight: 2,
     minWidth: 2,
     flex: 1,
-    paddingHorizontal: 1,
+    zIndex: 0,
+    paddingHorizontal: 1, 
     justifyContent: 'space-between',
+  },
+  checkboxControlContainer: {
+    width: '100%',  
+    minHeight: 30,
+    height: '4%',
+    alignContent: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: '1%',
+    alignItems: 'center',
+    marginVertical: '1%',
+    zIndex: 0,
+
+  },
+  searchBarContent: { 
+    width: '100%', 
+    paddingHorizontal: '1%',
+    marginVertical: '1%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignContent: 'center',
+    textAlign: 'center', 
+    justifyContent: 'flex-end',
+    zIndex: 1,
   },
   categoryButtonsContainer: {
     minHeight: 2,
@@ -474,10 +538,11 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   checkboxContainer: { 
-    padding: 4, 
-    marginBottom: -2,    
+    padding: 4,     
     width: '100%', 
-    paddingRight: 20,
+    position: 'absolute',
+    right: 0,
+    top: 0,
     borderRadius: 20, 
     flexDirection: 'row', 
     justifyContent: 'flex-end', 
