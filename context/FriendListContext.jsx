@@ -20,11 +20,18 @@ export const FriendListProvider = ({ children }) => {
   const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
     darkColor: '#4caf50',
     lightColor: '#a0f143',
-    fontColor: 'black', 
-    fontColorSecondary: 'black'
+    fontColor: '#000000', 
+    fontColorSecondary: '#000000'
 
 
   });
+
+  
+  const getThemeAheadOfLoading = (loadingFriend) => {
+    
+    setThemeAheadOfLoading({lightColor: loadingFriend.lightColor || '#a0f143', darkColor: loadingFriend.darkColor || '#4caf50', fontColor: loadingFriend.fontColor || '#00000', fontColorSecondary: loadingFriend.fontColorSecondary || '#00000'});
+  
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,12 +41,12 @@ export const FriendListProvider = ({ children }) => {
           const friendList = friendData.map(friend => ({ 
             id: friend.id, 
             name: friend.name, 
-            savedDarkColor: friend.saved_color_dark,
-            savedLightColor: friend.saved_color_light,
-            darkColor: friend.theme_color_dark, 
-            lightColor: friend.theme_color_light,
-            fontColor: friend.theme_color_font,
-            fontColorSecondary: friend.theme_color_font_secondary,
+            savedDarkColor: friend.saved_color_dark || '#4caf50',
+            savedLightColor: friend.saved_color_light || '#a0f143',
+            darkColor: friend.theme_color_dark || '#4caf50', 
+            lightColor: friend.theme_color_light || '#a0f143',
+            fontColor: friend.theme_color_font || '#000000',
+            fontColorSecondary: friend.theme_color_font_secondary || '#000000',
           }));
           
           setFriendList(friendList);
@@ -53,11 +60,6 @@ export const FriendListProvider = ({ children }) => {
   }, [authUserState.authenticated]);  
 
 
-  const getThemeAheadOfLoading = (loadingFriend) => {
-    
-    setThemeAheadOfLoading({lightColor: loadingFriend.lightColor, darkColor: loadingFriend.darkColor, fontColor: loadingFriend.fontColor, fontColorSecondary: loadingFriend.fontColorSecondary});
-  
-  };
 
 
   const addToFriendList = (newFriend) => {

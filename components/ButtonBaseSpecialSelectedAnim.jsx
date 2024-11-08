@@ -4,8 +4,13 @@ import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext'; 
+import { useFriendList } from '../context/FriendListContext';
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage';
+import AnimationGreenOut from '../components/AnimationGreenOut';
+import ButtonIconMoments from '../components/ButtonIconMoments';
+import ButtonIconLocations from '../components/ButtonIconLocations';
+import ButtonIconImages from '../components/ButtonIconImages';
 
  
 // Press function is internal
@@ -36,8 +41,9 @@ const ButtonBaseSpecialSelectedAnim = ({
     const navigation = useNavigation();
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle();
+    const { themeAheadOfLoading } = useFriendList();
     //friendLoaded = dashboard data retrieved successfully
-    const { selectedFriend, friendLoaded, friendDashboardData, loadingNewFriend, calculatedThemeColors } = useSelectedFriend();
+    const { selectedFriend, friendLoaded, friendDashboardData, isPending, isLoading, loadingNewFriend } = useSelectedFriend();
  
     const lastPress = useRef(0);
     const pressTimeout = useRef(null); 
@@ -49,6 +55,14 @@ const ButtonBaseSpecialSelectedAnim = ({
       const navigateToMoments = () => {
         navigation.navigate('Moments');
       };
+      const navigateToLocations = () => {
+        navigation.navigate('Locations');
+      };
+
+      const navigateToImages = () => {
+        navigation.navigate('Images');
+      };
+
 
       const navigateToAddMoment = () => {
         navigation.navigate('MomentFocus');
@@ -117,17 +131,20 @@ const ButtonBaseSpecialSelectedAnim = ({
                 ...StyleSheet.absoluteFillObject,
               }}
             />
-            {loadingNewFriend && !friendLoaded && (
+            {isLoading && !friendLoaded && (
+              <>
+              <AnimationGreenOut loading={isLoading}  />
                 <View style={styles.loadingWrapper}>
                 <LoadingPage
-                    loading={loadingNewFriend} 
+                    loading={isPending} 
                     spinnerType='flow' 
                 />
                 </View>
+                </>
             )}
     
             {!loadingNewFriend && friendLoaded && (
-                <TouchableOpacity onPress={onPress} style={{height: '100%', width: '100%'}}>
+                <View style={{paddingRight: '4%', height: '100%', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
                     {anim && showAnim && ( 
                     <LottieView
                         ref={lottieViewRef}
@@ -140,9 +157,10 @@ const ButtonBaseSpecialSelectedAnim = ({
                     )}
                     
     
-    
+                    
                     <View style={styles.textContainer}>
-    
+                    <TouchableOpacity onPress={onPress} >
+                      <>
                         <Text style={styles.headerText}>
                             {header}
                         </Text>
@@ -159,8 +177,8 @@ const ButtonBaseSpecialSelectedAnim = ({
                         <Text style={styles.subtitleText}>
                             {friendDashboardData ? friendDashboardData[0].future_date_in_words : 'No date available'}
                         </Text>
-    
-                    
+                      </>
+                      </TouchableOpacity>
                     </View>
                         {image && (
                         <Image
@@ -174,10 +192,30 @@ const ButtonBaseSpecialSelectedAnim = ({
                         resizeMode="contain"
                         />
                         )} 
+                      <View style={{paddingVertical: '0%',  marginLeft: '8%', borderRadius: 20, height: '100%', maxWidth: '50%', minWidth: '40%', flexGrow: 1, flexDirection: 'column', justifyContent: 'space-between'}}>
+                        <View style={{height: '26%', flexDirection: 'row', justifyContent: 'flex-start', width: '100%' }}>
+                          <View style={{width: '68%'}}>
+                          <ButtonIconMoments onPress={onPress} circleColor={themeAheadOfLoading.lightColor} countColor={themeAheadOfLoading.fontColorSecondary} />
+                        
+                          </View>
+                        </View>
+                        <View style={{height: '26%', flexDirection: 'row', alignContent: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', width: '100%' }}>
+                        <View style={{width: '68%'}}>
+                          <ButtonIconLocations onPress={navigateToLocations} circleColor={themeAheadOfLoading.lightColor} countColor={themeAheadOfLoading.fontColorSecondary}  />
+                        
+                          </View>
+                        </View>
+                        <View style={{height: '26%', flexDirection: 'row', justifyContent: 'flex-start', width: '100%' }}>
+                        <View style={{width: '68%'}}>
+                          <ButtonIconImages onPress={navigateToImages} circleColor={themeAheadOfLoading.lightColor} countColor={themeAheadOfLoading.fontColorSecondary}  />
+                        
+                          </View>
+                        </View>
+                      </View>
     
     
     
-                </TouchableOpacity>
+                </View>
             )}
         </View>
     
@@ -203,10 +241,10 @@ const ButtonBaseSpecialSelectedAnim = ({
     },
     textContainer: { 
         zIndex: 5,
-        position: 'absolute',
+        position: 'relative',
         paddingLeft: '2%',
         flexDirection: 'column',
-        width: '100%',
+        width: '58%',
         justifyContent: 'space-around',
     
     },
@@ -219,8 +257,9 @@ const ButtonBaseSpecialSelectedAnim = ({
         fontFamily: 'Poppins-Regular',
         fontSize: 16,
     },
-    loadingWrapper: {
+    loadingWrapper: { 
         flex: 1,
+        height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
       },

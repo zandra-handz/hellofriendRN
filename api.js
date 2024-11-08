@@ -17,11 +17,26 @@ export const setAuthHeader = (token) => {
         delete axios.defaults.headers.common['Authorization'];
     }
 };
+// not using these yet
+const TOKEN_KEY = 'my-jwt';
+ 
+export const getToken = async () => await SecureStore.getItemAsync(TOKEN_KEY);
 
+export const setToken = async (token) => await SecureStore.setItemAsync(TOKEN_KEY, token);
 
-const refreshToken = async () => {
+export const deleteTokens = async () => {
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await SecureStore.deleteItemAsync('refreshToken');
+    await SecureStore.deleteItemAsync('pushToken');
+};
+//
+
+const refreshTokenFunct = async () => {
     const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
-    if (!storedRefreshToken) throw new Error('No refresh token available');
+    if (!storedRefreshToken) {
+        console.warn('No refresh token available');
+        return null;  // Return early if there's no refresh token
+    }
 
     try {
         const response = await axios.post('/users/token/refresh/', { refresh: storedRefreshToken });
@@ -64,6 +79,9 @@ const onRefreshed = (newAccessToken) => {
     refreshSubscribers = [];
 };
 
+const fakeToken = 'lalala';
+//put this where token is in header below to test refetching expired/Problem tokens
+
 // Axios Request Interceptor
 axios.interceptors.request.use(
     async (config) => {
@@ -98,12 +116,20 @@ axios.interceptors.response.use(
                 originalRequest._retry = true;
 
                 try {
-                    const newAccessToken = await refreshToken();
-                    console.log('Interceptor acquired new token utilizing refreshToken!');
+                    const newAccessToken = await refreshTokenFunct();
+
+                    if (!newAccessToken) {
+                        throw new Error("Failed to refresh token: new access token is null or undefined");
+                    }
+                    console.log('Interceptor acquired new token utilizing refreshTokenFunct!', newAccessToken);
+        
+                    
+                    console.log('Interceptor acquired new token utilizing refreshToken!', newAccessToken);
                     isRefreshing = false;
 
                     // Update the Authorization header for all queued requests
                     onRefreshed(newAccessToken);
+                    setAuthHeader(newAccessToken);
                     originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
                     return axios(originalRequest);
                 } catch (err) {
@@ -183,9 +209,9 @@ export const getCurrentUser = async () => {
 };
 
 
-export const refreshAccessToken = async (refreshToken) => {
+export const refreshAccessToken = async (refToken) => {
     try {
-        const response = await axios.post('/users/token/refresh/', { refresh: refreshToken });
+        const response = await axios.post('/users/token/refresh/', { refresh: refToken });
         const newAccessToken = response.data.access;
         setAuthHeader(newAccessToken);
         return response;

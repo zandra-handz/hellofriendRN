@@ -1,8 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useFriendList } from './FriendListContext';
 import { useAuthUser } from './AuthUserContext';  
-import { fetchFriendDashboard } from '../api'; 
-import tinycolor from 'tinycolor2';
+import { fetchFriendDashboard } from '../api';  
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 
@@ -10,7 +9,6 @@ const SelectedFriendContext = createContext({});
 
 export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const [friendDataFetched, setFriendDataFetched ] = useState(false);
   const { authUserState } = useAuthUser(); 
   const { friendList } = useFriendList();  const [friendColorTheme, setFriendColorTheme] = useState({
     useFriendColorTheme: null,
@@ -27,7 +25,7 @@ export const SelectedFriendProvider = ({ children }) => {
 
 
 
-  const { data: friendDashboardData, isLoading, isError, isSuccess } = useQuery({
+  const { data: friendDashboardData, isLoading, isPending, isError, isSuccess } = useQuery({
     queryKey: ['friendDashboardData', selectedFriend?.id],
     queryFn: () => fetchFriendDashboard(selectedFriend.id),
     enabled: !!selectedFriend,
@@ -43,6 +41,9 @@ export const SelectedFriendProvider = ({ children }) => {
       }
     }
   });
+
+
+
 
   useEffect(() => {
     if (isError) {
@@ -68,11 +69,7 @@ export const SelectedFriendProvider = ({ children }) => {
     }
   }, [friendDashboardData]); // Depend on `friendDashboardData`
   
-
  
- 
-
-
 
   useEffect(() => {
     if (!selectedFriend) { 
@@ -86,84 +83,22 @@ export const SelectedFriendProvider = ({ children }) => {
 }, [selectedFriend]);
 
 
-  const getFontColor = (baseColor, targetColor, isInverted) => {
-    let fontColor = targetColor;  
-   
-    if (!tinycolor.isReadable(baseColor, targetColor, { level: 'AA', size: 'small' })) {
-       fontColor = isInverted ? 'white' : 'black';
-  
-      if (!tinycolor.isReadable(baseColor, fontColor, { level: 'AA', size: 'small' })) {
-        // If not readable, switch to the opposite color
-        fontColor = fontColor === 'white' ? 'black' : 'white';
-      }
-    }
-  
-    return fontColor; // Return the determined font color
-  };
-
-  const getFontColorSecondary = (baseColor, targetColor, isInverted) => {
-    let fontColorSecondary = baseColor; // Start with the base color
-  
-    // Check if the targetColor is readable on the baseColor
-    if (!tinycolor.isReadable(targetColor, baseColor, { level: 'AA', size: 'small' })) {
-      // If not readable, switch to black or white based on isInverted
-      fontColorSecondary = isInverted ? 'black' : 'white';
-  
-      if (!tinycolor.isReadable(targetColor, fontColorSecondary, { level: 'AA', size: 'small' })) {
-        // If not readable, switch to the opposite color
-        fontColorSecondary = fontColorSecondary === 'black' ? 'white' : 'black';
-      }
-    }
-  
-    return fontColorSecondary; // Return the determined secondary font color
-  };
-  
+ 
+ 
   
 
-
+//placeholder until i replace them all with themeAheadOfLoading
   useEffect(() => {
     console.log('FRIEND COLOR THEME CALCULATIONS TRIGGERED');
     if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) { 
-
-      if (friendColorTheme.invertGradient) {
+ 
         setCalculatedThemeColors({
-          lightColor: friendColorTheme.darkColor || '#a0f143',
-          darkColor: friendColorTheme.lightColor || '#4caf50',
-          fontColor: getFontColor(
-            friendColorTheme.lightColor || '#a0f143', // baseColor
-            friendColorTheme.darkColor || '#4caf50', // targetColor
-            true // isInverted
-          ),
-          fontColorSecondary: getFontColorSecondary(
-            friendColorTheme.lightColor || '#a0f143', // baseColor
-            friendColorTheme.darkColor || '#4caf50', // targetColor
-            true // isInverted
-          ),
+          lightColor:   '#a0f143',
+          darkColor:   '#4caf50',
+          fontColor:  '#a0f143',  
+          fontColorSecondary:   '#a0f143',
         });
-      } else {
-        setCalculatedThemeColors({
-          lightColor: friendColorTheme.lightColor || '#a0f143',
-          darkColor: friendColorTheme.darkColor || '#4caf50',
-          fontColor: getFontColor(
-            friendColorTheme.darkColor || '#a0f143', // baseColor
-            friendColorTheme.lightColor || '#4caf50', // targetColor
-            false // isInverted
-          ),
-          fontColorSecondary: getFontColorSecondary(
-            friendColorTheme.darkColor || '#a0f143', // baseColor
-            friendColorTheme.lightColor || '#4caf50', // targetColor
-            false // isInverted
-          ),
-        });
-      }
-    } else {
-      setCalculatedThemeColors({
-        lightColor: '#a0f143',
-        darkColor: '#4caf50',
-        fontColor: 'black',
-        fontColorSecondary: 'black',
-      });
-    }
+      } 
   }, [friendColorTheme]);
 
   useEffect(() => {
@@ -190,7 +125,10 @@ export const SelectedFriendProvider = ({ children }) => {
       selectedFriend, 
       setFriend: setSelectedFriend, 
       friendLoaded,
-      friendList, 
+      friendList,
+      isPending,
+      isLoading,
+      isSuccess,
       friendDashboardData, 
       friendColorTheme,
       setFriendColorTheme,
