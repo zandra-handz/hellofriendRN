@@ -21,13 +21,14 @@ import {
   updateFriendFavesColorThemeGradientDirection,
 } from '../api'; 
  
+
+import FriendSettingsSection from '../components/FriendSettingsSection';
 import ModalFormColorTheme from '../components/ModalFormColorTheme';
-import LoadingPage from '../components/LoadingPage';
-import BaseModalFooter from '../components/BaseModalFooter';
+import LoadingPage from '../components/LoadingPage'; 
 import BaseRowModalFooter from '../components/BaseRowModalFooter';
 import tinycolor from 'tinycolor2';
 
-const ModalColorTheme = ({ visible, onClose }) => {
+const ModalColorTheme = () => {
   const { authUserState } = useAuthUser();
   const { themeStyles } = useGlobalStyle();
   const { friendList, updateFriendListColors, setThemeAheadOfLoading } = useFriendList();
@@ -65,13 +66,11 @@ const ModalColorTheme = ({ visible, onClose }) => {
   const getFontColorSecondary = (baseColor, targetColor, isInverted) => {
     let fontColorSecondary = baseColor; // Start with the base color
   
-    // Check if the targetColor is readable on the baseColor
     if (!tinycolor.isReadable(targetColor, baseColor, { level: 'AA', size: 'small' })) {
-      // If not readable, switch to black or white based on isInverted
       fontColorSecondary = isInverted ? 'black' : 'white';
   
       if (!tinycolor.isReadable(targetColor, fontColorSecondary, { level: 'AA', size: 'small' })) {
-        // If not readable, switch to the opposite color
+       
         fontColorSecondary = fontColorSecondary === 'black' ? 'white' : 'black';
       }
     }
@@ -93,16 +92,7 @@ const ModalColorTheme = ({ visible, onClose }) => {
     setUseFriendColorTheme(newValue);
     await updateColorThemeSetting(newValue);
   };
-
-  const toggleColorThemeInvertGradient = async () => {
-
-  };
-
-  const toggleColorThemeGradientDirection = async () => {
-    const newValue = !invertGradientDirection;
-    setInvertGradientDirection(newValue);
-    await updateGradientDirectionSetting(newValue);
-  };
+ 
 
   const updateColorThemeSetting = async (setting) => {
     setIsMakingCall(true);
@@ -145,13 +135,7 @@ const ModalColorTheme = ({ visible, onClose }) => {
         
         //This also includes setThemeAheadOfLoading
         updateFriendListColors(selectedFriend.id, response.savedDarkColor, response.savedLightColor, fontColor, fontColorSecondary);
-        //setThemeAheadOfLoading({
-         //   lightColor: response.savedLightColor, 
-          //  darkColor: response.savedDarkColor, 
-          //  fontColor: fontColor, 
-          //  fontColorSecondary: fontColorSecondary,
-       // });
-  
+     
         setFriendColorTheme((prev) => ({ ...prev, useFriendColorTheme: setting }));
       
       } finally {
@@ -160,39 +144,18 @@ const ModalColorTheme = ({ visible, onClose }) => {
   };
   };
  
-
-  
-
-  const updateGradientDirectionSetting = async (setting) => {
-    setIsMakingCall(true);
-    try {
-      await updateFriendFavesColorThemeGradientDirection(authUserState.user.id, selectedFriend.id, setting);
-      setFriendColorTheme((prev) => ({ ...prev, invertGradient: setting }));
-    } finally {
-      setIsMakingCall(false);
-    }
-  };
-
+ 
   const closeColorThemeModal = () => setIsColorThemeModalVisible(false);
 
   const toggleColorThemeModal = () => setIsColorThemeModalVisible(true);
 
-  return (
-    <BaseModalFooter
-      visible={visible}
-      onClose={onClose}
+  return ( 
+      <View style={styles.container}>
+
+    <FriendSettingsSection  
       isMakingCall={isMakingCall}
-      LoadingComponent={LoadingPage}
-      themeStyles={themeStyles}
+      LoadingComponent={LoadingPage} 
     >
-      <View style={styles.headerRow}>
-        <FontAwesome5 name="user" size={20} style={[styles.headerIcon, themeStyles.modalIconColor]} />
-        {selectedFriend?.name && (
-          <Text style={[styles.modalTitle, themeStyles.modalText]}>
-            Custom Colors for {selectedFriend.name}
-          </Text>
-        )}
-      </View>
 
       {isColorThemeOn && (
         <>
@@ -224,16 +187,24 @@ const ModalColorTheme = ({ visible, onClose }) => {
         formRef={formRef}
         close={closeColorThemeModal} 
       />
-    </BaseModalFooter>
+    </FriendSettingsSection> 
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: '100%',
+
+  },
   headerRow: { 
     flexDirection: 'row', 
     alignItems: 'center', 
-    marginBottom: 30 },
+    marginBottom: 30 
+  },
     
+
   headerIcon: { 
     marginRight: 10 
   },

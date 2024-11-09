@@ -1,46 +1,39 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
-import LottieView from 'lottie-react-native';
+
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext'; 
 import { useFriendList } from '../context/FriendListContext';
 import { useNavigation } from '@react-navigation/native';
-import LoadingPage from '../components/LoadingPage';
-import AnimationGreenOut from '../components/AnimationGreenOut';
+import LoadingPage from '../components/LoadingPage'; 
 import ButtonIconMoments from '../components/ButtonIconMoments';
 import ButtonIconLocations from '../components/ButtonIconLocations';
 import ButtonIconImages from '../components/ButtonIconImages';
 
  
+import EclipseAnim from '../animations/EclipseAnim';
 // Press function is internal
 // HAS DOUBLE TAP PRESS AS WELL :)
 
 const DOUBLE_PRESS_DELAY = 300;
 
-const ButtonBaseSpecialSelectedAnim = ({  
+const HomeButtonSelectedFriend = ({  
         header='SELECTED:',   
         height='100%',
         maxHeight=100,
         borderRadius=20,
-        borderColor='transparent',
-        darkColor = '#4caf50',
-        lightColor = 'rgb(160, 241, 67)',
+        borderColor='transparent', 
         imageSize=0,
         image=require("../assets/shapes/fairymagic.png"), 
         imagePositionHorizontal=0, 
-        imagePositionVertical=70,
-        showAnim=false,
-        animSize=100,
-        anim=require("../assets/anims/arrows.json"),
-        animPositionHorizontal=0, 
-        animPositionVertical=0,
+        imagePositionVertical=70,  
 
     }) => {
 
-    const navigation = useNavigation();
-    const lottieViewRef = useRef(null);
+    const navigation = useNavigation(); 
     const globalStyles = useGlobalStyle();
+    const { gradientColors, gradientColorsHome } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
     //friendLoaded = dashboard data retrieved successfully
     const { selectedFriend, friendLoaded, friendDashboardData, isPending, isLoading, loadingNewFriend } = useSelectedFriend();
@@ -48,9 +41,7 @@ const ButtonBaseSpecialSelectedAnim = ({
     const lastPress = useRef(0);
     const pressTimeout = useRef(null); 
 
-    const navigateBackToFriendFocus = () => {
-        navigation.navigate('FriendFocus');
-      };
+ 
     
       const navigateToMoments = () => {
         navigation.navigate('Moments');
@@ -92,17 +83,6 @@ const ButtonBaseSpecialSelectedAnim = ({
 
 
 
-      useEffect(() => {
-    if (lottieViewRef.current && anim) {
-      try {
-        lottieViewRef.current.play();
-      } catch (error) {
-        console.error('Error playing animation:', error);
-      }
-    }
-  }, [anim]);
-
-
     const adjustFontSize = (fontSize) => {
         return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
       };
@@ -122,18 +102,25 @@ const ButtonBaseSpecialSelectedAnim = ({
     
   
     return(
+      <View style={{borderRadius: borderRadius}}>
+        
+      <EclipseAnim color={gradientColorsHome.lightColor} innerColor={gradientColorsHome.darkColor} delay={10} speed={100}>
+
         <View style={[styles.container, {borderRadius: borderRadius, borderColor: borderColor, height: height, maxHeight: maxHeight}]}>
+            
+            
             <LinearGradient
-              colors={[darkColor, lightColor]}
+              colors={[gradientColors.darkColor, gradientColors.lightColor]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1}}
               style={{
                 ...StyleSheet.absoluteFillObject,
               }}
             />
+            
+        
             {isLoading && !friendLoaded && (
-              <>
-              <AnimationGreenOut loading={isLoading}  />
+              <> 
                 <View style={styles.loadingWrapper}>
                 <LoadingPage
                     loading={isPending} 
@@ -144,19 +131,7 @@ const ButtonBaseSpecialSelectedAnim = ({
             )}
     
             {!loadingNewFriend && friendLoaded && (
-                <View style={{paddingRight: '4%', height: '100%', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
-                    {anim && showAnim && ( 
-                    <LottieView
-                        ref={lottieViewRef}
-                        source={anim}
-                        loop
-                        autoPlay
-                        style={{ zIndex: 2, position: 'absolute',  width: animSize, height: animSize, right: animPositionHorizontal,   top: animPositionVertical}}
-                        onError={(error) => console.error('Error rendering animation:', error)}
-                    /> 
-                    )}
-                    
-    
+                <View style={{paddingRight: '4%', height: '100%', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>    
                     
                     <View style={styles.textContainer}>
                     <TouchableOpacity onPress={onPress} >
@@ -217,7 +192,11 @@ const ButtonBaseSpecialSelectedAnim = ({
     
                 </View>
             )}
+           
         </View>
+        </EclipseAnim>
+        
+      </View>
     
     )
     
@@ -234,7 +213,7 @@ const ButtonBaseSpecialSelectedAnim = ({
         paddingRight: '0%',
         alignContent: 'center', 
         marginVertical: '1%',
-        borderWidth: 1, 
+        borderWidth: 0, 
         alignItems: 'center',
         justifyContent: 'space-between',
         overflow: 'hidden',
@@ -267,5 +246,5 @@ const ButtonBaseSpecialSelectedAnim = ({
     });
 
 
-export default ButtonBaseSpecialSelectedAnim;
+export default HomeButtonSelectedFriend;
 

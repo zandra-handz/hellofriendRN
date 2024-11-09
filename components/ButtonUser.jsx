@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, AccessibilityInfo } from 'react-native';
-import ActionPageInfo from './ActionPageInfo'; 
-import InfoOutlineSvg from '../assets/svgs/info-outline.svg'; 
+import ActionPageInfo from './ActionPageInfo';  
 import UserOutlineSvg from '../assets/svgs/user-outline.svg'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 

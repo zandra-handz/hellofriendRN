@@ -7,21 +7,20 @@ import React, { useEffect, useState } from 'react';
 import { View, Text,  StyleSheet } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import LastHelloBanner from '../components/LastHelloBanner';
-import SettingsColorTheme from '../components/SettingsColorTheme';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-
+ 
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
  import LoadingPage from '../components/LoadingPage';
 import { Dimensions } from 'react-native';
 import HelloFriendFooter from '../components/HelloFriendFooter'; 
- 
+import ModalColorTheme from '../components/ModalColorTheme';
  
 const ScreenFriendSettings = () => {
   const { selectedFriend, friendDashboardData, friendColorTheme, loadingNewFriend } = useSelectedFriend();
-  const { friendList, themeAheadOfLoading } = useFriendList();
-  const { themeStyles } = useGlobalStyle(); 
+  const { themeAheadOfLoading } = useFriendList(); 
+  const { themeStyles, gradientColorsHome } = useGlobalStyle();
+  const { darkColor, lightColor } = gradientColorsHome;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -33,16 +32,10 @@ const ScreenFriendSettings = () => {
 
 
   const navigation = useNavigation();
- 
-  const buttonMargin = 0; 
+  
  
 
-  const windowHeight = Dimensions.get('window').height;
-  const bottomSectionHeight = windowHeight * 0.7; // Fixed 70% for bottom
-  const topSectionHeight = windowHeight - bottomSectionHeight; 
-  const topSectionPadding = Dimensions.get('window').height * 0.01;
-  const bottomSectionPadding = Dimensions.get('window').height * 0.01;
-
+  const windowHeight = Dimensions.get('window').height; 
 
 const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
   
@@ -57,10 +50,7 @@ const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
     return unsubscribeBlur;
   }, [navigation]);
 
-
-const navigateToMomentsScreen = () => { 
-    navigation.navigate('Moments'); 
-  };
+ 
 
   const navigateToHelloesScreen = () => { 
     navigation.navigate('Helloes'); 
@@ -69,7 +59,7 @@ const navigateToMomentsScreen = () => {
   
   return (
     <LinearGradient
-      colors={['#000002', '#163805']}  
+      colors={[darkColor, lightColor]}  
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}  
       style={styles.container} 
@@ -87,11 +77,11 @@ const navigateToMomentsScreen = () => {
       )}
       {!loadingNewFriend && selectedFriend && (
         <>
-        <View style={[styles.backColorContainer, {backgroundColor: 'transparent', borderColor: themeAheadOfLoading.lightColor}]}>
+        <View style={[styles.backColorContainer, {borderColor: themeAheadOfLoading.lightColor}]}>
       
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
-                    <Text style={[styles.modalSubTitle, themeStyles.modalText]}>SETTINGS</Text>
+                    <Text style={[styles.modalSubTitle]}>SETTINGS</Text>
                 </View>
                 <Text style={themeStyles.genericText}>Hi</Text>
                 <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
@@ -100,7 +90,7 @@ const navigateToMomentsScreen = () => {
                 <View style={styles.subTitleRow}> 
                     <Text style={[styles.modalSubTitle, themeStyles.modalText]}>THEME</Text>
                 </View>
-                <Text style={themeStyles.genericText}>Hi</Text>
+                <ModalColorTheme />
                 <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
             </View>
             <View style={styles.section}>
@@ -128,26 +118,24 @@ const navigateToMomentsScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
-    paddingVertical: 0,  
-    width: '100%',
-    alignSelf: 'flex-start', 
+    flex: 1,    
+    width: '100%', 
   },
   subTitleRow: {
-    flexDirection: 'row',
-    alignContent: 'center', 
-    alignItems: 'center',
-    marginBottom: 20, //lowered this from ModalColorTheme
+    flexDirection: 'row',  
+    marginBottom: 20,  
   },
-  section: {
-    marginBottom: 10,
+  section: { 
+    flex: 1,
+     
+    width: '100%', 
+    justifyContent: 'flex-start',
 },
 modalSubTitle: {
     fontSize: 19,
     fontFamily: 'Poppins-Regular',  
   }, 
-divider: {
-    marginVertical: 10,
+divider: { 
     borderBottomWidth: 1,  
 }, 
   friendNameText: {
@@ -160,19 +148,7 @@ divider: {
     marginTop: 0,
     fontFamily: 'Poppins-Regular',
 
-  },
-  topSectionContainer: {
-    width: '100%',  
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start', 
-  },
-  bottomSectionContainer: {
-    width: '100%',   
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    flex: 1, 
-},
+  }, 
   loadingWrapper: {
     flex: 1,
     justifyContent: 'center',
@@ -189,17 +165,12 @@ divider: {
   },
  
 backColorContainer: {  
-  minHeight: '100%', 
-  alignContent: 'center',
+  minHeight: '100%',  
   paddingHorizontal: '2%',
   paddingTop: '8%',
   paddingBottom: '13%', 
   width: '101%',
-  alignSelf: 'center',
-  borderWidth: 0,
-  borderTopRightRadius: 0,
-  borderTopLeftRadius: 0,
-  borderRadius: 0,
+  alignSelf: 'center', 
   flexDirection: 'column',
   justifyContent: 'space-between',
 },  

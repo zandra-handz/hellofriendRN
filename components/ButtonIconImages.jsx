@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Animated } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext'; 
 import { useImageList } from '../context/ImageListContext'; 
-
+import FlashAnim from '../animations/FlashAnim';
 import PhotosTwoSvg from '../assets/svgs/photos-two.svg';
 
 const ButtonIconImages = ({
@@ -13,7 +13,7 @@ const ButtonIconImages = ({
     countTextSize = 12,
     onPress,
 }) => {
-    const { capsuleCount } = useCapsuleList();
+    
     const { imageList } = useImageList();
     const flashAnim = useRef(new Animated.Value(0)).current;
     const bobbingValue = useRef(new Animated.Value(0)).current;
@@ -52,39 +52,18 @@ const ButtonIconImages = ({
             },
         ],
     };
-
-    const animatedCircleColor = flashAnim.interpolate({
-        inputRange: [0, .5],
-        outputRange: [circleColor, 'yellow'], // Flashing to yellow
-    });
-
-    const animatedCountColor = flashAnim.interpolate({
-        inputRange: [0, .5],
-        outputRange: [countColor, 'black'], // Flashing to black
-    });
+ 
 
     return (
         <TouchableOpacity onPress={onPress ? onPress : () => {}} style={styles.container}>
             
             <Animated.View style={[styles.animatedContainer, bobbingStyle]}>
-                {/* Keeping the photo icon intact */}
+              
                 <PhotosTwoSvg height={iconSize} width={iconSize} color={iconColor} />
                 <View style={{ top: '-17%', right: '27%' }}>
-                    <Animated.View
-                        style={[
-                            styles.countContainer,
-                            { backgroundColor: animatedCircleColor },
-                        ]}
-                    >
-                        <Animated.Text
-                            style={[
-                                styles.countText,
-                                { color: animatedCountColor, fontSize: countTextSize },
-                            ]}
-                        >
-                            {imageList.length}
-                        </Animated.Text>
-                    </Animated.View>
+                    <FlashAnim circleColor={circleColor} countColor={countColor}>
+                        {imageList.length}
+                    </FlashAnim>
                 </View>
             </Animated.View>
         </TouchableOpacity>

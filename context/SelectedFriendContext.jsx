@@ -53,6 +53,7 @@ export const SelectedFriendProvider = ({ children }) => {
 
   const loadingNewFriend = isLoading;
   const friendLoaded = isSuccess;
+  const errorLoadingFriend = isError;
  
 
   useEffect(() => {
@@ -104,6 +105,13 @@ export const SelectedFriendProvider = ({ children }) => {
   useEffect(() => {
     setSelectedFriend(null);
   }, [authUserState]);
+
+  useEffect(() => {
+    if (!selectedFriend) {
+      queryClient.resetQueries(['friendDashboardData']);
+    }
+  }, [selectedFriend, queryClient]);
+  
  
 
   const updateFriendDashboardData = (newData) => {
@@ -125,6 +133,7 @@ export const SelectedFriendProvider = ({ children }) => {
       selectedFriend, 
       setFriend: setSelectedFriend, 
       friendLoaded,
+      errorLoadingFriend,
       friendList,
       isPending,
       isLoading,

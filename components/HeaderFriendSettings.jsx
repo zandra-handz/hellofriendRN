@@ -29,11 +29,9 @@ const HeaderFriendSettings = () => {
     return (
         <>
             {!loadingNewFriend && ( 
-                <LinearGradient
-                    colors={['#000002', '#000005']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.headerContainer}
+                <View
+                    style={[styles.headerContainer, themeStyles.genericTextBackground]}
+                     
                 > 
                     <TouchableOpacity onPress={handleNavigateBack} style={styles.leftIcon}>
                         <ArrowLeftCircleOutline height={30} width={30} color={themeStyles.footerIcon.color} />
@@ -55,7 +53,7 @@ const HeaderFriendSettings = () => {
                     <View style={styles.rightIcon}>
                         <GearsTwoBiggerCircleSvg width={34} height={34} color={themeStyles.footerIcon.color} />
                     </View>
-                </LinearGradient>
+                </View>
             )}
         </>
     );

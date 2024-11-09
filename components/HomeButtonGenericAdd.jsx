@@ -1,9 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
- 
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
-const ButtonBaseSpecialLarge = ({ 
+
+const HomeButtonGenericAdd = ({ 
         onPress, 
         label='ADD NEW IMAGE', 
         height='100%',
@@ -18,6 +18,7 @@ const ButtonBaseSpecialLarge = ({
         lightColor = 'rgb(160, 241, 67)',
     }) => { 
     const globalStyles = useGlobalStyle();
+    const { gradientColors } = useGlobalStyle();
 
     const adjustFontSize = (fontSize) => {
         return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
@@ -37,7 +38,7 @@ const ButtonBaseSpecialLarge = ({
 return(
     <TouchableOpacity onPress={onPress} style={[styles.container, {borderColor: borderColor, borderRadius: borderRadius, height: height, maxHeight: maxHeight}]}>
         <LinearGradient
-          colors={[darkColor, lightColor]}
+          colors={[gradientColors.darkColor, gradientColors.lightColor]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1}}
           style={{
@@ -59,8 +60,8 @@ return(
             )} 
                     <Text
               style={[
-                textStyles(24, 'black'),
-                { fontFamily: 'Poppins-Regular', paddingRight: 20},
+                textStyles(20, '#163805'),
+                { fontFamily: 'Poppins-Bold', paddingRight: 20},
               ]}
             >
               {label}
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
         paddingRight: '0%',
         alignContent: 'center', 
         marginVertical: '1%',
-        borderWidth: 1, 
+        borderWidth: 0, 
         alignItems: 'center',
         justifyContent: 'space-between',
         overflow: 'hidden',
@@ -93,5 +94,5 @@ const styles = StyleSheet.create({
 });
 
 
-export default ButtonBaseSpecialLarge;
+export default HomeButtonGenericAdd;
 

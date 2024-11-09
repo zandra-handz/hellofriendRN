@@ -8,10 +8,10 @@ import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import ButtonBaseLargeHorScroll from '../components/ButtonBaseLargeHorScroll';
-import ButtonBaseSpecialLarge from '../components/ButtonBaseSpecialLarge';
-import ButtonBaseSpecialLargeAnim from '../components/ButtonBaseSpecialLargeAnim';
-import ButtonBaseSpecialThreeTextAnim from '../components/ButtonBaseSpecialThreeTextAnim';
-import ButtonBaseSpecialSelectedAnim from '../components/ButtonBaseSpecialSelectedAnim';
+import HomeButtonGenericAdd from '../components/HomeButtonGenericAdd';
+import HomeButtonMomentAdd from '../components/HomeButtonMomentAdd';
+import HomeButtonUpNext from '../components/HomeButtonUpNext';
+import HomeButtonSelectedFriend from '../components/HomeButtonSelectedFriend';
 
 import { BlurView } from 'expo-blur'; 
 import HelloFriendFooter from '../components/HelloFriendFooter';
@@ -19,7 +19,7 @@ import LoadingPage from '../components/LoadingPage';
 
 const ScreenHome = ({ navigation }) => {
   
-  const { themeStyles } = useGlobalStyle(); 
+  const { themeStyles, gradientColorsHome } = useGlobalStyle(); 
   const { themeAheadOfLoading } = useFriendList();
   const darkColor = '#000002'; // '#4caf50';
   const lightColor ='#163805'; //'rgb(160, 241, 67)';
@@ -90,7 +90,7 @@ const ScreenHome = ({ navigation }) => {
 
   return ( 
     <LinearGradient
-      colors={[darkColor, lightColor]}
+      colors={[gradientColorsHome.darkColor, gradientColorsHome.lightColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.container]}
@@ -113,25 +113,25 @@ const ScreenHome = ({ navigation }) => {
               <View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10}]}>  
                  
 
-                <ButtonBaseSpecialLargeAnim  onPress={navigateToAddMomentScreen} borderRadius={topButtonRadius} borderColor={mainButtonBorderColor} height={buttonHeight} />
-                <ButtonBaseSpecialLarge label={'ADD IMAGE'}  onPress={navigateToAddImageScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} height={buttonHeight}/>  
-                <ButtonBaseSpecialLarge label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
+                <HomeButtonMomentAdd onPress={navigateToAddMomentScreen} borderRadius={topButtonRadius} borderColor={mainButtonBorderColor} height={buttonHeight} />
+                <HomeButtonGenericAdd label={'ADD IMAGE'}  onPress={navigateToAddImageScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} height={buttonHeight}/>  
+                <HomeButtonGenericAdd label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
                 
                 {(selectedFriend || friendLoaded) && showLastButton && (
-                  <ButtonBaseSpecialLarge label={'ADD LOCATION'}   onPress={navigateToAddLocationScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
+                  <HomeButtonGenericAdd label={'ADD LOCATION'}   onPress={navigateToAddLocationScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
                 
                 )}
                 {(!selectedFriend && !friendLoaded) && showLastButton && ( 
-                  <ButtonBaseSpecialLarge label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
+                  <HomeButtonGenericAdd label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
                 )} 
                                 
                 {!selectedFriend && (
                   
-                  <ButtonBaseSpecialThreeTextAnim  onPress={navigateToAddMomentScreen}   borderRadius={mainButtonRadius} height={headerHeight} borderColor={mainButtonBorderColor} maxHeight={200}/>
+                  <HomeButtonUpNext  onPress={navigateToAddMomentScreen}   borderRadius={mainButtonRadius} height={headerHeight} borderColor={mainButtonBorderColor} maxHeight={200}/>
                 )}
                 {selectedFriend && (
                   
-                  <ButtonBaseSpecialSelectedAnim    onPress={navigateToAddMomentScreen} borderRadius={mainButtonRadius} borderColor={mainButtonBorderColor} height={headerHeight} maxHeight={200}/>
+                  <HomeButtonSelectedFriend  onPress={navigateToAddMomentScreen} borderRadius={mainButtonRadius} borderColor={mainButtonBorderColor} height={headerHeight} maxHeight={200}/>
                 )} 
                 <ButtonBaseLargeHorScroll height={upcomingDatesTray}   borderRadius={mainButtonRadius} borderColor={mainButtonBorderColor}/> 
                 

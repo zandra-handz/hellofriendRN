@@ -28,6 +28,10 @@ export const GlobalStyleProvider = ({ children }) => {
             darkColor: '#4caf50',
             lightColor: '#a0f143',
         },
+        gradientColorsHome: {
+            darkColor: '#000002',
+            lightColor: '#163805',
+        },
         gradientDirection: { x: 1, y: 0 },
     });
 
@@ -65,6 +69,10 @@ export const GlobalStyleProvider = ({ children }) => {
                     darkColor: '#ffffff',
                     lightColor: '#ffffff',
                 },
+                gradientColorsHome: {
+                    darkColor: '#ffffff',
+                    lightColor: '#ffffff', 
+                },
             }));
         } else {
             setStyles(prevStyles => ({
@@ -72,6 +80,10 @@ export const GlobalStyleProvider = ({ children }) => {
                 gradientColors: {
                     darkColor: '#4caf50',
                     lightColor: '#a0f143',
+                },
+                gradientColorsHome: {
+                    darkColor: '#000002',
+                    lightColor: '#163805',
                 },
             }));
         }

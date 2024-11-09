@@ -11,7 +11,7 @@ import LizardSvg from '../assets/svgs/lizard';
 
  
 // Press function is internal
-const ButtonBaseSpecialThreeTextAnim = ({  
+const HomeButtonUpNext = ({  
         header='UP NEXT',  
         height='100%',
         maxHeight=100,
@@ -30,6 +30,7 @@ const ButtonBaseSpecialThreeTextAnim = ({
     const { friendList, getThemeAheadOfLoading } = useFriendList();
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle();
+    const { gradientColors } = useGlobalStyle();
     const { setFriend, loadingNewFriend } = useSelectedFriend();
     const hideAnimation = true;
 
@@ -75,7 +76,7 @@ const ButtonBaseSpecialThreeTextAnim = ({
 return(
     <View style={[styles.container, {borderRadius: borderRadius, borderColor: borderColor, height: height, maxHeight: maxHeight}]}>
         <LinearGradient
-          colors={[darkColor, lightColor]}
+          colors={[gradientColors.darkColor, gradientColors.lightColor]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1}}
           style={{
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     paddingRight: '0%',
     alignContent: 'center', 
     marginVertical: '1%',
-    borderWidth: 1, 
+    borderWidth: 0, 
     alignItems: 'center',
     justifyContent: 'space-between',
     overflow: 'hidden',
@@ -185,5 +186,5 @@ loadingWrapper: {
 });
 
 
-export default ButtonBaseSpecialThreeTextAnim;
+export default HomeButtonUpNext;
 

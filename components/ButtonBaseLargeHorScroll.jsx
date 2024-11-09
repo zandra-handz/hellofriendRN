@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column', 
     overflow: 'hidden',
     marginVertical: '1%',
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: 'black',
     paddingHorizontal: '4%',
     paddingTop: '1%',

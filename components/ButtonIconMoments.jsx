@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { TouchableOpacity, Text, StyleSheet, View, Animated } from 'react-native';
+import React from 'react';
+import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext'; 
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg';
+import BobbingAnim from '../animations/BobbingAnim';
+import FlashAnim from '../animations/FlashAnim'; 
 
 const ButtonIconMoments = ({
     iconSize = 36,
@@ -12,63 +14,20 @@ const ButtonIconMoments = ({
     onPress,
 }) => {
     const { capsuleCount } = useCapsuleList();
-    const bobbingValue = useRef(new Animated.Value(0)).current;
-
-    useEffect(() => {
-        const animateBobbing = () => {
-            Animated.loop(
-                Animated.sequence([
-                    Animated.timing(bobbingValue, {
-                        toValue: 1,
-                        duration: 1000,
-                        useNativeDriver: true,
-                    }),
-                    Animated.timing(bobbingValue, {
-                        toValue: 0,
-                        duration: 1000,
-                        useNativeDriver: true,
-                    }),
-                ])
-            ).start();
-        };
-
-        animateBobbing();
-    }, [bobbingValue]); 
-
-    const bobbingStyle = {
-        transform: [
-            {
-                translateY: bobbingValue.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, -5],
-                }),
-            },
-        ],
-    };
 
     return (
         <TouchableOpacity onPress={onPress ? onPress : () => {}} style={styles.container}>
-            <Animated.View style={[styles.animatedContainer, bobbingStyle]}>
-                <ThoughtBubbleOutlineSvg height={iconSize} width={iconSize} color={iconColor} />
-                <View style={{ top: '-17%', right: '27%' }}>
-                    <View
-                        style={{
-                            height: countTextSize * 2,
-                            width: countTextSize * 2,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            alignContent: 'center',
-                            backgroundColor: circleColor,
-                            textAlign: 'center',
-                            borderRadius: 16,
-                        }}
-                    >
-                        <Text style={[styles.countText, { color: countColor, fontSize: countTextSize }]}>
+                   
+            <BobbingAnim bobbingDistance={2} duration={800}>
+                <View style={styles.animatedContainer}>
+                    <ThoughtBubbleOutlineSvg height={iconSize} width={iconSize} color={iconColor} />
+                    <View style={{ top: '-17%', right: '27%' }}>
+                        <FlashAnim circleColor={circleColor} countColor={countColor}>
                             {capsuleCount}
-                        </Text>
+                        </FlashAnim>
                     </View>
-                </View>
-            </Animated.View>
+                </View> 
+            </BobbingAnim>
         </TouchableOpacity>
     );
 };

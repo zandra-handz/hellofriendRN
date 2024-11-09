@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGlobalStyle } from '../context/GlobalStyleContext'; 
+import { useGlobalStyle } from '../context/GlobalStyleContext';  
 
-const ButtonBaseSpecialLargeAnim = ({ 
+const HomeButtonMomentAdd = ({ 
         onPress, 
         label='ADD MOMENT', 
         height='100%',
@@ -25,6 +25,7 @@ const ButtonBaseSpecialLargeAnim = ({
     }) => {
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle(); 
+    const { gradientColors } = useGlobalStyle();
 
       useEffect(() => {
     if (lottieViewRef.current && anim) {
@@ -56,6 +57,7 @@ const ButtonBaseSpecialLargeAnim = ({
   
 return(
     <TouchableOpacity onPress={onPress} style={[styles.container, {borderRadius: borderRadius, borderColor: borderColor, height: height, maxHeight: maxHeight}]}>
+                
         {anim && !hideAnimation && ( 
 
         
@@ -70,17 +72,19 @@ return(
         )}
         
         <LinearGradient
-          colors={[darkColor, lightColor]}
+          colors={[gradientColors.darkColor, gradientColors.lightColor]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1}}
           style={{
             ...StyleSheet.absoluteFillObject,
           }}
         />
+        
+
                       <Text
               style={[
-                textStyles(24, 'black'),
-                { fontFamily: 'Poppins-Regular', paddingRight: 20 },
+                textStyles(20, '#163805'),
+                { fontFamily: 'Poppins-Bold', paddingRight: 20},
               ]}
             >
               {label}
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     borderRadius: 40,
     marginVertical: '1%',
-    borderWidth: 1, 
+    borderWidth: 0, 
     alignItems: 'center',
     justifyContent: 'flex-end',
     overflow: 'hidden',
@@ -133,5 +137,5 @@ const styles = StyleSheet.create({
 });
 
 
-export default ButtonBaseSpecialLargeAnim;
+export default HomeButtonMomentAdd;
 
