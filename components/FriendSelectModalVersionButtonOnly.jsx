@@ -94,7 +94,7 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, ic
           numberOfLines={1}  
           ellipsizeMode='tail'  
         >
-          {friendLoaded && selectedFriend?.name || 'Select friend'}
+          {friendLoaded && `For:  ${selectedFriend?.name}` || 'Which friend is this for?'}
         </Text>
         )}
 
@@ -106,7 +106,7 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, ic
             accessibilityRole='button'
             accessibilityLabel='Friend selector button'
             >
-              <View style={{ paddingHorizontal: '1%'}}>
+              <View style={{ paddingHorizontal: '0%'}}>
                 <ProfileTwoUsersSvg 
                   height={iconSize} 
                   width={iconSize} 

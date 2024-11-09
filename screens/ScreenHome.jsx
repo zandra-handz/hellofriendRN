@@ -17,7 +17,7 @@ import { BlurView } from 'expo-blur';
 import HelloFriendFooter from '../components/HelloFriendFooter';
 import LoadingPage from '../components/LoadingPage';
 
-const ScreenDefaultActionMode = ({ navigation }) => {
+const ScreenHome = ({ navigation }) => {
   
   const { themeStyles } = useGlobalStyle(); 
   const { themeAheadOfLoading } = useFriendList();
@@ -174,4 +174,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScreenDefaultActionMode;
+export default ScreenHome;

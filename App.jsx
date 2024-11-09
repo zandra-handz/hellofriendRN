@@ -19,15 +19,15 @@ import { useGlobalStyle } from './context/GlobalStyleContext';
  
 
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
-import ScreenDefaultActionMode from './screens/ScreenDefaultActionMode';
+import ScreenHome from './screens/ScreenHome';
+import ScreenFriendSettings from './screens/ScreenFriendSettings';
 import ScreenMoments from './screens/ScreenMoments';
 import ScreenImages from './screens/ScreenImages';
 import ScreenHelloes from './screens/ScreenHelloes';
 import ScreenLocations from './screens/ScreenLocations';
 import ScreenLocationSearch from './screens/ScreenLocationSearch';
 import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch';
-import Signin from './screens/Signin';
-import ScreenFriendFocus from './screens/ScreenFriendFocus'; 
+import Signin from './screens/Signin'; 
 import ScreenMomentFocus from './screens/ScreenMomentFocus'; 
 import ScreenLocation from './screens/ScreenLocation';
 
@@ -38,12 +38,12 @@ import ScreenAddHello from './screens/ScreenAddHello';
  
 
 import HellofriendHeader from './components/HellofriendHeader';
-import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
+//import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
 import HeaderWriteMoment from './components/HeaderWriteMoment';
-import HeaderPickCategory from './components/HeaderPickCategory';
-import HeaderFriendFocus from './components/HeaderFriendFocus';
-import HeaderBase from './components/HeaderBase'; 
-import HeaderBaseTall from './components/HeaderBaseTall'; 
+//import HeaderPickCategory from './components/HeaderPickCategory';
+//import HeaderFriendFocus from './components/HeaderFriendFocus';
+import HeaderFriendSettings from './components/HeaderFriendSettings';
+import HeaderBase from './components/HeaderBase';  
 import HeaderLocations from './components/HeaderLocations';
 import HeaderHelloes from './components/HeaderHelloes';
 import HeaderLocationSingle from './components/HeaderLocationSingle';
@@ -170,7 +170,7 @@ export const Layout = () => {
             <>
               <Stack.Screen
                 name="hellofriend"
-                component={ScreenDefaultActionMode}
+                component={ScreenHome}
                 options={{
                   headerShown: true,
                   header: () => <HellofriendHeader />
@@ -178,10 +178,10 @@ export const Layout = () => {
               />
               <Stack.Screen
                 name="FriendFocus"
-                component={ScreenFriendFocus}
+                component={ScreenFriendSettings}
                 options={{
                   headerShown: true,
-                  header: () => <HeaderFriendFocus />,
+                  header: () => <HeaderFriendSettings />,
                 }}
               />
               <Stack.Screen

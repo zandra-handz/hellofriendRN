@@ -2,6 +2,9 @@
 //start={{ x: 0, y: 0 }}
 //end={{ x: 1, y: 0 }}
 
+//HeaderFriendFocus is the same but with the user's custom colors
+//(can't decide yet till I finish/see the rest of it)
+
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -13,7 +16,7 @@ import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const HeaderFriendFocus = () => {
+const HeaderFriendSettings = () => {
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
     const { selectedFriend, loadingNewFriend } = useSelectedFriend();
@@ -27,13 +30,13 @@ const HeaderFriendFocus = () => {
         <>
             {!loadingNewFriend && ( 
                 <LinearGradient
-                    colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+                    colors={['#000002', '#000005']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.headerContainer}
                 > 
                     <TouchableOpacity onPress={handleNavigateBack} style={styles.leftIcon}>
-                        <ArrowLeftCircleOutline height={30} width={30} color={themeAheadOfLoading.fontColor} />
+                        <ArrowLeftCircleOutline height={30} width={30} color={themeStyles.footerIcon.color} />
                     </TouchableOpacity>
 
                     <View style={styles.centeredContainer}>
@@ -42,7 +45,7 @@ const HeaderFriendFocus = () => {
                             style={[
                                 styles.headerText, 
                                 themeStyles.headerText, 
-                                { color: themeAheadOfLoading.fontColorSecondary }
+                                { color: themeStyles.footerIcon.color }
                             ]}
                         >
                             {`${selectedFriend ? selectedFriend.name : ''}`}
@@ -50,7 +53,7 @@ const HeaderFriendFocus = () => {
                     </View>
 
                     <View style={styles.rightIcon}>
-                        <GearsTwoBiggerCircleSvg width={34} height={34} color={themeAheadOfLoading.fontColorSecondary} />
+                        <GearsTwoBiggerCircleSvg width={34} height={34} color={themeStyles.footerIcon.color} />
                     </View>
                 </LinearGradient>
             )}
@@ -93,4 +96,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HeaderFriendFocus;
+export default HeaderFriendSettings;

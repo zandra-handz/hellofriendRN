@@ -62,8 +62,7 @@ const ActionPageBase = ({ visible, onClose, sections, showFooter = false, footer
                         <FontAwesome5 name="times" size={14} color="white" solid={false} />
                         </View>
                     </TouchableOpacity>
-                    <View
-    style={styles.innerContainer}
+                    <View 
     accessible={true}
     accessibilityRole="adjustable"
     accessibilityLabel="Modal Content"
@@ -144,9 +143,7 @@ const styles = StyleSheet.create({
     divider: {
         marginVertical: 10,
         borderBottomWidth: 1,  
-    },
-    innerContainer: { 
-    },
+    }, 
     footer: {  
         paddingTop: 10,
         alignItems: 'center',

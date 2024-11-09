@@ -36,6 +36,7 @@ const ButtonSettings = () => {
     <>
       <TouchableOpacity onPress={toggleModal}>
         <GearsTwoBiggerCircleSvg width={32} height={32} style={themeStyles.footerIcon} />
+      
       </TouchableOpacity>
 
       <ActionPageBase
