@@ -543,11 +543,10 @@ export const fetchUpcomingHelloes = async () => {
 
 
 
-export const fetchThoughtCapsules = async (friendId) => {
+export const fetchMomentsAPI = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/thoughtcapsules/`);
-        if (response && response.data) {
-            // Process the response data
+        if (response && response.data) { 
             const capsules = response.data.map(capsule => ({
                 id: capsule.id,
                 typedCategory: capsule.typed_category || 'Uncategorized',
@@ -606,7 +605,7 @@ export const fetchPastHelloes = async (friendId) => {
 
 
 
-export const saveThoughtCapsule = async (requestData) => {
+export const saveMomentAPI = async (requestData) => {
     
     try {
         const response = await axios.post(`/friends/${requestData.friend}/thoughtcapsules/add/`, requestData);
@@ -634,9 +633,9 @@ export const saveHello = async (requestData) => {
 
 
 
-export const deleteThoughtCapsule = async (friendId, capsuleId) => {
+export const deleteMomentAPI = async (data) => {
     try {
-        const response = await axios.delete(`/friends/${friendId}/thoughtcapsule/${capsuleId}/`);
+        const response = await axios.delete(`/friends/${data.friend}/thoughtcapsule/${data.id}/`);
         return response.data;
     } catch (error) {
         console.error('Error deleting thought capsule:', error);
@@ -644,7 +643,7 @@ export const deleteThoughtCapsule = async (friendId, capsuleId) => {
     }
 };
 
-export const updateThoughtCapsule = async (friendId, capsuleId, capsuleData) => {
+export const updateMomentAPI = async (friendId, capsuleId, capsuleData) => {
     try {
         const response = await axios.patch(`/friends/${friendId}/thoughtcapsules/${capsuleId}/`, capsuleData);
         return response.data;
@@ -654,7 +653,7 @@ export const updateThoughtCapsule = async (friendId, capsuleId, capsuleData) => 
     }
 };
 
-export const updateThoughtCapsules = async (friendId, capsulesAndChanges) => {
+export const updateMultMomentsAPI = async (friendId, capsulesAndChanges) => {
     try {
         
         const capsuleData = { 

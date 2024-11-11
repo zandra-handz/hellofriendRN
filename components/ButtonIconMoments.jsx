@@ -22,7 +22,7 @@ const ButtonIconMoments = ({
                 <View style={styles.animatedContainer}>
                     <ThoughtBubbleOutlineSvg height={iconSize} width={iconSize} color={iconColor} />
                     <View style={{ top: '-17%', right: '27%' }}>
-                        <FlashAnim circleColor={circleColor} countColor={countColor}>
+                        <FlashAnim circleColor={circleColor} circleTextSize={countTextSize} countColor={countColor}>
                             {capsuleCount}
                         </FlashAnim>
                     </View>

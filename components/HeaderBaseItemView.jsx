@@ -2,84 +2,112 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
  
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import InfoOutline from '../assets/svgs/info-outline.svg';
-import LoadingPage from '../components/LoadingPage';
+import ThreeDotsSvg from '../assets/svgs/three-dots.svg';
+import SlideToAction from '../components/SlideToAction';
+import { LinearGradient } from 'expo-linear-gradient';
+import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
+
+
 
 //onBackPress function instead of stack navigation, to use with modals
 
 const HeaderBaseItemView = ({
     onBackPress,
+    onMenuPress,
+    onSliderPull,
     headerTitle='Header title here',
     
-    rightIcon='info',
-    rightIconOnPress,
 }) => {
 
     const { themeAheadOfLoading } = useFriendList();
- 
-    const { themeStyles } = useGlobalStyle();
-    const { calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
-
+    const { themeStyles } = useGlobalStyle(); 
 
    
 
   return (
     <> 
-        <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: loadingNewFriend ? themeAheadOfLoading.darkColor : calculatedThemeColors.darkColor}]}>
-        {loadingNewFriend && themeAheadOfLoading && (
-          <View style={[styles.loadingWrapper, {backgroundColor: themeAheadOfLoading.darkColor}]}>
-          <LoadingPage 
-            loading={loadingNewFriend} 
-            spinnerType='flow'
-            color={themeAheadOfLoading.lightColor}
-            includeLabel={false} 
-          />
-          </View>
-      )}
-      {!loadingNewFriend && (
-        <>
-      <View style={{flexDirection: 'row', width: '60%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
-        
-        
+        <LinearGradient
+          colors={[
+              themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor,
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.headerContainer}
+      > 
+      <>
+      <View style={styles.headerContent}>
+      <View style={styles.leftButtonContainer}>
         <TouchableOpacity onPress={onBackPress}>
-          <ArrowLeftCircleOutline height={30} width={30}   color={calculatedThemeColors.fontColor}/>
+          <ArrowLeftCircleOutline height={30} width={30}   color={themeAheadOfLoading.fontColor}/>
         </TouchableOpacity> 
+      </View>
         <Text style={[
-          styles.headerText, themeStyles.headerText, { color: calculatedThemeColors.fontColor, paddingLeft: 20}
+          styles.headerText, themeStyles.headerText, { color: themeAheadOfLoading.fontColor, paddingLeft: 20}
           ]}> 
             {headerTitle}
         </Text> 
-      </View> 
-        <InfoOutline height={30} width={30} color={calculatedThemeColors.fontColor}/>
-    </>
-    )}
-    </View> 
-    </>
+        <View style={styles.rightIconContainer}>
+        <TouchableOpacity onPress={onMenuPress ? onMenuPress : () => {}}>
+          <ThreeDotsSvg height={30} width={30} color={themeAheadOfLoading.fontColor}/>
+        
+        </TouchableOpacity>
+        </View>
+          </View>
+         
+    </> 
+    
+    </LinearGradient>  
+     <SlideToAction
+     onPress={onSliderPull}
+     sliderWidth={'100%'}  // Set width of the slider
+     onSlideComplete={() => alert('Action triggered!')}
+     targetIcon={TrashOutlineSvg}
+   /> 
+   </>
+    
   );
 };
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: 'row',
     padding: 10,
-    paddingTop: 66,  
+    paddingTop: 20,  //66 
     paddingHorizontal: 10, 
-    alignItems: 'center',  
+    height: 90, //110
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    height: 110, 
+  },
+  leftButtonContainer: {
+    width: 40,
   },
   headerText: {
-    fontSize: 18,
-    paddingVertical: 2, 
-    fontFamily: 'Poppins-Bold',
+    position: 'absolute', 
+    right: 60,  // Maintain a fixed distance from the right icon
+    fontSize: 20,
+    fontFamily: 'Poppins-Regular',
+    textTransform: 'uppercase',
+    width: '70%',  // Adjust width to prevent overlapping
+    textAlign: 'right',  // Keep the text aligned to the right
   },
-  usernameText: {
-    fontSize: 14,
-    paddingVertical: 2, 
-    fontFamily: 'Poppins-Bold',
+  rightIconContainer: {
+    width: 40,
+    alignItems: 'center',
+  },
+  defaultIconWrapper: {
+    height: 44,
+    width: 90,
+    overflow: 'hidden',
+    justifyContent: 'flex-end',
+    paddingBottom: 6,
+  },
+  defaultIcon: {
+    transform: [{ rotate: '240deg' }],
   },
   loadingWrapper: {
     flex: 1,
@@ -87,5 +115,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
 
 export default HeaderBaseItemView;

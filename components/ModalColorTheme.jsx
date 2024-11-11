@@ -1,24 +1,12 @@
-//  <BaseRowModalFooter 
-// iconName='palette' 
-// iconSize={20}
-// label='Invert gradient' 
-// useToggle={true}
-// value={invertGradientDirection}
-// onTogglePress={toggleColorThemeGradientDirection}
-// /> 
-
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { View, StyleSheet } from 'react-native';
+ 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
-import { useFriendList } from '../context/FriendListContext';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useFriendList } from '../context/FriendListContext'; 
 import {
   updateFriendFavesColorThemeSetting,
-  resetFriendFavesColorThemeToDefault,
-  updateFriendFavesColorThemeGradientDirection,
+  resetFriendFavesColorThemeToDefault, 
 } from '../api'; 
  
 
@@ -29,18 +17,15 @@ import BaseRowModalFooter from '../components/BaseRowModalFooter';
 import tinycolor from 'tinycolor2';
 
 const ModalColorTheme = () => {
-  const { authUserState } = useAuthUser();
-  const { themeStyles } = useGlobalStyle();
-  const { friendList, updateFriendListColors, setThemeAheadOfLoading } = useFriendList();
+  const { authUserState } = useAuthUser(); 
+  const { friendList, updateFriendListColorsExcludeSaved } = useFriendList();
   const { selectedFriend, friendColorTheme, setFriendColorTheme } = useSelectedFriend();
   const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false);
   const [isMakingCall, setIsMakingCall] = useState(false);
   const formRef = useRef(null);
   const [useFriendColorTheme, setUseFriendColorTheme] = useState(false);
   const [isColorThemeOn, setIsColorThemeOn] = useState(false);
-  const [invertGradientDirection, setInvertGradientDirection] = useState(false);
 
- 
 
   const getSavedColorTheme = () => {
     const currentFriend = friendList.find(friend => friend.id === selectedFriend.id);
@@ -55,16 +40,15 @@ const ModalColorTheme = () => {
        fontColor = isInverted ? 'white' : 'black';
   
       if (!tinycolor.isReadable(baseColor, fontColor, { level: 'AA', size: 'small' })) {
-        // If not readable, switch to the opposite color
         fontColor = fontColor === 'white' ? 'black' : 'white';
       }
     }
   
-    return fontColor; // Return the determined font color
+    return fontColor;
   };
 
   const getFontColorSecondary = (baseColor, targetColor, isInverted) => {
-    let fontColorSecondary = baseColor; // Start with the base color
+    let fontColorSecondary = baseColor;
   
     if (!tinycolor.isReadable(targetColor, baseColor, { level: 'AA', size: 'small' })) {
       fontColorSecondary = isInverted ? 'black' : 'white';
@@ -75,7 +59,7 @@ const ModalColorTheme = () => {
       }
     }
   
-    return fontColorSecondary; // Return the determined secondary font color
+    return fontColorSecondary; 
   };
   
 
@@ -83,7 +67,6 @@ const ModalColorTheme = () => {
     if (friendColorTheme) {
       setUseFriendColorTheme(friendColorTheme.useFriendColorTheme || false);
       setIsColorThemeOn(friendColorTheme.useFriendColorTheme || false);
-      setInvertGradientDirection(friendColorTheme.invertGradient || false);
     }
   }, [friendColorTheme]);
 
@@ -97,7 +80,7 @@ const ModalColorTheme = () => {
   const updateColorThemeSetting = async (setting) => {
     setIsMakingCall(true);
 
-    if (useFriendColorTheme) {
+    if (useFriendColorTheme) { // if state before toggling Color Theme is off
       try {
         await resetFriendFavesColorThemeToDefault(
           authUserState.user.id,selectedFriend.id, 
@@ -106,7 +89,7 @@ const ModalColorTheme = () => {
         );
 
         //This also includes setThemeAheadOfLoading
-        updateFriendListColors(
+        updateFriendListColorsExcludeSaved(
           selectedFriend.id, '#4caf50', '#a0f143', '#000000', '#000000');
  
         //setThemeAheadOfLoading({lightColor: '#a0f143', darkColor: '#4caf50', fontColor: 'black', secondaryFontColor: 'black'});
@@ -120,6 +103,7 @@ const ModalColorTheme = () => {
     } else {
       try {
         const response = getSavedColorTheme();
+        console.log('getSavedColorTheme response: ', response);
         const fontColor = getFontColor(
           response.savedDarkColor, 
           response.savedLightColor, 
@@ -131,10 +115,10 @@ const ModalColorTheme = () => {
             false);
         
         console.log(response);
-        await updateFriendFavesColorThemeSetting(authUserState.user.id, selectedFriend.id, response.savedDarkColor, response.savedLightColor);
+        await updateFriendFavesColorThemeSetting(authUserState.user.id, selectedFriend.id, response.savedDarkColor, response.savedLightColor, fontColor, fontColorSecondary);
         
         //This also includes setThemeAheadOfLoading
-        updateFriendListColors(selectedFriend.id, response.savedDarkColor, response.savedLightColor, fontColor, fontColorSecondary);
+        updateFriendListColorsExcludeSaved(selectedFriend.id, response.savedDarkColor, response.savedLightColor, fontColor, fontColorSecondary);
      
         setFriendColorTheme((prev) => ({ ...prev, useFriendColorTheme: setting }));
       
@@ -146,7 +130,6 @@ const ModalColorTheme = () => {
  
  
   const closeColorThemeModal = () => setIsColorThemeModalVisible(false);
-
   const toggleColorThemeModal = () => setIsColorThemeModalVisible(true);
 
   return ( 
@@ -204,7 +187,6 @@ const styles = StyleSheet.create({
     marginBottom: 30 
   },
     
-
   headerIcon: { 
     marginRight: 10 
   },

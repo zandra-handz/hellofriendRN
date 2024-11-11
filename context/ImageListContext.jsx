@@ -66,8 +66,7 @@ export const ImageListProvider = ({ children }) => {
     // Mutation to delete the image
     const deleteImageMutation = useMutation({
         mutationFn: (id) => deleteFriendImage(selectedFriend.id, id), // Pass friendId and imageId
-        onSuccess: () => {
-            // Invalidate the query to refetch updated data
+        onSuccess: () => { 
             queryClient.invalidateQueries(['friendImages', selectedFriend?.id]);
         },
         onError: (error) => {
@@ -75,8 +74,7 @@ export const ImageListProvider = ({ children }) => {
         },
     });
 
-    const deleteImage = (id) => {
-        // Call the mutation to delete the image
+    const deleteImage = (id) => { 
         deleteImageMutation.mutate(id);
     };
 

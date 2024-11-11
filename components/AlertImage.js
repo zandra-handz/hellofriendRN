@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Modal, Dimensions } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import HeaderBaseItemView from '../components/HeaderBaseItemView';
+import LoadingPage from '../components/LoadingPage';
 
 const { height: screenHeight } = Dimensions.get('window'); // Get screen height
 
@@ -11,6 +12,7 @@ const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) =
   
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+      
       <HeaderBaseItemView onBackPress={toggleModal} headerTitle={modalTitle} />
       <View style={styles.modalContainer}>
         <View 
@@ -35,6 +37,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
     zIndex: 1,
+  },
+  loadingWrapper: {
+    flex: 1, 
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContent: {
     width: '100%', 

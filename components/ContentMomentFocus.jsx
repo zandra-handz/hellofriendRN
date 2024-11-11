@@ -19,7 +19,7 @@ import LoadingPage from '../components/LoadingPage';
 
 const ContentMomentFocus = ({ placeholderText }) => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { handleCreateMoment, resetCreateMomentInputs, resultMessage, closeResultMessage, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW 
+  const { handleCreateMoment, resultMessage, closeResultMessage, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW 
   const { authUserState } = useAuthUser(); 
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();

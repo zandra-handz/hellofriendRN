@@ -76,7 +76,7 @@ const HomeButtonUpNext = ({
 return(
     <View style={[styles.container, {borderRadius: borderRadius, borderColor: borderColor, height: height, maxHeight: maxHeight}]}>
         <LinearGradient
-          colors={[gradientColors.darkColor, gradientColors.lightColor]}
+          colors={[darkColor, lightColor]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1}}
           style={{

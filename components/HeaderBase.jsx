@@ -4,10 +4,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
-
 import LizardSvg from '../assets/svgs/lizard.svg';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
-import CoffeeMugSolidHeart from '../assets/svgs/coffee-mug-solid-heart';
 import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 import HeartbeatLifeLineArrowSvg from '../assets/svgs/heartbeat-lifeline-arrow.svg';
@@ -17,12 +15,11 @@ import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import LoadingPage from '../components/LoadingPage';
 
 const HeaderBase = ({
   headerTitle = 'Header title here', 
   navigateTo = 'Moments',
-  icon, // Select which SVG to display
+  icon,
 }) => {
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();

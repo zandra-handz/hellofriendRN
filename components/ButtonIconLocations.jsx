@@ -63,9 +63,8 @@ const ButtonIconLocations = ({
     return (
         <TouchableOpacity onPress={onPress ? onPress : () => {}} style={styles.container}>
             <View style={styles.animatedContainer}>
-                <LocationHeartSolidSvg height={iconSize} width={iconSize} color={iconColor} />
+                <LocationHeartOutlineSvg height={iconSize} width={iconSize} color={iconColor} />
                 
-                {/* Directional arrow element */}
                 <Animated.View style={[styles.arrowContainer, arrowStyle]}>
                     <Text style={styles.arrowText}>→</Text>
                 </Animated.View>

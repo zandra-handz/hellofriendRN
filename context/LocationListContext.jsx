@@ -85,21 +85,19 @@ const handleCreateLocation = async (friends, title, address, parkingTypeText, tr
       console.error('Error saving location:', error);
   }
 };
+const RESET_DELAY = 1000; 
 
-
-
-const RESET_DELAY = 1000; // Adjust as needed
 
 const deleteLocationMutation = useMutation({
   mutationFn: (data) => deleteLocation(data),
   onSuccess: (data) => {
-      // Update the cache by filtering out the deleted location
-      queryClient.setQueryData(['locationList'], (old) => {
+    // Remove from cache
+    queryClient.setQueryData(['locationList'], (old) => {
           const updatedList = old ? old.filter((location) => location.id !== data.id) : [];
           return updatedList;
       });
       
-      // Invalidate the cache so the latest data is fetched
+      // Invalidate the cache to trigger new fetch
       queryClient.invalidateQueries(['locationList']);
       
       console.log('Successfully deleted location:', data);

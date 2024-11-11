@@ -6,7 +6,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import { useFriendList } from '../context/FriendListContext';
-
+import SlideToAction from '../components/SlideToAction';
 const ScreenMoments = ({ route, navigation }) => {
     const { themeAheadOfLoading } = useFriendList();
     const { themeStyles } = useGlobalStyle();  
@@ -89,6 +89,7 @@ const ScreenMoments = ({ route, navigation }) => {
             end={{ x: 1, y: 0 }}
             style={[styles.container, themeStyles.signinContainer]}
         >
+            
             <View style={{ flex: 1}}>
                 {isCapsuleListReady ? (
                     <>  

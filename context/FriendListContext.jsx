@@ -106,6 +106,24 @@ export const FriendListProvider = ({ children }) => {
     });
   };
 
+
+  const updateFriendListColorsExcludeSaved = (friendId, darkColor, lightColor, fontColor, fontColorSecondary) => {
+    setFriendList(prevFriendList => {
+      const friend = prevFriendList.find(friend => friend.id === friendId);
+      if (friend) {
+        friend.darkColor = darkColor;
+        //friend.savedDarkColor = darkColor;
+        friend.lightColor = lightColor; 
+        //friend.savedLightColor = lightColor;
+        friend.fontColor = fontColor;
+        friend.fontColorSecondary = fontColorSecondary;
+        setThemeAheadOfLoading({lightColor: lightColor, darkColor: darkColor, fontColor: fontColor, fontColorSecondary: fontColorSecondary});
+  
+      }
+      return [...prevFriendList];  // Create a new array to trigger re-render
+    });
+  };
+
   
 
   return (
@@ -118,7 +136,8 @@ export const FriendListProvider = ({ children }) => {
       addToFriendList,
       removeFromFriendList,
       updateFriend,
-      updateFriendListColors
+      updateFriendListColors,
+      updateFriendListColorsExcludeSaved
     }}>
       {children}
     </FriendListContext.Provider>

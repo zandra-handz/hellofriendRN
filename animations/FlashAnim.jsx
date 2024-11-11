@@ -4,6 +4,7 @@ import { Animated, StyleSheet } from 'react-native';
 
 const FlashAmin = ({
     children,
+    circleTextSize = 11,
     circleColor = 'red',
     countColor = 'white',
     flashToColor = 'yellow',  
@@ -43,8 +44,8 @@ const FlashAmin = ({
     });
 
     return (
-        <Animated.View style={[styles.countContainer, { backgroundColor: animatedCircleColor }]}>
-            <Animated.Text style={[styles.countText, { color: animatedCountColor }]}>
+        <Animated.View style={[styles.countContainer, { height: circleTextSize * 2, width: circleTextSize * 2, backgroundColor: animatedCircleColor }]}>
+            <Animated.Text style={[styles.countText, { color: animatedCountColor, fontSize: circleTextSize }]}>
                 {children}
             </Animated.Text>
         </Animated.View>
@@ -52,16 +53,16 @@ const FlashAmin = ({
 };
 
 const styles = StyleSheet.create({
-    countContainer: {
-        height: 24,
-        width: 24,
+    countContainer: { 
         alignItems: 'center',
+        alignContents: 'center',
         justifyContent: 'center',
-        borderRadius: 12,
+        borderRadius: 50,
         textAlign: 'center',
     },
     countText: {
         fontFamily: 'Poppins-Bold',
+        alignSelf: 'center',
     },
 });
 

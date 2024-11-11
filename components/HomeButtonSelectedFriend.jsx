@@ -28,12 +28,14 @@ const HomeButtonSelectedFriend = ({
         image=require("../assets/shapes/fairymagic.png"), 
         imagePositionHorizontal=0, 
         imagePositionVertical=70,  
+        darkColor = '#4caf50',
+        lightColor = 'rgb(160, 241, 67)',
 
     }) => {
 
     const navigation = useNavigation(); 
     const globalStyles = useGlobalStyle();
-    const { gradientColors, gradientColorsHome } = useGlobalStyle();
+    const { gradientColorsHome } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
     //friendLoaded = dashboard data retrieved successfully
     const { selectedFriend, friendLoaded, friendDashboardData, isPending, isLoading, loadingNewFriend } = useSelectedFriend();
@@ -110,7 +112,7 @@ const HomeButtonSelectedFriend = ({
             
             
             <LinearGradient
-              colors={[gradientColors.darkColor, gradientColors.lightColor]}
+              colors={[darkColor, lightColor]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1}}
               style={{
@@ -170,7 +172,7 @@ const HomeButtonSelectedFriend = ({
                       <View style={{paddingVertical: '0%',  marginLeft: '8%', borderRadius: 20, height: '100%', maxWidth: '50%', minWidth: '40%', flexGrow: 1, flexDirection: 'column', justifyContent: 'space-between'}}>
                         <View style={{height: '26%', flexDirection: 'row', justifyContent: 'flex-start', width: '100%' }}>
                           <View style={{width: '68%'}}>
-                          <ButtonIconMoments onPress={onPress} circleColor={themeAheadOfLoading.lightColor} countColor={themeAheadOfLoading.fontColorSecondary} />
+                          <ButtonIconMoments onPress={onPress} circleColor={'orange'} countTextSize={10} countColor={themeAheadOfLoading.fontColorSecondary} />
                         
                           </View>
                         </View>
@@ -182,7 +184,7 @@ const HomeButtonSelectedFriend = ({
                         </View>
                         <View style={{height: '26%', flexDirection: 'row', justifyContent: 'flex-start', width: '100%' }}>
                         <View style={{width: '68%'}}>
-                          <ButtonIconImages onPress={navigateToImages} circleColor={themeAheadOfLoading.lightColor} countColor={themeAheadOfLoading.fontColorSecondary}  />
+                          <ButtonIconImages onPress={navigateToImages} circleColor={'orange'} countTextSize={10} countColor={themeAheadOfLoading.fontColorSecondary}  />
                         
                           </View>
                         </View>

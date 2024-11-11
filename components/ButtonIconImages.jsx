@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Animated } from 'react-native';
-import { useCapsuleList } from '../context/CapsuleListContext'; 
+
 import { useImageList } from '../context/ImageListContext'; 
 import FlashAnim from '../animations/FlashAnim';
 import PhotosTwoSvg from '../assets/svgs/photos-two.svg';
@@ -61,7 +61,7 @@ const ButtonIconImages = ({
               
                 <PhotosTwoSvg height={iconSize} width={iconSize} color={iconColor} />
                 <View style={{ top: '-17%', right: '27%' }}>
-                    <FlashAnim circleColor={circleColor} countColor={countColor}>
+                    <FlashAnim circleColor={circleColor} circleTextSize={countTextSize} countColor={countColor}>
                         {imageList.length}
                     </FlashAnim>
                 </View>
