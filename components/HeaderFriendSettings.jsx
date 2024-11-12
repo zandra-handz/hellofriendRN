@@ -30,7 +30,7 @@ const HeaderFriendSettings = () => {
         <>
             {!loadingNewFriend && ( 
                 <View
-                    style={[styles.headerContainer, themeStyles.genericTextBackground]}
+                    style={[styles.headerContainer, themeStyles.headerContainer]}
                      
                 > 
                     <TouchableOpacity onPress={handleNavigateBack} style={styles.leftIcon}>

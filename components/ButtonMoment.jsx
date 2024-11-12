@@ -10,6 +10,7 @@ const ButtonMoment = ({
   size = 15, 
   style,
   disabled = false,
+  onTop = false,
   sameStyleForDisabled = false, // New prop to control style
 }) => {
 
@@ -30,7 +31,7 @@ const ButtonMoment = ({
         <View style={styles.iconContainer}> 
         </View>
         <View style={styles.textWrapper}>
-          <Text style={[styles.momentText, themeStyles.genericText, { fontSize: size }]}>
+          <Text numberOfLines={2} style={[styles.momentText, themeStyles.genericText, { fontSize: size }]}>
             {moment.capsule}
           </Text>
         </View>
@@ -54,8 +55,10 @@ const ButtonMoment = ({
 };
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {  
+    height: 120,
     borderRadius: 30,
+    width: '100%',
     padding: 20,   
     flexDirection: 'column', 
     

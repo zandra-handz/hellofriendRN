@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { useCapsuleList } from '../context/CapsuleListContext';
-import ItemMomentMultiPlain from '../components/ItemMomentMultiPlain';
+import { useCapsuleList } from '../context/CapsuleListContext'; 
+import MomentsList from '../components/MomentsList';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import { useFriendList } from '../context/FriendListContext';
-import SlideToAction from '../components/SlideToAction';
+import { useFriendList } from '../context/FriendListContext'; 
+
 const ScreenMoments = ({ route, navigation }) => {
     const { themeAheadOfLoading } = useFriendList();
     const { themeStyles } = useGlobalStyle();  
@@ -93,7 +93,7 @@ const ScreenMoments = ({ route, navigation }) => {
             <View style={{ flex: 1}}>
                 {isCapsuleListReady ? (
                     <>  
-                        <ItemMomentMultiPlain 
+                        <MomentsList 
                             triggerUpdate={triggerUpdate} 
                             parentCheckboxesTracker={toggleCheckboxesParent} 
                             parentChangesTracker={handleChangeDetection} // Callback function to handle changes
@@ -118,7 +118,8 @@ const ScreenMoments = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: { 
         flex: 1,
-        width: '100%',  
+        width: '101%',
+        left: -1,  
         padding: 0,
         justifyContent: 'space-between',
     },

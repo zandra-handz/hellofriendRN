@@ -184,20 +184,20 @@ const lightThemeStyles = StyleSheet.create({
         backgroundColor: '#ccc',
     },
     genericText: {
-        color: 'black',
+        color: '#121212',
     },
     genericIcon: {
-        color: 'black',
+        color: '#121212',
     },
     selectedIconBorder: {
         borderColor: 'darkgreen', 
     },
     subHeaderText: {
-        color: 'black',
+        color: '#121212',
 
     },
     input: {
-        color: 'black',
+        color: '#121212',
         borderWidth: 1,
         borderRadius: 20,
         padding: 10,
@@ -216,19 +216,19 @@ const lightThemeStyles = StyleSheet.create({
         backgroundColor: 'white',
     },
     friendFocusSectionText: {
-        color: 'black',
+        color: '#121212',
     },
     friendFocusSectionIcon: {
-        color: 'black',
+        color: '#121212',
     },
     modalContainer: {
         backgroundColor: 'white',
     },
     modalText: {
-        color: 'black',
+        color: '#121212',
     },
     modalIconColor: {
-        color: 'black', 
+        color: '#121212', 
     },
     toggleButtonColor: {
         backgroundColor: '#ccc',
@@ -267,31 +267,31 @@ const lightThemeStyles = StyleSheet.create({
     footerText: {
         fontFamily: 'Poppins-Bold',
         fontSize: 14,
-        color: 'black',
+        color: '#121212',
     },
     footerIcon: {
-        color: 'black',
+        color: '#121212',
     },
     headerText: { 
-        color: 'black',
+        color: '#121212',
     },
     headerIcon: {
-        color: 'black',
+        color: '#121212',
     },
     upcomingNavIcon: {
-        color: 'black',
+        color: '#121212',
     },
     upcomingNavText: {
         fontFamily: 'Poppins-Bold',
         fontSize: 14,
-        color: 'black',
+        color: '#121212',
     }, 
     header: {
         backgroundColor: 'white',
         borderBottomColor: 'gray',
         borderBottomWidth: 1,
     },
-    headerTextColor: 'black',
+    headerTextColor: '#121212',
 });
 
 
@@ -309,7 +309,7 @@ const darkThemeStyles = StyleSheet.create({
         fontSize: 16,
     },
     signinInput: {
-        backgroundColor:'black',
+        backgroundColor:'#121212',
         color: 'white',
         fontFamily: 'Poppins-Regular',
         placeholderTextColor: 'lightgray',
@@ -335,33 +335,33 @@ const darkThemeStyles = StyleSheet.create({
         elevation: 10,
     },
     genericTextBackground: {
-        backgroundColor: '#000000',
+        backgroundColor: '#121212',
     },
     genericTextBackgroundShadeTwo: {
         backgroundColor: '#2B2B2B',
     },
     genericText: {
-        color: 'white',
+        color: '#d3d3d3',
     },
     genericIcon: {
-        color: 'white',
+        color: '#d3d3d3',
     },
     selectedIconBorder: {
         borderColor: '#d4edda', 
     },
     subHeaderText: {
-        color: 'white',
+        color: '#d3d3d3',
     },
     inputContainer: {
         borderWidth: 1,
-        borderColor: 'white',
+        borderColor: '#d3d3d3',
 
     },
     input: {
-        color: 'white',
+        color: '#d3d3d3',
         borderWidth: 1,
-        borderColor: 'white',
-        backgroundColor: 'black',
+        borderColor: '#d3d3d3',
+        backgroundColor: '#121212',
         placeholderTextColor: 'darkgray', 
         borderWidth: 1,
         borderRadius: 20,
@@ -372,25 +372,25 @@ const darkThemeStyles = StyleSheet.create({
         fontSize: 16,
     },
     borderColor: {
-        color: 'black',
+        color: '#121212',
     },
     friendFocusSection: {
-        backgroundColor: 'black',
+        backgroundColor: '#121212',
     },
     friendFocusSectionText: {
-        color: 'white',
+        color: '#d3d3d3',
     },
     friendFocusSectionIcon: {
-        color: 'white',
+        color: '#d3d3d3',
     },
     modalContainer: {
         backgroundColor: '#2B2B2B',
     },
     modalText: {
-        color: 'white',
+        color: '#d3d3d3',
     },
     modalIconColor: {
-        color: 'white', 
+        color: '#d3d3d3', 
     },
     toggleButtonColor: {
         backgroundColor: '#ccc',
@@ -412,7 +412,7 @@ const darkThemeStyles = StyleSheet.create({
         borderColor: 'transparent',
     },
     headerContainerNoBorder: {
-        backgroundColor: 'black', 
+        backgroundColor: '#121212', 
         
     },
 
@@ -427,32 +427,32 @@ const darkThemeStyles = StyleSheet.create({
     footerText: {
         fontFamily: 'Poppins-Bold',
         fontSize: 14,
-        color: 'white',
+        color: '#d3d3d3',
     },
     footerIcon: {
-        color: 'white',
+        color: '#d3d3d3',
     },
     headerText: { 
-        color: 'white',
+        color: '#d3d3d3',
     },
     headerIcon: {
-        color: 'white',
+        color: '#d3d3d3',
     },
     UpcomingNavText: {
         fontFamily: 'Poppins-Bold',
         fontSize: 14,
         textAlign: 'center',
-        color: 'white',
+        color: '#d3d3d3',
     },
     upcomingNavIcon: {
-        color: 'white',
+        color: '#d3d3d3',
     },
     header: {
         backgroundColor: 'black',
         borderBottomColor: 'darkgray',
         borderBottomWidth: 1,
     },
-    headerTextColor: 'white',
+    headerTextColor: '#d3d3d3',
 });
 
 export default GlobalStyleProvider;
