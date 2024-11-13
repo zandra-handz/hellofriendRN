@@ -62,8 +62,7 @@ const HeaderBaseItemView = ({
     </LinearGradient>  
      <SlideToAction
      onPress={onSliderPull}
-     sliderWidth={'100%'}  // Set width of the slider
-     onSlideComplete={() => alert('Action triggered!')}
+     sliderWidth={'100%'} 
      targetIcon={TrashOutlineSvg}
    /> 
    </>

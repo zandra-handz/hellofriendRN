@@ -61,8 +61,16 @@ export const CapsuleListProvider = ({ children }) => {
         if (a.typedCategory > b.typedCategory) return 1;
         return new Date(b.created) - new Date(a.created);
       });
+
+      const preAdded = sorted.reduce((ids, capsule) => {
+        if (capsule.preAdded) ids.push(capsule.id);
+        return ids;
+      }, []);
+
+      const filterPreAdded = sorted.filter(capsule => !preAdded.includes(capsule.id));
+    
    
-      const sortedWithIndices = sorted.map((capsule, index) => ({
+      const sortedWithIndices = filterPreAdded.map((capsule, index) => ({
         ...capsule,
         uniqueIndex: index
       }));
@@ -78,10 +86,7 @@ export const CapsuleListProvider = ({ children }) => {
         index += sortedWithIndices.filter((item) => item.typedCategory === category).length;
       }
   
-      const preAdded = sortedWithIndices.reduce((ids, capsule) => {
-        if (capsule.preAdded) ids.push(capsule.id);
-        return ids;
-      }, []);
+
   
       const momentsSavedToHello = sortedWithIndices.filter(capsule => preAdded.includes(capsule.id));
    

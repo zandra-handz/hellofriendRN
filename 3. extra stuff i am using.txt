@@ -216,12 +216,8 @@ npm install @tanstack/react-query
 
 npm install @tanstack/react-query-devtools
 
-
-#installed but haven't started using
-npm install expo-google-fonts
-
-
-npm install react-native-text-size
+ 
+ 
 
 
 

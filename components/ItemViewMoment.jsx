@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import MomentView from '../components/MomentView';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useCapsuleList } from '../context/CapsuleListContext'; 
-import  { useFriendList } from '../context/FriendListContext';
+import { useCapsuleList } from '../context/CapsuleListContext';  
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
 
 import NavigationArrows from '../components/NavigationArrows'; 

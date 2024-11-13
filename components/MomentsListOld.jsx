@@ -11,6 +11,7 @@ import { useFriendList } from '../context/FriendListContext';
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import SpinOutlineSvg from '../assets/svgs/spin-outline.svg';
+
 import LoadingPage from '../components/LoadingPage';
 import SearchBar from '../components/SearchBar';
 
@@ -19,7 +20,7 @@ import { Dimensions } from 'react-native';
  
 const footerHeight = 720; // Set to a fixed height for footer
 
-const ItemMomentMultiPlain = ({
+const MomentsList = ({
   passInData = false,  
   includeCategoryTitle = false, 
   parentCheckboxesTracker,
@@ -37,6 +38,7 @@ const ItemMomentMultiPlain = ({
   const [selectedMoments, setSelectedMoments] = useState([]);
   const [selectedMomentsAlreadySaved, setSelectedMomentsAlreadySaved] = useState([]);
 
+  const [ tempSelectedMoment, setTempSelectedMoment ] = useState(null);
   const flatListRef = useRef(null);
   const categoryFlatListRef = useRef(null);
   const [categoryButtonPressed, setCategoryButtonPressed] = useState(false);
@@ -49,9 +51,7 @@ const ItemMomentMultiPlain = ({
   const moments = (capsuleList);
  
   useEffect(() => {  
-    
-    console.log('MOMENTS SAVED TO HELLO', momentsSavedToHello);
-    console.log(preAdded);
+     
     const initialSelectedMoments = capsuleList.filter(capsule => preAdded.includes(capsule.id));
     
     setSelectedMoments(initialSelectedMoments); 
@@ -66,8 +66,7 @@ const ItemMomentMultiPlain = ({
   
     const selectedMomentAlreadySavedIds = selectedMomentsAlreadySaved.map(moment => moment.id);
     const selectedMomentsAlreadySavedSet = new Set(selectedMomentAlreadySavedIds);
-  
-    // Symmetric difference implementation
+   
     const symmetricDifference = (setA, setB) => {
       const difference = new Set(setA);
       for (let elem of setB) {
@@ -185,32 +184,43 @@ const handleScrollToRandomItem = () => {
   };
 
 
+  useEffect(() => {
+
+    console.log(tempSelectedMoment);
+  }, [tempSelectedMoment]);
+
 
   const DELAY = 0; //previously when using flatlist for moments: 64
 
   const handleViewableItemsChanged = useCallback(({ viewableItems }) => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    if (viewableItems.length > 0 && !categoryButtonPressed) {
-      const visibleCategory = moments.find(moment => viewableItems.some(viewable => viewable.item.id === moment.id))?.typedCategory;
-
-      if (visibleCategory) {
-        timerRef.current = setTimeout(() => {
-          setSelectedCategory(visibleCategory); 
-
-          const categoryIndex = Object.keys(categoryStartIndices).indexOf(visibleCategory);
-          if (categoryIndex !== -1 && !categoryButtonPressed) {
-            categoryFlatListRef.current?.scrollToIndex({ index: categoryIndex, animated: true });
-          }
-        }, DELAY);
+    // Immediately set the tempSelectedMoment without a delay
+    if (viewableItems.length > 0) {
+      const firstViewableItem = viewableItems[0].item;
+      if (firstViewableItem && firstViewableItem.id !== tempSelectedMoment) {
+        setTempSelectedMoment(firstViewableItem.id); // Update state instantly
       }
     }
-  }, [moments, categoryStartIndices, categoryButtonPressed]);
+  
+    // Check for category changes without the timer, update immediately
+    if (viewableItems.length > 0 && !categoryButtonPressed) {
+      const visibleCategory = moments.find(moment => 
+        viewableItems.some(viewable => viewable.item.id === moment.id)
+      )?.typedCategory;
+  
+      if (visibleCategory) {
+        setSelectedCategory(visibleCategory);
+        const categoryIndex = Object.keys(categoryStartIndices).indexOf(visibleCategory);
+        if (categoryIndex !== -1) {
+          categoryFlatListRef.current?.scrollToIndex({ index: categoryIndex, animated: true });
+        }
+      }
+    }
+  }, [moments, categoryStartIndices, categoryButtonPressed, tempSelectedMoment]);
+  
+  
 
   const viewabilityConfig = {
-    itemVisiblePercentThreshold: 60,
+    itemVisiblePercentThreshold: 80,
   };
 
   const openModal = (moment) => {
@@ -330,6 +340,9 @@ setSelectedMoments(updatedSelectedMoments);
   const renderMomentItem = ({ item: moment }) => {
     const isSelected = selectedMoments.includes(moment);
     const isHighlighted = moment.typedCategory === selectedCategory;
+    const isTemp = moment.id === tempSelectedMoment;
+    
+
   
     return (
       <View style={[styles.momentContainer, isHighlighted && styles.highlightedMoment, {backgroundColor: themeAheadOfLoading.lightColor}]}>
@@ -345,7 +358,7 @@ setSelectedMoments(updatedSelectedMoments);
             size={24} 
           />
         )}
-        <Animated.View style={[styles.momentContent, !isHighlighted && styles.fadedOut]}>
+        <Animated.View style={[styles.momentContent, (isHighlighted && !isTemp) && styles.partiallyFadedOut, (!isTemp && !isHighlighted) && styles.fadedOut, isTemp && styles.tempSelected]}>
           <ButtonMoment
             moment={moment}
             onPress={() => openModal(moment)}
@@ -441,7 +454,7 @@ setSelectedMoments(updatedSelectedMoments);
             ListFooterComponent={() => <View style={{ height: footerHeight }} />}  // Optional footer
             onViewableItemsChanged={handleViewableItemsChanged}  // Handle viewable items
             viewabilityConfig={viewabilityConfig}  // Viewability configuration
-            scrollEventThrottle={16}  // Throttle the scroll event for performance
+            scrollEventThrottle={16} 
           />
         )}
         
@@ -464,7 +477,7 @@ const styles = StyleSheet.create({
     minWidth: 2,
     flex: 1,
     zIndex: 0,
-    paddingHorizontal: 1, 
+    paddingHorizontal: 0, 
     justifyContent: 'space-between',
   },
   checkboxControlContainer: {
@@ -508,10 +521,15 @@ const styles = StyleSheet.create({
     alignItems: 'right',
     justifyContent: 'flex-start',
   },
+  tempSelected: {
+    borderColor: 'yellow',
+
+
+  },
   momentContainer: {
     padding: 0,
-    width: '100%',
-    marginBottom: '2%',
+    width: '100%', 
+    //marginBottom: '2%',
     borderRadius: 30, 
   },
   loadingContainer: { 
@@ -520,10 +538,16 @@ const styles = StyleSheet.create({
       width: '100%',
   },
   momentContent: {
-    padding: 2,
+    width: '100%', 
+    //this is the border
+    //padding: 2,  
   },
   fadedOut: {
-    opacity: 0.2, // Adjust the faded effect here
+   // opacity: 0.2, // Adjust the faded effect here
+  },
+  partiallyFadedOut: {
+   // opacity: 0.7
+
   },
   categoryCircle: {
     borderRadius: 20,
@@ -558,4 +582,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemMomentMultiPlain;
+export default MomentsList;
