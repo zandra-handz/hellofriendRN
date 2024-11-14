@@ -645,13 +645,22 @@ export const deleteMomentAPI = async (data) => {
 
 export const updateMomentAPI = async (friendId, capsuleId, capsuleData) => {
     try {
-        const response = await axios.patch(`/friends/${friendId}/thoughtcapsules/${capsuleId}/`, capsuleData);
+        const response = await axios.patch(`/friends/${friendId}/thoughtcapsule/${capsuleId}/`, capsuleData);
         return response.data;
     } catch (error) {
-        console.error('Error updating thought capsule:', error);
+        if (error.response) {
+            console.error('Error updating thought capsule:', {
+                message: error.message,
+                status: error.response.status,
+                data: error.response.data,
+            });
+        } else {
+            console.error('Error updating thought capsule:', error.message);
+        }
         throw error;
     }
 };
+
 
 export const updateMultMomentsAPI = async (friendId, capsulesAndChanges) => {
     try {

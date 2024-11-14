@@ -4,7 +4,7 @@
 //</Text>
 //   <HelloFriendFooter />   
 import React, { useEffect, useState } from 'react';
-import { View, Text,  StyleSheet } from 'react-native';
+import { View, Text,  StyleSheet, TouchableOpacity } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -38,17 +38,7 @@ const ScreenFriendSettings = () => {
   const windowHeight = Dimensions.get('window').height; 
 
 const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
-  
-  useEffect(() => {
-    const handleScreenBlur = () => {
-      setIsAnimationPaused(true);
-      console.log('paused animation via blur effect');
-    };
 
-    const unsubscribeBlur = navigation.addListener('blur', handleScreenBlur);
-
-    return unsubscribeBlur;
-  }, [navigation]);
 
  
 
@@ -78,7 +68,9 @@ const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
       {!loadingNewFriend && selectedFriend && (
         <>
         <View style={[styles.backColorContainer, {borderColor: themeAheadOfLoading.lightColor}]}>
-      
+        <TouchableOpacity onPress={navigateToHelloesScreen}>
+          <Text style={styles.genericText}>Go to helloes</Text>
+          </TouchableOpacity>
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
                     <Text style={[styles.modalSubTitle]}>SETTINGS</Text>

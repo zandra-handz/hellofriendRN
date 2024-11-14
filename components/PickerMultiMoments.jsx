@@ -28,7 +28,7 @@ const PickerMultiMoments = ({
 
   const [isMomentSelectModalVisible, setIsMomentSelectModalVisible] = useState(false);
   const { selectedFriend, loadingNewFriend, friendDashboardData } = useSelectedFriend();
-  const { capsuleList, preAdded } = useCapsuleList();
+  const { capsuleList, allCapsulesList, preAdded } = useCapsuleList();
 
 
   const useScrollingCategorySelector = false; 
@@ -39,8 +39,8 @@ const PickerMultiMoments = ({
 
 
   useEffect(() => {
-    if (capsuleList.length > 0) {
-      const totalCount = capsuleList.length;
+    if (allCapsulesList.length > 0) {
+      const totalCount = allCapsulesList.length;
       const selectedCount = selectedMoments.length;
       const percentage = calculatePercentage(selectedCount, totalCount);
       setSelectionPercentage(percentage);
@@ -50,14 +50,14 @@ const PickerMultiMoments = ({
       setSelectedCategory(null);
       fetchCategoryLimitData();
     }
-  }, [selectedFriend, friendDashboardData, capsuleList]);
+  }, [selectedFriend, friendDashboardData, allCapsulesList]);
 
   useEffect(() => { 
     console.log('Use effect to set moments when preAddedTracker updates');
-    const initialSelectedMoments = capsuleList.filter(capsule => preAdded.includes(capsule.id));
+    const initialSelectedMoments = allCapsulesList.filter(capsule => preAdded.includes(capsule.id));
     setSelectedMoments(initialSelectedMoments);
 
-  }, [capsuleList]);
+  }, [allCapsulesList]);
 
 
   const fetchCategoryLimitData = async () => {
@@ -76,13 +76,13 @@ const PickerMultiMoments = ({
   };
 
   useEffect(() => {
-    const uniqueCategories = [...new Set(capsuleList.map(capsule => capsule.typedCategory))];
+    const uniqueCategories = [...new Set(allCapsulesList.map(capsule => capsule.typedCategory))];
     setCategories(uniqueCategories);
-  }, [capsuleList]);
+  }, [allCapsulesList]);
 
   const handleCategoryPress = (category) => {
     setSelectedCategory(category);
-    const items = capsuleList.filter(capsule => capsule.typedCategory === category);
+    const items = allCapsulesList.filter(capsule => capsule.typedCategory === category);
     setCategoryItems(items);
     if (showInModal) {
       setModalVisible(true);
@@ -91,7 +91,7 @@ const PickerMultiMoments = ({
 
   const handleCategoryPressInModal = (category) => {
     setSelectedCategory(category);
-    const items = capsuleList.filter(capsule => capsule.typedCategory === category);
+    const items = allCapsulesList.filter(capsule => capsule.typedCategory === category);
     setCategoryItems(items); 
   };
 
@@ -130,7 +130,7 @@ const PickerMultiMoments = ({
     <View style={styles.container}>
       <View style={{flexDirection: 'row', alignItems: 'center', alignContent: 'center', width: '100%'}}> 
       <Text style={[styles.selectedItemsTitle, themeStyles.subHeaderText]}>
-        {containerText} ({selectedMoments.length}/{capsuleList.length})
+        {containerText} ({selectedMoments.length}/{allCapsulesList.length})
       </Text>
     
       {!useScrollingCategorySelector && (

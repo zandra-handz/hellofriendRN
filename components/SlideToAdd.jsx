@@ -68,9 +68,8 @@ const SlideToAdd = ({ onPress, sliderText='Label', targetIcon: TargetIcon, width
         <View style={styles.iconContainer}>
           <TargetIcon height={30} width={30} color={isDragging ? gradientColorsHome.lightColor : themeAheadOfLoading.darkColor} />
         </View>
-      )}
-      {isPressed && <Text style={styles.completedText}>Action Triggered!</Text>}
-    </View>
+      )} 
+      </View>
   );
 };
 

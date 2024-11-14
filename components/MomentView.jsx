@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Modal, Dimensions } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import HeaderBaseItemView from '../components/HeaderBaseItemView';
-import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
+import HeaderBaseItemView from '../components/HeaderBaseItemView'; 
 import LoadingPage from '../components/LoadingPage';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useFriendList } from '../context/FriendListContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import SlideToAction from '../components/SlideToAction';
-
+ 
 const { height: screenHeight } = Dimensions.get('window'); // Get screen height
 
 const MomentView = ({ onSliderPull, isModalVisible, toggleModal, modalContent, modalTitle }) => {

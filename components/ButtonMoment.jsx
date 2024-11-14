@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
     flex: 1, 
-    // Removed fixed height
+    // Removed fixed height 
   },
   iconContainer: { 
     justifyContent: 'center', 

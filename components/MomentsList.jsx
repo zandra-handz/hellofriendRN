@@ -16,7 +16,7 @@ const ITEM_HEIGHT = 160; // Define the height of each item
 const MomentsList = (navigation) => {
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();  
-    const { capsuleList, preAdded, categoryNames, categoryStartIndices, preAddedTracker, momentsSavedToHello, updateCapsules } = useCapsuleList();
+    const { capsuleList, categoryNames, categoryStartIndices, preAddedTracker, momentsSavedToHello, updateCapsule } = useCapsuleList();
   
     const [selectedMomentToView, setSelectedMomentToView] = useState(null);
     const [isMomentViewVisible, setMomentViewVisible] = useState(false);
@@ -38,13 +38,9 @@ const MomentsList = (navigation) => {
         setMomentViewVisible(false);
     };
 
-    const saveToHello = async (moment) => {
-        const formattedMoment = {
-            id: moment.id,
-            fieldsToUpdate: { pre_added_to_hello: true }
-        };
+    const saveToHello = async (moment) => { 
         try {
-            updateCapsules([formattedMoment]);
+            updateCapsule(moment.id);
         } catch (error) {
             console.error('Error during pre-save:', error);
         };
@@ -64,7 +60,7 @@ const MomentsList = (navigation) => {
         const categoryIndex = categoryStartIndices[category];
         console.log('hi', categoryIndex);
         if (categoryIndex !== undefined) { 
-            flatListRef.current?.scrollToIndex({ index: categoryIndex > 0 ? categoryIndex + 1 : categoryIndex, animated: true });
+            flatListRef.current?.scrollToIndex({ index: categoryIndex > 0 ? categoryIndex  : 0, animated: true });
         };
       
     };
@@ -76,7 +72,8 @@ const MomentsList = (navigation) => {
                 <FlatList
                 data={categoryNames}
                 horizontal={false}
-                keyExtractor={(categoryName) => categoryName.toString()}
+                keyExtractor={(categoryName) => (categoryName ? categoryName.toString() : 'Uncategorized')}
+
                 
                 renderItem={({ item: categoryName }) => (
                     <TouchableOpacity style={styles.categoryButton} onPress={() => {scrollToCategoryStart(categoryName)}}>
@@ -106,7 +103,9 @@ const MomentsList = (navigation) => {
         return (
             <Animated.View style={[styles.cardContainer, { transform: [{ scale }] }]}>
                 <MomentCard
+                    key={item.id}
                     moment={item}
+                    index={index}
                     onPress={() => openMomentView(item)}
                     onSliderPull={() => saveToHello(item)}
                 />
@@ -129,7 +128,7 @@ const MomentsList = (navigation) => {
                     ref={flatListRef}
                     data={capsuleList}
                     renderItem={renderMomentCard}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item, index) => item.id ? item.id.toString() : `placeholder-${index}`}
                     getItemLayout={(data, index) => (
                         { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index }
                     )}
@@ -198,10 +197,11 @@ const styles = StyleSheet.create({
     listContainer: {
         height: Dimensions.get("screen").height - 100,
         width: Dimensions.get("screen").width,
+        overflow: 'visible',
     },
     cardContainer: {
         marginVertical: 0,
-        height: 160,
+        height: 'auto',
         alignItems: 'center',
     },
 });

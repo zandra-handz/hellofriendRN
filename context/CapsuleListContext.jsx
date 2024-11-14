@@ -36,8 +36,7 @@ export const CapsuleListProvider = ({ children }) => {
   const queryClient = useQueryClient();
 
   const [sortedByCategory, setSortedByCategory] = useState([]);
-  const [newestFirst, setNewestFirst] = useState([]);
-  const [preAddedTracker, setPreAddedTracker] = useState([]); 
+  const [newestFirst, setNewestFirst] = useState([]); 
 
   const [ resultMessage, setResultMessage ] = useState(null);
   const [ closeResultMessage, setCloseResultMessage ] = useState(true);
@@ -85,18 +84,20 @@ export const CapsuleListProvider = ({ children }) => {
         categoryStartIndices[category] = index;
         index += sortedWithIndices.filter((item) => item.typedCategory === category).length;
       }
+
   
 
   
       const momentsSavedToHello = sortedWithIndices.filter(capsule => preAdded.includes(capsule.id));
    
-      return { capsules: sortedWithIndices, categoryCount, categoryNames, categoryStartIndices, preAdded, momentsSavedToHello };
+      return { capsules: sortedWithIndices, allCapsules: sorted, categoryCount, categoryNames, categoryStartIndices, preAdded, momentsSavedToHello };
     },
   });
   
 
   const {
     capsules = [],
+    allCapsules = [],
     categoryCount = 0,
     categoryNames = [],
     categoryStartIndices = {},
@@ -106,15 +107,67 @@ export const CapsuleListProvider = ({ children }) => {
 
   const capsuleCount = capsules.length;
 
+  const [momentData, setMomentData ] = useState(null);
+
+  
+
   const updateCapsuleMutation = useMutation({
-    mutationFn: (updatedCapsule) => updateMomentAPI(updatedCapsule.id, updatedCapsule),
-    onSuccess: () => queryClient.invalidateQueries(['Moments', selectedFriend?.id]),
+    mutationFn: (capsuleId) => updateMomentAPI(selectedFriend?.id, capsuleId, { pre_added_to_hello: true }),
+    onSuccess: (data) => {
+      console.log('Updated capsule data:', data);
+      setMomentData(data);
+  
+      // Log the cache before updating it
+      const oldMoments = queryClient.getQueryData(['Moments', selectedFriend?.id]);
+      console.log('Cache before update:', oldMoments);
+  
+      //queryClient.setQueryData(['Moments', selectedFriend?.id], (oldMoments) => {
+        //if (!oldMoments) return [data];
+        //const momentIndex = oldMoments.findIndex((moment) => moment.id === data.id);
+        //if (momentIndex === -1) {
+        //  return [data, ...oldMoments];
+       // }
+   
+       // const updatedMoments = [...oldMoments];
+       // updatedMoments[momentIndex] = { ...updatedMoments[momentIndex], ...data, preAdded: true };
+  
+       // return updatedMoments;
+     // });
+  
+     // const updatedCache = queryClient.getQueryData(['Moments', selectedFriend?.id]);
+     // console.log('Updated cache:', updatedCache);
+    },
     onError: (error) => console.error('Error updating capsule:', error),
   });
 
-  const updateCapsule = (updatedCapsule) => updateCapsuleMutation.mutate(updatedCapsule);
+  const updateCache = () => {
+    if (momentData) {
+      
+      queryClient.setQueryData(['Moments', selectedFriend?.id], (oldMoments) => {
+      if (!oldMoments) return [momentData];
   
+      const updatedMoments = [...oldMoments];
+      const momentIndex = oldMoments.findIndex((moment) => moment.id === momentData.id);
+      if (momentIndex !== -1) {
+        updatedMoments[momentIndex] = { ...updatedMoments[momentIndex], ...momentData, preAdded: true };
+      } else {
+        updatedMoments.unshift(momentData); // Add new moment if it doesn't exist
+      }
+  
+      return updatedMoments;
 
+    }); 
+  
+    // Log the updated cache
+    const updatedCache = queryClient.getQueryData(['Moments', selectedFriend?.id]);
+    console.log('Updated cache after mutation:', updatedCache);
+}
+  };
+  
+  
+  
+  const updateCapsule = (capsuleId) => updateCapsuleMutation.mutate(capsuleId);
+  
   const updateCapsulesMutation = useMutation({
     mutationFn: (updatedCapsules) => updateMultMomentsAPI(selectedFriend?.id, updatedCapsules),
     onSuccess: () => queryClient.invalidateQueries(['Moments', selectedFriend?.id]),
@@ -126,11 +179,9 @@ export const CapsuleListProvider = ({ children }) => {
   
   const createMomentMutation = useMutation({
     mutationFn: (data) => saveMomentAPI(data),
-    onError: (error) => {
-      // Centralized error handling
+    onError: (error) => { 
       setResultMessage('Oh no! :( Please try again');
-      
-      // Clear previous timeout if any
+       
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -302,7 +353,10 @@ export const CapsuleListProvider = ({ children }) => {
   return (
     <CapsuleListContext.Provider
       value={{
+        updateCache,
+        momentData,
         capsuleList: capsules,
+        allCapsulesList: allCapsules,
         capsuleCount,
         categoryCount,
         categoryNames,
@@ -321,6 +375,7 @@ export const CapsuleListProvider = ({ children }) => {
         resultMessage,
         closeResultMessage, 
         updateCapsule,
+        updateCapsuleMutation,
         sortByCategory,
         sortNewestFirst,
       }}
