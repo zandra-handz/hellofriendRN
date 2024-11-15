@@ -12,11 +12,12 @@ const MomentCard = ({
   onSliderPull, 
   moment, 
   size = 15,  
+  addIsSuccessful = false,
   disabled = false, 
 }) => {
 
   const { themeStyles } = useGlobalStyle();
-  const { updateCapsuleMutation, updateCache, momentData } = useCapsuleList();
+  const { updateCapsuleMutation, updateCacheWithNewPreAdded, momentData } = useCapsuleList();
 
   useEffect(() => {
     console.log('card rerendered for ', moment.capsule);
@@ -47,7 +48,7 @@ const MomentCard = ({
       useNativeDriver: true,  // Enable native driver for better performance
     }).start(() => {  // onComplete callback
       console.log('Animation finished, updating cache!');
-      updateCache();  // Call updateCache once animation is done
+      //updateCacheWithNewPreAdded();  // Call updateCacheWithNewPreAdded once animation is done
     });
   };
 

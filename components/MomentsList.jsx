@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Animated, Dimensions, TouchableOpacity, FlatList } from 'react-native';
 import { FlashList } from "@shopify/flash-list";
 import { useFriendList } from '../context/FriendListContext';
@@ -11,31 +11,61 @@ import SpinOutlineSvg from '../assets/svgs/spin-outline.svg';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
+import { update } from 'firebase/database';
 const ITEM_HEIGHT = 160; // Define the height of each item
 
 const MomentsList = (navigation) => {
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();  
-    const { capsuleList, categoryNames, categoryStartIndices, preAddedTracker, momentsSavedToHello, updateCapsule } = useCapsuleList();
-  
+    const { capsuleList, setMomentIdToAnimate, momentIdToAnimate, updateCacheWithNewPreAdded, updateCapsuleMutation, categoryNames, categoryStartIndices, preAddedTracker, momentsSavedToHello, updateCapsule } = useCapsuleList();
+    
     const [selectedMomentToView, setSelectedMomentToView] = useState(null);
     const [isMomentViewVisible, setMomentViewVisible] = useState(false);
     const flatListRef = useRef(null);
-
     const scrollY = useRef(new Animated.Value(0)).current;
 
-    //const moments = capsuleList.filter(capsule => !preAdded.includes(capsule.id));
-    
+    const fadeAnim = useRef(new Animated.Value(1)).current;
+    const heightAnim = useRef(new Animated.Value(ITEM_HEIGHT)).current;
+
     const moments = capsuleList;
     const momentListBottomSpacer = Dimensions.get("screen").height - 200;
+   
 
-    const openMomentView = (moment) => {
-        setSelectedMomentToView(moment);
-        setMomentViewVisible(true);
-    };
+    useEffect(() => {
+        if (momentIdToAnimate) {
+            // Run fade-out and height animations in parallel
+            Animated.parallel([
+                Animated.timing(fadeAnim, {
+                    toValue: 0,
+                    duration: 200, // Adjust duration as needed
+                    useNativeDriver: true,
+                }),
+                Animated.timing(heightAnim, {
+                    toValue: 0,
+                    duration: 200, // Adjust duration as needed
+                    useNativeDriver: false, // `useNativeDriver: false` is needed for height animations
+                }),
+            ]).start(() => {
+                // After animation, update the cache and reset animations
+                updateCacheWithNewPreAdded();
+                //should do this a different way! just testing my theory re: what is causing an issue
+                //(this value not getting reset)
+                setMomentIdToAnimate(false);
+                fadeAnim.setValue(1);  // Reset fade for future use
+                heightAnim.setValue(ITEM_HEIGHT); // Reset height for future use
+            });
+        }
+    }, [momentIdToAnimate]);
+    
 
-    const closeMomentView = () => {
-        setMomentViewVisible(false);
+    const scrollToRandomItem = () => {
+        if (capsuleList.length === 0) return;
+
+        const randomIndex = Math.floor(Math.random() * capsuleList.length);
+        flatListRef.current?.scrollToIndex({
+            index: randomIndex,
+            animated: true,
+        });
     };
 
     const saveToHello = async (moment) => { 
@@ -45,15 +75,15 @@ const MomentsList = (navigation) => {
             console.error('Error during pre-save:', error);
         };
     };
+ 
 
-    const scrollToRandomItem = () => {
-        if (moments.length === 0) return;
+    const openMomentView = (moment) => {
+        setSelectedMomentToView(moment);
+        setMomentViewVisible(true);
+    };
 
-        const randomIndex = Math.floor(Math.random() * moments.length);
-        flatListRef.current?.scrollToIndex({
-            index: randomIndex,
-            animated: true,
-        });
+    const closeMomentView = () => {
+        setMomentViewVisible(false);
     };
 
     const scrollToCategoryStart = (category) => {
@@ -87,31 +117,37 @@ const MomentsList = (navigation) => {
 
     };
 
+
+
     const renderMomentCard = ({ item, index }) => {
         const inputRange = [
             (index - 1) * ITEM_HEIGHT, // Start scaling slightly earlier
             index * ITEM_HEIGHT + ITEM_HEIGHT / 3, // Finish scaling earlier
         ];
     
-        // Increase the scale factor to make it expand and shrink faster
         const scale = scrollY.interpolate({
             inputRange,
-            outputRange: [0.8, 1.0], // Scale more aggressively (0.8 to 1.2)
+            outputRange: [0.8, 1.0], 
             extrapolate: 'clamp',
         });
 
+        // Apply the fade-out effect only to the item with `momentIdToAnimate`
+        const opacity = item.id === momentIdToAnimate ? fadeAnim : 1;
+
         return (
-            <Animated.View style={[styles.cardContainer, { transform: [{ scale }] }]}>
+            <Animated.View style={[styles.cardContainer, { transform: [{ scale }], opacity }]}>
                 <MomentCard
                     key={item.id}
                     moment={item}
-                    index={index}
+                    index={index} 
                     onPress={() => openMomentView(item)}
                     onSliderPull={() => saveToHello(item)}
                 />
             </Animated.View>
         );
     };
+
+    // Other functions and rendering logic remain the same
 
     return (
         <View style={styles.container}>
@@ -121,7 +157,7 @@ const MomentsList = (navigation) => {
                     <SpinOutlineSvg height={26} width={26} color={themeAheadOfLoading.fontColorSecondary}/>
                     <Text style={[styles.randomButtonText, {color: themeAheadOfLoading.fontColorSecondary}]}></Text>
                 </TouchableOpacity> 
-                <SearchBar data={moments} borderColor={'transparent'} onPress={openMomentView} searchKeys={['capsule', 'typedCategory']} />
+                <SearchBar data={capsuleList} borderColor={'transparent'} onPress={openMomentView} searchKeys={['capsule', 'typedCategory']} />
             </View>
             <View style={styles.listContainer}>
                 <Animated.FlatList
@@ -138,7 +174,6 @@ const MomentsList = (navigation) => {
                     )}
                     ListFooterComponent={() => <View style={{ height: momentListBottomSpacer }} />}
                     onScrollToIndexFailed={(info) => {
-                        // Smoothly scroll to the index if it fails initially
                         flatListRef.current?.scrollToOffset({
                             offset: info.averageItemLength * info.index,
                             animated: true,
@@ -155,6 +190,7 @@ const MomentsList = (navigation) => {
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {

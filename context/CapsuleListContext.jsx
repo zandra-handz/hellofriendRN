@@ -40,7 +40,7 @@ export const CapsuleListProvider = ({ children }) => {
 
   const [ resultMessage, setResultMessage ] = useState(null);
   const [ closeResultMessage, setCloseResultMessage ] = useState(true);
- 
+  const [ momentIdToAnimate, setMomentIdToAnimate] = useState(null);
   const [ newMomentInput, setNewMomentInput] = useState('');
   
   const { data: sortedCapsuleList = [], isLoading: isCapsuleContextLoading } = useQuery({
@@ -116,6 +116,8 @@ export const CapsuleListProvider = ({ children }) => {
     onSuccess: (data) => {
       console.log('Updated capsule data:', data);
       setMomentData(data);
+
+      setMomentIdToAnimate(data.id);
   
       // Log the cache before updating it
       const oldMoments = queryClient.getQueryData(['Moments', selectedFriend?.id]);
@@ -140,7 +142,7 @@ export const CapsuleListProvider = ({ children }) => {
     onError: (error) => console.error('Error updating capsule:', error),
   });
 
-  const updateCache = () => {
+  const updateCacheWithNewPreAdded = () => {
     if (momentData) {
       
       queryClient.setQueryData(['Moments', selectedFriend?.id], (oldMoments) => {
@@ -353,7 +355,7 @@ export const CapsuleListProvider = ({ children }) => {
   return (
     <CapsuleListContext.Provider
       value={{
-        updateCache,
+        updateCacheWithNewPreAdded,
         momentData,
         capsuleList: capsules,
         allCapsulesList: allCapsules,
@@ -378,6 +380,8 @@ export const CapsuleListProvider = ({ children }) => {
         updateCapsuleMutation,
         sortByCategory,
         sortNewestFirst,
+        momentIdToAnimate,
+        setMomentIdToAnimate,
       }}
     >
       {children}
