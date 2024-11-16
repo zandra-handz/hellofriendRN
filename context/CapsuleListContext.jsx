@@ -7,7 +7,7 @@ import {
         updateMultMomentsAPI,
         deleteMomentAPI } from '../api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
+ 
 const CapsuleListContext = createContext({
   capsuleList: [],
   capsuleCount: 0,
@@ -41,6 +41,7 @@ export const CapsuleListProvider = ({ children }) => {
   const [ resultMessage, setResultMessage ] = useState(null);
   const [ closeResultMessage, setCloseResultMessage ] = useState(true);
   const [ momentIdToAnimate, setMomentIdToAnimate] = useState(null);
+  const [ momentSaveToAnimate, setMomentSaveToAnimate ] = useState({});
   const [ newMomentInput, setNewMomentInput] = useState('');
   
   const { data: sortedCapsuleList = [], isLoading: isCapsuleContextLoading } = useQuery({
@@ -113,15 +114,17 @@ export const CapsuleListProvider = ({ children }) => {
 
   const updateCapsuleMutation = useMutation({
     mutationFn: (capsuleId) => updateMomentAPI(selectedFriend?.id, capsuleId, { pre_added_to_hello: true }),
+    
     onSuccess: (data) => {
       console.log('Updated capsule data:', data);
       setMomentData(data);
 
-      setMomentIdToAnimate(data.id);
+      setMomentIdToAnimate(data.id); 
   
       // Log the cache before updating it
       const oldMoments = queryClient.getQueryData(['Moments', selectedFriend?.id]);
       console.log('Cache before update:', oldMoments);
+ 
   
       //queryClient.setQueryData(['Moments', selectedFriend?.id], (oldMoments) => {
         //if (!oldMoments) return [data];
@@ -139,7 +142,16 @@ export const CapsuleListProvider = ({ children }) => {
      // const updatedCache = queryClient.getQueryData(['Moments', selectedFriend?.id]);
      // console.log('Updated cache:', updatedCache);
     },
-    onError: (error) => console.error('Error updating capsule:', error),
+    onError: (error) => { 
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+   
+      timeoutRef.current = setTimeout(() => {
+        updateCapsuleMutation.reset(); 
+      }, 2000); 
+    console.error('Error updating capsule:', error); 
+    }
   });
 
   const updateCacheWithNewPreAdded = () => {
@@ -155,14 +167,15 @@ export const CapsuleListProvider = ({ children }) => {
       } else {
         updatedMoments.unshift(momentData); // Add new moment if it doesn't exist
       }
+
+      setMomentData(null);
+
+      updateCapsuleMutation.reset();
   
       return updatedMoments;
 
     }); 
-  
-    // Log the updated cache
-    const updatedCache = queryClient.getQueryData(['Moments', selectedFriend?.id]);
-    console.log('Updated cache after mutation:', updatedCache);
+   
 }
   };
   
@@ -204,6 +217,9 @@ export const CapsuleListProvider = ({ children }) => {
         created: data.created_on,
         preAdded: data.pre_added_to_hello,
       }
+
+      setMomentSaveToAnimate(data);
+
       queryClient.setQueryData(['Moments', selectedFriend?.id], (old) => (old ? [formattedMoment, ...old] : [formattedMoment]));
       
       // Log the updated moments cache

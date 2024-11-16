@@ -11,28 +11,19 @@ const MomentCard = ({
   onPress,  
   onSliderPull, 
   moment, 
-  size = 15,  
-  addIsSuccessful = false,
+  size = 15,   
   disabled = false, 
 }) => {
 
   const { themeStyles } = useGlobalStyle();
-  const { updateCapsuleMutation, updateCacheWithNewPreAdded, momentData } = useCapsuleList();
+  const { updateCapsuleMutation, momentData } = useCapsuleList();
+
+
 
   useEffect(() => {
-    console.log('card rerendered for ', moment.capsule);
-
-  }, []);
-
-  useEffect(() => {
-    if (updateCapsuleMutation.isPending){
-      console.log('Hello is being added');
-    }
-  }, [updateCapsuleMutation.isPending]);
-
-  useEffect(() => {
-    if (updateCapsuleMutation.isSuccess && moment.id === momentData.id){
+    if (updateCapsuleMutation.isSuccess && moment.id === momentData?.id){
       triggerAnimation();
+      console.log('removed triggering animation in moment card for now');
     }
   }, [updateCapsuleMutation.isSuccess]);
 
@@ -101,9 +92,9 @@ const MomentCard = ({
 const styles = StyleSheet.create({
   container: {  
     height: 160,
-    borderRadius: 30,
+    borderRadius: 40,
     width: '100%', 
-    padding: 20, 
+    padding: 22, 
     flexDirection: 'column', 
     margin: 0,
   },

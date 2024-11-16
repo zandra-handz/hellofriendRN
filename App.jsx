@@ -1,8 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
+
 import TopLevelNavigationHandler from './TopLevelNavigationHandler'; // Adjust import path if necessary
 import { Alert, View, Text, useColorScheme } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
+import { MessageContextProvider } from './context/MessageContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
 import { GlobalStyleProvider } from './context/GlobalStyleContext';
@@ -16,7 +18,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font'; 
 import * as Notifications from 'expo-notifications'; 
 import { useGlobalStyle } from './context/GlobalStyleContext';
- 
+import { useMessage } from './context/MessageContext';
+import ResultMessage from './components/ResultMessage';
 
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
 import ScreenHome from './screens/ScreenHome';
@@ -61,7 +64,7 @@ async function loadFonts() {
   });
 }
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator(); 
 
 export default function App() {
 
@@ -105,6 +108,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}> 
       <QueryClientProvider client={queryClient}>
+
       
         <AuthUserProvider>
           <GlobalStyleProvider>
@@ -115,7 +119,10 @@ export default function App() {
                   <CapsuleListProvider>
                     <ImageListProvider>
                       <LocationListProvider>
+                      <MessageContextProvider>
                         <Layout />
+                        
+                      </MessageContextProvider>
                       </LocationListProvider>
                     </ImageListProvider> 
                   </CapsuleListProvider>
@@ -124,19 +131,21 @@ export default function App() {
             </UpcomingHelloesProvider>
           </GlobalStyleProvider>
         </AuthUserProvider> 
-      </QueryClientProvider>
+        
+      </QueryClientProvider>  
     </GestureHandlerRootView>
   );
 }
 
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle(); 
-  const { authUserState, onSignOut } = useAuthUser();
+  const { authUserState } = useAuthUser(); 
 
  
 
   return (
     <NavigationContainer>
+      <ResultMessage />
       <TopLevelNavigationHandler>
       <Stack.Navigator
         screenOptions={{
@@ -181,6 +190,7 @@ export const Layout = () => {
                 component={ScreenFriendSettings}
                 options={{
                   headerShown: true,
+                  presentation: 'card',
                   header: () => <HeaderFriendSettings />,
                 }}
               />
@@ -189,6 +199,7 @@ export const Layout = () => {
                 component={ScreenMomentFocus}
                 options={{
                   headerShown: true,
+                  presentation: 'modal',
                   header: () => <HeaderWriteMoment />
                 }}
               />

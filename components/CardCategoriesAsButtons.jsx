@@ -2,13 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ScrollView, StyleSheet} from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
- 
+import { useFriendList } from '../context/FriendListContext';
 import  { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonAddCategory from '../components/ButtonAddCategory'
 import AlertFormSubmit from '../components/AlertFormSubmit';
 
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 import AddOutlineSvg from '../assets/svgs/add-outline.svg'; // Import the SVG
+
+
+import ButtonBottomActionBaseSmallLongPress from '../components/ButtonBottomActionBaseSmallLongPress';
 import ButtonBottomSaveMomentToCategory from './ButtonBottomSaveMomentToCategory';
 import LoadingPage from '../components/LoadingPage';
 
@@ -28,6 +31,7 @@ const CardCategoriesAsButtons = ({ onCategorySelect, momentTextForDisplay, onPar
   const [newCategoryEntered, setNewCategoryEntered] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [ pressedOnce, setPressedOnce ] = useState(false);
+  const { themeAheadOfLoading } = useFriendList();
 
 
   useEffect(() => {

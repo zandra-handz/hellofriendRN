@@ -54,12 +54,16 @@ const SearchBar = ({ data, borderColor='#ccc', onPress, searchKeys }) => {  // U
         <View style={[styles.inputContainer, themeStyles.genericTextBackground, {borderColor: borderColor}]}>
           <TextInput
             style={[styles.searchInput, themeStyles.genericText]}
-            placeholder="Search..."
+            placeholder="Search moments"
+            placeholderTextColor={'darkgray'}
             value={searchQuery}
             onChangeText={handleSearch}
             onBlur={handleBlur}  // Clear when the user moves away from the input
           />
-          <Icon name="search" size={18} color={themeStyles.genericText.color} style={styles.icon} />  
+          <View>
+            
+          <Icon name="search" size={30} color={themeStyles.genericText.color} style={styles.icon} />  
+          </View>
         </View>
     
         {searchQuery.length > 0 && (
@@ -86,27 +90,35 @@ const SearchBar = ({ data, borderColor='#ccc', onPress, searchKeys }) => {  // U
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    position: 'relative',
-    width: '100%',
+  container: {  
+    width: '100%',  
     flex: 1, 
     zIndex: 0,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center', 
+    alignContent: 'center',
+    height: '100%', 
     borderWidth: 1,
     borderRadius: 30,
-    backgroundColor: '#444',
+    height: 48,
+    backgroundColor: '#444', 
   },
   searchInput: { 
     flex: 1, 
-    fontFamily: 'Poppins-Regular',
-    paddingHorizontal: 8, 
-    paddingVertical: 2,
+    alignItems: 'center',
+    alignContent: 'center',
+    fontFamily: 'Poppins-Regular', 
+    fontSize: 15,
+    textAlign: 'left',
+    overflow: 'hidden',
+    paddingHorizontal: 12, 
+    height: 'auto', 
   },
   icon: {
     paddingHorizontal: 10, 
+    overflow: 'hidden',
   },
   dropdownContainer: {
     position: 'absolute',
@@ -128,7 +140,7 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   itemContainer: {
-    paddingVertical: 10,
+    paddingVertical: 0,
     paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',

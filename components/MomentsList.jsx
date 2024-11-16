@@ -36,17 +36,17 @@ const MomentsList = (navigation) => {
             Animated.parallel([
                 Animated.timing(fadeAnim, {
                     toValue: 0,
-                    duration: 100, // Adjust duration as needed
+                    duration: 200, // Adjust duration as needed
                     useNativeDriver: true,
                 }),
                 Animated.timing(heightAnim, {
                     toValue: 0,
-                    duration: 100, // Adjust duration as needed
+                    duration: 200, // Adjust duration as needed
                     useNativeDriver: true, // `useNativeDriver: false` is needed for height animations
                 }),
                 Animated.timing(translateY, {
                     toValue: -ITEM_HEIGHT, // Move the items upwards when a card is removed
-                    duration: 100, // Adjust duration as needed
+                    duration: 200, // Adjust duration as needed
                     useNativeDriver: true,
                 })
             ]).start(() => { 
@@ -110,43 +110,50 @@ const MomentsList = (navigation) => {
             </View>
         );
     };
-
     const renderMomentCard = ({ item, index }) => {
-        const inputRange = [
-            (index - 1) * ITEM_HEIGHT, // Start scaling slightly earlier
-            index * ITEM_HEIGHT + ITEM_HEIGHT / 3, // Finish scaling earlier
-        ];
-
-        const scale = scrollY.interpolate({
-            inputRange,
-            outputRange: [0.8, 1.0], 
+        // Calculate the offset of the current item in relation to the scroll position
+        const offset = index * ITEM_HEIGHT;
+    
+        // Get the distance of the card's position relative to the scrollY
+        const distanceFromTop = scrollY.interpolate({
+            inputRange: [offset - ITEM_HEIGHT, offset, offset + ITEM_HEIGHT],
+            outputRange: [0.93, .98, 0.84], // Scale down and up as the card moves in and out of the view
             extrapolate: 'clamp',
         });
-
-        const opacity = item.id === momentIdToAnimate ? fadeAnim : 1;
-
-        // Apply translation (move upward) for all items except the one being removed
+    
+        const opacity = item.id === momentIdToAnimate ? fadeAnim : 1;  // Fade out when it's being animated
+    
+        // Apply translation for all items except the one being removed
         const translate = item.id === momentIdToAnimate ? translateY : 0;
-
+    
         return (
-            <Animated.View style={[styles.cardContainer, { transform: [{ scale }, { translateY: translate }], opacity }]}>
+            <Animated.View
+                style={[
+                    styles.cardContainer,
+                    {
+                        transform: [{ scale: distanceFromTop }, { translateY: translate }],
+                        opacity,  // Fading effect
+                    },
+                ]}
+            >
                 <MomentCard
                     key={item.id}
                     moment={item}
-                    index={index} 
-                    onPress={() => openMomentView(item)}
-                    onSliderPull={() => saveToHello(item)}
+                    index={index}
+                    onPress={() => openMomentView(item)}  // Open the moment view when the card is pressed
+                    onSliderPull={() => saveToHello(item)}  // Save moment to Hello when slider is pulled
                 />
             </Animated.View>
         );
     };
+    
 
     return (
         <View style={styles.container}>
             {renderCategoryButtons()}
             <View style={styles.searchBarContent}>
                 <TouchableOpacity style={{alignContent: 'center', marginHorizontal: '1%', alignItems: 'center', flexDirection: 'row'}} onPress={scrollToRandomItem}>
-                    <SpinOutlineSvg height={26} width={26} color={themeAheadOfLoading.fontColorSecondary}/>
+                    <SpinOutlineSvg height={34} width={34} color={themeAheadOfLoading.fontColor}/>
                     <Text style={[styles.randomButtonText, {color: themeAheadOfLoading.fontColorSecondary}]}></Text>
                 </TouchableOpacity> 
                 <SearchBar data={capsuleList} borderColor={'transparent'} onPress={openMomentView} searchKeys={['capsule', 'typedCategory']} />
@@ -212,9 +219,9 @@ const styles = StyleSheet.create({
     },
     searchBarContent: {
         width: '97%',
-        marginVertical: '1%',
+        marginVertical: '2%',
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'center', 
         justifyContent: 'center',
         zIndex: 2,
     },
@@ -223,8 +230,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get("screen").width,
         overflow: 'visible',
     },
-    cardContainer: {
-        marginVertical: 0,
+    cardContainer: { 
         height: 'auto',
         alignItems: 'center',
     },

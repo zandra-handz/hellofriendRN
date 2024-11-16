@@ -31,23 +31,12 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
   useEffect(() => {
     let timeout;
     if (deleteMomentMutation.isSuccess) {
-      timeout = setTimeout(() => {
-        closeModal();
-      }, 1000);
+      closeModal();
     }
   
-    // Cleanup function to clear the timeout when the effect is cleaned up
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
   }, [deleteMomentMutation.isSuccess]);
 
-  const closeModal = () => {
-
-
-    setIsModalVisible(false); 
+  const closeModal = () => { 
     onClose();
   };
   
@@ -94,7 +83,7 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
       <MomentView
       onSliderPull={handleDelete}
         isModalVisible={isModalVisible} 
-        toggleModal={closeModal}
+        toggleModal={onClose}
         modalContent={
           capsuleList[currentIndex] ? (
             <View style={{flex: 1}}>

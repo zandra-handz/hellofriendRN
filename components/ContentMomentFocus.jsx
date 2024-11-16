@@ -1,28 +1,29 @@
 // removed the onPress for right now <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TouchableOpacity } from 'react-native';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useFriendList } from '../context/FriendListContext';
 import { useCapsuleList } from '../context/CapsuleListContext'; 
-import { useGlobalStyle } from '../context/GlobalStyleContext'; 
+import { useGlobalStyle } from '../context/GlobalStyleContext';  
 import { useFocusEffect } from '@react-navigation/native';
+
+import { useNavigation } from '@react-navigation/native';
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
-import LoadingPage from '../components/LoadingPage';
 
-
-const ContentMomentFocus = ({ placeholderText }) => {
+const ContentMomentFocus = ({ placeholderText }) => { 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { handleCreateMoment, resultMessage, closeResultMessage, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW 
+  const { handleCreateMoment, closeResultMessage, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW 
   const { authUserState } = useAuthUser(); 
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
+  const navigation = useNavigation();
    
   const [textInput, setTextInput] = useState('');
   const textareaRef = useRef();   
@@ -34,6 +35,10 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
   const [categoriesHeight, setCategoriesHeight] = useState(70); // Default height
  
+  const navigateToMoments = () => {
+    navigation.goBack();
+
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -53,9 +58,9 @@ const ContentMomentFocus = ({ placeholderText }) => {
   //);
 
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.focus();
+      textareaRef.current.focus(); 
     }
   }, []); 
 
@@ -77,14 +82,9 @@ const ContentMomentFocus = ({ placeholderText }) => {
   const handleCategorySelect = (category) => {
     setSelectedCategory(category); 
   }; 
+ 
 
-  const resetTextInput = () => {
-    setTextInput(''); 
-    setSelectedCategory(''); 
-  };
-   
-
-  const handleSave = async () => { 
+  const handleSave = async () => {  
  
     try {
       if (selectedFriend) {
@@ -96,6 +96,8 @@ const ContentMomentFocus = ({ placeholderText }) => {
         };
   
         await handleCreateMoment(requestData); 
+
+        
   
       }
     } catch (error) {
@@ -105,8 +107,9 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) { 
-      resetTextInput();
-      setSelectedCategory('');  
+      //resetTextInput();
+      //setSelectedCategory('');   
+      navigation.goBack();
     } 
 
   }, [createMomentMutation.isSuccess]);
@@ -124,16 +127,10 @@ const ContentMomentFocus = ({ placeholderText }) => {
   >   
 
 
+
+
     
-    <LoadingPage
-      loading={createMomentMutation.isPending}
-      resultsMessage={resultMessage}
-      spinnerType='flow'
-      color={'transparent'}
-      labelColor={themeAheadOfLoading.fontColorSecondary}
-      includeLabel={false}
-      label="Saving moment..."
-    />
+
  
 
  

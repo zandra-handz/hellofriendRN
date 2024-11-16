@@ -7,23 +7,12 @@ const ButtonBottomSaveMomentToCategory = ({ onPress, onLongPress, height, label,
             onPress={onPress}  
             onLongPress={onLongPress}
             label={label}
-            fontFamily={'Poppins-Regular'}
-            height={height} 
-            radius={0}
-            labelFontSize={16}
-            labelColor="white"  
-            labelContainerMarginHorizontal={4}
-            animationMargin={-64}
-            showGradient={true}  
-            darkColor='#4caf50'  
-            lightColor='rgb(160, 241, 67)'  
-            showShape={true}   
+            fontFamily={'Poppins-Regular'}    
             shapeWidth={44}
             shapeHeight={44}
             shapePosition="right"
             shapePositionValue={0}
-            shapePositionValueVertical={4}
-            disabled={false} 
+            shapePositionValueVertical={4} 
             selected={selected}
         />
     );

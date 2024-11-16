@@ -62,7 +62,7 @@ const SlideToAdd = ({ onPress, sliderText='Label', targetIcon: TargetIcon, width
           },
         ]}
       >
-        <Text style={styles.sliderText}>{sliderText}</Text>
+        <Text style={[styles.sliderText, {color: themeAheadOfLoading.fontColor}]}>{sliderText}</Text>
       </Animated.View>
       {TargetIcon && (
         <View style={styles.iconContainer}>
@@ -98,7 +98,8 @@ const styles = StyleSheet.create({
   },
   sliderText: { 
     fontSize: 14,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Bold',
+    paddingHorizontal: 6,
   },
   completedText: {
     position: 'absolute',

@@ -6,6 +6,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import { useFriendList } from '../context/FriendListContext'; 
+//import { useCardAnimation } from '@react-navigation/stack';
 
 const ScreenMoments = ({ route, navigation }) => {
     const { themeAheadOfLoading } = useFriendList();
