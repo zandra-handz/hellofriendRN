@@ -125,7 +125,7 @@ const Signin = () => {
       style={[styles.container, themeStyles.signinContainer]}
     >
       {signinMutation.isLoading && (
-        <LoadingPage loading={signinMutation.isLoading} spinnerType='circle' />
+        <LoadingPage loading={signinMutation.isLoading} spinnerType='flow' />
       )}
       {!signinMutation.isLoading && (
         <>

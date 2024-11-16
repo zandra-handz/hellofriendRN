@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions, Animated } from 'react-native';
 
-import { useAuthUser } from '../context/AuthUserContext';
-import { useFriendList } from '../context/FriendListContext';
+import { useAuthUser } from '../context/AuthUserContext'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -19,20 +18,12 @@ import LoadingPage from '../components/LoadingPage';
 
 const ScreenHome = ({ navigation }) => {
   
-  const { themeStyles, gradientColorsHome } = useGlobalStyle(); 
-  const { themeAheadOfLoading } = useFriendList();
-  const darkColor = '#000002'; // '#4caf50';
-  const lightColor ='#163805'; //'rgb(160, 241, 67)';
+  const { themeStyles, gradientColorsHome } = useGlobalStyle();  
   const { authUserState } = useAuthUser();
-  const { selectedFriend, friendLoaded, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, friendLoaded } = useSelectedFriend();
   const { isLoading } = useUpcomingHelloes(); 
-  
 
-  const showLastButton = true;
-
-  const [borderColor, setBorderColor] = useState('transparent');
-  const [backgroundColor, setBackgroundColor] = useState('transparent');
-
+  const showLastButton = true; 
   const screenHeight = Dimensions.get('window').height;
   const maxButtonHeight = 100;
   const footerHeight = screenHeight * 0.082; // Footer height
@@ -41,32 +32,17 @@ const ScreenHome = ({ navigation }) => {
   const upcomingDatesTray = buttonHeight * .9;
   const headerHeight = buttonHeight * 1.4;
 
-  
+  // Animated values for slide-in effect
+  const [slideAnim] = useState(new Animated.Value(1));  // Value for animating the button container
 
-  const buttonDarkColor = '4c8e06';
-  const buttonLightColor = '#73d802';
-
-  const topButtonRadius = 40;
-  const mainButtonRadius = 40;
-  const topButtonBorderColor = 'black';
-  const mainButtonBorderColor = 'black';
-
-
+  // Trigger the slide-in animation when the screen mounts
   useEffect(() => {
-    console.log('~~~~~~~~~~~~Main screen rerendered!');
-
+    Animated.timing(slideAnim, {
+      toValue: 0, // Slide in from the right
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
   }, []);
-  
-
-  useEffect(() => {
-    if (selectedFriend && friendLoaded && !loadingNewFriend) {
-      setBorderColor(themeAheadOfLoading.lightColor);
-      setBackgroundColor(themeAheadOfLoading.darkColor);
-    } else { 
-      setBorderColor('transparent');
-      setBackgroundColor('black');
-    }
-  }, [selectedFriend, loadingNewFriend]);
 
   const navigateToAddMomentScreen = () => {
     navigation.navigate('MomentFocus');
@@ -100,43 +76,42 @@ const ScreenHome = ({ navigation }) => {
         {authUserState.authenticated && authUserState.user ? (
           <>  
             {isLoading && (  
+              <View style={styles.loadingWrapper}>
+
               <LoadingPage 
                 loading={isLoading}
                 includeLabel={true}
-                label='Updating next helloes'
+                label=''
                 spinnerSize={70}
                 color='lightgreen'
-                spinnerType='wander'
+                spinnerType='flow'
               />  
+              </View>
             )}
             {!isLoading && (  
-              <View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10}]}>  
+              <Animated.View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10, transform: [{ translateX: slideAnim }]}]}>
                  
-
-                <HomeButtonMomentAdd onPress={navigateToAddMomentScreen} borderRadius={topButtonRadius} borderColor={mainButtonBorderColor} height={buttonHeight} />
-                <HomeButtonGenericAdd label={'ADD IMAGE'}  onPress={navigateToAddImageScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} height={buttonHeight}/>  
-                <HomeButtonGenericAdd label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
+                <HomeButtonMomentAdd onPress={navigateToAddMomentScreen} borderRadius={40} borderColor="black" height={buttonHeight} />
+                <HomeButtonGenericAdd label={'ADD IMAGE'}  onPress={navigateToAddImageScreen} borderRadius={40} borderColor="black" height={buttonHeight}/>  
+                <HomeButtonGenericAdd label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
                 
                 {(selectedFriend || friendLoaded) && showLastButton && (
-                  <HomeButtonGenericAdd label={'ADD LOCATION'}   onPress={navigateToAddLocationScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
-                
+                  <HomeButtonGenericAdd label={'ADD LOCATION'}   onPress={navigateToAddLocationScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
                 )}
                 {(!selectedFriend && !friendLoaded) && showLastButton && ( 
-                  <HomeButtonGenericAdd label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={topButtonRadius} borderColor={topButtonBorderColor} image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
+                  <HomeButtonGenericAdd label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
                 )} 
-                                
+                
                 {!selectedFriend && (
-                  
-                  <HomeButtonUpNext  onPress={navigateToAddMomentScreen}   borderRadius={mainButtonRadius} height={headerHeight} borderColor={mainButtonBorderColor} maxHeight={200}/>
+                  <HomeButtonUpNext  onPress={navigateToAddMomentScreen} borderRadius={40} height={headerHeight} borderColor="black" maxHeight={200}/>
                 )}
                 {selectedFriend && (
-                  
-                  <HomeButtonSelectedFriend  onPress={navigateToAddMomentScreen} borderRadius={mainButtonRadius} borderColor={mainButtonBorderColor} height={headerHeight} maxHeight={200}/>
-                )} 
-                <ButtonBaseLargeHorScroll height={upcomingDatesTray}   borderRadius={mainButtonRadius} borderColor={mainButtonBorderColor}/> 
+                  <HomeButtonSelectedFriend  onPress={navigateToAddMomentScreen} borderRadius={40} borderColor="black" height={headerHeight} maxHeight={200}/>
+                )}
+                <ButtonBaseLargeHorScroll height={upcomingDatesTray} borderRadius={40} borderColor="black"/> 
                 
                 <HelloFriendFooter /> 
-              </View>
+              </Animated.View>
             )}
           </>
         ) : (
@@ -149,10 +124,6 @@ const ScreenHome = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  selectorContainer: {
-    flex: 1,
-    width: '100%',
-  },
   container: {
     flex: 1,  
     width: '100%',
@@ -166,11 +137,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,  
     flex: 1,
   }, 
-  headerRow: { 
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    paddingVertical: '1%',
-
+  loadingWrapper: {
+    flex: 1,
+    width: '100%', 
   },
 });
 

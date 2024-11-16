@@ -69,7 +69,7 @@ const MomentCard = ({
           <View style={styles.iconContainer}> 
           </View>
           <View style={styles.textWrapper}>
-            <Text numberOfLines={2} style={[styles.momentText, themeStyles.genericText, { fontSize: size }]}>
+            <Text numberOfLines={3} style={[styles.momentText, themeStyles.genericText, { fontSize: size }]}>
               {moment.capsule}
             </Text>
           </View>
@@ -90,8 +90,7 @@ const MomentCard = ({
       <View style={styles.sliderContainer}>
         <SlideToAdd
           onPress={onSliderPull}
-          sliderText='SHARED'
-          sliderWidth={'100%'} 
+          sliderText='ADD'  
           targetIcon={CheckmarkOutlineSvg}
         />
       </View>
@@ -102,17 +101,16 @@ const MomentCard = ({
 const styles = StyleSheet.create({
   container: {  
     height: 160,
-    borderRadius: 10,
+    borderRadius: 30,
     width: '100%', 
-    paddingHorizontal: 0,
-    paddingTop: 14,  
-    paddingBottom: 6, 
+    padding: 20, 
     flexDirection: 'column', 
     margin: 0,
   },
   sliderContainer: {
     height: 30,
-    borderRadius: 20,
+    borderRadius: 20,  
+    zIndex: 3,
   },
   disabledContainer: {
     opacity: 0.5,  
@@ -147,6 +145,7 @@ const styles = StyleSheet.create({
     alignContent: 'flex-end',
     alignItems: 'flex-end',
     width: '100%',  
+    zIndex: 2,
   },
   creationDateTextContainer: {  
     paddingBottom: 2,

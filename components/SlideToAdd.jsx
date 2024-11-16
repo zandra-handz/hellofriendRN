@@ -3,7 +3,7 @@ import { View, Text, Animated, PanResponder, Dimensions, StyleSheet, Alert } fro
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 
-const SlideToAdd = ({ onPress, sliderText='Label', targetIcon: TargetIcon, width = Dimensions.get('window').width }) => {
+const SlideToAdd = ({ onPress, sliderText='Label', targetIcon: TargetIcon, width = Dimensions.get('window').width - 100 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 0,
+    borderRadius: 20,
     margin: 0,
   },
   text: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: '3%',
     justifyContent: 'center',
     height: '100%',
-    borderRadius: 0,
+    borderRadius: 20,
   },
   sliderText: { 
     fontSize: 14,

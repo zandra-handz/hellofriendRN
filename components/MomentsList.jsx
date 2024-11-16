@@ -8,10 +8,10 @@ import ItemViewMoment from '../components/ItemViewMoment';
 import SearchBar from '../components/SearchBar';
 import SpinOutlineSvg from '../assets/svgs/spin-outline.svg';
 
-
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { update } from 'firebase/database';
+
 const ITEM_HEIGHT = 160; // Define the height of each item
 
 const MomentsList = (navigation) => {
@@ -26,37 +26,38 @@ const MomentsList = (navigation) => {
 
     const fadeAnim = useRef(new Animated.Value(1)).current;
     const heightAnim = useRef(new Animated.Value(ITEM_HEIGHT)).current;
+    const translateY = useRef(new Animated.Value(0)).current; // Added for animation
 
     const moments = capsuleList;
     const momentListBottomSpacer = Dimensions.get("screen").height - 200;
    
-
     useEffect(() => {
-        if (momentIdToAnimate) {
-            // Run fade-out and height animations in parallel
+        if (momentIdToAnimate) { 
             Animated.parallel([
                 Animated.timing(fadeAnim, {
                     toValue: 0,
-                    duration: 200, // Adjust duration as needed
+                    duration: 100, // Adjust duration as needed
                     useNativeDriver: true,
                 }),
                 Animated.timing(heightAnim, {
                     toValue: 0,
-                    duration: 200, // Adjust duration as needed
-                    useNativeDriver: false, // `useNativeDriver: false` is needed for height animations
+                    duration: 100, // Adjust duration as needed
+                    useNativeDriver: true, // `useNativeDriver: false` is needed for height animations
                 }),
-            ]).start(() => {
-                // After animation, update the cache and reset animations
+                Animated.timing(translateY, {
+                    toValue: -ITEM_HEIGHT, // Move the items upwards when a card is removed
+                    duration: 100, // Adjust duration as needed
+                    useNativeDriver: true,
+                })
+            ]).start(() => { 
                 updateCacheWithNewPreAdded();
-                //should do this a different way! just testing my theory re: what is causing an issue
-                //(this value not getting reset)
                 setMomentIdToAnimate(false);
                 fadeAnim.setValue(1);  // Reset fade for future use
                 heightAnim.setValue(ITEM_HEIGHT); // Reset height for future use
+                translateY.setValue(0); // Reset translateY for future use
             });
         }
     }, [momentIdToAnimate]);
-    
 
     const scrollToRandomItem = () => {
         if (capsuleList.length === 0) return;
@@ -75,7 +76,6 @@ const MomentsList = (navigation) => {
             console.error('Error during pre-save:', error);
         };
     };
- 
 
     const openMomentView = (moment) => {
         setSelectedMomentToView(moment);
@@ -90,52 +90,46 @@ const MomentsList = (navigation) => {
         const categoryIndex = categoryStartIndices[category];
         console.log('hi', categoryIndex);
         if (categoryIndex !== undefined) { 
-            flatListRef.current?.scrollToIndex({ index: categoryIndex > 0 ? categoryIndex  : 0, animated: true });
-        };
-      
+            flatListRef.current?.scrollToIndex({ index: categoryIndex > 0 ? categoryIndex : 0, animated: true });
+        }
     };
 
     const renderCategoryButtons = () => {
         return( 
-
             <View style={styles.categoryContainer}>
                 <FlatList
-                data={categoryNames}
-                horizontal={false}
-                keyExtractor={(categoryName) => (categoryName ? categoryName.toString() : 'Uncategorized')}
-
-                
-                renderItem={({ item: categoryName }) => (
-                    <TouchableOpacity style={styles.categoryButton} onPress={() => {scrollToCategoryStart(categoryName)}}>
-                        <Text style={styles.categoryText}>#{categoryName}</Text>
-                    </TouchableOpacity>
-                )}
-                 />
+                    data={categoryNames}
+                    horizontal={false}
+                    keyExtractor={(categoryName) => (categoryName ? categoryName.toString() : 'Uncategorized')}
+                    renderItem={({ item: categoryName }) => (
+                        <TouchableOpacity style={styles.categoryButton} onPress={() => {scrollToCategoryStart(categoryName)}}>
+                            <Text style={styles.categoryText}>#{categoryName}</Text>
+                        </TouchableOpacity>
+                    )}
+                />
             </View>
-            
-        )
-
+        );
     };
-
-
 
     const renderMomentCard = ({ item, index }) => {
         const inputRange = [
             (index - 1) * ITEM_HEIGHT, // Start scaling slightly earlier
             index * ITEM_HEIGHT + ITEM_HEIGHT / 3, // Finish scaling earlier
         ];
-    
+
         const scale = scrollY.interpolate({
             inputRange,
             outputRange: [0.8, 1.0], 
             extrapolate: 'clamp',
         });
 
-        // Apply the fade-out effect only to the item with `momentIdToAnimate`
         const opacity = item.id === momentIdToAnimate ? fadeAnim : 1;
 
+        // Apply translation (move upward) for all items except the one being removed
+        const translate = item.id === momentIdToAnimate ? translateY : 0;
+
         return (
-            <Animated.View style={[styles.cardContainer, { transform: [{ scale }], opacity }]}>
+            <Animated.View style={[styles.cardContainer, { transform: [{ scale }, { translateY: translate }], opacity }]}>
                 <MomentCard
                     key={item.id}
                     moment={item}
@@ -146,8 +140,6 @@ const MomentsList = (navigation) => {
             </Animated.View>
         );
     };
-
-    // Other functions and rendering logic remain the same
 
     return (
         <View style={styles.container}>
@@ -191,7 +183,6 @@ const MomentsList = (navigation) => {
     );
 };
 
-
 const styles = StyleSheet.create({
     container: {
         width: '100%',
@@ -208,19 +199,16 @@ const styles = StyleSheet.create({
         height: 'auto',
         width: 'auto',
         padding: 10,
-
     },
     categoryButton: {
         borderBottomWidth: .8,
         borderBottomColor: 'darkgray',
         paddingVertical: 10,
         paddingHorizontal: 4,
-
     },
     categoryText: {
         fontFamily: 'Poppins-Regular',
         fontSize: 14,
-
     },
     searchBarContent: {
         width: '97%',
