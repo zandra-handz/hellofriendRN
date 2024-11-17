@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
-import SlideToAdd from '../components/SlideToAdd';
-import FormatDate from '../components/FormatDate';
+import SlideToAdd from '../components/SlideToAdd'; 
+import FormatMonthDay from '../components/FormatMonthDay';
 import CheckmarkOutlineSvg from '../assets/svgs/checkmark-outline.svg';
 import { Easing } from 'react-native-reanimated';
 
@@ -27,14 +27,13 @@ const MomentCard = ({
     }
   }, [updateCapsuleMutation.isSuccess]);
 
-  // Define Animated values
-  const translateX = new Animated.Value(0);  // Start at the original position
-
-  // Function to trigger the animation
+  
+  const translateX = new Animated.Value(0);   
+ 
   const triggerAnimation = () => {
     Animated.timing(translateX, {
       toValue: 500, // Adjust to slide it off-screen
-      duration: 500, // Duration of the animation
+      duration: 200, // Duration of the animation
       easing: Easing.ease,
       useNativeDriver: true,  // Enable native driver for better performance
     }).start(() => {  // onComplete callback
@@ -48,40 +47,43 @@ const MomentCard = ({
       style={[ 
         styles.container,
         themeStyles.genericTextBackground,
-        { transform: [{ translateX }] },  // Apply the translateX transformation to slide off-screen
+        { transform: [{ translateX }] },  
       ]}
     >
       <TouchableOpacity 
         style={{width: '100%', flex: 1}}
         onPress={!disabled ? onPress : null} // Disable onPress if the button is disabled
-        disabled={disabled} // Disable the button interaction
+        disabled={disabled} 
       >
-        <View style={styles.iconAndMomentContainer}>
-          <View style={styles.iconContainer}> 
+        <View style={styles.iconAndMomentContainer}> 
+         <View style={styles.categoryHeader}>
+          <View style={{flexDirection: 'row'}}>
+            
+          <Text style={[styles.categoryText, { color: 'darkgrey' }]}>
+            {moment.typedCategory.length > 20 
+              ? `${moment.typedCategory.substring(0, 20)}...` 
+              : moment.typedCategory} • added </Text>
+          <FormatMonthDay  
+            date={moment.created} 
+            fontSize={13}  
+            fontFamily={'Poppins-Regular'} 
+            parentStyle={styles.categoryText}
+          /> 
+          
+          </View>
           </View>
           <View style={styles.textWrapper}>
             <Text numberOfLines={3} style={[styles.momentText, themeStyles.genericText, { fontSize: size }]}>
               {moment.capsule}
             </Text>
           </View>
-        </View>
-        <View style={styles.creationDateSection}>
-          <FormatDate  
-            date={moment.created} 
-            fontSize={11} 
-            month={true} 
-            monthAbr={true} 
-            dayAsNumber={true} 
-            year={true} 
-            noOutputIfCurrentYear={true} 
-            commas={false}
-          /> 
-        </View>
+          
+        </View> 
       </TouchableOpacity>
       <View style={styles.sliderContainer}>
         <SlideToAdd
           onPress={onSliderPull}
-          sliderText='ADD'  
+          sliderText='ADD TO HELLO'  
           targetIcon={CheckmarkOutlineSvg}
         />
       </View>
@@ -92,37 +94,62 @@ const MomentCard = ({
 const styles = StyleSheet.create({
   container: {  
     height: 160,
-    borderRadius: 40,
+    borderRadius: 50,
     width: '100%', 
-    padding: 22, 
-    flexDirection: 'column', 
-    margin: 0,
+    paddingHorizontal: 24,
+    paddingVertical: 18,
+    flexDirection: 'column',  
   },
   sliderContainer: {
-    height: 30,
+    height: 28,
     borderRadius: 20,  
     zIndex: 3,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   disabledContainer: {
     opacity: 0.5,  
   },
   iconAndMomentContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column', 
+    height: '100%',
     alignItems: 'center',
-    width: '100%',
-    padding: 0,
-    paddingTop: 0,
+    width: '100%', 
     flexWrap: 'wrap',
     backgroundColor: 'transparent',
+    
   },
-  momentText: { 
-    fontFamily: 'Poppins-Regular', 
-    margin: 8, 
+  momentText: {   
+    //fontFamily: 'Poppins-Regular',  
     flexShrink: 1, 
-    lineHeight: 24,
+    fontSize: 16,
+    lineHeight: 21,
+    alignSelf: 'left',
   },
   textWrapper: {
     flex: 1, 
+    textAlign: 'left',
+    width: '100%',
+  },
+  categoryText: { 
+    fontSize: 14,
+    flexShrink: 1, 
+    lineHeight: 21,
+    color: 'darkgrey',
+    overflow:'hidden',
+    //textTransform: 'uppercase',
+
+  },
+  categoryHeader: {
+    paddingBottom: 2,
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'flex-end',
+    width: '100%',
+    minHeight: 20,
+    height: 'auto',
+    maxHeight: 50,
+
   },
   iconContainer: { 
     justifyContent: 'center', 
@@ -137,13 +164,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     width: '100%',  
     zIndex: 2,
-  },
-  creationDateTextContainer: {  
-    paddingBottom: 2,
-    paddingRight: 8, 
-    backgroundColor: 'transparent',
-    borderRadius: 20,
-  },
+  }, 
 });
 
 export default MomentCard;

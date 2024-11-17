@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import TopLevelNavigationHandler from './TopLevelNavigationHandler'; // Adjust import path if necessary
 import { Alert, View, Text, useColorScheme } from 'react-native';
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { MessageContextProvider } from './context/MessageContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
@@ -149,29 +149,13 @@ export const Layout = () => {
       <TopLevelNavigationHandler>
       <Stack.Navigator
         screenOptions={{
-          headerShown: true,
+          headerShown: true, 
           headerStyle: themeStyles.header,  
           headerTintColor: themeStyles.headerTextColor, 
           contentContainerStyle: { flexGrow: 1 }, 
-          cardStyle: { backgroundColor: 'transparent' }, 
+          cardStyle: { backgroundColor: '#000002' }, 
           
-          cardStyleInterpolator: ({ current: { progress } }) => ({
-            cardStyle: {
-              opacity: progress.interpolate({
-                inputRange: [0, 0.5, 1],
-                outputRange: [0, 0.7, 1],
-              }),
-              transform: [
-                {
-                  scale: progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.8, 1],
-                    extrapolate: 'clamp',
-                  }),
-                },
-              ],
-            },
-          }),
+
         }}
       >
         {authUserState?.authenticated && authUserState?.user ? (
@@ -190,7 +174,6 @@ export const Layout = () => {
                 component={ScreenFriendSettings}
                 options={{
                   headerShown: true,
-                  presentation: 'card',
                   header: () => <HeaderFriendSettings />,
                 }}
               />
@@ -198,8 +181,7 @@ export const Layout = () => {
                 name="MomentFocus"
                 component={ScreenMomentFocus}
                 options={{
-                  headerShown: true,
-                  presentation: 'modal',
+                  headerShown: true, 
                   header: () => <HeaderWriteMoment />
                 }}
               />

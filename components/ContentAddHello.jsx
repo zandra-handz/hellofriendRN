@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
 import { LinearGradient } from 'expo-linear-gradient';
+
+import { useMessage } from '../context/MessageContext';
+
 
  
 import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
@@ -25,13 +28,14 @@ import PickerDate from '../components/PickerDate';
 import PickerHelloType from '../components/PickerHelloType';
 import PickerHelloLocation from '../components/PickerHelloLocation'; 
 
-
-import LoadingPage from '../components/LoadingPage';
+ 
 
 const ContentAddHello = () => {
 
   const navigation = useNavigation();
   const queryClient = useQueryClient();
+
+  const { showMessage } = useMessage();
  
 
   const { authUserState } = useAuthUser(); 
@@ -53,27 +57,53 @@ const ContentAddHello = () => {
   const [momentsSelected, setMomentsSelected] = useState([]);
   const [deleteMoments, setDeleteMoments ] = useState(false); 
   
-  const [ saveInProgress, setSaveInProgress ] = useState(false);
-  
-  const [ resultMessage, setResultMessage ] = useState(null);
  
-
    
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
    
-
+  const timeoutRef = useRef(null);
   
   const createHelloMutation = useMutation({
     mutationFn: (data) => saveHello(data),
+    onError: (error) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+  
+      timeoutRef.current = setTimeout(() => {
+        createHelloMutation.reset(); 
+      }, 2000); 
+
+    },
     onSuccess: (data) => {queryClient.setQueryData(['pastHelloes'], (old) => {
             const updatedHelloes = old ? [data, ...old] : [data];
             return updatedHelloes; 
+
         });
  
         const actualHelloesList = queryClient.getQueryData(['pastHelloes']);
         console.log('Actual HelloesList after mutation:', actualHelloesList);
-    }, 
+        
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+    
+        timeoutRef.current = setTimeout(() => {
+          createHelloMutation.reset(); 
+        }, 2000);
+      }, 
 });
+
+useEffect(() => {
+  if (createHelloMutation.isSuccess) {
+    showMessage(true, null, 'Hello saved!');
+    setUpdateTrigger((prev) => !prev); 
+    setFriend(null); 
+    navigateToMainScreen();
+  }
+
+}, [createHelloMutation.isSuccess]);
+
 
  
 const handleCreateHello = async (helloData) => {
@@ -99,6 +129,11 @@ const handleCreateHello = async (helloData) => {
   }
 };
 
+
+useLayoutEffect(() => {
+
+  showMessage(true, null, 'Changes made on this page will not be saved if you exit.');
+}, []);
  
 
   const toggleDeleteMoments = () => {
@@ -109,15 +144,14 @@ const handleCreateHello = async (helloData) => {
     navigation.navigate('hellofriend');
 
 };
+
+
  
 
 const handleNotesInputChange = (text) => {
   setAdditionalNotes(text);
 };
-
-const resetAdditionalNotes = () => {
-  setAdditionalNotes('');
-}; 
+ 
  
 
   const handleTypeChoiceChange = (index) => {
@@ -205,54 +239,14 @@ const resetAdditionalNotes = () => {
     };
   };
 
-  useEffect(() => {
-    if (createHelloMutation.isSuccess) {
-      setFriend(null);
-      setUpdateTrigger((prev) => !prev);  
-      setResultMessage('Added!'); 
-
-      let timeout;
-
-      timeout = setTimeout(() => {
-        
-        navigateToMainScreen();
-        setSaveInProgress(false);
-
-      }, 1000);
-    }
-
-  }, [createHelloMutation.isSuccess]);
-
-  //don't think this is working
-  useEffect(() => {
 
 
-    if (createHelloMutation.isLoading) { 
-
-      setSaveInProgress(true); 
-      console.log('saving'); 
-    } else {
-      setSaveInProgress(false); 
-    }
-
-  }, [createHelloMutation.isLoading]);
 
 
 useEffect(() => {
 
   if (createHelloMutation.isError) {
-    console.log('MUTATION IS ERROR');
-    
-    setResultMessage('Something went wrong :( Please try again');
-
-    let timeout;
-
-      timeout = setTimeout(() => { 
-        
-      setSaveInProgress(false);
-      createHelloMutation.reset();
-      setResultMessage(null); 
-    }, 1000);
+    showMessage(true, null, 'Error saving Hello. Please try again!');
   }
 
 }, [createHelloMutation.isError]);
@@ -267,18 +261,8 @@ useEffect(() => {
           style={[styles.container]} 
         > 
  
-          <View style={styles.loadingWrapper}>
-          <LoadingPage
-            loading={saveInProgress}
-            resultsMessage={resultMessage}
-            spinnnerType='wander'
-            includeLabel={true}
-            label="Saving..."
-          />
-          </View> 
-
-
-        {(createHelloMutation.isIdle) && ( 
+ 
+ 
         <> 
 
         <View style={{width: '100%', flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '28%'}}> 
@@ -380,8 +364,7 @@ useEffect(() => {
           )} 
            </View>
           </>  
-         
-        )}
+          
     </LinearGradient>
   );
 };

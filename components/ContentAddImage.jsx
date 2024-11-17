@@ -11,8 +11,7 @@ import InputSingleValue from '../components/InputSingleValue';
 import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
  
 import CameraCuteSvg from '../assets/svgs/camera-cute.svg';
-import UploadCurlySvg from '../assets/svgs/upload-curly.svg'; 
-import LoadingPage from '../components/LoadingPage';
+import UploadCurlySvg from '../assets/svgs/upload-curly.svg';  
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useAuthUser } from '../context/AuthUserContext';
@@ -20,7 +19,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useImageList } from '../context/ImageListContext';
 import { useFriendList } from '../context/FriendListContext';  
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { useNavigation } from '@react-navigation/native';
 
 import * as ImageManipulator from 'expo-image-manipulator';
 
@@ -28,31 +27,21 @@ import * as ImageManipulator from 'expo-image-manipulator';
 const ContentAddImage = () => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
   const [canContinue, setCanContinue] = useState('');
   const { themeAheadOfLoading } = useFriendList();
   const [imageUri, setImageUri] = useState(null);
   const [imageTitle, setImageTitle] = useState('');
   const [imageCategory, setImageCategory] = useState('Misc');
-  const [firstSectionTitle, setFirstSectionTitle] = useState('For: ');
  
-
-  const delayForResultsMessage = 2000;
+  const navigation = useNavigation(); 
   
   const imageTitleRef = useRef(null); 
-  const imageCategoryRef = useRef(null); 
-  const [saveInProgress, setSaveInProgress] = useState(false);
-  const [ resultMessage, setResultMessage ] = useState(null);
-  const [ gettingResultMessage, setGettingResultMessage ] = useState(null);
+  const imageCategoryRef = useRef(null);  
 
+  const { createImage, createImageMutation } = useImageList();
 
-  const { createImage } = useImageList();
-
-  useEffect(() => {
-    if (selectedFriend && !loadingNewFriend) {
-      setFirstSectionTitle('For: ');
-    }
-  }, [selectedFriend, loadingNewFriend]);
+ 
 
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -121,13 +110,18 @@ const resizeImage = async (imageUri) => {
   return manipResult;
 };
 
-const handleSave = async () => {
-  setSaveInProgress(true);
-  setGettingResultMessage(true);
+useEffect(() => {
+  if (createImageMutation.isSuccess) {
+    navigation.goBack();
+  }
+
+}, [createImageMutation.isSuccess]);
+
+const handleSave = async () => {  
 
   if (imageUri && imageTitle.trim() && selectedFriend && authUserState.user) {
     try { 
-      // Resize the image before saving
+      
       const manipResult = await resizeImage(imageUri); // Use resizeImage function here
 
       const formData = new FormData();
@@ -146,30 +140,14 @@ const handleSave = async () => {
       formData.append('thought_capsules', '');
 
       await createImage(formData);
-
-      setResultMessage('Image saved!');
-
-      let timeout;
-      timeout = setTimeout(() => {
-        setGettingResultMessage(false);
-        handleModalClose();
-      }, delayForResultsMessage);
-      return () => clearTimeout(timeout);
+ 
+ 
 
     } catch (error) {
-      console.error('Error saving image:', error);
-      setResultMessage('Error! Could not save image');
-      setGettingResultMessage(true);
-      let timeout = setTimeout(() => {
-        setGettingResultMessage(false);
-      }, delayForResultsMessage);
-      return () => clearTimeout(timeout);
-    } finally {
-      setSaveInProgress(false);
-    }
+      console.error('Error saving image:', error); 
+    }  
   }
-
-  setSaveInProgress(false);
+ 
 };
   
 
@@ -195,20 +173,7 @@ const handleSave = async () => {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}  
           style={{flex: 1}} 
-        > 
-      {gettingResultMessage && (
-        <View style={styles.loadingWrapper}>
-          <LoadingPage
-            loading={saveInProgress}
-            resultsMessage={resultMessage}
-            spinnnerType='wander'
-            includeLabel={true}
-            label="Saving image..."
-          />
-        </View>
-      )}
-  
-      {!gettingResultMessage && (  
+        >  
         <>
 
 <       View style={{width: '100%', flex: 1, flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '28%'}}> 
@@ -273,8 +238,7 @@ const handleSave = async () => {
 
       
       </View>
-      </>
-    )}
+      </> 
           <View style={styles.buttonContainer}>
         {selectedFriend && canContinue && imageUri ? (  
           <ButtonBaseSpecialSave

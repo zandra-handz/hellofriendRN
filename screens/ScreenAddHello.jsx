@@ -17,37 +17,37 @@ const ScreenAddHello = () => {
     const navigation = useNavigation();
 
 
-    useEffect(() => {
+   // useEffect(() => {
 
        
-        const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-            if (selectedFriend) {  
+     //   const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+       //     if (selectedFriend) {  
            
-                e.preventDefault();
+         //       e.preventDefault();
         
-                Alert.alert(
-                    '',
-                    'Changes made on this page will not be saved.',
-                    [
-                        { 
-                            text: 'Stay', 
-                            style: 'destructive',
-                            onPress: () => {    
-                            }
-                        },
-                        { 
-                            text: 'Continue', 
-                            style: 'default',
-                            onPress: () => navigation.dispatch(e.data.action) // Navigate away without saving
-                        },
-                    ]  
-                ); 
-            }
-        }
-        );
+           //     Alert.alert(
+             //       '',
+               //     'Changes made on this page will not be saved.',
+                 //   [
+                   //     { 
+                     //       text: 'Stay', 
+                       //     style: 'destructive',
+                         //   onPress: () => {    
+                        //    }
+                      //  },
+                      //  { 
+                        //    text: 'Continue', 
+                          //  style: 'default',
+                         //   onPress: () => navigation.dispatch(e.data.action) // Navigate away without saving
+                     //   },
+                   // ]  
+               // ); 
+          //  }
+      //  }
+       // );
     
-        return unsubscribe;  
-    }, [navigation, selectedFriend]);
+     //   return unsubscribe;  
+   // }, [navigation, selectedFriend]);
     
  
     return (

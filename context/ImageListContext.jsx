@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useRef } from 'react';
 import { useSelectedFriend } from './SelectedFriendContext'; // Adjust the import path as needed
 import { fetchFriendImagesByCategory, createFriendImage, updateFriendImage, deleteFriendImage } from '../api'; // Adjust the import path as needed
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -17,9 +17,9 @@ export const useImageList = () => {
 
 export const ImageListProvider = ({ children }) => {
     const { selectedFriend } = useSelectedFriend();
-    const queryClient = useQueryClient(); // Initialize the query client
+    const queryClient = useQueryClient(); 
 
-    // Use useQuery to fetch images based on the selectedFriend
+
     const { data: imageList = [], isLoading: isImageContextLoading } = useQuery({
         queryKey: ['friendImages', selectedFriend?.id],
         queryFn: () => fetchFriendImagesByCategory(selectedFriend.id),
@@ -46,12 +46,13 @@ export const ImageListProvider = ({ children }) => {
  
     const imageCount = imageList.length;
 
-    // Mutation to update the image
+    const timeoutRef = useRef(null);
+    
     const updateImageMutation = useMutation({
         mutationFn: (imageData) => updateFriendImage(selectedFriend.id, imageData.id, imageData.updatedData), // Pass friendId and imageId
         onSuccess: () => {
-            // Invalidate the query to refetch updated data
             queryClient.invalidateQueries(['friendImages', selectedFriend?.id]);
+        
         },
         onError: (error) => {
             console.error('Error updating image:', error);
@@ -59,18 +60,35 @@ export const ImageListProvider = ({ children }) => {
     });
 
     const updateImage = (id, updatedData) => {
-        // Call the mutation with the image ID and updated data
         updateImageMutation.mutate({ id, updatedData });
     };
-
-    // Mutation to delete the image
+ 
     const deleteImageMutation = useMutation({
         mutationFn: (id) => deleteFriendImage(selectedFriend.id, id), // Pass friendId and imageId
         onSuccess: () => { 
+
             queryClient.invalidateQueries(['friendImages', selectedFriend?.id]);
+ 
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+              }
+
+ 
+            timeoutRef.current = setTimeout(() => {
+                deleteImageMutation.reset(); 
+              }, 2000);
+
         },
         onError: (error) => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+              }
+
+
             console.error('Error deleting image:', error);
+            timeoutRef.current = setTimeout(() => {
+                deleteImageMutation.reset(); 
+              }, 2000);
         },
     });
 
@@ -82,16 +100,32 @@ export const ImageListProvider = ({ children }) => {
     const createImageMutation = useMutation({
         mutationFn: (formData) => createFriendImage(selectedFriend.id, formData), // Use the imported function
         onSuccess: () => {
-            // Invalidate the query to refetch updated data
             queryClient.invalidateQueries(['friendImages', selectedFriend?.id]);
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+              }
+
+ 
+            timeoutRef.current = setTimeout(() => {
+                createImageMutation.reset(); 
+              }, 2000);
         },
         onError: (error) => {
             console.error('Error creating friend image:', error);
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+              }
+
+
+            console.error('Error deleting image:', error);
+            timeoutRef.current = setTimeout(() => {
+                createImageMutation.reset(); 
+              }, 2000);
         },
     });
 
     const createImage = (formData) => {
-        // Call the mutation to create a new image
+        
         createImageMutation.mutate(formData);
     };
 
@@ -102,7 +136,9 @@ export const ImageListProvider = ({ children }) => {
             isImageContextLoading,
             updateImage, 
             deleteImage,
+            deleteImageMutation,
             createImage,
+            createImageMutation,
         }}>
             {children}
         </ImageListContext.Provider>

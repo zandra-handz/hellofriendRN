@@ -16,6 +16,14 @@ import EclipseAnim from '../animations/EclipseAnim';
 // Press function is internal
 // HAS DOUBLE TAP PRESS AS WELL :)
 
+
+//TOOK LOCATION BUTTON OUT FOR RIGHT NOW BECAUSE BAD
+//<View style={{height: '26%', flexDirection: 'row', alignContent: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', width: '100%' }}>
+//<View style={{width: '68%'}}>
+//<ButtonIconLocations onPress={navigateToLocations} circleColor={themeAheadOfLoading.lightColor} countColor={themeAheadOfLoading.fontColorSecondary}  />
+//</View>
+//</View>
+
 const DOUBLE_PRESS_DELAY = 300;
 
 const HomeButtonSelectedFriend = ({  
@@ -170,21 +178,16 @@ const HomeButtonSelectedFriend = ({
                         />
                         )} 
                       <View style={{paddingVertical: '0%',  marginLeft: '8%', borderRadius: 20, height: '100%', maxWidth: '50%', minWidth: '40%', flexGrow: 1, flexDirection: 'column', justifyContent: 'space-between'}}>
-                        <View style={{height: '26%', flexDirection: 'row', justifyContent: 'flex-start', width: '100%' }}>
-                          <View style={{width: '68%'}}>
-                          <ButtonIconMoments onPress={onPress} circleColor={'orange'} countTextSize={10} countColor={themeAheadOfLoading.fontColorSecondary} />
+                        <View style={{height: '46%', flexDirection: 'row', justifyContent: 'flex-end', width: '100%' }}>
+                          <View style={{width: '74%'}}>
+                          <ButtonIconMoments iconSize={60} onPress={onPress} circleColor={'orange'} countTextSize={14} countColor={themeAheadOfLoading.fontColorSecondary} />
                         
                           </View>
                         </View>
-                        <View style={{height: '26%', flexDirection: 'row', alignContent: 'flex-end', alignItems: 'flex-end', justifyContent: 'flex-end', width: '100%' }}>
-                        <View style={{width: '68%'}}>
-                          <ButtonIconLocations onPress={navigateToLocations} circleColor={themeAheadOfLoading.lightColor} countColor={themeAheadOfLoading.fontColorSecondary}  />
-                        
-                          </View>
-                        </View>
-                        <View style={{height: '26%', flexDirection: 'row', justifyContent: 'flex-start', width: '100%' }}>
-                        <View style={{width: '68%'}}>
-                          <ButtonIconImages onPress={navigateToImages} circleColor={'orange'} countTextSize={10} countColor={themeAheadOfLoading.fontColorSecondary}  />
+
+                        <View style={{height: '46%', flexDirection: 'row', justifyContent: 'flex-end', width: '100%' }}>
+                        <View style={{width: '74%'}}>
+                          <ButtonIconImages iconSize={60} onPress={navigateToImages} circleColor={'orange'} countTextSize={14} countColor={themeAheadOfLoading.fontColorSecondary}  />
                         
                           </View>
                         </View>

@@ -15,8 +15,8 @@ import { useMessage } from '../context/MessageContext';
 
 const ResultMessage = ({   
   delay = 0,  
-  resultsDisplayDuration = 2000, // Duration to show results message (default 3 seconds)
-  messageDelay = 40, // Delay before the message appears (2 seconds)
+  resultsDisplayDuration = 1800, // Duration to show results message (default 3 seconds)
+  messageDelay = 0, // Delay before the message appears (2 seconds)
 }) => { 
   const [showResultsMessage, setShowResultsMessage] = useState(false); // State for showing results message
   const { messageData, hideMessage } = useMessage();
@@ -87,9 +87,11 @@ const ResultMessage = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 0,
+    top: 40, // Centers vertically
+    left: 0, // Centers horizontally
+    //transform: [{ translateX: '-50%' }, { translateY: '-50%' }], // Offsets by 50% of the element's width/height
     zIndex: 10,
-    width: '100%',
+    width: '100%', // Adjust width as needed
     padding: 10,
     height: 'auto',
     minHeight: '10%',

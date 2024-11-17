@@ -1,18 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, Animated, PanResponder, Dimensions, StyleSheet, Alert } from 'react-native';
+import { View, Text, Animated, PanResponder, Dimensions, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useFriendList } from '../context/FriendListContext';
-
-const SlideToAdd = ({ onPress, sliderText='Label', targetIcon: TargetIcon, width = Dimensions.get('window').width - 100 }) => {
+ 
+const SlideToAdd = ({ onPress, sliderText = 'Label', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
+  const isDraggingRef = useRef(false); // Use ref for immediate updates
   const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+ 
 
-  // Wrap the onPress function to always show an alert first
   const handlePress = () => {
-    //Alert.alert("onPress was triggered");
     if (onPress) onPress();
   };
 
@@ -21,27 +19,30 @@ const SlideToAdd = ({ onPress, sliderText='Label', targetIcon: TargetIcon, width
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (_, gestureState) => {
-        // Update the slider position based on user's drag
         if (gestureState.dx >= 0 && gestureState.dx <= width) {
           position.setValue(gestureState.dx);
-          
-          // Set isDragging to true only when slider is beyond 50% width
-          if (gestureState.dx >= width * 0.3) {
-            setIsDragging(true);
+
+          if (gestureState.dx >= width * 0.1 && !isDraggingRef.current) {
+            isDraggingRef.current = true; // Update ref immediately
+            setIsDragging(true); // Update state for UI
           }
         }
       },
       onPanResponderRelease: (_, gestureState) => {
-        // If the user slid close to the entire width, trigger the action
-        if (gestureState.dx >= width * 0.7) {  // Trigger near the full width
+        if (gestureState.dx >= width * 0.7) {
           handlePress();
           setIsPressed(true);
         }
-        // Animate the slider back to the start if it wasn't fully slid
+
+        isDraggingRef.current = false; // Reset ref immediately
+        setIsDragging(false); // Reset state for UI
+
         Animated.spring(position, {
           toValue: 0,
           useNativeDriver: true,
-        }).start(() => setIsDragging(false));  // Reset dragging after animation
+          speed: 15, // Faster spring animation
+          bounciness: 8, // Lower bounciness for quicker reset
+        }).start();
       },
     })
   ).current;
@@ -49,37 +50,47 @@ const SlideToAdd = ({ onPress, sliderText='Label', targetIcon: TargetIcon, width
   const sliderWidth = width;
 
   return (
-    <View style={[styles.container, { width: sliderWidth, backgroundColor: isDragging ? gradientColors.lightColor : themeStyles.genericTextBackgroundShadeTwo.backgroundColor }]}>
-      <Text style={[styles.text, { color: themeAheadOfLoading.fontColorSecondary}]}></Text>
+    <View
+      style={[
+        styles.container,
+        {
+          width: sliderWidth,
+          backgroundColor: isDragging
+            ? gradientColors.lightColor
+            : themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+        },
+      ]}
+    >
+      <Text style={[styles.text, { color: themeStyles.genericText }]}></Text>
       <Animated.View
         {...panResponder.panHandlers}
         style={[
           styles.slider,
-          { 
-            backgroundColor: isDragging ? themeAheadOfLoading.lightColor : themeAheadOfLoading.darkColor,
+          {
+            backgroundColor: isDragging ? gradientColorsHome.darkColor : 'transparent',
             transform: [{ translateX: position }],
-            width: 'auto', // Adjust the slider thumb width
+            width: 'auto',
           },
         ]}
       >
-        <Text style={[styles.sliderText, {color: themeAheadOfLoading.fontColor}]}>{sliderText}</Text>
+        <Text style={[styles.sliderText, themeStyles.genericText]}>{sliderText}</Text>
       </Animated.View>
       {TargetIcon && (
         <View style={styles.iconContainer}>
-          <TargetIcon height={30} width={30} color={isDragging ? gradientColorsHome.lightColor : themeAheadOfLoading.darkColor} />
+          <TargetIcon height={30} width={30} color={isDragging ? gradientColorsHome.lightColor : 'transparent'} />
         </View>
-      )} 
-      </View>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%', 
+    height: '100%',
     backgroundColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 20,
+    borderRadius: 10,
     margin: 0,
   },
   text: {
@@ -87,25 +98,18 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: 16,
   },
-  slider: { 
+  slider: {
     alignSelf: 'flex-start',
     alignItems: 'center',
-    alignText: 'center',
-    paddingHorizontal: '3%',
     justifyContent: 'center',
+    paddingHorizontal: '3%',
     height: '100%',
-    borderRadius: 20,
+    borderRadius: 30,
+    borderWidth: 0.8,
+    borderColor: 'darkgray',
   },
-  sliderText: { 
-    fontSize: 14,
-    fontFamily: 'Poppins-Bold',
-    paddingHorizontal: 6,
-  },
-  completedText: {
-    position: 'absolute',
-    bottom: -30,
-    fontSize: 14,
-    color: 'green',
+  sliderText: {
+    fontSize: 12,
   },
   iconContainer: {
     position: 'absolute',
