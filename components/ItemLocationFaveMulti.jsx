@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
@@ -20,7 +20,7 @@ const ItemLocationFaveMulti = ({
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
     const { friendDashboardData } = useSelectedFriend();
-    const { locationList, faveLocationList, setSelectedLocation, populateFaveLocationsList } = useLocationList();
+    const { locationList, faveLocationList, setSelectedLocation, populateFaveLocationsList } = useLocationFunctions();
     
     const [isFaveLocationReady, setIsFaveLocationReady] = useState(false);
 

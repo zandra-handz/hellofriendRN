@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonGoToAddImage from '../components/ButtonGoToAddImage';
-import { useImageList } from '../context/ImageListContext';
+import useImageFunctions from '../hooks/useImageFunctions';
 import ItemImageMulti from '../components/ItemImageMulti';
 
 const ScreenImages = ({ route, navigation }) => {
-    const { imageList } = useImageList();
+    const { imageList } = useImageFunctions();
     const { themeStyles } = useGlobalStyle();
     const [isImageListReady, setIsImageListReady] = useState(false);
 

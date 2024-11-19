@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, Text } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useImageList } from '../context/ImageListContext';
+
+import useImageFunctions from '../hooks/useImageFunctions';
+
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -20,7 +22,7 @@ import NavigationArrows from '../components/NavigationArrows';
 const ItemViewImage = ({ image, onClose }) => {
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
-  const { imageList, updateImage, deleteImage } = useImageList();
+  const { imageList, updateImage, deleteImage } = useImageFunctions();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(null);

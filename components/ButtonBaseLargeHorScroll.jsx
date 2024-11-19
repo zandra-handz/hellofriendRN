@@ -7,7 +7,8 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import { useFriendList } from '../context/FriendListContext';
 
- 
+import LoadingPage from '../components/LoadingPage';
+
 import ButtonCalendarDateSvgAndLabel from '../components/ButtonCalendarDateSvgAndLabel';
  
 const ButtonBaseLargeHorScroll = ({
@@ -100,7 +101,22 @@ const ButtonBaseLargeHorScroll = ({
             ...StyleSheet.absoluteFillObject,
           }}
         />
-       
+
+{isLoading && (  
+              <View style={styles.loadingWrapper}>
+
+              <LoadingPage 
+                loading={isLoading}
+                includeLabel={false}
+                label=''
+                spinnerSize={70}
+                color='#000002'
+                spinnerType='grid'
+              />  
+              </View>
+            )}
+       {!isLoading && (  
+        <>
        <View style={styles.headerContainer}>
         <Text style={styles.headerText}>SOON</Text>
         </View>
@@ -112,7 +128,10 @@ const ButtonBaseLargeHorScroll = ({
           {renderUpcomingHelloes()} 
           </>  
         </View>  
+        </>
+       )}
     </View>
+
   );
 };
 
@@ -128,6 +147,10 @@ const styles = StyleSheet.create({
     paddingTop: '1%',
     paddingBottom: '0%',
   }, 
+  loadingWrapper: {
+    flex: 1,
+    width: '100%', 
+  },
   headerContainer: {
     width: '100%', 
     paddingVertical: '0%',

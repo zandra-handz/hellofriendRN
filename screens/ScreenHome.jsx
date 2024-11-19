@@ -74,21 +74,7 @@ const ScreenHome = ({ navigation }) => {
       <BlurView intensity={0} tint="dark" style={StyleSheet.absoluteFill}> 
        
         {authUserState.authenticated && authUserState.user ? (
-          <>  
-            {isLoading && (  
-              <View style={styles.loadingWrapper}>
-
-              <LoadingPage 
-                loading={isLoading}
-                includeLabel={true}
-                label=''
-                spinnerSize={70}
-                color='lightgreen'
-                spinnerType='flow'
-              />  
-              </View>
-            )}
-            {!isLoading && (  
+          <>   
               <Animated.View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10, transform: [{ translateX: slideAnim }]}]}>
                  
                 <HomeButtonMomentAdd onPress={navigateToAddMomentScreen} borderRadius={40} borderColor="black" height={buttonHeight} />
@@ -111,8 +97,7 @@ const ScreenHome = ({ navigation }) => {
                 <ButtonBaseLargeHorScroll height={upcomingDatesTray} borderRadius={40} borderColor="black"/> 
                 
                 <HelloFriendFooter /> 
-              </Animated.View>
-            )}
+              </Animated.View> 
           </>
         ) : (
           <View style={styles.signInContainer}> 

@@ -1,25 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import CardMicroLocation from '../components/CardMicroLocation';
-import { useLocationList } from '../context/LocationListContext'; 
-
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg'; 
 import ButtonLocation from '../components/ButtonLocation'; 
 
 const ItemLocationSavedMulti = ({ 
+    locationList,
     horizontal = true,
     singleLineScroll = false, 
     width = 70,
     height = 70,
     columns = 3, 
     showBigSvg = false, 
-}) => { 
-    const { locationList, savedLocationList } = useLocationList();
+}) => {  
     const { themeStyles } = useGlobalStyle();
-    const [selectedLocation, setSelectedLocation] = useState(null);
-   
+
    
 
 

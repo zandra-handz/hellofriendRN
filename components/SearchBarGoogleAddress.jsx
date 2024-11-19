@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useLocationList } from '../context/LocationListContext'; // Adjust the import path as necessary
-
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -12,7 +11,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 
 const SearchBarGoogleAddress = () => {
-  const { locationList, setTempLocationList, tempLocationList, setSelectedLocation, selectedLocation } = useLocationList();
+  const { locationList, setTempLocationList, tempLocationList, setSelectedLocation, selectedLocation } = useLocationFunctions();
   const navigation = useNavigation();
   const [listViewDisplayed, setListViewDisplayed] = useState(true);
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);

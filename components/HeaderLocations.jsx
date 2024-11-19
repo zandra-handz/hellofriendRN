@@ -1,12 +1,12 @@
 import React from 'react'; 
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import HeaderBaseWithSearch from '../components/HeaderBaseWithSearch';
 import { useNavigation } from '@react-navigation/native';
 
 
 const HeaderLocations = () => {
 
-        const { locationList, selectedLocation, setSelectedLocation } = useLocationList();
+        const { locationList, selectedLocation, setSelectedLocation } = useLocationFunctions();
         const navigation = useNavigation();
 
         const handleGoToLocationViewScreen = (location) => { 

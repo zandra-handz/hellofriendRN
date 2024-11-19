@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native'; 
-import { useLocationList } from '../context/LocationListContext'; 
+import useLocationFunctions from '../hooks/useLocationFunctions'; 
+
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';  
@@ -16,7 +17,7 @@ const ItemHelloesMulti = ({
     columns = 3, 
     showBigSvg = false, 
 }) => { 
-    const { savedLocationList } = useLocationList();
+    const { savedLocationList } = useLocationFunctions();
     const { themeStyles } = useGlobalStyle();
     const [selectedLocation, setSelectedLocation] = useState(null);
    

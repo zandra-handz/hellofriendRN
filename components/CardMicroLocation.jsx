@@ -1,11 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
-import LocationSolidSvg from '../assets/svgs/location-solid.svg';
-import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
-import LocationHeartOutlineSvg from '../assets/svgs/location-heart-outline.svg';
-
-// Define updated color schemes
+ 
 const colorSchemes = {
     pink: {
         iconColor: '#F06292', // Light pink

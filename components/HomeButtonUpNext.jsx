@@ -83,29 +83,19 @@ return(
             ...StyleSheet.absoluteFillObject,
           }}
         />
-        {loadingNewFriend && (
+        {loadingNewFriend || isLoading && (
             <View style={styles.loadingWrapper}>
             <LoadingPage
-                loading={loadingNewFriend} 
-                spinnerType='flow' 
+                loading={loadingNewFriend || isLoading} 
+                spinnerSize={70}
+                color='#000002'
+                spinnerType='grid'
             />
             </View>
         )}
 
-        {!loadingNewFriend && (
+        {!loadingNewFriend && !isLoading && (
             <TouchableOpacity onPress={onPress} style={{height: '100%', width: '100%'}}>
-                {anim && !hideAnimation && ( 
-                <LottieView
-                    ref={lottieViewRef}
-                    source={anim}
-                    loop
-                    autoPlay
-                    style={{ zIndex: 2, position: 'absolute',  width: animSize, height: animSize, right: animPositionHorizontal,   top: animPositionVertical}}
-                    onError={(error) => console.error('Error rendering animation:', error)}
-                /> 
-                )}
-                
-
 
                 <View style={styles.textContainer}>
 
@@ -150,14 +140,17 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', 
     width: '100%',  
-    padding: '5%', 
-    paddingRight: '0%',
+    padding: '5%',  
     alignContent: 'center', 
     marginVertical: '1%',
     borderWidth: 0, 
     alignItems: 'center',
     justifyContent: 'space-between',
     overflow: 'hidden',
+},
+loadingWrapper: {
+  flex: 1,
+  width: '100%', 
 },
 textContainer: { 
     zIndex: 5,

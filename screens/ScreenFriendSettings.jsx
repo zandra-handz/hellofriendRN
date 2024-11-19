@@ -3,17 +3,15 @@
 //{selectedFriend ? selectedFriend.name : ''}
 //</Text>
 //   <HelloFriendFooter />   
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text,  StyleSheet, TouchableOpacity } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
- 
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
- import LoadingPage from '../components/LoadingPage';
+import LoadingPage from '../components/LoadingPage';
 import { Dimensions } from 'react-native';
-import HelloFriendFooter from '../components/HelloFriendFooter'; 
 import ModalColorTheme from '../components/ModalColorTheme';
  
 const ScreenFriendSettings = () => {
@@ -69,7 +67,10 @@ const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
         <>
         <View style={[styles.backColorContainer, {borderColor: themeAheadOfLoading.lightColor}]}>
         <TouchableOpacity onPress={navigateToHelloesScreen}>
-          <Text style={styles.genericText}>Go to helloes</Text>
+          <Text style={themeStyles.genericText}>Go to helloes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {navigation.navigate('Locations')}}>
+          <Text style={themeStyles.genericText}>Go to locations</Text>
           </TouchableOpacity>
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 

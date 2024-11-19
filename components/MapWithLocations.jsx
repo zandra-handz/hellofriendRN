@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 
 const MapWithLocations = ({ locations }) => {
   const mapRef = useRef(null);
   const [initialRegion, setInitialRegion] = useState(null);
   const [isInvalidLocation, setIsInvalidLocation] = useState(false);
-  const { selectedLocation, setSelectedLocation } = useLocationList();
+  const { selectedLocation, setSelectedLocation } = useLocationFunctions();
     
   const isValidCoordinate = (latitude, longitude) => {
     return !isNaN(latitude) && !isNaN(longitude) && latitude !== null && longitude !== null;

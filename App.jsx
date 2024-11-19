@@ -9,10 +9,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
 import { GlobalStyleProvider } from './context/GlobalStyleContext';
 import { FriendListProvider } from './context/FriendListContext';
-import { LocationListProvider } from './context/LocationListContext';
 import { UpcomingHelloesProvider } from './context/UpcomingHelloesContext';
 import { CapsuleListProvider } from './context/CapsuleListContext';
-import { ImageListProvider } from './context/ImageListContext';
 import { SelectedFriendProvider } from './context/SelectedFriendContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font'; 
@@ -116,15 +114,11 @@ export default function App() {
               <FriendListProvider>
                 <SelectedFriendProvider>
                 <PhoneStatusBar />
-                  <CapsuleListProvider>
-                    <ImageListProvider>
-                      <LocationListProvider>
+                  <CapsuleListProvider>  
                       <MessageContextProvider>
                         <Layout />
                         
-                      </MessageContextProvider>
-                      </LocationListProvider>
-                    </ImageListProvider> 
+                      </MessageContextProvider> 
                   </CapsuleListProvider>
                 </SelectedFriendProvider>
               </FriendListProvider>

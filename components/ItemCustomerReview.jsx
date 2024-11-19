@@ -5,8 +5,7 @@ import LoadingPage from '../components/LoadingPage';
  
 import StylingRating from '../components/StylingRating';
 
-import { useLocationList } from '../context/LocationListContext';
-
+import useLocationFunctions from '../hooks/useLocationFunctions';
 
 // Function to format Unix timestamp to a readable date
 const formatDate = (timestamp) => {
@@ -15,7 +14,7 @@ const formatDate = (timestamp) => {
 };
 
 const ItemCustomerReview = ({ review }) => {
-  const { loadingAdditionalDetails } = useLocationList();
+  const { loadingAdditionalDetails } = useLocationFunctions();
 
   const [revealReviews, setRevealReviews] = useState(true);
 

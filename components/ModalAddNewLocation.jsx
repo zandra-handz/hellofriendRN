@@ -2,22 +2,21 @@ import React, { useState, useCallback } from 'react';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import ShopAddOutlineSvg from '../assets/svgs/shop-add-outline.svg';
 import AlertFormSubmit from '../components/AlertFormSubmit';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useFriendList } from '../context/FriendListContext';
 import PickerParkingType from '../components/PickerParkingType';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, FlatList, StyleSheet } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 
 const ModalAddNewLocation = ({
-    isVisible, 
-    friends, 
+    isVisible,  
     title, 
     address,
     close,
 }) => {
     const { themeStyles } = useGlobalStyle(); 
     const { friendList } = useFriendList();
-    const { handleCreateLocation } = useLocationList();
+    const { handleCreateLocation } = useLocationFunctions();
     
     const [parkingType, setParkingType] = useState(null);
     const [parkingTypeText, setParkingTypeText] = useState(null);

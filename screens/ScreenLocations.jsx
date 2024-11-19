@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -15,7 +15,8 @@ import CustomTabBar from '../components/CustomTabBar';
 import LoadingPage from '../components/LoadingPage';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
+//import { useLocationList } from '../context/LocationListContext';
 import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
  
@@ -23,7 +24,7 @@ const Tab = createBottomTabNavigator();
 
 const ScreenLocations = ({ route, navigation }) => {
   const { themeStyles } = useGlobalStyle();
-  const { isFetching } = useLocationList();
+  const { locationList, isFetching } = useLocationFunctions();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend } = useSelectedFriend();
   
@@ -43,7 +44,7 @@ const ScreenLocations = ({ route, navigation }) => {
 
   const SavedLocationsScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <ItemLocationSavedMulti horizontal={false} />
+      <ItemLocationSavedMulti locationList={locationList} horizontal={false} />
     </View>
   );
 
@@ -83,10 +84,11 @@ const ScreenLocations = ({ route, navigation }) => {
             },
           })}
         >
-          <Tab.Screen name={selectedFriend.name} component={FavoritesScreen} />
+          <Tab.Screen name={selectedFriend.name} component={SavedLocationsScreen} />
           
           <Tab.Screen name="Others" component={SavedLocationsScreen} />
-          <Tab.Screen name="Recent" component={RecentlyViewedScreen} />
+          <Tab.Screen name="Recent" component={SavedLocationsScreen} />
+       
         </Tab.Navigator>
 
           <ButtonGoToFindLocation />

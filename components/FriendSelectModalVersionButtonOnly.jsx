@@ -8,10 +8,12 @@ import ProfileTwoUsersSvg from '../assets/svgs/profile-two-users.svg';
 import LoadingPage from '../components/LoadingPage'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import ButtonSelectFriend from '../components/ButtonSelectFriend';
+import { useImageFunctions } from '../hooks/useImageFunctions';
 
 import { Dimensions } from 'react-native';
 
 const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, iconSize=26, width = '60%' }) => {  
+  
   const { themeStyles } = useGlobalStyle();
   const globalStyles = useGlobalStyle();  
   const { selectedFriend, friendLoaded, setFriend, loadingNewFriend } = useSelectedFriend();

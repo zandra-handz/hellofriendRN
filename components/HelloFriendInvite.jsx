@@ -4,11 +4,11 @@ import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; 
 
 import { useAuthUser } from '../context/AuthUserContext';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import CardHoursAsButtons from '../components/CardHoursAsButtons';
 
 const HelloFriendInvite = () => {
-    const { selectedLocation } = useLocationList();
+    const { selectedLocation } = useLocationFunctions();
     const { authUserState } = useAuthUser();
     const [message, setMessage] = useState('');
     const [editedMessage, setEditedMessage] = useState('');

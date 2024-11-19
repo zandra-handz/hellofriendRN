@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext'; // Import the AuthUser context
 
-import { fetchAllLocations, fetchLocationDetails, createLocation, updateLocation, deleteLocation } from '../api'; // Import the API methods
+import { fetchAllLocations, fetchLocationDetails, createLocation, deleteLocation } from '../api'; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
 
 const LocationListContext = createContext();
 

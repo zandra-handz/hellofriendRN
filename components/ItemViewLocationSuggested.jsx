@@ -8,12 +8,12 @@ import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFr
 import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
 import FooterActionButtons from '../components/FooterActionButtons';
  
-import { useLocationList } from '../context/LocationListContext';
- 
+import useLocationFunctions from '../hooks/useLocationFunctions';
+
 const ItemViewLocationSuggested = ({ onClose }) => {
   const [ isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);  
-  const { selectedLocation } = useLocationList();
+  const { selectedLocation } = useLocationFunctions();
   
   const [isTemp ] = useState(false);
 

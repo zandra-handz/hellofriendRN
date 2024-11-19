@@ -5,8 +5,7 @@ import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';
 
 import PickerComplexList from '../components/PickerComplexList';
-
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const PickerHelloLocation = ({
@@ -21,7 +20,7 @@ const PickerHelloLocation = ({
     }) => { 
         
     const { themeStyles } = useGlobalStyle();
-    const { locationList, faveLocationList,populateFaveLocationsList, savedLocationList } = useLocationList();
+    const { locationList, faveLocationList,populateFaveLocationsList, savedLocationList } = useLocationFunctions();
     const [isLocationListReady, setIsLocationListReady] = useState(false);
     const { friendDashboardData, loadingNewFriend } = useSelectedFriend();
 

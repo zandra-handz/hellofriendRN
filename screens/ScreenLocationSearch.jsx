@@ -9,10 +9,10 @@ import MapWithLocations from '../components/MapWithLocations';
 
 
 import ItemLocationSingle from '../components/ItemLocationSingle';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 
 const ScreenLocationSearch = ({ route, navigation }) => {
-    const { locationList, selectedLocation, setSelectedLocation } = useLocationList();
+    const { locationList, selectedLocation, setSelectedLocation } = useLocationFunctions();
     const [category, setCategory] = useState(null);
     const [scrollSavedLocations] = useState(false); //for me to turn off to test performance without it
     useEffect(() => {

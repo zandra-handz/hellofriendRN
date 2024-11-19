@@ -22,6 +22,7 @@
     "android": {  
       "package": "com.badrainbowz.sampleproject",
       "googleServicesFile": "./google-services.json",
+      "backgroundColor": "#000002",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyAY-lQdQaVSKpPz9h2GiX_Jde47nv3FsNg"

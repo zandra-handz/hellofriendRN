@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LoadingPage from '../components/LoadingPage';
 import HeaderBase from '../components/HeaderBase';
 
 const AlertLocation = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
-  const { selectedLocation, setSelectedLocation, loadingAdditionalDetails } = useLocationList();
+  const { selectedLocation, setSelectedLocation, loadingAdditionalDetails } = useLocationFunctions();
   const [useSpinner, setUseSpinner] = useState(true);
   const { themeStyles } = useGlobalStyle();
   // Define a function to handle closing the modal and resetting the location

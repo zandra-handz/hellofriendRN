@@ -1,16 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { View, Animated, StyleSheet } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useNavigation } from '@react-navigation/native';
 import ButtonSDOptionSendLoc from '../components/ButtonSDOptionSendLoc';
 import ButtonSDOptionCalculateTravel from '../components/ButtonSDOptionCalculateTravel';
 import ButtonBaseSDMain from '../components/ButtonBaseSDMain';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg';
 
-const ButtonGoToLocationFunctions = () => {
-  const { themeStyles } = useGlobalStyle();
-  const navigation = useNavigation();
+const ButtonGoToLocationFunctions = () => { 
   const { calculatedThemeColors } = useSelectedFriend();
   
   const [expanded, setExpanded] = useState(false);

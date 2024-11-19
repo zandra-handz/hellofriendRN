@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import CardMicroLocation from '../components/CardMicroLocation';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import { FlashList } from "@shopify/flash-list";
 import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
 
@@ -18,7 +18,7 @@ const ItemLocationTempMulti = ({
     columns = 3, 
     showBigSvg = false,
 }) => {
-    const { tempLocationList } = useLocationList();
+    const { tempLocationList } = useLocationFunctions();
     const { themeStyles } = useGlobalStyle();
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);

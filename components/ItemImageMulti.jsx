@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { View,  StyleSheet, Dimensions, TouchableOpacity, Modal } from 'react-native';
 import ItemViewImage from '../components/ItemViewImage'; // Import your ItemViewImage component
-import { useImageList } from '../context/ImageListContext';
+import useImageFunctions from '../hooks/useImageFunctions';
 import { FlashList } from "@shopify/flash-list";  
 import { Image } from 'expo-image'; 
 
 const windowWidth = Dimensions.get('window').width;
 
 const ItemImageMulti = ({ horizontal = true, singleLineScroll = true, width, height, containerWidth='100%', borderRadius = 10 }) => {
-  const { imageList } = useImageList();  
+  const { imageList } = useImageFunctions();  
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ isEditing, setIsEditing] = useState(false);

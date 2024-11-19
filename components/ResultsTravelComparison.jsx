@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { GetTravelComparisons } from '../api'; // Ensure the path is correct
-import { useLocationList } from '../context/LocationListContext';
 
 const ResultsTravelComparison = ({ 
     userAddress, 

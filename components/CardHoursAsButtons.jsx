@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 
 const CardHoursAsButtons = ({ onDaySelect }) => {
-  const { additionalDetails } = useLocationList();
+  const { additionalDetails } = useLocationFunctions();
   const [selectedDay, setSelectedDay] = useState(null); // Change to null to handle "All Days"
   const [daysOfWeek, setDaysOfWeek] = useState([]);
   const [fullDaysOfWeek, setFullDaysOfWeek] = useState([]); // New state for full day names

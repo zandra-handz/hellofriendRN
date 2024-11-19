@@ -1,21 +1,20 @@
 import React from 'react'; 
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import HeaderBaseButtonComponent  from '../components/HeaderBaseButtonComponent';
 import ButtonSaveLocation from '../components/ButtonSaveLocation';
 
-const HeaderLocationSingle = () => {
+const HeaderLocationSingle = ({location}) => {
     
 
-    const { selectedLocation, additionalDetails } = useLocationList();
+    const { selectedLocation, additionalDetails } = useLocationFunctions();
   
-        const title = additionalDetails?.name || (selectedLocation && selectedLocation.title ? selectedLocation.title : "Location not available");
+        const title = location && location.title ? selectedLocation.title : "VIEW LOCATION";
 
 
         return(
-            <> 
-            {selectedLocation && ( 
+            <>  
             <HeaderBaseButtonComponent headerTitle={`${title}`}  buttonComponent={ButtonSaveLocation} />
-            )}
+    
             </>
         );
 

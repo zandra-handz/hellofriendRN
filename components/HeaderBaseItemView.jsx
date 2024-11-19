@@ -60,11 +60,13 @@ const HeaderBaseItemView = ({
     </> 
     
     </LinearGradient>  
-     <SlideToAction
-     onPress={onSliderPull}
-     sliderWidth={'100%'} 
-     targetIcon={TrashOutlineSvg}
-   /> 
+    <View style={styles.sliderContainer}>
+      <SlideToAction
+      onPress={onSliderPull}
+      sliderWidth={'100%'} 
+      targetIcon={TrashOutlineSvg}
+    /> 
+       </View>
    </>
     
   );
@@ -112,6 +114,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  sliderContainer: {
+    height: 30,
+    width: '100%',
+
   },
 });
 

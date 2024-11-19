@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { TouchableOpacity, Text, StyleSheet, View, Animated } from 'react-native';
-
-import { useImageList } from '../context/ImageListContext'; 
+import { TouchableOpacity, StyleSheet, View, Animated } from 'react-native';
+import useImageFunctions from '../hooks/useImageFunctions';
 import FlashAnim from '../animations/FlashAnim';
 import PhotosTwoSvg from '../assets/svgs/photos-two.svg';
 
@@ -14,7 +13,7 @@ const ButtonIconImages = ({
     onPress,
 }) => {
     
-    const { imageList } = useImageList();
+    const { imageList } = useImageFunctions();
     const flashAnim = useRef(new Animated.Value(0)).current;
     const bobbingValue = useRef(new Animated.Value(0)).current;
 

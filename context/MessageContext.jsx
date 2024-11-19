@@ -1,7 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useCapsuleList } from './CapsuleListContext';
-import { useImageList } from './ImageListContext';
-import { useLocationList } from './LocationListContext';
 
 
 const MessageContext = createContext();
@@ -21,9 +19,7 @@ export const useMessage = () => {
 export const MessageContextProvider = ({ children }) => {
   
     const { createMomentMutation, updateCapsuleMutation, deleteMomentMutation } = useCapsuleList();
-    const { createImageMutation, deleteImageMutation } = useImageList();
-    const { createLocationMutation,  deleteLocationMutation } = useLocationList();
-
+ 
     const [messageData, setMessageData] = useState({
     result: false,
     resultData: null,
@@ -60,34 +56,6 @@ useEffect(() => {
         showMessage(true, null, 'Moment sent to hello!');
     }
 }, [updateCapsuleMutation]);
-
-
-useEffect(() => {
-    if (createImageMutation.isSuccess) {
-        showMessage(true, null, 'Image uploaded!');
-    }
-}, [createImageMutation]);
-
-
-useEffect(() => {
-    if (deleteImageMutation.isSuccess) {
-        showMessage(true, null, 'Image deleted!');
-    }
-}, [deleteImageMutation]);
-
-
-useEffect(() => {
-    if (createLocationMutation.isSuccess) {
-        showMessage(true, null, 'Location added!');
-    }
-}, [createLocationMutation]);
-
-
-useEffect(() => {
-    if (deleteLocationMutation.isSuccess) {
-        showMessage(true, null, 'Location deleted!');
-    }
-}, [deleteLocationMutation]);
 
 
 

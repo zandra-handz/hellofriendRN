@@ -11,7 +11,6 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg'; 
-import PushPinOutlineSvg from '../assets/svgs/push-pin-outline.svg';  
 import FavoriteProfileSvg from '../assets/svgs/favorite-profile.svg';  
 
 import AlertConfirm from '../components/AlertConfirm'; 
@@ -21,7 +20,7 @@ import MenuLocationOptions from '../components/MenuLocationOptions';
 import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useQueryClient } from '@tanstack/react-query';
@@ -29,7 +28,7 @@ import { useQueryClient } from '@tanstack/react-query';
 const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { authUserState } = useAuthUser();
     const { selectedFriend, calculatedThemeColors, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-    const { locationList, handleDeleteLocation, deleteLocationMutation, selectedLocation, isTemp, isFave, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationList();
+    const { locationList, handleDeleteLocation, deleteLocationMutation, selectedLocation, isTemp, isFave, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationFunctions();
     const [isATemp, setIsTemp ] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModal2Visible, setModal2Visible] = useState(false);

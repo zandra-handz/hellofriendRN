@@ -16,7 +16,7 @@ import UploadCurlySvg from '../assets/svgs/upload-curly.svg';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useImageList } from '../context/ImageListContext';
+import useImageFunctions from '../hooks/useImageFunctions';
 import { useFriendList } from '../context/FriendListContext';  
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -39,7 +39,7 @@ const ContentAddImage = () => {
   const imageTitleRef = useRef(null); 
   const imageCategoryRef = useRef(null);  
 
-  const { createImage, createImageMutation } = useImageList();
+  const { createImage, createImageMutation } = useImageFunctions();
 
  
 

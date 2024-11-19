@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import InputUpdateLocation from './InputUpdateLocation';
 import AlertSmall from '../components/AlertSmall';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 
 const MenuLocationOptions = ({ onEdit, onDelete, onHelp, closeMenu }) => {
-  const { selectedLocation } = useLocationList();
+  const { selectedLocation } = useLocationFunctions();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
   const openEditModal = () => {

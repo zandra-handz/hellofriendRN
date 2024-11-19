@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { View, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import ItemCustomerReview from '../components/ItemCustomerReview';
-import { useLocationList } from '../context/LocationListContext';
-
+import useLocationFunctions from '../hooks/useLocationFunctions';
 const SectionCustomerReviews = ({ reviews }) => {
-  const { loadingAdditionalDetails } = useLocationList();
+  const { loadingAdditionalDetails } = useLocationFunctions();
   const [revealReviews, setRevealReviews] = useState(false);
 
   const handleRevealReviews = () => {

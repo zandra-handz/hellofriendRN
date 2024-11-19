@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get("screen").height - 440,
         width: Dimensions.get("screen").width,
         overflow: 'visible',
-        zIndex: 2,
+        zIndex: 1,
     },
     cardContainer: { 
         height: 'auto',

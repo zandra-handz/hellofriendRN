@@ -3,15 +3,15 @@ import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-nat
 import { CheckBox } from 'react-native-elements';
 import { updateLocation } from '../api';  
 import { useAuthUser } from '../context/AuthUserContext';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useFriendList } from '../context/FriendListContext';
 
 const FormLocationUpdate = ({ onLocationUpdate, location }) => {
   const { authUserState } = useAuthUser();
   const { friendList } = useFriendList();
-  const { locationList, setLocationList } = useLocationList();
+  const { locationList, setLocationList } = useLocationFunctions();
 
-  const { id, title: initialTitle, address, notes, latitude, longitude, friends } = location;
+  const { id, title: initialTitle, address, friends } = location;
 
   useEffect(() => {
     console.log('Friends prop:', friends); 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 
-import { useLocationList } from '../context/LocationListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import CardHours from './CardHours';  
@@ -19,8 +19,8 @@ import StylingRating from '../components/StylingRating';
 
 const ContentLocationView = ({ location }) => {
     const { themeStyles } = useGlobalStyle();
-    const { clearAdditionalDetails, deleteLocationMutation, isDeletingLocation, selectedLocation, setSelectedLocation } = useLocationList();
-    const { loadingAdditionalDetails, useFetchAdditionalDetails} = useLocationList();
+    const { clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
+    const { loadingAdditionalDetails, useFetchAdditionalDetails} = useLocationFunctions();
     
     const navigation = useNavigation();
     const [isTemp, setIsTemp] = useState(false);
@@ -31,19 +31,17 @@ const ContentLocationView = ({ location }) => {
   
     
   
-    const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(selectedLocation, isFetching);
+    const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(location, isFetching);
   
     const handleRefresh = () => {
         setIsFetching(true); // Trigger the fetch
     };
 
     useEffect(() => {
-        console.log('Received location:', location);
+       console.log('Received location:', location);
         if (location == true) {
-            clearAdditionalDetails();
-            setSelectedLocation(location);
-            console.log('Setting selectedLocation to:', location);
-        }
+           clearAdditionalDetails();  
+          }
     }, [location]);
 
     useEffect(() => {
@@ -71,7 +69,7 @@ const ContentLocationView = ({ location }) => {
                       
 
                 <View> 
-    {selectedLocation && selectedLocation.id && (
+    {location && location.id && (
       <>
 
  
@@ -81,17 +79,17 @@ const ContentLocationView = ({ location }) => {
           <View style={styles.detailRow}>
             <View style={{height: 'auto', alignItems: 'center', justifyContent: 'center', width: '100%'}}>
               
-          <ButtonDirections address={selectedLocation.address} buttonColor={'blue'} fontColor={calculatedThemeColors.fontColor} backgroundColor={calculatedThemeColors.darkColor} />
+          <ButtonDirections address={location.address} buttonColor={'blue'} fontColor={calculatedThemeColors.fontColor} backgroundColor={calculatedThemeColors.darkColor} />
 
             </View> 
           </View> 
           <View style={styles.detailRow}> 
-            <DisplayParkingScore parkingScore={selectedLocation.parking} size={18}/>
+            <DisplayParkingScore parkingScore={location.parking} size={18}/>
            
 
           </View> 
             <View style={styles.detailRow}>
-              <DisplayLocationNotes notes={selectedLocation.notes} />
+              <DisplayLocationNotes notes={location.notes} />
               
             </View>
           </View>

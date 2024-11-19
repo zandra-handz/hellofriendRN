@@ -3,13 +3,13 @@ import { View, Text, StyleSheet, TextInput } from 'react-native';
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg';  
 import { useAuthUser } from '../context/AuthUserContext';
-import { useLocationList } from '../context/LocationListContext';
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useSelectedFriend } from '../context/SelectedFriendContext'; 
 import SelectorAddressBase from '../components/SelectorAddressBase'; 
 import ResultsTravelComparison from '../components/ResultsTravelComparison';
 
 const CompareTravel = () => {
-    const { selectedLocation } = useLocationList();
+    const { selectedLocation } = useLocationFunctions();
     const { authUserState } = useAuthUser();
     const { friendDashboardData } = useSelectedFriend(); // Access selected friend data
     const [message, setMessage] = useState('');
