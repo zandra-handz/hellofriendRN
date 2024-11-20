@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
+ import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';
 
 import PickerComplexList from '../components/PickerComplexList';
-import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const PickerHelloLocation = ({
 
     selectedLocation, 
+    faveLocations=[],
+    savedLocations=[],
     modalVisible,
     setModalVisible,
     onLocationChange, 
@@ -20,42 +20,23 @@ const PickerHelloLocation = ({
     }) => { 
         
     const { themeStyles } = useGlobalStyle();
-    const { locationList, faveLocationList,populateFaveLocationsList, savedLocationList } = useLocationFunctions();
-    const [isLocationListReady, setIsLocationListReady] = useState(false);
-    const { friendDashboardData, loadingNewFriend } = useSelectedFriend();
-
-        useEffect(() => {
-            if (friendDashboardData && friendDashboardData.length > 0) {
-                const favoriteLocationIds = friendDashboardData[0]?.friend_faves?.locations || [];
-
-                console.log('favorite location IDs: ', favoriteLocationIds);
-                populateFaveLocationsList(favoriteLocationIds);
-
-            }
-        }, [locationList, friendDashboardData]);
+  
 
 
-    useEffect(() => {
-        if (locationList.length > 0 && !loadingNewFriend) {
-            setIsLocationListReady(true); 
-        } else {
-          setIsLocationListReady(false)
-        };
-      }, [loadingNewFriend, locationList]);
 
     return (
         <> 
-        {isLocationListReady && (
+       
         <PickerComplexList 
             containerText={
             <LocationSolidSvg width={20} height={20} color={themeStyles.genericText.color} />}
             inline={true}
             modalHeader='Select Location'
             allowCustomEntry={true}
-            primaryOptions={faveLocationList}
+            primaryOptions={faveLocations}
             primaryOptionsHeader='Pinned'
             primaryIcon={LocationHeartSolidSvg}
-            secondaryOptions={savedLocationList}
+            secondaryOptions={savedLocations}
             secondaryOptionsHeader='All Saved'
             secondaryIcon={LocationSolidSvg}
             objects={true} 
@@ -65,8 +46,7 @@ const PickerHelloLocation = ({
             setModalVisible={setModalVisible} 
             buttonRadius={buttonRadius}
             buttonHeight={buttonHeight}
-        />
-        )}
+        /> 
         </>
     );
 };

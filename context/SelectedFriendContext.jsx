@@ -17,14 +17,16 @@ export const SelectedFriendProvider = ({ children }) => {
     darkColor: null,
   });
   const [calculatedThemeColors, setCalculatedThemeColors] = useState({
-    lightColor: '#a0f143',
-    darkColor: '#4caf50',
+    lightColor:   '#a0f143',
+    darkColor:   '#4caf50',
+    fontColor:  '#a0f143',  
+    fontColorSecondary:   '#a0f143',
   }); 
   const queryClient = useQueryClient();
 
 
-
-
+  const [favoriteLocationIds, setFavoriteLocationIds] = useState([]);
+    
   const { data: friendDashboardData, isLoading, isPending, isError, isSuccess } = useQuery({
     queryKey: ['friendDashboardData', selectedFriend?.id],
     queryFn: () => fetchFriendDashboard(selectedFriend.id),
@@ -34,7 +36,8 @@ export const SelectedFriendProvider = ({ children }) => {
       
     },
     onSuccess: (data) => {
-      console.log('Raw data in RQ onSuccess:', data);
+      console.log('Raw data in RQ onSuccess:', data); 
+
       if (!data) {
           console.log('No data received');
           return;
@@ -43,11 +46,25 @@ export const SelectedFriendProvider = ({ children }) => {
   });
 
 
+  const getFaveLocationIds = () => {
+    return queryClient.getQueryData(['friendDashboardData', selectedFriend.id])?.[0]?.friend_faves?.locations || []
+  
+  };
+
+  useEffect(() => {
+    if (selectedFriend && friendDashboardData) {
+      ids = getFaveLocationIds();
+      setFavoriteLocationIds(ids);
+    }
+
+  }, [friendDashboardData]);
+
+
 
 
   useEffect(() => {
     if (isError) {
-      setSelectedFriend(null);
+      deselectFriend();
     }
   }, [isError]);
 
@@ -68,49 +85,31 @@ export const SelectedFriendProvider = ({ children }) => {
       console.log('Setting color theme data in useEffect:', colorThemeData);
       setFriendColorTheme(colorThemeData);
     }
-  }, [friendDashboardData]); // Depend on `friendDashboardData`
+  }, [friendDashboardData]); 
   
- 
-
-  useEffect(() => {
-    if (!selectedFriend) { 
-        setFriendColorTheme({
-            useFriendColorTheme: null,
-            invertGradient: null,
-            lightColor: null,
-            darkColor: null,
-        });
-    }
-}, [selectedFriend]);
-
-
- 
- 
   
 
-//placeholder until i replace them all with themeAheadOfLoading
-  useEffect(() => {
-    console.log('FRIEND COLOR THEME CALCULATIONS TRIGGERED');
-    if (friendColorTheme && friendColorTheme.useFriendColorTheme !== false) { 
- 
-        setCalculatedThemeColors({
-          lightColor:   '#a0f143',
-          darkColor:   '#4caf50',
-          fontColor:  '#a0f143',  
-          fontColorSecondary:   '#a0f143',
-        });
-      } 
-  }, [friendColorTheme]);
-
-  useEffect(() => {
+  const deselectFriend = () => {
     setSelectedFriend(null);
+    queryClient.resetQueries(['friendDashboardData']);
+    setFriendColorTheme({
+      useFriendColorTheme: null,
+      invertGradient: null,
+      lightColor: null,
+      darkColor: null,
+  });
+  };
+
+  useEffect(() => {
+    deselectFriend();
   }, [authUserState]);
 
   useEffect(() => {
     if (!selectedFriend) {
-      queryClient.resetQueries(['friendDashboardData']);
+      deselectFriend();
+    
     }
-  }, [selectedFriend, queryClient]);
+  }, [selectedFriend]);
   
  
 
@@ -132,6 +131,7 @@ export const SelectedFriendProvider = ({ children }) => {
     <SelectedFriendContext.Provider value={{ 
       selectedFriend, 
       setFriend: setSelectedFriend, 
+      deselectFriend,
       friendLoaded,
       errorLoadingFriend,
       friendList,
@@ -139,12 +139,15 @@ export const SelectedFriendProvider = ({ children }) => {
       isLoading,
       isSuccess,
       friendDashboardData, 
+      favoriteLocationIds,
       friendColorTheme,
       setFriendColorTheme,
       calculatedThemeColors,
       loadingNewFriend,
       updateFriendDashboardData,
       updateFriendColorTheme,
+      favoriteLocationIds,
+      getFaveLocationIds,
     }}>
       {children}
     </SelectedFriendContext.Provider>

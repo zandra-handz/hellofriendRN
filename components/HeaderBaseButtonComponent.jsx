@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const HeaderBaseButtonComponent = ({
     headerTitle='Header title here',
-    buttonComponent: ButtonComponent,
+    buttonComponent,
     
 }) => {
 
@@ -44,12 +44,13 @@ const HeaderBaseButtonComponent = ({
   ]}
 >
   {headerTitle}
+  
 </Text>
 
 
       </View> 
       
-      {ButtonComponent && <ButtonComponent />}
+      {buttonComponent}
          
     </View>
   );

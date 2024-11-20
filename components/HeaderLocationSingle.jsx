@@ -1,20 +1,19 @@
 import React from 'react'; 
-import useLocationFunctions from '../hooks/useLocationFunctions';
 import HeaderBaseButtonComponent  from '../components/HeaderBaseButtonComponent';
 import ButtonSaveLocation from '../components/ButtonSaveLocation';
 
 const HeaderLocationSingle = ({location}) => {
     
-
-    const { selectedLocation, additionalDetails } = useLocationFunctions();
-  
-        const title = location && location.title ? selectedLocation.title : "VIEW LOCATION";
+ 
+        const title = location && location.title ? location.title : "VIEW LOCATION";
 
 
         return(
             <>  
-            <HeaderBaseButtonComponent headerTitle={`${title}`}  buttonComponent={ButtonSaveLocation} />
-    
+            <HeaderBaseButtonComponent 
+                headerTitle={typeof title === 'string' ? title : `${title}`}  
+                buttonComponent={<ButtonSaveLocation location={location}/>} 
+                />
             </>
         );
 

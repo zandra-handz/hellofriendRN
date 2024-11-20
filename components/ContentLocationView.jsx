@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import useLocationFunctions from '../hooks/useLocationFunctions';
-
+import ButtonSaveLocation from '../components/ButtonSaveLocation';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import CardHours from './CardHours';  
@@ -10,7 +10,7 @@ import SectionLocationImages from '../components/SectionLocationImages';
 import SectionCustomerReviews from '../components/SectionCustomerReviews';
 import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
 import ButtonDirections from '../components/ButtonDirections';
-
+import { useFriendList } from '../context/FriendListContext';
 import DisplayParkingScore from '../components/DisplayParkingScore';
 import DisplayLocationNotes from '../components/DisplayLocationNotes';
 
@@ -19,6 +19,7 @@ import StylingRating from '../components/StylingRating';
 
 const ContentLocationView = ({ location }) => {
     const { themeStyles } = useGlobalStyle();
+    const { themeAheadOfLoading } = useFriendList();
     const { clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
     const { loadingAdditionalDetails, useFetchAdditionalDetails} = useLocationFunctions();
     
@@ -71,14 +72,15 @@ const ContentLocationView = ({ location }) => {
                 <View> 
     {location && location.id && (
       <>
+     
 
  
         <View style={styles.infoContainer}>
           
           <View style={styles.detailsColumn}> 
-          <View style={styles.detailRow}>
-            <View style={{height: 'auto', alignItems: 'center', justifyContent: 'center', width: '100%'}}>
-              
+          <View style={[styles.detailRow, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+            <View style={{height: 'auto', backgroundColor: themeAheadOfLoading.darkColor, alignItems: 'flex-end', backgroundColor: 'transparent', justifyContent: 'center', width: '100%'}}>
+            <ButtonSaveLocation location={location} />
           <ButtonDirections address={location.address} buttonColor={'blue'} fontColor={calculatedThemeColors.fontColor} backgroundColor={calculatedThemeColors.darkColor} />
 
             </View> 
@@ -107,8 +109,8 @@ const ContentLocationView = ({ location }) => {
         <>
           <View style={styles.infoContainer}>
             <View style={styles.detailsColumn}>
-              <View style={styles.detailRow}>
-                <ButtonDirections address={additionalDetails.address} />
+              <View style={[styles.detailRow, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+              <ButtonDirections address={additionalDetails.address} />
               </View>
               <View style={styles.detailRow}>
                 <ButtonPhoneNumber phoneNumber={additionalDetails.phone} />

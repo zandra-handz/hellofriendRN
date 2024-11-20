@@ -36,7 +36,7 @@ const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
         <Text style={[styles.itemTitle, { color: themeStyles.genericText.color }]}>
           {title}
         </Text>
-        <ButtonSaveLocation saveable={unSaved} />
+        <ButtonSaveLocation location={location} saveable={unSaved} />
       </View>
       <Button
         title={refreshing ? 'Refreshing...' : 'Load Details'}

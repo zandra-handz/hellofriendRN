@@ -7,6 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useMessage } from '../context/MessageContext';
 
 
+import useLocationFunctions from '../hooks/useLocationFunctions';
+
  
 import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
 
@@ -58,6 +60,9 @@ const ContentAddHello = () => {
   const [deleteMoments, setDeleteMoments ] = useState(false); 
   
  
+  const { locationList, sortLocationList, locationListIsSuccess, faveLocationList, populateFaveLocationsList, savedLocationList } = useLocationFunctions();
+ 
+
    
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
    
@@ -292,14 +297,20 @@ useEffect(() => {
           
            <View style={{flexDirection: 'row', marginVertical: '2%', justifyContent: 'space-between'}}>  
             <View style={{flex: 1, marginRight: 4, width: '4%'}}>
+             {locationListIsSuccess && (
+              
              <PickerHelloLocation 
+                    faveLocations={faveLocationList}
+                    savedLocations={savedLocationList}
                     buttonHeight={36}
                     buttonRadius={10}
                     onLocationChange={handleLocationChange}
                     modalVisible={locationModalVisible}
                     setModalVisible={setLocationModalVisible}
                     selectedLocation={selectedHelloLocation} 
-              />   
+              /> 
+              
+             )}  
               </View>
               <View style={{flex: 1, width: '44%'}}>
                 <PickerDate

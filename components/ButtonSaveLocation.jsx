@@ -6,7 +6,7 @@
  //   console.log('Location added to friend\'s favorites.');
 //  }
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
@@ -22,18 +22,31 @@ import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../ap
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useAuthUser } from '../context/AuthUserContext';
+import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useQueryClient } from '@tanstack/react-query';
 
 const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { authUserState } = useAuthUser();
-    const { selectedFriend, calculatedThemeColors, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-    const { locationList, handleDeleteLocation, deleteLocationMutation, selectedLocation, isTemp, isFave, setSelectedLocation, faveLocationList, addLocationToFaves, removeLocationFromFaves } = useLocationFunctions();
+    const { themeAheadOfLoading } = useFriendList();
+    const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
+    const { locationList, handleDeleteLocation, faveLocationList, deleteLocationMutation, addLocationToFaves, removeLocationFromFaves } = useLocationFunctions();
     const [isATemp, setIsTemp ] = useState(false);
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModal2Visible, setModal2Visible] = useState(false);
     const [isMenuVisible, setMenuVisible] = useState(false);
     const { themeStyles } = useGlobalStyle();
+
+
+    const [ isFave, setIsFave ] = useState(false);
+
+    useLayoutEffect(() => {
+        console.log(faveLocationList);
+        if (location) {
+            setIsFave(faveLocationList.some(faveLocation => faveLocation.id === location.id));
+        };
+
+    }, [location]);
 
     const queryClient = useQueryClient();
 
@@ -67,8 +80,8 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
     };
 
     const handleDelete = () => {
-        console.log(selectedLocation.id);
-        handleDeleteLocation(selectedLocation.id);
+        console.log(location.id);
+        handleDeleteLocation(location.id);
         setMenuVisible(false);
     };
 
@@ -82,17 +95,13 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
 
     };
     
-    
-    useEffect(() => {
-        console.log('Selected Location:', selectedLocation);
-        console.log('Is Temp:', isTemp);
-    }, [selectedLocation, isTemp]);
+
 
 
     const handleRemoveFromFaves = async () => {
-        if  (selectedFriend && selectedLocation && isFave) {
-            const response = await removeFromFriendFavesLocations(authUserState.user.id, selectedFriend.id, selectedLocation.id);
-            removeLocationFromFaves(selectedLocation.id);
+        if  (selectedFriend && location && isFave) {
+            const response = await removeFromFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
+            removeLocationFromFaves(location.id);
             const updatedFaves = response;
             console.log(updatedFaves);
 
@@ -112,15 +121,15 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
         try {
           if (isTemp) { 
             
-            const newLocationWithId = { ...selectedLocation, id: Date.now().toString() }; // Generate a unique ID for the new location
+            const newLocationWithId = { ...location, id: Date.now().toString() }; // Generate a unique ID for the new location
             //setLocationList([...locationList, newLocationWithId]);
             setIsEditing(false); 
           } else {
 
             // If the location is not temporary, update or add the location to the friend's favorites
-            if (selectedFriend && selectedLocation) {
-              const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, selectedLocation.id);
-              addLocationToFaves(selectedLocation.id);
+            if (selectedFriend && location) {
+              const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
+              addLocationToFaves(location.id);
               const updatedFaves = response;
               console.log(updatedFaves);
     
@@ -139,34 +148,34 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
 
       const onConfirmAction = () => {
         if (isFave) {
-          handleRemoveFromFaves(selectedLocation.id);
+          handleRemoveFromFaves(location.id);
         } else {
-          handleAddToFaves(selectedLocation);
+          handleAddToFaves(location);
         }
       };
 
     return (
         <View>
-            {selectedLocation && isTemp && (
+            {location && String(location.id).startsWith('temp') && (
                 <TouchableOpacity onPress={handlePress} style={[styles.container, style]}> 
                     <FontAwesome5 name="save" size={iconSize} color={themeStyles.modalIconColor.color} /> 
                     <Text style={[styles.saveText, { fontSize: size, color: themeStyles.genericText.color, fontFamily: family }]}> SAVE</Text>
                 </TouchableOpacity>
             )}
 
-            {selectedLocation && !isTemp && (
+            {location && !String(location.id).startsWith('temp') && (
                 <View style={styles.container}>
 
                     <View style={styles.iconContainer}>
                     {!isFave && (
-                    <PushPinSolidSvg width={20} height={20} color={calculatedThemeColors.fontColor} onPress={toggleModal2}/>
+                    <PushPinSolidSvg width={20} height={20} color={themeAheadOfLoading.fontColor} onPress={toggleModal2}/>
                     )}
                     {isFave && (
-                    <FavoriteProfileSvg width={28} height={28} color={calculatedThemeColors.lightColor} onPress={toggleModal2}/>
+                    <FavoriteProfileSvg width={28} height={28} color={themeAheadOfLoading.lightColor} onPress={toggleModal2}/>
                     )}
                     </View>
                     <View style={styles.iconContainer}>
-                    <FontAwesome5 name="ellipsis-v" size={24} color={calculatedThemeColors.fontColor}  onPress={toggleMenu} />
+                    <FontAwesome5 name="ellipsis-v" size={24} color={themeAheadOfLoading.fontColor}  onPress={toggleMenu} />
                     </View>
                 </View>
             )}
@@ -186,12 +195,12 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
                     />
                 </View>
             </Modal>
-            {selectedLocation && ( 
+            {location && ( 
             <ModalAddNewLocation 
                 isVisible={isModalVisible}
                 close={closeModal}
-                title={selectedLocation.title}
-                address={selectedLocation.address}
+                title={location.title}
+                address={location.address}
             />
             )}
  

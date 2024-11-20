@@ -1,4 +1,5 @@
 
+
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -64,15 +65,18 @@ const ScreenLocationSearch = ({ route, navigation }) => {
                 <View style={{zIndex: 2, position: 'absolute', height: 300, width: '100%', backgroundColor: 'transparent', top: 0}}>
                 <SearchBarGoogleAddress />
                 </View>
-                <View style={styles.mapContainer}>
 
-                    <MapWithLocations locations={locationList} />
-                </View>
                 {locationList && (
+                    <>
+                                    <View style={styles.mapContainer}>
+
+                                    <MapWithLocations locations={locationList} />
+                                </View>
                     <View style={styles.additionalSatelliteSection}>
                         <Text style={styles.categoryText}>{category}</Text>
                         {renderAdditionalSatellites()}
                     </View>
+                    </>
                 )} 
         </GestureHandlerRootView>
     );

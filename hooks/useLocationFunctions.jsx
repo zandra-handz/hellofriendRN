@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { fetchAllLocations, fetchLocationDetails, createLocation, deleteLocation } from '../api'; // Import the API methods
+import { addToFriendFavesLocations, removeFromFriendFavesLocations, fetchAllLocations, fetchLocationDetails, createLocation, deleteLocation } from '../api'; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthUser } from '../context/AuthUserContext'; // Import the AuthUser context
 import { useMessage } from '../context/MessageContext';
+
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 
 const useLocationFunctions = () => {
@@ -20,33 +22,45 @@ const useLocationFunctions = () => {
     const queryClient = useQueryClient();
     const [isDeletingLocation, setIsDeletingLocation ] = useState(false);
   
+    const { selectedFriend, friendDashboardData, getFaveLocationIds } = useSelectedFriend();
+
     const { showMessage } = useMessage();
+
+
  
-    const { data: locationList, isLoading, isFetching, isError } = useQuery({
-        queryKey: ['locationList'],
-        queryFn: () => fetchAllLocations(),
-        enabled: !!authUserState.authenticated,
-        onSuccess: (data) => {
+    const { data: locationList, isLoading, isFetching, isSuccess, isError } = useQuery({
+      queryKey: ['locationList'],
+      queryFn: () => fetchAllLocations(),
+      enabled: !!authUserState.authenticated,
+      onSuccess: (data) => {
           console.log('Raw data in RQ onSuccess:', data);
           if (!data) {
               console.log('No data received');
               return;
           }
-        }
-      });
+   
+          const { validated, saved } = data.reduce(
+              (acc, location) => {
+                  if (location.validatedAddress) {
+                      acc.validated.push(location); // Add to validated list
+                  }
+                  if (!String(location.id).startsWith('temp')) {
+                      acc.saved.push(location); // Add to saved list
+                  }
+                  return acc;
+              },
+              { validated: [], saved: [] }
+          );
+  
+          setValidatedLocationList(validated);
+          setSavedLocationList(saved);
+      },
+  });
+  
+
     
-      //runs on mount only, sets selectedLocation to the first location in locationList by default
-      //useEffect(() => {
-       // if (selectedLocation) {
-        //  return;
-       // }
-        //(NOT SURE IF TRU POST RQ!!) checking for if the loading state is false prevents this effect from setting selected location before the initial data load then goes on to
-       // if (locationList && locationList.length > 0 && loadingSelectedLocation === false) {
-        //  setSelectedLocation(locationList[0]);
-        //  console.log('selected location set in context');
-        
-       // }
-      //}, []); //locationList, selectedLocation
+      const locationListIsSuccess = isSuccess;
+     
     
     
       const createLocationMutation = useMutation({
@@ -93,8 +107,7 @@ const useLocationFunctions = () => {
               const updatedList = old ? old.filter((location) => location.id !== data.id) : [];
               return updatedList;
           });
-          
-          // Invalidate the cache to trigger new fetch
+           
           queryClient.invalidateQueries(['locationList']);
           
           console.log('Successfully deleted location:', data);
@@ -130,11 +143,7 @@ const useLocationFunctions = () => {
     };
     
     
-    
-    
      
-    
-      //sets temp or fave when a location is selected
       useEffect(() => {
         if (selectedLocation && selectedLocation.id) {
           const isTemp = String(selectedLocation.id).startsWith('temp');
@@ -152,57 +161,123 @@ const useLocationFunctions = () => {
       }, [selectedLocation, faveLocationList]); // Removed faveLocationList from dependencies
       //faveLocationList
     
+      //this sorts it faster 
       useEffect(() => { 
-        if (locationList) {
-            const { validated, saved } = locationList.reduce((acc, location) => {
-                if (location.validatedAddress) {
+       if (locationList) {
+          const { validated, saved } = locationList.reduce((acc, location) => {
+               if (location.validatedAddress) {
                     acc.validated.push(location);  // Add to validated list
                 } 
-                if (!String(location.id).startsWith('temp')) {
+               if (!String(location.id).startsWith('temp')) {
                     acc.saved.push(location);
                 }
                 return acc;
             }, { validated: [], saved: [] });
             
             setValidatedLocationList(validated); 
-            setSavedLocationList(saved);
-        }
+           setSavedLocationList(saved);
+       }
     }, [locationList]);
+
+
+    const sortLocationList = () => { 
+      if (locationList && locationList !== undefined) {
+        const { validated, saved } = locationList.reduce(
+            (acc, location) => {
+                if (location.validatedAddress) {
+                    acc.validated.push(location); // Add to validated list
+                }
+                if (!String(location.id).startsWith('temp')) {
+                    acc.saved.push(location); // Add to saved list
+                }
+                return acc;
+            },
+            { validated: [], saved: [] }
+        );
+    
+        setValidatedLocationList(validated); 
+        setSavedLocationList(saved);
+      }
+    };
+
+
+    useEffect(() => {
+      if (friendDashboardData && locationList) {
+        ids = getFaveLocationIds();
+        console.log('use effect ids', ids);
+        populateFaveLocationsList(ids);
+      };
+
+    }, [friendDashboardData, locationList]);
+
+    const sortData = (locationData) => { 
+      const { validated, saved } = locationData.reduce(
+          (acc, location) => {
+              if (location.validatedAddress) {
+                  acc.validated.push(location); // Add to validated list
+              }
+              if (!String(location.id).startsWith('temp')) {
+                  acc.saved.push(location); // Add to saved list
+              }
+              return acc;
+          },
+          { validated: [], saved: [] }
+      );
+
+      return { validated, saved };
+  
+      //return { validated, saved };
+  };
+ 
     
      
     
-    const useFetchAdditionalDetails = (location, enabled) => {
-        return useQuery({
-          queryKey: ['additionalDetails', location?.id], // Unique key based on location ID
-          queryFn: async () => {
-            if (location && location.id) {
-              const details = await fetchLocationDetails({
-                address: encodeURIComponent(`${location.title} ${location.address}`),
-                lat: parseFloat(location.latitude),
-                lon: parseFloat(location.longitude),
-              });
-              console.log('Fetched additional location details...');
-              return details;
-            } else {
-              console.log('No location provided. Returning null.');
-              return null;
-            }
-          },
-          enabled, // Only run the query if enabled is true
-          onError: (err) => {
-            console.error('Error fetching location details:', err);
-          },
+const useFetchAdditionalDetails = (location, enabled) => {
+  const queryClient = useQueryClient();  
+ 
+  return useQuery({
+    queryKey: ['additionalDetails', location?.id], 
+    queryFn: async () => {
+      if (location && location.id) { 
+        const cachedData = queryClient.getQueryData(['additionalDetails', location.id]);
+        if (cachedData) {
+          console.log('Cache hit for location:', location.id);
+          console.log('Cached data:', cachedData);
+          return cachedData;  
+        }
+
+        console.log('Cache miss for location:', location.id); 
+        const details = await fetchLocationDetails({
+          address: encodeURIComponent(`${location.title} ${location.address}`),
+          lat: parseFloat(location.latitude),
+          lon: parseFloat(location.longitude),
         });
-      };
+
+        console.log('Fetched additional location details...');
+        return details;
+      } else {
+        console.log('No location provided. Returning null.');
+        return null;
+      }
+    },
+    enabled, 
+    onError: (err) => {
+      console.error('Error fetching location details:', err);
+    },
+  });
+};
       const clearAdditionalDetails = () => {
         setAdditionalDetails(null);
       };
     
     const populateFaveLocationsList = (locationIds) => {
+      if (locationIds && locationIds !== undefined) {
+
         const favoriteLocations = locationList.filter(location => locationIds.includes(location.id));
         if (JSON.stringify(faveLocationList) !== JSON.stringify(favoriteLocations)) {
             setFaveLocationList(favoriteLocations);
         }
+      }
     };
     
     
@@ -221,6 +296,8 @@ const useLocationFunctions = () => {
     return { 
         locationList, 
         isFetching,
+        locationListIsSuccess,
+        sortLocationList,
         handleCreateLocation,
         createLocationMutation,
         handleDeleteLocation,

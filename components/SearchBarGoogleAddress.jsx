@@ -1,3 +1,5 @@
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -11,8 +13,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 
 const SearchBarGoogleAddress = () => {
-  const { locationList, setTempLocationList, tempLocationList, setSelectedLocation, selectedLocation } = useLocationFunctions();
+  const { locationList, setTempLocationList, tempLocationList } = useLocationFunctions();
   const navigation = useNavigation();
+  const [ selectedLocation, setSelectedLocation ] = useState();
   const [listViewDisplayed, setListViewDisplayed] = useState(true);
   const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
   const queryClient = useQueryClient();
