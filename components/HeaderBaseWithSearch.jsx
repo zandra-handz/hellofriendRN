@@ -34,51 +34,47 @@ const HeaderBaseWithSearch = ({
             <ArrowLeftCircleOutline height={30} width={30} color={themeAheadOfLoading.fontColor}/>
         </TouchableOpacity> 
         <Text 
-  style={[
-    styles.headerText, 
-    themeStyles.headerText, 
-    {
-        color: themeAheadOfLoading.fontColor, 
-        paddingLeft: 20, 
-    }
-  ]}
->
-  {headerTitle}
-</Text>
+          style={[
+            styles.headerText, 
+            themeStyles.headerText, 
+            {
+                color: themeAheadOfLoading.fontColor, 
+                paddingLeft: 20, 
+            }
+          ]}
+        >
+          {headerTitle}
+        </Text>
 
 
+      </View>  
+      <View style={{width: '40%', zIndex: 10, flexDirection: 'row', alignContent: 'center', alignItems: 'center', height: 'auto' }}>
+      
+      <SearchBar data={componentData ? componentData : []} onPress={onPress} searchKeys={dataFieldToSearch} />
       </View> 
-      {componentData && (
-      <View style={{width: '40%', flexDirection: 'row', alignContent: 'center', alignItems: 'center', height: 'auto' }}>
-      <SearchBar data={componentData} onPress={onPress} searchKeys={dataFieldToSearch} />
-      </View>
-      )}
       
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: 'row',
+  headerContainer: { 
+    flexDirection: 'row', 
+    overflow: 'visible',
     padding: 10,
     paddingTop: 66, //FOR TEST BUILD: 12 For dev: 66
     paddingHorizontal: 10, 
     alignItems: 'center',  
     justifyContent: 'space-between',
     height: 110,//FOR TEST BUILD: 60 (or 56?) //For dev: 110
+    zIndex: 10,
 
   },
   headerText: {
     fontSize: 18,
     paddingVertical: 2, 
     fontFamily: 'Poppins-Bold',
-  },
-  usernameText: {
-    fontSize: 14,
-    paddingVertical: 2, 
-    fontFamily: 'Poppins-Bold',
-  },
+  },  
 });
 
 export default HeaderBaseWithSearch;

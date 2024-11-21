@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useNavigation } from '@react-navigation/native';
+ import { useNavigation } from '@react-navigation/native';
 
-const ButtonLocation = ({ location, onPress, color = 'white',  iconColor = 'white', icon: Icon, iconSize = 34 }) => {
+const ButtonLocation = ({ location, color = 'white',  iconColor = 'white', icon: Icon, iconSize = 34 }) => {
 
   const navigation = useNavigation();  
  

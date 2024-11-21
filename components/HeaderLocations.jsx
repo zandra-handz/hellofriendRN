@@ -1,16 +1,21 @@
-import React from 'react'; 
+import React, { useEffect, useLayoutEffect } from 'react'; 
+import { View } from 'react-native';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import HeaderBaseWithSearch from '../components/HeaderBaseWithSearch';
 import { useNavigation } from '@react-navigation/native';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+ 
 
 
 const HeaderLocations = () => {
 
-        const { locationList, selectedLocation, setSelectedLocation } = useLocationFunctions();
+        const { locationList, accessLocationListCacheData } = useLocationFunctions();
         const navigation = useNavigation();
+        const queryClient = useQueryClient();
 
         const handleGoToLocationViewScreen = (location) => { 
-            if (selectedLocation) {
+            if (location) {
 
            
             navigation.navigate('Location', { location: location });
@@ -19,16 +24,21 @@ const HeaderLocations = () => {
 
 
 
+          const locationsCache = accessLocationListCacheData();
+
+
+
+useLayoutEffect(() => { 
+        console.log(locationList);
+        const locationsCache = accessLocationListCacheData();
+        console.log('LOCATION CACHE', locationsCache);
+        
+ 
+}, []);
+
+
+
         const handlePress = (item) => {
-            console.log(item);
-
-            //const locationMatch = locationList.filter(location => 
-             //   location.id === item.id // Adjust this comparison based on your property
-            //);
-
-            //console.log(locationMatch);
-            setSelectedLocation(item);
-            console.log('attempting to set location from header locations...');
             handleGoToLocationViewScreen(item);
 
 
@@ -38,11 +48,11 @@ const HeaderLocations = () => {
 
 
         return(
-            <> 
+            <View style={{zIndex: 1000, overflow: 'visible'}}> 
             {locationList && ( 
-            <HeaderBaseWithSearch headerTitle="Locations" onPress={handlePress} componentData={locationList} dataFieldToSearch={['title', 'address']} />
+            <HeaderBaseWithSearch headerTitle="Locations" onPress={handlePress} componentData={locationsCache} dataFieldToSearch={['title', 'address']} />
             )}
-            </>
+            </View>
         );
 
 };

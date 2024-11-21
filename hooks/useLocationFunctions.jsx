@@ -5,7 +5,7 @@ import { useAuthUser } from '../context/AuthUserContext'; // Import the AuthUser
 import { useMessage } from '../context/MessageContext';
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-
+ 
 
 const useLocationFunctions = () => {
     const [faveLocationList, setFaveLocationList] = useState([]);
@@ -74,6 +74,22 @@ const useLocationFunctions = () => {
             console.log('Actual locationList after mutation:', actualLocationList);
         },
     });
+
+    const accessLocationListCacheData = () => {
+
+      if (isSuccess) {
+
+    
+
+      try {
+      const locationCache = queryClient.getQueryData(['locationList']);
+      return locationCache;
+      } catch (error) {
+        console.error('no location cached data');
+        return null;
+      }
+    }
+    }
     
      
     const handleCreateLocation = async (friends, title, address, parkingTypeText, trimmedCustomTitle, personalExperience) => {
@@ -97,8 +113,137 @@ const useLocationFunctions = () => {
       }
     };
     const RESET_DELAY = 1000; 
+
+
+
+    const removeFromFavesMutation = useMutation({
+      mutationFn: (data) => removeFromFriendFavesLocations(data),
+      onSuccess: (data) => {
+        console.log(`data in deleteFromFavesMutation: `, data);
+        removeLocationFromFaves(data);
+        console.log('location removed faves!', data.locations);
+        const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
+        console.log('Friend dashboard data accessed from location hook:', friendData);
+        
+        queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
+          if (!old || !old[0]) {
+              return {
+                  0: {
+                      friend_faves: {
+                          locations: data.locations,
+                      },
+                      ...old?.[0],
+                  },
+              };
+          }
+      
+          const updatedDashboardData = {
+              ...old,
+              0: {
+                  ...old[0],
+                  friend_faves: {
+                      ...old[0].friend_faves,
+                      locations: data.locations,
+                  },
+              },
+          };
+      
+          console.log(updatedDashboardData);
+          return updatedDashboardData;
+      });
+      
+      },
+      onError: (error) => {
+        console.error('Error removing location to friend faves:', error);
+    },
+    onSettled: () => { 
+      setTimeout(() => {
+          removeFromFavesMutation.reset();
+      }, RESET_DELAY);
+  },
+    })
+
+
+    const handleRemoveFromFaves = async (friendId, locationId) => {
+      const favoriteLocationData = {
+        friendId: friendId,
+        userId: authUserState.user.id, 
+        locationId: locationId
+      };
+
+      try {
+        await removeFromFavesMutation.mutateAsync(favoriteLocationData);
+
+
+      } catch (error) {
+        console.error('Error removing location from friend faves: ', error);
+      }
+    }
+
+    const addToFavesMutation = useMutation({
+      mutationFn: (data) => addToFriendFavesLocations(data),
+      onSuccess: (data) => {
+        console.log(`data in addToFavesMutation: `, data);
+        addLocationToFaves(data);
+        console.log('location added to faves!', data.locations);
+        const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
+        console.log('Friend dashboard data accessed from location hook:', friendData);
+        
+        queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
+          if (!old || !old[0]) {
+              // Initialize if `old` or `old[0]` is missing
+              return {
+                  0: {
+                      friend_faves: {
+                          locations: data.locations,
+                      },
+                      ...old?.[0],
+                  },
+              };
+          }
+      
+          const updatedDashboardData = {
+              ...old,
+              0: {
+                  ...old[0],
+                  friend_faves: {
+                      ...old[0].friend_faves,
+                      locations: data.locations,
+                  },
+              },
+          };
+      
+          console.log(updatedDashboardData);
+          return updatedDashboardData;
+      });
+      
+      },
+      onError: (error) => {
+        console.error('Error adding location to friend faves:', error);
+    },
+    onSettled: () => { 
+      setTimeout(() => {
+          addToFavesMutation.reset();
+      }, RESET_DELAY);
+  },
+    })
     
-    
+    const handleAddToFaves = async (friendId, locationId) => {
+      const favoriteLocationData = {
+        friendId: friendId,
+        userId: authUserState.user.id, 
+        locationId: locationId
+      };
+
+      try {
+        await addToFavesMutation.mutateAsync(favoriteLocationData);
+
+
+      } catch (error) {
+        console.error('Error adding location to friend faves: ', error);
+      }
+    }
+
     const deleteLocationMutation = useMutation({
       mutationFn: (data) => deleteLocation(data),
       onSuccess: (data) => {
@@ -115,8 +260,7 @@ const useLocationFunctions = () => {
       onError: (error) => {
           console.error('Error deleting location:', error);
       },
-      onSettled: () => {
-          // Delay resetting mutation state
+      onSettled: () => { 
           setTimeout(() => {
               deleteLocationMutation.reset();
           }, RESET_DELAY);
@@ -210,24 +354,6 @@ const useLocationFunctions = () => {
 
     }, [friendDashboardData, locationList]);
 
-    const sortData = (locationData) => { 
-      const { validated, saved } = locationData.reduce(
-          (acc, location) => {
-              if (location.validatedAddress) {
-                  acc.validated.push(location); // Add to validated list
-              }
-              if (!String(location.id).startsWith('temp')) {
-                  acc.saved.push(location); // Add to saved list
-              }
-              return acc;
-          },
-          { validated: [], saved: [] }
-      );
-
-      return { validated, saved };
-  
-      //return { validated, saved };
-  };
  
     
      
@@ -300,6 +426,8 @@ const useFetchAdditionalDetails = (location, enabled) => {
         sortLocationList,
         handleCreateLocation,
         createLocationMutation,
+        handleAddToFaves,
+        handleRemoveFromFaves,
         handleDeleteLocation,
         deleteLocationMutation,
         isDeletingLocation,
@@ -320,7 +448,9 @@ const useFetchAdditionalDetails = (location, enabled) => {
         isTemp, 
         isFave,
         useFetchAdditionalDetails,  
-        clearAdditionalDetails 
+        clearAdditionalDetails,
+
+        accessLocationListCacheData
     };
 
 }

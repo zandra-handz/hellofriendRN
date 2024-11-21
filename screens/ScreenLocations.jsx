@@ -2,21 +2,18 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-
 import { Ionicons } from '@expo/vector-icons'; 
 
 import ButtonSearchGoogleMap from '../components/ButtonSearchGoogleMap';
 import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
-import ItemLocationFaveMulti from '../components/ItemLocationFaveMulti';
-import ItemLocationSavedMulti from '../components/ItemLocationSavedMulti';
-import ItemLocationTempMulti from '../components/ItemLocationTempMulti';
-import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
+import LocationsFriendFavesList from '../components/LocationsFriendFavesList';
+import LocationsSavedList from '../components/LocationsSavedList';
+ import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
 import CustomTabBar from '../components/CustomTabBar';
 import LoadingPage from '../components/LoadingPage';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import useLocationFunctions from '../hooks/useLocationFunctions';
-//import { useLocationList } from '../context/LocationListContext';
 import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
  
@@ -24,27 +21,22 @@ const Tab = createBottomTabNavigator();
 
 const ScreenLocations = ({ route, navigation }) => {
   const { themeStyles } = useGlobalStyle();
-  const { locationList, isFetching } = useLocationFunctions();
+  const { locationList, faveLocationList, isFetching } = useLocationFunctions();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend } = useSelectedFriend();
   
   const showBottomButtons = false;
 
-  const RecentlyViewedScreen = () => (
-    <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <ItemLocationTempMulti horizontal={false} />
-    </View>
-  );
 
   const FavoritesScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <ItemLocationFaveMulti horizontal={false} />
+      <LocationsFriendFavesList locations={faveLocationList} />
     </View>
   );
 
   const SavedLocationsScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <ItemLocationSavedMulti locationList={locationList} horizontal={false} />
+      <LocationsSavedList locationList={locationList} />
     </View>
   );
 
@@ -69,12 +61,13 @@ const ScreenLocations = ({ route, navigation }) => {
           screenOptions={({ route }) => ({
             tabBarStyle: {
               backgroundColor: themeAheadOfLoading.darkColor,
-              position: 'absolute',
+              //position: 'absolute',
               flexDirection: 'row',
               top: 0, 
               elevation: 0,
               shadowOpacity: 0,
               borderTopWidth: 0, 
+              zIndex: 0,
             }, 
             tabBarActiveTintColor: themeAheadOfLoading.fontColor,
             tabBarInactiveTintColor: themeAheadOfLoading.fontColor,
@@ -84,10 +77,9 @@ const ScreenLocations = ({ route, navigation }) => {
             },
           })}
         >
-          <Tab.Screen name={selectedFriend.name} component={SavedLocationsScreen} />
+          <Tab.Screen name={selectedFriend.name} component={FavoritesScreen} />
           
-          <Tab.Screen name="Others" component={SavedLocationsScreen} />
-          <Tab.Screen name="Recent" component={SavedLocationsScreen} />
+          <Tab.Screen name="All" component={SavedLocationsScreen} /> 
        
         </Tab.Navigator>
 
@@ -105,7 +97,8 @@ const ScreenLocations = ({ route, navigation }) => {
         <View style={styles.loadingWrapper}>
         <LoadingPage
             loading={isFetching} 
-            spinnnerType='wander'
+            spinnerType='grid'
+            color={themeAheadOfLoading.lightColor}
             includeLabel={true}
             label=""
         />
@@ -120,17 +113,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', 
   },
   loadingWrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  
   sectionContainer: {
     paddingTop: 24,
     width: '100%',
-    flex: 1,
+    flex: 1, 
   },
 });
 

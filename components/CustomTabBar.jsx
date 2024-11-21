@@ -4,7 +4,6 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-na
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import { useFriendList } from '../context/FriendListContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const { width } = Dimensions.get('window');
 
@@ -67,8 +66,10 @@ const styles = StyleSheet.create({
     top: 0,
     width: '100%',
     height: 60,
+    zIndex: 1,
   },
   tabButton: {
+    zIndex: 1,
     flex: 1,
     paddingBottom: 0,
     paddingTop: '1%',

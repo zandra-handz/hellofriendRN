@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-
-import { useAuthUser } from '../context/AuthUserContext';
+ 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList} from '../context/FriendListContext';
 
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
-import InfoOutline from '../assets/svgs/info-outline.svg';
+
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -16,10 +15,9 @@ const HeaderBaseButtonComponent = ({
     buttonComponent,
     
 }) => {
-
-    const { authUserState } = useAuthUser();
-    const { themeStyles } = useGlobalStyle();
-    const { calculatedThemeColors } = useSelectedFriend();
+ 
+    const { themeStyles } = useGlobalStyle(); 
+    const { themeAheadOfLoading } = useFriendList();
     const navigation = useNavigation();
 
     const handleNavigateBack = () => {
@@ -27,10 +25,10 @@ const HeaderBaseButtonComponent = ({
       };
 
   return (
-    <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: calculatedThemeColors.darkColor}]}>
+    <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: themeAheadOfLoading.darkColor}]}>
       <View style={{flexDirection: 'row', width: '60%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
         <TouchableOpacity onPress={handleNavigateBack}>
-        <ArrowLeftCircleOutline height={30} width={30}   color={calculatedThemeColors.fontColor}/>
+        <ArrowLeftCircleOutline height={30} width={30}   color={themeAheadOfLoading.fontColor}/>
 
         </TouchableOpacity> 
         <Text 
@@ -38,15 +36,14 @@ const HeaderBaseButtonComponent = ({
     styles.headerText, 
     themeStyles.headerText, 
     {
-        color: calculatedThemeColors.fontColor, 
+        color: themeAheadOfLoading.fontColor, 
         paddingLeft: 20, 
     }
   ]}
 >
   {headerTitle}
   
-</Text>
-
+</Text> 
 
       </View> 
       

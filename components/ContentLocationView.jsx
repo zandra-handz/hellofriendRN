@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import ButtonSaveLocation from '../components/ButtonSaveLocation';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
 import SectionCustomerReviews from '../components/SectionCustomerReviews';
@@ -20,18 +20,11 @@ import StylingRating from '../components/StylingRating';
 const ContentLocationView = ({ location }) => {
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
-    const { clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
-    const { loadingAdditionalDetails, useFetchAdditionalDetails} = useLocationFunctions();
-    
-    const navigation = useNavigation();
-    const [isTemp, setIsTemp] = useState(false);
-
-    const { calculatedThemeColors } = useSelectedFriend();
-    const [refreshing, setRefreshing] = useState(false); 
+    const { loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
+   
+    const navigation = useNavigation();  
     const [isFetching, setIsFetching] = useState(false);
-  
-    
-  
+   
     const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(location, isFetching);
   
     const handleRefresh = () => {
@@ -44,12 +37,7 @@ const ContentLocationView = ({ location }) => {
            clearAdditionalDetails();  
           }
     }, [location]);
-
-    useEffect(() => {
-        if (location && location.id) {
-            setIsTemp(String(location.id).startsWith('temp'));
-        }
-    }, [location]); 
+ 
 
     const navigateToLocationsScreen = () => {
         navigation.navigate('Locations'); 
@@ -66,7 +54,7 @@ const ContentLocationView = ({ location }) => {
 
     return (
         <>   
-                <View style={[styles.container, themeStyles.genericTextBackground]}> 
+          <View style={[styles.container, themeStyles.genericTextBackground]}> 
                       
 
                 <View> 
@@ -81,7 +69,7 @@ const ContentLocationView = ({ location }) => {
           <View style={[styles.detailRow, {backgroundColor: themeAheadOfLoading.darkColor}]}>
             <View style={{height: 'auto', backgroundColor: themeAheadOfLoading.darkColor, alignItems: 'flex-end', backgroundColor: 'transparent', justifyContent: 'center', width: '100%'}}>
             <ButtonSaveLocation location={location} />
-          <ButtonDirections address={location.address} buttonColor={'blue'} fontColor={calculatedThemeColors.fontColor} backgroundColor={calculatedThemeColors.darkColor} />
+          <ButtonDirections address={location.address} buttonColor={'blue'} fontColor={themeAheadOfLoading.fontColor} backgroundColor={themeAheadOfLoading.darkColor} />
 
             </View> 
           </View> 
@@ -98,9 +86,9 @@ const ContentLocationView = ({ location }) => {
         </View>
 
       <Button
-        title={refreshing ? 'Refreshing...' : 'Load Details'}
+        title={'Load Details'}
         onPress={handleRefresh}
-        disabled={refreshing}
+        disabled={false}
         style={styles.refreshButton}
       />
       {loadingAdditionalDetails ? (

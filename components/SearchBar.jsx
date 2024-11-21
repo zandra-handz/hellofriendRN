@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   container: {  
     width: '100%',  
     flex: 1, 
-    zIndex: 0,
+    zIndex: 2,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -132,12 +132,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 5,
     width: '100%',
-    zIndex: 3,
+    zIndex: 1000,
   },
   dropdownList: {
     paddingHorizontal: 10,
     borderRadius: 20,
-    zIndex: 3,
+    zIndex: 1000,
   },
   itemContainer: {
     paddingVertical: 0,

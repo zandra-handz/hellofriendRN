@@ -144,6 +144,7 @@ export const Layout = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: true, 
+          
           headerStyle: themeStyles.header,  
           headerTintColor: themeStyles.headerTextColor, 
           contentContainerStyle: { flexGrow: 1 }, 
@@ -207,7 +208,7 @@ export const Layout = () => {
                 name="Locations"
                 component={ScreenLocations}
                 options={{
-                  headerShown: true,
+                  headerShown: true, 
                   header: () => <HeaderLocations />,
                 }}
               />
@@ -215,7 +216,7 @@ export const Layout = () => {
                 name="Location"
                 component={ScreenLocation}
                 options={{
-                  headerShown: true,
+                  headerShown: true, 
                   header: () => <HeaderLocationSingle />,
                 }}
               />

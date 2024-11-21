@@ -15,7 +15,6 @@ import { Easing } from 'react-native-reanimated';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
-import { update } from 'firebase/database';
 
 const ITEM_HEIGHT = 160; // Define the height of each item
 
@@ -174,6 +173,7 @@ const MomentsList = (navigation) => {
                     <Text style={[styles.randomButtonText, {color: themeAheadOfLoading.fontColorSecondary}]}></Text>
                 </TouchableOpacity> 
                 <SearchBar data={capsuleList} borderColor={'transparent'} onPress={openMomentView} searchKeys={['capsule', 'typedCategory']} />
+            
             </View>
 <View style={styles.listContainer}>
     <Animated.FlatList
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center', 
         justifyContent: 'center',
-        zIndex: 2,
+        zIndex: 1000,
     },
     lizardTransform: { 
         position: 'absolute', 

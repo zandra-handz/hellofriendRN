@@ -4,8 +4,11 @@ import InputUpdateLocation from './InputUpdateLocation';
 import AlertSmall from '../components/AlertSmall';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 
-const MenuLocationOptions = ({ onEdit, onDelete, onHelp, closeMenu }) => {
-  const { selectedLocation } = useLocationFunctions();
+
+// I think I want to get rid of this completely and add the delete item slider
+// and pencil icon to edit maybe?
+const MenuLocationOptions = ({ location, onEdit, onDelete, onHelp, closeMenu }) => {
+ 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
   const openEditModal = () => {
@@ -57,13 +60,13 @@ const MenuLocationOptions = ({ onEdit, onDelete, onHelp, closeMenu }) => {
         modalContent={
           <InputUpdateLocation
             onClose={closeEditModal}
-            id={selectedLocation.id}
-            friends={selectedLocation.friends}
-            title={selectedLocation.title}
-            address={selectedLocation.address}
-            notes={selectedLocation.notes}
-            latitude={selectedLocation.latitude}
-            longitude={selectedLocation.longitude}
+            id={location.id}
+            friends={location.friends}
+            title={location.title}
+            address={location.address}
+            notes={location.notes}
+            latitude={location.latitude}
+            longitude={location.longitude}
           />
         }
         modalTitle={'Update Location'}

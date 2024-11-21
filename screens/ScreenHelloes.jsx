@@ -5,6 +5,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 import { fetchPastHelloes } from '../api'; 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import LoadingPage from '../components/LoadingPage';
 
 import ItemViewHello from '../components/ItemViewHello';
 import { Ionicons } from '@expo/vector-icons'; 
@@ -27,7 +28,7 @@ const ScreenHelloes = ({ route, navigation }) => {
     const [ selectedHello, setSelectedHello ] = useState(null);
     const [helloesInPersonList, setHelloesInPersonList] = useState([]);
 
-    const { data: helloesList, isLoading, isError } = useQuery({
+    const { data: helloesList, isLoading, isFetching, isError } = useQuery({
         queryKey: ['pastHelloes', selectedFriend?.id],
         queryFn: () => fetchPastHelloes(selectedFriend.id),
         enabled: !!selectedFriend,
@@ -80,14 +81,14 @@ const ScreenHelloes = ({ route, navigation }) => {
 
     return ( 
         <View style={[styles.container]}>
-                    {helloesList && helloesInPersonList && !isLoading ? (
+                    {helloesList && helloesInPersonList && !isFetching && (
                         <>  
                         <Tab.Navigator
                             tabBar={props => <CustomTabBar {...props} />}
                             screenOptions={({ route }) => ({
                                 tabBarStyle: {
                                 backgroundColor: themeAheadOfLoading.darkColor,
-                                position: 'absolute',
+                                //position: 'absolute',
                                 flexDirection: 'row',
                                 top: 0, 
                                 elevation: 0,
@@ -123,9 +124,18 @@ const ScreenHelloes = ({ route, navigation }) => {
 
                         </>
                         
-                    ) : (
-                        <Text>Loading...</Text>
-                    )} 
+                    )}
+                    {isFetching && (
+                    <View style={styles.loadingWrapper}>
+                    <LoadingPage
+                        loading={isFetching} 
+                        spinnerType='grid'
+                        color={themeAheadOfLoading.lightColor}
+                        includeLabel={true}
+                        label=""
+                    />
+                    </View>
+                    )}
             </View> )
 };
 
@@ -135,6 +145,11 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'space-between',
     },
+    loadingWrapper: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
     sectionContainer: {
         paddingTop: 24,
         width: '100%',

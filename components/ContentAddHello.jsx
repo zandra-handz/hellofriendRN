@@ -83,8 +83,7 @@ const ContentAddHello = () => {
     onSuccess: (data) => {queryClient.setQueryData(['pastHelloes'], (old) => {
             const updatedHelloes = old ? [data, ...old] : [data];
             return updatedHelloes; 
-
-        });
+            });
  
         const actualHelloesList = queryClient.getQueryData(['pastHelloes']);
         console.log('Actual HelloesList after mutation:', actualHelloesList);

@@ -6,51 +6,27 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg'; 
 import ButtonLocation from '../components/ButtonLocation'; 
 
-const ItemLocationSavedMulti = ({ 
-    locationList,
-    horizontal = true,
-    singleLineScroll = false, 
-    width = 70,
-    height = 70,
-    columns = 3, 
-    showBigSvg = false, 
+const LocationsSavedList = ({ 
+    locationList,  
 }) => {  
     const { themeStyles } = useGlobalStyle();
-
-   
-
 
     return (
         <View style={[styles.container, {height: '100%'}]}>
             <Text style={[styles.headerText, themeStyles.genericText]}>Saved</Text>
             <FlashList
                 data={locationList}
-                horizontal={horizontal && singleLineScroll}
+                horizontal={false}
                 keyExtractor={(location) => location.id.toString()}
                 renderItem={({ item: location }) => (
-                    <>
-                        {horizontal ? (
-                            <CardMicroLocation
-                                location={location}
-                                width={width}
-                                height={height}
-                                showBigSvg={showBigSvg}
-                                onPress={() => openModal(location)}
-                                SvgComponent={LocationSolidSvg}
-                                iconColor={'lightblue'}
-                                colorScheme={'green'}
-                            />
-                        ) : (
                             <ButtonLocation 
                                 location={location}  iconColor={themeStyles.genericText.color}
                                 color={themeStyles.genericText.color}
                                 icon={LocationSolidSvg} 
-                            />
-                        )}
-                    </>
+                            />  
                 )}
-                numColumns={horizontal && !singleLineScroll ? columns : 1}
-                columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
+                numColumns={1}
+                columnWrapperStyle={ null}
                 estimatedItemSize={99}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
@@ -82,4 +58,4 @@ const styles = StyleSheet.create({
     }, 
 });
 
-export default ItemLocationSavedMulti;
+export default LocationsSavedList;

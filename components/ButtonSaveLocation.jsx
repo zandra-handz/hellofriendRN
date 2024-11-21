@@ -17,7 +17,6 @@ import AlertConfirm from '../components/AlertConfirm';
 import ModalAddNewLocation from '../components/ModalAddNewLocation';
 
 import MenuLocationOptions from '../components/MenuLocationOptions';
-import { addToFriendFavesLocations, removeFromFriendFavesLocations } from '../api'; 
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import useLocationFunctions from '../hooks/useLocationFunctions';
@@ -30,8 +29,8 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
     const { authUserState } = useAuthUser();
     const { themeAheadOfLoading } = useFriendList();
     const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-    const { locationList, handleDeleteLocation, faveLocationList, deleteLocationMutation, addLocationToFaves, removeLocationFromFaves } = useLocationFunctions();
-    const [isATemp, setIsTemp ] = useState(false);
+    const { locationList, handleAddToFaves, handleRemoveFromFaves, handleDeleteLocation, faveLocationList, deleteLocationMutation, addLocationToFaves, removeLocationFromFaves } = useLocationFunctions();
+  
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModal2Visible, setModal2Visible] = useState(false);
     const [isMenuVisible, setMenuVisible] = useState(false);
@@ -40,13 +39,13 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
 
     const [ isFave, setIsFave ] = useState(false);
 
-    useLayoutEffect(() => {
-        console.log(faveLocationList);
+    useLayoutEffect(() => { 
         if (location) {
             setIsFave(faveLocationList.some(faveLocation => faveLocation.id === location.id));
+        
         };
 
-    }, [location]);
+    }, [location, faveLocationList]);
 
     const queryClient = useQueryClient();
 
@@ -96,48 +95,23 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
     };
     
 
-
-
-    const handleRemoveFromFaves = async () => {
+    const removeFromFaves = async () => {
         if  (selectedFriend && location && isFave) {
-            const response = await removeFromFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
-            removeLocationFromFaves(location.id);
-            const updatedFaves = response;
-            console.log(updatedFaves);
-
-            if (friendDashboardData && friendDashboardData.length > 0) {
-                const updatedFriendDashboardData = [...friendDashboardData];
-                updatedFriendDashboardData[0].friend_faves = updatedFaves;
-              
-                 queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], updatedFriendDashboardData);
-              
-                console.log('Location added to friend\'s favorites.');
-              }
+            handleRemoveFromFaves(selectedFriend.id, location.id);
             onClose();
         }
     };
 
-    const handleAddToFaves = async () => {
+    const addToFaves = async () => {
         try {
-          if (isTemp) { 
-            
-            const newLocationWithId = { ...location, id: Date.now().toString() }; // Generate a unique ID for the new location
-            //setLocationList([...locationList, newLocationWithId]);
+          if (String(location.id).startsWith('temp')) { 
+            console.log('location not a saved object yet/add code to ButtonSaveLocation pls');
+             
             setIsEditing(false); 
           } else {
 
-            // If the location is not temporary, update or add the location to the friend's favorites
             if (selectedFriend && location) {
-              const response = await addToFriendFavesLocations(authUserState.user.id, selectedFriend.id, location.id);
-              addLocationToFaves(location.id);
-              const updatedFaves = response;
-              console.log(updatedFaves);
-    
-              if (friendDashboardData && friendDashboardData.length > 0) {
-                friendDashboardData[0].friend_faves = updatedFaves;
-                console.log(friendDashboardData);
-                updateFriendDashboardData(friendDashboardData); 
-              }
+              handleAddToFaves(selectedFriend.id, location.id);
             }
             onClose();
           }
@@ -148,9 +122,9 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
 
       const onConfirmAction = () => {
         if (isFave) {
-          handleRemoveFromFaves(location.id);
+          removeFromFaves(location.id);
         } else {
-          handleAddToFaves(location);
+          addToFaves(location);
         }
       };
 
@@ -188,6 +162,7 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
             >
                 <View style={styles.modalBackground}>
                     <MenuLocationOptions
+                        location={location}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                         onHelp={handleHelp}

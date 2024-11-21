@@ -389,14 +389,14 @@ export const remixAllNextHelloes = async (userId) => {
     }
 };
 
-export const addToFriendFavesLocations = async (userId, friendId, locationId) => {
-
+export const addToFriendFavesLocations = async (data) => {
+    console.log(data);
     try {
-        const response = await axios.patch(`/friends/${friendId}/faves/add/location/`, {
+        const response = await axios.patch(`/friends/${data.friendId}/faves/add/location/`, {
             
-            friend: friendId,
-            user: userId, 
-            location_id: locationId // Use an array if locationId is a single ID
+            friend: data.friendId,
+            user: data.userId, 
+            location_id: data.locationId // Use an array if locationId is a single ID
         });
         console.log('Location added to favorites: ', response.data);
         return response.data;
@@ -408,17 +408,17 @@ export const addToFriendFavesLocations = async (userId, friendId, locationId) =>
 
 
 
-export const removeFromFriendFavesLocations = async (userId, friendId, locationId) => {
+export const removeFromFriendFavesLocations = async (data) => {
     
     try {
-        const response = await axios.patch(`/friends/${friendId}/faves/remove/location/`, {
-            user: userId,
-            friend: friendId,
-            location_id: locationId  
+        const response = await axios.patch(`/friends/${data.friendId}/faves/remove/location/`, {
+            user: data.userId,
+            friend: data.friendId,
+            location_id: data.locationId  
         });
         return response.data;
     } catch (error) {
-        console.error('Error adding favorite location:', error);
+        console.error('Error removing favorite location:', error);
         throw error;
     }
 };

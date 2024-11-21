@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import useLocationFunctions from '../hooks/useLocationFunctions';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 import { FlashList } from '@shopify/flash-list';
@@ -9,29 +8,11 @@ import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 
 import ButtonLocation from '../components/ButtonLocation';  
 
-const ItemLocationFaveMulti = ({ 
-    horizontal = true,
-    singleLineScroll = false,
-    width = 70,
-    height = 70,
-    columns = 3, 
-    showBigSvg = false, 
+const LocationsFriendFavesList = ({  
+    locations, 
 }) => {
     const { themeStyles } = useGlobalStyle();
-    const { themeAheadOfLoading } = useFriendList();
-    const { friendDashboardData } = useSelectedFriend();
-    const { locationList, faveLocationList, setSelectedLocation, populateFaveLocationsList } = useLocationFunctions();
-    
-    const [isFaveLocationReady, setIsFaveLocationReady] = useState(false);
-
-    useEffect(() => {
-        if (friendDashboardData && friendDashboardData.length > 0) {
-            const favoriteLocationIds = friendDashboardData[0]?.friend_faves?.locations || [];
-            populateFaveLocationsList(favoriteLocationIds);
-            setIsFaveLocationReady(true);
-        }
-    }, [locationList, friendDashboardData]);
-
+    const { themeAheadOfLoading } = useFriendList(); 
  
 
 
@@ -39,27 +20,24 @@ const ItemLocationFaveMulti = ({
 
     return (
         <View style={[styles.container]}>
-            {isFaveLocationReady && faveLocationList.length > 0 && (
+            {locations && locations.length > 0 && (
             <>
             <Text style={[styles.headerText, themeStyles.subHeaderText]}>Favorites</Text>
             <FlashList
-                data={faveLocationList}
-                horizontal={horizontal && singleLineScroll}
+                data={locations}
+                horizontal={false}
                 keyExtractor={(location) => location.id.toString()}
                 renderItem={({ item: location }) => (
-                    <>
-                   
-                    {!horizontal && (
+                     
                     <ButtonLocation 
                         location={location}     
                         iconColor={themeAheadOfLoading.darkColor}
                         color={themeStyles.genericText.color}
                         icon={LocationHeartSolidSvg} />
-                    )}
-                    </>
+                    
                 )}
-                numColumns={horizontal && !singleLineScroll ? columns : 1}
-                columnWrapperStyle={horizontal && !singleLineScroll ? styles.imageRow : null}
+                numColumns={1}
+                columnWrapperStyle={null}
                 estimatedItemSize={99}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
@@ -97,4 +75,4 @@ const styles = StyleSheet.create({
     }, 
 });
 
-export default ItemLocationFaveMulti;
+export default LocationsFriendFavesList;
