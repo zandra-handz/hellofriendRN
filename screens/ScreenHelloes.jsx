@@ -6,7 +6,7 @@ import { useFriendList } from '../context/FriendListContext';
 import { fetchPastHelloes } from '../api'; 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import LoadingPage from '../components/LoadingPage';
-
+import SearchBar from '../components/SearchBar';
 import ItemViewHello from '../components/ItemViewHello';
 import { Ionicons } from '@expo/vector-icons'; 
   
@@ -80,9 +80,14 @@ const ScreenHelloes = ({ route, navigation }) => {
  
 
     return ( 
-        <View style={[styles.container]}>
+        <View style={[styles.container, {backgroundColor: themeAheadOfLoading.darkColor}]}>
                     {helloesList && helloesInPersonList && !isFetching && (
                         <>  
+                    <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+
+                    <SearchBar data={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={() => {}} searchKeys={['address', 'title']} />
+
+                    </View>
                         <Tab.Navigator
                             tabBar={props => <CustomTabBar {...props} />}
                             screenOptions={({ route }) => ({
@@ -150,6 +155,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
       },
+      searchBarContent: {
+        width: '100%',
+        paddingHorizontal: '1%',
+        paddingVertical: '2%',
+        flexDirection: 'row',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        zIndex: 1000,
+    },
     sectionContainer: {
         paddingTop: 24,
         width: '100%',

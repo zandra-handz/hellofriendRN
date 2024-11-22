@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import TopLevelNavigationHandler from './TopLevelNavigationHandler'; // Adjust import path if necessary
 import { Alert, View, Text, useColorScheme } from 'react-native';
-import { NavigationContainer, DarkTheme } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { MessageContextProvider } from './context/MessageContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthUserProvider, useAuthUser } from './context/AuthUserContext';
@@ -15,9 +15,9 @@ import { SelectedFriendProvider } from './context/SelectedFriendContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font'; 
 import * as Notifications from 'expo-notifications'; 
-import { useGlobalStyle } from './context/GlobalStyleContext';
-import { useMessage } from './context/MessageContext';
+import { useGlobalStyle } from './context/GlobalStyleContext'; 
 import ResultMessage from './components/ResultMessage';
+import FullScreenSpinner from './components/FullScreenSpinner';
 
 import ScreenOnboardingFlow from './onboarding/ScreenOnboardingFlow';
 import ScreenHome from './screens/ScreenHome';
@@ -45,7 +45,7 @@ import HeaderWriteMoment from './components/HeaderWriteMoment';
 //import HeaderFriendFocus from './components/HeaderFriendFocus';
 import HeaderFriendSettings from './components/HeaderFriendSettings';
 import HeaderBase from './components/HeaderBase';  
-import HeaderLocations from './components/HeaderLocations';
+import HeaderBaseSolid from './components/HeaderBaseSolid';
 import HeaderHelloes from './components/HeaderHelloes';
 import HeaderLocationSingle from './components/HeaderLocationSingle';
 
@@ -140,11 +140,13 @@ export const Layout = () => {
   return (
     <NavigationContainer>
       <ResultMessage />
+      
       <TopLevelNavigationHandler>
+      <FullScreenSpinner />
       <Stack.Navigator
         screenOptions={{
           headerShown: true, 
-          
+          headerMode: 'screen',
           headerStyle: themeStyles.header,  
           headerTintColor: themeStyles.headerTextColor, 
           contentContainerStyle: { flexGrow: 1 }, 
@@ -201,15 +203,16 @@ export const Layout = () => {
                 component={ScreenHelloes}
                 options={{
                   headerShown: true,
-                  header: () => <HeaderHelloes />,
+                  header: () => <HeaderBaseSolid headerTitle='Helloes'/>,
                 }}
               />
               <Stack.Screen
                 name="Locations"
                 component={ScreenLocations}
                 options={{
+                  headerMode: 'screen',
                   headerShown: true, 
-                  header: () => <HeaderLocations />,
+                  header: () => <HeaderBaseSolid headerTitle='Locations' />,
                 }}
               />
               <Stack.Screen

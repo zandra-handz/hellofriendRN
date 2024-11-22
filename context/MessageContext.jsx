@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useAuthUser } from './AuthUserContext';
 import { useCapsuleList } from './CapsuleListContext';
+import { useUpcomingHelloes } from './UpcomingHelloesContext';
 
 
 const MessageContext = createContext();
@@ -19,14 +21,26 @@ export const useMessage = () => {
 export const MessageContextProvider = ({ children }) => {
   
     const { createMomentMutation, updateCapsuleMutation, deleteMomentMutation } = useCapsuleList();
- 
+    const { upcomingHelloesIsFetching, upcomingHelloesIsSuccess, newSuccess } = useUpcomingHelloes();
+    const { authUserState } = useAuthUser(); 
+
     const [messageData, setMessageData] = useState({
     result: false,
     resultData: null,
     resultsMessage: '',
   });
 
+  const [isFetchingData, setFetchingData ] = useState({fetching: false});
 
+
+  const passToSpinner = (fetching) => {
+    setFetchingData({fetching: fetching});
+    console.log(fetching);
+  };
+
+  const killSpinner = () => {
+    setFetchingData({fetching: false});
+  };
 
   const showMessage = (result, resultData, resultsMessage = 'Action successful') => {
     setMessageData({ result, resultData, resultsMessage });
@@ -39,9 +53,39 @@ export const MessageContextProvider = ({ children }) => {
 };
 
 useEffect(() => {
+  if (upcomingHelloesIsFetching) {
+    passToSpinner(upcomingHelloesIsFetching);
+  } else {
+    killSpinner();
+  }
+}, [upcomingHelloesIsFetching]);
+
+useEffect(() => {
+  if (upcomingHelloesIsSuccess) {
+      showMessage(true, null, `Next helloes are up to date!`);
+  }
+}, [upcomingHelloesIsSuccess]);
+
+
+useEffect(() => {
+  if (createMomentMutation.isFetching) {
+    passToSpinner(createMomentMutation.isFetching);
+  } else {
+    killSpinner();
+  }
+}, [createMomentMutation]);
+
+useEffect(() => {
     if (createMomentMutation.isSuccess) {
         showMessage(true, null, 'Moment saved!');
     }
+}, [createMomentMutation]);
+
+
+useEffect(() => {
+  if (createMomentMutation.isError) {
+      showMessage(true, null, '!! Moment could not be saved. Please try again.');
+  }
 }, [createMomentMutation]);
 
 useEffect(() => {
@@ -58,9 +102,16 @@ useEffect(() => {
 }, [updateCapsuleMutation]);
 
 
+useEffect(() => {
+  if (updateCapsuleMutation.isError) {
+      showMessage(true, null, '!! Moment could not be sent.');
+  }
+}, [updateCapsuleMutation]);
+
+
 
   return (
-    <MessageContext.Provider value={{ messageData, showMessage, hideMessage }}>
+    <MessageContext.Provider value={{ messageData, showMessage, hideMessage, passToSpinner, killSpinner, isFetchingData }}>
       {children}
     </MessageContext.Provider>
   );

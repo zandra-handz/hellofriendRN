@@ -24,7 +24,7 @@ const useLocationFunctions = () => {
   
     const { selectedFriend, friendDashboardData, getFaveLocationIds } = useSelectedFriend();
 
-    const { showMessage } = useMessage();
+    const { showMessage, passToSpinner, killSpinner } = useMessage();
 
 
  
@@ -58,6 +58,14 @@ const useLocationFunctions = () => {
   });
   
 
+  useEffect(() => { 
+    if (isFetching) {
+      passToSpinner({fetching: isFetching});
+    } else {
+      killSpinner();
+    }
+  }, [isFetching]);
+
     
       const locationListIsSuccess = isSuccess;
      
@@ -74,6 +82,15 @@ const useLocationFunctions = () => {
             console.log('Actual locationList after mutation:', actualLocationList);
         },
     });
+
+
+    useEffect(() => { 
+      if (createLocationMutation.isPending) {
+        passToSpinner({fetching: true});
+      } else {
+        killSpinner();
+      }
+    }, [createLocationMutation.isPending]);
 
     const accessLocationListCacheData = () => {
 

@@ -135,8 +135,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
 
  
    
- 
-      {closeResultMessage && ( 
+  
       <>
       <KeyboardAvoidingView
         style={styles.container}
@@ -144,7 +143,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 30}  
        
       >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
       
         <View 
         style={[styles.container]} 
@@ -185,8 +184,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
       </View>
       </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
-      </>
-      )}
+      </> 
     </LinearGradient>
   );
 };

@@ -13,10 +13,9 @@ import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
  
 
 import { useNavigation } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
 
 
-const HeaderBase = ({
+const HeaderBaseSolid = ({
   headerTitle = 'Header title here', 
   navigateTo = 'Moments', 
   icon,
@@ -38,13 +37,8 @@ const HeaderBase = ({
   const IconComponent = iconMap[icon] || null;
 
   return (
-      <LinearGradient
-          colors={[
-              themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor,
-          ]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.headerContainer}
+      <View
+          style={[styles.headerContainer, {backgroundColor: themeAheadOfLoading.darkColor}]}
       >
           {!loadingNewFriend && (
               <View style={styles.headerContent}>
@@ -58,7 +52,7 @@ const HeaderBase = ({
                       style={[
                           styles.headerText,
                           themeStyles.headerText,
-                          { color: themeAheadOfLoading.fontColorSecondary },
+                          { color: themeAheadOfLoading.fontColor },
                       ]}
                       numberOfLines={1}
                       ellipsizeMode="tail"
@@ -69,17 +63,17 @@ const HeaderBase = ({
                   <View style={styles.rightIconContainer}>
                       {IconComponent ? (
                           <TouchableOpacity onPress={() => navigation.navigate(navigateTo)}>
-                              <IconComponent width={30} height={30} fill={themeAheadOfLoading.fontColorSecondary} />
+                              <IconComponent width={30} height={30} fill={themeAheadOfLoading.fontColor} />
                           </TouchableOpacity>
                       ) : (
                           <View style={styles.defaultIconWrapper}>
-                              <LizardSvg width={74} height={74} color={themeAheadOfLoading.fontColorSecondary} style={styles.defaultIcon} />
+                              <LizardSvg width={74} height={74} color={themeAheadOfLoading.fontColor} style={styles.defaultIcon} />
                           </View>
                       )}
                   </View>
               </View>
           )}
-      </LinearGradient>
+      </View>
   );
 };
 
@@ -103,10 +97,10 @@ const styles = StyleSheet.create({
     position: 'absolute', 
     right: 60,  // Maintain a fixed distance from the right icon
     fontSize: 20,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Bold',
     textTransform: 'uppercase',
     width: '70%',  // Adjust width to prevent overlapping
-    textAlign: 'right',  // Keep the text aligned to the right
+    textAlign: 'left',  // Keep the text aligned to the right
   },
   rightIconContainer: {
     width: 40,
@@ -129,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeaderBase;
+export default HeaderBaseSolid;

@@ -16,9 +16,7 @@ const AlertFormSubmit = ({
   onConfirm,
   onCancel,
   saveMoment=false,
-  useSvgForCancelInstead,
-  confirmColor= '#4CAF50',
-  cancelColor='darkgreen',
+  useSvgForCancelInstead, 
   confirmText = 'OK',
   cancelText = 'Nevermind',
   showButtons = true  
@@ -66,21 +64,13 @@ const AlertFormSubmit = ({
           </View>
           }  
           <View style={[styles.fullBodyContainer, {height: formHeight}]}>  
-          {isMakingCall && ( 
-            <LoadingPage
-              loading={isMakingCall}
-            />
-
-
-          )}
-          {!isMakingCall && ( 
+  
           <>  
           <View style={styles.formBodyContainer}>
             {formBody}  
           </View> 
 
-          </>
-          )}
+          </> 
           </View>
         <View style={styles.buttonContainer}>
 
@@ -121,6 +111,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 1)',  
+    zIndex: 10,
   },
   modalContent: {
     width: '90%',
@@ -130,6 +121,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     flexDirection: 'column',
     justifyContent: 'space-between',
+    zIndex: 10,
   },
   headerContainer: {
     paddingTop: 10,

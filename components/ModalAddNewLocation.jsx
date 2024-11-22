@@ -34,20 +34,6 @@ const ModalAddNewLocation = ({
     const [showSaveMessage, setShowSaveMessage] = useState(false);
     const [isMakingCall, setIsMakingCall] = useState(false); 
 
- 
-
-    const debounce = (func, delay) => {
-        let timeoutId;
-        return (...args) => {
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-            timeoutId = setTimeout(() => {
-                func(...args);
-            }, delay);
-        };
-    };
-
     const onParkingTypeChange = (index) => {
         setParkingType(index); 
         setParkingTypeText(`${typeChoices[index]}`); 
@@ -68,19 +54,12 @@ const ModalAddNewLocation = ({
 
         try {
             await handleCreateLocation(friends, title, address, parkingTypeText, trimmedCustomTitle, personalExperience);
-            setShowSaveMessage(true);
-            setTimeout(() => setShowSaveMessage(false), 3000);
-            close(); // Close after submission completes
+             close(); // Close after submission completes
         } catch (error) {
             console.error('Error creating location:', error);
-        } finally {
-            setIsMakingCall(false); 
-        }
+        }  
     };
-
-    // Wrap handleSubmit with debounce
-    const debouncedHandleSubmit = useCallback(debounce(handleSubmit, 500), [handleSubmit]);
-
+ 
 
     return (
         <AlertFormSubmit
@@ -155,6 +134,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         justifyContent: 'space-between',
+        zIndex: 10,
     },
     title: {
         fontSize: 18, 

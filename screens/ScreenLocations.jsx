@@ -1,17 +1,15 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
+import SearchBar from '../components/SearchBar';
 import { Ionicons } from '@expo/vector-icons'; 
-
+ 
 import ButtonSearchGoogleMap from '../components/ButtonSearchGoogleMap';
 import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
 import LocationsFriendFavesList from '../components/LocationsFriendFavesList';
 import LocationsSavedList from '../components/LocationsSavedList';
  import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
-import CustomTabBar from '../components/CustomTabBar';
-import LoadingPage from '../components/LoadingPage';
-
+import CustomTabBar from '../components/CustomTabBar'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useFriendList } from '../context/FriendListContext';
@@ -21,11 +19,13 @@ const Tab = createBottomTabNavigator();
 
 const ScreenLocations = ({ route, navigation }) => {
   const { themeStyles } = useGlobalStyle();
-  const { locationList, faveLocationList, isFetching } = useLocationFunctions();
+  const { locationList, faveLocationList } = useLocationFunctions();
   const { themeAheadOfLoading } = useFriendList();
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend(); 
   
   const showBottomButtons = false;
+
+
 
 
   const FavoritesScreen = () => (
@@ -53,15 +53,19 @@ const ScreenLocations = ({ route, navigation }) => {
  
 
   return (
-    <View style={[styles.container, themeStyles.genericTextBackground]}>
-      {!isFetching && (
+    <View style={[styles.container, themeStyles.genericTextBackground]}
+> 
         <>
+                    <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+
+                <SearchBar data={locationList} placeholderText={'Search'} borderColor={'transparent'} onPress={() => {}} searchKeys={['address', 'title']} />
+            
+            </View>
           <Tab.Navigator
           tabBar={props => <CustomTabBar {...props} />}
           screenOptions={({ route }) => ({
             tabBarStyle: {
               backgroundColor: themeAheadOfLoading.darkColor,
-              //position: 'absolute',
               flexDirection: 'row',
               top: 0, 
               elevation: 0,
@@ -90,20 +94,8 @@ const ScreenLocations = ({ route, navigation }) => {
               <ButtonFindMidpoints />
             </View>
           )}
-        </>
-      )}
-        
-      {isFetching && (
-        <View style={styles.loadingWrapper}>
-        <LoadingPage
-            loading={isFetching} 
-            spinnerType='grid'
-            color={themeAheadOfLoading.lightColor}
-            includeLabel={true}
-            label=""
-        />
-        </View>
-        )}
+        </> 
+         
     
     </View>
   );
@@ -112,19 +104,24 @@ const ScreenLocations = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%', 
+    zIndex: 1,
+  }, 
+  searchBarContent: {
     width: '100%',
-    justifyContent: 'space-between', 
-  },
-  loadingWrapper: {
-    flex: 1,
+    paddingHorizontal: '1%',
+    paddingVertical: '2%',
+    flexDirection: 'row',
+    alignItems: 'center', 
     justifyContent: 'center',
-    alignItems: 'center',
-  },
+    zIndex: 1000,
+},
   
   sectionContainer: {
     paddingTop: 24,
     width: '100%',
     flex: 1, 
+    zIndex: 1,
   },
 });
 

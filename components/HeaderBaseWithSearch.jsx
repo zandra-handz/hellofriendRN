@@ -48,7 +48,7 @@ const HeaderBaseWithSearch = ({
 
 
       </View>  
-      <View style={{width: '40%', zIndex: 10, flexDirection: 'row', alignContent: 'center', alignItems: 'center', height: 'auto' }}>
+      <View style={{width: '40%', zIndex: 1000, elevation: 1000, flexDirection: 'row', alignContent: 'center', alignItems: 'center', height: 'auto' }}>
       
       <SearchBar data={componentData ? componentData : []} onPress={onPress} searchKeys={dataFieldToSearch} />
       </View> 

@@ -2,15 +2,14 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useNavigation } from '@react-navigation/native';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
+ 
 
 import ContentMomentFocus from '../components/ContentMomentFocus';
  
 const ScreenMomentFocus = ( ) => { 
 
-    const { themeStyles } = useGlobalStyle();
-    const navigation = useNavigation();
+    const { themeStyles } = useGlobalStyle(); 
 
 
      

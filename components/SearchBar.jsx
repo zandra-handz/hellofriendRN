@@ -3,7 +3,7 @@ import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Touchabl
 import Icon from 'react-native-vector-icons/Ionicons'; // Import the icon
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const SearchBar = ({ data, borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
+const SearchBar = ({ data, placeholderText='Search moments', borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]); 
   const { themeStyles } = useGlobalStyle();
@@ -54,7 +54,7 @@ const SearchBar = ({ data, borderColor='#ccc', onPress, searchKeys }) => {  // U
         <View style={[styles.inputContainer, themeStyles.genericTextBackground, {borderColor: borderColor}]}>
           <TextInput
             style={[styles.searchInput, themeStyles.genericText]}
-            placeholder="Search moments"
+            placeholder={placeholderText}
             placeholderTextColor={'darkgray'}
             value={searchQuery}
             onChangeText={handleSearch}
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   container: {  
     width: '100%',  
     flex: 1, 
-    zIndex: 2,
+    zIndex: 2, 
   },
   inputContainer: {
     flexDirection: 'row',
@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     width: '100%',
     zIndex: 1000,
+    elevation: 1000,
   },
   dropdownList: {
     paddingHorizontal: 10,
