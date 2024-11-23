@@ -218,10 +218,15 @@ export const Layout = () => {
               <Stack.Screen
                 name="Location"
                 component={ScreenLocation}
-                options={{
-                  headerShown: true, 
-                  header: () => <HeaderLocationSingle />,
-                }}
+                options={({ route }) => ({
+                  headerShown: true,
+                  header: () => (
+                    <HeaderLocationSingle 
+                      location={route.params?.location} 
+                      favorite={route.params?.favorite} 
+                    />
+                  ),
+                })}
               />
               <Stack.Screen
                 name="LocationSearch"

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 import { FlashList } from '@shopify/flash-list';
@@ -13,10 +13,18 @@ const LocationsFriendFavesList = ({
 }) => {
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList(); 
+    const { friendDashboardData } = useSelectedFriend();
+
+
+    const filterLocations = () => {
+        const favoriteLocations = locations.filter(location => friendDashboardData[0].friend_faves.locations.includes(location.id));
+        console.log('NEW FILTER FUNCTION');
+        return favoriteLocations;
+    };
+
+    //const faveLocations = filterLocations();
  
 
-
-  
 
     return (
         <View style={[styles.container]}>
@@ -30,7 +38,8 @@ const LocationsFriendFavesList = ({
                 renderItem={({ item: location }) => (
                      
                     <ButtonLocation 
-                        location={location}     
+                        location={location} 
+                        favorite={true}    
                         iconColor={themeAheadOfLoading.darkColor}
                         color={themeStyles.genericText.color}
                         icon={LocationHeartSolidSvg} />

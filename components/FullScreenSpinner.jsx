@@ -4,6 +4,7 @@ import { Flow, Swing, Chase, Circle, CircleFade, Fold, Grid, Pulse, Wander, Wave
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useMessage } from '../context/MessageContext';
 import { useFriendList } from '../context/FriendListContext';
+import  useLocationFunctions from '../hooks/useLocationFunctions';
 
 const spinners = {
   circle: Circle,
@@ -27,6 +28,7 @@ const FullScreenSpinner = ({
   const [showSpinner, setShowSpinner] = useState(false); // Initialize state with the loading prop
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
+  const{ isFetching, isLoading } = useLocationFunctions();
 
  
   useEffect(() => { 
@@ -38,6 +40,17 @@ const FullScreenSpinner = ({
       } 
  
   }, [isFetchingData]); 
+
+  useEffect(() => { 
+    
+    if (isFetching) {
+      setShowSpinner(true);
+    } else {
+      setShowSpinner(false);
+    } 
+
+}, [isFetching]); 
+
 
    if (!showSpinner) return null;
 

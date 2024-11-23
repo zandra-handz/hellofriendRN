@@ -10,13 +10,14 @@ import ButtonGoToLocationFunctions from '../components/ButtonGoToLocationFunctio
 const ScreenLocation = ( ) => { 
     const route = useRoute();
     const location = route.params?.location ?? null; 
+    const favorite = route.params?.favorite ?? false; 
 
     const { themeStyles } = useGlobalStyle();
 
      
     return (
         <View style={[styles.container, themeStyles.container]}> 
-            <ContentLocationView location={location} />
+            <ContentLocationView location={location} favorite={favorite} />
             <ButtonGoToLocationFunctions />
         </View>
     );

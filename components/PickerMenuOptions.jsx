@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import { useFriendList } from '../context/FriendListContext';
 const PickerMenuOptions = ({
   options = [],
@@ -18,7 +17,7 @@ const PickerMenuOptions = ({
 }) => {
 
   const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendList(); 
 
   return (
     <View style={styles.container}>

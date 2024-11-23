@@ -25,7 +25,7 @@ import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useQueryClient } from '@tanstack/react-query';
 
-const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
+const ButtonSaveLocation = ({ location, favorite=false, saveable=true, size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { authUserState } = useAuthUser();
     const { themeAheadOfLoading } = useFriendList();
     const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
@@ -39,13 +39,18 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
 
     const [ isFave, setIsFave ] = useState(false);
 
-    useLayoutEffect(() => { 
-        if (location) {
-            setIsFave(faveLocationList.some(faveLocation => faveLocation.id === location.id));
-        
-        };
+    //const isFavorite = friendDashboardData[0].friend_faves.locations.includes(location.id);
 
-    }, [location, faveLocationList]);
+    useEffect(() => { 
+        if (favorite && location && location.id) {
+            console.log('location id in button save',location.id);
+            setIsFave(true); 
+        } else if (friendDashboardData?.[0]?.friend_faves?.locations) {
+            setIsFave(friendDashboardData[0].friend_faves.locations.includes(location.id));
+        } else {
+            setIsFave(false); // Fallback case
+        }
+    }, [location]);
 
     const queryClient = useQueryClient();
 
@@ -123,8 +128,10 @@ const ButtonSaveLocation = ({ location, saveable=true, size = 11, iconSize = 16,
       const onConfirmAction = () => {
         if (isFave) {
           removeFromFaves(location.id);
+          setIsFave(false);
         } else {
           addToFaves(location);
+          setIsFave(true);
         }
       };
 

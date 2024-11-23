@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SearchBar from '../components/SearchBar';
@@ -21,16 +21,25 @@ const ScreenLocations = ({ route, navigation }) => {
   const { themeStyles } = useGlobalStyle();
   const { locationList, faveLocationList } = useLocationFunctions();
   const { themeAheadOfLoading } = useFriendList();
-  const { selectedFriend } = useSelectedFriend(); 
+  const { selectedFriend, friendDashboardData } = useSelectedFriend(); 
   
   const showBottomButtons = false;
+
+  const faveLocations = useMemo(() => {
+    console.log('Filtering favorite locations');
+    return locationList.filter(location =>
+      friendDashboardData[0].friend_faves.locations.includes(location.id)
+    );
+  }, [locationList, friendDashboardData]);
+
+//const faveLocations = filterLocations();
 
 
 
 
   const FavoritesScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <LocationsFriendFavesList locations={faveLocationList} />
+      <LocationsFriendFavesList locations={faveLocations} />
     </View>
   );
 

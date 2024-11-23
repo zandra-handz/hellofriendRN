@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
@@ -41,7 +41,7 @@ const ContentAddHello = () => {
  
 
   const { authUserState } = useAuthUser(); 
-  const { selectedFriend, setFriend, loadingNewFriend} = useSelectedFriend();
+  const { selectedFriend, setFriend, loadingNewFriend, friendDashboardData } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
@@ -60,11 +60,24 @@ const ContentAddHello = () => {
   const [deleteMoments, setDeleteMoments ] = useState(false); 
   
  
-  const { locationList, sortLocationList, locationListIsSuccess, faveLocationList, populateFaveLocationsList, savedLocationList } = useLocationFunctions();
+  const { locationList,  locationListIsSuccess, savedLocationList } = useLocationFunctions();
  
 
    
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
+
+  const faveLocations = useMemo(() => {
+
+    if (!friendDashboardData?.[0]?.friend_faves?.locations) {
+      return [];
+    }
+  
+    
+    return locationList.filter(location =>
+      friendDashboardData[0].friend_faves.locations.includes(location.id)
+    );
+  }, [locationList, friendDashboardData]);
+  
    
   const timeoutRef = useRef(null);
   
@@ -299,7 +312,7 @@ useEffect(() => {
              {locationListIsSuccess && (
               
              <PickerHelloLocation 
-                    faveLocations={faveLocationList}
+                    faveLocations={faveLocations}
                     savedLocations={savedLocationList}
                     buttonHeight={36}
                     buttonRadius={10}

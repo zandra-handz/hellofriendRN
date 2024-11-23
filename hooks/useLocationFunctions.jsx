@@ -58,13 +58,13 @@ const useLocationFunctions = () => {
   });
   
 
-  useEffect(() => { 
-    if (isFetching) {
-      passToSpinner({fetching: isFetching});
-    } else {
-      killSpinner();
-    }
-  }, [isFetching]);
+ // useEffect(() => { 
+   // if (isFetching) {
+     // passToSpinner({fetching: isFetching});
+   // } else {
+   //   killSpinner();
+   // }
+ // }, [isFetching]);
 
     
       const locationListIsSuccess = isSuccess;
@@ -95,8 +95,6 @@ const useLocationFunctions = () => {
     const accessLocationListCacheData = () => {
 
       if (isSuccess) {
-
-    
 
       try {
       const locationCache = queryClient.getQueryData(['locationList']);
@@ -136,11 +134,11 @@ const useLocationFunctions = () => {
     const removeFromFavesMutation = useMutation({
       mutationFn: (data) => removeFromFriendFavesLocations(data),
       onSuccess: (data) => {
-        console.log(`data in deleteFromFavesMutation: `, data);
-        removeLocationFromFaves(data);
-        console.log('location removed faves!', data.locations);
+        //console.log(`data in deleteFromFavesMutation: `, data);
+        //removeLocationFromFaves(data);
+        //console.log('location removed faves!', data.locations);
         const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
-        console.log('Friend dashboard data accessed from location hook:', friendData);
+        //console.log('Friend dashboard data accessed from location hook:', friendData);
         
         queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
           if (!old || !old[0]) {
@@ -200,11 +198,11 @@ const useLocationFunctions = () => {
     const addToFavesMutation = useMutation({
       mutationFn: (data) => addToFriendFavesLocations(data),
       onSuccess: (data) => {
-        console.log(`data in addToFavesMutation: `, data);
-        addLocationToFaves(data);
-        console.log('location added to faves!', data.locations);
+        //console.log(`data in addToFavesMutation: `, data);
+        //addLocationToFaves(data);
+        //console.log('location added to faves!', data.locations);
         const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
-        console.log('Friend dashboard data accessed from location hook:', friendData);
+        //console.log('Friend dashboard data accessed from location hook:', friendData);
         
         queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
           if (!old || !old[0]) {
@@ -362,14 +360,14 @@ const useLocationFunctions = () => {
     };
 
 
-    useEffect(() => {
-      if (friendDashboardData && locationList) {
-        ids = getFaveLocationIds();
-        console.log('use effect ids', ids);
-        populateFaveLocationsList(ids);
-      };
+   // useEffect(() => {
+     // if (friendDashboardData && locationList) {
+       // ids = getFaveLocationIds();
+       // console.log('use effect ids', ids);
+       // populateFaveLocationsList(ids);
+     // };
 
-    }, [friendDashboardData, locationList]);
+   // }, [friendDashboardData, locationList]);
 
  
     
@@ -450,20 +448,20 @@ const useFetchAdditionalDetails = (location, enabled) => {
         isDeletingLocation,
         isLoading, 
         validatedLocationList, 
-        faveLocationList, 
-        tempLocationList,
-        setTempLocationList,
+        //faveLocationList, 
+        //tempLocationList,
+        //setTempLocationList,
         savedLocationList,
         selectedLocation, 
         additionalDetails, 
         setSelectedLocation, 
-        populateFaveLocationsList, 
+        //populateFaveLocationsList, 
         addLocationToFaves, 
         removeLocationFromFaves,  
         loadingSelectedLocation,
         loadingAdditionalDetails,
-        isTemp, 
-        isFave,
+        //isTemp, 
+        //isFave,
         useFetchAdditionalDetails,  
         clearAdditionalDetails,
 

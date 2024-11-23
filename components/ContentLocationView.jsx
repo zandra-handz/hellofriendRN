@@ -1,3 +1,6 @@
+//  <ButtonSaveLocation location={location} favorite={favorite} />
+          
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 
@@ -17,7 +20,7 @@ import DisplayLocationNotes from '../components/DisplayLocationNotes';
 import StylingRating from '../components/StylingRating';
 
 
-const ContentLocationView = ({ location }) => {
+const ContentLocationView = ({ location, favorite }) => {
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
     const { loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
@@ -68,7 +71,7 @@ const ContentLocationView = ({ location }) => {
           <View style={styles.detailsColumn}> 
           <View style={[styles.detailRow, {backgroundColor: themeAheadOfLoading.darkColor}]}>
             <View style={{height: 'auto', backgroundColor: themeAheadOfLoading.darkColor, alignItems: 'flex-end', backgroundColor: 'transparent', justifyContent: 'center', width: '100%'}}>
-            <ButtonSaveLocation location={location} />
+          
           <ButtonDirections address={location.address} buttonColor={'blue'} fontColor={themeAheadOfLoading.fontColor} backgroundColor={themeAheadOfLoading.darkColor} />
 
             </View> 

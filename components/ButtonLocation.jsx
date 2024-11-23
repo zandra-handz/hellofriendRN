@@ -2,14 +2,14 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
  import { useNavigation } from '@react-navigation/native';
 
-const ButtonLocation = ({ location, color = 'white',  iconColor = 'white', icon: Icon, iconSize = 34 }) => {
+const ButtonLocation = ({ location, favorite=false, color = 'white',  iconColor = 'white', icon: Icon, iconSize = 34 }) => {
 
   const navigation = useNavigation();  
  
   
 
   const handleGoToLocationViewScreen = () => { 
-    navigation.navigate('Location', { location: location });
+    navigation.navigate('Location', { location: location, favorite: favorite });
   
   }; 
 

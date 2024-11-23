@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Text, Animated } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useMessage } from '../context/MessageContext';
+import { useLocationFunctions } from '../hooks/useLocationFunctions';
 
 //simple temporary popup message to let user know if action was successful
 //does not affect flow of app
@@ -15,12 +16,14 @@ import { useMessage } from '../context/MessageContext';
 
 const ResultMessage = ({   
   delay = 0,  
-  resultsDisplayDuration = 1800, // Duration to show results message (default 3 seconds)
+  resultsDisplayDuration = 1000, // Duration to show results message (default 3 seconds)
   messageDelay = 0, // Delay before the message appears (2 seconds)
 }) => { 
   const [showResultsMessage, setShowResultsMessage] = useState(false); // State for showing results message
   const { messageData, hideMessage } = useMessage();
   const { themeStyles } = useGlobalStyle();
+ 
+
 
   // Create animated values for the container's opacity
   const opacity = useRef(new Animated.Value(0)).current;

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React from 'react';
 
  import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 import PickerComplexList from '../components/PickerComplexList';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -20,6 +21,7 @@ const PickerHelloLocation = ({
     }) => { 
         
     const { themeStyles } = useGlobalStyle();
+    const { friendDataDashboard } = useSelectedFriend();
   
 
 
