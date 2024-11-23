@@ -4,7 +4,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Animated,  LayoutAnimation, Dimensions, TouchableOpacity, FlatList } from 'react-native';
-import { FlashList } from "@shopify/flash-list";
+
 import { useFriendList } from '../context/FriendListContext';
 import LizardSvg from '../assets/svgs/lizard.svg';
 import MomentCard from '../components/MomentCard';

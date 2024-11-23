@@ -9,7 +9,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 import ItemViewFooter from '../components/ItemViewFooter'; 
-import AlertImage from '../components/AlertImage';
+import ItemModal from '../components/ItemModal';
 import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
@@ -144,7 +144,7 @@ const ItemViewImage = ({ image, onClose }) => {
 
   return (
     <>
-      <AlertImage
+      <ItemModal
         isModalVisible={isModalVisible}
         toggleModal={closeModal}
         modalContent={
@@ -216,8 +216,7 @@ const ItemViewImage = ({ image, onClose }) => {
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
+  modalContainer: { 
     width: '100%', 
     justifyContent: 'space-between',
   }, 

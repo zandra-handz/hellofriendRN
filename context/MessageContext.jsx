@@ -22,7 +22,7 @@ export const MessageContextProvider = ({ children }) => {
   
     const { createMomentMutation, updateCapsuleMutation, deleteMomentMutation } = useCapsuleList();
     const { upcomingHelloesIsFetching, upcomingHelloesIsSuccess, newSuccess } = useUpcomingHelloes();
-    const { authUserState } = useAuthUser(); 
+    const { authUserState, signinMutation } = useAuthUser(); 
 
     const [messageData, setMessageData] = useState({
     result: false,
@@ -65,6 +65,27 @@ useEffect(() => {
       showMessage(true, null, `Next helloes are up to date!`);
   }
 }, [upcomingHelloesIsSuccess]);
+
+
+useEffect(() => {
+  if (signinMutation.isFetching) {
+    passToSpinner(signinMutation.isFetching);
+  } else {
+    killSpinner();
+  }
+}, [signinMutation]);
+
+useEffect(() => {
+  if (signinMutation.isSuccess && authUserState?.authenticated && authUserState?.user) {
+      showMessage(true, null, `Signed in as ${authUserState.user.username}!`);
+  } 
+}, [signinMutation]);
+
+useEffect(() => {
+  if (signinMutation.isError) {
+      showMessage(true, null, 'Oops! Could not sign in.');
+  }
+}, [signinMutation]);
 
 
 useEffect(() => {

@@ -6,7 +6,7 @@ import CompareTravel from '../components/CompareTravel';
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import LocationsOnMapColoredSvg from '../assets/svgs/locations-on-map-colored.svg'; 
 
-import AlertImage from '../components/AlertImage'; 
+import ItemModal from '../components/ItemModal'; 
 
 
 
@@ -20,13 +20,13 @@ const ButtonCalculateAndCompareTravel = () => {
 
     return (
         <View style={styles.container}>
-        <AlertImage
+        <ItemModal
             isModalVisible={isModalVisible} 
             toggleModal={closeModal} 
             modalContent={<CompareTravel/>}
             modalTitle={'Compare travel times'}
         > 
-      </AlertImage> 
+      </ItemModal> 
 
             
             <ButtonBottomActionBase

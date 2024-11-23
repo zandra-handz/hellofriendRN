@@ -58,12 +58,12 @@ const FullScreenSpinner = ({
 
   return (
     
-    <View style={[styles.container, {backgroundColor: themeStyles.genericText.backgroundColor}]}>
+    <View style={[styles.container, {backgroundColor: themeStyles.genericText.backgroundColor || 'transparent'}]}>
 
 
       {showSpinner && (
         <View style={[styles.spinnerContainer, {backgroundColor: 'transparent'}]}>
-          <Spinner size={spinnerSize} color={themeAheadOfLoading.darkColor} />
+          <Spinner size={spinnerSize} color={themeAheadOfLoading.darkColor || '#000002'} />
         </View>
       )}
     </View>

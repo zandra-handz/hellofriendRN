@@ -6,15 +6,14 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
-import ButtonBaseLargeHorScroll from '../components/ButtonBaseLargeHorScroll';
+import HomeScrollSoon from '../components/HomeScrollSoon';
 import HomeButtonGenericAdd from '../components/HomeButtonGenericAdd';
 import HomeButtonMomentAdd from '../components/HomeButtonMomentAdd';
 import HomeButtonUpNext from '../components/HomeButtonUpNext';
 import HomeButtonSelectedFriend from '../components/HomeButtonSelectedFriend';
 
 import { BlurView } from 'expo-blur'; 
-import HelloFriendFooter from '../components/HelloFriendFooter';
-import LoadingPage from '../components/LoadingPage';
+import HelloFriendFooter from '../components/HelloFriendFooter'; 
 
 const ScreenHome = ({ navigation }) => {
   
@@ -94,7 +93,7 @@ const ScreenHome = ({ navigation }) => {
                 {selectedFriend && (
                   <HomeButtonSelectedFriend  onPress={navigateToAddMomentScreen} borderRadius={40} borderColor="black" height={headerHeight} maxHeight={200}/>
                 )}
-                <ButtonBaseLargeHorScroll height={upcomingDatesTray} borderRadius={40} borderColor="black"/> 
+                <HomeScrollSoon height={upcomingDatesTray} borderRadius={40} borderColor="black"/> 
                 
                 <HelloFriendFooter /> 
               </Animated.View> 

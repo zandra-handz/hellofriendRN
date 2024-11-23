@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import AlertImage from '../components/AlertImage';
+import React from 'react';
+import { View, StyleSheet } from 'react-native'; 
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import SearchMapSvg from '../assets/svgs/search-map.svg';
-
-import CompareTravel from '../components/CompareTravel';
-
+ 
 
 
 

@@ -1,23 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native'; 
-import useLocationFunctions from '../hooks/useLocationFunctions'; 
-
-import { FlashList } from "@shopify/flash-list";
+ import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';  
 import ButtonHello from '../components/ButtonHello';
 
-const ItemHelloesMulti = ({ 
+const HelloesList = ({ 
     helloesData,
     onPress, 
     horizontal = true,
-    singleLineScroll = false, 
-    width = 70,
-    height = 70,
-    columns = 3, 
-    showBigSvg = false, 
-}) => { 
-    const { savedLocationList } = useLocationFunctions();
+    singleLineScroll = false,  
+    columns = 3,  
+}) => {  
     const { themeStyles } = useGlobalStyle();
     const [selectedLocation, setSelectedLocation] = useState(null);
    
@@ -89,4 +83,4 @@ const styles = StyleSheet.create({
     }, 
 });
 
-export default ItemHelloesMulti;
+export default HelloesList;

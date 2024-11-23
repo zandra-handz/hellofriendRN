@@ -3,16 +3,21 @@ import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Touchabl
 import Icon from 'react-native-vector-icons/Ionicons'; // Import the icon
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const SearchBar = ({ data, placeholderText='Search moments', borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
+const SearchBarForFormattedData = ({ data, originalData, placeholderText='Search moments', borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]); 
   const { themeStyles } = useGlobalStyle();
 
   const handleItemPress = (item) => {
-    console.log(item);
-    onPress(item);  
+    console.log(findOriginalItem(item));
+
+    onPress(findOriginalItem(item));  
     handleOutsidePress();
     setSearchQuery('');
+  };
+
+  const findOriginalItem = (formattedItem) => {
+    return originalData.find(item => item.id === formattedItem.id);
   };
 
 
@@ -155,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchBar;
+export default SearchBarForFormattedData;

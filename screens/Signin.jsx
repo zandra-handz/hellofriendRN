@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
+import { useMessage } from '../context/MessageContext';
 import ButtonColorHighlight from '../components/ButtonColorHighlight';
 import { useFonts } from 'expo-font'; 
 import * as SecureStore from 'expo-secure-store';
@@ -17,6 +17,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 const TOKEN_KEY = 'my-jwt';
 
 const Signin = () => {
+  const { showMessage } = useMessage();
   const { themeStyles, gradientColors } = useGlobalStyle();
   const { darkColor, lightColor } = gradientColors;
   const [showSignIn, setShowSignIn ] = useState(true);
@@ -52,31 +53,39 @@ const Signin = () => {
     checkIfSignedIn();
   }, []);
 
+
+
   const checkIfSignedIn = async () => {
+   
     try {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
       if (token) {
         console.log(token);
+        showMessage(true, null, 'Reinitializing...');
         reInitialize(); 
         // Optionally, handle any other logic needed after re-initialization
       } else {
         // No token found, show sign in
         setShowSignIn(true);
+        showMessage(true, null, 'Signed out');
       }
     } catch (error) { 
       console.error('Error checking sign-in status', error);
       // Handle errors as necessary
-    }
+    } 
   };
   
 
   const handleAuthentication = async () => { 
+    
     let result;
-    if (isSignIn) {
-      signinMutation.mutate({ username, password });
+    if (isSignIn) { 
+      showMessage(true, null, 'Signing you in...'); 
+      onSignin(username, password); 
     } else {
       if (password !== verifyPassword) {
         alert("Passwords do not match!"); 
+        showMessage(true, null, 'Oops! Passwords do not match');
         return;
       }
       result = await onSignup(username, email, password);
@@ -89,7 +98,7 @@ const Signin = () => {
         alert("Error: " + result.error);
       }
     }
-    setLoading(false);
+    setLoading(false);  
   };
 
   const toggleMode = () => {
@@ -124,10 +133,10 @@ const Signin = () => {
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.signinContainer]}
     >
-      {signinMutation.isLoading && (
-        <LoadingPage loading={signinMutation.isLoading} spinnerType='flow' />
+      {signinMutation.isFetching && (
+        <LoadingPage loading={signinMutation.isFetching} color={'#000002'} spinnerType='flow' />
       )}
-      {!signinMutation.isLoading && (
+      {!signinMutation.isFetching && (
         <>
         <View style={{width: '100%'}}>
           <Logo

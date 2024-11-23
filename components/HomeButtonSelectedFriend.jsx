@@ -8,7 +8,7 @@ import { useFriendList } from '../context/FriendListContext';
 import { useNavigation } from '@react-navigation/native';
 import LoadingPage from '../components/LoadingPage'; 
 import ButtonIconMoments from '../components/ButtonIconMoments';
-import ButtonIconLocations from '../components/ButtonIconLocations';
+//import ButtonIconLocations from '../components/ButtonIconLocations';
 import ButtonIconImages from '../components/ButtonIconImages';
 
  
@@ -27,7 +27,7 @@ import EclipseAnim from '../animations/EclipseAnim';
 const DOUBLE_PRESS_DELAY = 300;
 
 const HomeButtonSelectedFriend = ({  
-        header='SELECTED:',   
+        header='',  //'SELECTED'  
         height='100%',
         maxHeight=100,
         borderRadius=20,
@@ -56,9 +56,10 @@ const HomeButtonSelectedFriend = ({
       const navigateToMoments = () => {
         navigation.navigate('Moments');
       };
-      const navigateToLocations = () => {
-        navigation.navigate('Locations');
-      };
+
+      //const navigateToLocations = () => {
+      //  navigation.navigate('Locations');
+     // };
 
       const navigateToImages = () => {
         navigation.navigate('Images');
@@ -146,21 +147,20 @@ const HomeButtonSelectedFriend = ({
                     <View style={styles.textContainer}>
                     <TouchableOpacity onPress={onPress} >
                       <>
-                        <Text style={styles.headerText}>
-                            {header}
-                        </Text>
     
                         <Text
-                            style={[
-                                textStyles(30, 'white'),
-                                { fontFamily: 'Poppins-Regular' },
+                            style={[ 
+                                { fontFamily: 'Poppins-Regular',
+                                  fontSize: 30,
+                                  fontColor: '#000002',
+                                 },
                             ]}
                             >
                             {selectedFriend && friendDashboardData? selectedFriend.name : 'None'}
                         </Text>
     
                         <Text style={styles.subtitleText}>
-                            {friendDashboardData ? friendDashboardData[0].future_date_in_words : 'No date available'}
+                            {friendDashboardData ? `Suggested: Say hi on ${friendDashboardData[0].future_date_in_words}` : 'No date available'}
                         </Text>
                       </>
                       </TouchableOpacity>
@@ -234,7 +234,8 @@ const HomeButtonSelectedFriend = ({
     },
     headerText: {
         fontFamily: 'Poppins-Regular',
-        fontSize: 28,
+        fontSize: 22,
+        fontColor: '#000002',
     
     },
     subtitleText: {

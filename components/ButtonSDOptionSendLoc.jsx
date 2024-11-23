@@ -5,7 +5,7 @@ import HelloFriendInvite from '../components/HelloFriendInvite';
 import ButtonBaseSDOption from '../components/ButtonBaseSDOption';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
 
-import AlertImage from '../components/AlertImage';
+import ItemModal from '../components/ItemModal';
  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
@@ -28,13 +28,13 @@ const ButtonSDOptionSendLoc = () => {
             iconSize={32}
         />
 
-        <AlertImage
+        <ItemModal
             isModalVisible={isModalVisible}
             toggleModal={closeModal} 
             modalContent={<HelloFriendInvite />}
             modalTitle={'Send Hello plans!'}
         > 
-      </AlertImage>
+      </ItemModal>
       </>
 
     );

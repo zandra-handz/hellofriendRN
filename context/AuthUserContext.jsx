@@ -123,7 +123,7 @@ export const AuthUserProvider = ({ children }) => {
         },
         onError: (error) => {
             console.error('Sign in mutation error:', error);
-            alert("Sign-in failed: " + (error.response?.data.msg || 'Unknown error occurred'));
+            //alert("Sign-in failed: " + (error.response?.data.msg || 'Unknown error occurred'));
         }
     });
     

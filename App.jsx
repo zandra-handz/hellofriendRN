@@ -45,8 +45,7 @@ import HeaderWriteMoment from './components/HeaderWriteMoment';
 //import HeaderFriendFocus from './components/HeaderFriendFocus';
 import HeaderFriendSettings from './components/HeaderFriendSettings';
 import HeaderBase from './components/HeaderBase';  
-import HeaderBaseSolid from './components/HeaderBaseSolid';
-import HeaderHelloes from './components/HeaderHelloes';
+import HeaderBaseSolid from './components/HeaderBaseSolid'; 
 import HeaderLocationSingle from './components/HeaderLocationSingle';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

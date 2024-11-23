@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
-import InfoOutline from '../assets/svgs/info-outline.svg';
+ 
 import ThreeDotsSvg from '../assets/svgs/three-dots.svg';
 import SlideToAction from '../components/SlideToAction';
 import { LinearGradient } from 'expo-linear-gradient';

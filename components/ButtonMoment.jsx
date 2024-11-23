@@ -9,8 +9,7 @@ const ButtonMoment = ({
   moment, 
   size = 15, 
   style,
-  disabled = false,
-  onTop = false,
+  disabled = false, 
   sameStyleForDisabled = false, // New prop to control style
 }) => {
 

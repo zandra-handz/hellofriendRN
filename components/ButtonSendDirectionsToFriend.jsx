@@ -6,7 +6,7 @@ import HelloFriendInvite from '../components/HelloFriendInvite';
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
 
-import AlertImage from '../components/AlertImage';
+import ItemModal from '../components/ItemModal';
  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
@@ -21,13 +21,13 @@ const ButtonSendDirectionsToFriend = () => {
 
     return (
         <View style={styles.container}>
-        <AlertImage
+        <ItemModal
             isModalVisible={isModalVisible}
             toggleModal={closeModal} 
             modalContent={<HelloFriendInvite />}
             modalTitle={'Send Hello plans!'}
         > 
-      </AlertImage>
+      </ItemModal>
  
             <ButtonBottomActionBase
                 onPress={openModal}

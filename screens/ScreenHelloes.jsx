@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-//<Tab.Screen name="Recent" component={HelloesScreen} />
+import React, { useState, useMemo } from 'react';
+import { View, StyleSheet } from 'react-native'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 import { fetchPastHelloes } from '../api'; 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import LoadingPage from '../components/LoadingPage';
-import SearchBar from '../components/SearchBar';
-import ItemViewHello from '../components/ItemViewHello';
+import SearchBarForFormattedData from '../components/SearchBarForFormattedData';
+import HelloView from '../components/HelloView';
 import { Ionicons } from '@expo/vector-icons'; 
   
-import ItemHelloesMulti from '../components/ItemHelloesMulti';
+import HelloesList from '../components/HelloesList';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -28,19 +27,24 @@ const ScreenHelloes = ({ route, navigation }) => {
     const [ selectedHello, setSelectedHello ] = useState(null);
     const [helloesInPersonList, setHelloesInPersonList] = useState([]);
 
-    const { data: helloesList, isLoading, isFetching, isError } = useQuery({
+    const { data: helloesList, isLoading, isFetching, isSuccess, isError } = useQuery({
         queryKey: ['pastHelloes', selectedFriend?.id],
         queryFn: () => fetchPastHelloes(selectedFriend.id),
         enabled: !!selectedFriend,
-        onSuccess: (data) => {
-            const inPersonList = data.filter(hello => hello.type === 'in person');
-            console.log(inPersonList);
-            setHelloesInPersonList(inPersonList);
+        onSuccess: (data) => { 
             
         }
     });
 
 
+    const inPersonHelloes = useMemo(() => {
+        if (helloesList) {
+
+       
+        console.log('filtering helloes in useMemo function');
+        return helloesList.filter(hello => hello.type === 'in person');
+    }
+    }, [helloesList]);
     
 
     
@@ -61,20 +65,53 @@ const ScreenHelloes = ({ route, navigation }) => {
     const HelloesScreen = () => (
         
         <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-          <ItemHelloesMulti onPress={onPress} helloesData={helloesList} horizontal={false} />
+          <HelloesList onPress={onPress} helloesData={helloesList} horizontal={false} />
         </View>
       );
 
-      const HelloesInPersonScreen = () => {
-        const inPersonHelloes = helloesList ? helloesList.filter(hello => hello.type === 'in person') : [];
-        console.log("In-person hello data:", inPersonHelloes); // Check filtered data
-    
+      const HelloesInPersonScreen = () => { 
         return (
             <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-              <ItemHelloesMulti onPress={onPress} helloesData={inPersonHelloes} horizontal={false} />
+              <HelloesList onPress={onPress} helloesData={inPersonHelloes} horizontal={false} />
             </View>
         );
     };
+
+    const flattenHelloes = useMemo(() => {
+        if (helloesList) {
+        
+        return helloesList.flatMap((hello) => {
+          const pastCapsules = hello.pastCapsules || []; // Ensure it's an array or an empty one if undefined
+    
+             return pastCapsules.length > 0 ? 
+                pastCapsules.map(capsule => ({
+                    id: hello.id,
+                    date: hello.date,
+                    type: hello.type,
+                    typedLocation: hello.typedLocation,
+                    locationName: hello.locationName,
+                    location: hello.location,
+                    additionalNotes: hello.additionalNotes || '', // Keep existing additional notes
+                    capsuleId: capsule.id,     
+                    capsule: capsule.capsule,   
+                    typedCategory: capsule.typed_category  
+                })) :
+                [{
+                    id: hello.id,
+                    date: hello.date,
+                    type: hello.type,
+                    typedLocation: hello.typedLocation,
+                    locationName: hello.locationName,
+                    location: hello.location,
+                    additionalNotes: hello.additionalNotes || '', // Keep existing additional notes
+                    capsuleId: null,             
+                    capsule: null,
+                    typedCategory: null
+                }];
+        });
+    }
+    }, [helloesList]);
+    
 
 
  
@@ -85,7 +122,7 @@ const ScreenHelloes = ({ route, navigation }) => {
                         <>  
                     <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
 
-                    <SearchBar data={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={() => {}} searchKeys={['address', 'title']} />
+                    <SearchBarForFormattedData data={flattenHelloes} originalData={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={onPress} searchKeys={['date', 'locationName',  'capsule',  'additionalNotes']} />
 
                     </View>
                         <Tab.Navigator
@@ -121,7 +158,9 @@ const ScreenHelloes = ({ route, navigation }) => {
 
 
                             {isModalVisible && selectedHello && (
-                                <ItemViewHello hello={selectedHello} onClose={onClose} />
+                                <View style={{width: '100%', height: '100%'}}> 
+                                <HelloView hello={selectedHello} onClose={onClose} />
+                                </View>
                             )}
 
                         

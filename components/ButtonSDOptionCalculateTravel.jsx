@@ -5,7 +5,7 @@ import CompareTravel from '../components/CompareTravel';
 import ButtonBaseSDOption from '../components/ButtonBaseSDOption';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
 
-import AlertImage from '../components/AlertImage';
+import ItemModal from '../components/ItemModal';
  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
@@ -28,13 +28,13 @@ const ButtonSDOptionCalculateTravel = () => {
             iconSize={32}
         />
 
-        <AlertImage
+        <ItemModal
             isModalVisible={isModalVisible} 
             toggleModal={closeModal} 
             modalContent={<CompareTravel/>}
             modalTitle={'Compare travel times'}
         > 
-        </AlertImage> 
+        </ItemModal> 
       </>
 
     );

@@ -15,6 +15,7 @@ import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
  
+
 const Tab = createBottomTabNavigator();
 
 const ScreenLocations = ({ route, navigation }) => {
@@ -24,6 +25,12 @@ const ScreenLocations = ({ route, navigation }) => {
   const { selectedFriend, friendDashboardData } = useSelectedFriend(); 
   
   const showBottomButtons = false;
+
+  const handleGoToLocationViewScreen = (item) => { 
+    console.log(item);
+    navigation.navigate('Location', { location: item, favorite: false }); //false as default, receiving screen should still detect
+  
+  }; 
 
   const faveLocations = useMemo(() => {
     console.log('Filtering favorite locations');
@@ -50,6 +57,7 @@ const ScreenLocations = ({ route, navigation }) => {
   );
 
   const navigateToLocationSearchScreen = () => {
+
     navigation.navigate('LocationSearch');
   };
 
@@ -67,7 +75,7 @@ const ScreenLocations = ({ route, navigation }) => {
         <>
                     <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
 
-                <SearchBar data={locationList} placeholderText={'Search'} borderColor={'transparent'} onPress={() => {}} searchKeys={['address', 'title']} />
+                <SearchBar data={locationList} placeholderText={'Search'} onPress={handleGoToLocationViewScreen} borderColor={'transparent'}  searchKeys={['address', 'title']} />
             
             </View>
           <Tab.Navigator

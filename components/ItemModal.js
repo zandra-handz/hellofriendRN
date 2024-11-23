@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, View, Modal, Dimensions } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import HeaderBaseItemView from '../components/HeaderBaseItemView';
-import LoadingPage from '../components/LoadingPage';
+
 
 const { height: screenHeight } = Dimensions.get('window'); // Get screen height
 
-const AlertImage = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
+const ItemModal = ({ isModalVisible, toggleModal, modalContent, modalTitle }) => {
   
   const { themeStyles } = useGlobalStyle();
   
@@ -47,8 +47,7 @@ const styles = StyleSheet.create({
     width: '100%', 
     padding: 4, 
     borderRadius: 0,
-    flexDirection: 'column',
-    flex: 1,
+    flexDirection: 'column', 
     justifyContent: 'space-between',
   },
   header: {
@@ -69,4 +68,4 @@ const styles = StyleSheet.create({
   }, 
 });
 
-export default AlertImage;
+export default ItemModal;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import AlertImage from '../components/AlertImage';
+import ItemModal from '../components/ItemModal';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useCapsuleList } from '../context/CapsuleListContext'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -10,7 +10,7 @@ import DisplayHelloNotes from '../components/DisplayHelloNotes';
  
 import ButtonReuseMoments from '../components/ButtonReuseMoments';
 
-const ItemViewHello = ({ hello, onClose }) => {
+const HelloView = ({ hello, onClose }) => {
   const { themeStyles } = useGlobalStyle();
   const [isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
@@ -61,7 +61,7 @@ const ItemViewHello = ({ hello, onClose }) => {
   };
   const handleMomentSelect = (selectedMoments) => {
     setMomentsSelected(selectedMoments);
-    if (selectedMoments.length > 0) {
+    if (selectedMoments && selectedMoments.length > 0) {
       setMomentsToSave(true);
       console.log('moments set to true');
     } else {
@@ -72,7 +72,7 @@ const ItemViewHello = ({ hello, onClose }) => {
   };
 
   return (
-    <AlertImage
+    <ItemModal
       isModalVisible={isModalVisible}
       toggleModal={closeModal}
       modalContent={
@@ -128,15 +128,15 @@ const ItemViewHello = ({ hello, onClose }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { 
     width: '100%',
+    height: '100%',
     justifyContent: 'space-between', 
     paddingHorizontal: 2,
   }, 
   headerContainer: { 
     width: '100%',
-    textAlign: 'left',   
+    textAlign: 'left',  
   },
   itemTitleContainer: {
     width: '100%',
@@ -176,4 +176,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemViewHello;
+export default HelloView;
