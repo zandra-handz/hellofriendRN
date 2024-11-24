@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     position: 'absolute', 
     right: 60,  // Maintain a fixed distance from the right icon
     fontSize: 20,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Bold',
     textTransform: 'uppercase',
     width: '70%',  // Adjust width to prevent overlapping
     textAlign: 'right',  // Keep the text aligned to the right

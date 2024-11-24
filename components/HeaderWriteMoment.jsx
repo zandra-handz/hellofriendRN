@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     paddingVertical: 2, 
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Bold',
   },
   usernameText: {
     fontSize: 14,

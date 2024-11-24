@@ -8,7 +8,7 @@ import { View, StyleSheet, Text, Animated,  LayoutAnimation, Dimensions, Touchab
 import { useFriendList } from '../context/FriendListContext';
 import LizardSvg from '../assets/svgs/lizard.svg';
 import MomentCard from '../components/MomentCard';
-import ItemViewMoment from '../components/ItemViewMoment';
+import MomentsNavigator from '../components/MomentsNavigator';
 import SearchBar from '../components/SearchBar';
 import SpinOutlineSvg from '../assets/svgs/spin-outline.svg';
 import { Easing } from 'react-native-reanimated';
@@ -16,7 +16,7 @@ import { Easing } from 'react-native-reanimated';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 
-const ITEM_HEIGHT = 160; // Define the height of each item
+const ITEM_HEIGHT = 162; // Define the height of each item
 
 const MomentsList = (navigation) => {
     const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
@@ -24,7 +24,7 @@ const MomentsList = (navigation) => {
     const { capsuleList, setMomentIdToAnimate, momentIdToAnimate, updateCacheWithNewPreAdded, updateCapsuleMutation, categoryNames, categoryStartIndices, preAddedTracker, momentsSavedToHello, updateCapsule } = useCapsuleList();
     
     const [selectedMomentToView, setSelectedMomentToView] = useState(null);
-    const [isMomentViewVisible, setMomentViewVisible] = useState(false);
+    const [isMomentNavVisible, setMomentNavVisible] = useState(false);
     const flatListRef = useRef(null);
     const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -88,13 +88,13 @@ const MomentsList = (navigation) => {
         };
     };
 
-    const openMomentView = (moment) => {
+    const openMomentNav = (moment) => {
         setSelectedMomentToView(moment);
-        setMomentViewVisible(true);
+        setMomentNavVisible(true);
     };
 
-    const closeMomentView = () => {
-        setMomentViewVisible(false);
+    const closeMomentNav = () => {
+        setMomentNavVisible(false);
     };
 
     const scrollToCategoryStart = (category) => {
@@ -131,13 +131,23 @@ const MomentsList = (navigation) => {
     
         const distanceFromTop = scrollY.interpolate({
             inputRange: [offset - ITEM_HEIGHT, offset, offset + ITEM_HEIGHT],
-            outputRange: [0.93, .98, 0.84], // Scale down and up as the card moves in and out of the view
+            outputRange: [0.93, .98, 0.84],
+            extrapolate: 'clamp',
+        });
+
+        const dynamicTextSize = scrollY.interpolate({
+            inputRange: [offset - ITEM_HEIGHT, offset, offset + ITEM_HEIGHT],
+            outputRange: [16.2, 17, 15],  
+            extrapolate: 'clamp',
+        });
+
+        const dynamicVisibility = scrollY.interpolate({
+            inputRange: [offset - ITEM_HEIGHT, offset, offset + ITEM_HEIGHT],
+            outputRange: [0.4, 1, 0],  // 0 = fully transparent, 1 = fully visible
             extrapolate: 'clamp',
         });
     
         const opacity = item.id === momentIdToAnimate ? fadeAnim : 1;  // Fade out when it's being animated
-    
-        // Apply translation for all items except the one being removed
         const translate = item.id === momentIdToAnimate ? translateY : 0;
     
         return (
@@ -154,7 +164,9 @@ const MomentsList = (navigation) => {
                     key={item.id}
                     moment={item}
                     index={index}
-                    onPress={() => openMomentView(item)}  // Open the moment view when the card is pressed
+                    size={dynamicTextSize} 
+                    sliderVisible={dynamicVisibility}
+                    onPress={() => openMomentNav(item)}  // Open the moment view when the card is pressed
                     onSliderPull={() => saveToHello(item)}  // Save moment to Hello when slider is pulled
                 />
             </Animated.View>
@@ -172,7 +184,7 @@ const MomentsList = (navigation) => {
                     <SpinOutlineSvg height={34} width={34} color={themeAheadOfLoading.fontColor}/>
                     <Text style={[styles.randomButtonText, {color: themeAheadOfLoading.fontColorSecondary}]}></Text>
                 </TouchableOpacity> 
-                <SearchBar data={capsuleList} borderColor={'transparent'} onPress={openMomentView} searchKeys={['capsule', 'typedCategory']} />
+                <SearchBar data={capsuleList} borderColor={'transparent'} onPress={openMomentNav} searchKeys={['capsule', 'typedCategory']} />
             
             </View>
 <View style={styles.listContainer}>
@@ -186,7 +198,7 @@ const MomentsList = (navigation) => {
         )}
         onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true }
+            { useNativeDriver: false }
         )}
         ListFooterComponent={() => <View style={{ height: momentListBottomSpacer }} />}
         onScrollToIndexFailed={(info) => {
@@ -201,9 +213,9 @@ const MomentsList = (navigation) => {
     />
 </View>
 
-            {isMomentViewVisible && selectedMomentToView && (
-                <ItemViewMoment
-                    onClose={closeMomentView}
+            {isMomentNavVisible && selectedMomentToView && (
+                <MomentsNavigator
+                    onClose={closeMomentNav}
                     moment={selectedMomentToView}
                 />
             )}

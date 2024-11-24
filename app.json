@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "newArchEnabled": true,
-    "icon": "./assets/icon.png",
+    "icon": "./assets/shapes/lizard.png",
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.badrainbowz.sampleproject",  
@@ -30,9 +30,9 @@
       }
     },
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/shapes/happyskull.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000002"
     }, 
     "assetBundlePatterns": [
       "**/*"

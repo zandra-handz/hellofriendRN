@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, Animated } from 'react-native';
 import moment from 'moment';  
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
@@ -15,6 +15,7 @@ const FormatMonthDay = ({
   commas = false,
   fontFamily = 'Poppins-Regular',
   parentStyle,
+  opacity,
 }) => {
   const { themeStyles } = useGlobalStyle();
 
@@ -68,7 +69,7 @@ const FormatMonthDay = ({
     } 
  
   return ( 
-      <Text style={parentStyle}>{displayText}</Text>
+      <Animated.Text style={[parentStyle, {opacity: opacity}]}>{displayText}</Animated.Text>
   );
 };
 

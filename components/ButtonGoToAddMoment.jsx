@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 const ButtonGoToAddMoment = () => {
-  const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
+  const { themeStyles, gradientColors, gradientColorsHome, manualGradientColors} = useGlobalStyle();
   const navigation = useNavigation();
   const { themeAheadOfLoading } = useFriendList();
 
@@ -21,12 +21,12 @@ const ButtonGoToAddMoment = () => {
 
   return ( 
     <View style={styles.container}> 
-      <TouchableOpacity onPress={handleGoToMomentScreen} style={[styles.circleButton, themeStyles.footerIcon, { backgroundColor: gradientColorsHome.darkColor}]}> 
+      <TouchableOpacity onPress={handleGoToMomentScreen} style={[styles.circleButton, themeStyles.footerIcon, { backgroundColor: manualGradientColors.homeDarkColor}]}> 
         {!viewSvg && (  
         <Text style={[styles.controlButtonText, themeStyles.footerText]}>Add moment</Text>
         )}
         {viewSvg && (  
-        <MessageAddSolidSvg width={48} height={48} color={gradientColors.darkColor} />
+        <MessageAddSolidSvg width={48} height={48} color={manualGradientColors.darkColor} />
         )}
       </TouchableOpacity>  
       </View> 

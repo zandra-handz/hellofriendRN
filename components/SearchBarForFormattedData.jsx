@@ -1,9 +1,10 @@
+//This will match the id of the formatted data to the original data to find the item
 import React, { useState } from 'react';
 import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; // Import the icon
+import Icon from 'react-native-vector-icons/Ionicons'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const SearchBarForFormattedData = ({ data, originalData, placeholderText='Search moments', borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
+const SearchBarForFormattedData = ({ formattedData, originalData, placeholderText='Search moments', borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]); 
   const { themeStyles } = useGlobalStyle();
@@ -24,7 +25,7 @@ const SearchBarForFormattedData = ({ data, originalData, placeholderText='Search
   const handleSearch = (text) => {
     setSearchQuery(text);
   
-    const filtered = data.filter((item) => {
+    const filtered = formattedData.filter((item) => {
       const searchText = text.toLowerCase();
   
       return searchKeys.some((key) => {

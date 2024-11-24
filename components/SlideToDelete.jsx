@@ -1,17 +1,17 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, Animated, PanResponder, Dimensions, StyleSheet, Alert } from 'react-native';
+import { View, Text, Animated, PanResponder, Dimensions, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
- 
+ import DragRightThickOutlineSvg from '../assets/svgs/drag-right-thick-outline.svg';
 
-const SlideToAction = ({ onPress, sliderText = 'DELETE', sliderColor = 'red', targetIcon: TargetIcon, width = Dimensions.get('window').width }) => {
+ const SlideToDelete = ({ onPress, sliderText = 'DELETE?', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50, disabled=false }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
   const isDraggingRef = useRef(false); // Use ref for immediate updates
   const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
- 
+  
 
-  const handlePress = () => { 
+  const handlePress = () => {
     if (onPress) onPress();
   };
 
@@ -23,7 +23,7 @@ const SlideToAction = ({ onPress, sliderText = 'DELETE', sliderColor = 'red', ta
         if (gestureState.dx >= 0 && gestureState.dx <= width) {
           position.setValue(gestureState.dx);
 
-          if (gestureState.dx >= width * 0.1 && !isDraggingRef.current) {
+          if (gestureState.dx >= width * 0.2 && !isDraggingRef.current) {
             isDraggingRef.current = true; // Update ref immediately
             setIsDragging(true); // Update state for UI
           }
@@ -51,6 +51,7 @@ const SlideToAction = ({ onPress, sliderText = 'DELETE', sliderColor = 'red', ta
   const sliderWidth = width;
 
   return (
+    
     <View
       style={[
         styles.container,
@@ -58,23 +59,27 @@ const SlideToAction = ({ onPress, sliderText = 'DELETE', sliderColor = 'red', ta
           width: sliderWidth,
           backgroundColor: isDragging
             ? 'red'
-            : themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+            : 'transparent' //themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
         },
       ]}
     >
-      <Text style={[styles.text, { color: themeStyles.genericText }]}></Text>
       <Animated.View
         {...panResponder.panHandlers}
         style={[
           styles.slider,
           {
-            backgroundColor: isDragging ? gradientColorsHome.darkColor : 'transparent',
+            flexDirection: 'row', 
+            backgroundColor: isDragging ? '#000002' : 'transparent',
             transform: [{ translateX: position }],
             width: 'auto',
           },
         ]}
-      >
-        <Text style={[styles.sliderText, themeStyles.genericText]}>{sliderText}</Text>
+      >        
+        <Text style={[styles.sliderText, {color: isDragging ? 'white' : 'black'}]}>{sliderText}</Text>
+
+        <View style={{paddingHorizontal: '2%' }}>
+      <DragRightThickOutlineSvg height={18} width={18} color={isDragging ? 'white' : 'black'} />
+      </View>
       </Animated.View>
       {TargetIcon && (
         <View style={styles.iconContainer}>
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 0,
+    borderRadius: 30,
     margin: 0,
   },
   text: {
@@ -107,16 +112,11 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 30,
     borderWidth: 0.8,
-    borderColor: 'darkgray',
+    borderColor: 'transparent',
   },
   sliderText: {
     fontSize: 12,
-  },
-  completedText: {
-    position: 'absolute',
-    bottom: -30,
-    fontSize: 14,
-    color: 'green',
+    fontWeight: 'bold',
   },
   iconContainer: {
     position: 'absolute',
@@ -126,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SlideToAction;
+export default SlideToDelete;

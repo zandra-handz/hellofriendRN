@@ -1,19 +1,41 @@
+//I wanted to position: 'absolute' this like i did my spinner buttons, but
+//then decided to do that in the parent in case i want to use these for 
+//any smaller (not FS) components
+//cause this component was kind of a pain in the ass when i worked on it :)
+
+//can use this in parent components to position:
+//<View
+//style={{
+//  position: 'absolute', 
+//  width: '100%',
+//  zIndex: 1000,
+//  top: '50%',
+//  transform: [{ translateY: -50 }],
+//  alignItems: 'center',
+//}}
+//>
+
+
+
+
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const { height: screenHeight } = Dimensions.get('window');
+const NavigationArrows = ({ iconSize=30, currentIndex, imageListLength, onPrevPress, onNextPress }) => {
+  
+  const { manualGradientColors } = useGlobalStyle();
 
-const NavigationArrows = ({ currentIndex, imageListLength, onPrevPress, onNextPress }) => {
   return (
-    <View style={[styles.navigationContainer, { top: screenHeight * 0.4 }]}>
+    <View style={[styles.navigationContainer]}>
       {currentIndex > 0 ? (
         <TouchableOpacity 
           onPress={onPrevPress} 
-          style={styles.arrowButton}
+          style={[styles.arrowButton, {backgroundColor: manualGradientColors.homeDarkColor}]}
         >
-          <ArrowLeftCircleOutlineSvg width={40} height={40} color={'black'} />
+          <ArrowLeftCircleOutlineSvg width={iconSize} height={iconSize} color={manualGradientColors.lightColor} />
         </TouchableOpacity>
       ) : (
         <View style={styles.placeholder} />
@@ -22,9 +44,9 @@ const NavigationArrows = ({ currentIndex, imageListLength, onPrevPress, onNextPr
       {currentIndex < imageListLength - 1 ? (
         <TouchableOpacity 
           onPress={onNextPress} 
-          style={styles.arrowButton}
+          style={[styles.arrowButton, {backgroundColor: manualGradientColors.homeDarkColor}]}
         >
-          <ArrowRightCircleOutlineSvg width={40} height={40} color={'black'} />
+          <ArrowRightCircleOutlineSvg width={iconSize} height={iconSize} color={manualGradientColors.lightColor} />
         </TouchableOpacity>
       ) : (
         <View style={styles.placeholder} />
@@ -36,14 +58,14 @@ const NavigationArrows = ({ currentIndex, imageListLength, onPrevPress, onNextPr
 const styles = StyleSheet.create({
   navigationContainer: {
     flexDirection: 'row', 
-    position: 'absolute',
+    flex: 1, 
     width: '100%', 
+    height: 'auto', 
     justifyContent: 'space-between',
-    paddingHorizontal: 20, // Adjust padding as needed to prevent overlap
+    paddingHorizontal: 0,  
   },
   arrowButton: {
-    padding: 10, 
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', 
+    padding: 0,  
     borderRadius: 30, 
     justifyContent: 'center',
     alignItems: 'center',

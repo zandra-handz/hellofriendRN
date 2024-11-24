@@ -11,7 +11,8 @@ const MomentCard = ({
   onPress,  
   onSliderPull, 
   moment, 
-  size = 15,   
+  size,   
+  sliderVisible,
   disabled = false, 
 }) => {
 
@@ -59,49 +60,52 @@ const MomentCard = ({
          <View style={styles.categoryHeader}>
           <View style={{flexDirection: 'row'}}>
             
-          <Text style={[styles.categoryText, { color: 'darkgrey' }]}>
+          <Animated.Text style={[styles.categoryText, { color: 'darkgrey', opacity: sliderVisible }]}>
             {moment.typedCategory.length > 20 
               ? `${moment.typedCategory.substring(0, 20)}...` 
-              : moment.typedCategory} • added </Text>
+              : moment.typedCategory} • added </Animated.Text>
           <FormatMonthDay  
             date={moment.created} 
             fontSize={13}  
             fontFamily={'Poppins-Regular'} 
             parentStyle={styles.categoryText}
+            opacity={sliderVisible}
           /> 
           
           </View>
           </View>
           <View style={styles.textWrapper}>
-            <Text numberOfLines={3} style={[styles.momentText, themeStyles.genericText, { fontSize: size }]}>
+          <Animated.Text numberOfLines={3} style={[styles.momentText, themeStyles.genericText, { fontSize: size, opacity: sliderVisible }]}>
               {moment.capsule}
-            </Text>
+            </Animated.Text>
           </View>
           
         </View> 
       </TouchableOpacity>
-      <View style={styles.sliderContainer}>
+      <Animated.View style={[styles.sliderContainer, { opacity: sliderVisible }]}>
         <SlideToAdd
           onPress={onSliderPull}
           sliderText='ADD TO HELLO'  
           targetIcon={CheckmarkOutlineSvg}
+          disabled={sliderVisible !== 1}
         />
-      </View>
+      </Animated.View>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {  
-    height: 160,
+    height: 162,
     borderRadius: 50,
     width: '100%', 
-    paddingHorizontal: 24,
-    paddingVertical: 18,
+    paddingHorizontal: '6%',
+    paddingTop: '3%',
+    paddingBottom: '4%',
     flexDirection: 'column',  
   },
   sliderContainer: {
-    height: 28,
+    height: 24,
     borderRadius: 20,  
     zIndex: 3,
     flexDirection: 'row',
@@ -120,14 +124,14 @@ const styles = StyleSheet.create({
     
   },
   momentText: {   
-    //fontFamily: 'Poppins-Regular',  
+    fontFamily: 'Poppins-Regular',  
     flexShrink: 1, 
     fontSize: 16,
     lineHeight: 21,
     alignSelf: 'left',
   },
-  textWrapper: {
-    flex: 1, 
+  textWrapper: { 
+    flexGrow: 1,
     textAlign: 'left',
     width: '100%',
   },
@@ -141,7 +145,7 @@ const styles = StyleSheet.create({
 
   },
   categoryHeader: {
-    paddingBottom: 2,
+    paddingBottom: '1%',
     flexDirection: 'row',
     alignContent: 'center',
     justifyContent: 'flex-end',

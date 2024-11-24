@@ -8,7 +8,7 @@ import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
 import NavigationArrows from '../components/NavigationArrows'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const ItemViewMoment = ({ archived = false, moment, onClose }) => {
+const MomentsNavigator = ({ archived = false, moment, onClose }) => {
 
   const [isModalVisible, setIsModalVisible] = useState(true);
   const { capsuleList, deleteMomentRQuery, deleteMomentMutation } = useCapsuleList();
@@ -21,15 +21,13 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
     if (moment) {
       setTitle(moment.typedCategory);
       const index = capsuleList.findIndex(mom => mom.id === moment.id);
-      setCurrentIndex(index);
-      console.log('moment:  ', moment.id);
+      setCurrentIndex(index); 
     }
   }, [moment]);
 
 
   //manually closing this for right now because I give up
-  useEffect(() => {
-    let timeout;
+  useEffect(() => { 
     if (deleteMomentMutation.isSuccess) {
       closeModal();
     }
@@ -65,9 +63,7 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
       };
  
 
-      await deleteMomentRQuery(momentData); 
-      //removeCapsules([moment.id]);
-      //closeModal();  
+      await deleteMomentRQuery(momentData);  
     } catch (error) { 
       console.error('Error deleting moment:', error);
     }  
@@ -84,31 +80,14 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
       onSliderPull={handleDelete}
         isModalVisible={isModalVisible} 
         toggleModal={onClose}
-        modalContent={
-          capsuleList[currentIndex] ? (
-            <View style={{flex: 1}}>
+        momentCategory={capsuleList[currentIndex] ? capsuleList[currentIndex].typedCategory : 'No category'}
+        momentText={capsuleList[currentIndex] ? capsuleList[currentIndex].capsule: 'No moment'}
+        momentData={capsuleList[currentIndex] ? capsuleList[currentIndex] : null}
+        navigationArrows={
+          capsuleList[currentIndex] ? ( 
 
-              <View style={styles.momentContainer}>
-                <Text style={styles.categoryTitle}>
-                  {capsuleList[currentIndex].typedCategory}
-                </Text> 
-                <Text style={styles.momentText}>
-                  {capsuleList[currentIndex].capsule}
-                </Text>
-
-             
-                <View style={styles.buttonContainer}>            
-           <ButtonBaseSpecialSave
-              label="SEND "
-              maxHeight={80}
-              onPress={[() => {}]} 
-              isDisabled={false}
-              fontFamily={'Poppins-Bold'}
-              image={require("../assets/shapes/redheadcoffee.png")}
-            
-            />
-            </View>
-            
+              
+            <>
                 {!archived && moment.typedCategory && (
                   <NavigationArrows 
                     currentIndex={currentIndex}
@@ -116,10 +95,8 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
                     onPrevPress={goToPreviousMoment}
                     onNextPress={goToNextMoment}
                   />
-                )}
- 
-              </View>
-            </View>
+                )} 
+            </>
           ) : null
         }
         modalTitle='View moment'
@@ -131,14 +108,8 @@ const ItemViewMoment = ({ archived = false, moment, onClose }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
-    zIndex: 0,
-  },
-  loadingWrapper: {
     flex: 1, 
-    justifyContent: 'center',
-    alignItems: 'center',
+    zIndex: 0,
   },
   modalOverlay: {
     flex: 1,
@@ -154,10 +125,8 @@ const styles = StyleSheet.create({
   },
   
   modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
+    width: '100%', 
+    padding: 20, 
     alignItems: 'center',
   },
   categoryTitle: {
@@ -169,8 +138,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 16,
     padding: 20,
-    borderRadius: 30,
-    backgroundColor: 'lightgray',
+    borderRadius: 30, 
   },
   modalText: {
     fontSize: 16,
@@ -184,7 +152,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderColor: 'gray',
-    borderWidth: 1,
+    borderWidth: 0,
     padding: 8,
     marginBottom: 10,
     borderRadius: 8,
@@ -193,9 +161,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%', 
     padding: 10,
-    borderRadius: 20,
-    borderWidth: 0.8,
-    borderColor: 'gray',
+    borderRadius: 20, 
     justifyContent: 'flex-start',
   }, 
   footerContainer: { 
@@ -214,4 +180,4 @@ const styles = StyleSheet.create({
   }, 
 });
 
-export default ItemViewMoment;
+export default MomentsNavigator;

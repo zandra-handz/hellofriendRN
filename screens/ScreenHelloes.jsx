@@ -1,16 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 import { fetchPastHelloes } from '../api'; 
-import { useQuery } from '@tanstack/react-query';
-import LoadingPage from '../components/LoadingPage';
+import { useQuery } from '@tanstack/react-query'; 
 import SearchBarForFormattedData from '../components/SearchBarForFormattedData';
 import HelloView from '../components/HelloView';
 import { Ionicons } from '@expo/vector-icons'; 
   
 import HelloesList from '../components/HelloesList';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useMessage } from '../context/MessageContext';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import CustomTabBar from '../components/CustomTabBar';
@@ -25,7 +25,7 @@ const ScreenHelloes = ({ route, navigation }) => {
     const { themeAheadOfLoading } = useFriendList();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [ selectedHello, setSelectedHello ] = useState(null);
-    const [helloesInPersonList, setHelloesInPersonList] = useState([]);
+    const { showMessage, passToSpinner, killSpinner } = useMessage();
 
     const { data: helloesList, isLoading, isFetching, isSuccess, isError } = useQuery({
         queryKey: ['pastHelloes', selectedFriend?.id],
@@ -35,6 +35,16 @@ const ScreenHelloes = ({ route, navigation }) => {
             
         }
     });
+
+
+    useEffect(() => {
+        if (isFetching) {
+            passToSpinner(true);
+        } else {
+            killSpinner();
+        }
+
+    }, [isFetching]);
 
 
     const inPersonHelloes = useMemo(() => {
@@ -111,6 +121,7 @@ const ScreenHelloes = ({ route, navigation }) => {
         });
     }
     }, [helloesList]);
+ 
     
 
 
@@ -118,19 +129,18 @@ const ScreenHelloes = ({ route, navigation }) => {
 
     return ( 
         <View style={[styles.container, {backgroundColor: themeAheadOfLoading.darkColor}]}>
-                    {helloesList && helloesInPersonList && !isFetching && (
-                        <>  
-                    <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
 
-                    <SearchBarForFormattedData data={flattenHelloes} originalData={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={onPress} searchKeys={['date', 'locationName',  'capsule',  'additionalNotes']} />
+                <>  
+                <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
 
-                    </View>
+                    <SearchBarForFormattedData formattedData={flattenHelloes} originalData={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={onPress} searchKeys={['date', 'locationName',  'capsule',  'additionalNotes']} />
+
+                </View>
                         <Tab.Navigator
                             tabBar={props => <CustomTabBar {...props} />}
                             screenOptions={({ route }) => ({
                                 tabBarStyle: {
                                 backgroundColor: themeAheadOfLoading.darkColor,
-                                //position: 'absolute',
                                 flexDirection: 'row',
                                 top: 0, 
                                 elevation: 0,
@@ -166,21 +176,9 @@ const ScreenHelloes = ({ route, navigation }) => {
                         
                         
 
-                        </>
-                        
-                    )}
-                    {isFetching && (
-                    <View style={styles.loadingWrapper}>
-                    <LoadingPage
-                        loading={isFetching} 
-                        spinnerType='grid'
-                        color={themeAheadOfLoading.lightColor}
-                        includeLabel={true}
-                        label=""
-                    />
-                    </View>
-                    )}
-            </View> )
+                        </> 
+            </View>
+             )
 };
 
 const styles = StyleSheet.create({

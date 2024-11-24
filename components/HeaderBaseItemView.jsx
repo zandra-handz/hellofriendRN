@@ -4,9 +4,9 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
- 
-import ThreeDotsSvg from '../assets/svgs/three-dots.svg';
-import SlideToAction from '../components/SlideToAction';
+import InfoOutlineSvg from '../assets/svgs/info-outline.svg';
+import ThreeDotsSvg from '../assets/svgs/three-dots.svg'; 
+import SlideToDelete from '../components/SlideToDelete';
 import { LinearGradient } from 'expo-linear-gradient';
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 
@@ -40,7 +40,7 @@ const HeaderBaseItemView = ({
       <>
       <View style={styles.headerContent}>
       <View style={styles.leftButtonContainer}>
-        <TouchableOpacity onPress={onBackPress}>
+        <TouchableOpacity style={{paddingBottom: '5%'}} onPress={onBackPress}>
           <ArrowLeftCircleOutline height={30} width={30}   color={themeAheadOfLoading.fontColor}/>
         </TouchableOpacity> 
       </View>
@@ -50,23 +50,25 @@ const HeaderBaseItemView = ({
             {headerTitle}
         </Text> 
         <View style={styles.rightIconContainer}>
-        <TouchableOpacity onPress={onMenuPress ? onMenuPress : () => {}}>
-          <ThreeDotsSvg height={30} width={30} color={themeAheadOfLoading.fontColor}/>
+        <TouchableOpacity style={{paddingBottom: '6%'}} onPress={onMenuPress ? onMenuPress : () => {}}>
+          <InfoOutlineSvg height={34} width={34} color={themeAheadOfLoading.fontColor}/>
         
         </TouchableOpacity>
         </View>
           </View>
          
     </> 
-    
-    </LinearGradient>  
     <View style={styles.sliderContainer}>
-      <SlideToAction
+      <SlideToDelete
+
       onPress={onSliderPull}
       sliderWidth={'100%'} 
       targetIcon={TrashOutlineSvg}
     /> 
        </View>
+    
+    </LinearGradient>  
+
    </>
     
   );
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
     position: 'absolute', 
     right: 60,  // Maintain a fixed distance from the right icon
     fontSize: 20,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Bold',
     textTransform: 'uppercase',
     width: '70%',  // Adjust width to prevent overlapping
     textAlign: 'right',  // Keep the text aligned to the right
@@ -116,8 +118,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sliderContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: -4,
+    right: 0,
+    zIndex: 3,
     height: 30,
     width: '100%',
+    
 
   },
 });

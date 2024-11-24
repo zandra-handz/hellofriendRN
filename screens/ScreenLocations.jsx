@@ -20,11 +20,10 @@ const Tab = createBottomTabNavigator();
 
 const ScreenLocations = ({ route, navigation }) => {
   const { themeStyles } = useGlobalStyle();
-  const { locationList, faveLocationList } = useLocationFunctions();
+  const { locationList } = useLocationFunctions();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend, friendDashboardData } = useSelectedFriend(); 
   
-  const showBottomButtons = false;
 
   const handleGoToLocationViewScreen = (item) => { 
     console.log(item);
@@ -54,12 +53,7 @@ const ScreenLocations = ({ route, navigation }) => {
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
       <LocationsSavedList locationList={locationList} />
     </View>
-  );
-
-  const navigateToLocationSearchScreen = () => {
-
-    navigation.navigate('LocationSearch');
-  };
+  ); 
 
   const iconMapping = {
     [selectedFriend.name]: 'star',
@@ -70,14 +64,13 @@ const ScreenLocations = ({ route, navigation }) => {
  
 
   return (
-    <View style={[styles.container, themeStyles.genericTextBackground]}
-> 
-        <>
-                    <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+    <View style={[styles.container, themeStyles.genericTextBackground]}> 
+<>
+      <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
 
-                <SearchBar data={locationList} placeholderText={'Search'} onPress={handleGoToLocationViewScreen} borderColor={'transparent'}  searchKeys={['address', 'title']} />
+        <SearchBar data={locationList} placeholderText={'Search'} onPress={handleGoToLocationViewScreen} borderColor={'transparent'}  searchKeys={['address', 'title']} />
             
-            </View>
+      </View>
           <Tab.Navigator
           tabBar={props => <CustomTabBar {...props} />}
           screenOptions={({ route }) => ({
@@ -104,13 +97,7 @@ const ScreenLocations = ({ route, navigation }) => {
        
         </Tab.Navigator>
 
-          <ButtonGoToFindLocation />
-          {showBottomButtons && ( 
-            <View style={[themeStyles.genericTextBackground, { width: '100%', height: 120 }]}>
-              <ButtonSearchGoogleMap onPress={navigateToLocationSearchScreen} />
-              <ButtonFindMidpoints />
-            </View>
-          )}
+          <ButtonGoToFindLocation /> 
         </> 
          
     

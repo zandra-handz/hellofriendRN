@@ -12,17 +12,14 @@ const HelloesList = ({
     singleLineScroll = false,  
     columns = 3,  
 }) => {  
-    const { themeStyles } = useGlobalStyle();
-    const [selectedLocation, setSelectedLocation] = useState(null);
-   
-    const openModal = (location) => {
-        setSelectedLocation(location);
-        console.log('setting location in ItemLocationSavedMulti'); 
-    };
- 
+    const { themeStyles } = useGlobalStyle(); 
+
 
     return (
         <View style={[styles.container, {height: '100%'}]}>
+            {helloesData && helloesData.length > 0 && (
+            <>
+                
             <Text style={[styles.headerText, themeStyles.genericText]}>Helloes</Text>
             <FlashList
                 data={helloesData}
@@ -58,7 +55,8 @@ const HelloesList = ({
                 scrollIndicatorInsets={{ right: 1 }}
             />
  
-
+        </>
+        )}
         </View>
     );
 };
