@@ -33,21 +33,24 @@ const MomentView = ({ momentData, navigationArrows, onSliderPull, isModalVisible
         >
           <HeaderBaseItemView onBackPress={toggleModal} onSliderPull={onSliderPull} headerTitle={modalTitle} />
           <View style={styles.momentContainer}>
-            
+            {momentData && momentData.typedCategory && (
             <View style={styles.categoryContainer}>
               <Text style={[styles.categoryText, themeStyles.genericText]}>
                 CATEGORY:  {momentData.typedCategory}
               </Text>
             </View> 
+            )}
             <View style={{flex: 1}}>
             
             <ScrollView 
                 contentContainerStyle={{ padding: 10 }} // Adds padding inside the ScrollView
                 style={{ flex: 1 }} // Ensures ScrollView takes up remaining space
               >
-              <Text style={[styles.momentText, themeStyles.genericText]}>
-                {momentData.capsule}
-              </Text>
+                {momentData && momentData.capsule && (
+                <Text style={[styles.momentText, themeStyles.genericText]}>
+                  {momentData.capsule}
+                </Text>
+                 )}
             </ScrollView> 
             </View> 
           

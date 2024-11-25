@@ -41,20 +41,18 @@ const SearchBarGoogleAddress = () => {
         friends: [],
       };
  
-      setSelectedLocation(newLocation);
-      setTempLocationList((prevTempLocationList) => [newLocation, ...prevTempLocationList]);
+      //setSelectedLocation(newLocation);
+      //setTempLocationList((prevTempLocationList) => [newLocation, ...prevTempLocationList]);
          
       
-      handleGoToLocationViewScreen();
+      handleGoToLocationViewScreen(newLocation);
     }
     setListViewDisplayed(false);
   };
 
-  const handleGoToLocationViewScreen = () => { 
-    navigation.navigate('Location', { location: selectedLocation });
-    //no need to pass in location if already selected in parent
-    //navigation.navigate('Location', { location: location });
-    
+  const handleGoToLocationViewScreen = (location) => { 
+    navigation.navigate('Location', { location: location });
+ 
   }; 
 
   useEffect(() => {

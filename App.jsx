@@ -41,8 +41,6 @@ import ScreenAddHello from './screens/ScreenAddHello';
 import HellofriendHeader from './components/HellofriendHeader';
 //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
 import HeaderWriteMoment from './components/HeaderWriteMoment';
-//import HeaderPickCategory from './components/HeaderPickCategory';
-//import HeaderFriendFocus from './components/HeaderFriendFocus';
 import HeaderFriendSettings from './components/HeaderFriendSettings';
 import HeaderBase from './components/HeaderBase';  
 import HeaderBaseSolid from './components/HeaderBaseSolid'; 
