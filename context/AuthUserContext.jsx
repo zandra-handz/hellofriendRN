@@ -25,6 +25,7 @@ export const AuthUserProvider = ({ children }) => {
     const [userAddresses, setUserAddresses] = useState({ addresses: [] });
     const queryClient = useQueryClient();
 
+    
     // Reinitialize user data function
     const reInitialize = async () => {
         const token = await SecureStore.getItemAsync(TOKEN_KEY);
@@ -113,6 +114,9 @@ export const AuthUserProvider = ({ children }) => {
     
     const signinMutation = useMutation({
         mutationFn: signin,
+        onMutate: () => {  
+            console.log('signin is fetching from onMutate');
+        },
         onSuccess: async (result) => { 
             if (result.data) {
                 const { access: token, refresh } = result.data;
@@ -124,7 +128,11 @@ export const AuthUserProvider = ({ children }) => {
         onError: (error) => {
             console.error('Sign in mutation error:', error);
             //alert("Sign-in failed: " + (error.response?.data.msg || 'Unknown error occurred'));
-        }
+        },
+        onSettled: () => { 
+            //signinMutation.reset()
+
+        },
     });
     
 
@@ -253,7 +261,7 @@ const onSignin = async (username, password) => {
             authUserState,
             userAppSettings,
             userNotificationSettings,
-            userAddresses,
+            userAddresses, 
             handleSignup: signupMutation.mutate,
             onSignin, 
             updateAppSettingsMutation, 

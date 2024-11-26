@@ -73,6 +73,9 @@ const useLocationFunctions = () => {
     
       const createLocationMutation = useMutation({
         mutationFn: (data) => createLocation(data),
+        onMutate: () =>{
+          passToSpinner({fetching: true});
+        },
         onSuccess: (data) => {queryClient.setQueryData(['locationList'], (old) => {
                 const updatedList = old ? [data, ...old] : [data];
                 return updatedList; 
@@ -80,17 +83,21 @@ const useLocationFunctions = () => {
      
             const actualLocationList = queryClient.getQueryData(['locationList']);
             console.log('Actual locationList after mutation:', actualLocationList);
+            killSpinner();
+          },
+        onError: (error) => {
+          killSpinner();
         },
     });
 
 
-    useEffect(() => { 
-      if (createLocationMutation.isPending) {
-        passToSpinner({fetching: true});
-      } else {
-        killSpinner();
-      }
-    }, [createLocationMutation.isPending]);
+    //useEffect(() => { 
+      //if (createLocationMutation.isPending) {
+      //  passToSpinner({fetching: true});
+      //} else {
+      //  killSpinner();
+     // }
+    //}, [createLocationMutation.isPending]);
 
     const accessLocationListCacheData = () => {
 
@@ -133,12 +140,10 @@ const useLocationFunctions = () => {
 
     const removeFromFavesMutation = useMutation({
       mutationFn: (data) => removeFromFriendFavesLocations(data),
-      onSuccess: (data) => {
-        //console.log(`data in deleteFromFavesMutation: `, data);
-        //removeLocationFromFaves(data);
-        //console.log('location removed faves!', data.locations);
-        const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
-        //console.log('Friend dashboard data accessed from location hook:', friendData);
+      onMutate: () =>{
+        passToSpinner({fetching: true});
+      },
+      onSuccess: (data) => {  const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
         
         queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
           if (!old || !old[0]) {
@@ -168,12 +173,14 @@ const useLocationFunctions = () => {
       });
       
       },
-      onError: (error) => {
+      onError: (error) => { 
         console.error('Error removing location to friend faves:', error);
     },
     onSettled: () => { 
+      killSpinner();
       setTimeout(() => {
-          removeFromFavesMutation.reset();
+        
+        removeFromFavesMutation.reset();
       }, RESET_DELAY);
   },
     })
@@ -197,16 +204,12 @@ const useLocationFunctions = () => {
 
     const addToFavesMutation = useMutation({
       mutationFn: (data) => addToFriendFavesLocations(data),
-      onSuccess: (data) => {
-        //console.log(`data in addToFavesMutation: `, data);
-        //addLocationToFaves(data);
-        //console.log('location added to faves!', data.locations);
-        const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
-        //console.log('Friend dashboard data accessed from location hook:', friendData);
-        
-        queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
+      onMutate: () =>{
+        passToSpinner({fetching: true});
+      },
+      onSuccess: (data) => {  const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
+         queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
           if (!old || !old[0]) {
-              // Initialize if `old` or `old[0]` is missing
               return {
                   0: {
                       friend_faves: {
@@ -237,6 +240,7 @@ const useLocationFunctions = () => {
         console.error('Error adding location to friend faves:', error);
     },
     onSettled: () => { 
+      killSpinner();
       setTimeout(() => {
           addToFavesMutation.reset();
       }, RESET_DELAY);
@@ -261,6 +265,9 @@ const useLocationFunctions = () => {
 
     const deleteLocationMutation = useMutation({
       mutationFn: (data) => deleteLocation(data),
+      onMutate: () =>{
+        passToSpinner({fetching: true});
+      },
       onSuccess: (data) => {
         // Remove from cache
         queryClient.setQueryData(['locationList'], (old) => {
@@ -276,6 +283,7 @@ const useLocationFunctions = () => {
           console.error('Error deleting location:', error);
       },
       onSettled: () => { 
+        killSpinner();
           setTimeout(() => {
               deleteLocationMutation.reset();
           }, RESET_DELAY);

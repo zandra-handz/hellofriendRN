@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Animated } from 'react-native';
+import React, { useState, useEffect  } from 'react';
+import { View, StyleSheet  } from 'react-native';
 import { Flow, Swing, Chase, Circle, CircleFade, Fold, Grid, Pulse, Wander, Wave } from 'react-native-animated-spinkit';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useMessage } from '../context/MessageContext';
@@ -30,23 +30,30 @@ const FullScreenSpinner = ({
   const { themeAheadOfLoading } = useFriendList();
   const{ isFetching, isLoading } = useLocationFunctions();
 
+  useEffect(() => {
+    console.log('FULL SCREEN SPINNER RERENDERED');
+  }, []);
+
  
   useEffect(() => { 
     
-      if (isFetchingData.fetching) {
+      if (isFetchingData.fetching && isFetchingData.fetching === true) {
+        console.log('passToSpinner triggered');
         setShowSpinner(true);
       } else {
+        console.log('passToSpinner triggered off');
+        //setShowSpinner(true);
         setShowSpinner(false);
       } 
  
   }, [isFetchingData]); 
 
-  useEffect(() => { 
+ useEffect(() => { 
     
-    if (isFetching) {
-      setShowSpinner(true);
+   if (isFetching) {
+     setShowSpinner(true);
     } else {
-      setShowSpinner(false);
+    setShowSpinner(false);
     } 
 
 }, [isFetching]); 
@@ -80,8 +87,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay
-        zIndex: 1000, // High zIndex to stay on top
-        elevation: 1000, // Ensures Android rendering priority
+        zIndex: 2000, // High zIndex to stay on top
+        elevation: 2000, // Ensures Android rendering priority
       },
   textContainer: {
     position: 'absolute',
@@ -92,7 +99,8 @@ const styles = StyleSheet.create({
   spinnerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
+    zIndex: 2000,
+    elevation: 2000,
   },
   loadingTextBold: {
     fontSize: 22,

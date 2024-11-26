@@ -33,12 +33,13 @@ export const MessageContextProvider = ({ children }) => {
   const [isFetchingData, setFetchingData ] = useState({fetching: false});
 
 
-  const passToSpinner = (fetching) => {
-    setFetchingData({fetching: fetching});
-    console.log(fetching);
+  const passToSpinner = (state) => {
+    console.log('passed to spinner: ', state);
+    setFetchingData({fetching: state}); 
   };
 
   const killSpinner = () => {
+    console.log('killSpinner ran');
     setFetchingData({fetching: false});
   };
 
@@ -56,6 +57,7 @@ useEffect(() => {
   if (upcomingHelloesIsFetching) {
     passToSpinner(upcomingHelloesIsFetching);
   } else {
+    console.log('upcominghelloes killspinner');
     killSpinner();
   }
 }, [upcomingHelloesIsFetching]);
@@ -67,13 +69,13 @@ useEffect(() => {
 }, [upcomingHelloesIsSuccess]);
 
 
-useEffect(() => {
-  if (signinMutation.isFetching) {
-    passToSpinner(signinMutation.isFetching);
-  } else {
-    killSpinner();
-  }
-}, [signinMutation]);
+//useEffect(() => {
+  //if (signinMutation.isFetching) {
+    //passToSpinner(signinMutation.isFetching);
+  //} else {
+  //  killSpinner();
+ // }
+//}, [signinMutation]);
 
 useEffect(() => {
   if (signinMutation.isSuccess && authUserState?.authenticated && authUserState?.user) {

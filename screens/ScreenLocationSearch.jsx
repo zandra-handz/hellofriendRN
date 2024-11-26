@@ -1,7 +1,7 @@
 
 
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import SearchBarGoogleAddress from '../components/SearchBarGoogleAddress';
@@ -9,56 +9,17 @@ import SearchBarGoogleAddress from '../components/SearchBarGoogleAddress';
 import MapWithLocations from '../components/MapWithLocations';
 
 
-import ItemLocationSingle from '../components/ItemLocationSingle';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 
 const ScreenLocationSearch = ({ route, navigation }) => {
     const { locationList, selectedLocation, setSelectedLocation } = useLocationFunctions();
-    const [category, setCategory] = useState(null);
-    const [scrollSavedLocations] = useState(false); //for me to turn off to test performance without it
+
     useEffect(() => {
         console.log('Selected Location Changed:', selectedLocation);
     }, [selectedLocation]);
 
-    const handleGooglePress = (data, details = null) => {
-        console.log("Address selected");
-        console.log("Data:", data);
-        console.log("Details:", details);
-        if (details) {
-            const { formatted_address } = details;
-            console.log('Selected Address:', formatted_address);
-            setSelectedLocation(formatted_address);
-        }
-    };
 
-    const onViewableItemsChanged = useRef(({ viewableItems }) => {
-        if (viewableItems.length > 0) {
-            const topItem = viewableItems[0].item;
-            setCategory(topItem.name);
-            setSelectedLocation(topItem);
-            console.log('Top item:', topItem);
-            console.log('Category:', topItem.title);
-        }
-    }).current;
-
-    const renderAdditionalSatellites = useCallback(() => (
-        <>
-        {scrollSavedLocations && ( 
-        <FlatList
-            data={locationList}
-            horizontal
-            keyExtractor={(item, index) => `additional-satellite-${index}`}
-            renderItem={({ item }) => (
-                <ItemLocationSingle locationObject={item} spacer={50} color="white" />
-            )}
-            onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-            ListFooterComponent={<View style={{ width: 300 }} />} // Add blank space at the end of the list
-    
-        />
-        )}
-        </>
-    ), [locationList, onViewableItemsChanged]);
+ 
 
     return (
         <GestureHandlerRootView style={styles.container}> 
@@ -68,14 +29,10 @@ const ScreenLocationSearch = ({ route, navigation }) => {
 
                 {locationList && (
                     <>
-                                    <View style={styles.mapContainer}>
+                    <View style={styles.mapContainer}>
 
-                                    <MapWithLocations locations={locationList} />
-                                </View>
-                    <View style={styles.additionalSatelliteSection}>
-                        <Text style={styles.categoryText}>{category}</Text>
-                        {renderAdditionalSatellites()}
-                    </View>
+                        <MapWithLocations locations={locationList} />
+                    </View> 
                     </>
                 )} 
         </GestureHandlerRootView>

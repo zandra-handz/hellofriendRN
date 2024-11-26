@@ -6,19 +6,18 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useNavigation } from '@react-navigation/native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 
 import { GOOGLE_API_KEY } from '@env';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 const SearchBarGoogleAddress = () => {
-  const { locationList, setTempLocationList, tempLocationList } = useLocationFunctions();
-  const navigation = useNavigation();
+  const { themeStyles } = useGlobalStyle();  const navigation = useNavigation();
   const [ selectedLocation, setSelectedLocation ] = useState();
   const [listViewDisplayed, setListViewDisplayed] = useState(true);
-  const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
-  const queryClient = useQueryClient();
+
   const googlePlacesRef = useRef(null);
  
 
@@ -60,10 +59,7 @@ const SearchBarGoogleAddress = () => {
       googlePlacesRef.current?.setAddressText('');
     }
   }, [listViewDisplayed]);
-
-  const closeModal = () => {
-    setIsLocationModalVisible(false);
-  };
+ 
 
   return (
     <View style={styles.container}>
@@ -82,8 +78,8 @@ const SearchBarGoogleAddress = () => {
           language: 'en',
         }}
         styles={{
-          textInputContainer: styles.textInputContainer,
-          textInput: styles.textInput,
+          textInputContainer: [styles.inputContainer, themeStyles.genericTextBackground],
+          textInput: [styles.searchInput, themeStyles.genericText],
           listView: styles.listView,
           predefinedPlacesDescription: styles.predefinedPlacesDescription,
         }}
@@ -112,18 +108,31 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     paddingRight: 2,
   },
-  textInput: {
-    height: 50,
-    borderColor: 'black',
-    borderWidth: 1.4,
-    width: '100%',
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center', 
+    alignContent: 'center',
+    height: '100%', 
+    borderWidth: 1,
     borderRadius: 30,
-    paddingHorizontal: 10,
+    height: 48,
+    backgroundColor: '#444', 
   },
   searchIcon: {
     position: 'absolute',
     right: 14,
     top: '18%',
+  },
+  searchInput: { 
+    flex: 1, 
+    alignItems: 'center',
+    alignContent: 'center',
+    fontFamily: 'Poppins-Regular', 
+    fontSize: 15,
+    textAlign: 'left',
+    overflow: 'hidden',
+    paddingHorizontal: 12, 
+    height: 'auto', 
   },
   listView: {
     backgroundColor: 'white',

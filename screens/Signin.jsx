@@ -6,8 +6,7 @@ import { useMessage } from '../context/MessageContext';
 import ButtonColorHighlight from '../components/ButtonColorHighlight';
 import { useFonts } from 'expo-font'; 
 import * as SecureStore from 'expo-secure-store';
-import { useNavigation } from '@react-navigation/native';
-import LoadingPage from '../components/LoadingPage'; 
+import { useNavigation } from '@react-navigation/native'; 
 import Logo from '../components/Logo'; 
 import { LinearGradient } from 'expo-linear-gradient'; 
 
@@ -17,7 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 const TOKEN_KEY = 'my-jwt';
 
 const Signin = () => {
-  const { showMessage } = useMessage();
+  const { showMessage, passToSpinner, killSpinner } = useMessage();
   const { themeStyles, gradientColors } = useGlobalStyle();
   const { darkColor, lightColor } = gradientColors;
   const [showSignIn, setShowSignIn ] = useState(true);
@@ -26,9 +25,9 @@ const Signin = () => {
   const [password, setPassword] = useState('');
   const [verifyPassword, setVerifyPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isSignIn, setIsSignIn] = useState(true);
+  const [isSignInScreen, setSignInScreen] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const { onSignin, signinMutation, signupMutation, onSignup, onSignOut, reInitialize  } = useAuthUser();
+  const { onSignin, signinMutation, signupMutation, onSignup, reInitialize  } = useAuthUser();
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const emailInputRef = useRef(null);
@@ -36,6 +35,8 @@ const Signin = () => {
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const navigation = useNavigation();
+
+  const [ confirmedUserNotSignedIn, setConfirmedUserNotSignedIn ] = useState(false);
 
   const [fontsLoaded] = useFonts({
     'Poppins-Regular': require('../assets/fonts/Poppins-Regular.ttf'),
@@ -55,6 +56,8 @@ const Signin = () => {
 
 
 
+
+
   const checkIfSignedIn = async () => {
    
     try {
@@ -62,11 +65,12 @@ const Signin = () => {
       if (token) {
         console.log(token);
         showMessage(true, null, 'Reinitializing...');
-        reInitialize(); 
+        reInitialize();  
         // Optionally, handle any other logic needed after re-initialization
       } else {
         // No token found, show sign in
         setShowSignIn(true);
+        setConfirmedUserNotSignedIn(true);
         showMessage(true, null, 'Signed out');
       }
     } catch (error) { 
@@ -75,13 +79,30 @@ const Signin = () => {
     } 
   };
   
+  //not working
+  useEffect(() => {
+    passToSpinner(signinMutation.isFetching);
+  }, [signinMutation.isFetching]);
+ 
+   // useEffect(() => { 
+     //   passToSpinner(true);
+
+  
+   // }, [ ]);
 
   const handleAuthentication = async () => { 
     
     let result;
-    if (isSignIn) { 
+    if (isSignInScreen) { 
+      try {
       showMessage(true, null, 'Signing you in...'); 
+      passToSpinner(true);
       onSignin(username, password); 
+      } catch (error) {
+        console.error(error);
+        showMessage(true, null, `Error! Not signed in.`);
+
+      };
     } else {
       if (password !== verifyPassword) {
         alert("Passwords do not match!"); 
@@ -97,8 +118,8 @@ const Signin = () => {
       } else if (result && result.error) {
         alert("Error: " + result.error);
       }
-    }
-    setLoading(false);  
+    } 
+    setLoading(false); 
   };
 
   const toggleMode = () => {
@@ -106,7 +127,7 @@ const Signin = () => {
     setEmail('');
     setPassword('');
     setVerifyPassword('');
-    setIsSignIn(prevState => !prevState);
+    setSignInScreen(prevState => !prevState);
     setSignUpSuccess(false);
   };
 
@@ -132,11 +153,9 @@ const Signin = () => {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.signinContainer]}
-    >
-      {signinMutation.isFetching && (
-        <LoadingPage loading={signinMutation.isFetching} color={'#000002'} spinnerType='flow' />
-      )}
-      {!signinMutation.isFetching && (
+    > 
+
+      {confirmedUserNotSignedIn && (
         <>
         <View style={{width: '100%'}}>
           <Logo
@@ -154,7 +173,7 @@ const Signin = () => {
 
           {showSignIn && (
           <View style={styles.form} accessible={true} accessibilityLabel="Form container">
-            {!isSignIn && (
+            {!isSignInScreen && (
               <TextInput
                 style={[styles.input, themeStyles.signinInput, isEmailFocused && styles.inputFocused]}
                 placeholder="Email"
@@ -201,7 +220,7 @@ const Signin = () => {
               accessibilityHint="Enter your password"
               importantForAccessibility="yes"
             />
-            {!isSignIn && (
+            {!isSignInScreen && (
               <TextInput
                 style={[styles.input, themeStyles.signinInput, isPasswordFocused && styles.inputFocused]}
                 placeholder="Verify Password"
@@ -221,7 +240,7 @@ const Signin = () => {
               <>
                 <ButtonColorHighlight
                   onPress={handleAuthentication}
-                  title={isSignIn ? "Sign in" : "Create account"} 
+                  title={isSignInScreen ? "Sign in" : "Create account"} 
                   shapeSource={require('../assets/shapes/coffeecupdarkheart.png')}
                   shapeWidth={190}
                   shapeHeight={190}
@@ -230,7 +249,7 @@ const Signin = () => {
                   shapePositionVerticalValue={-23}
                   fontColor="white"
                   accessible={true}
-                  accessibilityLabel={isSignIn ? "Sign in button" : "Create account button"}
+                  accessibilityLabel={isSignInScreen ? "Sign in button" : "Create account button"}
                   accessibilityHint="Press to sign in or create an account"
                 />
                 <Text
@@ -240,7 +259,7 @@ const Signin = () => {
                   accessibilityLabel="Toggle button"
                   accessibilityHint="Press to toggle between sign in and create account"
                 >
-                  {isSignIn ? "Create account" : "Go back to sign in"}
+                  {isSignInScreen ? "Create account" : "Go back to sign in"}
                 </Text>
                 {signUpSuccess && (
                   <Text
