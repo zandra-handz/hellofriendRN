@@ -18,8 +18,7 @@ const { theme, nonCustomHeaderPage } = useGlobalStyle();
     
     const whiteContrast = tinycolor.readability(backgroundColor, 'white');
     const blackContrast = tinycolor.readability(backgroundColor, 'black');
-
-    // Choose the color with better readability
+ 
     const readableColor = whiteContrast > blackContrast ? null : 'black';
 
     setColor(readableColor);

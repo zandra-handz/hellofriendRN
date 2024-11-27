@@ -229,7 +229,7 @@ export const Layout = () => {
                 name="LocationSearch"
                 component={ScreenLocationSearch}
                 options={{
-                  headerShown: true,
+                  headerShown: false,
                   header: () => <HeaderBase headerTitle='Search locations' />,
                 }}
               />

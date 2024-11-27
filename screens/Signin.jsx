@@ -16,7 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 const TOKEN_KEY = 'my-jwt';
 
 const Signin = () => {
-  const { showMessage, passToSpinner, killSpinner } = useMessage();
+  const { showMessage } = useMessage();
   const { themeStyles, gradientColors } = useGlobalStyle();
   const { darkColor, lightColor } = gradientColors;
   const [showSignIn, setShowSignIn ] = useState(true);
@@ -78,17 +78,7 @@ const Signin = () => {
       // Handle errors as necessary
     } 
   };
-  
-  //not working
-  useEffect(() => {
-    passToSpinner(signinMutation.isFetching);
-  }, [signinMutation.isFetching]);
- 
-   // useEffect(() => { 
-     //   passToSpinner(true);
-
-  
-   // }, [ ]);
+   
 
   const handleAuthentication = async () => { 
     
@@ -96,7 +86,7 @@ const Signin = () => {
     if (isSignInScreen) { 
       try {
       showMessage(true, null, 'Signing you in...'); 
-      passToSpinner(true);
+
       onSignin(username, password); 
       } catch (error) {
         console.error(error);

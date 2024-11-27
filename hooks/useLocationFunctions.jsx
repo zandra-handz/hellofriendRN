@@ -56,6 +56,8 @@ const useLocationFunctions = () => {
           setSavedLocationList(saved);
       },
   });
+
+  const locationsIsFetching = isFetching;
   
 
  // useEffect(() => { 
@@ -443,7 +445,8 @@ const useFetchAdditionalDetails = (location, enabled) => {
       };
 
     return { 
-        locationList, 
+        locationList,
+        locationsIsFetching, 
         isFetching,
         locationListIsSuccess,
         sortLocationList,

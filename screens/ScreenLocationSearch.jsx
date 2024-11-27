@@ -1,7 +1,7 @@
 
 
-import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import SearchBarGoogleAddress from '../components/SearchBarGoogleAddress';
@@ -11,26 +11,19 @@ import MapWithLocations from '../components/MapWithLocations';
 
 import useLocationFunctions from '../hooks/useLocationFunctions';
 
-const ScreenLocationSearch = ({ route, navigation }) => {
-    const { locationList, selectedLocation, setSelectedLocation } = useLocationFunctions();
-
-    useEffect(() => {
-        console.log('Selected Location Changed:', selectedLocation);
-    }, [selectedLocation]);
-
+const ScreenLocationSearch = () => {
+    const { locationList } = useLocationFunctions();
 
  
-
     return (
         <GestureHandlerRootView style={styles.container}> 
-                <View style={{zIndex: 2, position: 'absolute', height: 300, width: '100%', backgroundColor: 'transparent', top: 0}}>
+                <View style={{zIndex: 5, position: 'absolute', width: '100%', paddingHorizontal: '1%', ackgroundColor: 'transparent', top: '12%'}}>
                 <SearchBarGoogleAddress />
                 </View>
 
                 {locationList && (
                     <>
                     <View style={styles.mapContainer}>
-
                         <MapWithLocations locations={locationList} />
                     </View> 
                     </>

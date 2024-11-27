@@ -2,9 +2,10 @@ import React, { useState, useEffect  } from 'react';
 import { View, StyleSheet  } from 'react-native';
 import { Flow, Swing, Chase, Circle, CircleFade, Fold, Grid, Pulse, Wander, Wave } from 'react-native-animated-spinkit';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useMessage } from '../context/MessageContext';
 import { useFriendList } from '../context/FriendListContext';
 import  useLocationFunctions from '../hooks/useLocationFunctions';
+import { useAuthUser } from '../context/AuthUserContext';
+import useHelloesData from '../hooks/useHelloesData';
 
 const spinners = {
   circle: Circle,
@@ -22,41 +23,49 @@ const spinners = {
 const FullScreenSpinner = ({   
   spinnerSize = 90, 
   spinnerType = 'grid'}) => {
+ 
+    const { signinMutation } = useAuthUser(); 
 
-    const { isFetchingData } = useMessage();
 
   const [showSpinner, setShowSpinner] = useState(false); // Initialize state with the loading prop
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
-  const{ isFetching, isLoading } = useLocationFunctions();
+  const{ locationsIsFetching } = useLocationFunctions();
+  const { helloesIsFetching, helloesIsLoading } = useHelloesData();
 
   useEffect(() => {
     console.log('FULL SCREEN SPINNER RERENDERED');
   }, []);
 
+  useEffect(() => {
+    if (signinMutation.isPending) {
+      setShowSpinner(signinMutation.isPending);
+    } else {
+      setShowSpinner(false);
+    }
+  }, [signinMutation]);
  
-  useEffect(() => { 
-    
-      if (isFetchingData.fetching && isFetchingData.fetching === true) {
-        console.log('passToSpinner triggered');
-        setShowSpinner(true);
-      } else {
-        console.log('passToSpinner triggered off');
-        //setShowSpinner(true);
-        setShowSpinner(false);
-      } 
- 
-  }, [isFetchingData]); 
 
  useEffect(() => { 
     
-   if (isFetching) {
-     setShowSpinner(true);
-    } else {
-    setShowSpinner(false);
-    } 
+   if (locationsIsFetching) {
+    setShowSpinner(locationsIsFetching);
+     } else {
+      setShowSpinner(false);
+     } 
 
-}, [isFetching]); 
+  }, [locationsIsFetching]); 
+
+
+  useEffect(() => { 
+    
+    if (helloesIsFetching) {
+     setShowSpinner(helloesIsFetching);
+      } else {
+       setShowSpinner(false);
+      } 
+ 
+   }, [helloesIsFetching]); 
 
 
    if (!showSpinner) return null;
@@ -68,10 +77,12 @@ const FullScreenSpinner = ({
     <View style={[styles.container, {backgroundColor: themeStyles.genericText.backgroundColor || 'transparent'}]}>
 
 
-      {showSpinner && (
+      {showSpinner ? (
         <View style={[styles.spinnerContainer, {backgroundColor: 'transparent'}]}>
           <Spinner size={spinnerSize} color={themeAheadOfLoading.darkColor || '#000002'} />
         </View>
+      ) : (
+        null
       )}
     </View>
   );

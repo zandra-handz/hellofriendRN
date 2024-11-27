@@ -39,11 +39,7 @@ const SearchBarGoogleAddress = () => {
         friendsCount: 0,
         friends: [],
       };
- 
-      //setSelectedLocation(newLocation);
-      //setTempLocationList((prevTempLocationList) => [newLocation, ...prevTempLocationList]);
-         
-      
+  
       handleGoToLocationViewScreen(newLocation);
     }
     setListViewDisplayed(false);
@@ -79,8 +75,8 @@ const SearchBarGoogleAddress = () => {
         }}
         styles={{
           textInputContainer: [styles.inputContainer, themeStyles.genericTextBackground],
-          textInput: [styles.searchInput, themeStyles.genericText],
-          listView: styles.listView,
+          textInput: [styles.inputContainer, themeStyles.genericTextBackground],
+          listView: [themeStyles.genericTextBackground],
           predefinedPlacesDescription: styles.predefinedPlacesDescription,
         }}
         nearbyPlacesAPI="GooglePlacesSearch"
@@ -133,6 +129,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingHorizontal: 12, 
     height: 'auto', 
+    
   },
   listView: {
     backgroundColor: 'white',

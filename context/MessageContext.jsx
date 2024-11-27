@@ -57,7 +57,7 @@ useEffect(() => {
   if (upcomingHelloesIsFetching) {
     passToSpinner(upcomingHelloesIsFetching);
   } else {
-    console.log('upcominghelloes killspinner');
+    console.log('upcominghelloes not passing to killspinner');
     killSpinner();
   }
 }, [upcomingHelloesIsFetching]);
@@ -69,13 +69,13 @@ useEffect(() => {
 }, [upcomingHelloesIsSuccess]);
 
 
-//useEffect(() => {
-  //if (signinMutation.isFetching) {
-    //passToSpinner(signinMutation.isFetching);
-  //} else {
-  //  killSpinner();
- // }
-//}, [signinMutation]);
+useEffect(() => {
+  if (signinMutation.isPending) {
+    setFetchingData({fetching: signinMutation.isPending});
+  } else {
+    setFetchingData({fetching: true});
+  }
+}, [signinMutation]);
 
 useEffect(() => {
   if (signinMutation.isSuccess && authUserState?.authenticated && authUserState?.user) {
@@ -134,7 +134,7 @@ useEffect(() => {
 
 
   return (
-    <MessageContext.Provider value={{ messageData, showMessage, hideMessage, passToSpinner, killSpinner, isFetchingData }}>
+    <MessageContext.Provider value={{ messageData, showMessage, hideMessage, isFetchingData }}>
       {children}
     </MessageContext.Provider>
   );
