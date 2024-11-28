@@ -63,11 +63,7 @@ const ButtonGoToLocationFunctions = () => {
     inputRange: [0, 1],
     outputRange: [0, -80], // Adjust to your desired spacing
   });
-
-  const rotateInterpolate = rotation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['180deg', '0deg'], // Adjust to rotate back to initial position
-  });
+ 
 
   return (
     <View style={styles.container}> 
@@ -119,7 +115,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     right: 10,
     bottom: 20,
-    zIndex: 1,
+    zIndex: 3000,
   },
   smallButtonContainer: {
     justifyContent: 'center',

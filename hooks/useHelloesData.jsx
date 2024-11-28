@@ -1,18 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { View, StyleSheet } from 'react-native'; 
+import React, { useMemo } from 'react';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useFriendList } from '../context/FriendListContext';
 import { fetchPastHelloes } from '../api'; 
-import { useQuery } from '@tanstack/react-query'; 
-import SearchBarForFormattedData from '../components/SearchBarForFormattedData';
-import HelloView from '../components/HelloView';
-import { Ionicons } from '@expo/vector-icons'; 
-  
-import HelloesList from '../components/HelloesList';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useMessage } from '../context/MessageContext';
-
-import CustomTabBar from '../components/CustomTabBar';
+import { useQuery } from '@tanstack/react-query';  
 
  
 
@@ -53,8 +42,7 @@ const useHelloesData = () => {
         if (helloesList) {
         
         return helloesList.flatMap((hello) => {
-          const pastCapsules = hello.pastCapsules || []; // Ensure it's an array or an empty one if undefined
-    
+          const pastCapsules = hello.pastCapsules || [];  
              return pastCapsules.length > 0 ? 
                 pastCapsules.map(capsule => ({
                     id: hello.id,
@@ -83,11 +71,7 @@ const useHelloesData = () => {
         });
     }
     }, [helloesList]);
- 
-    
-
-
- 
+  
 
     return { 
         helloesList,

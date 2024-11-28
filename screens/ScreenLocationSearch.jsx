@@ -1,6 +1,6 @@
 
 
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -10,21 +10,39 @@ import MapWithLocations from '../components/MapWithLocations';
 
 
 import useLocationFunctions from '../hooks/useLocationFunctions';
+import useLocationHelloFunctions from '../hooks/useLocationHelloFunctions';
+import useHelloesData from '../hooks/useHelloesData';
 
 const ScreenLocationSearch = () => {
     const { locationList } = useLocationFunctions();
+    const { inPersonHelloes } = useHelloesData();
+    const { createLocationListWithHelloes } = useLocationHelloFunctions();
+    const [ sortedLocations, setSortedLocations ] = useState([]);
+    
+    useLayoutEffect(() => {
+      if (locationList && inPersonHelloes) {
 
+        const newList = createLocationListWithHelloes(locationList, inPersonHelloes);
+      setSortedLocations(newList);
+      }
+    }, [locationList, inPersonHelloes]);
+
+    useEffect(() => {
+      if (sortedLocations) {
+        console.log(sortedLocations);
+      }
+
+
+    }, [sortedLocations]);
  
     return (
         <GestureHandlerRootView style={styles.container}> 
-                <View style={{zIndex: 5, position: 'absolute', width: '100%', paddingHorizontal: '1%', ackgroundColor: 'transparent', top: '12%'}}>
-                <SearchBarGoogleAddress />
-                </View>
 
-                {locationList && (
+
+                {sortedLocations && (
                     <>
                     <View style={styles.mapContainer}>
-                        <MapWithLocations locations={locationList} />
+                        <MapWithLocations sortedLocations={sortedLocations} />
                     </View> 
                     </>
                 )} 

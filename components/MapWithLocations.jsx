@@ -1,152 +1,79 @@
 import * as Location from 'expo-location';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { View, StyleSheet, Platform, Alert, TouchableOpacity, Text, Dimensions, Animated, Image } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
-import useLocationFunctions from '../hooks/useLocationFunctions';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
 import LocationOverMapButton from '../components/LocationOverMapButton';
-import Geocoder from 'react-native-geocoding';
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext'; 
 import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
-import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
-import useHelloesData from '../hooks/useHelloesData';
+import ButtonGoToAllLocations from '../components/ButtonGoToAllLocations';
+
 import ButtonGoToLocationFunctions from '../components/ButtonGoToLocationFunctions';
+import useCurrentLocation from '../hooks/useCurrentLocation'; 
+import ExpandableUpCard from '../components/ExpandableUpCard';
+import SearchBarGoogleAddress from '../components/SearchBarGoogleAddress';
 
-const MapWithLocations = () => {
+
+const MapWithLocations = ({ sortedLocations }) => {
   const mapRef = useRef(null);
-  const { helloesList, inPersonHelloes } = useHelloesData();
+  const { currentLocationDetails, currentRegion  } = useCurrentLocation();
+  const navigation = useNavigation();
   const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
-  const [initialRegion, setInitialRegion] = useState(null);
-  const [isInvalidLocation, setIsInvalidLocation] = useState(false);
-  const { locationList, loadingAdditionalDetails, useFetchAdditionalDetails } = useLocationFunctions();
-  const [selectedLocation, setSelectedLocation  ] = useState(locationList[0] || null);
-  const { selectedFriend, friendDashboardData } = useSelectedFriend(); 
-  
-  useEffect(() => {
-    const handleUseCurrentLocation = async () => {
-      try { 
-        const { status } = await Location.requestForegroundPermissionsAsync();
-  
-        if (status !== 'granted') {
-          Alert.alert(
-            'Permission Denied',
-            'Permission to access location was denied. Please enable it in settings.'
-          );
-          return;
-        }
-  
-        // Get user's current location
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-  
-        const { latitude, longitude } = location.coords;
-  
-        // Reverse geocoding to get the address
-        const response = await Geocoder.from(latitude, longitude); // Ensure Geocoder is properly configured
-        const address = response.results[0]?.formatted_address || 'Unknown Address';
-  
-        const newAddress = {
-          address,
-          latitude,
-          longitude,
-          title: 'Current Location',
-        };
-  
-        setSelectedLocation(newAddress);
-  
-        // Set the initial region to the user's current location
-        setInitialRegion({
-          latitude,
-          longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-      } catch (error) {
-        console.error('Error getting location:', error);
-        Alert.alert('Error', 'Unable to get current location.');
-      }
-    };
-  
-    handleUseCurrentLocation();
-  }, []);
-
-
-  const findHelloesAtLocation = (singleLocationId) => {
-    if (singleLocationId) { 
-      const matchingHelloes = inPersonHelloes.filter(
-        hello => hello.location === singleLocationId
-      ); 
-      return matchingHelloes.length;
-    }
-  };
-  
-
-
-  const faveLocations = useMemo(() => {
-    console.log('Filtering favorite locations');
-    if (locationList) {
-    return locationList.filter(location =>
-      friendDashboardData[0].friend_faves.locations.includes(location.id)
-    );
-    }
-  }, [locationList, friendDashboardData]);
+  const { themeAheadOfLoading } = useFriendList(); 
+  const { initialRegion, setInitialRegion } = useState(null);
+  const [focusedLocation, focusOnLocation  ] = useState(null);
  
 
-  const isValidCoordinate = (latitude, longitude) => {
-    return !isNaN(latitude) && !isNaN(longitude) && latitude !== null && longitude !== null;
-  };
+ useEffect(() => {
+  if (currentLocationDetails && currentRegion) { 
+  focusOnLocation(currentLocationDetails);
+  console.log(currentLocationDetails);
+  mapRef.current.animateToRegion(currentRegion, 200);
+}  
 
-  useEffect(() => {
-    if (locationList && locationList.length > 0 && !initialRegion) {
-      const initialLocation = locationList.find(location => isValidCoordinate(location.latitude, location.longitude));
-      if (initialLocation) {
-        const region = {
-          latitude: parseFloat(initialLocation.latitude),
-          longitude: parseFloat(initialLocation.longitude),
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        };
-        setInitialRegion(region);
-      }
-    }
-  }, [locationList]);
+}, [currentRegion]);
 
-  const scrollElementHeight = 100;
+const handleGoToLocationViewScreen = (item) => { 
+  navigation.navigate('Location', { location: item, favorite: false }); //false as default, receiving screen should still detect
+
+}; 
+
+
+
+ // const findHelloesAtLocation = (singleLocationId) => {
+   // if (singleLocationId) { 
+     // const matchingHelloes = inPersonHelloes.filter(
+       // hello => hello.location === singleLocationId
+     // ); 
+     // return matchingHelloes.length;
+   // }
+ // };
+
 
   
 
-  const soonButtonWidth = 190;
- // const friendItemButtonWidth = 160;
-
+ 
+  const soonButtonWidth = 190; 
   const soonListRightSpacer = Dimensions.get("screen").width - 136;
-
-  const friendItemButtonWidth = Dimensions.get("screen").width / 2.6;
-
   const buttonRightSpacer = 6;
- 
-  const calendarButtonHeight = (scrollElementHeight / .6);
+  
 
   const handlePress = (location) => {
     if (location) {
-      setSelectedLocation(location);
+      focusOnLocation(location);
+      console.log('focus on location pressed!');
 
     };
   }
 
-  const transformCoordinateDataType = (latitude, longitude ) => {
-
-  };
-
   const renderBottomScrollList = () => {
     return (
       <Animated.FlatList
-      data={faveLocations}
+      data={sortedLocations}
       horizontal={true}
       keyExtractor={(item, index) => `fl-${index}`}
       getItemLayout={(data, index) => (
@@ -178,34 +105,49 @@ const MapWithLocations = () => {
   }
 
   useEffect(() => {
-    if (selectedLocation) {
-      console.log('selectedLocation changed:', selectedLocation); // Log when selectedLocation changes
-      if (mapRef.current && isValidCoordinate(selectedLocation.latitude, selectedLocation.longitude)) {
-        const newRegion = {
-          latitude: parseFloat(selectedLocation.latitude),
-          longitude: parseFloat(selectedLocation.longitude),
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        };
-        mapRef.current.animateToRegion(newRegion, 200);
-        setIsInvalidLocation(false);
-      } else {
-        setIsInvalidLocation(true);
-      }
+    if (focusedLocation) { 
+        try {
+            const { latitude, longitude } = focusedLocation;
+
+            // Validate latitude and longitude are defined and within valid range
+            if (
+                mapRef.current && 
+                latitude !== undefined && 
+                longitude !== undefined &&
+                isFinite(latitude) && 
+                isFinite(longitude) && 
+                latitude >= -90 && 
+                latitude <= 90 && 
+                longitude >= -180 && 
+                longitude <= 180
+            ) {
+                mapRef.current.animateToRegion(
+                    {
+                        latitude: parseFloat(latitude),
+                        longitude: parseFloat(longitude),
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    },
+                    200
+                );
+            } else {
+                console.warn('Invalid latitude or longitude:', { latitude, longitude });
+            }
+        } catch (error) {
+            console.error('Error animating map region:', error);
+        }
     }
-  }, [selectedLocation]);
-
-  
+}, [focusedLocation]);
 
 
+   
   const renderLocationsMap = (locations) => (
-    <>
-      {initialRegion ? (
+    <> 
         <MapView
           {...(Platform.OS === 'android' && { provider: PROVIDER_GOOGLE })}
           ref={mapRef}
           style={styles.map}
-          initialRegion={initialRegion} 
+          initialRegion={currentRegion || null} 
           enableZoomControl={true}
           showsUserLocation={true}
           showsMyLocationButton={true}
@@ -235,7 +177,7 @@ const MapWithLocations = () => {
             <View style={{flex: 1}}>
             
             <Text style={{fontWeight: 'bold',  zIndex: 1000, position: 'absolute', top: -12, right: -8, backgroundColor: 'yellow', padding: 4, borderRadius: 20, fontSize: 12}}>
-              {findHelloesAtLocation(location.id)}
+              {location && location.helloCount}
               </Text> 
                 
             </View>
@@ -248,8 +190,7 @@ const MapWithLocations = () => {
                 
           </Marker>
           )}
-        </MapView>
-      ) : null}
+        </MapView> 
     </>
   );
 
@@ -260,45 +201,62 @@ const MapWithLocations = () => {
     end={{ x: 1, y: 0 }}  
     style={[styles.container]} 
   > 
-    {locationList && faveLocations && ( 
+    {sortedLocations && ( 
       <>
-        {renderLocationsMap(faveLocations)}
+        {renderLocationsMap(sortedLocations)}
        
         <View style={styles.scrollContainer}>
           {renderBottomScrollList()}
         </View>
-        <View style={[styles.detailsContainer, themeStyles.genericTextBackground]}>
-        {selectedLocation && (
+
+</>
+      )}
+
+<ExpandableUpCard
+        onPress={() => {
+          handleGoToLocationViewScreen(focusedLocation)
+        }}
+        content={
+          <>
+        {focusedLocation && (
           <>
           <View style={{flexDirection: 'row'}}>
-          <Text style={[themeStyles.genericText, {fontWeight: 'bold', fontSize: 15, textTransform: 'uppercase', lineHeight: 22}]}>{selectedLocation.title}</Text>
+          <Text style={[themeStyles.genericText, {fontWeight: 'bold', fontSize: 15, textTransform: 'uppercase', lineHeight: 22}]}>{focusedLocation.title}</Text>
+
           </View> 
                     <View style={{flexDirection: 'row'}}>
-                      <Text style={themeStyles.genericText}>{selectedLocation.address}</Text>
+                      <Text style={themeStyles.genericText}>{focusedLocation.address}</Text>
                     </View>  
-                    {selectedLocation && selectedLocation.notes && ( 
+                    {focusedLocation && focusedLocation.notes && ( 
                       <View style={{flexDirection: 'row'}}>
                         <Text style={[styles.detailsSubtitle, themeStyles.genericText]}>Notes: </Text>
-                        <Text style={themeStyles.genericText}>{selectedLocation.notes}</Text>
+                        <Text style={themeStyles.genericText}>{focusedLocation.notes}</Text>
                       </View>       
                     )}              
                     
-                    {selectedLocation && selectedLocation.parking && ( 
+                    {focusedLocation && focusedLocation.parking && ( 
                     <View style={{flexDirection: 'row'}}>
                       <Text style={[styles.detailsSubtitle, themeStyles.genericText]}>Parking: </Text>
-                      <Text style={themeStyles.genericText}>{selectedLocation.parking}</Text>
+                      <Text style={themeStyles.genericText}>{focusedLocation.parking}</Text>
+                    </View> 
+                  )} 
+                  {focusedLocation && focusedLocation.helloCount && ( 
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={[styles.detailsSubtitle, themeStyles.genericText]}>Helloes here: </Text>
+                      <Text style={themeStyles.genericText}>{focusedLocation.helloCount}</Text>
                     </View> 
                   )} 
         </>
         )}
+        </>
+      }
+        />
+        <View style={{zIndex: 2200, position: 'absolute', width: '100%', paddingHorizontal: '1%', ackgroundColor: 'transparent', top: '12%'}}>
+        <SearchBarGoogleAddress onPress={handlePress}/>
         </View>
-</>
-      )}
-
     <ButtonGoToFindLocation />
-
-    <ButtonGoToLocationFunctions />
-
+    <ButtonGoToAllLocations onPress={handlePress} /> 
+    <ButtonGoToLocationFunctions /> 
     </LinearGradient>
   );
 };
@@ -310,8 +268,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'pink',
   },
-  map: {  // Ensure the map takes up the entire space of the container
-    width: '100%', // Full width 
+  map: {  
+     width: '100%',  
     height: '64%', 
     paddingTop: 60,
     zIndex: 3,
@@ -337,8 +295,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignContent: 'center',
     alignItems: 'center',
-
-
   },
 });
 

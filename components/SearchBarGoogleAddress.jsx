@@ -13,10 +13,9 @@ import { GOOGLE_API_KEY } from '@env';
 import { useQueryClient } from '@tanstack/react-query';
 
 
-const SearchBarGoogleAddress = () => {
+const SearchBarGoogleAddress = ({onPress}) => {
   const { themeStyles } = useGlobalStyle();  const navigation = useNavigation();
-  const [ selectedLocation, setSelectedLocation ] = useState();
-  const [listViewDisplayed, setListViewDisplayed] = useState(true);
+   const [listViewDisplayed, setListViewDisplayed] = useState(true);
 
   const googlePlacesRef = useRef(null);
  
@@ -39,10 +38,12 @@ const SearchBarGoogleAddress = () => {
         friendsCount: 0,
         friends: [],
       };
-  
-      handleGoToLocationViewScreen(newLocation);
+
+      onPress(newLocation);
+      //handleGoToLocationViewScreen(newLocation); 
+      googlePlacesRef.current?.setAddressText('');
     }
-    setListViewDisplayed(false);
+    googlePlacesRef.current?.setAddressText('');
   };
 
   const handleGoToLocationViewScreen = (location) => { 
@@ -75,7 +76,7 @@ const SearchBarGoogleAddress = () => {
         }}
         styles={{
           textInputContainer: [styles.inputContainer, themeStyles.genericTextBackground],
-          textInput: [styles.inputContainer, themeStyles.genericTextBackground],
+          textInput: [styles.inputContainer, themeStyles.genericText],
           listView: [themeStyles.genericTextBackground],
           predefinedPlacesDescription: styles.predefinedPlacesDescription,
         }}
@@ -108,11 +109,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', 
     alignContent: 'center',
-    height: '100%', 
-    borderWidth: 1,
+    height: '100%',  
     borderRadius: 30,
     height: 48,
-    backgroundColor: '#444', 
+    backgroundColor: 'transparent', 
   },
   searchIcon: {
     position: 'absolute',
@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'white',
     maxHeight: 300,
+
   },
   predefinedPlacesDescription: {
     color: '#1faadb',

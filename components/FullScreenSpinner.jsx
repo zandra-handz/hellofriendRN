@@ -5,7 +5,11 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 import  useLocationFunctions from '../hooks/useLocationFunctions';
 import { useAuthUser } from '../context/AuthUserContext';
+import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
+import { useCapsuleList } from '../context/CapsuleListContext';
+
 import useHelloesData from '../hooks/useHelloesData';
+import useCurrentLocation from '../hooks/useCurrentLocation';
 
 const spinners = {
   circle: Circle,
@@ -24,14 +28,16 @@ const FullScreenSpinner = ({
   spinnerSize = 90, 
   spinnerType = 'grid'}) => {
  
-    const { signinMutation } = useAuthUser(); 
-
-
-  const [showSpinner, setShowSpinner] = useState(false); // Initialize state with the loading prop
+  const { signinMutation } = useAuthUser(); 
+   const { createMomentMutation } = useCapsuleList();
+    
+  const [ showSpinner, setShowSpinner ] = useState(false); // Initialize state with the loading prop
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const{ locationsIsFetching } = useLocationFunctions();
-  const { helloesIsFetching, helloesIsLoading } = useHelloesData();
+  const { helloesIsFetching  } = useHelloesData();
+  const { upcomingHelloesIsFetching, upcomingHelloesIsSuccess, newSuccess } = useUpcomingHelloes();
+  const { currentLocationIsCalculating } = useCurrentLocation();
 
   useEffect(() => {
     console.log('FULL SCREEN SPINNER RERENDERED');
@@ -44,6 +50,15 @@ const FullScreenSpinner = ({
       setShowSpinner(false);
     }
   }, [signinMutation]);
+
+
+  useEffect(() => {
+    if (createMomentMutation.isPending) {
+      setShowSpinner(createMomentMutation.isPending);
+    } else {
+      setShowSpinner(false);
+    }
+  }, [createMomentMutation]);
  
 
  useEffect(() => { 
@@ -55,6 +70,28 @@ const FullScreenSpinner = ({
      } 
 
   }, [locationsIsFetching]); 
+  
+
+  useEffect(() => { 
+    
+    if (currentLocationIsCalculating) {
+     setShowSpinner(currentLocationIsCalculating);
+      } else {
+       setShowSpinner(false);
+      } 
+ 
+   }, [currentLocationIsCalculating]); 
+
+  useEffect(() => { 
+    
+    if (upcomingHelloesIsFetching) {
+     setShowSpinner(upcomingHelloesIsFetching);
+      } else {
+       setShowSpinner(false);
+      } 
+ 
+   }, [upcomingHelloesIsFetching]); 
+
 
 
   useEffect(() => { 

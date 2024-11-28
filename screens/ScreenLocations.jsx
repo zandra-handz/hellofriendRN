@@ -3,9 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SearchBar from '../components/SearchBar';
 import { Ionicons } from '@expo/vector-icons'; 
- 
-import ButtonSearchGoogleMap from '../components/ButtonSearchGoogleMap';
-import ButtonFindMidpoints from '../components/ButtonFindMidpoints';
 import LocationsFriendFavesList from '../components/LocationsFriendFavesList';
 import LocationsSavedList from '../components/LocationsSavedList';
  import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
