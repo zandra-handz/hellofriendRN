@@ -29,7 +29,7 @@ const ButtonSaveLocation = ({ location, favorite=false, saveable=true, size = 11
     const { authUserState } = useAuthUser();
     const { themeAheadOfLoading } = useFriendList();
     const { selectedFriend, friendDashboardData, updateFriendDashboardData } = useSelectedFriend();
-    const { locationList, handleAddToFaves, handleRemoveFromFaves, handleDeleteLocation, faveLocationList, deleteLocationMutation, addLocationToFaves, removeLocationFromFaves } = useLocationFunctions();
+    const { handleAddToFaves, handleRemoveFromFaves, handleDeleteLocation, faveLocationList, deleteLocationMutation, addLocationToFaves, removeLocationFromFaves } = useLocationFunctions();
   
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModal2Visible, setModal2Visible] = useState(false);

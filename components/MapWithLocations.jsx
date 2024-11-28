@@ -1,8 +1,8 @@
 import * as Location from 'expo-location';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, StyleSheet, Platform, Alert, Dimensions, Animated } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { View, StyleSheet, Platform, Alert, TouchableOpacity, Text, Dimensions, Animated, Image } from 'react-native';
+import MapView, { Marker, Callout } from 'react-native-maps';
 import { PROVIDER_GOOGLE } from 'react-native-maps';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -12,21 +12,24 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext'; 
 import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
+import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
+import useHelloesData from '../hooks/useHelloesData';
+import ButtonGoToLocationFunctions from '../components/ButtonGoToLocationFunctions';
 
 const MapWithLocations = () => {
   const mapRef = useRef(null);
+  const { helloesList, inPersonHelloes } = useHelloesData();
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const [initialRegion, setInitialRegion] = useState(null);
   const [isInvalidLocation, setIsInvalidLocation] = useState(false);
-  const { locationList } = useLocationFunctions();
+  const { locationList, loadingAdditionalDetails, useFetchAdditionalDetails } = useLocationFunctions();
   const [selectedLocation, setSelectedLocation  ] = useState(locationList[0] || null);
   const { selectedFriend, friendDashboardData } = useSelectedFriend(); 
   
   useEffect(() => {
     const handleUseCurrentLocation = async () => {
-      try {
-        // Request permission to access location
+      try { 
         const { status } = await Location.requestForegroundPermissionsAsync();
   
         if (status !== 'granted') {
@@ -72,6 +75,16 @@ const MapWithLocations = () => {
   
     handleUseCurrentLocation();
   }, []);
+
+
+  const findHelloesAtLocation = (singleLocationId) => {
+    if (singleLocationId) { 
+      const matchingHelloes = inPersonHelloes.filter(
+        hello => hello.location === singleLocationId
+      ); 
+      return matchingHelloes.length;
+    }
+  };
   
 
 
@@ -108,7 +121,7 @@ const MapWithLocations = () => {
 
   
 
-  const soonButtonWidth = 140;
+  const soonButtonWidth = 190;
  // const friendItemButtonWidth = 160;
 
   const soonListRightSpacer = Dimensions.get("screen").width - 136;
@@ -137,13 +150,13 @@ const MapWithLocations = () => {
       horizontal={true}
       keyExtractor={(item, index) => `fl-${index}`}
       getItemLayout={(data, index) => (
-        {length: buttonWidth, offset: buttonWidth * index, index }
+        {length: soonButtonWidth, offset: soonButtonWidth * index, index }
       )}
 
       renderItem={({ item }) => (
-            <View style={{marginRight: buttonRightSpacer, height: '30%', flex: 1}}>
+            <View style={{marginRight: buttonRightSpacer, paddingVertical: 4, height: '90%'}}>
             <LocationOverMapButton 
-              height={'30%'} 
+              height={'100%'} 
               friendName={item.title || item.address}  
               width={soonButtonWidth} 
               onPress={() => (handlePress(item))} /> 
@@ -192,10 +205,14 @@ const MapWithLocations = () => {
           {...(Platform.OS === 'android' && { provider: PROVIDER_GOOGLE })}
           ref={mapRef}
           style={styles.map}
-          initialRegion={initialRegion}
+          initialRegion={initialRegion} 
+          enableZoomControl={true}
+          showsUserLocation={true}
+          showsMyLocationButton={true}
+          zoomEnabled={true}
         >
  
-          {locations.map(location =>
+          {locations.map(location =>  
               <Marker
                 key={location.id.toString()}
                 coordinate={{
@@ -204,7 +221,32 @@ const MapWithLocations = () => {
                 }}
                 title={location.title}
                 description={location.address}
-              /> 
+                >
+ 
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                alignContent: 'center',
+                justifyContent: 'flex-start', 
+                padding: 5, 
+              }}
+            >  
+            <View style={{flex: 1}}>
+            
+            <Text style={{fontWeight: 'bold',  zIndex: 1000, position: 'absolute', top: -12, right: -8, backgroundColor: 'yellow', padding: 4, borderRadius: 20, fontSize: 12}}>
+              {findHelloesAtLocation(location.id)}
+              </Text> 
+                
+            </View>
+           
+            <Image
+              source={require('../assets/shapes/coffeecupnoheart.png')}
+              style={{ height: 35, width: 35 }}
+            />
+          </View> 
+                
+          </Marker>
           )}
         </MapView>
       ) : null}
@@ -226,12 +268,36 @@ const MapWithLocations = () => {
           {renderBottomScrollList()}
         </View>
         <View style={[styles.detailsContainer, themeStyles.genericTextBackground]}>
-
+        {selectedLocation && (
+          <>
+          <View style={{flexDirection: 'row'}}>
+          <Text style={[themeStyles.genericText, {fontWeight: 'bold', fontSize: 15, textTransform: 'uppercase', lineHeight: 22}]}>{selectedLocation.title}</Text>
+          </View> 
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={themeStyles.genericText}>{selectedLocation.address}</Text>
+                    </View>  
+                    {selectedLocation && selectedLocation.notes && ( 
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={[styles.detailsSubtitle, themeStyles.genericText]}>Notes: </Text>
+                        <Text style={themeStyles.genericText}>{selectedLocation.notes}</Text>
+                      </View>       
+                    )}              
+                    
+                    {selectedLocation && selectedLocation.parking && ( 
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={[styles.detailsSubtitle, themeStyles.genericText]}>Parking: </Text>
+                      <Text style={themeStyles.genericText}>{selectedLocation.parking}</Text>
+                    </View> 
+                  )} 
+        </>
+        )}
         </View>
 </>
       )}
 
-      <ButtonGoToFindLocation />
+    <ButtonGoToFindLocation />
+
+    <ButtonGoToLocationFunctions />
 
     </LinearGradient>
   );
@@ -246,22 +312,31 @@ const styles = StyleSheet.create({
   },
   map: {  // Ensure the map takes up the entire space of the container
     width: '100%', // Full width 
-    height: '50%',
-    top: 50,
-    paddingBottom: 100,
+    height: '64%', 
+    paddingTop: 60,
     zIndex: 3,
   },
   detailsContainer: {
     flexGrow: 1, 
     width: '100%',
+    padding: 20,
+    borderTopRightRadius: 50,
+    borderTopLeftRadius: 50,
+    marginTop: '0%',
+
+  },
+  detailsSubtitle: {
+    fontWeight: 'bold',
+    fontSize: 15,
 
   },
   scrollContainer: {
-    width: '100%',
-    height: 'auto', 
-    top: 56, 
-    flex: 1,
-    zIndex: 0,
+    width: '100%',  
+    height: 50,  
+    zIndex: 1000,
+    justifyContent: 'center', 
+    alignContent: 'center',
+    alignItems: 'center',
 
 
   },

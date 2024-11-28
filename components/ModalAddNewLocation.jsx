@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import ShopAddOutlineSvg from '../assets/svgs/shop-add-outline.svg';
 import AlertFormSubmit from '../components/AlertFormSubmit';

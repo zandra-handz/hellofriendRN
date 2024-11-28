@@ -1,16 +1,14 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import MessageAddSolidSvg from '../assets/svgs/message-add-solid.svg';
-import { useFriendList } from '../context/FriendListContext'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
 
 
 
 const ButtonGoToAddMoment = () => {
-  const { themeStyles, gradientColors, gradientColorsHome, manualGradientColors} = useGlobalStyle();
-  const navigation = useNavigation();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeStyles,   manualGradientColors} = useGlobalStyle();
+  const navigation = useNavigation(); 
 
   const viewSvg = true;
 

@@ -9,7 +9,6 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 const useLocationFunctions = () => {
     const [faveLocationList, setFaveLocationList] = useState([]);
-    const [tempLocationList, setTempLocationList] = useState([]);
     const [savedLocationList, setSavedLocationList] = useState([]);
     const [validatedLocationList, setValidatedLocationList] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
@@ -22,9 +21,8 @@ const useLocationFunctions = () => {
     const queryClient = useQueryClient();
     const [isDeletingLocation, setIsDeletingLocation ] = useState(false);
   
-    const { selectedFriend, friendDashboardData, getFaveLocationIds } = useSelectedFriend();
+    const { selectedFriend } = useSelectedFriend();
 
-    const { showMessage, passToSpinner, killSpinner } = useMessage();
 
 
  
@@ -59,15 +57,7 @@ const useLocationFunctions = () => {
 
   const locationsIsFetching = isFetching;
   
-
- // useEffect(() => { 
-   // if (isFetching) {
-     // passToSpinner({fetching: isFetching});
-   // } else {
-   //   killSpinner();
-   // }
- // }, [isFetching]);
-
+ 
     
       const locationListIsSuccess = isSuccess;
      
@@ -75,9 +65,6 @@ const useLocationFunctions = () => {
     
       const createLocationMutation = useMutation({
         mutationFn: (data) => createLocation(data),
-        onMutate: () =>{
-          passToSpinner({fetching: true});
-        },
         onSuccess: (data) => {queryClient.setQueryData(['locationList'], (old) => {
                 const updatedList = old ? [data, ...old] : [data];
                 return updatedList; 
@@ -85,21 +72,14 @@ const useLocationFunctions = () => {
      
             const actualLocationList = queryClient.getQueryData(['locationList']);
             console.log('Actual locationList after mutation:', actualLocationList);
-            killSpinner();
+            
           },
         onError: (error) => {
-          killSpinner();
+          console.error(error);
         },
     });
 
 
-    //useEffect(() => { 
-      //if (createLocationMutation.isPending) {
-      //  passToSpinner({fetching: true});
-      //} else {
-      //  killSpinner();
-     // }
-    //}, [createLocationMutation.isPending]);
 
     const accessLocationListCacheData = () => {
 
@@ -142,9 +122,6 @@ const useLocationFunctions = () => {
 
     const removeFromFavesMutation = useMutation({
       mutationFn: (data) => removeFromFriendFavesLocations(data),
-      onMutate: () =>{
-        passToSpinner({fetching: true});
-      },
       onSuccess: (data) => {  const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
         
         queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
@@ -178,8 +155,7 @@ const useLocationFunctions = () => {
       onError: (error) => { 
         console.error('Error removing location to friend faves:', error);
     },
-    onSettled: () => { 
-      killSpinner();
+    onSettled: () => {  
       setTimeout(() => {
         
         removeFromFavesMutation.reset();
@@ -206,9 +182,6 @@ const useLocationFunctions = () => {
 
     const addToFavesMutation = useMutation({
       mutationFn: (data) => addToFriendFavesLocations(data),
-      onMutate: () =>{
-        passToSpinner({fetching: true});
-      },
       onSuccess: (data) => {  const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
          queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
           if (!old || !old[0]) {
@@ -241,8 +214,7 @@ const useLocationFunctions = () => {
       onError: (error) => {
         console.error('Error adding location to friend faves:', error);
     },
-    onSettled: () => { 
-      killSpinner();
+    onSettled: () => {  
       setTimeout(() => {
           addToFavesMutation.reset();
       }, RESET_DELAY);
@@ -267,11 +239,8 @@ const useLocationFunctions = () => {
 
     const deleteLocationMutation = useMutation({
       mutationFn: (data) => deleteLocation(data),
-      onMutate: () =>{
-        passToSpinner({fetching: true});
-      },
-      onSuccess: (data) => {
-        // Remove from cache
+
+      onSuccess: (data) => { 
         queryClient.setQueryData(['locationList'], (old) => {
               const updatedList = old ? old.filter((location) => location.id !== data.id) : [];
               return updatedList;
@@ -284,8 +253,7 @@ const useLocationFunctions = () => {
       onError: (error) => {
           console.error('Error deleting location:', error);
       },
-      onSettled: () => { 
-        killSpinner();
+      onSettled: () => {  
           setTimeout(() => {
               deleteLocationMutation.reset();
           }, RESET_DELAY);
@@ -311,23 +279,8 @@ const useLocationFunctions = () => {
       setIsDeletingLocation(false);
     };
     
-    
      
-      useEffect(() => {
-        if (selectedLocation && selectedLocation.id) {
-          const isTemp = String(selectedLocation.id).startsWith('temp');
-          setIsTemp(isTemp);
-          
-          if (!isTemp) {
-            setIsFave(faveLocationList.some(location => location.id === selectedLocation.id));
-          } else {
-            setIsFave(false);
-          }
-        } else {
-          setIsTemp(false);
-          setIsFave(false);
-        }
-      }, [selectedLocation, faveLocationList]); // Removed faveLocationList from dependencies
+      
       //faveLocationList
     
       //this sorts it faster 
@@ -368,21 +321,8 @@ const useLocationFunctions = () => {
         setSavedLocationList(saved);
       }
     };
-
-
-   // useEffect(() => {
-     // if (friendDashboardData && locationList) {
-       // ids = getFaveLocationIds();
-       // console.log('use effect ids', ids);
-       // populateFaveLocationsList(ids);
-     // };
-
-   // }, [friendDashboardData, locationList]);
-
  
-    
-     
-    
+
 const useFetchAdditionalDetails = (location, enabled) => {
   const queryClient = useQueryClient();  
  
@@ -420,17 +360,7 @@ const useFetchAdditionalDetails = (location, enabled) => {
       const clearAdditionalDetails = () => {
         setAdditionalDetails(null);
       };
-    
-    const populateFaveLocationsList = (locationIds) => {
-      if (locationIds && locationIds !== undefined) {
-
-        const favoriteLocations = locationList.filter(location => locationIds.includes(location.id));
-        if (JSON.stringify(faveLocationList) !== JSON.stringify(favoriteLocations)) {
-            setFaveLocationList(favoriteLocations);
-        }
-      }
-    };
-    
+     
     
       const addLocationToFaves = (locationId) => {
         const location = locationList.find(loc => loc.id === locationId);
@@ -458,21 +388,15 @@ const useFetchAdditionalDetails = (location, enabled) => {
         deleteLocationMutation,
         isDeletingLocation,
         isLoading, 
-        validatedLocationList, 
-        //faveLocationList, 
-        //tempLocationList,
-        //setTempLocationList,
+        validatedLocationList,  
         savedLocationList,
         selectedLocation, 
         additionalDetails, 
-        setSelectedLocation, 
-        //populateFaveLocationsList, 
+        setSelectedLocation,   
         addLocationToFaves, 
         removeLocationFromFaves,  
         loadingSelectedLocation,
-        loadingAdditionalDetails,
-        //isTemp, 
-        //isFave,
+        loadingAdditionalDetails, 
         useFetchAdditionalDetails,  
         clearAdditionalDetails,
 

@@ -11,7 +11,7 @@ import ButtonSaveLocation from '../components/ButtonSaveLocation';
 import StylingRating from '../components/StylingRating';
 
 const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
-  const { selectedLocation, loadingAdditionalDetails, useFetchAdditionalDetails } = useLocationFunctions();
+  const { loadingAdditionalDetails, useFetchAdditionalDetails } = useLocationFunctions();
   
   const [refreshing, setRefreshing] = useState(false);
   const { themeStyles } = useGlobalStyle();
@@ -21,7 +21,7 @@ const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
     console.log('location passed in to location details: ', location);
   }, [location]);
 
-  const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(selectedLocation, isFetching);
+  const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(location, isFetching);
 
   const handleRefresh = () => {
     setIsFetching(true); // Trigger the fetch

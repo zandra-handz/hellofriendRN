@@ -1,22 +1,21 @@
 import React, { useState, useRef } from 'react';
 import { View, Animated, StyleSheet } from 'react-native';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
 import ButtonSDOptionSendLoc from '../components/ButtonSDOptionSendLoc';
 import ButtonSDOptionCalculateTravel from '../components/ButtonSDOptionCalculateTravel';
 import ButtonBaseSDMain from '../components/ButtonBaseSDMain';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import RightArrowNoStemSolidSvg from '../assets/svgs/right-arrow-no-stem-solid.svg';
 
-const ButtonGoToLocationFunctions = () => { 
-  const { calculatedThemeColors } = useSelectedFriend();
-  
+const ButtonGoToLocationFunctions = () => {  
+  const { manualGradientColors } = useGlobalStyle();
   const [expanded, setExpanded] = useState(false);
   const animation1 = useRef(new Animated.Value(0)).current;  
   const animation2 = useRef(new Animated.Value(0)).current;  
   const rotation = useRef(new Animated.Value(0)).current; // New animation value for rotation
 
   const toggleButtons = () => {
-    if (!expanded) {
-      // Expand
+    if (!expanded) { 
       setExpanded(true);
       
       Animated.parallel([
@@ -99,10 +98,11 @@ const ButtonGoToLocationFunctions = () => {
  
       <ButtonBaseSDMain 
         expanded={expanded} 
-        icon={DistanceDottedSvg}
+        icon={RightArrowNoStemSolidSvg}
         iconSize={52}
         onPress={toggleButtons} 
-        calculatedThemeColors={calculatedThemeColors} 
+        backgroundColor={manualGradientColors.homeDarkColor}
+        iconColor={manualGradientColors.lightColor}  
         rotation={rotation} // Pass rotation to the main button
       />
     </View>

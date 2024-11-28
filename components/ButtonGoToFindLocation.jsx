@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 
 const ButtonGoToFindLocation = () => {
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
   const { themeAheadOfLoading } = useFriendList();
   
@@ -51,7 +51,7 @@ const ButtonGoToFindLocation = () => {
         ]}
       >
         <TouchableOpacity onPress={handleGoToLocationSearchScreen} style={[styles.smallCircleButton, themeStyles.footerIcon]}>
-          <MapSearchOutlineSvg width={32} height={32} color={themeAheadOfLoading.fontColor} />
+          <MapSearchOutlineSvg width={32} height={32} color={manualGradientColors.lightColor} />
         </TouchableOpacity>
       </Animated.View>
  
@@ -66,7 +66,7 @@ const ButtonGoToFindLocation = () => {
         ]}
       >
         <TouchableOpacity onPress={handleGoToMidpointLocationSearchScreen} style={[styles.smallCircleButton, themeStyles.footerIcon]}>
-          <MapSearchOutlineSvg width={32} height={32} color={themeAheadOfLoading.fontColor} />
+          <MapSearchOutlineSvg width={32} height={32} color={manualGradientColors.lightColor} />
         </TouchableOpacity>
       </Animated.View>
  
@@ -75,10 +75,10 @@ const ButtonGoToFindLocation = () => {
         style={[
           styles.circleButton,
           themeStyles.footerIcon,
-          { backgroundColor: themeAheadOfLoading.darkColor },
+          { backgroundColor: manualGradientColors.homeDarkColor},
         ]}
       >
-        <ShopAddOutlineSvg width={48} height={48} color={themeAheadOfLoading.fontColor} />
+        <ShopAddOutlineSvg width={18} height={18} color={manualGradientColors.lightColor} />
       </TouchableOpacity>
     </View>
   );
@@ -92,13 +92,13 @@ const styles = StyleSheet.create({
     width: 73,
     alignContent: 'center',
     justifyContent: 'center',
-    right: 10,
-    bottom: 20,
-    zIndex: 1,
+    right: -14,
+    top: 160,
+    zIndex: 1000,
   },
   circleButton: {
-    width: 70,
-    height: 70,
+    width: 35,
+    height: 35,
     borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',

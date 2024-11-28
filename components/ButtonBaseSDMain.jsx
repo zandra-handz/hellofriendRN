@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
 import { TouchableOpacity, Animated, StyleSheet } from 'react-native';
-import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-
+ 
 
 const ButtonBaseSDMain = ({ 
         expanded, 
         onPress, 
         icon: Icon,
         iconSize=52,
-        calculatedThemeColors, 
+        backgroundColor,
+        iconColor, 
         rotation }) => {
     
   
@@ -23,17 +22,17 @@ const ButtonBaseSDMain = ({
 
   const rotateInterpolate = rotation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
+    outputRange: ['0deg', '-90deg'],
   });
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.circleButton, {backgroundColor : calculatedThemeColors.darkColor}]}
+      style={[styles.circleButton, {backgroundColor: backgroundColor}]}
     >
       <Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
         {Icon && (
-        <Icon width={iconSize} height={iconSize} color={calculatedThemeColors.fontColor} />
+        <Icon width={iconSize} height={iconSize} color={iconColor} />
         )}
         </Animated.View>
     </TouchableOpacity>
