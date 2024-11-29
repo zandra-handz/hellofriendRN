@@ -7,7 +7,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useNavigation } from '@react-navigation/native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
+import GoogleLogoSvg from '../assets/svgs/google-logo.svg';
 
 import { GOOGLE_API_KEY } from '@env';
 import { useQueryClient } from '@tanstack/react-query';
@@ -62,7 +62,11 @@ const SearchBarGoogleAddress = ({onPress}) => {
     <View style={styles.container}>
       <GooglePlacesAutocomplete
         ref={googlePlacesRef}
-        placeholder="Search"
+        placeholder="Search Google maps"
+        textInputProps={{
+          placeholderTextColor: themeStyles.genericText.color,
+          returnKeyType: "search"
+        }}
         minLength={2}
         autoFocus={true}
         returnKeyType={'search'}
@@ -76,14 +80,14 @@ const SearchBarGoogleAddress = ({onPress}) => {
         }}
         styles={{
           textInputContainer: [styles.inputContainer, themeStyles.genericTextBackground],
-          textInput: [styles.inputContainer, themeStyles.genericText],
+          textInput: [styles.inputContainer, themeStyles.genericText, { placeholderTextColor: 'white' }],
           listView: [themeStyles.genericTextBackground],
           predefinedPlacesDescription: styles.predefinedPlacesDescription,
         }}
         nearbyPlacesAPI="GooglePlacesSearch"
         debounce={200}
         renderRightButton={() => (
-          <FontAwesome5 name="search" size={22} color="gray" style={styles.searchIcon} />
+          <GoogleLogoSvg width={24} height={24} style={styles.iconStyle} />
         )}
       /> 
     </View>
@@ -108,29 +112,19 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center', 
-    alignContent: 'center',
-    height: '100%',  
+    alignContent: 'center',  
     borderRadius: 30,
     height: 48,
     backgroundColor: 'transparent', 
+    //fontFamily: 'Poppins-Regular',
+    paddingTop: 5,
+     
   },
   searchIcon: {
     position: 'absolute',
     right: 14,
     top: '18%',
-  },
-  searchInput: { 
-    flex: 1, 
-    alignItems: 'center',
-    alignContent: 'center',
-    fontFamily: 'Poppins-Regular', 
-    fontSize: 15,
-    textAlign: 'left',
-    overflow: 'hidden',
-    paddingHorizontal: 12, 
-    height: 'auto', 
-    
-  },
+  }, 
   listView: {
     backgroundColor: 'white',
     marginTop: -4,
@@ -142,6 +136,11 @@ const styles = StyleSheet.create({
   },
   predefinedPlacesDescription: {
     color: '#1faadb',
+  },
+  iconStyle: {
+    marginRight: 10,
+    marginBottom: 6,
+
   },
 });
 

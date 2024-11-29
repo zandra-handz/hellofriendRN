@@ -1,5 +1,3 @@
-import * as Location from 'expo-location';
-
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { View, StyleSheet, Platform, Alert, TouchableOpacity, Text, Dimensions, Animated, Image } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -8,18 +6,21 @@ import LocationOverMapButton from '../components/LocationOverMapButton';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext'; 
 import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
 import ButtonGoToAllLocations from '../components/ButtonGoToAllLocations';
-
+import useLocationFunctions from '../hooks/useLocationFunctions';
 import ButtonGoToLocationFunctions from '../components/ButtonGoToLocationFunctions';
 import useCurrentLocation from '../hooks/useCurrentLocation'; 
 import ExpandableUpCard from '../components/ExpandableUpCard';
 import SearchBarGoogleAddress from '../components/SearchBarGoogleAddress';
-
+import DualLocationSearcher from '../components/DualLocationSearcher';
 
 const MapWithLocations = ({ sortedLocations }) => {
   const mapRef = useRef(null);
+  const { friendDashboardData } = useSelectedFriend();
+  const { locationList } = useLocationFunctions();
   const { currentLocationDetails, currentRegion  } = useCurrentLocation();
   const navigation = useNavigation();
   const { themeStyles } = useGlobalStyle();
@@ -42,7 +43,16 @@ const handleGoToLocationViewScreen = (item) => {
 
 }; 
 
-
+//i had taken this out but brought it back in because if i use sorted
+//list for the bottom scroll, it doesn't update when a new favorite is added;
+//i don't like having both sortedLocations passed in AND using the locationFuctions
+//for this
+const faveLocations = useMemo(() => {
+  console.log('Filtering favorite locations');
+  return locationList.filter(location =>
+    friendDashboardData[0].friend_faves.locations.includes(location.id)
+  );
+}, [locationList, friendDashboardData]);
 
  // const findHelloesAtLocation = (singleLocationId) => {
    // if (singleLocationId) { 
@@ -73,7 +83,7 @@ const handleGoToLocationViewScreen = (item) => {
   const renderBottomScrollList = () => {
     return (
       <Animated.FlatList
-      data={sortedLocations}
+      data={faveLocations}
       horizontal={true}
       keyExtractor={(item, index) => `fl-${index}`}
       getItemLayout={(data, index) => (
@@ -250,10 +260,9 @@ const handleGoToLocationViewScreen = (item) => {
         )}
         </>
       }
-        />
-        <View style={{zIndex: 2200, position: 'absolute', width: '100%', paddingHorizontal: '1%', ackgroundColor: 'transparent', top: '12%'}}>
-        <SearchBarGoogleAddress onPress={handlePress}/>
-        </View>
+        /> 
+        <DualLocationSearcher onPress={handlePress}/>
+    
     <ButtonGoToFindLocation />
     <ButtonGoToAllLocations onPress={handlePress} /> 
     <ButtonGoToLocationFunctions /> 

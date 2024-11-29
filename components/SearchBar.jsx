@@ -3,7 +3,7 @@ import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Touchabl
 import Icon from 'react-native-vector-icons/Ionicons'; // Import the icon
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const SearchBar = ({ data, placeholderText='Search moments', borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
+const SearchBar = ({ data, useCustomIcon=false, customIcon: CustomIcon, placeholderText='Search moments', borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]); 
   const { themeStyles } = useGlobalStyle();
@@ -56,14 +56,18 @@ const SearchBar = ({ data, placeholderText='Search moments', borderColor='#ccc',
           <TextInput
             style={[styles.searchInput, themeStyles.genericText]}
             placeholder={placeholderText}
-            placeholderTextColor={'darkgray'}
+            placeholderTextColor={themeStyles.genericText.color}
             value={searchQuery}
             onChangeText={handleSearch}
             onBlur={handleBlur}  // Clear when the user moves away from the input
           />
           <View>
-            
+           {!useCustomIcon && (
+
+        
           <Icon name="search" size={30} color={themeStyles.genericText.color} style={styles.icon} />  
+        )} 
+        {useCustomIcon && CustomIcon}  
           </View>
         </View>
     
@@ -100,22 +104,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', 
     alignContent: 'center',
-    height: '100%', 
-    borderWidth: 1,
+    height: '100%',  
     borderRadius: 30,
-    height: 48,
-    backgroundColor: '#444', 
+    height: 48,  
   },
   searchInput: { 
     flex: 1, 
     alignItems: 'center',
-    alignContent: 'center',
-    fontFamily: 'Poppins-Regular', 
+    alignContent: 'center', 
     fontSize: 15,
     textAlign: 'left',
     overflow: 'hidden',
-    paddingHorizontal: 12, 
-    height: 'auto', 
+    paddingHorizontal: '2%', 
+    height: 48, 
   },
   icon: {
     paddingHorizontal: 10, 

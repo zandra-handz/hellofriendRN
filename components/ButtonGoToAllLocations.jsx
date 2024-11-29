@@ -7,7 +7,8 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import LocationsSavedList from '../components/LocationsSavedList';
-
+import SearchBar from '../components/SearchBar';
+import GoogleLogoSvg from '../assets/svgs/google-logo.svg';
 
 const ButtonGoToAllLocations = ({onPress}) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
@@ -20,7 +21,7 @@ const ButtonGoToAllLocations = ({onPress}) => {
 
   const handlePress = (location) => {
     onPress(location);
-    toggleButtons();
+    //toggleButtons();
 
   };
 
@@ -49,24 +50,15 @@ const ButtonGoToAllLocations = ({onPress}) => {
         {
           transform: [{ translateX: buttonTranslateY }],
           opacity: animation,
-          top: -40,
+          top: 0,
           zIndex: expanded ? 2000 : 1000, // Ensure higher zIndex when expanded
         },
       ]}
       pointerEvents={expanded ? 'auto' : 'none'} // Enable interaction only when expanded
     >
-  <ScrollView contentContainerStyle={{padding: 20}}>
-    {locationList.map((location, index) => (
-      <View key={index}>
-        <TouchableOpacity onPress={() => {handlePress(location)}} style={[styles.locationItem, {paddingVertical: 8}]}>
-          <Text style={[themeStyles.genericText, {fontWeight: 'bold', lineHeight: 22}]}>{location.title}</Text>
-          <Text style={[themeStyles.genericText, {lineHeight: 22}]}>{location.address}</Text>
-        </TouchableOpacity>
-        {/* Divider */}
-        {index < locationList.length - 1 && <View style={styles.divider} />}
-      </View>
-    ))}
-  </ScrollView>
+    <SearchBar data={locationList} useCustomIcon={true} customIcon={<ListCheckSvg width={24} height={24} color={manualGradientColors.lightColor} style={{marginRight: 10}} />
+        } placeholderText={'Search saved locations'} onPress={handlePress} borderColor={'transparent'}  searchKeys={['address', 'title']} />
+          
       </Animated.View>
  
       <TouchableOpacity
@@ -77,7 +69,13 @@ const ButtonGoToAllLocations = ({onPress}) => {
           { backgroundColor: manualGradientColors.homeDarkColor},
         ]}
       >
-        <ListCheckSvg width={22} height={22} color={manualGradientColors.lightColor} />
+        {!expanded && (
+ 
+        <ListCheckSvg width={24} height={24} color={manualGradientColors.lightColor} />
+        )}
+        {expanded && (
+        <GoogleLogoSvg width={24} height={24} />
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -86,18 +84,19 @@ const ButtonGoToAllLocations = ({onPress}) => {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    position: 'absolute',
+    //position: 'absolute',
+    
     flexWrap: 'wrap',
-    width: 73,
+    width: 48,
     alignContent: 'center',
     justifyContent: 'center',
-    right: -14,
-    top: 204,
+    //right: -14,
+    //top: 204,
     zIndex: 1000,
   },
   circleButton: {
-    width: 35,
-    height: 35,
+    width: 48,
+    height: 48, 
     borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
@@ -105,8 +104,8 @@ const styles = StyleSheet.create({
   },
   smallCircleButton: {
     position: 'absolute',
-    width: 356,
-    height: 400,
+    width: 350,
+    height: 48,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center', 
