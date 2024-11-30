@@ -95,7 +95,7 @@ const ButtonGoToLocationFunctions = () => {
       <ButtonBaseSDMain 
         expanded={expanded} 
         icon={RightArrowNoStemSolidSvg}
-        iconSize={52}
+        iconSize={42}
         onPress={toggleButtons} 
         backgroundColor={manualGradientColors.homeDarkColor}
         iconColor={manualGradientColors.lightColor}  

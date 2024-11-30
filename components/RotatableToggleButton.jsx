@@ -10,11 +10,10 @@ const RotatableToggleButton = ({
   backgroundColor,
   iconColor, 
 }) => {
-  // Shared value for rotation
+  
   const rotation = useSharedValue(0);
 
-  useEffect(() => {
-    // Animate the rotation when expanded changes
+  useEffect(() => { 
     rotation.value = withTiming(expanded ? 1 : 0, { duration: 100 });
   }, [expanded]);
 

@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import UpArrowNoStemSolidSvg from '../assets/svgs/up-arrow-no-stem-solid.svg';
 
 import RotatableToggleButton from '../components/RotatableToggleButton';
-import { TouchableOpacity, View, Text, StyleSheet, Dimensions } from "react-native";
+import { TouchableOpacity, Keyboard,  View, Text, StyleSheet, Dimensions } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -16,9 +16,37 @@ const ExpandableUpCard = ({ content, onPress=() => {} }) => {
   const [expanded, setExpanded] = useState(false);
   const screenHeight = Dimensions.get('window').height;
  
-  const cardHeight = useSharedValue(screenHeight / 3.08);  
+  const cardHeight = useSharedValue(screenHeight / 3.4);  
   const rotation = useSharedValue(0);
- 
+
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isKeyboardVisible) {
+      cardHeight.value = screenHeight / 8;
+    } else {
+      cardHeight.value = screenHeight / 3.4; 
+
+    }
+
+  }, [isKeyboardVisible]);
+  
   const animatedStyle = useAnimatedStyle(() => {
     return {
       height: withTiming(cardHeight.value, { duration: 300 }), // Smooth transition
@@ -27,7 +55,7 @@ const ExpandableUpCard = ({ content, onPress=() => {} }) => {
 
   const toggleCard = () => {
     if (expanded) {
-        cardHeight.value = screenHeight / 3.08;  
+        cardHeight.value = screenHeight / 3.4;  
     } else {
         onPress();
         cardHeight.value = screenHeight; 
@@ -37,6 +65,10 @@ const ExpandableUpCard = ({ content, onPress=() => {} }) => {
   };
    
   return (
+    <>
+    {!isKeyboardVisible && (
+
+    
     <Animated.View style={[styles.detailsContainer, animatedStyle, themeStyles.genericTextBackground, {zIndex: expanded ? 3000 : 2000} ]}>
     <View style={{ position: 'absolute', paddingTop: '2%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', width: '100%',  alignContent: 'center', justifyContent: 'center',   alignSelf: 'center' }}>
   
@@ -46,13 +78,15 @@ const ExpandableUpCard = ({ content, onPress=() => {} }) => {
         iconSize={14}
         onPress={toggleCard} 
         backgroundColor={manualGradientColors.homeDarkColor}
-        iconColor={manualGradientColors.lightColor}  
+        iconColor={manualGradientColors.darkColor}  
         rotation={rotation}
     />
         </View> 
 
       {content}
     </Animated.View>
+    )}
+    </>
   );
 };
 

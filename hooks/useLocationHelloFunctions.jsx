@@ -5,6 +5,10 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 const useLocationHelloFunctions = () => {
     const { friendDashboardData } = useSelectedFriend(); 
 
+
+          
+    const bermudaCoords = { latitude: 27.0000, longitude: -71.0000 };
+      
  
 
     const groupHelloesByLocations = (helloesListToSort) => {
@@ -23,27 +27,48 @@ const useLocationHelloFunctions = () => {
         return groupedHelloes;
       };
       
-    const createLocationListWithHelloes = (allLocations, helloesListToSort) => {
-        //console.log('Filtering favorite locations');
-        //console.log(allLocations);
-        //console.log(helloesListToSort);
+      const createLocationListWithHelloes = (allLocations, helloesListToSort) => {
+        if (allLocations && helloesListToSort) {
+          const groupedHelloes = groupHelloesByLocations(helloesListToSort);
       
-        if (allLocations && helloesListToSort) { 
-          const groupedHelloes = groupHelloesByLocations(helloesListToSort); // Example: { 1: [hello1, hello2], 3: [hello3] }
-         
+  
           const faves = allLocations
             .filter(location =>
               friendDashboardData[0].friend_faves.locations.includes(location.id)
             )
             .map(location => {
-              
-            const helloGroup = groupedHelloes[location.id] || [];
+              console.log(location.latitude, location.longitude);
+              // Validate latitude and longitude
+              const isLatitudeValid =
+                location.latitude !== undefined &&
+                isFinite(location.latitude) &&
+                location.latitude >= -90 &&
+                location.latitude <= 90;
+      
+              const isLongitudeValid =
+                location.longitude !== undefined &&
+                isFinite(location.longitude) &&
+                location.longitude >= -180 &&
+                location.longitude <= 180;
+      
+              // If either is invalid, replace both with Bermuda Triangle coordinates
+              const latitude = isLatitudeValid && isLongitudeValid
+                ? location.latitude
+                : bermudaCoords.latitude;
+      
+              const longitude = isLatitudeValid && isLongitudeValid
+                ? location.longitude
+                : bermudaCoords.longitude;
+      
+              const helloGroup = groupedHelloes[location.id] || [];
               const helloIds = helloGroup.map(hello => hello.id);
       
               return {
                 ...location,
-                helloIds, 
-                helloCount: helloIds.length,  
+                latitude,
+                longitude,
+                helloIds,
+                helloCount: helloIds.length,
               };
             });
       
@@ -52,13 +77,13 @@ const useLocationHelloFunctions = () => {
       
         return [];
       };
-
-
+      
     
 
     return {
         groupHelloesByLocations,
         createLocationListWithHelloes,
+        bermudaCoords,
 
     };
 

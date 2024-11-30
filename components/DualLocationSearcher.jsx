@@ -1,27 +1,127 @@
- 
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native'; 
+import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
+import { View, StyleSheet, Animated, Text, TouchableOpacity } from 'react-native'; 
+import ListCheckSvg from '../assets/svgs/list-check.svg';
+import GoogleLogoSvg from '../assets/svgs/google-logo.svg';
 import SearchBarGoogleAddress from '../components/SearchBarGoogleAddress';
-import ButtonGoToAllLocations from '../components/ButtonGoToAllLocations';
- 
-const DualLocationSearcher = ({switchSource, onPress}) => {
+import SearchBarSavedLocations from '../components/SearchBarSavedLocations';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import SearchBarAnimationWrapper from '../components/SearchBarAnimationWrapper';
 
-    return(
-        <View style={{zIndex: 2200, flexDirection: 'row', position: 'absolute', width: '100%', paddingHorizontal: '1%', top: '12%'}}>
-        <SearchBarGoogleAddress onPress={onPress}/>
-        <View>
-        <ButtonGoToAllLocations onPress={onPress} /> 
-        </View> 
-        </View>
+
+const DualLocationSearcher = ({onPress, locationListDrilledOnce}) => {
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const searchStringRef = useRef(null);
+  const [ savedLocationsSearchIsVisible, setSavedLocationsVisibility ] = useState(false);
+  const [ mountingText, setMountingText ] = useState('');
+  const [searchString, setSearchString] = useState('');
+
+  const updateSearchString = (text) => {
+    setSearchString(text);
+
+    // Update the text in both components via ref
+    if (searchStringRef && searchStringRef.current) {
+      searchStringRef.current.setText(text);
+    }
+  };
+
+  useEffect(() =>{ 
+    if (searchString){
+      console.log(searchString);
+
+    }
+   }, [searchString]);
+
+ 
+
+
+  const switchViews = () => {
+    setMountingText(searchString);
+    setSavedLocationsVisibility(!savedLocationsSearchIsVisible);
+    
+  };
+
+  return (
+    <View style={styles.container}> 
+    
+    {!savedLocationsSearchIsVisible && (
+      <View style={{width: '100%', flexDirection: 'row',  position: 'absolute', justifyContent: 'flex-end', width: '100%'}}>   
+          <View style={styles.googleSearchContainer}>
+            <SearchBarAnimationWrapper>
+              <SearchBarGoogleAddress 
+                ref={searchStringRef} 
+                mountingText={mountingText}
+                onPress={onPress} 
+                visible={true}
+                onTextChange={updateSearchString}  
+              /> 
+            </SearchBarAnimationWrapper>
+          </View>  
+      </View> 
+    )}
+       
+{savedLocationsSearchIsVisible && (  
+  <View style={{width: '100%', flexDirection: 'row', height: 48, position: 'absolute', justifyContent: 'flex-end', width: '100%'}}>   
+    <View style={styles.savedLocationsContainer}>
+      <SearchBarAnimationWrapper>
+        <SearchBarSavedLocations
+          locationListDrilledTwice={locationListDrilledOnce}
+          ref={searchStringRef}  
+          mountingText={mountingText} 
+          triggerAnimation={savedLocationsSearchIsVisible}
+          onTextChange={updateSearchString} 
+          onPress={onPress}  
+          searchStringRef={searchStringRef} 
+        /> 
+      </SearchBarAnimationWrapper>  
+    </View>
+  </View>
+)}
+<View style={styles.buttonContainer}>
+
+<TouchableOpacity 
+onPress={switchViews} 
+style={[styles.circleButton, themeStyles.footerIcon, { backgroundColor: manualGradientColors.homeDarkColor }]}>
+{!savedLocationsSearchIsVisible && <ListCheckSvg width={24} height={24} color={manualGradientColors.lightColor} />}
+{savedLocationsSearchIsVisible && <GoogleLogoSvg width={24} height={24} />}
+    </TouchableOpacity> 
+    
+</View> 
+  
+ 
+  </View >
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'transparent',
+  container: { 
+    position: 'absolute',
+    top: 80,
+    flex: 1, 
+
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between', 
     padding: 0,
-    zIndex: 1,
+    zIndex: 1000,
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    position: 'absolute', 
+    right: '1%',
+    marginBottom: 2,
+    height: 'auto',  
+    width: 54,
+    
+    justifyContent: 'flex-end',
+    zIndex: 4000,
+  },
+  circleButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textInputContainer: {
     backgroundColor: 'transparent',
@@ -55,7 +155,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingHorizontal: 12, 
     height: 'auto', 
-    
   },
   listView: {
     backgroundColor: 'white',
@@ -64,15 +163,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'white',
     maxHeight: 300,
-
   },
   predefinedPlacesDescription: {
     color: '#1faadb',
   },
   iconStyle: {
     marginRight: 10,
+  },
+  savedLocationsContainer:{
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    width: '86%',  
+    zIndex: 2200,
+    elevation: 2200,
 
   },
+  googleSearchContainer: { 
+      justifyContent: 'flex-start',
+      width: '86%',
+      backgroundColor: 'transparent', 
+      padding: 0,
+      zIndex: 1,
+    },
 });
 
 export default DualLocationSearcher;

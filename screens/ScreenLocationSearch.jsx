@@ -16,7 +16,7 @@ import useHelloesData from '../hooks/useHelloesData';
 const ScreenLocationSearch = () => {
     const { locationList } = useLocationFunctions();
     const { inPersonHelloes } = useHelloesData();
-    const { createLocationListWithHelloes } = useLocationHelloFunctions();
+    const { createLocationListWithHelloes, bermudaCoords } = useLocationHelloFunctions();
     const [ sortedLocations, setSortedLocations ] = useState([]);
     
     useLayoutEffect(() => {
@@ -42,7 +42,7 @@ const ScreenLocationSearch = () => {
                 {sortedLocations && (
                     <>
                     <View style={styles.mapContainer}>
-                        <MapWithLocations sortedLocations={sortedLocations} />
+                        <MapWithLocations sortedLocations={sortedLocations}  bermudaCoordsDrilledOnce={bermudaCoords} />
                     </View> 
                     </>
                 )} 

@@ -1,24 +1,49 @@
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, forwardRef, useEffect, useImperativeHandle } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useNavigation } from '@react-navigation/native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import GoogleLogoSvg from '../assets/svgs/google-logo.svg';
-
+import SearchBarAnimationWrapper from '../components/SearchBarAnimationWrapper';
 import { GOOGLE_API_KEY } from '@env';
 import { useQueryClient } from '@tanstack/react-query';
 
+// The component wrapped with forwardRef
+const SearchBarGoogleAddress = forwardRef(({ onPress, mountingText, onTextChange }, ref) => {
+  const { themeStyles } = useGlobalStyle();
+  const googlePlacesRef = useRef();
+  const [searchText, setSearchText] = useState('');
 
-const SearchBarGoogleAddress = ({onPress}) => {
-  const { themeStyles } = useGlobalStyle();  const navigation = useNavigation();
-   const [listViewDisplayed, setListViewDisplayed] = useState(true);
+  useEffect(() =>{
+    if (googlePlacesRef.current) {
+      googlePlacesRef.current.setAddressText(mountingText);
 
-  const googlePlacesRef = useRef(null);
- 
+    }
+
+
+  }, []);
+  
+
+  // Expose methods to parent via `useImperativeHandle`
+  useImperativeHandle(ref, () => ({
+    setText: (text) => {
+      if (googlePlacesRef.current) {
+        googlePlacesRef.current.setAddressText(text); // Use setAddressText for updating the input field
+        setSearchText(text);
+      }
+    },
+    clearText: () => {
+      if (googlePlacesRef.current) {
+        googlePlacesRef.current.clear(); // Use clear to reset the input field
+        setSearchText('');
+      }
+    },
+  }));
 
   const generateTemporaryId = () => {
     return `temp_${Date.now()}`;
@@ -46,33 +71,26 @@ const SearchBarGoogleAddress = ({onPress}) => {
     googlePlacesRef.current?.setAddressText('');
   };
 
-  const handleGoToLocationViewScreen = (location) => { 
-    navigation.navigate('Location', { location: location });
- 
-  }; 
+  const handleTextInputChange = (text) => {
+    setSearchText(text); // Update local state
+    onTextChange?.(text); // Notify parent of the change
+  };
 
   useEffect(() => {
-    if (!listViewDisplayed) {
-      googlePlacesRef.current?.setAddressText('');
-    }
-  }, [listViewDisplayed]);
- 
+    console.log('Current search text:', searchText);
+  }, [searchText]);
 
-  return (
-    <View style={styles.container}>
+  return ( 
       <GooglePlacesAutocomplete
-        ref={googlePlacesRef}
+        ref={googlePlacesRef}  
         placeholder="Search Google maps"
         textInputProps={{
+          autoFocus: mountingText.length > 0 ? true : false,
           placeholderTextColor: themeStyles.genericText.color,
-          returnKeyType: "search"
+          onChangeText: handleTextInputChange, // Capture typing updates
         }}
         minLength={2}
-        autoFocus={true}
-        returnKeyType={'search'}
-        listViewDisplayed={listViewDisplayed}
-        fetchDetails={true}
-        keepResultsAfterBlur={true}
+        fetchDetails
         onPress={handlePress}
         query={{
           key: 'AIzaSyAY-lQdQaVSKpPz9h2GiX_Jde47nv3FsNg',
@@ -80,27 +98,24 @@ const SearchBarGoogleAddress = ({onPress}) => {
         }}
         styles={{
           textInputContainer: [styles.inputContainer, themeStyles.genericTextBackground],
-          textInput: [styles.inputContainer, themeStyles.genericText, { placeholderTextColor: 'white' }],
-          listView: [themeStyles.genericTextBackground],
-          predefinedPlacesDescription: styles.predefinedPlacesDescription,
+          textInput: [styles.inputContainer, themeStyles.genericText],
         }}
-        nearbyPlacesAPI="GooglePlacesSearch"
-        debounce={200}
-        renderRightButton={() => (
-          <GoogleLogoSvg width={24} height={24} style={styles.iconStyle} />
-        )}
-      /> 
-    </View>
+        renderRightButton={() => <GoogleLogoSvg width={24} height={24} style={styles.iconStyle} />}
+      />
+       
   );
-};
+});
+
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    padding: 0,
-    zIndex: 1,
-  },
+  //moved to parent because animation wrapper goes under this
+  //container: { 
+    //justifyContent: 'flex-start',
+    //width: '86%',
+    //backgroundColor: 'transparent', 
+    //padding: 0,
+    //zIndex: 1,
+  //},
   textInputContainer: {
     backgroundColor: 'transparent',
     width: '100%',
@@ -111,28 +126,25 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'row',
-    alignItems: 'center', 
-    alignContent: 'center',  
+    alignItems: 'center',
+    width: '100%', // Make input field take up full width
     borderRadius: 30,
     height: 48,
     backgroundColor: 'transparent', 
-    //fontFamily: 'Poppins-Regular',
-    paddingTop: 5,
-     
+    paddingLeft: '2%',
   },
   searchIcon: {
     position: 'absolute',
     right: 14,
     top: '18%',
-  }, 
+  },
   listView: {
-    backgroundColor: 'white',
     marginTop: -4,
     borderRadius: 30,
     borderWidth: 1,
     borderColor: 'white',
     maxHeight: 300,
-
+    width: '100%',
   },
   predefinedPlacesDescription: {
     color: '#1faadb',
@@ -140,7 +152,7 @@ const styles = StyleSheet.create({
   iconStyle: {
     marginRight: 10,
     marginBottom: 6,
-
+    
   },
 });
 
