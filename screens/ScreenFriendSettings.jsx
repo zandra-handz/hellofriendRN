@@ -67,41 +67,40 @@ const [isAnimationPaused, setIsAnimationPaused ] = useState(true);
       {!loadingNewFriend && selectedFriend && (
         <>
         <View style={[styles.backColorContainer, {borderColor: themeAheadOfLoading.lightColor}]}>
-        <TouchableOpacity onPress={navigateToHelloesScreen}>
-          <Text style={themeStyles.genericText}>Go to helloes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {navigation.navigate('Locations')}}>
-          <Text style={themeStyles.genericText}>Go to locations</Text>
-          </TouchableOpacity>
+
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
-                    <Text style={[styles.modalSubTitle]}>SETTINGS</Text>
-                </View>
-                <Text style={themeStyles.genericText}>Hi</Text>
-                <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
+                    <Text style={[styles.modalSubTitle, themeStyles.genericText]}>SETTINGS</Text>
+                </View> 
             </View>
+
+            <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
+            
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
-                    <Text style={[styles.modalSubTitle, themeStyles.modalText]}>THEME</Text>
-                </View>
-                <ModalColorTheme />
-                <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
-            </View>
+                    <Text style={[styles.modalSubTitle, themeStyles.genericText]}>THEME</Text>
+                </View> 
+                <ModalColorTheme /> 
+              </View>
+            
+            <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
+           
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
                     <Text style={[styles.modalSubTitle, themeStyles.modalText]}>ADDRESSES</Text>
                 </View>
-                <Text style={themeStyles.genericText}>Hi</Text>
-                <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
+                <Text style={themeStyles.genericText}></Text>
             </View>
+
+            <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
+            
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
-                    <Text style={[styles.modalSubTitle, themeStyles.modalText]}>TITLE</Text>
+                    <Text style={[styles.modalSubTitle, themeStyles.modalText]}>DANGER ZONE: DELETE</Text>
                 </View>
-                <Text style={themeStyles.genericText}>Hi</Text>
-                <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
+                <Text style={themeStyles.genericText}></Text>
             </View>
-        
+
         </View>
      
         </>
@@ -124,13 +123,15 @@ const styles = StyleSheet.create({
      
     width: '100%', 
     justifyContent: 'flex-start',
+    paddingHorizontal: '2%',
+    paddingVertical: '3%',
 },
 modalSubTitle: {
     fontSize: 19,
     fontFamily: 'Poppins-Regular',  
   }, 
 divider: { 
-    borderBottomWidth: 1,  
+    borderBottomWidth: .8,  
 }, 
   friendNameText: {
     fontSize: 28,
@@ -159,14 +160,13 @@ divider: {
   },
  
 backColorContainer: {  
-  minHeight: '100%',  
-  paddingHorizontal: '2%',
-  paddingTop: '8%',
-  paddingBottom: '13%', 
+  flex: 1,
+  paddingHorizontal: '2%', 
+  paddingTop: '10%', 
   width: '101%',
   alignSelf: 'center', 
   flexDirection: 'column',
-  justifyContent: 'space-between',
+  justifyContent: 'flex-start',
 },  
 
 });

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { fetchLocationDetails } from '../api'; // Adjust the import path as needed
 import { View, Text, StyleSheet, ActivityIndicator, Button } from 'react-native';
-import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
-import ButtonDirections from '../components/ButtonDirections';
+import CallNumberLink from '../components/CallNumberLink';
+import DirectionsLink from '../components/DirectionsLink';
 import ButtonMakeTempLocation from '../components/ButtonMakeTempLocation';
 import StylingRating from '../components/StylingRating';
 
@@ -43,8 +43,8 @@ const CardMidpointLocation = ({ fullLocationData, id, unSaved=true, name, addres
         ) : details ? (
           <>
             <StylingRating rating={details.rating} starSize={10} /> 
-            <ButtonDirections address={details.address} />
-            <ButtonPhoneNumber phoneNumber={details.phone} />
+            <DirectionsLink address={details.address} />
+            <CallNumberLink phoneNumber={details.phone} />
           </>
         ) : (
           <Button title="Load Details" onPress={fetchDetails} />

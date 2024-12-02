@@ -1,6 +1,6 @@
 import React from 'react'; 
 import HeaderBaseButtonComponent  from '../components/HeaderBaseButtonComponent';
-import ButtonSaveLocation from '../components/ButtonSaveLocation';
+import LocationSavingActions from '../components/LocationSavingActions';
 
 const HeaderLocationSingle = ({location, favorite}) => {
     
@@ -12,7 +12,7 @@ const HeaderLocationSingle = ({location, favorite}) => {
             <>  
             <HeaderBaseButtonComponent 
                 headerTitle={typeof title === 'string' ? title : `${title}`}  
-                buttonComponent={<ButtonSaveLocation location={location} favorite={favorite}/>} 
+                buttonComponent={<LocationSavingActions location={location} favorite={favorite}/>} 
                 />
             </>
         );

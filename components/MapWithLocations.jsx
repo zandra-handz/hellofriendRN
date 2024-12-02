@@ -1,17 +1,19 @@
+
 //removed midpoint searcher and whatever else it did for right now:  <ButtonGoToFindLocation /> 
 // <LocationHeartSolidSvg height={30} width={30} color="red" />
         
 //<Image source={require('../assets/shapes/coffeecupnoheart.png')} style={{ height: 35, width: 35 }}/>
 import React, { useState, useEffect,  useRef, useMemo } from 'react';
-import { View, StyleSheet, Platform, Keyboard, Text, Dimensions, Animated, Image } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import { PROVIDER_GOOGLE } from 'react-native-maps';
+import { View, StyleSheet, TouchableOpacity, Platform, Keyboard, Text, Dimensions, Animated, Image } from 'react-native';
+import MapView, { AnimatedRegion, MarkerAnimated, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { useColorScheme } from 'react-native';
 import LocationOverMapButton from '../components/LocationOverMapButton';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext'; 
+
 //import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import useLocationFunctions from '../hooks/useLocationFunctions';
@@ -19,6 +21,9 @@ import ButtonGoToLocationFunctions from '../components/ButtonGoToLocationFunctio
 import useCurrentLocation from '../hooks/useCurrentLocation'; 
 import ExpandableUpCard from '../components/ExpandableUpCard';
 import DualLocationSearcher from '../components/DualLocationSearcher';
+import HorizontalScrollAnimationWrapper from '../components/HorizontalScrollAnimationWrapper';
+import FadeInOutWrapper from '../components/FadeInOutWrapper'; //pass in isVisible prop
+import LocationDetailsBody from '../components/LocationDetailsBody';
 
 const MapWithLocations = ({ sortedLocations, bermudaCoordsDrilledOnce }) => {
   const mapRef = useRef(null);
@@ -29,10 +34,14 @@ const MapWithLocations = ({ sortedLocations, bermudaCoordsDrilledOnce }) => {
   const { currentLocationDetails, currentRegion  } = useCurrentLocation();
   const navigation = useNavigation();
   const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList(); 
-  const { initialRegion, setInitialRegion } = useState(null);
+  const { themeAheadOfLoading } = useFriendList();  
   const [focusedLocation, focusOnLocation  ] = useState(null);
- 
+  const [locationDetailsAreOpen, setLocationDetailsAreOpen ] = useState(false);
+  const colorScheme = useColorScheme();
+
+  const toggleLocationDetailsState = () => {
+    setLocationDetailsAreOpen(prev => !prev);
+  };
 
  useEffect(() => {
   if (currentLocationDetails && currentRegion) { 
@@ -42,6 +51,9 @@ const MapWithLocations = ({ sortedLocations, bermudaCoordsDrilledOnce }) => {
 }  
 
 }, [currentRegion]);
+ 
+
+
 
 useEffect(() => {
   const keyboardDidShowListener = Keyboard.addListener(
@@ -74,6 +86,23 @@ const faveLocations = useMemo(() => {
     friendDashboardData[0].friend_faves.locations.includes(location.id)
   );
 }, [locationList, friendDashboardData]);
+
+
+// Function to fit all markers
+const fitToMarkers = () => {
+  if (mapRef.current && faveLocations && sortedLocations.length > 0) {
+    const coordinates = faveLocations
+      .filter(location => location.latitude !== 25.0000 || location.longitude !== -71.0000)
+      .map(location => ({
+        latitude: parseFloat(location.latitude),
+        longitude: parseFloat(location.longitude),
+      }));
+    mapRef.current.fitToCoordinates(coordinates, {
+      edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+      animated: true,
+    });
+  }
+};
 
  // const findHelloesAtLocation = (singleLocationId) => {
    // if (singleLocationId) { 
@@ -165,144 +194,266 @@ const faveLocations = useMemo(() => {
     }
 }, [focusedLocation]);
 
+const darkMapStyle = [
+  {
+    elementType: 'geometry',
+    stylers: [{ color: '#212121' }],
+  },
+  {
+    elementType: 'labels.icon',
+    stylers: [{ visibility: 'off' }],
+  },
+  {
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#757575' }],
+  },
+  {
+    elementType: 'labels.text.stroke',
+    stylers: [{ color: '#212121' }],
+  },
+  {
+    featureType: 'administrative',
+    elementType: 'geometry',
+    stylers: [{ color: '#757575' }],
+  },
+  {
+    featureType: 'administrative.country',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#9e9e9e' }],
+  },
+  {
+    featureType: 'administrative.land_parcel',
+    stylers: [{ visibility: 'off' }],
+  },
+  {
+    featureType: 'administrative.locality',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#bdbdbd' }],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'labels.text',
+    stylers: [{ visibility: 'off' }],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#757575' }],
+  },
+  {
+    featureType: 'poi.park',
+    elementType: 'geometry',
+    stylers: [{ color: '#181818' }],
+  },
+  {
+    featureType: 'poi.park',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#616161' }],
+  },
+  {
+    featureType: 'poi.park',
+    elementType: 'labels.text.stroke',
+    stylers: [{ color: '#1b1b1b' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry.fill',
+    stylers: [{ color: '#2c2c2c' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#8a8a8a' }],
+  },
+  {
+    featureType: 'road.arterial',
+    elementType: 'geometry',
+    stylers: [{ color: '#373737' }],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry',
+    stylers: [{ color: '#3c3c3c' }],
+  },
+  {
+    featureType: 'road.highway.controlled_access',
+    elementType: 'geometry',
+    stylers: [{ color: '#4e4e4e' }],
+  },
+  {
+    featureType: 'road.local',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#616161' }],
+  },
+  {
+    featureType: 'transit',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#757575' }],
+  },
+  {
+    featureType: 'transit.line',
+    elementType: 'geometry',
+    stylers: [{ color: '#3d3d3d' }],
+  },
+  {
+    featureType: 'transit.station',
+    elementType: 'geometry',
+    stylers: [{ color: '#2e2e2e' }],
+  },
+  {
+    featureType: 'water',
+    elementType: 'geometry',
+    stylers: [{ color: '#000000' }],
+  },
+  {
+    featureType: 'water',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#3d3d3d' }],
+  },
+];
 
    
   const renderLocationsMap = (locations) => (
-    <> 
-<MapView
-  {...(Platform.OS === 'android' && { provider: PROVIDER_GOOGLE })}
-  ref={mapRef}
-  style={[styles.map, {height: isKeyboardVisible? '100%' : '63%'}]}
-  initialRegion={currentRegion || null} 
-  enableZoomControl={true}
-  showsUserLocation={true}
-  showsMyLocationButton={true}
-  zoomEnabled={true}
->
-  {locations
-    .filter(location => 
-      location.latitude !== 25.0000 || location.longitude !== -71.0000 // Exclude Bermuda Triangle coordinates
-    )
-    .map(location => (
-      <Marker
-        key={location.id.toString()}
-        coordinate={{
-          latitude: parseFloat(location.latitude),
-          longitude: parseFloat(location.longitude),
-        }}
-        title={location.title}
-        description={location.address}
+    <>  
+      <MapView
+        {...(Platform.OS === 'android' && { provider: PROVIDER_GOOGLE })}
+        ref={mapRef}
+        liteMode={isKeyboardVisible? true : false}
+        style={[styles.map, {height: isKeyboardVisible? '100%' : '100%'}]}
+        initialRegion={currentRegion || null} 
+        scrollEnabled={isKeyboardVisible? false : true}
+        enableZoomControl={true}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        zoomEnabled={true}
+        //customMapStyle={colorScheme === 'dark' ? darkMapStyle : null}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            alignContent: 'center',
-            justifyContent: 'flex-start', 
-            padding: 5, 
-          }}
-        >  
-          <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                zIndex: 1000,
-                position: 'absolute',
-                top: -12,
-                right: -8,
-                backgroundColor: 'yellow',
-                padding: 4,
-                borderRadius: 20,
-                fontSize: 12,
+        {locations
+          .filter(location => 
+            location.latitude !== 25.0000 || location.longitude !== -71.0000 // Exclude Bermuda Triangle coordinates
+          )
+          .map(location => (
+            <Marker
+              key={location.id.toString()}
+              coordinate={{
+                latitude: parseFloat(location.latitude),
+                longitude: parseFloat(location.longitude),
               }}
+              title={location.title}
+              description={location.address}
             >
-              {location && location.helloCount}
-            </Text> 
-          </View>
-          <Image source={require('../assets/shapes/coffeecupnoheart.png')} style={{ height: 35, width: 35 }}/>
-         
-        </View> 
-      </Marker>
-    ))}
-</MapView>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'flex-start', 
+                  padding: 5,
+                  pinColor: 'limegreen', //haven't tested if this works
+                }}
+              >  
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      zIndex: 1000,
+                      position: 'absolute',
+                      top: -12,
+                      right: -8,
+                      backgroundColor: 'yellow',
+                      padding: 4,
+                      borderRadius: 20,
+                      fontSize: 12,
+                    }}
+                  >
+                    {location && location.helloCount}
+                  </Text> 
+                </View>
+                <Image source={require('../assets/shapes/coffeecupnoheart.png')} style={{ height: 35, width: 35 }}/>
+              
+              </View> 
+            </Marker>
+          ))}
+      </MapView> 
+      <TouchableOpacity style={[styles.zoomOutButton, {backgroundColor: themeStyles.genericTextBackground.backgroundColor}]} onPress={fitToMarkers}>
+        <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>Show All</Text>
+      </TouchableOpacity>
+
+      
+      <DualLocationSearcher onPress={handlePress} locationListDrilledOnce={locationList}/>
+    
 
     </>
   );
 
   return (
-    <LinearGradient
-    colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}  
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 0 }}  
-    style={[styles.container]} 
-  > 
-    {sortedLocations && ( 
-      <>
-        {renderLocationsMap(sortedLocations)}
+    <View style={styles.container}>
+    {locationDetailsAreOpen && (
+      
+    <FadeInOutWrapper
+    isVisible={locationDetailsAreOpen}
+    children={
+      <LinearGradient
+      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}  
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}  
+      style={[styles.gradientCover, {zIndex: locationDetailsAreOpen ? 4000 : 1000}]} 
+    /> 
+    }
+    />
+    
+    
+  )}
 
+    {sortedLocations && ( 
+      <> 
+        {renderLocationsMap(sortedLocations)}
+    
 
         {!isKeyboardVisible && (
-<>
-        <View style={styles.scrollTitleContainer}>
-          
-        <Text style={styles.friendNameText}>Faved for {selectedFriend.name}</Text>
-
-        </View>
-       
-        <View style={styles.scrollContainer}>
-          {renderBottomScrollList()}
-        </View>
-
-        </>
-          
-)}
+            <View style={{width: '100%', height: 70, zIndex: 1200, elevation: 1200,  flexDirection: 'column', position: 'absolute', bottom: '28%', justifyContent: 'space-between', width: '100%'}}>   
+              <HorizontalScrollAnimationWrapper>
+                <View style={styles.scrollContainer}>
+                  <View style={styles.scrollTitleContainer}>
+                    <Text style={[styles.friendNameText, {color: themeAheadOfLoading.fontColor}]}>Faved for {selectedFriend.name}</Text>
+                  </View>
+                      {renderBottomScrollList()}
+                </View>
+              </HorizontalScrollAnimationWrapper>
+             
+            </View>
+          )}
 
 </>
       )}
 
-<ExpandableUpCard
-        onPress={() => {
-          handleGoToLocationViewScreen(focusedLocation)
-        }}
-        content={
-          <>
-        {focusedLocation && (
-          <>
-          <View style={{flexDirection: 'row'}}>
-          <Text style={[themeStyles.genericText, {fontWeight: 'bold', fontSize: 15, textTransform: 'uppercase', lineHeight: 22}]}>{focusedLocation.title}</Text>
 
-          </View> 
-                    <View style={{flexDirection: 'row'}}>
-                      <Text style={themeStyles.genericText}>{focusedLocation.address}</Text>
-                    </View>  
-                    {focusedLocation && focusedLocation.notes && ( 
-                      <View style={{flexDirection: 'row'}}>
-                        <Text style={[styles.detailsSubtitle, themeStyles.genericText]}>Notes: </Text>
-                        <Text style={themeStyles.genericText}>{focusedLocation.notes}</Text>
-                      </View>       
-                    )}              
-                    
-                    {focusedLocation && focusedLocation.parking && ( 
-                    <View style={{flexDirection: 'row'}}>
-                      <Text style={[styles.detailsSubtitle, themeStyles.genericText]}>Parking: </Text>
-                      <Text style={themeStyles.genericText}>{focusedLocation.parking}</Text>
-                    </View> 
-                  )} 
-                  {focusedLocation && focusedLocation.helloCount && ( 
-                    <View style={{flexDirection: 'row'}}>
-                      <Text style={[styles.detailsSubtitle, themeStyles.genericText]}>Helloes here: </Text>
-                      <Text style={themeStyles.genericText}>{focusedLocation.helloCount}</Text>
-                    </View> 
-                  )} 
-        </>
-        )}
-        </>
-      }
+    {!isKeyboardVisible && (
+
+        <LinearGradient
+          colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}  
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}  
+          style={styles.gradientBelowFaves} 
+        />   
+    )}
+
+      <ExpandableUpCard
+        onPress={() => {
+          //handleGoToLocationViewScreen(focusedLocation) //scaffolding during transition to keep build functional
+        }}
+        parentFunctionToTrackOpenClose={toggleLocationDetailsState} //use locationDetailsAreOpen to act on
+        content={ 
+          focusedLocation ? (
+            <LocationDetailsBody locationObject={focusedLocation} />
+          ) : (
+            null //I'm not sure if this would return error, the LocationDetailsBody has checks in place already
+                //and will return an empty container if no focusedLocation
+          )
+          }
         /> 
-        <DualLocationSearcher onPress={handlePress} locationListDrilledOnce={locationList}/>
-    
     <ButtonGoToLocationFunctions /> 
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -310,12 +461,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: 'pink',
+    alignItems: 'center', 
+  },
+  gradientCover: {
+    width: '100%',
+    flex: 1,
+
+  },
+  gradientBelowFaves: {
+    width: '100%',
+    flex: 1,
+    zIndex: 4,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    height: '37%',
+    borderTopRightRadius: 40,
+    borderTopLeftRadius: 40,
+
   },
   map: {  
+    ...StyleSheet.absoluteFillObject,
      width: '100%',  
-    height: '63%',
     paddingTop: 60,
     zIndex: 3,
   },
@@ -332,26 +499,30 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
 
-  },
+  }, 
   scrollContainer: {
     width: '100%',  
-    height: 60,  
-    zIndex: 1000, 
-    justifyContent: 'center', 
+    flex: 1, 
+    flexDirection: 'column', 
+    zIndex: 1000,     
+    justifyContent: 'flex-end', 
     alignContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center', 
+    paddingHorizontal: '2%',
   },
   scrollTitleContainer: {
     width: '100%',   
-    zIndex: 1000, 
-    justifyContent: 'center', 
+    zIndex: 1000,  
+
+    flexDirection: 'row',
+    justifyContent: 'flex-start', 
     alignContent: 'left',
     alignItems: 'left',
     textAlign: 'left',
     paddingHorizontal: '3%',
+    paddingBottom: '1%',
     borderWidth: 0, 
-    borderColor: 'gray',
-    paddingVertical: '1%',
+    borderColor: 'gray', 
   },
   friendNameText: {
     
@@ -359,6 +530,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
 
+  },
+  zoomOutButton: {
+    position: 'absolute',
+    zIndex: 4,
+    width: 'auto',
+    paddingHorizontal: '2%',
+    bottom: '38%',
+    right: 8,
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 30,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 5,
+  },
+  zoomOutButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

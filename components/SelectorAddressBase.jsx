@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import * as Location from 'expo-location'; // Import from expo-location
 import Geocoder from 'react-native-geocoding';
 import { GOOGLE_API_KEY } from '@env';
-import ButtonDirections from '../components/ButtonDirections';
+import DirectionsLink from '../components/DirectionsLink';
 import SelectAddressModalVersion from '../components/SelectAddressModalVersion';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -85,7 +85,7 @@ const SelectorAddressBase = ({ addresses, currentAddressOption, onAddressSelect,
         <View style={styles.hintContainer}>
           <View style={{borderRadius: 20, width: '100%', padding: 10, borderWidth: 1, borderColor: '#ccc'}}>
             {selectedAddress && (
-              <ButtonDirections address={selectedAddress.address} size={15} />
+              <DirectionsLink address={selectedAddress.address} size={15} />
             )}
             {!selectedAddress && (
               <Text style={{fontFamily: 'Poppins-Regular', fontSize: 15}}>No addresses saved</Text>

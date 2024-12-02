@@ -5,9 +5,9 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
 import SectionCustomerReviews from '../components/SectionCustomerReviews';
-import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
-import ButtonDirections from '../components/ButtonDirections';
-import ButtonSaveLocation from '../components/ButtonSaveLocation';
+import CallNumberLink from '../components/CallNumberLink';
+import DirectionsLink from '../components/DirectionsLink';
+import LocationSavingActions from '../components/LocationSavingActions';
 import StylingRating from '../components/StylingRating';
 
 const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
@@ -36,7 +36,7 @@ const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
         <Text style={[styles.itemTitle, { color: themeStyles.genericText.color }]}>
           {title}
         </Text>
-        <ButtonSaveLocation location={location} saveable={unSaved} />
+        <LocationSavingActions location={location} saveable={unSaved} />
       </View>
       <Button
         title={refreshing ? 'Refreshing...' : 'Load Details'}
@@ -51,10 +51,10 @@ const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
           <View style={styles.infoContainer}>
             <View style={styles.detailsColumn}>
               <View style={styles.detailRow}>
-                <ButtonDirections address={additionalDetails.address} />
+                <DirectionsLink address={additionalDetails.address} />
               </View>
               <View style={styles.detailRow}>
-                <ButtonPhoneNumber phoneNumber={additionalDetails.phone} />
+                <CallNumberLink phoneNumber={additionalDetails.phone} />
                 <View
                   style={[
                     styles.statusContainer,

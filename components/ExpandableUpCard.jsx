@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-const ExpandableUpCard = ({ content, onPress=() => {} }) => {
+const ExpandableUpCard = ({ content, parentFunctionToTrackOpenClose, onPress=() => {} }) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 
   const [expanded, setExpanded] = useState(false);
@@ -54,6 +54,7 @@ const ExpandableUpCard = ({ content, onPress=() => {} }) => {
   });
 
   const toggleCard = () => {
+    parentFunctionToTrackOpenClose();
     if (expanded) {
         cardHeight.value = screenHeight / 3.4;  
     } else {
@@ -83,7 +84,7 @@ const ExpandableUpCard = ({ content, onPress=() => {} }) => {
     />
         </View> 
 
-      {content}
+        {content ? content : <Text>No content available</Text>}
     </Animated.View>
     )}
     </>

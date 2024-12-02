@@ -6,13 +6,12 @@ import { View, Text, StyleSheet, Button } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import useLocationFunctions from '../hooks/useLocationFunctions';
-import ButtonSaveLocation from '../components/ButtonSaveLocation';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
 import SectionCustomerReviews from '../components/SectionCustomerReviews';
-import ButtonPhoneNumber from '../components/ButtonPhoneNumber';
-import ButtonDirections from '../components/ButtonDirections';
+import CallNumberLink from '../components/CallNumberLink';
+import DirectionsLink from '../components/DirectionsLink';
 import { useFriendList } from '../context/FriendListContext';
 import DisplayParkingScore from '../components/DisplayParkingScore';
 import DisplayLocationNotes from '../components/DisplayLocationNotes';
@@ -72,7 +71,7 @@ const ContentLocationView = ({ location, favorite }) => {
           <View style={[styles.detailRow, {backgroundColor: themeAheadOfLoading.darkColor}]}>
             <View style={{height: 'auto', backgroundColor: themeAheadOfLoading.darkColor, alignItems: 'flex-end', backgroundColor: 'transparent', justifyContent: 'center', width: '100%'}}>
           
-          <ButtonDirections address={location.address} buttonColor={'blue'} fontColor={themeAheadOfLoading.fontColor} backgroundColor={themeAheadOfLoading.darkColor} />
+          <DirectionsLink address={location.address} buttonColor={'blue'} fontColor={themeAheadOfLoading.fontColor} backgroundColor={themeAheadOfLoading.darkColor} />
 
             </View> 
           </View> 
@@ -101,10 +100,10 @@ const ContentLocationView = ({ location, favorite }) => {
           <View style={styles.infoContainer}>
             <View style={styles.detailsColumn}>
               <View style={[styles.detailRow, {backgroundColor: themeAheadOfLoading.darkColor}]}>
-              <ButtonDirections address={additionalDetails.address} />
+              <DirectionsLink address={additionalDetails.address} />
               </View>
               <View style={styles.detailRow}>
-                <ButtonPhoneNumber phoneNumber={additionalDetails.phone} />
+                <CallNumberLink phoneNumber={additionalDetails.phone} />
                 
                 <View
                   style={[
