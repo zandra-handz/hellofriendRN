@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
   },
   iconContainer: { 
     paddingRight: '2%', 
-
   },
   address: { 
     flexShrink: 1, 

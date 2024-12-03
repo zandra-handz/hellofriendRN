@@ -9,6 +9,10 @@ import DirectionsLink from '../components/DirectionsLink';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import CallNumberLink from '../components/CallNumberLink';
 
+import HoursOfOperation from '../components/HoursOfOperation';
+
+import  useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
+
 const LocationDetailsBody = ({
     locationObject,
     }) => {
@@ -16,7 +20,7 @@ const LocationDetailsBody = ({
     const { themeStyles } = useGlobalStyle();
     const { loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
     const [isFetching, setIsFetching] = useState(false);
-   
+   const { checkIfOpen } = useLocationDetailFunctions();
     const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(locationObject, isFetching);
   
     const handleRefresh = () => {
@@ -31,14 +35,49 @@ const LocationDetailsBody = ({
           }
     }, [locationObject]);
 
+    const renderOpenStatus = (data) => {
+        let isOpenNow;
+        isOpenNow = checkIfOpen(data);
+
+        return ( 
+            <View style={[ 
+                {borderWidth: 1, 
+                borderColor: isOpenNow ? `lightgreen` : (isOpenNow === false ? `red` : 'transparent'), 
+                backgroundColor: 'transparent', //themeStyles.genericTextBackgroundShadeTwo.backgroundColor, 
+                position: 'absolute', 
+                top: -30, 
+                left: 0, 
+                width: 'auto', 
+                paddingHorizontal: '3%', 
+                paddingVertical: '1%', 
+                borderRadius: 20}]}>
+                <Text style={[themeStyles.genericText, {
+                fontSize: 13}]}>
+                    {isOpenNow ? `Open` : (isOpenNow === false ? `Closed` : '') }
+                </Text>  
+            </View>
+            
+
+        );
+
+
+    };
+
 
     return (
 
         <View style={styles.container}>
-               <View style={styles.rowContainer}> 
+               <View style={[styles.rowContainer]}> 
                     <Text style={[themeStyles.genericText, {fontWeight: 'bold', fontSize: 15, textTransform: 'uppercase', lineHeight: 22}]}>
                         {locationObject && locationObject.title}
-                    </Text>
+                    </Text> 
+                    {locationObject && additionalDetails && additionalDetails.hours &&(
+                        <>
+                     {renderOpenStatus(additionalDetails.hours)}
+                     
+                     </>
+                    
+                    )}
                 </View>  
 
                     <View style={styles.rowContainer}> 
@@ -51,6 +90,14 @@ const LocationDetailsBody = ({
 
                     <View style={styles.rowContainer}> 
                      <CallNumberLink phoneNumber={additionalDetails.phone} />
+                    </View> 
+
+                    )}
+
+                    {locationObject && additionalDetails && additionalDetails.hours &&(
+
+                    <View style={styles.rowContainer}> 
+                    <HoursOfOperation hours={additionalDetails.hours.weekday_text} />
                     </View> 
 
                     )}
