@@ -23,6 +23,7 @@ const LocationDetailsBody = ({
    const { checkIfOpen } = useLocationDetailFunctions();
     const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(locationObject, isFetching);
   
+
     const handleRefresh = () => {
         setIsFetching(true);   
     };
@@ -34,10 +35,10 @@ const LocationDetailsBody = ({
            clearAdditionalDetails();  
           }
     }, [locationObject]);
-
+ 
     const renderOpenStatus = (data) => {
         let isOpenNow;
-        isOpenNow = checkIfOpen(data);
+        isOpenNow = checkIfOpen(data); 
 
         return ( 
             <View style={[ 
@@ -97,7 +98,7 @@ const LocationDetailsBody = ({
                     {locationObject && additionalDetails && additionalDetails.hours &&(
 
                     <View style={styles.rowContainer}> 
-                    <HoursOfOperation hours={additionalDetails.hours.weekday_text} />
+                    <HoursOfOperation data={additionalDetails.hours} /> 
                     </View> 
 
                     )}

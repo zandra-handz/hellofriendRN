@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-// endpoint data: additionalDertails.data.open_now
+// endpoint data: additionalDetails.data.open_now
 
 const useLocationDetailFunctions = () => {
 
@@ -65,6 +65,7 @@ const useLocationDetailFunctions = () => {
 
     const getSoonestAvailable = (allHours) => {
         const todayHours = getTodayHours(allHours);
+        
     
         // Normalize spaces and remove invisible characters (zero-width spaces, non-breaking spaces, etc.)
         const sanitizedHours = todayHours
@@ -84,19 +85,32 @@ const useLocationDetailFunctions = () => {
         if (!match) {
             console.log(sanitizedHours);
             console.log('no match');
-            return todayHours;
-        }
+
+                if (checkIfOpen(allHours) === false) {
+                    console.log('returning tomorrow');
+                    return getTomorrow();
+                } else {
+                    console.log('returning unknown');
+                    return 'Unknown';
+                
+
+            }
+            
+        } 
     
         let endTime, period;
     
         // Extract end time and period from the match
-        endTime = match[4];  // Second time
-        period = match[5];  // Period for second time (AM/PM)
-    
-        // Validate if endTime is valid
+        endTime = match[4]; 
+        period = match[5]; 
+
         if (!endTime || !period) {
             console.log('Invalid time or period format');
-            return todayHours;
+            if (checkIfOpen(allHours) === false) {
+                return getTomorrow();
+            } else {
+                return 'Unknown';
+            }
         }
     
         // Split the time and convert it to a 24-hour format
@@ -105,7 +119,7 @@ const useLocationDetailFunctions = () => {
         // Check if hour and minute are valid numbers
         if (isNaN(hour) || isNaN(minute)) {
             console.log('Invalid time format');
-            return todayHours;
+            return getCurrentDay();
         }
     
         const endHour24 = (period === "PM" && hour !== 12 ? hour + 12 : 
@@ -125,6 +139,7 @@ const useLocationDetailFunctions = () => {
             return getCurrentDay();
         }
     };
+
     
     
     

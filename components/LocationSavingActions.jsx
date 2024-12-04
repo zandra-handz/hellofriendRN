@@ -112,7 +112,7 @@ const LocationSavingActions = ({ location, favorite=false,  size = 11, iconSize 
     return (
         <View>
             {location && String(location.id).startsWith('temp') && (
-                <TouchableOpacity onPress={handlePress} style={[styles.container, style]}> 
+                <TouchableOpacity style={[styles.container, style]}> 
                     <AddSquareOutlineSvg width={34} height={34} color={themeStyles.genericText.color} onPress={toggleModal2}/>
                    
                     <Text style={[styles.saveText, {  color: themeStyles.genericText.color, fontFamily: family }]}> ADD </Text>
@@ -124,10 +124,10 @@ const LocationSavingActions = ({ location, favorite=false,  size = 11, iconSize 
 
                     <View style={styles.iconContainer}>
                     {!isFave && (
-                    <HeartAddOutlineSvg width={34} height={34} color={themeStyles.genericText.color} onPress={toggleModal2}/>
+                    <HeartAddOutlineSvg width={34} height={34} color={themeStyles.genericText.color} onPress={handlePress} />
                     )}
                     {isFave && (
-                    <HeartCheckSolidSvg width={34} height={34} color={themeAheadOfLoading.lightColor} onPress={toggleModal2}/>
+                    <HeartCheckSolidSvg width={34} height={34} color={themeAheadOfLoading.lightColor} onPress={handlePress} />
                     )}
                     </View> 
                 </View>
@@ -135,8 +135,8 @@ const LocationSavingActions = ({ location, favorite=false,  size = 11, iconSize 
    
             {location && ( 
             <ModalAddNewLocation 
-                isVisible={isModalVisible}
-                close={closeModal}
+                isVisible={isModal2Visible}
+                close={closeModal2}
                 title={location.title}
                 address={location.address}
             />
@@ -144,12 +144,12 @@ const LocationSavingActions = ({ location, favorite=false,  size = 11, iconSize 
  
            
             <AlertConfirm
-                isModalVisible={isModal2Visible}
-                toggleModal={closeModal2} 
+                isModalVisible={isModalVisible}
+                toggleModal={closeModal} 
                 headerContent={<PushPinSolidSvg width={18} height={18} color='black' />}
                 questionText={isFave ? "Remove this location from friend's dashboard?" : "Pin this location to friend dashboard?"}
                 onConfirm={onConfirmAction}
-                onCancel={closeModal2}
+                onCancel={closeModal}
                 confirmText="Yes"
                 cancelText="No"
             />

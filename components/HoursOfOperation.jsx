@@ -4,14 +4,18 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
 import { View, Text, TouchableOpacity, Animated, StyleSheet, FlatList } from 'react-native';
 
-const HoursOfOperation = ({ hours, iconSize=17, fontColor='white' }) => {
+const HoursOfOperation = ({ data, iconSize=17, fontColor='white' }) => {
     const { themeStyles } = useGlobalStyle();
-    const { getCurrentDay, getTodayHours, getSoonestAvailable } = useLocationDetailFunctions();
+    const { getCurrentDay, getTodayHours, checkIfOpen, getSoonestAvailable } = useLocationDetailFunctions();
     const [showAllHours, setShowAllHours] = useState(true);
 
     const flatListRef = useRef(null);
 
+  const hours = data.weekday_text;
+
   const currentDay = getSoonestAvailable(hours);
+
+ 
 
   const toggleHoursView = () => {
     //setShowAllHours(!showAllHours);
@@ -21,12 +25,14 @@ const HoursOfOperation = ({ hours, iconSize=17, fontColor='white' }) => {
   const splitDayAndTime = (data) => {
     return data.split(': ');
   }
-
-  
+ 
 
   const todayHours = getSoonestAvailable(hours);
   const soonestAvailable = getSoonestAvailable(hours);
+
   const [todayDay, todayTime] = soonestAvailable.split(': ');
+
+
   const days = {
     
     "Mon": 0,
@@ -37,22 +43,34 @@ const HoursOfOperation = ({ hours, iconSize=17, fontColor='white' }) => {
     "Sat" : 5,
     "Sun": 6, 
 }
-  const startingIndex = () => {
-    if (soonestAvailable) {
+
+  const startingIndex = () => { 
+    console.log('starting index');
+
+      try { 
+        console.log(soonestAvailable);
       return days[soonestAvailable];
-    }
+      } catch (error) {
+        console.log(error);
+        try {
+          return days['Tue'];
+        } catch (error) {
+          console.log(error);
+          return 0; 
+        }
+        return 0;
+      }
+       
     return 0;
     };
 
     useEffect(() => {
-        const index = startingIndex(soonestAvailable); // Get the starting index
-    
-        // Only scroll if the index is valid
-        if (index !== -1 && flatListRef.current) {
+        const index = startingIndex(soonestAvailable); 
+
+        if (index && index !== -1 && flatListRef.current) {
           flatListRef.current.scrollToIndex({ index, animated: true });
         }
-      }, [soonestAvailable]); // This hook will run whenever soonestAvailable changes
-    
+      }, [soonestAvailable, hours]); 
 
   return (
     <View style={[styles.card, themeStyles.genericTextBackground]}>
