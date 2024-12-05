@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import HelloFriendInvite from '../components/HelloFriendInvite';
-
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
 
@@ -24,7 +22,7 @@ const ButtonSendDirectionsToFriend = () => {
         <ItemModal
             isModalVisible={isModalVisible}
             toggleModal={closeModal} 
-            modalContent={<HelloFriendInvite />}
+            modalContent={<View><Text>Removed</Text></View>}
             modalTitle={'Send Hello plans!'}
         > 
       </ItemModal>

@@ -25,7 +25,7 @@ import HorizontalScrollAnimationWrapper from '../components/HorizontalScrollAnim
 import FadeInOutWrapper from '../components/FadeInOutWrapper'; //pass in isVisible prop
 import LocationDetailsBody from '../components/LocationDetailsBody';
 
-const MapWithLocations = ({ sortedLocations, bermudaCoordsDrilledOnce }) => {
+const MapWithLocations = ({ sortedLocations, currentDayDrilledOnce, bermudaCoordsDrilledOnce }) => {
   const mapRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   
@@ -445,7 +445,7 @@ const darkMapStyle = [
         parentFunctionToTrackOpenClose={toggleLocationDetailsState} //use locationDetailsAreOpen to act on
         content={ 
           focusedLocation ? (
-            <LocationDetailsBody locationObject={focusedLocation} />
+            <LocationDetailsBody locationObject={focusedLocation}  currentDayDrilledTwice={currentDayDrilledOnce} />
           ) : (
             null //I'm not sure if this would return error, the LocationDetailsBody has checks in place already
                 //and will return an empty container if no focusedLocation

@@ -28,9 +28,12 @@ import ScreenHelloes from './screens/ScreenHelloes';
 import ScreenLocations from './screens/ScreenLocations';
 import ScreenLocationSearch from './screens/ScreenLocationSearch';
 import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch';
+
 import Signin from './screens/Signin'; 
 import ScreenMomentFocus from './screens/ScreenMomentFocus'; 
 import ScreenLocation from './screens/ScreenLocation';
+
+import ScreenLocationSend from './screens/ScreenLocationSend';
 
  
 import ScreenAddFriend from './screens/ScreenAddFriend';
@@ -222,6 +225,16 @@ export const Layout = () => {
                       location={route.params?.location} 
                       favorite={route.params?.favorite} 
                     />
+                  ),
+                })}
+              />
+                            <Stack.Screen
+                name="LocationSend"
+                component={ScreenLocationSend}
+                options={({ route }) => ({
+                  headerShown: true,
+                  header: () => (
+                  <HeaderBase headerTitle='Send Directions & Hrs' icon='heartbeat' navigateTo='LocationSearch' />
                   ),
                 })}
               />

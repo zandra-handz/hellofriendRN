@@ -1,19 +1,33 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {  useEffect, useRef } from 'react';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
-import { View, Text, TouchableOpacity, Animated, StyleSheet, FlatList } from 'react-native';
+import { View, TouchableOpacity, Animated, StyleSheet, FlatList } from 'react-native';
+import LocationSendDirAndHrsButton from '../components/LocationSendDirAndHrsButton';
+import { useNavigation } from '@react-navigation/native';
 
-const HoursOfOperation = ({ data, iconSize=17, fontColor='white' }) => {
+const LocationHoursOfOperation = ({ location, data, currentDayDrilledThrice, iconSize=17, fontColor='white' }) => {
     const { themeStyles } = useGlobalStyle();
-    const { getCurrentDay, getTodayHours, checkIfOpen, getSoonestAvailable } = useLocationDetailFunctions();
-    const [showAllHours, setShowAllHours] = useState(true);
-
+    const {  getSoonestAvailable } = useLocationDetailFunctions();
+ 
     const flatListRef = useRef(null);
 
   const hours = data.weekday_text;
 
-  const currentDay = getSoonestAvailable(hours);
+  const nextOpen = getSoonestAvailable(hours);
+
+  const navigation = useNavigation();  
+
+  const handleGoToLocationSendScreen = (day) => {
+    navigation.navigate('LocationSend', { location: location, weekdayTextData: hours, selectedDay: day});
+}
+
+const handlePress = (day) => {  
+    handleGoToLocationSendScreen(day);
+
+  };
+
 
  
 
@@ -25,12 +39,6 @@ const HoursOfOperation = ({ data, iconSize=17, fontColor='white' }) => {
   const splitDayAndTime = (data) => {
     return data.split(': ');
   }
- 
-
-  const todayHours = getSoonestAvailable(hours);
-  const soonestAvailable = getSoonestAvailable(hours);
-
-  const [todayDay, todayTime] = soonestAvailable.split(': ');
 
 
   const days = {
@@ -44,33 +52,47 @@ const HoursOfOperation = ({ data, iconSize=17, fontColor='white' }) => {
     "Sun": 6, 
 }
 
-  const startingIndex = () => { 
-    console.log('starting index');
+const startingIndex = () => { 
+  console.log('starting index');
 
-      try { 
-        console.log(soonestAvailable);
-      return days[soonestAvailable];
-      } catch (error) {
-        console.log(error);
-        try {
-          return days['Tue'];
-        } catch (error) {
-          console.log(error);
-          return 0; 
-        }
-        return 0;
-      }
-       
-    return 0;
-    };
+  try { 
+    console.log('next open', nextOpen);
+ 
+    if (nextOpen in days) {
+      return days[nextOpen];
+    } else {
+      console.log(`nextOpen (${nextOpen}) is not a valid day key.`);
+    }
+  } catch (error) {
+    console.log('error using days to find index', error);
+  }
+
+  try {
+    if (currentDayDrilledThrice in days) {
+      return days[currentDayDrilledThrice];
+    }
+  } catch (error) {
+    console.log('error in startingIndex function', error);
+  }
+ 
+  return 0;
+};
+
 
     useEffect(() => {
-        const index = startingIndex(soonestAvailable); 
+      console.log('scroll use effect triggered');
+      if (data) { 
+       
+      console.log('scrolling index');
+        const index = startingIndex(nextOpen); 
+        console.log('index', index);
 
         if (index && index !== -1 && flatListRef.current) {
-          flatListRef.current.scrollToIndex({ index, animated: true });
+          console.log('flatlist scrolling now!');
+         flatListRef.current.scrollToIndex({ index, animated: false });
         }
-      }, [soonestAvailable, hours]); 
+      }
+      }, [data]); 
 
   return (
     <View style={[styles.card, themeStyles.genericTextBackground]}>
@@ -78,8 +100,7 @@ const HoursOfOperation = ({ data, iconSize=17, fontColor='white' }) => {
         <TouchableOpacity onPress={toggleHoursView} style={[styles.iconContainer, themeStyles.genericTextBackground, {zIndex: 10, width: 20, flex: 1, position: 'absolute', left: 0, top: 0, height: 20 }]}>
             <FontAwesome5 name="clock" size={iconSize} color={fontColor} />
 
-        </TouchableOpacity>
-        {showAllHours ? (
+        </TouchableOpacity> 
         <Animated.FlatList 
             ref={flatListRef}
             data={hours}
@@ -97,50 +118,28 @@ const HoursOfOperation = ({ data, iconSize=17, fontColor='white' }) => {
 
             )}
 
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
                 <View style={{width: 150}}>
-                    <View style={[splitDayAndTime(item)[0].startsWith(currentDay) && styles.currentDayRow, {paddingVertical: '1%', alignContent: 'center', alignItems: 'center', flexDirection: 'row'}]}>
-
-                    <Text style={[styles.day, themeStyles.genericText]}>{splitDayAndTime(item)[0].substring(0, 3)}</Text>
-                    <Text style={[styles.time, themeStyles.genericText]}>{splitDayAndTime(item)[1].replace(/:00/g, '')}</Text>
-                    
-                    </View>
+                    <LocationSendDirAndHrsButton  
+                      onPress={handlePress}
+                      dayIndex={index}
+                      isNextOpen={splitDayAndTime(item)[0].startsWith(nextOpen)}
+                      day={splitDayAndTime(item)[0].substring(0, 3)}
+                      time={splitDayAndTime(item)[1].replace(/:00/g, '')}
+                      width={'90%'}
+                      />   
                 </View>
 
-           
-          //const [day, time] = hour.split(': ');
-
-         // const isToday = day.startsWith(currentDay);
-         
-           // <View key={index} style={[styles.hourRow, day.startsWith(currentDay) && styles.currentDayRow]}>
-           // <Text style={[styles.day, day.startsWith(currentDay) && styles.currentDayText]}>
-           // {day.substring(0, 2)}:
-           // </Text>
-           // <Text style={[styles.time, isToday && styles.currentDayText]}>{time.replace(/:00/g, '')}</Text>
-                       
-           // </View> 
             )}
             showsHorizontalScrollIndicator={false}
             scrollIndicatorInsets={{ right: 1 }}
-            initialScrollIndex={0}
+            initialScrollIndex={days[currentDayDrilledThrice]}
             ListFooterComponent={() => <View style={{ width: 200}} />}
             snapToInterval={150 + 0}
             snapToAlignment="start"  // Align items to the top of the list when snapped
             decelerationRate="fast" 
           /> 
-
-        
-      ) : (
-        todayHours && (
-          <View style={[styles.currentDayRow, {width: 150}]}> 
-            <Text style={[themeStyles.genericText, styles.currentDayText]}>{todayTime.replace(/:00/g, '')}</Text>
-          
-          </View>
-        )
-      )}
-      <TouchableOpacity onPress={toggleHoursView}>
-        <Text style={styles.toggleText}>{showAllHours ? 'Back' : 'See all'}</Text>
-      </TouchableOpacity>
+ 
     </View>
   );
 };
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
     padding: 2,
     marginBottom: 4,
   },
-  currentDayRow: { 
+  nextOpenRow: { 
     borderWidth: 1, 
     borderColor: `lightgreen`, 
     backgroundColor: 'transparent', //themeStyles.genericTextBackgroundShadeTwo.backgroundColor, 
@@ -177,7 +176,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
     fontSize: 14,
   },
-  currentDayText: {
+  nextOpenText: {
     color: 'green',
     fontWeight: 'bold',
     fontSize: 14,
@@ -196,4 +195,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HoursOfOperation;
+export default LocationHoursOfOperation;

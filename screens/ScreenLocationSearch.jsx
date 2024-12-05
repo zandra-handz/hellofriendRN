@@ -11,10 +11,13 @@ import MapWithLocations from '../components/MapWithLocations';
 
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import useLocationHelloFunctions from '../hooks/useLocationHelloFunctions';
+import useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
+
 import useHelloesData from '../hooks/useHelloesData';
 
 const ScreenLocationSearch = () => {
     const { locationList } = useLocationFunctions();
+    const { getCurrentDay } = useLocationDetailFunctions();
     const { inPersonHelloes } = useHelloesData();
     const { createLocationListWithHelloes, bermudaCoords } = useLocationHelloFunctions();
     const [ sortedLocations, setSortedLocations ] = useState([]);
@@ -42,7 +45,7 @@ const ScreenLocationSearch = () => {
                 {sortedLocations && (
                     <>
                     <View style={styles.mapContainer}>
-                        <MapWithLocations sortedLocations={sortedLocations}  bermudaCoordsDrilledOnce={bermudaCoords} />
+                        <MapWithLocations sortedLocations={sortedLocations} currentDayDrilledOnce={getCurrentDay()} bermudaCoordsDrilledOnce={bermudaCoords} />
                     </View> 
                     </>
                 )} 

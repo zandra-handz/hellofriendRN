@@ -7,7 +7,7 @@ import { useRoute } from '@react-navigation/native';
 import ContentLocationView from '../components/ContentLocationView';
 import ButtonGoToLocationFunctions from '../components/ButtonGoToLocationFunctions';
 
-const ScreenLocation = ( ) => { 
+const ScreenLocation = () => { 
     const route = useRoute();
     const location = route.params?.location ?? null; 
     const favorite = route.params?.favorite ?? false; 

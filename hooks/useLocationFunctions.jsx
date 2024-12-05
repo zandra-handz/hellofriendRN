@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { addToFriendFavesLocations, removeFromFriendFavesLocations, fetchAllLocations, fetchLocationDetails, createLocation, deleteLocation } from '../api'; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthUser } from '../context/AuthUserContext'; // Import the AuthUser context
-import { useMessage } from '../context/MessageContext';
-
+ 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
  
 

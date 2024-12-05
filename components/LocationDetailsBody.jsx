@@ -9,18 +9,19 @@ import DirectionsLink from '../components/DirectionsLink';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import CallNumberLink from '../components/CallNumberLink';
 
-import HoursOfOperation from '../components/HoursOfOperation';
+import LocationHoursOfOperation from '../components/LocationHoursOfOperation';
 
 import  useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
 
 const LocationDetailsBody = ({
     locationObject,
+    currentDayDrilledTwice,
     }) => {
         
     const { themeStyles } = useGlobalStyle();
     const { loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
     const [isFetching, setIsFetching] = useState(false);
-   const { checkIfOpen } = useLocationDetailFunctions();
+   const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
     const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(locationObject, isFetching);
   
 
@@ -30,6 +31,7 @@ const LocationDetailsBody = ({
 
     useEffect(() => { 
         setIsFetching(false);
+        console.log(currentDayDrilledTwice);
         if (locationObject == true) {
             
            clearAdditionalDetails();  
@@ -98,7 +100,7 @@ const LocationDetailsBody = ({
                     {locationObject && additionalDetails && additionalDetails.hours &&(
 
                     <View style={styles.rowContainer}> 
-                    <HoursOfOperation data={additionalDetails.hours} /> 
+                    <LocationHoursOfOperation location={locationObject} data={additionalDetails.hours} currentDayDrilledThrice={currentDayDrilledTwice} /> 
                     </View> 
 
                     )}

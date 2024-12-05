@@ -1,37 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import useLocationFunctions from '../hooks/useLocationFunctions';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const CardHoursAsButtons = ({ onDaySelect }) => {
-  const { additionalDetails } = useLocationFunctions();
-  const [selectedDay, setSelectedDay] = useState(null); // Change to null to handle "All Days"
+
+const LocationDayAndHrsSelector = ({ onDaySelect, daysHrsData, initiallySelectedDay, borderRadius=20 }) => {
+  const { themeStyles } = useGlobalStyle();
+  const [selectedDay, setSelectedDay] = useState(initiallySelectedDay); // Change to null to handle "All Days"
   const [daysOfWeek, setDaysOfWeek] = useState([]);
   const [fullDaysOfWeek, setFullDaysOfWeek] = useState([]); // New state for full day names
   const [hours, setHours] = useState([]);
+ 
 
-  useEffect(() => {
-    if (additionalDetails && additionalDetails.hours && additionalDetails.hours.weekday_text) {
-      const abbreviatedDays = additionalDetails.hours.weekday_text.map(entry => entry.slice(0, 3));
+  useLayoutEffect(() => {
+    if (daysHrsData) {
+      const abbreviatedDays = daysHrsData.map(entry => entry.slice(0, 3));
       const fullDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']; // Full day names
       const pluralFullDays = fullDays.map(day => day + 's'); // Convert to plural
 
       setDaysOfWeek(abbreviatedDays);
       setFullDaysOfWeek(pluralFullDays);
-      setHours(additionalDetails.hours.weekday_text);
+      setHours(daysHrsData);
     } else {
       setDaysOfWeek([]);
       setFullDaysOfWeek([]);
       setHours([]);
     }
-  }, [additionalDetails]);
+  }, []);
 
-  useEffect(() => {
-    // Notify parent about the selected day whenever it changes
-    if (onDaySelect) {
-      const day = selectedDay === null ? 'All Days' : daysOfWeek[selectedDay];
+  useEffect(() => {  
+    if (onDaySelect) { 
       const fullDay = selectedDay === null ? 'All Days' : fullDaysOfWeek[selectedDay];
       const hoursForDay = selectedDay === null ? getHoursForAllDays() : getHoursForDay(selectedDay);
-      onDaySelect(fullDay, hoursForDay); // Pass plural day name to parent
+      onDaySelect(fullDay, hoursForDay);  
     }
   }, [selectedDay]);
 
@@ -42,7 +42,7 @@ const CardHoursAsButtons = ({ onDaySelect }) => {
   const getHoursForDay = (dayIndex) => {
     if (dayIndex >= 0 && dayIndex < hours.length) {
       const hoursString = hours[dayIndex];
-      const timeStartIndex = hoursString.indexOf(':') + 1; // Find the index of the colon and move one position right
+      const timeStartIndex = hoursString.indexOf(':') + 1;  
       return timeStartIndex > 0 ? hoursString.slice(timeStartIndex).trim() : 'Closed'; // Slice from the colon to end and trim
     }
     return 'Closed';
@@ -59,11 +59,11 @@ const CardHoursAsButtons = ({ onDaySelect }) => {
   };
 
   const handleAllDaysPress = () => {
-    setSelectedDay(null); // Set to null to show hours for all days
+    setSelectedDay(null);  
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, {borderRadius: borderRadius}]}>
       <View style={styles.daysContainer}>
         <TouchableOpacity
           style={[
@@ -75,6 +75,7 @@ const CardHoursAsButtons = ({ onDaySelect }) => {
           <Text
             style={[
               styles.dayText,
+              themeStyles.genericText,
               selectedDay === null && styles.selectedDayText
             ]}
           >
@@ -86,13 +87,15 @@ const CardHoursAsButtons = ({ onDaySelect }) => {
             key={index}
             style={[
               styles.dayButton,
-              selectedDay === index && styles.selectedDayButton
+              selectedDay === index && styles.selectedDayButton, 
+              selectedDay === index && themeStyles.genericTextBackground,
             ]}
             onPress={() => handleDayPress(index)}
           >
             <Text
               style={[
                 styles.dayText,
+                themeStyles.genericText,
                 selectedDay === index && styles.selectedDayText
               ]}
             >
@@ -104,12 +107,12 @@ const CardHoursAsButtons = ({ onDaySelect }) => {
       <View style={styles.hoursContainer}>
         {selectedDay === null ? (
           getHoursForAllDays().map((entry, index) => (
-            <Text key={index} style={styles.hoursText}>
+            <Text key={index} style={[styles.hoursText, themeStyles.genericText]}>
               {entry}
             </Text>
           ))
         ) : (
-          <Text style={styles.hoursText}>
+          <Text style={[styles.hoursText, themeStyles.genericText]}>
             {removeZeroMinutes(getHoursForDay(selectedDay))}
           </Text>
         )}
@@ -119,44 +122,39 @@ const CardHoursAsButtons = ({ onDaySelect }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    marginVertical: 8,
+  container: {  
+    paddingHorizontal: '2%', 
+    paddingVertical: '3%',
   },
   daysContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 10,
+    justifyContent: 'space-between', 
   },
   dayButton: {
-    padding: 10,
-    borderRadius: 20,
+    padding: 2,
+    paddingHorizontal: '1%',
+    borderRadius: 10,
   },
-  selectedDayButton: {
-    backgroundColor: '#d4edda',
+  selectedDayButton: {  
+    borderWidth: .8, 
+    borderRadius: 30,
+    paddingHorizontal: '3%',
+    paddingVertical: '1%',
   },
-  dayText: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 14,
+  dayText: { 
+    fontSize: 15,
   },
-  selectedDayText: {
-    color: 'green',
-    fontFamily: 'Poppins-Bold',
+  selectedDayText: { 
+    fontWeight: 'bold',
+    fontSize: 15,
   },
   hoursContainer: {
+    paddingVertical: '4%',
     alignItems: 'center',
   },
-  hoursText: {
-    fontFamily: 'Poppins-Regular',
+  hoursText: { 
     fontSize: 14,
   },
 });
 
-export default CardHoursAsButtons;
+export default LocationDayAndHrsSelector;

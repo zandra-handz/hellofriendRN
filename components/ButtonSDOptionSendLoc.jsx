@@ -1,6 +1,6 @@
 import React, { useState } from 'react'; 
-
-import HelloFriendInvite from '../components/HelloFriendInvite';
+import { View, Text } from 'react-native';
+import LocationInviteBody from '../components/LocationInviteBody';
 
 import ButtonBaseSDOption from '../components/ButtonBaseSDOption';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
@@ -31,7 +31,7 @@ const ButtonSDOptionSendLoc = () => {
         <ItemModal
             isModalVisible={isModalVisible}
             toggleModal={closeModal} 
-            modalContent={<HelloFriendInvite />}
+            modalContent={<View><Text>Removed</Text></View>}
             modalTitle={'Send Hello plans!'}
         > 
       </ItemModal>
