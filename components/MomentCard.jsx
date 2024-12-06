@@ -5,6 +5,7 @@ import { useCapsuleList } from '../context/CapsuleListContext';
 import SlideToAdd from '../components/SlideToAdd'; 
 import FormatMonthDay from '../components/FormatMonthDay';
 import CheckmarkOutlineSvg from '../assets/svgs/checkmark-outline.svg';
+
 import { Easing } from 'react-native-reanimated';
 
 const MomentCard = ({

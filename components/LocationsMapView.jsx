@@ -1,7 +1,7 @@
 
 //removed midpoint searcher and whatever else it did for right now:  <ButtonGoToFindLocation /> 
 // <LocationHeartSolidSvg height={30} width={30} color="red" />
-        
+// <ButtonGoToLocationFunctions /> 
 //<Image source={require('../assets/shapes/coffeecupnoheart.png')} style={{ height: 35, width: 35 }}/>
 import React, { useState, useEffect,  useRef, useMemo } from 'react';
 import { View, StyleSheet, TouchableOpacity, Platform, Keyboard, Text, Dimensions, Animated, Image } from 'react-native';
@@ -14,6 +14,12 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext'; 
 
+import CheckmarkOutlineSvg from '../assets/svgs/checkmark-outline.svg';
+
+
+import SlideUpToOpen from '../components/SlideUpToOpen';
+import SlideDownToClose from '../components/SlideDownToClose';
+
 //import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import useLocationFunctions from '../hooks/useLocationFunctions';
@@ -25,7 +31,7 @@ import HorizontalScrollAnimationWrapper from '../components/HorizontalScrollAnim
 import FadeInOutWrapper from '../components/FadeInOutWrapper'; //pass in isVisible prop
 import LocationDetailsBody from '../components/LocationDetailsBody';
 
-const MapWithLocations = ({ sortedLocations, currentDayDrilledOnce, bermudaCoordsDrilledOnce }) => {
+const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoordsDrilledOnce }) => {
   const mapRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   
@@ -38,6 +44,19 @@ const MapWithLocations = ({ sortedLocations, currentDayDrilledOnce, bermudaCoord
   const [focusedLocation, focusOnLocation  ] = useState(null);
   const [locationDetailsAreOpen, setLocationDetailsAreOpen ] = useState(false);
   const colorScheme = useColorScheme();
+
+  const [ noModalsOpen, setNoModalsOpen ] = useState(true);
+
+  const [ expandStateFromParent, setExpandStateFromParent ] = useState(false);
+  
+  
+  const toggleCardWithSlider = () => {
+    console.log('expandCardWithSlider');
+    setExpandStateFromParent(prev => !prev); 
+   
+  };
+ 
+  
 
   const toggleLocationDetailsState = () => {
     setLocationDetailsAreOpen(prev => !prev);
@@ -315,6 +334,7 @@ const darkMapStyle = [
    
   const renderLocationsMap = (locations) => (
     <>  
+    
       <MapView
         {...(Platform.OS === 'android' && { provider: PROVIDER_GOOGLE })}
         ref={mapRef}
@@ -442,6 +462,8 @@ const darkMapStyle = [
         onPress={() => {
           //handleGoToLocationViewScreen(focusedLocation) //scaffolding during transition to keep build functional
         }}
+        useParentButton={true}
+        parentTriggerToExpand={expandStateFromParent}  
         parentFunctionToTrackOpenClose={toggleLocationDetailsState} //use locationDetailsAreOpen to act on
         content={ 
           focusedLocation ? (
@@ -452,7 +474,35 @@ const darkMapStyle = [
           )
           }
         /> 
-    <ButtonGoToLocationFunctions /> 
+
+<Animated.View style={[styles.sliderContainer, { opacity: 1 }]}>
+
+  {!locationDetailsAreOpen && (
+    
+        <SlideUpToOpen
+          onPress={toggleCardWithSlider}
+          sliderText='OPEN'  
+          targetIcon={CheckmarkOutlineSvg}
+          disabled={false}
+        />
+
+  )}
+
+        
+      </Animated.View>
+      {locationDetailsAreOpen && (
+     
+      <Animated.View style={[styles. sliderStartAtTopContainer, { opacity: 1 }]}>
+        <SlideDownToClose
+          onPress={toggleCardWithSlider}
+          sliderText='CLOSE'  
+          targetIcon={CheckmarkOutlineSvg}
+          disabled={false}
+        />
+
+      </Animated.View>
+      )}
+
     </View>
   );
 };
@@ -550,6 +600,32 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  sliderContainer: {
+    width: 40, 
+    position: 'absolute',
+    justifyContent: 'flex-end',
+    flexDirection: 'column',
+     bottom: 10,
+     right: 50,
+     height: '90%',
+    borderRadius: 20,  
+    zIndex: 3000,
+    elevation: 3000,
+    backgroundColor: 'transparent',  
+ },
+ sliderStartAtTopContainer: {
+  width: 40, 
+  position: 'absolute',
+  justifyContent: 'flex-start',
+  flexDirection: 'column',
+   bottom: 10,
+   right: 50,
+   height: '90%',
+  borderRadius: 20,  
+  zIndex: 6000,
+  elevation: 6000,
+  backgroundColor: 'transparent',  
+},
 });
 
-export default MapWithLocations;
+export default LocationsMapView;

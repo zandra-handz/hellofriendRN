@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { addToFriendFavesLocations, removeFromFriendFavesLocations, fetchAllLocations, fetchLocationDetails, createLocation, deleteLocation } from '../api'; // Import the API methods
+import { addToFriendFavesLocations, removeFromFriendFavesLocations, fetchAllLocations, fetchLocationDetails, createLocation, updateLocation, deleteLocation } from '../api'; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthUser } from '../context/AuthUserContext'; // Import the AuthUser context
  
@@ -78,6 +78,33 @@ const useLocationFunctions = () => {
         },
     });
 
+    const handleUpdateLocation = async (locationId, locationUpdate) => {
+      console.log('Updating location:', locationId, locationUpdate);
+  
+      try {
+          await updateLocationMutation.mutateAsync({ id: locationId, ...locationUpdate });
+      } catch (error) {
+          console.error('Error updating location:', error);
+      }
+  };
+    
+    
+    const updateLocationMutation = useMutation({
+      mutationFn: ({ id, ...locationData }) => updateLocation(id, locationData),
+      onSuccess: (data) => {
+          queryClient.setQueryData(['locationList'], (old) => {
+              if (!old) return [data];
+              return old.map((location) =>
+                  location.id === data.id ? { ...location, ...data } : location
+              );
+          });
+      },
+      onError: (error) => {
+          console.error('Update failed:', error);
+      },
+  });
+  
+
 
 
     const accessLocationListCacheData = () => {
@@ -93,6 +120,8 @@ const useLocationFunctions = () => {
       }
     }
     }
+
+    
     
      
     const handleCreateLocation = async (friends, title, address, parkingTypeText, trimmedCustomTitle, personalExperience) => {
@@ -381,6 +410,7 @@ const useFetchAdditionalDetails = (location, enabled) => {
         sortLocationList,
         handleCreateLocation,
         createLocationMutation,
+        handleUpdateLocation,
         handleAddToFaves,
         handleRemoveFromFaves,
         handleDeleteLocation,

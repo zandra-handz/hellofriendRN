@@ -695,10 +695,9 @@ export const fetchAllLocations = async () => {
             zipCode: location.zip_code,
             latitude: location.latitude,
             longitude: location.longitude,
-            parking: location.parking_score,
-            notes: location.notes,
+            parking_score: location.parking_score, 
             title: location.title,
-            notes: location.personal_experience_info,
+            personal_experience_info: location.personal_experience_info,
             validatedAddress: location.validated_address,
             friendsCount: location.friends ? location.friends.length : 0,
             friends: location.friends ? location.friends.map(friend => ({

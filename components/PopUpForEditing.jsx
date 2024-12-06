@@ -1,12 +1,14 @@
 import React, { useEffect, useRef} from 'react';
 import { useGlobalStyle} from '../context/GlobalStyleContext';
-import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated, KeyboardAvoidingView, Platform } from 'react-native';
+import { TouchableOpacity,Keyboard, TouchableWithoutFeedback, StyleSheet, View, Modal, Text, Animated, KeyboardAvoidingView, Platform } from 'react-native';
+
 import LoadingPage from '../components/LoadingPage';  
 import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.svg';
 import SearchBar from '../components/SearchBar';
 import { Dimensions } from 'react-native';
 
-const AlertList = ({ 
+//based on AlertList but without the automatic closing
+const PopUpForEditing = ({ 
     isModalVisible,
     isFetching, 
     useSpinner,
@@ -40,13 +42,13 @@ const AlertList = ({
         }).start();
       }, [isModalVisible]);
 
-    return ( 
-            
-        <Modal transparent={true} visible={isModalVisible} animationType="slide" onRequestClose={toggleModal}>
+    return (
+        <Modal transparent={true} visible={isModalVisible} animationType="slide">
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <Animated.View style={[styles.modalContainer, { opacity: fadeAnim }]}>
                
                 <KeyboardAvoidingView
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    behavior={Platform.OS == 'android' ? 'height' : 'padding'}
                     style={{ flex: 1}}  
                 >
                     <View style={[styles.modalContent, themeStyles.genericTextBackground, { height: modalHeight, borderColor: themeStyles.genericTextBackgroundShadeTwo.backgroundColor }]}>
@@ -100,7 +102,8 @@ const AlertList = ({
                     </View>
                 </KeyboardAvoidingView>
             </Animated.View>
-        </Modal> 
+            </TouchableWithoutFeedback>
+        </Modal>
     );
 };
 
@@ -196,4 +199,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AlertList;
+export default PopUpForEditing;

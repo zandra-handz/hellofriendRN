@@ -1,7 +1,7 @@
 import React, { useState, forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { View, TouchableOpacity, StyleSheet, TextInput, ScrollView, FlatList, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, TextInput, FlatList, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import ListCheckSvg from '../assets/svgs/list-check.svg';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 
 const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress, mountingText = 'default', triggerAnimation, onTextChange, searchStringRef }, ref) => {
   
@@ -12,7 +12,6 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
 
   // Trigger animation when component mounts
   useEffect(() => { 
-
     if (textInputRef.current) {
       textInputRef.current.setNativeProps({ text: mountingText });
       setSearchQuery(mountingText);
@@ -33,7 +32,6 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
       }
     },
   }));
- 
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -63,22 +61,23 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
 
   return ( 
     <>
-        <TouchableWithoutFeedback onPress={handleOutsidePress}>
-          <View style={[styles.inputContainer, themeStyles.genericTextBackground]}>
-            <TextInput
-              ref={textInputRef}
-              autoFocus={mountingText.length > 0 ? true : false}
-              style={[styles.searchInput, themeStyles.genericText]}
-              placeholder={'Search saved locations'}
-              placeholderTextColor={themeStyles.genericText.color}
-              value={searchQuery} // Controlled input
-              onChangeText={handleSearch}
-            />
-            <ListCheckSvg width={26} height={26} color={manualGradientColors.lightColor} style={styles.icon} />
-          </View>
-        </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback onPress={handleOutsidePress}>
+        <View style={[styles.inputContainer, themeStyles.genericTextBackground]}>
+          <TextInput
+            ref={textInputRef}
+            autoFocus={mountingText.length > 0 ? true : false}
+            style={[styles.searchInput, themeStyles.genericText]}
+            placeholder={'Search saved locations'}
+            placeholderTextColor={themeStyles.genericText.color}
+            value={searchQuery} // Controlled input
+            onChangeText={handleSearch}
+          />
+          <ListCheckSvg width={26} height={26} color={manualGradientColors.lightColor} style={styles.icon} />
+        </View>
+      </TouchableWithoutFeedback>
 
-        {searchQuery.length > 0 && ( 
+      {searchQuery.length > 0 && ( 
+ 
           <View style={[styles.dropdownContainer, themeStyles.genericTextBackground]}>
             <FlatList
               data={filteredData}
@@ -92,32 +91,15 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
               )}
               style={styles.dropdownList}
               keyboardShouldPersistTaps="handled"
-              nestedScrollEnabled
+              nestedScrollEnabled={true}
             />
-          </View>
-           
-        )}
-        </>
+          </View> 
+      )}
+    </>
   );
 });
 
 const styles = StyleSheet.create({
-  //moved to parent because the animation wrapper goes under this
-  //container: {   
-    //flexDirection: 'row',
-    //justifyContent: 'flex-start',
-    //width: '86%',  
-    //zIndex: 2200,
-    //elevation: 2200,
-  //},
-  smallCircleButton: {
-    position: 'absolute',
-    width: '100%',  
-    height: 48,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -148,7 +130,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 5,
-    width: '114%',  
+    width: '114%',
     zIndex: 2100,
     elevation: 2100,
   },

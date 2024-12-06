@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-const ExpandableUpCard = ({ content, parentFunctionToTrackOpenClose, onPress=() => {} }) => {
+const ExpandableUpCard = ({ content, useParentButton=false, parentTriggerToExpand, parentTriggerToCollapse, parentFunctionToTrackOpenClose, onPress=() => {} }) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 
   const [expanded, setExpanded] = useState(false);
@@ -21,6 +21,18 @@ const ExpandableUpCard = ({ content, parentFunctionToTrackOpenClose, onPress=() 
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   
+  useEffect(() => {
+    if (parentTriggerToExpand && useParentButton) {
+      toggleCard();
+  
+    }
+    if (!parentTriggerToExpand && useParentButton) {
+      closeCard();
+    }
+
+  }, [parentTriggerToExpand]);
+ 
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -64,6 +76,17 @@ const ExpandableUpCard = ({ content, parentFunctionToTrackOpenClose, onPress=() 
     setExpanded(prev => !prev);
 
   };
+
+  const closeCard = () => {
+    
+    if (expanded) {
+      parentFunctionToTrackOpenClose();
+        cardHeight.value = screenHeight / 3.4;  
+        setExpanded(false);
+    }   
+
+  };
+
    
   return (
     <>
@@ -71,6 +94,8 @@ const ExpandableUpCard = ({ content, parentFunctionToTrackOpenClose, onPress=() 
 
     
     <Animated.View style={[styles.detailsContainer, animatedStyle, themeStyles.genericTextBackground, {zIndex: expanded ? 3000 : 2000} ]}>
+    {!useParentButton && (
+      
     <View style={{ position: 'absolute', paddingTop: '2%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', width: '100%',  alignContent: 'center', justifyContent: 'center',   alignSelf: 'center' }}>
   
     <RotatableToggleButton 
@@ -83,6 +108,8 @@ const ExpandableUpCard = ({ content, parentFunctionToTrackOpenClose, onPress=() 
         rotation={rotation}
     />
         </View> 
+        
+    )}
 
         {content ? content : <Text>No content available</Text>}
     </Animated.View>

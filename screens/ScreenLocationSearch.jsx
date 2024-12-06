@@ -3,11 +3,8 @@
 import React, { useLayoutEffect, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
-import SearchBarGoogleAddress from '../components/SearchBarGoogleAddress';
-
-import MapWithLocations from '../components/MapWithLocations';
-
+ 
+import LocationsMapView from '../components/LocationsMapView';
 
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import useLocationHelloFunctions from '../hooks/useLocationHelloFunctions';
@@ -45,7 +42,7 @@ const ScreenLocationSearch = () => {
                 {sortedLocations && (
                     <>
                     <View style={styles.mapContainer}>
-                        <MapWithLocations sortedLocations={sortedLocations} currentDayDrilledOnce={getCurrentDay()} bermudaCoordsDrilledOnce={bermudaCoords} />
+                        <LocationsMapView sortedLocations={sortedLocations} currentDayDrilledOnce={getCurrentDay()} bermudaCoordsDrilledOnce={bermudaCoords} />
                     </View> 
                     </>
                 )} 

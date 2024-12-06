@@ -10,12 +10,15 @@ const SelectedFriendContext = createContext({});
 export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const { authUserState } = useAuthUser(); 
-  const { friendList } = useFriendList();  const [friendColorTheme, setFriendColorTheme] = useState({
+  const { friendList, resetTheme } = useFriendList();  
+
+  const [friendColorTheme, setFriendColorTheme] = useState({
     useFriendColorTheme: null,
     invertGradient: null,
     lightColor: null,
     darkColor: null,
   });
+
   const [calculatedThemeColors, setCalculatedThemeColors] = useState({
     lightColor:   '#a0f143',
     darkColor:   '#4caf50',
@@ -53,11 +56,10 @@ export const SelectedFriendProvider = ({ children }) => {
 
   useEffect(() => {
     if (selectedFriend && friendDashboardData) {
-      ids = getFaveLocationIds();
-      setFavoriteLocationIds(ids);
+      const ids = getFaveLocationIds();
+      setFavoriteLocationIds(ids || []);
     }
-
-  }, [friendDashboardData]);
+  }, [friendDashboardData, selectedFriend, queryClient]);
 
 
 
@@ -91,6 +93,7 @@ export const SelectedFriendProvider = ({ children }) => {
 
   const deselectFriend = () => {
     setSelectedFriend(null);
+    resetTheme();
     queryClient.resetQueries(['friendDashboardData']);
     setFriendColorTheme({
       useFriendColorTheme: null,
@@ -98,6 +101,7 @@ export const SelectedFriendProvider = ({ children }) => {
       lightColor: null,
       darkColor: null,
   });
+  
   };
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext'; // Import useAuthUser hook
-
 import { fetchFriendList } from '../api';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const FriendListContext = createContext({
   friendList: [], 
@@ -16,7 +16,9 @@ export const useFriendList = () => useContext(FriendListContext);
 
 export const FriendListProvider = ({ children }) => {
   const { authUserState } = useAuthUser();  
+  const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
   const [friendList, setFriendList] = useState([]);
+  
   const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
     darkColor: '#4caf50',
     lightColor: '#a0f143',
@@ -28,10 +30,22 @@ export const FriendListProvider = ({ children }) => {
 
   
   const getThemeAheadOfLoading = (loadingFriend) => {
-    
+     
     setThemeAheadOfLoading({lightColor: loadingFriend.lightColor || '#a0f143', darkColor: loadingFriend.darkColor || '#4caf50', fontColor: loadingFriend.fontColor || '#00000', fontColorSecondary: loadingFriend.fontColorSecondary || '#00000'});
-  
+
   };
+
+  const resetTheme = () => {
+   
+    setThemeAheadOfLoading({
+      lightColor: '#a0f143', 
+      darkColor: '#4caf50', 
+      fontColor: '#00000', 
+      fontColorSecondary: '#00000'}); 
+  };
+ 
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,6 +147,7 @@ export const FriendListProvider = ({ children }) => {
       themeAheadOfLoading,
       setThemeAheadOfLoading,
       getThemeAheadOfLoading,
+      resetTheme,
       addToFriendList,
       removeFromFriendList,
       updateFriend,

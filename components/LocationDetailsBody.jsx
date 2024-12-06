@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-import LocationSavingActions from '../components/LocationSavingActions';
+import CheckmarkOutlineSvg from '../assets/svgs/checkmark-outline.svg';
 
+
+import SlideUpToOpen from '../components/SlideUpToOpen';
+
+import LocationSavingActions from '../components/LocationSavingActions';
+import LocationNotes from '../components/LocationNotes';
 import DirectionsLink from '../components/DirectionsLink';
 
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import CallNumberLink from '../components/CallNumberLink';
 
 import LocationHoursOfOperation from '../components/LocationHoursOfOperation';
+import { useQueryClient } from '@tanstack/react-query'; // Import QueryClient hook
 
 import  useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
+
+//pulling the data from locationList and using the useEffect gets it to update
+//must be better way. for some reason the query client is returning undefined from the cache
 
 const LocationDetailsBody = ({
     locationObject,
@@ -19,15 +28,38 @@ const LocationDetailsBody = ({
     }) => {
         
     const { themeStyles } = useGlobalStyle();
-    const { loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
+    const { locationList, loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
     const [isFetching, setIsFetching] = useState(false);
    const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
     const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(locationObject, isFetching);
-  
+    const queryClient = useQueryClient();
+    const [ locationDetails, setLocationDetails ] = useState(null);
 
     const handleRefresh = () => {
         setIsFetching(true);   
     };
+
+    useEffect(() => {
+        const updateFromCache = () => {
+            console.log('checking cache for location data');
+            const cachedLocationList = queryClient.getQueryData('locationList');
+            console.log(locationObject);
+            if (locationList && locationObject) {
+                const matchedLocation = locationList.find(
+                    (loc) => loc.id === locationObject.id
+                );
+                if (matchedLocation) {
+                    setLocationDetails(matchedLocation);
+
+                    console.log('cached data for location found: ', matchedLocation);
+                } else {
+                    console.log('no data found in cache for this location');
+                }
+            }
+        };
+
+        updateFromCache();
+    }, [locationObject, locationList, queryClient]);
 
     useEffect(() => { 
         setIsFetching(false);
@@ -105,20 +137,20 @@ const LocationDetailsBody = ({
 
                     )}
 
-                {locationObject && locationObject.notes && ( 
+                {locationDetails && locationDetails.personal_experience_info && ( 
                     <View style={styles.rowContainer}> 
                         <Text style={[styles.subtitle, themeStyles.genericText]}>Notes: </Text>
                         <Text style={themeStyles.genericText}>
-                            {locationObject.notes}
+                            {locationDetails.personal_experience_info}
                         </Text>
                     </View>   
                 )}    
                 
-                {locationObject && locationObject.parking && ( 
+                {locationObject && locationObject.parking_score && ( 
                     <View style={styles.rowContainer}> 
                         <Text style={[styles.subtitle, themeStyles.genericText]}>Parking: </Text>
                         <Text style={themeStyles.genericText}>
-                            {locationObject && locationObject.parking}
+                            {locationObject && locationObject.parking_score}
                         </Text>
                     </View> 
                     )} 
@@ -139,11 +171,20 @@ const LocationDetailsBody = ({
                 </View> 
                 )} 
 
+                
+
                 {locationObject &&  (
-                    <View style={{position: 'absolute', flexDirection: 'row', bottom: 10, width: '100%', left: 0}}> 
+                    <>
+                    <View style={[themeStyles.genericTextBackground, {position: 'absolute', flexDirection: 'row', bottom: 10, width: '100%', left: 0}]}> 
                     <LocationSavingActions location={locationObject} />
-                     
+                    
                     </View>
+
+                    <View style={[themeStyles.genericTextBackground, {position: 'absolute', flexDirection: 'row', bottom: 10, width: '100%', left: 48}]}> 
+                     <LocationNotes location={locationObject} />
+
+                    </View>
+                    </>
                 )}
         </View>
 
@@ -166,6 +207,16 @@ const styles = StyleSheet.create({
         paddingVertical: '1%',
 
     },
+    sliderContainer: {
+         width: 40,
+         position: 'absolute',
+          bottom: 120,
+          right: 50,
+          height: '50%',
+        borderRadius: 20,  
+        zIndex: 2000,
+        backgroundColor: 'pink',  
+      },
 });
 
 
