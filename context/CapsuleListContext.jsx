@@ -150,8 +150,10 @@ export const CapsuleListProvider = ({ children }) => {
       timeoutRef.current = setTimeout(() => {
         updateCapsuleMutation.reset(); 
       }, 2000); 
-    console.error('Error updating capsule:', error); 
-    }
+    
+    //  console.error('Error updating capsule:', error); 
+    
+  }
   });
 
   const updateCacheWithNewPreAdded = () => {

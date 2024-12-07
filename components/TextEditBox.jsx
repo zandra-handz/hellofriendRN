@@ -1,34 +1,59 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 // Forwarding ref to the parent to expose the TextInput value
-const TextEditBox = forwardRef(({ title = 'title', startingText = '' }, ref) => {
+const TextEditBox = forwardRef(({ title = 'title', mountingText = '', onTextChange }, ref) => {
   const { themeStyles } = useGlobalStyle();
-  const [editedMessage, setEditedMessage] = useState(startingText); // Use the starting text passed as prop
+  const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
+  const textInputRef = useRef();
+
+
+  useEffect(() => { 
+    if (textInputRef.current) {
+      textInputRef.current.setNativeProps({ text: mountingText });
+      setEditedMessage(mountingText);
+    }
+  }, []);
 
   // Expose the current value of the TextInput via the ref
   useImperativeHandle(ref, () => ({
-    get value() {
-      return editedMessage; // Return the latest value when accessed
+    setText: (text) => {
+      if (textInputRef.current) {
+        textInputRef.current.setNativeProps({ text });
+        setEditedMessage(text); 
+      }
+    }, 
+    clearText: () => {
+      if (textInputRef.current) {
+        textInputRef.current.clear();
+        setEditedMessage(''); 
+      }
     },
-    set value(newValue) {
-      setEditedMessage(newValue); // Optionally allow setting the value externally
-    }
+    getText: () => editedMessage,
   }));
+ 
 
   useEffect(() => {
-    setEditedMessage(startingText); // Reset to starting text if it changes
-  }, [startingText]);
+    setEditedMessage(mountingText); // Reset to starting text if it changes
+  }, [mountingText]);
+
+
+  const handleTextInputChange = (text) => {
+    console.log(text);
+    setEditedMessage(text);
+    onTextChange(text);
+  }
 
   return ( 
       <View style={styles.previewContainer}>
         <Text style={[styles.previewTitle, themeStyles.genericText]}>{title}</Text>
         <TextInput
+          ref={textInputRef}
           autoFocus={true}
           style={[styles.textInput, themeStyles.genericText, themeStyles.genericTextBackgroundShadeTwo]}
           value={editedMessage}
-          onChangeText={setEditedMessage} // Update local state
+          onChangeText={handleTextInputChange} // Update local state
           multiline
         />
       </View> 

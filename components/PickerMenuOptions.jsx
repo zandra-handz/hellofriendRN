@@ -1,16 +1,20 @@
+
+//<Text style={[styles.containerText, styles.inlineText, {color: themeAheadOfLoading.fontColor}]}>
+//{containerText}
+//</Text>
+
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import { useFriendList } from '../context/FriendListContext';
 const PickerMenuOptions = ({
   options = [],
   onSelectOption,
-  selectedOption,
-  containerText = 'Select an option', 
+  selectedOption, 
   buttonStyle,
   widthForHorizontal='80%',
   buttonTextStyle,  
-  useSvg = false,  
+  useSvg = true,  
   svgIcons = [], 
   labels = [], 
   labelPosition = 'below',  
@@ -20,16 +24,16 @@ const PickerMenuOptions = ({
   const { themeAheadOfLoading } = useFriendList(); 
 
   return (
-    <View style={styles.container}>
-      <View style={styles.innerContainer}>
-        <Text style={[styles.containerText, styles.inlineText, {color: themeAheadOfLoading.fontColor}]}>
-          {containerText}
-        </Text>
-        {options.length === 0 ? (
-          <Text style={styles.noOptionsText}>No options available</Text>
-        ) : (
+    <View style={styles.container}> 
+
+        {options.length === 0 && (
+          <Text style={styles.noOptionsText}>''</Text>
+        )}
+        {options.length > 0 && options.length < 5 && (
+          
           <View style={[styles.optionsContainer, {width: widthForHorizontal}]}>
             {options.map((option, index) => (
+              <View style={{marginHorizontal: '1%'}}>
               <TouchableOpacity
                 key={index}
                 style={[
@@ -41,8 +45,7 @@ const PickerMenuOptions = ({
                 onPress={() => onSelectOption(index)}
               >
                 <View style={[
-                  styles.optionContent,
-                  labelPosition === 'below' && styles.labelBelow
+                  styles.optionContent, styles.labelBelow
                 ]}>
                   {useSvg && svgIcons[index] ? (
                     <>
@@ -77,31 +80,93 @@ const PickerMenuOptions = ({
                   )}
                 </View>
               </TouchableOpacity>
+              </View>
             ))}
           </View>
         )}
-      </View>
-    </View>
+        {options.length > 5 && (
+
+          <FlatList
+            data={options}
+            horizontal={true}
+            keyExtractor={(item, index) => `option-${index}`}
+            renderItem={({ item, index }) => (
+              <View style={{width: 160}}>
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.optionButton, themeStyles.genericIcon, themeStyles.genericTextBackgroundShadeTwo, {borderColor: themeStyles.genericText.color},
+                  selectedOption === index && [styles.selectedOptionButton,  {borderWidth: 1, borderColor : themeAheadOfLoading.darkColor, backgroundColor: themeAheadOfLoading.darkColor}],
+                  
+                  buttonStyle
+                ]}
+                onPress={() => onSelectOption(index)}
+              >
+                <View style={[
+                  styles.optionContent, styles.labelBelow
+                ]}>
+                  {useSvg && svgIcons[index] ? (
+                    <>
+                      {labelPosition === 'beside' && labels[index] && (
+                        <Text style={[styles.optionLabel, {color: themeAheadOfLoading.fontColor}]}>{labels[index]}</Text>
+                      )}
+                      {React.createElement(svgIcons[index], { width: 24, height: 24, color: selectedOption === index ? themeAheadOfLoading.fontColor : themeStyles.genericText.color })}
+                      
+                      {labelPosition === 'below' && labels[index] && ( 
+                        <Text
+                          style={[
+                            styles.optionLabel,
+                            { color: selectedOption === index ? themeAheadOfLoading.fontColor : themeStyles.genericText.color },
+                            selectedOption === index && styles.selectedOptionText,
+                            buttonTextStyle,
+                          ]}
+                        >
+                          {labels[index]}
+                        </Text>
+                      )} 
+                    </>
+                  ) : (
+                    <Text
+                      style={[
+                        styles.optionText,
+                        selectedOption === index && styles.selectedOptionText, {color: themeAheadOfLoading.fontColor},
+                        
+                      ]}
+                    >
+                      {labels[index] || option}
+                    </Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+              </View>
+            )}
+            showsHorizontalScrollIndicator={false}
+            scrollIndicatorInsets={{ right: 1 }}
+            initialScrollIndex={0}
+              decelerationRate="fast" 
+
+            /> 
+        )}
+        
+      </View> 
   );
 };
 
 const styles = StyleSheet.create({
   container: { 
-    width: '100%',
-    alignContent: 'center',
-    flex: 1,  
-  },
-  innerContainer: {
-    flex: 1,
-    flexDirection: 'row', 
-    alignItems: 'center',
-    justifyContent: 'space-between', 
-    alignContent: 'center', 
+    
+    paddingHorizontal: '2%', 
+    paddingVertical: '3%', 
+    flexDirection: 'row',
     width: '100%', 
-  },
+    justifyContent: 'center',
+    height: '100%', 
+
+    
+    //backgroundColor: 'red',
+  }, 
   containerText: {
-    fontSize: 17,
-    fontFamily: 'Poppins-Regular', 
+    fontSize: 17, 
      
   },
   inlineText: {
@@ -113,25 +178,21 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   }, 
   optionButton: {  
+    padding: '4%',
     minWidth: 76,
     width: 'auto',
-    flex: 1, 
-    paddingBottom: 4,
-    paddingTop: 8,
-    marginRight: 6,
-    borderRadius: 10,
-    borderWidth: 0,
-    borderColor: '#ccc', 
+    flex: 1,  
+    borderRadius: 10,   
+    minHeight: 60,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   selectedOptionButton: { 
     borderWidth: 2,
   },
-  optionText: { 
-    fontFamily: 'Poppins-Regular', 
+  optionText: {  
   },
-  selectedOptionText: { 
-    fontFamily: 'Poppins-Regular', 
+  selectedOptionText: {   
   },
   optionContent: {
     flexDirection: 'row', 

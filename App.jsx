@@ -35,6 +35,7 @@ import ScreenLocation from './screens/ScreenLocation';
 
 import ScreenLocationSend from './screens/ScreenLocationSend';
 import ScreenLocationEdit from './screens/ScreenLocationEdit';
+import ScreenLocationSave from './screens/ScreenLocationSave';
 
  
 import ScreenAddFriend from './screens/ScreenAddFriend';
@@ -239,13 +240,23 @@ export const Layout = () => {
                   ),
                 })}
               />
-                            <Stack.Screen
+              <Stack.Screen
                 name="LocationEdit"
                 component={ScreenLocationEdit}
                 options={({ route }) => ({
                   headerShown: true,
                   header: () => (
                   <HeaderBase headerTitle='Edit Location details' icon='heartbeat' navigateTo='LocationSearch' />
+                  ),
+                })}
+              />
+              <Stack.Screen
+                name="LocationSave"
+                component={ScreenLocationSave}
+                options={({ route }) => ({
+                  headerShown: true,
+                  header: () => (
+                  <HeaderBase headerTitle='Save Location' icon='heartbeat' navigateTo='LocationSearch' />
                   ),
                 })}
               />

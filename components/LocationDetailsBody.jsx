@@ -24,6 +24,7 @@ import  useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
 
 const LocationDetailsBody = ({
     locationObject,
+    appOnlyLocationObject, //is not stored in cache, is calculated via the useLocationHelloesFunctions in the location search screen
     currentDayDrilledTwice,
     }) => {
         
@@ -41,19 +42,20 @@ const LocationDetailsBody = ({
 
     useEffect(() => {
         const updateFromCache = () => {
-            console.log('checking cache for location data');
-            const cachedLocationList = queryClient.getQueryData('locationList');
-            console.log(locationObject);
+            //console.log('checking cache for location data');
+          
             if (locationList && locationObject) {
+                //console.log('location object', locationObject);
                 const matchedLocation = locationList.find(
                     (loc) => loc.id === locationObject.id
                 );
                 if (matchedLocation) {
                     setLocationDetails(matchedLocation);
 
-                    console.log('cached data for location found: ', matchedLocation);
+              //      console.log('cached data for location found: ', matchedLocation);
                 } else {
-                    console.log('no data found in cache for this location');
+                    setLocationDetails(locationObject); //back up if nothing in cache
+              //      console.log('no data found in cache for this location');
                 }
             }
         };
@@ -63,7 +65,7 @@ const LocationDetailsBody = ({
 
     useEffect(() => { 
         setIsFetching(false);
-        console.log(currentDayDrilledTwice);
+        //console.log(currentDayDrilledTwice);
         if (locationObject == true) {
             
            clearAdditionalDetails();  
@@ -102,11 +104,13 @@ const LocationDetailsBody = ({
     return (
 
         <View style={styles.container}>
+            {locationDetails && (
+               <>
                <View style={[styles.rowContainer]}> 
                     <Text style={[themeStyles.genericText, {fontWeight: 'bold', fontSize: 15, textTransform: 'uppercase', lineHeight: 22}]}>
-                        {locationObject && locationObject.title}
+                        {locationDetails.title || 'No title found'}
                     </Text> 
-                    {locationObject && additionalDetails && additionalDetails.hours &&(
+                    {additionalDetails && additionalDetails.hours &&(
                         <>
                      {renderOpenStatus(additionalDetails.hours)}
                      
@@ -116,54 +120,54 @@ const LocationDetailsBody = ({
                 </View>  
 
                     <View style={styles.rowContainer}> 
-                    {locationObject && locationObject.address && (
-                        <DirectionsLink address={locationObject.address} fontColor={themeStyles.genericText.color} />
+                    {locationDetails.address && (
+                        <DirectionsLink address={locationDetails.address} fontColor={themeStyles.genericText.color} />
                     )}
                     </View>   
 
-                    {locationObject && additionalDetails && additionalDetails.phone &&(
+                    {additionalDetails && (
+                        <>
+                            {additionalDetails.phone && (
+                            <View style={styles.rowContainer}> 
+                                <CallNumberLink phoneNumber={additionalDetails.phone} />
+                            </View> 
+                            )} 
 
-                    <View style={styles.rowContainer}> 
-                     <CallNumberLink phoneNumber={additionalDetails.phone} />
-                    </View> 
-
+                            {additionalDetails.hours &&(
+                            <View style={styles.rowContainer}> 
+                                <LocationHoursOfOperation location={locationObject} data={additionalDetails.hours} currentDayDrilledThrice={currentDayDrilledTwice} /> 
+                            </View> 
+                            )}
+                        </>
                     )}
 
-                    {locationObject && additionalDetails && additionalDetails.hours &&(
-
-                    <View style={styles.rowContainer}> 
-                    <LocationHoursOfOperation location={locationObject} data={additionalDetails.hours} currentDayDrilledThrice={currentDayDrilledTwice} /> 
-                    </View> 
-
-                    )}
-
-                {locationDetails && locationDetails.personal_experience_info && ( 
+                {locationDetails.personal_experience_info && ( 
                     <View style={styles.rowContainer}> 
                         <Text style={[styles.subtitle, themeStyles.genericText]}>Notes: </Text>
                         <Text style={themeStyles.genericText}>
-                            {locationDetails.personal_experience_info}
+                            {locationDetails.personal_experience_info || 'None'}
                         </Text>
                     </View>   
                 )}    
                 
-                {locationObject && locationObject.parking_score && ( 
+                {locationDetails.parking_score && ( 
                     <View style={styles.rowContainer}> 
                         <Text style={[styles.subtitle, themeStyles.genericText]}>Parking: </Text>
                         <Text style={themeStyles.genericText}>
-                            {locationObject && locationObject.parking_score}
+                            {locationDetails && locationDetails.parking_score}
                         </Text>
                     </View> 
                     )} 
 
-                {locationObject && locationObject.helloCount && ( 
+                {appOnlyLocationObject && appOnlyLocationObject.helloCount > 0 && ( 
                 <View style={styles.rowContainer}> 
                     <Text style={[styles.subtitle, themeStyles.genericText]}>Helloes here: </Text>
                     <Text style={themeStyles.genericText}>
-                        {locationObject && locationObject.helloCount}
+                        {appOnlyLocationObject.helloCount}
                     </Text>
                 </View> 
                 )} 
-                {locationObject && !additionalDetails && ( 
+                {locationDetails && !additionalDetails && ( 
                 <View style={[styles.rowContainer, {paddingVertical: '10%'}]}> 
                     <TouchableOpacity onPress={handleRefresh} style={themeStyles.genericText}>
                         <Text style={[themeStyles.genericText, {fontWeight: 'bold'}]}>GET MORE INFO</Text>
@@ -173,19 +177,23 @@ const LocationDetailsBody = ({
 
                 
 
-                {locationObject &&  (
+                {locationDetails &&  (
                     <>
                     <View style={[themeStyles.genericTextBackground, {position: 'absolute', flexDirection: 'row', bottom: 10, width: '100%', left: 0}]}> 
-                    <LocationSavingActions location={locationObject} />
+                    <LocationSavingActions location={locationDetails} />
                     
                     </View>
-
+                    {locationDetails.id && (
+                       
                     <View style={[themeStyles.genericTextBackground, {position: 'absolute', flexDirection: 'row', bottom: 10, width: '100%', left: 48}]}> 
-                     <LocationNotes location={locationObject} />
-
+                     <LocationNotes location={locationDetails && locationDetails} />
                     </View>
+                    )}
+
                     </>
                 )}
+              </>   
+            )}
         </View>
 
     );

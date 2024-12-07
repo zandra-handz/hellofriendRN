@@ -9,6 +9,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet  } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native'; 
 
 import PushPinSolidSvg from '../assets/svgs/push-pin-solid.svg';  
 
@@ -32,8 +33,16 @@ const LocationSavingActions = ({ location, favorite=false,  size = 11, iconSize 
     const [isModal2Visible, setModal2Visible] = useState(false);
     const { themeStyles } = useGlobalStyle();
 
+    const navigation = useNavigation();  
+
 
     const [ isFave, setIsFave ] = useState(false);
+
+
+    const handleGoToLocationSaveScreen = () => {
+        navigation.navigate('LocationSave', { location: location });
+
+   }
 
  
     useEffect(() => { 
@@ -113,7 +122,7 @@ const LocationSavingActions = ({ location, favorite=false,  size = 11, iconSize 
         <View>
             {location && String(location.id).startsWith('temp') && (
                 <TouchableOpacity style={[styles.container, style]}> 
-                    <AddSquareOutlineSvg width={34} height={34} color={themeStyles.genericText.color} onPress={toggleModal2}/>
+                    <AddSquareOutlineSvg width={34} height={34} color={themeStyles.genericText.color} onPress={handleGoToLocationSaveScreen}/>
                    
                     <Text style={[styles.saveText, {  color: themeStyles.genericText.color, fontFamily: family }]}> ADD </Text>
                 </TouchableOpacity>

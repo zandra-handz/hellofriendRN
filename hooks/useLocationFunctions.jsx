@@ -2,10 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { addToFriendFavesLocations, removeFromFriendFavesLocations, fetchAllLocations, fetchLocationDetails, createLocation, updateLocation, deleteLocation } from '../api'; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthUser } from '../context/AuthUserContext'; // Import the AuthUser context
- 
+
 import { useSelectedFriend } from '../context/SelectedFriendContext';
  
-
 const useLocationFunctions = () => {
     const [faveLocationList, setFaveLocationList] = useState([]);
     const [savedLocationList, setSavedLocationList] = useState([]);
@@ -411,6 +410,7 @@ const useFetchAdditionalDetails = (location, enabled) => {
         handleCreateLocation,
         createLocationMutation,
         handleUpdateLocation,
+        updateLocationMutation,
         handleAddToFaves,
         handleRemoveFromFaves,
         handleDeleteLocation,

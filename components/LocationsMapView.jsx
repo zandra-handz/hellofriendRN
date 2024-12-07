@@ -31,6 +31,7 @@ import HorizontalScrollAnimationWrapper from '../components/HorizontalScrollAnim
 import FadeInOutWrapper from '../components/FadeInOutWrapper'; //pass in isVisible prop
 import LocationDetailsBody from '../components/LocationDetailsBody';
 
+
 const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoordsDrilledOnce }) => {
   const mapRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -49,6 +50,7 @@ const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoord
 
   const [ expandStateFromParent, setExpandStateFromParent ] = useState(false);
   
+  const [ appOnlyLocationData, setAppOnlyLocationData ] = useState(null);
   
   const toggleCardWithSlider = () => {
     console.log('expandCardWithSlider');
@@ -65,7 +67,7 @@ const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoord
  useEffect(() => {
   if (currentLocationDetails && currentRegion) { 
   focusOnLocation(currentLocationDetails);
-  console.log(currentLocationDetails);
+  console.log('current location details in map view', currentLocationDetails);
   mapRef.current.animateToRegion(currentRegion, 200);
 }  
 
@@ -144,7 +146,9 @@ const fitToMarkers = () => {
   const handlePress = (location) => {
     if (location) {
       focusOnLocation(location);
-      console.log('focus on location pressed!');
+      const appOnly = sortedLocations.find(item => item.id === location.id);
+      setAppOnlyLocationData(appOnly || null);
+      //console.log('focus on location pressed!');
 
     };
   }
@@ -467,7 +471,7 @@ const darkMapStyle = [
         parentFunctionToTrackOpenClose={toggleLocationDetailsState} //use locationDetailsAreOpen to act on
         content={ 
           focusedLocation ? (
-            <LocationDetailsBody locationObject={focusedLocation}  currentDayDrilledTwice={currentDayDrilledOnce} />
+            <LocationDetailsBody locationObject={focusedLocation} appOnlyLocationObject={appOnlyLocationData} currentDayDrilledTwice={currentDayDrilledOnce} />
           ) : (
             null //I'm not sure if this would return error, the LocationDetailsBody has checks in place already
                 //and will return an empty container if no focusedLocation

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Linking, KeyboardAvoidingView } from 'react-native';
-import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
 
@@ -46,7 +44,7 @@ const LocationInviteBody = ({location, weekdayTextData, initiallySelectedDay}) =
         <View style={[styles.container, themeStyles.genericTextBackground]}> 
             <View style={{flex: 1, width: '100%', flexDirection: 'column', justifyContent: 'space-between'}}>
                 
-            <View style={styles.locationContainer}>
+            <View style={styles.locationDetailsContainer}>
                 <Text style={[styles.locationTitle, themeStyles.genericText]}>{location?.title}</Text>
                 <Text style={[styles.locationAddress, themeStyles.genericText]}>{location?.address}</Text>
                 
@@ -91,12 +89,12 @@ const LocationInviteBody = ({location, weekdayTextData, initiallySelectedDay}) =
 
 const styles = StyleSheet.create({
 
-        container: {
+    container: {
             flex: 1, 
             width: '100%',
             justifyContent: 'space-between', 
           }, 
-    locationContainer: { 
+    locationDetailsContainer: { 
         borderRadius: 8, 
         marginVertical: '2%',
     },

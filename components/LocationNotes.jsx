@@ -6,7 +6,7 @@
  //   console.log('Location added to friend\'s favorites.');
 //  }
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, KeyboardAvoidingView, StyleSheet  } from 'react-native';
 import AlertList from '../components/AlertList'; 
  import TextEditBox from '../components/TextEditBox';
@@ -16,10 +16,7 @@ import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import NotesOutlineSvg from '../assets/svgs/notes-outline.svg';
 import NotesSolidSvg from '../assets/svgs/notes-solid.svg';
-import { useNavigation } from '@react-navigation/native';
-
-
-import TextAreaBase from '../components/TextAreaBase';
+import { useNavigation } from '@react-navigation/native'; 
 
 const LocationNotes = ({ location, favorite=false,  size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { themeAheadOfLoading } = useFriendList();
@@ -28,15 +25,23 @@ const LocationNotes = ({ location, favorite=false,  size = 11, iconSize = 16, fa
     const [ isModalVisible, setModalVisible ] = useState(false);
     const { themeStyles } = useGlobalStyle();
     const [ hasNotes, setHasNotes ] = useState(false);
-    const [ notesEdits, setNotesEdits ] = useState(location.notes || '');
-    const notesTextRef = useRef();
+ 
 
     const navigation = useNavigation();  
 
+
+    const closeModalAfterDelay = () => {
+        let timeout;
+        timeout = setTimeout(() => {
+            setModalVisible(false);
+
+        }, 1000);
+    }
+
     const handleGoToLocationEditScreen = () => {
-        console.log('address being passed to edit screen: ',location);
-     navigation.navigate('LocationEdit', { location: location, notes: (location.personal_experience_info || ''), parking: location.parking || ''});
-     setModalVisible(false);
+         navigation.navigate('LocationEdit', { location: location, notes: (location.personal_experience_info || ''), parking: location.parking || ''});
+        //doesn't help
+         closeModalAfterDelay();
     }
   
 
@@ -52,14 +57,12 @@ const LocationNotes = ({ location, favorite=false,  size = 11, iconSize = 16, fa
         setModalVisible(prev => !prev);
     }
 
-    useEffect(() => {
-        if (location && (location.notes || location.parking)) {
+    useLayoutEffect(() => {
+        if (location && (location.personal_experience_info || location.parking_score)) {
             setHasNotes(true);
         } else {
             setHasNotes(false);
-        }
-
-
+        } 
     }, [location])
 
  
@@ -92,21 +95,19 @@ const LocationNotes = ({ location, favorite=false,  size = 11, iconSize = 16, fa
         headerContent={<NotesOutlineSvg width={42} height={42} color={themeStyles.modalIconColor.color} />}
         
         content={
-
-            <KeyboardAvoidingView>
+ 
                 
             <View> 
     
-                {location.notes && (
-                    <Text style={themeStyles.genericText}>{location.notes}</Text>
+                {location.personal_experience_info && (
+                    <Text style={themeStyles.genericText}>{location.personal_experience_info}</Text>
                 )}
             <TouchableOpacity onPress={handleGoToLocationEditScreen} style={{width: 40, height: 40, backgroundColor: 'pink'}}></TouchableOpacity>
-                {location.parking && (
-                    <Text style={themeStyles.genericText}>{location.parking}</Text>
+                {location.parking_score && (
+                    <Text style={themeStyles.genericText}>{location.parking_score}</Text>
                 )}
             </View>
-            
-            </KeyboardAvoidingView>
+              
             }
         onCancel={toggleModal}
         />

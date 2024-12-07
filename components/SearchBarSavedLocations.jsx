@@ -31,6 +31,7 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
         setSearchQuery(''); // Reset the state
       }
     },
+    
   }));
 
   const handleSearch = (text) => {

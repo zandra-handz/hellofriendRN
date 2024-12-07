@@ -17,6 +17,7 @@ const ScreenLocationSearch = () => {
     const { getCurrentDay } = useLocationDetailFunctions();
     const { inPersonHelloes } = useHelloesData();
     const { createLocationListWithHelloes, bermudaCoords } = useLocationHelloFunctions();
+    
     const [ sortedLocations, setSortedLocations ] = useState([]);
     
     useLayoutEffect(() => {
@@ -26,14 +27,7 @@ const ScreenLocationSearch = () => {
       setSortedLocations(newList);
       }
     }, [locationList, inPersonHelloes]);
-
-    useEffect(() => {
-      if (sortedLocations) {
-        console.log(sortedLocations);
-      }
-
-
-    }, [sortedLocations]);
+ 
  
     return (
         <GestureHandlerRootView style={styles.container}> 

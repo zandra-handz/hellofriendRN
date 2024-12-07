@@ -9,6 +9,7 @@ import { Dimensions } from 'react-native';
 const AlertList = ({ 
     isModalVisible,
     isFetching, 
+    animType='slide',
     useSpinner,
     toggleModal,
     headerContent,
@@ -42,7 +43,7 @@ const AlertList = ({
 
     return ( 
             
-        <Modal transparent={true} visible={isModalVisible} animationType="slide" onRequestClose={toggleModal}>
+        <Modal transparent={true} visible={isModalVisible} animationType={animType} onRequestClose={toggleModal}>
             <Animated.View style={[styles.modalContainer, { opacity: fadeAnim }]}>
                
                 <KeyboardAvoidingView

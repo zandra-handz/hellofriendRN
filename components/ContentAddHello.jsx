@@ -290,7 +290,7 @@ useEffect(() => {
 
           <View style={[styles.backColorContainer, themeStyles.genericTextBackground, {borderColor: themeAheadOfLoading.lightColor}]}>
             
-            <View style={{height: '10%', marginVertical: '2%'}}>
+            <View style={{height: '14%', marginBottom: '2%'}}>
               <PickerHelloType  
                       containerText=''
                       selectedTypeChoice={selectedTypeChoice} 

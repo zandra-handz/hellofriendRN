@@ -20,7 +20,7 @@ const PickerParkingType = ({
           'no parking whatsoever',
           'unspecified'],
 
-    widthInPercentage='84%',
+    widthInPercentage='100%',
     height=40
     
     }) => {
@@ -42,8 +42,9 @@ const PickerParkingType = ({
       ];
 
 
-   return ( 
-          <View style={{height: height}}> 
+   return (  
+          <View style={{height: height}}>
+      
             <PickerMenuOptions
                 options={typeChoices}
                 widthForHorizontal={widthInPercentage}
@@ -54,7 +55,8 @@ const PickerParkingType = ({
                 svgIcons={svgIcons} 
                 labels={labels}
             /> 
-          </View>
+
+          </View> 
 
    );
 };

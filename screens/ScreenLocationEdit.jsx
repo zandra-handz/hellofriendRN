@@ -1,6 +1,6 @@
  
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import TextEditBox from '../components/TextEditBox';
@@ -14,20 +14,43 @@ const ScreenLocationEdit = () => {
     const notes = route.params?.notes?? null;
     const parking = route.params?.parking ?? null;
 
-    const { handleUpdateLocation } = useLocationFunctions();
+    const navigation = useNavigation();
+
+    const { handleUpdateLocation, updateLocationMutation } = useLocationFunctions();
     const {themeStyles} = useGlobalStyle(); 
+
+    const editedTextRef = useRef(null);
+
+    const updateNoteEditString = (text) => {
+        if (editedTextRef && editedTextRef.current) {
+            editedTextRef.current.setText(text);
+            console.log('in parent', editedTextRef.current.getText());
+        }
+    };
 
  //weekdayTextData is coming from LocationHoursOfOperation component
     
  const handlePress = () => {
-    handleUpdateLocation(location.id, { personal_experience_info: 'hihihihihihihi' });
+    handleUpdateLocation(location.id, { personal_experience_info: editedTextRef.current.getText()});
+
 };
+
+useEffect(() => {
+    if (updateLocationMutation.isSuccess) {
+        navigation.goBack();
+    };
+
+
+}, [updateLocationMutation]);
+ 
 
     return (
         <View style={[styles.container, themeStyles.container]}> 
                 <TextEditBox
+                ref={editedTextRef}
                 title={'Edit notes'}
-                startingText={notes}
+                mountingText={notes}
+                onTextChange={updateNoteEditString}
                 />
 
             <TouchableOpacity style={{width: 40, height: 40, backgroundColor: 'limegreen'}} onPress={handlePress} />
