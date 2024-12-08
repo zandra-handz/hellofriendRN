@@ -25,15 +25,14 @@ const PickerParkingType = ({
     
     }) => {
 
-    const [typeChoices, setTypeChoices] = useState(['location has free parking lot', 
+    const typeChoices = [
+      'location has free parking lot', 
       'free parking lot nearby', 
       'street parking', 
       'fairly stressful or unreliable street parking',
       'no parking whatsoever',
-      'unspecified']);
-  
+      'unspecified'];
    
-
     const svgIcons = [
         PhoneChatMessageHeartSvg, 
         CoffeeMugSolidHeart,

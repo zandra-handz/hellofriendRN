@@ -4,11 +4,9 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import RightArrowNoStemSolidSvg from '../assets/svgs/right-arrow-no-stem-solid.svg';
 
 const SlideDownToClose = ({
-  onPress,
-  sliderText = 'Label',
+  onPress, 
   targetIcon: TargetIcon,
-  height = 200, // Default height for the container
-  disabled = false,
+  height = 200,   
 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -150,7 +148,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     borderRadius: 30,
-    borderWidth: 0.8,
+    borderWidth: 0,
     borderColor: 'transparent',
     zIndex: 5000,
     elevation: 5000,

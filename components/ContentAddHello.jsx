@@ -68,7 +68,7 @@ const ContentAddHello = () => {
 
   const faveLocations = useMemo(() => {
 
-    if (!friendDashboardData?.[0]?.friend_faves?.locations) {
+    if (!locationList || !friendDashboardData?.[0]?.friend_faves?.locations) {
       return [];
     }
   

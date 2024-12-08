@@ -32,7 +32,7 @@ const LocationDetailsBody = ({
     const { locationList, loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
     const [isFetching, setIsFetching] = useState(false);
    const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
-    const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(locationObject, isFetching);
+    const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(locationObject || locationDetails, isFetching);
     const queryClient = useQueryClient();
     const [ locationDetails, setLocationDetails ] = useState(null);
 

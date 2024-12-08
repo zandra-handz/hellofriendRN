@@ -5,6 +5,9 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 import LizardSvg from '../assets/svgs/lizard.svg';
+import ClockOutlineSvg from '../assets/svgs/clock-outline.svg';
+
+import EditPencilOutlineSvg from '../assets/svgs/edit-pencil-outline.svg';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
@@ -33,6 +36,8 @@ const HeaderBase = ({
       coffeeSteaming: CoffeeMugFancySteamSvg,
       thoughtBubble: ThoughtBubbleOutlineSvg,
       heartbeat: HeartbeatLifeLineArrowSvg, 
+      edit: EditPencilOutlineSvg,
+      clock: ClockOutlineSvg,
   };
  
   const IconComponent = iconMap[icon] || null;
@@ -69,7 +74,7 @@ const HeaderBase = ({
                   <View style={styles.rightIconContainer}>
                       {IconComponent ? (
                           <TouchableOpacity onPress={() => navigation.navigate(navigateTo)}>
-                              <IconComponent width={30} height={30} fill={themeAheadOfLoading.fontColorSecondary} />
+                              <IconComponent width={30} height={30} color={themeAheadOfLoading.fontColorSecondary}   />
                           </TouchableOpacity>
                       ) : (
                           <View style={styles.defaultIconWrapper}>

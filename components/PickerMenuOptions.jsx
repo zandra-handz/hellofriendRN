@@ -7,6 +7,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import { useFriendList } from '../context/FriendListContext';
+
+
 const PickerMenuOptions = ({
   options = [],
   onSelectOption,
@@ -93,7 +95,7 @@ const PickerMenuOptions = ({
             renderItem={({ item, index }) => (
               <View style={{width: 160}}>
               <TouchableOpacity
-                key={index}
+                //key={index}
                 style={[
                   styles.optionButton, themeStyles.genericIcon, themeStyles.genericTextBackgroundShadeTwo, {borderColor: themeStyles.genericText.color},
                   selectedOption === index && [styles.selectedOptionButton,  {borderWidth: 1, borderColor : themeAheadOfLoading.darkColor, backgroundColor: themeAheadOfLoading.darkColor}],
@@ -143,7 +145,7 @@ const PickerMenuOptions = ({
             showsHorizontalScrollIndicator={false}
             scrollIndicatorInsets={{ right: 1 }}
             initialScrollIndex={0}
-              decelerationRate="fast" 
+            decelerationRate="fast" 
 
             /> 
         )}

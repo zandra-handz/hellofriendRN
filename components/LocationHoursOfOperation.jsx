@@ -3,7 +3,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
-import { View, TouchableOpacity, Animated, StyleSheet, FlatList } from 'react-native';
+import { View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import LocationSendDirAndHrsButton from '../components/LocationSendDirAndHrsButton';
 import { useNavigation } from '@react-navigation/native';
 
@@ -21,7 +21,8 @@ const LocationHoursOfOperation = ({ location, data, currentDayDrilledThrice, ico
 
   const handleGoToLocationSendScreen = (day) => {
     navigation.navigate('LocationSend', { location: location, weekdayTextData: hours, selectedDay: day});
-}
+
+  }
 
 const handlePress = (day) => {  
     handleGoToLocationSendScreen(day);

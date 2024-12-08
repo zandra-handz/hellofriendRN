@@ -3,7 +3,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import UpArrowNoStemSolidSvg from '../assets/svgs/up-arrow-no-stem-solid.svg';
 
 import RotatableToggleButton from '../components/RotatableToggleButton';
-import { TouchableOpacity, Keyboard,  View, Text, StyleSheet, Dimensions } from "react-native";
+import { Keyboard,  View, Text, StyleSheet, Dimensions } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,

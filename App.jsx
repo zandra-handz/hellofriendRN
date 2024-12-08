@@ -236,7 +236,7 @@ export const Layout = () => {
                 options={({ route }) => ({
                   headerShown: true,
                   header: () => (
-                  <HeaderBase headerTitle='Send Directions & Hrs' icon='heartbeat' navigateTo='LocationSearch' />
+                  <HeaderBase headerTitle='Send Directions & Hrs' icon='clock' navigateTo='LocationSearch' />
                   ),
                 })}
               />
@@ -246,7 +246,7 @@ export const Layout = () => {
                 options={({ route }) => ({
                   headerShown: true,
                   header: () => (
-                  <HeaderBase headerTitle='Edit Location details' icon='heartbeat' navigateTo='LocationSearch' />
+                  <HeaderBase headerTitle='Edit Location details' icon='edit' navigateTo='LocationSearch' />
                   ),
                 })}
               />

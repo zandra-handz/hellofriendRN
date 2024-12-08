@@ -16,14 +16,12 @@ import { useFriendList } from '../context/FriendListContext';
 
 import CheckmarkOutlineSvg from '../assets/svgs/checkmark-outline.svg';
 
-
+import { useMessage } from '../context/MessageContext';
 import SlideUpToOpen from '../components/SlideUpToOpen';
 import SlideDownToClose from '../components/SlideDownToClose';
 
 //import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
-import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import useLocationFunctions from '../hooks/useLocationFunctions';
-import ButtonGoToLocationFunctions from '../components/ButtonGoToLocationFunctions';
 import useCurrentLocation from '../hooks/useCurrentLocation'; 
 import ExpandableUpCard from '../components/ExpandableUpCard';
 import DualLocationSearcher from '../components/DualLocationSearcher';
@@ -35,14 +33,14 @@ import LocationDetailsBody from '../components/LocationDetailsBody';
 const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoordsDrilledOnce }) => {
   const mapRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  
+  const { showMessage } = useMessage();
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
   const { locationList } = useLocationFunctions();
   const { currentLocationDetails, currentRegion  } = useCurrentLocation();
   const navigation = useNavigation();
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();  
-  const [focusedLocation, focusOnLocation  ] = useState(null);
+  const [focusedLocation, setFocusedLocation ] = useState(null);
   const [locationDetailsAreOpen, setLocationDetailsAreOpen ] = useState(false);
   const colorScheme = useColorScheme();
 
@@ -52,8 +50,7 @@ const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoord
   
   const [ appOnlyLocationData, setAppOnlyLocationData ] = useState(null);
   
-  const toggleCardWithSlider = () => {
-    console.log('expandCardWithSlider');
+  const toggleCardWithSlider = () => { 
     setExpandStateFromParent(prev => !prev); 
    
   };
@@ -66,12 +63,30 @@ const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoord
 
  useEffect(() => {
   if (currentLocationDetails && currentRegion) { 
-  focusOnLocation(currentLocationDetails);
-  console.log('current location details in map view', currentLocationDetails);
+  handleLocationAlreadyExists(currentLocationDetails);
+  //console.log('current location details in map view', currentLocationDetails);
   mapRef.current.animateToRegion(currentRegion, 200);
 }  
 
 }, [currentRegion]);
+
+
+const handleLocationAlreadyExists = (locationDetails, addMessage) => {
+ 
+  let matchedLocation;
+
+  let locationIsOutsideFaves = false;
+
+  matchedLocation = sortedLocations.find(location => String(location.address) === String(locationDetails.address));
+  
+  if (matchedLocation === undefined) {
+    matchedLocation = locationList.find(location => String(location.address) === String(locationDetails.address));
+    locationIsOutsideFaves = true;
+    }
+  showMessage(matchedLocation && addMessage && locationIsOutsideFaves, null, 'Location already in list!');
+  setFocusedLocation(matchedLocation || locationDetails);
+ 
+};
  
 
 
@@ -97,12 +112,17 @@ const handleGoToLocationViewScreen = (item) => {
 
 }; 
 
+const handleGoToLocationSendScreen = (item) => { 
+  navigation.navigate('LocationSend', { location: item, weekdayTextData: null, selectedDay: null});
+
+}; 
+
 //i had taken this out but brought it back in because if i use sorted
 //list for the bottom scroll, it doesn't update when a new favorite is added;
 //i don't like having both sortedLocations passed in AND using the locationFuctions
 //for this
 const faveLocations = useMemo(() => {
-  console.log('Filtering favorite locations');
+  //console.log('Filtering favorite locations');
   return locationList.filter(location =>
     friendDashboardData[0].friend_faves.locations.includes(location.id)
   );
@@ -145,10 +165,9 @@ const fitToMarkers = () => {
 
   const handlePress = (location) => {
     if (location) {
-      focusOnLocation(location);
+      handleLocationAlreadyExists(location, true); //true is for addMessage
       const appOnly = sortedLocations.find(item => item.id === location.id);
-      setAppOnlyLocationData(appOnly || null);
-      //console.log('focus on location pressed!');
+      setAppOnlyLocationData(appOnly || null); 
 
     };
   }
@@ -191,7 +210,7 @@ const fitToMarkers = () => {
     if (focusedLocation) { 
         try {
             const { latitude, longitude } = focusedLocation;
-            console.log(latitude, longitude);
+            //console.log(latitude, longitude);
 
             // Validate latitude and longitude are defined and within valid range
             if (
@@ -485,6 +504,7 @@ const darkMapStyle = [
     
         <SlideUpToOpen
           onPress={toggleCardWithSlider}
+          //onDoubleTap={handleGoToLocationSendScreen(focusedLocation)}
           sliderText='OPEN'  
           targetIcon={CheckmarkOutlineSvg}
           disabled={false}

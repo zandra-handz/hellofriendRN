@@ -4,10 +4,16 @@ import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import TextEditBox from '../components/TextEditBox';
+import FlatListChangeChoice from '../components/FlatListChangeChoice';
+
 import { useNavigation, useRoute } from '@react-navigation/native'; 
  
- import useLocationFunctions from '../hooks/useLocationFunctions';
+import useLocationFunctions from '../hooks/useLocationFunctions';
  
+import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+
+
+
 const ScreenLocationEdit = () => { 
     const route = useRoute();
     const location = route.params?.location ?? null; 
@@ -17,9 +23,20 @@ const ScreenLocationEdit = () => {
     const navigation = useNavigation();
 
     const { handleUpdateLocation, updateLocationMutation } = useLocationFunctions();
+    
     const {themeStyles} = useGlobalStyle(); 
-
     const editedTextRef = useRef(null);
+
+
+
+    const parkingScores = [
+        'location has free parking lot', 
+        'free parking lot nearby', 
+        'street parking', 
+        'fairly stressful or unreliable street parking',
+        'no parking whatsoever',
+        'unspecified'];
+
 
     const updateNoteEditString = (text) => {
         if (editedTextRef && editedTextRef.current) {
@@ -28,19 +45,27 @@ const ScreenLocationEdit = () => {
         }
     };
 
+
+    const editedParkingScoreRef = useRef(null);
+
+    const updateParkingScore = (text) => {
+        if (editedParkingScoreRef && editedParkingScoreRef.current) {
+            editedParkingScoreRef.current.setText(text);
+            console.log('in parent', editedParkingScoreRef.current.getText());
+        }
+    };
+
  //weekdayTextData is coming from LocationHoursOfOperation component
     
- const handlePress = () => {
-    handleUpdateLocation(location.id, { personal_experience_info: editedTextRef.current.getText()});
+ const handleSubmit = () => {
+    handleUpdateLocation(location.id, { personal_experience_info: editedTextRef.current.getText(), parking_score: editedParkingScoreRef.current.getText()});
 
 };
 
 useEffect(() => {
     if (updateLocationMutation.isSuccess) {
         navigation.goBack();
-    };
-
-
+    }; 
 }, [updateLocationMutation]);
  
 
@@ -53,8 +78,26 @@ useEffect(() => {
                 onTextChange={updateNoteEditString}
                 />
 
-            <TouchableOpacity style={{width: 40, height: 40, backgroundColor: 'limegreen'}} onPress={handlePress} />
-      
+                <FlatListChangeChoice
+                    horizontal={true}
+                    choicesArray={parkingScores}
+                    ref={editedParkingScoreRef}
+                    title={'Change parking score'}
+                    oldChoice={parking}
+                    onChoiceChange={updateParkingScore}
+                    
+
+                />
+
+            <ButtonBaseSpecialSave
+              label="SAVE CHANGES "
+              maxHeight={80}
+              onPress={handleSubmit} 
+              isDisabled={false}
+              fontFamily={'Poppins-Bold'}
+              image={require("../assets/shapes/redheadcoffee.png")}
+            
+            />
         </View> 
            
     );

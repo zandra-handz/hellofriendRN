@@ -29,7 +29,7 @@ const useLocationFunctions = () => {
       queryFn: () => fetchAllLocations(),
       enabled: !!authUserState.authenticated,
       onSuccess: (data) => {
-          console.log('Raw data in RQ onSuccess:', data);
+          //console.log('Raw data in RQ onSuccess:', data);
           if (!data) {
               console.log('No data received');
               return;
@@ -68,8 +68,8 @@ const useLocationFunctions = () => {
                 return updatedList; 
             });
      
-            const actualLocationList = queryClient.getQueryData(['locationList']);
-            console.log('Actual locationList after mutation:', actualLocationList);
+            //const actualLocationList = queryClient.getQueryData(['locationList']);
+            //console.log('Actual locationList after mutation:', actualLocationList);
             
           },
         onError: (error) => {
@@ -78,7 +78,7 @@ const useLocationFunctions = () => {
     });
 
     const handleUpdateLocation = async (locationId, locationUpdate) => {
-      console.log('Updating location:', locationId, locationUpdate);
+      //console.log('Updating location:', locationId, locationUpdate);
   
       try {
           await updateLocationMutation.mutateAsync({ id: locationId, ...locationUpdate });
@@ -134,7 +134,7 @@ const useLocationFunctions = () => {
           user: authUserState.user.id,
       };
     
-      console.log('Payload before sending:', locationData);
+      //console.log('Payload before sending:', locationData);
     
       try {
         
@@ -174,7 +174,7 @@ const useLocationFunctions = () => {
               },
           };
       
-          console.log(updatedDashboardData);
+          //console.log(updatedDashboardData);
           return updatedDashboardData;
       });
       
@@ -233,7 +233,7 @@ const useLocationFunctions = () => {
               },
           };
       
-          console.log(updatedDashboardData);
+          //console.log(updatedDashboardData);
           return updatedDashboardData;
       });
       
@@ -275,7 +275,7 @@ const useLocationFunctions = () => {
            
           queryClient.invalidateQueries(['locationList']);
           
-          console.log('Successfully deleted location:', data);
+          //console.log('Successfully deleted location:', data);
       },
       onError: (error) => {
           console.error('Error deleting location:', error);
@@ -295,7 +295,7 @@ const useLocationFunctions = () => {
           user: authUserState.user.id,
       };
     
-      console.log('Payload before sending:', locationData);
+      //console.log('Payload before sending:', locationData);
     
       try {
         
@@ -356,22 +356,23 @@ const useFetchAdditionalDetails = (location, enabled) => {
   return useQuery({
     queryKey: ['additionalDetails', location?.id], 
     queryFn: async () => {
+      //console.log(location);
       if (location && location.id) { 
         const cachedData = queryClient.getQueryData(['additionalDetails', location.id]);
         if (cachedData) {
-          console.log('Cache hit for location:', location.id);
-          console.log('Cached data:', cachedData);
+          //console.log('Cache hit for location:', location.id);
+          //console.log('Cached data:', cachedData);
           return cachedData;  
         }
 
-        console.log('Cache miss for location:', location.id); 
+        //console.log('Cache miss for location:', location.id); 
         const details = await fetchLocationDetails({
           address: encodeURIComponent(`${location.title} ${location.address}`),
           lat: parseFloat(location.latitude),
           lon: parseFloat(location.longitude),
         });
 
-        console.log('Fetched additional location details...');
+        //console.log('Fetched additional location details...');
         return details;
       } else {
         console.log('No location provided. Returning null.');

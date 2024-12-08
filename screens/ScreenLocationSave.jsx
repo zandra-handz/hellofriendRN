@@ -1,18 +1,11 @@
- 
-              //  <TextEditBox
-              //  ref={editedTextRef}
-              //  title={'Edit notes'}
-              //  mountingText={notes}
-              //  onTextChange={updateNoteEditString}
-              //  />
 
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import TextEditBox from '../components/TextEditBox';
+
+import React, { useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import { useNavigation, useRoute } from '@react-navigation/native'; 
- import LocationSaveBody from '../components/LocationSaveBody';
- import useLocationFunctions from '../hooks/useLocationFunctions';
+import LocationSaveBody from '../components/LocationSaveBody';
+import useLocationFunctions from '../hooks/useLocationFunctions';
  
 const ScreenLocationSave = () => { 
     const route = useRoute();
@@ -21,21 +14,8 @@ const ScreenLocationSave = () => {
     const navigation = useNavigation();
 
     const {themeStyles} = useGlobalStyle(); 
-    const { handleCreateLocation, createLocationMutation } = useLocationFunctions();
-    
+    const { createLocationMutation } = useLocationFunctions();
 
-    const editedTextRef = useRef(null);
-
-    //const updateNoteEditString = (text) => {
-      //  if (editedTextRef && editedTextRef.current) {
-        //    editedTextRef.current.setText(text);
-          //  console.log('in parent', editedTextRef.current.getText());
-       // }
-//    };
-
- //weekdayTextData is coming from LocationHoursOfOperation component
-    
- 
 
 useEffect(() => {
     if (createLocationMutation.isSuccess) {

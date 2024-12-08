@@ -6,12 +6,9 @@
  //   console.log('Location added to friend\'s favorites.');
 //  }
 
-import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
+import React, { useLayoutEffect, useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, KeyboardAvoidingView, StyleSheet  } from 'react-native';
 import AlertList from '../components/AlertList'; 
- import TextEditBox from '../components/TextEditBox';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import NotesOutlineSvg from '../assets/svgs/notes-outline.svg';
@@ -20,8 +17,6 @@ import { useNavigation } from '@react-navigation/native';
 
 const LocationNotes = ({ location, favorite=false,  size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { themeAheadOfLoading } = useFriendList();
-    const { selectedFriend, friendDashboardData } = useSelectedFriend();
-    const { handleAddToFaves, handleRemoveFromFaves  } = useLocationFunctions();
     const [ isModalVisible, setModalVisible ] = useState(false);
     const { themeStyles } = useGlobalStyle();
     const [ hasNotes, setHasNotes ] = useState(false);
@@ -39,7 +34,7 @@ const LocationNotes = ({ location, favorite=false,  size = 11, iconSize = 16, fa
     }
 
     const handleGoToLocationEditScreen = () => {
-         navigation.navigate('LocationEdit', { location: location, notes: (location.personal_experience_info || ''), parking: location.parking || ''});
+         navigation.navigate('LocationEdit', { location: location, notes: (location.personal_experience_info || ''), parking: location.parking_score || ''});
         //doesn't help
          closeModalAfterDelay();
     }

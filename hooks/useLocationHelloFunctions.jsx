@@ -37,7 +37,7 @@ const useLocationHelloFunctions = () => {
               friendDashboardData[0].friend_faves.locations.includes(location.id)
             )
             .map(location => {
-              console.log(location.latitude, location.longitude);
+              //console.log(location.latitude, location.longitude);
               // Validate latitude and longitude
               const isLatitudeValid =
                 location.latitude !== undefined &&

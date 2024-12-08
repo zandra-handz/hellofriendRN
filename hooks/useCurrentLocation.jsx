@@ -1,3 +1,6 @@
+
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import * as Location from 'expo-location';
@@ -9,6 +12,11 @@ const useCurrentLocation = (autoFetch = true) => {
     const [currentLocationDetails, setCurrentLocationDetails] = useState(null);
     const [currentRegion, setCurrentRegion] = useState(null);
     const [ currentLocationIsCalculating, setCurrentLocationIsCalculating] = useState(false);
+    
+    const generateTemporaryId = () => {
+        return `temp_${Date.now()}`;
+      };
+    
     const currentLocation = async () => {
         try {
             const { status } = await Location.requestForegroundPermissionsAsync();
@@ -32,6 +40,7 @@ const useCurrentLocation = (autoFetch = true) => {
             const address = response.results[0]?.formatted_address || 'Unknown Address';
 
             const newAddress = {
+                id: generateTemporaryId(),
                 address,
                 latitude,
                 longitude,

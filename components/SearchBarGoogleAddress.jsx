@@ -4,10 +4,7 @@ import React, { useState, useRef, forwardRef, useEffect, useImperativeHandle } f
 import { View, StyleSheet } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import useLocationFunctions from '../hooks/useLocationFunctions';
-import { useNavigation } from '@react-navigation/native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import GoogleLogoSvg from '../assets/svgs/google-logo.svg';
 import SearchBarAnimationWrapper from '../components/SearchBarAnimationWrapper';
 import { GOOGLE_API_KEY } from '@env';
@@ -29,17 +26,17 @@ const SearchBarGoogleAddress = forwardRef(({ onPress, mountingText, onTextChange
   }, []);
   
 
-  // Expose methods to parent via `useImperativeHandle`
+   
   useImperativeHandle(ref, () => ({
     setText: (text) => {
       if (googlePlacesRef.current) {
-        googlePlacesRef.current.setAddressText(text); // Use setAddressText for updating the input field
+        googlePlacesRef.current.setAddressText(text);  
         setSearchText(text);
       }
     },
     clearText: () => {
       if (googlePlacesRef.current) {
-        googlePlacesRef.current.clear(); // Use clear to reset the input field
+        googlePlacesRef.current.clear();  
         setSearchText('');
       }
     },
