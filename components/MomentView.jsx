@@ -1,14 +1,44 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View, Modal, ScrollView, Dimensions } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import HeaderBaseItemView from '../components/HeaderBaseItemView'; 
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+import { useCapsuleList } from '../context/CapsuleListContext';  
+import { useSelectedFriend } from '../context/SelectedFriendContext';
+
 
 const { height: screenHeight } = Dimensions.get('window'); // Get screen height
 
 const MomentView = ({ momentData, navigationArrows, onSliderPull, isModalVisible, toggleModal, modalContent, modalTitle }) => {
-  
+  const { deleteMomentRQuery  } = useCapsuleList();
+const { selectedFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle(); 
+ 
+ 
+
+  const handleDelete = (item) => {
+    //console.log('handle delete moment triggered: ', item);
+    try { 
+
+      const momentDataDelete = {
+        friend: selectedFriend.id,
+        id: item.id,
+      };
+ 
+
+     deleteMomentRQuery(momentDataDelete);  
+    } catch (error) { 
+      console.error('Error deleting moment:', error);
+    }  
+  };
+  
+  useEffect(() => {
+    if (momentData) {
+      console.log('moment data changed: ', momentData);
+        }
+
+  }, [momentData]);
+
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
         <>
@@ -31,7 +61,7 @@ const MomentView = ({ momentData, navigationArrows, onSliderPull, isModalVisible
             { maxHeight: screenHeight * 1, paddingBottom: 0 }  
           ]}
         >
-          <HeaderBaseItemView onBackPress={toggleModal} onSliderPull={onSliderPull} headerTitle={modalTitle} />
+          <HeaderBaseItemView onBackPress={toggleModal} itemData={momentData} onSliderPull={handleDelete} headerTitle={'VIEW MOMENT'} />
           <View style={styles.momentContainer}>
             {momentData && momentData.typedCategory && (
             <View style={styles.categoryContainer}>

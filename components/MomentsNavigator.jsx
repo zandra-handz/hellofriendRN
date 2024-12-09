@@ -16,12 +16,14 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
   const [title, setTitle] = useState(null); 
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend(); 
+  const [ momentInView, setMomentInView ] = useState(moment || null);
  
   useEffect(() => {
     if (moment) {
       setTitle(moment.typedCategory);
       const index = capsuleList.findIndex(mom => mom.id === moment.id);
       setCurrentIndex(index); 
+      setMomentInView(moment);
     }
   }, [moment]);
 
@@ -43,27 +45,32 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
   const goToPreviousMoment = () => {
     if (currentIndex > 0) {
       setCurrentIndex(prevIndex => prevIndex - 1);
+      console.log(capsuleList[currentIndex - 1]);
+      setMomentInView(capsuleList[currentIndex - 1]);
+
     }
   };
 
   const goToNextMoment = () => {
     if (currentIndex < capsuleList.length - 1) {
       setCurrentIndex(prevIndex => prevIndex + 1);
+      console.log(capsuleList[currentIndex + 1]);
+      setMomentInView(capsuleList[currentIndex + 1]);
     }
   };
  
 
-  const handleDelete = async () => {
-    console.log('handle delete moment triggered');
+  const handleDelete = ({item}) => {
+    console.log('handle delete moment triggered: ', item);
     try { 
 
       const momentData = {
         friend: selectedFriend.id,
-        id: moment.id,
+        id: item.id,
       };
  
 
-      await deleteMomentRQuery(momentData);  
+      deleteMomentRQuery(momentData);  
     } catch (error) { 
       console.error('Error deleting moment:', error);
     }  
@@ -82,13 +89,15 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
         toggleModal={onClose}
         momentCategory={capsuleList[currentIndex] ? capsuleList[currentIndex].typedCategory : 'No category'}
         momentText={capsuleList[currentIndex] ? capsuleList[currentIndex].capsule: 'No moment'}
-        momentData={capsuleList[currentIndex] ? capsuleList[currentIndex] : null}
+        momentData={momentInView || null}
         navigationArrows={
           capsuleList[currentIndex] ? ( 
 
               
             <>
-                {!archived && moment.typedCategory && (
+            {momentInView && (
+              <>
+                {!archived && momentInView.typedCategory && (
                   <NavigationArrows 
                     currentIndex={currentIndex}
                     imageListLength={capsuleList.length}
@@ -96,6 +105,9 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
                     onNextPress={goToNextMoment}
                   />
                 )} 
+              </>
+              )}
+              
             </>
           ) : null
         }

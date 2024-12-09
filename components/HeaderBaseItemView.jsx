@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect , useState} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
  
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -15,18 +15,20 @@ import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 //onBackPress function instead of stack navigation, to use with modals
 
 const HeaderBaseItemView = ({
+    itemData,
+    
     onBackPress,
     onMenuPress,
     onSliderPull,
     headerTitle='Header title here',
+    
     
 }) => {
 
     const { themeAheadOfLoading } = useFriendList();
     const { themeStyles } = useGlobalStyle(); 
 
-   
-
+ 
   return (
     <> 
         <LinearGradient
@@ -60,7 +62,7 @@ const HeaderBaseItemView = ({
     </> 
     <View style={styles.sliderContainer}>
       <SlideToDelete
-
+      itemToDelete={itemData}
       onPress={onSliderPull}
       sliderWidth={'100%'} 
       targetIcon={TrashOutlineSvg}
