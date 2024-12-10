@@ -9,14 +9,23 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]); 
   const textInputRef = useRef();
+  const [ showFullList, setShowFullList ] = useState(true);
 
   // Trigger animation when component mounts
   useEffect(() => { 
     if (textInputRef.current) {
       textInputRef.current.setNativeProps({ text: mountingText });
-      setSearchQuery(mountingText);
+      setSearchQuery(mountingText); 
     }
   }, []);
+
+
+  useEffect(() => {
+    if (locationListDrilledTwice && !mountingText) {
+      
+      populateFullList();
+    }
+  }, [locationListDrilledTwice]);
 
   useImperativeHandle(ref, () => ({
     setText: (text) => {
@@ -32,7 +41,7 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
       }
     },
     
-  }));
+  })); 
 
   const handleSearch = (text) => {
     setSearchQuery(text);
@@ -45,8 +54,36 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
         return typeof itemValue === 'string' && itemValue.toLowerCase().includes(searchText);
       });
     }) : [];
+  
 
+    if (text) {
+      setShowFullList(false);
+    
+
+      console.log('setting filtered list', filtered);
     setFilteredData(filtered);
+  } else {
+    console.log('setting full list of locations'); 
+    populateFullList(); 
+  }
+
+  };
+ 
+
+  const populateFullList = () => {
+    const fullList = Array.isArray(locationListDrilledTwice)
+    ? locationListDrilledTwice.map((item) => ({
+        address: item.address,
+        title: item.title,
+      }))
+    : [];
+
+    setShowFullList(true);
+
+    setFilteredData(fullList);
+
+
+
   };
 
   const handleItemPress = (item) => {
@@ -77,7 +114,7 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
         </View>
       </TouchableWithoutFeedback>
 
-      {searchQuery.length > 0 && ( 
+      {(searchQuery.length > 0 || showFullList) && (  
  
           <View style={[styles.dropdownContainer, themeStyles.genericTextBackground]}>
             <FlatList

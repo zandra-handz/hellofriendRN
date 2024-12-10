@@ -31,7 +31,13 @@ const DualLocationSearcher = ({onPress, locationListDrilledOnce}) => {
     }
    }, [searchString]);
 
- 
+   useEffect(() => {
+    if (locationListDrilledOnce) {
+      console.log(locationListDrilledOnce);
+
+    };
+
+   }, [locationListDrilledOnce]);
 
 
   const switchViews = () => {

@@ -5,7 +5,6 @@ import SearchBar from '../components/SearchBar';
 import { Ionicons } from '@expo/vector-icons'; 
 import LocationsFriendFavesList from '../components/LocationsFriendFavesList';
 import LocationsSavedList from '../components/LocationsSavedList';
- import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
 import CustomTabBar from '../components/CustomTabBar'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import useLocationFunctions from '../hooks/useLocationFunctions';
@@ -93,8 +92,7 @@ const ScreenLocations = ({ route, navigation }) => {
           <Tab.Screen name="All" component={SavedLocationsScreen} /> 
        
         </Tab.Navigator>
-
-          <ButtonGoToFindLocation /> 
+ 
         </> 
          
     

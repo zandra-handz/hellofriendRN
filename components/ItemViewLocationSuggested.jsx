@@ -4,8 +4,6 @@ import AlertLocation from '../components/AlertLocation';
 
 
 import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
-import ButtonSendDirectionsToFriend from '../components/ButtonSendDirectionsToFriend';
-import ButtonCalculateAndCompareTravel from '../components/ButtonCalculateAndCompareTravel';
 import FooterActionButtons from '../components/FooterActionButtons';
  
 import useLocationFunctions from '../hooks/useLocationFunctions';
@@ -41,9 +39,7 @@ const ItemViewLocationSuggested = ({ onClose }) => {
               height='9%'
               bottom={66} 
               backgroundColor='white'
-              buttons={[
-                <ButtonCalculateAndCompareTravel />,
-                <ButtonSendDirectionsToFriend />,
+              buttons={[ 
               ]}
             />
            

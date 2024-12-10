@@ -1,19 +1,35 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Animated, PanResponder, Dimensions, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
- import DragRightThickOutlineSvg from '../assets/svgs/drag-right-thick-outline.svg';
+import DragRightThickOutlineSvg from '../assets/svgs/drag-right-thick-outline.svg';
 
- const SlideToDelete = ({ onPress, sliderText = 'Label', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50, disabled=false }) => {
+const SlideToDeleteHeader = ({ onPress, itemToDelete, sliderText = 'DELETE?', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
-  const isDraggingRef = useRef(false); // Use ref for immediate updates
+  const isDraggingRef = useRef(false); 
+  const deleteItemRef = useRef(null);  
   const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
-  
+  const [deleteItem, setDeleteItem] = useState();
 
   const handlePress = () => {
-    if (onPress) onPress();
+    const item = deleteItemRef.current;
+    if (item) {
+      //console.log('handlePress in slider triggered', item);
+      if (onPress) onPress(item);
+    } else {
+      console.error('Error: deleteItem is undefined');
+    }
   };
+ 
+
+  useEffect(() => {
+    if (itemToDelete) {
+      ///console.log('slider item: ', itemToDelete);
+      setDeleteItem(itemToDelete);
+      deleteItemRef.current = itemToDelete;  
+    }
+  }, [itemToDelete]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -51,39 +67,41 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
   const sliderWidth = width;
 
   return (
-    
     <View
       style={[
         styles.container,
         {
           width: sliderWidth,
           backgroundColor: isDragging
-            ? 'red'
-            : 'transparent' //themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+            ? 'red'  
+            : 'transparent',
         },
       ]}
     >
-      <Animated.View
-        {...panResponder.panHandlers}
-        style={[
-          styles.slider,
-          {
-            flexDirection: 'row', 
-            backgroundColor: isDragging ? '#000002' : themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-            transform: [{ translateX: position }],
-            width: 'auto',
-          },
-        ]}
-      >        
-        <Text style={[styles.sliderText, themeStyles.genericText]}>{sliderText}</Text>
+      {deleteItem && (
+        <Animated.View
+          {...panResponder.panHandlers}
+          style={[
+            styles.slider,
+            {
+              flexDirection: 'row',
+              backgroundColor: isDragging ? '#000002' : 'transparent',
+              transform: [{ translateX: position }],
+              width: 'auto',
+            },
+          ]}
+        >
+          <Text style={[styles.sliderText, { color: isDragging ? 'white' : 'black' }]}>{sliderText}</Text>
 
-        <View style={{paddingHorizontal: '2%' }}>
-      <DragRightThickOutlineSvg height={18} width={18} style={themeStyles.genericText} />
-      </View>
-      </Animated.View>
+          <View style={{ paddingHorizontal: '2%' }}>
+            <DragRightThickOutlineSvg height={18} width={18} color={isDragging ? 'white' : 'black'} />
+          </View>
+        </Animated.View>
+      )}
+
       {TargetIcon && (
         <View style={styles.iconContainer}>
-          <TargetIcon height={30} width={30} color={isDragging ? themeStyles.genericText.color : 'transparent'} />
+          <TargetIcon height={30} width={30} color={isDragging ? gradientColorsHome.lightColor : 'transparent'} />
         </View>
       )}
     </View>
@@ -126,4 +144,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SlideToDelete;
+export default SlideToDeleteHeader;

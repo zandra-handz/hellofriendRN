@@ -1,7 +1,5 @@
 import React, { useState } from 'react';  
-
-import CompareTravel from '../components/CompareTravel';
-
+ 
 import ButtonBaseSDOption from '../components/ButtonBaseSDOption';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
 
@@ -31,7 +29,7 @@ const ButtonSDOptionCalculateTravel = () => {
         <ItemModal
             isModalVisible={isModalVisible} 
             toggleModal={closeModal} 
-            modalContent={<CompareTravel/>}
+            modalContent={<View><Text>REMOVED OLD COMPARE TRAVEL COMPONENT THAT WAS HERE</Text></View>}
             modalTitle={'Compare travel times'}
         > 
         </ItemModal> 

@@ -9,6 +9,7 @@ import SlideUpToOpen from '../components/SlideUpToOpen';
 
 import LocationSavingActions from '../components/LocationSavingActions';
 import LocationNotes from '../components/LocationNotes';
+import LocationTravelTimes from '../components/LocationTravelTimes';
 import DirectionsLink from '../components/DirectionsLink';
 
 import useLocationFunctions from '../hooks/useLocationFunctions';
@@ -184,10 +185,14 @@ const LocationDetailsBody = ({
                         <LocationSavingActions location={locationDetails} />
                     </View>
                     {locationDetails.id && (
-                        
-                    <LocationNotes location={locationDetails && locationDetails} />
-                    
+                        <View style={{paddingRight: '7%'}}>
+                            <LocationNotes location={locationDetails && locationDetails} />
+                        </View>
                     )}
+                            <View style={{paddingRight: '7%'}}>
+                            <LocationTravelTimes location={locationDetails && locationDetails} />
+                        </View>
+
                     </View> 
 
                     </>

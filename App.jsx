@@ -28,7 +28,7 @@ import ScreenHelloes from './screens/ScreenHelloes';
 import ScreenLocations from './screens/ScreenLocations';
 import ScreenLocationSearch from './screens/ScreenLocationSearch';
 import ScreenMidpointLocationSearch from './screens/ScreenMidpointLocationSearch';
-
+import ScreenCalculateTravelTimes from './screens/ScreenCalculateTravelTimes';
 import Signin from './screens/Signin'; 
 import ScreenMomentFocus from './screens/ScreenMomentFocus'; 
 import ScreenLocation from './screens/ScreenLocation';
@@ -274,6 +274,14 @@ export const Layout = () => {
                 options={{
                   headerShown: true,
                   header: () => <HeaderBase headerTitle='Find midpoint locations' />,
+                }}
+              />
+              <Stack.Screen
+                name="CalculateTravelTimes"
+                component={ScreenCalculateTravelTimes}
+                options={{
+                  headerShown: true,
+                  header: () => <HeaderBase headerTitle='Compare driving times' />,
                 }}
               />
 

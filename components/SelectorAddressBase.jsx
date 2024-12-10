@@ -4,14 +4,18 @@ import * as Location from 'expo-location'; // Import from expo-location
 import Geocoder from 'react-native-geocoding';
 import { GOOGLE_API_KEY } from '@env';
 import DirectionsLink from '../components/DirectionsLink';
-import SelectAddressModalVersion from '../components/SelectAddressModalVersion';
+import SelectAddressModal from '../components/SelectAddressModal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
+import EditPencilOutlineSvg from '../assets/svgs/edit-pencil-outline.svg';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+
+import DualLocationSearcher from '../components/DualLocationSearcher';
 
 // Initialize Geocoder with your Google Maps API key
 Geocoder.init(GOOGLE_API_KEY);
 
-const SelectorAddressBase = ({ addresses, currentAddressOption, onAddressSelect, contextTitle }) => {
+const SelectorAddressBase = ({ height, titleBottomMargin, addresses, currentLocation, currentAddressOption, onAddressSelect, contextTitle }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [showAddressOptions, setShowAddressOptions] = useState(false);
@@ -24,21 +28,26 @@ const SelectorAddressBase = ({ addresses, currentAddressOption, onAddressSelect,
         const uniqueKey = `${address.title}-${address.coordinates ? address.coordinates.join(',') : `${address.latitude},${address.longitude}`}`;
     
         return {
-          key: uniqueKey,
+          key: uniqueKey, 
+          id: address.id,
+          address: address.address,
+          title: address.title,
           label: address.title,
-          value: {
-            address: address.address,
-            label: address.title,
-            lat: address.coordinates ? address.coordinates[0] : address.latitude,
-            lng: address.coordinates ? address.coordinates[1] : address.longitude,
-          },
+          latitude: address.coordinates ? address.coordinates[0] : address.latitude,
+          longitude: address.coordinates ? address.coordinates[1] : address.longitude,
+          
         };
       });
       setLocalAddressOptions(options);
-      setSelectedAddress(options[0].value);
-      onAddressSelect(options[0].value);  
+      if (currentLocation) {
+        setSelectedAddress(currentLocation);
+
+      } else { 
+      setSelectedAddress(options[0]);
+      }
+      onAddressSelect(options[0]);  
     }
-  }, [addresses]);
+  }, [addresses, currentLocation]);
 
   const handleUseCurrentLocation = async () => {
     try {
@@ -68,37 +77,45 @@ const SelectorAddressBase = ({ addresses, currentAddressOption, onAddressSelect,
     }
   };
 
+  const handleAddressSelect = (address) => {
+    if (address) {
+      setSelectedAddress(address);
+      onAddressSelect(address);
+      setIsEditingAddress(false);
+      //handleLocationAlreadyExists(location, true); //true is for addMessage
+      //const appOnly = sortedLocations.find(item => item.id === location.id);
+      //setAppOnlyLocationData(appOnly || null); 
+
+    };
+  }
+
   return (
     <>
-      <View style={styles.container}>
+      <View style={[styles.container, themeStyles.genericTextBackground, {height: height}]}>
         <View style={{flexDirection: 'row',  alignContent: 'center'}}>
-        <Text style={styles.cardTitle}>{contextTitle}</Text>
-          {currentAddressOption && ( 
-          <TouchableOpacity style={{marginHorizontal: 10, marginTop:3 }} onPress={handleUseCurrentLocation}>
-            <Text style={{fontFamily: 'Poppins-Regular', fontSize: 13 }}>
+        <Text style={[styles.title, themeStyles.genericText, {marginBottom: titleBottomMargin}]}>{contextTitle}</Text>
+          {currentAddressOption && !currentLocation && ( 
+          <TouchableOpacity style={{marginHorizontal: '3%' }} onPress={handleUseCurrentLocation}>
+            <Text style={[ themeStyles.genericText, {fontSize: 14, fontWeight: 'bold' }]}>
               Use current location?
             </Text>
           </TouchableOpacity>
           )}
         </View>
 
-        <View style={styles.hintContainer}>
-          <View style={{borderRadius: 20, width: '100%', padding: 10, borderWidth: 1, borderColor: '#ccc'}}>
-            {selectedAddress && (
-              <DirectionsLink address={selectedAddress.address} size={15} />
+        <View style={[styles.displayContainer, themeStyles.genericTextBackgroundShadeTwo, {borderColor: themeStyles.genericText.color}]}>
+           {selectedAddress && selectedAddress.address && (
+              <Text style={[themeStyles.genericText, styles.displayText]}>{selectedAddress?.address}</Text>
             )}
             {!selectedAddress && (
-              <Text style={{fontFamily: 'Poppins-Regular', fontSize: 15}}>No addresses saved</Text>
-            )}
-            <Text style={styles.hintText}>
-              {selectedAddress ? '' : 'No address selected'}
-            </Text>
-          </View>
+              <Text style={[themeStyles.genericText, styles.displayText]}>No addresses saved</Text>
+            )} 
           {addresses.length > 0 && ( 
-          <FontAwesome
-            name="pencil"
+          <EditPencilOutlineSvg
+            height={24}
+            width={24}
             size={24}
-            color="limegreen"
+            color={themeStyles.genericText.color}
             onPress={() => setIsEditingAddress(prev => !prev)}
             style={styles.icon}
           /> 
@@ -107,16 +124,24 @@ const SelectorAddressBase = ({ addresses, currentAddressOption, onAddressSelect,
           <FontAwesome
             name="search"
             size={24}
-            color="limegreen"
+            color={themeStyles.genericText.color}
             onPress={() => setIsEditingAddress(prev => !prev)}
             style={styles.icon}
           /> 
           )}
+
         </View>
+        
 
     </View>
       
-      <SelectAddressModalVersion
+      <SelectAddressModal
+      content={
+        <DualLocationSearcher
+        onPress={handleAddressSelect}
+        locationListDrilledOnce={localAddressOptions}
+        />
+      }
         isEditingAddress={isEditingAddress}
         setIsEditingAddress={setIsEditingAddress}
         localAddressOptions={localAddressOptions}
@@ -132,37 +157,36 @@ const SelectorAddressBase = ({ addresses, currentAddressOption, onAddressSelect,
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    padding: 0, 
-    borderRadius: 20,
-    marginBottom: 8,
-    height: 50,
+  container: { 
+    flexDirection: 'column', 
+    borderRadius: 20,  
     width: '100%',  
   },
-  cardTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 10, 
+  title: {
+    fontSize: 16, 
+    //textTransform: 'uppercase', 
   },
-  hintContainer: {
+  displayContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    width: '90%',
-    justifyContent: 'space-between',
+    alignItems: 'center', 
+    width: '100%', 
+    borderBottomWidth: 0,
+    borderRadius: 20, 
+    paddingHorizontal: '3%',
+    paddingVertical: '3%',
+    paddingRight: '10%', //space for the icon button
   },
-  hintText: {
+  displayText: {
     fontSize: 16,
-    flex: 1,
+    lineHeight: 21, 
   },
   icon: {
-    marginLeft: 10,
+    position: 'absolute', 
+    right: 10,
+ 
   },
   addressText: {
-    fontSize: 16,
-    marginBottom: 20, 
+    fontSize: 16, 
   },
   searchIconContainer: {
     flexDirection: 'row',
@@ -173,27 +197,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   hardcodedLabel: {
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 16, 
   },
   picker: {
     height: 50,
   },
   searchButton: {
     marginLeft: 10,
-  },
-  textInputContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  textInput: {
-    height: 40,
-    borderColor: '#ddd',
-    borderBottomWidth: 1,
-    paddingLeft: 10, 
-  },
+  }, 
   closeButton: {
     marginTop: 20,
     backgroundColor: 'limegreen',

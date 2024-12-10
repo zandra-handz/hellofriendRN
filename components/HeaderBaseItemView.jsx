@@ -6,7 +6,7 @@ import { useFriendList } from '../context/FriendListContext';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import InfoOutlineSvg from '../assets/svgs/info-outline.svg';
 import ThreeDotsSvg from '../assets/svgs/three-dots.svg'; 
-import SlideToDelete from '../components/SlideToDelete';
+import SlideToDeleteHeader from '../components/SlideToDeleteHeader';
 import { LinearGradient } from 'expo-linear-gradient';
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 
@@ -61,7 +61,7 @@ const HeaderBaseItemView = ({
          
     </> 
     <View style={styles.sliderContainer}>
-      <SlideToDelete
+      <SlideToDeleteHeader
       itemToDelete={itemData}
       onPress={onSliderPull}
       sliderWidth={'100%'} 

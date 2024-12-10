@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-import { useNavigation, useRoute } from '@react-navigation/native'; 
+import { useRoute } from '@react-navigation/native'; 
 import LocationInviteBody from '../components/LocationInviteBody';
 
  

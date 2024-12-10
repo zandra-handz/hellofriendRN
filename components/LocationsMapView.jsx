@@ -71,6 +71,8 @@ const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoord
 }, [currentRegion]);
 
 
+
+
 const handleLocationAlreadyExists = (locationDetails, addMessage) => {
  
   let matchedLocation;
@@ -128,9 +130,11 @@ const handleGoToMidpointLocationSearchScreen = () => {
 //for this
 const faveLocations = useMemo(() => {
   //console.log('Filtering favorite locations');
+  if (locationList) {
   return locationList.filter(location =>
     friendDashboardData[0].friend_faves.locations.includes(location.id)
   );
+}
 }, [locationList, friendDashboardData]);
 
 

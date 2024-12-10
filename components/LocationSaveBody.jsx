@@ -53,8 +53,7 @@ const LocationSaveBody = ({
     const [personalExperience, setPersonalExperience] = useState('');
     const [customTitle, setCustomTitle] = useState(null);
     const [selectedFriends, setSelectedFriends] = useState([]);
-    const [showSaveMessage, setShowSaveMessage] = useState(false);
-    const [isMakingCall, setIsMakingCall] = useState(false); 
+     const [isMakingCall, setIsMakingCall] = useState(false); 
 
     const onParkingTypeChange = (index) => {
         setParkingType(index); 
@@ -91,47 +90,47 @@ const LocationSaveBody = ({
     };
  
 
-    return ( 
-                <View style={[styles.container, themeStyles.genericTextBackground]}> 
-                    <View style={styles.locationDetailsContainer}>
- 
-                        <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>{title}</Text>
-                        <Text style={[styles.locationAddress, themeStyles.genericText]}>{address}</Text>
-                        
-                        <Text style={[styles.previewTitle, themeStyles.genericText]}>Give this location a parking score</Text>
-                         
-                        <PickerParkingType 
-                            height={'20%'} 
-                            containerText=''
-                            selectedTypeChoice={parkingType}
-                            onTypeChoiceChange={onParkingTypeChange}
-                        />
+return ( 
+        <View style={[styles.container, themeStyles.genericTextBackground]}> 
+            <View style={styles.locationDetailsContainer}>
 
-                    <TextInput
-                        style={[themeStyles.input, styles.textArea]}
-                        value={personalExperience}
-                        onChangeText={setPersonalExperience}
-                        placeholder='Optional notes'
-                        placeholderTextColor='darkgray'
-                        multiline
-                        numberOfLines={4}
-                    />
+                <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>{title}</Text>
+                <Text style={[styles.locationAddress, themeStyles.genericText]}>{address}</Text>
+                
+                <Text style={[styles.previewTitle, themeStyles.genericText]}>Give this location a parking score</Text>
+                    
+                <PickerParkingType 
+                    height={'20%'} 
+                    containerText=''
+                    selectedTypeChoice={parkingType}
+                    onTypeChoiceChange={onParkingTypeChange}
+                />
 
-                    <View style={styles.friendCheckboxesContainer}>
-                        <FlatList
-                            data={friendList}
-                            keyExtractor={(item) => item.id.toString()} // Ensure each key is unique
-                            renderItem={({ item }) => (
-                                <CheckBox
-                                    title={item.name}
-                                    checked={selectedFriends.includes(item.id)}
-                                    onPress={() => handleFriendSelect(item.id)}
-                                />
-                            )}
-                            style={styles.flatList}
-                            showsVerticalScrollIndicator={false}
+            <TextInput
+                style={[themeStyles.input, styles.textArea]}
+                value={personalExperience}
+                onChangeText={setPersonalExperience}
+                placeholder='Optional notes'
+                placeholderTextColor='darkgray'
+                multiline
+                numberOfLines={4}
+            />
+
+            <View style={styles.friendCheckboxesContainer}>
+                <FlatList
+                    data={friendList}
+                    keyExtractor={(item) => item.id.toString()} // Ensure each key is unique
+                    renderItem={({ item }) => (
+                        <CheckBox
+                            title={item.name}
+                            checked={selectedFriends.includes(item.id)}
+                            onPress={() => handleFriendSelect(item.id)}
                         />
-                    </View> 
+                    )}
+                    style={styles.flatList}
+                    showsVerticalScrollIndicator={false}
+                />
+            </View> 
 
 
                           
@@ -150,7 +149,7 @@ const LocationSaveBody = ({
             
             />
                 
-                </View>
+        </View>
             
     );
 };
