@@ -107,15 +107,20 @@ useEffect(() => {
   };
 }, []);
 
-const handleGoToLocationViewScreen = (item) => { 
-  navigation.navigate('Location', { location: item, favorite: false }); //false as default, receiving screen should still detect
+const handleGoToLocationSendScreen = () => {
+  navigation.navigate('LocationSend', { location: focusedLocation, weekdayTextData: null, selectedDay: currentDayDrilledOnce});
 
-}; 
+}
 
-const handleGoToLocationSendScreen = (item) => { 
-  navigation.navigate('LocationSend', { location: item, weekdayTextData: null, selectedDay: null});
+const handleDoubleTapSliderUpPress = () => {  
+  handleGoToLocationSendScreen();
 
-}; 
+};
+
+const handleGoToMidpointLocationSearchScreen = () => {
+  navigation.navigate('MidpointLocationSearch');
+};
+ 
 
 //i had taken this out but brought it back in because if i use sorted
 //list for the bottom scroll, it doesn't update when a new favorite is added;
@@ -418,6 +423,11 @@ const darkMapStyle = [
             </Marker>
           ))}
       </MapView> 
+
+      <TouchableOpacity style={[styles.midpointsButton, {backgroundColor: themeStyles.genericTextBackground.backgroundColor}]} onPress={handleGoToMidpointLocationSearchScreen}>
+        <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>Midpoints</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={[styles.zoomOutButton, {backgroundColor: themeStyles.genericTextBackground.backgroundColor}]} onPress={fitToMarkers}>
         <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>Show All</Text>
       </TouchableOpacity>
@@ -504,6 +514,7 @@ const darkMapStyle = [
     
         <SlideUpToOpen
           onPress={toggleCardWithSlider}
+          onDoubleTap={handleDoubleTapSliderUpPress}
           //onDoubleTap={handleGoToLocationSendScreen(focusedLocation)}
           sliderText='OPEN'  
           targetIcon={CheckmarkOutlineSvg}
@@ -605,6 +616,21 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
 
   },
+  midpointsButton: {
+    position: 'absolute',
+    zIndex: 4,
+    width: 'auto',
+    paddingHorizontal: '2%',
+    bottom: '44%',
+    right: 8,
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 30,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 5,
+  },
   zoomOutButton: {
     position: 'absolute',
     zIndex: 4,
@@ -629,8 +655,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     justifyContent: 'flex-end',
     flexDirection: 'column',
-     bottom: 10,
-     right: 50,
+     bottom: 60,
+     right: 40,
      height: '90%',
     borderRadius: 20,  
     zIndex: 3000,

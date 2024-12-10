@@ -179,16 +179,16 @@ const LocationDetailsBody = ({
 
                 {locationDetails &&  (
                     <>
-                    <View style={[themeStyles.genericTextBackground, {position: 'absolute', flexDirection: 'row', bottom: 10, width: '100%', left: 0}]}> 
-                    <LocationSavingActions location={locationDetails} />
-                    
+                    <View style={[themeStyles.genericTextBackground, {position: 'absolute', flexDirection: 'row', bottom: 0, width: '100%', left: 0}]}> 
+                    <View style={{paddingRight: '7%'}}>
+                        <LocationSavingActions location={locationDetails} />
                     </View>
                     {locationDetails.id && (
-                       
-                    <View style={[themeStyles.genericTextBackground, {position: 'absolute', flexDirection: 'row', bottom: 10, width: '100%', left: 48}]}> 
-                     <LocationNotes location={locationDetails && locationDetails} />
-                    </View>
+                        
+                    <LocationNotes location={locationDetails && locationDetails} />
+                    
                     )}
+                    </View> 
 
                     </>
                 )}

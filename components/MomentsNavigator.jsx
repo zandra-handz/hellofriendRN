@@ -12,15 +12,13 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
 
   const [isModalVisible, setIsModalVisible] = useState(true);
   const { capsuleList, deleteMomentRQuery, deleteMomentMutation } = useCapsuleList();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [title, setTitle] = useState(null); 
+  const [currentIndex, setCurrentIndex] = useState(0); 
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend(); 
   const [ momentInView, setMomentInView ] = useState(moment || null);
  
   useEffect(() => {
-    if (moment) {
-      setTitle(moment.typedCategory);
+    if (moment) { 
       const index = capsuleList.findIndex(mom => mom.id === moment.id);
       setCurrentIndex(index); 
       setMomentInView(moment);
@@ -60,8 +58,8 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
   };
  
 
-  const handleDelete = ({item}) => {
-    console.log('handle delete moment triggered: ', item);
+  const handleDelete = (item) => {
+    console.log('handle delete moment in navigator triggered: ', item);
     try { 
 
       const momentData = {
@@ -75,16 +73,12 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
       console.error('Error deleting moment:', error);
     }  
   };
-
-  useEffect(() => {
-    setTitle(capsuleList[currentIndex]?.typedCategory || '');
-  }, [currentIndex]);
+ 
 
   return (
-    <View>
-  
+    <View> 
       <MomentView
-      onSliderPull={handleDelete}
+        onSliderPull={handleDelete}
         isModalVisible={isModalVisible} 
         toggleModal={onClose}
         momentCategory={capsuleList[currentIndex] ? capsuleList[currentIndex].typedCategory : 'No category'}
@@ -92,8 +86,6 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
         momentData={momentInView || null}
         navigationArrows={
           capsuleList[currentIndex] ? ( 
-
-              
             <>
             {momentInView && (
               <>
@@ -128,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    position: 'absolute',  // Ensure it overlays the full screen
+    position: 'absolute',  
     top: 0,
     bottom: 0,
     left: 0,

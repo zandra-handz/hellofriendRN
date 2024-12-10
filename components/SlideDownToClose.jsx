@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     position: 'absolute',
-    top: 20,
+    top: 0,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 5000,

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuthUser } from './AuthUserContext';
-import { useCapsuleList } from './CapsuleListContext';
+import { useCapsuleList } from './CapsuleListContext'; 
 import { useUpcomingHelloes } from './UpcomingHelloesContext';
 
 

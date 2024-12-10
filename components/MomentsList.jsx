@@ -16,7 +16,7 @@ import { Easing } from 'react-native-reanimated';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 
-const ITEM_HEIGHT = 162; // Define the height of each item
+const ITEM_HEIGHT = 162; 
 
 const MomentsList = (navigation) => {
     const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
@@ -30,7 +30,7 @@ const MomentsList = (navigation) => {
 
     const fadeAnim = useRef(new Animated.Value(1)).current;
     const heightAnim = useRef(new Animated.Value(ITEM_HEIGHT)).current;
-    const translateY = useRef(new Animated.Value(0)).current; // Added for animation
+    const translateY = useRef(new Animated.Value(0)).current;  
 
     const moments = capsuleList;
     const momentListBottomSpacer = Dimensions.get("screen").height - 200;
@@ -39,28 +39,24 @@ const MomentsList = (navigation) => {
     const translateX = new Animated.Value(0);   
     useEffect(() => {
         if (momentIdToAnimate) {
-            // Slide the item off-screen
+            
             Animated.timing(translateX, {
-                toValue: 500, // Slide it off-screen
+                toValue: 500, 
                 duration: 0,
                 easing: Easing.ease,
                 useNativeDriver: true,
             }).start(() => {
-                // After the slide-out animation completes, update the data and shift remaining items
-                Animated.parallel([
-                    // Animate height reduction
+                 Animated.parallel([ 
                     Animated.timing(heightAnim, {
                         toValue: 0,
                         duration: 200,
-                        useNativeDriver: false, // Must be false for height animations
+                        useNativeDriver: false,  
                     }),
-                ]).start(() => {
-                    // Remove the item from the list and trigger layout changes
+                ]).start(() => { 
                     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                    updateCacheWithNewPreAdded(); // Update list in context/state
+                    updateCacheWithNewPreAdded();  
                     setMomentIdToAnimate(null);
-    
-                    // Reset animation values
+     
                     fadeAnim.setValue(1);
                     heightAnim.setValue(ITEM_HEIGHT);
                     translateX.setValue(0);

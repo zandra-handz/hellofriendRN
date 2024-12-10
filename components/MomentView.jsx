@@ -1,108 +1,80 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Modal, ScrollView, Dimensions } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import HeaderBaseItemView from '../components/HeaderBaseItemView'; 
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
-import { useCapsuleList } from '../context/CapsuleListContext';  
-import { useSelectedFriend } from '../context/SelectedFriendContext';
 
+const { height: screenHeight } = Dimensions.get('window'); 
 
-const { height: screenHeight } = Dimensions.get('window'); // Get screen height
-
-const MomentView = ({ momentData, navigationArrows, onSliderPull, isModalVisible, toggleModal, modalContent, modalTitle }) => {
-  const { deleteMomentRQuery  } = useCapsuleList();
-const { selectedFriend } = useSelectedFriend();
+const MomentView = ({ momentData, navigationArrows, onSliderPull, isModalVisible, toggleModal }) => {
   const { themeStyles } = useGlobalStyle(); 
- 
- 
-
-  const handleDelete = (item) => {
-    //console.log('handle delete moment triggered: ', item);
-    try { 
-
-      const momentDataDelete = {
-        friend: selectedFriend.id,
-        id: item.id,
-      };
- 
-
-     deleteMomentRQuery(momentDataDelete);  
-    } catch (error) { 
-      console.error('Error deleting moment:', error);
-    }  
-  };
   
-  useEffect(() => {
-    if (momentData) {
-      console.log('moment data changed: ', momentData);
-        }
+  //useEffect(() => {
+    //if (momentData) {
+    //  console.log('moment data changed: ', momentData);
+      //  }
 
-  }, [momentData]);
+ // }, [momentData]);
 
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-        <>
-  <View
-    style={{
-      position: 'absolute', 
-      width: '100%',
-      zIndex: 1000,
-      top: '50%',
-      transform: [{ translateY: -50 }],
-      alignItems: 'center',
-    }}
-  >
-    {navigationArrows}
-  </View>
-      <View style={[styles.modalContainer, themeStyles.genericTextBackground]}> 
-        <View 
-          style={[
-            styles.modalContent, themeStyles.genericText,
-            { maxHeight: screenHeight * 1, paddingBottom: 0 }  
-          ]}
-        >
-          <HeaderBaseItemView onBackPress={toggleModal} itemData={momentData} onSliderPull={handleDelete} headerTitle={'VIEW MOMENT'} />
-          <View style={styles.momentContainer}>
-            {momentData && momentData.typedCategory && (
-            <View style={styles.categoryContainer}>
-              <Text style={[styles.categoryText, themeStyles.genericText]}>
-                CATEGORY:  {momentData.typedCategory}
-              </Text>
-            </View> 
-            )}
-            <View style={{flex: 1}}>
+      <>
+      <View
+        style={{
+          position: 'absolute', 
+          width: '100%',
+          zIndex: 1000,
+          top: '50%',
+          transform: [{ translateY: -50 }],
+          alignItems: 'center',
+        }}
+      >
+      {navigationArrows}
+      </View>
+        <View style={[styles.modalContainer, themeStyles.genericTextBackground]}> 
+          <View 
+            style={[
+              styles.modalContent, themeStyles.genericText,
+              { maxHeight: screenHeight * 1, paddingBottom: 0 }  
+            ]}
+          >
+            <HeaderBaseItemView onBackPress={toggleModal} itemData={momentData} onSliderPull={onSliderPull} headerTitle={'VIEW MOMENT'} />
+              <View style={styles.momentContainer}>
+                  {momentData && momentData.typedCategory && (
+                  <View style={styles.categoryContainer}>
+                    <Text style={[styles.categoryText, themeStyles.genericText]}>
+                      CATEGORY:  {momentData.typedCategory}
+                    </Text>
+                  </View> 
+                  )}
+                  <View style={{flex: 1}}>
             
-            <ScrollView 
-                contentContainerStyle={{ padding: 10 }} // Adds padding inside the ScrollView
-                style={{ flex: 1 }} // Ensures ScrollView takes up remaining space
-              >
-                {momentData && momentData.capsule && (
-                <Text style={[styles.momentText, themeStyles.genericText]}>
-                  {momentData.capsule}
-                </Text>
-                 )}
-            </ScrollView> 
-            </View> 
-          
-          </View>
-          <View style={{position: 'absolute', height: 80, bottom: -6, left: -4, width: '103%'}}>
-          <ButtonBaseSpecialSave
-              label="SEND "
-              maxHeight={80}
-              onPress={[() => {}]} 
-              isDisabled={false}
-              fontFamily={'Poppins-Bold'}
-              image={require("../assets/shapes/redheadcoffee.png")}
-            
-            />
-          </View>
+                    <ScrollView 
+                      contentContainerStyle={{ padding: 10 }}  
+                      style={{ flex: 1 }} 
+                    >
+                      {momentData && momentData.capsule && (
+                      <Text style={[styles.momentText, themeStyles.genericText]}>
+                        {momentData.capsule}
+                      </Text>
+                      )}
+                    </ScrollView> 
+                  </View> 
+              </View>
 
-         
-        </View>
-    
+              <View style={{position: 'absolute', height: 80, bottom: -6, left: -4, width: '103%'}}>
+              <ButtonBaseSpecialSave
+                  label="SEND "
+                  maxHeight={80}
+                  onPress={[() => {}]} 
+                  isDisabled={false}
+                  fontFamily={'Poppins-Bold'}
+                  image={require("../assets/shapes/redheadcoffee.png")}
+                />
+              </View>
+          </View>
       </View>
       </> 
-     
     </Modal>
   );
 };
@@ -119,7 +91,6 @@ const styles = StyleSheet.create({
     width: '100%',   
     flexDirection: 'column',
     flex: 1,
-  
   },
   momentContainer: { 
     width: '100%',
@@ -144,8 +115,6 @@ const styles = StyleSheet.create({
   categoryContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    
-
   },
   header: {
     flexDirection: 'row', 

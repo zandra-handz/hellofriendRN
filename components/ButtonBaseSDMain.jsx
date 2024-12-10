@@ -15,7 +15,7 @@ const ButtonBaseSDMain = ({
     useEffect(() => {
     Animated.timing(rotation, {
       toValue: expanded ? 1 : 0,
-      duration: 100, // Duration for rotation when expanding
+      duration: 100, 
       useNativeDriver: true,
     }).start();
   }, [expanded]);

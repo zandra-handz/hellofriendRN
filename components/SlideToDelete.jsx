@@ -7,8 +7,8 @@ const SlideToDelete = ({ onPress, itemToDelete, sliderText = 'DELETE?', targetIc
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
-  const isDraggingRef = useRef(false); // Use ref for immediate updates
-  const deleteItemRef = useRef(null); // Use ref to store the delete item
+  const isDraggingRef = useRef(false); 
+  const deleteItemRef = useRef(null);  
   const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
   const [deleteItem, setDeleteItem] = useState();
 
@@ -27,7 +27,7 @@ const SlideToDelete = ({ onPress, itemToDelete, sliderText = 'DELETE?', targetIc
     if (itemToDelete) {
       ///console.log('slider item: ', itemToDelete);
       setDeleteItem(itemToDelete);
-      deleteItemRef.current = itemToDelete; // Store the delete item in ref
+      deleteItemRef.current = itemToDelete;  
     }
   }, [itemToDelete]);
 

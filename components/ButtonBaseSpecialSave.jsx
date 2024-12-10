@@ -72,7 +72,7 @@ return(
             <Text
               style={[
                 textStyles(labelSize, 'black'),
-                { fontFamily: fontFamily, paddingRight: 20},
+                { fontFamily: fontFamily, textTransform: 'uppercase', paddingRight: 20},
               ]}
             >
               {label}

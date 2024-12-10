@@ -23,9 +23,7 @@ const ResultMessage = ({
   const { messageData, hideMessage } = useMessage();
   const { themeStyles } = useGlobalStyle();
  
-
-
-  // Create animated values for the container's opacity
+ 
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -34,17 +32,14 @@ const ResultMessage = ({
 
     timeout = setTimeout(() => { 
       if (messageData.result) { 
-        setShowResultsMessage(true);
-
-        // Fade in the container after the delay
+        setShowResultsMessage(true); 
         Animated.timing(opacity, {
           toValue: 1,
           duration: 200,
           useNativeDriver: true,
         }).start();
 
-        resultsTimeout = setTimeout(() => { 
-          // Fade out the container after the message display duration
+        resultsTimeout = setTimeout(() => {  
           Animated.timing(opacity, {
             toValue: 0,
             duration: 700,
@@ -93,7 +88,8 @@ const styles = StyleSheet.create({
     top: 40, // Centers vertically
     left: 0, // Centers horizontally
     //transform: [{ translateX: '-50%' }, { translateY: '-50%' }], // Offsets by 50% of the element's width/height
-    zIndex: 10,
+    zIndex: 10000,
+    elevation: 10000,
     width: '100%', // Adjust width as needed
     padding: 10,
     height: 'auto',
@@ -113,6 +109,8 @@ const styles = StyleSheet.create({
     height: '100%',
     alignContent: 'center',
     borderRadius: 20,
+    zIndex: 10000,
+    elevation: 10000,
   }, 
   loadingTextBold: {
     fontSize: 16,

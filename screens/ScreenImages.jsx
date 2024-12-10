@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonGoToAddImage from '../components/ButtonGoToAddImage';
 import useImageFunctions from '../hooks/useImageFunctions';
-import ItemImageMulti from '../components/ItemImageMulti';
+import ImagesList from '../components/ImagesList';
 
 const ScreenImages = ({ route, navigation }) => {
     const { imageList } = useImageFunctions();
@@ -21,7 +21,7 @@ const ScreenImages = ({ route, navigation }) => {
                 <ScrollView>
                     {imageList.length > 0 ? (
                         <>  
-                        <ItemImageMulti height={120} width={120} singleLineScroll={false} />
+                        <ImagesList height={120} width={120} singleLineScroll={false} />
                         </>
                         
                     ) : (
