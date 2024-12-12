@@ -3,7 +3,6 @@ import { View, StyleSheet, Platform } from 'react-native';
 import ButtonSignOut from './ButtonSignOut';
 import ButtonSettings from './ButtonSettings';
 import ButtonFriendAddresses from '../components/ButtonFriendAddresses';
-import ButtonInfo from './ButtonInfo';
 import ButtonUser from './ButtonUser';
 import ButtonData from './ButtonData';
 import ButtonColors from '../components/ButtonColors'; 

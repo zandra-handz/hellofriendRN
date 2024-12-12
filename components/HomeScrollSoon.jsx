@@ -139,7 +139,7 @@ const HomeScrollSoon = ({
         ListFooterComponent={() => <View style={{ width: soonListRightSpacer }} />}
         
         snapToInterval={friendItemButtonWidth + buttonRightSpacer}  // Set the snapping interval to the height of each item
-        snapToAlignment="start"  // Align items to the top of the list when snapped
+        snapToAlignment="start" 
         decelerationRate="fast" 
       />
     );

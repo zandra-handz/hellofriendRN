@@ -1,17 +1,15 @@
 import React, { useState } from 'react';  
- 
+ import { View, Text } from 'react-native';
 import ButtonBaseSDOption from '../components/ButtonBaseSDOption';
 import DistanceDottedSvg from '../assets/svgs/distance-dotted.svg'; 
 
 import ItemModal from '../components/ItemModal';
  
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-
-
+import { useFriendList } from '../context/FriendListContext';
 
 const ButtonSDOptionCalculateTravel = () => {
 
-    const { calculatedThemeColors } = useSelectedFriend(); 
+    const { themeAheadOfLoading } = useFriendList(); 
     const [ isModalVisible, setIsModalVisible ] = useState(false);
 
     const openModal = () => setIsModalVisible(true);
@@ -22,7 +20,7 @@ const ButtonSDOptionCalculateTravel = () => {
         <ButtonBaseSDOption 
             onPress={openModal} 
             icon={DistanceDottedSvg}
-            iconColor={calculatedThemeColors.fontColor}
+            iconColor={themeAheadOfLoading.fontColor}
             iconSize={32}
         />
 

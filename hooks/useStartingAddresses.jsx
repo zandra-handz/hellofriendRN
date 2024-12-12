@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
-import { addUserAddress, addFriendAddress, fetchFriendAddresses, deleteFriendAddress } from '../api'; 
+import { addUserAddress, deleteUserAddress, fetchUserAddresses, addFriendAddress, fetchFriendAddresses, deleteFriendAddress } from '../api'; 
 import { useMessage } from '../context/MessageContext';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';  
@@ -10,7 +10,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 const useStartingAddresses = () => {  
     const { authUserState } = useAuthUser(); 
     const { selectedFriend, friendDashboardData } = useSelectedFriend();  
-    const [ userAddresses, setUserAddresses ] = useState([]);
     const queryClient = useQueryClient(); 
     const { showMessage } = useMessage();
     //const [ friendAddresses, setFriendAddresses ] = useState([]);
@@ -25,43 +24,116 @@ const useStartingAddresses = () => {
         }
     });
 
+    const { data: userAddresses = [], isLoadingUserAddresses, isFetchingUserAddresses, isSuccessUserAddresses, isErrorUserAddresses } = useQuery({
+      queryKey: ['userAddresses'],
+      queryFn: () => fetchUserAddresses(),
+      enabled: !!authUserState?.authenticated,
+      onSuccess: (data) => { 
+          console.log(userAddresses);
+          
+      }
+  });
+
     const timeoutRef = useRef(null);
 
-    useEffect(() => {
-        if (authUserState) {
-            const addresses = getUserAddresses();
-            setUserAddresses((prev) => JSON.stringify(prev) !== JSON.stringify(addresses) ? addresses : prev);
-        }
-    }, [authUserState]);
+
+    const createUserAddressMutation = useMutation({
+      mutationFn: (data) => addUserAddress(data),
+      onSuccess: () => {
+          showMessage(true, null, `Address added`);
+          
+          queryClient.invalidateQueries(['userAddresses']);
+          if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+            }
 
 
-   // useEffect(() => {
-     //   const addresses = getFriendAddresses();
-       // setFriendAddresses((prev) => JSON.stringify(prev) !== JSON.stringify(addresses) ? addresses : prev);
-   // }, [friendDashboardData]);
+          timeoutRef.current = setTimeout(() => {
+              createUserAddressMutation.reset(); 
+            }, 2000);
+      },
+      onError: (error) => { 
+          if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+            }
+
+            showMessage(true, null, 'Oops! Error adding address');
+          console.error('Error adding address:', error);
+          timeoutRef.current = setTimeout(() => {
+              createUserAddressMutation.reset(); 
+            }, 2000);
+      },
+
+    });
 
 
-    const getUserAddresses = () => {
-        return authUserState?.user?.addresses || [];  
+    const deleteUserAddressMutation = useMutation({
+      mutationFn: (data) => deleteUserAddress(data),
+      onSuccess: () => {
+          showMessage(true, null, `Address deleted!`);
+          
+          queryClient.invalidateQueries(['userAddresses']);
+          if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+            }
+
+
+          timeoutRef.current = setTimeout(() => {
+              deleteUserAddressMutation.reset(); 
+            }, 2000);
+      },
+      onError: (error) => { 
+          if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+            }
+
+            showMessage(true, null, 'Oops! Error deleting address');
+          console.error('Error deleting address:', error);
+          timeoutRef.current = setTimeout(() => {
+              deleteUserAddressMutation.reset(); 
+            }, 2000);
+      },
+
+    });
+
+
+    const createUserAddress = (title, address) => {
+      try {
+        const addressData = {
+          title,
+          address, 
+          user: authUserState.user.id,
+        };
+
+        createUserAddressMutation.mutate(addressData);
+
+  
+      } catch (error) {
+        console.error('Error adding address to friend addresses: ', error);
+       
+      }
+    };
+  
+
+    const removeUserAddress = (addressId) => {
+      try {
+        const addressData = { 
+          address: addressId, 
+           
+        };
+
+        deleteUserAddressMutation.mutate(addressId);
+      } catch (error) {
+        console.error('Error deleting address from friend addresses: ', error);
+      }
     };
 
+ 
+
+  
   //  const getFriendAddresses = () => friendDashboardData?.[0]?.friend_addresses || [];
 
- //I don't know if this is enough/might need to reset source data
-    const createUserAddress = async ({title, address}) => {
-        try {
-          const addressData = {
-            title: title,
-            address: address,
-          };
-          response = await addUserAddress(authUserState.user.id, addressData);
-          console.log('createUserAddress in useStartingAddresses:', response);
-          setUserAddresses(prevAddresses => [...prevAddresses, response]);
-
-        } catch (error) {
-          console.error('Error adding address in createUserAddress in useStartingAddresses:', error); 
-        }
-      };
+ 
 
       const createFriendAddressMutation = useMutation({
         mutationFn: (data) => addFriendAddress(selectedFriend.id, data),
@@ -122,8 +194,7 @@ const useStartingAddresses = () => {
 
       });
 
-      
-
+  
  
 
       const createFriendAddress = (friendId, title, address) => {
@@ -154,11 +225,8 @@ const useStartingAddresses = () => {
           };
 
           deleteFriendAddressMutation.mutate(addressId);
-
-    
         } catch (error) {
           console.error('Error deleting address from friend addresses: ', error);
-         
         }
       };
 
@@ -169,9 +237,10 @@ const useStartingAddresses = () => {
   
 
     return { 
-        userAddresses,
-        friendAddresses,  
+        userAddresses, 
         createUserAddress,
+        removeUserAddress,
+        friendAddresses,   
         createFriendAddress,
         removeFriendAddress,
 };

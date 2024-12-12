@@ -16,7 +16,6 @@ import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg';  
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useSelectedFriend } from '../context/SelectedFriendContext'; 
 import  useStartingAddresses from '../hooks/useStartingAddresses';
 import SelectorAddressBase from '../components/SelectorAddressBase'; 
@@ -29,7 +28,7 @@ import SlideToDelete from '../components/SlideToDelete';
 
 const CalculateTravelTimesBody = ({location, currentLocation}) => { 
     const { authUserState } = useAuthUser();
-    const { userAddresses, friendAddresses, createFriendAddress, removeFriendAddress } = useStartingAddresses();
+    const { userAddresses, friendAddresses, createUserAddress, createFriendAddress, removeUserAddress, removeFriendAddress } = useStartingAddresses();
     const { themeStyles } = useGlobalStyle();
     const { selectedFriend } = useSelectedFriend();  
     const [message, setMessage] = useState('');
@@ -38,7 +37,8 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
     const [selectedUserAddress, setSelectedUserAddress] = useState(null);
     const [selectedFriendAddress, setSelectedFriendAddress] = useState(null);
     const [showMessage, setShowMessage ] = useState(false);  
-    const [ isExistingAddress, setIsExistingAddress ] = useState(false);
+    const [ isExistingFriendAddress, setIsExistingFriendAddress ] = useState(false);
+    const [ isExistingUserAddress, setIsExistingUserAddress ] = useState(false);
     
     
     useEffect(() => {
@@ -53,25 +53,49 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
     }, [location, authUserState.user.username]);
  
     const handleUserAddressSelect = (address) => {
+        setIsExistingUserAddress(false);
         setSelectedUserAddress(address);
-        console.log('Selected User Address:', address);
+        const existingUserAddress = userAddresses.find(existingUserAddress => 
+            existingUserAddress.address === address.address || existingUserAddress.id === address.id
+        );
+        if (existingUserAddress) {
+            setSelectedUserAddress(existingUserAddress);
+            console.log('Existing User Address Selected:', existingUserAddress);
+        } else { setSelectedUserAddress(address);
+            console.log('New User Address Selected:', address);
+        }
+      setIsExistingUserAddress(!!existingUserAddress);
     };
 
     const handleFriendAddressSelect = (address) => {
-        setIsExistingAddress(false);
-         const existingAddress = friendAddresses.find(existingAddress => 
-            existingAddress.address === address.address || existingAddress.id === address.id
+        setIsExistingFriendAddress(false);
+         const existingFriendAddress = friendAddresses.find(existingFriendAddress => 
+            existingFriendAddress.address === address.address || existingFriendAddress.id === address.id
         );
     
-         if (existingAddress) {
-            setSelectedFriendAddress(existingAddress);
-            console.log('Existing Friend Address Selected:', existingAddress);
+         if (existingFriendAddress) {
+            setSelectedFriendAddress(existingFriendAddress);
+            console.log('Existing Friend Address Selected:', existingFriendAddress);
         } else { setSelectedFriendAddress(address);
             console.log('New Friend Address Selected:', address);
         }
-      setIsExistingAddress(!!existingAddress);
+      setIsExistingFriendAddress(!!existingFriendAddress);
     };
     
+    const handleAddUserAddress = (title, address) => {
+        console.log(title, address);
+        createUserAddress(title, address);
+    };
+
+    const handleDeleteUserAddress = (addressId) => {
+        console.log('deleting address triggered', addressId);
+        try {
+        removeUserAddress(addressId);
+        setIsExistingUserAddress(false); 
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const handleAddFriendAddress = (friendId, title, address) => {
         createFriendAddress(friendId, title, address);
@@ -81,15 +105,7 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
         console.log('deleting address triggered', addressId);
         try {
         removeFriendAddress(friendId, addressId);
-        setIsExistingAddress(false);
-          //  if (friendAddresses.length > 0) {
-            
-          //  handleFriendAddressSelect(friendAddresses[0]);
-          //  console.log('reset address to first in list');
-
-          //  } else {
-          //      handleFriendAddressSelect(null);
-          //  }
+        setIsExistingFriendAddress(false); 
         } catch (error) {
             console.log(error);
         }
@@ -125,6 +141,31 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
                     contextTitle="My startpoint"
                     />   
                 </View> 
+
+                {selectedUserAddress && !isExistingUserAddress && (
+                <Animated.View style={styles.sliderContainer}>
+                      <SlideToAdd
+                        onPress={() => handleAddUserAddress(selectedUserAddress.title, selectedUserAddress.address)}
+                        sliderText={`Save`} 
+                        targetIcon={CheckmarkOutlineSvg}
+                        disabled={!selectedFriendAddress}
+                      />
+                </Animated.View> 
+                )}
+                
+
+                {selectedUserAddress && selectedUserAddress.id && isExistingUserAddress && (
+                <Animated.View style={[styles.sliderContainer]}>
+                      <SlideToDelete
+                        onPress={() => handleDeleteUserAddress(selectedUserAddress.id)}
+                        
+                        sliderText={`Remove from list`} 
+                        targetIcon={CheckmarkOutlineSvg}
+                        disabled={false} 
+                      />
+                </Animated.View> 
+                )}
+                
                  <View style={{height: '18%', width: '100%', marginVertical: '4%'}}> 
                 <SelectorAddressBase
                     height={'100%'}
@@ -135,7 +176,7 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
                 />
                 </View> 
 
-                {selectedFriendAddress && !isExistingAddress && (
+                {selectedFriendAddress && !isExistingFriendAddress && (
                 <Animated.View style={styles.sliderContainer}>
                       <SlideToAdd
                         onPress={() => handleAddFriendAddress(selectedFriend.id, selectedFriendAddress.title, selectedFriendAddress.address)}
@@ -147,7 +188,7 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
                 )}
                 
 
-                {selectedFriendAddress && selectedFriendAddress.id && isExistingAddress && (
+                {selectedFriendAddress && selectedFriendAddress.id && isExistingFriendAddress && (
                 <Animated.View style={[styles.sliderContainer]}>
                       <SlideToDelete
                         onPress={() => handleDeleteFriendAddress(selectedFriend.id, selectedFriendAddress.id)}

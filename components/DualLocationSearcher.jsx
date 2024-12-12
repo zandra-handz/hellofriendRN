@@ -24,20 +24,20 @@ const DualLocationSearcher = ({onPress, locationListDrilledOnce}) => {
     }
   };
 
-  useEffect(() =>{ 
-    if (searchString){
-      console.log(searchString);
+  //useEffect(() =>{ 
+    //if (searchString){
+      //console.log(searchString);
 
-    }
-   }, [searchString]);
+   // }
+   //}, [searchString]);
 
-   useEffect(() => {
-    if (locationListDrilledOnce) {
-      console.log(locationListDrilledOnce);
+   //useEffect(() => {
+   // if (locationListDrilledOnce) {
+    //  console.log(locationListDrilledOnce);
 
-    };
+    //};
 
-   }, [locationListDrilledOnce]);
+   //}, [locationListDrilledOnce]);
 
 
   const switchViews = () => {

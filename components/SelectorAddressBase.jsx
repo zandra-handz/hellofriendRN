@@ -6,7 +6,7 @@ import { GOOGLE_API_KEY } from '@env';
 import DirectionsLink from '../components/DirectionsLink';
 import SelectAddressModal from '../components/SelectAddressModal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import useCurrentLocation from '../hooks/useCurrentLocation'; 
 import EditPencilOutlineSvg from '../assets/svgs/edit-pencil-outline.svg';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
@@ -21,6 +21,8 @@ const SelectorAddressBase = ({ height, titleBottomMargin, addresses, currentLoca
   const [showAddressOptions, setShowAddressOptions] = useState(false);
   const [localAddressOptions, setLocalAddressOptions] = useState([]);
   const { themeStyles } = useGlobalStyle();
+
+  const { getCurrentLocation, currentLocationDetails  } = useCurrentLocation();
 
   useEffect(() => {
     if (addresses && addresses.length > 0) {
@@ -49,29 +51,17 @@ const SelectorAddressBase = ({ height, titleBottomMargin, addresses, currentLoca
     }
   }, [addresses, currentLocation]);
 
-  const handleUseCurrentLocation = async () => {
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Error', 'Permission to access location was denied');
-        return;
-      }
+  const handleUseCurrentLocation = () => {
+    console.log('handleUseCurrentLocation pressed', currentLocationDetails);
+    try { 
 
-      const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      const { latitude, longitude } = location.coords;
+      getCurrentLocation();
+      if (currentLocationDetails) {
+      setSelectedAddress(currentLocationDetails);
+      onAddressSelect(currentLocationDetails);
       
-      const response = await Geocoder.from(latitude, longitude);
-      const address = response.results[0].formatted_address;
+    }
 
-      const newAddress = {
-        address: address,
-        latitude: latitude,
-        longitude: longitude,
-        title: 'Current Location',
-      };
-
-      setSelectedAddress(newAddress);
-      onAddressSelect(newAddress);
     } catch (error) {
       Alert.alert('Error', 'Unable to get current location.');
     }
@@ -107,7 +97,7 @@ const SelectorAddressBase = ({ height, titleBottomMargin, addresses, currentLoca
            {selectedAddress && selectedAddress.address && (
               <Text style={[themeStyles.genericText, styles.displayText]}>{selectedAddress?.address}</Text>
             )}
-            {!selectedAddress && (
+            {!selectedAddress && !addresses && (
               <Text style={[themeStyles.genericText, styles.displayText]}>No addresses saved</Text>
             )} 
           {addresses.length > 0 && ( 

@@ -161,13 +161,14 @@ export const signup = async (username, email, password) => {
 };
 
 export const signin = async ({ username, password }) => {
-    console.log("Signing in with credentials:", { username, password });
+    //console.log("Signing in with credentials:", { username, password });
     try {
         const result = await axios.post('/users/token/', { username, password });
-        console.log("API response received:", result);
+        console.log(`API POST CALL signin`);
+        //console.log("API response received:", result);
 
         if (result.data && result.data.access) {
-            console.log("Access token:", result.data.access);
+            //console.log("Access token:", result.data.access);
             setAuthHeader(result.data.access); // Assuming setAuthHeader is defined elsewhere
             return result; // Successful response
         } else {
@@ -191,7 +192,8 @@ export const signin = async ({ username, password }) => {
 export const getCurrentUser = async () => {
     try {
         const response = await axios.get('/users/get-current/');
-        console.log("API getCurrentUser: ", response);
+        console.log('API GET Call getCurrentUser');
+        //console.log("API getCurrentUser: ", response);
         return response.data;
     } catch (error) {
         if (error.response) {
@@ -265,11 +267,34 @@ export const addFriendAddress = async (friendId, addressData) => {
     }
 };
 
+ 
+   // path('<int:user_id>/addresses/add/', views.AddAddressView.as_view()),
+   // path('<int:user_id>/addresses/delete/', views.DeleteAddressView.as_view()),
+   // path('<int:user_id>/settings/', views.UserSettingsDetail.as_view()),
+   // path('<int:user_id>/settings/update/', views.UserSettingsDetail.as_view()),
+   // path('<int:user_id>/profile/', views.UserProfileDetail.as_view()),
+   // path('<int:user_id>/profile/update/', views.UserProfileDetail.as_view()),
 
-export const addUserAddress = async (userId, addressData) => {
+   // path('addresses/all/', views.UserAddressesAll.as_view()),
+   // path('addresses/validated/', views.UserAddressesValidated.as_view()),  
+   // path('addresses/add/', views.UserAddressCreate.as_view()),
+   // path('address/<int:pk>/', views.UserAddressDetail.as_view()),
+
+   export const fetchUserAddresses = async () => {
     try {
+        const response = await axios.get(`/users/addresses/all/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching user addresses:', error);
+        throw error;
+    }
+};
 
-      const response = await axios.post(`/users/${userId}/addresses/add/`, addressData); // Pass addressData directly
+export const addUserAddress = async (addressData) => {
+    try {
+        console.log(addressData);
+
+      const response = await axios.post(`/users/addresses/add/`, addressData); // Pass addressData directly
       return response.data;
     } catch (error) {
       console.error('Error adding user address:', error);
@@ -278,9 +303,9 @@ export const addUserAddress = async (userId, addressData) => {
   };
 
 
-  export const deleteUserAddress = async (userId, title) => {
+  export const deleteUserAddress = async (addressId) => {
     try { 
-        const response = await axios.post(`/users/${userId}/addresses/delete/`, title); 
+        const response = await axios.delete(`/users/address/${addressId}/`); 
 
         if (response.status === 200) {
             console.log('Address deleted successfully');
@@ -319,7 +344,7 @@ export const GetTravelComparisons = async (locationData) => {
       try {
  
         const response = await axios.post(`/friends/places/`, locationData);
-        console.log('Consider the Drive Response', response.data);
+        //console.log('Consider the Drive Response', response.data);
         return response.data;
       } catch (error) {
         console.error('Error submitting addresses:', error); 
@@ -330,7 +355,7 @@ export const SearchForMidpointLocations = async (locationData) => {
     try {
  
       const response = await axios.post(`/friends/places/near-midpoint/`, locationData);
-      console.log('Search for Midpoint Response:', response.data);
+      //console.log('Search for Midpoint Response:', response.data);
       return response.data.suggested_places;
     } catch (error) {
       console.error('Error searching for midpoint locations:', error); 
@@ -340,7 +365,8 @@ export const SearchForMidpointLocations = async (locationData) => {
 export const updateUserAccessibilitySettings = async (userId, fieldUpdates) => {
     try {
         const response = await axios.patch(`/users/${userId}/settings/update/`, fieldUpdates);
-        console.log('API response:', response.data); // Log the response data
+        console.log('API PATCH CALL updateUserAccessibilitySettings');
+        //console.log('API response:', response.data); // Log the response data
         return response.data; // Ensure this returns the expected structure
     } catch (error) {
         console.error('Error updating user settings:', error);
@@ -371,7 +397,7 @@ export const updateUserProfile = async (userId, firstName, lastName, dateOfBirth
 export const fetchFriendDashboard = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/dashboard/`);
-        console.log('fetchFriendDashboard fetched successfully' );
+        console.log('API GET CALL fetchFriendDashboard' );
         return response.data;
     } catch (error) {
         console.error('Error fetching friend dashboard data:', error);
@@ -390,7 +416,7 @@ export const remixAllNextHelloes = async (userId) => {
 };
 
 export const addToFriendFavesLocations = async (data) => {
-    console.log(data);
+    //console.log(data);
     try {
         const response = await axios.patch(`/friends/${data.friendId}/faves/add/location/`, {
             
@@ -398,7 +424,7 @@ export const addToFriendFavesLocations = async (data) => {
             user: data.userId, 
             location_id: data.locationId // Use an array if locationId is a single ID
         });
-        console.log('Location added to favorites: ', response.data);
+        //console.log('Location added to favorites: ', response.data);
         return response.data;
     } catch (error) {
         console.error('Error adding favorite location:', error);
@@ -424,7 +450,7 @@ export const removeFromFriendFavesLocations = async (data) => {
 };
 
 export const updateFriendFavesColorThemeSetting = async (userId, friendId, savedDarkColor, savedLightColor) => { 
-    console.log(savedDarkColor);
+     
     try {
         const response = await axios.patch(`/friends/${friendId}/faves/`, {
             
@@ -434,7 +460,7 @@ export const updateFriendFavesColorThemeSetting = async (userId, friendId, saved
             light_color: savedLightColor,
             use_friend_color_theme: true,
         });
-        console.log('Color theme setting for friend updated: ', response.data);
+        console.log('API PATCH CALL updateFriendFavesColorThemeSetting');
         return response.data;
     } catch (error) {
         console.error('Error updating color theme setting for friend:', error);
@@ -443,7 +469,7 @@ export const updateFriendFavesColorThemeSetting = async (userId, friendId, saved
 };
 
 export const resetFriendFavesColorThemeToDefault = async (userId, friendId, setting) => {
-    console.log(`color theme setting call, ${userId}, ${friendId}, ${setting}`);
+
     
     try {
         const response = await axios.patch(`/friends/${friendId}/faves/`, {
@@ -456,7 +482,8 @@ export const resetFriendFavesColorThemeToDefault = async (userId, friendId, sett
             font_color_secondary: '#000000',
             use_friend_color_theme: false,
         });
-        console.log('Color theme setting for friend updated: ', response.data);
+        
+        console.log(`API PATCH CALL resetFriendFavesColorThemeToDefault`);
         return response.data;
     } catch (error) {
         console.error('Error updating color theme setting for friend:', error);
@@ -464,8 +491,9 @@ export const resetFriendFavesColorThemeToDefault = async (userId, friendId, sett
     }
 };
 
+//Don't think this is in use anymore, it was a dumb option
 export const updateFriendFavesColorThemeGradientDirection = async (userId, friendId, setting) => {
-    console.log(`color theme gradient direction call, ${userId}, ${friendId}, ${setting}`);
+    //console.log(`color theme gradient direction call, ${userId}, ${friendId}, ${setting}`);
     try {
         const response = await axios.patch(`/friends/${friendId}/faves/`, {
             
@@ -532,10 +560,10 @@ export const resetFriendFavesColorThemeToDefaultOld = async (userId, friendId, d
 export const fetchUpcomingHelloes = async () => {
     try {
         const response = await axios.get('/friends/upcoming/');
-        console.log("fetchUpcomingHelloes successful");
+        console.log("API GET CALL fetchUpcomingHelloes");
         return response.data;
     } catch (error) {
-        console.error('Error fetching upcoming helloes:', error);
+        console.error('ERROR API GET CALL fetchUpcomingHelloes:', error);
         throw error;
     }
 };
@@ -572,7 +600,7 @@ export const fetchPastHelloes = async (friendId) => {
         const response = await axios.get(`/friends/${friendId}/helloes/`);
         if (response && response.data) {
             const helloesData = response.data;
-            console.log('(api) fetchPastHelloes successful');
+            console.log('API GET CALL fetchPastHelloes');
 
             const formattedHelloesList = helloesData.map(hello => ({
                 id: hello.id,
@@ -769,7 +797,7 @@ export const fetchValidatedLocations = async () => {
         }));
          
 
-        console.log("API formatted data validated locations: ", formattedLocations);
+        //console.log("API formatted data validated locations: ", formattedLocations);
         return formattedLocations;
     } catch (error) {
         console.error('Error fetching validated locations:', error);
@@ -829,7 +857,7 @@ export const updateAppSetup = async () => {
 export const fetchFriendImagesByCategory = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/images/by-category/`);
-        console.log("(api) fetchFriendImagesByCategory successful");
+        console.log("API GET CALL fetchFriendImagesByCategory");
         return response.data;
     } catch (error) {
         console.error('Error fetching friend images by category:', error);
@@ -928,7 +956,7 @@ export const fetchLocationDetails = async (locationData) => {
          
       const response = await axios.post('/friends/places/get-details/', locationData);
   
-      console.log('(api) fetchLocationDetails successful ');
+      console.log(`API POST CALL fetchLocationDetails`);
       return response.data;
   
     } catch (error) {

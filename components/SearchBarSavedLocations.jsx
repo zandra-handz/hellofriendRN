@@ -11,7 +11,7 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
   const textInputRef = useRef();
   const [ showFullList, setShowFullList ] = useState(true);
 
-  // Trigger animation when component mounts
+ 
   useEffect(() => { 
     if (textInputRef.current) {
       textInputRef.current.setNativeProps({ text: mountingText });
@@ -31,7 +31,7 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
     setText: (text) => {
       if (textInputRef.current) {
         textInputRef.current.setNativeProps({ text });
-        setSearchQuery(text); // Update the state as well
+        setSearchQuery(text);  
       }
     },
     clearText: () => {
@@ -60,7 +60,7 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
       setShowFullList(false);
     
 
-      console.log('setting filtered list', filtered);
+    //console.log('setting filtered list', filtered);
     setFilteredData(filtered);
   } else {
     console.log('setting full list of locations'); 
@@ -107,7 +107,7 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
             style={[styles.searchInput, themeStyles.genericText]}
             placeholder={'Search saved locations'}
             placeholderTextColor={themeStyles.genericText.color}
-            value={searchQuery} // Controlled input
+            value={searchQuery} 
             onChangeText={handleSearch}
           />
           <ListCheckSvg width={26} height={26} color={manualGradientColors.lightColor} style={styles.icon} />
@@ -160,8 +160,7 @@ const styles = StyleSheet.create({
   dropdownContainer: {
     position: 'absolute',
     top: 54,
-    left: 0,
-    backgroundColor: '#fff',
+    left: 0, 
     maxHeight: 300,
     borderRadius: 20,
     shadowColor: '#000',

@@ -6,6 +6,7 @@ import FormUserAddressCreate from '../forms/FormUserAddressCreate';
 import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
 
 import { useAuthUser } from '../context/AuthUserContext';
+import  useStartingAddresses from '../hooks/useStartingAddresses';
 
 import { deleteUserAddress } from '../api';
 import ButtonAddress from './ButtonAddress';
@@ -17,7 +18,8 @@ import LoadingPage from '../components/LoadingPage';
 
 
 const ButtonAddUserAddresses = ({ title }) => {
-    const { authUserState, userAddresses, removeAddress} = useAuthUser();
+    const { authUserState, removeAddress} = useAuthUser();
+    const { userAddresses,  createUserAddress } = useStartingAddresses();
     
     const [isFormVisible, setIsFormVisible] = useState(false); // Toggle form visibility
     const formRef = useRef(null);

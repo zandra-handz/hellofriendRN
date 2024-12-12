@@ -22,7 +22,6 @@ export const AuthUserProvider = ({ children }) => {
     });
     const [userAppSettings, setUserAppSettings] = useState({});
     const [userNotificationSettings, setUserNotificationSettings] = useState({});
-    const [userAddresses, setUserAddresses] = useState({ addresses: [] });
     const queryClient = useQueryClient();
 
     
@@ -42,10 +41,7 @@ export const AuthUserProvider = ({ children }) => {
                 console.log('user app settings in reinitialize', userData.settings);
                 setUserNotificationSettings({
                     receive_notifications: userData.settings?.receive_notifications || false
-                });
-                setUserAddresses({
-                    addresses: userData.addresses ? Object.values(userData.addresses) : []
-                });
+                }); 
             } else {
                 // Handle case where user data is null
                 setAuthUserState(prev => ({ ...prev, authenticated: false, loading: false }));
@@ -79,10 +75,6 @@ export const AuthUserProvider = ({ children }) => {
                 setUserAppSettings(data.settings || {});
                 console.log('user app settings', userAppSettings);
                 setUserNotificationSettings({ receive_notifications: data.settings?.receive_notifications || false });
-                
-                setUserAddresses({
-                    addresses: data.addresses ? Object.values(data.addresses) : []
-                });
             }
         },
         onError: () => {
@@ -203,8 +195,7 @@ const onSignin = async (username, password) => {
         });
      
         setUserAppSettings(null); 
-        setUserNotificationSettings(null); 
-        setUserAddresses({ addresses: [] });  
+        setUserNotificationSettings(null);   
         queryClient.clear();
     };
     
@@ -260,8 +251,7 @@ const onSignin = async (username, password) => {
         <AuthUserContext.Provider value={{
             authUserState,
             userAppSettings,
-            userNotificationSettings,
-            userAddresses, 
+            userNotificationSettings, 
             handleSignup: signupMutation.mutate,
             onSignin, 
             updateAppSettingsMutation, 
@@ -272,8 +262,6 @@ const onSignin = async (username, password) => {
             reInitialize, // Added to the context
             updateUserSettings: setUserAppSettings,
             updateUserNotificationSettings: setUserNotificationSettings,
-            addAddress: (newAddress) => setUserAddresses(prev => ({ addresses: [...prev.addresses, newAddress] })),
-            removeAddress: (title) => setUserAddresses(prev => ({ addresses: prev.addresses.filter(a => a.title !== title) })),
         }}>
             {children}
         </AuthUserContext.Provider>
