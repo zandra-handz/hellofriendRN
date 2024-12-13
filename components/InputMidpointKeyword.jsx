@@ -2,7 +2,7 @@ import React, { useRef, useEffect, forwardRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import InputAnyValue from './InputAnyValue';  
 
-const InputMidpointKeyword = forwardRef(({ searchKeyword, setSearchKeyword }, ref) => {
+const InputMidpointKeyword = forwardRef(({ searchKeyword, labelStyle, setSearchKeyword }, ref) => {
     useEffect(() => {
         if (ref && ref.current) {
             ref.current.focus();  // Automatically focus the input field when the component mounts
@@ -11,7 +11,7 @@ const InputMidpointKeyword = forwardRef(({ searchKeyword, setSearchKeyword }, re
 
     return (
         <View style={styles.container}>
-            <Text style={styles.inputLabel}>Search Keyword</Text>
+            <Text style={[styles.inputLabel, labelStyle]}>Search Keyword</Text>
             <InputAnyValue
                 ref={ref}
                 value={searchKeyword}
@@ -27,9 +27,8 @@ const styles = StyleSheet.create({
     container: {
         marginVertical: 10,
     },
-    inputLabel: {
-        color: 'black',
-        fontFamily: 'Poppins-Bold',
+    inputLabel: { 
+        fontWeight: 'bold',
         fontSize: 16,
         marginVertical: 10,
     },

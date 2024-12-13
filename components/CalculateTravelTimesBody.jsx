@@ -11,16 +11,19 @@
 //    </View>
 //    )}
 
+
+//change height percentage of container inside the main container to adjust screen 
+
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native'; 
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg';  
+import { View, Text, StyleSheet, Animated } from 'react-native';  
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext'; 
 import  useStartingAddresses from '../hooks/useStartingAddresses';
 import SelectorAddressBase from '../components/SelectorAddressBase'; 
-import ResultsTravelComparison from '../components/ResultsTravelComparison';
+import TravelTimesResults from '../components/TravelTimesResults';
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+
 import CheckmarkOutlineSvg from '../assets/svgs/checkmark-outline.svg';
 
 import SlideToAdd from '../components/SlideToAdd'; 
@@ -124,23 +127,26 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
 
     return (
         <View style={[styles.container, themeStyles.genericTextBackground]}> 
-            <View style={styles.locationDetailsContainer}>
 
-                <Text style={[styles.locationTitle, themeStyles.genericText]}>{location?.title}</Text>
-                <Text style={[styles.locationAddress, themeStyles.genericText]}>{location?.address}</Text>
-                 
-                <View style={{height: '18%', width: '100%', marginVertical: '4%'}}> 
-                
+            <View style={{height: '46%',  paddingHorizontal: '2%', paddingVertical: '4%', flexDirection: 'column', justifyContent: 'space-between'}}>
+            <View style={{ marginVertical: '1%', height: '10%', flexDirection: 'column', justifyContent: 'center', width: '100%'}}> 
+                    <Text style={[styles.locationTitle, themeStyles.genericText]}>{location?.title}</Text>
+                    <Text style={[styles.locationAddress, themeStyles.genericText]}>{location?.address}</Text> 
+                </View>
+                <View style={{flexDirection: 'column', maxHeight: 120, height: '30%', justifyContent: 'center', marginVertical: '4%',width: '100%'}}> 
+                   <View style={{marginBottom: '1%'}}>
                     <SelectorAddressBase
-                    height={'100%'}
+                    height={'auto'}
                     titleBottomMargin={'2%'}
                     currentLocation={currentLocation}
                     addresses={userAddresses}
                     onAddressSelect={handleUserAddressSelect}
                     currentAddressOption={true}
                     contextTitle="My startpoint"
-                    />   
-                </View> 
+                    />  
+                    
+                    
+                   </View> 
 
                 {selectedUserAddress && !isExistingUserAddress && (
                 <Animated.View style={styles.sliderContainer}>
@@ -166,16 +172,19 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
                 </Animated.View> 
                 )}
                 
-                 <View style={{height: '18%', width: '100%', marginVertical: '4%'}}> 
-                <SelectorAddressBase
-                    height={'100%'}
-                    titleBottomMargin={'2%'}
-                    addresses={friendAddresses}
-                    onAddressSelect={handleFriendAddressSelect}
-                    contextTitle={`${selectedFriend.name}'s startpoint`}
-                />
                 </View> 
-
+                
+                <View style={{flexDirection: 'column', height: '30%', maxHeight: 120, justifyContent: 'center', marginVertical: '4%',width: '100%'}}> 
+                   <View style={{marginBottom: '1%'}}>
+                        <SelectorAddressBase
+                            height={'auto'}
+                            titleBottomMargin={'2%'}
+                            addresses={friendAddresses}
+                            onAddressSelect={handleFriendAddressSelect}
+                            contextTitle={`${selectedFriend.name}'s startpoint`}
+                        /> 
+                    </View>
+                         
                 {selectedFriendAddress && !isExistingFriendAddress && (
                 <Animated.View style={styles.sliderContainer}>
                       <SlideToAdd
@@ -198,31 +207,36 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
                       />
                 </Animated.View> 
                 )}
+                
+                </View> 
+            </View>
                  
 
 
 
             
 
+ 
 
-            <ResultsTravelComparison
+            
+            <View style={{flexGrow: 1, width: '100%', paddingBottom: '4%', alignItems: 'center', justifyContent: 'center'}}>
+                
+            <TravelTimesResults
                 userAddress={selectedUserAddress || { address: 'User Address', lat: '0', lng: '0' }}
                 friendAddress={selectedFriendAddress || { address: 'Friend Address', lat: '0', lng: '0' }}
+                friendName={selectedFriend?.name || null}
                 destinationLocation={location}
                 triggerFetch={triggerFetch}
-            />
-  
-            
+            /> 
             </View>
 
             <ButtonBaseSpecialSave
-            label="CALCULATE "
-            maxHeight={80}
-            onPress={handleCalculate} 
-            isDisabled={!selectedUserAddress || !selectedFriendAddress}
-            fontFamily={'Poppins-Bold'}
-            image={require("../assets/shapes/redheadcoffee.png")}
-
+                label="CALCULATE "
+                maxHeight={80}
+                onPress={handleCalculate} 
+                isDisabled={!selectedUserAddress || !selectedFriendAddress}
+                fontFamily={'Poppins-Bold'}
+                image={require("../assets/shapes/redheadcoffee.png")}
             /> 
         </View>
     );
@@ -234,18 +248,23 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         width: '100%',
         justifyContent: 'space-between', 
+        
     },
     locationDetailsContainer: { 
         borderRadius: 8, 
-        marginVertical: '2%', 
+        marginVertical: '2%',  
+        justifyContent: 'space-between',
     
+    },
+    headerContainer: { 
+
     },
     locationTitle: {
         fontSize: 18,
         fontWeight: 'bold',
     },
     locationAddress: {
-        fontSize: 16, 
+        fontSize: 18, 
     },   
     cardContainer: {
         marginVertical: 10,
@@ -274,10 +293,10 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular',
         height: 100,
     },
-    sliderContainer: {
+    sliderContainer: { 
         height: 24,
         borderRadius: 20,  
-        zIndex: 3,
+        zIndex: 3, 
         flexDirection: 'row',
         justifyContent: 'space-between',
     }, 

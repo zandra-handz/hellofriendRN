@@ -1,41 +1,43 @@
 import React, { forwardRef } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const InputAnyValue = forwardRef(({ value, setValue, placeholder, errorMessage, isError }, ref) => {
-    return (
-        <View style={styles.sectionContainer}>
-            <View style={styles.inputContainer}>
+    
+    const { themeStyles } = useGlobalStyle();
+    
+    return ( 
+            <View style={[styles.inputContainer, themeStyles.genericTextBackgroundShadeTwo, {borderColor: themeStyles.genericText.color}]}>
                 <TextInput
                     ref={ref}
-                    style={[styles.textInput, isError && styles.errorInput]}
+                    style={[themeStyles.genericText, isError && styles.errorInput]}
                     value={value}
                     placeholder={placeholder}
+                    placeholderTextColor={themeStyles.genericText}
                     onChangeText={setValue}
                 />
                 {isError && value.length > 0 && (
                     <Text style={styles.errorText}>{errorMessage}</Text>
                 )}
-            </View>
-        </View>
+            </View> 
     );
 });
 
 const styles = StyleSheet.create({
-    sectionContainer: {
-        marginBottom: 8,
-    },
+ 
     inputContainer: {
         justifyContent: 'center',
-        width: '100%',
-        marginVertical: 4,
+        width: '100%', 
+        borderRadius: 20,
+        paddingHorizontal: '2%',
     },
     textInput: {
         borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 20,
         fontSize: 16,
-        padding: 10,
-        fontFamily: 'Poppins-Regular',
+        padding: 10, 
+        
     },
     errorInput: {
         borderColor: 'red',

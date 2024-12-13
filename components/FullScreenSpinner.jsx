@@ -10,6 +10,7 @@ import { useCapsuleList } from '../context/CapsuleListContext';
 
 import useHelloesData from '../hooks/useHelloesData';
 import useCurrentLocation from '../hooks/useCurrentLocation';
+import useTravelTimes from '../hooks/useTravelTimes';
 
 const spinners = {
   circle: Circle,
@@ -29,7 +30,8 @@ const FullScreenSpinner = ({
   spinnerType = 'grid'}) => {
  
   const { signinMutation } = useAuthUser(); 
-   const { createMomentMutation } = useCapsuleList();
+  const { createMomentMutation } = useCapsuleList();
+  const { travelTimesMutation } = useTravelTimes();
     
   const [ showSpinner, setShowSpinner ] = useState(false); // Initialize state with the loading prop
   const { themeStyles } = useGlobalStyle();
@@ -70,6 +72,18 @@ const FullScreenSpinner = ({
      } 
 
   }, [locationsIsFetching]); 
+
+
+  //is not working
+  useEffect(() => { 
+    
+    if (travelTimesMutation.isFetching) {
+     setShowSpinner(travelTimesMutation.isFetching);
+      } else {
+       setShowSpinner(false);
+      } 
+ 
+   }, [travelTimesMutation.isFetching]); 
   
 
   useEffect(() => { 

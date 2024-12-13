@@ -149,8 +149,10 @@ const SelectorAddressBase = ({ height, titleBottomMargin, addresses, currentLoca
 const styles = StyleSheet.create({
   container: { 
     flexDirection: 'column', 
-    borderRadius: 20,  
-    width: '100%',  
+    borderRadius: 0,  
+    width: '100%', 
+    minHeight: 80, 
+    paddingVertical: 10,
   },
   title: {
     fontSize: 16, 
@@ -159,8 +161,7 @@ const styles = StyleSheet.create({
   displayContainer: {
     flexDirection: 'row',
     alignItems: 'center', 
-    width: '100%', 
-    borderBottomWidth: 0,
+    width: '100%',  
     borderRadius: 20, 
     paddingHorizontal: '3%',
     paddingVertical: '3%',

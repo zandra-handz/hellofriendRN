@@ -2,16 +2,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 import ResultsMidpointFinds from '../components/ResultsMidpointFinds';
 import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
-import { useAuthUser } from '../context/AuthUserContext'; 
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; 
 import SelectorAddressBase from '../components/SelectorAddressBase';
 import PickerSimpleButtonsBase from '../components/PickerSimpleButtonsBase';
 import InputMidpointKeyword from '../components/InputMidpointKeyword';
+import  useStartingAddresses from '../hooks/useStartingAddresses';
+import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const ContentFindMidpoint = () => { 
-    const { authUserState, userAddresses } = useAuthUser();
-    const { friendDashboardData } = useSelectedFriend();
+import SlideToAdd from '../components/SlideToAdd'; 
+import SlideToDelete from '../components/SlideToDelete'; 
+
+const ContentFindMidpoint = () => {  
+    const { userAddresses, friendAddresses, createUserAddress, createFriendAddress, removeUserAddress, removeFriendAddress } = useStartingAddresses();
+    const { themeStyles } = useGlobalStyle();
     const [selectedUserAddress, setSelectedUserAddress] = useState(null);
     const [selectedFriendAddress, setSelectedFriendAddress] = useState(null);
     const [showResults, setShowResults] = useState(false);
@@ -38,7 +42,7 @@ const ContentFindMidpoint = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, themeStyles.genericTextBackground]}>
             {showResults ? (
                 <ResultsMidpointFinds
                     userAddress={selectedUserAddress || { address: 'User Address', lat: '0', lng: '0' }}
@@ -51,11 +55,12 @@ const ContentFindMidpoint = () => {
             ) : (
                 <View style={styles.mainContainer}>
                     <InputMidpointKeyword
+                        labelStyle={themeStyles.genericText}
                         searchKeyword={searchKeyword}
                         setSearchKeyword={setSearchKeyword}
-                        ref={inputRef}  // Pass the ref to the input component
+                        ref={inputRef}  
                     />
-                    <PickerSimpleButtonsBase
+                    <PickerSimpleButtonsBase 
                         name="radius (meters)"
                         isScrollable={true}
                         defaultOption={5000}
@@ -73,16 +78,16 @@ const ContentFindMidpoint = () => {
                     />
                     <View style={{height: 100}}>
                         <SelectorAddressBase
-                            addresses={userAddresses.addresses}
+                            addresses={userAddresses}
                             onAddressSelect={setSelectedUserAddress}
                             currentAddressOption={true}
                             contextTitle="My Address"
                         />
                     </View>
-                    {friendDashboardData && Array.isArray(friendDashboardData[0]?.friend_addresses) && (
+                    {friendAddresses && (
                         <View style={{height: 100}}>
                             <SelectorAddressBase
-                                addresses={friendDashboardData[0].friend_addresses}
+                                addresses={friendAddresses}
                                 onAddressSelect={setSelectedFriendAddress}
                                 contextTitle="Friend's starting point"
                             />
@@ -90,26 +95,16 @@ const ContentFindMidpoint = () => {
                     )}
 
                     {searchKeyword && selectedUserAddress && selectedFriendAddress && (
-                    <ButtonBottomActionBase
-                        onPress={handleCalculate}
-                        preLabel=''
-                        label={`Find midpoints`}
-                        height={54}
-                        radius={16}
-                        fontMargin={3}
-                        labelFontSize={22}
-                        labelColor="white"
-                        labelContainerMarginHorizontal={4}
-                        showGradient={true}
-                        showShape={true}
-                        shapePosition="right"
-                        shapeSource={CompassCuteSvg}
-                        shapeWidth={100}
-                        shapeHeight={100}
-                        shapePositionValue={-14}
-                        shapePositionValueVertical={-10}
-                        showIcon={false}
-                    />
+                    
+                    <ButtonBaseSpecialSave
+                        label="CALCULATE "
+                        maxHeight={80}
+                        onPress={handleCalculate} 
+                        isDisabled={!selectedUserAddress || !selectedFriendAddress}
+                        fontFamily={'Poppins-Bold'}
+                        image={require("../assets/shapes/redheadcoffee.png")}
+                    /> 
+                     
                 )}
                 </View>
             )}
@@ -122,27 +117,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'transparent', 
+        paddingHorizontal: '1%',
     },
     mainContainer: {
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'space-between',
-    },
-    inputLabel: {
-        color: 'black',
-        fontFamily: 'Poppins-Bold',
-        fontSize: 16,
-        marginVertical: 10,
-    },
-    textInput: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 20,
-        fontFamily: 'Poppins-Regular',
-        color: 'black',
-        paddingHorizontal: 10,
-    },
+    },  
 });
 
 export default ContentFindMidpoint;

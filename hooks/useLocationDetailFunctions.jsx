@@ -66,18 +66,14 @@ const useLocationDetailFunctions = () => {
     const getSoonestAvailable = (allHours) => {
         const todayHours = getTodayHours(allHours);
         
-    
-        // Normalize spaces and remove invisible characters (zero-width spaces, non-breaking spaces, etc.)
         const sanitizedHours = todayHours
             .replace(/[\u200B\u2009\u200C\u200D\uFEFF]/g, ' ')  // Remove invisible characters
-            .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
-            .trim();  // Trim extra spaces at the beginning and end
-    
-        // Log sanitized string length and content for debugging
+            .replace(/\s+/g, ' ')  
+            .trim(); 
+
         console.log("Sanitized todayHours length:", sanitizedHours.length);
         console.log("Sanitized todayHours:", sanitizedHours);
     
-        // Updated regex pattern to handle "5:00 – 10:00 PM" and "Monday: 5:00 – 10:00 PM"
         const dayTimeRegex = /([A-Za-z]+:\s*)?(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?\s*–\s*(\d{1,2}:\d{2})\s*(AM|PM|am|pm)/;
     
         let match = dayTimeRegex.exec(sanitizedHours);
