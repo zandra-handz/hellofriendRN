@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, Animated } from 'react-native';
 
+import { useCurrentLocationManual, useGeolocationWatcher } from '../hooks/useCurrentLocationAndWatcher';
+
 import { useAuthUser } from '../context/AuthUserContext'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
@@ -11,16 +13,19 @@ import HomeButtonGenericAdd from '../components/HomeButtonGenericAdd';
 import HomeButtonMomentAdd from '../components/HomeButtonMomentAdd';
 import HomeButtonUpNext from '../components/HomeButtonUpNext';
 import HomeButtonSelectedFriend from '../components/HomeButtonSelectedFriend';
+import useCurrentLocation from '../hooks/useCurrentLocation';
 
 import { BlurView } from 'expo-blur'; 
 import HelloFriendFooter from '../components/HelloFriendFooter'; 
 
 const ScreenHome = ({ navigation }) => {
-  
+   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();  
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
   const { isLoading } = useUpcomingHelloes(); 
+  
+  const { data, isLoadingCurrentLocation, error } = useCurrentLocationManual();
 
   const showLastButton = true; 
   const screenHeight = Dimensions.get('window').height;
@@ -30,6 +35,15 @@ const ScreenHome = ({ navigation }) => {
   const buttonHeight = buttonContainerHeight / 6; // Divide remaining height by the number of buttons (5 buttons + footer)
   const upcomingDatesTray = buttonHeight * .9;
   const headerHeight = buttonHeight * 1.4;
+
+  const {currentLocationDetails, currentRegion }= useCurrentLocation();
+  useEffect(() => {
+    if (currentLocationDetails) {
+      console.log('data in home screen', currentLocationDetails);
+      
+    }
+  
+  }, [currentLocationDetails]);
 
   // Animated values for slide-in effect
   const [slideAnim] = useState(new Animated.Value(1));  // Value for animating the button container

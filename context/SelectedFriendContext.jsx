@@ -55,6 +55,7 @@ export const SelectedFriendProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log('useEffect in selectedfriend triggered by queryClient');
     if (selectedFriend && friendDashboardData) {
       const ids = getFaveLocationIds();
       setFavoriteLocationIds(ids || []);
@@ -66,6 +67,7 @@ export const SelectedFriendProvider = ({ children }) => {
 
   useEffect(() => {
     if (isError) {
+
       deselectFriend();
     }
   }, [isError]);
@@ -92,6 +94,7 @@ export const SelectedFriendProvider = ({ children }) => {
   
 
   const deselectFriend = () => {
+    console.log('friend deselected via deselectFriend()');
     setSelectedFriend(null);
     resetTheme();
     queryClient.resetQueries(['friendDashboardData']);
@@ -104,7 +107,11 @@ export const SelectedFriendProvider = ({ children }) => {
   
   };
 
+
+  //HMM WHAT IS THIS
   useEffect(() => {
+    
+    console.log('friend getting deselected when no authuserstate');
     deselectFriend();
   }, [authUserState]);
 

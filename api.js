@@ -148,7 +148,7 @@ axios.interceptors.response.use(
         }
 
         return Promise.reject(error);
-    }
+    } 
 );
 
 
@@ -320,16 +320,16 @@ export const addUserAddress = async (addressData) => {
 
 
   //not finished yet 12/13/2024
-  export const updateUserAddress = async (friendId, addressId, fieldUpdates) => {
+  export const updateUserAddress = async (addressId, fieldUpdates) => {
     
     try {  
-      const response = await axios.patch(`/friends/${friendId}/address/${addressId}/`, fieldUpdates); 
+      const response = await axios.patch(`/users/address/${addressId}/`, fieldUpdates); 
       
-      console.log('API PATCH CALL updateFriendAddress: ', addressId, fieldUpdates);
+      console.log('API PATCH CALL updateUserAddress: ', addressId, fieldUpdates);
         
       return response.data;
     } catch (error) {
-      console.error('Error adding friend address:', error);
+      console.error('Error adding user address:', error);
       throw error;
     }
   };

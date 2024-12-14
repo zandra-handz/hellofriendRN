@@ -1,20 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 import ResultsMidpointFinds from '../components/ResultsMidpointFinds';
-import ButtonBottomActionBase from '../components/ButtonBottomActionBase';
-import CompassCuteSvg from '../assets/svgs/compass-cute.svg'; 
-import SelectorAddressBase from '../components/SelectorAddressBase';
+
+ import { useSelectedFriend } from '../context/SelectedFriendContext';
+import AddressSelectorFriend from '../components/AddressSelectorFriend';
+import AddressSelectorUser from '../components/AddressSelectorUser';
+
 import PickerSimpleButtonsBase from '../components/PickerSimpleButtonsBase';
 import InputMidpointKeyword from '../components/InputMidpointKeyword';
-import  useStartingAddresses from '../hooks/useStartingAddresses';
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
-import SlideToAdd from '../components/SlideToAdd'; 
-import SlideToDelete from '../components/SlideToDelete'; 
-
-const ContentFindMidpoint = () => {  
-    const { userAddresses, friendAddresses, createUserAddress, createFriendAddress, removeUserAddress, removeFriendAddress } = useStartingAddresses();
+ 
+const ContentFindMidpoint = () => { 
+    const { selectedFriend } = useSelectedFriend(); 
     const { themeStyles } = useGlobalStyle();
     const [selectedUserAddress, setSelectedUserAddress] = useState(null);
     const [selectedFriendAddress, setSelectedFriendAddress] = useState(null);
@@ -31,6 +29,17 @@ const ContentFindMidpoint = () => {
             inputRef.current.focus();
         }
     }, []);
+
+    const handleUserAddressSelect = (address) => { 
+        console.log('user address selected');
+        setSelectedUserAddress(address); 
+    }; 
+
+    const handleFriendAddressSelect = (address) => {
+        console.log('friend address selected');
+        setSelectedFriendAddress(address);
+    
+       }
 
     const handleCalculate = () => {
         setTriggerFetch(true);
@@ -77,22 +86,25 @@ const ContentFindMidpoint = () => {
                         onValueChange={(itemValue) => setLength(itemValue)}
                     />
                     <View style={{height: 100}}>
-                        <SelectorAddressBase
-                            addresses={userAddresses}
-                            onAddressSelect={setSelectedUserAddress}
-                            currentAddressOption={true}
-                            contextTitle="My Address"
-                        />
-                    </View>
-                    {friendAddresses && (
-                        <View style={{height: 100}}>
-                            <SelectorAddressBase
-                                addresses={friendAddresses}
-                                onAddressSelect={setSelectedFriendAddress}
-                                contextTitle="Friend's starting point"
-                            />
-                        </View>
-                    )}
+                        <AddressSelectorUser
+                            setAddressInParent={handleUserAddressSelect}
+                            currentLocation={null} //feature not available at this time
+                            height={'auto'}
+                            titleBottomMargin={'2%'} 
+                            contextTitle={`My startpoint`}
+                        /> 
+                    </View> 
+
+                    <View style={{height: 100}}>
+                        <AddressSelectorFriend
+                            selectedFriendId={selectedFriend.id || null}
+                            setAddressInParent={handleFriendAddressSelect}
+                            currentLocation={null} //feature not available at this time
+                            height={'auto'}
+                            titleBottomMargin={'2%'} 
+                            contextTitle={`${selectedFriend.name}'s startpoint`}
+                        /> 
+                        </View> 
 
                     {searchKeyword && selectedUserAddress && selectedFriendAddress && (
                     

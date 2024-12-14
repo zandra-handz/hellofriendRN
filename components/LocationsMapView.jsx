@@ -13,6 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext'; 
+import { useCurrentLocationManual, useGeolocationWatcher } from '../hooks/useCurrentLocationAndWatcher';
 
 import CheckmarkOutlineSvg from '../assets/svgs/checkmark-outline.svg';
 
@@ -23,6 +24,7 @@ import SlideDownToClose from '../components/SlideDownToClose';
 //import ButtonGoToFindLocation from '../components/ButtonGoToFindLocation';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import useCurrentLocation from '../hooks/useCurrentLocation'; 
+
 import ExpandableUpCard from '../components/ExpandableUpCard';
 import DualLocationSearcher from '../components/DualLocationSearcher';
 import HorizontalScrollAnimationWrapper from '../components/HorizontalScrollAnimationWrapper';
@@ -31,6 +33,8 @@ import LocationDetailsBody from '../components/LocationDetailsBody';
 
 
 const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoordsDrilledOnce }) => {
+  
+  useGeolocationWatcher();
   const mapRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { showMessage } = useMessage();
@@ -50,6 +54,7 @@ const LocationsMapView = ({ sortedLocations, currentDayDrilledOnce, bermudaCoord
   
   const [ appOnlyLocationData, setAppOnlyLocationData ] = useState(null);
   
+
   const toggleCardWithSlider = () => { 
     setExpandStateFromParent(prev => !prev); 
    
