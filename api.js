@@ -257,6 +257,22 @@ export const addFriendAddress = async (friendId, addressData) => {
   };
 
 
+
+  export const updateFriendAddress = async (friendId, addressId, fieldUpdates) => {
+    
+    try {  
+      const response = await axios.patch(`/friends/${friendId}/address/${addressId}/`, fieldUpdates); 
+      
+      console.log('API PATCH CALL updateFriendAddress: ', addressId, fieldUpdates);
+        
+      return response.data;
+    } catch (error) {
+      console.error('Error adding friend address:', error);
+      throw error;
+    }
+  };
+
+
   export const deleteFriendAddress = async (friendId, addressId) => {
     try {
         const response = await axios.delete(`/friends/${friendId}/address/${addressId}/`);
@@ -298,6 +314,22 @@ export const addUserAddress = async (addressData) => {
       return response.data;
     } catch (error) {
       console.error('Error adding user address:', error);
+      throw error;
+    }
+  };
+
+
+  //not finished yet 12/13/2024
+  export const updateUserAddress = async (friendId, addressId, fieldUpdates) => {
+    
+    try {  
+      const response = await axios.patch(`/friends/${friendId}/address/${addressId}/`, fieldUpdates); 
+      
+      console.log('API PATCH CALL updateFriendAddress: ', addressId, fieldUpdates);
+        
+      return response.data;
+    } catch (error) {
+      console.error('Error adding friend address:', error);
       throw error;
     }
   };

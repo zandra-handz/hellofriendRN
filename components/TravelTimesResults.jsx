@@ -73,7 +73,7 @@ const TravelTimesResults = ({
         {travelTimesMutation.isLoading && <ActivityIndicator size="large" color="#0000ff" />}
         {travelTimeResultsView && !travelTimesMutation.isLoading ? renderComparisonResults() : null}
         {!travelTimeResultsView && !travelTimesMutation.isLoading && (
-          <Text style={styles.message}>hiiii</Text>
+          <Text style={styles.message}></Text>
         )}
       </View>
     );

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import * as Location from 'expo-location'; // Import from expo-location
 import Geocoder from 'react-native-geocoding';
-import { GOOGLE_API_KEY } from '@env';
-import DirectionsLink from '../components/DirectionsLink';
+import { GOOGLE_API_KEY } from '@env'; 
 import SelectAddressModal from '../components/SelectAddressModal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import useCurrentLocation from '../hooks/useCurrentLocation'; 
@@ -35,19 +33,22 @@ const SelectorAddressBase = ({ height, titleBottomMargin, addresses, currentLoca
           address: address.address,
           title: address.title,
           label: address.title,
+          isDefault: address.is_default,
           latitude: address.coordinates ? address.coordinates[0] : address.latitude,
           longitude: address.coordinates ? address.coordinates[1] : address.longitude,
           
         };
       });
+      const defaultAddress = options.find(address => address.isDefault === true);
+      
       setLocalAddressOptions(options);
       if (currentLocation) {
         setSelectedAddress(currentLocation);
 
       } else { 
-      setSelectedAddress(options[0]);
+      setSelectedAddress(defaultAddress || options[0]);
       }
-      onAddressSelect(options[0]);  
+      onAddressSelect(defaultAddress || options[0]);  
     }
   }, [addresses, currentLocation]);
 

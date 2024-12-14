@@ -15,7 +15,7 @@
 //change height percentage of container inside the main container to adjust screen 
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';  
+import { View, TouchableOpacity, Text, StyleSheet, Animated } from 'react-native';  
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext'; 
@@ -31,7 +31,7 @@ import SlideToDelete from '../components/SlideToDelete';
 
 const CalculateTravelTimesBody = ({location, currentLocation}) => { 
     const { authUserState } = useAuthUser();
-    const { userAddresses, friendAddresses, createUserAddress, createFriendAddress, removeUserAddress, removeFriendAddress } = useStartingAddresses();
+    const { userAddresses, friendAddresses, updateFriendDefaultAddress, createUserAddress, createFriendAddress, removeUserAddress, removeFriendAddress } = useStartingAddresses();
     const { themeStyles } = useGlobalStyle();
     const { selectedFriend } = useSelectedFriend();  
     const [message, setMessage] = useState('');
@@ -84,6 +84,14 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
         }
       setIsExistingFriendAddress(!!existingFriendAddress);
     };
+
+
+    useEffect(() => {
+        if (selectedFriendAddress) {
+            console.log(`selectedFrienAddress changed: `, selectedFriendAddress);
+        }
+
+    }, [selectedFriendAddress]);
     
     const handleAddUserAddress = (title, address) => {
         console.log(title, address);
@@ -99,6 +107,13 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
             console.log(error);
         }
     };
+
+    const handleUpdateUserDefaultAddress = () => {
+        const newData = {
+            is_default: true,  //backend will turn the previous one to false
+          };
+        updateFriendDefaultAddress(selectedFriend.id, selectedFriendAddress.id, newData);
+    }
 
     const handleAddFriendAddress = (friendId, title, address) => {
         createFriendAddress(friendId, title, address);
@@ -184,8 +199,12 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
                             contextTitle={`${selectedFriend.name}'s startpoint`}
                         /> 
                     </View>
+
+
                          
                 {selectedFriendAddress && !isExistingFriendAddress && (
+                
+                
                 <Animated.View style={styles.sliderContainer}>
                       <SlideToAdd
                         onPress={() => handleAddFriendAddress(selectedFriend.id, selectedFriendAddress.title, selectedFriendAddress.address)}
@@ -198,6 +217,12 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
                 
 
                 {selectedFriendAddress && selectedFriendAddress.id && isExistingFriendAddress && (
+                <>
+                <TouchableOpacity onPress={() => handleUpdateUserDefaultAddress()} style={{width: 50, height: 20, backgroundColor: 'blue'}}>
+
+                </TouchableOpacity>
+                
+                
                 <Animated.View style={[styles.sliderContainer]}>
                       <SlideToDelete
                         onPress={() => handleDeleteFriendAddress(selectedFriend.id, selectedFriendAddress.id)}
@@ -206,7 +231,10 @@ const CalculateTravelTimesBody = ({location, currentLocation}) => {
                         disabled={false} 
                       />
                 </Animated.View> 
+                </>
                 )}
+
+                
                 
                 </View> 
             </View>

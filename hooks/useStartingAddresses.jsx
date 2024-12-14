@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useAuthUser } from '../context/AuthUserContext';
-import { addUserAddress, deleteUserAddress, fetchUserAddresses, addFriendAddress, fetchFriendAddresses, deleteFriendAddress } from '../api'; 
+import { addUserAddress, deleteUserAddress, fetchUserAddresses, addFriendAddress, updateFriendAddress, fetchFriendAddresses, deleteFriendAddress } from '../api'; 
 import { useMessage } from '../context/MessageContext';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';  
@@ -194,7 +194,35 @@ const useStartingAddresses = () => {
 
       });
 
-  
+      const updateFriendAddressMutation = useMutation({
+        mutationFn: ({ friend, id, fieldUpdates }) => 
+          updateFriendAddress(friend, id, fieldUpdates),
+        onSuccess: () => {
+          showMessage(true, null, `Address updated for ${selectedFriend.name}!`);
+          //queryClient.invalidateQueries(['friendAddresses', selectedFriend?.id]);
+      
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
+      
+          timeoutRef.current = setTimeout(() => {
+            updateFriendAddressMutation.reset();
+          }, 2000);
+        },
+        onError: (error) => {
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
+      
+          showMessage(true, null, 'Oops! Error adding address');
+          console.error('Error adding address:', error);
+      
+          timeoutRef.current = setTimeout(() => {
+            updateFriendAddressMutation.reset();
+          }, 2000);
+        },
+      });
+      
  
 
       const createFriendAddress = (friendId, title, address) => {
@@ -231,6 +259,22 @@ const useStartingAddresses = () => {
       };
 
 
+      const updateFriendDefaultAddress = async (friendId, addressId, newData) => {
+        console.log(`updateFriendAddress: `, friendId, addressId, newData);
+        try {
+          await updateFriendAddressMutation.mutateAsync({
+            friend: friendId,
+            user: authUserState.user.id,
+            id: addressId,
+            fieldUpdates: newData,
+          });
+        } catch (error) {
+          console.error('Error adding address to friend addresses: ', error);
+        }
+      };
+      
+
+
     
  
   
@@ -242,6 +286,7 @@ const useStartingAddresses = () => {
         removeUserAddress,
         friendAddresses,   
         createFriendAddress,
+        updateFriendDefaultAddress,
         removeFriendAddress,
 };
 
