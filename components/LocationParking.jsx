@@ -7,29 +7,18 @@
 //  }
 
 import React, { useLayoutEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import AlertList from "../components/AlertList";
 import { useFriendList } from "../context/FriendListContext";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
-import NotesOutlineSvg from "../assets/svgs/notes-outline.svg";
-import NotesSolidSvg from "../assets/svgs/notes-solid.svg";
+import NotesOutlineSvg from "../assets/svgs/notes-outline.svg"; 
+import ParkingCircleOutlineSvg from "../assets/svgs/parking-circle-outline.svg";
+import ParkingCircleSolidSvg from "../assets/svgs/parking-circle-solid.svg";
 import { useNavigation } from "@react-navigation/native";
 import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 
-const LocationNotes = ({
-  location,
-  favorite = false,
-  size = 11,
-  iconSize = 16,
-  family = "Poppins-Bold",
-  color = "black",
-  style,
+const LocationParking = ({
+  location
 }) => {
   const { themeAheadOfLoading } = useFriendList();
   const [isModalVisible, setModalVisible] = useState(false);
@@ -64,7 +53,7 @@ const LocationNotes = ({
   };
 
   useLayoutEffect(() => {
-    if (location && location.personal_experience_info) {
+    if (location && location.parking_score) {
       setHasNotes(true);
     } else {
       setHasNotes(false);
@@ -77,7 +66,7 @@ const LocationNotes = ({
         <View style={styles.container}>
           <View style={styles.iconContainer}>
             {!hasNotes && (
-              <NotesOutlineSvg
+              <ParkingCircleOutlineSvg
                 width={34}
                 height={34}
                 color={themeStyles.genericText.color}
@@ -85,7 +74,7 @@ const LocationNotes = ({
               />
             )}
             {hasNotes && (
-              <NotesSolidSvg
+              <ParkingCircleSolidSvg
                 width={34}
                 height={34}
                 color={themeAheadOfLoading.lightColor}
@@ -125,9 +114,9 @@ const LocationNotes = ({
                 <View
                   style={{
                     flexDirection: "row",
-                    justifyContent: "space-between", 
-                    width: "100%", 
-                    height: 'auto',
+                    justifyContent: "space-between",
+                    width: "100%",
+                    height: "auto",
                   }}
                 >
                   <Text style={themeStyles.subHeaderText}>NOTES</Text>
@@ -140,7 +129,7 @@ const LocationNotes = ({
                 </View>
                 <ScrollView
                   style={{ flex: 1, width: "100%", padding: "6%" }}
-                  contentContainerStyle={{ paddingVertical: 0 }}
+                  contentContainerStyle={{ marginVertical: 0 }}
                   showsVerticalScrollIndicator={false}
                 >
                   <Text style={[styles.notesText, themeStyles.genericText]}>
@@ -162,9 +151,9 @@ const LocationNotes = ({
                 <View
                   style={{
                     flexDirection: "row",
-                    justifyContent: "space-between", 
-                    width: "100%", 
-                    height: 'auto',
+                    justifyContent: "space-between",
+                    width: "100%",
+                    height: "auto",
                   }}
                 >
                   <Text style={themeStyles.subHeaderText}>PARKING</Text>
@@ -232,8 +221,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)", // Semi-transparent background
   },
   textContainer: {
-    padding: 0,
-    textAlign: "top",
+    padding: 20,
   },
   containerTitle: {
     fontSize: 16,
@@ -248,4 +236,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LocationNotes;
+export default LocationParking;

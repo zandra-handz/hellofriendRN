@@ -1,33 +1,69 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Animated, PanResponder, StyleSheet, Dimensions } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import RightArrowNoStemSolidSvg from '../assets/svgs/right-arrow-no-stem-solid.svg';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  Animated,
+  PanResponder,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import { useGlobalStyle } from "../context/GlobalStyleContext";
+import RightArrowNoStemSolidSvg from "../assets/svgs/right-arrow-no-stem-solid.svg";
+import HelperTag from '../components/HelperTag';
 
-
-const DOUBLE_TAP_DELAY = 300;  
+const DOUBLE_TAP_DELAY = 300;
 
 const SlideUpToOpen = ({
-  onPress, 
-  onDoubleTap=() => {},
+  onPress,
+  triggerReappear,
+  onDoubleTap = () => {},
   targetIcon: TargetIcon,
-  height = 200,  
+  height = 200,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [manualOpacity, setManualOpacity] = useState(1);
   const position = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
   const isDraggingRef = useRef(false);
 
-  const screenHeight = Dimensions.get('window').height; // Full screen height
-  const { manualGradientColors, themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
-const [ helpersVisible, setHelpersVisible ] = useState(false);
-const lastTapRef = useRef(0); 
+  const screenHeight = Dimensions.get("window").height; // Full screen height
+  const {
+    manualGradientColors,
+    themeStyles,
+    gradientColors,
+    gradientColorsHome,
+  } = useGlobalStyle();
+  const [helpersVisible, setHelpersVisible] = useState(false);
+  const lastTapRef = useRef(0);
 
-
-const rotation = position.interpolate({
-    inputRange: [-screenHeight / 20, 0], 
-    outputRange: ['-90deg', '0deg'],
-    extrapolate: 'clamp',
+  const rotation = position.interpolate({
+    inputRange: [-screenHeight / 20, 0],
+    outputRange: ["-90deg", "0deg"],
+    extrapolate: "clamp",
   });
+
+  useEffect(() => {
+    if (triggerReappear) {
+      Animated.timing(position, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+
+      setIsPressed(false);
+      setIsDragging(false);
+      isDraggingRef.current = false;
+
+      setManualOpacity(1);
+    }
+  }, [triggerReappear]);
 
   const handlePress = () => {
     if (onPress) onPress();
@@ -40,7 +76,7 @@ const rotation = position.interpolate({
   const handleTap = () => {
     const now = Date.now();
     if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
-      console.log('double tapped!');
+      //console.log("double tapped!");
       handleDoubleTap();
     } else {
       lastTapRef.current = now;
@@ -49,8 +85,7 @@ const rotation = position.interpolate({
 
   const onInitialPress = () => {
     setHelpersVisible(true);
-    console.log('slide up button pressed');
-
+    //console.log("slide up button pressed");
   };
 
   const panResponder = useRef(
@@ -68,22 +103,34 @@ const rotation = position.interpolate({
         if (gestureState.dy <= 0 && Math.abs(gestureState.dy) <= screenHeight) {
           position.setValue(gestureState.dy);
 
-          if (Math.abs(gestureState.dy) >= screenHeight * 0.09 ) { //&& !isDraggingRef.current
+          if (Math.abs(gestureState.dy) >= screenHeight * 0.09) {
+            //&& !isDraggingRef.current
             setHelpersVisible(false);
-            
-          } 
+          }
 
-          if (Math.abs(gestureState.dy) >= screenHeight * 0.08 ) { //&& !isDraggingRef.current
+          if (Math.abs(gestureState.dy) >= screenHeight * 0.18) {
+            //console.log("Button is at the top of the screen");
+            // Set opacity to zero
+            setManualOpacity(0);
+          }
+
+          if (Math.abs(gestureState.dy) < screenHeight * 0.18) {
+           // console.log("Button is at the top of the screen");
+            // Set opacity to zero
+            setManualOpacity(1);
+          }
+
+          if (Math.abs(gestureState.dy) >= screenHeight * 0.08) {
+            //&& !isDraggingRef.current
             isDraggingRef.current = true;
-            setIsDragging(true); 
-            
+            setIsDragging(true);
           }
         }
       },
       onPanResponderRelease: (_, gestureState) => {
-        if (Math.abs(gestureState.dy) >= screenHeight * 0.1) {
-          console.log('press in slider up');
-          
+        if (Math.abs(gestureState.dy) >= screenHeight * 0.07) {
+          //console.log("press in slider up");
+
           handlePress();
           setIsPressed(true);
         }
@@ -95,7 +142,7 @@ const rotation = position.interpolate({
           isDraggingRef.current = false;
           setIsDragging(false);
           Animated.spring(position, {
-            toValue: 0,  // Move back to the original position
+            toValue: 0, // Move back to the original position
             useNativeDriver: true,
             speed: 15,
             bounciness: 8,
@@ -105,16 +152,17 @@ const rotation = position.interpolate({
     })
   ).current;
 
-  // UseEffect to handle animation when the slider is pressed
   useEffect(() => {
     if (isPressed) {
       // If pressed, immediately move to the top
-      Animated.spring(position, {
-        toValue: -screenHeight * .88,  // Move to the top of the screen
+      Animated.timing(position, {
+        toValue: -screenHeight / 1.22, // Move to the exact top
+        duration: 200, // Fast movement
         useNativeDriver: true,
-        speed: 15,
-        bounciness: 8,
-      }).start();
+      }).start(() => {
+        // After the animation completes, set opacity to 0
+        setManualOpacity(0);
+      });
     }
   }, [isPressed]);
 
@@ -126,7 +174,7 @@ const rotation = position.interpolate({
           height,
           backgroundColor: isDragging
             ? gradientColors.lightColor
-            : 'transparent',
+            : "transparent",
         },
       ]}
     >
@@ -135,47 +183,61 @@ const rotation = position.interpolate({
         style={[
           styles.slider,
           {
+            opacity: manualOpacity,
             backgroundColor: isDragging
-              ? '#000002'
+              ? "#000002"
               : themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-            transform: [
-              { translateY: position },
-              { rotate: rotation },
-            ],
+            transform: [{ translateY: position }, { rotate: rotation }],
           },
         ]}
       >
         <View
           style={{
             backgroundColor: manualGradientColors.homeDarkColor,
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 73,
-            height: 73,
-            borderRadius: '50%',
+            alignItems: "center",
+            justifyContent: "center",
+            width: 63,
+            height: 63,
+            borderRadius: "50%",
           }}
         >
-
           <RightArrowNoStemSolidSvg
-            height={40}
-            width={40}
+            height={36}
+            width={36}
             color={manualGradientColors.lightColor}
           />
         </View>
       </Animated.View>
-      {helpersVisible && ( 
-            
-            <View style={{position: 'absolute', height: 40, width: 40, borderRadius: 20, top: 70, backgroundColor: 'red'}}>
-  
-  
-            </View>
-            )}
+      {helpersVisible && (
+        <>
+
+          
+
+        <View
+          style={{
+            position: "absolute", 
+            width: 'auto',
+            minWidth: 50,  
+            flex: 1,
+            height: 'auto',
+            top: 60,  
+          }}
+        >
+        <HelperTag
+          helperText='details'
+          textColor={themeStyles.genericText.color}
+          backgroundColor={themeStyles.genericTextBackgroundShadeTwo.backgroundColor}
+          />
+        </View>
+        </>
+      )}
       {TargetIcon && (
         <View style={styles.iconContainer}>
-          <TargetIcon
+          <RightArrowNoStemSolidSvg
             height={30}
             width={30}
-            color={isDragging ? gradientColorsHome.lightColor : 'transparent'}
+            color={(isDragging || helpersVisible) ? gradientColorsHome.lightColor : "transparent"}
+            style={{ transform: [{ rotate: "-90deg" }] }} // Apply the rotation here
           />
         </View>
       )}
@@ -185,29 +247,29 @@ const rotation = position.interpolate({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    width: "100%",
+    justifyContent: "flex-end",
+    alignItems: "center",
     borderRadius: 50,
     zIndex: 5000,
     elevation: 5000,
   },
   slider: {
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     borderRadius: 50,
     borderWidth: 0,
-    borderColor: 'transparent',
+    borderColor: "transparent",
     zIndex: 5000,
     elevation: 5000,
   },
   iconContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 5000,
     elevation: 5000,
   },

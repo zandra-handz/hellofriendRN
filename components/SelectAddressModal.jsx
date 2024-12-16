@@ -1,16 +1,13 @@
 import React from 'react';
-import { Text, StyleSheet, View } from 'react-native';
-import AlertList from './AlertList';
-import PickerSimpleAddressBase from './PickerSimpleAddressBase';
-import SearchGoogleAddressFloating from '../components/SearchGoogleAddressFloating';
+import { View, Text, StyleSheet } from 'react-native';
+import AlertList from './AlertList'; 
+import LocationOutlineSvg from '../assets/svgs/location-outline.svg';
 
 
 const SelectAddressModal = ({ 
   isEditingAddress, 
   setIsEditingAddress, 
-  localAddressOptions, 
-  selectedAddress, 
-  onAddressSelect, 
+  currentlySelected, 
   content,
   setShowAddressOptions 
 }) => {
@@ -20,14 +17,17 @@ const SelectAddressModal = ({
       height={700}
       isModalVisible={isEditingAddress} 
       useSpinner={false}
+      questionText={'Select starting address'}
+      includeSearch={false}
+      includeBottomButtons={false}
+      headerContent={<LocationOutlineSvg height={42} width={42} color={'white'}/>}
       toggleModal={() => setIsEditingAddress(false)}
-      headerContent={<Text style={styles.headerText}>Select address</Text>}
-      content={
-        <>
+     content={
+        <View style={{flexDirection: 'column', position: 'absolute',width: '100%', backgroundColor: 'red', height: '100%', justifyContent: 'flex-start'}}>
         {content}
-        </>
+        </View>
       }
-      onCancel={() => setShowAddressOptions(false)}
+      onCancel={() => setIsEditingAddress(false)}
       confirmText="Reset All"
       cancelText="Back"
     />

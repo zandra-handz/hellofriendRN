@@ -110,11 +110,11 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
             value={searchQuery} 
             onChangeText={handleSearch}
           />
-          <ListCheckSvg width={26} height={26} color={manualGradientColors.lightColor} style={styles.icon} />
+          <ListCheckSvg width={28} height={28} color={manualGradientColors.lightColor} style={styles.icon} />
         </View>
       </TouchableWithoutFeedback>
 
-      {(searchQuery.length > 0 || showFullList) && (  
+      {(searchQuery.length > 0 && filteredData.length > 0 || (filteredData.length > 0 && showFullList)) && (  
  
           <View style={[styles.dropdownContainer, themeStyles.genericTextBackground]}>
             <FlatList
@@ -139,19 +139,21 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
 
 const styles = StyleSheet.create({
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: '2%',
+    flexDirection: 'row-reverse',
+    alignItems: 'center', 
     justifyContent: 'center',
     width: '100%',
     borderRadius: 30,
     height: 48,
+    backgroundColor: "transparent",
+    paddingLeft: "4%", 
+    paddingVertical: '3%',
   },
   searchInput: {
     flex: 1,
     fontSize: 15,
     textAlign: 'left',
-    paddingHorizontal: '2%',
+    paddingRight: 2,
     height: 48,
   },
   icon: {

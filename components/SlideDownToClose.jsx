@@ -5,6 +5,7 @@ import RightArrowNoStemSolidSvg from '../assets/svgs/right-arrow-no-stem-solid.s
 
 const SlideDownToClose = ({
   onPress, 
+  triggerReappear,
   targetIcon: TargetIcon,
   height = 200,   
 }) => {
@@ -18,7 +19,7 @@ const SlideDownToClose = ({
 
   const rotation = position.interpolate({
     inputRange: [0, screenHeight / 20], // Use screenHeight here
-    outputRange: ['0deg', '90deg'],
+    outputRange: ['-90deg', '90deg'],
     extrapolate: 'clamp',
   });
 
@@ -108,14 +109,14 @@ const SlideDownToClose = ({
             backgroundColor: manualGradientColors.homeDarkColor,
             alignItems: 'center',
             justifyContent: 'center',
-            width: 73,
-            height: 73,
-            borderRadius: 50,
+            width: 63,
+            height: 63,
+            borderRadius: '50%',
           }}
         >
           <RightArrowNoStemSolidSvg
-            height={40}
-            width={40}
+            height={36}
+            width={36}
             color={manualGradientColors.lightColor}
           />
         </View>
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    borderRadius: 30,
+    borderRadius: 50,
     zIndex: 5000,
     elevation: 5000,
   },
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    borderRadius: 30,
+    borderRadius: 50,
     borderWidth: 0,
     borderColor: 'transparent',
     zIndex: 5000,
