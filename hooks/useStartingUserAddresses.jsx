@@ -68,10 +68,20 @@ useEffect(() => {
 
         
         if (currentLocationDetails) {
-            setDefaultUserAddress(currentLocationDetails);
-        } else {
-            setDefaultUserAddress(menuItems.find(address => address.isDefault === true));
-        };
+          setDefaultUserAddress(currentLocationDetails);
+      } else {
+          const defaultAddress = menuItems.find(address => address.isDefault === true);
+          
+          if (defaultAddress) {
+              setDefaultUserAddress(defaultAddress);
+          } else if (menuItems.length > 0) {
+              // If no default address but there are menu items, set the first one
+              setDefaultUserAddress(menuItems[0]);
+          } else { 
+              // If no addresses exist, set to "no address"
+              setDefaultUserAddress(null); // or "no address" if you prefer a string
+          }
+      }
 
     }
 

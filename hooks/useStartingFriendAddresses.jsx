@@ -50,7 +50,11 @@ const useStartingFriendAddresses = () => {
                 };
             });
 
-            setDefaultAddress(menuItems.find(address => address.isDefault === true));
+            setDefaultAddress(
+              menuItems.find(address => address.isDefault === true) 
+              || (menuItems.length > 0 ? menuItems[0] : null)
+          );
+          
             setAddressMenu(menuItems);
         }
 

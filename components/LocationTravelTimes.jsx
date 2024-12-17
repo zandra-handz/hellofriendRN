@@ -6,7 +6,7 @@
  //   console.log('Location added to friend\'s favorites.');
 //  }
 
-import React, { useLayoutEffect, useState, useRef } from 'react';
+import React, { useLayoutEffect, useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, KeyboardAvoidingView, StyleSheet  } from 'react-native';
 import AlertList from '../components/AlertList'; 
 import { useFriendList } from '../context/FriendListContext';
@@ -17,14 +17,19 @@ import DistanceZigZagSvg from '../assets/svgs/distance-zigzag.svg';
 import ClockOutlineSvg from '../assets/svgs/clock-outline.svg';
 import { useNavigation } from '@react-navigation/native'; 
 import useCurrentLocation from '../hooks/useCurrentLocation'; 
-
-
+import useStartingUserAddresses from '../hooks/useStartingUserAddresses';
+import useStartingFriendAddresses from '../hooks/useStartingFriendAddresses';
+import useTravelTimes from '../hooks/useTravelTimes';
 const LocationTravelTimes = ({ location, favorite=false,  size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { themeAheadOfLoading } = useFriendList();
     const [ isModalVisible, setModalVisible ] = useState(false);
     const { themeStyles } = useGlobalStyle();
     const [ hasNotes, setHasNotes ] = useState(false);
     const { currentLocationDetails  } = useCurrentLocation();
+    const { checkCache } = useTravelTimes();
+    const { defaultUserAddress } = useStartingUserAddresses;
+    const { defaultAddress } = useStartingFriendAddresses;
+
  
  
 
@@ -47,7 +52,15 @@ const LocationTravelTimes = ({ location, favorite=false,  size = 11, iconSize = 
   
 
  
- 
+  useEffect(() => {
+    console.log('useEffect for travel times cache check in LocationTT button');
+    console.log(defaultAddress);
+    if (location && defaultUserAddress && defaultAddress) {
+        checkCache(defaultUserAddress, defaultAddress, location);
+
+    };
+
+  }, [location, defaultUserAddress, defaultAddress]);
  
 
     const handlePress = () => {

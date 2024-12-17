@@ -58,16 +58,16 @@ const useTravelTimes = () => {
         const cachedData = queryClient.getQueryData(['travelTimes', locationData]);
         if (cachedData) {
             console.log('Using cached travel times:', cachedData);
-            setTravelTimeResults(data);
+            setTravelTimeResults(cachedData);
             setTravelTimeResultsView(true);
             setUserTravelTime({
-              time: data.Me ? data.Me.duration : 'N/A',
-              miles: data.Me ? data.Me.distance : 'N/A',
+              time: cachedData.Me ? cachedData.Me.duration : 'N/A',
+              miles: cachedData.Me ? cachedData.Me.distance : 'N/A',
             });
 
             setFriendTravelTime({
-              time: data.friend ? data.friend.duration : 'N/A',
-              miles: data.friend ? data.friend.distance : 'N/A',
+              time: cachedData.friend ? cachedData.friend.duration : 'N/A',
+              miles: cachedData.friend ? cachedData.friend.distance : 'N/A',
             });
 
         } else { 
@@ -75,9 +75,33 @@ const useTravelTimes = () => {
         }
     };
 
+    const checkCache = ({userAddress, friendAddress, destinationLocation}) => {
+
+        const locationData = {
+            address_a_address: userAddress.address,
+            address_a_lat: parseFloat(userAddress.lat),
+            address_a_long: parseFloat(userAddress.lng),
+            address_b_address: friendAddress.address,
+            address_b_lat: parseFloat(friendAddress.lat),
+            address_b_long: parseFloat(friendAddress.lng),
+            destination_address: destinationLocation.address,
+            destination_lat: parseFloat(destinationLocation.latitude),
+            destination_long: parseFloat(destinationLocation.longitude),
+            perform_search: false,
+        };
+        const cachedData = queryClient.getQueryData(['travelTimes', locationData]);
+        if (cachedData) {
+            console.log('Using cached travel times:', cachedData);
+            updateTravelTimeData(cachedData);
+            return true; // Cache found
+        }
+        return false; // No cache found
+    };
+
  
 
     return {
+        checkCache,
         fetchTravelTimes,
         travelTimeResults, //: travelTimesMutation.data,
         travelTimeResultsView,

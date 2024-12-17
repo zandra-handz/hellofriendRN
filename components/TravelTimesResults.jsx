@@ -1,4 +1,4 @@
- import React, {  useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import  useTravelTimes from '../hooks/useTravelTimes';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -26,7 +26,7 @@ const TravelTimesResults = ({
               friendAddress, 
               destinationLocation 
           });
-            console.log(results); 
+            //console.log(results); 
             console.log("Travel comparisons requested successfully");
           } catch (error) {
             console.error("Error getting travel comparisons:", error);
@@ -60,9 +60,17 @@ const TravelTimesResults = ({
       return ( 
         <View style={styles.container}>
 
-          
+          {userTravelTime && (
+            <>
           {ResultsCard('Me', userTravelTime)};
+            </>
+          )}
+
+          {friendTravelTime && (
+            <>
           {ResultsCard(friendName, friendTravelTime)};
+          </>
+        )}
           
           </View> 
       );
