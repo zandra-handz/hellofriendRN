@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Keyboard } from 'react-native';
 import AlertList from '../components/AlertList'; 
 import { FlashList } from '@shopify/flash-list';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -8,11 +8,10 @@ import ProfileTwoUsersSvg from '../assets/svgs/profile-two-users.svg';
 import LoadingPage from '../components/LoadingPage'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import ButtonSelectFriend from '../components/ButtonSelectFriend';
-import { useImageFunctions } from '../hooks/useImageFunctions';
 
 import { Dimensions } from 'react-native';
 
-const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, iconSize=26, width = '60%' }) => {  
+const FriendSelectModalVersionButtonOnly = ({ addToPress, addToOpenModal, includeLabel=false, iconSize=26, width = '60%' }) => {  
   
   const { themeStyles } = useGlobalStyle();
   const globalStyles = useGlobalStyle();  
@@ -41,9 +40,22 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, ic
 // but android is being a butt about opening the keyboard
   const toggleModal = () => {
     if (addToPress) {
-      addToPress(); // Call it without any arguments if not needed
+      addToPress(); // Cal
+      // l it without any arguments if not needed
     }
-    setIsFriendMenuModalVisible(!isFriendMenuModalVisible);
+
+    setIsFriendMenuModalVisible(false);
+
+  };
+
+  const openModal = () => {
+    if (addToOpenModal) {
+      console.log('running add to open modal');
+      addToOpenModal();
+    }
+ 
+
+    setIsFriendMenuModalVisible(true);
   };
 
   const handleSelectFriend = (itemId) => { 
@@ -52,9 +64,9 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, ic
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
     getThemeAheadOfLoading(selectedFriend); 
-    if (addToPress && selectedFriend) {
-      addToPress(); // Call it without any arguments if not needed
-    }
+    //if (addToPress && selectedFriend) {
+    //  addToPress(); // Call it without any arguments if not needed
+   // }
     //setForceUpdate(prevState => !prevState);  
     toggleModal(); 
   
@@ -103,7 +115,7 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, includeLabel=false, ic
         </View>
         <View style={[styles.selectorButtonContainer, {paddingHorizontal: '2%'}]}>
           <TouchableOpacity
-            onPress={toggleModal}
+            onPress={openModal}
             accessible={true}
             accessibilityRole='button'
             accessibilityLabel='Friend selector button'

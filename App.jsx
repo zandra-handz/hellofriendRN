@@ -281,7 +281,7 @@ export const Layout = () => {
                 component={ScreenCalculateTravelTimes}
                 options={{
                   headerShown: true,
-                  header: () => <HeaderBase headerTitle='Compare driving times' />,
+                  header: () => <HeaderBase headerTitle='Compare driving times' icon='distanceZigZag' />,
                 }}
               />
 

@@ -6,6 +6,7 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 import LizardSvg from '../assets/svgs/lizard.svg';
 import ClockOutlineSvg from '../assets/svgs/clock-outline.svg';
+import DistanceZigZagSvg from "../assets/svgs/distance-zigzag.svg";
 
 import EditPencilOutlineSvg from '../assets/svgs/edit-pencil-outline.svg';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
@@ -38,6 +39,7 @@ const HeaderBase = ({
       heartbeat: HeartbeatLifeLineArrowSvg, 
       edit: EditPencilOutlineSvg,
       clock: ClockOutlineSvg,
+      distanceZigZag: DistanceZigZagSvg,
   };
  
   const IconComponent = iconMap[icon] || null;

@@ -9,6 +9,8 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import  useStartingUserAddresses from '../hooks/useStartingUserAddresses';
 
+import LocationCheckSvg from "../assets/svgs/location-check.svg";
+import LocationPlusSvg from "../assets/svgs/location-plus.svg";
 
 import DualLocationSearcher from '../components/DualLocationSearcher';
 
@@ -21,7 +23,7 @@ import SlideToDelete from '../components/SlideToDelete';
 Geocoder.init(GOOGLE_API_KEY);
 
 const AddressSelectorUser = ({ setAddressInParent, height, titleBottomMargin, currentLocation, currentAddressOption, contextTitle }) => {
-    const { userAddressMenu, defaultUserAddress, updateUserDefaultAddress, createUserAddress,  removeUserAddress } = useStartingUserAddresses();
+    const { usingCurrent, userAddressMenu, defaultUserAddress, updateUserDefaultAddress, createUserAddress,  removeUserAddress } = useStartingUserAddresses();
     
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -31,11 +33,11 @@ const AddressSelectorUser = ({ setAddressInParent, height, titleBottomMargin, cu
     
 
   useEffect(() => {
-    if (defaultUserAddress && userAddressMenu && userAddressMenu.length > 0) {
+    if (defaultUserAddress) {
   
-      handleCheckIfExistingAndSelect(defaultUserAddress || userAddressMenu[0]);  
+      handleCheckIfExistingAndSelect(defaultUserAddress);  
     }
-  }, [defaultUserAddress, userAddressMenu]);
+  }, [defaultUserAddress]);
 
   const handleCheckIfExistingAndSelect = (address) => {
     setIsExistingAddress(false); //to clear
@@ -102,6 +104,47 @@ const handleDeleteUserAddress = (addressId) => {
         </View>
 
         <View style={[styles.displayContainer, themeStyles.genericTextBackgroundShadeTwo, {borderColor: themeStyles.genericText.color}]}>
+        {selectedAddress &&
+            defaultUserAddress && !usingCurrent && 
+            selectedAddress !== defaultUserAddress && (
+
+              <View style={styles.defaultLocationIconContainer}>
+              <LocationPlusSvg height={24} width={24} color={themeStyles.genericText.color} />
+
+              <TouchableOpacity
+               onPress={() => handleUpdateUserDefaultAddress(selectedAddress.id)} 
+               >
+                <Text
+                  style={[themeStyles.genericText, styles.defaultButtonText, {width: 40, alignItems: 'center', textAlign: 'center', flexWrap: 'wrap'}]}
+                >
+                  new default
+                </Text>
+              </TouchableOpacity>
+            </View>
+            )}
+
+          {selectedAddress &&
+            defaultUserAddress && !usingCurrent &&
+            selectedAddress === defaultUserAddress && (
+              <View style={styles.defaultLocationIconContainer}>
+                <LocationCheckSvg height={24} width={24} color={"orange"} />
+                <Text style={[themeStyles.genericText, styles.defaultButtonText, {color: 'orange'}]}>
+                  default
+                </Text>
+              </View>
+            )}
+
+            {selectedAddress &&
+            defaultUserAddress && usingCurrent && (
+              <View style={styles.defaultLocationIconContainer}>
+                <LocationCheckSvg height={24} width={24} color={"orange"} />
+                <Text style={[themeStyles.genericText, styles.defaultButtonText, {color: 'orange'}]}>
+                  current
+                </Text>
+              </View>
+            )}
+           
+           
            {selectedAddress && selectedAddress.address && (
               <Text style={[themeStyles.genericText, styles.displayText]}>{selectedAddress?.title}</Text>
             )}
@@ -132,7 +175,7 @@ const handleDeleteUserAddress = (addressId) => {
         {selectedAddress && !isExistingAddress && (
                 
                 
-                <Animated.View style={styles.sliderContainer}>
+                <Animated.View style={[styles.sliderContainer, {marginTop: '2%'}]}>
                       <SlideToAdd
                         onPress={() => handleAddUserAddress(selectedAddress.title, selectedAddress.address)}
                         sliderText={`Save`} 
@@ -144,21 +187,15 @@ const handleDeleteUserAddress = (addressId) => {
                 
 
                 {selectedAddress && selectedAddress.id && isExistingAddress && (
-                <>
-                <TouchableOpacity 
-                    onPress={() => handleUpdateUserDefaultAddress(selectedAddress.id)} 
-                    style={{
-                        width: 50, 
-                        height: 20, 
-                        backgroundColor: 'blue'}}> 
-                </TouchableOpacity>
+                <> 
                 
                 
-                <Animated.View style={[styles.sliderContainer]}>
+                <Animated.View style={[styles.sliderContainer, {marginTop: '2%'}]}>
                       <SlideToDelete
                         onPress={() => handleDeleteUserAddress(selectedAddress.id)}
-                        sliderText={`Remove from list`} 
+                        sliderText={`Remove from my starting addresses`} 
                         targetIcon={CheckmarkOutlineSvg}
+                        buttonBackgroundColor={'transparent'}
                         disabled={false} 
                       />
                 </Animated.View> 
@@ -214,6 +251,15 @@ const styles = StyleSheet.create({
   displayText: {
     fontSize: 16,
     lineHeight: 21, 
+  },
+  defaultButtonText: {
+    fontSize: 10, 
+  },
+  defaultLocationIconContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingRight: '3%',
   },
   icon: {
     position: 'absolute', 

@@ -16,17 +16,18 @@ import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
 import CardCategoriesAsButtons from '../components/CardCategoriesAsButtons';
+import { fetchFriendDashboard } from '../api';
 
 const ContentMomentFocus = ({ placeholderText }) => { 
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { handleCreateMoment, closeResultMessage, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW 
+  const { selectedFriend, loadingNewFriend, friendDashboardData } = useSelectedFriend();
+  const { handleCreateMoment, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW 
   const { authUserState } = useAuthUser(); 
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
    
   const [textInput, setTextInput] = useState('');
-  const textareaRef = useRef();   
+  const textareaRef = useRef(null);   
   const [selectedCategory, setSelectedCategory] = useState('');
  
 
@@ -34,18 +35,14 @@ const ContentMomentFocus = ({ placeholderText }) => {
  
 
   const [categoriesHeight, setCategoriesHeight] = useState(70); // Default height
- 
-  const navigateToMoments = () => {
-    navigation.goBack();
-
-  };
+  
 
   useFocusEffect(
     useCallback(() => {
       if (textareaRef.current) {
         textareaRef.current.focus();
       }
-    }, [loadingNewFriend])
+    }, [])
   );
 
 
@@ -56,19 +53,35 @@ const ContentMomentFocus = ({ placeholderText }) => {
      // }
     //}, [createMomentMutation.isSuccess])
   //);
-
-
-  useLayoutEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus(); 
-    }
-  }, []); 
+ 
 
   const openKeyboard = () => {  
     if (textareaRef.current) { 
-      textareaRef.current.focus();
+      console.log('running openKeyboard');
+      // Add a slight delay before focusing the textarea
+      setTimeout(() => {
+        textareaRef.current.focus();
+      }, 500); // 200ms delay (adjust the value as needed)
     }
-  }; 
+  };
+  
+  const closeKeyboard = () => {
+    if (textareaRef.current) {
+      textareaRef.current.blur(); // De-focus the textarea to close the keyboard
+    }
+  };
+
+  useEffect(() => {
+    if (friendDashboardData) {
+      
+     if (textareaRef.current) {
+      console.log('focusing on textbox after loading dashboard');
+       textareaRef.current.focus();
+     }
+
+    }
+
+  }, [friendDashboardData]);
 
   const toggleCategoriesSlider = () => {
     setShowCategoriesSlider(!showCategoriesSlider);
@@ -152,7 +165,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
         <View style={styles.blurView}> 
           
           <View style={styles.selectFriendContainer}>
-            <FriendSelectModalVersionButtonOnly addToPress={openKeyboard} includeLabel={true} width='100%' />
+            <FriendSelectModalVersionButtonOnly addToPress={openKeyboard} addToOpenModal={closeKeyboard} includeLabel={true} width='100%' />
           </View>
             <>  
           <TextInput
@@ -164,7 +177,7 @@ const ContentMomentFocus = ({ placeholderText }) => {
             onFocus={() => setShowCategoriesSlider(false)}
             onChangeText={setTextInput} // Directly update textInput using setTextInput
             placeholder={placeholderText}
-            //autoFocus={true}
+            autoFocus={true}
             ref={textareaRef}
           />
           <TouchableOpacity onPress={toggleCategoriesSlider} style={{position: 'absolute', zIndex: 2, bottom: 30, right: 30}}>

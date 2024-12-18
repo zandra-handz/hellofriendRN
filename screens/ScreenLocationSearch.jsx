@@ -1,6 +1,6 @@
 
 
-import React, { useLayoutEffect, useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
  

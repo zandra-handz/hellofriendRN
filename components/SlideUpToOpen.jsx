@@ -9,7 +9,9 @@ import {
 } from "react-native";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import RightArrowNoStemSolidSvg from "../assets/svgs/right-arrow-no-stem-solid.svg";
-import HelperTag from '../components/HelperTag';
+import HelperTag from "../components/HelperTag";
+
+import LizardHands from "../components/LizardHands";
 
 const DOUBLE_TAP_DELAY = 300;
 
@@ -18,7 +20,7 @@ const SlideUpToOpen = ({
   triggerReappear,
   onDoubleTap = () => {},
   targetIcon: TargetIcon,
-  height = 200,
+  height = 180,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -35,6 +37,10 @@ const SlideUpToOpen = ({
     gradientColorsHome,
   } = useGlobalStyle();
   const [helpersVisible, setHelpersVisible] = useState(false);
+  const [firstLizardVisible, setFirstLizardVisible] = useState(false);
+  const [secondLizardVisible, setSecondLizardVisible] = useState(false);
+  const [thirdLizardVisible, setThirdLizardVisible] = useState(false);
+
   const lastTapRef = useRef(0);
 
   const rotation = position.interpolate({
@@ -42,6 +48,8 @@ const SlideUpToOpen = ({
     outputRange: ["-90deg", "0deg"],
     extrapolate: "clamp",
   });
+
+  const isMirrored = position.__getValue() < 0 ? -1 : 1;
 
   useEffect(() => {
     if (triggerReappear) {
@@ -103,7 +111,8 @@ const SlideUpToOpen = ({
         if (gestureState.dy <= 0 && Math.abs(gestureState.dy) <= screenHeight) {
           position.setValue(gestureState.dy);
 
-          if (Math.abs(gestureState.dy) >= screenHeight * 0.09) {
+          if (Math.abs(gestureState.dy) >= screenHeight * 0.04) {
+            //.09
             //&& !isDraggingRef.current
             setHelpersVisible(false);
           }
@@ -115,15 +124,35 @@ const SlideUpToOpen = ({
           }
 
           if (Math.abs(gestureState.dy) < screenHeight * 0.18) {
-           // console.log("Button is at the top of the screen");
+            // console.log("Button is at the top of the screen");
             // Set opacity to zero
             setManualOpacity(1);
           }
 
-          if (Math.abs(gestureState.dy) >= screenHeight * 0.08) {
+          if (Math.abs(gestureState.dy) >= screenHeight * 0.001) {
             //&& !isDraggingRef.current
             isDraggingRef.current = true;
             setIsDragging(true);
+            setFirstLizardVisible(true);
+            setSecondLizardVisible(false);
+            
+            setThirdLizardVisible(false);
+            setHelpersVisible(false); //second earlier one
+          }
+          if (Math.abs(gestureState.dy) >= screenHeight * 0.07) {
+           
+            setFirstLizardVisible(false);
+            setSecondLizardVisible(true);
+            
+            setThirdLizardVisible(false);
+            
+          }
+
+          if (Math.abs(gestureState.dy) >= screenHeight * 0.14) {
+            setFirstLizardVisible(false);
+            setSecondLizardVisible(false);
+            setThirdLizardVisible(true);
+            
           }
         }
       },
@@ -131,6 +160,7 @@ const SlideUpToOpen = ({
         if (Math.abs(gestureState.dy) >= screenHeight * 0.07) {
           //console.log("press in slider up");
 
+          setThirdLizardVisible(false);
           handlePress();
           setIsPressed(true);
         }
@@ -199,6 +229,8 @@ const SlideUpToOpen = ({
             width: 63,
             height: 63,
             borderRadius: "50%",
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: manualGradientColors.lightColor
           }}
         >
           <RightArrowNoStemSolidSvg
@@ -208,35 +240,90 @@ const SlideUpToOpen = ({
           />
         </View>
       </Animated.View>
-      {helpersVisible && (
-        <>
-
-          
-
+      {firstLizardVisible && (
         <View
           style={{
-            position: "absolute", 
-            width: 'auto',
-            minWidth: 50,  
+            position: "absolute",
+            width: "auto",
+            minWidth: 50,
             flex: 1,
-            height: 'auto',
-            top: 60,  
+            right: -32,
+            height: "auto",
+            top: 50,
           }}
         >
-        <HelperTag
-          helperText='details'
-          textColor={themeStyles.genericText.color}
-          backgroundColor={themeStyles.genericTextBackgroundShadeTwo.backgroundColor}
+          <LizardHands
+            color={themeStyles.genericTextBackground.backgroundColor}
           />
         </View>
+      )}
+
+      {secondLizardVisible && (
+        <View
+          style={{
+            position: "absolute",
+            width: "auto",
+            minWidth: 50,
+            flex: 1,
+            height: "auto",
+            top: 0,
+          }}
+        >
+          <LizardHands
+            isMirrored={true}
+            color={themeStyles.genericTextBackground.backgroundColor}
+          />
+        </View>
+      )}
+
+{thirdLizardVisible && (
+        <View
+          style={{
+            position: "absolute",
+            width: "auto",
+            minWidth: 50,
+            flex: 1,
+            height: "auto",
+            top: -50,
+          }}
+        >
+          <LizardHands 
+            color={themeStyles.genericTextBackground.backgroundColor}
+          />
+        </View>
+      )}
+      {helpersVisible && (
+        <>
+          <View
+            style={{
+              position: "absolute",
+              width: "auto",
+              minWidth: 50,
+              flex: 1,
+              height: "auto",
+              top: 40,
+            }}
+          >
+            <HelperTag
+              helperText="details"
+              textColor={themeStyles.genericText.color}
+              backgroundColor={
+                themeStyles.genericTextBackgroundShadeTwo.backgroundColor
+              }
+            />
+          </View>
         </>
       )}
-      {TargetIcon && (
+      {TargetIcon && helpersVisible && (
         <View style={styles.iconContainer}>
           <RightArrowNoStemSolidSvg
             height={30}
             width={30}
-            color={(isDragging || helpersVisible) ? gradientColorsHome.lightColor : "transparent"}
+            color={
+              isDragging || helpersVisible
+                ? gradientColorsHome.lightColor
+                : "transparent"
+            }
             style={{ transform: [{ rotate: "-90deg" }] }} // Apply the rotation here
           />
         </View>
@@ -267,7 +354,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     position: "absolute",
-    top: 20,
+    top: 0,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 5000,

@@ -165,6 +165,7 @@ const LocationDetailsBody = ({
                 
              </>
               )}
+              <View style={styles.titleContainer}>
             <Text
               style={[
                 themeStyles.genericText,
@@ -177,6 +178,9 @@ const LocationDetailsBody = ({
             >
               {locationDetails.title || "No title found"}
             </Text>
+            
+                
+            </View>
             
 
           </View>
@@ -287,7 +291,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    paddingTop: "6%",
+    paddingTop: "5%",
   },
   subtitle: {
     fontWeight: "bold",
@@ -300,6 +304,13 @@ const styles = StyleSheet.create({
 
     paddingVertical: "1%",
     paddingHorizontal: "6%",
+  },
+  titleContainer: {
+
+    width: '100%',
+    flex: 1,
+    flexShrink: 1,
+    marginRight: '2%',
   },
 });
 

@@ -17,7 +17,7 @@ const MomentCard = ({
   disabled = false, 
 }) => {
 
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { updateCapsuleMutation, momentData } = useCapsuleList();
 
 
@@ -49,7 +49,7 @@ const MomentCard = ({
       style={[ 
         styles.container,
         themeStyles.genericTextBackground,
-        { transform: [{ translateX }] },  
+        { borderColor: manualGradientColors.lightColor, transform: [{ translateX }] },  
       ]}
     >
       <TouchableOpacity 
@@ -102,8 +102,9 @@ const styles = StyleSheet.create({
     width: '100%', 
     paddingHorizontal: '6%',
     paddingTop: '3%',
-    paddingBottom: '4%',
+    paddingBottom: '2%',
     flexDirection: 'column',  
+    borderWidth: StyleSheet.hairlineWidth,
   },
   sliderContainer: {
     height: 24,
@@ -125,9 +126,9 @@ const styles = StyleSheet.create({
     
   },
   momentText: {   
-    fontFamily: 'Poppins-Regular',  
+    //fontFamily: 'Poppins-Regular',  
     flexShrink: 1, 
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 21,
     alignSelf: 'left',
   },
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   categoryText: { 
-    fontSize: 14,
+    fontSize: 13,
     flexShrink: 1, 
     lineHeight: 21,
     color: 'darkgrey',

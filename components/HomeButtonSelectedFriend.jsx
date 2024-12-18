@@ -24,8 +24,7 @@ import EclipseAnim from "../animations/EclipseAnim";
 
 const DOUBLE_PRESS_DELAY = 300;
 
-const HomeButtonSelectedFriend = ({
-  header = "", //'SELECTED'
+const HomeButtonSelectedFriend = ({ 
   height = "100%",
   maxHeight = 100,
   borderRadius = 20,
@@ -95,22 +94,13 @@ const HomeButtonSelectedFriend = ({
   const adjustFontSize = (fontSize) => {
     return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
   };
-
-  const textStyles = (fontSize, color) => ({
-    fontSize: adjustFontSize(fontSize),
-    color,
-    ...(globalStyles.highContrast && {
-      textShadowColor: "rgba(0, 0, 0, 0.75)",
-      textShadowOffset: { width: 2, height: 2 },
-      textShadowRadius: 1,
-    }),
-  });
+ 
 
   return (
     <View style={{ borderRadius: borderRadius }}>
       <EclipseAnim
-        color={gradientColorsHome.lightColor}
-        innerColor={gradientColorsHome.darkColor}
+        color={gradientColorsHome ? gradientColorsHome.lightColor : 'lightgreen'}
+        innerColor={gradientColorsHome ? gradientColorsHome.darkColor : 'darkgreen'}
         delay={10}
         speed={100}
       >
@@ -216,7 +206,7 @@ const HomeButtonSelectedFriend = ({
                       onPress={onPress}
                       circleColor={"orange"}
                       countTextSize={14}
-                      countColor={themeAheadOfLoading.fontColorSecondary}
+                      countColor={themeAheadOfLoading ? themeAheadOfLoading.fontColorSecondary : 'orange'}
                     />
                   </View>
                 </View>
@@ -235,7 +225,7 @@ const HomeButtonSelectedFriend = ({
                       onPress={navigateToImages}
                       circleColor={"orange"}
                       countTextSize={14}
-                      countColor={themeAheadOfLoading.fontColorSecondary}
+                      countColor={themeAheadOfLoading ? themeAheadOfLoading.fontColorSecondary : 'orange'}
                     />
                   </View>
                 </View>

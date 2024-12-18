@@ -1,7 +1,7 @@
  
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
  
 

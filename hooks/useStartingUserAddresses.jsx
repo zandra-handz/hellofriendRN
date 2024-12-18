@@ -23,15 +23,15 @@ const useStartingUserAddresses = () => {
     const { showMessage } = useMessage(); 
     const [ userAddressMenu, setUserAddressMenu ] = useState([]);
     const [ defaultUserAddress, setDefaultUserAddress ] = useState(null);
-
+    const [ usingCurrent, setUsingCurrent ] = useState(false);
     const {currentLocationDetails } = useCurrentLocation();
-useEffect(() => {
-  if (currentLocationDetails) {
-    console.log('formatted location data', currentLocationDetails);
+//useEffect(() => {
+ // if (currentLocationDetails) {
+ //   console.log('formatted location data', currentLocationDetails);
     
-  }
+ // }
 
-}, [currentLocationDetails]);
+//}, [currentLocationDetails]);
  
 
     const { data: userAddresses = [], isLoadingUserAddresses, isFetchingUserAddresses, isSuccessUserAddresses, isErrorUserAddresses } = useQuery({
@@ -69,6 +69,7 @@ useEffect(() => {
         
         if (currentLocationDetails) {
           setDefaultUserAddress(currentLocationDetails);
+          setUsingCurrent(true);
       } else {
           const defaultAddress = menuItems.find(address => address.isDefault === true);
           
@@ -249,6 +250,7 @@ useEffect(() => {
         createUserAddress,
         updateUserDefaultAddress,
         removeUserAddress, 
+        usingCurrent,
 };
 
 }

@@ -3,7 +3,7 @@ import { View, Text, Animated, PanResponder, Dimensions, StyleSheet } from 'reac
 import { useGlobalStyle } from '../context/GlobalStyleContext';
  import DragRightThickOutlineSvg from '../assets/svgs/drag-right-thick-outline.svg';
 
- const SlideToDelete = ({ onPress, sliderText = 'Label', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50, disabled=false }) => {
+ const SlideToDelete = ({ onPress, buttonBackgroundColor='white', sliderText = 'Label', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50, disabled=false }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
@@ -69,7 +69,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
           styles.slider,
           {
             flexDirection: 'row', 
-            backgroundColor: isDragging ? '#000002' : themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+            backgroundColor: isDragging ? '#000002' : buttonBackgroundColor,
             transform: [{ translateX: position }],
             width: 'auto',
           },

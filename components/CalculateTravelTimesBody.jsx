@@ -76,6 +76,7 @@ useEffect(() => {
                 <View style={{flexDirection: 'column', height: '30%', maxHeight: 120, justifyContent: 'center', marginVertical: '4%',width: '100%'}}> 
                    <View style={{marginBottom: '1%'}}>
                         <AddressSelectorFriend
+                            selectedFriendName={selectedFriend.name || ''}
                             selectedFriendId={selectedFriend.id || null}
                             setAddressInParent={handleFriendAddressSelect}
                             currentLocation={null} //feature not available at this time

@@ -4,6 +4,14 @@
 //  style={styles.switchIcon}
 //  color={themeStyles.genericTextBackgroundShadeTwo.backgroundColor}
 // />
+
+
+//TO TRY LATER TO FLIP THE BUTTON?
+//const lizardHandsFlip = position.interpolate({
+//  inputRange: [-screenHeight / 20, 0],
+//  outputRange: [-1, 1],  // Flip horizontally when the position is negative
+//  extrapolate: "clamp",
+//});
 import React, { useState, useRef, useEffect, useImperativeHandle } from "react";
 import {
   View,
@@ -39,6 +47,7 @@ const DualLocationSearcher = ({
       searchStringRef.current.setText(text);
     }
   };
+  
 
   const switchViews = () => {
     setMountingText(searchString);
