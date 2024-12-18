@@ -15,17 +15,21 @@ const TravelTimesResults = ({
   }) => {
 
     const { themeStyles } = useGlobalStyle();
-    const { travelTimesMutation, fetchTravelTimes, userTravelTime, friendTravelTime, travelTimeResults, travelTimeResultsView, } = useTravelTimes();
+    const { travelTimesMutation, fetchTravelTimes, userTravelTime, friendTravelTime, travelTimeResults, travelTimeResultsView } = useTravelTimes();
 
     useEffect(() => {
       if (triggerFetch) { 
           try { 
+            console.log(userAddress);
+            console.log(friendAddress);
+            console.log(destinationLocation);
+            
   
-            const results = fetchTravelTimes({ 
+            const results = fetchTravelTimes( 
               userAddress, 
               friendAddress, 
               destinationLocation 
-          });
+          );
             //console.log(results); 
             console.log("Travel comparisons requested successfully");
           } catch (error) {
@@ -137,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Poppins-Bold',
     marginBottom: 20,
-    textAlign: 'leftr',
+    textAlign: 'left',
   },
   title: {
     fontSize: 16,

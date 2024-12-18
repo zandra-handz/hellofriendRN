@@ -112,32 +112,32 @@ const LocationNotes = ({
         }
         content={
           <View style={styles.contentContainer}>
-            {location.personal_experience_info && (
+            <View
+              style={[
+                styles.notesContainer,
+                {
+                  backgroundColor:
+                    themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+                },
+              ]}
+            >
               <View
-                style={[
-                  styles.notesContainer,
-                  {
-                    backgroundColor:
-                      themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-                  },
-                ]}
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  height: "auto",
+                }}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between", 
-                    width: "100%", 
-                    height: 'auto',
-                  }}
-                >
-                  <Text style={themeStyles.subHeaderText}>NOTES</Text>
-                  <EditPencilOutlineSvg
-                    height={30}
-                    width={30}
-                    onPress={handleGoToLocationEditScreen}
-                    color={themeStyles.genericText.color}
-                  />
-                </View>
+                <Text style={themeStyles.subHeaderText}>NOTES</Text>
+                <EditPencilOutlineSvg
+                  height={30}
+                  width={30}
+                  onPress={handleGoToLocationEditScreen}
+                  color={themeStyles.genericText.color}
+                />
+              </View>
+              {location.personal_experience_info && (
                 <ScrollView
                   style={{ flex: 1, width: "100%", padding: "6%" }}
                   contentContainerStyle={{ paddingVertical: 0 }}
@@ -147,41 +147,42 @@ const LocationNotes = ({
                     {location.personal_experience_info}
                   </Text>
                 </ScrollView>
-              </View>
-            )}
-            {location.parking_score && (
+              )}
+            </View>
+            <View
+              style={[
+                styles.parkingScoreContainer,
+                {
+                  backgroundColor:
+                    themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+                },
+              ]}
+            >
               <View
-                style={[
-                  styles.parkingScoreContainer,
-                  {
-                    backgroundColor:
-                      themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-                  },
-                ]}
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  height: "auto",
+                }}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between", 
-                    width: "100%", 
-                    height: 'auto',
-                  }}
-                >
-                  <Text style={themeStyles.subHeaderText}>PARKING</Text>
-                  <EditPencilOutlineSvg
-                    height={30}
-                    width={30}
-                    onPress={handleGoToLocationEditScreen}
-                    color={themeStyles.genericText.color}
-                  />
-                </View>
+                <Text style={themeStyles.subHeaderText}>PARKING</Text>
+                <EditPencilOutlineSvg
+                  height={30}
+                  width={30}
+                  onPress={handleGoToLocationEditScreen}
+                  color={themeStyles.genericText.color}
+                />
+              </View>
+
+              {location.parking_score && (
                 <View style={{ flex: 1, width: "100%", padding: "6%" }}>
                   <Text style={[styles.notesText, themeStyles.genericText]}>
                     {location.parking_score}
                   </Text>
                 </View>
-              </View>
-            )}
+              )}
+            </View>
           </View>
         }
         onCancel={toggleModal}

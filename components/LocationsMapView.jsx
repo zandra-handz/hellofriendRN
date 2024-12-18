@@ -52,7 +52,8 @@ const LocationsMapView = ({
   currentDayDrilledOnce,
   bermudaCoordsDrilledOnce,
 }) => {
-  useGeolocationWatcher();
+  //i think when i put this in the parent screen it starts up faster?
+  //useGeolocationWatcher();
   const mapRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { showMessage } = useMessage();

@@ -101,7 +101,6 @@ const LocationParking = ({
         }
         content={
           <View style={styles.contentContainer}>
-            {location.personal_experience_info && (
               <View
                 style={[
                   styles.notesContainer,
@@ -127,6 +126,8 @@ const LocationParking = ({
                     color={themeStyles.genericText.color}
                   />
                 </View>
+                
+            {location.personal_experience_info && (
                 <ScrollView
                   style={{ flex: 1, width: "100%", padding: "6%" }}
                   contentContainerStyle={{ marginVertical: 0 }}
@@ -136,9 +137,8 @@ const LocationParking = ({
                     {location.personal_experience_info}
                   </Text>
                 </ScrollView>
-              </View>
             )}
-            {location.parking_score && (
+              </View>
               <View
                 style={[
                   styles.parkingScoreContainer,
@@ -164,13 +164,15 @@ const LocationParking = ({
                     color={themeStyles.genericText.color}
                   />
                 </View>
+                
+            {location.parking_score && (
                 <View style={{ flex: 1, width: "100%", padding: "6%" }}>
                   <Text style={[styles.notesText, themeStyles.genericText]}>
                     {location.parking_score}
                   </Text>
                 </View>
-              </View>
             )}
+              </View> 
           </View>
         }
         onCancel={toggleModal}

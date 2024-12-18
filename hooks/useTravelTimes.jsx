@@ -21,7 +21,19 @@ const useTravelTimes = () => {
             return results.compare_directions;  
         },
         onSuccess: (data, variables) => { 
-            queryClient.setQueryData(['travelTimes', variables], data);
+            const cacheKey = [
+                'travelTimes', 
+                variables.address_a_address, 
+                variables.address_b_address,
+                variables.destination_address
+            ];
+            queryClient.setQueryData(cacheKey, {
+                travelTime: data,
+                locationData: variables // Store the original location data as well
+            }, {
+                cacheTime: 3600000 // 1 hour (in milliseconds)
+            });
+            
             setTravelTimeResults(data);
             setTravelTimeResultsView(true);  
             setUserTravelTime({
@@ -33,15 +45,17 @@ const useTravelTimes = () => {
               time: data.friend ? data.friend.duration : 'N/A',
               miles: data.friend ? data.friend.distance : 'N/A',
             });
-
-            console.log('Travel comparisons cached successfully:', data);
+ 
         },
         onError: (error) => {
             console.error('Error getting travel comparisons:', error);
         },
     });
 
-    const fetchTravelTimes = ({ userAddress, friendAddress, destinationLocation }) => {
+    const fetchTravelTimes = (userAddress, friendAddress, destinationLocation ) => {
+        
+        
+        
         const locationData = {
             address_a_address: userAddress.address,
             address_a_lat: parseFloat(userAddress.lat),
@@ -55,19 +69,27 @@ const useTravelTimes = () => {
             perform_search: false,
         };
  
-        const cachedData = queryClient.getQueryData(['travelTimes', locationData]);
+        //const cachedData = queryClient.getQueryData(['travelTimes', locationData]);
+        const cachedData = queryClient.getQueryData([
+            'travelTimes', 
+            userAddress.address, 
+            friendAddress.address, 
+            destinationLocation.address
+        ]);
+        //console.log(`cached data: `, cachedData);
+
         if (cachedData) {
-            console.log('Using cached travel times:', cachedData);
+            //console.log('Using cached travel times:', cachedData);
             setTravelTimeResults(cachedData);
             setTravelTimeResultsView(true);
             setUserTravelTime({
-              time: cachedData.Me ? cachedData.Me.duration : 'N/A',
-              miles: cachedData.Me ? cachedData.Me.distance : 'N/A',
+              time: cachedData.travelTime.Me ? cachedData.travelTime.Me.duration : 'N/A',
+              miles: cachedData.travelTime.Me ? cachedData.travelTime.Me.distance : 'N/A',
             });
 
             setFriendTravelTime({
-              time: cachedData.friend ? cachedData.friend.duration : 'N/A',
-              miles: cachedData.friend ? cachedData.friend.distance : 'N/A',
+              time: cachedData.travelTime.friend ? cachedData.travelTime.friend.duration : 'N/A',
+              miles: cachedData.travelTime.friend ? cachedData.travelTime.friend.distance : 'N/A',
             });
 
         } else { 
@@ -75,27 +97,22 @@ const useTravelTimes = () => {
         }
     };
 
-    const checkCache = ({userAddress, friendAddress, destinationLocation}) => {
+    const checkCache = (userAddress, friendAddress, destinationLocation) => {
 
-        const locationData = {
-            address_a_address: userAddress.address,
-            address_a_lat: parseFloat(userAddress.lat),
-            address_a_long: parseFloat(userAddress.lng),
-            address_b_address: friendAddress.address,
-            address_b_lat: parseFloat(friendAddress.lat),
-            address_b_long: parseFloat(friendAddress.lng),
-            destination_address: destinationLocation.address,
-            destination_lat: parseFloat(destinationLocation.latitude),
-            destination_long: parseFloat(destinationLocation.longitude),
-            perform_search: false,
-        };
-        const cachedData = queryClient.getQueryData(['travelTimes', locationData]);
+        const cachedData = queryClient.getQueryData([
+            'travelTimes', 
+            userAddress.address, 
+            friendAddress.address, 
+            destinationLocation.address
+        ]);
+        //console.log(`cached data in checkCache: `, cachedData);
+       
         if (cachedData) {
-            console.log('Using cached travel times:', cachedData);
-            updateTravelTimeData(cachedData);
-            return true; // Cache found
+            //console.log('Using cached travel times:', cachedData);
+            //updateTravelTimeData(cachedData);
+            return cachedData.travelTime; // Cache found
         }
-        return false; // No cache found
+        return null; // No cache found
     };
 
  

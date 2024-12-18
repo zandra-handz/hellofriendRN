@@ -9,10 +9,18 @@ import LocationsMapView from '../components/LocationsMapView';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import useLocationHelloFunctions from '../hooks/useLocationHelloFunctions';
 import useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
-
+import {
+  useCurrentLocationManual,
+  useGeolocationWatcher,
+} from "../hooks/useCurrentLocationAndWatcher";
 import useHelloesData from '../hooks/useHelloesData';
 
 const ScreenLocationSearch = () => {
+  
+  useGeolocationWatcher();
+  const { data, isLoadingCurrentLocation, error } = useCurrentLocationManual();
+
+
     const { locationList } = useLocationFunctions();
     const { getCurrentDay } = useLocationDetailFunctions();
     const { inPersonHelloes } = useHelloesData();
@@ -21,6 +29,7 @@ const ScreenLocationSearch = () => {
     const [ sortedLocations, setSortedLocations ] = useState([]);
     
     useLayoutEffect(() => {
+      console.log('use layout in screen');
       if (locationList && inPersonHelloes) {
 
         const newList = createLocationListWithHelloes(locationList, inPersonHelloes);

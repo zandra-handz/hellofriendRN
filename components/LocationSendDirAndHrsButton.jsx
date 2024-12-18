@@ -40,23 +40,23 @@ const styles = StyleSheet.create({
   hourRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderRadius: 20,
-    padding: 2,
-    marginBottom: 4,
+    borderRadius: 20, 
   },
   nextOpenRow: { 
-    borderWidth: 1, 
+    borderWidth: 2, 
     borderColor: `lightgreen`, 
     backgroundColor: 'transparent', //themeStyles.genericTextBackgroundShadeTwo.backgroundColor, 
     width: 'auto',
     paddingHorizontal: '3%', 
     paddingVertical: '1%', 
-    borderRadius: 20
+    borderRadius: 20,
+    justifyContent: 'center',
   },
   day: {
     fontWeight: 'bold',
     marginRight: 4,
     fontSize: 14,
+    selfAlign: 'center',
   }, 
   time: { 
     textTransform: 'lowercase',

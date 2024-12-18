@@ -20,9 +20,7 @@ const CalculateTravelTimesBody = ({location }) => {
     const { themeStyles } = useGlobalStyle();
     const { selectedFriend } = useSelectedFriend();   
     const [triggerFetch, setTriggerFetch] = useState(false);
-    const [selectedUserAddress, setSelectedUserAddress] = useState(null);
-    const [selectedFriendAddress, setSelectedFriendAddress] = useState(null);
-  
+
 
     const selectedUserAddressRef = useRef(null);
     const selectedFriendAddressRef = useRef(null);
