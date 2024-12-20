@@ -31,6 +31,7 @@ const AddressSelectorFriend = ({
   selectedFriendId,
   selectedFriendName,
   setAddressInParent,
+  tellParentIfExistsOnMount,
   height,
   titleBottomMargin,
   currentLocation,
@@ -53,9 +54,18 @@ const AddressSelectorFriend = ({
 
   useEffect(() => {
     if (defaultAddress && addressMenu && addressMenu.length > 0) {
+      console.log('address detected in friend selector');
       handleCheckIfExistingAndSelect(defaultAddress || addressMenu[0]);
-    }
+    } 
   }, [defaultAddress, addressMenu]);
+
+  useEffect(() => {
+    if (!addressMenu && !selectedAddress) {
+      console.log('setting friend parent address to null');
+      setAddressInParent(null);
+      tellParentIfExistsOnMount(false);
+    }
+  }, []);
 
   const handleCheckIfExistingAndSelect = (address) => {
     setIsExistingAddress(false); //to clear
@@ -66,12 +76,15 @@ const AddressSelectorFriend = ({
 
     if (isExisting) {
       setSelectedAddress(isExisting);
+
       setAddressInParent(isExisting);
-      console.log(`set address in selector via parent function`);
+      tellParentIfExistsOnMount(true);
+      console.log(`isExisting set friend address in selector via parent function`, address);
     } else {
       setSelectedAddress(address);
       setAddressInParent(address);
-      console.log(`set address in selector via parent function`);
+      tellParentIfExistsOnMount(true);
+      console.log(`set friend address in selector via parent function`);
     }
     setIsExistingAddress(!!isExisting);
   };
@@ -151,6 +164,11 @@ const AddressSelectorFriend = ({
             { borderColor: themeStyles.genericText.color },
           ]}
         >
+          {!selectedAddress && (
+            <Text style={[themeStyles.genericText, styles.displayText]}>
+              No address selected
+            </Text>
+          )}
           {selectedAddress &&
             defaultAddress &&
             selectedAddress !== defaultAddress && (
@@ -187,13 +205,9 @@ const AddressSelectorFriend = ({
               {selectedAddress?.title}
             </Text>
           )}
-          {!selectedAddress && !addressMenu && (
-            <Text style={[themeStyles.genericText, styles.displayText]}>
-              No addresses saved
-            </Text>
-          )}
 
-          {addressMenu.length > 0 && (
+
+          {selectedAddress && (
             <EditPencilOutlineSvg
               height={24}
               width={24}
@@ -203,7 +217,7 @@ const AddressSelectorFriend = ({
               style={styles.icon}
             />
           )}
-          {addressMenu.length === 0 && (
+          {!selectedAddress && (
             <FontAwesome
               name="search"
               size={24}
@@ -222,7 +236,7 @@ const AddressSelectorFriend = ({
                   selectedAddress.address
                 )
               }
-              sliderText={`Save`}
+              sliderText={`Save to ${selectedFriendName}'s starting addresses`}
               targetIcon={CheckmarkOutlineSvg}
               disabled={!selectedAddress}
             />
@@ -284,6 +298,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: "3%",
     paddingVertical: "3%",
     paddingRight: "10%", //space for the icon button
+  
   },
   displayText: {
     fontSize: 16,

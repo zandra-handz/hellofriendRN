@@ -1,79 +1,118 @@
-import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
+import { View, Text, TextInput, StyleSheet } from "react-native";
+import { useGlobalStyle } from "../context/GlobalStyleContext";
+import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 
 // Forwarding ref to the parent to expose the TextInput value
-const TextEditBox = forwardRef(({ title = 'title', mountingText = '', onTextChange }, ref) => {
-  const { themeStyles } = useGlobalStyle();
-  const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
-  const textInputRef = useRef();
+const TextEditBox = forwardRef(
+  ({ title = "title", mountingText = "", onTextChange }, ref) => {
+    const { themeStyles } = useGlobalStyle();
+    const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
+    const textInputRef = useRef();
 
-
-  useEffect(() => { 
-    if (textInputRef.current) {
-      textInputRef.current.setNativeProps({ text: mountingText });
-      setEditedMessage(mountingText);
-    }
-  }, []);
-
-  // Expose the current value of the TextInput via the ref
-  useImperativeHandle(ref, () => ({
-    setText: (text) => {
+    useEffect(() => {
       if (textInputRef.current) {
-        textInputRef.current.setNativeProps({ text });
-        setEditedMessage(text); 
+        textInputRef.current.setNativeProps({ text: mountingText });
+        setEditedMessage(mountingText);
       }
-    }, 
-    clearText: () => {
-      if (textInputRef.current) {
-        textInputRef.current.clear();
-        setEditedMessage(''); 
-      }
-    },
-    getText: () => editedMessage,
-  }));
- 
+    }, []);
 
-  useEffect(() => {
-    setEditedMessage(mountingText); // Reset to starting text if it changes
-  }, [mountingText]);
+    // Expose the current value of the TextInput via the ref
+    useImperativeHandle(ref, () => ({
+      setText: (text) => {
+        if (textInputRef.current) {
+          textInputRef.current.setNativeProps({ text });
+          setEditedMessage(text);
+        }
+      },
+      clearText: () => {
+        if (textInputRef.current) {
+          textInputRef.current.clear();
+          setEditedMessage("");
+        }
+      },
+      getText: () => editedMessage,
+    }));
 
+    useEffect(() => {
+      setEditedMessage(mountingText); // Reset to starting text if it changes
+    }, [mountingText]);
 
-  const handleTextInputChange = (text) => {
-    console.log(text);
-    setEditedMessage(text);
-    onTextChange(text);
+    const handleTextInputChange = (text) => {
+      console.log(text);
+      setEditedMessage(text);
+      onTextChange(text);
+    };
+
+    return ( 
+        <View
+          style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+              height: "auto",
+            }}
+          >
+            <Text style={[styles.previewTitle, themeStyles.genericText]}>
+              {title}
+            </Text>
+            <EditPencilOutlineSvg
+              height={30}
+              width={30}
+              color={'red'}
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <TextInput
+              ref={textInputRef}
+              autoFocus={true}
+              style={[
+                styles.textInput,
+                themeStyles.genericText,
+                themeStyles.genericTextBackgroundShadeTwo,
+              ]}
+              value={editedMessage}
+              onChangeText={handleTextInputChange} // Update local state
+              multiline
+            />
+          </View>
+        </View> 
+    );
   }
-
-  return ( 
-      <View style={styles.previewContainer}>
-        <Text style={[styles.previewTitle, themeStyles.genericText]}>{title}</Text>
-        <TextInput
-          ref={textInputRef}
-          autoFocus={true}
-          style={[styles.textInput, themeStyles.genericText, themeStyles.genericTextBackgroundShadeTwo]}
-          value={editedMessage}
-          onChangeText={handleTextInputChange} // Update local state
-          multiline
-        />
-      </View> 
-  );
-});
+);
 
 const styles = StyleSheet.create({
-  previewContainer: {
-    padding: 20,
+  outerContainer: {
+    flex: 1,
+    padding: "4%",
+  },
+  container: {
+    width: "90%",
+    height: "60%",
+    borderRadius: 30, 
+    margin: '4%',
+    alignSelf: 'center', 
+    padding: 20, 
   },
   previewTitle: {
-    fontSize: 16,
-    marginBottom: '4%',
+    fontSize: 15,
+    lineHeight: 21,
+    textTransform: "uppercase",
   },
   textInput: {
-    textAlign: 'top',
-    borderWidth: 1,
+    textAlignVertical: "top",
     borderRadius: 20,
     padding: 10,
-    height: 100,
+    flex: 1,
   },
 });
 

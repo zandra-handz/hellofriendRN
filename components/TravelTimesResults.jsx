@@ -66,13 +66,13 @@ const TravelTimesResults = ({
 
           {userTravelTime && (
             <>
-          {ResultsCard('Me', userTravelTime)};
+          {ResultsCard('Me', userTravelTime)}
             </>
           )}
 
           {friendTravelTime && (
             <>
-          {ResultsCard(friendName, friendTravelTime)};
+          {ResultsCard(friendName, friendTravelTime)}
           </>
         )}
           

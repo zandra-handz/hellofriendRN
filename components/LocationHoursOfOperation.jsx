@@ -98,7 +98,7 @@ const startingIndex = () => {
   return (
     <View style={[styles.card, themeStyles.genericTextBackground]}>
       
-        <TouchableOpacity onPress={toggleHoursView} style={[styles.iconContainer, themeStyles.genericTextBackground, {zIndex: 10, width: 20, flex: 1, position: 'absolute', left: 0, top: 0, height: 20 }]}>
+        <TouchableOpacity onPress={toggleHoursView} style={[styles.iconContainer, themeStyles.genericTextBackground, {zIndex: 10, width: 20, flex: 1, alignItems: 'center', justifyContent: 'center', position: 'absolute', left: 0, top: 0, height: 27}]}>
             <FontAwesome5 name="clock" size={iconSize} color={fontColor} />
 
         </TouchableOpacity> 
@@ -193,6 +193,10 @@ const styles = StyleSheet.create({
   },
   iconContainer: { 
     paddingRight: '1%', 
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
   },
 });
 

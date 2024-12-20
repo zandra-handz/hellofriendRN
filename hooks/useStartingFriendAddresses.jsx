@@ -69,14 +69,28 @@ const useStartingFriendAddresses = () => {
     const createFriendAddressMutation = useMutation({
         mutationFn: (data) => addFriendAddress(selectedFriend.id, data),
         onSuccess: (newAddress) => {
-            showMessage(true, null, `Address added for ${selectedFriend.name}!`);
-            
-            queryClient.setQueryData(['friendAddresses', selectedFriend?.id], (oldData) => {
-             
-              if (!oldData || !Array.isArray(oldData)) return [newAddress]; // If no existing data, just return the new address in an array
-              return [...oldData, newAddress]; 
+          showMessage(true, null, `Address added for ${selectedFriend.name}!`);
+        
+          queryClient.setQueryData(['friendAddresses', selectedFriend?.id], (oldData) => {
+            // If no existing data, just return the new address in an array
+            if (!oldData || !Array.isArray(oldData)) return [newAddress];
+        
+            // Combine old data with the new address
+            const combinedData = [...oldData, newAddress];
+        
+            // Process the combined data to update the default address logic
+            return combinedData.map((address) => {
+              if (address.is_default && address.id !== newAddress.id) {
+                console.log('Turning off default for', address.title);
+                return { ...address, is_default: false };
+              }
+              if (address.id === newAddress.id) {
+                console.log('Turning on default for address', address.title);
+                return { ...address, is_default: true };
+              }
+              return address;
             });
-
+          }); 
  
             timeoutRef.current = setTimeout(() => {
                 createFriendAddressMutation.reset(); 
@@ -189,6 +203,7 @@ const useStartingFriendAddresses = () => {
           const addressData = {
             title,
             address,
+            is_default: true,
             friend: selectedFriend.id,
             user: authUserState.user.id,
           };

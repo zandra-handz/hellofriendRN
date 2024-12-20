@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'r
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 
+import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
+
 // Forwarding ref to the parent to expose the TextInput value
 const FlatListChangeChoice = forwardRef(({ title = 'title', horizontal = true, choicesArray, oldChoice = '', onChoiceChange }, ref) => {
   const { themeStyles } = useGlobalStyle();
@@ -48,8 +50,24 @@ const FlatListChangeChoice = forwardRef(({ title = 'title', horizontal = true, c
   }
 
   return ( 
-      <View style={styles.previewContainer}>
+              <View
+                style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    height: "auto",
+                  }}
+                >
         <Text style={[styles.previewTitle, themeStyles.genericText]}>{title}</Text>
+                    <EditPencilOutlineSvg
+                      height={30}
+                      width={30}
+                      color={'red'}
+                    />
+        </View>
         {choicesArray && (
           <FlatList
             data={choicesArray}
@@ -57,39 +75,55 @@ const FlatListChangeChoice = forwardRef(({ title = 'title', horizontal = true, c
             horizontal={horizontal}
             keyExtractor={(item, index) => `choice-${index}`}
             renderItem={({ item, index }) => (
-
-              <TouchableOpacity onPress={() => (handleChoiceChange(item))} style={[ styles.itemBox, themeStyles.genericTextBackground, {width: 160, borderWidth: 1, borderColor: item === newChoice ? themeAheadOfLoading.darkColor : themeStyles.genericTextBackground.backgroundColor}]}>
-                <Text style={[themeStyles.genericText]}>{item}</Text>
+              <View style={{height: '100%', width: 'auto', marginRight: '2%'}}>
+              <TouchableOpacity onPress={() => handleChoiceChange(String(item.value))} style={[ styles.itemBox, themeStyles.genericTextBackground, {width: 130, borderWidth: 1, borderColor: item.value === newChoice ? themeAheadOfLoading.darkColor : themeStyles.genericTextBackground.backgroundColor}]}>
+                <Text style={[themeStyles.genericText]}>{index + 1}</Text>
+                <Text style={[themeStyles.genericText]}>{item.label}</Text>
               </TouchableOpacity>
+              </View>
             )}
             showsHorizontalScrollIndicator={false}
             scrollIndicatorInsets={{ right: 1 }}
             initialScrollIndex={0}
             decelerationRate="fast"
+            ListFooterComponent={<View style={{ width: 120 }} />} 
  
             />
             
 
         )}
-
-      </View> 
+ 
+      </View>
   );
 });
 
 const styles = StyleSheet.create({
-  previewContainer: {
-    padding: 20,
+  outerContainer: {
+    flex: 1,
+    padding: "4%",
+  },
+  container: {
+    width: "90%",
+    flex: 1, 
+    borderRadius: 30, 
+    margin: '4%',
+    alignSelf: 'center', 
+    padding: 20, 
   },
   previewTitle: {
-    fontSize: 16,
-    marginBottom: '4%',
+    fontSize: 15,
+    lineHeight: 21,
+    textTransform: "uppercase",
   },
   itemBox: {
-    textAlign: 'top',
+    flexDirection: 'column',
+    textAlignVertical: 'top', 
+    alignContent: 'center', 
     borderWidth: 1,
     borderRadius: 20,
-    padding: 10,
-    height: 100,
+    padding: '6%',
+    height: '100%',
+    width: '100%',
   },
 });
 

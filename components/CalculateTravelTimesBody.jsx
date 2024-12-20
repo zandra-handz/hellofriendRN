@@ -24,10 +24,16 @@ const CalculateTravelTimesBody = ({location }) => {
 
     const selectedUserAddressRef = useRef(null);
     const selectedFriendAddressRef = useRef(null);
+
+    const [ friendAddressIsSelected, setFriendAddressIsSelected ] = useState(false);
+    const [ userAddressIsSelected, setUserAddressIsSelected ] = useState(false);
+  
   
 
    const handleFriendAddressSelect = (address) => {
     console.log('friend address selected');
+    detectFriendAddress(address);
+
     //setSelectedFriendAddress(address);  this causes component to rerender every time
     selectedFriendAddressRef.current = address;
 
@@ -35,9 +41,34 @@ const CalculateTravelTimesBody = ({location }) => {
  
     const handleUserAddressSelect = (address) => { 
         console.log('user address selected');
+        detectUserAddress(address);
+       
         //setSelectedUserAddress(address); this causes component to rerender every time
         selectedUserAddressRef.current = address;
     }; 
+
+    const detectFriendAddress = (address) => {
+        console.log('running detectFriendAddress');
+        if (address) {
+            setFriendAddressIsSelected(true);
+        } else {
+            setFriendAddressIsSelected(false);
+        }
+
+    };
+
+
+    const detectUserAddress = (address) => {
+        console.log('running detectUserAddress');
+        if (address) { 
+            setUserAddressIsSelected(true);
+        } else {
+            console.log('OOOOOPS..');
+            setUserAddressIsSelected(false);
+        }
+
+    };
+    
     
  
  
@@ -62,6 +93,7 @@ useEffect(() => {
                 <View style={{marginBottom: '1%'}}>
                         <AddressSelectorUser
                             setAddressInParent={handleUserAddressSelect}
+                            tellParentIfExistsOnMount={detectUserAddress}
                             currentLocation={null} //feature not available at this time
                             height={'auto'}
                             titleBottomMargin={'2%'} 
@@ -79,6 +111,7 @@ useEffect(() => {
                             selectedFriendName={selectedFriend.name || ''}
                             selectedFriendId={selectedFriend.id || null}
                             setAddressInParent={handleFriendAddressSelect}
+                            tellParentIfExistsOnMount={detectFriendAddress}
                             currentLocation={null} //feature not available at this time
                             height={'auto'}
                             titleBottomMargin={'2%'} 
@@ -88,21 +121,22 @@ useEffect(() => {
                 </View> 
             </View>
             <View style={{flexGrow: 1, width: '100%', paddingBottom: '4%', alignItems: 'center', justifyContent: 'center'}}>
-                
+
+           
             <TravelTimesResults
                 userAddress={selectedUserAddressRef.current  || { address: 'User Address', lat: '0', lng: '0' }}
                 friendAddress={selectedFriendAddressRef.current || { address: 'Friend Address', lat: '0', lng: '0' }}
                 friendName={selectedFriend?.name || null}
                 destinationLocation={location}
                 triggerFetch={triggerFetch}
-            /> 
+            />  
             </View>
 
             <ButtonBaseSpecialSave
                 label="CALCULATE "
                 maxHeight={80}
                 onPress={handleCalculate} 
-                isDisabled={!selectedUserAddressRef || !selectedFriendAddressRef}
+                isDisabled={!userAddressIsSelected || !friendAddressIsSelected}
                 fontFamily={'Poppins-Bold'}
                 image={require("../assets/shapes/redheadcoffee.png")}
             /> 

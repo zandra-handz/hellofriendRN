@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, StyleSheet, Text, Keyboard, TouchableOpacity } from 'react-native';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useMessage } from '../context/MessageContext';
@@ -183,6 +183,7 @@ const Signin = () => {
             <TextInput
               style={[styles.input, themeStyles.signinInput, isUsernameFocused && styles.inputFocused]}
               placeholder="Username"
+              autoFocus={true}
               placeholderTextColor={themeStyles.signinInput.placeholderTextColor} 
               onChangeText={(text) => setUsername(text)}
               value={username}

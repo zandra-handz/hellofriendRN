@@ -215,7 +215,7 @@ const LocationDetailsBody = ({
               )}
 
               {additionalDetails.hours && (
-                <View style={styles.rowContainer}>
+                <View style={[styles.rowContainer, {paddingRight: '20%'}]}>
                   <LocationHoursOfOperation
                     location={locationObject}
                     data={additionalDetails.hours}

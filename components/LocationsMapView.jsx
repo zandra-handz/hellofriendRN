@@ -14,9 +14,7 @@ import {
   Animated,
   Image,
 } from "react-native";
-import MapView, {
-  AnimatedRegion,
-  MarkerAnimated,
+import MapView, { 
   Marker,
   PROVIDER_GOOGLE,
 } from "react-native-maps";
