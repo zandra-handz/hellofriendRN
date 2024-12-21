@@ -25,7 +25,7 @@ const ItemCustomerReview = ({ review }) => {
   return (
     <View style={styles.review}>
       {loadingAdditionalDetails && (
-        <LoadingPage loading={loadingAdditionalDetails} spinnerType='circle' />
+        <LoadingPage loading={loadingAdditionalDetails} spinnerType='wander' />
       )}
       {!loadingAdditionalDetails && (
         <ScrollView>

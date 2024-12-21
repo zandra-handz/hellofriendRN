@@ -41,9 +41,12 @@ import useLocationFunctions from "../hooks/useLocationFunctions";
 import CallNumberLink from "../components/CallNumberLink";
 
 import LocationHoursOfOperation from "../components/LocationHoursOfOperation";
-import { useQueryClient } from "@tanstack/react-query"; // Import QueryClient hook
+import { useQueryClient } from "@tanstack/react-query";
 
 import useLocationDetailFunctions from "../hooks/useLocationDetailFunctions";
+
+import LocationImages from "../components/LocationImages";
+import LocationCustomerReviews from "../components/LocationCustomerReviews";
 
 //pulling the data from locationList and using the useEffect gets it to update
 //must be better way. for some reason the query client is returning undefined from the cache
@@ -115,7 +118,7 @@ const LocationDetailsBody = ({
       <View
         style={[
           {
-            marginRight: '2%',
+            marginRight: "2%",
             borderWidth: 2,
             borderColor: isOpenNow
               ? `lightgreen`
@@ -155,34 +158,24 @@ const LocationDetailsBody = ({
     <View style={styles.container}>
       {locationDetails && (
         <>
-           
           <View style={[styles.rowContainer]}>
-          {additionalDetails && additionalDetails.hours && (
-              
-              
-              <>
-                {renderOpenStatus(additionalDetails.hours)}
-                
-             </>
-              )}
-              <View style={styles.titleContainer}>
-            <Text
-              style={[
-                themeStyles.genericText,
-                {
-                  fontWeight: "bold",
-                  fontSize: 16,
-                  textTransform: "uppercase",
-                },
-              ]}
-            >
-              {locationDetails.title || "No title found"}
-            </Text>
-            
-                
+            {additionalDetails && additionalDetails.hours && (
+              <>{renderOpenStatus(additionalDetails.hours)}</>
+            )}
+            <View style={styles.titleContainer}>
+              <Text
+                style={[
+                  themeStyles.genericText,
+                  {
+                    fontWeight: "bold",
+                    fontSize: 16,
+                    textTransform: "uppercase",
+                  },
+                ]}
+              >
+                {locationDetails.title || "No title found"}
+              </Text>
             </View>
-            
-
           </View>
 
           <View style={styles.rowContainer}>
@@ -215,7 +208,7 @@ const LocationDetailsBody = ({
               )}
 
               {additionalDetails.hours && (
-                <View style={[styles.rowContainer, {paddingRight: '20%'}]}>
+                <View style={[styles.rowContainer, { paddingRight: "20%" }]}>
                   <LocationHoursOfOperation
                     location={locationObject}
                     data={additionalDetails.hours}
@@ -237,6 +230,12 @@ const LocationDetailsBody = ({
             </View>
           )}
 
+          {additionalDetails && (
+            <>
+              <LocationImages photos={additionalDetails.photos} />
+              <LocationCustomerReviews reviews={additionalDetails.reviews} />
+            </>
+          )}
 
           {locationDetails && (
             <View
@@ -250,7 +249,7 @@ const LocationDetailsBody = ({
                   bottom: 0,
                   height: 56,
                   //backgroundColor:
-                    //themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+                  //themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
                   width: "100%",
                   left: 0,
                   right: 0,
@@ -267,7 +266,7 @@ const LocationDetailsBody = ({
                   />
                 </View>
               )}
-                {locationDetails.id && (
+              {locationDetails.id && (
                 <View style={{ paddingRight: "7%" }}>
                   <LocationParking
                     location={locationDetails && locationDetails}
@@ -297,7 +296,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 15,
   },
-  rowContainer: { 
+  rowContainer: {
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
@@ -306,11 +305,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: "6%",
   },
   titleContainer: {
-
-    width: '100%',
+    width: "100%",
     flex: 1,
     flexShrink: 1,
-    marginRight: '2%',
+    marginRight: "2%",
   },
 });
 

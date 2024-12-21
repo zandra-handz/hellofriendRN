@@ -1,28 +1,44 @@
-// Rating.js
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+//
+// <Text style={[styles.ratingText, { fontSize: fontSize, color: 'white' }]}>
+// {rating}
+// </Text>
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import StarFullSvg from "../assets/svgs/star-full.svg";
+import StarOutlineSvg from "../assets/svgs/star-outline.svg";
+import StarHalfSvg from "../assets/svgs/star-half.svg";
 
-const StylingRating = ({ rating, icon='star', iconHalf='star-half', starSize=16, starColor='black', fontSize=14 }) => {
+const StylingRating = ({
+  rating,
+  icon = "star",
+  iconHalf = "star-half",
+  starSize = 16,
+  starColor = "white",
+  noStarColor = "red",
+  fontSize = 14,
+}) => {
   return (
     <View style={styles.ratingContainer}>
       {Array.from({ length: Math.floor(rating) }, (_, index) => (
-        <FontAwesome5 key={index} name={`${icon}`} size={starSize} color={starColor}/>
+        <StarFullSvg
+          width={starSize}
+          height={starSize}
+          color={starColor}
+          style={{ marginLeft: "2%" }}
+        />
       ))}
       {rating % 1 !== 0 && (
-        <FontAwesome5 name={`${iconHalf}`} size={starSize} />
+        <StarHalfSvg width={starSize} height={starSize} color={starColor} />
       )}
-      <Text style={[styles.ratingText, { fontSize: fontSize }]}>
-        {rating}
-    </Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   ratingText: {
     fontSize: 14,
