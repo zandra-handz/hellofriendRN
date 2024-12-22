@@ -101,6 +101,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         overflow: 'hidden',
+        zIndex: 5000,
+        elevation: 5000,
     },
 
 });

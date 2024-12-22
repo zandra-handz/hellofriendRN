@@ -11,7 +11,8 @@ import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 
 // Forwarding ref to the parent to expose the TextInput value
 const TextEditBox = forwardRef(
-  ({ title = "title", mountingText = "", onTextChange }, ref) => {
+  //width and height are original settings being used in location notes
+  ({ title = "title", mountingText = "", onTextChange, autoFocus=true, width='90%', height='60%', multiline=true }, ref) => {
     const { themeStyles } = useGlobalStyle();
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
     const textInputRef = useRef();
@@ -52,7 +53,7 @@ const TextEditBox = forwardRef(
 
     return ( 
         <View
-          style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}
+          style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, {width: width, height: height}]}
         >
           <View
             style={{
@@ -74,7 +75,7 @@ const TextEditBox = forwardRef(
           <View style={{ flex: 1 }}>
             <TextInput
               ref={textInputRef}
-              autoFocus={true}
+              autoFocus={autoFocus}
               style={[
                 styles.textInput,
                 themeStyles.genericText,
@@ -82,7 +83,7 @@ const TextEditBox = forwardRef(
               ]}
               value={editedMessage}
               onChangeText={handleTextInputChange} // Update local state
-              multiline
+              multiline={multiline}
             />
           </View>
         </View> 
@@ -96,8 +97,8 @@ const styles = StyleSheet.create({
     padding: "4%",
   },
   container: {
-    width: "90%",
-    height: "60%",
+    //width: "90%",
+    //height: "60%",
     borderRadius: 30, 
     margin: '4%',
     alignSelf: 'center', 

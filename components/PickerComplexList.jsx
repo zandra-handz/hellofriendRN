@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  FlatList,
+} from "react-native";
 
-import AlertSingleInput from './AlertSingleInput';
-import { useGlobalStyle } from '../context/GlobalStyleContext'; 
+import AlertSingleInput from "./AlertSingleInput";
+import { useGlobalStyle } from "../context/GlobalStyleContext";
 
 const PickerComplexList = ({
-  label = 'Select Label',
+  label = "Select Label",
+  title = 'title here',
   onLabelChange,
   modalHeader,
   primaryOptions = [],
@@ -13,28 +21,33 @@ const PickerComplexList = ({
   secondaryOptions = [],
   secondaryOptionsHeader,
   objects = false,
-  containerText = 'Select an option',
-  containerStyle, 
-  buttonRadius = 24,
-  includeContainer = false,
+  containerText = "Select an option",
+  buttonRadius = 20,
   modalVisible = false,
   setModalVisible,
   inline = false,
   noBackground = false,
   primaryIcon: PrimaryIcon,
-  secondaryIcon: SecondaryIcon, 
+  secondaryIcon: SecondaryIcon,
   iconSize = 34,
-  allowCustomEntry = false,  
-  buttonHeight = 'auto',
+  allowCustomEntry = false,
+  buttonHeight = "auto",
 }) => {
-
   const { themeStyles } = useGlobalStyle();
   const [isCustomModalVisible, setCustomModalVisible] = useState(false);
-  const [customValue, setCustomValue] = useState('');
+  const [customValue, setCustomValue] = useState("");
 
   const combinedOptions = [
-    { type: `${primaryOptionsHeader}`, data: primaryOptions, icon: PrimaryIcon },
-    { type: `${secondaryOptionsHeader}`, data: secondaryOptions, icon: SecondaryIcon },
+    {
+      type: `${primaryOptionsHeader}`,
+      data: primaryOptions,
+      icon: PrimaryIcon,
+    },
+    {
+      type: `${secondaryOptionsHeader}`,
+      data: secondaryOptions,
+      icon: SecondaryIcon,
+    },
   ];
 
   const handleSelectLabel = (selectedItem) => {
@@ -44,20 +57,24 @@ const PickerComplexList = ({
 
   const handleCustomEntry = (value) => {
     setCustomValue(value);
-    onLabelChange(value);  
+    onLabelChange(value);
     setCustomModalVisible(false);
-    setModalVisible(false);  
+    setModalVisible(false);
   };
 
   const handleClear = () => {
-    onLabelChange('');  
-    setCustomValue(''); 
-    setModalVisible(false);  
+    onLabelChange("");
+    setCustomValue("");
+    setModalVisible(false);
   };
 
   const renderOptionItem = ({ item }) => {
-    const Icon = combinedOptions.find(section => section.data.includes(item))?.icon || null;
-    const iconColor = combinedOptions.find(section => section.data.includes(item))?.color || 'black';
+    const Icon =
+      combinedOptions.find((section) => section.data.includes(item))?.icon ||
+      null;
+    const iconColor =
+      combinedOptions.find((section) => section.data.includes(item))?.color ||
+      "black";
 
     return (
       <TouchableOpacity
@@ -95,34 +112,40 @@ const PickerComplexList = ({
   );
 
   return (
-    <View
-      style={[
-        includeContainer ? [styles.container, containerStyle] : undefined,
-        inline && styles.inlineContainer,
-      ]}
-    >
-      <View style={[styles.content, inline && styles.inlineContent]}>
-        {inline && noBackground && (
-          <Text style={[styles.containerText, themeStyles.subHeaderText, inline && styles.inlineText]}>
-            {containerText}
+    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+          height: "auto",
+        }}
+      >
+        <Text style={[styles.title, themeStyles.genericText]}>
+          {title}
           </Text>
-        )}
+      </View> 
         <TouchableOpacity
-          style={[styles.button, themeStyles.genericTextBackgroundShadeTwo, { borderRadius: buttonRadius, height: buttonHeight }]}
+          style={[
+            styles.button,
+            themeStyles.genericTextBackgroundShadeTwo,
+          ]}
           onPress={() => setModalVisible(true)}
-        >
-          <View style={styles.buttonInner}>
-            {inline && !noBackground && (  
-              <View style={{ alignContent: 'center', paddingRight: 10 }}> 
+        > 
+        <>
+              <View style={{ alignContent: "center", paddingRight: 10 }}>
                 {containerText}
-              </View>
-            )}
-            <Text style={[styles.buttonText, themeStyles.genericText]} numberOfLines={1} ellipsizeMode="tail">
-            {label}
-          </Text>
-          </View>
-        </TouchableOpacity> 
-      </View>
+              </View> 
+            <Text
+              style={[styles.buttonText, themeStyles.genericText]}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {label}
+            </Text> 
+          </>
+
+        </TouchableOpacity>  
 
       {modalVisible && (
         <Modal
@@ -198,113 +221,121 @@ const PickerComplexList = ({
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    width: "100%",
+    flex: 1,
+    borderRadius: 30,
+    margin: "4%",
+    alignSelf: "center",
+    padding: 20,
+  },
   inlineContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   content: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
   },
   inlineContent: {
     flex: 1,
   },
   containerText: {
     fontSize: 17,
-    height: '100%', 
-    fontFamily: 'Poppins-Bold', 
+    height: "100%",
+    fontFamily: "Poppins-Bold",
   },
   inlineText: {},
-  button: {  
+  button: {
+    borderRadius: 30,
+    alignSelf: "center",
+    padding: 0,
+    flexDirection:'row',
     width: '100%',
-    justifyContent: 'flex-start',
-    textAlign: 'center',
-    alignContent: 'center', 
-    padding: 2,
-    paddingLeft: 10,  
-    alignItems: 'center',
-    flexDirection: 'row',
-    flex: 1,
-  }, 
-  buttonInner: { 
-    width: '80%',
-    flexDirection: 'row', 
     justifyContent: 'space-between',
+    height: '100%',
+  },
+  title: {
+    fontSize: 15,
+    lineHeight: 21,
+    textTransform: "uppercase",
+  },
+  buttonInner: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   buttonText: {
     fontSize: 15,
-    justifyContent: 'flex-start',
-    width: '100%', 
-    fontFamily: 'Poppins-Regular',
-    color: '#fff',
+    justifyContent: "flex-start",
+    width: "100%",
+    //fontFamily: "Poppins-Regular", 
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    width: '80%',
-    maxHeight: '80%',
-    backgroundColor: '#fff',
+    width: "80%",
+    maxHeight: "80%",
+    backgroundColor: "#fff",
     borderRadius: 8,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   scrollView: {
-    width: '100%',
+    width: "100%",
   },
   section: {
     marginBottom: 20,
-    width: '100%',
+    width: "100%",
   },
   sectionTitle: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: "Poppins-Bold",
     marginBottom: 10,
   },
   modalTitle: {
     fontSize: 18,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: "Poppins-Bold",
     marginBottom: 10,
   },
   optionButton: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    width: '100%',
-    alignItems: 'flex-start',
-    flexDirection: 'row',
+    borderBottomColor: "#ddd",
+    width: "100%",
+    alignItems: "flex-start",
+    flexDirection: "row",
   },
   iconContainer: {
     marginRight: 10,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   textContainer: {
     flex: 1,
   },
   optionTitleText: {
     fontSize: 12,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: "Poppins-Bold",
   },
   optionText: {
     fontSize: 12,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   closeButton: {
     marginTop: 10,
     padding: 10,
-    backgroundColor: 'gray',
+    backgroundColor: "gray",
     borderRadius: 20,
   },
   clearButton: {
     marginTop: 10,
     padding: 10,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     borderRadius: 20,
   },
   footerButton: {
@@ -314,23 +345,23 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: '#fff',
+    fontFamily: "Poppins-Bold",
+    color: "#fff",
   },
   clearButtonText: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: '#fff',
+    fontFamily: "Poppins-Bold",
+    color: "#fff",
   },
   customEntryButton: {
     marginTop: 10,
     padding: 10,
-    backgroundColor: 'lightblue',
+    backgroundColor: "lightblue",
     borderRadius: 20,
   },
   customEntryText: {
     fontSize: 14,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: "Poppins-Bold",
   },
 });
 

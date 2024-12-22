@@ -20,7 +20,7 @@ const LocationImages = ({ photos }) => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
           {photos.map((photoUrl, index) => (
             <>
-            <Image key={index} style={styles.image} source={{ uri: photoUrl }} contentFit="cover"  />
+            <Image key={`${photoUrl.slice(-5)}-${index}`} style={styles.image} source={{ uri: photoUrl }} contentFit="cover"  />
            
             
             </>

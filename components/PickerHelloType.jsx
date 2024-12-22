@@ -15,12 +15,11 @@ const PickerHelloType = ({
     onTypeChoiceChange, 
     useSvg=true,
     labels=['digital', 'in person', 'surprise', 'N/A'],
-    widthInPercentage='84%',
-    height=40
+    widthInPercentage='84%', 
     
     }) => {
 
-    const [typeChoices, setTypeChoices] = useState(["via text or social media", "in person", "happenstance", "unspecified"]);
+    const typeChoices = ["via text or social media", "in person", "happenstance", "unspecified"];
   
    
 
@@ -32,10 +31,10 @@ const PickerHelloType = ({
       ];
 
 
-   return ( 
-          <View style={{height: height}}> 
+   return (  
             <PickerMenuOptions
                 options={typeChoices}
+                title={'PICK TYPE'}
                 widthForHorizontal={widthInPercentage}
                 containerText={containerText}
                 onSelectOption={onTypeChoiceChange}
@@ -43,8 +42,7 @@ const PickerHelloType = ({
                 useSvg={useSvg}
                 svgIcons={svgIcons} 
                 labels={labels}
-            /> 
-          </View>
+            />  
 
    );
 };

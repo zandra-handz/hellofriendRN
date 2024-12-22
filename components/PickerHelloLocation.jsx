@@ -30,6 +30,7 @@ const PickerHelloLocation = ({
         <> 
        
         <PickerComplexList 
+        title={'PICK LOCATION'}
             containerText={
             <LocationSolidSvg width={20} height={20} color={themeStyles.genericText.color} />}
             inline={true}
@@ -45,8 +46,7 @@ const PickerHelloLocation = ({
             onLabelChange={onLocationChange}
             label={selectedLocation}
             modalVisible={modalVisible}
-            setModalVisible={setModalVisible} 
-            buttonRadius={buttonRadius}
+            setModalVisible={setModalVisible}  
             buttonHeight={buttonHeight}
         /> 
         </>

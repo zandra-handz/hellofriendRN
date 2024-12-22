@@ -6,46 +6,48 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import CalendarAddOutlineSvg from '../assets/svgs/calendar-add-outline.svg';
 
 const PickerDate = ({
+  title='PICK DATE',
   value,
-  mode,
-  containerText = 'Last time you said hello?',
+  mode, 
   display,
   maximumDate,
   onChange,
   showDatePicker,
-  setShowDatePicker, 
-  includeContainer = false,
-  inline =false,  
-  buttonHeight='auto',
+  setShowDatePicker,   
 }) => {
   
   const { themeStyles } = useGlobalStyle();
   
   return (
-    <View
-      style={[
-        includeContainer ? [styles.locationContainer] : undefined,
-        inline && styles.inlineContainer,  
-      ]}
-    >
-      <View style={inline ? styles.inlineContent : undefined}>
-        <Text style={[styles.locationTitle, themeStyles.subHeaderText]}>
-          {containerText}
-        </Text>
+    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          width: "100%",
+          height: "auto",
+        }}
+      >
+        <Text style={[styles.title, themeStyles.genericText]}>
+          {title}
+          </Text> 
+          </View>
         <TouchableOpacity
           onPress={() => setShowDatePicker(true)}
-          style={[styles.datePickerButton, themeStyles.genericTextBackgroundShadeTwo, {height: buttonHeight}, inline && styles.flexButton]}
-        >
+          style={[
+            styles.button,
+            themeStyles.genericTextBackgroundShadeTwo,
+          ]}
+          >
             <View style={{paddingRight: 8}}>
             <CalendarAddOutlineSvg height={30} width={30} color={themeStyles.genericText.color} />
             </View>
 
-          <Text style={[styles.dateText, {color: themeStyles.genericText.color }]}>
+          <Text style={[styles.dateText, themeStyles.genericText]}>
  
             {moment(value).format('MMM D YYYY')}
           </Text>
-        </TouchableOpacity>
-      </View>
+        </TouchableOpacity> 
       {showDatePicker && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -61,35 +63,27 @@ const PickerDate = ({
 };
 
 const styles = StyleSheet.create({
-  locationContainer: { 
-    borderRadius: 8,
-    padding: 10,  
-    marginVertical: 8,
-  },
-  inlineContainer: {
-    flexDirection: 'row', 
-    alignItems: 'center',
-  },
-  inlineContent: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    width: '100%',
-  },
-  locationTitle: {
-    fontSize: 17,
-    fontFamily: 'Poppins-Bold',  
-  },
-  datePickerButton: { 
-    borderRadius: 10,
-    width: '100%',
-    justifyContent: 'flex-start',
-    textAlign: 'center',
-    alignContent: 'center',  
-    padding: 2,
-    paddingLeft: 10,  
-    alignItems: 'center',
-    flexDirection: 'row',
+  container: {
+    width: "100%",
     flex: 1,
+    borderRadius: 30,
+    margin: "4%",
+    alignSelf: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 15,
+    lineHeight: 21,
+    textTransform: "uppercase",
+  },    
+  button: {
+    borderRadius: 30,
+    alignSelf: "center",
+    padding: 0,
+    flexDirection:'row',
+    width: '100%',
+    justifyContent: 'space-between',
+    height: '100%',
   },
   flexButton: {
     flex: 1,   
@@ -102,8 +96,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
 
-    fontFamily: 'Poppins-Regular',
-    color: '#fff',  
+    //fontFamily: 'Poppins-Regular', 
   },
 });
 
