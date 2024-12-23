@@ -223,9 +223,9 @@ const PickerComplexList = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    flex: 1,
+    //flex: 1,
     borderRadius: 30,
-    margin: "4%",
+    //margin: "4%",
     alignSelf: "center",
     padding: 20,
   },
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     width: '100%',
     justifyContent: 'space-between',
-    height: '100%',
+    //height: '100%',
   },
   title: {
     fontSize: 15,

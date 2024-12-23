@@ -39,6 +39,8 @@ import { saveHello } from "../api";
 
 import PickerMultiMoments from "../components/PickerMultiMoments";
 
+import useHelloesData from "../hooks/useHelloesData";
+
 import Icon from "react-native-vector-icons/FontAwesome";
 import PickerDate from "../components/PickerDate";
 import PickerHelloType from "../components/PickerHelloType";
@@ -53,6 +55,7 @@ const ContentAddHello = () => {
 
   const { showMessage } = useMessage();
 
+  const { createHelloMutation, handleCreateHello } = useHelloesData();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const { authUserState } = useAuthUser();
@@ -62,12 +65,12 @@ const ContentAddHello = () => {
   const { themeStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [typeChoices, setTypeChoices] = useState([
+  const typeChoices = [
     "via text or social media",
     "in person",
     "happenstance",
     "unspecified",
-  ]);
+  ];
 
   const [selectedTypeChoice, setSelectedTypeChoice] = useState(null);
   const [selectedTypeChoiceText, setSelectedTypeChoiceText] = useState(null);
@@ -84,8 +87,9 @@ const ContentAddHello = () => {
 
   const { width, height } = Dimensions.get("window");
 
+  const oneFifthHeight = height / 5;
   const oneSixthHeight = height / 6;
-  const oneEighthHeight = height / 7.6; //location
+  const oneSeventhHeight = height / 7; 
   const oneHalfHeight = height / 2; //notes when keyboard is up
 
   const { locationList, locationListIsSuccess, savedLocationList } =
@@ -121,36 +125,6 @@ const ContentAddHello = () => {
 
   const timeoutRef = useRef(null);
 
-  const createHelloMutation = useMutation({
-    mutationFn: (data) => saveHello(data),
-    onError: (error) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        createHelloMutation.reset();
-      }, 2000);
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["pastHelloes"], (old) => {
-        const updatedHelloes = old ? [data, ...old] : [data];
-        return updatedHelloes;
-      });
-
-      const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
-      console.log("Actual HelloesList after mutation:", actualHelloesList);
-
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        createHelloMutation.reset();
-      }, 2000);
-    },
-  });
-
   useEffect(() => {
     if (createHelloMutation.isSuccess) {
       showMessage(true, null, "Hello saved!");
@@ -159,28 +133,6 @@ const ContentAddHello = () => {
       navigateToMainScreen();
     }
   }, [createHelloMutation.isSuccess]);
-
-  const handleCreateHello = async (helloData) => {
-    const hello = {
-      user: authUserState.user.id,
-      friend: helloData.friend,
-      type: helloData.type,
-      typed_location: helloData.manualLocation,
-      additional_notes: helloData.notes,
-      location: helloData.locationId,
-      date: helloData.date,
-      thought_capsules_shared: helloData.momentsShared,
-      delete_all_unshared_capsules: deleteMoments ? true : false,
-    };
-
-    console.log("Payload before sending:", hello);
-
-    try {
-      await createHelloMutation.mutateAsync(hello); // Call the mutation with the location data
-    } catch (error) {
-      console.error("Error saving hello:", error);
-    }
-  };
 
   useLayoutEffect(() => {
     showMessage(
@@ -205,6 +157,36 @@ const ContentAddHello = () => {
     }
   };
 
+  const onChangeDate = (event, selectedDate) => {
+    const currentDate = selectedDate || friendDate;
+
+    const dateWithoutTime = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
+
+    setHelloDate(dateWithoutTime);
+    setShowDatePicker(false);
+    console.log(dateWithoutTime);
+  };
+
+  const handleLocationChange = (item) => {
+    if (item && item.id) {
+      setSelectedHelloLocation(item.title);
+      setExistingLocationId(item.id);
+      setCustomLocation(null);
+    } else {
+      if (item) {
+        setSelectedHelloLocation(item);
+        setCustomLocation(item);
+        setExistingLocationId(null);
+      } else {
+        setSelectedHelloLocation("None");
+      }
+    }
+  };
+
   const handleTypeChoiceChange = (index) => {
     setSelectedTypeChoice(index);
     setSelectedTypeChoiceText(`${typeChoices[index]}`);
@@ -224,39 +206,9 @@ const ContentAddHello = () => {
     setLocationModalVisible(!locationModalVisible);
   };
 
-  const handleLocationChange = (item) => {
-    if (item && item.id) {
-      setSelectedHelloLocation(item.title);
-      setExistingLocationId(item.id);
-      setCustomLocation(null);
-    } else {
-      if (item) {
-        setSelectedHelloLocation(item);
-        setCustomLocation(item);
-        setExistingLocationId(null);
-      } else {
-        setSelectedHelloLocation("None");
-      }
-    }
-  };
-
   const handleMomentSelect = (selectedMoments) => {
     setMomentsSelected(selectedMoments);
-    console.log("Selected Moments in Parent:", selectedMoments);
-  };
-
-  const onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate || friendDate;
-    setShowDatePicker(false);
-
-    const dateWithoutTime = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate()
-    );
-
-    setHelloDate(dateWithoutTime);
-    console.log(dateWithoutTime);
+    //console.log("Selected Moments in Parent:", selectedMoments);
   };
 
   const handleSave = async () => {
@@ -304,7 +256,7 @@ const ContentAddHello = () => {
       <>
         <View
           style={{
-            width: "100%", 
+            width: "100%",
 
             flexDirection: "column",
             justifyContent: "space-between",
@@ -324,114 +276,99 @@ const ContentAddHello = () => {
               { borderColor: themeAheadOfLoading.lightColor },
             ]}
           >
-            
             <View style={styles.paddingForElements}>
               <>
-              {!isKeyboardVisible && (
-                <PickerHelloType
-                  containerText=""
-                  selectedTypeChoice={selectedTypeChoice}
-                  onTypeChoiceChange={handleTypeChoiceChange}
-                  useSvg={true}
-                />
-              )}
-
-              {selectedTypeChoiceText && (
-                <>
-                  <View style={{ flex: 1, width: "100%" }}>
-                    
                 {!isKeyboardVisible && (
-                    <> 
-                        {locationListIsSuccess && (
-                          <View style={{height:oneEighthHeight }}>
-                            
-                          <PickerHelloLocation
-                            faveLocations={faveLocations}
-                            savedLocations={savedLocationList} 
-                            onLocationChange={handleLocationChange}
-                            modalVisible={locationModalVisible}
-                            setModalVisible={setLocationModalVisible}
-                            selectedLocation={selectedHelloLocation}
-                          />
-                          
-                          </View>
-                        )}   
-                          
-                        <View style={{height:oneEighthHeight }}>
-                            
-                        <PickerDate
-                          buttonHeight={36}
-                          value={helloDate}
-                          mode="date"
-                          display="default"
-                          containerText=""
-                          maximumDate={new Date()}
-                          onChange={onChangeDate}
-                          showDatePicker={showDatePicker}
-                          setShowDatePicker={setShowDatePicker}
-                          inline={true}
-                        /> 
-                        
-                        </View>
-                         
-                        </>
-                       
+                  <PickerHelloType
+                    containerText=""
+                    selectedTypeChoice={selectedTypeChoice}
+                    onTypeChoiceChange={handleTypeChoiceChange}
+                    useSvg={true}
+                  />
                 )}
-                     
 
-                    <TextEditBox
-                      width={"100%"}
-                      height={!isKeyboardVisible ? oneSixthHeight : oneHalfHeight}
-                      ref={editedTextRef}
-                      autoFocus={false}
-                      title={"Add notes"}
-                      mountingText={""}
-                      onTextChange={updateNoteEditString}
-                      multiline={false}
-                    />
+                {selectedTypeChoiceText && (
+                  <>
+                    <>
+                     {!isKeyboardVisible && ( 
+                      <>
+                          {locationListIsSuccess && (
+                            <View style={{  }}>
+                              <PickerHelloLocation
+                                faveLocations={faveLocations}
+                                savedLocations={savedLocationList}
+                                onLocationChange={handleLocationChange}
+                                modalVisible={locationModalVisible}
+                                setModalVisible={setLocationModalVisible}
+                                selectedLocation={selectedHelloLocation}
+                              />
+                            </View>
+                          )}
+                        </>
+                     )}
 
-                    <View
-                      style={[
-                        styles.momentsContainer,
-                        {
-                          marginVertical: "2%",
-                          flex: 1,
-                          width: "100%",
-                          height: "auto",
-                        },
-                      ]}
-                    >
-                      <PickerMultiMoments onMomentSelect={handleMomentSelect} />
-                    </View>
-                    <View
-                      style={[
-                        styles.deleteRemainingContainer,
-                        { marginVertical: "2%" },
-                      ]}
-                    >
-                      <TouchableOpacity
-                        onPress={toggleDeleteMoments}
-                        style={[styles.controlButton, themeStyles.footerIcon]}
-                      >
-                        <Text
-                          style={[
-                            styles.controlButtonText,
-                            { color: themeStyles.footerText.color },
-                          ]}
-                        >
-                          {"DELETE UNUSED MOMENTS"}
-                        </Text>
-                        <Icon
-                          name={deleteMoments ? "check-square-o" : "square-o"}
-                          size={20}
-                          style={[styles.checkbox, themeStyles.footerIcon]}
+{!isKeyboardVisible && ( 
+                          <View style={{   }}>
+                            <PickerDate
+                              buttonHeight={36}
+                              value={helloDate}
+                              mode="date"
+                              display="default"
+                              containerText=""
+                              maximumDate={new Date()}
+                              onChange={onChangeDate}
+                              showDatePicker={showDatePicker}
+                              setShowDatePicker={setShowDatePicker}
+                              inline={true}
+                            />
+                          </View> 
+                      )}
+
+                      <TextEditBox
+                        width={"100%"}
+                        height={
+                          !isKeyboardVisible ? oneSeventhHeight: oneHalfHeight
+                        }
+                        ref={editedTextRef}
+                        autoFocus={false}
+                        title={"Add notes"}
+                        mountingText={""}
+                        onTextChange={updateNoteEditString}
+                        multiline={false}
+                      />
+
+                      <View style={{  }}>
+                        <PickerMultiMoments
+                          onMomentSelect={handleMomentSelect}
                         />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </>
-                
-              )}
+                      </View>
+                      <View
+                        style={[
+                          styles.deleteRemainingContainer, 
+                        ]}
+                      >
+                        <TouchableOpacity
+                          onPress={toggleDeleteMoments}
+                          style={[styles.controlButton, themeStyles.footerIcon]}
+                        >
+                          <Text
+                            style={[
+                              styles.controlButtonText,
+                              { color: themeStyles.footerText.color },
+                            ]}
+                          >
+                            {"Delete unused?"}
+                          </Text>
+                          <Icon
+                            name={deleteMoments ? "check-square-o" : "square-o"}
+                            size={20}
+                            style={[styles.checkbox, themeStyles.footerIcon]}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                  </>
+                )}
               </>
             </View>
 
@@ -486,7 +423,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    justifyContent: "space-between", 
+    justifyContent: "space-between",
     zIndex: 1,
   },
   loadingWrapper: {
@@ -506,7 +443,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderRadius: 30,
     flexDirection: "column",
-    justifyContent: "space-between", 
+    justifyContent: "space-between",
     zIndex: 2000,
   },
   locationContainer: {
@@ -537,12 +474,19 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   deleteRemainingContainer: {
+    position: 'absolute',
+    bottom: 0,
     flexDirection: "row",
     justifyContent: "flex-end",
     width: "100%",
   },
   paddingForElements: {
     paddingHorizontal: "4%",
+    flex: 1,
+    //backgroundColor: 'pink',
+    paddingBottom: "5%",
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   checkbox: {
     paddingLeft: 10,
@@ -554,8 +498,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   controlButtonText: {
-    fontSize: 15,
-    fontFamily: "Poppins-Regular",
+    fontSize: 12, 
     justifyContent: "center",
     alignItems: "center",
     alignContent: "center",

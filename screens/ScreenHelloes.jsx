@@ -15,6 +15,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomTabBar from '../components/CustomTabBar';
 
 import useHelloesData from '../hooks/useHelloesData';
+//to transition over to
+import HelloesNavigator from '../components/HelloesNavigator';
 
 
 const Tab = createBottomTabNavigator();
@@ -25,6 +27,12 @@ const ScreenHelloes = ({ route, navigation }) => {
     const { selectedFriend } = useSelectedFriend();
     const { themeAheadOfLoading } = useFriendList();
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    //to transition over to
+    const [ isHelloesNavVisible, setHelloesNavVisible ] = useState(false);
+    const [selectedHelloToView, setSelectedHelloToView] = useState(null);
+      
+
     const [ selectedHello, setSelectedHello ] = useState(null);
    const { helloesList, inPersonHelloes, flattenHelloes } = useHelloesData();
 

@@ -25,7 +25,7 @@ const PickerDate = ({
           flexDirection: "row",
           justifyContent: "space-between",
           width: "100%",
-          height: "auto",
+          //height: "auto",
         }}
       >
         <Text style={[styles.title, themeStyles.genericText]}>
@@ -64,10 +64,10 @@ const PickerDate = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    flex: 1,
+    width: "100%", 
+    //flex: 1,
     borderRadius: 30,
-    margin: "4%",
+    //margin: "4%",
     alignSelf: "center",
     padding: 20,
   },
@@ -82,8 +82,7 @@ const styles = StyleSheet.create({
     padding: 0,
     flexDirection:'row',
     width: '100%',
-    justifyContent: 'space-between',
-    height: '100%',
+    justifyContent: 'space-between', 
   },
   flexButton: {
     flex: 1,   

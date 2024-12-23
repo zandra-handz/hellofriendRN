@@ -96,11 +96,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: "4%",
   },
-  container: {
-    //width: "90%",
-    //height: "60%",
-    borderRadius: 30, 
-    margin: '4%',
+  container: { 
+    borderRadius: 30,  
     alignSelf: 'center', 
     padding: 20, 
   },
