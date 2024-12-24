@@ -1,178 +1,292 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import ItemModal from '../components/ItemModal';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import React, { useState } from "react";
+import { View, Image, StyleSheet, Text, Dimensions, Modal } from "react-native";
+import { useSelectedFriend } from "../context/SelectedFriendContext";
+import { useFriendList } from "../context/FriendListContext";
 import { useCapsuleList } from '../context/CapsuleListContext'; 
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+
+import useImageFunctions from "../hooks/useImageFunctions";
+
+import { useGlobalStyle } from "../context/GlobalStyleContext";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
+
+import AlertConfirm from "../components/AlertConfirm";
+
+import FormatMonthDay from '../components/FormatMonthDay';
+
+
+
 import PickerMultiMomentsArchived from '../components/PickerMultiMomentsArchived';
 import ViewMultiMomentsArchived from '../components/ViewMultiMomentsArchived';
 import DisplayHelloNotes from '../components/DisplayHelloNotes';
  
 import ButtonReuseMoments from '../components/ButtonReuseMoments';
 
-const HelloView = ({ hello, onClose }) => {
+import HeaderBaseItemViewTwoOptions from "../components/HeaderBaseItemViewTwoOptions";
+import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
+
+
+
+const { height: screenHeight } = Dimensions.get("window");
+
+const HelloView = ({
+  helloData,
+  navigationArrows,
+  onSliderPull,
+  isModalVisible,
+  toggleModal,
+}) => {
   const { themeStyles } = useGlobalStyle();
-  const [isEditing, setIsEditing] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(true);
-  const [isReselectMomentsModalVisible, setReselectMomentsModalVisible] = useState(false);
-  const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
-  const { capsuleList, setCapsuleList } = useCapsuleList();
-  const [momentsToSave, setMomentsToSave] = useState(false);
+  const { selectedFriend } = useSelectedFriend();
+  const { imageList, updateImage, deleteImage } = useImageFunctions();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isEditing, setIsEditing] = useState(false); 
+  const [isOldModalVisible, setIsOldModalVisible] = useState(true);
+  const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] =
+    useState(false);
+ 
+ const { capsuleList } = useCapsuleList();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const [momentsSelected, setMomentsSelected] = useState([]);
+    const [momentsToSave, setMomentsToSave] = useState(false);
   
+    const [momentsSelected, setMomentsSelected] = useState([]);
 
-  useEffect(() => {
-    if (capsuleList) {
-      setReselectMomentsModalVisible(false);
-      setMomentsSelected([]);
-      setMomentsToSave(false);
-    }
-  }, [capsuleList]);
-
-  const toggleReselectModal = () => {
-    setReselectMomentsModalVisible(!isReselectMomentsModalVisible);
-  };
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+ 
 
   const closeModal = () => {
-    setIsModalVisible(false);
+    setIsOldModalVisible(false);
     setIsEditing(false);
     onClose();
   };
 
-  const handleUpdate = async () => {
-    try { 
-      onClose();
+  //const handleUpdate = async () => {
+  //try {
+  // updateImage(image.id, { title });
+  // setIsEditing(false);
+  // onClose();
+  // } catch (error) {
+  //   console.error('Error updating image:', error);
+  // }
+  // };
+
+  const toggleOldModal = () => {
+    setConfirmDeleteModalVisible(!isConfirmDeleteModalVisible);
+  };
+
+  const handleShare = async () => {
+    if (!helloData?.moments) {
+      console.error("Error: Image URL is null or undefined");
+      return;
+    }
+
+    const fileUri =
+      FileSystem.documentDirectory +
+      (helloData.title || "shared_image") +
+      ".jpg";
+
+    try {
+      const { uri } = await FileSystem.downloadAsync(helloData.image, fileUri);
+      await Sharing.shareAsync(uri);
+
+      setTimeout(async () => {
+        try {
+          setConfirmDeleteModalVisible(true);
+        } catch (error) {
+          console.error("Error deleting shared image:", error);
+        }
+      }, 500);
     } catch (error) {
-      console.error('Error updating moment:', error);
+      console.error("Error sharing image:", error);
     }
   };
 
   const handleDelete = async () => {
-    try { 
-      onClose();
-    } catch (error) {
-      console.error('Error deleting moment:', error);
+    try {
+      setIsDeleting(true);
+      const imageToDelete = imageList[currentIndex];
+      deleteImage(imageList[currentIndex].id);
+
+      // Update currentIndex to prevent out-of-bounds access
+      if (currentIndex >= imageList.length - 1) {
+        setCurrentIndex(imageList.length - 2); // Move to the previous image
+      }
+ 
+    } catch (error) { 
+      console.error("Error deleting image:", error);
+    } finally {
+      setConfirmDeleteModalVisible(false);
+      setIsDeleting(false);
     }
   };
-  const handleMomentSelect = (selectedMoments) => {
-    setMomentsSelected(selectedMoments);
-    if (selectedMoments && selectedMoments.length > 0) {
-      setMomentsToSave(true);
-      console.log('moments set to true');
-    } else {
-      setMomentsToSave(false);
-      console.log('moments set to false');
-    };
-    console.log('Selected Moments in Parent:', selectedMoments);
-  };
+ 
+ 
 
   return (
-    <ItemModal
-      isModalVisible={isModalVisible}
-      toggleModal={closeModal}
-      modalContent={
-        hello ? (
-          <View style={styles.container}>
-            <View style={styles.headerContainer}>
-              <View style={styles.itemTitleContainer}>
-                <Text style={[styles.itemTitle, themeStyles.subHeaderText]} >{hello.date}</Text> 
-              </View>
-              <View style={styles.infoContainer}> 
-                <View style={styles.detailRow}>
-                  <Text style={[styles.detailsText, themeStyles.genericText]}> {hello.type}</Text> 
-                </View>
-                <View style={styles.detailRow}>
-                  <Text style={[styles.detailsText, themeStyles.genericText]}>@ {hello.locationName} </Text> 
-                </View> 
-                <View style={styles.notesRow}> 
-                  <DisplayHelloNotes 
-                    notes={hello.additionalNotes}
-                    borderColor={calculatedThemeColors.lightColor} />
-                </View>
-              </View>  
-            </View>
+    <>
+      <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+        <>
+          <View
+            style={{
+              position: "absolute",
+              width: "100%",
+              zIndex: 1000,
+              top: "50%",
+              transform: [{ translateY: -50 }],
+              alignItems: "center",
+            }}
+          >
+            {navigationArrows}
+          </View>
+          <View
+            style={[styles.modalContainer, themeStyles.genericTextBackground]}
+          >
+            <View
+              style={[
+                styles.modalContent,
+                themeStyles.genericText,
+                { maxHeight: screenHeight * 1, paddingBottom: 0 },
+              ]}
+            >
+              <HeaderBaseItemViewTwoOptions
+                onBackPress={toggleModal}
+                itemData={helloData}
+                onSliderPull={onSliderPull}
+                headerTitle={"VIEW HELLO"}
+              />
 
-            {!isReselectMomentsModalVisible && ( 
-            <View style={styles.momentsContainer}> 
-            <ViewMultiMomentsArchived
-              archivedMoments={hello.pastCapsules}
-              reuseButtonOnPress={toggleReselectModal}
-             />
+              <View
+                style={[
+                  styles.imageContainer,
+                  themeStyles.textGenericBackgroundShadeTwo,
+                ]}
+              >
+                <View style={styles.categoryContainer}> 
+                  <Text style={[styles.imageText, themeStyles.genericText]}>
+                  {helloData.type} @ {helloData.locationName}
+                  </Text>
+                </View>
+                <View style={styles.categoryContainer}> 
+                  <Text style={[styles.imageText, themeStyles.genericText]}>
+                  {helloData.created} @ {helloData.updated} 
+                  </Text>
+                  <FormatMonthDay  
+            date={helloData.created} 
+            fontSize={13}  
+            fontFamily={'Poppins-Regular'} 
+            opacity={1}
+            parentStyle={styles.categoryText}
+          /> 
+                            <FormatMonthDay  
+            date={helloData.updated} 
+            fontSize={13}  
+            fontFamily={'Poppins-Regular'} 
+            opacity={1}
+            parentStyle={styles.categoryText}
+          /> 
+                </View>
+
+ 
+              </View>
+
+              <View
+                style={{
+                  position: "absolute",
+                  height: 80,
+                  bottom: -6,
+                  left: -4,
+                  width: "103%",
+                }}
+              >
+                <ButtonBaseSpecialSave
+                  label={`SEND TO ${selectedFriend.name} `}
+                  maxHeight={80}
+                  onPress={handleShare}
+                  isDisabled={false}
+                  fontFamily={"Poppins-Bold"}
+                  image={require("../assets/shapes/chatmountain.png")}
+                />
+              </View>
+            </View>
           </View>
-          )}
-            {isReselectMomentsModalVisible && ( 
-            <View style={styles.momentsContainer}> 
-            <PickerMultiMomentsArchived
-              archivedMoments={hello.pastCapsules}
-              onMomentSelect={handleMomentSelect}
-              onCancel={toggleReselectModal}
-             />
-          </View>
-          )} 
-                <ButtonReuseMoments 
-                  onPress={toggleReselectModal} 
-                  momentsData={momentsSelected}
-                  disabled={!momentsToSave} 
-                  /> 
-          </View>
-        ) : null
-      }
-      modalTitle={`Helloes for ${selectedFriend.name}`}
-    />
+        </>
+      </Modal>
+
+      <AlertConfirm
+        fixedHeight={true}
+        height={330}
+        isModalVisible={isConfirmDeleteModalVisible}
+        questionText="Delete image?"
+        isFetching={isDeleting}
+        useSpinner={true}
+        headerContent={
+          <Text style={{ fontFamily: "Poppins-Bold", fontSize: 18 }}>
+            {imageList[currentIndex]?.title || "Image"}
+          </Text>
+        }
+        onConfirm={() => handleDelete()}
+        onCancel={toggleOldModal}
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    width: '100%',
-    height: '100%',
-    justifyContent: 'space-between', 
-    paddingHorizontal: 2,
-  }, 
-  headerContainer: { 
-    width: '100%',
-    textAlign: 'left',  
+  modalContainer: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
+    zIndex: 1,
   },
-  itemTitleContainer: {
-    width: '100%',
-    paddingTop: 20,  
-    },
-  itemTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins-Bold',   
+  modalContent: {
+    width: "100%",
+    flexDirection: "column",
+    flex: 1,
   },
-  detailsText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',  
+  imageContainer: {
+    width: "100%",
+    overflow: "hidden",
+    flexDirection: "column",
+    flex: 1,
+    padding: "5%",
+    paddingHorizontal: "3%",
   },
-  infoContainer: {
-    flexDirection: 'column', 
-    alignItems: 'flex-start', 
-  }, 
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center', 
-    width: '100%',
+  categoryContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
-  notesRow: {
-    paddingTop: 10,
-    flexDirection: 'row',
-    alignItems: 'center', 
-    width: '100%',
+  imageText: {
+    //fontWeight: 'bold',
+    fontSize: 16,
+    paddingVertical: "4%",
   },
-  archivedMomentsContainer: {  
-    width: '100%',  
-    height: 280, 
-  }, 
-    momentsContainer: {  
-    height: 280,
-    width: '100%', 
-    borderRadius: 8,  
+  modalImageContainer: {
+    width: "100%",
+    height: "80%",
+    borderRadius: 20,
+  },
+  modalImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+    marginBottom: 0,
+    borderRadius: 10,
+  },
+  buttonContainer: {
+    flexDirection: "column",
+    justifyContent: "flex-start",
+  },
+  categoryText: { 
+    fontSize: 13,
+    flexShrink: 1, 
+    lineHeight: 21,
+    color: 'white',
+    overflow:'hidden',
+    //textTransform: 'uppercase',
+
   },
 });
 

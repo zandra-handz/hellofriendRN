@@ -10,11 +10,12 @@ import SlideToDeleteHeader from '../components/SlideToDeleteHeader';
 import { LinearGradient } from 'expo-linear-gradient';
 import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
 
-
+//same as HeaderBaseItemView except allows delete OR edit by comparing created and updated
+//made for hello view which is editable on same day as created, else can only be deleted
 
 //onBackPress function instead of stack navigation, to use with modals
 
-const HeaderBaseItemView = ({
+const HeaderBaseItemViewTwoOptions = ({
     itemData,
     
     onBackPress,
@@ -27,7 +28,19 @@ const HeaderBaseItemView = ({
 
     const { themeAheadOfLoading } = useFriendList();
     const { themeStyles } = useGlobalStyle(); 
- 
+
+    // Put this in really fast not sure if can cause a bug
+    const editable = (itemData? itemData.created.slice(0,13) === itemData.updated.slice(0,13) : false);
+
+
+
+    //useEffect(() => {
+      //if (itemData) {
+        //console.log(itemData.created.slice(0,13) === itemData.updated.slice(0,13));
+        //console.log(itemData.created.slice(0,13));
+     // }
+
+    //}, [itemData]);
 
  
   return (
@@ -48,13 +61,13 @@ const HeaderBaseItemView = ({
         </TouchableOpacity> 
       </View>
         <Text style={[
-          styles.headerText, themeStyles.headerText, { color: themeAheadOfLoading.fontColor, paddingLeft: 20}
+          styles.headerText, themeStyles.headerText, { color: themeAheadOfLoading.fontColorSecondary, paddingLeft: 20}
           ]}> 
             {headerTitle}
         </Text> 
         <View style={styles.rightIconContainer}>
         <TouchableOpacity style={{paddingBottom: '6%'}} onPress={onMenuPress ? onMenuPress : () => {}}>
-          <InfoOutlineSvg height={34} width={34} color={themeAheadOfLoading.fontColor}/>
+          <InfoOutlineSvg height={34} width={34} color={themeAheadOfLoading.fontColorSecondary}/>
         
         </TouchableOpacity>
         </View>
@@ -67,6 +80,8 @@ const HeaderBaseItemView = ({
       onPress={onSliderPull}
       sliderWidth={'100%'} 
       targetIcon={TrashOutlineSvg}
+      sliderColor={editable ? 'blue' : 'red'}
+      sliderText={editable ? 'EDIT' : 'DELETE'}
     /> 
        </View>
     
@@ -134,4 +149,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default HeaderBaseItemView;
+export default HeaderBaseItemViewTwoOptions;

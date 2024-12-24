@@ -3,8 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { useFriendList } from '../context/FriendListContext';
 
-import SearchBarForFormattedData from '../components/SearchBarForFormattedData';
-import HelloView from '../components/HelloView';
+import SearchBarForFormattedData from '../components/SearchBarForFormattedData'; 
 import { Ionicons } from '@expo/vector-icons'; 
   
 import HelloesList from '../components/HelloesList';
@@ -36,6 +35,15 @@ const ScreenHelloes = ({ route, navigation }) => {
     const [ selectedHello, setSelectedHello ] = useState(null);
    const { helloesList, inPersonHelloes, flattenHelloes } = useHelloesData();
 
+   const openHelloesNav = (hello) => {
+    setSelectedHelloToView(hello);
+    setHelloesNavVisible(true);
+  };
+
+  const closeHelloesNav = () => {
+    setHelloesNavVisible(false);
+  };
+
     
     const onPress = (hello) => { 
          if (hello) {
@@ -54,14 +62,14 @@ const ScreenHelloes = ({ route, navigation }) => {
     const HelloesScreen = () => (
         
         <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-          <HelloesList onPress={onPress} helloesData={helloesList} horizontal={false} />
+          <HelloesList onPress={openHelloesNav} helloesData={helloesList} horizontal={false} />
         </View>
       );
 
       const HelloesInPersonScreen = () => { 
         return (
             <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-              <HelloesList onPress={onPress} helloesData={inPersonHelloes} horizontal={false} />
+              <HelloesList onPress={openHelloesNav} helloesData={inPersonHelloes} horizontal={false} />
             </View>
         );
     };
@@ -73,7 +81,7 @@ const ScreenHelloes = ({ route, navigation }) => {
                 <>  
                 <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
 
-                    <SearchBarForFormattedData formattedData={flattenHelloes} originalData={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={onPress} searchKeys={['date', 'locationName',  'capsule',  'additionalNotes']} />
+                    <SearchBarForFormattedData formattedData={flattenHelloes} originalData={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={openHelloesNav} searchKeys={['date', 'locationName',  'capsule',  'additionalNotes']} />
 
                 </View>
                         <Tab.Navigator
@@ -107,16 +115,13 @@ const ScreenHelloes = ({ route, navigation }) => {
                             </Tab.Navigator>
 
 
-                            {isModalVisible && selectedHello && (
-                                <View style={{width: '100%', height: '100%'}}> 
-                                <HelloView hello={selectedHello} onClose={onClose} />
-                                </View>
-                            )}
-
                         
                         
 
                         </> 
+                        {isHelloesNavVisible && selectedHelloToView && (
+        <HelloesNavigator onClose={closeHelloesNav} hello={selectedHelloToView} />
+      )}
             </View>
              )
 };

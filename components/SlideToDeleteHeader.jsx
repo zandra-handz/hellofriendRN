@@ -3,7 +3,7 @@ import { View, Text, Animated, PanResponder, Dimensions, StyleSheet } from 'reac
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import DragRightThickOutlineSvg from '../assets/svgs/drag-right-thick-outline.svg';
 
-const SlideToDeleteHeader = ({ onPress, itemToDelete, sliderText = 'DELETE?', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50 }) => {
+const SlideToDeleteHeader = ({ onPress, itemToDelete, sliderText = 'DELETE?', sliderColor = 'red', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
@@ -73,7 +73,7 @@ const SlideToDeleteHeader = ({ onPress, itemToDelete, sliderText = 'DELETE?', ta
         {
           width: sliderWidth,
           backgroundColor: isDragging
-            ? 'red'  
+            ? sliderColor  
             : 'transparent',
         },
       ]}

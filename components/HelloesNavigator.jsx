@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native'; 
 import ImageView from '../components/ImageView';
 import useImageFunctions from '../hooks/useImageFunctions';
+
+import useHelloesData from '../hooks/useHelloesData';
+
 import { useMessage } from '../context/MessageContext';
 
 import HelloView from '../components/HelloView';
@@ -9,25 +12,28 @@ import HelloView from '../components/HelloView';
 import NavigationArrows from '../components/NavigationArrows'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const HelloesNavigator = ({ archived = false, image, onClose }) => {
+const HelloesNavigator = ({ archived = false, hello, onClose }) => {
 
   const [isModalVisible, setIsModalVisible] = useState(true);
+
+  
+  const { helloesList, inPersonHelloes, flattenHelloes } = useHelloesData();
   
  
   const { imageList, updateImage, deleteImage, deleteImageMutation } = useImageFunctions(); 
   const { showMessage } = useMessage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const { themeStyles } = useGlobalStyle();  
-  const [ imageInView, setImageInView ] = useState(image || null);
+  const [ helloInView, setHelloInView ] = useState(hello || null);
  
   useEffect(() => {
-    if (image) { 
-      const index = imageList.findIndex(im => im.id === image.id);
+    if (hello) { 
+      const index = helloesList.findIndex(helloListItem => helloListItem.id === hello.id);
       setCurrentIndex(index); 
-      console.log('image index: ', index)
-      setImageInView(image);
+      console.log('hello index: ', index)
+      setHelloInView(hello);
     }
-  }, [image]);
+  }, [hello]);
 
 
   //manually closing this for right now because I give up
@@ -38,9 +44,9 @@ const HelloesNavigator = ({ archived = false, image, onClose }) => {
         console.log('image count: ', imageList.length);
         if (imageList.length > 1) {
             if (currentIndex > 0) {
-                goToPreviousImage();
+                goToPreviousHello();
             } else {
-                goToNextImage();
+                goToNextHello();
             }
         } else {
             onClose();     
@@ -54,21 +60,18 @@ const HelloesNavigator = ({ archived = false, image, onClose }) => {
  
    
 
-  const goToPreviousImage = () => {
-    //console.log('go to previous image: ', currentIndex - 1);
-    if (currentIndex > 0) {
-      setCurrentIndex(prevIndex => prevIndex - 1);
-      //console.log(imageList[currentIndex - 1]);
-      setImageInView(imageList[currentIndex - 1]);
+  const goToPreviousHello = () => {
+     if (currentIndex > 0) {
+      setCurrentIndex(prevIndex => prevIndex - 1); 
+      setHelloInView(helloesList[currentIndex - 1]);
 
     }
   };
 
-  const goToNextImage = () => {
-    if (currentIndex < imageList.length - 1) {
-      setCurrentIndex(prevIndex => prevIndex + 1);
-      //console.log(imageList[currentIndex + 1]);
-      setImageInView(imageList[currentIndex + 1]);
+  const goToNextHello = () => {
+    if (currentIndex < helloesList.length - 1) {
+      setCurrentIndex(prevIndex => prevIndex + 1); 
+      setHelloInView(helloesList[currentIndex + 1]);
     }
   };
  
@@ -95,22 +98,22 @@ const HelloesNavigator = ({ archived = false, image, onClose }) => {
   return (
     <View>
   
-      <ImageView
+      <HelloView
         onSliderPull={handleDelete} 
         isModalVisible={isModalVisible} 
         toggleModal={onClose}
-        imageData={imageInView || null}
+        helloData={helloInView || null}
         navigationArrows={
-          imageList[currentIndex] ? ( 
+          helloesList[currentIndex] ? ( 
             <>
-            {imageInView && (
+            {helloInView && (
               <>
-                {imageList && imageInView && (
+                {helloesList && helloInView && (
                   <NavigationArrows 
                     currentIndex={currentIndex}
-                    imageListLength={imageList.length}
-                    onPrevPress={goToPreviousImage}
-                    onNextPress={goToNextImage}
+                    imageListLength={helloesList.length}
+                    onPrevPress={goToPreviousHello}
+                    onNextPress={goToNextHello}
                   />
                 )} 
               </>
@@ -119,7 +122,7 @@ const HelloesNavigator = ({ archived = false, image, onClose }) => {
             </>
           ) : null
         }
-        modalTitle='View image'
+        modalTitle='View Hello'
       /> 
   
     </View>
