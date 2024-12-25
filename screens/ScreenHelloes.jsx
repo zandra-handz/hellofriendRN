@@ -17,6 +17,8 @@ import useHelloesData from '../hooks/useHelloesData';
 //to transition over to
 import HelloesNavigator from '../components/HelloesNavigator';
 
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -76,10 +78,15 @@ const ScreenHelloes = ({ route, navigation }) => {
  
 
     return ( 
-        <View style={[styles.container, {backgroundColor: themeAheadOfLoading.darkColor}]}>
-
+                <LinearGradient
+                    colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[styles.container]}
+                >
+                    
                 <>  
-                <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+                <View style={[styles.searchBarContent, {backgroundColor: 'transparent'}]}>
 
                     <SearchBarForFormattedData formattedData={flattenHelloes} originalData={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={openHelloesNav} searchKeys={['date', 'locationName',  'capsule',  'additionalNotes']} />
 
@@ -88,7 +95,7 @@ const ScreenHelloes = ({ route, navigation }) => {
                             tabBar={props => <CustomTabBar {...props} />}
                             screenOptions={({ route }) => ({
                                 tabBarStyle: {
-                                backgroundColor: themeAheadOfLoading.darkColor,
+                                backgroundColor: 'transparent',
                                 flexDirection: 'row',
                                 top: 0, 
                                 elevation: 0,
@@ -122,7 +129,7 @@ const ScreenHelloes = ({ route, navigation }) => {
                         {isHelloesNavVisible && selectedHelloToView && (
         <HelloesNavigator onClose={closeHelloesNav} hello={selectedHelloToView} />
       )}
-            </View>
+            </LinearGradient>
              )
 };
 

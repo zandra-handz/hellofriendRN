@@ -53,6 +53,7 @@ const ViewMultiMomentsArchived = ({
 
   const handleViewAllMoments = () => {
     setSelectedCategory('All Moments');
+    
   };
 
   const visibleCategories = showAllCategories ? categories : categories.slice(0, 5);

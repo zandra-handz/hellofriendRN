@@ -10,6 +10,8 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+
+import { LinearGradient } from 'expo-linear-gradient';
  
 
 const Tab = createBottomTabNavigator();
@@ -60,9 +62,14 @@ const ScreenLocations = ({ route, navigation }) => {
  
 
   return (
-    <View style={[styles.container, themeStyles.genericTextBackground]}> 
+            <LinearGradient
+                colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={[styles.container]}
+            >
 <>
-      <View style={[styles.searchBarContent, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+      <View style={[styles.searchBarContent, {backgroundColor: 'transparent'}]}>
 
         <SearchBar data={locationList} placeholderText={'Search'} onPress={handleGoToLocationViewScreen} borderColor={'transparent'}  searchKeys={['address', 'title']} />
             
@@ -96,7 +103,7 @@ const ScreenLocations = ({ route, navigation }) => {
         </> 
          
     
-    </View>
+    </LinearGradient>
   );
 };
 

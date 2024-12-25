@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Dimensions, Text } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
+import { LinearGradient } from 'expo-linear-gradient';
 import { useFriendList } from '../context/FriendListContext';
 
 const { width } = Dimensions.get('window');
@@ -23,7 +23,13 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   }));
 
   return (
-    <View style={[styles.tabBar, {backgroundColor: themeAheadOfLoading.darkColor}]}>
+            <LinearGradient
+                colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={[styles.tabBar]}
+            >
+                
       <Animated.View style={[styles.underline, animatedStyle, { width: tabWidth, backgroundColor: themeAheadOfLoading.fontColor }]} />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
@@ -54,7 +60,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
           </TouchableOpacity>
         );
       })}
-    </View>
+    </LinearGradient>
   );
 };
 

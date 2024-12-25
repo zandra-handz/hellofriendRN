@@ -190,6 +190,9 @@ const lightThemeStyles = StyleSheet.create({
     genericTextBackgroundShadeTwo: {
         backgroundColor: '#ccc',
     },
+    genericTextBackgroundShadeThree: {
+        backgroundColor: '#ccc',
+    },
     genericText: {
         color: '#121212',
     },
@@ -346,6 +349,9 @@ const darkThemeStyles = StyleSheet.create({
     },
     genericTextBackgroundShadeTwo: {
         backgroundColor: '#2B2B2B',
+    },
+    genericTextBackgroundShadeThree: {
+        backgroundColor: '#242424',
     },
     genericText: {
         color: '#d3d3d3',

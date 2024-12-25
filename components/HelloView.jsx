@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Image, StyleSheet, Text, Dimensions, Modal } from "react-native";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 import { useFriendList } from "../context/FriendListContext";
-import { useCapsuleList } from '../context/CapsuleListContext'; 
+import { useCapsuleList } from "../context/CapsuleListContext";
 
 import useImageFunctions from "../hooks/useImageFunctions";
 
@@ -12,22 +12,29 @@ import * as Sharing from "expo-sharing";
 
 import AlertConfirm from "../components/AlertConfirm";
 
-import FormatMonthDay from '../components/FormatMonthDay';
+import HelloViewTitleCard from "../components/HelloViewTitleCard";
+import NotesDisplayCard from "../components/NotesDisplayCard";
 
+import FormatMonthDay from "../components/FormatMonthDay";
 
+import PickerMultiMomentsArchived from "../components/PickerMultiMomentsArchived";
+import ViewMultiMomentsArchived from "../components/ViewMultiMomentsArchived";
+import DisplayHelloNotes from "../components/DisplayHelloNotes";
 
-import PickerMultiMomentsArchived from '../components/PickerMultiMomentsArchived';
-import ViewMultiMomentsArchived from '../components/ViewMultiMomentsArchived';
-import DisplayHelloNotes from '../components/DisplayHelloNotes';
- 
-import ButtonReuseMoments from '../components/ButtonReuseMoments';
+import ButtonReuseMoments from "../components/ButtonReuseMoments";
 
 import HeaderBaseItemViewTwoOptions from "../components/HeaderBaseItemViewTwoOptions";
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
+import HelloMomentsDisplayCard from "./HelloMomentsDisplayCard";
 
+const { width, height } = Dimensions.get("window");
 
-
-const { height: screenHeight } = Dimensions.get("window");
+const oneThirdHeight = height / 3;
+const oneFourthHeight = height / 4;
+const oneFifthHeight = height / 5;
+const oneSixthHeight = height / 6;
+const oneSeventhHeight = height / 7;
+const oneHalfHeight = height / 2;
 
 const HelloView = ({
   helloData,
@@ -37,22 +44,29 @@ const HelloView = ({
   toggleModal,
 }) => {
   const { themeStyles } = useGlobalStyle();
+  const [categories, setCategories] = useState([]);
   const { selectedFriend } = useSelectedFriend();
   const { imageList, updateImage, deleteImage } = useImageFunctions();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isEditing, setIsEditing] = useState(false); 
+  const [isEditing, setIsEditing] = useState(false);
   const [isOldModalVisible, setIsOldModalVisible] = useState(true);
   const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] =
     useState(false);
- 
- const { capsuleList } = useCapsuleList();
+
+  const { capsuleList } = useCapsuleList();
   const [isDeleting, setIsDeleting] = useState(false);
 
-    const [momentsToSave, setMomentsToSave] = useState(false);
-  
-    const [momentsSelected, setMomentsSelected] = useState([]);
+  const [momentsToSave, setMomentsToSave] = useState(false);
 
- 
+  const [momentsSelected, setMomentsSelected] = useState([]);
+
+  useEffect(() => {
+    if (helloData) {
+      setCategories([
+        ...new Set(helloData.pastCapsules.map((moment) => moment.typed_category)),
+      ]);
+    }
+  }, [helloData]);
 
   const closeModal = () => {
     setIsOldModalVisible(false);
@@ -111,16 +125,13 @@ const HelloView = ({
       if (currentIndex >= imageList.length - 1) {
         setCurrentIndex(imageList.length - 2); // Move to the previous image
       }
- 
-    } catch (error) { 
+    } catch (error) {
       console.error("Error deleting image:", error);
     } finally {
       setConfirmDeleteModalVisible(false);
       setIsDeleting(false);
     }
   };
- 
- 
 
   return (
     <>
@@ -145,7 +156,7 @@ const HelloView = ({
               style={[
                 styles.modalContent,
                 themeStyles.genericText,
-                { maxHeight: screenHeight * 1, paddingBottom: 0 },
+                { maxHeight: height * 1, paddingBottom: 0 },
               ]}
             >
               <HeaderBaseItemViewTwoOptions
@@ -157,36 +168,32 @@ const HelloView = ({
 
               <View
                 style={[
-                  styles.imageContainer,
+                  styles.container,
                   themeStyles.textGenericBackgroundShadeTwo,
                 ]}
               >
-                <View style={styles.categoryContainer}> 
-                  <Text style={[styles.imageText, themeStyles.genericText]}>
-                  {helloData.type} @ {helloData.locationName}
-                  </Text>
-                </View>
-                <View style={styles.categoryContainer}> 
-                  <Text style={[styles.imageText, themeStyles.genericText]}>
-                  {helloData.created} @ {helloData.updated} 
-                  </Text>
-                  <FormatMonthDay  
-            date={helloData.created} 
-            fontSize={13}  
-            fontFamily={'Poppins-Regular'} 
-            opacity={1}
-            parentStyle={styles.categoryText}
-          /> 
-                            <FormatMonthDay  
-            date={helloData.updated} 
-            fontSize={13}  
-            fontFamily={'Poppins-Regular'} 
-            opacity={1}
-            parentStyle={styles.categoryText}
-          /> 
-                </View>
+                <HelloViewTitleCard
+                  helloData={helloData}
+                  height={oneSixthHeight}
+                />
+                {helloData && helloData.additionalNotes && (
+                  <View style={{flex: 1, marginTop: '4%'}}>
+                  <NotesDisplayCard
+                    notesData={helloData.additionalNotes}
+                    height={'100%'}
+                  />
+                  </View>
+                )}
 
- 
+                {helloData && helloData.pastCapsules && helloData.pastCapsules.length > 0 && (
+                  <View style={{flex: 1, marginTop: '4%'}}>
+                  <HelloMomentsDisplayCard
+                    momentsData={helloData.pastCapsules}
+                    momentsCategories={categories}
+                    height={oneThirdHeight}
+                  />
+                  </View>
+                )}
               </View>
 
               <View
@@ -246,13 +253,15 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     flex: 1,
   },
-  imageContainer: {
+  container: {
     width: "100%",
     overflow: "hidden",
     flexDirection: "column",
     flex: 1,
     padding: "5%",
     paddingHorizontal: "3%",
+    justifyContent: "space-between",
+    paddingBottom: "20%",
   },
   categoryContainer: {
     flexDirection: "row",
@@ -279,14 +288,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
   },
-  categoryText: { 
+  categoryText: {
     fontSize: 13,
-    flexShrink: 1, 
+    flexShrink: 1,
     lineHeight: 21,
-    color: 'white',
-    overflow:'hidden',
+    color: "white",
+    overflow: "hidden",
     //textTransform: 'uppercase',
-
   },
 });
 

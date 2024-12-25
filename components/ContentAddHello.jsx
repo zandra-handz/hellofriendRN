@@ -48,6 +48,7 @@ import PickerHelloLocation from "../components/PickerHelloLocation";
 
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "../components/KeyboardSaveButton";
+import DoubleChecker from '../components/DoubleChecker';
 
 const ContentAddHello = () => {
   const navigation = useNavigation();
@@ -57,6 +58,8 @@ const ContentAddHello = () => {
 
   const { createHelloMutation, handleCreateHello } = useHelloesData();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+
+  const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
 
   const { authUserState } = useAuthUser();
   const { selectedFriend, setFriend, loadingNewFriend, friendDashboardData } =
@@ -122,6 +125,16 @@ const ContentAddHello = () => {
       friendDashboardData[0].friend_faves.locations.includes(location.id)
     );
   }, [locationList, friendDashboardData]);
+
+  const openDoubleChecker = () => {
+    setIsDoubleCheckerVisible(true);
+
+  };
+
+  const toggleDoubleChecker = () => {
+    setIsDoubleCheckerVisible(prev => !prev);
+
+  };
 
   const timeoutRef = useRef(null);
 
@@ -332,6 +345,12 @@ const ContentAddHello = () => {
                         ref={editedTextRef}
                         autoFocus={false}
                         title={"Add notes"}
+                        helperText={
+                          !isKeyboardVisible ? null : 'Press enter to exit'
+                        }
+                        iconColor={
+                          !isKeyboardVisible ? themeStyles.genericText.color : 'red'
+                        }
                         mountingText={""}
                         onTextChange={updateNoteEditString}
                         multiline={false}
@@ -373,16 +392,16 @@ const ContentAddHello = () => {
             </View>
 
             {helloDate &&
-              selectedFriend &&
-              !loadingNewFriend &&
+              //selectedFriend &&
+              //!loadingNewFriend &&
               selectedTypeChoice !== null && (
                 <>
                   {!isKeyboardVisible && (
                     <ButtonBaseSpecialSave
                       label="SAVE HELLO! "
                       maxHeight={80}
-                      onPress={handleSave}
-                      isDisabled={false}
+                      onPress={openDoubleChecker}
+                      isDisabled={selectedFriend && !loadingNewFriend ? false : true}
                       fontFamily={"Poppins-Bold"}
                       image={require("../assets/shapes/redheadcoffee.png")}
                     />
@@ -401,21 +420,32 @@ const ContentAddHello = () => {
                     >
                       <KeyboardSaveButton
                         label="SAVE HELLO! "
-                        onPress={handleSave}
-                        isDisabled={false}
+                        onPress={openDoubleChecker}
+                        isDisabled={selectedFriend && !loadingNewFriend ? false : true}
                         image={false}
                       />
                     </View>
                   )}
                 </>
               )}
-          </View>
-          <View></View>
+          </View> 
+        
         </View>
+          
+        {isDoubleCheckerVisible && (
+          <DoubleChecker
+          isVisible={isDoubleCheckerVisible}
+          toggleVisible={toggleDoubleChecker}
+          singleQuestionText='Ready to save hello?'
+          onPress={() => handleSave()}/>
 
-        <View></View>
+        )}
+        
+ 
       </>
     </LinearGradient>
+    
+    
   );
 };
 

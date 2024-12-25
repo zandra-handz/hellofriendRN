@@ -12,7 +12,20 @@ import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 // Forwarding ref to the parent to expose the TextInput value
 const TextEditBox = forwardRef(
   //width and height are original settings being used in location notes
-  ({ title = "title", mountingText = "", onTextChange, autoFocus=true, width='90%', height='60%', multiline=true }, ref) => {
+  (
+    {
+      title = "title",
+      mountingText = "",
+      onTextChange,
+      helperText,
+      autoFocus = true,
+      width = "90%",
+      height = "60%",
+      multiline = true,
+      iconColor = 'red',
+    },
+    ref
+  ) => {
     const { themeStyles } = useGlobalStyle();
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
     const textInputRef = useRef();
@@ -51,42 +64,52 @@ const TextEditBox = forwardRef(
       onTextChange(text);
     };
 
-    return ( 
+    return (
+      <View
+        style={[
+          styles.container,
+          themeStyles.genericTextBackgroundShadeTwo,
+          { width: width, height: height },
+        ]}
+      >
         <View
-          style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, {width: width, height: height}]}
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "100%",
+            height: "auto",
+            alignItems: 'center',
+          }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "100%",
-              height: "auto",
-            }}
-          >
-            <Text style={[styles.previewTitle, themeStyles.genericText]}>
-              {title}
+          <View style={{flexDirection: 'row', height: '100%', alignItems: 'center'}}>
+          <Text style={[styles.title, themeStyles.genericText]}>
+            {title}
+          </Text>
+          </View>
+
+          <EditPencilOutlineSvg height={30} width={30} color={iconColor} />
+        </View>
+        <View style={{ flex: 1 }}>
+
+        {helperText && (
+            <Text style={[styles.helperText, themeStyles.genericText]}>
+              {helperText}
             </Text>
-            <EditPencilOutlineSvg
-              height={30}
-              width={30}
-              color={'red'}
-            />
-          </View>
-          <View style={{ flex: 1 }}>
-            <TextInput
-              ref={textInputRef}
-              autoFocus={autoFocus}
-              style={[
-                styles.textInput,
-                themeStyles.genericText,
-                themeStyles.genericTextBackgroundShadeTwo,
-              ]}
-              value={editedMessage}
-              onChangeText={handleTextInputChange} // Update local state
-              multiline={multiline}
-            />
-          </View>
-        </View> 
+          )}
+          <TextInput
+            ref={textInputRef}
+            autoFocus={autoFocus}
+            style={[
+              styles.textInput,
+              themeStyles.genericText,
+              themeStyles.genericTextBackgroundShadeTwo,
+            ]}
+            value={editedMessage}
+            onChangeText={handleTextInputChange} // Update local state
+            multiline={multiline}
+          />
+        </View>
+      </View>
     );
   }
 );
@@ -96,20 +119,27 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: "4%",
   },
-  container: { 
-    borderRadius: 30,  
-    alignSelf: 'center', 
-    padding: 20, 
+  container: {
+    borderRadius: 30,
+    alignSelf: "center",
+    padding: 20,
   },
-  previewTitle: {
+  title: {
     fontSize: 15,
     lineHeight: 21,
     textTransform: "uppercase",
   },
+  helperText: {
+    fontSize: 16,
+    lineHeight: 20,
+    opacity: .5,
+    //marginLeft: '6%'
+    //textTransform: "uppercase",
+  },
   textInput: {
     textAlignVertical: "top",
     borderRadius: 20,
-    padding: 10,
+    paddingVertical: 10,
     flex: 1,
   },
 });

@@ -10,6 +10,8 @@ import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 import HeartbeatLifeLineArrowSvg from '../assets/svgs/heartbeat-lifeline-arrow.svg';
 import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
+
+import { LinearGradient } from 'expo-linear-gradient';
  
 
 import { useNavigation } from '@react-navigation/native';
@@ -37,9 +39,12 @@ const HeaderBaseSolid = ({
   const IconComponent = iconMap[icon] || null;
 
   return (
-      <View
-          style={[styles.headerContainer, {backgroundColor: themeAheadOfLoading.darkColor}]}
-      >
+        <LinearGradient
+            colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.headerContainer]}
+        >
           {!loadingNewFriend && (
               <View style={styles.headerContent}>
                   <View style={styles.leftButtonContainer}>
@@ -73,7 +78,7 @@ const HeaderBaseSolid = ({
                   </View>
               </View>
           )}
-      </View>
+      </LinearGradient>
   );
 };
 
