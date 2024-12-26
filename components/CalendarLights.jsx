@@ -64,38 +64,25 @@ const CalendarLights = ({ helloesData, helloesDataSorted, earliestDataPoint, lat
   };
 
 
-
   const getMonthsInRange = (startMonth, endMonth) => {
     const [startMonthNum, startYear] = startMonth.split('/').map(Number);
     const [endMonthNum, endYear] = endMonth.split('/').map(Number);
   
-    // Set the start and end date based on the given months
+    // Set the start and end dates based on the given months
     const startDate = new Date(startYear, startMonthNum - 1, 1); // Start of the given start month
-    const endDate = new Date(endYear, endMonthNum - 1, 1); // Start of the given end month (inclusive)
-  
-    // Get all the months in the interval
+    const endDate = new Date(endYear, endMonthNum - 1, 1); // Start of the given end month
+  console.log('END DATE',endDate);
+    // Generate all months in the interval
     const months = eachMonthOfInterval({
       start: startDate,
       end: endDate,
-    }).map((date, index, array) => {
-      const monthIndex = date.getMonth(); // Get the 0-11 month index from the date object
-        console.log(monthIndex)
-      // Calculate the correct cyclic month index, starting with December as 0
-      let adjustedMonthIndex = (monthIndex - 11 + 12) % 12; // Ensure December is index 0
-  
-      // If the month is before the startMonth, adjust its index to go towards the end of the year
-      const startMonthIndex = startDate.getMonth();
-      if (monthIndex < startMonthIndex) {
-        adjustedMonthIndex = (adjustedMonthIndex + 12 - (startMonthIndex - monthIndex)) % 12;
-      }
-  
+    }).map((date) => {
       return {
-        month: format(date, "MMMM"),
-        year: format(date, "yyyy"),
-        daysInMonth: getDaysInMonth(date),
+        month: format(date, "MMMM"), // Full month name
+        year: format(date, "yyyy"),  // Year
+        daysInMonth: getDaysInMonth(date), // Total days in the month
         startsOn: format(startOfMonth(date), "EEEE"), // Day of the week the month starts on
-        index: adjustedMonthIndex, // Adjusted index starting with December as 0
-        monthYear: format(date, "M/yyyy"),
+        monthYear: format(date, "M/yyyy"), // Month/Year in M/yyyy format
       };
     });
   
@@ -105,7 +92,9 @@ const CalendarLights = ({ helloesData, helloesDataSorted, earliestDataPoint, lat
 
   //automatically set to current year on mount
   useLayoutEffect(() => {
-    setMonthsData(getMonthsInRange(earliestDataPoint, latestDataPoint))
+    console.log('LATEST',latestDataPoint);
+    setMonthsData(getMonthsInRange(earliestDataPoint, latestDataPoint));
+    console.log(' MONTHS DATA', monthsData);
  
     //setMonthsData(getYearData(currentYear));
   }, []);
@@ -118,7 +107,7 @@ const CalendarLights = ({ helloesData, helloesDataSorted, earliestDataPoint, lat
 
 
   const renderDay = (item, lightUp, rowStart, weekData) => {
-    console.log(item);
+    //console.log(item);
 
     if (!item) {
         return(
@@ -192,7 +181,7 @@ const CalendarLights = ({ helloesData, helloesDataSorted, earliestDataPoint, lat
           const rowEnd = rowStart + 7;
   
           const weekData = allDays.slice(rowStart, rowEnd);
-          console.log('WEEK DATA', weekData); // Debugging output
+          //console.log('WEEK DATA', weekData); // Debugging output
   
           return (
             <View style={styles.weekRow} key={rowIndex}>
@@ -218,8 +207,8 @@ const CalendarLights = ({ helloesData, helloesDataSorted, earliestDataPoint, lat
   const renderCalendarMonth = ({ item }) => {
     const indexRangeStart = indexDays[item.monthData.startsOn];
     const indexRangeTotal = (item.monthData.daysInMonth - 1) + indexRangeStart;
-    console.log(indexRangeStart);
-    console.log(indexRangeTotal);
+    //console.log(indexRangeStart);
+    // console.log(indexRangeTotal);
 
     return (
       <View style={styles.calendarContainer}>
@@ -251,11 +240,11 @@ const CalendarLights = ({ helloesData, helloesDataSorted, earliestDataPoint, lat
   
       setCombinedData(combined);
   
-      console.log("Combined Data:", combined);
-      combined.forEach((item, index) => {
-        console.log(`Hello Data for Month Index ${index}:`, item.helloData.days);
-      });
-      console.log(combined.map(item => item.helloData.days));
+     // console.log("Combined Data:", combined);
+     // combined.forEach((item, index) => {
+     //   console.log(`Hello Data for Month Index ${index}:`, item.helloData.days);
+     // });
+    //  console.log(combined.map(item => item.helloData.days));
     }
   }, [monthsData, helloesDataSorted]);
   
@@ -265,14 +254,14 @@ const CalendarLights = ({ helloesData, helloesDataSorted, earliestDataPoint, lat
     <View style={[styles.container]}>
         {combinedData && (
 
-      <FlatList
-        ref={flatListRef}
-        data={combinedData} //to put most recent hello/index 0 on right of screen
-        horizontal
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderCalendarMonth}
-        ListEmptyComponent={() => <Text style={styles.noItemsText}></Text>}
-      />
+<FlatList
+  ref={flatListRef}
+  data={combinedData} // to put most recent hello/index 0 on right of screen
+  horizontal
+  initialNumToRender={30}
+  keyExtractor={(item, index) => `${item.monthData.month}-${item.monthData.year}`} // Use month and year as key
+  renderItem={renderCalendarMonth}  
+/>
         )}
     </View>
   );

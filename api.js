@@ -633,7 +633,7 @@ export const fetchPastHelloes = async (friendId) => {
         const response = await axios.get(`/friends/${friendId}/helloes/`);
         if (response && response.data) {
             const helloesData = response.data;
-            console.log('API GET CALL fetchPastHelloes', helloesData);
+            console.log('API GET CALL fetchPastHelloes');
 
             const formattedHelloesList = helloesData.map(hello => ({
                 id: hello.id,

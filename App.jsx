@@ -107,14 +107,12 @@ export default function App() {
             <UpcomingHelloesProvider>
               <FriendListProvider>
                 <SelectedFriendProvider>
-                  <HelloesProvider>
-                    <PhoneStatusBar />
-                    <CapsuleListProvider>
-                      <MessageContextProvider>
-                        <Layout />
-                      </MessageContextProvider>
-                    </CapsuleListProvider>
-                  </HelloesProvider>
+                  <PhoneStatusBar />
+                  <CapsuleListProvider>
+                    <MessageContextProvider>
+                      <Layout />
+                    </MessageContextProvider>
+                  </CapsuleListProvider>
                 </SelectedFriendProvider>
               </FriendListProvider>
             </UpcomingHelloesProvider>

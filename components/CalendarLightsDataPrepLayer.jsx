@@ -57,71 +57,76 @@ const CalendarLightsDataPrepLayer = ({
     const year = date.getFullYear();
     return `${month}/${year}`;
   };
-  
   const groupByMonthAndYear = (data) => {
-    console.log('group by', data);
-  
-    // Step 1: Group data by month and year
-    const groupedData = data.reduce((acc, item) => {
-      // Parse the input date (in YYYY-MM-DD format) without time zone shifts
-      const createdDate = new Date(item.dateLong + 'T00:00:00');  // Treat it as local time
-  
-      console.log(item.dateLong);
-      console.log('CREATED DATE', createdDate);
-  
-      // Ensure the date was parsed successfully
-      if (isNaN(createdDate)) {
-        console.error('Invalid date:', item.dateLong);
-        return acc; // Skip invalid dates
-      }
-  
-      // Format the month/year string as 'month/year'
-      const monthYear = `${createdDate.getMonth() + 1}/${createdDate.getFullYear()}`;
-  
-      // If this monthYear doesn't exist, create an empty structure
-      if (!acc[monthYear]) {
-        acc[monthYear] = {
-          data: [],
-          days: [], // To store unique day numbers
-        };
-      }
-  
-      // Add item to the grouped data
-      acc[monthYear].data.push(item);
-  
-      // Extract the day of the month using getDate() for local time (no UTC adjustments)
-      const dayOfMonth = createdDate.getDate();  // Use getDate() for local day
-      if (!acc[monthYear].days.includes(dayOfMonth)) {
-        acc[monthYear].days.push(dayOfMonth);
-      }
-      console.log(`Final days for ${monthYear}:`, acc[monthYear].days);
-  
-      return acc;
-    }, {});
-  
-    // Step 2: Generate a full list of months in the desired range (last 12 months)
-    const now = new Date();
-    const monthsList = [];
-    for (let i = 0; i < 12; i++) {
-      const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthYear = `${month.getMonth() + 1}/${month.getFullYear()}`;
-      monthsList.push(monthYear);
+  //console.log('group by', data);
+
+  // Step 1: Group data by month and year
+  const groupedData = data.reduce((acc, item) => {
+    const createdDate = new Date(item.dateLong + 'T00:00:00'); // Treat as local time
+
+    //console.log(item.dateLong);
+    console.log('CREATED DATE', createdDate);
+
+    // Ensure the date was parsed successfully
+    if (isNaN(createdDate)) {
+      console.error('Invalid date:', item.dateLong);
+      return acc; // Skip invalid dates
     }
-  
-    // Step 3: Assign indices starting from 0 for the most recent month
-    const sortedMonths = monthsList.map((monthYear, index) => {
-      return {
-        monthYear,
-        index, // Assign index directly (December gets 0, January gets 11)
-        data: groupedData[monthYear]?.data || [], // Add empty array if no data exists for this month
-        days: groupedData[monthYear]?.days || [], // Add empty array if no days exist for this month
+
+    // Format the month/year string as 'month/year'
+    const monthYear = `${createdDate.getMonth() + 1}/${createdDate.getFullYear()}`;
+
+    // If this monthYear doesn't exist, create an empty structure
+    if (!acc[monthYear]) {
+      acc[monthYear] = {
+        data: [],
+        days: [], // To store unique day numbers
       };
-    });
-  
-    console.log('Sorted Months with Correct Indices:', sortedMonths);
-  
-    return sortedMonths;
-  };
+    }
+
+    // Add item to the grouped data
+    acc[monthYear].data.push(item);
+
+    // Extract the day of the month using getDate() for local time (no UTC adjustments)
+    const dayOfMonth = createdDate.getDate(); // Use getDate() for local day
+    if (!acc[monthYear].days.includes(dayOfMonth)) {
+      acc[monthYear].days.push(dayOfMonth);
+    }
+    //console.log(`Final days for ${monthYear}:`, acc[monthYear].days);
+
+    return acc;
+  }, {});
+
+  // Step 2: Generate a full list of months dynamically based on data range
+  const allDates = data.map((item) => new Date(item.dateLong + 'T00:00:00'));
+  const minDate = new Date(Math.min(...allDates));
+  const maxDate = new Date(Math.max(...allDates));
+
+  const monthsList = [];
+  const start = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+  const end = new Date(maxDate.getFullYear(), maxDate.getMonth(), 1);
+
+  while (start <= end) {
+    const monthYear = `${start.getMonth() + 1}/${start.getFullYear()}`;
+    monthsList.push(monthYear);
+    start.setMonth(start.getMonth() + 1); // Move to the next month
+  }
+
+  // Step 3: Assign indices starting from 0 for the most recent month
+  const sortedMonths = monthsList.map((monthYear, index) => {
+    return {
+      monthYear,
+      index, // Assign index directly (December gets 0, January gets 11)
+      data: groupedData[monthYear]?.data || [], // Add empty array if no data exists for this month
+      days: groupedData[monthYear]?.days || [], // Add empty array if no days exist for this month
+    };
+  });
+
+  //console.log('Sorted Months with Correct Indices:', sortedMonths);
+
+  return sortedMonths;
+};
+
   
   
   
