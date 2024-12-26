@@ -1,3 +1,6 @@
+// <SearchBarForFormattedData formattedData={flattenHelloes} originalData={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={openHelloesNav} searchKeys={['date', 'locationName',  'capsule',  'additionalNotes']} />
+
+
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -19,13 +22,15 @@ import HelloesNavigator from '../components/HelloesNavigator';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
+import CalendarLights from '../components/CalendarLights';
+import CalendarLightsDataPrepLayer from '../components/CalendarLightsDataPrepLayer';
 
 const Tab = createBottomTabNavigator();
 
 
 const ScreenHelloes = ({ route, navigation }) => { 
     const { themeStyles } = useGlobalStyle();
-    const { selectedFriend } = useSelectedFriend();
+    const { selectedFriend, friendDashboardData } = useSelectedFriend();
     const { themeAheadOfLoading } = useFriendList();
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -87,13 +92,15 @@ const ScreenHelloes = ({ route, navigation }) => {
                     
                 <>  
                 <View style={[styles.searchBarContent, {backgroundColor: 'transparent'}]}>
-
-                    <SearchBarForFormattedData formattedData={flattenHelloes} originalData={helloesList} placeholderText={'Search'} borderColor={'transparent'} onPress={openHelloesNav} searchKeys={['date', 'locationName',  'capsule',  'additionalNotes']} />
-
+                <CalendarLightsDataPrepLayer helloesData={helloesList} earliestDataPoint={friendDashboardData[0].friend_faves.created_on} latestDataPoint={helloesList[0].created}/>
+                   
                 </View>
                         <Tab.Navigator
                             tabBar={props => <CustomTabBar {...props} />}
+                            
+                         
                             screenOptions={({ route }) => ({
+                                //lazy: true,
                                 tabBarStyle: {
                                 backgroundColor: 'transparent',
                                 flexDirection: 'row',

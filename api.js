@@ -429,7 +429,7 @@ export const updateUserProfile = async (userId, firstName, lastName, dateOfBirth
 export const fetchFriendDashboard = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/dashboard/`);
-        console.log('API GET CALL fetchFriendDashboard' );
+        console.log('API GET CALL fetchFriendDashboard', response.data );
       
         return response.data;
     } catch (error) {
@@ -639,6 +639,7 @@ export const fetchPastHelloes = async (friendId) => {
                 id: hello.id,
                 created: hello.created_on,
                 updated: hello.updated_on,
+                dateLong: hello.date,
                 date: hello.past_date_in_words,
                 type: hello.type,
                 typedLocation: hello.typed_location,
