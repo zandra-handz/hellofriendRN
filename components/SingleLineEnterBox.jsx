@@ -10,19 +10,19 @@ import { useGlobalStyle } from "../context/GlobalStyleContext";
 import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 
 // Forwarding ref to the parent to expose the TextInput value
-const TextEditBox = forwardRef(
+const SingleLineEnterBox = forwardRef(
   //width and height are original settings being used in location notes
   (
     {
       title = "title",
-      mountingText = "Start typing",
+      mountingText = "",
       onTextChange,
       helperText,
       autoFocus = true,
       width = "90%",
-      height = "60%",
-      multiline = true,
-      iconColor = 'red',
+      height = "60%", 
+      iconColor = 'transparent',
+      onEnterPress = () => {}, //onCategorySelect(text) , sets text as the category in the parent
     },
     ref
   ) => {
@@ -52,7 +52,16 @@ const TextEditBox = forwardRef(
         }
       },
       getText: () => editedMessage,
-    }));
+    }));4
+
+    const handleOnEnterPress = () => {
+      if (ref && ref.current) {
+        const currentText = ref.current.getText();
+        onEnterPress(currentText);
+      }
+      
+
+    };
 
     useEffect(() => {
       setEditedMessage(mountingText); // Reset to starting text if it changes
@@ -87,28 +96,31 @@ const TextEditBox = forwardRef(
           </Text>
           </View>
 
+          <View style={{ flex: 1 }}>
+
+{helperText && (
+    <Text style={[styles.helperText, themeStyles.genericText]}>
+      {helperText}
+    </Text>
+  )}
+  <TextInput
+    ref={textInputRef}
+    autoFocus={autoFocus}
+    style={[
+      styles.textInput,
+      themeStyles.genericText,
+      themeStyles.genericTextBackgroundShadeTwo,
+    ]}
+    onSubmitEditing={handleOnEnterPress}
+    value={editedMessage}
+    onChangeText={handleTextInputChange} // Update local state
+    multiline={false}
+  />
+</View>
+
           <EditPencilOutlineSvg height={30} width={30} color={iconColor} />
         </View>
-        <View style={{ flex: 1 }}>
 
-        {helperText && (
-            <Text style={[styles.helperText, themeStyles.genericText]}>
-              {helperText}
-            </Text>
-          )}
-          <TextInput
-            ref={textInputRef}
-            autoFocus={autoFocus}
-            style={[
-              styles.textInput,
-              themeStyles.genericText,
-              themeStyles.genericTextBackgroundShadeTwo,
-            ]}
-            value={editedMessage}
-            onChangeText={handleTextInputChange} // Update local state
-            multiline={multiline}
-          />
-        </View>
       </View>
     );
   }
@@ -122,7 +134,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 30,
     alignSelf: "center",
-    padding: 20,
+    padding: 0,
   },
   title: {
     fontSize: 15,
@@ -137,11 +149,13 @@ const styles = StyleSheet.create({
     //textTransform: "uppercase",
   },
   textInput: {
-    textAlignVertical: "top",
+    textAlignVertical: "center",
+    justifyContent: 'center',
+    backgroundColor: 'teal',
     borderRadius: 20,
-    paddingVertical: 10,
+    paddingVertical: 0,
     flex: 1,
   },
 });
 
-export default TextEditBox;
+export default SingleLineEnterBox;

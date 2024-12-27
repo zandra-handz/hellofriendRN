@@ -34,8 +34,7 @@ import { useUpcomingHelloes } from "../context/UpcomingHelloesContext";
 import { useFriendList } from "../context/FriendListContext";
 import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-import { saveHello } from "../api";
+ 
 
 import PickerMultiMoments from "../components/PickerMultiMoments";
 
@@ -48,7 +47,7 @@ import PickerHelloLocation from "../components/PickerHelloLocation";
 
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "../components/KeyboardSaveButton";
-import DoubleChecker from '../components/DoubleChecker';
+import DoubleChecker from "../components/DoubleChecker";
 
 const ContentAddHello = () => {
   const navigation = useNavigation();
@@ -92,7 +91,7 @@ const ContentAddHello = () => {
 
   const oneFifthHeight = height / 5;
   const oneSixthHeight = height / 6;
-  const oneSeventhHeight = height / 7; 
+  const oneSeventhHeight = height / 7;
   const oneHalfHeight = height / 2; //notes when keyboard is up
 
   const { locationList, locationListIsSuccess, savedLocationList } =
@@ -128,12 +127,10 @@ const ContentAddHello = () => {
 
   const openDoubleChecker = () => {
     setIsDoubleCheckerVisible(true);
-
   };
 
   const toggleDoubleChecker = () => {
-    setIsDoubleCheckerVisible(prev => !prev);
-
+    setIsDoubleCheckerVisible((prev) => !prev);
   };
 
   const timeoutRef = useRef(null);
@@ -303,10 +300,10 @@ const ContentAddHello = () => {
                 {selectedTypeChoiceText && (
                   <>
                     <>
-                     {!isKeyboardVisible && ( 
-                      <>
+                      {!isKeyboardVisible && (
+                        <>
                           {locationListIsSuccess && (
-                            <View style={{  }}>
+                            <View style={{}}>
                               <PickerHelloLocation
                                 faveLocations={faveLocations}
                                 savedLocations={savedLocationList}
@@ -318,54 +315,52 @@ const ContentAddHello = () => {
                             </View>
                           )}
                         </>
-                     )}
+                      )}
 
-{!isKeyboardVisible && ( 
-                          <View style={{   }}>
-                            <PickerDate
-                              buttonHeight={36}
-                              value={helloDate}
-                              mode="date"
-                              display="default"
-                              containerText=""
-                              maximumDate={new Date()}
-                              onChange={onChangeDate}
-                              showDatePicker={showDatePicker}
-                              setShowDatePicker={setShowDatePicker}
-                              inline={true}
-                            />
-                          </View> 
+                      {!isKeyboardVisible && (
+                        <View style={{}}>
+                          <PickerDate
+                            buttonHeight={36}
+                            value={helloDate}
+                            mode="date"
+                            display="default"
+                            containerText=""
+                            maximumDate={new Date()}
+                            onChange={onChangeDate}
+                            showDatePicker={showDatePicker}
+                            setShowDatePicker={setShowDatePicker}
+                            inline={true}
+                          />
+                        </View>
                       )}
 
                       <TextEditBox
                         width={"100%"}
                         height={
-                          !isKeyboardVisible ? oneSeventhHeight: oneHalfHeight
+                          !isKeyboardVisible ? oneSeventhHeight : oneHalfHeight
                         }
                         ref={editedTextRef}
                         autoFocus={false}
                         title={"Add notes"}
                         helperText={
-                          !isKeyboardVisible ? null : 'Press enter to exit'
+                          !isKeyboardVisible ? null : "Press enter to exit"
                         }
                         iconColor={
-                          !isKeyboardVisible ? themeStyles.genericText.color : 'red'
+                          !isKeyboardVisible
+                            ? themeStyles.genericText.color
+                            : "red"
                         }
                         mountingText={""}
                         onTextChange={updateNoteEditString}
                         multiline={false}
                       />
 
-                      <View style={{  }}>
+                      <View style={{}}>
                         <PickerMultiMoments
                           onMomentSelect={handleMomentSelect}
                         />
                       </View>
-                      <View
-                        style={[
-                          styles.deleteRemainingContainer, 
-                        ]}
-                      >
+                      <View style={[styles.deleteRemainingContainer]}>
                         <TouchableOpacity
                           onPress={toggleDeleteMoments}
                           style={[styles.controlButton, themeStyles.footerIcon]}
@@ -401,7 +396,9 @@ const ContentAddHello = () => {
                       label="SAVE HELLO! "
                       maxHeight={80}
                       onPress={openDoubleChecker}
-                      isDisabled={selectedFriend && !loadingNewFriend ? false : true}
+                      isDisabled={
+                        selectedFriend && !loadingNewFriend ? false : true
+                      }
                       fontFamily={"Poppins-Bold"}
                       image={require("../assets/shapes/redheadcoffee.png")}
                     />
@@ -421,31 +418,28 @@ const ContentAddHello = () => {
                       <KeyboardSaveButton
                         label="SAVE HELLO! "
                         onPress={openDoubleChecker}
-                        isDisabled={selectedFriend && !loadingNewFriend ? false : true}
+                        isDisabled={
+                          selectedFriend && !loadingNewFriend ? false : true
+                        }
                         image={false}
                       />
                     </View>
                   )}
                 </>
               )}
-          </View> 
-        
+          </View>
         </View>
-          
+
         {isDoubleCheckerVisible && (
           <DoubleChecker
-          isVisible={isDoubleCheckerVisible}
-          toggleVisible={toggleDoubleChecker}
-          singleQuestionText='Ready to save hello?'
-          onPress={() => handleSave()}/>
-
+            isVisible={isDoubleCheckerVisible}
+            toggleVisible={toggleDoubleChecker}
+            singleQuestionText="Ready to save hello?"
+            onPress={() => handleSave()}
+          />
         )}
-        
- 
       </>
     </LinearGradient>
-    
-    
   );
 };
 
@@ -504,7 +498,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   deleteRemainingContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -515,8 +509,8 @@ const styles = StyleSheet.create({
     flex: 1,
     //backgroundColor: 'pink',
     paddingBottom: "5%",
-    flexDirection: 'column',
-    justifyContent: 'space-between',
+    flexDirection: "column",
+    justifyContent: "space-between",
   },
   checkbox: {
     paddingLeft: 10,
@@ -528,7 +522,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   controlButtonText: {
-    fontSize: 12, 
+    fontSize: 12,
     justifyContent: "center",
     alignItems: "center",
     alignContent: "center",

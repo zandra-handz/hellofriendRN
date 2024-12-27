@@ -5,17 +5,17 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput, StyleSheet,  KeyboardAvoidingView, Platform } from "react-native";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 
 // Forwarding ref to the parent to expose the TextInput value
-const TextEditBox = forwardRef(
+const TextMomentBox = forwardRef(
   //width and height are original settings being used in location notes
   (
     {
       title = "title",
-      mountingText = "Start typing",
+      mountingText = "",
       onTextChange,
       helperText,
       autoFocus = true,
@@ -96,6 +96,10 @@ const TextEditBox = forwardRef(
               {helperText}
             </Text>
           )}
+              <KeyboardAvoidingView
+      style={styles.textInputKeyboardAvoidContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Adjust behavior based on the platform
+    >
           <TextInput
             ref={textInputRef}
             autoFocus={autoFocus}
@@ -108,6 +112,7 @@ const TextEditBox = forwardRef(
             onChangeText={handleTextInputChange} // Update local state
             multiline={multiline}
           />
+          </KeyboardAvoidingView>
         </View>
       </View>
     );
@@ -136,6 +141,10 @@ const styles = StyleSheet.create({
     //marginLeft: '6%'
     //textTransform: "uppercase",
   },
+  textInputKeyboardAvoidContainer: {
+    flex: 1,
+    paddingBottom: 76,
+  },
   textInput: {
     textAlignVertical: "top",
     borderRadius: 20,
@@ -144,4 +153,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TextEditBox;
+export default TextMomentBox;

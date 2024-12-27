@@ -10,6 +10,7 @@ const ButtonBottomActionBaseSmallLongPress = ({
   label,
   fontFamily='Poppins-Regular', 
   selected=false,
+  width=100,
   labelFontSize = 14,    
   shapeWidth = 260,
   shapeHeight = 260,
@@ -38,7 +39,7 @@ const ButtonBottomActionBaseSmallLongPress = ({
     <TouchableOpacity
       style={{
         flexDirection: 'row',
-        width: 'auto',
+        width: width,
         height: '100%',    
         alignItems: 'center',
         alignContent: 'center',
