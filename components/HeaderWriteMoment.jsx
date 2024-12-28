@@ -10,7 +10,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 
 
-const HeaderWriteMoment = () => {
+const HeaderWriteMoment = ({
+  title='ADD MOMENT'
+}) => {
     const { themeStyles } = useGlobalStyle();
     const { loadingNewFriend } = useSelectedFriend();
     const { themeAheadOfLoading } = useFriendList();
@@ -52,7 +54,7 @@ const HeaderWriteMoment = () => {
         </TouchableOpacity> 
       </View> 
 
-      <Text style={[styles.headerText, themeStyles.headerText, {color: themeAheadOfLoading.fontColorSecondary, paddingRight: 0}]}>ADD MOMENT</Text>
+      <Text style={[styles.headerText, themeStyles.headerText, {color: themeAheadOfLoading.fontColorSecondary, paddingRight: 0}]}>{title}</Text>
        <View>
        <TouchableOpacity onPress={handleNavigateToAllMoments}>
        <ThoughtBubbleOutlineSvg height={30} width={30} fill={themeAheadOfLoading.fontColorSecondary}/>

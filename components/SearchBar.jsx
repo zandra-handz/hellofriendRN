@@ -3,7 +3,7 @@ import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Touchabl
 import Icon from 'react-native-vector-icons/Ionicons'; // Import the icon
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const SearchBar = ({ data, useCustomIcon=false, customIcon: CustomIcon, placeholderText='Search moments', borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
+const SearchBar = ({ data, height=48, width='100%', useCustomIcon=false, backgroundColor, textAndIconColor='gray', customIcon: CustomIcon, placeholderText='Search moments', borderColor='#ccc', onPress, searchKeys }) => {  // Updated to accept `searchKeys`
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]); 
   const { themeStyles } = useGlobalStyle();
@@ -51,12 +51,13 @@ const SearchBar = ({ data, useCustomIcon=false, customIcon: CustomIcon, placehol
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
-      <View style={[styles.container, {height: '100%'}]}> 
-        <View style={[styles.inputContainer, themeStyles.genericTextBackground, {borderColor: borderColor}]}>
+      <View style={[styles.container, {width: width}]}> 
+        <View style={[styles.inputContainer,  {backgroundColor: backgroundColor, height: height, borderColor: borderColor}]}>
           <TextInput
             style={[styles.searchInput, themeStyles.genericText]}
             placeholder={placeholderText}
-            placeholderTextColor={themeStyles.genericText.color}
+            placeholderTextColor={textAndIconColor}
+            color={textAndIconColor}
             value={searchQuery}
             onChangeText={handleSearch}
             onBlur={handleBlur}  // Clear when the user moves away from the input
@@ -65,7 +66,7 @@ const SearchBar = ({ data, useCustomIcon=false, customIcon: CustomIcon, placehol
            {!useCustomIcon && (
 
         
-          <Icon name="search" size={30} color={themeStyles.genericText.color} style={styles.icon} />  
+          <Icon name="search" size={26} color={textAndIconColor} style={styles.icon} />  
         )} 
         {useCustomIcon && CustomIcon}  
           </View>
@@ -96,27 +97,28 @@ const SearchBar = ({ data, useCustomIcon=false, customIcon: CustomIcon, placehol
 
 const styles = StyleSheet.create({
   container: {  
-    width: '100%',  
-    flex: 1, 
-    zIndex: 2, 
+    //width: '100%',  
+   // flex: 1, 
+    
+    zIndex: 2,  
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center', 
     alignContent: 'center',
     height: '100%',  
-    borderRadius: 30,
-    height: 48,  
+    borderRadius: 20,
+    //height: 30,  
   },
   searchInput: { 
     flex: 1, 
     alignItems: 'center',
     alignContent: 'center', 
-    fontSize: 15,
+    fontSize: 13,
     textAlign: 'left',
     overflow: 'hidden',
-    paddingHorizontal: '2%', 
-    height: 48, 
+    paddingHorizontal: '5%', 
+    height: 50, 
   },
   icon: {
     paddingHorizontal: 10, 

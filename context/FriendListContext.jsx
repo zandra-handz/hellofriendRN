@@ -31,7 +31,7 @@ export const FriendListProvider = ({ children }) => {
   
   const getThemeAheadOfLoading = (loadingFriend) => {
      
-    setThemeAheadOfLoading({lightColor: loadingFriend.lightColor || '#a0f143', darkColor: loadingFriend.darkColor || '#4caf50', fontColor: loadingFriend.fontColor || '#00000', fontColorSecondary: loadingFriend.fontColorSecondary || '#00000'});
+    setThemeAheadOfLoading({lightColor: loadingFriend.lightColor || '#a0f143', darkColor: loadingFriend.darkColor || '#4caf50', fontColor: loadingFriend.fontColor || '#000000', fontColorSecondary: loadingFriend.fontColorSecondary || '#000000'});
 
   };
 
@@ -40,8 +40,8 @@ export const FriendListProvider = ({ children }) => {
     setThemeAheadOfLoading({
       lightColor: '#a0f143', 
       darkColor: '#4caf50', 
-      fontColor: '#00000', 
-      fontColorSecondary: '#00000'}); 
+      fontColor: '#000000', 
+      fontColorSecondary: '#000000'}); 
   };
  
 

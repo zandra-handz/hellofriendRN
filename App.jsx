@@ -175,7 +175,7 @@ export const Layout = () => {
                   component={ScreenMoments}
                   options={{
                     headerShown: true,
-                    header: () => <HeaderBase headerTitle="Moments" />,
+                    header: () => <HeaderWriteMoment title={'ALL MOMENTS'}/>,
                   }}
                 />
                 <Stack.Screen
