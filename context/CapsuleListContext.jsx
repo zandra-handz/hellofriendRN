@@ -79,7 +79,8 @@ export const CapsuleListProvider = ({ children }) => {
       const categoryCount = uniqueCategories.length;
       const categoryNames = uniqueCategories;
   
-      const categoryStartIndices = {};
+      const categoryStartIndices = {}; 
+
       let index = 0;
       for (const category of uniqueCategories) {
         categoryStartIndices[category] = index;

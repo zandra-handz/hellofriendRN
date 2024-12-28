@@ -3,6 +3,8 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import MessageAddSolidSvg from '../assets/svgs/message-add-solid.svg';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useNavigation } from '@react-navigation/native';
+import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
+import AddOutlineSvg from '../assets/svgs/add-outline.svg';
 
 
 
@@ -18,13 +20,22 @@ const ButtonGoToAddMoment = () => {
   };
 
   return ( 
-    <View style={styles.container}> 
-      <TouchableOpacity onPress={handleGoToMomentScreen} style={[styles.circleButton, themeStyles.footerIcon, { backgroundColor: manualGradientColors.homeDarkColor}]}> 
+    <View style={[styles.container]}> 
+      <TouchableOpacity onPress={handleGoToMomentScreen} style={[styles.circleButton, themeStyles.footerIcon, {borderColor: manualGradientColors.lightColor, backgroundColor: manualGradientColors.homeDarkColor}]}> 
         {!viewSvg && (  
         <Text style={[styles.controlButtonText, themeStyles.footerText]}>Add moment</Text>
         )}
         {viewSvg && (  
-        <MessageAddSolidSvg width={48} height={48} color={manualGradientColors.darkColor} />
+          <>
+                          <View style={{ position: "absolute", bottom: 13, right: 12 }}>
+                            <AddOutlineSvg
+                              width={20}
+                              height={20}
+                              color={manualGradientColors.darkColor} 
+                            />
+                          </View>
+        <ThoughtBubbleOutlineSvg width={40} height={40} color={manualGradientColors.darkColor} />
+        </>
         )}
       </TouchableOpacity>  
       </View> 
@@ -58,6 +69,8 @@ const styles = StyleSheet.create({
     width: 70, // Set width and height to the same value
     height: 70,
     borderRadius: 35, // Half of the width/height to make it a perfect circle
+    
+    borderWidth: StyleSheet.hairlineWidth,
     justifyContent: 'center',
     alignItems: 'center', // Ensure the content is centered within the circle
     backgroundColor: '#f0f', // Optional: set a background color to make it visible

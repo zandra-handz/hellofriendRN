@@ -5,10 +5,15 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
-import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
-
+import QuickSaveButton from "../components/QuickSaveButton";
 // Forwarding ref to the parent to expose the TextInput value
 const SingleLineEnterBox = forwardRef(
   //width and height are original settings being used in location notes
@@ -17,11 +22,12 @@ const SingleLineEnterBox = forwardRef(
       title = "title",
       mountingText = "",
       onTextChange,
+      onSave,
       helperText,
       autoFocus = true,
-      width = "90%",
-      height = "60%", 
-      iconColor = 'transparent',
+      width = "100%",
+      height = "100%",
+      iconColor = "transparent",
       onEnterPress = () => {}, //onCategorySelect(text) , sets text as the category in the parent
     },
     ref
@@ -52,15 +58,20 @@ const SingleLineEnterBox = forwardRef(
         }
       },
       getText: () => editedMessage,
-    }));4
+    }));
 
     const handleOnEnterPress = () => {
       if (ref && ref.current) {
         const currentText = ref.current.getText();
         onEnterPress(currentText);
       }
-      
+    };
 
+    const handleQuickSave = () => {
+      if (ref && ref.current) {
+        const currentText = ref.current.getText();
+        onSave(currentText);
+      }
     };
 
     useEffect(() => {
@@ -68,7 +79,7 @@ const SingleLineEnterBox = forwardRef(
     }, [mountingText]);
 
     const handleTextInputChange = (text) => {
-      console.log(text);
+     // console.log(text);
       setEditedMessage(text);
       onTextChange(text);
     };
@@ -86,41 +97,60 @@ const SingleLineEnterBox = forwardRef(
             flexDirection: "row",
             justifyContent: "space-between",
             width: "100%",
-            height: "auto",
-            alignItems: 'center',
+            height: "100%",
+            alignItems: "center", 
           }}
         >
-          <View style={{flexDirection: 'row', height: '100%', alignItems: 'center'}}>
-          <Text style={[styles.title, themeStyles.genericText]}>
-            {title}
-          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              height: "100%",
+              alignItems: "center",
+            }}
+          >
+            <Text style={[styles.title, themeStyles.genericText]}>{title}</Text>
           </View>
-
-          <View style={{ flex: 1 }}>
-
-{helperText && (
-    <Text style={[styles.helperText, themeStyles.genericText]}>
-      {helperText}
-    </Text>
-  )}
-  <TextInput
-    ref={textInputRef}
-    autoFocus={autoFocus}
-    style={[
-      styles.textInput,
-      themeStyles.genericText,
-      themeStyles.genericTextBackgroundShadeTwo,
-    ]}
-    onSubmitEditing={handleOnEnterPress}
-    value={editedMessage}
-    onChangeText={handleTextInputChange} // Update local state
-    multiline={false}
-  />
-</View>
-
-          <EditPencilOutlineSvg height={30} width={30} color={iconColor} />
+          <View
+            style={{
+              width: "100%",
+              flexShrink: 1,
+              height: "100%",
+              alignContent: "center",
+              justifyContent: "center", 
+            }}
+          >
+            <TextInput
+              ref={textInputRef}
+              autoFocus={autoFocus}
+              style={[
+                styles.textInput,
+                themeStyles.genericText,
+                themeStyles.genericTextBackgroundShadeTwo,
+              ]}
+              onSubmitEditing={handleOnEnterPress}
+              value={editedMessage}
+              onChangeText={handleTextInputChange} // Update local state
+              multiline={false}
+            />
+          </View> 
+          {editedMessage.length > 0 && (
+            <View
+              style={{
+                height: "100%", 
+                width: 80, 
+                justifyContent: 'center',
+                //position: "absolute",
+              }}
+            >
+              <QuickSaveButton
+                isDisabled={!editedMessage}
+                label="Save"
+                height='70%'
+                onPress={handleQuickSave}
+              />
+            </View>
+          )}
         </View>
-
       </View>
     );
   }
@@ -139,22 +169,26 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     lineHeight: 21,
+    alignItems: "center",
     textTransform: "uppercase",
+    height: "auto",
   },
   helperText: {
     fontSize: 16,
     lineHeight: 20,
-    opacity: .5,
+    opacity: 0.5,
     //marginLeft: '6%'
     //textTransform: "uppercase",
   },
   textInput: {
+    fontSize: 15,
     textAlignVertical: "center",
-    justifyContent: 'center',
-    backgroundColor: 'teal',
+    justifyContent: "center",
+    backgroundColor: "teal",
     borderRadius: 20,
     paddingVertical: 0,
     flex: 1,
+    //flex: 1,
   },
 });
 

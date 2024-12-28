@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext'; 
 import MomentsList from '../components/MomentsList';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import { useFriendList } from '../context/FriendListContext';  
 
@@ -24,7 +23,6 @@ const ScreenMoments = ({ route, navigation }) => {
                 {capsuleList && (
                         <MomentsList  /> 
                 )}
-                <ButtonGoToAddMoment />
                
             </View> 
         </LinearGradient> 

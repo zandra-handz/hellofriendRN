@@ -14,6 +14,7 @@ import LizardHandsHorizontal from "../components/LizardHandsHorizontal";
 const SlideToAdd = ({
   onPress,
   sliderText = "Label",
+  sliderTextSize= 11,
   targetIcon: TargetIcon,
   width = Dimensions.get("window").width - 50,
   disabled = false,
@@ -122,6 +123,15 @@ const SlideToAdd = ({
           setIsPressed(true);
         }
 
+        
+        setFirstLizardVisible(false);
+        setSecondLizardVisible(false);
+        setThirdLizardVisible(false);
+        setFourthLizardVisible(false);
+        setFifthLizardVisible(false);
+        setSixthLizardVisible(false);
+        setSeventhLizardVisible(false);
+
         isDraggingRef.current = false; // Reset ref immediately
         setIsDragging(false); // Reset state for UI
 
@@ -157,13 +167,13 @@ const SlideToAdd = ({
             flexDirection: "row",
             backgroundColor: isDragging
               ? "#000002"
-              : themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+              : 'transparent', //themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
             transform: [{ translateX: position }],
             width: "auto",
           },
         ]}
       >
-        <Text style={[styles.sliderText, themeStyles.genericText]}>
+        <Text style={[themeStyles.genericText, {fontSize: sliderTextSize}]}>
           {sliderText}
         </Text>
 
@@ -345,11 +355,7 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
     zIndex: 4000,
     elevation: 4000,
-  },
-  sliderText: {
-    fontSize: 11,
-    //fontWeight: 'bold',
-  },
+  }, 
   iconContainer: {
     position: "absolute",
     right: 20,

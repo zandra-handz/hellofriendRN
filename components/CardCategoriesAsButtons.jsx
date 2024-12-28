@@ -55,7 +55,7 @@ const CardCategoriesAsButtons = ({
   const updateNewCategoryText = (text) => {
     if (newCategoryRef && newCategoryRef.current) {
       newCategoryRef.current.setText(text);
-      console.log("in parent", newCategoryRef.current.getText());
+     // console.log("in parent", newCategoryRef.current.getText());
     }
   };
 
@@ -77,8 +77,8 @@ const CardCategoriesAsButtons = ({
   }, [categoryCount]);
 
   const fetchCategoryLimitData = async () => {
-    console.log("category names: ", categoryNames);
-    console.log("category counts: ", categoryCount);
+  //  console.log("category names: ", categoryNames);
+  //  console.log("category counts: ", categoryCount);
 
     if (categoryCount < 3) {
       setContainerHeight("100%");
@@ -106,9 +106,9 @@ const CardCategoriesAsButtons = ({
     setRemainingCategories(categoryLimit - categoryCount);
   }, [categoryCount, categoryLimit]);
 
-  useEffect(() => {
-    console.log("remaining categories updated: ", remainingCategories);
-  }, [remainingCategories]);
+  // useEffect(() => {
+  //   console.log("remaining categories updated: ", remainingCategories);
+  // }, [remainingCategories]);
 
   const getMostCapsulesCategory = () => {
     if (capsuleList.length === 0) return null;
@@ -158,13 +158,13 @@ const CardCategoriesAsButtons = ({
   const handleCategoryPress = (category) => {
     setSelectedCategory(category);
     setModalVisible(true);
-    console.log("SELECTED CATEGORY!!!");
+   // console.log("SELECTED CATEGORY!!!");
   };
 
   const handlePressOut = (category) => {
     if (category === selectedCategory && pressedOnce) {
       handleSave();
-      console.log("SAVED IN HANDLEPRESSOUT!!!");
+    //  console.log("SAVED IN HANDLEPRESSOUT!!!");
       setPressedOnce(false);
     } else {
       setSelectedCategory(category);
@@ -174,14 +174,14 @@ const CardCategoriesAsButtons = ({
 
   const handleSave = () => {
     if (selectedCategory) {
-      console.log("no save");
+     // console.log("no save");
       onParentSave();
     }
   };
 
   const handleAllCategoriesPress = () => {
-    console.log("Clicked All Categories");
-    console.log("All capsules:", capsuleList);
+    //console.log("Clicked All Categories");
+    //console.log("All capsules:", capsuleList);
     setSelectedCategory(null);
   };
 
@@ -225,9 +225,6 @@ const CardCategoriesAsButtons = ({
     );
   }, [selectedCategory]);
 
-  useEffect(() => {
-    console.log("selected capsules: ", selectedCategoryCapsules);
-  }, [selectedCategoryCapsules]);
 
   return (
     <View style={[themeStyles.genericTextBackgroundShadeTwo, { flex: 1 }]}>
@@ -238,17 +235,6 @@ const CardCategoriesAsButtons = ({
           { maxHeight: containerHeight, minHeight: 130 },
         ]}
       >
-        {loadingNewFriend && (
-          <View style={styles.loadingWrapper}>
-            <LoadingPage
-              loading={loadingNewFriend}
-              spinnnerType="wander"
-              spinnerSize={60}
-              includeLabel={false}
-            />
-          </View>
-        )}
-
         {friendDashboardData && categoryNames && !loadingNewFriend && (
           <>
             <View
@@ -277,97 +263,128 @@ const CardCategoriesAsButtons = ({
                   </Text>
                 </TouchableOpacity>
               )}
-              {categoryCount === 0 ? (
-                <Text style={styles.noCategoriesText}>
-                  Please enter a category
-                </Text>
-              ) : (
+
+              <View
+                style={{
+                  flexDirection: "row", 
+                  height: "100%",
+                  width: "100%",
+                  paddingLeft: '4%',
+                }}
+              >
+                {/* {categoryCount === 0 && viewExistingCategories && (
+                  <View  style={[
+                    styles.noCategoriesText,
+                    { width: "auto", flex: 1, height: '100%', alignSelf: 'center', alignItems: 'center', justifyContent: 'center'  },
+                  ]}>
+
+                  <Text
+                    style={[
+                      styles.noCategoriesText, 
+                    ]}
+                  >
+                    Please enter a category
+                  </Text>
+                  </View>
+                )} */}
+                {categoryCount > 0 && viewExistingCategories && (
+                  <FlatList
+                    data={categoryNames}
+                    horizontal={true}
+                    keyboardShouldPersistTaps="handled"
+                    keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
+                    renderItem={({ item }) => (
+                      <View
+                        key={item}
+                        style={{ width: 140, height: '100%', justifyContent: 'center', flex: 1, marginRight: "2%" }}
+                      >
+                        <ButtonBottomActionBaseSmallLongPress
+                          height={'80%'}
+                          onPress={() => handlePressOut(item)} // Correct way to pass the function
+                          onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
+                          label={item}
+                          selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
+                          width={140}
+                          fontFamily={"Poppins-Regular"}
+                          shapeWidth={44}
+                          shapeHeight={44}
+                          shapePosition="right"
+                          shapePositionValue={0}
+                          shapePositionValueVertical={4}
+                        />
+                      </View>
+                    )}
+                    // Set the FlatList's contentContainerStyle to push items to the bottom
+                    contentContainerStyle={{
+                      //flexGrow: 1, // Allow the FlatList to grow and fill space
+                      justifyContent: "space-around", // Push items to the bottom
+                      maxHeight: containerHeight,
+                    }}
+                    ListFooterComponent={
+                      <View style={styles.flatListEndSpace} />
+                    }
+                  />
+                )}
+
+                {!viewExistingCategories || categoryCount === 0 && (
+                  <View
+                    style={{
+                      flex: 1,
+                      width: "100%",
+                      alignContent: "center",
+                      alignItems: "center",
+                      
+                    }}
+                  >
+                    <SingleLineEnterBox
+                      ref={newCategoryRef}
+                      onEnterPress={onCategorySelect}
+                      onSave={handleNewCategory}
+                      title={"New category: "}
+                      onTextChange={updateNewCategoryText}
+                    />
+                  </View>
+                )}
                 <View
                   style={{
-                    flexDirection: "row",
-                    justifyContent: "flex-start", // Align items to the bottom of the container
-                    height: "auto",
-                    width: "100%",
+                    flexDirection: "row", 
+                    alignContent: "center",
+                    alignItems: "center",
+                    textAlign: "left",
+                    justifyContent: "center", 
+                    width: '10%',
                   }}
                 >
-                  {viewExistingCategories && (
-                    <FlatList
-                      data={categoryNames}
-                      horizontal={true}
-                      keyboardShouldPersistTaps="handled"
-                      keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
-                      renderItem={({ item }) => (
-                        <View
-                          key={item}
-                          style={{ width: 100, marginRight: "2%" }}
-                        >
-                          <ButtonBottomActionBaseSmallLongPress
-                            height={"auto"}
-                            onPress={() => handlePressOut(item)} // Correct way to pass the function
-                            onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
-                            label={item}
-                            selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
-                            width={100}
-                            fontFamily={"Poppins-Regular"}
-                            shapeWidth={44}
-                            shapeHeight={44}
-                            shapePosition="right"
-                            shapePositionValue={0}
-                            shapePositionValueVertical={4}
-                          />
-                        </View>
-                      )}
-                      // Set the FlatList's contentContainerStyle to push items to the bottom
-                      contentContainerStyle={{
-                        //flexGrow: 1, // Allow the FlatList to grow and fill space
-                        justifyContent: "space-around", // Push items to the bottom
-                        maxHeight: containerHeight,
-                      }}
-                      ListFooterComponent={<View style={styles.flatListEndSpace} />} 
-                    />
-                  )}
-
-                  {!viewExistingCategories && (
+                  {remainingCategories !== null && remainingCategories > 0 && (
                     <View
                       style={{
-                        flex: 1,
-                        width: "100%",                   
-                        alignContent: "center",
-                        alignItems: "center",
+                        zIndex: 7000,
+                        elevation: 7000,
+                        paddingHorizontal: "2%",
+                        justifyContent: 'center',
+                        width: '100%',
+                        height: '100%',
+                        alignContent: 'center', 
+                        alignItems: 'center',
+                       
+                        
+                    alignContent: "center", 
                       }}
                     >
-                      <SingleLineEnterBox
-                        ref={newCategoryRef}
-                        onEnterPress={onCategorySelect}
-                        title={"New category: "}
-                        onTextChange={updateNewCategoryText}
+                      <AddOutlineSvg
+                        width={32}
+                        height={32}
+                        color={themeStyles.modalIconColor.color}
+                        onPress={() =>
+                          setViewExistingCategories((prev) => !prev)
+                        }
                       />
+                      {/* <ButtonAddCategory color={themeStyles.subHeaderText.color} onInputValueChange={handleNewCategory} width={32} height={32} />
+                       */}
                     </View>
                   )}
                 </View>
-              )}
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                paddingBottom: 10,
-                alignContent: "center",
-                alignItems: "center",
-                textAlign: "left",
-              }}
-            >
-              {remainingCategories !== null && remainingCategories > 0 && (
-                <View style={{ paddingLeft: 0, paddingBottom: 5 }}>
-                  <AddOutlineSvg
-                    width={32}
-                    height={32}
-                    color={themeStyles.modalIconColor.color}
-                    onPress={() => setViewExistingCategories((prev) => !prev)}
-                  />
-                  {/* <ButtonAddCategory color={themeStyles.subHeaderText.color} onInputValueChange={handleNewCategory} width={32} height={32} />
-                   */}
-                </View>
-              )}
+              </View>
             </View>
 
             {!showInModal && (
@@ -480,12 +497,12 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     padding: 0,
     borderWidth: 0,
-    paddingVertical: 10,
+    paddingVertical: 0,
     paddingHorizontal: 2,
     flex: 1,
     alignContent: "center",
     flexDirection: "row",
-    height: "auto",
+    height: "auto", 
   },
   loadingWrapper: {
     flex: 1,
@@ -628,8 +645,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   flatListEndSpace: {
-
-    width: 50,
+    width: 200,
   },
 });
 

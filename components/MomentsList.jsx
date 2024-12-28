@@ -16,22 +16,25 @@ import {
 } from "react-native";
 
 import { useFriendList } from "../context/FriendListContext";
+
+import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
 import LizardSvg from "../assets/svgs/lizard.svg";
 import MomentCard from "../components/MomentCard";
 import MomentsNavigator from "../components/MomentsNavigator";
-import SearchBar from "../components/SearchBar";
+import MomentsSearchBar from "../components/MomentsSearchBar";
 import SpinOutlineSvg from "../assets/svgs/spin-outline.svg";
+import DiceRandom3dSolidSvg from "../assets/svgs/dice-random-3d-solid.svg";
 import { Easing } from "react-native-reanimated";
 
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useCapsuleList } from "../context/CapsuleListContext";
 
-const ITEM_HEIGHT = 180;
+const ITEM_HEIGHT = 240;
 const ITEM_BOTTOM_MARGIN = 6; //Add to value for snapToInterval
-const NUMBER_OF_LINES = 4;
+const NUMBER_OF_LINES = 5;
 
 const MomentsList = (navigation) => {
-  const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
+  const { themeStyles, gradientColors, gradientColorsHome, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const {
     capsuleList,
@@ -62,7 +65,7 @@ const MomentsList = (navigation) => {
   const momentListBottomSpacer = Dimensions.get("screen").height - 200;
 
   const translateX = new Animated.Value(0);
-
+ 
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -108,6 +111,15 @@ const MomentsList = (navigation) => {
     }
   }, [momentIdToAnimate]);
 
+  const scrollToMoment = (moment) => {  
+    if (moment.uniqueIndex !== undefined) {
+      flatListRef.current?.scrollToIndex({
+        index: moment.uniqueIndex,
+        animated: true,
+      });
+    }
+  };
+
   const scrollToRandomItem = () => {
     if (capsuleList.length === 0) return;
 
@@ -137,7 +149,7 @@ const MomentsList = (navigation) => {
 
   const scrollToCategoryStart = (category) => {
     const categoryIndex = categoryStartIndices[category];
-    console.log("hi", categoryIndex);
+    
     if (categoryIndex !== undefined) {
       flatListRef.current?.scrollToIndex({
         index: categoryIndex > 0 ? categoryIndex : 0,
@@ -145,6 +157,9 @@ const MomentsList = (navigation) => {
       });
     }
   };
+
+
+
 
   const renderCategoryButtons = () => {
     return (
@@ -201,7 +216,7 @@ const MomentsList = (navigation) => {
 
     const distanceFromTop = scrollY.interpolate({
       inputRange: [offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN), offset, offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN],
-      outputRange: [0.94, .94, 0.88], //[0.93, 0.98, 0.84],
+      outputRange: [.98, 1.01, 0.86], //[0.93, 0.98, 0.84],
       extrapolate: "clamp",
     });
 
@@ -216,11 +231,12 @@ const MomentsList = (navigation) => {
 
     const dynamicVisibility = scrollY.interpolate({
       inputRange: [offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN, offset, offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN],
-      outputRange: [0.4, 1, 0], // 0 = fully transparent, 1 = fully visible
+      outputRange: [0.2, 1, 0], // 0 = fully transparent, 1 = fully visible
       extrapolate: "clamp",
     });
 
-    const opacity = item.id === momentIdToAnimate ? fadeAnim : 1; // Fade out when it's being animated
+    const opacity = item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
+// Fade out when it's being animated
     const translate = item.id === momentIdToAnimate ? translateY : 0;
 
     return (
@@ -238,13 +254,16 @@ const MomentsList = (navigation) => {
           heightToMatchWithFlatList={ITEM_HEIGHT}
           marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
           numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
+          backgroundColor={themeStyles.genericTextBackgroundShadeTwo.backgroundColor}
           borderRadius={30}
+          borderColor={'transparent'}  //manualGradientColors.lightColor}
           moment={item}
           index={index}
           size={dynamicTextSize}
           sliderVisible={dynamicVisibility}
           onPress={() => openMomentNav(item)} // Open the moment view when the card is pressed
           onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
+          
         />
       </Animated.View>
     );
@@ -262,42 +281,32 @@ const MomentsList = (navigation) => {
         <>
         
       {renderCategoryButtons()}
+      
+                      <ButtonGoToAddMoment />
         </>
       
     )}
-      <View style={[styles.selectFriendContainer, { marginBottom: "2%" }]}>
-        <TouchableOpacity
-          style={{
-            alignContent: "center",
-            marginHorizontal: "1%",
-            alignItems: "center",
-            flexDirection: "row",
-          }}
-          onPress={scrollToRandomItem}
-        >
-          <SpinOutlineSvg
-            height={34}
-            width={34}
-            color={themeAheadOfLoading.fontColor}
-          />
-          <Text
-            style={[
-              styles.randomButtonText,
-              { color: themeAheadOfLoading.fontColorSecondary },
-            ]}
-          ></Text>
-        </TouchableOpacity>
-        <SearchBar
+      <View style={[styles.selectFriendContainer, { alignItems: 'center', marginBottom: "2%" }]}>
+     
+          <DiceRandom3dSolidSvg
+            height={36}
+            width={36}
+            color={themeAheadOfLoading.fontColorSecondary}
+            onPress={scrollToRandomItem}
+            
+          />  
+        <MomentsSearchBar 
           data={capsuleList}
           height={30}
-          width={'30%'}
+          width={'27%'}
           borderColor={"transparent"}
           placeholderText={'Search'}
           textAndIconColor={themeAheadOfLoading.fontColorSecondary}
           backgroundColor={'transparent'}
-          onPress={openMomentNav}
+          onPress={scrollToMoment}
           searchKeys={["capsule", "typedCategory"]}
         />
+
       </View>
               <View
                 style={[
@@ -355,16 +364,14 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     position: "absolute",
-    bottom: 20,
-    left: 8,
+    bottom: 20, //20
+    left: 4,
     zIndex: 5,
-    borderRadius: 20,
+    borderRadius: 20, 
     height: "auto",
-    height: "auto",
-    maxHeight: "18%",
+    maxHeight: "20%",
     width: "40%",
-    padding: 10,
-    paddingBottom: 10,
+    padding: 20, 
   },
   categoryButton: {
     borderBottomWidth: 0.8,
@@ -373,10 +380,10 @@ const styles = StyleSheet.create({
     alignText: "left",
     alignContent: "center",
     justifyContent: "center",
-    paddingHorizontal: "4%",
-    paddingVertical: "4%",
-    borderRadius: 20,
-    marginBottom: 6,
+    paddingHorizontal: "8%",
+    paddingVertical: "6%",
+    borderRadius: 16,
+    marginBottom: '3%',
     height: "auto",
   },
   categoryText: {
@@ -414,11 +421,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   innerContainer: {
-    height: Dimensions.get("screen").height - 0, //440
+    height: Dimensions.get("screen").height - 400, //440
     width: Dimensions.get("screen").width - 10,
     alignContent: "center",
-    //paddingHorizontal: "4%",
-    paddingTop: "4%",
+    paddingHorizontal: "4%",
+    //paddingTop: "4%",
     width: "101%",
     alignSelf: "center",
     borderWidth: 1,
@@ -437,7 +444,7 @@ const styles = StyleSheet.create({
     minHeight: 30,
     maxHeight: 30,
     height: 30,
-    paddingHorizontal: '2%',
+    paddingHorizontal: '4%',
   },
 });
 

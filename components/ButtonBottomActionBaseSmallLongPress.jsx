@@ -11,11 +11,8 @@ const ButtonBottomActionBaseSmallLongPress = ({
   fontFamily='Poppins-Regular', 
   selected=false,
   width=100,
-  labelFontSize = 14,    
-  shapeWidth = 260,
-  shapeHeight = 260,
-  shapePositionValue = -134,  
-  shapePositionValueVertical = null, 
+  labelFontSize = 14,     
+  height,
 }) => { 
   const globalStyles = useGlobalStyle();   
   const { themeAheadOfLoading } = useFriendList();
@@ -40,38 +37,24 @@ const ButtonBottomActionBaseSmallLongPress = ({
       style={{
         flexDirection: 'row',
         width: width,
-        height: '100%',    
+        height: height,    
         alignItems: 'center',
         alignContent: 'center',
         textAlign: 'center',
-        paddingHorizontal: 10,
+        paddingHorizontal: '2%',
         justifyContent: 'center',
         overflow: 'hidden',     
-        borderRadius: 10, 
+        borderRadius: 20, 
         backgroundColor: selected ? themeAheadOfLoading.darkColor : themeAheadOfLoading.lightColor,
       }}
       onPress={onPress}  
       onLongPress={onLongPress}
-    > 
-        <>  
-        </> 
-        {selected && (
-        <ArrowForwardDoubleSvg
-          width={shapeWidth}
-          height={shapeHeight}
-          color={'transparent'}
-          style={{
-            position: 'absolute', 
-            right: shapePositionValue,
-            top: shapePositionValueVertical,
-          }}
-        />
-      )} 
+    >  
 
        <Text
         style={[
           textStyles(labelFontSize, selected ? themeAheadOfLoading.fontColor : themeAheadOfLoading.fontColorSecondary), // White label color if disabled
-          { fontFamily: selected ? 'Poppins-Bold' : fontFamily },
+          {fontWeight: selected ? 'bold': null},
         ]}
         numberOfLines={1}          
         ellipsizeMode="tail"      

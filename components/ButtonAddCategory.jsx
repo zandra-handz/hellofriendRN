@@ -14,7 +14,7 @@ const ButtonAddCategory = ({ title = '', onInputValueChange, height=30, width=30
   };
 
   const handleConfirm = (inputValue) => {
-    console.log('Input value from modal:', inputValue);
+   // console.log('Input value from modal:', inputValue);
     if (onInputValueChange) {
       onInputValueChange(inputValue);
     }
@@ -22,7 +22,7 @@ const ButtonAddCategory = ({ title = '', onInputValueChange, height=30, width=30
   };
 
   const handleCancel = () => {
-    console.log('Modal canceled');
+  //  console.log('Modal canceled');
     toggleModal();  
   };
 

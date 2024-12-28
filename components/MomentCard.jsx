@@ -1,3 +1,6 @@
+//<LeafGreenOutlineSvg color={manualGradientColors.lightColor} width={80} height={80} />
+     
+
 import React, { useEffect } from "react";
 import {
   View,
@@ -11,6 +14,9 @@ import { useCapsuleList } from "../context/CapsuleListContext";
 import SlideToAdd from "../components/SlideToAdd";
 import FormatMonthDay from "../components/FormatMonthDay";
 import CheckmarkOutlineSvg from "../assets/svgs/checkmark-outline.svg";
+import LeafGreenOutlineSvg from "../assets/svgs/leaf-green-outline.svg";
+import LeavesOnBranchSolidSvg from "../assets/svgs/leaves-on-branch-solid.svg";
+import LeafSolidSvg from "../assets/svgs/leaf-solid.svg";
 
 import { Easing } from "react-native-reanimated";
 
@@ -21,10 +27,12 @@ const MomentCard = ({
   heightToMatchWithFlatList, //match THIS if using FlatList
   marginToMatchWithFlatList,
   numberOfLinesToMatchWithFlatList,
+  backgroundColor,
   borderRadius,
+  borderColor,
   size,
   sliderVisible,
-  disabled = false,
+  disabled = false, 
 }) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { updateCapsuleMutation, momentData } = useCapsuleList();
@@ -51,16 +59,39 @@ const MomentCard = ({
     });
   };
 
+  //Added from chatGPT
+  const capitalizeFirstFiveWords = (text) => {
+    if (!text) return "";
+    const words = text.split(" ");
+    const capitalizedWords = words
+      .slice(0, 5)
+      .map((word) => word.toUpperCase())
+      .concat(words.slice(3));
+    return capitalizedWords.join(" ");
+  };
+
+  //Added from chatGPT
+  const uppercaseFirstLine = (text) => {
+    if (!text) return "";
+    const lines = text.split("\n"); // Split text into lines
+    if (lines.length > 0) {
+      lines[0] = lines[0].toUpperCase(); // Capitalize the first line
+    }
+    return lines.join("\n"); // Join the lines back together
+  };
+  
+
   return (
     <Animated.View
       style={[
         styles.container,
-        themeStyles.genericTextBackgroundShadeTwo,
+        //themeStyles.genericTextBackgroundShadeTwo,
         {
           height: heightToMatchWithFlatList,
           marginBottom: marginToMatchWithFlatList,
           borderRadius: borderRadius,
-          //borderColor: manualGradientColors.lightColor,
+          backgroundColor: backgroundColor,
+          borderColor: borderColor,
           transform: [{ translateX }],
         },
       ]}
@@ -72,7 +103,7 @@ const MomentCard = ({
       >
         <View style={styles.iconAndMomentContainer}>
           <View style={styles.categoryHeader}>
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row", width: '100%' }}>
               <Animated.Text
                 style={[
                   styles.categoryText,
@@ -93,7 +124,7 @@ const MomentCard = ({
               />
             </View>
           </View>
-          <View style={styles.textWrapper}>
+          <View style={[styles.textWrapper, {borderRadius: borderRadius}]}>
             <Animated.Text
               numberOfLines={numberOfLinesToMatchWithFlatList}
               style={[
@@ -102,7 +133,7 @@ const MomentCard = ({
                 { fontSize: size, opacity: sliderVisible },
               ]}
             >
-              {moment.capsule}
+               {capitalizeFirstFiveWords(moment.capsule)}
             </Animated.Text>
           </View>
         </View>
@@ -111,11 +142,17 @@ const MomentCard = ({
         style={[styles.sliderContainer, { opacity: sliderVisible }]}
       >
         <SlideToAdd
+
           onPress={onSliderPull}
           sliderText="ADD TO HELLO"
+          sliderTextSize={13}
           targetIcon={CheckmarkOutlineSvg}
           disabled={sliderVisible !== 1}
         />
+      </Animated.View>
+      <Animated.View style={[styles.leafTransform, {opacity: sliderVisible }]}>
+        <LeavesOnBranchSolidSvg   color={manualGradientColors.lightColor} width={80} height={80} />
+     
       </Animated.View>
     </Animated.View>
   );
@@ -125,12 +162,24 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 50,
     width: "100%",
-    paddingHorizontal: "6%",
-    paddingTop: "4%",
+    paddingHorizontal: "5%",
+    paddingTop: "6%",
     paddingBottom: "5%",
     flexDirection: "column",
-    borderWidth: StyleSheet.hairlineWidth, 
-    
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+  leafTransform: {
+    position: "absolute",
+    zIndex: 0,
+    bottom: -20,
+    right: 4,
+    transform: [
+      { //rotate: "34deg",
+        rotate: "2deg",
+       },
+      // Flip horizontally (mirror image)
+    ], 
   },
   sliderContainer: {
     height: 24,
@@ -154,14 +203,15 @@ const styles = StyleSheet.create({
     //fontFamily: 'Poppins-Regular',
     flexShrink: 1,
     fontSize: 15,
-    lineHeight: 21,
+    lineHeight: 22,
     alignSelf: "left",
   },
-  textWrapper: {
-    flexGrow: 1, 
+  textWrapper: { 
+    flexGrow: 1,
     textAlign: "left",
-   // justifyContent: 'center',
-    width: "100%",
+    // justifyContent: 'center',
+    width: "100%", 
+    
   },
   categoryText: {
     fontSize: 13,
@@ -169,15 +219,15 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     color: "darkgrey",
     overflow: "hidden",
-    //textTransform: 'uppercase',
+    textTransform: 'uppercase',
   },
   categoryHeader: {
-    paddingBottom: "1%",
+    paddingBottom: "3%",
     flexDirection: "row",
     alignContent: "center",
-    justifyContent: "flex-end",
+    justifyContent: "flex-start",
     width: "100%",
-    minHeight: 20,
+    minHeight: 30,
     height: "auto",
     maxHeight: 50,
   },
