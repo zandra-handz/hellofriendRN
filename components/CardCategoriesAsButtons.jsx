@@ -326,7 +326,7 @@ const CardCategoriesAsButtons = ({
                   />
                 )}
 
-                {!viewExistingCategories || categoryCount === 0 && (
+                {(!viewExistingCategories || categoryCount === 0) && (
                   <View
                     style={{
                       flex: 1,
