@@ -89,7 +89,7 @@ const ScreenHome = ({ navigation }) => {
         {authUserState.authenticated && authUserState.user ? (
           <>   
               <Animated.View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10, transform: [{ translateX: slideAnim }]}]}>
-                 
+                 {/* <View style={{flex: 1}}>  */}
                 <HomeButtonMomentAdd onPress={navigateToAddMomentScreen} borderRadius={40} borderColor="black" height={buttonHeight} />
                 <HomeButtonGenericAdd label={'ADD IMAGE'}  onPress={navigateToAddImageScreen} borderRadius={40} borderColor="black" height={buttonHeight}/>  
                 <HomeButtonGenericAdd label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
@@ -100,7 +100,7 @@ const ScreenHome = ({ navigation }) => {
                 {(!selectedFriend && !friendLoaded) && showLastButton && ( 
                   <HomeButtonGenericAdd label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
                 )} 
-                
+                {/* </View> */}
                 {!selectedFriend && (
                   <HomeButtonUpNext  onPress={navigateToAddMomentScreen} borderRadius={40} height={headerHeight} borderColor="black" maxHeight={200}/>
                 )}

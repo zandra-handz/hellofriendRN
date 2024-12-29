@@ -21,17 +21,16 @@ import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
 import LizardSvg from "../assets/svgs/lizard.svg";
 import MomentCard from "../components/MomentCard";
 import MomentsNavigator from "../components/MomentsNavigator";
-import MomentsSearchBar from "../components/MomentsSearchBar";
-import SpinOutlineSvg from "../assets/svgs/spin-outline.svg";
+import MomentsSearchBar from "../components/MomentsSearchBar"; 
 import DiceRandom3dSolidSvg from "../assets/svgs/dice-random-3d-solid.svg";
 import { Easing } from "react-native-reanimated";
 
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useCapsuleList } from "../context/CapsuleListContext";
 
-const ITEM_HEIGHT = 240;
-const ITEM_BOTTOM_MARGIN = 6; //Add to value for snapToInterval
-const NUMBER_OF_LINES = 5;
+const ITEM_HEIGHT = 210;
+const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
+const NUMBER_OF_LINES = 4;
 
 const MomentsList = (navigation) => {
   const { themeStyles, gradientColors, gradientColorsHome, manualGradientColors } = useGlobalStyle();
@@ -216,7 +215,7 @@ const MomentsList = (navigation) => {
 
     const distanceFromTop = scrollY.interpolate({
       inputRange: [offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN), offset, offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN],
-      outputRange: [.98, 1.01, 0.86], //[0.93, 0.98, 0.84],
+      outputRange: [.92, .94, 0.84], //[0.93, 0.98, 0.84],
       extrapolate: "clamp",
     });
 
@@ -421,11 +420,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   innerContainer: {
-    height: Dimensions.get("screen").height - 400, //440
+    height: Dimensions.get("screen").height - 250, //440
     width: Dimensions.get("screen").width - 10,
     alignContent: "center",
     paddingHorizontal: "4%",
-    //paddingTop: "4%",
+    paddingTop: "4%",
     width: "101%",
     alignSelf: "center",
     borderWidth: 1,

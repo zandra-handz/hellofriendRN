@@ -173,7 +173,7 @@ const SlideToAdd = ({
           },
         ]}
       >
-        <Text style={[themeStyles.genericText, {fontSize: sliderTextSize}]}>
+        <Text style={[themeStyles.genericText, {fontSize: sliderTextSize, opacity: .5}]}>
           {sliderText}
         </Text>
 
@@ -181,7 +181,7 @@ const SlideToAdd = ({
           <DragRightThickOutlineSvg
             height={18}
             width={18}
-            style={themeStyles.genericText}
+            style={[themeStyles.genericText, {opacity: .6}]}
           />
         </View>
       </Animated.View>

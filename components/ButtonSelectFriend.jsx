@@ -10,8 +10,8 @@ import { useFriendList } from '../context/FriendListContext';
 
 //may need to configure friendlist theme color before using as a button
 const ButtonSelectFriend = ({ friend }) => {
-    const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
-    const { getThemeAheadOfLoading, themeAheadOfLoading } = useFriendList();
+    const { selectedFriend } = useSelectedFriend();
+    const { themeAheadOfLoading } = useFriendList();
     const { themeStyles } = useGlobalStyle();  
     const [isFriendDetailsModalVisible, setIsFriendDetailsModalVisible] = useState(false);
     const [ rowColor, setRowColor ] = useState(themeStyles.genericTextBackgroundShadeTwo.backgroundColor || 'transparent');
@@ -25,12 +25,12 @@ const ButtonSelectFriend = ({ friend }) => {
     };
 
     useEffect(() => {
-        if (selectedFriend && calculatedThemeColors) { 
+        if (selectedFriend && themeAheadOfLoading) { 
             if (friend.id === selectedFriend.id) {
-                setRowColor(calculatedThemeColors.darkColor);
-                setLightColor(calculatedThemeColors.fontColor);
-                setDarkColor(calculatedThemeColors.fontColor);
-                setTextColor(calculatedThemeColors.fontColor);
+                setRowColor(themeAheadOfLoading.darkColor);
+                setLightColor(themeAheadOfLoading.fontColor);
+                setDarkColor(themeAheadOfLoading.fontColor);
+                setTextColor(themeAheadOfLoading.fontColor);
             } else {
                 setRowColor(themeStyles.genericTextBackgroundShadeTwo.backgroundColor || 'transparent');
             }

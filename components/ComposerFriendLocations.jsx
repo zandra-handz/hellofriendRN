@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import BaseFriendViewLocations from '../components/BaseFriendViewLocations';
-import { useLocationList } from '../context/LocationListContext';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useLocationList } from '../context/LocationListContext'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import TogglerActionButton from '../components/TogglerActionButton';
@@ -29,8 +28,8 @@ const ComposerFriendLocations = ({
 }) => {
 
   const navigation = useNavigation();
-  const { themeStyles } = useGlobalStyle();
-  const { calculatedThemeColors } = useSelectedFriend();
+  const { themeStyles } = useGlobalStyle(); 
+  const { themeAheadOfLoading } = useFriendList();
   const { locationList } = useLocationList(); 
   const [showSecondButton, setShowSecondButton] = useState(false);
   const calculatedButtonHeight = headerInside ? buttonHeight + headerHeight : buttonHeight;
@@ -97,7 +96,7 @@ const ComposerFriendLocations = ({
             topIconSize={topIconSize}
             bottomIconSize={bottomIconSize}
             iconColor={inactiveIconColor}
-            highlightIconColor={calculatedThemeColors.darkColor}
+            highlightIconColor={themeAheadOfLoading.darkColor}
             oneButtonOnly={false}
             firstPageTopSvg={MagGlassSimpleSvg}
             firstPageBottomSvg={MapPinOutlineSvg}

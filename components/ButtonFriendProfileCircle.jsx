@@ -6,10 +6,11 @@ import ProfileCircleSvg from '../assets/svgs/ProfileCircleSvg'; // Import Profil
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import LoadingPage from '../components/LoadingPage';
+import LoadingPage from '../components/LoadingPage'; 
 
-const ButtonFriendProfileCircle = ({ screenSide = 'left' }) => {
-  const { selectedFriend, friendLoaded, friendColorTheme, friendDashboardData, setFriend, calculatedThemeColors, loadingNewFriend } = useSelectedFriend();
+
+const ButtonFriendProfileCircle = () => {
+  const { selectedFriend, friendLoaded, friendDashboardData, setFriend, loadingNewFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading, setThemeAheadOfLoading } = useFriendList();
   const [profileIconColor, setProfileIconColor] = useState();

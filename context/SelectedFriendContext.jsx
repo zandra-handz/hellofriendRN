@@ -153,7 +153,7 @@ export const SelectedFriendProvider = ({ children }) => {
       favoriteLocationIds,
       friendColorTheme,
       setFriendColorTheme,
-      calculatedThemeColors,
+      //calculatedThemeColors,
       loadingNewFriend,
       updateFriendDashboardData,
       updateFriendColorTheme,

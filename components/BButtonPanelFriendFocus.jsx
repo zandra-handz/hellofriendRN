@@ -1,20 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
-import PushPinOutlineSvg from '../assets/svgs/push-pin-outline';
+import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart'; 
 import LocationHeartOutlineSvg from '../assets/svgs/location-heart-outline';
 import PhotoSolidSvg from '../assets/svgs/photo-solid';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline';
 
-import { useNavigation } from '@react-navigation/native';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useNavigation } from '@react-navigation/native'; 
+import { useFriendList } from '../context/FriendListContext';
+
 
 const ButtonPanelFriendFocus = () => {
-
-    const { calculatedThemeColors } = useSelectedFriend();
-    const { themeStyles } = useGlobalStyle();
+ 
+    const { themeAheadOfLoading } = useFriendList(); 
     const navigation = useNavigation();
 
 
@@ -44,34 +42,34 @@ const ButtonPanelFriendFocus = () => {
         <View style={styles.container}>
             <View style={styles.section}>
                 <>
-                <TouchableOpacity onPress={navigateToHelloesScreen} style={[styles.button, {backgroundColor: calculatedThemeColors.lightColor}]}>
-                    <PhoneChatMessageHeartSvg height={34} width={34} color={calculatedThemeColors.fontColorSecondary} />
+                <TouchableOpacity onPress={navigateToHelloesScreen} style={[styles.button, {backgroundColor: themeAheadOfLoading.lightColor}]}>
+                    <PhoneChatMessageHeartSvg height={34} width={34} color={themeAheadOfLoading.fontColorSecondary} />
                 </TouchableOpacity>
-                <View><Text style={[styles.labelText, {color: calculatedThemeColors.fontColor}]}>helloes</Text></View> 
+                <View><Text style={[styles.labelText, {color: themeAheadOfLoading.fontColor}]}>helloes</Text></View> 
                 
                 </>
             </View>
             <View style={styles.section}>
                 <>
-                <TouchableOpacity onPress={navigateToLocationsScreen} style={[styles.button, {backgroundColor: calculatedThemeColors.lightColor}]}>
-                    <LocationHeartOutlineSvg height={30} width={30} color={calculatedThemeColors.fontColorSecondary} />
+                <TouchableOpacity onPress={navigateToLocationsScreen} style={[styles.button, {backgroundColor: themeAheadOfLoading.lightColor}]}>
+                    <LocationHeartOutlineSvg height={30} width={30} color={themeAheadOfLoading.fontColorSecondary} />
                 </TouchableOpacity> 
-                <View><Text style={[styles.labelText, {color: calculatedThemeColors.fontColor}]}>locals</Text></View> 
+                <View><Text style={[styles.labelText, {color: themeAheadOfLoading.fontColor}]}>locals</Text></View> 
                 
                 </>
             </View>
             <View style={styles.section}>
-                <TouchableOpacity onPress={navigateToImagesScreen} style={[styles.button, {backgroundColor: calculatedThemeColors.lightColor}]}>
-                    <PhotoSolidSvg height={28} width={28} color={calculatedThemeColors.fontColorSecondary} />
+                <TouchableOpacity onPress={navigateToImagesScreen} style={[styles.button, {backgroundColor: themeAheadOfLoading.lightColor}]}>
+                    <PhotoSolidSvg height={28} width={28} color={themeAheadOfLoading.fontColorSecondary} />
                 </TouchableOpacity> 
-                <View><Text style={[styles.labelText, {color: calculatedThemeColors.fontColor}]}>pics</Text></View> 
+                <View><Text style={[styles.labelText, {color: themeAheadOfLoading.fontColor}]}>pics</Text></View> 
                 
             </View>
             <View style={styles.section}>
-                <TouchableOpacity onPress={navigateToMomentsScreen} style={[styles.button, {backgroundColor: calculatedThemeColors.lightColor}]}>
-                    <ThoughtBubbleOutlineSvg height={32} width={32} color={calculatedThemeColors.fontColorSecondary} />
+                <TouchableOpacity onPress={navigateToMomentsScreen} style={[styles.button, {backgroundColor: themeAheadOfLoading.lightColor}]}>
+                    <ThoughtBubbleOutlineSvg height={32} width={32} color={themeAheadOfLoading.fontColorSecondary} />
                 </TouchableOpacity>
-                <View><Text style={[styles.labelText, {color: calculatedThemeColors.fontColor}]}>momes</Text></View> 
+                <View><Text style={[styles.labelText, {color: themeAheadOfLoading.fontColor}]}>momes</Text></View> 
                  
             </View>
 

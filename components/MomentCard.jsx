@@ -15,8 +15,7 @@ import SlideToAdd from "../components/SlideToAdd";
 import FormatMonthDay from "../components/FormatMonthDay";
 import CheckmarkOutlineSvg from "../assets/svgs/checkmark-outline.svg";
 import LeafGreenOutlineSvg from "../assets/svgs/leaf-green-outline.svg";
-import LeavesOnBranchSolidSvg from "../assets/svgs/leaves-on-branch-solid.svg";
-import LeafSolidSvg from "../assets/svgs/leaf-solid.svg";
+import LeavesOnBranchSolidSvg from "../assets/svgs/leaves-on-branch-solid.svg"; 
 
 import { Easing } from "react-native-reanimated";
 
@@ -66,20 +65,11 @@ const MomentCard = ({
     const capitalizedWords = words
       .slice(0, 5)
       .map((word) => word.toUpperCase())
-      .concat(words.slice(3));
+      .concat(words.slice(5));
     return capitalizedWords.join(" ");
   };
 
-  //Added from chatGPT
-  const uppercaseFirstLine = (text) => {
-    if (!text) return "";
-    const lines = text.split("\n"); // Split text into lines
-    if (lines.length > 0) {
-      lines[0] = lines[0].toUpperCase(); // Capitalize the first line
-    }
-    return lines.join("\n"); // Join the lines back together
-  };
-  
+ 
 
   return (
     <Animated.View
@@ -146,6 +136,7 @@ const MomentCard = ({
           onPress={onSliderPull}
           sliderText="ADD TO HELLO"
           sliderTextSize={13}
+          sliderTextVisible={ sliderVisible }
           targetIcon={CheckmarkOutlineSvg}
           disabled={sliderVisible !== 1}
         />

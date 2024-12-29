@@ -106,12 +106,13 @@ const CalendarLights = ({
   // }
   //}, [monthsData]);
 
-  const renderDay = (item, lightUp, rowStart, weekData) => {
+  const renderDay = (item, lightUp, rowStart, weekData, key) => {
     //console.log(item);
 
     if (!item) {
       return (
         <View
+        key={key}
           style={[
             styles.daySquare,
             { backgroundColor: "transparent", opacity: 0 },
@@ -124,6 +125,7 @@ const CalendarLights = ({
     if (!lightUp) {
       return (
         <View
+        key={key}
           style={[styles.daySquare, { backgroundColor: "transparent" }]}
           // key={`day-${rowStart + index}`}
         ></View>
@@ -132,7 +134,7 @@ const CalendarLights = ({
     if (lightUp) {
       console.log("yes", item);
       return (
-        <Animated.View style={{ height: 10, width: 10, overflow: "hidden" }}>
+        <Animated.View key={key} style={{ height: 10, width: 10, overflow: "hidden" }}>
           <HelloDayWrapper isVisible={lightUp}>
             <Animated.View
               style={[styles.daySquare, { backgroundColor: "orange" }]}
@@ -175,12 +177,12 @@ const CalendarLights = ({
           //console.log('WEEK DATA', weekData); // Debugging output
 
           return (
-            <View style={styles.weekRow} key={rowIndex}>
+            <View style={styles.weekRow} key={`week-${rowIndex}`}>
               {weekData.map((day, index) => {
                 const isHighlighted =
                   day !== null && highlightDays.includes(day);
 
-                return renderDay(day, isHighlighted, rowStart, weekData);
+                return renderDay(day, isHighlighted, rowStart, weekData, `day-${rowStart + index}`);
               })}
             </View>
           );
@@ -232,6 +234,7 @@ const CalendarLights = ({
       });
 
       setCombinedData(combined);
+      console.log(combined);
 
       // console.log("Combined Data:", combined);
       // combined.forEach((item, index) => {
@@ -246,7 +249,7 @@ const CalendarLights = ({
       {combinedData && (
         <FlatList
           ref={flatListRef}
-          data={combinedData} // to put most recent hello/index 0 on right of screen
+          data={combinedData}  
           horizontal
           initialNumToRender={30}
           keyExtractor={(item, index) =>

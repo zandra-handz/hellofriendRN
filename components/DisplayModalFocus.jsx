@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
-import { LinearGradient } from 'expo-linear-gradient'; 
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { LinearGradient } from 'expo-linear-gradient';  
+import { useFriendList } from '../context/FriendListContext';
 
 const DisplayModalFocus = ({ backButtonText='Back', isModalVisible, handleCloseModal, displayText, placeholderText }) => {
-  
-  const { calculatedThemeColors } = useSelectedFriend();
+   
+  const { themeAheadOfLoading } = useFriendList();
 
   return (
     <Modal
@@ -16,18 +16,18 @@ const DisplayModalFocus = ({ backButtonText='Back', isModalVisible, handleCloseM
     >
       <View style={styles.modalOverlay}>
         <LinearGradient
-          colors={[calculatedThemeColors.darkColor, calculatedThemeColors.lightColor]} 
+          colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]} 
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}  
           style={styles.modalContent}
         >
           <Text
-            style={[styles.modalTextDisplay, { borderColor: calculatedThemeColors.darkColor }]}
+            style={[styles.modalTextDisplay, { borderColor: themeAheadOfLoading.darkColor }]}
           >
             {displayText || placeholderText}
           </Text>
-          <TouchableOpacity onPress={handleCloseModal} style={[styles.closeButton, { backgroundColor: calculatedThemeColors.darkColor }]}>
-            <Text style={[styles.closeButtonText, { color: calculatedThemeColors.lightColor }]}>{backButtonText}</Text>
+          <TouchableOpacity onPress={handleCloseModal} style={[styles.closeButton, { backgroundColor: themeAheadOfLoading.darkColor }]}>
+            <Text style={[styles.closeButtonText, { color: themeAheadOfLoading.lightColor }]}>{backButtonText}</Text>
           </TouchableOpacity>
         </LinearGradient>
       </View>

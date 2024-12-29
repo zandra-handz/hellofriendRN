@@ -43,7 +43,7 @@ import ScreenAddHello from "./screens/ScreenAddHello";
 
 import HellofriendHeader from "./components/HellofriendHeader";
 //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
-import HeaderWriteMoment from "./components/HeaderWriteMoment";
+import HeaderMoment from "./components/HeaderMoment";
 import HeaderFriendSettings from "./components/HeaderFriendSettings";
 import HeaderBase from "./components/HeaderBase";
 import HeaderBaseSolid from "./components/HeaderBaseSolid";
@@ -167,7 +167,7 @@ export const Layout = () => {
                   component={ScreenMomentFocus}
                   options={{
                     headerShown: true,
-                    header: () => <HeaderWriteMoment />,
+                    header: () => <HeaderMoment writeView={true} />,
                   }}
                 />
                 <Stack.Screen
@@ -175,7 +175,7 @@ export const Layout = () => {
                   component={ScreenMoments}
                   options={{
                     headerShown: true,
-                    header: () => <HeaderWriteMoment title={'ALL MOMENTS'}/>,
+                    header: () => <HeaderMoment title={'ALL MOMENTS'}/>,
                   }}
                 />
                 <Stack.Screen

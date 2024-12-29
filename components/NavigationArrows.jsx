@@ -24,7 +24,7 @@ import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const NavigationArrows = ({ iconSize=30, currentIndex, imageListLength, onPrevPress, onNextPress }) => {
+const NavigationArrows = ({ iconSize=50, currentIndex, imageListLength, onPrevPress, onNextPress }) => {
   
   const { manualGradientColors } = useGlobalStyle();
 

@@ -209,6 +209,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flexDirection: "column",
+    flexGrow: 1,
     overflow: "hidden",
     marginVertical: "1%",
     borderWidth: 0,

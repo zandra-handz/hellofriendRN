@@ -11,7 +11,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 const MomentsNavigator = ({ archived = false, moment, onClose }) => {
 
   const [isModalVisible, setIsModalVisible] = useState(true);
-  const { capsuleList, deleteMomentRQuery, deleteMomentMutation } = useCapsuleList();
+  const { capsuleList, deleteMomentRQuery, deleteMomentMutation, updateCapsuleMutation } = useCapsuleList();
   const [currentIndex, setCurrentIndex] = useState(0); 
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend(); 
@@ -33,6 +33,14 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
     }
   
   }, [deleteMomentMutation.isSuccess]);
+
+
+  useEffect(() => { 
+    if (updateCapsuleMutation.isSuccess) {
+      closeModal();
+    }
+  
+  }, [updateCapsuleMutation.isSuccess]);
 
   const closeModal = () => { 
     onClose();

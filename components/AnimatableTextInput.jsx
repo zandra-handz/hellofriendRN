@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 import * as Animatable from 'react-native-animatable'; // Import animatable
+import { useFriendList } from '../context/FriendListContext';
+
 
 const AnimatableTextInput = ({
   style,
@@ -14,6 +16,8 @@ const AnimatableTextInput = ({
   themeAheadOfLoading,
   calculatedThemeColors
 }) => {
+
+  const { themeAheadOfLoading } = useFriendList();
   
   // Create a ref for animating the input
   const inputRef = React.useRef(null);
@@ -33,8 +37,8 @@ const AnimatableTextInput = ({
           {
             borderColor: loadingNewFriend 
               ? themeAheadOfLoading.darkColor 
-              : calculatedThemeColors.darkColor,
-            color: calculatedThemeColors.fontColor,
+              : themeAheadOfLoading.darkColor,
+            color: themeAheadOfLoading .fontColor,
           }
         ]}
         multiline={multiline}

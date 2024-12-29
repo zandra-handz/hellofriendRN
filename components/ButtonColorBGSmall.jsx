@@ -1,14 +1,14 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native'; 
+import { useFriendList } from '../context/FriendListContext';
 
 
 const ButtonColorBGSmall = ({ onPress, useLightColor=true, title, textStyle, textColor }) => {
-
-    const { calculatedThemeColors } = useSelectedFriend();
+ 
+    const { themeAheadOfLoading } = useFriendList();
   
     return (
-    <TouchableOpacity onPress={onPress} style={[styles.button, { backgroundColor: useLightColor ? calculatedThemeColors.lightColor : calculatedThemeColors.darkColor }]}>
+    <TouchableOpacity onPress={onPress} style={[styles.button, { backgroundColor: useLightColor ? themeAheadOfLoading.lightColor : themeAheadOfLoading.darkColor }]}>
       <Text style={[styles.buttonText, textStyle, {color: textColor }]}>{title}</Text>
     </TouchableOpacity>
   );

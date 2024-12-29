@@ -159,7 +159,9 @@ const SlideUpToOpen = ({
       onPanResponderRelease: (_, gestureState) => {
         if (Math.abs(gestureState.dy) >= screenHeight * 0.07) {
           //console.log("press in slider up");
-
+          setFirstLizardVisible(false);
+          setSecondLizardVisible(false);
+           
           setThirdLizardVisible(false);
           handlePress();
           setIsPressed(true);
@@ -169,6 +171,10 @@ const SlideUpToOpen = ({
         if (!isPressed) {
           setHelpersVisible(false);
           // Only bounce back if NOT pressed
+          setFirstLizardVisible(false);
+          setSecondLizardVisible(false);
+          setThirdLizardVisible(false);
+          
           isDraggingRef.current = false;
           setIsDragging(false);
           Animated.spring(position, {
@@ -178,6 +184,8 @@ const SlideUpToOpen = ({
             bounciness: 8,
           }).start();
         }
+
+
       },
     })
   ).current;

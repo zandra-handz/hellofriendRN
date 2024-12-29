@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';  
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 import AddOutlineSvg from '../assets/svgs/add-outline.svg';
 
 const ButtonBottomActionBaseSmall = ({ 
@@ -38,8 +38,8 @@ const ButtonBottomActionBaseSmall = ({
   shapeLabelPositionRight = '93%',
   disabled = false  
 }) => { 
-  const globalStyles = useGlobalStyle();   
-  const { calculatedThemeColors } = useSelectedFriend();
+  const globalStyles = useGlobalStyle();    
+  const { themeAheadOfLoading } = useFriendList();
   
   const getShapeStyle = () => {
     switch (shapePosition) {
@@ -97,7 +97,7 @@ const ButtonBottomActionBaseSmall = ({
         <>
         {!selected && ( 
         <LinearGradient
-          colors={[calculatedThemeColors.lightColor, calculatedThemeColors.lightColor]}
+          colors={[themeAheadOfLoading.lightColor, themeAheadOfLoading.lightColor]}
           start={{ x: 0, y: 0 }}
           end={direction}
           style={{
@@ -107,7 +107,7 @@ const ButtonBottomActionBaseSmall = ({
         )}
         {selected && (
             <LinearGradient
-            colors={[calculatedThemeColors.darkColor, calculatedThemeColors.darkColor]}
+            colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.darkColor]}
             start={{ x: 0, y: 0 }}
             end={direction}
             style={{
@@ -133,7 +133,7 @@ const ButtonBottomActionBaseSmall = ({
         <AddOutlineSvg
           width={shapeWidth}
           height={shapeHeight}
-          color={calculatedThemeColors.fontColorSecondary}
+          color={themeAheadOfLoading.fontColorSecondary}
           style={{
             position: 'absolute',
             ...getShapeStyle(), 
@@ -145,7 +145,7 @@ const ButtonBottomActionBaseSmall = ({
         <AddOutlineSvg
           width={shapeWidth}
           height={shapeHeight}
-          color={calculatedThemeColors.fontColor}
+          color={themeAheadOfLoading.fontColor}
           style={{
             position: 'absolute',
             ...getShapeStyle(), 
@@ -184,7 +184,7 @@ const ButtonBottomActionBaseSmall = ({
       <View style={{ flexDirection: 'row', marginHorizontal: labelContainerMarginHorizontal, alignItems: 'center' }}>
       <Text
         style={[
-          textStyles(labelFontSize, disabled ? 'white' : (selected ? calculatedThemeColors.fontColor : calculatedThemeColors.fontColorSecondary )), // White label color if disabled
+          textStyles(labelFontSize, disabled ? 'white' : (selected ? themeAheadOfLoading.fontColor : calculatedThemeColors.fontColorSecondary )), // White label color if disabled
           { fontFamily: fontFamily, marginRight: fontMargin },
         ]}
         numberOfLines={1}          

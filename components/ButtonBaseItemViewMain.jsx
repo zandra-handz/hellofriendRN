@@ -46,17 +46,18 @@ const ButtonBaseItemViewMain = ({
   shapeLabelPositionRight = '93%',
   disabled = false // New prop to control disabled state
 }) => {
-  const { selectedFriend, calculatedThemeColors } = useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   const lottieViewRef = useRef(null);
   const globalStyles = useGlobalStyle(); // Get the global styles
   const [ lightColor, setLightColor ] = useState('rgb(160, 241, 67)')
   const [ darkColor, setDarkColor ] = useState('#4caf50');
 
   useEffect(() => {
-    setLightColor(calculatedThemeColors.lightColor);
-    setDarkColor(calculatedThemeColors.darkColor);
+    setLightColor(themeAheadOfLoading.lightColor);
+    setDarkColor(themeAheadOfLoading.darkColor);
 
-  }, [selectedFriend, calculatedThemeColors]);
+  }, [selectedFriend, themeAheadOfLoading]);
 
   useEffect(() => {
     if (lottieViewRef.current && animationSource) {

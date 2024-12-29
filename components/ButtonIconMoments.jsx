@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import { useCapsuleList } from '../context/CapsuleListContext'; 
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg';
+import LeavesTwoFallingOutlineThickerSvg from '../assets/svgs/leaves-two-falling-outline-thicker.svg';
 import BobbingAnim from '../animations/BobbingAnim';
 import FlashAnim from '../animations/FlashAnim'; 
 
@@ -20,7 +21,7 @@ const ButtonIconMoments = ({
                    
             <BobbingAnim bobbingDistance={2} duration={800}>
                 <View style={styles.animatedContainer}>
-                    <ThoughtBubbleOutlineSvg height={iconSize} width={iconSize} color={iconColor} />
+                    <LeavesTwoFallingOutlineThickerSvg height={iconSize} width={iconSize} color={iconColor} />
                     <View style={{ top: '-17%', right: '27%' }}>
                         <FlashAnim circleColor={circleColor} circleTextSize={countTextSize} countColor={countColor}>
                             {capsuleCount}
