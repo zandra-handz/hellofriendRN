@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, StyleSheet, Text, Keyboard, Dimensions, Animated, Platform, FlatList, TouchableOpacity } from 'react-native';
+import React, { useCallback,useEffect, useState, useRef } from 'react';
+import { View, Alert, StyleSheet, Text, Keyboard, Dimensions, Animated, Platform, FlatList, TouchableOpacity } from 'react-native';
 
 import { useCurrentLocationManual, useGeolocationWatcher } from '../hooks/useCurrentLocationAndWatcher';
 
 import { useAuthUser } from '../context/AuthUserContext'; 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext'; //to check if any friends, don't render Up Next component or upcoming scroll if so
+
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
@@ -15,12 +17,8 @@ import HomeButtonMomentAddSmall from '../components/HomeButtonMomentAddSmall';
 import HomeButtonUpNext from '../components/HomeButtonUpNext';
 import HomeButtonSelectedFriend from '../components/HomeButtonSelectedFriend';
 import useCurrentLocation from '../hooks/useCurrentLocation';
-import TextMomentHomeScreenBox from "../components/TextMomentHomeScreenBox";
-import FriendSelectModalVersionButtonOnly from "../components/FriendSelectModalVersionButtonOnly";
-import { useWindowDimensions } from 'react-native';
-
-
-import { BlurView } from 'expo-blur'; 
+import TextMomentHomeScreenBox from "../components/TextMomentHomeScreenBox";  
+ 
 import HelloFriendFooter from '../components/HelloFriendFooter'; 
 
 const ScreenHome = ({ navigation }) => {
@@ -28,6 +26,7 @@ const ScreenHome = ({ navigation }) => {
   const { themeStyles, gradientColorsHome } = useGlobalStyle();  
   const { authUserState } = useAuthUser();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
+  const { friendListLength } = useFriendList();
   const { isLoading } = useUpcomingHelloes(); 
   const [ showMomentScreenButton, setShowMomentScreenButton ] = useState();
   
@@ -52,6 +51,14 @@ const ScreenHome = ({ navigation }) => {
       }, []);
 
  
+      // useFocusEffect(
+      //   useCallback(() => {
+      //     if (newMomentTextRef.current) {
+      //       newMomentTextRef.current.focus();
+      //     }
+      //   }, [])
+      // );
+    
 
   const updateNewMomentTextString = (text) => {
     if (newMomentTextRef && newMomentTextRef.current) {
@@ -100,6 +107,8 @@ const ScreenHome = ({ navigation }) => {
       useNativeDriver: true,
     }).start();
   }, []);
+
+
  
   const itemActions = [
     () => navigateToAddImageScreen(),
@@ -166,7 +175,20 @@ const ScreenHome = ({ navigation }) => {
   };
 
   const navigateToAddLocationScreen = () => {
+    if (friendListLength != 0) {
+ 
     navigation.navigate('LocationSearch');
+    
+  } else {
+    Alert.alert(
+      `I'm sorry!`,
+      'You need to add friends before navigating to the location search screen.',
+      [
+        { text: 'OK', onPress: () => console.log('OK Pressed') }
+      ]
+    );
+  }
+ 
   };
 
   return ( 
@@ -175,9 +197,7 @@ const ScreenHome = ({ navigation }) => {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.container]}
-    >
-      {/* <BlurView intensity={0} tint="dark" style={StyleSheet.absoluteFill}>  */}
-       
+    > 
         {authUserState.authenticated && authUserState.user ? (
           <>   
           <View style={{height: isKeyboardVisible ? Dimensions.get('window').height / 2.5 : Dimensions.get('window').height / 3 }}>
@@ -207,7 +227,9 @@ const ScreenHome = ({ navigation }) => {
                 )}
 
           </View>
+                {friendListLength > 0 && (
 
+                  
           <View style={{  height: 'auto', width: '100%'}}>
             <FlatList
               data={otherOptions} 
@@ -223,6 +245,8 @@ const ScreenHome = ({ navigation }) => {
 
             />
           </View>
+          
+        )}
               <Animated.View style={[styles.buttonContainer, {paddingBottom: footerHeight, paddingTop: 10, transform: [{ translateX: slideAnim }]}]}>
 
                 
@@ -255,8 +279,7 @@ const ScreenHome = ({ navigation }) => {
         ) : (
           <View style={styles.signInContainer}> 
           </View>
-        )} 
-      {/* </BlurView> */}
+        )}  
     </LinearGradient>
   );
 };

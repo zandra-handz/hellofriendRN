@@ -273,7 +273,7 @@ const MomentsList = (navigation) => {
       <LizardSvg
         height={300}
         width={300}
-        color="black"
+        color={themeStyles.genericTextBackground.backgroundColor}
         style={styles.lizardTransform}
       />
     {!isKeyboardVisible && (

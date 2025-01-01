@@ -12,6 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useFriendList } from "../context/FriendListContext";
 import SoonButton from "../components/SoonButton";
 import FriendItemButton from "../components/FriendItemButton";
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import { useNavigation } from "@react-navigation/native";
 
@@ -22,16 +23,15 @@ import LoadingPage from "../components/LoadingPage";
 const HomeScrollSoon = ({
   height,
   borderRadius = 20,
-  borderColor = "transparent",
-  darkColor = "#4caf50",
-  lightColor = "rgb(160, 241, 67)",
+  borderColor = "transparent", 
 }) => {
   const { width } = Dimensions.get("window");
 
   const navigation = useNavigation();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { selectedFriend, setFriend } = useSelectedFriend();
-  const { friendList, getThemeAheadOfLoading } = useFriendList();
+  const { friendList, friendListLength, getThemeAheadOfLoading } = useFriendList();
 
   const soonButtonWidth = 140;
   // const friendItemButtonWidth = 160;
@@ -161,15 +161,16 @@ const HomeScrollSoon = ({
       ]}
     >
       <LinearGradient
-        colors={[darkColor, lightColor]}
+        colors={[manualGradientColors.darkColor, manualGradientColors.lightColor]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
           ...StyleSheet.absoluteFillObject,
         }}
       />
+                
 
-      {isLoading && (
+      {isLoading && !upcomingHelloes && (
         <View style={styles.loadingWrapper}>
           <LoadingPage
             loading={isLoading}
@@ -185,20 +186,38 @@ const HomeScrollSoon = ({
         <>
           <View style={styles.headerContainer}>
             {!selectedFriend && <Text style={styles.headerText}>SOON</Text>}
+
+
             {selectedFriend && (
               <Text style={styles.headerText}>HELLO HELPERS</Text>
             )}
           </View>
+          
+          {friendListLength === 0 && (
+              <View style={styles.noFriendsTextContainer}>
 
+                <Text
+                  style={[{color: themeStyles.genericTextBackground.backgroundColor, fontSize: 18} ]}
+                  >Suggested meet up dates will go here.</Text>
+
+                  </View>
+            )}
+
+          {friendListLength > 0 && (
+            
           <View
             style={[
               styles.buttonContainer,
               { height: calendarButtonHeight, backgroundColor: "transparent" },
             ]}
           >
-            {!selectedFriend && <>{renderUpcomingHelloes()}</>}
-            {selectedFriend && <>{renderFriendItems()}</>}
+            {!selectedFriend && friendListLength > 0 && <>{renderUpcomingHelloes()}</>}
+            {selectedFriend && friendListLength > 0 && <>{renderFriendItems()}</>}
+
           </View>
+          
+        )}
+
         </>
       )}
     </View>
@@ -217,11 +236,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: "4%",
     paddingTop: "1%",
     paddingBottom: "0%",
+    
   },
   text: {
     fontSize: 16,
     fontFamily: "Poppins-Regular",
   },
+  noFriendsTextContainer: { 
+    
+    flex: 1,
+    flexDirection: 'row',
+    zIndex: 1, 
+    
+    
+     paddingLeft: '2%', 
+   // paddingRight: '16%', 
+    width: '100%', 
+
+},
   loadingWrapper: {
     flex: 1,
     width: "100%",

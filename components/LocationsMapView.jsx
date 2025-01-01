@@ -543,8 +543,8 @@ const LocationsMapView = ({
                         styles.friendNameText,
                         { color: themeAheadOfLoading.fontColor },
                       ]}
-                    >
-                      Faved for {selectedFriend.name}
+                    > 
+                      Faved for {selectedFriend?.name || 'friend'}
                     </Text>
                   </View>
                   {renderBottomScrollList()}

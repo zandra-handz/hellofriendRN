@@ -1,6 +1,7 @@
 //Derivative of TextEditBox
 
 import React, {
+  useCallback,
   useState,
   useEffect,
   useRef,
@@ -18,13 +19,14 @@ import {
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 import FriendSelectModalVersionButtonOnly from "../components/FriendSelectModalVersionButtonOnly";
-import HomeButtonMomentAdd from '../components/HomeButtonMomentAdd';
+import HomeButtonMomentAdd from "../components/HomeButtonMomentAdd";
 import LeafSingleOutlineThickerSvg from "../assets/svgs/leaf-single-outline-thicker.svg";
 import { useAuthUser } from "../context/AuthUserContext";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 import { useFriendList } from "../context/FriendListContext";
 import LeavesTwoFallingOutlineThickerSvg from "../assets/svgs/leaves-two-falling-outline-thicker.svg";
 import LeavesSingleStemOutlineSvg from "../assets/svgs/leaves-single-stem-outline.svg";
+import { useFocusEffect } from "@react-navigation/native";
 
 // Forwarding ref to the parent to expose the TextInput value
 const TextMomentHomeScreenBox = forwardRef(
@@ -33,7 +35,7 @@ const TextMomentHomeScreenBox = forwardRef(
     {
       title = "title",
       mountingText = "Start typing",
-      onTextChange, 
+      onTextChange,
       autoFocus = true,
       width = "90%",
       height = "60%",
@@ -65,6 +67,24 @@ const TextMomentHomeScreenBox = forwardRef(
         keyboardDidHideListener.remove();
       };
     }, []);
+
+    useEffect(() => {
+      if (authUserState && authUserState.user) {
+        console.log(authUserState);
+      }
+    }, []);
+
+    useFocusEffect(
+      useCallback(() => {
+        const timeout = setTimeout(() => {
+          if (textInputRef.current) {
+            console.log("Focusing TextInput");
+            textInputRef.current.focus();
+          }
+        }, 50); // Small delay for rendering
+        return () => clearTimeout(timeout); // Cleanup timeout
+      }, [])
+    );
 
     useEffect(() => {
       if (textInputRef.current) {
@@ -124,14 +144,16 @@ const TextMomentHomeScreenBox = forwardRef(
                   flexDirection: "row",
                   height: "100%",
                   alignItems: "center",
-
                   marginBottom: "1%",
                 }}
               >
                 <Text
                   style={[styles.welcomeHeaderText, themeStyles.genericText]}
                 >
-                  Welcome back, {authUserState?.user?.username}!
+                  {new Date(authUserState?.user?.created_on).toDateString() ===
+                  new Date().toDateString()
+                    ? `Hi ${authUserState?.user?.username}!`
+                    : `Welcome back, ${authUserState?.user?.username}!`}
                 </Text>
               </View>
             </View>
@@ -153,36 +175,42 @@ const TextMomentHomeScreenBox = forwardRef(
                 }}
               >
                 <Text style={[styles.title, themeStyles.genericText]}>
-                  {friendListLength ? title : `Please add one or more friends to use this app!`}
+                  {friendListLength
+                    ? title
+                    : `Please add one or more friends to use this app!`}
                 </Text>
               </View>
 
-                {friendListLength && (
-                    
-              <View
-                style={[styles.selectFriendContainer, { marginBottom: "2%" }]}
-              >
-                <FriendSelectModalVersionButtonOnly
-                color={themeStyles.genericText.color}
-                  includeLabel={true}
-                  width="auto"
-                />
-              </View>
-              
-            )}
+              {friendListLength && (
+                <View
+                  style={[styles.selectFriendContainer, { marginBottom: "2%" }]}
+                >
+                  <FriendSelectModalVersionButtonOnly
+                    color={themeStyles.genericText.color}
+                    includeLabel={true}
+                    width="auto"
+                  />
+                </View>
+              )}
             </View>
             <>
               <View style={{ flex: 1, marginTop: "1%" }}>
                 {friendListLength && (
-                    <Text style={[styles.helperText, themeStyles.genericText]}>
-  Enter a future note, anecdote, joke, or whatever else you would like to share with{" "}
-  {selectedFriend ? (
-    <Text style={{ fontWeight: "bold"}}>{selectedFriend.name}</Text>
-  ) : <Text>your friend</Text>}{" "}
-  here:
-</Text>
+                  <Text style={[styles.helperText, themeStyles.genericText]}>
+                    Enter a note, anecdote, joke, or whatever else you
+                    would like to share with{" "}
+                    {selectedFriend ? (
+                      <Text style={{ fontWeight: "bold" }}>
+                        {selectedFriend.name}
+                      </Text>
+                    ) : (
+                      <Text>your friend</Text>
+                    )}{" "}
+                    here:
+                  </Text>
                 )}
-
+                {friendListLength > 0 && (
+                  
                 <View style={{ flexDirection: "row", marginTop: "2%" }}>
                   <View style={{ flexShrink: 1, width: "auto" }}>
                     <LeafSingleOutlineThickerSvg
@@ -191,25 +219,26 @@ const TextMomentHomeScreenBox = forwardRef(
                       color={themeStyles.genericText.color}
                     />
                   </View>
-{friendListLength && (
-    
-                  <TextInput
-                    ref={textInputRef}
-                    autoFocus={autoFocus}
-                    style={[
-                      styles.textInput,
-                      themeStyles.genericText,
-                      //themeStyles.genericTextBackground,
-                    ]}
-                    value={editedMessage}
-                    placeHolder={"hihihi"}
-                    placeHolderTextColor={"white"}
-                    onChangeText={handleTextInputChange} // Update local state
-                    multiline={multiline}
-                  />
                   
-)}
+                
+                  {friendListLength && (
+                    <TextInput
+                      ref={textInputRef}
+                      autoFocus={autoFocus}
+                      style={[
+                        styles.textInput,
+                        themeStyles.genericText,
+                        //themeStyles.genericTextBackground,
+                      ]}
+                      value={editedMessage}
+                      placeholder={""}
+                      placeholderTextColor={"white"}
+                      onChangeText={handleTextInputChange} // Update local state
+                      multiline={multiline}
+                    />
+                  )}
                 </View>
+                )}
               </View>
             </>
           </>

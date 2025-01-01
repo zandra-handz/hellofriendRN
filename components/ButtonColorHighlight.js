@@ -6,9 +6,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the gl
 const ButtonColorHighlight = ({
   onPress,
   title,
-  showGradient = true,
-  darkColor = '#4caf50',
-  lightColor = 'rgb(160, 241, 67)',
+  showGradient = true, 
   shapeSource,
   shapeWidth = 260,
   shapeHeight = 260,
@@ -17,6 +15,8 @@ const ButtonColorHighlight = ({
   shapePositionVerticalValue = 0, // Default vertical position of the shape
 }) => {
   const globalStyles = useGlobalStyle(); // Get the global styles
+  const { themeStyles } = useGlobalStyle();
+  const { manualGradientColors } = useGlobalStyle();
 
   const textStyles = {
     fontSize: globalStyles.fontSize === 20 ? 22 : 20,
@@ -52,8 +52,7 @@ const ButtonColorHighlight = ({
     <TouchableOpacity
       style={{
         ...styles.buttonContainer,
-        backgroundColor: globalStyles.highContrast ? 'black' : '#4caf50',
-        position: 'relative', // Ensure relative positioning for child elements
+        backgroundColor: globalStyles.highContrast ? 'black' : '#4caf50', 
         overflow: 'hidden', // Prevent shape from overflowing the button
       }}
       onPress={onPress}
@@ -61,7 +60,7 @@ const ButtonColorHighlight = ({
     >
       {showGradient && (
         <LinearGradient
-          colors={[darkColor, lightColor]}
+          colors={[manualGradientColors.darkColor, manualGradientColors.lightColor]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={{
@@ -81,7 +80,7 @@ const ButtonColorHighlight = ({
           resizeMode="contain"
         />
       )}
-      <Text style={[styles.buttonText, textStyles]}>{title}</Text>
+      <Text style={[styles.buttonText, textStyles, {color: themeStyles.genericTextBackground.backgroundColor}]}>{title}</Text>
     </TouchableOpacity>
   );
 };
@@ -89,16 +88,16 @@ const ButtonColorHighlight = ({
 const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginVertical: 2,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
+    marginVertical: 0,
     alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row', // Ensure alignment with image if present
+    justifyContent: 'flex-end',
+    flexDirection: 'row', // Ensure alignment with image if present 
+    backgroundColor: 'orange',
+  
   },
-  buttonText: {
-    color: 'white',
-    textAlign: 'center',
+  buttonText: {  
     fontFamily: 'Poppins-Regular',
     marginLeft: 20, // Adjust spacing between image and text
   },

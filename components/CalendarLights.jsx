@@ -94,8 +94,7 @@ const CalendarLights = ({
   //automatically set to current year on mount
   useLayoutEffect(() => {
     console.log("LATEST", latestDataPoint);
-    setMonthsData(getMonthsInRange(earliestDataPoint, latestDataPoint));
-    console.log(" MONTHS DATA", monthsData);
+    setMonthsData(getMonthsInRange(earliestDataPoint, latestDataPoint)); 
 
     //setMonthsData(getYearData(currentYear));
   }, []);
@@ -216,12 +215,17 @@ const CalendarLights = ({
   };
 
   useEffect(() => {
+    //console.log(`helloes data sorted`, helloesDataSorted);
+    //console.log('months data', monthsData);
     if (monthsData && helloesDataSorted) {
       // Reverse the monthsData to start from December and add correct indices
 
       // Combine months and helloesData by matching their indices
       const combined = monthsData.map((month) => {
         // Match by index
+
+        //POTENTIAL CAUSE OF CRASH
+        // IF IT RETURNS A NULL IT WILL BREAK THE WHOLE COMPONENT SO NEED TO CHANGE THIS
         const helloData =
           helloesDataSorted.find(
             (hello) => hello.monthYear === month.monthYear

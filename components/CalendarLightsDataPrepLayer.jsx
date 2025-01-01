@@ -39,19 +39,37 @@ const CalendarLightsDataPrepLayer = ({
 
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
 
+  // useEffect(() => {
+  //   if (helloesList) {
+  //     console.log('HELLOES LIST', helloesList);
+  //   }
+
+  // }, [helloesList]);
+
   const formatBackendDateToMonthYear = (backendDate) => {
     const date = new Date(backendDate);
     return format(date, "M/yyyy");
   };
-
+ 
   //for some dumb reason i don't record the dates of the helloes thenmselves like a normal person
   //on my backend so here is my modified function to format it
   const lightFormatBackendDateToMonthYear = (backendDate) => {
+    //console.log('LATEST DATE IN CALCULATOR:', backendDate);
     const date = new Date(backendDate);
-    const month = date.getMonth() + 1; // Months are zero-indexed, so add 1
-    const year = date.getFullYear();
+    const month = date.getUTCMonth() + 1; // Get UTC month
+    const year = date.getUTCFullYear();  // Get UTC year
+    //console.log('LATEST DATE IN CALCULATOR:', year, month);
     return `${month}/${year}`;
   };
+  
+  
+  
+  // const lightFormatBackendDateToMonthYear = (backendDate) => {
+  //   const date = new Date(backendDate);
+  //   const month = date.getMonth() + 1; // Months are zero-indexed, so add 1
+  //   const year = date.getFullYear();
+  //   return `${month}/${year}`;
+  // };
   const groupByMonthAndYear = (data) => {
     //console.log('group by', data);
 

@@ -146,9 +146,7 @@ export const GlobalStyleProvider = ({ children }) => {
 
 
 const lightThemeStyles = StyleSheet.create({
-    signinContainer: {
-        backgroundColor: 'white',
-    },
+   
     signinText: {
         color: 'black',
         fontFamily: 'Poppins-Bold',
@@ -157,25 +155,7 @@ const lightThemeStyles = StyleSheet.create({
         fontColor: 'black', 
         fontFamily: 'Poppins-Regular',
         fontSize: 16,
-    },
-    signinInput: {
-        backgroundColor:'white',
-        color: 'black',
-        fontFamily: 'Poppins-Regular',
-        placeholderTextColor: 'gray',
-    },
-    logoText: {
-        color: 'black',
-    },
-    logoTextOutline: {
-        color: 'white',
-        position: 'absolute',
-        fontFamily: 'Poppins-Bold',
-        fontSize: 62,
-    },
-    logoShape: {
-        tintColor: 'black',
-    },
+    },   
     container: {
         backgroundColor: 'white',
         shadowColor: '#000000',
@@ -306,10 +286,7 @@ const lightThemeStyles = StyleSheet.create({
 
 
 const darkThemeStyles = StyleSheet.create({
-    signinContainer: {
-        backgroundColor: 'black',
-    },
-
+ 
     signinText: {
         color: 'white',
         fontFamily: 'Poppins-Bold',
@@ -317,25 +294,7 @@ const darkThemeStyles = StyleSheet.create({
     signInAppDescription: {
         fontColor: 'black', 
         fontSize: 16,
-    },
-    signinInput: {
-        backgroundColor:'#121212',
-        color: 'white',
-        fontFamily: 'Poppins-Regular',
-        placeholderTextColor: 'lightgray',
-    },
-    logoText: {
-        color: 'black',  
-    },
-    logoTextOutline: {
-        color: 'white',
-        position: 'absolute',
-        fontFamily: 'Poppins-Bold',
-        fontSize: 64,
-    },
-    logoShape: {
-        tintColor: 'black',
-    },
+    },   
     container: {
         backgroundColor: '#050604',
         shadowColor: '#000000',

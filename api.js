@@ -78,10 +78,7 @@ const onRefreshed = (newAccessToken) => {
     refreshSubscribers.forEach(callback => callback(newAccessToken));
     refreshSubscribers = [];
 };
-
-const fakeToken = 'lalala';
-//put this where token is in header below to test refetching expired/Problem tokens
-
+ 
 // Axios Request Interceptor
 axios.interceptors.request.use(
     async (config) => {
@@ -151,11 +148,41 @@ axios.interceptors.response.use(
     } 
 );
 
+export const signinWithoutRefresh = async ({ username, password }) => {
+    try {
+        const result = await axios.post('/users/token/', { username, password });
+        console.log(`API POST CALL signinWithoutRefresh`);
 
-export const signup = async (username, email, password) => {
+        if (result.data && result.data.access) {
+            console.log("Access token received:", result.data.access);
+            setAuthHeader(result.data.access); // Store the token for later use
+            return result; // Successful response
+        } else {
+            throw new Error("Unexpected response format");
+        }
+    } catch (e) {
+        console.error("Error during signinWithoutRefresh:", e);
+
+        if (e.response) {
+            console.log("Server responded with:", e.response.data);
+            throw new Error(e.response.data.msg || 'Invalid credentials'); // Explicit error for invalid credentials
+        } else if (e.request) {
+            console.log("No response from server:", e.request);
+            throw new Error('No response from server, please check your network');
+        } else {
+            console.log("Unexpected error:", e.message);
+            throw new Error('Unexpected error occurred during signin');
+        }
+    }
+};
+
+
+export const signup = async ({username, email, password}) => {
+  
     try {
         return await axios.post('/users/sign-up/', { username, email, password });
     } catch (e) {
+        console.log('error creating new account:', e);
         return { error: true, msg: e.response.data.msg };
     }
 };
@@ -596,11 +623,27 @@ export const fetchUpcomingHelloes = async () => {
         console.log("API GET CALL fetchUpcomingHelloes");
         return response.data;
     } catch (error) {
-        console.error('ERROR API GET CALL fetchUpcomingHelloes:', error);
-        throw error;
+        // Log the entire error object for debugging
+        //console.error('ERROR API GET CALL fetchUpcomingHelloes:', error);
+
+        // Log specific details about the error if they exist
+        if (error.response) {
+            // If the server responded with a status code out of the 2xx range
+            //console.error('Error Response:', error.response);
+            console.error('Response Status:', error.response.status); // e.g., 500
+            console.error('Response Headers:', error.response.headers);
+           //console.error('Response Data:', error.response.data); // Error message from server
+        } else if (error.request) {
+            // If the request was made but no response was received
+           // console.error('Error Request:', error.request);
+        } else {
+            // If something else caused the error
+          //  console.error('Error Message:', error.message);
+        }
+
+        throw error; // Re-throw the error so the calling function can handle it
     }
 };
-
 
 
 

@@ -41,7 +41,19 @@ export const UpcomingHelloesProvider = ({ children }) => {
 
           }, 2000);
       
-        }
+        },
+        onError: (error) => {
+            console.log('Error occurred:', error);
+            // Optionally handle or log the error
+            setNewSuccess(false);
+          },
+          // Return an empty list in case of error
+          select: (data) => {
+            if (isError) {
+              return []; // Return an empty list if there's an error
+            }
+            return data || []; // Return data or an empty list if no data
+          },
       });
 
       const upcomingHelloesIsFetching = isFetching;

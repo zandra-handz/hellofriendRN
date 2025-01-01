@@ -13,8 +13,7 @@ const ScreenOnboardingThree = ({ onEffortChange, onPriorityChange }) => {
     const navigation = useNavigation();
     const friendEffortInputRef = useRef(null);
     const friendPriorityInputRef = useRef(null);
-    const { themeStyles, gradientColors } = useGlobalStyle();
-    const { darkColor, lightColor } = gradientColors;
+    const { themeStyles, manualGradientColors } = useGlobalStyle(); 
 
     const [friendEffort, setFriendEffort] = useState(3); // Initialize with default values
     const [friendPriority, setFriendPriority] = useState(2);
@@ -62,7 +61,7 @@ const ScreenOnboardingThree = ({ onEffortChange, onPriorityChange }) => {
     return (
 
         <LinearGradient
-        colors={[darkColor, lightColor]}
+        colors={[ manualGradientColors.darkColor,  manualGradientColors.lightColor]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.container, themeStyles.signinContainer]}

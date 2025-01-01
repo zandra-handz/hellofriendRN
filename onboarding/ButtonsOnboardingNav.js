@@ -1,13 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { FontAwesome } from '@expo/vector-icons'; 
 
 
 const ButtonsOnboardingNav = ({ showPrevButton, showNextButton, onPrevPress, onNextPress, iconColor }) => {
-    const pulseAnimation = useRef(new Animated.Value(1)).current;
-    const { themeStyles, gradientColors } = useGlobalStyle();
-    const { darkColor, lightColor } = gradientColors;
+    const pulseAnimation = useRef(new Animated.Value(1)).current; 
 
     useEffect(() => {
         if (iconColor === 'hotpink' && showNextButton) { // Only start the animation if the button is active and not disabled

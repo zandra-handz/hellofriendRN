@@ -1,8 +1,11 @@
+//WHAT EVEN IS THIS
+//need to RQ 
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { createFriend, updateFriendSugSettings } from '../api';
+import { createFriend, updateFriendSugSettings, updateAppSetup } from '../api';
 
 import InputAddFriendName from '../components/InputAddFriendName';
 import SliderAddFriendEffort from '../components/SliderAddFriendEffort';
@@ -87,6 +90,13 @@ const ContentAddFriend = () => {
                 effort_required: friendEffort,
                 priority_level: friendPriority,
             }); 
+
+            if (!authUserState.user.app_setup_complete) {
+
+                //move this into RQ onSuccess when refactoring
+                await updateAppSetup();
+
+            };
  
             console.log(`${friendName} has been added to your friend's list!`); // Modified success message
             setSuccessModalVisible(true);
@@ -159,7 +169,7 @@ const ContentAddFriend = () => {
 
                     <ButtonMediumAddFriend
                         friendName={friendName}
-                        toggleReviewModal={toggleReviewModal}
+                        onPress={handleSave}
                     />
                 </>
 

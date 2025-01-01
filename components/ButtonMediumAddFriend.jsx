@@ -3,10 +3,10 @@ import { View, StyleSheet } from 'react-native';
 import ButtonMediumBase from '../components/ButtonMediumBase';
 import CompassCuteSvg from '../assets/svgs/compass-cute.svg';
 
-const ButtonMediumAddFriend = ({ friendName, toggleReviewModal }) => (
+const ButtonMediumAddFriend = ({ friendName, onPress }) => (
     <View style={styles.bottomButtonContainer}>
         <ButtonMediumBase
-            onPress={toggleReviewModal} 
+            onPress={onPress} 
             label={`Add ${friendName} To Friends`}
             height={54}
             radius={16}

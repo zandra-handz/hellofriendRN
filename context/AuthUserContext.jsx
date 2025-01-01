@@ -7,7 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as Device from 'expo-device';
 import Constants from "expo-constants";
 import { Platform } from 'react-native';
-import { signup, signin, signout, getCurrentUser, updateUserAccessibilitySettings } from '../api';
+import { signup, signin, signinWithoutRefresh, signout, getCurrentUser, updateUserAccessibilitySettings } from '../api';
 
 const AuthUserContext = createContext({});
 export const useAuthUser = () => useContext(AuthUserContext);
@@ -105,7 +105,7 @@ export const AuthUserProvider = ({ children }) => {
     
     
     const signinMutation = useMutation({
-        mutationFn: signin,
+        mutationFn: signinWithoutRefresh, //swapped this out with signin 1/1/2025 could be buggy
         onMutate: () => {  
             console.log('signin is fetching from onMutate');
         },
@@ -122,7 +122,7 @@ export const AuthUserProvider = ({ children }) => {
             //alert("Sign-in failed: " + (error.response?.data.msg || 'Unknown error occurred'));
         },
         onSettled: () => { 
-            //signinMutation.reset()
+          //  signinMutation.reset();
 
         },
     });
@@ -133,11 +133,28 @@ const onSignin = async (username, password) => {
         
         const credentials = { username, password };
 
-         console.log('Signing in with credentials:', credentials);
+         //console.log('Signing in with credentials:', credentials);
  
         await signinMutation.mutateAsync(credentials);
     } catch (error) {
         console.error('Sign in error', error); 
+    }
+};
+
+
+//giving me a lot of errors when I try to log the new user in but it does log them in
+const onSignUp = async (username, email, password) => {
+    try {
+        
+        const credentials = { username, email, password };
+
+         console.log('Signing in with credentials:', credentials);
+        
+ 
+        await signupMutation.mutateAsync( credentials );
+        onSignin(username, password);
+    } catch (error) {
+        console.error('Sign up error', error); 
     }
 };
 
@@ -254,6 +271,7 @@ const onSignin = async (username, password) => {
             userNotificationSettings, 
             handleSignup: signupMutation.mutate,
             onSignin, 
+            onSignUp,
             updateAppSettingsMutation, 
             updateAppSettings,
             signinMutation,

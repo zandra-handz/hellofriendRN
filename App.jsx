@@ -29,7 +29,7 @@ import ScreenLocations from "./screens/ScreenLocations";
 import ScreenLocationSearch from "./screens/ScreenLocationSearch";
 import ScreenMidpointLocationSearch from "./screens/ScreenMidpointLocationSearch";
 import ScreenCalculateTravelTimes from "./screens/ScreenCalculateTravelTimes";
-import Signin from "./screens/Signin";
+import Signin from "./screens/Signin"; 
 import ScreenMomentFocus from "./screens/ScreenMomentFocus";
 import ScreenLocation from "./screens/ScreenLocation";
 
@@ -144,7 +144,7 @@ export const Layout = () => {
           }}
         >
           {authUserState?.authenticated && authUserState?.user ? (
-            authUserState.user.app_setup_complete ? (
+            authUserState.user.app_setup_complete || !authUserState.user.app_setup_complete ? (
               <>
                 <Stack.Screen
                   name="hellofriend"
@@ -339,7 +339,7 @@ export const Layout = () => {
               options={{
                 headerShown: false,
               }}
-            />
+            /> 
           )}
         </Stack.Navigator>
       </TopLevelNavigationHandler>

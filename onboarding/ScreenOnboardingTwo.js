@@ -10,8 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 
 const ScreenOnboardingTwo = ({ onChange }) => {
-    const { themeStyles, gradientColors } = useGlobalStyle();
-    const { darkColor, lightColor } = gradientColors;
+    const { themeStyles, manualGradientColors } = useGlobalStyle(); 
     const navigation = useNavigation();
     const { friendList, setFriendList } = useFriendList(); // Accessing friendList from context
     const [friendName, setFriendName] = useState('');
@@ -67,7 +66,7 @@ const ScreenOnboardingTwo = ({ onChange }) => {
 
 
         <LinearGradient
-        colors={[darkColor, lightColor]}
+        colors={[ manualGradientColors.darkColor,  manualGradientColors.lightColor]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.container, themeStyles.signinContainer]}

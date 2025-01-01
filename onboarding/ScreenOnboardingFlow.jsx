@@ -10,6 +10,7 @@ import HelloFriendFooterOneButton from '../components/HelloFriendFooterOneButton
 import ProgressBarOnboarding from './ProgressBarOnboarding';
 import ButtonSpecialAlert from '../components/ButtonSpecialAlert';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
 import PhoneStatusBar from '../components/PhoneStatusBar';
 
@@ -37,11 +38,13 @@ const HeaderProgress = ({ percentage }) => {
 
 
 const ScreenOnboardingFlow = () => {
-    const { themeStyles, gradientColors } = useGlobalStyle();
-    const { darkColor, lightColor } = gradientColors;
+    const { themeStyles, manualGradientColors } = useGlobalStyle();
+    //const { darkColor, lightColor } = gradientColors;
     const { friendList } = useFriendList();
     const [finalizingData, setFinalizingData] = useState({});
     const { authUserState, onSignOut } = useAuthUser();
+
+    const navigation = useNavigation(0);
 
     const handleSignOutPress = () => {
         console.log("Sign Out button pressed");  
@@ -84,7 +87,7 @@ const ScreenOnboardingFlow = () => {
     return (
         <>
         <LinearGradient
-        colors={[darkColor, lightColor]}
+        colors={[manualGradientColors.darkColor, manualGradientColors.lightColor]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.container, themeStyles.signinContainer]}

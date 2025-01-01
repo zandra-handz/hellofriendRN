@@ -94,11 +94,7 @@ export const FriendListProvider = ({ children }) => {
     });
   };
 
-  const friendListLength = () => {
-    if (friendList) {
-      return friendList.length;
-    }  
-  }
+  const friendListLength = friendList.length;
 
   const updateFriend = (updatedFriend) => {
     setFriendList(prevFriendList => {

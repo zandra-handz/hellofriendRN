@@ -3,55 +3,49 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const Logo = ({
-  shapeSource,
-  shapeWidth = 200,
-  shapeHeight = 200,
-  shapePosition = 'left',
-  shapePositionValue = 0,
-  shapePositionVerticalValue = 0,
-}) => {
-  const { themeStyles, gradientColors } = useGlobalStyle(); 
+import LizardSvg from '../assets/svgs/lizard.svg';
 
-  const getShapeStyle = () => {
-    let positionStyle = {};
-    switch (shapePosition) {
-      case 'left':
-        positionStyle = { left: shapePositionValue };
-        break;
-      case 'center':
-        positionStyle = { left: '33.33%' }; // Adjust as needed
-        break;
-      case 'right':
-        positionStyle = { right: shapePositionValue };
-        break;
-      default:
-        positionStyle = { left: 0 };
-    }
-    positionStyle.top = shapePositionVerticalValue; // Adjust vertical position
+const Logo = () => {
+  const { themeStyles, manualGradientColors } = useGlobalStyle(); 
+ 
+  const svgSize = 140;
+ 
+  const svgPositionRight = -10;
+  const svgPositionTop = -10;
 
-    return positionStyle;
+  const titlePadding = '16%';
+ 
+  const fontStyle = {
+    //fontWeight: 'bold',
+    fontFamily: 'Poppins-Bold',
+    fontSize: 58,
+  };
+
+  //any styling unique to border
+  const borderStyle = {
+    position: 'absolute',
+    opacity: .5,
   };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={shapeSource}
-        style={[
-          styles.shape, themeStyles.logoShape,
-          { width: shapeWidth, height: shapeHeight }, // Apply shape color
-          getShapeStyle()
-        ]}
-        resizeMode="contain"
-      />
-      <View style={styles.titleContainer}>
-        <Text style={[  themeStyles.logoTextOutline, styles.titleOutlineTopLeft]}>hellofr::nd</Text>
-        <Text style={[  themeStyles.logoTextOutline, styles.titleOutlineTopRight]}>hellofr::nd</Text>
-        <Text style={[  themeStyles.logoTextOutline, styles.titleOutlineBottomLeft]}>hellofr::nd</Text>
-        <Text style={[ themeStyles.logoTextOutline, styles.titleOutlineBottomRight]}>hellofr::nd</Text>
+    <View style={[styles.container, {paddingRight: titlePadding}]}>
 
-          <Text style={[styles.title, themeStyles.logoText ]}>
-            hellofr::nd
+      <View style={{position: 'absolute', right: svgPositionRight,  top: svgPositionTop }}>
+          <LizardSvg
+              height={svgSize}
+              width={svgSize}
+              color={themeStyles.genericTextBackground.backgroundColor}
+              style={styles.lizardTransform}
+            />
+            </View>
+      <View style={[styles.titleContainer]}>
+        <Text style={[fontStyle, borderStyle,   styles.titleOutlineTopLeft, themeStyles.genericText]}>hellofriend</Text>
+        <Text style={[fontStyle, borderStyle,   styles.titleOutlineTopRight, themeStyles.genericText]}>hellofriend</Text>
+        <Text style={[fontStyle, borderStyle,  styles.titleOutlineBottomLeft, themeStyles.genericText]}>hellofriend</Text>
+        <Text style={[fontStyle, borderStyle,  styles.titleOutlineBottomRight, themeStyles.genericText]}>hellofriend</Text>
+
+          <Text style={[fontStyle, styles.title, themeStyles.genericTextBackground.backgroundColor]}>
+            hellofriend
           </Text> 
       </View>
     </View>
@@ -63,25 +57,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center', 
+   
+    height: 'auto',
+    //backgroundColor: 'pink',
+  }, 
+  lizardTransform: { 
+    transform: [
+      { rotate: "260deg" },
+      // Flip horizontally (mirror image)
+    ],
+    opacity: .98,
   },
-  shape: {
-    position: 'absolute',
+  titleContainer: { 
   },
-  titleContainer: {
-    position: 'relative',
-  },
-  title: {
-    fontSize: 64,
-    fontFamily: 'Poppins-Bold',
+  title: { 
     textAlign: 'center',
     backgroundColor: 'transparent', // Transparent background
     padding: .4, // Adjust padding as needed to fit the text
-  },
-  titleOutline: {
-    position: 'absolute', 
-    fontFamily: 'Poppins-Bold',
-    fontSize: 64,
-  },
+  }, 
   titleOutlineTopLeft: {
     left: -1,
     top: -1,

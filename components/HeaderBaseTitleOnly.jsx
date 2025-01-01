@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
+import { useFriendList } from '../context/FriendListContext';
 
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import InfoOutline from '../assets/svgs/info-outline.svg';
@@ -17,7 +18,7 @@ const HeaderBaseTitleOnly = ({
 
     const { authUserState } = useAuthUser();
     const { themeStyles } = useGlobalStyle();
-    const { calculatedThemeColors } = useSelectedFriend();
+    const { themeAheadOfLoading } = useFriendList();
     const navigation = useNavigation();
 
     const handleNavigateBack = () => {
@@ -25,7 +26,7 @@ const HeaderBaseTitleOnly = ({
       };
 
   return (
-    <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: calculatedThemeColors.darkColor}]}>
+    <View style={[styles.headerContainer, themeStyles.headerContainer, {backgroundColor: themeAheadOfLoading.darkColor}]}>
       <View style={{flexDirection: 'row', width: '100%', justifyContent: 'flex-start', alignContent: 'center', alignItems: 'center'}}>
  
         <Text 
@@ -33,7 +34,7 @@ const HeaderBaseTitleOnly = ({
                 styles.headerText, 
                 themeStyles.headerText, 
                 {
-                    color: calculatedThemeColors.fontColor, 
+                    color: themeAheadOfLoading.fontColor, 
                     paddingLeft: 0, 
                 }
             ]}

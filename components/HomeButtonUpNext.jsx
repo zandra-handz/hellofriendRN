@@ -18,19 +18,16 @@ const HomeButtonUpNext = ({
         borderRadius=20,
         borderColor='transparent',
         darkColor = '#4caf50',
-        lightColor = 'rgb(160, 241, 67)', 
-        animSize=100,
-        anim=require("../assets/anims/arrows.json"),
-        animPositionHorizontal=150, 
-        animPositionVertical=-30,
+        lightColor = 'rgb(160, 241, 67)',  
+        anim=require("../assets/anims/arrows.json"), 
 
     }) => { 
 
     const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-    const { friendList, getThemeAheadOfLoading } = useFriendList();
+    const { friendList, friendListLength, getThemeAheadOfLoading } = useFriendList();
     const lottieViewRef = useRef(null);
     const globalStyles = useGlobalStyle();
-    const { gradientColors } = useGlobalStyle();
+    const { themeStyles } = useGlobalStyle();
     const { setFriend, loadingNewFriend } = useSelectedFriend();
     const hideAnimation = true;
 
@@ -104,12 +101,9 @@ return(
                     </Text>
 
                     <Text
-                        style={[
-                            textStyles(30, 'white'),
-                            { fontFamily: 'Poppins-Regular' },
-                        ]}
+                        style={[{color: themeStyles.genericTextBackground.backgroundColor, fontSize: 18} ]}
                         >
-                        {upcomingHelloes && !isLoading && upcomingHelloes[0] ? upcomingHelloes[0].friend.name : 'No upcoming!'}
+                        {upcomingHelloes && friendListLength && !isLoading && upcomingHelloes[0] ? upcomingHelloes[0].friend.name : 'Please add a friend to use this feature!'}
                     </Text>
 
                     <Text style={styles.subtitleText}>
@@ -156,6 +150,7 @@ textContainer: {
     zIndex: 5,
     position: 'absolute',
     paddingLeft: '2%',
+    paddingRight: '16%',
     flexDirection: 'column',
     width: '100%',
     justifyContent: 'space-around',

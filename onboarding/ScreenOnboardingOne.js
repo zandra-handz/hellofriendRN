@@ -40,9 +40,8 @@ const PulsatingArrow = () => {
 };
 
 const ScreenOnboardingOne = ({ messageContent }) => { // Receive messageContent as props
-    const { themeStyles, gradientColors } = useGlobalStyle();
-    
-    const { darkColor, lightColor } = gradientColors;
+    const { themeStyles, manualGradientColors } = useGlobalStyle();
+     
     
     const { authUserState } = useAuthUser();
     const navigation = useNavigation(); 
@@ -55,7 +54,7 @@ const ScreenOnboardingOne = ({ messageContent }) => { // Receive messageContent 
 
     return (
         <LinearGradient
-            colors={[darkColor, lightColor]}
+            colors={[manualGradientColors.darkColor, manualGradientColors.lightColor]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={[styles.container, themeStyles.signinContainer]}
