@@ -32,9 +32,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 
 import FriendSelectModalVersionButtonOnly from "../components/FriendSelectModalVersionButtonOnly";
+
 import CardCategoriesAsButtons from "../components/CardCategoriesAsButtons";
 
-const ContentMomentFocus = () => {
+const ContentMomentFocus = ({ momentText }) => {
   const { selectedFriend } =
     useSelectedFriend();
   const { handleCreateMoment, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW
@@ -72,6 +73,16 @@ const ContentMomentFocus = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
+
+
+  useEffect(() => {
+    if (momentText) {
+      updateMomentText(momentText);
+      setShowCategoriesSlider(true);
+
+    }
+    
+  }, [momentText]);
 
   const updateMomentText = (text) => {
     if (momentTextRef && momentTextRef.current) {

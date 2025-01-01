@@ -6,6 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import LizardSvg from '../assets/svgs/lizard.svg';
 import ButtonInfo from '../components/ButtonInfo';
 import ButtonFriendProfileCircle from '../components/ButtonFriendProfileCircle';
+
  
 const HellofriendHeader = () => { 
   const { themeStyles, setNonCustomHeaderPage } = useGlobalStyle();

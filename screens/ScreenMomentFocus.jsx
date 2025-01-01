@@ -3,11 +3,13 @@
 import React from 'react';
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
- 
+import { useRoute } from '@react-navigation/native'; 
 
 import ContentMomentFocus from '../components/ContentMomentFocus';
  
 const ScreenMomentFocus = ( ) => { 
+        const route = useRoute();
+        const momentText = route.params?.momentText ?? null;  
 
     const { themeStyles } = useGlobalStyle(); 
 
@@ -15,7 +17,7 @@ const ScreenMomentFocus = ( ) => {
      
     return (
         <View style={[styles.container, themeStyles.container]}> 
-            <ContentMomentFocus />
+            <ContentMomentFocus momentText={momentText || null} />
         </View>
     );
 };

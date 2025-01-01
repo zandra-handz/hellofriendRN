@@ -11,7 +11,7 @@ import ButtonSelectFriend from '../components/ButtonSelectFriend';
 
 import { Dimensions } from 'react-native';
 
-const FriendSelectModalVersionButtonOnly = ({ addToPress, addToOpenModal, includeLabel=false, iconSize=26, width = '60%' }) => {  
+const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal, includeLabel=false, iconSize=26, width = '60%' }) => {  
   
   const { themeStyles } = useGlobalStyle();
   const globalStyles = useGlobalStyle();  
@@ -124,7 +124,7 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, addToOpenModal, includ
                 <ProfileTwoUsersSvg 
                   height={iconSize} 
                   width={iconSize} 
-                  color={loadingNewFriend? 'transparent' : themeAheadOfLoading.fontColorSecondary}
+                  color={loadingNewFriend? 'transparent' : color || themeAheadOfLoading.fontColorSecondary}
                   />
             
 

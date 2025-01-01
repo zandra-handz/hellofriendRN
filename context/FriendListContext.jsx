@@ -94,6 +94,11 @@ export const FriendListProvider = ({ children }) => {
     });
   };
 
+  const friendListLength = () => {
+    if (friendList) {
+      return friendList.length;
+    }  
+  }
 
   const updateFriend = (updatedFriend) => {
     setFriendList(prevFriendList => {
@@ -143,6 +148,7 @@ export const FriendListProvider = ({ children }) => {
   return (
     <FriendListContext.Provider value={{
       friendList,
+      friendListLength,
       setFriendList,
       themeAheadOfLoading,
       setThemeAheadOfLoading,
