@@ -175,19 +175,32 @@ const ScreenHome = ({ navigation }) => {
   };
 
   const navigateToAddLocationScreen = () => {
-    if (friendListLength != 0) {
+    if (selectedFriend) {
  
     navigation.navigate('LocationSearch');
     
-  } else {
+  } 
+  
+  if (!selectedFriend) {
     Alert.alert(
       `I'm sorry!`,
-      'You need to add friends before navigating to the location search screen.',
+      'Please select a friend first.',
       [
         { text: 'OK', onPress: () => console.log('OK Pressed') }
       ]
     );
   }
+
+  //Don't need -- it's already checking this at a higher level
+  // if (friendListLength < 1) {
+  //   Alert.alert(
+  //     `I'm sorry!`,
+  //     'You need to add friends before you can search and add locations.',
+  //     [
+  //       { text: 'OK', onPress: () => console.log('OK Pressed') }
+  //     ]
+  //   );
+  // }
  
   };
 
