@@ -146,7 +146,10 @@ export const GlobalStyleProvider = ({ children }) => {
 
 
 const lightThemeStyles = StyleSheet.create({
-   
+
+    dangerZoneText: {
+        color: '#B22222',
+    },
     signinText: {
         color: 'black',
         fontFamily: 'Poppins-Bold',
@@ -287,6 +290,9 @@ const lightThemeStyles = StyleSheet.create({
 
 const darkThemeStyles = StyleSheet.create({
  
+    dangerZoneText: {
+        color: '#B22222',
+    },
     signinText: {
         color: 'white',
         fontFamily: 'Poppins-Bold',

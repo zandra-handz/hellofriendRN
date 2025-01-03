@@ -18,13 +18,7 @@ export const SelectedFriendProvider = ({ children }) => {
     lightColor: null,
     darkColor: null,
   });
-
-  const [calculatedThemeColors, setCalculatedThemeColors] = useState({
-    lightColor:   '#a0f143',
-    darkColor:   '#4caf50',
-    fontColor:  '#a0f143',  
-    fontColorSecondary:   '#a0f143',
-  }); 
+ 
   const queryClient = useQueryClient();
 
 

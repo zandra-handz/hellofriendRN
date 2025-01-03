@@ -12,6 +12,8 @@ const ModalFormColorTheme = ({
     const { themeStyles } = useGlobalStyle();
     const [isMakingCall, setIsMakingCall] = useState(false);
 
+    const MODAL_BODY_HEIGHT = 610;
+
     return (
         <AlertFormSubmit
             isModalVisible={isVisible} 
@@ -28,7 +30,7 @@ const ModalFormColorTheme = ({
                     }}
                 />
             }
-            formHeight={610}
+            formHeight={MODAL_BODY_HEIGHT}
             onConfirm={async () => {
                 if (formRef.current) {
                     setIsMakingCall(true);

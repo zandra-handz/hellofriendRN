@@ -77,6 +77,7 @@ export const FriendListProvider = ({ children }) => {
 
 
   const addToFriendList = (newFriend) => {
+    console.log('adding to friend list!');
     setFriendList(prevFriendList => { 
       const isAlreadyFriend = prevFriendList.some(friend => friend.id === newFriend.id);
       if (!isAlreadyFriend) {
@@ -88,9 +89,15 @@ export const FriendListProvider = ({ children }) => {
 
   const removeFromFriendList = (friendIdToRemove) => {
     setFriendList(prevFriendList => {
+      try {
       const idsToRemove = Array.isArray(friendIdToRemove) ? friendIdToRemove : [friendIdToRemove];
-
+      console.log('friend removed from friend list!');
       return prevFriendList.filter(friend => !idsToRemove.includes(friend.id));
+      
+      } catch (error) {
+        console.log('error removing friend from list: ', error);
+        
+      }
     });
   };
 

@@ -160,7 +160,7 @@ const HomeButtonSelectedFriend = ({
                     </Text>
 
                     <Text style={styles.subtitleText}>
-                      {friendDashboardData
+                      {friendDashboardData && friendDashboardData[0] && friendDashboardData[0].future_date_in_words
                         ? `Suggested: Say hi on ${friendDashboardData[0].future_date_in_words}`
                         : "No date available"}
                     </Text>
