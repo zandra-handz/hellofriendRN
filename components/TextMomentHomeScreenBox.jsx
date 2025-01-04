@@ -46,7 +46,7 @@ const TextMomentHomeScreenBox = forwardRef(
   ) => {
     const { themeStyles } = useGlobalStyle();
     const { authUserState } = useAuthUser();
-    const { friendListLength } = useFriendList();
+    const { themeAheadOfLoading, friendListLength } = useFriendList();
     const { selectedFriend } = useSelectedFriend();
     const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
@@ -200,9 +200,21 @@ const TextMomentHomeScreenBox = forwardRef(
                     Enter a note, anecdote, joke, or whatever else you
                     would like to share with{" "}
                     {selectedFriend ? (
-                      <Text style={{ fontWeight: "bold" }}>
+                                //   <View style={{
+                                //     backgroundColor: selectedFriend ? themeAheadOfLoading.lightColor : 'transparent',  // Circle color
+                                //     borderRadius: 50,  // Half of width/height to make it circular
+                                //     //width: 32,  // Circle diameter
+                                //     //height: 32,
+                                //     alignItems: 'center', 
+                                //     justifyContent: 'center',
+                                //     //marginLeft: 4,  // Adjust spacing between circle and ProfileCircleSvg if needed
+                                // }}>
+                                  
+                      <Text style={{ fontWeight: "bold", color: themeAheadOfLoading.darkColor }}>
                         {selectedFriend.name}
                       </Text>
+                      
+                      // </View>
                     ) : (
                       <Text>your friend</Text>
                     )}{" "}

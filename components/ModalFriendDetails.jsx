@@ -11,16 +11,16 @@ import useFriendFunctions from "../hooks/useFriendFunctions";
 
 import GearsTwoBiggerCircleSvg from "../assets/svgs/gears-two-bigger-circle.svg";
 import FriendSettingsSection from "../components/FriendSettingsSection";
-import LoadingPage from "../components/LoadingPage";
-import BaseRowModalFooter from "../components/BaseRowModalFooter";
+import LoadingPage from "../components/LoadingPage"; 
 
-import EffortSettingSlider from "../components/EffortSettingSlider";
-import PrioritySettingSlider from "../components/PrioritySettingSlider";
+import HeartbeatLifelineArrowSvg from '../assets/svgs/heartbeat-lifeline-arrow.svg';
+
+import DetailRow from "../components/DetailRow"; 
 
 import AlertFormSubmit from "../components/AlertFormSubmit";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 
-const ModalEffortAndPriority = ({ mountingSettings }) => {
+const ModalFriendDetails = ({ mountingDetails }) => {
   const { authUserState } = useAuthUser();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend } = useSelectedFriend();
@@ -30,13 +30,14 @@ const ModalEffortAndPriority = ({ mountingSettings }) => {
     useFriendFunctions();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // State for friendEffort
-  const [friendEffort, setFriendEffort] = useState(3); // Set initial value as needed
-  const [friendPriority, setFriendPriority] = useState(3);
-  const formRef = useRef(null);
+ useEffect(() => {
+    if (mountingDetails) {
+        console.log(`MOUNTING TEXT IN FRIEND DETAILS DELETE`, mountingDetails);
+    }
 
-  
+ },[]);
  
+
   const friendName = selectedFriend?.name || "friend";
 
   useEffect(() => {
@@ -93,24 +94,21 @@ const ModalEffortAndPriority = ({ mountingSettings }) => {
         LoadingComponent={LoadingPage}
       >
         <>
-          <BaseRowModalFooter
+          <DetailRow
             iconName="palette"
             iconSize={20}
-            label="Effort"
-            useToggle={false}
-            useCustom={true}
-            customLabel={"Change"}
-            onCustomPress={toggleModal}
+            label={`Last hello: `}
+            value={`${mountingDetails.days_since_words}`}
+            svg={HeartbeatLifelineArrowSvg}
+            
           />
 
-          <BaseRowModalFooter
+          <DetailRow
             iconName="palette"
             iconSize={20}
-            label="Priority"
-            useToggle={false}
-            useCustom={true}
-            customLabel={"Change"}
-            onCustomPress={toggleModal}
+            label={``}
+            value={``}
+            
           />
         </>
 
@@ -126,27 +124,7 @@ const ModalEffortAndPriority = ({ mountingSettings }) => {
           }
           questionText="Update settings"
           formBody={
-            <View style={styles.formBodyContainer}>
-              <View style={{ marginVertical: "3%" }}>
-                <EffortSettingSlider
-                  //height={"40%"}
-                  ref={effortRef}
-                  friendEffort={mountingSettings.effort_required} // Passing friendEffort state as value
-                  setFriendEffort={setFriendEffort} // Passing setFriendEffort function to update the state
-                  sliderColor={themeAheadOfLoading.lightColor}
-                  trackColor={themeAheadOfLoading.darkColor}
-                />
-              </View>
-              <View style={{ marginVertical: "3%" }}>
-                <PrioritySettingSlider
-                  //height={"40%"}
-                  ref={priorityRef}
-                  friendPriority={mountingSettings.priority_level} // Passing friendEffort state as value
-                  setFriendPriority={setFriendPriority} // Passing setFriendEffort function to update the state
-                  sliderColor={themeAheadOfLoading.lightColor}
-                  trackColor={themeAheadOfLoading.darkColor}
-                />
-              </View>
+            <View style={styles.formBodyContainer}> 
             </View>
           }
           formHeight={MODAL_BODY_HEIGHT}
@@ -191,4 +169,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalEffortAndPriority;
+export default ModalFriendDetails;

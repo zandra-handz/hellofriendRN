@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const EffortSettingSlider = forwardRef(({ friendEffort, setFriendEffort }, ref) => {
+const EffortSettingSlider = forwardRef(({ height=200, friendEffort, setFriendEffort, sliderColor='limegreen', trackColor='limegreen' }, ref) => {
   const { themeStyles } = useGlobalStyle();
   
   // Messages for the slider
@@ -38,11 +38,11 @@ const EffortSettingSlider = forwardRef(({ friendEffort, setFriendEffort }, ref) 
   const selectedMessage = effortMessages[Math.round(sliderValue) - 1];  // 1-based indexing
 
   return (
-    <View style={styles.sectionContainer}>
-      <Text style={[styles.sectionTitle, themeStyles.subHeaderText]}>
+    <View style={[styles.container, {height: height}]}>
+      <Text style={[styles.sectionTitle, themeStyles.genericText]}>
         Effort needed to maintain friendship
       </Text>
-      <View style={styles.container}>
+      <View style={styles.innerContainer}>
         <Slider
           ref={sliderRef}
           style={styles.slider}
@@ -54,8 +54,8 @@ const EffortSettingSlider = forwardRef(({ friendEffort, setFriendEffort }, ref) 
             if (setFriendEffort) setFriendEffort(value);
           }}
           step={1}
-          thumbTintColor="limegreen"
-          minimumTrackTintColor="limegreen"
+          thumbTintColor={sliderColor}
+          minimumTrackTintColor={trackColor}
         />
         {selectedMessage && <Text style={[styles.value, themeStyles.subHeaderText]}>{selectedMessage}</Text>}
       </View>
@@ -64,26 +64,30 @@ const EffortSettingSlider = forwardRef(({ friendEffort, setFriendEffort }, ref) 
 });
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginVertical: 8,
+  container: { 
+    width: '100%', 
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
   },
   sectionTitle: {
     fontSize: 17,
     fontFamily: 'Poppins-Bold',
+    lineHeight: 26, 
+    //fontWeight: 'bold',
   },
-  container: {
-    alignItems: 'stretch',
-    justifyContent: 'center',
-    marginVertical: 10,
+  innerContainer: {
+    //alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    //backgroundColor: 'pink', 
+    //paddingTop: '4%',
     width: '100%',
   },
-  slider: {
-    marginHorizontal: 0,
-    marginBottom: 20,
-    marginTop: 6,
+  slider: {  
+    paddingVertical: '2%',
   },
   value: {
-    fontSize: 16,
+    fontSize: 14,
     textAlign: 'center',
     fontFamily: 'Poppins-Regular',
   },

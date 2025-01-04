@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useFriendList } from '../context/FriendListContext'; 
-import LoadingPage from '../components/LoadingPage';
+import { useFriendList } from '../context/FriendListContext';  
 import ButtonBottomSaveMoment from './ButtonBottomSaveMoment';
 
 const AlertFormSubmit = ({
@@ -45,7 +44,7 @@ const AlertFormSubmit = ({
             <>
             {!useSvgForCancelInstead && ( 
             <TouchableOpacity onPress={onCancel} style={[styles.topButton, {position: 'absolute', zIndex: 1, top: 4, left: 4, backgroundColor: themeAheadOfLoading.lightColor}]}>
-              <Text style={styles.buttonText}>{cancelText}</Text>
+              <Text style={[styles.buttonText]}>{cancelText}</Text>
             </TouchableOpacity>
             )}  
             {useSvgForCancelInstead && ( 
@@ -78,7 +77,7 @@ const AlertFormSubmit = ({
         <>
         {!saveMoment && ( 
         <TouchableOpacity onPress={onCancel} style={[styles.bottomButton, {backgroundColor: themeAheadOfLoading.lightColor}]}>
-          <Text style={styles.buttonText}>{cancelText}</Text>
+          <Text style={[styles.buttonText, {color: themeAheadOfLoading.fontColorSecondary}]}>{cancelText}</Text>
         </TouchableOpacity>
         )}
 
@@ -87,7 +86,7 @@ const AlertFormSubmit = ({
           <>
           {!saveMoment && (  
           <TouchableOpacity onPress={onConfirm} style={[styles.bottomButton, {backgroundColor: themeAheadOfLoading.darkColor}]}>
-            <Text style={styles.buttonText}>{confirmText}</Text>
+            <Text style={[styles.buttonText, {color: themeAheadOfLoading.fontColor}]}>{confirmText}</Text>
           </TouchableOpacity>
            )}
            

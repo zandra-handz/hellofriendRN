@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Text, Animated } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useMessage } from '../context/MessageContext';
-import { useLocationFunctions } from '../hooks/useLocationFunctions';
+import { useMessage } from '../context/MessageContext'; 
 
 //simple temporary popup message to let user know if action was successful
 //does not affect flow of app

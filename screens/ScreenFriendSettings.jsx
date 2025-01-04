@@ -20,6 +20,7 @@ import LoadingPage from '../components/LoadingPage';
 import { Dimensions } from 'react-native';
 import ModalColorTheme from '../components/ModalColorTheme';
 import ModalEffortAndPriority from '../components/ModalEffortAndPriority';
+import ModalFriendDetails from '../components/ModalFriendDetails';
 
 import DoubleChecker from "../components/DoubleChecker";
 import { useUpcomingHelloes } from "../context/UpcomingHelloesContext";
@@ -116,7 +117,17 @@ const navigateToMainScreen = () => {
       {!loadingNewFriend && selectedFriend && (
         <>
         <View style={[styles.backColorContainer, {borderColor: themeAheadOfLoading.lightColor}]}>
+           
+        <View style={styles.section}>
+                <View style={styles.subTitleRow}> 
+                    <Text style={[styles.modalSubTitle, themeStyles.modalText]}>DETAILS</Text>
+                </View>
+                <ModalFriendDetails mountingDetails={friendDashboardData[0]}/>
+                <Text style={themeStyles.genericText}></Text>
+            </View>
 
+            <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
+            
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
                     <Text style={[styles.modalSubTitle, themeStyles.genericText]}>SETTINGS</Text>

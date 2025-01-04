@@ -52,11 +52,26 @@ const useFriendFunctions = () => {
         onSuccess: () => {
             console.log('Friend suggestion settings updated successfully.');
             queryClient.invalidateQueries(['upcomingHelloes']);
-            showMessage(true, null, 'Friend added!');
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+    
+            timeoutRef.current = setTimeout(() => {
+                updateFriendSettingsMutation.reset();
+            }, 2000);
+            
         },
         onError: (error) => {
             console.error('Error updating friend suggestion settings: ', error);
             showMessage(true, null, 'Error updating settings! You can update this manually in the settings screen.');
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+    
+            timeoutRef.current = setTimeout(() => {
+                updateFriendSettingsMutation.reset();
+            }, 2000); 
+        
         },
     });
 
@@ -104,6 +119,7 @@ const useFriendFunctions = () => {
             const friendId = data?.id; // Adjust based on the API response structure
 
             addToFriendList(data);
+            showMessage(true, null, 'Friend added!');
 
             if (friendId) {
 

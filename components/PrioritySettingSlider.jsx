@@ -9,7 +9,7 @@ import Slider from "@react-native-community/slider";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 
 const PrioritySettingSlider = forwardRef(
-  ({ friendPriority, setFriendPriority }, ref) => {
+  ({ height=200, friendPriority, setFriendPriority, sliderColor='limegreen', trackColor='limegreen'  }, ref) => {
     const { themeStyles } = useGlobalStyle();
 
     // Messages for the slider
@@ -38,11 +38,11 @@ const PrioritySettingSlider = forwardRef(
     const selectedMessage = priorityMessages[Math.round(sliderValue) - 1]; // 1-based indexing
 
     return (
-      <View style={styles.sectionContainer}>
+     <View style={[styles.container, {height: height}]}>
         <Text style={[styles.sectionTitle, themeStyles.subHeaderText]}>
           Priority placed on friendship
         </Text>
-        <View style={styles.container}>
+        <View style={styles.innerContainer}>
           <Slider
             ref={sliderRef}
             style={styles.slider}
@@ -54,8 +54,8 @@ const PrioritySettingSlider = forwardRef(
               if (setFriendPriority) setFriendPriority(value);
             }}
             step={1}
-            thumbTintColor="limegreen"
-            minimumTrackTintColor="limegreen"
+            thumbTintColor={sliderColor}
+            minimumTrackTintColor={trackColor}
           />
           {selectedMessage && (
             <Text style={[styles.value, themeStyles.subHeaderText]}>
@@ -69,28 +69,32 @@ const PrioritySettingSlider = forwardRef(
 );
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginVertical: 8,
+  container: { 
+    width: '100%', 
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
   },
   sectionTitle: {
     fontSize: 17,
-    fontFamily: "Poppins-Bold",
+    fontFamily: 'Poppins-Bold',
+    lineHeight: 26, 
+    //fontWeight: 'bold',
   },
-  container: {
-    alignItems: "stretch",
-    justifyContent: "center",
-    marginVertical: 10,
-    width: "100%",
+  innerContainer: {
+    //alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    //backgroundColor: 'pink', 
+    //paddingTop: '4%',
+    width: '100%',
   },
-  slider: {
-    marginHorizontal: 0,
-    marginBottom: 20,
-    marginTop: 6,
+  slider: {  
+    paddingVertical: '2%',
   },
   value: {
-    fontSize: 16,
-    textAlign: "center",
-    fontFamily: "Poppins-Regular",
+    fontSize: 14,
+    textAlign: 'center',
+    fontFamily: 'Poppins-Regular',
   },
 });
 
