@@ -67,8 +67,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 100, // Adjust for device or build
-        position: 'relative',
+        height: 100, 
     },
     leftIcon: {
         width: '10%', // Adjust width as necessary

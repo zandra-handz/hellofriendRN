@@ -58,7 +58,7 @@ const HeaderMoment = ({ title = "ADD MOMENT", writeView = false }) => {
             <View
               style={{
                 flexDirection: "row",
-                width: "50%",
+                //flexShrink: 1,
                 justifyContent: "flex-start",
                 alignContent: "center",
                 alignItems: "center",
@@ -72,20 +72,33 @@ const HeaderMoment = ({ title = "ADD MOMENT", writeView = false }) => {
                 />
               </TouchableOpacity>
             </View>
-
-            <Text
-              style={[
-                styles.headerText,
-                themeStyles.headerText,
-                {
-                  color: themeAheadOfLoading.fontColorSecondary,
-                  paddingRight: 0,
-                },
-              ]}
+<View style={styles.headerTextContainer}>
+  
+<Text
+  style={[
+    styles.headerText,
+    themeStyles.headerText,
+    {
+      color: themeAheadOfLoading.fontColorSecondary,
+      paddingRight: 0,
+    },
+  ]}
+  numberOfLines={1} // Limit to one line
+  ellipsizeMode="tail" // Show "..." if text overflows
+>
+  {title}: {selectedFriend.name ? ` ${selectedFriend.name}` : ''}
+</Text>
+            
+</View>
+<View
+              style={{
+                flexDirection: "row",
+                //flexShrink: 1,
+                justifyContent: "flex-end",
+                alignContent: "center",
+                alignItems: "center",
+              }}
             >
-              {title}
-            </Text>
-            <View>
               <TouchableOpacity onPress={handleNavigateToAllMoments}>
                 {!writeView && (
                   <LeavesTwoFallingOutlineThickerSvg
@@ -120,10 +133,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     height: 110,
   },
+  headerTextContainer: {
+    flexDirection: 'row',
+    //backgroundColor: 'pink',
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingRight: '3%',
+    //flexWrap: 'wrap',
+
+
+  },
   headerText: {
-    fontSize: 20,
-    paddingVertical: 2,
+    fontSize: 20,  
     fontFamily: "Poppins-Bold",
+    textTransform: 'uppercase',
   },
   usernameText: {
     fontSize: 14,

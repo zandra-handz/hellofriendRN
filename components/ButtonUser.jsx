@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TouchableOpacity, AccessibilityInfo } from 'react-native';
 import ActionPageInfo from './ActionPageInfo';  
 import UserOutlineSvg from '../assets/svgs/user-outline.svg'; 
+import BugSvg from '../assets/svgs/bug.svg';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const ButtonUser = () => {
@@ -21,7 +22,7 @@ const ButtonUser = () => {
   return (
     <>
       <TouchableOpacity onPress={toggleModal}>
-        <UserOutlineSvg width={23} height={23} style={themeStyles.footerIcon} />
+        <BugSvg width={28} height={28} style={themeStyles.footerIcon} />
       </TouchableOpacity>
 
       <ActionPageInfo visible={isModalVisible} onClose={toggleModal} />

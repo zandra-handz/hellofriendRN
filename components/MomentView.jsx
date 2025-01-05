@@ -3,10 +3,11 @@ import {
   StyleSheet,
   Text,
   View,
-  Modal,
+  Modal, 
   ScrollView,
   Dimensions,
-} from "react-native";
+} from "react-native"; 
+
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useFriendList } from "../context/FriendListContext";
 import HeaderBaseItemView from "../components/HeaderBaseItemView";
@@ -135,6 +136,7 @@ const MomentView = ({
                       >
                         {momentData && momentData.capsule && (
                           <Text
+                          selectable={true}
                             style={[styles.momentText, themeStyles.genericText]}
                           >
                             {capitalizeFirstFiveWords(momentData.capsule)}

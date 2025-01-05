@@ -12,13 +12,15 @@ import useFriendFunctions from "../hooks/useFriendFunctions";
 import GearsTwoBiggerCircleSvg from "../assets/svgs/gears-two-bigger-circle.svg";
 import FriendSettingsSection from "../components/FriendSettingsSection";
 import LoadingPage from "../components/LoadingPage"; 
-
-import HeartbeatLifelineArrowSvg from '../assets/svgs/heartbeat-lifeline-arrow.svg';
+ 
 
 import DetailRow from "../components/DetailRow"; 
 
 import AlertFormSubmit from "../components/AlertFormSubmit";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
+
+import HeartbeatActivitySimpleSvg from '../assets/svgs/heartbeat-activity-simple.svg';
+import WristwatchOutlineSvg from '../assets/svgs/wristwatch-outline.svg';
 
 const ModalFriendDetails = ({ mountingDetails }) => {
   const { authUserState } = useAuthUser();
@@ -69,7 +71,7 @@ const ModalFriendDetails = ({ mountingDetails }) => {
   const handleSave = () => {
     try {
       handleUpdateFriendSettings(
-        //authUserState.user.id,
+        authUserState.user.id,
         selectedFriend.id,
         effortRef.current.getValue(),
         priorityRef.current.getValue()
@@ -99,15 +101,16 @@ const ModalFriendDetails = ({ mountingDetails }) => {
             iconSize={20}
             label={`Last hello: `}
             value={`${mountingDetails.days_since_words}`}
-            svg={HeartbeatLifelineArrowSvg}
+            svg={WristwatchOutlineSvg }
             
           />
 
           <DetailRow
             iconName="palette"
             iconSize={20}
-            label={``}
-            value={``}
+            label={`Current connection score: `}
+            value={`${mountingDetails.time_score}`}
+            svg={HeartbeatActivitySimpleSvg }
             
           />
         </>
@@ -139,8 +142,7 @@ const ModalFriendDetails = ({ mountingDetails }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { 
     width: "100%",
     zIndex: 1,
     elevation: 1,

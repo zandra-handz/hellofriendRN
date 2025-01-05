@@ -191,9 +191,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   momentText: {
-    //fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Regular',
     flexShrink: 1,
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 22,
     alignSelf: "left",
   },

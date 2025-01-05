@@ -1,25 +1,34 @@
 import React from 'react';
-import { View, Text, StyleSheet  } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { View, Text, StyleSheet  } from 'react-native'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import your context hook
  
 
 const DetailRow = ({ 
     iconName, 
+    color,
     iconSize,
-    svg,
+    svg: Svg,
     label,
-    value  }) => {
+    value,
+  useFill=false  }) => {
 
   const { themeStyles } = useGlobalStyle();
 
   return (
     <View style={styles.row}>
-      <View style={{flexDirection: 'row'}}>
-        <FontAwesome5 name={iconName} size={iconSize} style={[styles.icon, themeStyles.modalIconColor]} />
-        
-        <Text style={[styles.label, themeStyles.modalText]}>{label}</Text>
-        <Text style={[styles.value, themeStyles.modalText]}>{value}</Text>
+      
+      <View style={styles.svgContainer}>
+ 
+ {Svg && !useFill && <Svg height={iconSize} width={iconSize} color={color || themeStyles.genericText.color} />}
+ {Svg && useFill && <Svg height={iconSize} width={iconSize} fill={color || themeStyles.genericText.color} />}
+ 
+ </View>
+      <View style={styles.textContainer}>
+
+        {/* <FontAwesome5 name={iconName} size={iconSize} style={[styles.icon, themeStyles.modalIconColor]} />
+         */}
+        <Text style={[styles.label, themeStyles.modalText, {color: color || themeStyles.genericText.color }]}>{label}</Text>
+        <Text style={[styles.value, themeStyles.modalText, {color: color || themeStyles.genericText.color}]}>{value}</Text>
   
       </View>
       <>  
@@ -31,13 +40,27 @@ const DetailRow = ({
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
+     
+    
+    width: '100%',
     marginBottom: 8,
   },
-  labelSection: {
+  textContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    textAlign: 'center', 
+  },
+  svgContainer: {
+    width: '7%', //ADJUST WIDTH OF SVG CONTAINER HERE
+    flexDirection: 'row', 
+   height: '100%',
+   alignItems: 'center',
+   justifyContent: 'center', 
+   overflow: 'hidden',
+   marginRight: '2%', //ADJUST GAP BETWEEN SVG AND LABEL HERE
+   //backgroundColor: 'blue',
+
   },
   icon: {
     paddingTop: 2,

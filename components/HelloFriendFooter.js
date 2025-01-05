@@ -4,8 +4,7 @@ import ButtonSignOut from './ButtonSignOut';
 import ButtonSettings from './ButtonSettings';
 import ButtonFriendAddresses from '../components/ButtonFriendAddresses';
 import ButtonUser from './ButtonUser';
-import ButtonData from './ButtonData';
-import ButtonColors from '../components/ButtonColors'; 
+import ButtonData from './ButtonData'; 
 import AlertConfirm from './AlertConfirm'; 
 import { useNavigationState } from '@react-navigation/native';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; // Import the context hook
@@ -66,12 +65,9 @@ export default function HelloFriendFooter() {
 
             <View style={[styles.divider, themeStyles.divider]} />
             <> 
-            <View style={styles.section}>
-                {isOnActionPage ? ( 
+            <View style={styles.section}> 
                     <ButtonUser /> 
-                ): ( 
-                    <ButtonColors /> 
-                )}
+            
             </View>
             </>
             

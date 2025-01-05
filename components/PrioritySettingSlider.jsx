@@ -13,17 +13,41 @@ const PrioritySettingSlider = forwardRef(
     const { themeStyles } = useGlobalStyle();
 
     // Messages for the slider
-    const priorityMessages = ["High", "Medium", "Unworried"];
+    const priorityMessages = ["Unworried", "Medium", "High"];
 
-    const [sliderValue, setSliderValue] = useState(friendPriority);
     const sliderRef = useRef(null);
+
+//this function MUST be placed before the useState declaration using it
+//this function exists because I want priority to go in same direction as effort
+//and it does not on the backend, thanks to me
+    const invertValue = (value) => {
+
+      console.log('running invertValue function on: ', value);
+      if (value === 2) {
+        console.log('not inverting');
+        return value;
+      }
+
+      if (value < 2) {
+        console.log('inverting to 3');
+        return 3;
+      }
+
+      if (value === 3) {
+        console.log('inverting to 1');
+        return 1;
+      }
+    }
+
+    
+    const [sliderValue, setSliderValue] = useState(invertValue(friendPriority));
 
     // Expose methods to the parent via ref
     useImperativeHandle(ref, () => ({
       setValue: (newValue) => {
-        if (sliderRef.current) {
-          sliderRef.current.setNativeProps({ value: newValue });
-          setSliderValue(newValue);
+        if (sliderRef.current) { 
+          sliderRef.current.setNativeProps({ value: newValue }); // Use transformed value
+          setSliderValue(newValue); 
         }
       },
       clearValue: () => {
@@ -32,7 +56,7 @@ const PrioritySettingSlider = forwardRef(
           setSliderValue(1); // Reset state
         }
       },
-      getValue: () => sliderValue,
+      getValue: () => invertValue(sliderValue),
     }));
 
     const selectedMessage = priorityMessages[Math.round(sliderValue) - 1]; // 1-based indexing

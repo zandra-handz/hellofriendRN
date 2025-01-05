@@ -3,8 +3,11 @@
 //{selectedFriend ? selectedFriend.name : ''}
 //</Text>
 //   <HelloFriendFooter />   
+
+
+//put this into a ScrollView in case I need to add to this in case I need to add stuff in the future
 import React, { useEffect, useState } from 'react';
-import { View, Text,  StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text,  StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { LinearGradient } from 'expo-linear-gradient'; 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -16,14 +19,20 @@ import useFriendFunctions from '../hooks/useFriendFunctions';
 
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-import LoadingPage from '../components/LoadingPage';
-import { Dimensions } from 'react-native';
+import LoadingPage from '../components/LoadingPage'; 
 import ModalColorTheme from '../components/ModalColorTheme';
 import ModalEffortAndPriority from '../components/ModalEffortAndPriority';
 import ModalFriendDetails from '../components/ModalFriendDetails';
 
 import DoubleChecker from "../components/DoubleChecker";
 import { useUpcomingHelloes } from "../context/UpcomingHelloesContext";
+
+import WrenchOutlineSvg from '../assets/svgs/wrench-outline.svg';
+
+import ColorSwatchesSvg from '../components/ColorSwatchesSvg';
+import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
+
+import DetailRow from '../components/DetailRow';
 
  
 const ScreenFriendSettings = () => {
@@ -35,7 +44,29 @@ const ScreenFriendSettings = () => {
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { darkColor, lightColor } = gradientColorsHome;
 
+  const [isEffortPriorityModalVisible, setIsEffortPriorityModalVisible] = useState(false);
+const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false);
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
+
+
+  const openEffortPriorityModal = () => {
+    setIsEffortPriorityModalVisible(true);
+  }
+
+
+  const closeEffortPriorityModal = () => {
+    setIsEffortPriorityModalVisible(false);
+  }
+
+  const openColorThemeModal = () => {
+    console.log('opening color theme modal ?');
+    setIsColorThemeModalVisible(true);
+  }
+
+
+  const closeColorThemeModal = () => {
+    setIsColorThemeModalVisible(false);
+  }
   
 
   const openDoubleChecker = () => {
@@ -101,7 +132,7 @@ const navigateToMainScreen = () => {
       colors={[darkColor, lightColor]}  
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}  
-      style={styles.container} 
+      style={[styles.container, themeStyles.container]} 
     > 
       {loadingNewFriend && themeAheadOfLoading && (
           <View style={[styles.loadingWrapper, {backgroundColor: themeAheadOfLoading.lightColor}]}>
@@ -116,7 +147,13 @@ const navigateToMainScreen = () => {
       )}
       {!loadingNewFriend && selectedFriend && (
         <>
-        <View style={[styles.backColorContainer, {borderColor: themeAheadOfLoading.lightColor}]}>
+                              <ScrollView
+                                contentContainerStyle={[
+                                  styles.backColorContainer,
+                                  { padding: 10 },
+                                ]}
+                                 style={{width: '100%'  }}
+                              > 
            
         <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
@@ -131,17 +168,28 @@ const navigateToMainScreen = () => {
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
                     <Text style={[styles.modalSubTitle, themeStyles.genericText]}>SETTINGS</Text>
+                
+                  <View style={styles.subTitleButtonContainer}>
+                    <WrenchOutlineSvg onPress={openEffortPriorityModal} height={26} width={26} color={themeStyles.genericText.color}/>
+                  </View>
                 </View> 
-                <ModalEffortAndPriority mountingSettings={friendDashboardData[0].suggestion_settings} />
+
+                <ModalEffortAndPriority isModalVisible={isEffortPriorityModalVisible} closeModal={closeEffortPriorityModal} mountingSettings={friendDashboardData[0].suggestion_settings} />
             </View>
 
             <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
             
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
-                    <Text style={[styles.modalSubTitle, themeStyles.genericText]}>THEME</Text>
+                    <Text style={[styles.modalSubTitle, themeStyles.genericText]}>COLOR THEME</Text>
+                    <ColorSwatchesSvg darkColor={themeAheadOfLoading.darkColor} lightColor={themeAheadOfLoading.lightColor} />
+                  
+                    <View style={styles.subTitleButtonContainer}>
+                    <WrenchOutlineSvg onPress={openColorThemeModal} height={26} width={26} color={themeStyles.genericText.color}/>
+                  </View>
+                
                 </View> 
-                <ModalColorTheme /> 
+                <ModalColorTheme isModalVisible={isColorThemeModalVisible} closeModal={closeColorThemeModal}  /> 
               </View>
             
             <View style={[styles.divider, { borderBottomColor: themeStyles.modalText.color}]}></View>
@@ -161,11 +209,17 @@ const navigateToMainScreen = () => {
                 </View>
 
                 <TouchableOpacity onPress={openDoubleChecker}>
-                <Text style={[styles.rowText, themeStyles.dangerZoneText]}>Delete</Text>
-                </TouchableOpacity>
-            </View>
+                <DetailRow 
+            iconSize={20}
+            label={`Delete`} 
+            svg={TrashOutlineSvg }
+            color={themeStyles.dangerZoneText.color}
+            
+          />
+                 </TouchableOpacity>
+            </View> 
 
-        </View>
+        </ScrollView>
 
         {isDoubleCheckerVisible && (
           <DoubleChecker
@@ -184,20 +238,32 @@ const navigateToMainScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,    
+    //flex: 1,  
+    height: '100%',  
     width: '100%', 
   },
   subTitleRow: {
     flexDirection: 'row',  
-    marginBottom: 20,  
+    marginBottom: '4%',  
+    justifyContent: 'space-between',
+    width: '100%', 
+  },
+  subTitleButtonContainer: {
+    //width: '8%',
+    flexDirection: 'row', 
+   height: '100%',
+   alignItems: 'center',
+   justifyContent: 'center', 
+   //zIndex: 1000,
+
   },
   section: { 
-    flex: 1,
+    //flexGrow: 1,
      
     width: '100%', 
     justifyContent: 'flex-start',
     paddingHorizontal: '2%',
-    paddingVertical: '3%',
+    paddingVertical: '5%',
 },
 rowText: {
   fontWeight: 'bold',
@@ -238,7 +304,7 @@ divider: {
   },
  
 backColorContainer: {  
-  flex: 1,
+  //flex: 1,
   paddingHorizontal: '2%', 
   paddingTop: '10%', 
   width: '101%',

@@ -26,7 +26,7 @@ const ModalFormColorTheme = ({
                     ref={formRef}
                     onMakingCallChange={(isMakingCall) => {
                         setIsMakingCall(isMakingCall); 
-                        console.log("Is making call:", isMakingCall); 
+                        console.log("Is making callaaa:", isMakingCall); 
                     }}
                 />
             }

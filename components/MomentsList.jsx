@@ -221,7 +221,7 @@ const MomentsList = (navigation) => {
 
     const dynamicTextSize = scrollY.interpolate({
       inputRange: [offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN, offset, offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN],
-      outputRange: [15, 15, 15], //turned off for now  [14, 15, 13]
+      outputRange: [16, 16, 16], //turned off for now  [14, 15, 13]
       extrapolate: "clamp",
     });
 

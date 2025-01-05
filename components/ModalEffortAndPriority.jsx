@@ -17,18 +17,24 @@ import BaseRowModalFooter from "../components/BaseRowModalFooter";
 import EffortSettingSlider from "../components/EffortSettingSlider";
 import PrioritySettingSlider from "../components/PrioritySettingSlider";
 
+import DetailRow from '../components/DetailRow';
+
 import AlertFormSubmit from "../components/AlertFormSubmit";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 
-const ModalEffortAndPriority = ({ mountingSettings }) => {
+import WristwatchOutlineSvg from '../assets/svgs/wristwatch-outline.svg';
+import CommunicationPersonSolidSvg from '../assets/svgs/communication-person-solid.svg';
+import ExclamationDiamondOutlineSvg from '../assets/svgs/exclamation-diamond-outline.svg';
+
+
+const ModalEffortAndPriority = ({ mountingSettings, isModalVisible, closeModal }) => {
   const { authUserState } = useAuthUser();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
   const { showMessage } = useMessage();
   const { handleUpdateFriendSettings, updateFriendSettingsMutation } =
-    useFriendFunctions();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+    useFriendFunctions(); 
 
   // State for friendEffort
   const [friendEffort, setFriendEffort] = useState(3); // Set initial value as needed
@@ -39,9 +45,30 @@ const ModalEffortAndPriority = ({ mountingSettings }) => {
  
   const friendName = selectedFriend?.name || "friend";
 
+  const priorityLabels = {
+    3: 'Low',
+    2: 'Medium',
+    1: 'High'
+};
+
+
+
+const effortLabels = {
+  1: 'Check in twice a year',
+  2: 'Check in every 60-90 days',
+  3: 'Check in every month',
+  4: 'Check in every two weeks',
+  5: 'Check in every few days'
+};
+
+// useEffect(() => {
+//   console.log(priorityLabels[1]);
+
+// }, []);
+
   useEffect(() => {
     if (updateFriendSettingsMutation.isSuccess) {
-      setIsModalVisible(false);
+      closeModal();
       showMessage(true, null, `Settings for ${friendName} have been updated!`);
     }
   }, [updateFriendSettingsMutation.isSuccess]);
@@ -67,8 +94,10 @@ const ModalEffortAndPriority = ({ mountingSettings }) => {
 
   const handleSave = () => {
     try {
+
+      console.log(priorityRef.current.getValue());
       handleUpdateFriendSettings(
-        //authUserState.user.id,
+        authUserState.user.id,
         selectedFriend.id,
         effortRef.current.getValue(),
         priorityRef.current.getValue()
@@ -78,11 +107,12 @@ const ModalEffortAndPriority = ({ mountingSettings }) => {
     }
   };
 
+  
+
   const effortRef = useRef();
   const priorityRef = useRef();
-
-  const closeModal = () => setIsModalVisible(false);
-  const toggleModal = () => setIsModalVisible(true);
+ 
+  // const toggleModal = () => setIsModalVisible(true);
 
   const MODAL_BODY_HEIGHT = 610;
 
@@ -93,24 +123,33 @@ const ModalEffortAndPriority = ({ mountingSettings }) => {
         LoadingComponent={LoadingPage}
       >
         <>
-          <BaseRowModalFooter
+        {/* <BaseRowModalFooter
             iconName="palette"
             iconSize={20}
-            label="Effort"
+            label="Suggestion settings"
             useToggle={false}
             useCustom={true}
             customLabel={"Change"}
             onCustomPress={toggleModal}
+          /> */}
+          <DetailRow
+            iconName="palette"
+            iconSize={18}
+            label={`Effort: `}
+            value={effortLabels[mountingSettings.effort_required]}
+            svg={CommunicationPersonSolidSvg} 
+             
+            
           />
 
-          <BaseRowModalFooter
+<DetailRow
             iconName="palette"
-            iconSize={20}
-            label="Priority"
-            useToggle={false}
-            useCustom={true}
-            customLabel={"Change"}
-            onCustomPress={toggleModal}
+            iconSize={19}
+            label={`Priority: `}
+            value={priorityLabels[mountingSettings.priority_level]}
+            svg={ExclamationDiamondOutlineSvg}
+             
+            
           />
         </>
 
@@ -151,7 +190,7 @@ const ModalEffortAndPriority = ({ mountingSettings }) => {
           }
           formHeight={MODAL_BODY_HEIGHT}
           onConfirm={() => handleSave()}
-          onCancel={() => setIsModalVisible(false)}
+          onCancel={() => closeModal()}
           confirmText="Save changes"
           cancelText="Cancel"
         />
@@ -162,7 +201,7 @@ const ModalEffortAndPriority = ({ mountingSettings }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     width: "100%",
     zIndex: 1,
     elevation: 1,

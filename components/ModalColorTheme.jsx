@@ -16,11 +16,11 @@ import LoadingPage from '../components/LoadingPage';
 import BaseRowModalFooter from '../components/BaseRowModalFooter';
 import tinycolor from 'tinycolor2';
 
-const ModalColorTheme = () => {
+const ModalColorTheme = ({isModalVisible, closeModal}) => {
   const { authUserState } = useAuthUser(); 
   const { friendList, updateFriendListColorsExcludeSaved } = useFriendList();
   const { selectedFriend, friendColorTheme, setFriendColorTheme } = useSelectedFriend();
-  const [isColorThemeModalVisible, setIsColorThemeModalVisible] = useState(false);
+  
   const [isMakingCall, setIsMakingCall] = useState(false);
   const formRef = useRef(null);
   const [useFriendColorTheme, setUseFriendColorTheme] = useState(false);
@@ -127,10 +127,7 @@ const ModalColorTheme = () => {
       } 
   };
   };
- 
- 
-  const closeColorThemeModal = () => setIsColorThemeModalVisible(false);
-  const toggleColorThemeModal = () => setIsColorThemeModalVisible(true);
+  
 
   return ( 
       <View style={styles.container}>
@@ -140,7 +137,7 @@ const ModalColorTheme = () => {
       LoadingComponent={LoadingPage} 
     >
 
-      {isColorThemeOn && (
+      {/* {isColorThemeOn && (
         <>
 
           <BaseRowModalFooter 
@@ -154,7 +151,7 @@ const ModalColorTheme = () => {
           />  
 
         </>
-      )}
+      )} */}
           <BaseRowModalFooter 
             iconName='palette' 
             iconSize={20}
@@ -166,9 +163,9 @@ const ModalColorTheme = () => {
 
 
       <ModalFormColorTheme
-        isVisible={isColorThemeModalVisible} 
+        isVisible={isModalVisible} 
         formRef={formRef}
-        close={closeColorThemeModal} 
+        close={closeModal} 
       />
     </FriendSettingsSection> 
     </View>
@@ -177,7 +174,7 @@ const ModalColorTheme = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     width: '100%',
 
   },
