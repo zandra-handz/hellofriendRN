@@ -5,7 +5,7 @@ import IconDynamicHelloType from '../components/IconDynamicHelloType';
 
  
 
-const ButtonHello = ({ hello, onPress, color = 'white',  iconColor = 'white', icon: Icon, iconSize = 34 }) => {
+const ButtonHello = ({ hello, height='auto', onPress, color = 'white',  iconColor = 'white', icon: Icon, iconSize = 34 }) => {
   const { themeStyles } = useGlobalStyle(); 
  
    
@@ -19,16 +19,36 @@ const ButtonHello = ({ hello, onPress, color = 'white',  iconColor = 'white', ic
   return (
     <View>
       <TouchableOpacity
-        style={styles.optionButton}
+              style={[
+                styles.container,
+                themeStyles.genericTextBackgroundShadeTwo,
+                { height: height },
+              ]}
         onPress={handlePress} 
       >
-        {Icon && (
-          <View style={styles.iconContainer}>
-            
-            <IconDynamicHelloType selectedChoice={hello.type} svgColor={color}/>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  width: "100%",
+                  height: "auto",
+                  flex: 1,
+                  marginBottom: '3%',
+                }}
+              >
+                <View style={styles.svgContainer}>
+                  
+                <IconDynamicHelloType selectedChoice={hello.type} svgWidth={24} svgHeight={24} svgColor={color}/>
 
-          </View>
-        )}
+                </View>
+                <View style={styles.titleContainer}>
+                  
+<Text style={[styles.title, themeStyles.subHeaderText]}>{hello.type}</Text>
+
+</View>
+              </View> 
         <View style={styles.textContainer}>
           <Text style={[styles.optionTitleText, {color: color}]}>{hello.date}</Text>
           <Text style={[styles.optionText, {color: color}]}>{hello.locationName}</Text>
@@ -39,14 +59,16 @@ const ButtonHello = ({ hello, onPress, color = 'white',  iconColor = 'white', ic
 };
 
 const styles = StyleSheet.create({
-  optionButton: {
-    padding: 10,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    width: '100%',
-    alignItems: 'flex-start',
-    flexDirection: 'row',
+  container: {
+    width: "100%",
+    //flex: 1,
+    height: "auto",
+    borderRadius: 30,
+    alignSelf: "center",
+    padding: 20,
+    overflow: "hidden",
+
+    //backgroundColor: 'red',
   },
   optionTitleText: {
     fontSize: 12,
@@ -65,6 +87,35 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 15,
+    lineHeight: 21,
+    textTransform: "lowercase", 
+  },
+  svgContainer: {
+    flexDirection: 'row',
+   
+    width: '9%', 
+
+ 
+  },
+  titleContainer: {
+    width: '70%',
+    
+    flex: 1,
+    flexGrow: 1,
+
+  },
+  text: {
+    marginLeft: "4%",
+    fontSize: 15,
+    lineHeight: 21,
   },
 });
 

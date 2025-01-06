@@ -23,12 +23,15 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   }));
 
   return (
-            <LinearGradient
-                colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={[styles.tabBar]}
-            >
+            // <LinearGradient
+            //     colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+            //     start={{ x: 0, y: 0 }}
+            //     end={{ x: 1, y: 0 }}
+            //     style={[styles.tabBar]}
+            // >
+
+              <View style={[styles.tabBar, themeStyles.genericTextBackground]}>
+                 
                 
       <Animated.View style={[styles.underline, animatedStyle, { width: tabWidth, backgroundColor: themeAheadOfLoading.fontColor }]} />
       {state.routes.map((route, index) => {
@@ -54,13 +57,13 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             style={styles.tabButton}
           >
             {options.tabBarIcon({ focused: isFocused })} 
-            <Text style={{ fontFamily: 'Poppins-Bold', color: isFocused ? themeAheadOfLoading.fontColor : themeAheadOfLoading.fontColor, marginTop: 4, marginLeft: 7 }}>
+            <Text style={{ fontWeight: 'bold', textTransform: 'uppercase', opacity: isFocused ? 1 : .7, color: isFocused ? themeStyles.genericText.color : themeStyles.genericText.color,    marginLeft: 7 }}>
               {route.name}
             </Text>
           </TouchableOpacity>
         );
-      })}
-    </LinearGradient>
+      })} 
+      </View> 
   );
 };
 

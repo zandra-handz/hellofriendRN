@@ -6,20 +6,20 @@ const ColorSwatchesSvg = ({ darkColor = '#FF5733', lightColor = '#33FF57', heigh
     <Defs>
       {/* Define gradient with dynamic colors */}
       <LinearGradient id="twoColorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <Stop offset="0%" stopColor={lightColor} stopOpacity="1" />
-        <Stop offset="100%" stopColor={darkColor} stopOpacity="1" />
+        <Stop offset="0%" stopColor={darkColor} stopOpacity="1" />
+        <Stop offset="100%" stopColor={lightColor} stopOpacity="1" />
       </LinearGradient>
     </Defs>
 
     {/* First path using the dynamic gradient */}
     <Path
       d="M22.0009 16.5V19.5C22.0009 20.88 20.8809 22 19.5009 22H12.3609C11.4709 22 11.0309 20.93 11.6509 20.3L17.5209 14.3C17.7109 14.11 17.9709 14 18.2309 14H19.5009C20.8809 14 22.0009 15.12 22.0009 16.5Z"
-      fill={darkColor}
+      fill={lightColor}
     />
     {/* Second path using a static color */}
     <Path
       d="M18.3702 11.2895L15.6602 13.9995L13.2002 16.4495C12.5702 17.0795 11.4902 16.6395 11.4902 15.7495C11.4902 12.5395 11.4902 7.25953 11.4902 7.25953C11.4902 6.98953 11.6002 6.73953 11.7802 6.54953L12.7002 5.62953C13.6802 4.64953 15.2602 4.64953 16.2402 5.62953L18.3602 7.74953C19.3502 8.72953 19.3502 10.3095 18.3702 11.2895Z"
-      fill={lightColor}
+      fill={darkColor}
     />
     {/* Third path using currentColor */}
     <Path

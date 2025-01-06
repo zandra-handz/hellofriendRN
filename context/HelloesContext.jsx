@@ -17,14 +17,24 @@ export const HelloesProvider = ({ children }) => {
     const { authUserState } = useAuthUser();
     
     const timeoutRef = useRef(null);
+
+    
     
 
     const { data: helloesList, isLoading, isFetching, isSuccess, isError } = useQuery({
         queryKey: ['pastHelloes', selectedFriend?.id],
-        queryFn: () => fetchPastHelloes(selectedFriend.id),
+        queryFn: () => {
+  console.log('Fetching past helloes for:', selectedFriend?.id);
+  return fetchPastHelloes(selectedFriend.id);
+},
         enabled: !!selectedFriend,
         onSuccess: (data) => { 
-            
+          // const inPerson = data[0].filter(hello => hello.type === 'in person');
+          // queryClient.setQueryData(['inPersonHelloes', selectedFriend?.id], inPerson);
+          console.log('cached in person helloes: ', data);
+        },
+        onError: () => {
+          console.log('error in RQ fetching helloes');
         }
     });
 
@@ -35,17 +45,32 @@ export const HelloesProvider = ({ children }) => {
     const helloesIsError = isError;
     const helloesIsSuccess = isSuccess;
 
- 
-
-
+   
     const inPersonHelloes = useMemo(() => {
         if (helloesList) {
        
+
+          const inPerson = helloesList.filter(hello => hello.type === 'in person');
+          queryClient.setQueryData(['inPersonHelloes', selectedFriend?.id], inPerson);
+          
         console.log('filtering helloes in useMemo function');
-        return helloesList.filter(hello => hello.type === 'in person');
+        return inPerson;
     }
     }, [helloesList]);
-    
+
+    const getCachedInPersonHelloes = () => {
+      return queryClient.getQueryData(['inPersonHelloes', selectedFriend?.id]);
+  };
+  
+//   useEffect(() => {
+//     // Log the cached data for 'pastHelloes'
+//     const cachedHelloes = queryClient.getQueryData(['pastHelloes', selectedFriend?.id]);
+//     console.log('Cached pastHelloes:', cachedHelloes);
+
+//     // Log the cached data for 'inPersonHelloes'
+//     const cachedInPersonHelloes = queryClient.getQueryData(['inPersonHelloes', selectedFriend?.id]);
+//     console.log('Cached inPersonHelloes:', cachedInPersonHelloes);
+// }, [helloesList, selectedFriend, queryClient]);
  
  
     const flattenHelloes = useMemo(() => {
@@ -145,13 +170,14 @@ export const HelloesProvider = ({ children }) => {
             helloesList,
             isFetching,
             flattenHelloes,
-            inPersonHelloes,
+            //inPersonHelloes,
             helloesIsFetching,
             helloesIsLoading,
             helloesIsSuccess,
             helloesIsError,
             createHelloMutation,
             handleCreateHello,
+            getCachedInPersonHelloes,
             
         }}>
             {children}

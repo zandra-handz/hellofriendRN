@@ -38,7 +38,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import PickerMultiMoments from "../components/PickerMultiMoments";
 
-import useHelloesData from "../hooks/useHelloesData";
+//import useHelloesData from "../hooks/useHelloesData";
+import { useHelloes } from '../context/HelloesContext';
 
 import Icon from "react-native-vector-icons/FontAwesome";
 import PickerDate from "../components/PickerDate";
@@ -55,7 +56,7 @@ const ContentAddHello = () => {
 
   const { showMessage } = useMessage();
 
-  const { createHelloMutation, handleCreateHello } = useHelloesData();
+  const { createHelloMutation, handleCreateHello } = useHelloes();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);

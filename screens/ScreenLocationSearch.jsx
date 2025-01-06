@@ -13,7 +13,9 @@ import {
   useCurrentLocationManual,
   useGeolocationWatcher,
 } from "../hooks/useCurrentLocationAndWatcher";
-import useHelloesData from '../hooks/useHelloesData';
+//import useHelloesData from '../hooks/useHelloesData';
+
+import { useHelloes } from '../context/HelloesContext';
 
 const ScreenLocationSearch = () => {
   
@@ -23,8 +25,10 @@ const ScreenLocationSearch = () => {
 
     const { locationList } = useLocationFunctions();
     const { getCurrentDay } = useLocationDetailFunctions();
-    const { inPersonHelloes } = useHelloesData();
+    const { getCachedInPersonHelloes } = useHelloes();
     const { createLocationListWithHelloes, bermudaCoords } = useLocationHelloFunctions();
+
+    const inPersonHelloes = getCachedInPersonHelloes();
     
     const [ sortedLocations, setSortedLocations ] = useState([]);
     

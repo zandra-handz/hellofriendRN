@@ -181,11 +181,17 @@ const navigateToMainScreen = () => {
             
             <View style={styles.section}>
                 <View style={styles.subTitleRow}> 
-                    <Text style={[styles.modalSubTitle, themeStyles.genericText]}>COLOR THEME</Text>
-                    <ColorSwatchesSvg darkColor={themeAheadOfLoading.darkColor} lightColor={themeAheadOfLoading.lightColor} />
-                  
+                    <Text style={[styles.modalSubTitle, themeStyles.genericText]}>CUSTOM COLOR THEME</Text>
+                    
+                       
                     <View style={styles.subTitleButtonContainer}>
-                    <WrenchOutlineSvg onPress={openColorThemeModal} height={26} width={26} color={themeStyles.genericText.color}/>
+                    {/* <WrenchOutlineSvg onPress={openColorThemeModal} height={26} width={26} color={themeStyles.genericText.color}/>
+                  */}
+
+<TouchableOpacity onPress={openColorThemeModal}  >
+  <ColorSwatchesSvg  onPress={openColorThemeModal} darkColor={themeAheadOfLoading.darkColor} lightColor={themeAheadOfLoading.lightColor} />
+                  
+  </TouchableOpacity>
                   </View>
                 
                 </View> 

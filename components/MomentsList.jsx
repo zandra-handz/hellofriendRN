@@ -389,15 +389,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 13,
     textTransform: "uppercase",
-  },
-  searchBarContent: {
-    width: "97%",
-    marginVertical: "2%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1000,
-  },
+  }, 
   lizardTransform: {
     position: "absolute",
     zIndex: 0,

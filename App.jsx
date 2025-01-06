@@ -44,6 +44,7 @@ import ScreenAddHello from "./screens/ScreenAddHello";
 import HellofriendHeader from "./components/HellofriendHeader";
 //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
 import HeaderMoment from "./components/HeaderMoment";
+import HeaderHelloes from "./components/HeaderHelloes";
 import HeaderFriendSettings from "./components/HeaderFriendSettings";
 import HeaderBase from "./components/HeaderBase";
 import HeaderBaseSolid from "./components/HeaderBaseSolid";
@@ -109,9 +110,13 @@ export default function App() {
                 <SelectedFriendProvider>
                   <PhoneStatusBar />
                   <CapsuleListProvider>
+                    <HelloesProvider>
+                      
                     <MessageContextProvider>
                       <Layout />
                     </MessageContextProvider>
+                    
+                    </HelloesProvider>
                   </CapsuleListProvider>
                 </SelectedFriendProvider>
               </FriendListProvider>
@@ -191,7 +196,7 @@ export const Layout = () => {
                   component={ScreenHelloes}
                   options={{
                     headerShown: true,
-                    header: () => <HeaderBaseSolid headerTitle="Helloes" />,
+                    header: () => <HeaderHelloes />,
                   }}
                 />
                 <Stack.Screen

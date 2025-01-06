@@ -25,7 +25,8 @@ import {
   format,
 } from "date-fns";
 
-import useHelloesData from "../hooks/useHelloesData";
+// import useHelloesData from "../hooks/useHelloesData";
+import { useHelloes } from '../context/HelloesContext';
 
 import CalendarLights from "../components/CalendarLights";
 
@@ -35,7 +36,7 @@ const CalendarLightsDataPrepLayer = ({
   latestDataPoint,
 }) => {
   //these are in parent too but they are not rerendering in the child (CalendarLights)
-  const { helloesList, inPersonHelloes, flattenHelloes } = useHelloesData();
+  const { helloesList } = useHelloes();
 
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
 
@@ -78,7 +79,7 @@ const CalendarLightsDataPrepLayer = ({
       const createdDate = new Date(item.dateLong + "T00:00:00"); // Treat as local time
 
       //console.log(item.dateLong);
-      console.log("CREATED DATE", createdDate);
+      //console.log("CREATED DATE", createdDate);
 
       // Ensure the date was parsed successfully
       if (isNaN(createdDate)) {

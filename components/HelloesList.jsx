@@ -20,7 +20,8 @@ const HelloesList = ({
             {helloesData && helloesData.length > 0 && (
             <>
                 
-            <Text style={[styles.headerText, themeStyles.genericText]}>Helloes</Text>
+            {/* <Text style={[styles.headerText, themeStyles.genericText]}>Helloes</Text>
+             */}
             <FlashList
                 data={helloesData}
                 horizontal={horizontal && singleLineScroll}
@@ -37,6 +38,8 @@ const HelloesList = ({
                             />
                              
                         ) : (
+                            <View style={{marginBottom: '2%'}}>
+                                
                             <ButtonHello
                                 hello={hello} 
                                 onPress={() => {onPress(hello)}} 
@@ -44,6 +47,8 @@ const HelloesList = ({
                                 color={themeStyles.genericText.color}
                                 icon={LocationSolidSvg} 
                             />
+                            
+                            </View>
                         )}
                     </>
                 )}
@@ -63,17 +68,17 @@ const HelloesList = ({
 
 const styles = StyleSheet.create({
     container: { 
-        paddingHorizontal: 2,
+        paddingHorizontal: '4%',
         backgroundColor: 'transparent',
         width: '100%',
         minHeight: 2,
         height: '100%',
+    
     },
     headerText: {
-        color: 'black',
+        color: 'transparent',
         fontFamily: 'Poppins-Bold',
-        fontSize: 16,
-        marginTop: 4,
+        fontSize: 16, 
         marginBottom: 6,
     },
     imageRow: {

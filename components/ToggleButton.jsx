@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, Animated, StyleSheet, Easing } from 'react-native';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { useFriendList } from '../context/FriendListContext';
 
 const ToggleButton = ({ value, onToggle }) => {
+
   const [bounceAnim] = useState(new Animated.Value(value ? 20 : 0));
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendList();
  
 
   useEffect(() => {
@@ -32,24 +37,24 @@ const ToggleButton = ({ value, onToggle }) => {
       accessibilityRole="button"
       accessibilityLabel={`Toggle button. ${accessibilityLabel}`}
       accessibilityState={accessibilityState}
-      style={[styles.container, value ? styles.on : styles.off]}
+      style={[styles.container, value ? styles.on : styles.off, {backgroundColor: value ? manualGradientColors.lightColor :  themeStyles.genericText.color}]}
       onPress={() => {
         onToggle();
       }}
     >
-      <Animated.View style={[styles.circle, animatedStyle]} />
+      <Animated.View style={[styles.circle, animatedStyle, {backgroundColor: manualGradientColors.homeDarkColor}]} />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 50,
-    height: 24,
+    width: 44,
+    height: 'auto',
     borderRadius: 15,
     justifyContent: 'center',
-    paddingHorizontal: 5,
-    backgroundColor: '#ccc',
+    paddingHorizontal: '.5%', 
+    paddingVertical: '.5%',
   },
   on: {
     backgroundColor: '#4cd137',
@@ -60,8 +65,7 @@ const styles = StyleSheet.create({
   circle: {
     width: 15,
     height: 15,
-    borderRadius: 10,
-    backgroundColor: 'white',
+    borderRadius: 10, 
   },
 });
 

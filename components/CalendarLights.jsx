@@ -94,7 +94,7 @@ const CalendarLights = ({
   //automatically set to current year on mount
   useLayoutEffect(() => {
     console.log("LATEST", latestDataPoint);
-    setMonthsData(getMonthsInRange(earliestDataPoint, latestDataPoint)); 
+    setMonthsData(getMonthsInRange(earliestDataPoint, latestDataPoint));
 
     //setMonthsData(getYearData(currentYear));
   }, []);
@@ -111,7 +111,7 @@ const CalendarLights = ({
     if (!item) {
       return (
         <View
-        key={key}
+          key={key}
           style={[
             styles.daySquare,
             { backgroundColor: "transparent", opacity: 0 },
@@ -124,7 +124,7 @@ const CalendarLights = ({
     if (!lightUp) {
       return (
         <View
-        key={key}
+          key={key}
           style={[styles.daySquare, { backgroundColor: "transparent" }]}
           // key={`day-${rowStart + index}`}
         ></View>
@@ -133,7 +133,10 @@ const CalendarLights = ({
     if (lightUp) {
       console.log("yes", item);
       return (
-        <Animated.View key={key} style={{ height: 10, width: 10, overflow: "hidden" }}>
+        <Animated.View
+          key={key}
+          style={{ height: 10, width: 10, overflow: "hidden" }}
+        >
           <HelloDayWrapper isVisible={lightUp}>
             <Animated.View
               style={[styles.daySquare, { backgroundColor: "orange" }]}
@@ -181,7 +184,13 @@ const CalendarLights = ({
                 const isHighlighted =
                   day !== null && highlightDays.includes(day);
 
-                return renderDay(day, isHighlighted, rowStart, weekData, `day-${rowStart + index}`);
+                return renderDay(
+                  day,
+                  isHighlighted,
+                  rowStart,
+                  weekData,
+                  `day-${rowStart + index}`
+                );
               })}
             </View>
           );
@@ -238,7 +247,7 @@ const CalendarLights = ({
       });
 
       setCombinedData(combined);
-      console.log(combined);
+      //console.log(combined);
 
       // console.log("Combined Data:", combined);
       // combined.forEach((item, index) => {
@@ -253,7 +262,7 @@ const CalendarLights = ({
       {combinedData && (
         <FlatList
           ref={flatListRef}
-          data={combinedData}  
+          data={combinedData}
           horizontal
           initialNumToRender={30}
           keyExtractor={(item, index) =>
@@ -271,11 +280,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     flexDirection: "row",
     width: "100%",
-    height: "auto",
+    height: "auto", 
   },
   calendarContainer: {
-    height: 100,
+    height: 80,
     width: 80,
+
     backgroundColor: "transparent",
   },
   innerCalendarContainer: {

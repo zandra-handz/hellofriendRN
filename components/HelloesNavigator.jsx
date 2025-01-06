@@ -3,7 +3,8 @@ import { View, StyleSheet } from 'react-native';
 import ImageView from '../components/ImageView';
 import useImageFunctions from '../hooks/useImageFunctions';
 
-import useHelloesData from '../hooks/useHelloesData';
+// import useHelloesData from '../hooks/useHelloesData';
+import { useHelloes } from '../context/HelloesContext';
 
 import { useMessage } from '../context/MessageContext';
 
@@ -17,7 +18,7 @@ const HelloesNavigator = ({ archived = false, hello, onClose }) => {
   const [isModalVisible, setIsModalVisible] = useState(true);
 
   
-  const { helloesList, inPersonHelloes, flattenHelloes } = useHelloesData();
+  const { helloesList  } = useHelloes();
   
  
   const { imageList, updateImage, deleteImage, deleteImageMutation } = useImageFunctions(); 

@@ -10,6 +10,8 @@ import { useGlobalStyle } from "../context/GlobalStyleContext";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 
+import { LinearGradient } from "expo-linear-gradient";
+
 import AlertConfirm from "../components/AlertConfirm";
 
 import HelloViewTitleCard from "../components/HelloViewTitleCard";
@@ -22,6 +24,7 @@ import ViewMultiMomentsArchived from "../components/ViewMultiMomentsArchived";
 import DisplayHelloNotes from "../components/DisplayHelloNotes";
 
 import ButtonReuseMoments from "../components/ButtonReuseMoments";
+
 
 import HeaderBaseItemViewTwoOptions from "../components/HeaderBaseItemViewTwoOptions";
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
@@ -46,6 +49,7 @@ const HelloView = ({
   const { themeStyles } = useGlobalStyle();
   const [categories, setCategories] = useState([]);
   const { selectedFriend } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   const { imageList, updateImage, deleteImage } = useImageFunctions();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -142,16 +146,22 @@ const HelloView = ({
               position: "absolute",
               width: "100%",
               zIndex: 1000,
-              top: "50%",
+              top: "50%", 
               transform: [{ translateY: -50 }],
               alignItems: "center",
             }}
           >
             {navigationArrows}
           </View>
-          <View
-            style={[styles.modalContainer, themeStyles.genericTextBackground]}
-          >
+        <LinearGradient
+          colors={[
+            themeAheadOfLoading.darkColor,
+            themeAheadOfLoading.lightColor,
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={[styles.modalContainer]}
+        >
             <View
               style={[
                 styles.modalContent,
@@ -166,18 +176,22 @@ const HelloView = ({
                 headerTitle={"VIEW HELLO"}
               />
 
-              <View
-                style={[
-                  styles.container,
-                  themeStyles.textGenericBackgroundShadeTwo,
-                ]}
-              >
+            <View
+              style={[
+                styles.innerContainer,
+                themeStyles.genericTextBackground,
+                {
+                  marginHorizontal: '3%',
+                  borderColor: themeAheadOfLoading.lightColor,
+                },
+              ]}
+            >
                 <HelloViewTitleCard
                   helloData={helloData}
                   height={oneSixthHeight}
                 />
                 {helloData && helloData.additionalNotes && (
-                  <View style={{flex: 1, marginTop: '4%'}}>
+                  <View style={{flex: 1, marginTop: '4%' }}>
                   <NotesDisplayCard
                     notesData={helloData.additionalNotes}
                     height={'100%'}
@@ -186,7 +200,7 @@ const HelloView = ({
                 )}
 
                 {helloData && helloData.pastCapsules && helloData.pastCapsules.length > 0 && (
-                  <View style={{flex: 1, marginTop: '4%'}}>
+                  <View style={{flex: 1, marginTop: '4%' }}>
                   <HelloMomentsDisplayCard
                     momentsData={helloData.pastCapsules}
                     momentsCategories={categories}
@@ -206,16 +220,16 @@ const HelloView = ({
                 }}
               >
                 <ButtonBaseSpecialSave
-                  label={`SEND TO ${selectedFriend.name} `}
+                  label={`RELOAD MOMENTS `}
                   maxHeight={80}
                   onPress={handleShare}
-                  isDisabled={false}
+                  isDisabled={true}
                   fontFamily={"Poppins-Bold"}
                   image={require("../assets/shapes/chatmountain.png")}
                 />
               </View>
             </View>
-          </View>
+          </LinearGradient>
         </>
       </Modal>
 
@@ -254,14 +268,35 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
+    borderRadius: 30,
     width: "100%",
+
+    paddingHorizontal: "5%",
+    paddingTop: "6%",
+    paddingBottom: "5%",
+    flexDirection: "column",
+    borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
+  },
+  innerContainer: {
+    height: Dimensions.get("screen").height - 100, //440
+    width: Dimensions.get("screen").width - 10,
+    alignContent: "center",
+    paddingTop: "5%", 
+    width: "101%",
+    alignSelf: "center",
+    borderWidth: 1,
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+    borderRadius: 30,
     flexDirection: "column",
     flex: 1,
-    padding: "5%",
-    paddingHorizontal: "3%",
     justifyContent: "space-between",
-    paddingBottom: "20%",
+    overflow: "hidden",
+    zIndex: 2000,
+    paddingHorizontal: '4%',
+    paddingBottom: '22%',
+     
   },
   categoryContainer: {
     flexDirection: "row",

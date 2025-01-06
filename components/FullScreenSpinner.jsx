@@ -7,8 +7,9 @@ import  useLocationFunctions from '../hooks/useLocationFunctions';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
+import { useHelloes } from '../context/HelloesContext';
 
-import useHelloesData from '../hooks/useHelloesData';
+// import useHelloesData from '../hooks/useHelloesData';
 import useCurrentLocation from '../hooks/useCurrentLocation';
 import useTravelTimes from '../hooks/useTravelTimes';
 
@@ -37,7 +38,7 @@ const FullScreenSpinner = ({
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const{ locationsIsFetching } = useLocationFunctions();
-  const { helloesIsFetching  } = useHelloesData();
+  const { helloesIsFetching  } = useHelloes();
   const { upcomingHelloesIsFetching, upcomingHelloesIsSuccess, newSuccess } = useUpcomingHelloes();
   const { currentLocationIsCalculating } = useCurrentLocation();
 
