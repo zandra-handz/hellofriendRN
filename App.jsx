@@ -45,6 +45,7 @@ import HellofriendHeader from "./components/HellofriendHeader";
 //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
 import HeaderMoment from "./components/HeaderMoment";
 import HeaderHelloes from "./components/HeaderHelloes";
+import HeaderImage from "./components/HeaderImage";
 import HeaderFriendSettings from "./components/HeaderFriendSettings";
 import HeaderBase from "./components/HeaderBase";
 import HeaderBaseSolid from "./components/HeaderBaseSolid";
@@ -188,7 +189,7 @@ export const Layout = () => {
                   component={ScreenImages}
                   options={{
                     headerShown: true,
-                    header: () => <HeaderBase headerTitle="Images" />,
+                    header: () => <HeaderImage headerTitle="Images" />,
                   }}
                 />
                 <Stack.Screen

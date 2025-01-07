@@ -168,8 +168,9 @@ const ScreenHelloes = ({ route, navigation }) => {
               },
             })}
           >
-            <Tab.Screen name="In person" component={HelloesInPersonScreen} />
             <Tab.Screen name="All" component={HelloesScreen} />
+            <Tab.Screen name="In person" component={HelloesInPersonScreen} />
+            
           </Tab.Navigator>
         </View>
       </>

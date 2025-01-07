@@ -13,22 +13,27 @@ import ImagesNavigator from "../components/ImagesNavigator";
 
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image"; 
-
-import ImageCard from '../components/ImageCard';
  
 
 const windowWidth = Dimensions.get("window").width;
 
-const ImagesList = ({ 
+const ImagesListOld = ({
+  horizontal = true,
+  singleLineScroll = true,
   width,
   height,
-  containerWidth = "100%", 
+  containerWidth = "100%",
+  borderRadius = 10,
 }) => {
-  const { imageList } = useImageFunctions(); 
+  const { imageList } = useImageFunctions();
+  const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImageToView, setSelectedImageToView] = useState(null);
- 
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isImageNavVisible, setImageNavVisible] = useState(false);
- 
+
+  const [isEditing, setIsEditing] = useState(false);
+
   const openImageNav = (image) => {
     setSelectedImageToView(image);
     setImageNavVisible(true);
@@ -49,22 +54,30 @@ const ImagesList = ({
     <View style={[styles.container, { width: containerWidth }]}>
       <FlashList
         data={imageList}
-        horizontal={false}
+        horizontal={horizontal && singleLineScroll}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={{marginBottom: '2%'}}>
-
-            <ImageCard 
-              image={item} 
-              imageWidth={width || windowWidth / 3 - 20} 
-              imageHeight={height || windowWidth / 3 - 20}
-              onPress={() => openImageNav(item)}
-              />
-        
-
-          </View>
+          <TouchableOpacity onPress={() => openImageNav(item)}>
+            <Image
+            placeholder={{ blurhash }}
+              style={[
+                styles.image,
+                {
+                  borderRadius: borderRadius,
+                  width: width || windowWidth / 3 - 20,
+                  height: height || windowWidth / 3 - 20,
+                },
+              ]}
+              source={{ uri: item.image }}
+              contentFit="cover"
+              cachePolicy={'memory-disk'}
+            />
+          </TouchableOpacity>
         )}
-        numColumns={1} 
+        numColumns={horizontal && !singleLineScroll ? 3 : 1}
+        columnWrapperStyle={
+          horizontal && !singleLineScroll ? styles.imageRow : null
+        }
         estimatedItemSize={100}
         showsHorizontalScrollIndicator={false}
         scrollIndicatorInsets={{ right: 1 }}
@@ -83,8 +96,9 @@ const styles = StyleSheet.create({
   },
   imageRow: {},
   image: {
-    borderRadius: 10, 
+    borderRadius: 10,
+    marginRight: 10,
   },
 });
 
-export default ImagesList;
+export default ImagesListOld;

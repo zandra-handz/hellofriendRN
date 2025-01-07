@@ -219,6 +219,13 @@ npm install @tanstack/react-query-devtools
 
 npm install date-fns
 
+
+npm install thumbhash  //NOPE FUNCTION I WAS TRYING TO IMPORT WAS UNDEFINED
+
+
+npm install @luckypear/react-native-thumbhash
+
+
  
  
 
