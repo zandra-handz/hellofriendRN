@@ -14,7 +14,6 @@
     "@expo/metro-config": "0.19.4",
     "@expo/prebuild-config": "8.0.17",
     "@expo/vector-icons": "^14.0.3",
-    "@luckypear/react-native-thumbhash": "^1.0.2",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/blur": "^4.4.1",
     "@react-native-community/checkbox": "^0.5.17",
@@ -99,7 +98,6 @@
     "react-native-uuid": "^2.0.3",
     "react-native-webview": "13.12.4",
     "reanimated-color-picker": "^3.0.4",
-    "thumbhash": "^0.1.1",
     "tinycolor2": "^1.6.0"
   },
   "devDependencies": {
