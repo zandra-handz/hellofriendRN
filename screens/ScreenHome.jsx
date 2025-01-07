@@ -1,5 +1,5 @@
 import React, { useCallback,useEffect, useState, useRef } from 'react';
-import { View, Alert, StyleSheet, Text, Keyboard, Dimensions, Animated, Platform, FlatList, TouchableOpacity } from 'react-native';
+import { View, Alert, StyleSheet, Text, Keyboard, Dimensions, Animated,  FlatList, TouchableOpacity } from 'react-native';
 
 import { useCurrentLocationManual, useGeolocationWatcher } from '../hooks/useCurrentLocationAndWatcher';
 
@@ -9,14 +9,18 @@ import { useFriendList } from '../context/FriendListContext'; //to check if any 
 
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
+
+
 import { LinearGradient } from 'expo-linear-gradient'; 
 import HomeScrollSoon from '../components/HomeScrollSoon';
-import HomeButtonGenericAdd from '../components/HomeButtonGenericAdd';
-import HomeButtonMomentAdd from '../components/HomeButtonMomentAdd';
+import HomeButtonGenericAdd from '../components/HomeButtonGenericAdd'; 
 import HomeButtonMomentAddSmall from '../components/HomeButtonMomentAddSmall';
 import HomeButtonUpNext from '../components/HomeButtonUpNext';
 import HomeButtonSelectedFriend from '../components/HomeButtonSelectedFriend';
 import useCurrentLocation from '../hooks/useCurrentLocation';
+
+import useImageUploadFunctions from '../hooks/useImageUploadFunctions'; 
+
 import TextMomentHomeScreenBox from "../components/TextMomentHomeScreenBox";  
  
 import HelloFriendFooter from '../components/HelloFriendFooter'; 
@@ -24,11 +28,13 @@ import HelloFriendFooter from '../components/HelloFriendFooter';
 const ScreenHome = ({ navigation }) => {
    useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();  
-  const { authUserState } = useAuthUser();
+  const { authUserState, userAppSettings } = useAuthUser();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
   const { friendListLength } = useFriendList();
   const { isLoading } = useUpcomingHelloes(); 
-  const [ showMomentScreenButton, setShowMomentScreenButton ] = useState();
+  const [ showMomentScreenButton, setShowMomentScreenButton ] = useState(); 
+  const { requestPermission, imageUri, resizeImage, handleCaptureImage, handleSelectImage} = useImageUploadFunctions();
+  
   
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -111,9 +117,9 @@ const ScreenHome = ({ navigation }) => {
 
  
   const itemActions = [
-    () => navigateToAddImageScreen(),
-    () =>  navigateToAddHelloScreen(),
-    () => navigateToAddLocationScreen(),
+    () => handleCaptureImage(),
+    () =>  handleSelectImage(),
+    () => navigateToAddHelloScreen(),
   ];
   
   const renderOptionButton = (item, index) => {
@@ -154,7 +160,7 @@ const ScreenHome = ({ navigation }) => {
   };
 
   const otherOptions = [ 
-    'Add image', 'Add hello', 'Add meet-up spot'
+    'Add new photo', 'Add upload', 'Add hello' 
   ];
 
   const navigateToAddMomentScreen = () => {
@@ -163,8 +169,22 @@ const ScreenHome = ({ navigation }) => {
   };
 
   const navigateToAddImageScreen = () => {
-    navigation.navigate('AddImage');
+    navigation.navigate('AddImage', {imageUri: imageUri});
+
   };
+
+  useEffect(() => {
+    requestPermission();
+  }, []);
+ 
+
+useEffect(() => {
+  if (imageUri) {
+    navigateToAddImageScreen();
+  }
+
+}, [imageUri]);
+
 
   const navigateToAddHelloScreen = () => {
     navigation.navigate('AddHello');
@@ -203,6 +223,7 @@ const ScreenHome = ({ navigation }) => {
   // }
  
   };
+ 
 
   return ( 
     <LinearGradient
@@ -211,14 +232,13 @@ const ScreenHome = ({ navigation }) => {
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.container]}
     > 
-        {authUserState.authenticated && authUserState.user ? (
+        {authUserState.authenticated && authUserState.user && userAppSettings ? (
           <>   
-          <View style={{height: isKeyboardVisible ? Dimensions.get('window').height / 2.5 : Dimensions.get('window').height / 3 }}>
+          <View style={{height: isKeyboardVisible ? Dimensions.get('window').height / 3 : Dimensions.get('window').height / 3 }}>
                                   <TextMomentHomeScreenBox
                         width={"100%"}
                         height={'100%' }
-                        ref={newMomentTextRef }
-                        autoFocus={true}
+                        ref={newMomentTextRef } 
                         title={"Add a new moment?"}
                        // helperText={    not in use in child component
                          // 'Enter a future note, anecdote, joke, or whatever else you would like to share with your friend here:'

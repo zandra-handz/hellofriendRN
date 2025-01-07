@@ -2,20 +2,18 @@ import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
-import ImageView from "../components/ImageView";
+  Dimensions, 
+} from "react-native"; 
+import { useFriendList } from '../context/FriendListContext';
 import useImageFunctions from "../hooks/useImageFunctions";
 
 import ImagesNavigator from "../components/ImagesNavigator";
 
-import { FlashList } from "@shopify/flash-list";
-import { Image } from "expo-image"; 
-
+import { FlashList } from "@shopify/flash-list"; 
+import { useGlobalStyle } from "../context/GlobalStyleContext";
 import ImageCard from '../components/ImageCard';
- 
+import MomentsSearchBar from "../components/MomentsSearchBar"; 
+
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -26,6 +24,8 @@ const ImagesList = ({
 }) => {
   const { imageList } = useImageFunctions(); 
   const [selectedImageToView, setSelectedImageToView] = useState(null);
+  const { themeAheadOfLoading } = useFriendList();
+  const { themeStyles } = useGlobalStyle();
  
   const [isImageNavVisible, setImageNavVisible] = useState(false);
  
@@ -47,6 +47,39 @@ const ImagesList = ({
 
   return (
     <View style={[styles.container, { width: containerWidth }]}>
+       
+                            <View
+                              style={[styles.searchBarContent, { backgroundColor: "transparent" }]}
+                            >
+                                          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "flex-end",
+              paddingHorizontal: "3%",
+            }}
+          >
+            <MomentsSearchBar
+              data={imageList}
+              height={30}
+              width={"27%"}
+              borderColor={"transparent"}
+              placeholderText={"Search"}
+              textAndIconColor={themeAheadOfLoading.fontColorSecondary}
+              backgroundColor={"transparent"}
+              onPress={openImageNav}
+              searchKeys={["title", "image_category"]}
+            />
+          </View>
+                            
+                            </View>
+                                    <View
+                                      style={[
+                                        styles.backColorContainer,
+                                        themeStyles.genericTextBackground,
+                                        { borderColor: themeAheadOfLoading.lightColor },
+                                      ]}
+                                    >
       <FlashList
         data={imageList}
         horizontal={false}
@@ -64,15 +97,18 @@ const ImagesList = ({
 
           </View>
         )}
-        numColumns={1} 
+        numColumns={1}
         estimatedItemSize={100}
         showsHorizontalScrollIndicator={false}
         scrollIndicatorInsets={{ right: 1 }}
+        ListFooterComponent={() => (
+                                <View style={{ height: 100, width: '100%'}} />)}
       />
 
       {isImageNavVisible && selectedImageToView && (
         <ImagesNavigator onClose={closeImageNav} image={selectedImageToView} />
       )}
+    </View>
     </View>
   );
 };
@@ -84,6 +120,32 @@ const styles = StyleSheet.create({
   imageRow: {},
   image: {
     borderRadius: 10, 
+  },
+  searchBarContent: {
+    width: "100%",
+    paddingHorizontal: "1%",
+    paddingBottom: "2%",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 3000,
+  },
+backColorContainer: {
+    height: "96%",
+    alignContent: "center",
+    paddingHorizontal: "4%",
+    paddingTop: "6%",
+    //flex: 1,
+    width: "101%",
+    bottom: -10,
+    alignSelf: "center",
+    borderWidth: 1,
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+    borderRadius: 30,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    zIndex: 2000,
   },
 });
 

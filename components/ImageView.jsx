@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { View, Image, StyleSheet, Text, Dimensions, Modal } from "react-native";
+import { View,   StyleSheet, Text, Dimensions, Modal } from "react-native";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
-
+import { Image } from "expo-image";
 import useImageFunctions from "../hooks/useImageFunctions";
 
 import { useGlobalStyle } from "../context/GlobalStyleContext";
+import { useFriendList } from "../context/FriendListContext";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 
 import AlertConfirm from "../components/AlertConfirm";
 
 import HeaderBaseItemView from "../components/HeaderBaseItemView";
+import HeaderImageWithSlider from "../components/HeaderImageWithSlider";
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 
 const { height: screenHeight } = Dimensions.get("window");
@@ -24,6 +26,7 @@ const ImageView = ({
 }) => {
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   const { imageList, updateImage, deleteImage } = useImageFunctions();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -36,6 +39,10 @@ const ImageView = ({
   const [isFailModalVisible, setFailModalVisible] = useState(false);
 
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const blurhash =
+  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -109,15 +116,6 @@ const ImageView = ({
     }
   };
 
-  const successOk = () => {
-    setSuccessModalVisible(false);
-    closeModal();
-  };
-
-  const failOk = () => {
-    setFailModalVisible(false);
-  };
-
   return (
     <>
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
@@ -134,9 +132,7 @@ const ImageView = ({
           >
             {navigationArrows}
           </View>
-          <View
-            style={[styles.modalContainer, themeStyles.genericTextBackground]}
-          >
+          <View style={[styles.modalContainer]}>
             <View
               style={[
                 styles.modalContent,
@@ -144,7 +140,7 @@ const ImageView = ({
                 { maxHeight: screenHeight * 1, paddingBottom: 0 },
               ]}
             >
-              <HeaderBaseItemView
+              <HeaderImageWithSlider
                 onBackPress={toggleModal}
                 itemData={imageData}
                 onSliderPull={onSliderPull}
@@ -153,40 +149,40 @@ const ImageView = ({
 
               <View
                 style={[
-                  styles.imageContainer,
-                  themeStyles.textGenericBackgroundShadeTwo,
+                  styles.innerContainer,
+                  themeStyles.genericTextBackground,
+                  {
+                    paddingHorizontal: 0,
+                    borderColor: themeAheadOfLoading.lightColor,
+                  },
                 ]}
               >
-                <View style={styles.categoryContainer}>
+                <View style={styles.container}>
                   <Text style={[styles.imageText, themeStyles.genericText]}>
                     {imageData.title}
                   </Text>
+                  <View style={styles.imageContainer}>
+                    <Image
+                    placeholder={{ blurhash }}
+                      source={{ uri: imageData.image }}
+                      style={styles.modalImage}
+                      contentFit="cover" //switch to cover to see full image
+                      cachePolicy={"memory-disk"}
+                    />
+                  </View>
+                  
                 </View>
 
-                <Image
-                  source={{ uri: imageData.image }}
-                  style={styles.modalImage}
-                />
-              </View>
-
-              <View
-                style={{
-                  position: "absolute",
-                  height: 80,
-                  bottom: -6,
-                  left: -4,
-                  width: "103%",
-                }}
-              >
                 <ButtonBaseSpecialSave
                   label={`SEND TO ${selectedFriend.name} `}
                   maxHeight={80}
                   onPress={handleShare}
                   isDisabled={false}
                   fontFamily={"Poppins-Bold"}
-                  image={require("../assets/shapes/chatmountain.png")}
+                  image={require("../assets/shapes/redheadcoffee.png")}
                 />
               </View>
+              
             </View>
           </View>
         </>
@@ -226,13 +222,40 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     flex: 1,
   },
+  container: {
+    borderRadius: 30,
+    width: "100%",
+    flex: 1,
+    height: "100%", 
+    paddingHorizontal: "5%",
+    paddingTop: "6%",
+    paddingBottom: "5%",
+    flexDirection: "column",
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: "hidden",
+  },
+  innerContainer: {
+    height: Dimensions.get("screen").height - 164,
+    width: Dimensions.get("screen").width - 10,
+    alignContent: "center",
+    paddingHorizontal: "4%",
+    //paddingTop: "4%",
+    width: "101%",
+    alignSelf: "center",
+    borderWidth: 1,
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+    borderRadius: 30,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    overflow: "hidden",
+    zIndex: 2000,
+  },
   imageContainer: {
     width: "100%",
+    height: "90%",
     overflow: "hidden",
     flexDirection: "column",
-    flex: 1,
-    padding: "5%",
-    paddingHorizontal: "3%",
   },
   categoryContainer: {
     flexDirection: "row",
@@ -253,7 +276,7 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "contain",
     marginBottom: 0,
-    borderRadius: 10,
+    borderRadius: 30,
   },
   buttonContainer: {
     flexDirection: "column",

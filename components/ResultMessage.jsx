@@ -15,15 +15,14 @@ import { useMessage } from '../context/MessageContext';
 
 const ResultMessage = ({   
   delay = 0,  
-  resultsDisplayDuration = 1000, // Duration to show results message (default 3 seconds)
+  resultsDisplayDuration = 1600, // Duration to show results message (default 3 seconds)
   messageDelay = 0, // Delay before the message appears (2 seconds)
 }) => { 
   const [showResultsMessage, setShowResultsMessage] = useState(false); // State for showing results message
   const { messageData, hideMessage } = useMessage();
   const { themeStyles } = useGlobalStyle();
- 
- 
-  const opacity = useRef(new Animated.Value(0)).current;
+  
+  const translateY = useRef(new Animated.Value(-100)).current; // Start off-screen, above the view
 
   useEffect(() => {
     let timeout;
@@ -32,16 +31,20 @@ const ResultMessage = ({
     timeout = setTimeout(() => { 
       if (messageData.result) { 
         setShowResultsMessage(true); 
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }).start();
+        
+        setTimeout(() => {
+          Animated.timing(translateY, {
+            toValue: 0, // Move to original position (on screen)
+            duration: 120, // Duration for the slide-in
+            useNativeDriver: true,
+          }).start();
+        }, 200);
 
         resultsTimeout = setTimeout(() => {  
-          Animated.timing(opacity, {
-            toValue: 0,
-            duration: 700,
+          // Slide the message back up after the display duration
+          Animated.timing(translateY, {
+            toValue: -120, // Slide it back off-screen
+            duration: 120, // Duration for the slide-out
             useNativeDriver: true,
           }).start(() => endAnimation()); // Hide the message after animation
         }, resultsDisplayDuration);
@@ -52,14 +55,14 @@ const ResultMessage = ({
       clearTimeout(timeout);
       clearTimeout(resultsTimeout);
     };
-  }, [messageDelay, delay, messageData, resultsDisplayDuration, opacity]);
+  }, [messageDelay, delay, messageData, resultsDisplayDuration, translateY]);
 
   const endAnimation = () => {
     setShowResultsMessage(false);
     hideMessage();
   };
 
-  if (!showResultsMessage) return null; 
+  if (!showResultsMessage) return null;
 
   return (
     <View style={styles.container}> 
@@ -67,8 +70,8 @@ const ResultMessage = ({
         <Animated.View
           style={[ 
             styles.textContainer, themeStyles.genericTextBackgroundShadeTwo,
-            {
-              opacity: opacity,   // Animate opacity of the container
+            {  
+              transform: [{ translateY: translateY }], // Apply translateY animation for sliding
             },
           ]}
         >
@@ -80,7 +83,6 @@ const ResultMessage = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
@@ -92,13 +94,13 @@ const styles = StyleSheet.create({
     width: '100%', // Adjust width as needed
     padding: 10,
     height: 'auto',
-    minHeight: '10%',
+    minHeight: 80,
     maxHeight: '50%',
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
     borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
+    borderTopLeftRadius: 20, 
   },
   textContainer: { 
     justifyContent: 'center',
@@ -108,6 +110,8 @@ const styles = StyleSheet.create({
     height: '100%',
     alignContent: 'center',
     borderRadius: 20,
+    paddingVertical: '3%',
+    paddingHorizontal: '4%', 
     zIndex: 10000,
     elevation: 10000,
   }, 

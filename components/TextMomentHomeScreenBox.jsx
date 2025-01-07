@@ -16,17 +16,17 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { useGlobalStyle } from "../context/GlobalStyleContext";
-import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
+import { useGlobalStyle } from "../context/GlobalStyleContext"; 
 import FriendSelectModalVersionButtonOnly from "../components/FriendSelectModalVersionButtonOnly";
-import HomeButtonMomentAdd from "../components/HomeButtonMomentAdd";
+ 
 import LeafSingleOutlineThickerSvg from "../assets/svgs/leaf-single-outline-thicker.svg";
 import { useAuthUser } from "../context/AuthUserContext";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
-import { useFriendList } from "../context/FriendListContext";
-import LeavesTwoFallingOutlineThickerSvg from "../assets/svgs/leaves-two-falling-outline-thicker.svg";
-import LeavesSingleStemOutlineSvg from "../assets/svgs/leaves-single-stem-outline.svg";
+import { useFriendList } from "../context/FriendListContext"; 
 import { useFocusEffect } from "@react-navigation/native";
+
+import StyledPlaceholder from '../components/StyledPlaceholder';
+
 
 // Forwarding ref to the parent to expose the TextInput value
 const TextMomentHomeScreenBox = forwardRef(
@@ -35,22 +35,23 @@ const TextMomentHomeScreenBox = forwardRef(
     {
       title = "title",
       mountingText = "Start typing",
-      onTextChange,
-      autoFocus = true,
+      onTextChange, 
       width = "90%",
       height = "60%",
-      multiline = true,
-      iconColor = "red",
+      multiline = true, 
     },
     ref
   ) => {
     const { themeStyles } = useGlobalStyle();
-    const { authUserState } = useAuthUser();
+    const { authUserState, userAppSettings } = useAuthUser();
     const { themeAheadOfLoading, friendListLength } = useFriendList();
     const { selectedFriend } = useSelectedFriend();
     const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
+     const [ autoFocusSelected, setAutoFocusSelected ] = useState(true);
+
     const textInputRef = useRef();
+
 
     useEffect(() => {
       const keyboardDidShowListener = Keyboard.addListener(
@@ -68,23 +69,49 @@ const TextMomentHomeScreenBox = forwardRef(
       };
     }, []);
 
-    useEffect(() => {
-      if (authUserState && authUserState.user) {
-        console.log(authUserState);
-      }
-    }, []);
+    // useEffect(() => {
+    //   if (authUserState && authUserState.user) {
+    //     console.log(authUserState);
+    //   }
+    // }, []);
 
+ 
+//This is what turns moment text input autofocus on/off depending on user's settings
     useFocusEffect(
       useCallback(() => {
         const timeout = setTimeout(() => {
-          if (textInputRef.current) {
+          if (textInputRef.current && userAppSettings.simplify_app_for_focus === true) {
             console.log("Focusing TextInput");
             textInputRef.current.focus();
+          } else {
+            console.log("Not focusing TextInput");
+
           }
         }, 50); // Small delay for rendering
         return () => clearTimeout(timeout); // Cleanup timeout
-      }, [])
+      }, [userAppSettings])
     );
+
+//  (CHATGIPITY EXPLANATION ON WHY I NEEDED TO PASS IN USERAPPSETTINGS IN THE DEPEND ARRAY ABOVE:
+// 
+// If you leave the dependency array empty:
+
+// The useCallback function is only created once, on the initial render.
+// It captures the initial value of userAppSettings and does not respond to changes in that variable.
+// Subsequent updates to userAppSettings won’t trigger the useFocusEffect callback because the dependencies for the useCallback don’t change.
+// Why Including userAppSettings Solves the Problem
+// By including userAppSettings in the dependency array, you tell React:
+
+// Recreate the useCallback whenever userAppSettings changes.
+// This ensures that the useFocusEffect re-executes with the latest value of userAppSettings.)
+
+      useEffect(() => {
+        if (userAppSettings) {
+          console.log('userappsettings focus: ', userAppSettings.simplify_app_for_focus);
+          setAutoFocusSelected(userAppSettings.simplify_app_for_focus);
+        }
+    
+      }, [userAppSettings]);
 
     useEffect(() => {
       if (textInputRef.current) {
@@ -144,7 +171,7 @@ const TextMomentHomeScreenBox = forwardRef(
                   flexDirection: "row",
                   height: "100%",
                   alignItems: "center",
-                  marginBottom: "1%",
+                  //marginBottom: "1%",
                 }}
               >
                 <Text
@@ -165,6 +192,7 @@ const TextMomentHomeScreenBox = forwardRef(
                 width: "100%",
                 height: "auto",
                 alignItems: "center",
+                marginTop: '1%',
               }}
             >
               <View
@@ -172,6 +200,7 @@ const TextMomentHomeScreenBox = forwardRef(
                   flexDirection: "row",
                   height: "100%",
                   alignItems: "center",
+                  
                 }}
               >
                 <Text style={[styles.title, themeStyles.genericText]}>
@@ -195,7 +224,9 @@ const TextMomentHomeScreenBox = forwardRef(
             </View>
             <>
               <View style={{ flex: 1, marginTop: "1%" }}>
-                {friendListLength && (
+                {friendListLength && !editedMessage && (
+                  <View style={{position: 'absolute', top: 0, left: 46, right: 0}}>
+
                   <Text style={[styles.helperText, themeStyles.genericText]}>
                     Enter a note, anecdote, joke, or whatever else you
                     would like to share with{" "}
@@ -218,13 +249,14 @@ const TextMomentHomeScreenBox = forwardRef(
                     ) : (
                       <Text>your friend</Text>
                     )}{" "}
-                    here:
+                    here
                   </Text>
+                  </View>
                 )}
                 {friendListLength > 0 && (
                   
-                <View style={{ flexDirection: "row", marginTop: "2%" }}>
-                  <View style={{ flexShrink: 1, width: "auto" }}>
+                <View style={{ flexDirection: "row", marginTop: "0%" }}>
+                  <View style={{ flexShrink: 1, marginRight: '2%', justifyContent: 'flex-start', width: "auto" }}>
                     <LeafSingleOutlineThickerSvg
                       height={36}
                       width={36}
@@ -236,7 +268,7 @@ const TextMomentHomeScreenBox = forwardRef(
                   {friendListLength && (
                     <TextInput
                       ref={textInputRef}
-                      autoFocus={autoFocus}
+                      autoFocus={autoFocusSelected}
                       style={[
                         styles.textInput,
                         themeStyles.genericText,
@@ -261,16 +293,12 @@ const TextMomentHomeScreenBox = forwardRef(
 );
 
 const styles = StyleSheet.create({
-  outerContainer: {
-    flex: 1,
-    padding: "4%",
-  },
+ 
   container: {
     borderRadius: 30,
     alignSelf: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    paddingTop: 20,
+    paddingHorizontal: '4%',
+    paddingVertical: '3%',
   },
   selectFriendContainer: {
     width: 40,
@@ -280,13 +308,13 @@ const styles = StyleSheet.create({
     height: 30,
   },
   welcomeHeaderText: {
-    fontSize: 17,
-    lineHeight: 24,
+    fontSize: 16,
+    lineHeight: 22,
     fontFamily: "Poppins-Regular",
     //textTransform: "uppercase",
   },
   title: {
-    fontSize: 22,
+    fontSize: 21,
     lineHeight: 32,
 
     fontFamily: "Poppins-Regular",
@@ -302,7 +330,7 @@ const styles = StyleSheet.create({
   textInput: {
     textAlignVertical: "top",
     borderRadius: 20,
-    paddingVertical: 10,
+    paddingVertical: 0,
     flex: 1,
     fontSize: 15,
     fontFamily: "Poppins-Regular",

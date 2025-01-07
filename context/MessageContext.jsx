@@ -47,12 +47,12 @@ useEffect(() => {
   }
 }, [upcomingHelloesIsSuccess]);
 
- 
-useEffect(() => {
-  if (signinMutation.isSuccess && authUserState?.authenticated && authUserState?.user) {
-      showMessage(true, null, `Signed in as ${authUserState.user.username}!`);
-  } 
-}, [signinMutation]);
+ //unnecessary... especially since I added the user name to the top of the home screen
+// useEffect(() => {
+//   if (signinMutation.isSuccess && authUserState?.authenticated && authUserState?.user) {
+//       showMessage(true, null, `Signed in as ${authUserState.user.username}!`);
+//   } 
+// }, [signinMutation]);
 
 useEffect(() => {
   if (signinMutation.isError) {

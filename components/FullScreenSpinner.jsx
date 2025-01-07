@@ -4,6 +4,7 @@ import { Flow, Swing, Chase, Circle, CircleFade, Fold, Grid, Pulse, Wander, Wave
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 import  useLocationFunctions from '../hooks/useLocationFunctions';
+import useImageFunctions from '../hooks/useImageFunctions';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
@@ -28,7 +29,7 @@ const spinners = {
 
 const FullScreenSpinner = ({   
   spinnerSize = 90, 
-  spinnerType = 'grid'}) => {
+  spinnerType = 'flow'}) => {
  
   const { signinMutation } = useAuthUser(); 
   const { createMomentMutation } = useCapsuleList();
@@ -41,6 +42,7 @@ const FullScreenSpinner = ({
   const { helloesIsFetching  } = useHelloes();
   const { upcomingHelloesIsFetching, upcomingHelloesIsSuccess, newSuccess } = useUpcomingHelloes();
   const { currentLocationIsCalculating } = useCurrentLocation();
+  const { createImageMutation } = useImageFunctions();
 
   useEffect(() => {
     console.log('FULL SCREEN SPINNER RERENDERED');
@@ -62,6 +64,16 @@ const FullScreenSpinner = ({
       setShowSpinner(false);
     }
   }, [createMomentMutation]);
+
+
+  useEffect(() => {
+    if (createImageMutation.isFetching) {
+      console.log('image is saving');
+      setShowSpinner(createImageMutation.isFetching);
+    } else {
+      setShowSpinner(false);
+    }
+  }, [createImageMutation]);
  
 
  useEffect(() => { 
@@ -150,8 +162,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay
-        zIndex: 2000, // High zIndex to stay on top
-        elevation: 2000, // Ensures Android rendering priority
+        zIndex: 5000, // High zIndex to stay on top
+        elevation: 5000, // Ensures Android rendering priority
       },
   textContainer: {
     position: 'absolute',

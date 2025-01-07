@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     right: 10,
     bottom: 20,
-    zIndex: 1,
+    zIndex: 2000,
   },
   controlButton: {
     flexDirection: 'row',

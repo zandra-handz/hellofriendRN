@@ -3,6 +3,7 @@ import { TouchableOpacity, StyleSheet, View, Animated } from 'react-native';
 import useImageFunctions from '../hooks/useImageFunctions';
 import FlashAnim from '../animations/FlashAnim';
 import PhotosTwoSvg from '../assets/svgs/photos-two.svg';
+import ImageGalleryOutlineSvg from '../assets/svgs/image-gallery-outline.svg';
 
 const ButtonIconImages = ({
     iconSize = 36,
@@ -58,7 +59,7 @@ const ButtonIconImages = ({
             
             <Animated.View style={[styles.animatedContainer, bobbingStyle]}>
               
-                <PhotosTwoSvg height={iconSize} width={iconSize} color={iconColor} />
+                <ImageGalleryOutlineSvg height={iconSize} width={iconSize} color={iconColor} />
                 <View style={{ top: '-17%', right: '27%' }}>
                     <FlashAnim circleColor={circleColor} circleTextSize={countTextSize} countColor={countColor}>
                         {imageList.length}

@@ -1,18 +1,15 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, StyleSheet, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useCallback, useRef, useState, useEffect, Platform, useLayoutEffect } from 'react';
+import { View, StyleSheet, Image, Keyboard } from 'react-native';
 
 
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
-
-import * as FileSystem from 'expo-file-system';
-import * as ImagePicker from 'expo-image-picker';
-import PickerBinary from '../components/PickerBinary';
+  
 import InputSingleValue from '../components/InputSingleValue';
+import KeyboardSaveButton from './KeyboardSaveButton';
 import FriendSelectModalVersionButtonOnly from '../components/FriendSelectModalVersionButtonOnly';
+import { useFocusEffect } from "@react-navigation/native";
  
-import CameraCuteSvg from '../assets/svgs/camera-cute.svg';
-import UploadCurlySvg from '../assets/svgs/upload-curly.svg';  
-
+ 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -21,18 +18,23 @@ import { useFriendList } from '../context/FriendListContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
-import * as ImageManipulator from 'expo-image-manipulator';
 
 
-const ContentAddImage = () => {
+
+import useImageUploadFunctions from '../hooks/useImageUploadFunctions'; 
+
+
+const ContentAddImage = ({imageUri}) => {
+
+  const { resizeImage} = useImageUploadFunctions();
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser(); 
   const { selectedFriend } = useSelectedFriend();
   const [canContinue, setCanContinue] = useState('');
-  const { themeAheadOfLoading } = useFriendList();
-  const [imageUri, setImageUri] = useState(null);
+  const { themeAheadOfLoading } = useFriendList(); 
   const [imageTitle, setImageTitle] = useState('');
   const [imageCategory, setImageCategory] = useState('Misc');
+   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
  
   const navigation = useNavigation(); 
   
@@ -41,30 +43,43 @@ const ContentAddImage = () => {
 
   const { createImage, createImageMutation } = useImageFunctions();
 
+      useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+          "keyboardDidShow",
+          () => setIsKeyboardVisible(true)
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+          "keyboardDidHide",
+          () => setIsKeyboardVisible(false)
+        );
+  
+        return () => {
+          keyboardDidShowListener.remove();
+          keyboardDidHideListener.remove();
+        };
+      }, []);
+
+  
+// useEffect(() => {
+//   if (imageTitleRef.current) {
+//     console.log("Focusing TextInput");
+//     imageTitleRef.current.focus();
+//   }
+
+// }, []);
+
+    useFocusEffect(
+      useCallback(() => {
+        const timeout = setTimeout(() => {
+          if (imageTitleRef.current) {
+            console.log("Focusing TextInput");
+            imageTitleRef.current.focus();
+          }
+        }, 50); // Small delay for rendering
+        return () => clearTimeout(timeout); // Cleanup timeout
+      }, [ ])
+    );
  
-
-  const requestPermission = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to make this work!');
-    }
-  };
-
-  useEffect(() => {
-    requestPermission();
-  }, []);
-
-  const handleCaptureImage = async () => {
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setImageUri(result.assets[0].uri);
-    }
-  };
 
   const handleImageTitleChange = (value) => {
     setImageTitle(value);
@@ -75,40 +90,8 @@ const ContentAddImage = () => {
     setImageCategory(value);
     setCanContinue(value.length > 0);
   };
-
-  const handleSelectImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setImageUri(result.assets[0].uri);
-    }
-  };
-
  
-const resizeImage = async (imageUri) => {
-  // Get the original dimensions of the image
-  const imageInfo = await FileSystem.getInfoAsync(imageUri);
-  const { width: originalWidth, height: originalHeight } = await ImageManipulator.manipulateAsync(
-    imageUri,
-    []
-  ).then(result => result);
-
-  const targetWidth = 800; // Desired width
-  const aspectRatio = originalHeight / originalWidth; // Calculate aspect ratio
-  const targetHeight = Math.round(targetWidth * aspectRatio); // Adjust height based on aspect ratio
-
-  const manipResult = await ImageManipulator.manipulateAsync(
-    imageUri,
-    [{ resize: { width: targetWidth, height: targetHeight } }], // Apply proportional resize
-    { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG } // Set quality and format
-  );
-
-  return manipResult;
-};
+ 
 
 useEffect(() => {
   if (createImageMutation.isSuccess) {
@@ -117,15 +100,33 @@ useEffect(() => {
 
 }, [createImageMutation.isSuccess]);
 
+
+const handleTitleEnterPress = () => {
+  if (imageCategoryRef.current) {
+    imageCategoryRef.current.focus();
+  }
+};
+
+//Can take out if causes accidental premature saving
+const handleCategoryEnterPress = () => {
+  if (selectedFriend && canContinue && imageUri) {
+    handleSave();
+  }  
+};
+
+
 const handleSave = async () => {  
+  console.log(imageUri);
+
+
 
   if (imageUri && imageTitle.trim() && selectedFriend && authUserState.user) {
     try { 
       
-      const manipResult = await resizeImage(imageUri); // Use resizeImage function here
+      const manipResult = await resizeImage(imageUri); 
 
       const formData = new FormData();
-      const fileType = manipResult.uri.split('.').pop(); // Extract file type from URI
+      const fileType = manipResult.uri.split('.').pop();  
 
       formData.append('image', {
         uri: manipResult.uri,
@@ -139,7 +140,8 @@ const handleSave = async () => {
       formData.append('user', authUserState.user.id);
       formData.append('thought_capsules', '');
 
-      await createImage(formData);
+//removed the await here, the function is not async
+      createImage(formData);
  
  
 
@@ -150,29 +152,19 @@ const handleSave = async () => {
  
 };
   
-
-  const handleModalClose = () => { 
-    try {
-      setImageUri(null);
-      setImageTitle('');
-      setImageCategory('Misc'); 
-    } catch (e) {
-      console.log('Error closing image modal: ', e);
-    }
-    
-  };
+ 
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Adjust if needed
-    >
+    // <KeyboardAvoidingView
+    //   style={styles.container}
+    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    //   keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Adjust if needed
+    // >
       <LinearGradient
           colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}  
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}  
-          style={{flex: 1}} 
+          style={[styles.container, {flex: 1}]} 
         >  
         <>
 
@@ -187,20 +179,20 @@ const handleSave = async () => {
             
       {imageUri && (
         <>
-          <View style={styles.previewContainer}>
-            <View style={[styles.previewImageContainer, themeStyles.genericTextBackgroundShadeTwo]}>
+          <View style={[styles.previewContainer, themeStyles.genericTextBackgroundShadeTwo ]}>
+            <View style={[styles.previewImageContainer]}>
               <Image
                 source={{ uri: imageUri }}
                 style={styles.previewImage}
-                resizeMode="cover"
+                resizeMode="cover" //change to contain to fit whole image 
               />
             </View>
-          </View>
-  
-          <View style={styles.inputContainer}>
+            <View style={styles.inputContainer}>
             <View style={{paddingBottom: 6}}> 
             <InputSingleValue
-              valueRef={imageTitleRef}
+              ref={imageTitleRef} 
+              autoFocus={true}
+              onSubmitEditing={handleTitleEnterPress}
               handleValueChange={handleImageTitleChange}
               label=''
               placeholder='Title'
@@ -208,58 +200,60 @@ const handleSave = async () => {
             </View>
             <View> 
             <InputSingleValue
-              valueRef={imageCategoryRef}
+              ref={imageCategoryRef}
+              onSubmitEditing={handleCategoryEnterPress}
               handleValueChange={handleImageCategoryChange}
+              
               label=''
               placeholder='Category'
             />
             </View>
           </View>
-        </>
-      )}
+          </View>
   
-      {!imageUri && (
-        <View style={styles.pickerContainer}>
-          <PickerBinary
-            onPressRight={handleSelectImage}
-            onPressLeft={handleCaptureImage}
-            LeftSvg={CameraCuteSvg}
-            RightSvg={UploadCurlySvg}
-            leftLabel='Camera'
-            rightLabel='Upload'
-            leftLabelPosition='above'
-            rightLabelPosition='above'
-            containerText=""
-          />
-        </View>
-      )}
+
+        </>
+      )} 
       </View>
   
 
       
       </View>
       </> 
-          <View style={styles.buttonContainer}>
-        {selectedFriend && canContinue && imageUri ? (  
+       {!isKeyboardVisible && (
           <ButtonBaseSpecialSave
             label='SAVE IMAGE  '
             maxHeight={80}
             onPress={handleSave} 
-            isDisabled={false}
+            isDisabled={selectedFriend && canContinue && imageUri ? false : true}
             image={require("../assets/shapes/redheadcoffee.png")}
             
-          />
-        ) : (
-          <ButtonBaseSpecialSave
-            onPress={() => {}}
-            label='ADD IMAGE  '
-            isDisabled={true}  
-            
-          />
-        )}
-      </View>
+          /> 
+      )}
+
+{isKeyboardVisible && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        width: "100%",
+                        flex: 1,
+                      }}
+                    >
+                      <KeyboardSaveButton
+                        label="SAVE IMAGE "
+                        onPress={handleSave}
+                        isDisabled={selectedFriend && canContinue && imageUri ? false : true}
+                        image={false}
+                      />
+                    </View>
+                  )}
+
+
     </LinearGradient>
-    </KeyboardAvoidingView>
+    // </KeyboardAvoidingView>
   );
   
 
@@ -311,27 +305,30 @@ const styles = StyleSheet.create({
     left: -2,
   }, 
   previewContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    paddingVertical: 4,
+    height: 200,
+    flexDirection: 'row', 
+    width: '100%',  
+    padding: '4%',
+    borderRadius: 30,
+    
   },
 
   previewImageContainer: { 
     borderRadius: 10,
     flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginRight: '2%', 
+    width: '40%',  
+    overflow: 'hidden', 
   },
 
   previewImage: {
-    width: '100%', 
-    minHeight: 170,
-    height: 'auto',
+    width: '100%',  
+    height: '100%',
     resizeMode: 'contain',
-    borderRadius: 10,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+    backgroundColor: 'blue',
+    padding: '2%',
   },
   inputContainer: { 
     width: '100%', 

@@ -88,7 +88,7 @@ const ButtonFriendProfileCircle = () => {
         <View style={styles.loadingWrapper}>
         <LoadingPage
         loading={loadingNewFriend} 
-        spinnnerType='wander'
+        spinnerType='flow'
         spinnerSize={30}
         includeLabel={false} 
         />

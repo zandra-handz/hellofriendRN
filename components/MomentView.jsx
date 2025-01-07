@@ -9,8 +9,7 @@ import {
 } from "react-native"; 
 
 import { useGlobalStyle } from "../context/GlobalStyleContext";
-import { useFriendList } from "../context/FriendListContext";
-import HeaderBaseItemView from "../components/HeaderBaseItemView";
+import { useFriendList } from "../context/FriendListContext"; 
 import HeaderMomentWithSlider from "../components/HeaderMomentWithSlider";
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import { LinearGradient } from "expo-linear-gradient";
