@@ -137,8 +137,13 @@ export const GlobalStyleProvider = ({ children }) => {
 
     const themeStyles = styles.theme === 'dark' ? darkThemeStyles : lightThemeStyles;
 
+    const themeStyleSpinners = {
+        homeScreen : 'flow'
+
+    };
+
     return (
-        <GlobalStyleContext.Provider value={{ ...styles, themeStyles, nonCustomHeaderPage, setNonCustomHeaderPage }}>
+        <GlobalStyleContext.Provider value={{ ...styles, themeStyles, themeStyleSpinners, nonCustomHeaderPage, setNonCustomHeaderPage }}>
             {children}
         </GlobalStyleContext.Provider>
     );

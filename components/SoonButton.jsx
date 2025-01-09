@@ -7,9 +7,7 @@ const SoonButton = ({
     height=50,
     dateAsString='Tuesday, January 10',
     numDate='10',
-    friendName='N/A',
-    month='NOV',
-    color='#000002',
+    friendName='N/A', 
     onPress,
     disabled=false,
 }) => {

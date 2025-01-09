@@ -13,6 +13,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import { LinearGradient } from 'expo-linear-gradient'; 
 import HomeScrollSoon from '../components/HomeScrollSoon';
+import HomeScrollCalendarLights from '../components/HomeScrollCalendarLights';
 import HomeButtonGenericAdd from '../components/HomeButtonGenericAdd'; 
 import HomeButtonMomentAddSmall from '../components/HomeButtonMomentAddSmall';
 import HomeButtonUpNext from '../components/HomeButtonUpNext';
@@ -120,6 +121,7 @@ const ScreenHome = ({ navigation }) => {
     () => handleCaptureImage(),
     () =>  handleSelectImage(),
     () => navigateToAddHelloScreen(),
+    () => navigateToAddLocationScreen(),
   ];
   
   const renderOptionButton = (item, index) => {
@@ -160,7 +162,7 @@ const ScreenHome = ({ navigation }) => {
   };
 
   const otherOptions = [ 
-    'Add new photo', 'Add upload', 'Add hello' 
+    'Add new photo', 'Add upload', 'Add hello', 'Pick meet-up location' 
   ];
 
   const navigateToAddMomentScreen = () => {
@@ -290,9 +292,11 @@ useEffect(() => {
                
                 {/* <HomeButtonGenericAdd label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
                  */}
-                {(selectedFriend || friendLoaded) && showLastButton && (
+
+                {/* {(selectedFriend || friendLoaded) && showLastButton && (
                   <HomeButtonGenericAdd label={'ADD MEETUP SPOT'}   onPress={navigateToAddLocationScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
-                )}
+                )} */}
+
                 {(!selectedFriend && !friendLoaded) && showLastButton && ( 
                   <HomeButtonGenericAdd label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
                 )} 
@@ -305,7 +309,9 @@ useEffect(() => {
                   <HomeButtonSelectedFriend  onPress={navigateToAddMomentScreen} borderRadius={40} borderColor="black" height={headerHeight} maxHeight={200}/>
                 )}
                 <HomeScrollSoon height={upcomingDatesTray} borderRadius={40} borderColor="black"/> 
-                
+                {selectedFriend && (
+                <HomeScrollCalendarLights height={upcomingDatesTray} borderRadius={40} borderColor="black"/> 
+                )}
                 <HelloFriendFooter /> 
               </Animated.View> 
           </>

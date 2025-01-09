@@ -18,6 +18,8 @@ export const HelloesProvider = ({ children }) => {
     
     const timeoutRef = useRef(null);
 
+    const [helloesListMonthYear, setHelloesListMonthYear ] = useState([]);
+
     
     
 
@@ -29,6 +31,7 @@ export const HelloesProvider = ({ children }) => {
 },
         enabled: !!selectedFriend,
         onSuccess: (data) => { 
+          // groupByMonthAndYear(data);
           // const inPerson = data[0].filter(hello => hello.type === 'in person');
           // queryClient.setQueryData(['inPersonHelloes', selectedFriend?.id], inPerson);
           console.log('cached in person helloes: ', data);
@@ -160,6 +163,86 @@ export const HelloesProvider = ({ children }) => {
           console.error("Error saving hello:", error);
         }
       };
+
+
+ 
+
+
+      
+
+
+  //     const groupByMonthAndYear = (data) => {
+  //       console.log('running groupByMonthAndYear in helloes context');
+  //       if (!Array.isArray(data)) {
+  //         console.error("Invalid data passed to groupByMonthAndYear:", data);
+  //         return [];
+  //       }
+  //       //console.log('group by', data);
+    
+  //       // Step 1: Group data by month and year
+  //       const groupedData = data.reduce((acc, item) => {
+  //         const createdDate = new Date(item.dateLong + "T00:00:00"); // Treat as local time
+    
+  //         //console.log(item.dateLong);
+  //         //console.log("CREATED DATE", createdDate);
+    
+  //         // Ensure the date was parsed successfully
+  //         if (isNaN(createdDate)) {
+  //           console.error("Invalid date:", item.dateLong);
+  //           return acc; // Skip invalid dates
+  //         }
+    
+  //         // Format the month/year string as 'month/year'
+  //         const monthYear = `${createdDate.getMonth() + 1}/${createdDate.getFullYear()}`;
+    
+  //         // If this monthYear doesn't exist, create an empty structure
+  //         if (!acc[monthYear]) {
+  //           acc[monthYear] = {
+  //             data: [],
+  //             days: [], // To store unique day numbers
+  //           };
+  //         }
+    
+  //         // Add item to the grouped data
+  //         acc[monthYear].data.push(item);
+    
+  //         // Extract the day of the month using getDate() for local time (no UTC adjustments)
+  //         const dayOfMonth = createdDate.getDate(); // Use getDate() for local day
+  //         if (!acc[monthYear].days.includes(dayOfMonth)) {
+  //           acc[monthYear].days.push(dayOfMonth);
+  //         }
+  //         //console.log(`Final days for ${monthYear}:`, acc[monthYear].days);
+          
+  //         return acc;
+  //       }, {});
+        
+  //   const allDates = data.map((item) => new Date(item.dateLong + "T00:00:00"));
+  //   const minDate = new Date(Math.min(...allDates));
+  //   const maxDate = new Date(Math.max(...allDates));
+
+  //   const monthsList = [];
+  //   const start = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+  //   const end = new Date(maxDate.getFullYear(), maxDate.getMonth(), 1);
+
+  //   while (start <= end) {
+  //     const monthYear = `${start.getMonth() + 1}/${start.getFullYear()}`;
+  //     monthsList.push(monthYear);
+  //     start.setMonth(start.getMonth() + 1);
+  //   }
+
+  //   const sortedMonths = monthsList.map((monthYear, index) => {
+  //     return {
+  //       monthYear,
+  //       index,
+  //       data: groupedData[monthYear]?.data || [],
+  //       days: groupedData[monthYear]?.days || [],
+  //     };
+  //   });
+
+  //   setHelloesListMonthYear(sortedMonths);
+
+  //   return sortedMonths;
+  // };
  
  
 
@@ -178,6 +261,7 @@ export const HelloesProvider = ({ children }) => {
             createHelloMutation,
             handleCreateHello,
             getCachedInPersonHelloes,
+            // helloesListMonthYear,
             
         }}>
             {children}

@@ -32,13 +32,12 @@ const HomeButtonSelectedFriend = ({
   imageSize = 0,
   image = require("../assets/shapes/fairymagic.png"),
   imagePositionHorizontal = 0,
-  imagePositionVertical = 70,
-  darkColor = "#4caf50",
-  lightColor = "rgb(160, 241, 67)",
+  imagePositionVertical = 70, 
 }) => {
   const navigation = useNavigation();
   const globalStyles = useGlobalStyle();
-  const { gradientColorsHome } = useGlobalStyle();
+  const { themeStyleSpinners, manualGradientColors } = useGlobalStyle();
+  const { darkColor, lightColor, homeDarkColor, homeLightColor } = manualGradientColors;
   const { themeAheadOfLoading } = useFriendList();
   //friendLoaded = dashboard data retrieved successfully
   const {
@@ -99,8 +98,8 @@ const HomeButtonSelectedFriend = ({
   return (
     <View style={{ borderRadius: borderRadius }}>
       <EclipseAnim
-        color={gradientColorsHome ? gradientColorsHome.lightColor : 'lightgreen'}
-        innerColor={gradientColorsHome ? gradientColorsHome.darkColor : 'darkgreen'}
+        color={homeLightColor ? homeLightColor : 'lightgreen'}
+        innerColor={homeDarkColor ? homeDarkColor : 'darkgreen'}
         delay={10}
         speed={100}
       >
@@ -127,7 +126,7 @@ const HomeButtonSelectedFriend = ({
           {isLoading && !friendLoaded && (
             <>
               <View style={styles.loadingWrapper}>
-                <LoadingPage loading={isPending} spinnerType="flow" />
+                <LoadingPage loading={isPending} spinnerType={themeStyleSpinners.homeScreen} />
               </View>
             </>
           )}

@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
  
 const FriendItemButton = ({
     width=50,
-    height=50,   
+    height='100%',   
     buttonTitle='N/A',
+    
 
     onPress,
     disabled=false,
@@ -17,13 +18,10 @@ const FriendItemButton = ({
             disabled={disabled} >
             <View style={styles.blurOverlay} />
 
-            <View style={{flexDirection: 'row', height: '100%', width: '100%',   justifyContent: 'flex-start'}}>
-                
-            <View style={{flexDirection: 'column', width: '100%', flex: 1}}>
-
+            <View style={{ height: '100%', width: '100%', textAlign: 'center',  justifyContent: 'center'}}>
+           
                 <Text style={styles.text}>{buttonTitle}</Text>
-
-            </View>
+ 
             <View style={[styles.calendarContainer]}>
             <View style={{paddingRight: '8%'}}>
  
@@ -42,7 +40,7 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         padding: '4%',  
         borderColor: 'black',
-        borderRadius: 14,
+        borderRadius: 30,
         backgroundColor: 'rgba(255, 255, 255, 0.3)', 
         overflow: 'hidden',
     },
@@ -52,8 +50,8 @@ const styles = StyleSheet.create({
         opacity: 0.2,  
     },
     text: {
-        fontSize: 16,
-        fontWeight: 'bold',
+        fontSize: 15,
+        fontFamily: 'Poppins-Regular',
         paddingHorizontal: '4%', 
         
 

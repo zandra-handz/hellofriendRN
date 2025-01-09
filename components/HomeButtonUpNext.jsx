@@ -1,6 +1,5 @@
-import React, { useEffect, useRef} from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import LottieView from 'lottie-react-native';
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native'; 
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -16,48 +15,20 @@ const HomeButtonUpNext = ({
         height='100%',
         maxHeight=100,
         borderRadius=20,
-        borderColor='transparent',
-        darkColor = '#4caf50',
-        lightColor = 'rgb(160, 241, 67)',  
-        anim=require("../assets/anims/arrows.json"), 
+        borderColor='transparent',  
 
     }) => { 
 
     const { upcomingHelloes, isLoading } = useUpcomingHelloes();
     const { friendList, friendListLength, getThemeAheadOfLoading } = useFriendList();
-    const lottieViewRef = useRef(null);
-    const globalStyles = useGlobalStyle();
-    const { themeStyles } = useGlobalStyle();
-    const { setFriend, loadingNewFriend } = useSelectedFriend();
-    const hideAnimation = true;
+    const { themeStyles, themeStyleSpinners, manualGradientColors } = useGlobalStyle();
+    const { darkColor, lightColor } = manualGradientColors;
+    const { setFriend, loadingNewFriend } = useSelectedFriend(); 
+
+ 
 
 
-      useEffect(() => {
-    if (lottieViewRef.current && anim && !hideAnimation) {
-      try {
-        lottieViewRef.current.play();
-      } catch (error) {
-        console.error('Error playing animation:', error);
-      }
-    }
-  }, [anim]);
-
-
-    const adjustFontSize = (fontSize) => {
-        return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
-      };
-    
-      const textStyles = (fontSize, color) => ({
-        fontSize: adjustFontSize(fontSize),
-        color,
-        ...(globalStyles.highContrast && {
-          textShadowColor: 'rgba(0, 0, 0, 0.75)',
-          textShadowOffset: { width: 2, height: 2 },
-          textShadowRadius: 1,
-        }),
-      });
-
-     
+ 
 
       const onPress = () => {
         const { id, name } = upcomingHelloes[0].friend; 
@@ -86,7 +57,7 @@ return(
                 loading={loadingNewFriend || isLoading} 
                 spinnerSize={70}
                 color='#000002'
-                spinnerType='grid'
+                spinnerType={themeStyleSpinners?.homeScreen}
             />
             </View>
         )}

@@ -4,9 +4,12 @@ import {
   TextInput,
   StyleSheet,
   Text,
+  Dimensions,
   Keyboard,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView, 
+  Platform,
 } from "react-native";
 import { useAuthUser } from "../context/AuthUserContext";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
@@ -17,6 +20,10 @@ import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import Logo from "../components/Logo";
 import { LinearGradient } from "expo-linear-gradient";
+
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import PhoneStatusBar from "../components/PhoneStatusBar";
 
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
 
@@ -34,8 +41,14 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const [isSignInScreen, setSignInScreen] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const { onSignin, signinMutation, signupMutation, onSignUp, handleSignUp, reInitialize } =
-    useAuthUser();
+  const {
+    onSignin,
+    signinMutation,
+    signupMutation,
+    onSignUp,
+    handleSignUp,
+    reInitialize,
+  } = useAuthUser();
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const verifyPasswordInputRef = useRef(null);
@@ -79,9 +92,9 @@ const Signin = () => {
     setPassword("");
     setVerifyPassword("");
     setSignInScreen(false);
-    setSignUpSuccess(false); 
+    setSignUpSuccess(false);
     setUsernameInputVisible(true);
-  
+
     // Delay the focus function by 500ms (for example)
     setTimeout(() => {
       handleCreateAccountInitialFocus();
@@ -155,7 +168,7 @@ const Signin = () => {
         showMessage(true, null, "Oops! Passwords do not match");
         return;
       }
-      console.log('passwords match, sending data...');
+      console.log("passwords match, sending data...");
       result = await onSignUp(username, email, password);
       if (result && result.status === 201) {
         alert("Sign up was successful!");
@@ -173,34 +186,24 @@ const Signin = () => {
     setUsernameInputVisible(false);
     if (passwordInputRef.current) {
       passwordInputRef.current.focus();
-
     }
 
     console.log("password input current");
- 
   };
 
-
-  
   const handleFirstPasswordSubmit = () => {
     setUsernameInputVisible(false);
     if (verifyPasswordInputRef.current) {
       verifyPasswordInputRef.current.focus();
-
     }
 
     console.log("password input current");
- 
   };
-
 
   const handleCreateAccountInitialFocus = () => {
     if (emailInputRef.current) {
       emailInputRef.current.focus();
-
     }
-
-
   };
 
   const handleEmailSubmit = () => {
@@ -214,209 +217,283 @@ const Signin = () => {
   }
 
   return (
-    <LinearGradient
-      colors={[manualGradientColors.darkColor, manualGradientColors.lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={[styles.container]}
-    >
-      <TouchableWithoutFeedback onPress={dismissKeyboard}>
-        <>
-          {confirmedUserNotSignedIn && (
-            <>
-              <View style={{ width: "100%" }}>
-                <Logo
-                  accessible={true} //field not in component
-                  accessibilityLabel="App Logo" //field not in component
-                  accessibilityHint="This is the logo of the app" //field not in component
-                />
-              </View>
-              <View
-                style={{
-                  position: 'absolute',
-                  right: 30,
-                  top: 240,
-                  zIndex: 1000,
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  width: "100%", 
-                }}
-              >
-                <Text
-                  style={styles.toggleButton}
-                  onPress={isSignInScreen ? toggleMode : handleBackToSignIn}
-                  accessible={true}
-                  accessibilityLabel="Toggle button"
-                  accessibilityHint="Press to toggle between sign in and create account"
-                >
-                  {isSignInScreen ? "Create account" : "Back to sign in"}
-                </Text>
-              </View>
-
-
-              {showSignIn && (
-                <View
-                  style={styles.form}
-                  accessible={true}
-                  accessibilityLabel="Form container"
-                >
-                             
-                  {!isSignInScreen && usernameInputVisible && (
-                                        <View style={{ flexDirection: "column", width: "100%" }}>
-                                        <Text style={styles.inputTitleTextAndPadding}>
-                                          Email
-                                        </Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        isEmailFocused && styles.inputFocused,
-                      ]}
-                      placeholder="Email"
-                      placeholderTextColor={"gray"}
-                      onChangeText={(text) => setEmail(text)}
-                      value={email}
-                      onSubmitEditing={handleEmailSubmit}
-                      ref={emailInputRef}
-                      onFocus={() => setIsEmailFocused(true)}
-                      onBlur={() => setIsEmailFocused(false)}
+    <>
+      <PhoneStatusBar />
+      <LinearGradient
+        colors={[
+          manualGradientColors.darkColor,
+          manualGradientColors.lightColor,
+        ]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.container]}
+      >
+        <SafeAreaView
+          style={{
+            width: "100%", 
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          {/* <TouchableWithoutFeedback onPress={dismissKeyboard}> */}
+          <>
+            {confirmedUserNotSignedIn && (
+              <>
+                <View style={{ width: "100%", paddingTop: "12%" }}>
+                  <Logo
+                    accessible={true} //field not in component
+                    accessibilityLabel="App Logo" //field not in component
+                    accessibilityHint="This is the logo of the app" //field not in component
+                  />
+                  <View
+                    style={{
+                      marginTop: "14%",
+                      paddingHorizontal: "4%",
+                      zIndex: 1000,
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
+                  >
+                    <Text
+                      style={styles.toggleButton}
+                      onPress={isSignInScreen ? toggleMode : handleBackToSignIn}
                       accessible={true}
-                      accessibilityLabel="Email input"
-                      accessibilityHint="Enter your email address"
-                      importantForAccessibility="yes"
-                    />
-                    </View>
-                  )}
-                  {usernameInputVisible && (
-                    <View style={{ flexDirection: "column", width: "100%" }}>
-                      <Text style={styles.inputTitleTextAndPadding}>
-                        Username
-                      </Text>
-
-                      <TextInput
-                        style={[
-                          styles.input,
-                          isUsernameFocused && styles.inputFocused,
-                        ]}
-                        placeholder="Username"
-                        autoFocus={true}
-                        placeholderTextColor={"gray"}
-                        onChangeText={(text) => setUsername(text)}
-                        value={username}
-                        onSubmitEditing={handleUsernameSubmit}
-                        ref={usernameInputRef}
-                        onFocus={() => setIsUsernameFocused(true)}
-                        onBlur={() => setIsUsernameFocused(false)}
-                        accessible={true}
-                        accessibilityLabel="Username input"
-                        accessibilityHint="Enter your username"
-                        importantForAccessibility="yes"
-                      />
-                    </View>
-                  )}
-
-                  {username && !usernameInputVisible && (
-                    <View style={{ flexDirection: "column", width: "100%" }}>
-                      <Text style={styles.inputTitleTextAndPadding}>
-                        Password
-                      </Text>
-                      <TextInput
-                        style={[
-                          styles.input,
-                          isPasswordFocused && styles.inputFocused,
-                        ]}
-                        placeholder="Password"
-                        autoFocus={true}
-                        placeholderTextColor={"gray"}
-                        secureTextEntry={true}
-                        onChangeText={(text) => setPassword(text)}
-                        onSubmitEditing={isSignInScreen ? handleAuthentication : handleFirstPasswordSubmit}
-                        value={password}
-                        ref={passwordInputRef}
-                        onFocus={() => setIsPasswordFocused(true)}
-                        onBlur={() => setIsPasswordFocused(false)}
-                        accessible={true}
-                        accessibilityLabel="Password input"
-                        accessibilityHint="Enter your password"
-                        importantForAccessibility="yes"
-                      />
-                    </View>
-                  )}
-                  {!isSignInScreen && username && !usernameInputVisible && (
-                                        <View style={{ flexDirection: "column", width: "100%" }}>
-                                        <Text style={styles.inputTitleTextAndPadding}>
-                                          Verify Password
-                                        </Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        isPasswordFocused && styles.inputFocused,
-                      ]}
-                      ref={verifyPasswordInputRef}
-                      placeholder="Verify Password"
-                      placeholderTextColor={"gray"}
-                      secureTextEntry={true}
-                      onChangeText={(text) => setVerifyPassword(text)}
-                      value={verifyPassword}
-                      onFocus={() => setIsPasswordFocused(true)}
-                      onBlur={() => setIsPasswordFocused(false)}
-                      accessible={true}
-                      accessibilityLabel="Verify Password input"
-                      accessibilityHint="Re-enter your password for verification"
-                      importantForAccessibility="yes"
-                    />
-                    </View>
-                  )}
-                  {!loading && username && password && (
-                    <>
-                      <View
-                        style={{
-                          position: "absolute",
-                          bottom: 0, 
-                          right: 0,
-                          width: "40%",
-                          flex: 1, 
-                          zIndex: 1000,
-                        }}
-                      >
-                        <ButtonColorHighlight
-                          onPress={handleAuthentication}
-                          title={isSignInScreen ? "Sign in" : "Create account"}
-                          shapeSource={require("../assets/shapes/coffeecupdarkheart.png")}
-                          shapeWidth={190}
-                          shapeHeight={190}
-                          shapePosition="left"
-                          shapePositionValue={-48}
-                          shapePositionVerticalValue={-23}
-                          fontColor={themeStyles.genericText.color}
+                      accessibilityLabel="Toggle button"
+                      accessibilityHint="Press to toggle between sign in and create account"
+                    >
+                      {isSignInScreen ? "Create account" : "Back to sign in"}
+                    </Text>
+                  </View>
+                </View>
+                <KeyboardAvoidingView
+  behavior={Platform.OS === "ios" ? "padding" : undefined}
+  style={{ flex: 1  }} >
+ 
+                {showSignIn && (
+                  <View
+                    style={styles.form}
+                    accessible={true}
+                    accessibilityLabel="Form container"
+                  >
+                    {!isSignInScreen && usernameInputVisible && (
+                      <View style={{ flexDirection: "column", width: "100%" }}>
+                        <Text style={styles.inputTitleTextAndPadding}>
+                          Email
+                        </Text>
+                        <TextInput
+                          style={[
+                            styles.input,
+                            isEmailFocused && styles.inputFocused,
+                          ]}
+                          placeholder="Email"
+                          placeholderTextColor={"gray"}
+                          onChangeText={(text) => setEmail(text)}
+                          value={email}
+                          onSubmitEditing={handleEmailSubmit}
+                          ref={emailInputRef}
+                          onFocus={() => setIsEmailFocused(true)}
+                          onBlur={() => setIsEmailFocused(false)}
                           accessible={true}
-                          accessibilityLabel={
-                            isSignInScreen
-                              ? "Sign in button"
-                              : "Create account button"
-                          }
-                          accessibilityHint="Press to sign in or create an account"
+                          accessibilityLabel="Email input"
+                          accessibilityHint="Enter your email address"
+                          importantForAccessibility="yes"
                         />
                       </View>
-
-                      {signUpSuccess && (
-                        <Text
-                          style={styles.successMessage}
-                          accessible={true}
-                          accessibilityLabel="Sign up success message"
-                          accessibilityHint="Message indicating sign up was successful"
-                        >
-                          Sign up successful! Please log in.
+                    )}
+                                        {isSignInScreen && (
+                      <View style={{ flexDirection: "column", width: "100%", height: '29%' }}>
+                         {/* MANUAL SPACER BECAUSE USERNAME AND PASSWORD FLY UP WITHOUT EMAIL INPUT TO PUSH IT DOWN UGH */}
+                      </View>
+                    )}
+                    {usernameInputVisible && (
+                      <View style={{ flexDirection: "column", width: "100%" }}>
+                        <Text style={styles.inputTitleTextAndPadding}>
+                          Username
                         </Text>
-                      )}
-                    </>
-                  )}
-                </View>
-              )}
-            </>
-          )}
-        </>
-      </TouchableWithoutFeedback>
-    </LinearGradient>
+
+                        <TextInput
+                          style={[
+                            styles.input,
+                            isUsernameFocused && styles.inputFocused,
+                          ]}
+                          placeholder="Username"
+                          autoFocus={true}
+                          placeholderTextColor={"gray"}
+                          onChangeText={(text) => setUsername(text)}
+                          value={username}
+                          onSubmitEditing={handleUsernameSubmit}
+                          ref={usernameInputRef}
+                          onFocus={() => setIsUsernameFocused(true)}
+                          onBlur={() => setIsUsernameFocused(false)}
+                          accessible={true}
+                          accessibilityLabel="Username input"
+                          accessibilityHint="Enter your username"
+                          importantForAccessibility="yes"
+                        />
+                      </View>
+                    )}
+
+                    {username && !usernameInputVisible && (
+                      <View style={{ flexDirection: "column", width: "100%" }}>
+                        <Text style={styles.inputTitleTextAndPadding}>
+                          Password
+                        </Text>
+                        <TextInput
+                          style={[
+                            styles.input,
+                            isPasswordFocused && styles.inputFocused,
+                          ]}
+                          placeholder="Password"
+                          autoFocus={true}
+                          placeholderTextColor={"gray"}
+                          secureTextEntry={true}
+                          onChangeText={(text) => setPassword(text)}
+                          onSubmitEditing={
+                            isSignInScreen
+                              ? handleAuthentication
+                              : handleFirstPasswordSubmit
+                          }
+                          value={password}
+                          ref={passwordInputRef}
+                          onFocus={() => setIsPasswordFocused(true)}
+                          onBlur={() => setIsPasswordFocused(false)}
+                          accessible={true}
+                          accessibilityLabel="Password input"
+                          accessibilityHint="Enter your password"
+                          importantForAccessibility="yes"
+                        />
+                                            {!loading && username && password && (
+                      <>
+                        <View
+                          style={{
+                            position: "absolute",
+                            bottom: 0,
+                            right: 0,
+                            width: "40%",
+                            flex: 1,
+                            zIndex: 1000,
+                          }}
+                        >
+                          <ButtonColorHighlight
+                            onPress={handleAuthentication}
+                            title={
+                              isSignInScreen ? "Sign in" : "Create account"
+                            }
+                            shapeSource={require("../assets/shapes/coffeecupdarkheart.png")}
+                            shapeWidth={190}
+                            shapeHeight={190}
+                            shapePosition="left"
+                            shapePositionValue={-48}
+                            shapePositionVerticalValue={-23}
+                            fontColor={themeStyles.genericText.color}
+                            accessible={true}
+                            accessibilityLabel={
+                              isSignInScreen
+                                ? "Sign in button"
+                                : "Create account button"
+                            }
+                            accessibilityHint="Press to sign in or create an account"
+                          />
+                        </View>
+
+                        {signUpSuccess && (
+                          <Text
+                            style={styles.successMessage}
+                            accessible={true}
+                            accessibilityLabel="Sign up success message"
+                            accessibilityHint="Message indicating sign up was successful"
+                          >
+                            Sign up successful! Please log in.
+                          </Text>
+                        )}
+                      </>
+                    )}
+                      </View>
+                    )}
+                    {!isSignInScreen && username && !usernameInputVisible && (
+                      <View style={{ flexDirection: "column", width: "100%" }}>
+                        <Text style={styles.inputTitleTextAndPadding}>
+                          Verify Password
+                        </Text>
+                        <TextInput
+                          style={[
+                            styles.input,
+                            isPasswordFocused && styles.inputFocused,
+                          ]}
+                          ref={verifyPasswordInputRef}
+                          placeholder="Verify Password"
+                          placeholderTextColor={"gray"}
+                          secureTextEntry={true}
+                          onChangeText={(text) => setVerifyPassword(text)}
+                          value={verifyPassword}
+                          onFocus={() => setIsPasswordFocused(true)}
+                          onBlur={() => setIsPasswordFocused(false)}
+                          accessible={true}
+                          accessibilityLabel="Verify Password input"
+                          accessibilityHint="Re-enter your password for verification"
+                          importantForAccessibility="yes"
+                        />
+                                            {!loading && username && password && (
+                      <>
+                        <View
+                          style={{
+                            position: "absolute",
+                            bottom: 0,
+                            right: 0,
+                            width: "40%",
+                            flex: 1,
+                            zIndex: 1000,
+                          }}
+                        >
+                          <ButtonColorHighlight
+                            onPress={handleAuthentication}
+                            title={
+                              isSignInScreen ? "Sign in" : "Create account"
+                            }
+                            shapeSource={require("../assets/shapes/coffeecupdarkheart.png")}
+                            shapeWidth={190}
+                            shapeHeight={190}
+                            shapePosition="left"
+                            shapePositionValue={-48}
+                            shapePositionVerticalValue={-23}
+                            fontColor={themeStyles.genericText.color}
+                            accessible={true}
+                            accessibilityLabel={
+                              isSignInScreen
+                                ? "Sign in button"
+                                : "Create account button"
+                            }
+                            accessibilityHint="Press to sign in or create an account"
+                          />
+                        </View>
+
+                        {signUpSuccess && (
+                          <Text
+                            style={styles.successMessage}
+                            accessible={true}
+                            accessibilityLabel="Sign up success message"
+                            accessibilityHint="Message indicating sign up was successful"
+                          >
+                            Sign up successful! Please log in.
+                          </Text>
+                        )}
+                      </>
+                    )}
+                      </View>
+                    )}
+
+                  </View>
+                )}
+                </KeyboardAvoidingView>
+              </>
+            )}
+          </>
+          {/* </TouchableWithoutFeedback> */}
+        </SafeAreaView>
+      </LinearGradient>
+    </>
   );
 };
 
@@ -425,7 +502,10 @@ const styles = StyleSheet.create({
     gap: 10,
     width: "100%",
     fontFamily: "Poppins-Regular",
-   
+    // bottom: "54%",
+    // position: "absolute",
+    // width: "100%",
+    // right: 0,
   },
   input: {
     //backgroundColor:'#121212',
@@ -436,7 +516,7 @@ const styles = StyleSheet.create({
     //borderWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: 1,
     padding: 10,
-    paddingTop: 14, 
+    paddingTop: 14,
     //borderRadius: 10,
     alignContent: "center",
     justifyContent: "center",
@@ -449,14 +529,16 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    flexDirection: "column",
+    ...StyleSheet.absoluteFillObject,
+
+    position: "absolute",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height + 100,
     justifyContent: "space-between",
-    paddingTop: 90,
-    backgroundColor: "blue",
+
     alignItems: "center",
     width: "100%",
-    paddingBottom: '4%',
-    paddingHorizontal: '2%',
+    paddingHorizontal: "3%",
   },
   title: {
     fontSize: 62,

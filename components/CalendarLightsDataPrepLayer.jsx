@@ -15,25 +15,20 @@ import {
   Dimensions,
   StyleSheet,
 } from "react-native";
-import { useGlobalStyle } from "../context/GlobalStyleContext";
 
 import { useSelectedFriend } from "../context/SelectedFriendContext";
-import {
-  eachMonthOfInterval,
-  startOfMonth,
-  getDaysInMonth,
-  format,
-} from "date-fns";
+import { format } from "date-fns";
 
 // import useHelloesData from "../hooks/useHelloesData";
-import { useHelloes } from '../context/HelloesContext';
+import { useHelloes } from "../context/HelloesContext";
 
 import CalendarLights from "../components/CalendarLights";
 
 const CalendarLightsDataPrepLayer = ({
-  helloesData,
-  earliestDataPoint,
-  latestDataPoint,
+  daySquareBorderRadius = 0,
+  daySquareBorderColor = "black",
+  opacityMinusAnimation = 1,
+  animationColor = "orange",
 }) => {
   //these are in parent too but they are not rerendering in the child (CalendarLights)
   const { helloesList } = useHelloes();
@@ -47,24 +42,17 @@ const CalendarLightsDataPrepLayer = ({
 
   // }, [helloesList]);
 
-  const formatBackendDateToMonthYear = (backendDate) => {
-    const date = new Date(backendDate);
-    return format(date, "M/yyyy");
-  };
- 
   //for some dumb reason i don't record the dates of the helloes thenmselves like a normal person
   //on my backend so here is my modified function to format it
   const lightFormatBackendDateToMonthYear = (backendDate) => {
     //console.log('LATEST DATE IN CALCULATOR:', backendDate);
     const date = new Date(backendDate);
     const month = date.getUTCMonth() + 1; // Get UTC month
-    const year = date.getUTCFullYear();  // Get UTC year
+    const year = date.getUTCFullYear(); // Get UTC year
     //console.log('LATEST DATE IN CALCULATOR:', year, month);
     return `${month}/${year}`;
   };
-  
-  
-  
+
   // const lightFormatBackendDateToMonthYear = (backendDate) => {
   //   const date = new Date(backendDate);
   //   const month = date.getMonth() + 1; // Months are zero-indexed, so add 1
@@ -111,7 +99,6 @@ const CalendarLightsDataPrepLayer = ({
       return acc;
     }, {});
 
-    // Step 2: Generate a full list of months dynamically based on data range
     const allDates = data.map((item) => new Date(item.dateLong + "T00:00:00"));
     const minDate = new Date(Math.min(...allDates));
     const maxDate = new Date(Math.max(...allDates));
@@ -123,20 +110,17 @@ const CalendarLightsDataPrepLayer = ({
     while (start <= end) {
       const monthYear = `${start.getMonth() + 1}/${start.getFullYear()}`;
       monthsList.push(monthYear);
-      start.setMonth(start.getMonth() + 1); // Move to the next month
+      start.setMonth(start.getMonth() + 1);
     }
 
-    // Step 3: Assign indices starting from 0 for the most recent month
     const sortedMonths = monthsList.map((monthYear, index) => {
       return {
         monthYear,
-        index, // Assign index directly (December gets 0, January gets 11)
-        data: groupedData[monthYear]?.data || [], // Add empty array if no data exists for this month
-        days: groupedData[monthYear]?.days || [], // Add empty array if no days exist for this month
+        index,
+        data: groupedData[monthYear]?.data || [],
+        days: groupedData[monthYear]?.days || [],
       };
     });
-
-    //console.log('Sorted Months with Correct Indices:', sortedMonths);
 
     return sortedMonths;
   };
@@ -145,7 +129,10 @@ const CalendarLightsDataPrepLayer = ({
     <>
       {helloesList && friendDashboardData && (
         <CalendarLights
-          helloesData={helloesList}
+          daySquareBorderRadius={daySquareBorderRadius}
+          daySquareBorderColor={daySquareBorderColor}
+          opacityMinusAnimation={opacityMinusAnimation}
+          animationColor={animationColor}
           helloesDataSorted={groupByMonthAndYear(helloesList)}
           earliestDataPoint={lightFormatBackendDateToMonthYear(
             helloesList[helloesList.length - 1].dateLong
@@ -153,7 +140,6 @@ const CalendarLightsDataPrepLayer = ({
           latestDataPoint={lightFormatBackendDateToMonthYear(
             helloesList[0].dateLong
           )}
-          lightUpList
         />
       )}
     </>

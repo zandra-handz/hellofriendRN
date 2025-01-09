@@ -240,8 +240,10 @@ const TextMomentHomeScreenBox = forwardRef(
                                 //     justifyContent: 'center',
                                 //     //marginLeft: 4,  // Adjust spacing between circle and ProfileCircleSvg if needed
                                 // }}>
-                                  
-                      <Text style={{ fontWeight: "bold", color: themeAheadOfLoading.darkColor }}>
+
+
+                      // color: themeAheadOfLoading.darkColor
+                      <Text style={{ fontWeight: "bold" }}>
                         {selectedFriend.name}
                       </Text>
                       

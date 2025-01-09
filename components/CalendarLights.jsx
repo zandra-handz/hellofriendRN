@@ -3,9 +3,7 @@ import {
   View,
   Animated,
   FlatList,
-  Text,
-  TouchableOpacity,
-  Dimensions,
+  Text, 
   StyleSheet,
 } from "react-native";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
@@ -18,19 +16,19 @@ import {
 } from "date-fns";
 
 const CalendarLights = ({
-  helloesData,
+  
   helloesDataSorted,
   earliestDataPoint,
   latestDataPoint,
-  lightUpList,
-}) => {
-  const { themeStyles } = useGlobalStyle();
-  const { width, height } = Dimensions.get("window");
+  daySquareBorderRadius=0,
+  daySquareBorderColor='black', 
+  opacityMinusAnimation=1,
+  animationColor='orange',
+}) => { 
   const [monthsData, setMonthsData] = useState([]);
   const [combinedData, setCombinedData] = useState([]);
 
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
+  const currentDate = new Date(); 
 
   const flatListRef = useRef(null); //to scroll to most recent month, can't find a different way to do it
 
@@ -50,22 +48,7 @@ const CalendarLights = ({
     Friday: 5,
     Saturday: 6,
   };
-
-  const getYearData = (year) => {
-    const months = eachMonthOfInterval({
-      start: new Date(year, 0, 1),
-      end: new Date(year, 11, 31),
-    }).map((date) => {
-      return {
-        month: format(date, "MMMM"),
-        daysInMonth: getDaysInMonth(date),
-        startsOn: format(startOfMonth(date), "EEEE"), // Day of the week
-      };
-    });
-
-    return months;
-  };
-
+ 
   const getMonthsInRange = (startMonth, endMonth) => {
     const [startMonthNum, startYear] = startMonth.split("/").map(Number);
     const [endMonthNum, endYear] = endMonth.split("/").map(Number);
@@ -114,7 +97,7 @@ const CalendarLights = ({
           key={key}
           style={[
             styles.daySquare,
-            { backgroundColor: "transparent", opacity: 0 },
+            {opacity: opacityMinusAnimation, borderRadius: daySquareBorderRadius, borderColor: daySquareBorderColor, backgroundColor: "transparent", opacity: 0 },
           ]}
           // key={`day-${rowStart }`}
         ></View>
@@ -125,7 +108,7 @@ const CalendarLights = ({
       return (
         <View
           key={key}
-          style={[styles.daySquare, { backgroundColor: "transparent" }]}
+          style={[styles.daySquare, { opacity: opacityMinusAnimation, borderRadius: daySquareBorderRadius, borderColor: daySquareBorderColor, backgroundColor: "transparent" }]}
           // key={`day-${rowStart + index}`}
         ></View>
       );
@@ -139,7 +122,7 @@ const CalendarLights = ({
         >
           <HelloDayWrapper isVisible={lightUp}>
             <Animated.View
-              style={[styles.daySquare, { backgroundColor: "orange" }]}
+              style={[styles.daySquare, { borderRadius: daySquareBorderRadius, backgroundColor: animationColor}]}
               // key={`day-${rowStart + index}`}
             ></Animated.View>
           </HelloDayWrapper>
@@ -211,7 +194,7 @@ const CalendarLights = ({
 
     return (
       <View style={styles.calendarContainer}>
-        <Text>{item.monthData.month}</Text>
+        <Text style={{fontFamily: 'Poppins-Regular', fontSize: 12, opacity: opacityMinusAnimation, color: daySquareBorderColor}}>{item.monthData.month.slice(0,3)} {item.monthData.year.slice(0,4)}</Text>
         <View style={styles.innerCalendarContainer}>
           {renderWeeks(
             item.monthData.daysInMonth,
@@ -259,7 +242,7 @@ const CalendarLights = ({
 
   return (
     <View style={[styles.container]}>
-      {combinedData && (
+      {monthsData && combinedData && (
         <FlatList
           ref={flatListRef}
           data={combinedData}
@@ -303,7 +286,8 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Center content inside the square
     alignItems: "center", // Center content inside the square
     overflow: "hidden",
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: StyleSheet.hairlineWidth, 
+     
   },
 });
 
