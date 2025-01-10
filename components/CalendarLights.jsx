@@ -1,39 +1,30 @@
-import React, { useEffect, useRef, useLayoutEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Animated,
   FlatList,
   Text, 
   StyleSheet,
-} from "react-native";
-import { useGlobalStyle } from "../context/GlobalStyleContext";
+} from "react-native"; 
 import HelloDayWrapper from "../components/HelloDayWrapper";
-import {
-  eachMonthOfInterval,
-  startOfMonth,
-  getDaysInMonth,
-  format,
-} from "date-fns";
+ 
 
 const CalendarLights = ({
-  
-  helloesDataSorted,
-  earliestDataPoint,
-  latestDataPoint,
+    
+  combinedData,
   daySquareBorderRadius=0,
   daySquareBorderColor='black', 
   opacityMinusAnimation=1,
   animationColor='orange',
-}) => { 
-  const [monthsData, setMonthsData] = useState([]);
-  const [combinedData, setCombinedData] = useState([]);
+}) => {  
+  // const [combinedData, setCombinedData] = useState([]);
+ 
 
-  const currentDate = new Date(); 
-
-  const flatListRef = useRef(null); //to scroll to most recent month, can't find a different way to do it
+  const flatListRef = useRef(null);  
 
   useEffect(() => {
     // Scroll to the end without animation when the component mounts
+    // doesn't work!
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({ animated: false });
     }
@@ -49,44 +40,7 @@ const CalendarLights = ({
     Saturday: 6,
   };
  
-  const getMonthsInRange = (startMonth, endMonth) => {
-    const [startMonthNum, startYear] = startMonth.split("/").map(Number);
-    const [endMonthNum, endYear] = endMonth.split("/").map(Number);
-
-    // Set the start and end dates based on the given months
-    const startDate = new Date(startYear, startMonthNum - 1, 1); // Start of the given start month
-    const endDate = new Date(endYear, endMonthNum - 1, 1); // Start of the given end month
-    console.log("END DATE", endDate);
-    // Generate all months in the interval
-    const months = eachMonthOfInterval({
-      start: startDate,
-      end: endDate,
-    }).map((date) => {
-      return {
-        month: format(date, "MMMM"), // Full month name
-        year: format(date, "yyyy"), // Year
-        daysInMonth: getDaysInMonth(date), // Total days in the month
-        startsOn: format(startOfMonth(date), "EEEE"), // Day of the week the month starts on
-        monthYear: format(date, "M/yyyy"), // Month/Year in M/yyyy format
-      };
-    });
-
-    return months;
-  };
-
-  //automatically set to current year on mount
-  useLayoutEffect(() => {
-    console.log("LATEST", latestDataPoint);
-    setMonthsData(getMonthsInRange(earliestDataPoint, latestDataPoint));
-
-    //setMonthsData(getYearData(currentYear));
-  }, []);
-
-  // useEffect(() => {
-  // if (monthsData) {
-  // console.log(monthsData);
-  // }
-  //}, [monthsData]);
+ 
 
   const renderDay = (item, lightUp, rowStart, weekData, key) => {
     //console.log(item);
@@ -114,7 +68,7 @@ const CalendarLights = ({
       );
     }
     if (lightUp) {
-      console.log("yes", item);
+      //console.log("yes", item);
       return (
         <Animated.View
           key={key}
@@ -187,62 +141,38 @@ const CalendarLights = ({
   //render each month block + lightup list in the main flatlist
 
   const renderCalendarMonth = ({ item }) => {
+   
     const indexRangeStart = indexDays[item.monthData.startsOn];
     const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
-    //console.log(indexRangeStart);
-    // console.log(indexRangeTotal);
-
+  
+    // Ensure helloData exists and has `days`
+    const highlightDays = item.helloData?.days || [];
+  
     return (
       <View style={styles.calendarContainer}>
-        <Text style={{fontFamily: 'Poppins-Regular', fontSize: 12, opacity: opacityMinusAnimation, color: daySquareBorderColor}}>{item.monthData.month.slice(0,3)} {item.monthData.year.slice(0,4)}</Text>
+        <Text
+          style={{
+            fontFamily: 'Poppins-Regular',
+            fontSize: 12,
+            opacity: opacityMinusAnimation,
+            color: daySquareBorderColor,
+          }}
+        >
+          {item.monthData.month.slice(0, 3)} {item.monthData.year.slice(0, 4)}
+        </Text>
         <View style={styles.innerCalendarContainer}>
-          {renderWeeks(
-            item.monthData.daysInMonth,
-            indexRangeStart,
-            item.helloData.days
-          )}
+          {renderWeeks(item.monthData.daysInMonth, indexRangeStart, highlightDays)}
         </View>
       </View>
     );
   };
-
-  useEffect(() => {
-    //console.log(`helloes data sorted`, helloesDataSorted);
-    //console.log('months data', monthsData);
-    if (monthsData && helloesDataSorted) {
-      // Reverse the monthsData to start from December and add correct indices
-
-      // Combine months and helloesData by matching their indices
-      const combined = monthsData.map((month) => {
-        // Match by index
-
-        //POTENTIAL CAUSE OF CRASH
-        // IF IT RETURNS A NULL IT WILL BREAK THE WHOLE COMPONENT SO NEED TO CHANGE THIS
-        const helloData =
-          helloesDataSorted.find(
-            (hello) => hello.monthYear === month.monthYear
-          ) || null; // If no match, set to null
-
-        return {
-          monthData: month,
-          helloData, // Add matched hello data
-        };
-      });
-
-      setCombinedData(combined);
-      //console.log(combined);
-
-      // console.log("Combined Data:", combined);
-      // combined.forEach((item, index) => {
-      //   console.log(`Hello Data for Month Index ${index}:`, item.helloData.days);
-      // });
-      //  console.log(combined.map(item => item.helloData.days));
-    }
-  }, [monthsData, helloesDataSorted]);
+  
+ 
+ 
 
   return (
     <View style={[styles.container]}>
-      {monthsData && combinedData && (
+      {combinedData && (
         <FlatList
           ref={flatListRef}
           data={combinedData}

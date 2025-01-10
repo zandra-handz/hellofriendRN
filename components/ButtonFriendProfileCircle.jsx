@@ -88,6 +88,7 @@ const ButtonFriendProfileCircle = () => {
         <View style={styles.loadingWrapper}>
         <LoadingPage
         loading={loadingNewFriend} 
+        color={themeAheadOfLoading.darkColor}
         spinnerType='flow'
         spinnerSize={30}
         includeLabel={false} 

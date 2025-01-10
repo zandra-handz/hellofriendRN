@@ -288,7 +288,9 @@ const TextMomentHomeScreenBox = forwardRef(
               </View>
             </>
           </>
+          
         </View>
+        
       </TouchableWithoutFeedback>
     );
   }
@@ -310,13 +312,13 @@ const styles = StyleSheet.create({
     height: 30,
   },
   welcomeHeaderText: {
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 22,
     fontFamily: "Poppins-Regular",
     //textTransform: "uppercase",
   },
   title: {
-    fontSize: 21,
+    fontSize: 20,
     lineHeight: 32,
 
     fontFamily: "Poppins-Regular",
@@ -335,7 +337,9 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     flex: 1,
     fontSize: 15,
+    lineHeight: 21,
     fontFamily: "Poppins-Regular",
+     
   },
 });
 

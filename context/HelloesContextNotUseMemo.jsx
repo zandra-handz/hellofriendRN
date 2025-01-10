@@ -3,12 +3,6 @@ import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 import { fetchPastHelloes, saveHello } from '../api'; 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  eachMonthOfInterval,
-  startOfMonth,
-  getDaysInMonth,
-  format,
-} from "date-fns";
  
 
 const HelloesContext = createContext({});
@@ -24,6 +18,9 @@ export const HelloesProvider = ({ children }) => {
     
     const timeoutRef = useRef(null);
  
+    const [ latestHelloDate, setLatestHelloDate ] = useState(null);
+    const [ earliestHelloDate, setEarliestHelloDate ] = useState(null);
+    const [ helloesListMonthYear, setHelloesListMonthYear ] = useState(null);
 
     
     
@@ -31,7 +28,7 @@ export const HelloesProvider = ({ children }) => {
     const { data: helloesList, isLoading, isFetching, isSuccess, isError } = useQuery({
         queryKey: ['pastHelloes', selectedFriend?.id],
         queryFn: () => {
-  //console.log('Fetching past helloes for:', selectedFriend?.id);
+  console.log('Fetching past helloes for:', selectedFriend?.id);
   return fetchPastHelloes(selectedFriend.id);
 },
         enabled: !!selectedFriend,
@@ -39,7 +36,7 @@ export const HelloesProvider = ({ children }) => {
           // groupByMonthAndYear(data);
           // const inPerson = data[0].filter(hello => hello.type === 'in person');
           // queryClient.setQueryData(['inPersonHelloes', selectedFriend?.id], inPerson);
-          //console.log('cached in person helloes: ', data);
+          console.log('cached in person helloes: ', data);
         },
         onError: () => {
           console.log('error in RQ fetching helloes');
@@ -134,7 +131,7 @@ export const HelloesProvider = ({ children }) => {
           });
     
           const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
-          //console.log("Actual HelloesList after mutation:", actualHelloesList);
+          console.log("Actual HelloesList after mutation:", actualHelloesList);
     
           if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
@@ -160,7 +157,7 @@ export const HelloesProvider = ({ children }) => {
           delete_all_unshared_capsules: helloData.deleteMoments, // ? true : false,
         };
     
-        //console.log("Payload before sending:", hello);
+        console.log("Payload before sending:", hello);
     
         try {
           await createHelloMutation.mutateAsync(hello); // Call the mutation with the location data
@@ -175,14 +172,14 @@ export const HelloesProvider = ({ children }) => {
 
       
 
-      const helloesListMonthYear = useMemo(() => {
-        if (helloesList) {
-          if (!Array.isArray(helloesList)) {
-            console.error("Invalid data passed to groupByMonthAndYear:", helloesList);
+      const groupByMonthYear = (helloesData) => {
+        if (helloesData) {
+          if (!Array.isArray(helloesData)) {
+            console.error("Invalid data passed to groupByMonthAndYear:", helloesData);
             return [];
           }
       
-          const groupedData = helloesList.reduce((acc, item) => {
+          const groupedData = helloesData.reduce((acc, item) => {
             const createdDate = new Date(item.dateLong + "T00:00:00");
       
             if (isNaN(createdDate)) {
@@ -209,7 +206,7 @@ export const HelloesProvider = ({ children }) => {
             return acc;
           }, {});
       
-          const allDates = helloesList.map((item) => new Date(item.dateLong + "T00:00:00"));
+          const allDates = helloesData.map((item) => new Date(item.dateLong + "T00:00:00"));
           const minDate = new Date(Math.min(...allDates));
           const maxDate = new Date(Math.max(...allDates));
       
@@ -236,12 +233,12 @@ export const HelloesProvider = ({ children }) => {
           return sortedMonths;
         }
         return [];
-      }, [helloesList]);
+      } 
 
  
-  //for some dumb reason i don't record the dates of the helloes thenmselves like a normal person
-  //on my backend so here is my modified function to format it
-    const lightFormatBackendDateToMonthYear = (backendDate) => { 
+
+    const lightFormatBackendDateToMonthYear = (backendDate) => {
+      //console.log('LATEST DATE IN CALCULATOR:', backendDate);
       const date = new Date(backendDate);
       const month = date.getUTCMonth() + 1; // Get UTC month
       const year = date.getUTCFullYear(); // Get UTC year
@@ -250,64 +247,38 @@ export const HelloesProvider = ({ children }) => {
     };
 
 
-    const latestHelloDate = useMemo(() => {
-      if (helloesList) {
-     
+  
 
-        const latestDate = lightFormatBackendDateToMonthYear(helloesList[0].dateLong);
-      return latestDate;
-  }
-  }, [helloesList]); 
-
-  const earliestHelloDate = useMemo(() => {
-    if (helloesList) {
-   
-
-      const earliestDate = lightFormatBackendDateToMonthYear(
-        helloesList[helloesList.length - 1].dateLong
-      );
-    return earliestDate;
-
-}
-}, [helloesList]); 
-
-
-const monthsInRange = useMemo(() => {
-  if (helloesList) {
-    const earliestDate = lightFormatBackendDateToMonthYear(
-      helloesList[helloesList.length - 1].dateLong
-    );
-    const latestDate = lightFormatBackendDateToMonthYear(helloesList[0].dateLong);
-
-    const [startMonthNum, startYear] = earliestDate.split("/").map(Number);
-        const [endMonthNum, endYear] = latestDate.split("/").map(Number);
+    useEffect(() => {
+      if (helloesList?.length && selectedFriend) {
+        const helloesMonthsYears = groupByMonthYear(helloesList);
+        const latestHelloDate = lightFormatBackendDateToMonthYear(helloesList[0].dateLong);
+        const earliestHelloDate = lightFormatBackendDateToMonthYear(
+          helloesList[helloesList.length - 1].dateLong
+        );
     
-        // Set the start and end dates based on the given months
-        const startDate = new Date(startYear, startMonthNum - 1, 1); // Start of the given start month
-        const endDate = new Date(endYear, endMonthNum - 1, 1); // Start of the given end month
-        //console.log("END DATE", endDate);
-        // Generate all months in the interval
-        const months = eachMonthOfInterval({
-          start: startDate,
-          end: endDate,
-        }).map((date) => {
-          return {
-            month: format(date, "MMMM"), // Full month name
-            year: format(date, "yyyy"), // Year
-            daysInMonth: getDaysInMonth(date), // Total days in the month
-            startsOn: format(startOfMonth(date), "EEEE"), // Day of the week the month starts on
-            monthYear: format(date, "M/yyyy"), // Month/Year in M/yyyy format
-          };
-        });
+        setLatestHelloDate(latestHelloDate);
+        setEarliestHelloDate(earliestHelloDate);
+        setHelloesListMonthYear(helloesMonthsYears);
     
-        return months;
- 
- 
+        console.log('HELLOES LIST CHANGED');
+      }
 
-}
-}, [helloesList]); 
+    }, [helloesList, selectedFriend]);
 
- 
+
+    useEffect(() => {
+      if (!selectedFriend) {
+        setHelloesListMonthYear(null);
+        setLatestHelloDate(null);
+        setEarliestHelloDate(null);
+
+      }
+
+    }, [selectedFriend]);
+    
+    
+      
  
  
 
@@ -329,7 +300,6 @@ const monthsInRange = useMemo(() => {
             helloesListMonthYear,
             latestHelloDate,
             earliestHelloDate,
-            monthsInRange,
             
             
         }}>

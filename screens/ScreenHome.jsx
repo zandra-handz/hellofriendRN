@@ -136,6 +136,7 @@ const ScreenHome = ({ navigation }) => {
           marginRight: "6%",
           borderWidth: 1,
           borderColor: themeStyles.genericText.color,
+          opacity: .8,
         }}
         onPress={itemActions[index]} // Use the index to match the corresponding action
       >
@@ -236,7 +237,7 @@ useEffect(() => {
     > 
         {authUserState.authenticated && authUserState.user && userAppSettings ? (
           <>   
-          <View style={{height: isKeyboardVisible ? Dimensions.get('window').height / 3 : Dimensions.get('window').height / 3 }}>
+          <View style={{height: isKeyboardVisible ? Dimensions.get('window').height / 2.5 : Dimensions.get('window').height / 3 }}>
                                   <TextMomentHomeScreenBox
                         width={"100%"}
                         height={'100%' }
@@ -274,7 +275,7 @@ useEffect(() => {
                 renderOptionButton(item, index)
               )} 
                       ListFooterComponent={() => (
-                        <View style={{ width: 100 }} />)}
+                        <View style={{ width: 140 }} />)}
 
 
 
@@ -297,7 +298,7 @@ useEffect(() => {
                   <HomeButtonGenericAdd label={'ADD MEETUP SPOT'}   onPress={navigateToAddLocationScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
                 )} */}
 
-                {(!selectedFriend && !friendLoaded) && showLastButton && ( 
+                {(!selectedFriend && !friendLoaded) && showLastButton  && ( 
                   <HomeButtonGenericAdd label={'ADD FRIEND'}   onPress={navigateToAddFriendScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/yellowleaves.png")} height={buttonHeight} maxHeight={maxButtonHeight}/>
                 )} 
                 {/* </View> */}
@@ -305,7 +306,7 @@ useEffect(() => {
                 {!selectedFriend && (
                   <HomeButtonUpNext  onPress={navigateToAddMomentScreen} borderRadius={40} height={headerHeight} borderColor="black" maxHeight={200}/>
                 )}
-                {selectedFriend && (
+                {selectedFriend  && (
                   <HomeButtonSelectedFriend  onPress={navigateToAddMomentScreen} borderRadius={40} borderColor="black" height={headerHeight} maxHeight={200}/>
                 )}
                 <HomeScrollSoon height={upcomingDatesTray} borderRadius={40} borderColor="black"/> 

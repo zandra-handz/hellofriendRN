@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, View, Modal, Text } from 'react-native';
 import LoadingPage from '../components/LoadingPage';
+import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 const AlertConfirm = ({
   isModalVisible,
@@ -16,16 +17,18 @@ const AlertConfirm = ({
   height = 200, // Default height value
   type = 'success', // Can be 'success' or 'failure'
 }) => {
+  const { themeStyles } = useGlobalStyle();
+
   return (
     <Modal visible={isModalVisible} animationType="fade" transparent={false}>
-      <View style={styles.modalContainer}>
+      <View style={[styles.modalContainer, themeStyles.genericTextBackground]}>
         <View style={[styles.modalContent, fixedHeight && { height }]}> 
-          {headerContent && <View style={styles.headerContainer}>{headerContent}</View>}
+          {headerContent && <View style={[styles.headerContainer, {color: themeStyles.genericText.color}]}>{headerContent}</View>}
           {useSpinner && isFetching ? (
             <LoadingPage loading={isFetching} spinnerType='circle' />
           ) : (
             <View style={styles.contentContainer}>
-              {questionText && <Text style={styles.questionText}>{questionText}</Text>}
+              {questionText && <Text style={[styles.questionText, themeStyles.genericText]}>{questionText}</Text>}
               <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
                   <Text style={styles.buttonText}>{confirmText}</Text>

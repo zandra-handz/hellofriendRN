@@ -99,12 +99,12 @@ const HomeScrollSoon = ({
     {
       name: "Helloes",
       message: selectedFriend?.name
-        ? `Past helloes with ${selectedFriend.name}`
+        ? `Past helloes`
         : "View past helloes!", // Fallback message if selectedFriend.name does not exist
     },
     {
       name: "Locations",
-      message: "Pick a meet-up spot!",
+      message: "Saved locations",
     },
 
     {

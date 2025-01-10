@@ -15,7 +15,7 @@ const DoubleChecker = ({
   onPress,
 }) => {
 
-    const { themeStyles } = useGlobalStyle();
+    const { themeStyles, manualGradientColors } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
 
       const { width, height } = Dimensions.get("window");
@@ -34,7 +34,7 @@ const DoubleChecker = ({
         transparent={true }>
             <View style={styles.backgroundContainer}>
             
-            <View style={[styles.modalContainer, themeStyles.genericTextBackgroundShadeTwo, {borderColor: themeAheadOfLoading.darkColor}]}>
+            <View style={[styles.modalContainer, themeStyles.genericTextBackgroundShadeTwo, {borderColor: manualGradientColors.lightColor}]}>
                 <View style={styles.singleQuestionContainer}>
                     <Text numberOfLines={1} style={[styles.singleQuestionText, themeStyles.genericText]}>
                     {singleQuestionText}
@@ -43,14 +43,14 @@ const DoubleChecker = ({
                 <View style={styles.buttonRowContainer}>
                     
                     <TouchableOpacity
-                    style={[styles.noButton, themeStyles.genericTextBackgroundShadeThree, {borderColor: themeAheadOfLoading.lightColor}]} 
+                    style={[styles.noButton, themeStyles.genericTextBackgroundShadeThree, {borderColor: 'transparent'}]} 
                     onPress={toggleVisible}> 
                     <ArrowPrevStemlessLineSvg style={styles.prevArrowContainer} height={20} width={20} color={themeStyles.genericText.color}/>
                     <Text style={[styles.buttonText, themeStyles.genericText]}>{noButtonText}</Text>
                     
                     </TouchableOpacity>
                     <TouchableOpacity
-                    style={[styles.yesButton, themeStyles.genericTextBackgroundShadeThree, {borderColor: themeAheadOfLoading.lightColor}]} onPress={onPress}> 
+                    style={[styles.yesButton, themeStyles.genericTextBackgroundShadeThree, {borderColor: 'transparent'}]} onPress={onPress}> 
                     <Text style={[styles.buttonText, themeStyles.genericText]}>{yesButtonText}</Text>
                     <ArrowNextStemlessLineSvg style={styles.nextArrowContainer}  height={20} width={20} color={themeStyles.genericText.color}/>
                     
@@ -115,7 +115,8 @@ const styles = StyleSheet.create({
     },
     singleQuestionText: {
         fontSize: 17,
-        textTransform: 'uppercase',
+        fontFamily: 'Poppins-Regular',
+        //textTransform: 'uppercase',
         //fontWeight: 'bold',
         lineHeight: 22,
     },
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
         width: '100%',
         //backgroundColor: 'orange',
         flexDirection: 'row',
-        height: '42%', //height of buttons set here
+        height: '44%', //height of buttons set here
         justifyContent: 'space-between',
         overflow: 'hidden',
 
@@ -138,6 +139,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
         alignItems: 'center',  
         borderWidth: StyleSheet.hairlineWidth,
+        paddingVertical: '2%',
         //borderColor: 'hotpink',
 
     },
@@ -152,6 +154,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         textAlign: 'center',
         borderWidth: StyleSheet.hairlineWidth,
+        paddingVertical: '2%',
         //borderColor: 'hotpink',
 
     },

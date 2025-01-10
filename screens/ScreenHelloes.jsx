@@ -102,9 +102,10 @@ const ScreenHelloes = ({ route, navigation }) => {
           style={[styles.searchBarContent, { backgroundColor: "transparent" }]}
         >
           <CalendarLightsDataPrepLayer
-            helloesData={helloesList}
-            earliestDataPoint={friendDashboardData[0].friend_faves.created_on}
-            latestDataPoint={helloesList[0].created}
+                 daySquareBorderRadius={20}
+                 //daySquareBorderColor={themeStyles.genericText.color}
+                 opacityMinusAnimation={.8}
+                 animationColor={themeAheadOfLoading.lightColor}
           />
           <View
             style={{

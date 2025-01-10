@@ -89,10 +89,6 @@ const HomeButtonSelectedFriend = ({
     }
     lastPress.current = now;
   };
-
-  const adjustFontSize = (fontSize) => {
-    return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
-  };
  
 
   return (
@@ -148,7 +144,7 @@ const HomeButtonSelectedFriend = ({
                       style={[
                         {
                           fontFamily: "Poppins-Regular",
-                          fontSize: 30,
+                          fontSize: 25,
                           fontColor: "#000002",
                         },
                       ]}
@@ -201,10 +197,10 @@ const HomeButtonSelectedFriend = ({
                 >
                   <View style={{ width: "74%" }}>
                     <ButtonIconMoments
-                      iconSize={60}
+                      iconSize={46}
                       onPress={onPress}
                       circleColor={"orange"}
-                      countTextSize={14}
+                      countTextSize={11}
                       countColor={themeAheadOfLoading ? themeAheadOfLoading.fontColorSecondary : 'orange'}
                     />
                   </View>
@@ -220,10 +216,10 @@ const HomeButtonSelectedFriend = ({
                 >
                   <View style={{ width: "74%" }}>
                     <ButtonIconImages
-                      iconSize={60}
+                      iconSize={46}
                       onPress={navigateToImages}
                       circleColor={"orange"}
-                      countTextSize={14}
+                      countTextSize={11}
                       countColor={themeAheadOfLoading ? themeAheadOfLoading.fontColorSecondary : 'orange'}
                     />
                   </View>
@@ -257,15 +253,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: "58%",
     justifyContent: "space-around",
-  },
-  headerText: {
-    fontFamily: "Poppins-Regular",
-    fontSize: 22,
-    fontColor: "#000002",
-  },
+  }, 
   subtitleText: {
     fontFamily: "Poppins-Regular",
-    fontSize: 16,
+    fontSize: 15,
   },
   loadingWrapper: {
     flex: 1,

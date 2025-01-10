@@ -11,6 +11,8 @@ import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
+import MomentsSearchBar from '../components/MomentsSearchBar';
+
 import { LinearGradient } from 'expo-linear-gradient';
  
 
@@ -71,9 +73,36 @@ const ScreenLocations = ({ route, navigation }) => {
 <>
       <View style={[styles.searchBarContent, {backgroundColor: 'transparent'}]}>
 
-        <SearchBar data={locationList} placeholderText={'Search'} onPress={handleGoToLocationViewScreen} borderColor={'transparent'}  searchKeys={['address', 'title']} />
-            
+
+
+                  <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "flex-end",
+              paddingHorizontal: "3%",
+            }}
+          >
+            <MomentsSearchBar
+              data={locationList}
+              height={30}
+              width={"27%"}
+              borderColor={"transparent"}
+              placeholderText={"Search"}
+              textAndIconColor={themeAheadOfLoading.fontColorSecondary}
+              backgroundColor={"transparent"}
+              onPress={() => {}}
+              searchKeys={["address", "title"]}
+            />
+          </View>   
       </View>
+              <View
+                style={[
+                  styles.backColorContainer,
+                  themeStyles.genericTextBackground,
+                  { borderColor: themeAheadOfLoading.lightColor },
+                ]}
+              > 
           <Tab.Navigator
           tabBar={props => <CustomTabBar {...props} />}
           screenOptions={({ route }) => ({
@@ -99,6 +128,7 @@ const ScreenLocations = ({ route, navigation }) => {
           <Tab.Screen name="All" component={SavedLocationsScreen} /> 
        
         </Tab.Navigator>
+        </View>
  
         </> 
          
@@ -121,6 +151,22 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'center',
     zIndex: 1000,
+},
+backColorContainer: {
+  height: "96%",
+  alignContent: "center",
+  //paddingHorizontal: "4%",
+  paddingTop: "6%",
+  //flex: 1,
+  width: "101%",
+  alignSelf: "center",
+  borderWidth: 1,
+  borderTopRightRadius: 30,
+  borderTopLeftRadius: 30,
+  borderRadius: 30,
+  flexDirection: "column",
+  justifyContent: "space-between",
+  zIndex: 2000,
 },
   
   sectionContainer: {

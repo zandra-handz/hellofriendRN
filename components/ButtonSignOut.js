@@ -5,6 +5,7 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LogoutOutlineSvg from '../assets/svgs/logout-outline.svg';
 import ByeSvg from '../assets/svgs/bye.svg';
 import AlertConfirm from '../components/AlertConfirm';
+import DoubleChecker from "../components/DoubleChecker";
 
 const ButtonSignOut = ({ 
   label=null, 
@@ -12,7 +13,16 @@ const ButtonSignOut = ({
 }) => {
   const { onSignOut } = useAuthUser();
   const { themeStyles } = useGlobalStyle();
+   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
+
+  const openDoubleChecker = () => {
+    setIsDoubleCheckerVisible(true);
+  };
+
+  const toggleDoubleChecker = () => {
+    setIsDoubleCheckerVisible((prev) => !prev);
+  };
 
   const handleSignOutPress = () => {
     if (confirmationAlert) {
@@ -33,11 +43,21 @@ const ButtonSignOut = ({
 
   return (
     <>
-      <TouchableOpacity onPress={handleSignOutPress}>
+      <TouchableOpacity onPress={openDoubleChecker}>
         <LogoutOutlineSvg width={25} height={25} style={themeStyles.footerIcon}  />
       </TouchableOpacity>
 
-      {confirmationAlert && (
+
+      {isDoubleCheckerVisible && (
+          <DoubleChecker
+            isVisible={isDoubleCheckerVisible}
+            toggleVisible={toggleDoubleChecker}
+            singleQuestionText="Sign out?"
+            onPress={() => confirmSignOut()}
+          />
+        )}
+
+      {/* {confirmationAlert && (
         <AlertConfirm
           isModalVisible={isModalVisible}
           toggleModal={toggleModal}
@@ -48,7 +68,7 @@ const ButtonSignOut = ({
           confirmText="Yes"
           cancelText="No"
         />
-      )}
+      )} */}
     </>
   );
 };

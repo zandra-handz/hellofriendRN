@@ -63,7 +63,7 @@ export const CapsuleListProvider = ({ children }) => {
           "Moments",
           selectedFriend?.id,
         ]);
-        console.log("Initial moments cache after fetch:", initialCache);
+        //console.log("Initial moments cache after fetch:", initialCache);
       },
       select: (data) => {
         if (!data)
@@ -149,7 +149,7 @@ export const CapsuleListProvider = ({ children }) => {
       }),
 
     onSuccess: (data) => {
-      console.log("Updated capsule data:", data);
+      //console.log("Updated capsule data:", data);
       setMomentData(data);
 
       setMomentIdToAnimate(data.id);
@@ -159,7 +159,7 @@ export const CapsuleListProvider = ({ children }) => {
         "Moments",
         selectedFriend?.id,
       ]);
-      console.log("Cache before update:", oldMoments);
+      //console.log("Cache before update:", oldMoments);
 
       //queryClient.setQueryData(['Moments', selectedFriend?.id], (oldMoments) => {
       //if (!oldMoments) return [data];
@@ -270,10 +270,10 @@ export const CapsuleListProvider = ({ children }) => {
         "Moments",
         selectedFriend?.id,
       ]);
-      console.log(
-        "Updated moments cache after saving a new moment:",
-        updatedCache
-      );
+      // console.log(
+      //   "Updated moments cache after saving a new moment:",
+      //   updatedCache
+      // );
 
       setResultMessage("Moment saved!");
 
@@ -323,7 +323,7 @@ export const CapsuleListProvider = ({ children }) => {
   };
 
   const deleteMomentRQuery = async (data) => {
-    console.log("handleDeleteMoment requires completion!", data);
+    //console.log("handleDeleteMoment requires completion!", data);
 
     try {
       await deleteMomentMutation.mutateAsync(data);
@@ -335,7 +335,7 @@ export const CapsuleListProvider = ({ children }) => {
   const deleteMomentMutation = useMutation({
     mutationFn: (data) => deleteMomentAPI(data),
     onSuccess: (data) => {
-      console.log("data", data);
+      //console.log("data", data);
 
       queryClient.setQueryData(["Moments", selectedFriend?.id], (old) => {
         return old ? old.filter((moment) => moment.id !== data.id) : [];
