@@ -142,7 +142,6 @@ const TextMomentHomeScreenBox = forwardRef(
     }, [mountingText]);
 
     const handleTextInputChange = (text) => {
-      console.log(text);
       setEditedMessage(text);
       onTextChange(text);
     };

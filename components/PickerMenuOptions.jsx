@@ -128,7 +128,7 @@ const PickerMenuOptions = ({
           <FlatList
             data={options}
             horizontal={true}
-            keyExtractor={(item, index) => `option-${index}`}
+            keyExtractor={(item, index) => `option-${index}-${item}`}
             renderItem={({ item, index }) => (
               <TouchableOpacity
                 key={index}

@@ -1,13 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import SearchBar from '../components/SearchBar';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; 
 import { Ionicons } from '@expo/vector-icons'; 
 import LocationsFriendFavesList from '../components/LocationsFriendFavesList';
 import LocationsSavedList from '../components/LocationsSavedList';
 import CustomTabBar from '../components/CustomTabBar'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import useLocationFunctions from '../hooks/useLocationFunctions';
+
+import { useNavigationState } from '@react-navigation/native';
+
 import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
 
@@ -23,6 +25,8 @@ const ScreenLocations = ({ route, navigation }) => {
   const { locationList } = useLocationFunctions();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend, friendDashboardData } = useSelectedFriend(); 
+
+  const [ locationIdToScrollTo, setLocationIdToScrollTo ] = useState(null);
   
 
   const handleGoToLocationViewScreen = (item) => { 
@@ -45,13 +49,13 @@ const ScreenLocations = ({ route, navigation }) => {
 
   const FavoritesScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <LocationsFriendFavesList locations={faveLocations} />
+      <LocationsFriendFavesList locations={faveLocations} scrollTo={locationIdToScrollTo} />
     </View>
   );
 
   const SavedLocationsScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <LocationsSavedList locationList={locationList} />
+      <LocationsSavedList locationList={locationList} scrollTo={locationIdToScrollTo}/>
     </View>
   ); 
 
@@ -60,6 +64,18 @@ const ScreenLocations = ({ route, navigation }) => {
     Others: 'location',
     Recent: 'time',
   };
+
+  const handleScrollToLocation = (locationItem) => {
+    console.log('location id!', locationItem.id);
+    setLocationIdToScrollTo(locationItem.id);
+
+  };
+
+  const triggerScrollToLocation = (locationId) => {
+    console.log('location id sent to list component: ', locationId);
+  };
+
+  
   
  
 
@@ -91,7 +107,7 @@ const ScreenLocations = ({ route, navigation }) => {
               placeholderText={"Search"}
               textAndIconColor={themeAheadOfLoading.fontColorSecondary}
               backgroundColor={"transparent"}
-              onPress={() => {}}
+              onPress={handleScrollToLocation}
               searchKeys={["address", "title"]}
             />
           </View>   
@@ -150,7 +166,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center', 
     justifyContent: 'center',
-    zIndex: 1000,
+    zIndex: 2000,
 },
 backColorContainer: {
   height: "96%",
@@ -166,7 +182,7 @@ backColorContainer: {
   borderRadius: 30,
   flexDirection: "column",
   justifyContent: "space-between",
-  zIndex: 2000,
+  zIndex: 1000,
 },
   
   sectionContainer: {

@@ -79,7 +79,7 @@ const ScreenHome = ({ navigation }) => {
         setShowMomentScreenButton(true);
       }
       
-      console.log("new moment in home screen", newMomentTextRef.current.getText());
+     // console.log("new moment in home screen", newMomentTextRef.current.getText());
     }
   };
   
