@@ -7,6 +7,7 @@ import BobbingAnim from '../animations/BobbingAnim';
 import FlashAnim from '../animations/FlashAnim'; 
 
 const ButtonIconMoments = ({
+    height=50,
     iconSize = 36,
     iconColor = 'black',
     countColor = 'white',
@@ -17,15 +18,19 @@ const ButtonIconMoments = ({
     const { capsuleCount } = useCapsuleList();
 
     return (
-        <TouchableOpacity onPress={onPress ? onPress : () => {}} style={styles.container}>
+        <TouchableOpacity onPress={onPress ? onPress : () => {}} style={[styles.container, {height: height}]}>
                    
             <BobbingAnim bobbingDistance={2} duration={800}>
                 <View style={styles.animatedContainer}>
+                      <View style={{ backgroundColor: 'transparent', flex: 1, width: '100%', justifyContent: 'center'}}>
+                        
                     <LeavesTwoFallingOutlineThickerSvg height={iconSize} width={iconSize} color={iconColor} />
-                    <View style={{ top: '-17%', right: '27%' }}>
+                    <View style={{ top: '-7%', right: '1%', position: 'absolute' }}>
                         <FlashAnim circleColor={circleColor} circleTextSize={countTextSize} countColor={countColor}>
                             {capsuleCount}
                         </FlashAnim>
+                    </View>
+                    
                     </View>
                 </View> 
             </BobbingAnim>
@@ -34,14 +39,17 @@ const ButtonIconMoments = ({
 };
 
 const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        flex: 1,
-        flexDirection: 'row',
+    container: {  
+        flexDirection: 'row', 
+        justifyContent: 'center',
     },
     animatedContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: 'transparent',
+        width: '100%',
+        flex: 1,
     },
     countText: {
         fontFamily: 'Poppins-Bold',

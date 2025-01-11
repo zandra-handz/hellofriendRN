@@ -6,6 +6,7 @@ import PhotosTwoSvg from '../assets/svgs/photos-two.svg';
 import ImageGalleryOutlineSvg from '../assets/svgs/image-gallery-outline.svg';
 
 const ButtonIconImages = ({
+    height=50,
     iconSize = 36,
     iconColor = 'black',
     countColor = 'white',
@@ -55,30 +56,39 @@ const ButtonIconImages = ({
  
 
     return (
-        <TouchableOpacity onPress={onPress ? onPress : () => {}} style={styles.container}>
+        <TouchableOpacity onPress={onPress ? onPress : () => {}} style={[styles.container, {height: height}]}>
             
             <Animated.View style={[styles.animatedContainer, bobbingStyle]}>
-              
+             <View style={{ backgroundColor: 'transparent', flex: 1, width: '100%', justifyContent: 'center'}}>
+                                     
                 <ImageGalleryOutlineSvg height={iconSize} width={iconSize} color={iconColor} />
-                <View style={{ top: '-17%', right: '27%' }}>
+                <View style={{ top: '-7%', right: '1%', position: 'absolute' }}>
                     <FlashAnim circleColor={circleColor} circleTextSize={countTextSize} countColor={countColor}>
                         {imageList.length}
                     </FlashAnim>
                 </View>
+                
+              </View>
             </Animated.View>
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        width: '100%',
-        flex: 1,
+    container: { 
         flexDirection: 'row',
+         
+        justifyContent: 'center',
+
     },
     animatedContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        backgroundColor: 'transparent',
+        width: '100%',
+        flex: 1,
+        
     },
     countContainer: {
         height: 24, // Adjust the size of the circle container

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native'; 
+import { View, Text, StyleSheet, Dimensions } from 'react-native'; 
  import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import LocationSolidSvg from '../assets/svgs/location-solid.svg';  
@@ -13,6 +13,7 @@ const HelloesList = ({
     columns = 3,  
 }) => {  
     const { themeStyles } = useGlobalStyle(); 
+     const momentListBottomSpacer = Dimensions.get("screen").height - 400;
 
 
     return (
@@ -58,6 +59,9 @@ const HelloesList = ({
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 scrollIndicatorInsets={{ right: 1 }}
+                        ListFooterComponent={() => (
+                          <View style={{ height: momentListBottomSpacer }} />
+                        )}
             />
  
         </>

@@ -5,32 +5,46 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 
 import LizardSvg from '../assets/svgs/lizard.svg';
 
-const Logo = () => {
+const LogoSmaller = () => {
   const { themeStyles, manualGradientColors } = useGlobalStyle(); 
  
-  const svgSize = 140;
+  const svgSize = 130;
  
+//   const svgPositionRight = -10;
+//   const svgPositionTop = -10;
+
   const svgPositionRight = -10;
-  const svgPositionTop = -10;
+  const svgPositionTop = -240;
 
   const titlePadding = '16%';
  
   const fontStyle = {
     //fontWeight: 'bold',
-    fontFamily: 'Poppins-Bold',
-    fontSize: 58,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 27,
+    lineHeight: 40,
   };
 
   //any styling unique to border
   const borderStyle = {
     position: 'absolute',
-    opacity: .5,
+    opacity: .2,
   };
 
   return (
-    <View style={[styles.container, {paddingRight: titlePadding}]}>
+    <View style={[styles.container]}>
+        
 
-      <View style={{position: 'absolute', right: svgPositionRight,  top: svgPositionTop }}>
+<View style={{position: 'absolute', opacity: .3, right: svgPositionRight,  top: svgPositionTop }}>
+           <LizardSvg
+              height={400}
+              width={400}
+              color={themeStyles.genericTextBackground.backgroundColor}
+              style={styles.lizardTransform}
+            />
+            </View>
+
+      <View style={{ }}>
           <LizardSvg
               height={svgSize}
               width={svgSize}
@@ -38,14 +52,10 @@ const Logo = () => {
               style={styles.lizardTransform}
             />
             </View>
-      <View style={[styles.titleContainer]}>
-        <Text style={[fontStyle, borderStyle,   styles.titleOutlineTopLeft, themeStyles.genericText]}>hellofriend</Text>
-        <Text style={[fontStyle, borderStyle,   styles.titleOutlineTopRight, themeStyles.genericText]}>hellofriend</Text>
-        <Text style={[fontStyle, borderStyle,  styles.titleOutlineBottomLeft, themeStyles.genericText]}>hellofriend</Text>
-        <Text style={[fontStyle, borderStyle,  styles.titleOutlineBottomRight, themeStyles.genericText]}>hellofriend</Text>
-
+      <View style={[styles.titleContainer, {marginTop: '14%'}]}>
+      
           <Text style={[fontStyle, styles.title, themeStyles.genericTextBackground.backgroundColor]}>
-            hellofriend
+            Welcome to the hellofriend app!
           </Text> 
       </View>
     </View>
@@ -54,7 +64,7 @@ const Logo = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center', 
    
@@ -68,6 +78,7 @@ const styles = StyleSheet.create({
     opacity: .98,
   },
   titleContainer: { 
+    paddingHorizontal: '10%',
   },
   title: { 
     textAlign: 'center',
@@ -101,4 +112,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Logo;
+export default LogoSmaller;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet, Dimensions, Text } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
@@ -6,16 +6,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFriendList } from '../context/FriendListContext';
 
 const { width } = Dimensions.get('window');
-
-const CustomTabBar = ({ state, descriptors, navigation }) => {
-
+const CustomTabBar = ({ state, descriptors, navigation, onTabChange }) => {
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const underlinePosition = useSharedValue(0);
-  const tabWidth = width / state.routes.length; // Calculate the width of each tab
+  const tabWidth = width / state.routes.length;
 
   React.useEffect(() => {
     underlinePosition.value = withTiming(state.index * tabWidth, { duration: 200 });
+    if (onTabChange) {
+      onTabChange(state.index);  // Call the parent's function on tab change
+    }
   }, [state.index]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -23,16 +24,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   }));
 
   return (
-            // <LinearGradient
-            //     colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-            //     start={{ x: 0, y: 0 }}
-            //     end={{ x: 1, y: 0 }}
-            //     style={[styles.tabBar]}
-            // >
-
-              <View style={[styles.tabBar, themeStyles.genericTextBackground]}>
-                 
-                
+    <View style={[styles.tabBar, themeStyles.genericTextBackground]}>
       <Animated.View style={[styles.underline, animatedStyle, { width: tabWidth, backgroundColor: themeAheadOfLoading.fontColor }]} />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
@@ -51,19 +43,15 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
         };
 
         return (
-          <TouchableOpacity
-            key={route.key}
-            onPress={onPress}
-            style={styles.tabButton}
-          >
-            {options.tabBarIcon({ focused: isFocused })} 
-            <Text style={{ fontWeight: 'bold', textTransform: 'uppercase', opacity: isFocused ? 1 : .7, color: isFocused ? themeStyles.genericText.color : themeStyles.genericText.color,    marginLeft: 7 }}>
+          <TouchableOpacity key={route.key} onPress={onPress} style={styles.tabButton}>
+            {options.tabBarIcon({ focused: isFocused })}
+            <Text style={{ fontWeight: 'bold', textTransform: 'uppercase', opacity: isFocused ? 1 : 0.7, color: isFocused ? themeStyles.genericText.color : themeStyles.genericText.color, marginLeft: 7 }}>
               {route.name}
             </Text>
           </TouchableOpacity>
         );
-      })} 
-      </View> 
+      })}
+    </View>
   );
 };
 
@@ -71,7 +59,7 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     position: 'absolute',
-    backgroundColor: 'transparent', // Set to your desired background
+    backgroundColor: 'transparent',
     top: 0,
     width: '100%',
     height: 60,
@@ -85,11 +73,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    height: '100%', // Ensure full height is taken
+    height: '100%',
   },
   underline: {
     position: 'absolute',
-    height: 3, 
+    height: 3,
     bottom: 0,
   },
 });

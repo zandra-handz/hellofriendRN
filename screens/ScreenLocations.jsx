@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; 
 import { Ionicons } from '@expo/vector-icons'; 
@@ -8,7 +8,7 @@ import CustomTabBar from '../components/CustomTabBar';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import useLocationFunctions from '../hooks/useLocationFunctions';
 
-import { useNavigationState } from '@react-navigation/native';
+import { useNavigation, useNavigationState } from '@react-navigation/native';
 
 import { useFriendList } from '../context/FriendListContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
@@ -20,20 +20,25 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const Tab = createBottomTabNavigator();
 
-const ScreenLocations = ({ route, navigation }) => {
+const ScreenLocations = ({   }) => {
   const { themeStyles } = useGlobalStyle();
   const { locationList } = useLocationFunctions();
+  const [ viewingAllLocations, setViewingAllLocations ] = useState(false);
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend, friendDashboardData } = useSelectedFriend(); 
 
   const [ locationIdToScrollTo, setLocationIdToScrollTo ] = useState(null);
-  
+  const [faveLocationIdToScrollTo, setFaveLocationIdToScrollTo] = useState(null);
+const [savedLocationIdToScrollTo, setSavedLocationIdToScrollTo] = useState(null);
 
   const handleGoToLocationViewScreen = (item) => { 
     console.log(item);
     navigation.navigate('Location', { location: item, favorite: false }); //false as default, receiving screen should still detect
   
   }; 
+
+  const navigation = useNavigation();
+ 
 
   const faveLocations = useMemo(() => {
     console.log('Filtering favorite locations');
@@ -44,12 +49,11 @@ const ScreenLocations = ({ route, navigation }) => {
 
 //const faveLocations = filterLocations();
 
-
-
+ 
 
   const FavoritesScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <LocationsFriendFavesList locations={faveLocations} scrollTo={locationIdToScrollTo} />
+      <LocationsFriendFavesList locationList={faveLocations} scrollTo={faveLocationIdToScrollTo} />
     </View>
   );
 
@@ -65,6 +69,14 @@ const ScreenLocations = ({ route, navigation }) => {
     Recent: 'time',
   };
 
+
+  const handleScrollToFavoriteLocation = (locationItem) => {
+    console.log('location id!', locationItem.id);
+    setFaveLocationIdToScrollTo(locationItem.id);
+
+  };
+
+ 
   const handleScrollToLocation = (locationItem) => {
     console.log('location id!', locationItem.id);
     setLocationIdToScrollTo(locationItem.id);
@@ -76,8 +88,13 @@ const ScreenLocations = ({ route, navigation }) => {
   };
 
   
-  
- 
+  const handleTabChange = (tabIndex) => {
+    console.log('Active Tab Index:', tabIndex);
+    setLocationIdToScrollTo(null);
+    setViewingAllLocations(tabIndex === 1); //index 1 is second tab all locations
+    // Perform any actions needed in the parent when the tab changes
+    // For example, set locationIdToScrollTo based on the tab or update other state
+  };
 
   return (
             <LinearGradient
@@ -99,8 +116,10 @@ const ScreenLocations = ({ route, navigation }) => {
               paddingHorizontal: "3%",
             }}
           >
+            {viewingAllLocations && (
+              
             <MomentsSearchBar
-              data={locationList}
+              data={ locationList}
               height={30}
               width={"27%"}
               borderColor={"transparent"}
@@ -110,6 +129,23 @@ const ScreenLocations = ({ route, navigation }) => {
               onPress={handleScrollToLocation}
               searchKeys={["address", "title"]}
             />
+            
+          )}
+          {!viewingAllLocations && (
+            
+                        <MomentsSearchBar
+              data={ faveLocations }
+              height={30}
+              width={"27%"}
+              borderColor={"transparent"}
+              placeholderText={"Search"}
+              textAndIconColor={themeAheadOfLoading.fontColorSecondary}
+              backgroundColor={"transparent"}
+              onPress={handleScrollToFavoriteLocation}
+              searchKeys={["address", "title"]}
+            />
+            
+          )}
           </View>   
       </View>
               <View
@@ -120,7 +156,8 @@ const ScreenLocations = ({ route, navigation }) => {
                 ]}
               > 
           <Tab.Navigator
-          tabBar={props => <CustomTabBar {...props} />}
+          tabBar={props => <CustomTabBar {...props} onTabChange={handleTabChange} />}
+       
           screenOptions={({ route }) => ({
             tabBarStyle: {
               backgroundColor: themeAheadOfLoading.darkColor,
@@ -137,7 +174,9 @@ const ScreenLocations = ({ route, navigation }) => {
               const iconName = iconMapping[route.name]; // Get the icon name from the mapping
               return <Ionicons name={iconName} size={18} color={themeAheadOfLoading.fontColor} />;
             },
+            
           })}
+          
         >
           <Tab.Screen name={selectedFriend.name} component={FavoritesScreen} />
           

@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
  import { useNavigation } from '@react-navigation/native';
+ import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 
-const ButtonLocation = ({ location, favorite=false, color = 'white',  iconColor = 'white', icon: Icon, iconSize = 34 }) => {
+const ButtonLocation = ({ location, height=100, favorite=false, color = 'white', bottomMargin = 0, iconColor = 'white', icon: Icon, iconSize = 30 }) => {
 
   const navigation = useNavigation();  
+  const { themeStyles } = useGlobalStyle(); 
  
   
 
@@ -21,18 +23,43 @@ const ButtonLocation = ({ location, favorite=false, color = 'white',  iconColor 
   return (
     <View>
       <TouchableOpacity
-        style={styles.optionButton}
-        onPress={handlePress} // Call the passed in onPress function
+              style={[
+                styles.container,
+                themeStyles.genericTextBackgroundShadeTwo,
+                { height: height,
+                  marginBottom: bottomMargin
+                 },
+              ]}
+        onPress={handlePress} 
       >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    textAlign: "center",
+                    width: "100%", 
+                    flex: 1,
+                    //marginBottom: "3%",
+                  }}
+                >
+
         {Icon && (
           <View style={styles.iconContainer}>
             
             <Icon width={iconSize} height={iconSize} color={iconColor} />
           </View>
         )}
-        <View style={styles.textContainer}>
-          <Text style={[styles.optionTitleText, {color: color}]}>{location.title}</Text>
+        <View style={styles.titleContainer}> 
+           <Text style={[styles.title, themeStyles.subHeaderText]}>
+            {location.title}
+            </Text>
+            </View>
+         </View>
+          <View style={styles.textContainer}>
           <Text style={[styles.optionText, {color: color}]}>{location.address}</Text>
+    
+        
         </View>
       </TouchableOpacity>
     </View>
@@ -40,15 +67,11 @@ const ButtonLocation = ({ location, favorite=false, color = 'white',  iconColor 
 };
 
 const styles = StyleSheet.create({
-  optionButton: {
-    padding: 10,
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    height: 100,
-    borderBottomColor: '#ddd',
-    width: '100%',
-    alignItems: 'flex-start',
-    flexDirection: 'row',
+  container: {
+    width: "100%",  
+    borderRadius: 30, 
+    padding: 20,
+    overflow: "hidden", 
   },
   optionTitleText: {
     fontSize: 12,
@@ -59,13 +82,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'white',
     fontFamily: 'Poppins-Regular',
-  },
+  }, 
   iconContainer: {
-    marginRight: 10,
-    justifyContent: 'center',
+    flexDirection: "row",
+
+    width: "9%",
   },
   textContainer: {
     flex: 1,
+  },
+  titleContainer: {
+    width: "70%",
+
+    flex: 1,
+    flexGrow: 1,
+  },
+  title: {
+    fontSize: 15,
+    lineHeight: 21,
+    textTransform: "lowercase",
   },
 });
 

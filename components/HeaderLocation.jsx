@@ -9,7 +9,7 @@ import { useFriendList } from "../context/FriendListContext";
 import { LinearGradient } from "expo-linear-gradient";
  import LeavesTwoFallingOutlineThickerSvg from "../assets/svgs/leaves-two-falling-outline-thicker.svg";
  import LeafSingleOutlineThickerSvg from "../assets/svgs/leaf-single-outline-thicker.svg";
-import ImageGalleryOutlineSvg from '../assets/svgs/image-gallery-outline.svg';
+import LocationPinMapSvg from '../assets/svgs/location-pin-map.svg';
 
 const HeaderLocation = ({ title = "LOCATIONS", addView = false }) => {
   const { themeStyles } = useGlobalStyle();
@@ -20,14 +20,7 @@ const HeaderLocation = ({ title = "LOCATIONS", addView = false }) => {
   const handleNavigateBack = () => {
     navigation.goBack();
   };
-
-  const handleNavigateToAllMoments = () => {
-    if (selectedFriend) {
-    navigation.navigate("Moments");
-    
-  }
-  };
-
+ 
   return (
     <>
       <LinearGradient
@@ -98,14 +91,14 @@ const HeaderLocation = ({ title = "LOCATIONS", addView = false }) => {
               }}
             > 
                 {!addView && (
-                  <ImageGalleryOutlineSvg
+                  <LocationPinMapSvg
                     height={36}
                     width={36}
                     color={themeAheadOfLoading.fontColorSecondary}
                   />
                 )}
                 {addView && (
-                  <ImageGalleryOutlineSvg
+                  <LocationPinMapSvg
                     height={36}
                     width={36}
                     color={themeAheadOfLoading.fontColorSecondary}

@@ -129,22 +129,24 @@ const HomeButtonSelectedFriend = ({
 
           {!loadingNewFriend && friendLoaded && (
             <View
-              style={{
-                paddingRight: "4%",
+              style={{ 
                 height: "100%",
                 flexDirection: "row",
                 justifyContent: "space-between",
+                borderRadius: borderRadius,
+                //backgroundColor: 'pink',
                 width: "100%",
               }}
             >
               <View style={styles.textContainer}>
                 <TouchableOpacity onPress={onPress}>
                   <>
+                  <>
                     <Text
                       style={[
                         {
                           fontFamily: "Poppins-Regular",
-                          fontSize: 25,
+                          fontSize: 23,
                           fontColor: "#000002",
                         },
                       ]}
@@ -153,78 +155,47 @@ const HomeButtonSelectedFriend = ({
                         ? selectedFriend.name
                         : "None"}
                     </Text>
-
+                    </>
+<>
                     <Text style={styles.subtitleText}>
                       {friendDashboardData && friendDashboardData[0] && friendDashboardData[0].future_date_in_words
                         ? `Suggested: Say hi on ${friendDashboardData[0].future_date_in_words}`
                         : "No date available"}
                     </Text>
+                    </>
                   </>
                 </TouchableOpacity>
-              </View>
-              {image && (
-                <Image
-                  source={image}
-                  style={{
-                    width: imageSize,
-                    height: imageSize,
-                    top: imagePositionVertical,
-                    right: imagePositionHorizontal,
-                  }}
-                  resizeMode="contain"
-                />
-              )}
+              </View> 
               <View
-                style={{
-                  paddingVertical: "0%",
-                  marginLeft: "8%",
+                style={{ 
                   borderRadius: 20,
                   height: "100%",
-                  maxWidth: "50%",
-                  minWidth: "40%",
-                  flexGrow: 1,
+                  //backgroundColor: 'teal',
+                  minWidth: '10%',
+                  maxWidth: '12%',  
+                  alignItems: 'center',
+                  alignContent: 'center',
                   flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
-              >
-                <View
-                  style={{
-                    height: "46%",
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                  }}
-                >
-                  <View style={{ width: "74%" }}>
+                  justifyContent: "space-between", //ADJUST POSITION HERE
+                  paddingTop: '2%', //ADJUST POSITION HERE
+                }} > 
                     <ButtonIconMoments
+                    height={'40%'} //ADJUST POSITION HERE
                       iconSize={46}
                       onPress={onPress}
                       circleColor={"orange"}
                       countTextSize={11}
                       countColor={themeAheadOfLoading ? themeAheadOfLoading.fontColorSecondary : 'orange'}
-                    />
-                  </View>
-                </View>
-
-                <View
-                  style={{
-                    height: "46%",
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                  }}
-                >
-                  <View style={{ width: "74%" }}>
-                    <ButtonIconImages
+                    />  
+                                        <ButtonIconImages
+                                         height={'40%'} //ADJUST POSITION HERE
                       iconSize={46}
                       onPress={navigateToImages}
                       circleColor={"orange"}
                       countTextSize={11}
                       countColor={themeAheadOfLoading ? themeAheadOfLoading.fontColorSecondary : 'orange'}
                     />
-                  </View>
-                </View>
-              </View>
+                </View> 
             </View>
           )}
         </View>
@@ -237,8 +208,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    padding: "5%",
-    paddingRight: "0%",
+    padding: "5%", 
     alignContent: "center",
     marginVertical: "1%",
     borderWidth: 0,
@@ -247,12 +217,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   textContainer: {
-    zIndex: 5,
-    position: "relative",
+    zIndex: 5, 
     paddingLeft: "2%",
     flexDirection: "column",
     width: "58%",
-    justifyContent: "space-around",
+    height: '100%',
+    justifyContent: "space-between", 
   }, 
   subtitleText: {
     fontFamily: "Poppins-Regular",

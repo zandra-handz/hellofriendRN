@@ -29,7 +29,8 @@ import ScreenLocations from "./screens/ScreenLocations";
 import ScreenLocationSearch from "./screens/ScreenLocationSearch";
 import ScreenMidpointLocationSearch from "./screens/ScreenMidpointLocationSearch";
 import ScreenCalculateTravelTimes from "./screens/ScreenCalculateTravelTimes";
-import Signin from "./screens/Signin"; 
+import ScreenWelcome from "./screens/ScreenWelcome"; 
+import ScreenAuth from "./screens/ScreenAuth"; 
 import ScreenMomentFocus from "./screens/ScreenMomentFocus";
 import ScreenLocation from "./screens/ScreenLocation";
 
@@ -46,8 +47,10 @@ import HellofriendHeader from "./components/HellofriendHeader";
 import HeaderMoment from "./components/HeaderMoment";
 import HeaderHelloes from "./components/HeaderHelloes";
 import HeaderImage from "./components/HeaderImage";
+import HeaderLocation from "./components/HeaderLocation";
 import HeaderFriendSettings from "./components/HeaderFriendSettings";
 import HeaderBase from "./components/HeaderBase";
+import HeaderBlank from "./components/HeaderBlank"; //can make a SignIn one in future if want to put info on top
 import HeaderBaseSolid from "./components/HeaderBaseSolid";
 import HeaderLocationSingle from "./components/HeaderLocationSingle";
 
@@ -206,7 +209,7 @@ export const Layout = () => {
                   options={{
                     headerMode: "screen",
                     headerShown: true,
-                    header: () => <HeaderBaseSolid headerTitle="Locations" />,
+                    header: () => <HeaderLocation headerTitle="Locations" />,
                   }}
                 />
                 <Stack.Screen
@@ -268,7 +271,7 @@ export const Layout = () => {
                   name="LocationSearch"
                   component={ScreenLocationSearch}
                   options={{
-                    headerShown: false,
+                    headerShown: true,
                     header: () => <HeaderBase headerTitle="Search locations" />,
                   }}
                 />
@@ -339,13 +342,33 @@ export const Layout = () => {
               />
             )
           ) : (
+            <>
             <Stack.Screen
-              name="Signin"
-              component={Signin}
+              name="Welcome"
+              component={ScreenWelcome}
               options={{
                 headerShown: false,
+                header: () => (
+                  <HeaderBlank
+                  />
+                ),
               }}
             /> 
+
+            <Stack.Screen
+              name="Auth"
+              component={ScreenAuth}
+              options={{
+                headerShown: false,
+                header: () => (
+                  <HeaderBlank
+                  />
+                ),
+              }}
+            /> 
+            
+            </>
+            
           )}
         </Stack.Navigator>
       </TopLevelNavigationHandler>
