@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from "../context/FriendListContext";
-import ButtonGoToAddImage from '../components/ButtonGoToAddImage';
+import ImageMenuButton from '../components/ImageMenuButton'; 
 import useImageFunctions from '../hooks/useImageFunctions';
 import ImagesList from '../components/ImagesList'; 
 
@@ -39,8 +39,7 @@ const ScreenImages = ({ route, navigation }) => {
                         <Text></Text>
                     )}
                 </View> 
-                <ButtonGoToAddImage />
-                
+                <ImageMenuButton /> 
             </LinearGradient> )
 };
 

@@ -127,11 +127,7 @@ const LocationDetailsBody = ({
                 : "transparent",
             backgroundColor:
               themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-            //themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-            //position: "absolute",
-            //top: -30,
-            //left: 0,
-            //marginLeft: "2%",
+       
             width: "auto",
             paddingHorizontal: "3%",
             paddingVertical: "1%",

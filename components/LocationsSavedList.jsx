@@ -4,21 +4,24 @@ import { View, Dimensions, StyleSheet } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import LocationSolidSvg from "../assets/svgs/location-solid.svg";
+import ShopOutlineSvg from '../assets/svgs/shop-outline.svg';
 import ButtonLocation from "../components/ButtonLocation";
 
-const LocationsSavedList = ({ locationList, scrollTo }) => {
+const LocationsSavedList = ({ locationList, addToFavoritesFunction, removeFromFavoritesFunction, scrollTo }) => {
   const { themeStyles } = useGlobalStyle();
 
   const flatListRef = useRef(null);
 
-  const ITEM_HEIGHT = 100;
+  const ITEM_HEIGHT = 170;
   const ITEM_BOTTOM_MARGIN = 6;
+  const COMBINED = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
   const momentListBottomSpacer = Dimensions.get("screen").height - 200;
 
   const scrollToLocationId = (locationId) => {
     const index = locationList.findIndex(
       (location) => location.id === locationId
+      
     );
     console.log(index);
     if (index !== -1) {
@@ -43,40 +46,55 @@ const LocationsSavedList = ({ locationList, scrollTo }) => {
   }, [scrollTo]);
 
   return (
-    <View style={[styles.container, { height: "100%" }]}>
+    <View style={[styles.container, { height: 651}]}
+    onLayout={(event) => {
+      console.log("Parent layout height:", event.nativeEvent.layout.height);
+    }}>
       <FlashList
         ref={flatListRef}
         data={locationList}
         horizontal={false}
         keyExtractor={(location) => location.id.toString()}
         getItemLayout={(data, index) => ({
-            length: ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-            offset: (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN) * index,
-            index,
-          })}
+          length: COMBINED,
+          offset: COMBINED * index,
+          index,
+        })}
         renderItem={({ item: location }) => ( 
             <ButtonLocation
+              addToFavorites={addToFavoritesFunction}
+              removeFromFavorites={removeFromFavoritesFunction}
               height={ITEM_HEIGHT}
               bottomMargin={ITEM_BOTTOM_MARGIN}
               location={location}
               iconColor={themeStyles.genericText.color}
               color={themeStyles.genericText.color}
-              icon={LocationSolidSvg}
+              icon={ShopOutlineSvg}
+              iconSize={25}
             /> 
         )}
         numColumns={1}
         columnWrapperStyle={null}
-        estimatedItemSize={106}
+        estimatedItemSize={COMBINED}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
+        onLayout={(event) => {
+          console.log("FlashList layout height:", event.nativeEvent.layout.height);
+      }}
+      
+        // onScroll={(event) => {
+        //   console.log("Scroll offset:", event.nativeEvent.contentOffset.y);
+        // }}
         scrollIndicatorInsets={{ right: 1 }}
         onScrollToIndexFailed={(info) => {
+          console.log('Saved Location List scroll to index failed:', info); // Logs the error information
           flatListRef.current?.scrollToOffset({
             offset: info.averageItemLength * info.index,
             animated: true,
           });
         }}
-        snapToInterval={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN} // Set the snapping interval to the height of each item
+        
+        snapToInterval={COMBINED} // Set the snapping interval to the height of each item
         snapToAlignment="start" // Align items to the top of the list when snapped
         decelerationRate="fast" // Optional: makes the scroll feel snappier
         ListFooterComponent={() => (

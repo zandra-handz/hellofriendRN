@@ -22,20 +22,15 @@ import useStartingUserAddresses from "../hooks/useStartingUserAddresses";
 import useStartingFriendAddresses from "../hooks/useStartingFriendAddresses";
 import useTravelTimes from "../hooks/useTravelTimes";
 const LocationTravelTimes = ({
-  location,
-  favorite = false,
-  size = 11,
-  iconSize = 16,
-  family = "Poppins-Bold",
-  color = "black",
-  style,
+  location, 
+  smallClockIconSize=20,
+  iconSize=34, 
 }) => {
   const { themeAheadOfLoading } = useFriendList();
   const [isModalVisible, setModalVisible] = useState(false);
-  const { themeStyles } = useGlobalStyle();
-  const [isCached, setIsCached] = useState(false);
+  const { themeStyles } = useGlobalStyle(); 
   const { currentLocationDetails } = useCurrentLocation();
-  const { checkCache, fetchTravelTimes, travelTimesMutation, travelTimeResults } = useTravelTimes();
+  const { checkCache, travelTimesMutation, travelTimeResults } = useTravelTimes();
   const [cachedTravelTimes, setCachedTravelTimes] = useState([]);
   const { defaultUserAddress } = useStartingUserAddresses();
   const { defaultAddress } = useStartingFriendAddresses();
@@ -46,6 +41,8 @@ const LocationTravelTimes = ({
   const navigation = useNavigation();
 
   const DOUBLE_PRESS_DELAY = 300;
+
+  const SPACER_MARGIN_AFTER_CLOCK_ICON = 7;
 
   const lastPress = useRef(0);
   const pressTimeout = useRef(null);
@@ -135,9 +132,7 @@ const LocationTravelTimes = ({
   useFocusEffect(
     React.useCallback(() => {
       if (location && defaultUserAddress && defaultAddress && !isModalVisible) {
-        //console.log(location);
-        //console.log(defaultUserAddress);
-        //console.log(defaultAddress);
+ 
         setCachedTravelTimes(
           checkCache(defaultUserAddress, defaultAddress, location)
         );
@@ -154,34 +149,39 @@ const LocationTravelTimes = ({
     <View>
       {location && !String(location.id).startsWith("temp") && (
         <View style={styles.container}>
-          <View style={styles.iconContainer}>
+         
             {!cachedTravelTimes && (
               <>
                 <View style={{ position: "absolute", top: -6 }}>
                   <ClockOutlineSvg
-                    width={20}
-                    height={20}
+                    width={smallClockIconSize}
+                    height={smallClockIconSize}
                     color={themeStyles.genericText.color}
                     onPress={handlePress}
                   />
                 </View>
                 <DistanceZigZagSvg
-                  width={34}
-                  height={34}
+                  width={iconSize}
+                  height={iconSize}
                   color={themeStyles.genericText.color}
                   onPress={handlePress}
                 />
               </>
             )}
             {cachedTravelTimes && (
-              <View style={{ flexDirection: "row", alignItems: 'center' }}>
+              <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', width: 'auto', flexShrink: 1 }}>
+               <View style={{ marginRight: SPACER_MARGIN_AFTER_CLOCK_ICON, width: iconSize}}>
                 <ClockOutlineSvg
-                  width={34}
-                  height={34}
+                  width={iconSize}
+                  height={iconSize}
                   color={themeAheadOfLoading.lightColor}
                   onPress={handlePress}
                 />
+                </View>
+                
                 <View style={styles.travelTimesTextContainer}>
+              
+                    
                 <Text style={[styles.travelTimeText, themeStyles.genericText]}>
                   {cachedTravelTimes?.Me?.duration || "N/A"}
                 </Text>
@@ -191,8 +191,7 @@ const LocationTravelTimes = ({
                 </View>
               </View>
             )}
-          </View>
-        </View>
+          </View> 
       )}
 
     </View>
@@ -200,27 +199,31 @@ const LocationTravelTimes = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingRight: 2,
-  },
-  iconContainer: {
-    margin: 0,
-  },
+  container: { 
+    justifyContent: "center", 
+    flexSrink: 1,
+    width: 'auto', 
+    alignItems: 'center',
+     
+    
+    
+     
+  }, 
   saveText: {
     marginLeft: 8,
   },
   travelTimesTextContainer: { 
-    textAlign: 'right',
-    alignItems: 'flex-end',
-    flexDirection: 'column',
-    paddingLeft: '16%',
+    textAlign: 'flex-end', 
+    flexDirection: 'column', 
+    
+     
 
   },
   travelTimeText: {
     fontSize: 11,
     fontWeight: 'bold',
+    alignSelf: 'flex-end', //OH YAY THIS WORKS
+
 
   },
   modalBackground: {

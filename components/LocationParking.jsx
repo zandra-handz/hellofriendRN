@@ -18,7 +18,8 @@ import { useNavigation } from "@react-navigation/native";
 import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 
 const LocationParking = ({
-  location
+  location,
+  iconSize=34,
 }) => {
   const { themeAheadOfLoading } = useFriendList();
   const [isModalVisible, setModalVisible] = useState(false);
@@ -67,16 +68,16 @@ const LocationParking = ({
           <View style={styles.iconContainer}>
             {!hasNotes && (
               <ParkingCircleOutlineSvg
-                width={34}
-                height={34}
+                width={iconSize}
+                height={iconSize}
                 color={themeStyles.genericText.color}
                 onPress={handlePress}
               />
             )}
             {hasNotes && (
               <ParkingCircleSolidSvg
-                width={34}
-                height={34}
+                width={iconSize}
+                height={iconSize}
                 color={themeAheadOfLoading.lightColor}
                 onPress={handlePress}
               />

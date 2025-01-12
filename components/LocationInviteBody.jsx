@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Linking, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Linking, KeyboardAvoidingView } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+
+import useLocationFunctions from "../hooks/useLocationFunctions";
+import useLocationDetailFunctions from "../hooks/useLocationDetailFunctions";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 
 import { useAuthUser } from '../context/AuthUserContext';
@@ -10,11 +15,104 @@ import LocationDayAndHrsSelector from '../components/LocationDayAndHrsSelector';
 // weekday data passed from LocationHoursOfOperation to ScreenLocationSend to here
 const LocationInviteBody = ({location, weekdayTextData, initiallySelectedDay}) => {
     const { authUserState } = useAuthUser();
+    const queryClient = useQueryClient();
     const [message, setMessage] = useState('');
     const [editedMessage, setEditedMessage] = useState('');
     const [selectedDay, setSelectedDay] = useState('');
     const [hoursForDay, setHoursForDay] = useState('');
     const { themeStyles } = useGlobalStyle();
+
+    const {
+        locationList,
+        loadingAdditionalDetails,
+        useFetchAdditionalDetails,
+        clearAdditionalDetails,
+        deleteLocationMutation,
+      } = useLocationFunctions();
+
+      const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
+       const [locationDetails, setLocationDetails] = useState(null);
+       const [isFetching, setIsFetching] = useState(false);
+
+
+      const handleRefresh = () => {
+        setIsFetching(true);
+      };
+
+      const {data: additionalDetails, isLoading, isError, error} = useFetchAdditionalDetails(location || locationDetails, isFetching);
+
+     
+      useEffect(() => {
+        const updateFromCache = () => {
+          //console.log('checking cache for location data');
+    
+          if (locationList && location) {
+            //console.log('location object', locationObject);
+            const matchedLocation = locationList.find(
+              (loc) => loc.id === location.id
+            );
+            if (matchedLocation) {
+              setLocationDetails(matchedLocation);
+    
+              //      console.log('cached data for location found: ', matchedLocation);
+            } else {
+              setLocationDetails(location); //back up if nothing in cache
+              //      console.log('no data found in cache for this location');
+            }
+          }
+        };
+    
+        updateFromCache();
+      }, [location, locationList, queryClient]);
+
+
+        useEffect(() => {
+          setIsFetching(false);
+          //console.log(currentDayDrilledTwice);
+          if (location == true) {
+            clearAdditionalDetails();
+          }
+        }, [location]);
+      
+  const renderOpenStatus = (data) => {
+    let isOpenNow;
+    isOpenNow = checkIfOpen(data);
+
+    return (
+      <View
+        style={[
+          {
+            marginRight: "2%",
+            borderWidth: 2,
+            borderColor: isOpenNow
+              ? `lightgreen`
+              : isOpenNow === false
+                ? `red`
+                : "transparent",
+            backgroundColor:
+              themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+       
+            width: "auto",
+            paddingHorizontal: "3%",
+            paddingVertical: "1%",
+            borderRadius: 20,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            themeStyles.genericText,
+            {
+              fontSize: 12,
+              fontWeight: "bold",
+            },
+          ]}
+        >
+          {isOpenNow ? `Open` : isOpenNow === false ? `Closed` : ""}
+        </Text>
+      </View>
+    );
+  };
 
     useEffect(() => { 
         if (location && location.address) {
@@ -47,12 +145,25 @@ const LocationInviteBody = ({location, weekdayTextData, initiallySelectedDay}) =
             <View style={styles.locationDetailsContainer}>
                 <Text style={[styles.locationTitle, themeStyles.genericText]}>{location?.title}</Text>
                 <Text style={[styles.locationAddress, themeStyles.genericText]}>{location?.address}</Text>
-                
+                              <TouchableOpacity
+                                onPress={handleRefresh}
+                                style={themeStyles.genericText}
+                              >
+                                <Text style={[themeStyles.genericText, { fontWeight: "bold" }]}>
+                                  GET MORE INFO
+                                </Text>
+                              </TouchableOpacity>
 
+{additionalDetails && additionalDetails.hours && (
+    <>
                 <Text style={[styles.previewTitle, themeStyles.genericText]}>Select day</Text>
                 
-                <LocationDayAndHrsSelector onDaySelect={handleDaySelect} daysHrsData={weekdayTextData} initiallySelectedDay={initiallySelectedDay}/>
-             <KeyboardAvoidingView>
+                <LocationDayAndHrsSelector onDaySelect={handleDaySelect} daysHrsData={ additionalDetails?.hours?.weekday_text} initiallySelectedDay={initiallySelectedDay}/>
+   
+                </>         
+
+)}
+            <KeyboardAvoidingView>
                 <View style={styles.previewContainer}>
                 <Text style={[styles.previewTitle, themeStyles.genericText]}>Add message</Text>
                 <TextInput

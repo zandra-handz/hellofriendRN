@@ -22,7 +22,7 @@ const Tab = createBottomTabNavigator();
 
 const ScreenLocations = ({   }) => {
   const { themeStyles } = useGlobalStyle();
-  const { locationList } = useLocationFunctions();
+  const { locationList, handleAddToFaves, handleRemoveFromFaves } = useLocationFunctions();
   const [ viewingAllLocations, setViewingAllLocations ] = useState(false);
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend, friendDashboardData } = useSelectedFriend(); 
@@ -49,17 +49,18 @@ const [savedLocationIdToScrollTo, setSavedLocationIdToScrollTo] = useState(null)
 
 //const faveLocations = filterLocations();
 
- 
+ //drilling down the addToFaves and removeFromFaves to the LocationSavingActionsForCard component
+ //Accessing this hook inside the component itself causes the card to rerender infinitely
 
   const FavoritesScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <LocationsFriendFavesList locationList={faveLocations} scrollTo={faveLocationIdToScrollTo} />
+      <LocationsFriendFavesList addToFavoritesFunction={handleAddToFaves} removeFromFavoritesFunction={handleRemoveFromFaves} locationList={faveLocations} scrollTo={faveLocationIdToScrollTo} />
     </View>
   );
 
   const SavedLocationsScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
-      <LocationsSavedList locationList={locationList} scrollTo={locationIdToScrollTo}/>
+      <LocationsSavedList addToFavoritesFunction={handleAddToFaves} removeFromFavoritesFunction={handleRemoveFromFaves} locationList={locationList} scrollTo={locationIdToScrollTo}/>
     </View>
   ); 
 
@@ -127,7 +128,7 @@ const [savedLocationIdToScrollTo, setSavedLocationIdToScrollTo] = useState(null)
               textAndIconColor={themeAheadOfLoading.fontColorSecondary}
               backgroundColor={"transparent"}
               onPress={handleScrollToLocation}
-              searchKeys={["address", "title"]}
+              searchKeys={["address", "title", "parking_score", "personal_experience_info"]}
             />
             
           )}
@@ -142,7 +143,7 @@ const [savedLocationIdToScrollTo, setSavedLocationIdToScrollTo] = useState(null)
               textAndIconColor={themeAheadOfLoading.fontColorSecondary}
               backgroundColor={"transparent"}
               onPress={handleScrollToFavoriteLocation}
-              searchKeys={["address", "title"]}
+              searchKeys={["address", "title", "parking_score", "personal_experience_info"]}
             />
             
           )}

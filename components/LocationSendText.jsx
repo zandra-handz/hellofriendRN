@@ -22,7 +22,13 @@ import NotesSolidSvg from "../assets/svgs/notes-solid.svg";
 import { useNavigation } from "@react-navigation/native";
 import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 
-const LocationNotes = ({
+import ChatPersonOutlineSvg from '../assets/svgs/chat-person-outline.svg';
+
+
+import MessagingSendOutlineSvg from '../assets/svgs/messaging-send-outline.svg';
+
+
+const LocationSendText = ({
   location,
   favorite = false,
   size = 11,
@@ -43,6 +49,15 @@ const LocationNotes = ({
     timeout = setTimeout(() => {
       setModalVisible(false);
     }, 1000);
+  };
+
+
+  const handleGoToLocationSendScreen = () => {
+    navigation.navigate("LocationSend", {
+      location: location,
+      weekdayTextData: null,
+      selectedDay: null,
+    });
   };
 
   const handleGoToLocationEditScreen = () => {
@@ -75,23 +90,13 @@ const LocationNotes = ({
     <View>
       {location && !String(location.id).startsWith("temp") && (
         <View style={styles.container}>
-          <View style={styles.iconContainer}>
-            {!hasNotes && (
-              <NotesOutlineSvg
+          <View style={styles.iconContainer}> 
+              <ChatPersonOutlineSvg
                 width={iconSize}
                 height={iconSize}
                 color={themeStyles.genericText.color}
-                onPress={handlePress}
-              />
-            )}
-            {hasNotes && (
-              <NotesSolidSvg
-                width={iconSize}
-                height={iconSize}
-                color={themeAheadOfLoading.lightColor}
-                onPress={handlePress}
-              />
-            )}
+                onPress={handleGoToLocationSendScreen } //handlePress for modal
+              /> 
           </View>
         </View>
       )}
@@ -249,4 +254,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LocationNotes;
+export default LocationSendText;

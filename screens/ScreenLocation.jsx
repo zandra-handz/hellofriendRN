@@ -4,8 +4,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useRoute } from '@react-navigation/native'; 
-import ContentLocationView from '../components/ContentLocationView';
-import ButtonGoToLocationFunctions from '../components/ButtonGoToLocationFunctions';
+import ContentLocationView from '../components/ContentLocationView'; 
 
 const ScreenLocation = () => { 
     const route = useRoute();
@@ -18,7 +17,7 @@ const ScreenLocation = () => {
     return (
         <View style={[styles.container, themeStyles.container]}> 
             <ContentLocationView location={location} favorite={favorite} />
-            <ButtonGoToLocationFunctions />
+          
         </View>
     );
 };

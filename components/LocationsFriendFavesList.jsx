@@ -4,11 +4,14 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 import { FlashList } from '@shopify/flash-list';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
+import ShopOutlineSvg from '../assets/svgs/shop-outline.svg';
 
 import ButtonLocation from '../components/ButtonLocation';  
 
 const LocationsFriendFavesList = ({  
     locationList, 
+    addToFavoritesFunction, 
+    removeFromFavoritesFunction, 
     scrollTo,
 }) => {
     const { themeStyles } = useGlobalStyle();
@@ -17,8 +20,9 @@ const LocationsFriendFavesList = ({
  
         const flatListRef = useRef(null);
     
-        const ITEM_HEIGHT = 100;
+        const ITEM_HEIGHT = 170;
         const ITEM_BOTTOM_MARGIN = 6;
+        const COMBINED = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
     
     const momentListBottomSpacer = Dimensions.get("screen").height - 200;
 
@@ -63,20 +67,25 @@ const LocationsFriendFavesList = ({
                   })}
                 renderItem={({ item: location }) => ( 
                     <ButtonLocation 
+                    addToFavorites={addToFavoritesFunction}
+                    removeFromFavorites={removeFromFavoritesFunction}
                     height={ITEM_HEIGHT}
                     bottomMargin={ITEM_BOTTOM_MARGIN}
                         location={location} 
                         favorite={true}    
-                        iconColor={themeAheadOfLoading.darkColor}
-                        color={themeStyles.genericText.color}
-                        icon={LocationHeartSolidSvg} />
+                        iconColor={themeAheadOfLoading.lightColor}
+                        //color={themeStyles.genericText.color}
+                                      //iconColor={themeStyles.genericText.color}
+                                      color={themeStyles.genericText.color}
+                                      icon={ShopOutlineSvg}
+                                      iconSize={25} />
                          
                         
                     
                 )}
                 numColumns={1}
                 columnWrapperStyle={ null}
-                estimatedItemSize={106}
+                estimatedItemSize={COMBINED}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 scrollIndicatorInsets={{ right: 1 }}

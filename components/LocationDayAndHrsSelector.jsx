@@ -13,6 +13,7 @@ const LocationDayAndHrsSelector = ({ onDaySelect, daysHrsData, initiallySelected
 
   useLayoutEffect(() => {
     if (daysHrsData) {
+      console.log(daysHrsData);
       const abbreviatedDays = daysHrsData.map(entry => entry.slice(0, 3));
       const fullDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']; // Full day names
       const pluralFullDays = fullDays.map(day => day + 's'); // Convert to plural
