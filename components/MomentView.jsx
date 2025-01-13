@@ -59,7 +59,7 @@ const MomentView = ({
   };
 
   return (
-    <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+    <Modal visible={isModalVisible} animationType="slide" transparent={false}>
       <>
         <View
           style={{
@@ -175,8 +175,7 @@ const MomentView = ({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    //flex: 1,
-    height: "100%",
+    flex: 1, 
     width: "100%",
     zIndex: 1,
   },
@@ -215,8 +214,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   innerContainer: {
-    height: Dimensions.get("screen").height - 100, //440
-    width: Dimensions.get("screen").width - 10,
+    height: '90%', //440
+    width: '100%',
     alignContent: "center",
     paddingHorizontal: "4%",
     //paddingTop: "4%",

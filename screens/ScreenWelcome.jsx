@@ -138,7 +138,7 @@ const ScreenWelcome = () => {
                 </View> 
                 <View
                     style={{
-                      bottom: 70,
+                      bottom: '3%',
                       paddingHorizontal: "3%", 
                       width: "100%", 
                       right: 0,
@@ -223,9 +223,9 @@ const styles = StyleSheet.create({
     flex: 1,
     ...StyleSheet.absoluteFillObject,
 
-    position: "absolute",
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height + 100,
+    // position: "absolute",
+    // width: Dimensions.get("window").width,
+    // height: Dimensions.get("window").height + 100,
     justifyContent: "space-between",
 
     alignItems: "center",
@@ -259,19 +259,7 @@ const styles = StyleSheet.create({
     //fontWeight: "bold",
     fontSize: 14,
     lineHeight: 21,
-  },
-  spinnerContainer: {
-    ...StyleSheet.absoluteFillObject, // Cover the entire screen
-    backgroundColor: "transparent", // Semi-transparent background
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  successMessage: {
-    marginTop: 10,
-    color: "green",
-    textAlign: "center",
-    fontFamily: "Poppins-Regular",
-  },
+  }, 
 });
 
 export default ScreenWelcome;

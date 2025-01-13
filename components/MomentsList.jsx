@@ -400,20 +400,14 @@ const styles = StyleSheet.create({
       // Flip horizontally (mirror image)
     ],
     opacity: 0.8,
-  },
-  listContainer: {
-    height: Dimensions.get("screen").height - 230, //440
-    width: Dimensions.get("screen").width,
-    overflow: "visible",
-    zIndex: 1,
-  },
+  }, 
   cardContainer: {
     height: "auto",
     alignItems: "center",
   },
   innerContainer: {
-    height: Dimensions.get("screen").height - 250, //440
-    width: Dimensions.get("screen").width - 10,
+    height: '87%',
+    width: '100%',
     alignContent: "center",
     paddingHorizontal: "4%",
     paddingTop: "4%",

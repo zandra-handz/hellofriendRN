@@ -7,10 +7,14 @@ import LizardSvg from '../assets/svgs/lizard.svg';
 import ButtonInfo from '../components/ButtonInfo';
 import ButtonFriendProfileCircle from '../components/ButtonFriendProfileCircle';
 
+
+//icon size for friend settings button is 28
  
 const HellofriendHeader = () => { 
   const { themeStyles, setNonCustomHeaderPage } = useGlobalStyle();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
+
+  const ICON_SIZE = 28;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -26,13 +30,13 @@ const HellofriendHeader = () => {
     
       <View style={styles.leftSection}>
         <View style={styles.userProfile}>
-          <ButtonFriendProfileCircle /> 
+          <ButtonFriendProfileCircle />  
         </View>
       </View>
   
       <View style={styles.middleSection}>
         {selectedFriend && friendLoaded && (
-          <View style={{height: 44, width: 90, overflow: 'hidden', flexDirection: 'column', paddingBottom: 10, justifyContent: 'flex-end'}}>
+          <View style={{height: 44, width: 90, flexDirection: 'column', paddingBottom: 10, justifyContent: 'flex-end'}}>
                 <View style={{transform: [{ rotate: '240deg' }] }}>
       
                     <LizardSvg width={74} height={74} color={themeStyles.genericText.color} />
@@ -51,7 +55,7 @@ const HellofriendHeader = () => {
 
       <View style={styles.rightSection}>
         <View style={styles.userProfile}> 
-            <ButtonInfo iconSize={34} />
+            <ButtonInfo iconSize={ICON_SIZE} />
         </View>
       </View>
     </View>
@@ -62,11 +66,11 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     padding: 10,
-    paddingTop: 46, // Adjust as needed
-    paddingHorizontal: 10,
+    paddingTop: 70, // Adjust as needed
+    paddingHorizontal: '5%',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 100, // Adjust as needed
+    height: 120, // Adjust as needed
   },
   leftSection: {
     

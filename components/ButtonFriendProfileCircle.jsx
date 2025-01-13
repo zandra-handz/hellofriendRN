@@ -25,6 +25,8 @@ const ButtonFriendProfileCircle = () => {
 
   };
 
+  const ICON_SIZE = 28;
+
 
   useEffect(() => {
     if (selectedFriend && friendLoaded && themeAheadOfLoading.lightColor !== themeStyles.genericTextBackground.backgroundColor) {
@@ -62,13 +64,13 @@ const ButtonFriendProfileCircle = () => {
         return (
           <View style={{ flexDirection: 'row' }}>
             
-            <ProfileCircleSvg width={32} height={32} startColor={themeAheadOfLoading.lightColor} endColor={themeAheadOfLoading.darkColor} />
+            <ProfileCircleSvg width={ICON_SIZE} height={ICON_SIZE} startColor={themeAheadOfLoading.lightColor} endColor={themeAheadOfLoading.darkColor} />
             
             <View style={{
               backgroundColor: friendLoaded && friendDashboardData && selectedFriend ? themeAheadOfLoading.lightColor : 'transparent',  // Circle color
               borderRadius: 16,  // Half of width/height to make it circular
-              width: 32,  // Circle diameter
-              height: 32,
+              width: ICON_SIZE - 1,  // Circle diameter
+              height: ICON_SIZE - 1,
               alignItems: 'center', 
               justifyContent: 'center',
               marginLeft: 4,  // Adjust spacing between circle and ProfileCircleSvg if needed
@@ -125,7 +127,7 @@ const styles = StyleSheet.create({
     alignContent: 'flex-start',
   },
   friendText: {
-    fontSize: 20,
+    fontSize: 17,
     paddingVertical: 0,
     alignSelf: 'center',
     fontFamily: 'Poppins-Bold',
