@@ -6,8 +6,8 @@ import { FlashList } from '@shopify/flash-list';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import ShopOutlineSvg from '../assets/svgs/shop-outline.svg';
 
-import ButtonLocation from '../components/ButtonLocation';  
-
+import LocationCard from "../components/LocationCard";
+ 
 const LocationsFriendFavesList = ({  
     locationList, 
     addToFavoritesFunction, 
@@ -66,7 +66,7 @@ const LocationsFriendFavesList = ({
                     index,
                   })}
                 renderItem={({ item: location }) => ( 
-                    <ButtonLocation 
+                    <LocationCard
                     addToFavorites={addToFavoritesFunction}
                     removeFromFavorites={removeFromFavoritesFunction}
                     height={ITEM_HEIGHT}

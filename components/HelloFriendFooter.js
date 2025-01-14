@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',  
         width: '100%',
-        position: 'absolute',
+        //position: 'absolute',
         bottom: 0, 
         zIndex: 1,
     },

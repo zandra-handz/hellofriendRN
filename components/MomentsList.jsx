@@ -17,11 +17,11 @@ import {
 
 import { useFriendList } from "../context/FriendListContext";
 
-import ButtonGoToAddMoment from '../components/ButtonGoToAddMoment';
+import ButtonGoToAddMoment from "../components/ButtonGoToAddMoment";
 import LizardSvg from "../assets/svgs/lizard.svg";
 import MomentCard from "../components/MomentCard";
 import MomentsNavigator from "../components/MomentsNavigator";
-import MomentsSearchBar from "../components/MomentsSearchBar"; 
+import MomentsSearchBar from "../components/MomentsSearchBar";
 import DiceRandom3dSolidSvg from "../assets/svgs/dice-random-3d-solid.svg";
 import { Easing } from "react-native-reanimated";
 
@@ -33,7 +33,12 @@ const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
 const NUMBER_OF_LINES = 4;
 
 const MomentsList = (navigation) => {
-  const { themeStyles, gradientColors, gradientColorsHome, manualGradientColors } = useGlobalStyle();
+  const {
+    themeStyles,
+    gradientColors,
+    gradientColorsHome,
+    manualGradientColors,
+  } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const {
     capsuleList,
@@ -54,17 +59,17 @@ const MomentsList = (navigation) => {
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
-  const heightAnim = useRef(new Animated.Value(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN)).current;
+  const heightAnim = useRef(
+    new Animated.Value(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN)
+  ).current;
   const translateY = useRef(new Animated.Value(0)).current;
 
-    const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const moments = capsuleList;
   const momentListBottomSpacer = Dimensions.get("screen").height - 200;
 
   const translateX = new Animated.Value(0);
- 
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -81,7 +86,6 @@ const MomentsList = (navigation) => {
       keyboardDidHideListener.remove();
     };
   }, []);
-
 
   useEffect(() => {
     if (momentIdToAnimate) {
@@ -110,7 +114,7 @@ const MomentsList = (navigation) => {
     }
   }, [momentIdToAnimate]);
 
-  const scrollToMoment = (moment) => {  
+  const scrollToMoment = (moment) => {
     if (moment.uniqueIndex !== undefined) {
       flatListRef.current?.scrollToIndex({
         index: moment.uniqueIndex,
@@ -148,7 +152,7 @@ const MomentsList = (navigation) => {
 
   const scrollToCategoryStart = (category) => {
     const categoryIndex = categoryStartIndices[category];
-    
+
     if (categoryIndex !== undefined) {
       flatListRef.current?.scrollToIndex({
         index: categoryIndex > 0 ? categoryIndex : 0,
@@ -156,9 +160,6 @@ const MomentsList = (navigation) => {
       });
     }
   };
-
-
-
 
   const renderCategoryButtons = () => {
     return (
@@ -214,37 +215,47 @@ const MomentsList = (navigation) => {
     const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
 
     const distanceFromTop = scrollY.interpolate({
-      inputRange: [offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN), offset, offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN],
-      outputRange: [.92, .94, 0.84], //[0.93, 0.98, 0.84],
+      inputRange: [
+        offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN),
+        offset,
+        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+      ],
+      outputRange: [0.92, 0.94, 0.84], //[0.93, 0.98, 0.84],
       extrapolate: "clamp",
     });
 
     const dynamicTextSize = scrollY.interpolate({
-      inputRange: [offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN, offset, offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN],
+      inputRange: [
+        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+        offset,
+        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+      ],
       outputRange: [16, 16, 16], //turned off for now  [14, 15, 13]
       extrapolate: "clamp",
     });
 
-
- 
-
     const dynamicVisibility = scrollY.interpolate({
-      inputRange: [offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN, offset, offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN],
+      inputRange: [
+        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+        offset,
+        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+      ],
       outputRange: [0.2, 1, 0], // 0 = fully transparent, 1 = fully visible
       extrapolate: "clamp",
     });
 
-    const opacity = item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
-// Fade out when it's being animated
+    const opacity =
+      item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
+    // Fade out when it's being animated
     const translate = item.id === momentIdToAnimate ? translateY : 0;
 
     return (
       <Animated.View
         style={[
           styles.cardContainer,
-          { 
+          {
             transform: [{ scale: distanceFromTop }, { translateY: translate }],
-            opacity, 
+            opacity,
           },
         ]}
       >
@@ -253,16 +264,17 @@ const MomentsList = (navigation) => {
           heightToMatchWithFlatList={ITEM_HEIGHT}
           marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
           numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
-          backgroundColor={themeStyles.genericTextBackgroundShadeTwo.backgroundColor}
+          backgroundColor={
+            themeStyles.genericTextBackgroundShadeTwo.backgroundColor
+          }
           borderRadius={30}
-          borderColor={'transparent'}  //manualGradientColors.lightColor}
+          borderColor={"transparent"} //manualGradientColors.lightColor}
           moment={item}
           index={index}
           size={dynamicTextSize}
           sliderVisible={dynamicVisibility}
           onPress={() => openMomentNav(item)} // Open the moment view when the card is pressed
           onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
-          
         />
       </Animated.View>
     );
@@ -276,44 +288,44 @@ const MomentsList = (navigation) => {
         color={themeStyles.genericTextBackground.backgroundColor}
         style={styles.lizardTransform}
       />
-    {!isKeyboardVisible && (
+      {!isKeyboardVisible && (
         <>
-        
-      {renderCategoryButtons()}
-      
-                      <ButtonGoToAddMoment />
+          {renderCategoryButtons()}
+
+          <ButtonGoToAddMoment />
         </>
-      
-    )}
-      <View style={[styles.selectFriendContainer, { alignItems: 'center', marginBottom: "2%" }]}>
-     
-          <DiceRandom3dSolidSvg
-            height={36}
-            width={36}
-            color={themeAheadOfLoading.fontColorSecondary}
-            onPress={scrollToRandomItem}
-            
-          />  
-        <MomentsSearchBar 
+      )}
+      <View
+        style={[
+          styles.selectFriendContainer,
+          { alignItems: "center", marginBottom: "2%" },
+        ]}
+      >
+        <DiceRandom3dSolidSvg
+          height={36}
+          width={36}
+          color={themeAheadOfLoading.fontColorSecondary}
+          onPress={scrollToRandomItem}
+        />
+        <MomentsSearchBar
           data={capsuleList}
           height={30}
-          width={'27%'}
+          width={"27%"}
           borderColor={"transparent"}
-          placeholderText={'Search'}
+          placeholderText={"Search"}
           textAndIconColor={themeAheadOfLoading.fontColorSecondary}
-          backgroundColor={'transparent'}
+          backgroundColor={"transparent"}
           onPress={scrollToMoment}
           searchKeys={["capsule", "typedCategory"]}
         />
-
       </View>
-              <View
-                style={[
-                  styles.innerContainer,
-                 themeStyles.genericTextBackground,
-                  { paddingHorizontal: 0, borderColor: themeAheadOfLoading.lightColor },
-                ]}
-              >
+      <View
+        style={[
+          styles.innerContainer,
+          themeStyles.genericTextBackground,
+          { paddingHorizontal: 0, borderColor: themeAheadOfLoading.lightColor },
+        ]}
+      >
         <Animated.FlatList
           ref={flatListRef}
           data={capsuleList}
@@ -366,11 +378,11 @@ const styles = StyleSheet.create({
     bottom: 20, //20
     left: 4,
     zIndex: 5,
-    borderRadius: 20, 
+    borderRadius: 20,
     height: "auto",
     maxHeight: "20%",
     width: "40%",
-    padding: 20, 
+    padding: 20,
   },
   categoryButton: {
     borderBottomWidth: 0.8,
@@ -382,14 +394,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: "8%",
     paddingVertical: "6%",
     borderRadius: 16,
-    marginBottom: '3%',
+    marginBottom: "3%",
     height: "auto",
   },
   categoryText: {
     fontWeight: "bold",
     fontSize: 13,
     textTransform: "uppercase",
-  }, 
+  },
   lizardTransform: {
     position: "absolute",
     zIndex: 0,
@@ -400,14 +412,14 @@ const styles = StyleSheet.create({
       // Flip horizontally (mirror image)
     ],
     opacity: 0.8,
-  }, 
+  },
   cardContainer: {
     height: "auto",
     alignItems: "center",
   },
   innerContainer: {
-    height: '87%',
-    width: '100%',
+    height: "87%",
+    width: "100%",
     alignContent: "center",
     paddingHorizontal: "4%",
     paddingTop: "4%",
@@ -419,17 +431,17 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     flexDirection: "column",
     justifyContent: "space-between",
-    overflow: 'hidden', 
+    overflow: "hidden",
     // zIndex: 2000,
   },
   selectFriendContainer: {
     width: "100%",
     justifyContent: "flex-end",
-    flexDirection: 'row',
+    flexDirection: "row",
     minHeight: 30,
     maxHeight: 30,
     height: 30,
-    paddingHorizontal: '4%',
+    paddingHorizontal: "4%",
   },
 });
 

@@ -12,7 +12,7 @@ import LocationSendText from '../components/LocationSendText';
 
 import LocationTravelTimes from "../components/LocationTravelTimes";
 
-const ButtonLocation = ({
+const LocationCard = ({
   addToFavorites,
   removeFromFavorites,
   location,
@@ -28,7 +28,7 @@ const ButtonLocation = ({
   const { themeStyles } = useGlobalStyle();
 
   const MARGIN_LEFT_LOCATION_BUTTONS = "3%";
-  const LOCATION_BUTTONS_ICON_SIZE = 24;
+  const LOCATION_BUTTONS_ICON_SIZE = 20;
   const FAVORITE_LOCATION_ICON_SIZE = 24;
   const SMALL_CLOCK_ICON_SIZE = 16;
 
@@ -55,8 +55,8 @@ const ButtonLocation = ({
           justifyContent: "flex-start",
           alignItems: "center",
           textAlign: "center",
-          width: "100%",
-          flex: 1, 
+          width: "100%",  
+            
         }}
       > 
         {Icon && (
@@ -73,7 +73,7 @@ const ButtonLocation = ({
               
              
                
-      <View style={styles.textContainer}>
+      <View style={styles.detailsContainer}>
         {location.address && (
           <DirectionsLink
             address={location.address}
@@ -81,16 +81,18 @@ const ButtonLocation = ({
           />
         )}
         {/* <Text style={[styles.optionText, {color: color}]}>{location.address}</Text> */}
-        <View
+
+      </View>
+      <View
           style={{
             flexDirection: "row",
             width: "auto",   
             alignContent: 'center',
-            paddingVertical: "2%",
-            paddingHorizontal: "2%",
-            justifyContent: "flex-end",
+            paddingVertical: "0%",
+            paddingHorizontal: "0%",
+            justifyContent: "space-between",
             alignItems: "center",
-            overflow: "hidden", 
+            //overflow: "hidden", 
           }}
         >
 
@@ -134,7 +136,6 @@ const ButtonLocation = ({
           </View>
 
         </View>
-      </View>
     </View>
   );
 };
@@ -158,11 +159,13 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: "row",
+    justifyContent: 'flex-start',
 
     width: "9%",
   },
-  textContainer: {
+  detailsContainer: {
     flex: 1,
+    padding: '3%',
   },
   titleContainer: {
     width: "70%",
@@ -176,4 +179,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ButtonLocation;
+export default LocationCard;

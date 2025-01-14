@@ -247,7 +247,7 @@ const ScreenHome = ({ navigation }) => {
         {authUserState.authenticated &&
         authUserState.user &&
         userAppSettings ? (
-          <View  style={{ flex: 1, flexDirection: 'column',   paddingHorizontal: '2%', paddingBottom: '2%' }}>
+          <View  style={{ flex: 1, paddingBottom: '1%', justifyContent: "space-between", flexDirection: 'column',   paddingHorizontal: '2%'}}>
             <View
               style={{
                 height: isKeyboardVisible
@@ -305,8 +305,7 @@ const ScreenHome = ({ navigation }) => {
             <Animated.View
               style={[
                 styles.buttonContainer,
-                {
-                  paddingBottom: footerHeight,
+                { 
                   paddingTop: 10,
                   transform: [{ translateX: slideAnim }],
                 },
@@ -352,7 +351,7 @@ const ScreenHome = ({ navigation }) => {
                   borderRadius={40}
                   borderColor="black"
                   height={headerHeight}
-                  maxHeight={200}
+                  maxHeight={190}
                 />
               )}
               <HomeScrollSoon

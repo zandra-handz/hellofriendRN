@@ -5,7 +5,7 @@ import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import LocationSolidSvg from "../assets/svgs/location-solid.svg";
 import ShopOutlineSvg from '../assets/svgs/shop-outline.svg';
-import ButtonLocation from "../components/ButtonLocation";
+import LocationCard from "../components/LocationCard";
 
 const LocationsSavedList = ({ locationList, addToFavoritesFunction, removeFromFavoritesFunction, scrollTo }) => {
   const { themeStyles } = useGlobalStyle();
@@ -61,7 +61,7 @@ const LocationsSavedList = ({ locationList, addToFavoritesFunction, removeFromFa
           index,
         })}
         renderItem={({ item: location }) => ( 
-            <ButtonLocation
+            <LocationCard
               addToFavorites={addToFavoritesFunction}
               removeFromFavorites={removeFromFavoritesFunction}
               height={ITEM_HEIGHT}
