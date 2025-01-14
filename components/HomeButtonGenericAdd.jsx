@@ -18,7 +18,7 @@ const HomeButtonGenericAdd = ({
         lightColor = 'rgb(160, 241, 67)',
     }) => { 
     const globalStyles = useGlobalStyle();
-    const { gradientColors } = useGlobalStyle();
+    const { manualGradientColors } = useGlobalStyle();
 
     const adjustFontSize = (fontSize) => {
         return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
@@ -59,10 +59,8 @@ return(
             />
             )} 
                     <Text
-              style={[
-                textStyles(20, '#163805'),
-                { fontFamily: 'Poppins-Bold', paddingRight: 20},
-              ]}
+              style={[ styles.label, 
+                { color: manualGradientColors.homeDarkColor} ]}
             >
               {label}
             </Text>
@@ -80,16 +78,21 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         flex: 1,
-        width: '100%',  
-        padding: '5%', 
-        paddingRight: '0%',
+        width: '100%',    
         alignContent: 'center', 
         marginVertical: '1%',
         borderWidth: 0, 
         alignItems: 'center',
         justifyContent: 'space-between',
         overflow: 'hidden',
+        paddingHorizontal: '3%',
     },
+    label: {
+      fontSize: 18,
+      fontFamily: 'Poppins-Bold',
+      textTransform: 'uppercase',
+      paddingHorizontal: '1%',
+    }
 
 });
 

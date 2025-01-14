@@ -6,6 +6,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import LizardSvg from '../assets/svgs/lizard.svg';
 import ButtonInfo from '../components/ButtonInfo';
 import ButtonFriendProfileCircle from '../components/ButtonFriendProfileCircle';
+import GeckoSolidSvg from '../assets/svgs/gecko-solid.svg';
 
 
 //icon size for friend settings button is 28
@@ -36,13 +37,21 @@ const HellofriendHeader = () => {
   
       <View style={styles.middleSection}>
         {selectedFriend && friendLoaded && (
-          <View style={{height: 44, width: 90, flexDirection: 'column', paddingBottom: 10, justifyContent: 'flex-end'}}>
-                <View style={{transform: [{ rotate: '240deg' }] }}>
+          // <View style={{height: 44, width: 90, flexDirection: 'column', paddingBottom: 10, justifyContent: 'flex-end'}}>
+          //       <View style={{transform: [{ rotate: '240deg' }] }}>
       
-                    <LizardSvg width={74} height={74} color={themeStyles.genericText.color} />
+          //           <GeckoSolidSvg width={74} height={74} color={themeStyles.genericText.color} />
            
-                </View>
-              </View>
+          //       </View>
+          //     </View>
+
+<View style={{ justifyContent: 'center', paddingBottom: 14}}>
+<View style={{transform: [{ rotate: '180deg' }] }}>
+
+
+    <GeckoSolidSvg width={50} height={50} color={themeStyles.genericText.color} />
+ </View>
+</View>
           
 
         )}
@@ -66,7 +75,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     padding: 10,
-    paddingTop: 70, // Adjust as needed
+    paddingTop: 60, // Adjust as needed
     paddingHorizontal: '5%',
     alignItems: 'center',
     justifyContent: 'space-between',

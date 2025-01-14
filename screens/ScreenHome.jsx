@@ -242,17 +242,17 @@ const ScreenHome = ({ navigation }) => {
       
     <KeyboardAvoidingView
     behavior={Platform.OS === "ios" ? "padding" : "height"}
-    style={{ flex: 1, paddingHorizontal: '2%' }}
+    style={{ flex: 1 }}
   >
         {authUserState.authenticated &&
         authUserState.user &&
         userAppSettings ? (
-          <>
+          <View  style={{ flex: 1, flexDirection: 'column',   paddingHorizontal: '2%', paddingBottom: '2%' }}>
             <View
               style={{
                 height: isKeyboardVisible
                   ? '68%' //'Dimensions.get("window").height / 2.5'
-                  : '35%' //Dimensions.get("window").height / 3,
+                  : '33%' //Dimensions.get("window").height / 3,
               }}
             >
               <TextMomentHomeScreenBox
@@ -368,12 +368,13 @@ const ScreenHome = ({ navigation }) => {
                 />
               )} 
             </Animated.View>
-          </>
+          </View>
         ) : (
           <View style={styles.signInContainer}></View>
         )}
-      </KeyboardAvoidingView>
+        
       <HelloFriendFooter />
+      </KeyboardAvoidingView>
     </LinearGradient> 
   );
 };

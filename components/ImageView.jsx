@@ -235,8 +235,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   innerContainer: {
-    height: Dimensions.get("screen").height - 164,
-    width: Dimensions.get("screen").width - 10,
+    height: '90%', //440
+    width: '100%',
     alignContent: "center",
     paddingHorizontal: "4%",
     //paddingTop: "4%",

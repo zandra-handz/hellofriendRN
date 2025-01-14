@@ -146,9 +146,14 @@ const AlertList = ({
             ) : (
               <>
                 <View
-                  style={{
-                    height: "76%",
-                    width: Dimensions.get("screen").width - 60,
+                  style={{ 
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: "70%",
+                    minWidth: 300, 
+                    width: 300,
+                    flexGrow: 1,
                   }}
                 >
                   {content}
@@ -195,15 +200,17 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "96%",
-    minHeight: 200,
+    minHeight: 200,  
     padding: 10,
     borderWidth: 2,
     borderRadius: 20,
     alignItems: "center",
     paddingBottom: 30,
+    marginBottom: '6%',
     flexDirection: "column",
     justifyContent: "space-between", 
-    marginTop: 50,
+    marginTop: '2%',
+    flex: 1,
   },
   closeButtonTop: {
     padding: 5,

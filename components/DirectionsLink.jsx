@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
  
-const DirectionsLink = ({ address, size = 15, iconSize=17, fontColor, backgroundColor }) => {
+const DirectionsLink = ({ address, size = 15, iconSize=14, fontColor, backgroundColor }) => {
    
 
   const handlePress = () => {
@@ -50,6 +50,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   iconContainer: { 
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingRight: '2%', 
   },
   address: { 

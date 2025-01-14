@@ -8,10 +8,12 @@ import ProfileTwoUsersSvg from '../assets/svgs/profile-two-users.svg';
 import LoadingPage from '../components/LoadingPage'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import ButtonSelectFriend from '../components/ButtonSelectFriend';
+import FriendIcon from '../components/FriendIcon'; // Import ProfileCircleSvg
+
 
 import { Dimensions } from 'react-native';
 
-const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal, includeLabel=false, iconSize=26, width = '60%' }) => {  
+const HomeScreenSelectFriend = ({ addToPress, color, addToOpenModal, includeLabel=true, iconSize=26, width = '60%' }) => {  
   
   const { themeStyles } = useGlobalStyle();
   const globalStyles = useGlobalStyle();  
@@ -96,24 +98,23 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal,
           <LoadingPage
             loading={loadingNewFriend} 
             spinnerType='flow'
-            spinnerSize={60}
+            spinnerSize={30}
             color={themeAheadOfLoading.darkColor}
             includeLabel={false} 
           />
           </View>
         )}
         {!loadingNewFriend && includeLabel && ( 
+       
         <Text
-          style={[styles.displaySelected, textStyles(17, themeAheadOfLoading.fontColorSecondary)]}
+          style={[styles.friendText, themeStyles.genericText]}
           numberOfLines={1}  
           ellipsizeMode='tail'  
         >
-          {friendLoaded && `For:  ${selectedFriend?.name}` || 'Which friend is this for?'}
-        </Text>
+          {`For: `}
+        </Text> 
         )}
-
-        </View>
-        <View style={[styles.selectorButtonContainer, {paddingHorizontal: '2%'}]}>
+  
           <TouchableOpacity
             onPress={openModal}
             accessible={true}
@@ -121,20 +122,21 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal,
             accessibilityLabel='Friend selector button'
             >
               <View style={{ paddingHorizontal: '0%'}}>
-                <ProfileTwoUsersSvg 
+                <FriendIcon  />
+                {/* <ProfileTwoUsersSvg 
                   height={iconSize} 
                   width={iconSize} 
                   color={loadingNewFriend? 'transparent' : color || themeAheadOfLoading.fontColorSecondary}
                   />
-            
+             */}
 
               </View>
 
           </TouchableOpacity>
+          
+          </View>
  
-        </View> 
-      </View>
-
+        </View>  
       <AlertList 
         includeBottomButtons={false}
         isModalVisible={isFriendMenuModalVisible}
@@ -148,8 +150,6 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal,
         searchField={['name']}
         searchOnPress={handleSelectFriendSearch}
         content={ 
-          <View style={{flex: 1, width: '100%', minHeight: 2, minWidth: 2, height: '100%'}}>
-            
           <FlashList
           data={friendList}
           keyExtractor={item => item.id.toString()}
@@ -168,8 +168,6 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal,
           // Optional: Add styling for the content container
         /> 
         
-        </View>
-        
         }
         onCancel={toggleModal}
         confirmText="Reset All"
@@ -182,11 +180,16 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal,
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', 
+    flex: 1,
     height: 'auto',
     maxHeight: 40,
     justifyContent: 'flex-end',
     alignItems: 'center', 
+    alignContent: 'center',
     padding: 2,
+    //backgroundColor: 'pink',
+    
+    
 
     borderRadius: 0, 
   },
@@ -195,8 +198,10 @@ const styles = StyleSheet.create({
   },
   displaySelectedContainer: {
     alignItems: 'flex-end', 
-    width: '100%',   
+    flexDirection: 'row',
     flex: 1,
+    width: '100%', 
+    backgroundColor: 'orange',  
   },
   displaySelected: {
     color: 'black',
@@ -215,6 +220,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     maxWidth: Dimensions.get('window').width / 3 - 20,  // Divide by 3 to spread items evenly
   },
+  friendText: {
+    fontFamily: 'Poppins-Regular',
+  alignSelf: 'center',
+    fontSize: 16,
+
+  },
   row: { 
     borderRadius: 5,
   },
@@ -222,4 +233,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendSelectModalVersionButtonOnly;
+export default HomeScreenSelectFriend;

@@ -59,7 +59,7 @@ const MomentView = ({
   };
 
   return (
-    <Modal visible={isModalVisible} animationType="slide" transparent={false}>
+    <Modal visible={isModalVisible} animationType="slide" transparent={true}>
       <>
         <View
           style={{
