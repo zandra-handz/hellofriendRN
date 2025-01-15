@@ -15,7 +15,7 @@ import DirectionsLink from '../components/DirectionsLink';
 import { useFriendList } from '../context/FriendListContext';
 import DisplayParkingScore from '../components/DisplayParkingScore';
 import DisplayLocationNotes from '../components/DisplayLocationNotes';
-
+ 
 import StylingRating from '../components/StylingRating';
 
 
@@ -24,11 +24,15 @@ const ContentLocationView = ({ location, favorite }) => {
     const { themeAheadOfLoading } = useFriendList();
     const { loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
    
+
     const navigation = useNavigation();  
     const [isFetching, setIsFetching] = useState(false);
    
     const { data: additionalDetails, isLoading, isError, error } = useFetchAdditionalDetails(location, isFetching);
-  
+
+
+
+
     const handleRefresh = () => {
         setIsFetching(true); // Trigger the fetch
     };

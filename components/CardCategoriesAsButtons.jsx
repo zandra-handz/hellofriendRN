@@ -55,7 +55,7 @@ const CardCategoriesAsButtons = ({
   const updateNewCategoryText = (text) => {
     if (newCategoryRef && newCategoryRef.current) {
       newCategoryRef.current.setText(text);
-     // console.log("in parent", newCategoryRef.current.getText());
+      // console.log("in parent", newCategoryRef.current.getText());
     }
   };
 
@@ -77,8 +77,8 @@ const CardCategoriesAsButtons = ({
   }, [categoryCount]);
 
   const fetchCategoryLimitData = async () => {
-  //  console.log("category names: ", categoryNames);
-  //  console.log("category counts: ", categoryCount);
+    //  console.log("category names: ", categoryNames);
+    //  console.log("category counts: ", categoryCount);
 
     if (categoryCount < 3) {
       setContainerHeight("100%");
@@ -158,13 +158,12 @@ const CardCategoriesAsButtons = ({
   const handleCategoryPress = (category) => {
     setSelectedCategory(category);
     setModalVisible(true);
-   // console.log("SELECTED CATEGORY!!!");
+    // console.log("SELECTED CATEGORY!!!");
   };
 
   const handlePressOut = (category) => {
     if (category === selectedCategory && pressedOnce) {
       handleSave();
-    //  console.log("SAVED IN HANDLEPRESSOUT!!!");
       setPressedOnce(false);
     } else {
       setSelectedCategory(category);
@@ -174,14 +173,11 @@ const CardCategoriesAsButtons = ({
 
   const handleSave = () => {
     if (selectedCategory) {
-     // console.log("no save");
       onParentSave();
     }
   };
 
   const handleAllCategoriesPress = () => {
-    //console.log("Clicked All Categories");
-    //console.log("All capsules:", capsuleList);
     setSelectedCategory(null);
   };
 
@@ -225,7 +221,6 @@ const CardCategoriesAsButtons = ({
     );
   }, [selectedCategory]);
 
-
   return (
     <View style={[themeStyles.genericTextBackgroundShadeTwo, { flex: 1 }]}>
       <View
@@ -266,10 +261,10 @@ const CardCategoriesAsButtons = ({
 
               <View
                 style={{
-                  flexDirection: "row", 
+                  flexDirection: "row",
                   height: "100%",
                   width: "100%",
-                  paddingLeft: '4%',
+                  paddingLeft: "4%",
                 }}
               >
                 {/* {categoryCount === 0 && viewExistingCategories && (
@@ -296,10 +291,16 @@ const CardCategoriesAsButtons = ({
                     renderItem={({ item }) => (
                       <View
                         key={item}
-                        style={{ width: 140, height: '100%', justifyContent: 'center', flex: 1, marginRight: "2%" }}
+                        style={{
+                          width: 140,
+                          height: "100%",
+                          justifyContent: "center",
+                          flex: 1,
+                          marginRight: "2%",
+                        }}
                       >
                         <ButtonBottomActionBaseSmallLongPress
-                          height={'80%'}
+                          height={"80%"}
                           onPress={() => handlePressOut(item)} // Correct way to pass the function
                           onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
                           label={item}
@@ -333,7 +334,6 @@ const CardCategoriesAsButtons = ({
                       width: "100%",
                       alignContent: "center",
                       alignItems: "center",
-                      
                     }}
                   >
                     <SingleLineEnterBox
@@ -347,12 +347,12 @@ const CardCategoriesAsButtons = ({
                 )}
                 <View
                   style={{
-                    flexDirection: "row", 
+                    flexDirection: "row",
                     alignContent: "center",
                     alignItems: "center",
                     textAlign: "left",
-                    justifyContent: "center", 
-                    width: '10%',
+                    justifyContent: "center",
+                    width: "10%",
                   }}
                 >
                   {remainingCategories !== null && remainingCategories > 0 && (
@@ -361,14 +361,13 @@ const CardCategoriesAsButtons = ({
                         zIndex: 7000,
                         elevation: 7000,
                         paddingHorizontal: "2%",
-                        justifyContent: 'center',
-                        width: '100%',
-                        height: '100%',
-                        alignContent: 'center', 
-                        alignItems: 'center',
-                       
-                        
-                    alignContent: "center", 
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        alignContent: "center",
+                        alignItems: "center",
+
+                        alignContent: "center",
                       }}
                     >
                       <AddOutlineSvg
@@ -502,7 +501,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignContent: "center",
     flexDirection: "row",
-    height: "auto", 
+    height: "auto",
   },
   loadingWrapper: {
     flex: 1,

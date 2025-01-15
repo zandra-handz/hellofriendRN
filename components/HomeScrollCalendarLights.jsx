@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "column",
     flexGrow: 1,
+    height: '100%',
     overflow: "hidden",
     marginVertical: "1%",
     borderWidth: 0,

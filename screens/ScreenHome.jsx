@@ -237,7 +237,7 @@ const ScreenHome = ({ navigation }) => {
       colors={[gradientColorsHome.darkColor, gradientColorsHome.lightColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={[styles.container, {height: isKeyboardVisible ? Dimensions.get("window").height : 'auto'}]}
+      style={[styles.container, {height: isKeyboardVisible ? '200%' : '100%'}]}
     >
       
     <KeyboardAvoidingView
@@ -251,8 +251,8 @@ const ScreenHome = ({ navigation }) => {
             <View
               style={{
                 height: isKeyboardVisible
-                  ? '68%' //'Dimensions.get("window").height / 2.5'
-                  : '33%' //Dimensions.get("window").height / 3,
+                  ? '76%' //'Dimensions.get("window").height / 2.5'
+                  : '32%' //Dimensions.get("window").height / 3,
               }}
             >
               <TextMomentHomeScreenBox
@@ -324,7 +324,9 @@ const ScreenHome = ({ navigation }) => {
                 )} */}
 
               {!selectedFriend && !friendLoaded && showLastButton && (
-                <HomeButtonGenericAdd
+               <View style={{maxHeight: 80}}>
+                
+               <HomeButtonGenericAdd
                   label={"ADD FRIEND"}
                   onPress={navigateToAddFriendScreen}
                   borderRadius={40}
@@ -333,6 +335,9 @@ const ScreenHome = ({ navigation }) => {
                   height={buttonHeight}
                   maxHeight={maxButtonHeight}
                 />
+
+                
+               </View>
               )}
               {/* </View> */}
 
@@ -342,10 +347,12 @@ const ScreenHome = ({ navigation }) => {
                   borderRadius={40}
                   height={headerHeight}
                   borderColor="black"
-                  maxHeight={200}
+                  maxHeight={190}
                 />
               )}
               {selectedFriend && (
+                 <View style={{ width: '100%', height: 180,   alignItems: 'center'}}>
+                  
                 <HomeButtonSelectedFriend
                   onPress={navigateToAddMomentScreen}
                   borderRadius={40}
@@ -353,6 +360,8 @@ const ScreenHome = ({ navigation }) => {
                   height={headerHeight}
                   maxHeight={190}
                 />
+                
+                 </View>
               )}
               <HomeScrollSoon
                 height={upcomingDatesTray}
@@ -360,11 +369,15 @@ const ScreenHome = ({ navigation }) => {
                 borderColor="black"
               />
               {selectedFriend && (
+                <View style={{ height: '24%'}}>
                 <HomeScrollCalendarLights
                   height={upcomingDatesTray}
                   borderRadius={40}
                   borderColor="black"
                 />
+                
+                  
+                </View>
               )} 
             </Animated.View>
           </View>
@@ -390,7 +403,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     marginHorizontal: 0,
-    flex: 1,
+    flex: 1, 
   },
   loadingWrapper: {
     flex: 1,

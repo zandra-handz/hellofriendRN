@@ -45,11 +45,13 @@ const LocationNotes = ({
     }, 1000);
   };
 
-  const handleGoToLocationEditScreen = () => {
+  const handleGoToLocationEditScreenFocusNotes = () => {
     navigation.navigate("LocationEdit", {
       location: location,
+      category: location.category || "",
       notes: location.personal_experience_info || "",
       parking: location.parking_score || "",
+      focusOn: 'focusNotes',
     });
     //doesn't help
     closeModalAfterDelay();
@@ -133,7 +135,7 @@ const LocationNotes = ({
                 <EditPencilOutlineSvg
                   height={30}
                   width={30}
-                  onPress={handleGoToLocationEditScreen}
+                  onPress={handleGoToLocationEditScreenFocusNotes}
                   color={themeStyles.genericText.color}
                 />
               </View>
@@ -149,7 +151,7 @@ const LocationNotes = ({
                 </ScrollView>
               )}
             </View>
-            <View
+            {/* <View
               style={[
                 styles.parkingScoreContainer,
                 {
@@ -182,7 +184,7 @@ const LocationNotes = ({
                   </Text>
                 </View>
               )}
-            </View>
+            </View> */}
           </View>
         }
         onCancel={toggleModal}

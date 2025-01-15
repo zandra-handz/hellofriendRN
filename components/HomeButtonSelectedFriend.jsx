@@ -26,13 +26,9 @@ const DOUBLE_PRESS_DELAY = 300;
 
 const HomeButtonSelectedFriend = ({ 
   height = "100%",
-  maxHeight = 100,
+  maxHeight = 190,
   borderRadius = 20,
-  borderColor = "transparent",
-  imageSize = 0,
-  image = require("../assets/shapes/fairymagic.png"),
-  imagePositionHorizontal = 0,
-  imagePositionVertical = 70, 
+  borderColor = "transparent", 
 }) => {
   const navigation = useNavigation();
   const globalStyles = useGlobalStyle();
@@ -92,7 +88,7 @@ const HomeButtonSelectedFriend = ({
  
 
   return (
-    <View style={{ borderRadius: borderRadius }}>
+    <View style={{ maxHeight: maxHeight, borderRadius: borderRadius }}>
       <EclipseAnim
         color={homeLightColor ? homeLightColor : 'lightgreen'}
         innerColor={homeDarkColor ? homeDarkColor : 'darkgreen'}
@@ -107,6 +103,7 @@ const HomeButtonSelectedFriend = ({
               borderColor: borderColor,
               height: height,
               maxHeight: maxHeight,
+              minHeight: 180,
             },
           ]}
         >
@@ -207,14 +204,17 @@ const HomeButtonSelectedFriend = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    width: "100%",
+    width: "100%",  
+    height: 180,
     padding: "5%", 
-    alignContent: "center",
-    marginVertical: "1%",
+    alignContent: "center", 
     borderWidth: 0,
     alignItems: "center",
     justifyContent: "space-between",
-    overflow: "hidden",
+    overflow: "hidden",  
+    backgroundColor: 'teal', 
+  
+    
   },
   textContainer: {
     zIndex: 5, 

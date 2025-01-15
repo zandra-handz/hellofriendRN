@@ -131,9 +131,8 @@ const FlatListChangeChoice = forwardRef(
 const styles = StyleSheet.create({
   container: {
     width: "90%",
-    flex: 1,
-    borderRadius: 30,
-    margin: "4%",
+    height: '100%',
+    borderRadius: 30, 
     alignSelf: "center",
     padding: 20,
   },

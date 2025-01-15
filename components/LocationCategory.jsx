@@ -7,25 +7,35 @@
 //  }
 
 import React, { useLayoutEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import AlertList from "../components/AlertList";
 import { useFriendList } from "../context/FriendListContext";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
-import NotesOutlineSvg from "../assets/svgs/notes-outline.svg"; 
-import ParkingCircleOutlineSvg from "../assets/svgs/parking-circle-outline.svg";
-import ParkingCircleSolidSvg from "../assets/svgs/parking-circle-solid.svg";
+import NotesOutlineSvg from "../assets/svgs/notes-outline.svg";
+import NotesSolidSvg from "../assets/svgs/notes-solid.svg";
 import { useNavigation } from "@react-navigation/native";
 import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 
-const LocationParking = ({
+const LocationCategory = ({
   location,
-  iconSize=34,
+  favorite = false,
+  size = 11,
+  iconSize = 34,
+  family = "Poppins-Bold",
+  color = "black",
+  style,
 }) => {
   const { themeAheadOfLoading } = useFriendList();
   const [isModalVisible, setModalVisible] = useState(false);
-  const { themeStyles } = useGlobalStyle();
-  const [hasNotes, setHasNotes] = useState(false);
-  const [hasParkingScore, setHasParkingScore] = useState(false);
+  const { themeStyles } = useGlobalStyle(); 
+  const [hasCategory, setHasCategory] = useState(false);
+
 
   const navigation = useNavigation();
 
@@ -36,17 +46,20 @@ const LocationParking = ({
     }, 1000);
   };
 
-  const handleGoToLocationEditScreenFocusParking = () => {
+
+  const handleGoToLocationEditScreenFocusCategory = () => {
     navigation.navigate("LocationEdit", {
       location: location,
       category: location.category || "",
       notes: location.personal_experience_info || "",
       parking: location.parking_score || "",
-      focusOn: 'focusParking',
+      focusOn: 'focusCategory',
+      
     });
     //doesn't help
     closeModalAfterDelay();
   };
+ 
 
   const handlePress = () => {
     setModalVisible(true);
@@ -57,35 +70,26 @@ const LocationParking = ({
   };
 
   useLayoutEffect(() => {
-    if (location && location.parking_score) {
-      setHasNotes(true);
+    if (location && location.category) {
+      setHasCategory(true);
     } else {
-      setHasNotes(false);
+      setHasCategory(false);
     }
   }, [location]);
+ 
 
   return (
     <View>
       {location && !String(location.id).startsWith("temp") && (
         <View style={styles.container}>
-          <View style={styles.iconContainer}>
-            {!hasNotes && (
-              <ParkingCircleOutlineSvg
-                width={iconSize}
-                height={iconSize}
-                color={themeStyles.genericText.color}
-                onPress={handlePress}
-              />
+          <TouchableOpacity onPress={hasCategory? handlePress : handleGoToLocationEditScreenFocusCategory} style={styles.iconContainer}>
+            {!hasCategory && (
+              <Text style={[styles.categoryText, themeStyles.genericText]}>Add to category</Text>
             )}
-            {hasNotes && (
-              <ParkingCircleSolidSvg
-                width={iconSize}
-                height={iconSize}
-                color={themeAheadOfLoading.lightColor}
-                onPress={handlePress}
-              />
+            {hasCategory && (
+               <Text numberOfLines={1} style={[styles.categoryText, {color: themeAheadOfLoading.lightColor}]}>#{location?.category}</Text>
             )}
-          </View>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -105,41 +109,44 @@ const LocationParking = ({
         }
         content={
           <View style={styles.contentContainer}>
-
+            <View
+              style={[
+                styles.notesContainer,
+                {
+                  backgroundColor:
+                    themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+                },
+              ]}
+            >
               <View
-                style={[
-                  styles.parkingScoreContainer,
-                  {
-                    backgroundColor:
-                      themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-                  },
-                ]}
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  height: "auto",
+                }}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    height: "auto",
-                  }}
+                <Text style={themeStyles.subHeaderText}>CATEGORY</Text>
+                <EditPencilOutlineSvg
+                  height={30}
+                  width={30}
+                  onPress={handleGoToLocationEditScreenFocusCategory}
+                  color={themeStyles.genericText.color}
+                />
+              </View>
+              {location.category && (
+                <ScrollView
+                  style={{ flex: 1, width: "100%", padding: "6%" }}
+                  contentContainerStyle={{ paddingVertical: 0 }}
+                  showsVerticalScrollIndicator={false}
                 >
-                  <Text style={themeStyles.subHeaderText}>PARKING</Text>
-                  <EditPencilOutlineSvg
-                    height={30}
-                    width={30}
-                    onPress={handleGoToLocationEditScreenFocusParking}
-                    color={themeStyles.genericText.color}
-                  />
-                </View>
-                
-            {location.parking_score && (
-                <View style={{ flex: 1, width: "100%", padding: "6%" }}>
                   <Text style={[styles.notesText, themeStyles.genericText]}>
-                    {location.parking_score}
+                    {location.category}
                   </Text>
-                </View>
-            )}
-              </View> 
+                </ScrollView>
+              )}
+            </View>
+           
           </View>
         }
         onCancel={toggleModal}
@@ -153,6 +160,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingRight: 2,
+    overflow: 'hidden',
   },
   contentContainer: {
     flexDirection: "column",
@@ -183,6 +191,12 @@ const styles = StyleSheet.create({
   saveText: {
     marginLeft: 8,
   },
+  categoryText: {
+    //fontFamily: 'Poppins-Bold',
+    fontWeight: 'bold',
+    fontSize: 12,
+
+  },
   modalBackground: {
     flex: 1,
     justifyContent: "center",
@@ -190,7 +204,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)", // Semi-transparent background
   },
   textContainer: {
-    padding: 20,
+    padding: 0,
+    textAlign: "top",
   },
   containerTitle: {
     fontSize: 16,
@@ -205,4 +220,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LocationParking;
+export default LocationCategory;

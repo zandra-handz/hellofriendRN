@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
         //position: 'absolute',
         bottom: 0, 
         zIndex: 1,
+        minHeight: 60,
     },
     section: { 
         flex: 1,

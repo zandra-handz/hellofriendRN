@@ -7,6 +7,7 @@ import LocationSavingActionsForCard from "../components/LocationSavingActionsFor
 
 import DirectionsLink from "../components/DirectionsLink";
 import LocationNotes from "../components/LocationNotes";
+import LocationCategory from "../components/LocationCategory";
 import LocationParking from "../components/LocationParking";
 import LocationSendText from '../components/LocationSendText';
 
@@ -96,6 +97,13 @@ const LocationCard = ({
           }}
         >
 
+<View style={{ marginLeft: MARGIN_LEFT_LOCATION_BUTTONS, maxWidth: '38%' }}>
+            <LocationCategory
+              iconSize={LOCATION_BUTTONS_ICON_SIZE}
+              location={location && location}
+            />
+          </View>
+
 <View style={{ marginLeft: MARGIN_LEFT_LOCATION_BUTTONS }}>
 <LocationSavingActionsForCard
               iconSize={ LOCATION_BUTTONS_ICON_SIZE}
@@ -104,6 +112,7 @@ const LocationCard = ({
                 handleRemoveFromFaves={removeFromFavorites}
               />
           </View>
+
 
           <View style={{ marginLeft: MARGIN_LEFT_LOCATION_BUTTONS }}>
             <LocationNotes

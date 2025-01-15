@@ -18,6 +18,8 @@ const LocationsSavedList = ({ locationList, addToFavoritesFunction, removeFromFa
 
   const momentListBottomSpacer = Dimensions.get("screen").height - 200;
 
+ 
+
   const scrollToLocationId = (locationId) => {
     const index = locationList.findIndex(
       (location) => location.id === locationId

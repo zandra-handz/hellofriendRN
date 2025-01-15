@@ -802,6 +802,7 @@ export const fetchAllLocations = async () => {
             zipCode: location.zip_code,
             latitude: location.latitude,
             longitude: location.longitude,
+            category: location.category,
             parking_score: location.parking_score, 
             title: location.title,
             personal_experience_info: location.personal_experience_info,

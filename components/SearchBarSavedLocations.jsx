@@ -11,6 +11,8 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
   const textInputRef = useRef();
   const [ showFullList, setShowFullList ] = useState(true);
 
+
+
  
   useEffect(() => { 
     if (textInputRef.current) {

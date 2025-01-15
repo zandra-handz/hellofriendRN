@@ -34,6 +34,7 @@ const useLocationFunctions = () => {
               console.log('No data received');
               return;
           }
+ 
    
           const { validated, saved } = data.reduce(
               (acc, location) => {
@@ -50,8 +51,32 @@ const useLocationFunctions = () => {
   
           setValidatedLocationList(validated);
           setSavedLocationList(saved);
+
+          queryClient.setQueryData(['locationCategories'], () => {
+            // Extract categories and create a unique set
+            const uniqueCategories = Array.from(new Set(data.map((loc) => loc.category)));
+           
+            return uniqueCategories;
+          });
       },
   });
+
+
+  useEffect(() => {
+    if (locationList) {
+      queryClient.setQueryData(['locationCategories'], (oldData) => {
+        // Assuming `location` is an array of objects with a `category` field
+        const locationCategories = locationList.map((loc) => loc.category);
+        
+        // Create a unique set of categories
+        const uniqueCategories = Array.from(new Set(locationCategories));
+        console.log(uniqueCategories);
+        // Return the unique categories to set as the new data
+        return uniqueCategories;
+      });
+    }
+
+  }, [locationList]);
 
   const locationsIsFetching = isFetching;
   
