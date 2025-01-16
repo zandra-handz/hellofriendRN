@@ -57,6 +57,7 @@ const CustomTabBar = ({ state, descriptors, navigation, onTabChange }) => {
 
 const styles = StyleSheet.create({
   tabBar: {
+    
     flexDirection: 'row',
     position: 'absolute',
     backgroundColor: 'transparent',

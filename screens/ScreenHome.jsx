@@ -104,12 +104,8 @@ const ScreenHome = ({ navigation }) => {
 
   const showLastButton = true;
   const screenHeight = Dimensions.get("window").height;
-  const maxButtonHeight = 100;
-  const footerHeight = screenHeight * 0.082; // Footer height
-  const buttonContainerHeight = screenHeight - footerHeight; // Remaining height for buttons
-  const buttonHeight = buttonContainerHeight / 6; // Divide remaining height by the number of buttons (5 buttons + footer)
-  const upcomingDatesTray = buttonHeight * 0.9;
-  const headerHeight = buttonHeight * 1.4;
+  const maxButtonHeight = 100;  // Remaining height for buttons  // Divide remaining height by the number of buttons (5 buttons + footer)
+  const upcomingDatesTray = 100; 
 
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
   useEffect(() => {
@@ -283,8 +279,7 @@ const ScreenHome = ({ navigation }) => {
                   <HomeButtonMomentAddSmall
                     onPress={navigateToAddMomentScreen}
                     borderRadius={40}
-                    borderColor="black"
-                    height={buttonHeight}
+                    borderColor="black" 
                   />
                 </View>
               )}
@@ -332,7 +327,7 @@ const ScreenHome = ({ navigation }) => {
                   borderRadius={40}
                   borderColor="black"
                   image={require("../assets/shapes/yellowleaves.png")}
-                  height={buttonHeight}
+                  height={'100%'}
                   maxHeight={maxButtonHeight}
                 />
 
@@ -345,39 +340,35 @@ const ScreenHome = ({ navigation }) => {
                 <HomeButtonUpNext
                   onPress={navigateToAddMomentScreen}
                   borderRadius={40}
-                  height={headerHeight}
+                  height={'100%'}
                   borderColor="black"
                   maxHeight={190}
                 />
               )}
               {selectedFriend && (
-                 <View style={{ width: '100%', height: 180,   alignItems: 'center'}}>
                   
                 <HomeButtonSelectedFriend
                   onPress={navigateToAddMomentScreen}
                   borderRadius={40}
                   borderColor="black"
-                  height={headerHeight}
-                  maxHeight={190}
+                  height={'100%'}  
                 />
-                
-                 </View>
+                 
               )}
               <HomeScrollSoon
-                height={upcomingDatesTray}
+                height={'20%'}
+                maxHeight={140}
                 borderRadius={40}
                 borderColor="black"
               />
-              {selectedFriend && (
-                <View style={{ height: '24%'}}>
+              {selectedFriend && ( 
                 <HomeScrollCalendarLights
-                  height={upcomingDatesTray}
+                  height={'5%'}
                   borderRadius={40}
                   borderColor="black"
                 />
                 
-                  
-                </View>
+                   
               )} 
             </Animated.View>
           </View>

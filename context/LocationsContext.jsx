@@ -29,7 +29,7 @@ export const LocationsProvider = ({ children }) => {
     const queryClient = useQueryClient();
     const [isDeletingLocation, setIsDeletingLocation ] = useState(false);
   
-    const { selectedFriend } = useSelectedFriend();
+    const { selectedFriend, favoriteLocationIds, friendFavesData, friendDataDashboard } = useSelectedFriend();
 
 
  
@@ -63,15 +63,52 @@ export const LocationsProvider = ({ children }) => {
           setSavedLocationList(saved);
 
           queryClient.setQueryData(['locationCategories'], () => {
-            // Extract categories and create a unique set
-            const uniqueCategories = Array.from(new Set(data.map((loc) => loc.category)));
-           
-            return uniqueCategories;
+            // Extract categories, filter out blank and null, and create a unique set
+            const uniqueCategories = Array.from(
+              new Set(
+                data
+                  .map((loc) => loc.category)
+                  .filter((category) => category !== null && category !== " ")
+              )
+            );
+          
+            // Add 'All' manually to the categories
+            return ['All', ...uniqueCategories];
           });
+          
       },
   });
 
+  const filterFaveLocations = (locations, favorites) => {
+    //console.log('filterfavelocations', favorites);
+    if (locations && favorites) {
+      const faveLocations = locations.filter((location) => favorites.includes(location.id));
+      //console.log(`fave locations: `, faveLocations);
+      setFaveLocationList(faveLocations);
+        
+    } else {
+        const faveLocations = [];
+        //console.log(`fave locations: `, faveLocations);
+      setFaveLocationList(faveLocations);
 
+    }
+
+  };
+
+//THIS IS WHAT FILTERS THE FAVES AND THE DATA COMES FROM THE CACHE IN SELECTEDFRIEND
+      useEffect(() => {
+        //console.log('use effect for faaaave locations triggered', friendFavesData);
+        if (locationList && friendFavesData) { 
+          //console.log('heading to function');
+          const favorites = friendFavesData.friendFaveLocations || null;
+          filterFaveLocations(locationList, favorites);
+    
+        }
+      }, [locationList, friendFavesData]);
+
+
+
+      //MIGHT NEED TO REFETCH THIS DATA IF NO LONGER IN CACHE
   useEffect(() => {
     if (locationList) {
       queryClient.setQueryData(['locationCategories'], (oldData) => {
@@ -80,7 +117,7 @@ export const LocationsProvider = ({ children }) => {
         
         // Create a unique set of categories
         const uniqueCategories = Array.from(new Set(locationCategories));
-        console.log(uniqueCategories);
+        //console.log(uniqueCategories);
         // Return the unique categories to set as the new data
         return uniqueCategories;
       });
@@ -245,13 +282,18 @@ export const LocationsProvider = ({ children }) => {
 
     const [locationFaveAction, setLocationFaveAction] = useState(null);
 
+    const [locationFaveInProgress, setLocationFaveInProgress] = useState(null);
+
+    
+
+
     const addToFavesMutation = useMutation({
         mutationFn: (data) => {
+          setLocationFaveInProgress(true);
             setLocationFaveAction(data.locationId); // Set the loading state before the mutation starts
             return addToFriendFavesLocations(data);
           },
       onSuccess: (data, variables) => { 
-        setLocationFaveAction(null); 
          const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
          queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
           if (!old || !old[0]) {
@@ -275,6 +317,8 @@ export const LocationsProvider = ({ children }) => {
                   },
               },
           };
+
+          setLocationFaveAction(null); 
       
           //console.log(updatedDashboardData);
           return updatedDashboardData;
@@ -286,6 +330,8 @@ export const LocationsProvider = ({ children }) => {
         console.error('Error adding location to friend faves:', error);
     },
     onSettled: () => {  
+      
+      setLocationFaveInProgress(false);
       setTimeout(() => {
           addToFavesMutation.reset();
           setLocationFaveAction(null); 
@@ -451,6 +497,8 @@ const useFetchAdditionalDetails = (location, enabled) => {
     return (
         <LocationsContext.Provider value={{ 
         locationList,
+        locationFaveInProgress,
+        faveLocationList,
         locationsIsFetching, 
         isFetching,
         locationListIsSuccess,

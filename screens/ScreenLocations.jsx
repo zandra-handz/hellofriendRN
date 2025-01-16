@@ -28,11 +28,11 @@ const Tab = createBottomTabNavigator();
 
 const ScreenLocations = ({}) => {
   const { themeStyles } = useGlobalStyle();
-  const { locationList, handleAddToFaves, handleRemoveFromFaves } =
+  const { locationList, faveLocationList,  handleAddToFaves, handleRemoveFromFaves } =
     useLocations();
   const [viewingAllLocations, setViewingAllLocations] = useState(false);
   const { themeAheadOfLoading } = useFriendList();
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData, friendFavesData } = useSelectedFriend();
   const queryClient = useQueryClient();
   const [locationIdToScrollTo, setLocationIdToScrollTo] = useState(null);
   const [faveLocationIdToScrollTo, setFaveLocationIdToScrollTo] =
@@ -47,12 +47,41 @@ const ScreenLocations = ({}) => {
     return categories;
   };
 
+
+  // const getFavoriteLocations = () => {
+  //   const fave = queryClient.getQueryData(["friendDashboardData", selectedFriend.id]);
+  //   return fave;
+  // };
+
   useEffect(() => {
     if (locationList) {
-      setLocationCategories(getLocationCategories);
+      setLocationCategories(getLocationCategories); 
     }
   }, [locationList]);
 
+// const [ faveLocationsList, setFaveLocationsList ] = useState([]);
+
+  // useEffect(() => {
+  //   if (locationList && friendDashboardData) {
+  //     setFaveLocationsList(getFavoriteLocations); 
+  //     console.log(`FAVE LOCATIONS`, faveLocationsList[0]);
+  //   }
+  // }, [locationList, friendDashboardData]);
+
+  // useEffect(() => {
+  //   if (friendFavesData && locationList && friendFavesData.friendFaveLocations) {
+  //     console.log('friendfaves', friendFavesData);
+  //     const data = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id])?.[0]?.friend_faves?.locations || [];
+  
+  //     setFaveLocationsList(locationList.filter((location) =>
+  //       data.includes(location.id)
+  //     ));
+  //   }
+  // }, [friendFavesData, locationList]);
+
+
+
+  
 
 
   const handleGoToLocationViewScreen = (item) => {
@@ -62,12 +91,14 @@ const ScreenLocations = ({}) => {
 
   const navigation = useNavigation();
 
-  const faveLocations = useMemo(() => {
-    console.log("Filtering favorite locations");
-    return locationList.filter((location) =>
-      friendDashboardData[0].friend_faves.locations.includes(location.id)
-    );
-  }, [locationList, friendDashboardData]);
+
+  //old approach, I used this function when locations was a hook
+  // const faveLocations = useMemo(() => {
+  //   console.log("Filtering favorite locations");
+  //   return locationList.filter((location) =>
+  //     friendDashboardData[0].friend_faves.locations.includes(location.id)
+  //   );
+  // }, [locationList, friendDashboardData]);
 
   const renderCategoriesButtons = () => {
     return (
@@ -77,30 +108,32 @@ const ScreenLocations = ({}) => {
         keyboardShouldPersistTaps="handled"
         keyExtractor={(item, index) => `${item}_${index}`}
         renderItem={({ item }) => (
+          <View style={{marginRight: 10}}>
+            
           <TouchableOpacity
             onPress={() => setSelectedCategory(item)}
             key={item}
             style={{
-              width: 100,
-              paddingHorizontal: '3%',
+              width: 120,
+              paddingHorizontal: '4%',
+              borderRadius: 20,
               flexDirection: 'row',
               alignItems: 'center',
               alignContent: 'center',
               textAlign: 'center',
               justifyContent: 'center',
-              backgroundColor: 'gray',
-              height: "100%",
-              justifyContent: "center",
-              flex: 1,
-              marginRight: "2%",
+              backgroundColor: 'transparent',
+              height: "100%", 
             }}
           >
             {" "}
-            <Text style={[styles.categoryButtonText, themeStyles.genericText, {alignSelf: 'center', color: themeAheadOfLoading.lightColor}]}>{item}</Text>
+            <Text numberOfLines={1} style={[styles.categoryButtonText, themeStyles.genericText, {alignSelf: 'center', color: themeStyles.genericText.color}]}>{item ? `# ${item}` : `All`}</Text>
           </TouchableOpacity>
+          
+          </View>
         )}
            ListFooterComponent={() => (
-                                  <View style={{ width: 400 }} />
+                                  <View style={{ width: 200 }} />
                                 )}
       />
     );
@@ -113,12 +146,15 @@ const ScreenLocations = ({}) => {
 
   const FavoritesScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>
+    
+        
       <LocationsFriendFavesList
         addToFavoritesFunction={handleAddToFaves}
         removeFromFavoritesFunction={handleRemoveFromFaves}
-        locationList={faveLocations}
+        //locationList={faveLocationsList}
+        faveLocationList={faveLocationList}
         scrollTo={faveLocationIdToScrollTo}
-      />
+      /> 
     </View>
   );
 
@@ -154,7 +190,7 @@ const ScreenLocations = ({}) => {
 
   const handleScrollToLocation = (locationItem) => {
     console.log("location id!", locationItem.id);
-    setLocationIdToScrollTo(locationItem.id);
+    setLocationIdToScrollTo(locationItem.id); 
   };
 
  
@@ -206,7 +242,7 @@ const ScreenLocations = ({}) => {
             )}
             {!viewingAllLocations && (
               <MomentsSearchBar
-                data={faveLocations}
+                data={faveLocationList}
                 height={30}
                 width={"27%"}
                 borderColor={"transparent"}
@@ -231,7 +267,7 @@ const ScreenLocations = ({}) => {
             { borderColor: themeAheadOfLoading.lightColor },
           ]}
         >
-          {locationCategories && viewingAllLocations && <View style={{position: 'absolute', zIndex: 3000, top: 78}}>{renderCategoriesButtons()}</View>}
+          {locationCategories && viewingAllLocations && <View style={{position: 'absolute', zIndex: 3000, top: 94,  height: '4%', paddingHorizontal: '3%'}}>{renderCategoriesButtons()}</View>}
           <Tab.Navigator
             tabBar={(props) => (
               <CustomTabBar {...props} onTabChange={handleTabChange} />
@@ -245,7 +281,7 @@ const ScreenLocations = ({}) => {
                 shadowOpacity: 0,
                 borderTopWidth: 0,
                 zIndex: 0,
-              },
+              }, 
               tabBarActiveTintColor: themeAheadOfLoading.fontColor,
               tabBarInactiveTintColor: themeAheadOfLoading.fontColor,
               tabBarIcon: ({ color }) => {
@@ -254,7 +290,7 @@ const ScreenLocations = ({}) => {
                   <Ionicons
                     name={iconName}
                     size={18}
-                    color={themeAheadOfLoading.fontColor}
+                    color={'transparent'}
                   />
                 );
               },
@@ -306,10 +342,15 @@ const styles = StyleSheet.create({
   },
 
   sectionContainer: {
-    paddingTop: 24,
+    paddingTop: 54,
     width: "100%",
     flex: 1,
     zIndex: 1,
+  },
+  categoryButtonText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+
   },
 });
 

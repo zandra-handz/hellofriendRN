@@ -1,23 +1,28 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Dimensions, StyleSheet, FlatList, Animated } from 'react-native'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 import { FlashList } from '@shopify/flash-list';
 import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import ShopOutlineSvg from '../assets/svgs/shop-outline.svg';
-
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 import LocationCard from "../components/LocationCard";
 import { LinearTransition } from 'react-native-reanimated';
+import { useLocations } from '../context/LocationsContext';
  
 const LocationsFriendFavesList = ({  
-    locationList, 
+    faveLocationList,
     addToFavoritesFunction, 
     removeFromFavoritesFunction, 
     scrollTo,
 }) => {
+    const { locationList } = useLocations();
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();  
+const { favoriteLocationIds, friendFavesData } = useSelectedFriend();
+// const { faveLocationList } = useLocations();
 
+// const [faveLocationList, setFaveLocationList ] = useState([]);
  
         const flatListRef = useRef(null);
     
@@ -29,7 +34,7 @@ const LocationsFriendFavesList = ({
 
 
     const scrollToLocationId = (locationId) => {
-        const index = locationList.findIndex((location) => location.id === locationId);
+        const index = faveLocationList.findIndex((location) => location.id === locationId);
         console.log(index);
         if (index !== -1) {
             flatListRef.current?.scrollToIndex({
@@ -47,6 +52,28 @@ const LocationsFriendFavesList = ({
             }, 0); // Delay of 100ms
         }
     }, [scrollTo]);
+
+    //   useEffect(() => {
+    //     console.log('use effect for fave locations triggered');
+    //     if (locationList && friendFavesData && friendFavesData.friendFaveLocations ) { 
+    //       const data = friendFavesData.friendFaveLocations;
+    //       if (data) {
+    //       const faveLocations = locationList.filter((location) => data.includes(location.id));
+    //       console.log(`fave locations: `, faveLocations);
+    //       setFaveLocationList(faveLocations);
+            
+    //     } else {
+    //         const faveLocations = [];
+    //         console.log(`fave locations: `, faveLocations);
+    //       setFaveLocationList(faveLocations);
+
+
+    //     }
+          
+        
+    
+    //     }
+    //   }, [locationList, friendFavesData]);
     
     
  
@@ -54,11 +81,11 @@ const LocationsFriendFavesList = ({
 
     return (
         <View style={[styles.container]}>
-            {locationList && locationList.length > 0 && (
+            {locationList && faveLocationList && locationList.length > 0 && (
             <>
             <Animated.FlatList
                 ref={flatListRef}
-                data={locationList}
+                data={faveLocationList}
                 horizontal={false}
                 keyExtractor={(location) => location.id.toString()}
                 getItemLayout={(data, index) => ({

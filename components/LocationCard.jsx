@@ -36,7 +36,7 @@ const LocationCard = ({
   const FAVORITE_LOCATION_ICON_SIZE = 24;
   const SMALL_CLOCK_ICON_SIZE = 16;
 
-
+const copyLocation = location;
 
 
   const handleGoToLocationViewScreen = () => {
@@ -114,6 +114,7 @@ const LocationCard = ({
 <LocationSavingActionsForCard
               iconSize={ LOCATION_BUTTONS_ICON_SIZE}
                 location={location && location} 
+                //location={copyLocation && copyLocation}
                 handleAddToFaves={addToFavorites}
                 handleRemoveFromFaves={removeFromFavorites}
               />
@@ -134,7 +135,7 @@ const LocationCard = ({
           </View>
           <View
             style={{ 
-                marginLeft: MARGIN_LEFT_LOCATION_BUTTONS, position: 'absolute', top: -100, right: 10 }}
+                marginLeft: MARGIN_LEFT_LOCATION_BUTTONS}} //position: 'absolute', top: -100, right: 10 
           >
             <LocationTravelTimes
               iconSize={LOCATION_BUTTONS_ICON_SIZE}

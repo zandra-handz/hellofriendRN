@@ -11,6 +11,9 @@ export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const { authUserState } = useAuthUser(); 
   const { friendList, resetTheme } = useFriendList();  
+  const [friendFavesData, setFriendFavesData ] = useState({
+    friendFaveLocations: null,
+  })
 
   const [friendColorTheme, setFriendColorTheme] = useState({
     useFriendColorTheme: null,
@@ -33,28 +36,45 @@ export const SelectedFriendProvider = ({ children }) => {
       
     },
     onSuccess: (data) => {
-      console.log('Raw data in RQ onSuccess:', data); 
-
-      if (!data) {
-          console.log('No data received');
-          return;
-      }
-    }
+      //console.log('Raw data in RQ onSuccess:', data);
+  
+      // // Debugging: Log query key and cached data
+      // const queryKey = ['friendDashboardData', selectedFriend?.id];
+      // console.log('Query Key:', queryKey);
+      // const cachedData = queryClient.getQueryData(queryKey);
+      // console.log('Cached friendDashboardData onSuccess:', cachedData);
+    },
   });
 
 
+  // useEffect(() => {
+  //   if (friendDashboardData) {
+  //     console.log('friendDashboardData updated:', friendDashboardData);
+  
+  //     const queryKey = ['friendDashboardData', selectedFriend.id];
+  //     const cachedData = queryClient.getQueryData(queryKey);
+  
+  //     console.log('Query Key:', queryKey);
+  //     console.log('Cached friendDashboardData in useEffect:', cachedData);
+  
+  //     if (!cachedData) {
+  //       console.warn('Cache is undefined. Verify query key and timing.');
+  //     }
+  //   }
+  // }, [friendDashboardData, queryClient, selectedFriend]);
+
+
   const getFaveLocationIds = () => {
-    return queryClient.getQueryData(['friendDashboardData', selectedFriend.id])?.[0]?.friend_faves?.locations || []
+    // const data = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
+    // console.log(
+    //   'Specific Cache:',
+    //   data
+    // );
+    
+    return queryClient.getQueryData(['friendDashboardData', selectedFriend?.id])?.[0]?.friend_faves?.locations || []
   
   };
-
-  useEffect(() => {
-    console.log('useEffect in selectedfriend triggered by queryClient');
-    if (selectedFriend && friendDashboardData) {
-      const ids = getFaveLocationIds();
-      setFavoriteLocationIds(ids || []);
-    }
-  }, [friendDashboardData, selectedFriend, queryClient]);
+ 
 
 
 
@@ -73,17 +93,37 @@ export const SelectedFriendProvider = ({ children }) => {
 
   useEffect(() => {
     if (friendDashboardData) {
+
+      // console.log(
+      //   'Specific Cache:',
+      //   queryClient.getQueryData(['friendDashboardData', selectedFriend.id])
+      // );
+
+      const cachedData = queryClient.getQueryData(['friendDashboardData', selectedFriend.id]);
+
+const cachedDataLower = cachedData[0].friend_faves?.locations || null;
       const lowerLayerData = Array.isArray(friendDashboardData) ? friendDashboardData[0] : friendDashboardData;
+     
+      //const lowerLayerData = Array.isArray(friendDashboardData) ? friendDashboardData[0] : friendDashboardData;
+     
       const colorThemeData = {
         useFriendColorTheme: lowerLayerData?.friend_faves?.use_friend_color_theme || false,
         invertGradient: lowerLayerData?.friend_faves?.second_color_option || false,
         lightColor: lowerLayerData?.friend_faves?.light_color || null,
         darkColor: lowerLayerData?.friend_faves?.dark_color || null,
       };
+      const friendFavesData = {
+        friendFaveLocations: cachedDataLower || null,
+      };
       console.log('Setting color theme data in useEffect:', colorThemeData);
+      setFriendFavesData(friendFavesData);
+      console.log('Setting color theme data in useEffect:', friendFavesData);
       setFriendColorTheme(colorThemeData);
     }
   }, [friendDashboardData]); 
+
+
+
   
   
 
@@ -147,6 +187,7 @@ export const SelectedFriendProvider = ({ children }) => {
       favoriteLocationIds,
       friendColorTheme,
       setFriendColorTheme,
+      friendFavesData, 
       //calculatedThemeColors,
       loadingNewFriend,
       updateFriendDashboardData,

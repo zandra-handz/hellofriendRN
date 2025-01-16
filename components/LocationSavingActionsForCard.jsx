@@ -15,8 +15,7 @@ import PushPinSolidSvg from "../assets/svgs/push-pin-solid.svg";
 import AlertConfirm from "../components/AlertConfirm";
 import ModalAddNewLocation from "../components/ModalAddNewLocation";
 
-import { useSelectedFriend } from "../context/SelectedFriendContext";
-// import useLocationFunctions from "../hooks/useLocationFunctions";
+import { useSelectedFriend } from "../context/SelectedFriendContext"; 
 import { useFriendList } from "../context/FriendListContext";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useLocations } from '../context/LocationsContext';
@@ -24,18 +23,13 @@ import HeartAddOutlineSvg from "../assets/svgs/heart-add-outline.svg";
 import HeartCheckSolidSvg from "../assets/svgs/heart-check-solid.svg";
 import AddSquareOutlineSvg from "../assets/svgs/add-square-outline.svg";
 
-import LoadingPage from "../components/LoadingPage";
-import { Pressable } from 'react-native'
+import LoadingPage from "../components/LoadingPage"; 
 //The original will cause infinite rerendering if it appears in more than one component at a time (for example a flashlist!)
 
 //UPDATE THE RERENDER WAS USING USELOCATIONFUNCTIONS DIRECTLY, I HAD TO GO UP TO LOCATIONS SCREEN AND DRILL IT DOWN INSTEAD
 
 const LocationSavingActionsForCard = ({
-  location,
-  // isFave,
-  // handleAddToFaves,
-  // handleRemoveFromFaves,
-  favorite = false,
+  location, 
   size = 11,
   iconSize = 34,
   family = "Poppins-Bold", 
@@ -43,42 +37,49 @@ const LocationSavingActionsForCard = ({
 }) => {
 
   const { addToFavesMutation, removeFromFavesMutation, handleAddToFaves,
-    handleRemoveFromFaves } = useLocations();
+    handleRemoveFromFaves, locationFaveInProgress } = useLocations();
   const { themeAheadOfLoading } = useFriendList();
-  const { selectedFriend, friendDashboardData  } = useSelectedFriend();
+  const { selectedFriend, friendFavesData, getFaveLocationIds } = useSelectedFriend();
+  const { friendFaveLocations } = friendFavesData;
   // const { handleAddToFaves, handleRemoveFromFaves  } = useLocationFunctions();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModal2Visible, setModal2Visible] = useState(false);
-  const { themeStyles } = useGlobalStyle();
-  const [optimisticAdd, setOptimisticAdd ] = useState(false);
-  const [optimisticRemove, setOptimisticRemove ] = useState(false);
+  const { themeStyles } = useGlobalStyle();  
   const [showSpinner, setShowSpinner ] = useState(false); // to distinguish from other copies of this component with dif location data
 
+  const [faveLocations, setFaveLocations] = useState(null);
   const navigation = useNavigation();
+ 
 
   const [isFave, setIsFave] = useState(false);
+  
 
   const handleGoToLocationSaveScreen = () => {
     navigation.navigate("LocationSave", { location: location });
   };
 
+ 
+
   useLayoutEffect(() => { 
-    let newIsFave;
-  
-    if (favorite && location && location.id && friendDashboardData) {
+    console.log('new isFave state');
+    let newIsFave; 
+   
+    setFaveLocations(getFaveLocationIds()); 
+    if (location && location.id && friendFaveLocations) {
       newIsFave = true;
-    } else if (friendDashboardData?.[0]?.friend_faves?.locations) {
-      newIsFave = friendDashboardData[0].friend_faves.locations.includes(location.id);
+    } else if (friendFaveLocations) {
+      newIsFave = friendFaveLocations.includes(location.id);
     } else {
       newIsFave = false;
     }
   
     // Only update state if the value has changed
     if (isFave !== newIsFave) {
+      
       setIsFave(newIsFave);
     }
-  }, [location, favorite, friendDashboardData, isFave]);
+  }, [location, friendFaveLocations, isFave]);
   // Add `friendDashboardData` as a dependency
 
   const handlePress = () => {
@@ -98,9 +99,10 @@ const LocationSavingActionsForCard = ({
   };
 
   const removeFromFaves = async () => {
-    if (selectedFriend && location && isFave) {
+    if (selectedFriend && location) {
+      
       handleRemoveFromFaves(selectedFriend.id, location.id);
-    
+      setIsFave(false);
       onClose();
     }
   };
@@ -111,14 +113,14 @@ const LocationSavingActionsForCard = ({
         console.log(
           "location not a saved object yet/add code to ButtonSaveLocation pls"
         );
-
-        setIsEditing(false);
+ 
       } else {
         if (selectedFriend && location) {
-          handleAddToFaves(selectedFriend.id, location.id);
+          setIsFave(true);
+          await handleAddToFaves(selectedFriend.id, location.id);
+        
      
-        }
-        onClose();
+        } 
       }
     } catch (error) {
       console.error("Error saving new location in handleSave:", error);
@@ -133,18 +135,19 @@ const LocationSavingActionsForCard = ({
 
   // }, [addToFavesMutation, removeFromFavesMutation]);
 
-
+ 
 
 
 
   const onConfirmAction = () => {
     setShowSpinner(true);
     if (isFave) {
+      //handleRemoveFromFaves(selectedFriend.id, location.id);
       removeFromFaves(location.id);
       //setIsFave(false);
     } else {
       addToFaves(location);
-      //setIsFave(true);
+      setIsFave(true);
     } 
   };
 
@@ -173,30 +176,27 @@ const LocationSavingActionsForCard = ({
 
        <View style={styles.container}>
           <View style={[styles.iconContainer, {wdith: iconSize}]}>
-          {location && !String(location.id).startsWith("temp") && !showSpinner && (
+          {location && faveLocations && !String(location.id).startsWith("temp") && !showSpinner && (
        <>
-            {!isFave && (
-              <Pressable  onPress={onConfirmAction}>  
+            {!isFave && !showSpinner && ( 
   
               <HeartAddOutlineSvg
                 width={iconSize}
                 height={iconSize}
                 color={themeStyles.genericText.color}
+                onPress={onConfirmAction}
                // onPress={handlePress}
-              />
-              </Pressable>
+              /> 
             )}
-            {isFave && (
-              <Pressable  onPress={onConfirmAction}>
+            {isFave && !showSpinner && ( 
                 
               <HeartCheckSolidSvg
                 width={iconSize}
                 height={iconSize}
                 color={themeAheadOfLoading.lightColor}
-                //onPress={handlePress}
+                onPress={onConfirmAction}
               />
-              
-              </Pressable>
+               
             )}
             </>
           )}

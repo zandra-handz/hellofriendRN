@@ -22,6 +22,7 @@ import LoadingPage from "../components/LoadingPage";
 
 const HomeScrollSoon = ({
   height,
+  maxHeight=130,
   borderRadius = 20,
   borderColor = "transparent", 
 }) => { 
@@ -157,7 +158,7 @@ const HomeScrollSoon = ({
           borderRadius: borderRadius,
           borderColor: borderColor,
           height: height,
-          maxHeight: 140,
+          maxHeight: maxHeight,
         },
       ]}
     >
@@ -229,13 +230,13 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flexDirection: "column",
-    flexGrow: 1,
+    flex: 1,
     overflow: "hidden",
     marginVertical: "1%",
     borderWidth: 0,
     borderColor: "black",
     paddingHorizontal: "4%", 
-    paddingVertical: "3%",
+    paddingVertical: "4%",
     
   },
   text: {

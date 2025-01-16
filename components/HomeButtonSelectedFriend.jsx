@@ -102,8 +102,7 @@ const HomeButtonSelectedFriend = ({
               borderRadius: borderRadius,
               borderColor: borderColor,
               height: height,
-              maxHeight: maxHeight,
-              minHeight: 180,
+              maxHeight: maxHeight, 
             },
           ]}
         >
@@ -204,11 +203,12 @@ const HomeButtonSelectedFriend = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    width: "100%",  
-    height: 180,
+    width: "100%",   
+    flex: 1,
     padding: "5%", 
     alignContent: "center", 
     borderWidth: 0,
+    marginVertical: '1%',
     alignItems: "center",
     justifyContent: "space-between",
     overflow: "hidden",  

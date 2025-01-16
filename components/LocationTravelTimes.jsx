@@ -136,7 +136,7 @@ const LocationTravelTimes = ({
         setCachedTravelTimes(
           checkCache(defaultUserAddress, defaultAddress, location)
         );
-        console.log('use effect for cached data');
+        console.log('use effect for cached data,', location.id, defaultAddress?.address);
         //setIsCached(cachedData);
       }
     }, [location, defaultUserAddress, defaultAddress, isModalVisible])
@@ -150,7 +150,7 @@ const LocationTravelTimes = ({
       {location && !String(location.id).startsWith("temp") && (
         <View style={styles.container}>
          
-            {!cachedTravelTimes && (
+            {(!cachedTravelTimes || !defaultUserAddress || !defaultAddress) && (
               <>
                 <View style={{ position: "absolute", top: -6 }}>
                   <ClockOutlineSvg
@@ -168,7 +168,7 @@ const LocationTravelTimes = ({
                 />
               </>
             )}
-            {cachedTravelTimes && (
+            {cachedTravelTimes && defaultUserAddress && defaultAddress && (
               <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', width: 'auto', flexShrink: 1 }}>
                <View style={{ marginRight: SPACER_MARGIN_AFTER_CLOCK_ICON, width: iconSize}}>
                 <ClockOutlineSvg
