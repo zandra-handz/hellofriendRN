@@ -24,8 +24,7 @@ import { useAuthUser } from "../context/AuthUserContext";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 import { useFriendList } from "../context/FriendListContext"; 
 import { useFocusEffect } from "@react-navigation/native";
-
-import StyledPlaceholder from '../components/StyledPlaceholder';
+ 
 
 
 // Forwarding ref to the parent to expose the TextInput value
@@ -269,7 +268,7 @@ const TextMomentHomeScreenBox = forwardRef(
                   {friendListLength && (
                     <TextInput
                       ref={textInputRef}
-                      autoFocus={autoFocusSelected}
+                      autoFocus={autoFocusSelected || false}
                       style={[
                         styles.textInput,
                         themeStyles.genericText,

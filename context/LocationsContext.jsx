@@ -62,8 +62,7 @@ export const LocationsProvider = ({ children }) => {
           setValidatedLocationList(validated);
           setSavedLocationList(saved);
 
-          queryClient.setQueryData(['locationCategories'], () => {
-            // Extract categories, filter out blank and null, and create a unique set
+          queryClient.setQueryData(['locationCategories'], () => { 
             const uniqueCategories = Array.from(
               new Set(
                 data
@@ -71,8 +70,7 @@ export const LocationsProvider = ({ children }) => {
                   .filter((category) => category !== null && category !== " ")
               )
             );
-          
-            // Add 'All' manually to the categories
+           
             return ['All', ...uniqueCategories];
           });
           

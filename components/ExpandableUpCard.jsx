@@ -23,7 +23,7 @@ const ExpandableUpCard = ({
   const [expanded, setExpanded] = useState(false);
   const screenHeight = Dimensions.get("window").height;
 
-  const cardHeight = useSharedValue(screenHeight / 3.4);
+  const cardHeight = useSharedValue(screenHeight / 4.0);
   const rotation = useSharedValue(0);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -57,7 +57,7 @@ const ExpandableUpCard = ({
     if (isKeyboardVisible) {
       cardHeight.value = screenHeight / 8;
     } else {
-      cardHeight.value = screenHeight / 3.4;
+      cardHeight.value = screenHeight / 4;
     }
   }, [isKeyboardVisible]);
 
@@ -70,7 +70,7 @@ const ExpandableUpCard = ({
   const toggleCard = () => {
     parentFunctionToTrackOpenClose();
     if (expanded) {
-      cardHeight.value = screenHeight / 3.4;
+      cardHeight.value = screenHeight / 4;
     } else {
       onPress();
       cardHeight.value = screenHeight;
@@ -81,7 +81,7 @@ const ExpandableUpCard = ({
   const closeCard = () => {
     if (expanded) {
       parentFunctionToTrackOpenClose();
-      cardHeight.value = screenHeight / 3.4;
+      cardHeight.value = screenHeight / 4;
       setExpanded(false);
     }
   };

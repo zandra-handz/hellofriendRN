@@ -2,6 +2,8 @@
 // <LocationHeartSolidSvg height={30} width={30} color="red" />
 // <ButtonGoToLocationFunctions />
 //<Image source={require('../assets/shapes/coffeecupnoheart.png')} style={{ height: 35, width: 35 }}/>
+//midpoints screen is crashing right now so commented out
+
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   View,
@@ -457,7 +459,7 @@ const LocationsMapView = ({
       <TouchableOpacity
         style={[
           styles.midpointsButton,
-          {
+          {zIndex: 7000,
             backgroundColor: themeStyles.genericTextBackground.backgroundColor,
           },
         ]}
@@ -477,6 +479,7 @@ const LocationsMapView = ({
         style={[
           styles.zoomOutButton,
           {
+            zIndex: 7000,
             backgroundColor: themeStyles.genericTextBackground.backgroundColor,
           },
         ]}

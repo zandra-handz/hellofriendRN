@@ -67,8 +67,6 @@ const LocationSavingActionsForCard = ({
    
     setFaveLocations(getFaveLocationIds()); 
     if (location && location.id && friendFaveLocations) {
-      newIsFave = true;
-    } else if (friendFaveLocations) {
       newIsFave = friendFaveLocations.includes(location.id);
     } else {
       newIsFave = false;
