@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
  
 import LocationsMapView from '../components/LocationsMapView';
 
-import useLocationFunctions from '../hooks/useLocationFunctions';
+// import useLocationFunctions from '../hooks/useLocationFunctions';
 import useLocationHelloFunctions from '../hooks/useLocationHelloFunctions';
 import useLocationDetailFunctions from '../hooks/useLocationDetailFunctions';
 import {
@@ -16,6 +16,7 @@ import {
 //import useHelloesData from '../hooks/useHelloesData';
 
 import { useHelloes } from '../context/HelloesContext';
+import { useLocations } from '../context/LocationsContext';
 
 const ScreenLocationSearch = () => {
   
@@ -23,7 +24,7 @@ const ScreenLocationSearch = () => {
   const { data, isLoadingCurrentLocation, error } = useCurrentLocationManual();
 
 
-    const { locationList } = useLocationFunctions();
+    const { locationList } = useLocations();
     const { getCurrentDay } = useLocationDetailFunctions();
     const { getCachedInPersonHelloes } = useHelloes();
     const { createLocationListWithHelloes, bermudaCoords } = useLocationHelloFunctions();

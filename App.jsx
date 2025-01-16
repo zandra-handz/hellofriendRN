@@ -9,6 +9,7 @@ import { AuthUserProvider, useAuthUser } from "./context/AuthUserContext";
 import { GlobalStyleProvider } from "./context/GlobalStyleContext";
 import { FriendListProvider } from "./context/FriendListContext";
 import { HelloesProvider } from "./context/HelloesContext";
+import { LocationsProvider } from "./context/LocationsContext";
 import { UpcomingHelloesProvider } from "./context/UpcomingHelloesContext";
 import { CapsuleListProvider } from "./context/CapsuleListContext";
 import { SelectedFriendProvider } from "./context/SelectedFriendContext";
@@ -29,8 +30,8 @@ import ScreenLocations from "./screens/ScreenLocations";
 import ScreenLocationSearch from "./screens/ScreenLocationSearch";
 import ScreenMidpointLocationSearch from "./screens/ScreenMidpointLocationSearch";
 import ScreenCalculateTravelTimes from "./screens/ScreenCalculateTravelTimes";
-import ScreenWelcome from "./screens/ScreenWelcome"; 
-import ScreenAuth from "./screens/ScreenAuth"; 
+import ScreenWelcome from "./screens/ScreenWelcome";
+import ScreenAuth from "./screens/ScreenAuth";
 import ScreenMomentFocus from "./screens/ScreenMomentFocus";
 import ScreenLocation from "./screens/ScreenLocation";
 
@@ -112,16 +113,16 @@ export default function App() {
             <UpcomingHelloesProvider>
               <FriendListProvider>
                 <SelectedFriendProvider>
-                  <PhoneStatusBar />
-                  <CapsuleListProvider>
-                    <HelloesProvider>
-                      
-                    <MessageContextProvider>
-                      <Layout />
-                    </MessageContextProvider>
-                    
-                    </HelloesProvider>
-                  </CapsuleListProvider>
+                  <LocationsProvider>
+                    <PhoneStatusBar />
+                    <CapsuleListProvider>
+                      <HelloesProvider>
+                        <MessageContextProvider>
+                          <Layout />
+                        </MessageContextProvider>
+                      </HelloesProvider>
+                    </CapsuleListProvider>
+                  </LocationsProvider>
                 </SelectedFriendProvider>
               </FriendListProvider>
             </UpcomingHelloesProvider>
@@ -153,7 +154,8 @@ export const Layout = () => {
           }}
         >
           {authUserState?.authenticated && authUserState?.user ? (
-            authUserState.user.app_setup_complete || !authUserState.user.app_setup_complete ? (
+            authUserState.user.app_setup_complete ||
+            !authUserState.user.app_setup_complete ? (
               <>
                 <Stack.Screen
                   name="hellofriend"
@@ -184,7 +186,7 @@ export const Layout = () => {
                   component={ScreenMoments}
                   options={{
                     headerShown: true,
-                    header: () => <HeaderMoment title={'MOMENTS'}/>,
+                    header: () => <HeaderMoment title={"MOMENTS"} />,
                   }}
                 />
                 <Stack.Screen
@@ -343,32 +345,24 @@ export const Layout = () => {
             )
           ) : (
             <>
-            <Stack.Screen
-              name="Welcome"
-              component={ScreenWelcome}
-              options={{
-                headerShown: false,
-                header: () => (
-                  <HeaderBlank
-                  />
-                ),
-              }}
-            /> 
+              <Stack.Screen
+                name="Welcome"
+                component={ScreenWelcome}
+                options={{
+                  headerShown: false,
+                  header: () => <HeaderBlank />,
+                }}
+              />
 
-            <Stack.Screen
-              name="Auth"
-              component={ScreenAuth}
-              options={{
-                headerShown: false,
-                header: () => (
-                  <HeaderBlank
-                  />
-                ),
-              }}
-            /> 
-            
+              <Stack.Screen
+                name="Auth"
+                component={ScreenAuth}
+                options={{
+                  headerShown: false,
+                  header: () => <HeaderBlank />,
+                }}
+              />
             </>
-            
           )}
         </Stack.Navigator>
       </TopLevelNavigationHandler>

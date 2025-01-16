@@ -3,12 +3,13 @@ import { View, StyleSheet  } from 'react-native';
 import { Flow, Swing, Chase, Circle, CircleFade, Fold, Grid, Pulse, Wander, Wave } from 'react-native-animated-spinkit';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
-import  useLocationFunctions from '../hooks/useLocationFunctions';
+// import  useLocationFunctions from '../hooks/useLocationFunctions';
 import useImageFunctions from '../hooks/useImageFunctions';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
 import { useCapsuleList } from '../context/CapsuleListContext';
 import { useHelloes } from '../context/HelloesContext';
+import { useLocations } from '../context/LocationsContext';
 
 // import useHelloesData from '../hooks/useHelloesData';
 import useCurrentLocation from '../hooks/useCurrentLocation';
@@ -38,7 +39,7 @@ const FullScreenSpinner = ({
   const [ showSpinner, setShowSpinner ] = useState(false); // Initialize state with the loading prop
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
-  const{ locationsIsFetching } = useLocationFunctions();
+  const{ locationsIsFetching } = useLocations();
   const { helloesIsFetching  } = useHelloes();
   const { upcomingHelloesIsFetching, upcomingHelloesIsSuccess, newSuccess } = useUpcomingHelloes();
   const { currentLocationIsCalculating } = useCurrentLocation();

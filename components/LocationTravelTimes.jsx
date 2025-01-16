@@ -136,7 +136,7 @@ const LocationTravelTimes = ({
         setCachedTravelTimes(
           checkCache(defaultUserAddress, defaultAddress, location)
         );
-        //console.log(cachedData);
+        console.log('use effect for cached data');
         //setIsCached(cachedData);
       }
     }, [location, defaultUserAddress, defaultAddress, isModalVisible])

@@ -14,7 +14,9 @@ import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useFriendList } from "../context/FriendListContext";
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 
-import useLocationFunctions from "../hooks/useLocationFunctions";
+// import useLocationFunctions from "../hooks/useLocationFunctions";
+import { useLocations } from '../context/LocationsContext';
+
 import useLocationDetailFunctions from "../hooks/useLocationDetailFunctions";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -50,7 +52,7 @@ const LocationInviteBody = ({
     useFetchAdditionalDetails,
     clearAdditionalDetails,
     deleteLocationMutation,
-  } = useLocationFunctions();
+  } = useLocations();
 
   const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
   const [locationDetails, setLocationDetails] = useState(null);

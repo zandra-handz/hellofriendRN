@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ItemViewLocationSuggested from '../components/ItemViewLocationSuggested'; // Import your modal component
-
-import useLocationFunctions from '../hooks/useLocationFunctions';
+import { useLocations } from '../context/LocationsContext';
+// import useLocationFunctions from '../hooks/useLocationFunctions';
 
 const ButtonMakeTempLocation = ({ location, size = 11, iconSize = 16, family = 'Poppins-Bold', color = "black", style }) => {
-    const { locationList, setLocationList, selectedLocation, setSelectedLocation } = useLocationFunctions();
+    const { locationList, setLocationList, selectedLocation, setSelectedLocation } = useLocations();
     const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
 
     const generateTemporaryId = () => {

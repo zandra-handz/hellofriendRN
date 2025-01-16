@@ -5,7 +5,9 @@ import LoadingPage from '../components/LoadingPage';
  
 import StylingRating from '../components/StylingRating';
 
-import useLocationFunctions from '../hooks/useLocationFunctions';
+// import useLocationFunctions from '../hooks/useLocationFunctions';
+import { useLocations } from '../context/LocationsContext';
+
 
 // Function to format Unix timestamp to a readable date
 const formatDate = (timestamp) => {
@@ -14,7 +16,7 @@ const formatDate = (timestamp) => {
 };
 
 const LocationCustomerReviewCard = ({ review, backgroundColor='white', textColor='black' }) => {
-  const { loadingAdditionalDetails } = useLocationFunctions();
+  const { loadingAdditionalDetails } = useLocations();
  
 
   return (

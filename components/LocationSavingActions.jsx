@@ -17,7 +17,9 @@ import AlertConfirm from '../components/AlertConfirm';
 import ModalAddNewLocation from '../components/ModalAddNewLocation';
  
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import useLocationFunctions from '../hooks/useLocationFunctions';
+// import useLocationFunctions from '../hooks/useLocationFunctions';
+import { useLocations } from '../context/LocationsContext';
+
 import { useFriendList } from '../context/FriendListContext';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import HeartAddOutlineSvg from '../assets/svgs/heart-add-outline.svg';
@@ -27,7 +29,7 @@ import AddSquareOutlineSvg from '../assets/svgs/add-square-outline.svg';
 const LocationSavingActions = ({ location, favorite=false,  size = 11, iconSize = 16, family = 'Poppins-Bold', color="black", style }) => {
     const { themeAheadOfLoading } = useFriendList();
     const { selectedFriend, friendDashboardData } = useSelectedFriend();
-    const { handleAddToFaves, handleRemoveFromFaves  } = useLocationFunctions();
+    const { handleAddToFaves, handleRemoveFromFaves  } = useLocations();
   
     const [isModalVisible, setModalVisible] = useState(false);
     const [isModal2Visible, setModal2Visible] = useState(false);

@@ -1,14 +1,20 @@
 import React, { useEffect, useRef } from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View, Dimensions, StyleSheet, FlatList, Animated } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import LocationSolidSvg from "../assets/svgs/location-solid.svg";
-import ShopOutlineSvg from '../assets/svgs/shop-outline.svg';
+import ShopOutlineSvg from "../assets/svgs/shop-outline.svg";
 import LocationCard from "../components/LocationCard";
-
-const LocationsSavedList = ({ locationList, addToFavoritesFunction, removeFromFavoritesFunction, scrollTo }) => {
-  const { themeStyles } = useGlobalStyle();
+import { LinearTransition } from "react-native-reanimated";
+ 
+const LocationsSavedList = ({
+  locationList,
+  addToFavoritesFunction,
+  removeFromFavoritesFunction,
+  scrollTo,
+}) => {
+  const { themeStyles } = useGlobalStyle(); 
 
   const flatListRef = useRef(null);
 
@@ -18,12 +24,9 @@ const LocationsSavedList = ({ locationList, addToFavoritesFunction, removeFromFa
 
   const momentListBottomSpacer = Dimensions.get("screen").height - 200;
 
- 
-
   const scrollToLocationId = (locationId) => {
     const index = locationList.findIndex(
       (location) => location.id === locationId
-      
     );
     console.log(index);
     if (index !== -1) {
@@ -48,11 +51,13 @@ const LocationsSavedList = ({ locationList, addToFavoritesFunction, removeFromFa
   }, [scrollTo]);
 
   return (
-    <View style={[styles.container, { height: 651}]}
-    onLayout={(event) => {
-      console.log("Parent layout height:", event.nativeEvent.layout.height);
-    }}>
-      <FlashList
+    <View
+      style={[styles.container, { height: 651 }]}
+      onLayout={(event) => {
+        console.log("Parent layout height:", event.nativeEvent.layout.height);
+      }}
+    >
+      <Animated.FlatList
         ref={flatListRef}
         data={locationList}
         horizontal={false}
@@ -62,18 +67,18 @@ const LocationsSavedList = ({ locationList, addToFavoritesFunction, removeFromFa
           offset: COMBINED * index,
           index,
         })}
-        renderItem={({ item: location }) => ( 
-            <LocationCard
-              addToFavorites={addToFavoritesFunction}
-              removeFromFavorites={removeFromFavoritesFunction}
-              height={ITEM_HEIGHT}
-              bottomMargin={ITEM_BOTTOM_MARGIN}
-              location={location}
-              iconColor={themeStyles.genericText.color}
-              color={themeStyles.genericText.color}
-              icon={ShopOutlineSvg}
-              iconSize={25}
-            /> 
+        renderItem={({ item: location }) => (
+          <LocationCard
+            addToFavorites={addToFavoritesFunction}
+            removeFromFavorites={removeFromFavoritesFunction}
+            height={ITEM_HEIGHT}
+            bottomMargin={ITEM_BOTTOM_MARGIN}
+            location={location}
+            iconColor={themeStyles.genericText.color}
+            color={themeStyles.genericText.color}
+            icon={ShopOutlineSvg}
+            iconSize={25}
+          />
         )}
         numColumns={1}
         columnWrapperStyle={null}
@@ -81,21 +86,24 @@ const LocationsSavedList = ({ locationList, addToFavoritesFunction, removeFromFa
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         onLayout={(event) => {
-          console.log("FlashList layout height:", event.nativeEvent.layout.height);
-      }}
-      
+          console.log(
+            "FlashList layout height:",
+            event.nativeEvent.layout.height
+          );
+        }}
+        keyboardDismissMode="on-drag"
+        itemLayoutAnimation={LinearTransition}
         // onScroll={(event) => {
         //   console.log("Scroll offset:", event.nativeEvent.contentOffset.y);
         // }}
         scrollIndicatorInsets={{ right: 1 }}
         onScrollToIndexFailed={(info) => {
-          console.log('Saved Location List scroll to index failed:', info); // Logs the error information
+          console.log("Saved Location List scroll to index failed:", info); // Logs the error information
           flatListRef.current?.scrollToOffset({
             offset: info.averageItemLength * info.index,
             animated: true,
           });
         }}
-        
         snapToInterval={COMBINED} // Set the snapping interval to the height of each item
         snapToAlignment="start" // Align items to the top of the list when snapped
         decelerationRate="fast" // Optional: makes the scroll feel snappier

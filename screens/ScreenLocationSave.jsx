@@ -5,7 +5,9 @@ import { View, StyleSheet } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import { useNavigation, useRoute } from '@react-navigation/native'; 
 import LocationSaveBody from '../components/LocationSaveBody';
-import useLocationFunctions from '../hooks/useLocationFunctions';
+import { useLocations } from '../context/LocationsContext';
+
+// import useLocationFunctions from '../hooks/useLocationFunctions';
  
 const ScreenLocationSave = () => { 
     const route = useRoute();
@@ -14,7 +16,7 @@ const ScreenLocationSave = () => {
     const navigation = useNavigation();
 
     const {themeStyles} = useGlobalStyle(); 
-    const { createLocationMutation } = useLocationFunctions();
+    const { createLocationMutation } = useLocations();
 
 
 useEffect(() => {

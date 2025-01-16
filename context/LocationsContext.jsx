@@ -1,11 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { addToFriendFavesLocations, removeFromFriendFavesLocations, fetchAllLocations, fetchLocationDetails, createLocation, updateLocation, deleteLocation } from '../api'; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthUser } from '../context/AuthUserContext'; // Import the AuthUser context
 
 import { useSelectedFriend } from '../context/SelectedFriendContext';
- 
-const useLocationFunctions = () => {
+
+const LocationsContext = createContext([]);
+
+export const useLocations = () => {
+    return useContext(LocationsContext);
+};
+
+
+
+export const LocationsProvider = ({ children }) => {
+
+
     const [faveLocationList, setFaveLocationList] = useState([]);
     const [savedLocationList, setSavedLocationList] = useState([]);
     const [validatedLocationList, setValidatedLocationList] = useState([]);
@@ -22,7 +32,7 @@ const useLocationFunctions = () => {
     const { selectedFriend } = useSelectedFriend();
 
 
-
+ 
  
     const { data: locationList, isLoading, isFetching, isSuccess, isError } = useQuery({
       queryKey: ['locationList'],
@@ -232,9 +242,17 @@ const useLocationFunctions = () => {
       }
     }
 
+
+    const [locationFaveAction, setLocationFaveAction] = useState(null);
+
     const addToFavesMutation = useMutation({
-      mutationFn: (data) => addToFriendFavesLocations(data),
-      onSuccess: (data) => {  const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
+        mutationFn: (data) => {
+            setLocationFaveAction(data.locationId); // Set the loading state before the mutation starts
+            return addToFriendFavesLocations(data);
+          },
+      onSuccess: (data, variables) => { 
+        setLocationFaveAction(null); 
+         const friendData = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
          queryClient.setQueryData(['friendDashboardData', selectedFriend?.id], (old) => {
           if (!old || !old[0]) {
               return {
@@ -264,11 +282,13 @@ const useLocationFunctions = () => {
       
       },
       onError: (error) => {
+        setLocationFaveAction(null); 
         console.error('Error adding location to friend faves:', error);
     },
     onSettled: () => {  
       setTimeout(() => {
           addToFavesMutation.reset();
+          setLocationFaveAction(null); 
       }, RESET_DELAY);
   },
     })
@@ -427,7 +447,9 @@ const useFetchAdditionalDetails = (location, enabled) => {
         setFaveLocationList(updatedFaves);
       };
 
-    return { 
+
+    return (
+        <LocationsContext.Provider value={{ 
         locationList,
         locationsIsFetching, 
         isFetching,
@@ -449,16 +471,21 @@ const useFetchAdditionalDetails = (location, enabled) => {
         additionalDetails, 
         setSelectedLocation,   
         addLocationToFaves, 
+        addToFavesMutation,
+        locationFaveAction,
         removeLocationFromFaves,  
+        removeFromFavesMutation,
         loadingSelectedLocation,
         loadingAdditionalDetails, 
         useFetchAdditionalDetails,  
         clearAdditionalDetails,
 
         accessLocationListCacheData
-    };
+    }}>
+        {children}
+    </LocationsContext.Provider>
 
-}
+);
 
-
-export default useLocationFunctions;
+};
+ 

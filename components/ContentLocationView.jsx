@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
-import useLocationFunctions from '../hooks/useLocationFunctions';
+// import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
@@ -15,14 +15,15 @@ import DirectionsLink from '../components/DirectionsLink';
 import { useFriendList } from '../context/FriendListContext';
 import DisplayParkingScore from '../components/DisplayParkingScore';
 import DisplayLocationNotes from '../components/DisplayLocationNotes';
- 
+import { useLocations } from '../context/LocationsContext';
+
 import StylingRating from '../components/StylingRating';
 
 
 const ContentLocationView = ({ location, favorite }) => {
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
-    const { loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocationFunctions();
+    const { loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocations();
    
 
     const navigation = useNavigation();  

@@ -16,34 +16,44 @@ import AlertConfirm from "../components/AlertConfirm";
 import ModalAddNewLocation from "../components/ModalAddNewLocation";
 
 import { useSelectedFriend } from "../context/SelectedFriendContext";
-import useLocationFunctions from "../hooks/useLocationFunctions";
+// import useLocationFunctions from "../hooks/useLocationFunctions";
 import { useFriendList } from "../context/FriendListContext";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
+import { useLocations } from '../context/LocationsContext';
 import HeartAddOutlineSvg from "../assets/svgs/heart-add-outline.svg";
 import HeartCheckSolidSvg from "../assets/svgs/heart-check-solid.svg";
 import AddSquareOutlineSvg from "../assets/svgs/add-square-outline.svg";
 
+import LoadingPage from "../components/LoadingPage";
+import { Pressable } from 'react-native'
 //The original will cause infinite rerendering if it appears in more than one component at a time (for example a flashlist!)
 
 //UPDATE THE RERENDER WAS USING USELOCATIONFUNCTIONS DIRECTLY, I HAD TO GO UP TO LOCATIONS SCREEN AND DRILL IT DOWN INSTEAD
 
 const LocationSavingActionsForCard = ({
   location,
-  handleAddToFaves,
-  handleRemoveFromFaves,
+  // isFave,
+  // handleAddToFaves,
+  // handleRemoveFromFaves,
   favorite = false,
   size = 11,
   iconSize = 34,
   family = "Poppins-Bold", 
   style,
 }) => {
+
+  const { addToFavesMutation, removeFromFavesMutation, handleAddToFaves,
+    handleRemoveFromFaves } = useLocations();
   const { themeAheadOfLoading } = useFriendList();
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData  } = useSelectedFriend();
   // const { handleAddToFaves, handleRemoveFromFaves  } = useLocationFunctions();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModal2Visible, setModal2Visible] = useState(false);
   const { themeStyles } = useGlobalStyle();
+  const [optimisticAdd, setOptimisticAdd ] = useState(false);
+  const [optimisticRemove, setOptimisticRemove ] = useState(false);
+  const [showSpinner, setShowSpinner ] = useState(false); // to distinguish from other copies of this component with dif location data
 
   const navigation = useNavigation();
 
@@ -53,17 +63,23 @@ const LocationSavingActionsForCard = ({
     navigation.navigate("LocationSave", { location: location });
   };
 
-  useLayoutEffect(() => {
-    if (favorite && location && location.id) {
-      setIsFave(true);
+  useLayoutEffect(() => { 
+    let newIsFave;
+  
+    if (favorite && location && location.id && friendDashboardData) {
+      newIsFave = true;
     } else if (friendDashboardData?.[0]?.friend_faves?.locations) {
-      setIsFave(
-        friendDashboardData[0].friend_faves.locations.includes(location.id)
-      );
+      newIsFave = friendDashboardData[0].friend_faves.locations.includes(location.id);
     } else {
-      setIsFave(false);
+      newIsFave = false;
     }
-  }, [location, friendDashboardData]); // Add `friendDashboardData` as a dependency
+  
+    // Only update state if the value has changed
+    if (isFave !== newIsFave) {
+      setIsFave(newIsFave);
+    }
+  }, [location, favorite, friendDashboardData, isFave]);
+  // Add `friendDashboardData` as a dependency
 
   const handlePress = () => {
     setModalVisible(true);
@@ -84,6 +100,7 @@ const LocationSavingActionsForCard = ({
   const removeFromFaves = async () => {
     if (selectedFriend && location && isFave) {
       handleRemoveFromFaves(selectedFriend.id, location.id);
+    
       onClose();
     }
   };
@@ -99,6 +116,7 @@ const LocationSavingActionsForCard = ({
       } else {
         if (selectedFriend && location) {
           handleAddToFaves(selectedFriend.id, location.id);
+     
         }
         onClose();
       }
@@ -107,14 +125,27 @@ const LocationSavingActionsForCard = ({
     }
   };
 
+
+  // useEffect(() => {
+  //   if (!addToFavesMutation.isPending && !removeFromFavesMutation.isPending) {
+  //     setShowSpinner(false);
+  //   }
+
+  // }, [addToFavesMutation, removeFromFavesMutation]);
+
+
+
+
+
   const onConfirmAction = () => {
+    setShowSpinner(true);
     if (isFave) {
       removeFromFaves(location.id);
-      setIsFave(false);
+      //setIsFave(false);
     } else {
       addToFaves(location);
-      setIsFave(true);
-    }
+      //setIsFave(true);
+    } 
   };
 
   return (
@@ -140,28 +171,52 @@ const LocationSavingActionsForCard = ({
         </TouchableOpacity>
       )}
 
-      {location && !String(location.id).startsWith("temp") && (
-        <View style={styles.container}>
-          <View style={styles.iconContainer}>
+       <View style={styles.container}>
+          <View style={[styles.iconContainer, {wdith: iconSize}]}>
+          {location && !String(location.id).startsWith("temp") && !showSpinner && (
+       <>
             {!isFave && (
+              <Pressable  onPress={onConfirmAction}>  
+  
               <HeartAddOutlineSvg
                 width={iconSize}
                 height={iconSize}
                 color={themeStyles.genericText.color}
-                onPress={handlePress}
+               // onPress={handlePress}
               />
+              </Pressable>
             )}
             {isFave && (
+              <Pressable  onPress={onConfirmAction}>
+                
               <HeartCheckSolidSvg
                 width={iconSize}
                 height={iconSize}
                 color={themeAheadOfLoading.lightColor}
-                onPress={handlePress}
+                //onPress={handlePress}
               />
+              
+              </Pressable>
             )}
+            </>
+          )}
+          {showSpinner && (
+        <View style={[styles.spinnerWrapper, {width: iconSize, height: iconSize}]}>
+
+        <LoadingPage
+        loading={showSpinner} 
+        //loading={true}
+        color={themeAheadOfLoading.darkColor}
+        spinnerType='circle'
+        spinnerSize={20}
+        includeLabel={false} 
+        />
+        </View>
+          )}
+
           </View>
         </View>
-      )}
+     
 
       {location && isModal2Visible && (
         <ModalAddNewLocation
@@ -201,7 +256,12 @@ const styles = StyleSheet.create({
     paddingRight: 2,
   },
   iconContainer: {
-    margin: 0,
+    margin: 0, 
+  },
+  spinnerWrapper: {
+    flexDirection: 'row', 
+    zIndex: 1000,
+
   },
   saveText: {
     marginLeft: 8,

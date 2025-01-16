@@ -12,7 +12,10 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useGlobalStyle } from '../context/GlobalStyleContext'; 
 import ShopAddOutlineSvg from '../assets/svgs/shop-add-outline.svg';
 import AlertFormSubmit from '../components/AlertFormSubmit';
-import useLocationFunctions from '../hooks/useLocationFunctions';
+
+// import useLocationFunctions from '../hooks/useLocationFunctions';
+import { useLocations } from '../context/LocationsContext';
+
 import { useFriendList } from '../context/FriendListContext';
 import PickerParkingType from '../components/PickerParkingType';
 import { View, Text, TextInput, FlatList, StyleSheet } from 'react-native';
@@ -38,7 +41,7 @@ const LocationSaveBody = ({
 
     const { themeStyles } = useGlobalStyle(); 
     const { friendList } = useFriendList();
-    const { handleCreateLocation, createLocationMutation } = useLocationFunctions();
+    const { handleCreateLocation, createLocationMutation } = useLocations();
     
     const [parkingType, setParkingType] = useState(null);
     const [parkingTypeText, setParkingTypeText] = useState(null);

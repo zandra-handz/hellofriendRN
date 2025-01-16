@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
-import useLocationFunctions from '../hooks/useLocationFunctions';
+//import useLocationFunctions from '../hooks/useLocationFunctions';
+import { useLocations } from '../context/LocationsContext';
+
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import CardHours from './CardHours';  
 import SectionLocationImages from '../components/SectionLocationImages';
@@ -11,7 +13,7 @@ import LocationSavingActions from '../components/LocationSavingActions';
 import StylingRating from '../components/StylingRating';
 
 const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
-  const { loadingAdditionalDetails, useFetchAdditionalDetails } = useLocationFunctions();
+  const { loadingAdditionalDetails, useFetchAdditionalDetails } = useLocations();
   
   const [refreshing, setRefreshing] = useState(false);
   const { themeStyles } = useGlobalStyle();

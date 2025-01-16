@@ -37,7 +37,9 @@ import LocationParking from "../components/LocationParking";
 import LocationTravelTimes from "../components/LocationTravelTimes";
 import DirectionsLink from "../components/DirectionsLink";
 
-import useLocationFunctions from "../hooks/useLocationFunctions";
+// import useLocationFunctions from "../hooks/useLocationFunctions";
+import { useLocations } from '../context/LocationsContext';
+
 import CallNumberLink from "../components/CallNumberLink";
 
 import LocationHoursOfOperation from "../components/LocationHoursOfOperation";
@@ -63,7 +65,7 @@ const LocationDetailsBody = ({
     useFetchAdditionalDetails,
     clearAdditionalDetails,
     deleteLocationMutation,
-  } = useLocationFunctions();
+  } = useLocations();
   const [isFetching, setIsFetching] = useState(false);
   const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
   const {

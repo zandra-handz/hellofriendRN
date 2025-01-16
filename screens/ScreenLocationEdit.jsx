@@ -11,7 +11,9 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 
-import useLocationFunctions from "../hooks/useLocationFunctions";
+// import useLocationFunctions from "../hooks/useLocationFunctions";
+import { useLocations } from '../context/LocationsContext';
+
 
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "../components/KeyboardSaveButton";
@@ -31,7 +33,7 @@ const ScreenLocationEdit = () => {
   const navigation = useNavigation();
 
   const { handleUpdateLocation, updateLocationMutation } =
-    useLocationFunctions();
+    useLocations();
 
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();

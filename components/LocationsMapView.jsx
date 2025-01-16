@@ -35,8 +35,10 @@ import CheckmarkOutlineSvg from "../assets/svgs/checkmark-outline.svg";
 import { useMessage } from "../context/MessageContext";
 import SlideUpToOpen from "../components/SlideUpToOpen";
 import SlideDownToClose from "../components/SlideDownToClose";
+ 
+// import useLocationFunctions from "../hooks/useLocationFunctions";
+import { useLocations } from '../context/LocationsContext';
 
-import useLocationFunctions from "../hooks/useLocationFunctions";
 import useCurrentLocation from "../hooks/useCurrentLocation";
 
 import ExpandableUpCard from "../components/ExpandableUpCard";
@@ -56,7 +58,7 @@ const LocationsMapView = ({
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { showMessage } = useMessage();
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { locationList } = useLocationFunctions();
+  const { locationList } = useLocations();
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const navigation = useNavigation();
   const { themeStyles } = useGlobalStyle();

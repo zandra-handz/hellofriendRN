@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
+import { useSelectedFriend } from "../context/SelectedFriendContext";
 
 import LocationSavingActionsForCard from "../components/LocationSavingActionsForCard";
 
@@ -15,7 +16,7 @@ import LocationTravelTimes from "../components/LocationTravelTimes";
 
 const LocationCard = ({
   addToFavorites,
-  removeFromFavorites,
+  removeFromFavorites, 
   location,
   height = 100,
   favorite = false,
@@ -27,11 +28,16 @@ const LocationCard = ({
 }) => {
   const navigation = useNavigation();
   const { themeStyles } = useGlobalStyle();
+    const { selectedFriend, friendDashboardData } = useSelectedFriend();
+     const [isFave, setIsFave] = useState(false);
 
   const MARGIN_LEFT_LOCATION_BUTTONS = "3%";
   const LOCATION_BUTTONS_ICON_SIZE = 20;
   const FAVORITE_LOCATION_ICON_SIZE = 24;
   const SMALL_CLOCK_ICON_SIZE = 16;
+
+
+
 
   const handleGoToLocationViewScreen = () => {
     navigation.navigate("Location", { location: location, favorite: favorite });
@@ -97,7 +103,7 @@ const LocationCard = ({
           }}
         >
 
-<View style={{ marginLeft: MARGIN_LEFT_LOCATION_BUTTONS, maxWidth: '38%' }}>
+<View style={{ marginLeft: MARGIN_LEFT_LOCATION_BUTTONS, width: '28%' }}>
             <LocationCategory
               iconSize={LOCATION_BUTTONS_ICON_SIZE}
               location={location && location}
@@ -107,7 +113,7 @@ const LocationCard = ({
 <View style={{ marginLeft: MARGIN_LEFT_LOCATION_BUTTONS }}>
 <LocationSavingActionsForCard
               iconSize={ LOCATION_BUTTONS_ICON_SIZE}
-                location={location && location}
+                location={location && location} 
                 handleAddToFaves={addToFavorites}
                 handleRemoveFromFaves={removeFromFavorites}
               />
@@ -128,7 +134,7 @@ const LocationCard = ({
           </View>
           <View
             style={{ 
-                marginLeft: MARGIN_LEFT_LOCATION_BUTTONS }}
+                marginLeft: MARGIN_LEFT_LOCATION_BUTTONS, position: 'absolute', top: -100, right: 10 }}
           >
             <LocationTravelTimes
               iconSize={LOCATION_BUTTONS_ICON_SIZE}

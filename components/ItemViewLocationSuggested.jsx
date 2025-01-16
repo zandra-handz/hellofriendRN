@@ -6,12 +6,14 @@ import AlertLocation from '../components/AlertLocation';
 import ItemViewLocationDetails from './ItemViewLocationDetails'; // Import the new component
 import FooterActionButtons from '../components/FooterActionButtons';
  
-import useLocationFunctions from '../hooks/useLocationFunctions';
+// import useLocationFunctions from '../hooks/useLocationFunctions';
+import { useLocations } from '../context/LocationsContext';
+
 
 const ItemViewLocationSuggested = ({ onClose }) => {
   const [ isEditing, setIsEditing] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);  
-  const { selectedLocation } = useLocationFunctions();
+  const { selectedLocation } = useLocations();
   
   const [isTemp ] = useState(false);
 

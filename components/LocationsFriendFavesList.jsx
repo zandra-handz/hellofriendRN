@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Dimensions, StyleSheet } from 'react-native'; 
+import { View, Dimensions, StyleSheet, FlatList, Animated } from 'react-native'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 import { useFriendList } from '../context/FriendListContext';
 import { FlashList } from '@shopify/flash-list';
@@ -7,6 +7,7 @@ import LocationHeartSolidSvg from '../assets/svgs/location-heart-solid.svg';
 import ShopOutlineSvg from '../assets/svgs/shop-outline.svg';
 
 import LocationCard from "../components/LocationCard";
+import { LinearTransition } from 'react-native-reanimated';
  
 const LocationsFriendFavesList = ({  
     locationList, 
@@ -55,7 +56,7 @@ const LocationsFriendFavesList = ({
         <View style={[styles.container]}>
             {locationList && locationList.length > 0 && (
             <>
-            <FlashList
+            <Animated.FlatList
                 ref={flatListRef}
                 data={locationList}
                 horizontal={false}
@@ -102,6 +103,8 @@ const LocationsFriendFavesList = ({
                           ListFooterComponent={() => (
                             <View style={{ height: momentListBottomSpacer }} />
                           )}
+                          keyboardDismissMode="on-drag"
+                          itemLayoutAnimation={LinearTransition}
             />
 
 

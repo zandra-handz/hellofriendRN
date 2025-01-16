@@ -206,6 +206,7 @@ const MomentsList = (navigation) => {
               </Text>
             </TouchableOpacity>
           )}
+          
         />
       </View>
     );
@@ -354,6 +355,7 @@ const MomentsList = (navigation) => {
           snapToInterval={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN} // Set the snapping interval to the height of each item
           snapToAlignment="start" // Align items to the top of the list when snapped
           decelerationRate="fast" // Optional: makes the scroll feel snappier
+        keyboardDismissMode="on-drag"
         />
       </View>
 

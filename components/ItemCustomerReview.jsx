@@ -4,8 +4,9 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity} from 'react-nativ
 import LoadingPage from '../components/LoadingPage';
  
 import StylingRating from '../components/StylingRating';
+import { useLocations } from '../context/LocationsContext';
 
-import useLocationFunctions from '../hooks/useLocationFunctions';
+//import useLocationFunctions from '../hooks/useLocationFunctions';
 
 // Function to format Unix timestamp to a readable date
 const formatDate = (timestamp) => {
@@ -14,7 +15,7 @@ const formatDate = (timestamp) => {
 };
 
 const ItemCustomerReview = ({ review }) => {
-  const { loadingAdditionalDetails } = useLocationFunctions();
+  const { loadingAdditionalDetails } = useLocations();
 
   const [revealReviews, setRevealReviews] = useState(true);
 

@@ -40,6 +40,8 @@ import PickerMultiMoments from "../components/PickerMultiMoments";
 
 //import useHelloesData from "../hooks/useHelloesData";
 import { useHelloes } from '../context/HelloesContext';
+import { useLocations } from '../context/LocationsContext';
+
 
 import Icon from "react-native-vector-icons/FontAwesome";
 import PickerDate from "../components/PickerDate";
@@ -96,7 +98,7 @@ const ContentAddHello = () => {
   const oneHalfHeight = height / 2; //notes when keyboard is up
 
   const { locationList, locationListIsSuccess, savedLocationList } =
-    useLocationFunctions();
+    useLocations();
 
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
 

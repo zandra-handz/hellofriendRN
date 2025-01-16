@@ -12,7 +12,7 @@ import LocationsFriendFavesList from "../components/LocationsFriendFavesList";
 import LocationsSavedList from "../components/LocationsSavedList";
 import CustomTabBar from "../components/CustomTabBar";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
-import useLocationFunctions from "../hooks/useLocationFunctions";
+import { useLocations } from '../context/LocationsContext'; 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useNavigation, useNavigationState } from "@react-navigation/native";
@@ -29,7 +29,7 @@ const Tab = createBottomTabNavigator();
 const ScreenLocations = ({}) => {
   const { themeStyles } = useGlobalStyle();
   const { locationList, handleAddToFaves, handleRemoveFromFaves } =
-    useLocationFunctions();
+    useLocations();
   const [viewingAllLocations, setViewingAllLocations] = useState(false);
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
@@ -99,6 +99,9 @@ const ScreenLocations = ({}) => {
             <Text style={[styles.categoryButtonText, themeStyles.genericText, {alignSelf: 'center', color: themeAheadOfLoading.lightColor}]}>{item}</Text>
           </TouchableOpacity>
         )}
+           ListFooterComponent={() => (
+                                  <View style={{ width: 400 }} />
+                                )}
       />
     );
   };
