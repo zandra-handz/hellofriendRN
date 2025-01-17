@@ -28,6 +28,9 @@ import { Easing } from "react-native-reanimated";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useCapsuleList } from "../context/CapsuleListContext";
 
+import BodyStyling from "../layout/BodyStyling";
+import BelowHeaderContainer from "../layout/BelowHeaderContainer";
+
 const ITEM_HEIGHT = 210;
 const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
 const NUMBER_OF_LINES = 4;
@@ -206,7 +209,6 @@ const MomentsList = (navigation) => {
               </Text>
             </TouchableOpacity>
           )}
-          
         />
       </View>
     );
@@ -296,68 +298,75 @@ const MomentsList = (navigation) => {
           <ButtonGoToAddMoment />
         </>
       )}
-      <View
-        style={[
-          styles.selectFriendContainer,
-          { alignItems: "center", marginBottom: "2%" },
-        ]}
-      >
-        <DiceRandom3dSolidSvg
-          height={36}
-          width={36}
-          color={themeAheadOfLoading.fontColorSecondary}
-          onPress={scrollToRandomItem}
-        />
-        <MomentsSearchBar
-          data={capsuleList}
-          height={30}
-          width={"27%"}
-          borderColor={"transparent"}
-          placeholderText={"Search"}
-          textAndIconColor={themeAheadOfLoading.fontColorSecondary}
-          backgroundColor={"transparent"}
-          onPress={scrollToMoment}
-          searchKeys={["capsule", "typedCategory"]}
-        />
-      </View>
-      <View
-        style={[
-          styles.innerContainer,
-          themeStyles.genericTextBackground,
-          { paddingHorizontal: 0, borderColor: themeAheadOfLoading.lightColor },
-        ]}
-      >
-        <Animated.FlatList
-          ref={flatListRef}
-          data={capsuleList}
-          renderItem={renderMomentCard}
-          keyExtractor={(item, index) =>
-            item.id ? item.id.toString() : `placeholder-${index}`
-          }
-          getItemLayout={(data, index) => ({
-            length: ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-            offset: (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN) * index,
-            index,
-          })}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
-          )}
-          ListFooterComponent={() => (
-            <View style={{ height: momentListBottomSpacer }} />
-          )}
-          onScrollToIndexFailed={(info) => {
-            flatListRef.current?.scrollToOffset({
-              offset: info.averageItemLength * info.index,
-              animated: true,
-            });
-          }}
-          snapToInterval={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN} // Set the snapping interval to the height of each item
-          snapToAlignment="start" // Align items to the top of the list when snapped
-          decelerationRate="fast" // Optional: makes the scroll feel snappier
-        keyboardDismissMode="on-drag"
-        />
-      </View>
+      <BelowHeaderContainer
+        height={30}
+        alignItems="center"
+        marginBottom="2%"
+        justifyContent="flex-end"
+        children={
+          <>
+            <DiceRandom3dSolidSvg
+              height={36}
+              width={36}
+              color={themeAheadOfLoading.fontColorSecondary}
+              onPress={scrollToRandomItem}
+            />
+            <MomentsSearchBar
+              data={capsuleList}
+              height={30}
+              width={"27%"}
+              borderColor={"transparent"}
+              placeholderText={"Search"}
+              textAndIconColor={themeAheadOfLoading.fontColorSecondary}
+              backgroundColor={"transparent"}
+              onPress={scrollToMoment}
+              searchKeys={["capsule", "typedCategory"]}
+            />
+          </>
+        }
+      />
+
+      <BodyStyling
+        height={"87%"}
+        width={"100%"}
+        minHeight={"87%"}
+        paddingTop={"4%"}
+        paddingHorizontal={"2%"}
+        children={
+          <>
+            <Animated.FlatList
+              ref={flatListRef}
+              data={capsuleList}
+              renderItem={renderMomentCard}
+              keyExtractor={(item, index) =>
+                item.id ? item.id.toString() : `placeholder-${index}`
+              }
+              getItemLayout={(data, index) => ({
+                length: ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+                offset: (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN) * index,
+                index,
+              })}
+              onScroll={Animated.event(
+                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                { useNativeDriver: false }
+              )}
+              ListFooterComponent={() => (
+                <View style={{ height: momentListBottomSpacer }} />
+              )}
+              onScrollToIndexFailed={(info) => {
+                flatListRef.current?.scrollToOffset({
+                  offset: info.averageItemLength * info.index,
+                  animated: true,
+                });
+              }}
+              snapToInterval={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN} // Set the snapping interval to the height of each item
+              snapToAlignment="start" // Align items to the top of the list when snapped
+              decelerationRate="fast" // Optional: makes the scroll feel snappier
+              keyboardDismissMode="on-drag"
+            />
+          </>
+        }
+      />
 
       {isMomentNavVisible && selectedMomentToView && (
         <MomentsNavigator
@@ -418,23 +427,6 @@ const styles = StyleSheet.create({
   cardContainer: {
     height: "auto",
     alignItems: "center",
-  },
-  innerContainer: {
-    height: "87%",
-    width: "100%",
-    alignContent: "center",
-    paddingHorizontal: "4%",
-    paddingTop: "4%",
-    width: "101%",
-    alignSelf: "center",
-    borderWidth: 1,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderRadius: 30,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    overflow: "hidden",
-    // zIndex: 2000,
   },
   selectFriendContainer: {
     width: "100%",

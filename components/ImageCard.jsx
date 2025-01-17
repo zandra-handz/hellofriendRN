@@ -56,7 +56,7 @@ const ImageCard = ({
               ]}
               source={{ uri: image.image }}
               contentFit="cover"
-              cachePolicy={"memory-disk"}
+              cachePolicy="none" //memory-disk, none is for testing
             />
           </View> 
           <View style={styles.textContainer}>

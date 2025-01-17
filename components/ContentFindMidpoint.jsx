@@ -13,6 +13,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useFriendList } from '../context/FriendListContext'; 
 
+
+import BodyStyling from '../layout/BodyStyling';
+
 const ContentFindMidpoint = () => {
   const { selectedFriend } = useSelectedFriend();
     const { themeAheadOfLoading } = useFriendList(); 
@@ -100,9 +103,14 @@ useEffect(() => {
             <       View style={{width: '100%', flex: 1, flexDirection: 'column', justifyContent: 'space-between' }}> 
               
         <View style={[styles.selectFriendContainer, {marginBottom: '2%'}]}>  
-        </View>
-            <View style={[styles.backColorContainer, themeStyles.genericTextBackground, {borderColor: themeAheadOfLoading.lightColor}]}>
-                    
+        </View> 
+
+                     <BodyStyling 
+                     minHeight={'100%'}
+                     paddingTop={'4%'}
+                     children={
+                      <>
+                      
       {showResults ? (
         <ResultsMidpointFinds
           userAddress={
@@ -199,8 +207,9 @@ useEffect(() => {
         </View>
       )}
       {showResults && <Button title="Back" onPress={handleBack} />}
-
-      </View>
+      </>
+    }
+      />
       
       </View>
       <ButtonBaseSpecialSave
@@ -232,22 +241,7 @@ const styles = StyleSheet.create({
     minHeight: 30, 
     maxHeight: 30,
     height: 30,
-  },
-  backColorContainer: {  
-    minHeight: '95%',
-    alignContent: 'center',
-    paddingHorizontal: '4%',
-    paddingTop: '8%', 
-    width: '101%',
-    alignSelf: 'center',
-    borderWidth: 1,
-    
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderRadius: 30,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
+  }, 
   paddingExludingSaveButton: {
     paddingHorizontal: '3%',
 

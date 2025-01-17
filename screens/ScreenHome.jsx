@@ -64,54 +64,64 @@ const ScreenHome = ({ navigation }) => {
   const newMomentTextRef = useRef(null);
 
   const [sharedFileFromOutsideOfApp, setSharedFileFromOutsideOfApp] = useState(null);
-
   useEffect(() => {
-    if (Platform.OS === 'android') { 
+    if (Platform.OS === 'android') {
       const getInitialIntent = async () => {
-        const intent = await Linking.getInitialURL();
-        if (intent) {
-          processSharedFile(intent);
+        try {
+          const initialUrl = await Linking.getInitialURL();
+          if (initialUrl) {
+            processSharedFile(initialUrl);
+          }
+        } catch (error) {
+          console.error('Error fetching initial intent:', error);
         }
       };
-
+  
       getInitialIntent();
-    }
-    // else if (Platform.OS === 'ios') { 
-    //   Linking.addEventListener('url', (event) => {
-    //     processSharedFile(event.url);
-    //   });
-
-    //   return () => Linking.removeEventListener('url');
-    // }
+  
+      // Listen for new intents while the app is running
+      const subscription = Linking.addEventListener('url', (event) => {
+        if (event.url) {
+          processSharedFile(event.url);
+        }
+      });
+  
+      return () => {
+        subscription.remove();
+      };
+    } 
   }, []);
-
-
+  
   const processSharedFile = async (url) => {
     console.log('Processing shared file:', url);
   
     if (url.startsWith('content://') || url.startsWith('file://')) {
-      const fileInfo = await FileSystem.getInfoAsync(url);
+      try {
+        const fileInfo = await FileSystem.getInfoAsync(url);
   
-      if (fileInfo && fileInfo.exists) {
-        console.log('Shared File Info:', fileInfo);
+        if (fileInfo && fileInfo.exists) {
+          console.log('Shared File Info:', fileInfo);
   
-        // Validate that it's an image (optional)
-        if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
-          const resizedImage = await resizeImage(fileInfo.uri); // Call resize function
-          setSharedFileFromOutsideOfApp(resizedImage.uri); // Update shared file state
-          navigation.navigate('AddImage', { imageUri: resizedImage.uri }); // Navigate with resized image URI
+          // Validate that it's an image (optional)
+          if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
+            const resizedImage = await resizeImage(fileInfo.uri); // Call resize function
+            setSharedFileFromOutsideOfApp(resizedImage.uri); // Update shared file state
+            navigation.navigate('AddImage', { imageUri: resizedImage.uri }); // Navigate with resized image URI
+          } else {
+            Alert.alert('Unsupported File', 'The shared file is not a valid image.');
+          }
         } else {
-          Alert.alert('Unsupported File', 'The shared file is not a valid image.');
+          Alert.alert('Error', 'Could not process the shared file.');
         }
-      } else {
-        Alert.alert('Error', 'Could not process the shared file.');
+      } catch (error) {
+        console.error('Error processing shared file:', error);
+        Alert.alert('Error', 'An error occurred while processing the shared file.');
       }
     } else {
+      // Handle URLs that are not file-based
       setSharedFileFromOutsideOfApp(url);
     }
   };
-  
-
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
