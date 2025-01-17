@@ -40,6 +40,9 @@ import TextMomentHomeScreenBox from "../components/TextMomentHomeScreenBox";
 
 import HelloFriendFooter from "../components/HelloFriendFooter";
 
+import * as FileSystem from 'expo-file-system'; 
+import * as Linking from 'expo-linking'; 
+
 const ScreenHome = ({ navigation }) => {
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
@@ -59,6 +62,55 @@ const ScreenHome = ({ navigation }) => {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const newMomentTextRef = useRef(null);
+
+  const [sharedFileFromOutsideOfApp, setSharedFileFromOutsideOfApp] = useState(null);
+
+  useEffect(() => {
+    if (Platform.OS === 'android') { 
+      const getInitialIntent = async () => {
+        const intent = await Linking.getInitialURL();
+        if (intent) {
+          processSharedFile(intent);
+        }
+      };
+
+      getInitialIntent();
+    }
+    // else if (Platform.OS === 'ios') { 
+    //   Linking.addEventListener('url', (event) => {
+    //     processSharedFile(event.url);
+    //   });
+
+    //   return () => Linking.removeEventListener('url');
+    // }
+  }, []);
+
+
+  const processSharedFile = async (url) => {
+    console.log('Processing shared file:', url);
+  
+    if (url.startsWith('content://') || url.startsWith('file://')) {
+      const fileInfo = await FileSystem.getInfoAsync(url);
+  
+      if (fileInfo && fileInfo.exists) {
+        console.log('Shared File Info:', fileInfo);
+  
+        // Validate that it's an image (optional)
+        if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
+          const resizedImage = await resizeImage(fileInfo.uri); // Call resize function
+          setSharedFileFromOutsideOfApp(resizedImage.uri); // Update shared file state
+          navigation.navigate('AddImage', { imageUri: resizedImage.uri }); // Navigate with resized image URI
+        } else {
+          Alert.alert('Unsupported File', 'The shared file is not a valid image.');
+        }
+      } else {
+        Alert.alert('Error', 'Could not process the shared file.');
+      }
+    } else {
+      setSharedFileFromOutsideOfApp(url);
+    }
+  };
+  
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -184,6 +236,10 @@ const ScreenHome = ({ navigation }) => {
   };
 
   const navigateToAddImageScreen = () => {
+    navigation.navigate("AddImage", { imageUri: imageUri });
+  };
+
+  const navigateToAddImageScreenWithShared = () => {
     navigation.navigate("AddImage", { imageUri: imageUri });
   };
 
