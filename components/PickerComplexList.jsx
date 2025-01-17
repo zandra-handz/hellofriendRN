@@ -83,14 +83,14 @@ const PickerComplexList = ({
       >
         {Icon && (
           <View style={styles.iconContainer}>
-            <Icon width={iconSize} height={iconSize} color={iconColor} />
+            <Icon width={iconSize} height={iconSize} color={themeStyles.genericText.color} />
           </View>
         )}
         <View style={styles.textContainer}>
           {objects ? (
             <>
-              <Text style={styles.optionTitleText}>{item.title}</Text>
-              <Text style={styles.optionText}>{item.address}</Text>
+              <Text style={[styles.optionTitleText, themeStyles.genericText]}>{item.title}</Text>
+              <Text style={[styles.optionText, themeStyles.genericText]}>{item.address}</Text>
             </>
           ) : (
             <Text style={styles.optionText}>{item}</Text>
@@ -102,7 +102,7 @@ const PickerComplexList = ({
 
   const renderSection = ({ item }) => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{item.type}</Text>
+      <Text style={[styles.sectionTitle, themeStyles.genericText]}>{item.type}</Text>
       <FlatList
         data={item.data}
         keyExtractor={(item) => (objects ? item.id.toString() : item)}
@@ -154,9 +154,9 @@ const PickerComplexList = ({
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}
         >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>{modalHeader}</Text>
+          <View style={[styles.modalContainer]}>
+            <View style={[styles.modalContent, themeStyles.genericTextBackgroundShadeTwo]}>
+              <Text style={[styles.modalTitle, themeStyles.genericText]}>{modalHeader}</Text>
               {allowCustomEntry && (
                 <TouchableOpacity
                   style={styles.customEntryButton}
@@ -292,6 +292,10 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
     width: "100%",
+  },
+  modalFooter: {
+    flexDirection: 'row',
+   
   },
   sectionTitle: {
     fontSize: 16,

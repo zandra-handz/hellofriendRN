@@ -97,7 +97,7 @@ const ContentAddHello = () => {
   const oneSeventhHeight = height / 7;
   const oneHalfHeight = height / 2; //notes when keyboard is up
 
-  const { locationList, locationListIsSuccess, savedLocationList } =
+  const { locationList, locationListIsSuccess  } =
     useLocations();
 
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
@@ -309,7 +309,7 @@ const ContentAddHello = () => {
                             <View style={{}}>
                               <PickerHelloLocation
                                 faveLocations={faveLocations}
-                                savedLocations={savedLocationList}
+                                savedLocations={locationList}
                                 onLocationChange={handleLocationChange}
                                 modalVisible={locationModalVisible}
                                 setModalVisible={setLocationModalVisible}

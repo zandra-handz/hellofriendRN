@@ -43,7 +43,7 @@ const NotesDisplayCard = ({
       {notesData && (
         <ScrollView
           style={{ flex: 1, width: "100%", padding: "6%" }}
-          contentContainerStyle={{ paddingVertical: 0 }}
+          contentContainerStyle={{ paddingBottom: 30 }}
           showsVerticalScrollIndicator={false}
         >
           <Text style={[styles.notesText, themeStyles.genericText]}>
