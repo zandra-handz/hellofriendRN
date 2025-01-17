@@ -36,12 +36,12 @@ import ScreenMomentFocus from "./screens/ScreenMomentFocus";
 import ScreenLocation from "./screens/ScreenLocation";
 
 import ScreenLocationSend from "./screens/ScreenLocationSend";
-import ScreenLocationEdit from "./screens/ScreenLocationEdit";
-import ScreenLocationSave from "./screens/ScreenLocationSave";
+import ScreenLocationEdit from "./screens/ScreenLocationEdit"; 
 
 import ScreenAddFriend from "./screens/ScreenAddFriend";
 import ScreenAddImage from "./screens/ScreenAddImage";
 import ScreenAddHello from "./screens/ScreenAddHello";
+import ScreenAddLocation from "./screens/ScreenAddLocation";
 
 import HellofriendHeader from "./components/HellofriendHeader";
 //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
@@ -257,7 +257,7 @@ export const Layout = () => {
                 />
                 <Stack.Screen
                   name="LocationSave"
-                  component={ScreenLocationSave}
+                  component={ScreenAddLocation}
                   options={({ route }) => ({
                     headerShown: true,
                     header: () => (

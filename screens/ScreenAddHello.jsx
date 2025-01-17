@@ -1,59 +1,29 @@
  
 
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useNavigation } from '@react-navigation/native';
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+import React from 'react';
+import { StyleSheet } from 'react-native'; 
 import ContentAddHello from '../components/ContentAddHello';
+
+import { LinearGradient } from "expo-linear-gradient";
+import { useFriendList } from "../context/FriendListContext";
  
  
 const ScreenAddHello = () => { 
 
 
+ 
+      const { themeAheadOfLoading } = useFriendList(); 
 
-    const {themeStyles} = useGlobalStyle();
-    const { selectedFriend } = useSelectedFriend();
-    const navigation = useNavigation();
-
-
-   // useEffect(() => {
-
-       
-     //   const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-       //     if (selectedFriend) {  
-           
-         //       e.preventDefault();
-        
-           //     Alert.alert(
-             //       '',
-               //     'Changes made on this page will not be saved.',
-                 //   [
-                   //     { 
-                     //       text: 'Stay', 
-                       //     style: 'destructive',
-                         //   onPress: () => {    
-                        //    }
-                      //  },
-                      //  { 
-                        //    text: 'Continue', 
-                          //  style: 'default',
-                         //   onPress: () => navigation.dispatch(e.data.action) // Navigate away without saving
-                     //   },
-                   // ]  
-               // ); 
-          //  }
-      //  }
-       // );
-    
-     //   return unsubscribe;  
-   // }, [navigation, selectedFriend]);
-    
  
     return (
-        <View style={[styles.container, themeStyles.container]}> 
+            <LinearGradient
+              colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={[styles.container]}
+            >
             <ContentAddHello /> 
-        </View>
+        </LinearGradient>
     );
 };
 

@@ -16,32 +16,21 @@ import {
   Keyboard,
   Dimensions,
 } from "react-native";
-
-import { LinearGradient } from "expo-linear-gradient";
-
 import { useMessage } from "../context/MessageContext";
 
 import TextEditBox from "../components/TextEditBox";
 
-import useLocationFunctions from "../hooks/useLocationFunctions";
-
 import FriendSelectModalVersionButtonOnly from "../components/FriendSelectModalVersionButtonOnly";
 
 import { useSelectedFriend } from "../context/SelectedFriendContext";
-import { useAuthUser } from "../context/AuthUserContext";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useUpcomingHelloes } from "../context/UpcomingHelloesContext";
-import { useFriendList } from "../context/FriendListContext";
 import { useNavigation } from "@react-navigation/native";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
- 
 
 import PickerMultiMoments from "../components/PickerMultiMoments";
 
-//import useHelloesData from "../hooks/useHelloesData";
-import { useHelloes } from '../context/HelloesContext';
-import { useLocations } from '../context/LocationsContext';
-
+import { useHelloes } from "../context/HelloesContext";
+import { useLocations } from "../context/LocationsContext";
 
 import Icon from "react-native-vector-icons/FontAwesome";
 import PickerDate from "../components/PickerDate";
@@ -52,9 +41,11 @@ import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "../components/KeyboardSaveButton";
 import DoubleChecker from "../components/DoubleChecker";
 
+import BodyStyling from "../layout/BodyStyling";
+import BelowHeaderContainer from "../layout/BelowHeaderContainer";
+
 const ContentAddHello = () => {
   const navigation = useNavigation();
-  const queryClient = useQueryClient();
 
   const { showMessage } = useMessage();
 
@@ -63,10 +54,8 @@ const ContentAddHello = () => {
 
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
 
-  const { authUserState } = useAuthUser();
   const { selectedFriend, setFriend, loadingNewFriend, friendDashboardData } =
     useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -97,8 +86,7 @@ const ContentAddHello = () => {
   const oneSeventhHeight = height / 7;
   const oneHalfHeight = height / 2; //notes when keyboard is up
 
-  const { locationList, locationListIsSuccess  } =
-    useLocations();
+  const { locationList, locationListIsSuccess } = useLocations();
 
   const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
 
@@ -260,12 +248,7 @@ const ContentAddHello = () => {
   }, [createHelloMutation.isError]);
 
   return (
-    <LinearGradient
-      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={[styles.container]}
-    >
+    <View style={[styles.container]}>
       <>
         <View
           style={{
@@ -275,162 +258,183 @@ const ContentAddHello = () => {
             justifyContent: "space-between",
           }}
         >
-          <View style={[styles.selectFriendContainer, { marginBottom: "2%" }]}>
-            <FriendSelectModalVersionButtonOnly
-              includeLabel={true}
-              width="100%"
-            />
-          </View>
+          <BelowHeaderContainer
+            height={30}
+            minHeight={30}
+            maxHeight={30}
+            alignItems="center"
+            marginBottom="2%"
+            justifyContent="center"
+            children={
+              <FriendSelectModalVersionButtonOnly
+                includeLabel={true}
+                width="100%"
+              />
+            }
+          />
 
-          <View
-            style={[
-              styles.backColorContainer,
-              themeStyles.genericTextBackground,
-              { borderColor: themeAheadOfLoading.lightColor },
-            ]}
-          >
-            <View style={styles.paddingForElements}>
+          <BodyStyling
+            height={"96%"}
+            width={"101%"}
+            minHeight={"96%"}
+            paddingTop={"4%"}
+            paddingHorizontal={"0%"} //too much padding will cause the Type picker to flow to next line
+            children={
               <>
-                {!isKeyboardVisible && (
-                  <PickerHelloType
-                    containerText=""
-                    selectedTypeChoice={selectedTypeChoice}
-                    onTypeChoiceChange={handleTypeChoiceChange}
-                    useSvg={true}
-                  />
-                )}
-
-                {selectedTypeChoiceText && (
+                <View style={styles.paddingForElements}>
                   <>
-                    <>
-                      {!isKeyboardVisible && (
+                    {!isKeyboardVisible && (
+                      <PickerHelloType
+                        containerText=""
+                        selectedTypeChoice={selectedTypeChoice}
+                        onTypeChoiceChange={handleTypeChoiceChange}
+                        useSvg={true}
+                      />
+                    )}
+
+                    {selectedTypeChoiceText && (
+                      <>
                         <>
-                          {locationListIsSuccess && (
+                          {!isKeyboardVisible && (
+                            <>
+                              {locationListIsSuccess && (
+                                <View style={{}}>
+                                  <PickerHelloLocation
+                                    faveLocations={faveLocations}
+                                    savedLocations={locationList}
+                                    onLocationChange={handleLocationChange}
+                                    modalVisible={locationModalVisible}
+                                    setModalVisible={setLocationModalVisible}
+                                    selectedLocation={selectedHelloLocation}
+                                  />
+                                </View>
+                              )}
+                            </>
+                          )}
+
+                          {!isKeyboardVisible && (
                             <View style={{}}>
-                              <PickerHelloLocation
-                                faveLocations={faveLocations}
-                                savedLocations={locationList}
-                                onLocationChange={handleLocationChange}
-                                modalVisible={locationModalVisible}
-                                setModalVisible={setLocationModalVisible}
-                                selectedLocation={selectedHelloLocation}
+                              <PickerDate
+                                buttonHeight={36}
+                                value={helloDate}
+                                mode="date"
+                                display="default"
+                                containerText=""
+                                maximumDate={new Date()}
+                                onChange={onChangeDate}
+                                showDatePicker={showDatePicker}
+                                setShowDatePicker={setShowDatePicker}
+                                inline={true}
                               />
                             </View>
                           )}
+
+                          <TextEditBox
+                            width={"100%"}
+                            height={
+                              !isKeyboardVisible
+                                ? oneSeventhHeight
+                                : oneHalfHeight
+                            }
+                            ref={editedTextRef}
+                            autoFocus={false}
+                            title={"Add notes"}
+                            helperText={
+                              !isKeyboardVisible ? null : "Press enter to exit"
+                            }
+                            iconColor={
+                              !isKeyboardVisible
+                                ? themeStyles.genericText.color
+                                : "red"
+                            }
+                            mountingText={""}
+                            onTextChange={updateNoteEditString}
+                            multiline={false}
+                          />
+
+                          <View style={{}}>
+                            <PickerMultiMoments
+                              onMomentSelect={handleMomentSelect}
+                            />
+                          </View>
+                          <View style={[styles.deleteRemainingContainer]}>
+                            <TouchableOpacity
+                              onPress={toggleDeleteMoments}
+                              style={[
+                                styles.controlButton,
+                                themeStyles.footerIcon,
+                              ]}
+                            >
+                              <Text
+                                style={[
+                                  styles.controlButtonText,
+                                  { color: themeStyles.footerText.color },
+                                ]}
+                              >
+                                {"Delete unused?"}
+                              </Text>
+                              <Icon
+                                name={
+                                  deleteMoments ? "check-square-o" : "square-o"
+                                }
+                                size={20}
+                                style={[
+                                  styles.checkbox,
+                                  themeStyles.footerIcon,
+                                ]}
+                              />
+                            </TouchableOpacity>
+                          </View>
                         </>
+                      </>
+                    )}
+                  </>
+                </View>
+
+                {helloDate &&
+                  //selectedFriend &&
+                  //!loadingNewFriend &&
+                  selectedTypeChoice !== null && (
+                    <>
+                      {!isKeyboardVisible && (
+                        <ButtonBaseSpecialSave
+                          label="SAVE HELLO! "
+                          maxHeight={80}
+                          onPress={openDoubleChecker}
+                          isDisabled={
+                            selectedFriend && !loadingNewFriend ? false : true
+                          }
+                          fontFamily={"Poppins-Bold"}
+                          image={require("../assets/shapes/redheadcoffee.png")}
+                        />
                       )}
 
-                      {!isKeyboardVisible && (
-                        <View style={{}}>
-                          <PickerDate
-                            buttonHeight={36}
-                            value={helloDate}
-                            mode="date"
-                            display="default"
-                            containerText=""
-                            maximumDate={new Date()}
-                            onChange={onChangeDate}
-                            showDatePicker={showDatePicker}
-                            setShowDatePicker={setShowDatePicker}
-                            inline={true}
+                      {isKeyboardVisible && (
+                        <View
+                          style={{
+                            position: "absolute",
+                            bottom: 40,
+                            left: 0,
+                            right: 0,
+                            width: "100%",
+                            flex: 1,
+                          }}
+                        >
+                          <KeyboardSaveButton
+                            label="SAVE HELLO! "
+                            onPress={openDoubleChecker}
+                            isDisabled={
+                              selectedFriend && !loadingNewFriend ? false : true
+                            }
+                            image={false}
                           />
                         </View>
                       )}
-
-                      <TextEditBox
-                        width={"100%"}
-                        height={
-                          !isKeyboardVisible ? oneSeventhHeight : oneHalfHeight
-                        }
-                        ref={editedTextRef}
-                        autoFocus={false}
-                        title={"Add notes"}
-                        helperText={
-                          !isKeyboardVisible ? null : "Press enter to exit"
-                        }
-                        iconColor={
-                          !isKeyboardVisible
-                            ? themeStyles.genericText.color
-                            : "red"
-                        }
-                        mountingText={""}
-                        onTextChange={updateNoteEditString}
-                        multiline={false}
-                      />
-
-                      <View style={{}}>
-                        <PickerMultiMoments
-                          onMomentSelect={handleMomentSelect}
-                        />
-                      </View>
-                      <View style={[styles.deleteRemainingContainer]}>
-                        <TouchableOpacity
-                          onPress={toggleDeleteMoments}
-                          style={[styles.controlButton, themeStyles.footerIcon]}
-                        >
-                          <Text
-                            style={[
-                              styles.controlButtonText,
-                              { color: themeStyles.footerText.color },
-                            ]}
-                          >
-                            {"Delete unused?"}
-                          </Text>
-                          <Icon
-                            name={deleteMoments ? "check-square-o" : "square-o"}
-                            size={20}
-                            style={[styles.checkbox, themeStyles.footerIcon]}
-                          />
-                        </TouchableOpacity>
-                      </View>
                     </>
-                  </>
-                )}
+                  )}
               </>
-            </View>
-
-            {helloDate &&
-              //selectedFriend &&
-              //!loadingNewFriend &&
-              selectedTypeChoice !== null && (
-                <>
-                  {!isKeyboardVisible && (
-                    <ButtonBaseSpecialSave
-                      label="SAVE HELLO! "
-                      maxHeight={80}
-                      onPress={openDoubleChecker}
-                      isDisabled={
-                        selectedFriend && !loadingNewFriend ? false : true
-                      }
-                      fontFamily={"Poppins-Bold"}
-                      image={require("../assets/shapes/redheadcoffee.png")}
-                    />
-                  )}
-
-                  {isKeyboardVisible && (
-                    <View
-                      style={{
-                        position: "absolute",
-                        bottom: 40,
-                        left: 0,
-                        right: 0,
-                        width: "100%",
-                        flex: 1,
-                      }}
-                    >
-                      <KeyboardSaveButton
-                        label="SAVE HELLO! "
-                        onPress={openDoubleChecker}
-                        isDisabled={
-                          selectedFriend && !loadingNewFriend ? false : true
-                        }
-                        image={false}
-                      />
-                    </View>
-                  )}
-                </>
-              )}
-          </View>
+            }
+          />
         </View>
 
         {isDoubleCheckerVisible && (
@@ -442,7 +446,7 @@ const ContentAddHello = () => {
           />
         )}
       </>
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -458,21 +462,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  backColorContainer: {
-    height: "96%",
-    alignContent: "center",
-    //paddingHorizontal: "4%",
-    paddingTop: "6%",
-    width: "101%",
-    alignSelf: "center",
-    borderWidth: 1,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderRadius: 30,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    zIndex: 2000,
-  },
   locationContainer: {
     width: "50%",
   },
@@ -484,13 +473,7 @@ const styles = StyleSheet.create({
     width: "100%",
     minHeight: 100,
   },
-  selectFriendContainer: {
-    width: "100%",
-    justifyContent: "center",
-    minHeight: 30,
-    maxHeight: 30,
-    height: 30,
-  },
+
   locationTitle: {
     fontSize: 17,
     fontFamily: "Poppins-Regular",
