@@ -671,6 +671,36 @@ export const fetchMomentsAPI = async (friendId) => {
 
 
 
+export const deleteHelloAPI = async (data) => {
+    try {
+        const response = await axios.delete(`/friends/${data.friend}/helloes/${data.id}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting hello:', error);
+        throw error;
+    }
+};
+
+// NOT CORRECT OR COMPLETE
+// export const updateHelloAPI = async (friendId, helloId, helloesData) => {
+//     try {
+//         const response = await axios.patch(`/friends/${friendId}/helloes/${helloId}/`, helloesData);
+//         return response.data;
+//     } catch (error) {
+//         if (error.response) {
+//             console.error('Error updating hello:', {
+//                 message: error.message,
+//                 status: error.response.status,
+//                 data: error.response.data,
+//             });
+//         } else {
+//             console.error('Error updating hello:', error.message);
+//         }
+//         throw error;
+//     }
+// };
+
+
 export const fetchPastHelloes = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/helloes/`);
