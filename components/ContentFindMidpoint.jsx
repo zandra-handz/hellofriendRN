@@ -14,7 +14,7 @@ import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useFriendList } from '../context/FriendListContext'; 
 
 
-import BodyStyling from '../layout/BodyStyling';
+import BodyStyling from '../layoutComponents/BodyStyling';
 
 const ContentFindMidpoint = () => {
   const { selectedFriend } = useSelectedFriend();

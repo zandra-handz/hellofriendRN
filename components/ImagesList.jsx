@@ -10,8 +10,8 @@ import { useGlobalStyle } from "../context/GlobalStyleContext";
 import ImageCard from "../components/ImageCard";
 import MomentsSearchBar from "../components/MomentsSearchBar";
 
-import BodyStyling from "../layout/BodyStyling";
-import BelowHeaderContainer from "../layout/BelowHeaderContainer";
+import BodyStyling from "../layoutComponents/BodyStyling";
+import BelowHeaderContainer from "../layoutComponents/BelowHeaderContainer";
 
 const windowWidth = Dimensions.get("window").width;
 
