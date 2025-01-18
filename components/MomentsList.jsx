@@ -47,12 +47,9 @@ const MomentsList = (navigation) => {
     capsuleList,
     setMomentIdToAnimate,
     momentIdToAnimate,
-    updateCacheWithNewPreAdded,
-    updateCapsuleMutation,
+    updateCacheWithNewPreAdded, 
     categoryNames,
-    categoryStartIndices,
-    preAddedTracker,
-    momentsSavedToHello,
+    categoryStartIndices, 
     updateCapsule,
   } = useCapsuleList();
 
