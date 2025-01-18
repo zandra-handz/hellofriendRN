@@ -1,24 +1,29 @@
-import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Keyboard } from "react-native";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import TextEditBox from "../components/TextEditBox";
 import FlatListChangeChoice from "../components/FlatListChangeChoice";
 import { useFriendList } from "../context/FriendListContext";
 
-import {
-  useNavigation,
-  useRoute,
-  useFocusEffect,
-} from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 // import useLocationFunctions from "../hooks/useLocationFunctions";
-import { useLocations } from '../context/LocationsContext';
-
+import { useLocations } from "../context/LocationsContext";
 
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "../components/KeyboardSaveButton";
 
+import BodyStyling from "../components/BodyStyling";
+import BelowHeaderContainer from "../components/BelowHeaderContainer";
+
+import SlideToDeleteHeader from '../components/SlideToDeleteHeader';
+
+
 import { LinearGradient } from "expo-linear-gradient";
+
+import TrashOutlineSvg from "../assets/svgs/trash-outline.svg";
+
+
 
 const ScreenLocationEdit = () => {
   const route = useRoute();
@@ -32,8 +37,7 @@ const ScreenLocationEdit = () => {
 
   const navigation = useNavigation();
 
-  const { handleUpdateLocation, updateLocationMutation } =
-    useLocations();
+  const { handleUpdateLocation, updateLocationMutation, handleDeleteLocation, deleteLocationMutation } = useLocations();
 
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
@@ -104,6 +108,18 @@ const ScreenLocationEdit = () => {
 
   //weekdayTextData is coming from LocationHoursOfOperation component
 
+
+
+  const handleDelete = (location) => {
+    try { 
+
+      handleDeleteLocation(location.id); 
+   } catch (error) {
+    console.log('error, location not deleted: ', error, location);
+   }
+
+};
+
   const handleSubmit = () => {
     handleUpdateLocation(location.id, {
       category: editedCategoryRef.current.getText(),
@@ -118,95 +134,113 @@ const ScreenLocationEdit = () => {
     }
   }, [updateLocationMutation]);
 
+  useEffect(() => {
+    if (deleteLocationMutation.isSuccess) {
+      navigation.goBack();
+    }
+  }, [deleteLocationMutation]);
+
+
+
   return (
     <LinearGradient
       colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={[styles.container, themeStyles.signinContainer]}
-    > 
-            <View
+    >
+      {/* <View
                 style={{
                   width: "100%",
       
                   flexDirection: "column",
                   justifyContent: "space-between",
                 }}
-              >
-                <View style={[styles.selectFriendContainer, { marginBottom: "2%" }]}>
-                  {/* <FriendSelectModalVersionButtonOnly
-                    includeLabel={true}
-                    width="100%"
-                  /> */}
-                </View>
-      
-      
-                <View
-                  style={[
-                    styles.backColorContainer,
-                    themeStyles.genericTextBackground,
-                    { borderColor: themeAheadOfLoading.lightColor },
-                  ]}
-                >
-      <View
-        style={{
-          height: isKeyboardVisible ? "30%" : "14%",
-          marginBottom: "3%",
-        }}
-      >
-        <TextEditBox
-          ref={editedCategoryRef}
-          autoFocus={focusOn === "focusCategory"}
-          title={"Edit category"}
-          mountingText={category}
-          onTextChange={updateCategoryEditString}
-          multiline={false}
-          height={"100%"}
+              > */}
+      <BelowHeaderContainer
+        height={30}
+        minHeight={30}
+        maxHeight={30}
+        alignItems="center"
+        marginBottom="2%"
+        justifyContent="center"
+        children={            <View style={styles.sliderContainer}>
+        <SlideToDeleteHeader
+          itemToDelete={location}
+          onPress={handleDelete}
+          sliderWidth={"100%"}
+          targetIcon={TrashOutlineSvg}
         />
-      </View>
+      </View>}
+      />
 
-      <View
-        style={{
-          height: isKeyboardVisible ? "50%" : "34%",
-          flexGrow: 1,
-          marginBottom: "3%",
-        }}
-      >
-        <TextEditBox
-          ref={editedTextRef}
-          autoFocus={focusOn === "focusNotes"}
-          title={"Edit notes"}
-          mountingText={notes}
-          onTextChange={updateNoteEditString}
-          height={"100%"}
-        />
-      </View>
+<BodyStyling
+        height={"96%"}
+        width={"101%"}
+        minHeight={"96%"}
+        paddingTop={"4%"}
+        paddingHorizontal={"0%"} //too much padding will cause the Type picker to flow to next line
+        children={
+        <>
+        <View
+          style={{
+            height: isKeyboardVisible ? "30%" : "20%",
+            marginBottom: "3%",
+          }}
+        >
+          <TextEditBox
+            ref={editedCategoryRef}
+            autoFocus={focusOn === "focusCategory"}
+            title={"Edit category"}
+            mountingText={category}
+            onTextChange={updateCategoryEditString}
+            multiline={false}
+            height={"100%"}
+          />
+        </View>
 
-      <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
-        <FlatListChangeChoice
-          horizontal={true}
-          choicesArray={parkingScores}
-          ref={editedParkingScoreRef}
-          title={"Change parking score"}
-          oldChoice={parking}
-          onChoiceChange={updateParkingScore}
-        />
-      </View>
-      {!isKeyboardVisible && (
-        <ButtonBaseSpecialSave
-          label="SAVE CHANGES "
-          maxHeight={80}
-          onPress={handleSubmit}
-          isDisabled={false}
-          fontFamily={"Poppins-Bold"}
-          image={require("../assets/shapes/redheadcoffee.png")}
-        />
-      )}
+        <View
+          style={{
+            height: isKeyboardVisible ? "50%" : "30%",
+            flexGrow: 1,
+            marginBottom: "3%",
+          }}
+        >
+          <TextEditBox
+            ref={editedTextRef}
+            autoFocus={focusOn === "focusNotes"}
+            title={"Edit notes"}
+            mountingText={notes}
+            onTextChange={updateNoteEditString}
+            height={"100%"}
+          />
+        </View>
 
+        <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
+          <FlatListChangeChoice
+            horizontal={true}
+            choicesArray={parkingScores}
+            ref={editedParkingScoreRef}
+            title={"Change parking score"}
+            oldChoice={parking}
+            onChoiceChange={updateParkingScore}
+          />
+        </View>
+        {!isKeyboardVisible && (
+          <ButtonBaseSpecialSave
+            label="SAVE CHANGES "
+            maxHeight={80}
+            onPress={handleSubmit}
+            isDisabled={false}
+            fontFamily={"Poppins-Bold"}
+            image={require("../assets/shapes/redheadcoffee.png")}
+          />
+        )}
+        </>
+        }
+      />   
 
-      </View>
-      
-      </View>
+      {/* </View> */}
       {isKeyboardVisible && (
         <View
           style={{
@@ -226,7 +260,7 @@ const ScreenLocationEdit = () => {
             image={false}
           />
         </View>
-      )} 
+      )}
     </LinearGradient>
   );
 };
@@ -236,28 +270,15 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "space-between",
-  },
-  backColorContainer: {
-    height: "96%",
-    alignContent: "center",
-    //paddingHorizontal: "4%",
-    paddingTop: "6%",
-    width: "101%",
-    alignSelf: "center",
-    borderWidth: 1,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderRadius: 30,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    zIndex: 1999,
-  },
-  selectFriendContainer: {
-    width: "100%",
-    justifyContent: "center",
-    minHeight: 30,
-    maxHeight: 30,
+  }, 
+  sliderContainer: {
+    //position: "absolute",
+    bottom: 0,
+    left: -4,
+    right: 0,
+    zIndex: 3,
     height: 30,
+    width: "100%",
   },
 });
 
