@@ -23,8 +23,8 @@ import { CheckBox } from "react-native-elements";
 
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 
-import BodyStyling from "../layoutComponents/BodyStyling";
-import BelowHeaderContainer from "../layoutComponents/BelowHeaderContainer";
+import BodyStyling from "../components/BodyStyling";
+import BelowHeaderContainer from "../components/BelowHeaderContainer";
 
 import TextEditBox from "../components/TextEditBox";
 

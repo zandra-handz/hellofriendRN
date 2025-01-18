@@ -28,8 +28,8 @@ import { Easing } from "react-native-reanimated";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useCapsuleList } from "../context/CapsuleListContext";
 
-import BodyStyling from "../layoutComponents/BodyStyling";
-import BelowHeaderContainer from "../layoutComponents/BelowHeaderContainer";
+import BodyStyling from "../components/BodyStyling";
+import BelowHeaderContainer from "../components/BelowHeaderContainer";
 
 const ITEM_HEIGHT = 210;
 const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval

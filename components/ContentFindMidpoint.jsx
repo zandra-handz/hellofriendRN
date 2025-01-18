@@ -13,8 +13,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useFriendList } from '../context/FriendListContext'; 
 
-
-import BodyStyling from '../layoutComponents/BodyStyling';
+import BodyStyling from "../components/BodyStyling";
+import BelowHeaderContainer from "../components/BelowHeaderContainer";
 
 const ContentFindMidpoint = () => {
   const { selectedFriend } = useSelectedFriend();

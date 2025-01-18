@@ -41,9 +41,8 @@ import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "../components/KeyboardSaveButton";
 import DoubleChecker from "../components/DoubleChecker";
 
-import BodyStyling from "../layoutComponents/BodyStyling";
-import BelowHeaderContainer from "../layoutComponents/BelowHeaderContainer";
-
+import BodyStyling from "../components/BodyStyling";
+import BelowHeaderContainer from "../components/BelowHeaderContainer";
 const ContentAddHello = () => {
   const navigation = useNavigation();
 
