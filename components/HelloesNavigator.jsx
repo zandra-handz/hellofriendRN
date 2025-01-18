@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native'; 
-import ImageView from '../components/ImageView';
-import useImageFunctions from '../hooks/useImageFunctions';
+import { View, StyleSheet } from 'react-native';  
+import { useSelectedFriend } from '../context/SelectedFriendContext';
 
 // import useHelloesData from '../hooks/useHelloesData';
 import { useHelloes } from '../context/HelloesContext';
@@ -18,11 +17,10 @@ const HelloesNavigator = ({ archived = false, hello, onClose }) => {
   const [isModalVisible, setIsModalVisible] = useState(true);
 
   
-  const { helloesList  } = useHelloes();
+  const { helloesList, handleDeleteHelloRQuery, deleteHelloMutation } = useHelloes();
   
- 
-  const { imageList, updateImage, deleteImage, deleteImageMutation } = useImageFunctions(); 
-  const { showMessage } = useMessage();
+  const { selectedFriend } = useSelectedFriend(); 
+   const { showMessage } = useMessage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const { themeStyles } = useGlobalStyle();  
   const [ helloInView, setHelloInView ] = useState(hello || null);
@@ -39,11 +37,12 @@ const HelloesNavigator = ({ archived = false, hello, onClose }) => {
 
   //manually closing this for right now because I give up
  useEffect(() => { 
-    if (deleteImageMutation.isSuccess) {
+    if (deleteHelloMutation.isSuccess) {
+      showMessage(true, null, 'Hello deleted!');
         //the length of the list is the old length before the deleted one is removed
         //i don't like this
-        console.log('image count: ', imageList.length);
-        if (imageList.length > 1) {
+        console.log('hello count: ', helloesList.length);
+        if (helloesList.length > 1) {
             if (currentIndex > 0) {
                 goToPreviousHello();
             } else {
@@ -54,7 +53,7 @@ const HelloesNavigator = ({ archived = false, hello, onClose }) => {
         }
      }
   
-   }, [deleteImageMutation.isSuccess]);
+   }, [deleteHelloMutation.isSuccess]);
 
 
 
@@ -77,15 +76,23 @@ const HelloesNavigator = ({ archived = false, hello, onClose }) => {
   };
  
 
-  const handleDelete = (item) => {
+//Do I want to ask the user if they want to return the moments to their active moment list
+//(in case hello submitted by mistake)?
+  const handleDelete = (hello) => {
+    console.log('handle delete hello in navigator triggered: ', hello);
     try { 
 
-    deleteImage(item.id); 
-   } catch (error) {
-    console.log('error, image not deleted: ', error, item);
-   }
+      const helloData = {
+        friend: selectedFriend.id,
+        id: hello.id,
+      };
+ 
 
-};
+      handleDeleteHelloRQuery(helloData);  
+    } catch (error) { 
+      console.error('Error deleting hello:', error);
+    }  
+  };
  
  
 

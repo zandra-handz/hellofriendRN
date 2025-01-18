@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useRef } from 'react';
 import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { fetchPastHelloes, saveHello } from '../api'; 
+import { fetchPastHelloes, saveHello, deleteHelloAPI } from '../api'; 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   eachMonthOfInterval,
@@ -170,6 +170,50 @@ export const HelloesProvider = ({ children }) => {
       };
 
 
+      
+        const handleDeleteHelloRQuery = async (data) => { 
+      
+          try {
+            await deleteHelloMutation.mutateAsync(data);
+          } catch (error) {
+            console.log(error);
+          }
+        };
+      
+        const deleteHelloMutation = useMutation({
+          mutationFn: (data) => deleteHelloAPI(data),
+          onSuccess: (data) => { 
+      
+            queryClient.setQueryData(["pastHelloes", selectedFriend?.id], (old) => {
+              return old ? old.filter((hello) => hello.id !== data.id) : [];
+            }); 
+      
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+            }
+      
+            timeoutRef.current = setTimeout(() => {
+              deleteHelloMutation.reset(); 
+            }, 2000);
+          },
+          onError: (error) => {
+            setResultMessage("Oh no! :( Please try again");
+      
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+            }
+      
+            // Set new timeout to reset the state after 2 seconds
+            timeoutRef.current = setTimeout(() => {
+              deleteMomentMutation.reset(); 
+            }, 2000);
+          },
+        });
+
+
+
+
+
  
 
 
@@ -330,6 +374,8 @@ const monthsInRange = useMemo(() => {
             latestHelloDate,
             earliestHelloDate,
             monthsInRange,
+            handleDeleteHelloRQuery,
+            deleteHelloMutation,
             
             
         }}>

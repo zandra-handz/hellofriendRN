@@ -31,17 +31,31 @@
           "apiKey": "AIzaSyAY-lQdQaVSKpPz9h2GiX_Jde47nv3FsNg"
         }
       },
-"intentFilters": [
-  {
-    "action": "VIEW",
-    "data": [
-      {
-        "mimeType": "*/*"
-      }
-    ],
-    "category": ["BROWSABLE", "DEFAULT"]
-  }
-]
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "mimeType": "image/*"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        },
+        {
+          "action": "SEND",
+          "data": [
+            {
+              "mimeType": "image/*"
+            }
+          ],
+          "category": [
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "splash": {
       "image": "./assets/shapes/happyskull.png",
