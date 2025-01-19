@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import TopLevelNavigationHandler from "./TopLevelNavigationHandler"; // Adjust import path if necessary
-import { Alert, View, Text, useColorScheme } from "react-native";
+import { Alert, View, Text, useColorScheme, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { MessageContextProvider } from "./context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -16,6 +16,9 @@ import { SelectedFriendProvider } from "./context/SelectedFriendContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as Font from "expo-font";
 import * as Notifications from "expo-notifications";
+import * as FileSystem from 'expo-file-system'; 
+import * as Linking from 'expo-linking'; 
+
 import { useGlobalStyle } from "./context/GlobalStyleContext";
 import ResultMessage from "./components/ResultMessage";
 import FullScreenSpinner from "./components/FullScreenSpinner";
@@ -68,10 +71,17 @@ async function loadFonts() {
   });
 }
 
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  
+
+const [incomingFileUri, setIncomingFileUri] = useState(null);
+
+ 
+
 
   useEffect(() => {
     // Load fonts and set loading status
@@ -81,6 +91,9 @@ export default function App() {
     };
 
     fetchFonts();
+
+
+    
 
     const notificationSubscription =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -93,6 +106,35 @@ export default function App() {
     // Clean up subscription on unmount
     return () => notificationSubscription.remove();
   }, []);
+
+
+    useEffect(() => {
+      if (Platform.OS === 'android') {
+        const getInitialIntent = async () => {
+          try {
+            const initialUrl = await Linking.getInitialURL();
+            if (initialUrl) {
+              setIncomingFileUri(initialUrl);
+            }
+          } catch (error) {
+            console.error('Error fetching initial intent:', error);
+          }
+        };
+    
+        getInitialIntent();
+    
+        // Listen for new intents while the app is running
+        const subscription = Linking.addEventListener('url', (event) => {
+          if (event.url) {
+            setIncomingFileUri(event.url);
+          }
+        });
+    
+        return () => {
+          subscription.remove();
+        };
+      } 
+    }, []);
 
   const colorScheme = useColorScheme();
 
@@ -118,7 +160,7 @@ export default function App() {
                     <CapsuleListProvider>
                       <HelloesProvider>
                         <MessageContextProvider>
-                          <Layout />
+                          <Layout incomingFileUri={incomingFileUri || null} />
                         </MessageContextProvider>
                       </HelloesProvider>
                     </CapsuleListProvider>
@@ -133,7 +175,7 @@ export default function App() {
   );
 }
 
-export const Layout = () => {
+export const Layout = ({incomingFileUri}) => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser();
 
@@ -345,14 +387,15 @@ export const Layout = () => {
             )
           ) : (
             <>
-              <Stack.Screen
-                name="Welcome"
-                component={ScreenWelcome}
-                options={{
-                  headerShown: false,
-                  header: () => <HeaderBlank />,
-                }}
-              />
+<Stack.Screen
+  name="Welcome"
+  options={{
+    headerShown: false,
+    header: () => <HeaderBlank />,
+  }}
+>
+  {(props) => <ScreenWelcome {...props} incomingFileUri={incomingFileUri} />}
+</Stack.Screen>
 
               <Stack.Screen
                 name="Auth"

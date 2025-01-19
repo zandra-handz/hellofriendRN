@@ -25,6 +25,8 @@ import { useFriendList } from "../context/FriendListContext"; //to check if any 
 import { useUpcomingHelloes } from "../context/UpcomingHelloesContext";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 
+import { useMessage } from '../context/MessageContext';
+
 import { LinearGradient } from "expo-linear-gradient";
 import HomeScrollSoon from "../components/HomeScrollSoon";
 import HomeScrollCalendarLights from "../components/HomeScrollCalendarLights";
@@ -43,7 +45,7 @@ import HelloFriendFooter from "../components/HelloFriendFooter";
 import * as FileSystem from 'expo-file-system'; 
 import * as Linking from 'expo-linking'; 
 
-const ScreenHome = ({ navigation }) => {
+const ScreenHome = ({ navigation, incomingFileUri }) => {
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { authUserState, userAppSettings } = useAuthUser();
@@ -61,36 +63,57 @@ const ScreenHome = ({ navigation }) => {
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
+  const { showMessage } = useMessage();
+
   const newMomentTextRef = useRef(null);
 
   const [sharedFileFromOutsideOfApp, setSharedFileFromOutsideOfApp] = useState(null);
-  useEffect(() => {
-    if (Platform.OS === 'android') {
-      const getInitialIntent = async () => {
-        try {
-          const initialUrl = await Linking.getInitialURL();
-          if (initialUrl) {
-            processSharedFile(initialUrl);
-          }
-        } catch (error) {
-          console.error('Error fetching initial intent:', error);
-        }
-      };
+
+useEffect(() => {
+  if (incomingFileUri) {
+    showMessage(true, null, `incoming file: ${incomingFileUri}`);
+    try {
+      processSharedFile(incomingFileUri);
+
+    } catch (error) {
+      showMessage(true, null, `Oops, couldn't catch incoming file: ${error}`);
+    }
+  }
+  if (!incomingFileUri) {
+    showMessage(true, null, `no incoming file`);
+  }
+    
   
-      getInitialIntent();
+
+}, [incomingFileUri]);
+
+  // useEffect(() => {
+  //   if (Platform.OS === 'android') {
+  //     const getInitialIntent = async () => {
+  //       try {
+  //         const initialUrl = await Linking.getInitialURL();
+  //         if (initialUrl) {
+  //           processSharedFile(initialUrl);
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching initial intent:', error);
+  //       }
+  //     };
   
-      // Listen for new intents while the app is running
-      const subscription = Linking.addEventListener('url', (event) => {
-        if (event.url) {
-          processSharedFile(event.url);
-        }
-      });
+  //     getInitialIntent();
   
-      return () => {
-        subscription.remove();
-      };
-    } 
-  }, []);
+  //     // Listen for new intents while the app is running
+  //     const subscription = Linking.addEventListener('url', (event) => {
+  //       if (event.url) {
+  //         processSharedFile(event.url);
+  //       }
+  //     });
+  
+  //     return () => {
+  //       subscription.remove();
+  //     };
+  //   } 
+  // }, []);
   
   const processSharedFile = async (url) => {
     console.log('Processing shared file:', url);
@@ -122,6 +145,7 @@ const ScreenHome = ({ navigation }) => {
       setSharedFileFromOutsideOfApp(url);
     }
   };
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",

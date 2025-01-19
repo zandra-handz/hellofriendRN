@@ -107,7 +107,7 @@ const SectionAccessibilitySettings = () => {
           iconSize={16}
           useToggle={true}
           label='Light/Dark' 
-          value={userAppSettings.manual_dark_mode}
+          value={userAppSettings.manual_dark_mode === true}
           onTogglePress={updateLightDark}  
           />  
       )} 
