@@ -35,6 +35,9 @@ const ITEM_HEIGHT = 210;
 const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
 const NUMBER_OF_LINES = 4;
 
+
+const CARD_BORDERRADIUS = 50; //30
+
 const MomentsList = (navigation) => {
   const {
     themeStyles,
@@ -267,7 +270,9 @@ const MomentsList = (navigation) => {
           backgroundColor={
             themeStyles.genericTextBackgroundShadeTwo.backgroundColor
           }
-          borderRadius={30}
+          borderRadius={CARD_BORDERRADIUS }
+          paddingHorizontal={'10%'}
+          
           borderColor={"transparent"} //manualGradientColors.lightColor}
           moment={item}
           index={index}

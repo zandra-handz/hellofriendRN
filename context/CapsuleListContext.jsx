@@ -142,6 +142,9 @@ export const CapsuleListProvider = ({ children }) => {
 
   const [momentData, setMomentData] = useState(null);
 
+  
+  const timeoutRef = useRef(null);
+
   const updateCapsuleMutation = useMutation({
     mutationFn: (capsuleId) =>
       updateMomentAPI(selectedFriend?.id, capsuleId, {
@@ -291,9 +294,7 @@ export const CapsuleListProvider = ({ children }) => {
       }, 2000);
     },
   });
-
-  // Create a ref to hold the timeout ID
-  const timeoutRef = useRef(null);
+ 
 
   useEffect(() => {
     if (createMomentMutation.isPending) {

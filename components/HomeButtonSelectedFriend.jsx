@@ -10,6 +10,7 @@ import LoadingPage from "../components/LoadingPage";
 import ButtonIconMoments from "../components/ButtonIconMoments";
 //import ButtonIconLocations from '../components/ButtonIconLocations';
 import ButtonIconImages from "../components/ButtonIconImages";
+import BackArrowLongerStemSvg from '../assets/svgs/back-arrow-longer-stem.svg';
 
 import EclipseAnim from "../animations/EclipseAnim";
 // Press function is internal
@@ -42,6 +43,8 @@ const HomeButtonSelectedFriend = ({
     friendDashboardData,
     isPending,
     isLoading,
+    setFriend, 
+    deselectFriend,
     loadingNewFriend,
   } = useSelectedFriend();
 
@@ -134,6 +137,17 @@ const HomeButtonSelectedFriend = ({
                 width: "100%",
               }}
             >
+              <TouchableOpacity onPress={() => deselectFriend()} style={{zIndex: 3000, position: 'absolute', top: 0, left: 10}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <BackArrowLongerStemSvg height={20} width={20} color={'#121212'}/>
+
+                <Text style={{fontFamily: 'Poppins-Bold', fontSize: 14, color: '#121212'}}>
+                  {`  `}Back
+                </Text>
+                </View>
+          
+
+              </TouchableOpacity>
               <View style={styles.textContainer}>
                 <TouchableOpacity onPress={onPress}>
                   <>
@@ -219,10 +233,11 @@ const styles = StyleSheet.create({
   textContainer: {
     zIndex: 5, 
     paddingLeft: "2%",
+    //paddingTop: '6%',
     flexDirection: "column",
     width: "58%",
     height: '100%',
-    justifyContent: "space-between", 
+    justifyContent: "center", //'space-between'
   }, 
   subtitleText: {
     fontFamily: "Poppins-Regular",

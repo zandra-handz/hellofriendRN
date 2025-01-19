@@ -13,26 +13,23 @@ import GearsTwoBiggerCircleSvg from '../assets/svgs/gears-two-bigger-circle.svg'
 
 
 const ButtonFriendProfileCircle = () => {
-  const { selectedFriend, friendLoaded, friendDashboardData, setFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeStyles } = useGlobalStyle();
+  const { selectedFriend, friendLoaded, friendDashboardData, setFriend, loadingNewFriend, deselectFriend } = useSelectedFriend();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading, setThemeAheadOfLoading } = useFriendList();
   const [profileIconColor, setProfileIconColor] = useState();
   const navigation = useNavigation();
 
 
-  const handleDeselect = () => {
-    setFriend(null);
-    setThemeAheadOfLoading({lightColor: '#a0f143', darkColor: '#4caf50', fontColor: '#000000', fontColorSecondary: '#000000'});
-  
+  // const handleDeselect = () => {
+  //   deselectFriend();
 
-
-  };
+  // };
 
   const ICON_SIZE = 28;
 
 
   useEffect(() => {
-    if (selectedFriend && friendLoaded && themeAheadOfLoading.lightColor !== themeStyles.genericTextBackground.backgroundColor) {
+    if (themeAheadOfLoading.lightColor !== themeStyles.genericTextBackground.backgroundColor) {
     setProfileIconColor([themeAheadOfLoading.darkColor || '#4caf50', themeAheadOfLoading.lightColor || 'rgb(160, 241, 67)'] );
      
     } else { 
@@ -49,18 +46,18 @@ const ButtonFriendProfileCircle = () => {
   };
  
 
-  const handleLongPress = () => {
-    // Show an alert asking if they want to deselect the friend
-    Alert.alert(
-      'Deselect Friend',
-      'Do you want to deselect your friend?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Yes', onPress: handleDeselect()}, // Deselect friend function
-      ],
-      { cancelable: true }
-    );
-  };
+  // const handleLongPress = () => {
+  //   // Show an alert asking if they want to deselect the friend
+  //   Alert.alert(
+  //     'Deselect Friend',
+  //     'Do you want to deselect your friend?',
+  //     [
+  //       { text: 'Cancel', style: 'cancel' },
+  //       { text: 'Yes', onPress: handleDeselect()}, // Deselect friend function
+  //     ],
+  //     { cancelable: true }
+  //   );
+  // };
 //to restore gradient: [1] - [0]
   const renderProfileIcon = () => {
     if (Array.isArray(profileIconColor) && profileIconColor.length === 2) {
@@ -70,7 +67,7 @@ const ButtonFriendProfileCircle = () => {
             {/* <ProfileCircleSvg width={ICON_SIZE} height={ICON_SIZE} startColor={themeAheadOfLoading.lightColor} endColor={themeAheadOfLoading.darkColor} />
              */}
             <View style={{
-              backgroundColor: friendLoaded && friendDashboardData && selectedFriend ? themeAheadOfLoading.lightColor : 'transparent',  // Circle color
+              backgroundColor: themeAheadOfLoading.lightColor,  // Circle color
               borderRadius: 16,  // Half of width/height to make it circular
               width: ICON_SIZE - 1,  // Circle diameter
               height: ICON_SIZE - 1,
@@ -105,7 +102,7 @@ const ButtonFriendProfileCircle = () => {
     {!loadingNewFriend && (
       <TouchableOpacity
         onPress={navigateToFriendFocus} // Regular tap navigates to friend focus screen
-        onLongPress={handleLongPress} // Long press triggers the alert
+       // onLongPress={handleLongPress} // Long press triggers the alert
         style={styles.arrowButton}
       >
         <View style={styles.svgContainer}>

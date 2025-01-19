@@ -37,7 +37,7 @@ const LocationSavingActionsForCard = ({
 }) => {
 
   const { addToFavesMutation, removeFromFavesMutation, handleAddToFaves,
-    handleRemoveFromFaves, locationFaveInProgress } = useLocations();
+    handleRemoveFromFaves } = useLocations();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend, friendFavesData, getFaveLocationIds } = useSelectedFriend();
   const { friendFaveLocations } = friendFavesData;

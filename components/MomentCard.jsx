@@ -28,6 +28,9 @@ const MomentCard = ({
   numberOfLinesToMatchWithFlatList,
   backgroundColor,
   borderRadius,
+  paddingHorizontal='5%',
+  paddingTop="6%",
+  paddingBottom="5%",
   borderColor,
   size,
   sliderVisible,
@@ -80,6 +83,9 @@ const MomentCard = ({
           height: heightToMatchWithFlatList,
           marginBottom: marginToMatchWithFlatList,
           borderRadius: borderRadius,
+          paddingHorizontal: paddingHorizontal,
+          paddingTop: paddingTop,
+          paddingBottom: paddingBottom,
           backgroundColor: backgroundColor,
           borderColor: borderColor,
           transform: [{ translateX }],
@@ -150,8 +156,7 @@ const MomentCard = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 50,
+  container: { 
     width: "100%",
     paddingHorizontal: "5%",
     paddingTop: "6%",

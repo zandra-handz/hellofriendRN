@@ -18,19 +18,28 @@ import { useLocations } from "../context/LocationsContext";
 
 import { useFriendList } from "../context/FriendListContext";
 import PickerParkingType from "../components/PickerParkingType";
-import { View, Text, TextInput, FlatList, StyleSheet } from "react-native";
+import { View, Text, TextInput, Keyboard, StyleSheet } from "react-native";
 import { CheckBox } from "react-native-elements";
 
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
+import KeyboardSaveButton from "../components/KeyboardSaveButton";
 
 import BodyStyling from "../components/BodyStyling";
 import BelowHeaderContainer from "../components/BelowHeaderContainer";
 
+import FlatListChangeChoice from "../components/FlatListChangeChoice";
 import TextEditBox from "../components/TextEditBox";
 
 const ContentAddLocation = ({ title, address, close }) => {
-  const notesTextRef = useRef(null);
+  
   const customTitleRef = useRef(null);
+
+    const notesTextRef = useRef(null);
+    const categoryRef = useRef(null);
+
+
+     const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+    
 
   const navigation = useNavigation();
 
@@ -40,18 +49,65 @@ const ContentAddLocation = ({ title, address, close }) => {
 
   const [parkingType, setParkingType] = useState(null);
   const [parkingTypeText, setParkingTypeText] = useState(null);
-  const [typeChoices] = useState([
-    "location has free parking lot",
-    "free parking lot nearby",
-    "street parking",
-    "fairly stressful or unreliable street parking",
-    "no parking whatsoever",
-    "unspecified",
-  ]);
+  const parkingScores = [
+    { label: "Free parking", value: "location has free parking lot" },
+    { label: "Free parking nearby", value: "free parking lot nearby" },
+    { label: "Street parking", value: "street parking" },
+    {
+      label: "Stressful parking",
+      value: "fairly stressful or unreliable street parking",
+    },
+    { label: "No parking", value: "no parking whatsoever" },
+    { label: "unspecified", value: "unspecified" },
+  ];
   const [personalExperience, setPersonalExperience] = useState("");
   const [customTitle, setCustomTitle] = useState(null);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [isMakingCall, setIsMakingCall] = useState(false);
+
+
+    useEffect(() => {
+      const keyboardDidShowListener = Keyboard.addListener(
+        "keyboardDidShow",
+        () => setIsKeyboardVisible(true)
+      );
+      const keyboardDidHideListener = Keyboard.addListener(
+        "keyboardDidHide",
+        () => setIsKeyboardVisible(false)
+      );
+  
+      return () => {
+        keyboardDidShowListener.remove();
+        keyboardDidHideListener.remove();
+      };
+    }, []);
+  
+
+
+
+    const updateCategoryEditString = (text) => {
+      if (categoryRef && categoryRef.current) {
+        categoryRef.current.setText(text);
+        console.log("in parent", categoryRef.current.getText());
+      }
+    };
+  
+    const updateNoteEditString = (text) => {
+      if (notesTextRef && notesTextRef.current) {
+        notesTextRef.current.setText(text);
+        console.log("in parent", notesTextRef.current.getText());
+      }
+    };
+  
+    const parkingScoreRef = useRef(null);
+  
+    const updateParkingScore = (text) => {
+      if (parkingScoreRef && parkingScoreRef.current) {
+        parkingScoreRef.current.setText(text);
+        console.log("in parent", parkingScoreRef.current.getText());
+      }
+    };
+
 
   const onParkingTypeChange = (index) => {
     setParkingType(index);
@@ -76,6 +132,9 @@ const ContentAddLocation = ({ title, address, close }) => {
     setIsMakingCall(true);
     const trimmedCustomTitle = customTitle?.trim() || null;
     const friends = selectedFriends.map((id) => Number(id));
+    const parkingTypeText = parkingScoreRef.current.getText();
+    const personalExperience = notesTextRef.current.getText();
+
 
     try {
       await handleCreateLocation(
@@ -83,9 +142,9 @@ const ContentAddLocation = ({ title, address, close }) => {
         title,
         address,
         parkingTypeText,
-        trimmedCustomTitle,
         personalExperience
-      );
+
+    );
       //close(); // Close after submission completes
     } catch (error) {
       console.error("Error creating location:", error);
@@ -121,8 +180,51 @@ const ContentAddLocation = ({ title, address, close }) => {
               <Text style={[styles.locationAddress, themeStyles.genericText]}>
                 {address}
               </Text>
+              <View
+          style={{
+            height: isKeyboardVisible ? "30%" : "20%",
+            marginBottom: "3%",
+          }}
+        >
+          <TextEditBox
+            ref={categoryRef}
+            autoFocus={true}
+            title={"Add to category: "}
+            mountingText={''}
+            onTextChange={updateCategoryEditString}
+            multiline={false}
+            height={"100%"}
+          />
+        </View>
 
-              <Text style={[styles.previewTitle, themeStyles.genericText]}>
+        <View
+          style={{
+            height: isKeyboardVisible ? "50%" : "30%",
+            flexGrow: 1,
+            marginBottom: "3%",
+          }}
+        >
+          <TextEditBox
+            ref={notesTextRef}
+            autoFocus={false}
+            title={"Add notes"}
+            mountingText={''}
+            onTextChange={updateNoteEditString}
+            height={"100%"}
+          />
+        </View>
+        <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
+          <FlatListChangeChoice
+            horizontal={true}
+            choicesArray={parkingScores}
+            ref={parkingScoreRef}
+            title={"Set parking score"}
+            oldChoice={null}
+            onChoiceChange={updateParkingScore}
+          />
+        </View>
+
+              {/* <Text style={[styles.previewTitle, themeStyles.genericText]}>
                 Give this location a parking score
               </Text>
 
@@ -131,7 +233,7 @@ const ContentAddLocation = ({ title, address, close }) => {
                 containerText=""
                 selectedTypeChoice={parkingType}
                 onTypeChoiceChange={onParkingTypeChange}
-              />
+              /> */}
 
               <TextInput
                 style={[themeStyles.input, styles.textArea]}
