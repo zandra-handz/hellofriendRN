@@ -127,8 +127,8 @@ useEffect(() => {
   
           // Validate that it's an image (optional)
           if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
-            const resizedImage = await resizeImage(fileInfo.uri); // Call resize function
-            setSharedFileFromOutsideOfApp(resizedImage.uri); // Update shared file state
+            const resizedImage = await resizeImage(fileInfo.uri);  
+            setSharedFileFromOutsideOfApp(resizedImage.uri);  
             navigation.navigate('AddImage', { imageUri: resizedImage.uri }); // Navigate with resized image URI
           } else {
             Alert.alert('Unsupported File', 'The shared file is not a valid image.');

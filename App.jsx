@@ -201,12 +201,14 @@ export const Layout = ({incomingFileUri}) => {
               <>
                 <Stack.Screen
                   name="hellofriend"
-                  component={ScreenHome}
+                  //component={ScreenHome}
                   options={{
                     headerShown: true,
                     header: () => <HellofriendHeader />,
                   }}
-                />
+                  >
+                  {(props) => <ScreenHome {...props} incomingFileUri={incomingFileUri} />}
+                  </Stack.Screen>
                 <Stack.Screen
                   name="FriendFocus"
                   component={ScreenFriendSettings}
@@ -389,13 +391,12 @@ export const Layout = ({incomingFileUri}) => {
             <>
 <Stack.Screen
   name="Welcome"
+  component={ScreenWelcome}
   options={{
     headerShown: false,
     header: () => <HeaderBlank />,
   }}
->
-  {(props) => <ScreenWelcome {...props} incomingFileUri={incomingFileUri} />}
-</Stack.Screen>
+/>
 
               <Stack.Screen
                 name="Auth"
