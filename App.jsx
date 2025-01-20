@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 
 import TopLevelNavigationHandler from "./TopLevelNavigationHandler"; // Adjust import path if necessary
+
+import { useShareIntentContext, ShareIntentProvider } from "expo-share-intent";
+
+
 import { Alert, View, Text, useColorScheme, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { MessageContextProvider } from "./context/MessageContext";
@@ -74,13 +78,24 @@ async function loadFonts() {
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+export default function App() { 
+ 
   const [fontsLoaded, setFontsLoaded] = useState(false);
   
 
 const [incomingFileUri, setIncomingFileUri] = useState(null);
 
- 
+const { hasShareIntent, shareIntent, resetShareIntent, error } = useShareIntentContext();
+const [imageUri, setImageUri] = useState(null);
+
+useEffect(() => {
+  // If shared content is an image, set the URI
+  if (hasShareIntent && shareIntent?.type === "image") {
+    const uri = shareIntent?.uri;
+    setImageUri(uri);
+    Alert.alert("Shared Image", `Image URI: ${uri}`);
+  }
+}, [hasShareIntent, shareIntent]);
 
 
   useEffect(() => { 
@@ -107,33 +122,33 @@ const [incomingFileUri, setIncomingFileUri] = useState(null);
     return () => notificationSubscription.remove();
   }, []);
 
- useEffect(() => {
-    // Function to handle incoming file URI
-    const handleFileUri = async (uri) => {
-      if (uri && uri.startsWith('file://')) {
-        setIncomingFileUri(uri);  // Store file URI in state
-      }
-    };
+//  useEffect(() => {
+//     // Function to handle incoming file URI
+//     const handleFileUri = async (uri) => {
+//       if (uri && uri.startsWith('file://')) {
+//         setIncomingFileUri(uri);  // Store file URI in state
+//       }
+//     };
 
-    // Get the initial URL that launched the app
-    const getInitialFileUri = async () => {
-      const url = await Linking.getInitialURL();
-      handleFileUri(url);  // Handle the URI if it's a file URI
-    };
+//     // Get the initial URL that launched the app
+//     const getInitialFileUri = async () => {
+//       const url = await Linking.getInitialURL();
+//       handleFileUri(url);  // Handle the URI if it's a file URI
+//     };
 
-    // Add listener for incoming URLs while the app is running
-    const urlListener = Linking.addEventListener('url', ({ url }) => {
-      handleFileUri(url);  // Handle the incoming file URI
-    });
+//     // Add listener for incoming URLs while the app is running
+//     const urlListener = Linking.addEventListener('url', ({ url }) => {
+//       handleFileUri(url);  // Handle the incoming file URI
+//     });
 
-    // Call the function to handle the initial file URI when the app launches
-    getInitialFileUri();
+//     // Call the function to handle the initial file URI when the app launches
+//     getInitialFileUri();
 
-    // Cleanup the listener on component unmount
-    return () => {
-      urlListener.remove();
-    };
-  }, []);
+//     // Cleanup the listener on component unmount
+//     return () => {
+//       urlListener.remove();
+//     };
+//   }, []);
 
 
   const colorScheme = useColorScheme();
@@ -148,6 +163,7 @@ const [incomingFileUri, setIncomingFileUri] = useState(null);
   }
 
   return (
+    <ShareIntentProvider>
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <AuthUserProvider>
@@ -172,6 +188,9 @@ const [incomingFileUri, setIncomingFileUri] = useState(null);
         </AuthUserProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
+    
+      
+    </ShareIntentProvider>
   );
 }
 

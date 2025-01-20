@@ -73,6 +73,7 @@
       "expo-font",
       "@react-native-firebase/app",  
      "@react-native-firebase/messaging",
+     "expo-share-intent", // added 1/19/2025
       [
         "expo-build-properties",
         {
@@ -82,6 +83,7 @@
         }
       ]
     ],
+    "scheme": "hellofriend",
     "extra": {
       "eas": {
         "projectId": "3564e25f-85ac-4c60-9f14-93d9153871b3"

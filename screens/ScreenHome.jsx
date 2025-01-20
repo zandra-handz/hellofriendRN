@@ -1,3 +1,6 @@
+import { ShareIntentProvider, useShareIntentContext } from "expo-share-intent";
+
+
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import {
   View,
@@ -46,6 +49,8 @@ import * as FileSystem from 'expo-file-system';
 import * as Linking from 'expo-linking'; 
 
 const ScreenHome = ({ navigation, incomingFileUri }) => {
+  const { hasShareIntent, useShareIntent, shareIntent, resetShareIntent  } = useShareIntentContext();
+  
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { authUserState, userAppSettings, incomingFile } = useAuthUser();
@@ -69,49 +74,38 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
 
   const [sharedFileFromOutsideOfApp, setSharedFileFromOutsideOfApp] = useState(null);
 
-useEffect(() => {
-  if (incomingFileUri) {
-    showMessage(true, null, `incoming file: ${incomingFileUri}`);
-    try {
-      processSharedFile(incomingFileUri);
-
-    } catch (error) {
-      showMessage(true, null, `Oops, couldn't catch incoming file: ${error}`);
+  useEffect(() => {
+    if (shareIntent) {
+      processSharedFile(shareIntent);
+      showMessage(true, null, `incoming file: ${shareIntent}`);
     }
-  }
-  if (!incomingFileUri) {
-    showMessage(true, null, `no incoming file`);
-  }
+  }, [shareIntent]);
+
+
+// useEffect(() => {
+//   if (incomingFile) {
+//     showMessage(true, null, `incoming file: ${incomingFile}`);
+//     try {
+//       processSharedFile(incomingFile);
+
+//     } catch (error) {
+//       showMessage(true, null, `Oops, couldn't catch incoming file: ${error}`);
+//     }
+//   }
+//   if (!incomingFile) {
+//     showMessage(true, null, `no incoming file stored in auth`);
+//   }
     
   
 
-}, [incomingFileUri]);
-
-
-useEffect(() => {
-  if (incomingFile) {
-    showMessage(true, null, `incoming file: ${incomingFile}`);
-    try {
-      processSharedFile(incomingFile);
-
-    } catch (error) {
-      showMessage(true, null, `Oops, couldn't catch incoming file: ${error}`);
-    }
-  }
-  if (!incomingFile) {
-    showMessage(true, null, `no incoming file stored in auth`);
-  }
-    
-  
-
-}, [incomingFile]);
+// }, [incomingFile]);
 
 
 const handleIncomingFileDetails = () => {
-  if (incomingFile) {
-    showMessage(true, null, `incoming file saved to a context: `, incomingFile);
+  if (shareIntent) {
+    showMessage(true, null, `incoming file saved to a context: `, shareIntent);
   }
-  if (!incomingFile) {
+  if (!shareIntent) {
     showMessage(true, null, `no incoming file stored in auth`);
   }
     

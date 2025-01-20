@@ -4,6 +4,7 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
+    "postinstall": "patch-package",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
@@ -57,6 +58,7 @@
     "expo-location": "~18.0.2",
     "expo-notifications": "~0.29.8",
     "expo-secure-store": "~14.0.0",
+    "expo-share-intent": "^3.2.0",
     "expo-sharing": "~13.0.0",
     "expo-status-bar": "~2.0.0",
     "jwt-decode": "^4.0.0",
@@ -66,6 +68,7 @@
     "metro-resolver": "0.81.0",
     "moment": "^2.30.1",
     "moti": "^0.29.0",
+    "patch-package": "^8.0.0",
     "react": "^18.2.0",
     "react-native": "^0.76.2",
     "react-native-animatable": "^1.4.0",
