@@ -23,6 +23,8 @@ import * as Notifications from "expo-notifications";
 import * as FileSystem from 'expo-file-system'; 
 import * as Linking from 'expo-linking'; 
 
+import * as Permissions from 'expo-permissions';
+
 import { useGlobalStyle } from "./context/GlobalStyleContext";
 import ResultMessage from "./components/ResultMessage";
 import FullScreenSpinner from "./components/FullScreenSpinner";
@@ -59,7 +61,7 @@ import HeaderLocation from "./components/HeaderLocation";
 import HeaderFriendSettings from "./components/HeaderFriendSettings";
 import HeaderBase from "./components/HeaderBase";
 import HeaderBlank from "./components/HeaderBlank"; //can make a SignIn one in future if want to put info on top
-import HeaderBaseSolid from "./components/HeaderBaseSolid";
+
 import HeaderLocationSingle from "./components/HeaderLocationSingle";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -88,14 +90,45 @@ const [incomingFileUri, setIncomingFileUri] = useState(null);
 const { hasShareIntent, shareIntent, resetShareIntent, error } = useShareIntentContext();
 const [imageUri, setImageUri] = useState(null);
 
+
 useEffect(() => {
-  // If shared content is an image, set the URI
-  if (hasShareIntent && shareIntent?.type === "image") {
-    const uri = shareIntent?.uri;
-    setImageUri(uri);
-    Alert.alert("Shared Image", `Image URI: ${uri}`);
+  let permissionsGranted = false;
+
+  async function requestPermissions() {
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      const { status } = await Permissions.askAsync(
+        Permissions.MEDIA_LIBRARY // For images, videos, and audio
+      );
+
+      if (status === 'granted') {
+        console.log('Media permissions granted!');
+        permissionsGranted = true;
+        handleShareIntent(); // Process the share intent if permissions are granted
+      } else {
+        console.warn('Media permissions denied.');
+        permissionsGranted = false;
+      }
+    } else {
+      permissionsGranted = true; // Assume permissions are not required for other cases
+      handleShareIntent();
+    }
   }
+
+  function handleShareIntent() {
+    if (permissionsGranted && hasShareIntent && shareIntent?.files?.length > 0) {
+      const file = shareIntent.files[0]; // assuming the first file is the image
+      const uri = file.path || file.contentUri; // Use either path (iOS) or contentUri (Android)
+      setImageUri(uri);
+      Alert.alert("Shared Image", `Image URI: ${uri}`);
+    } else if (!permissionsGranted) {
+      console.warn("Cannot process share intent without permissions.");
+    }
+  }
+
+  requestPermissions();
 }, [hasShareIntent, shareIntent]);
+
+
 
 
   useEffect(() => { 
@@ -176,7 +209,7 @@ useEffect(() => {
                     <CapsuleListProvider>
                       <HelloesProvider>
                         <MessageContextProvider>
-                          <Layout incomingFileUri={incomingFileUri || null} />
+                          <Layout imageUri={imageUri || null} />
                         </MessageContextProvider>
                       </HelloesProvider>
                     </CapsuleListProvider>
@@ -194,18 +227,18 @@ useEffect(() => {
   );
 }
 
-export const Layout = ({incomingFileUri}) => {
+export const Layout = ({imageUri}) => {//{incomingFileUri}
   const { themeStyles} = useGlobalStyle();
   const { authUserState, incomingFile, setIncomingFile  } = useAuthUser();
 
 
-  useEffect(() => {
-    if (incomingFileUri) {
-      setIncomingFile(incomingFileUri);
-    }
+  // useEffect(() => {
+  //   if (incomingFileUri) {
+  //     setIncomingFile(incomingFileUri);
+  //   }
 
 
-  }, [incomingFileUri]);
+  // }, [incomingFileUri]);
 
   return (
     <NavigationContainer>
@@ -235,7 +268,7 @@ export const Layout = ({incomingFileUri}) => {
                     header: () => <HellofriendHeader />,
                   }}
                   >
-                  {(props) => <ScreenHome {...props} incomingFileUri={incomingFileUri} />}
+                  {(props) => <ScreenHome {...props} incomingFileUri={null} />}
                   </Stack.Screen>
                 <Stack.Screen
                   name="FriendFocus"
@@ -424,7 +457,7 @@ export const Layout = ({incomingFileUri}) => {
     headerShown: false,
     header: () => <HeaderBlank />,
   }}> 
-                    {(props) => <ScreenWelcome {...props} incomingFileUri={incomingFileUri} />}
+                    {(props) => <ScreenWelcome {...props} incomingFileUri={null} />}
                 
                 </Stack.Screen> 
 
