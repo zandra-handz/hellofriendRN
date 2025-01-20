@@ -102,15 +102,26 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
 
 
 const handleIncomingFileDetails = () => {
-  if (shareIntent) {
-    showMessage(true, null, `incoming file saved to a context: `, shareIntent);
-  }
-  if (!shareIntent) {
-    showMessage(true, null, `no incoming file stored in auth`);
-  }
-    
+  if (shareIntent && shareIntent.files) {
+    // Log the shareIntent.files object to check its structure
+    console.log('ShareIntent Files:', shareIntent.files);
 
-};
+    // Iterate through the files array and check if each file is an image
+    shareIntent.files.forEach((file, index) => {
+      if (file?.type === 'image') {
+        // Access the URI or path of the image file
+        const imageUri = file.uri;
+        
+        // Show message with image URI
+        showMessage(true, null, `Shared Image ${index + 1}: ${imageUri}`);
+
+        // Perform any other logic here, like displaying the image
+      }
+    });
+  } else {
+    showMessage(true, null, 'No files found in shareIntent.');
+  }
+}; 
 
   // useEffect(() => {
   //   if (Platform.OS === 'android') {

@@ -58,7 +58,7 @@ const ActionPageBase = ({
       presentationStyle="overFullScreen"
     >
       <View style={styles.overlay} {...panResponder.panHandlers}>
-        <View style={[styles.container]}>
+        <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
           <TouchableOpacity
             accessible={true}
             accessibilityRole="button"
@@ -75,7 +75,7 @@ const ActionPageBase = ({
                 solid={false}
               />
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> 
           <View
             accessible={true}
             accessibilityRole="adjustable"
@@ -98,6 +98,8 @@ const ActionPageBase = ({
                 ></View>
               </View>
             ))}
+            
+              
             {showFooter && (
               <View style={styles.footer}>
                 <Text style={[styles.footerText, themeStyles.genericText]}>
@@ -105,7 +107,7 @@ const ActionPageBase = ({
                 </Text>
               </View>
             )}
-          </View>
+          </View> 
         </View>
       </View>
     </Modal>
@@ -129,6 +131,7 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "100%",
     alignSelf: "flex-start",
+    flex: 1,
   },
   subTitleRow: {
     flexDirection: "row",
