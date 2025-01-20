@@ -25,7 +25,7 @@ import SimpleBottomButton from "../components/SimpleBottomButton";
 
 const TOKEN_KEY = "my-jwt";
 
-const ScreenAuth = () => {
+const ScreenRecoverCredentials = () => {
   const route = useRoute();
   const createNewAccount = route.params?.createNewAccount ?? false;
 
@@ -99,108 +99,31 @@ const ScreenAuth = () => {
       usernameInputRef.current.focus();
     }
   }, []);
+ 
 
-  // useEffect(() => {
-  //   checkIfSignedIn();
-  // }, []);
-
-  const toggleMode = () => {
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setVerifyPassword("");
-    setSignInScreen(false);
-    setSignUpSuccess(false);
-    setUsernameInputVisible(true);
-
-    // Delay the focus function by 500ms (for example)
-    setTimeout(() => {
-      handleCreateAccountInitialFocus();
-    }, 100); // Delay in milliseconds (500ms = 0.5 seconds)
-  };
-
+ 
   const handleBackToSignIn = () => {
-    setShowSignIn(true);
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setVerifyPassword("");
-    setShowSignIn(true);
-    setSignInScreen(true);
-    setSignUpSuccess(false);
-    if (usernameInputRef.current) {
-      setUsernameInputVisible(true);
+    // setShowSignIn(true);
+    // setUsername("");
+    // setEmail("");
+    // setPassword("");
+    // setVerifyPassword("");
+    // setShowSignIn(true);
+    // setSignInScreen(true);
+    // setSignUpSuccess(false);
+    // if (usernameInputRef.current) {
+    //   setUsernameInputVisible(true);
 
-      usernameInputRef.current.focus();
-    }
+    //   usernameInputRef.current.focus();
+    // }
     setUsernameInputVisible(true);
   };
+ 
+ 
 
-  useEffect(() => {
-    if (signinMutation.isError) {
-      setPassword(null);
-      console.log("useeffect for sign in mutation error");
-      setUsernameInputVisible(true);
+ 
 
-      if (usernameInputRef.current) {
-        setUsernameInputVisible(true);
-        usernameInputRef.current.focus();
-      }
-    }
-  }, [signinMutation]);
-
-  // const checkIfSignedIn = async () => {
-  //   try {
-  //     const token = await SecureStore.getItemAsync(TOKEN_KEY);
-  //     if (token) {
-  //       console.log(token);
-  //       showMessage(true, null, "Reinitializing...");
-  //       reInitialize();
-  //       // Optionally, handle any other logic needed after re-initialization
-  //     } else {
-  //       // No token found, show sign in
-  //       setShowSignIn(true);
-  //       setConfirmedUserNotSignedIn(true);
-  //      // showMessage(true, null, "Signed out");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error checking sign-in status", error);
-  //     // Handle errors as necessary
-  //   }
-  // };
-
-  const handleAuthentication = async () => {
-    let result;
-    if (isSignInScreen) {
-      try {
-        showMessage(true, null, "Signing you in...");
-
-        onSignin(username, password);
-      } catch (error) {
-        console.error(error);
-        showMessage(true, null, `Error! Not signed in.`);
-      }
-    } else {
-      if (password !== verifyPassword) {
-        //alert("Passwords do not match!");
-        showMessage(true, null, "Oops! Passwords do not match");
-        return;
-      }
-      console.log("passwords match, sending data...");
-      result = await onSignUp(username, email, password);
-      if (result && result.status === 201) {
-        alert("Sign up was successful!");
-        setSignUpSuccess(true);
-        setLoading(false);
-        navigation.navigate("Auth");
-      } else if (result && result.error) {
-        alert("Error: " + result.error);
-      }
-    }
-    setLoading(false);
-  };
-
-  const handleNavigateBackToWelcomeScreen = () => {
+  const handleNavigateBackToAuthScreen = () => {
     navigation.goBack();
   };
 
@@ -212,21 +135,8 @@ const ScreenAuth = () => {
 
     console.log("password input current");
   };
-
-  const handleFirstPasswordSubmit = () => {
-    setUsernameInputVisible(false);
-    if (verifyPasswordInputRef.current) {
-      verifyPasswordInputRef.current.focus();
-    }
-
-    console.log("password input current");
-  };
-
-  const handleCreateAccountInitialFocus = () => {
-    if (emailInputRef.current) {
-      emailInputRef.current.focus();
-    }
-  };
+ 
+ 
 
   const handleEmailSubmit = () => {
     if (usernameInputRef.current) {
@@ -259,7 +169,7 @@ const ScreenAuth = () => {
           }}
         >
           <TouchableOpacity
-            onPress={handleNavigateBackToWelcomeScreen}
+            onPress={handleNavigateBackToAuthScreen}
             style={{
               height: 40,
               width: 40,
@@ -273,13 +183,7 @@ const ScreenAuth = () => {
               x
             </Text>
           </TouchableOpacity>
-          
-          {/* <Text
-                  style={styles.toggleButton} 
-                  accessible={true} 
-                >
-                  {isSignInScreen ? "Sign in" : "Create new account"}
-                </Text> */}
+           
           <> 
               <View
                 style={{ 
@@ -290,21 +194,21 @@ const ScreenAuth = () => {
               >
                 <Text
                   style={styles.toggleButton}
-                  onPress={isSignInScreen ? toggleMode : handleBackToSignIn}
+                  onPress={handleBackToSignIn}
                   accessible={true}
                   accessibilityLabel="Toggle button"
                   accessibilityHint="Press to toggle between sign in and create account"
                 >
-                  {isSignInScreen ? "Create new account?" : "Go to sign in"}
+                  {"Go to sign in"}
                 </Text>
               </View> 
               
           </>
-          {!loading && username && password && !isSignInScreen && !isKeyboardVisible && (
+          {!loading && (username || email) && !isKeyboardVisible && (
                 <View style={{width: '100%', position: 'absolute', bottom: 0, paddingBottom: 60, right: 0}}> 
                     <SimpleBottomButton
                       onPress={handleAuthentication}
-                      title={isSignInScreen ? "Sign in" : "Create account"}
+                      title={"Recover"}
                       shapeSource={require("../assets/shapes/coffeecupdarkheart.png")}
                       shapeWidth={190}
                       shapeHeight={190}
@@ -313,46 +217,11 @@ const ScreenAuth = () => {
                       shapePositionVerticalValue={-23}
                       fontColor={themeStyles.genericText.color}
                       accessible={true}
-                      accessibilityLabel={
-                        isSignInScreen
-                          ? "Sign in button"
-                          : "Create account button"
-                      }
-                      accessibilityHint="Press to sign in or create an account"
+                      accessibilityLabel={"Submit button"}
+                      accessibilityHint="Press to recover username or reset password"
                     />  
                 </View>
-              )}
-                            {!loading && username && password && isSignInScreen && (
-                <>
-                  <View style={{width: '100%', position: 'absolute', bottom: 0, paddingBottom: 60, right: 0}}> 
-                   
-                    <SimpleBottomButton
-                      onPress={handleAuthentication}
-                      title={isSignInScreen ? "Sign in" : "Create account"} 
-                      fontColor={themeStyles.genericText.color}
-                      accessible={true}
-                      accessibilityLabel={
-                        isSignInScreen
-                          ? "Sign in button"
-                          : "Create account button"
-                      }
-                      accessibilityHint="Press to sign in or create an account"
-                    />
-                  </View>
-
-                  {signUpSuccess && (
-                    <Text
-                      style={styles.successMessage}
-                      accessible={true}
-                      accessibilityLabel="Sign up success message"
-                      accessibilityHint="Message indicating sign up was successful"
-                    >
-                      Sign up successful! Please log in.
-                    </Text>
-                  )}
-                </>
-              )}
-
+              )} 
           
         </SafeAreaView>
 
@@ -368,9 +237,8 @@ const ScreenAuth = () => {
                   style={styles.inputHeaderText} 
                   accessible={true} 
                 >
-                  {isSignInScreen ? "Sign in" : "Create new account"}
-                </Text>
-          {!isSignInScreen  && (
+                  {"Enter username or email"}
+                </Text> 
             <View style={{ flexDirection: "column", width: "100%" }}> 
               <TextInput
                 style={[styles.input, isEmailFocused && styles.inputFocused]}
@@ -386,8 +254,7 @@ const ScreenAuth = () => {
                 accessibilityHint="Enter your email address"
                 importantForAccessibility="yes"
               />
-            </View>
-          )} 
+            </View> 
           <View style={{ flexDirection: "column", width: "100%" }}> 
 
             <TextInput
@@ -407,30 +274,7 @@ const ScreenAuth = () => {
             />
           </View>
 
-         
-            <View style={{ flexDirection: "column", width: "100%" }}> 
-              <TextInput
-                style={[styles.input, isPasswordFocused && styles.inputFocused]}
-                placeholder="Password"
-                autoFocus={false} //true
-                secureTextEntry={true}
-                onChangeText={(text) => setPassword(text)}
-                onSubmitEditing={
-                  isSignInScreen
-                    ? handleAuthentication
-                    : handleFirstPasswordSubmit
-                }
-                value={password}
-                ref={passwordInputRef}
-                onFocus={() => setIsPasswordFocused(true)}
-                onBlur={() => setIsPasswordFocused(false)}
-                accessible={true}
-                accessibilityLabel="Password input"
-                accessibilityHint="Enter your password"
-                importantForAccessibility="yes"
-              />
-
-            </View> 
+          
 
 {isSignInScreen && (
             <View style={{ flexDirection: "row", width: "100%" }}> 
@@ -446,27 +290,7 @@ const ScreenAuth = () => {
               </View> 
               
   
-)}
-          {!isSignInScreen && (
-            <View style={{ flexDirection: "column", width: "100%" }}>
-          
-              <TextInput
-                style={[styles.input, isPasswordFocused && styles.inputFocused]}
-                ref={verifyPasswordInputRef}
-                placeholder="Verify Password"
-                secureTextEntry={true}
-                onChangeText={(text) => setVerifyPassword(text)}
-                value={verifyPassword}
-                onFocus={() => setIsPasswordFocused(true)}
-                onBlur={() => setIsPasswordFocused(false)}
-                accessible={true}
-                accessibilityLabel="Verify Password input"
-                accessibilityHint="Re-enter your password for verification"
-                importantForAccessibility="yes"
-              />
-
-            </View>
-          )}
+)} 
                        
         </View>
         
@@ -571,4 +395,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScreenAuth;
+export default ScreenRecoverCredentials;
