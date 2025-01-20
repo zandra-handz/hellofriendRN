@@ -48,7 +48,7 @@ import * as Linking from 'expo-linking';
 const ScreenHome = ({ navigation, incomingFileUri }) => {
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
-  const { authUserState, userAppSettings } = useAuthUser();
+  const { authUserState, userAppSettings, incomingFile } = useAuthUser();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
   const { friendListLength } = useFriendList();
   const { isLoading } = useUpcomingHelloes();
@@ -86,6 +86,37 @@ useEffect(() => {
   
 
 }, [incomingFileUri]);
+
+
+useEffect(() => {
+  if (incomingFile) {
+    showMessage(true, null, `incoming file: ${incomingFile}`);
+    try {
+      processSharedFile(incomingFile);
+
+    } catch (error) {
+      showMessage(true, null, `Oops, couldn't catch incoming file: ${error}`);
+    }
+  }
+  if (!incomingFile) {
+    showMessage(true, null, `no incoming file stored in auth`);
+  }
+    
+  
+
+}, [incomingFile]);
+
+
+const handleIncomingFileDetails = () => {
+  if (incomingFile) {
+    showMessage(true, null, `incoming file saved to a context: `, incomingFile);
+  }
+  if (!incomingFile) {
+    showMessage(true, null, `no incoming file stored in auth`);
+  }
+    
+
+};
 
   // useEffect(() => {
   //   if (Platform.OS === 'android') {
@@ -341,6 +372,8 @@ useEffect(() => {
                   : '32%' //Dimensions.get("window").height / 3,
               }}
             >
+
+              <TouchableOpacity onPress={handleIncomingFileDetails} style={{zIndex: 6000, width: 50, height:30, backgroundColor: 'blue'}}></TouchableOpacity>
               <TextMomentHomeScreenBox
                 width={"100%"}
                 height={"100%"}

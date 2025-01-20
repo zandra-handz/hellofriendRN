@@ -24,7 +24,7 @@ import PhoneStatusBar from "../components/PhoneStatusBar";
 
 const TOKEN_KEY = "my-jwt";
 
-const ScreenWelcome = () => {
+const ScreenWelcome = ({incomingFileUri}) => {
   const { showMessage } = useMessage();
   const { themeStyles,   manualGradientColors } =
     useGlobalStyle();

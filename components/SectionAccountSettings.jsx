@@ -23,10 +23,21 @@ const SectionAccountSettings = () => {
  
       <View style={styles.accountSettingsRow}> 
         <View style={{ flexDirection: 'row' }}>
+         <FontAwesome5 name="user" size={22} style={[styles.icon, themeStyles.modalIconColor]}  />
+          <Text style={[styles.sectionTitle, themeStyles.modalText]}>Edit Profile</Text> 
+        </View> 
+      </View> 
+      <View style={styles.accountSettingsRow}> 
+        <View style={{ flexDirection: 'row' }}>
+         <FontAwesome5 name="wrench" size={22} style={[styles.icon, themeStyles.modalIconColor]}  />
+          <Text style={[styles.sectionTitle, themeStyles.modalText]}>Change Password</Text> 
+        </View> 
+      </View> 
+      <View style={styles.accountSettingsRow}> 
+        <View style={{ flexDirection: 'row' }}>
          <FontAwesome5 name="trash" size={22} style={[styles.icon, themeStyles.modalIconColor]}  />
           <Text style={[styles.sectionTitle, themeStyles.modalText]}>Delete Account</Text> 
-        </View>
-        <ButtonResetHelloes />
+        </View> 
       </View> 
 
       </BaseModalFooterSection>

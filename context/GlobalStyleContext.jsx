@@ -12,6 +12,7 @@ export const GlobalStyleProvider = ({ children }) => {
     const { authUserState, userAppSettings,updateAppSettingsMutation, updateUserSettings } = useAuthUser();
     const colorScheme = useColorScheme();
     const [ nonCustomHeaderPage, setNonCustomHeaderPage ] = useState(false);
+    
 
     useEffect(() => {
         console.log(' U S E R A P P SE T T I N GS ', userAppSettings);

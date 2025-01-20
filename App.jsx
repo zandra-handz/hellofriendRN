@@ -83,7 +83,7 @@ const [incomingFileUri, setIncomingFileUri] = useState(null);
  
 
 
-  useEffect(() => {
+  useEffect(() => { 
     // Load fonts and set loading status
     const fetchFonts = async () => {
       await loadFonts();
@@ -107,34 +107,34 @@ const [incomingFileUri, setIncomingFileUri] = useState(null);
     return () => notificationSubscription.remove();
   }, []);
 
+ useEffect(() => {
+    // Function to handle incoming file URI
+    const handleFileUri = async (uri) => {
+      if (uri && uri.startsWith('file://')) {
+        setIncomingFileUri(uri);  // Store file URI in state
+      }
+    };
 
-    useEffect(() => {
-      if (Platform.OS === 'android') {
-        const getInitialIntent = async () => {
-          try {
-            const initialUrl = await Linking.getInitialURL();
-            if (initialUrl) {
-              setIncomingFileUri(initialUrl);
-            }
-          } catch (error) {
-            console.error('Error fetching initial intent:', error);
-          }
-        };
-    
-        getInitialIntent();
-    
-        // Listen for new intents while the app is running
-        const subscription = Linking.addEventListener('url', (event) => {
-          if (event.url) {
-            setIncomingFileUri(event.url);
-          }
-        });
-    
-        return () => {
-          subscription.remove();
-        };
-      } 
-    }, []);
+    // Get the initial URL that launched the app
+    const getInitialFileUri = async () => {
+      const url = await Linking.getInitialURL();
+      handleFileUri(url);  // Handle the URI if it's a file URI
+    };
+
+    // Add listener for incoming URLs while the app is running
+    const urlListener = Linking.addEventListener('url', ({ url }) => {
+      handleFileUri(url);  // Handle the incoming file URI
+    });
+
+    // Call the function to handle the initial file URI when the app launches
+    getInitialFileUri();
+
+    // Cleanup the listener on component unmount
+    return () => {
+      urlListener.remove();
+    };
+  }, []);
+
 
   const colorScheme = useColorScheme();
 
@@ -176,8 +176,17 @@ const [incomingFileUri, setIncomingFileUri] = useState(null);
 }
 
 export const Layout = ({incomingFileUri}) => {
-  const { themeStyles } = useGlobalStyle();
-  const { authUserState } = useAuthUser();
+  const { themeStyles} = useGlobalStyle();
+  const { authUserState, incomingFile, setIncomingFile  } = useAuthUser();
+
+
+  useEffect(() => {
+    if (incomingFileUri) {
+      setIncomingFile(incomingFileUri);
+    }
+
+
+  }, [incomingFileUri]);
 
   return (
     <NavigationContainer>
@@ -391,12 +400,14 @@ export const Layout = ({incomingFileUri}) => {
             <>
 <Stack.Screen
   name="Welcome"
-  component={ScreenWelcome}
+  //component={ScreenWelcome}
   options={{
     headerShown: false,
     header: () => <HeaderBlank />,
-  }}
-/>
+  }}> 
+                    {(props) => <ScreenWelcome {...props} incomingFileUri={incomingFileUri} />}
+                
+                </Stack.Screen> 
 
               <Stack.Screen
                 name="Auth"
