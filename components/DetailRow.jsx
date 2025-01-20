@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 15,
-    //fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Regular',
   },
   customButton:  { 
     marginLeft: 6, 

@@ -27,7 +27,7 @@ import CommunicationPersonSolidSvg from '../assets/svgs/communication-person-sol
 import ExclamationDiamondOutlineSvg from '../assets/svgs/exclamation-diamond-outline.svg';
 
 
-const ModalEffortAndPriority = ({ mountingSettings, isModalVisible, closeModal }) => {
+const ModalChangePassword = ({ mountingSettings, isModalVisible, closeModal }) => {
   const { authUserState } = useAuthUser();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend } = useSelectedFriend();

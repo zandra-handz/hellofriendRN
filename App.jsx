@@ -23,7 +23,7 @@ import * as Notifications from "expo-notifications";
 import * as FileSystem from 'expo-file-system'; 
 import * as Linking from 'expo-linking'; 
 
-import * as Permissions from 'expo-permissions';
+import * as MediaLibrary from 'expo-media-library';
 
 import { useGlobalStyle } from "./context/GlobalStyleContext";
 import ResultMessage from "./components/ResultMessage";
@@ -44,6 +44,8 @@ import ScreenAuth from "./screens/ScreenAuth";
 import ScreenMomentFocus from "./screens/ScreenMomentFocus";
 import ScreenLocation from "./screens/ScreenLocation";
 
+import ScreenUserDetails from "./screens/ScreenUserDetails";
+
 import ScreenLocationSend from "./screens/ScreenLocationSend";
 import ScreenLocationEdit from "./screens/ScreenLocationEdit"; 
 
@@ -63,6 +65,8 @@ import HeaderBase from "./components/HeaderBase";
 import HeaderBlank from "./components/HeaderBlank"; //can make a SignIn one in future if want to put info on top
 
 import HeaderLocationSingle from "./components/HeaderLocationSingle";
+
+import HeaderUserDetails from "./components/HeaderUserDetails";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -91,14 +95,13 @@ const { hasShareIntent, shareIntent, resetShareIntent, error } = useShareIntentC
 const [imageUri, setImageUri] = useState(null);
 
 
+
 useEffect(() => {
   let permissionsGranted = false;
 
   async function requestPermissions() {
     if (Platform.OS === 'android' && Platform.Version >= 33) {
-      const { status } = await Permissions.askAsync(
-        Permissions.MEDIA_LIBRARY // For images, videos, and audio
-      );
+      const { status } = await MediaLibrary.requestPermissionsAsync(); // Request media library permissions
 
       if (status === 'granted') {
         console.log('Media permissions granted!');
@@ -268,8 +271,16 @@ export const Layout = ({imageUri}) => {//{incomingFileUri}
                     header: () => <HellofriendHeader />,
                   }}
                   >
-                  {(props) => <ScreenHome {...props} incomingFileUri={null} />}
+                  {(props) => <ScreenHome {...props} incomingFileUri={imageUri} />}
                   </Stack.Screen>
+                  <Stack.Screen
+                  name="UserDetails"
+                  component={ScreenUserDetails}
+                  options={{
+                    headerShown: true,
+                    header: () => <HeaderUserDetails />,
+                  }}
+                />
                 <Stack.Screen
                   name="FriendFocus"
                   component={ScreenFriendSettings}

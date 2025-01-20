@@ -7,17 +7,18 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
-import { useFriendList } from '../context/FriendListContext';
+import { useGlobalStyle } from '../context/GlobalStyleContext'; 
+import { useAuthUser } from '../context/AuthUserContext';
 import { useSelectedFriend } from '../context/SelectedFriendContext';  
 import GearsTwoBiggerCircleSvg from '../assets/svgs/gears-two-bigger-circle.svg';
 import ArrowLeftCircleOutline from '../assets/svgs/arrow-left-circle-outline.svg';
 import { useNavigation } from '@react-navigation/native'; 
 
-const HeaderFriendSettings = () => {
+const HeaderUserDetails = () => {
     const { themeStyles } = useGlobalStyle(); 
     const { selectedFriend, loadingNewFriend } = useSelectedFriend();
     const navigation = useNavigation();
+    const { authUserState } = useAuthUser();
 
     const handleNavigateBack = () => {
         navigation.goBack();  
@@ -25,7 +26,7 @@ const HeaderFriendSettings = () => {
 
     return (
         <>
-            {!loadingNewFriend && ( 
+            {authUserState && authUserState.authenticated && authUserState.user && ( 
                 <View
                     style={[styles.headerContainer, themeStyles.headerContainer]}
                      
@@ -43,7 +44,7 @@ const HeaderFriendSettings = () => {
                                 { color: themeStyles.footerIcon.color }
                             ]}
                         >
-                            {`${selectedFriend ? selectedFriend.name : ''}`}
+                            {`${authUserState ? authUserState.user.username : ''}`}
                         </Text>
                     </View>
 
@@ -90,4 +91,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default HeaderFriendSettings;
+export default HeaderUserDetails;

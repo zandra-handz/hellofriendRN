@@ -18,9 +18,7 @@
       "config": {
         "usesNonExemptEncryption": false                 
       }
-      
-    //   "associatedDomains": 
-    //   ["applinks:yourapp.com"],
+       
     },
     "android": {  
       "permissions": [
@@ -29,7 +27,7 @@
         "android.permission.READ_MEDIA_AUDIO",
         "android.permission.POST_NOTIFICATIONS",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE", // If needed for notifications
+        "WRITE_EXTERNAL_STORAGE",  
       ],
       "package": "com.badrainbowz.sampleproject",
       "googleServicesFile": "./google-services.json",
@@ -88,7 +86,7 @@
         {
           "ios": {
             "useFrameworks": "static"
-          }
+          } 
         }
       ]
     ],

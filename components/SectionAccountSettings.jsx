@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ButtonResetHelloes from '../components/ButtonResetHelloes';
+import { useNavigation } from '@react-navigation/native';
  
 import BaseModalFooterSection from '../components/BaseModalFooterSection';
 import LoadingPage from '../components/LoadingPage';
@@ -13,6 +14,14 @@ const SectionAccountSettings = () => {
 
   const { themeStyles } = useGlobalStyle();  
   const [ isMakingCall, setIsMakingCall ] = useState(false);
+    const navigation = useNavigation();
+
+  const navigateToUserDetails = () => {
+    if (selectedFriend) {
+      navigation.navigate('UserDetails');
+    }
+  };
+
 
  
 
@@ -21,12 +30,12 @@ const SectionAccountSettings = () => {
 
  
  
-      <View style={styles.accountSettingsRow}> 
+      <TouchableOpacity onPress={() => navigation.navigate('UserDetails')} style={styles.accountSettingsRow}> 
         <View style={{ flexDirection: 'row' }}>
          <FontAwesome5 name="user" size={22} style={[styles.icon, themeStyles.modalIconColor]}  />
           <Text style={[styles.sectionTitle, themeStyles.modalText]}>Edit Profile</Text> 
         </View> 
-      </View> 
+      </TouchableOpacity> 
       <View style={styles.accountSettingsRow}> 
         <View style={{ flexDirection: 'row' }}>
          <FontAwesome5 name="wrench" size={22} style={[styles.icon, themeStyles.modalIconColor]}  />
