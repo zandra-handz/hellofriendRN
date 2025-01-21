@@ -24,7 +24,7 @@ import ArrowLeftCircleOutlineSvg from '../assets/svgs/arrow-left-circle-outline.
 import ArrowRightCircleOutlineSvg from '../assets/svgs/arrow-right-circle-outline.svg';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const NavigationArrows = ({ iconSize=50, currentIndex, imageListLength, onPrevPress, onNextPress }) => {
+const NavigationArrows = ({ iconSize=50, iconOpacity=1, opacity=.3, currentIndex, imageListLength, onPrevPress, onNextPress }) => {
   
   const { manualGradientColors } = useGlobalStyle();
 
@@ -33,9 +33,9 @@ const NavigationArrows = ({ iconSize=50, currentIndex, imageListLength, onPrevPr
       {currentIndex > 0 ? (
         <TouchableOpacity 
           onPress={onPrevPress} 
-          style={[styles.arrowButton, {backgroundColor: manualGradientColors.homeDarkColor}]}
+          style={[styles.arrowButton, {opacity: opacity, backgroundColor: manualGradientColors.homeDarkColor}]}
         >
-          <ArrowLeftCircleOutlineSvg width={iconSize} height={iconSize} color={manualGradientColors.lightColor} />
+          <ArrowLeftCircleOutlineSvg width={iconSize} height={iconSize} style={{opacity: iconOpacity}} color={manualGradientColors.lightColor} />
         </TouchableOpacity>
       ) : (
         <View style={styles.placeholder} />
@@ -44,9 +44,9 @@ const NavigationArrows = ({ iconSize=50, currentIndex, imageListLength, onPrevPr
       {currentIndex < imageListLength - 1 ? (
         <TouchableOpacity 
           onPress={onNextPress} 
-          style={[styles.arrowButton, {backgroundColor: manualGradientColors.homeDarkColor}]}
+          style={[styles.arrowButton, {opacity: opacity, backgroundColor: manualGradientColors.homeDarkColor}]}
         >
-          <ArrowRightCircleOutlineSvg width={iconSize} height={iconSize} color={manualGradientColors.lightColor} />
+          <ArrowRightCircleOutlineSvg width={iconSize} height={iconSize} style={{opacity: iconOpacity}} color={manualGradientColors.lightColor} />
         </TouchableOpacity>
       ) : (
         <View style={styles.placeholder} />

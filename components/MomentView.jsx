@@ -129,7 +129,7 @@ const MomentView = ({
                       <ScrollView
                         contentContainerStyle={[
                           styles.textWrapper,
-                          { padding: 10 },
+                          { paddingTop: '3%', paddingHorizontal: '2%', paddingBottom: 160 },
                         ]}
                          style={{width: '100%'  }}
                       >
@@ -195,15 +195,15 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     width: "100%",
-    flexWrap: "wrap",
+    flexWrap: "wrap",  
+    //textAlign: "justify",
   },
   categoryHeader: {
     paddingBottom: "3%",
     flexDirection: "row",
     alignContent: "center",
     justifyContent: "flex-start",
-    width: "100%",
-    flex: 1,
+    width: "100%", 
     minHeight: 30,
     height: "auto",
     maxHeight: 50,
@@ -236,13 +236,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     flex: 1,
     padding: "5%",
-    paddingHorizontal: "3%",
+    paddingHorizontal: "2%", 
   },
   momentText: {
     //fontFamily: 'Poppins-Regular',
    
     fontFamily: 'Poppins-Regular',
-    fontSize: 16,
+    fontSize: 15,
 
     lineHeight: 22,
     alignSelf: "left",
@@ -251,8 +251,11 @@ const styles = StyleSheet.create({
     //flexGrow: 1,
     //height: '100%',
     textAlign: "left",
+    //flexWrap: 'wrap',
+    
     // justifyContent: 'center',
     width: "100%", 
+     
   },
   categoryText: {
     fontSize: 14, 

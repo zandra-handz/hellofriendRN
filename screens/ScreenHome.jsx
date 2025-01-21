@@ -77,12 +77,18 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
 
   useEffect(() => {
     if (hasShareIntent && shareIntent?.files?.length > 0) {
-      console.log('Shared Files:', shareIntent.files);
-      showMessage(true, null, 'shared file exists! ', shareIntent.files);
-      //processSharedFile(shareIntent.files[0].uri); // Assuming the file is in shareIntent.files[0]
+      const file = shareIntent.files[0]; // Get the first shared file
+      const uri = file?.path || file?.contentUri; // Support both iOS and Android URIs
+  
+      if (uri) {
+        console.log('Shared File URI:', uri); // Log the URI to the console
+        setSharedFileFromOutsideOfApp(uri); // Optional: Set the URI in your state for further processing
+        showMessage(true, null, 'Shared file exists!', `URI: ${uri}`);
+      } else {
+        console.warn('No valid URI found for the shared file.');
+      }
     }
   }, [shareIntent, hasShareIntent]);
-
 
 // useEffect(() => {
 //   if (incomingFile) {

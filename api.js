@@ -176,6 +176,15 @@ export const signinWithoutRefresh = async ({ username, password }) => {
     }
 };
 
+export const sendEmail = async ({email}) => {
+  
+    try {
+        return await axios.post('/users/sign-up/', { username, email, password });
+    } catch (e) {
+        console.log('error creating new account:', e);
+        return { error: true, msg: e.response.data.msg };
+    }
+};
 
 export const signup = async ({username, email, password}) => {
   
