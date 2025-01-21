@@ -1,4 +1,4 @@
-import { ShareIntentProvider, useShareIntentContext } from "expo-share-intent";
+import { useShareIntentContext } from "expo-share-intent";
 
 
 import React, { useCallback, useEffect, useState, useRef } from "react";
@@ -49,7 +49,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Linking from 'expo-linking'; 
 
 const ScreenHome = ({ navigation, incomingFileUri }) => {
-  const { hasShareIntent, useShareIntent, shareIntent, resetShareIntent  } = useShareIntentContext();
+  const { hasShareIntent,  shareIntent  } = useShareIntentContext();
   
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
@@ -78,7 +78,8 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
   useEffect(() => {
     if (hasShareIntent && shareIntent?.files?.length > 0) {
       console.log('Shared Files:', shareIntent.files);
-      processSharedFile(shareIntent.files[0].uri); // Assuming the file is in shareIntent.files[0]
+      showMessage(true, null, 'shared file exists! ', shareIntent.files);
+      //processSharedFile(shareIntent.files[0].uri); // Assuming the file is in shareIntent.files[0]
     }
   }, [shareIntent, hasShareIntent]);
 
@@ -105,10 +106,10 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
 const handleIncomingFileDetails = () => {
   if (hasShareIntent && shareIntent?.files?.length > 0 && incomingFileUri) {
     // Log the shareIntent.files object to check its structure
-    console.log('ShareIntent Files:', shareIntent.files);
+    showMessage(true, null, 'ShareIntent Files:', shareIntent.files);
  
   } else {
-    showMessage(true, null, `No files found in shareIntent. incoming: ${incomingFileUri ? incomingFileUri : 'null'}`);
+    showMessage(true, null, `No files found in shareIntent.`);
   }
 };  
 
