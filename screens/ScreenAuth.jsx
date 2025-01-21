@@ -436,7 +436,7 @@ const ScreenAuth = () => {
             <View style={{ flexDirection: "row", width: "100%" }}> 
                 <Text
                   style={styles.toggleButton}
-                  onPress={isSignInScreen ? toggleMode : handleBackToSignIn}
+                  onPress={() => navigation.navigate('RecoverCredentials')}
                   accessible={true}
                   accessibilityLabel="Toggle button"
                   accessibilityHint="Press to toggle between sign in and create account"

@@ -41,6 +41,7 @@ import ScreenMidpointLocationSearch from "./screens/ScreenMidpointLocationSearch
 import ScreenCalculateTravelTimes from "./screens/ScreenCalculateTravelTimes";
 import ScreenWelcome from "./screens/ScreenWelcome";
 import ScreenAuth from "./screens/ScreenAuth";
+import ScreenRecoverCredentials from "./screens/ScreenRecoverCredentials";
 import ScreenMomentFocus from "./screens/ScreenMomentFocus";
 import ScreenLocation from "./screens/ScreenLocation";
 
@@ -475,6 +476,14 @@ export const Layout = ({imageUri}) => {//{incomingFileUri}
               <Stack.Screen
                 name="Auth"
                 component={ScreenAuth}
+                options={{
+                  headerShown: false,
+                  header: () => <HeaderBlank />,
+                }}
+              />
+                            <Stack.Screen
+                name="RecoverCredentials"
+                component={ScreenRecoverCredentials}
                 options={{
                   headerShown: false,
                   header: () => <HeaderBlank />,

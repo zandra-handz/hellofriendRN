@@ -69,12 +69,7 @@ const ScreenRecoverCredentials = () => {
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
   });
 
-  useLayoutEffect(() => {
-    if (createNewAccount === true) {
-      console.log("user wants to create new account");
-      toggleMode();
-    }
-  }, [createNewAccount]);
+
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -194,7 +189,7 @@ const ScreenRecoverCredentials = () => {
               >
                 <Text
                   style={styles.toggleButton}
-                  onPress={handleBackToSignIn}
+                  onPress={handleNavigateBackToAuthScreen}
                   accessible={true}
                   accessibilityLabel="Toggle button"
                   accessibilityHint="Press to toggle between sign in and create account"
@@ -233,11 +228,17 @@ const ScreenRecoverCredentials = () => {
           accessible={true}
           accessibilityLabel="Form container"
         >
-          <Text
+                      <Text
                   style={styles.inputHeaderText} 
                   accessible={true} 
                 >
-                  {"Enter username or email"}
+                  {"Recover password"}
+                </Text> 
+          <Text
+                  style={styles.inputSubHeaderText} 
+                  accessible={true} 
+                >
+                  {"Enter username or email: "}
                 </Text> 
             <View style={{ flexDirection: "column", width: "100%" }}> 
               <TextInput
@@ -276,21 +277,7 @@ const ScreenRecoverCredentials = () => {
 
           
 
-{isSignInScreen && (
-            <View style={{ flexDirection: "row", width: "100%" }}> 
-                <Text
-                  style={styles.toggleButton}
-                  onPress={isSignInScreen ? toggleMode : handleBackToSignIn}
-                  accessible={true}
-                  accessibilityLabel="Toggle button"
-                  accessibilityHint="Press to toggle between sign in and create account"
-                >
-                  {"Forgot username or password"}
-                </Text>
-              </View> 
-              
-  
-)} 
+
                        
         </View>
         
@@ -375,6 +362,12 @@ const styles = StyleSheet.create({
     color: "black",  
     fontFamily: 'Poppins-Bold',
     fontSize: 16,
+    selfAlign: 'center', 
+  },
+  inputSubHeaderText: {
+    color: "black",  
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
     selfAlign: 'center', 
   },
   spinnerContainer: {

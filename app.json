@@ -90,7 +90,7 @@
         }
       ]
     ],
-    "scheme": "hellofriend",
+    "scheme": "myapp",
     "extra": {
       "eas": {
         "projectId": "3564e25f-85ac-4c60-9f14-93d9153871b3"
