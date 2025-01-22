@@ -76,6 +76,9 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
  
 
   useEffect(() => {
+
+    if (!hasShareIntent || !shareIntent) return;
+
     if (hasShareIntent && shareIntent?.files?.length > 0) {
       const file = shareIntent.files[0]; // Get the first shared file
       const uri = file?.path || file?.contentUri; // Support both iOS and Android URIs
@@ -88,6 +91,21 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
       } else {
         console.warn('No valid URI found for the shared file.');
       }
+    }
+
+    if (hasShareIntent && shareIntent?.text?.length > 0) {
+      const sharedText = shareIntent.text;
+      showMessage(true, null, `Shared text exists! Text: ${sharedText}`);
+      navigation.navigate('MomentFocus', {momentText: sharedText });
+    }
+    if (hasShareIntent && (shareIntent?.type === "weburl")) {
+      const sharedWebUrlMeta = shareIntent?.meta || null;
+      const sharedWebUrl = shareIntent?.webUrl || null;
+       const sharedCombined = `${sharedWebUrlMeta || 'No Meta'}, ${sharedWebUrl || 'No URL'}`;
+      navigation.navigate('MomentFocus', {momentText: sharedCombined });
+      
+      
+      
     }
   }, [shareIntent, hasShareIntent]);
 
@@ -108,17 +126,7 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
   
 
 // }, [incomingFile]);
-
-
-const handleIncomingFileDetails = () => {
-  if (hasShareIntent && shareIntent?.files?.length > 0 && incomingFileUri) {
-    // Log the shareIntent.files object to check its structure
-    showMessage(true, null, 'ShareIntent Files:', shareIntent.files);
  
-  } else {
-    showMessage(true, null, `No files found in shareIntent.`);
-  }
-};  
 
 // const processSharedFile = async (uri) => {
 //   try {
@@ -365,8 +373,7 @@ const handleIncomingFileDetails = () => {
               }}
             >
 
-              <TouchableOpacity onPress={handleIncomingFileDetails} style={{zIndex: 6000, width: 50, height:30, backgroundColor: 'blue'}}></TouchableOpacity>
-              <TextMomentHomeScreenBox
+               <TextMomentHomeScreenBox
                 width={"100%"}
                 height={"100%"}
                 ref={newMomentTextRef}
