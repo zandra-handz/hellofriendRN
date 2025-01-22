@@ -83,7 +83,7 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
       if (uri) {
         console.log('Shared File URI:', uri); // Log the URI to the console
         setSharedFileFromOutsideOfApp(uri); // Optional: Set the URI in your state for further processing
-        showMessage(true, null, 'Shared file exists!', `URI: ${uri}`);
+        showMessage(true, null, `Shared file exists! URI: ${uri}`);
       } else {
         console.warn('No valid URI found for the shared file.');
       }
