@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute } from "@react-navigation/native";
 
-import { sendEmail } from '../api';
+import { sendResetCodeEmail, verifyResetCodeEmail, resetPassword } from '../api';
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -37,10 +37,12 @@ const ScreenRecoverCredentials = () => {
   const [showSignIn, setShowSignIn] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSignInScreen, setSignInScreen] = useState(true);
+  const [isRequestCodeScreen, setIsRequestCodeScreen] = useState(true); 
+  const [isValidateCodeScreen, setIsValidateCodeScreen] = useState(false);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
   const {
     onSignin,
@@ -51,13 +53,15 @@ const ScreenRecoverCredentials = () => {
     reInitialize,
   } = useAuthUser();
   const usernameInputRef = useRef(null);
-  const passwordInputRef = useRef(null);
+  const resetCodeRef = useRef(null);
+  const newPasswordInputRef = useRef(null);
   const verifyPasswordInputRef = useRef(null);
   const emailInputRef = useRef(null);
   const [isUsernameFocused, setIsUsernameFocused] = useState(false);
   const [usernameInputVisible, setUsernameInputVisible] = useState(true);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isNewPasswordFocused, setIsNewPasswordFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isResetCodeFocused, setIsResetCodeFocused] = useState(false);
   const navigation = useNavigation();
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -71,18 +75,7 @@ const ScreenRecoverCredentials = () => {
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
   });
 
-
-  const onSendEmail = async (email) => {
-    try {
-         
-        
  
-        await sendEmail(email); 
-    } catch (error) {
-        console.error('Sign up error', error); 
-    }
-};
-
 
 
   useEffect(() => {
@@ -129,17 +122,49 @@ const ScreenRecoverCredentials = () => {
   };
  
   const handleSubmit = async () => { 
-    if (isSignInScreen) {
+    //need to do something to prevent double calling probably?
+    if (!isRequestCodeScreen && !isValidateCodeScreen) {
+      try {
+        showMessage(true, null, `Resetting password for ${resetCode}`);
+        const reset = await resetPassword({ email, resetCode, newPassword });
+        console.log('Logging reply from password reset:', reset);
+       
+        showMessage(false, null, "Password reset successfully! Please go back to login screen.");
+       
+    } catch (error) {
+        console.error(error);
+        showMessage(true, null, `Error! Couldn't reset password.`);
+    }
+
+    }
+    if (isRequestCodeScreen) {
       try {
         showMessage(true, null, "Sending email...");
 
-        sendEmail(email);
+        sendResetCodeEmail(email);
+        setIsRequestCodeScreen(false);
+        setIsValidateCodeScreen(true);
       } catch (error) {
         console.error(error);
         showMessage(true, null, `Error! Can't send email.`);
       }
     } 
     setLoading(false);
+
+    if (isValidateCodeScreen) {
+      try {
+          showMessage(true, null, `Checking reset code... ${resetCode}, ${email}`);
+          const verify = await verifyResetCodeEmail({ email, resetCode });
+          console.log('Logging reply from validate code:', verify);
+          // Handle success response
+          showMessage(false, null, "Reset code verified successfully!");
+          setIsValidateCodeScreen(false);
+      } catch (error) {
+          console.error(error);
+          showMessage(true, null, `Error! Couldn't verify reset code.`);
+      }
+
+  }
   };
 
  
@@ -150,22 +175,15 @@ const ScreenRecoverCredentials = () => {
 
   const handleUsernameSubmit = () => {
     setUsernameInputVisible(false);
-    if (passwordInputRef.current && username) {
-      passwordInputRef.current.focus();
+    if (newPasswordInputRef.current && username) {
+      newPasswordInputRef.current.focus();
     }
 
     console.log("password input current");
   };
  
  
-
-  const handleEmailSubmit = () => {
-    handleSubmit();
-    // if (usernameInputRef.current) {
-    //   usernameInputRef.current.focus();
-    // }
-  };
-
+ 
   if (!fontsLoaded) {
     return null; // Or any other loading indicator if fonts are not yet loaded
   }
@@ -246,17 +264,17 @@ const ScreenRecoverCredentials = () => {
               )} 
 
 
-{!loading && (username || email) && isSignInScreen && (
+{!loading && (username || email) && isRequestCodeScreen && (
                 <>
                   <View style={{width: '100%', position: 'absolute', bottom: 0, paddingBottom: 60, right: 0}}> 
                    
                     <SimpleBottomButton
                       onPress={handleSubmit}
-                      title={isSignInScreen ? "Sign in" : "Create account"} 
+                      title={isRequestCodeScreen ? "Sign in" : "Create account"} 
                       fontColor={themeStyles.genericText.color}
                       accessible={true}
                       accessibilityLabel={
-                        isSignInScreen
+                        isRequestCodeScreen
                           ? "Sign in button"
                           : "Create account button"
                       }
@@ -282,19 +300,22 @@ const ScreenRecoverCredentials = () => {
                 >
                   {"Recover password"}
                 </Text> 
-          <Text
+          {/* <Text
                   style={styles.inputSubHeaderText} 
                   accessible={true} 
                 >
                   {"Enter username or email: "}
-                </Text> 
+                </Text>  */}
+                
+{isRequestCodeScreen && (
             <View style={{ flexDirection: "column", width: "100%" }}> 
               <TextInput
                 style={[styles.input, isEmailFocused && styles.inputFocused]}
                 placeholder="Email"
+                autoFocus={true}
                 onChangeText={(text) => setEmail(text)}
                 value={email}
-                onSubmitEditing={handleEmailSubmit}
+                onSubmitEditing={handleSubmit}
                 ref={emailInputRef}
                 onFocus={() => setIsEmailFocused(true)}
                 onBlur={() => setIsEmailFocused(false)}
@@ -304,12 +325,13 @@ const ScreenRecoverCredentials = () => {
                 importantForAccessibility="yes"
               />
             </View> 
-          <View style={{ flexDirection: "column", width: "100%" }}> 
+)}
+          {/* <View style={{ flexDirection: "column", width: "100%" }}> 
 
             <TextInput
               style={[styles.input, isUsernameFocused && styles.inputFocused]}
               placeholder="Username"
-              autoFocus={true}
+              //autoFocus={true}
               onChangeText={(text) => setUsername(text)}
               value={username}
               onSubmitEditing={() => handleUsernameSubmit()}
@@ -321,7 +343,53 @@ const ScreenRecoverCredentials = () => {
               accessibilityHint="Enter your username"
               importantForAccessibility="yes"
             />
-          </View>
+          </View> */}
+
+{isValidateCodeScreen && (
+  
+<View style={{ flexDirection: "column", width: "100%" }}> 
+              <TextInput
+                style={[styles.input, isResetCodeFocused && styles.inputFocused]}
+                placeholder="Reset code" 
+                onChangeText={(text) => setResetCode(text)}
+                value={resetCode}
+                onSubmitEditing={handleSubmit}
+                ref={resetCodeRef}
+                onFocus={() => setIsResetCodeFocused(true)}
+                onBlur={() => setIsResetCodeFocused(false)}
+                accessible={true}
+                accessibilityLabel="Reset code input"
+                accessibilityHint="Enter the reset code emailed to you"
+                importantForAccessibility="yes"
+              />
+            </View> 
+
+            
+)}
+
+
+{!isRequestCodeScreen && !isValidateCodeScreen && (
+  
+  <View style={{ flexDirection: "column", width: "100%" }}> 
+                <TextInput
+                  style={[styles.input, isNewPasswordFocused && styles.inputFocused]}
+                  placeholder="New password" 
+                  secureTextEntry={true}
+                  onChangeText={(text) => setNewPassword(text)}
+                  value={newPassword}
+                  onSubmitEditing={handleSubmit}
+                  ref={newPasswordInputRef}
+                  onFocus={() => setIsNewPasswordFocused(true)}
+                  onBlur={() => setIsNewPasswordFocused(false)}
+                  accessible={true}
+                  accessibilityLabel="New password input"
+                  accessibilityHint="Enter new password"
+                  importantForAccessibility="yes"
+                />
+              </View> 
+  
+              
+  )}
 
           
 

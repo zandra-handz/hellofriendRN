@@ -98,11 +98,11 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
       if (sharedText) {
         
       showMessage(true, null, `Shared text exists! Text: ${sharedText}`);
-      //updateNewMomentTextString(sharedText);
-      navigation.navigate("MomentFocus", {
-        momentText: sharedText,
-      });
-      clearNewMomentText();
+      updateNewMomentTextString(sharedText);
+      // navigation.navigate("MomentFocus", {
+      //   momentText: sharedText,
+      // });
+      //clearNewMomentText();
       //navigation.navigate('MomentFocus', {momentText: sharedText });
       
     } else {

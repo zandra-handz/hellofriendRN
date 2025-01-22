@@ -176,6 +176,45 @@ export const signinWithoutRefresh = async ({ username, password }) => {
     }
 };
 
+export const sendResetCodeEmail = async (email) => {
+  
+    try {
+        return await axios.post('/users/send-reset-code/', { 'email': email });
+    } catch (e) {
+        console.log('error sending email:', e);
+        return { error: true, msg: e.response.data.msg };
+    }
+};
+
+
+export const verifyResetCodeEmail = async ({email, resetCode}) => {
+    console.log(email);
+    console.log(resetCode);
+  
+    try {
+        response = await axios.post('/users/verify-reset-code/', { 'email': email, 'reset_code': resetCode });
+        console.log(response);
+        return response;
+    } catch (e) {
+        console.log('error checking reset code:', e);
+        return { error: true, msg: e.response.data.msg };
+    }
+};
+
+export const resetPassword = async ({email, resetCode, newPassword }) => {
+    console.log(email);
+    console.log(resetCode);
+  
+    try {
+        response = await axios.post('/users/reset-password/', { 'email': email, 'reset_code': resetCode, 'new_password' : newPassword});
+        console.log(response);
+        return response;
+    } catch (e) {
+        console.log('error resetting password:', e);
+        return { error: true, msg: e.response.data.msg };
+    }
+};
+
 export const sendEmail = async (email) => {
   
     try {
