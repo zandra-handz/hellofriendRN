@@ -84,7 +84,7 @@ const HeaderImage = ({ title = "IMAGES", addView = false }) => {
   numberOfLines={1} // Limit to one line
   ellipsizeMode="tail" // Show "..." if text overflows
 >
-  {title}: {selectedFriend.name ? ` ${selectedFriend.name}` : ''}
+  {title}: {selectedFriend?.name ? ` ${selectedFriend.name}` : ''}
 </Text>
             
 </View>
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 20,  
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-Regular",
     textTransform: 'uppercase',
   },
   usernameText: {

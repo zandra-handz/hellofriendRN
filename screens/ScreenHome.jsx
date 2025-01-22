@@ -1,14 +1,12 @@
 import { useShareIntentContext } from "expo-share-intent";
 
-
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Alert,
   StyleSheet,
   Text,
   Keyboard,
-  Dimensions,
   Animated,
   FlatList,
   TouchableOpacity,
@@ -28,7 +26,7 @@ import { useFriendList } from "../context/FriendListContext"; //to check if any 
 import { useUpcomingHelloes } from "../context/UpcomingHelloesContext";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 
-import { useMessage } from '../context/MessageContext';
+import { useMessage } from "../context/MessageContext";
 
 import { LinearGradient } from "expo-linear-gradient";
 import HomeScrollSoon from "../components/HomeScrollSoon";
@@ -45,15 +43,14 @@ import TextMomentHomeScreenBox from "../components/TextMomentHomeScreenBox";
 
 import HelloFriendFooter from "../components/HelloFriendFooter";
 
-import * as FileSystem from 'expo-file-system'; 
-import * as Linking from 'expo-linking'; 
+import * as FileSystem from "expo-file-system"; 
 
-const ScreenHome = ({ navigation, incomingFileUri }) => {
-  const { hasShareIntent,  shareIntent  } = useShareIntentContext();
-  
+const ScreenHome = ({ navigation }) => {
+  const { hasShareIntent, shareIntent } = useShareIntentContext();
+
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
-  const { authUserState, userAppSettings, incomingFile } = useAuthUser();
+  const { authUserState, userAppSettings  } = useAuthUser();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
   const { friendListLength } = useFriendList();
   const { isLoading } = useUpcomingHelloes();
@@ -70,122 +67,80 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
 
   const { showMessage } = useMessage();
 
-  const newMomentTextRef = useRef(null);
-
-  const [sharedFileFromOutsideOfApp, setSharedFileFromOutsideOfApp] = useState(null);
- 
+  const newMomentTextRef = useRef(null); 
 
   useEffect(() => {
-
     if (!hasShareIntent || !shareIntent) return;
 
     if (hasShareIntent && shareIntent?.files?.length > 0) {
-      const file = shareIntent.files[0]; // Get the first shared file
+      const file = shareIntent.files[0]; 
       const uri = file?.path || file?.contentUri; // Support both iOS and Android URIs
-  
+
       if (uri) {
-        console.log('Shared File URI:', uri); // Log the URI to the console
+        //console.log('Shared File URI:', uri); // Log the URI to the console
         processSharedFile(uri);
-        //setSharedFileFromOutsideOfApp(uri); // Optional: Set the URI in your state for further processing
-        showMessage(true, null, `Shared file exists! URI: ${uri}`);
+        // showMessage(true, null, `Shared file exists! URI: ${uri}`);
       } else {
-        console.warn('No valid URI found for the shared file.');
+        console.warn("No valid URI found for the shared file.");
       }
     }
 
     if (hasShareIntent && shareIntent?.text?.length > 0) {
       const sharedText = shareIntent.text;
       if (sharedText) {
-        
-      showMessage(true, null, `Shared text exists! Text: ${sharedText}`);
-      updateNewMomentTextString(sharedText);
-      // navigation.navigate("MomentFocus", {
-      //   momentText: sharedText,
-      // });
-      //clearNewMomentText();
-      //navigation.navigate('MomentFocus', {momentText: sharedText });
-      
-    } else {
-      showMessage(true, null, `length in shared text but data structure passed here is not valid`);
-    }
+        //showMessage(true, null, `Shared text exists! Text: ${sharedText}`);
+
+        navigation.navigate("MomentFocus", {
+          momentText: sharedText,
+        }); 
+      } else {
+        showMessage(
+          true,
+          null,
+          `length in shared text but data structure passed here is not valid`
+        );
+      }
     }
     // if (hasShareIntent && (shareIntent?.type === "weburl")) {
     //   const sharedWebUrlMeta = shareIntent?.meta || null;
     //   const sharedWebUrl = shareIntent?.webUrl || null;
     //    const sharedCombined = `${sharedWebUrlMeta || 'No Meta'}, ${sharedWebUrl || 'No URL'}`;
     //   navigation.navigate('MomentFocus', {momentText: sharedCombined });
-      
-      
-      
+
     // }
-  }, [shareIntent, hasShareIntent]);
-
-// useEffect(() => {
-//   if (incomingFile) {
-//     showMessage(true, null, `incoming file: ${incomingFile}`);
-//     try {
-//       processSharedFile(incomingFile);
-
-//     } catch (error) {
-//       showMessage(true, null, `Oops, couldn't catch incoming file: ${error}`);
-//     }
-//   }
-//   if (!incomingFile) {
-//     showMessage(true, null, `no incoming file stored in auth`);
-//   }
-    
-  
-
-// }, [incomingFile]);
+  }, [shareIntent, hasShareIntent]); 
  
 
-// const processSharedFile = async (uri) => {
-//   try {
-//     const fileInfo = await FileSystem.getInfoAsync(uri);
-//     if (fileInfo.exists) {
-//       // Handle the file (resize, validate, etc.)
-//       console.log('File Info:', fileInfo);
-//       setSharedFileFromOutsideOfApp(fileInfo.uri);
-//       Alert.alert('Yay', `file: ${fileInfo.uri}`);
-//       //navigation.navigate('AddImage', { imageUri: fileInfo.uri });
-//     } else {
-//       Alert.alert('Error', 'File not found or is invalid.');
-//     }
-//   } catch (error) {
-//     console.error('Error processing file:', error);
-//     Alert.alert('Error', 'Could not process shared file.');
-//   }
-// };
-  
-  const processSharedFile = async (url) => {
-    console.log('Processing shared file:', url);
-  
-    if (url.startsWith('content://') || url.startsWith('file://')) {
+  const processSharedFile = async (url) => { 
+
+    if (url.startsWith("content://") || url.startsWith("file://")) {
       try {
         const fileInfo = await FileSystem.getInfoAsync(url);
-  
-        if (fileInfo && fileInfo.exists) {
-          console.log('Shared File Info:', fileInfo);
-  
-          // Validate that it's an image (optional)
+
+        if (fileInfo && fileInfo.exists) { 
+
+          // Validate that it's an image  
           if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
-            const resizedImage = await resizeImage(fileInfo.uri);  
-            //setSharedFileFromOutsideOfApp(resizedImage.uri);  
-            navigation.navigate('AddImage', { imageUri: resizedImage.uri }); // Navigate with resized image URI
+            const resizedImage = await resizeImage(fileInfo.uri); 
+            navigation.navigate("AddImage", { imageUri: resizedImage.uri }); // Navigate with resized image URI
           } else {
-            Alert.alert('Unsupported File', 'The shared file is not a valid image.');
+            Alert.alert(
+              "Unsupported File",
+              "The shared file is not a valid image."
+            );
           }
         } else {
-          Alert.alert('Error', 'Could not process the shared file.');
+          Alert.alert("Error", "Could not process the shared file.");
         }
       } catch (error) {
-        console.error('Error processing shared file:', error);
-        Alert.alert('Error', 'An error occurred while processing the shared file.');
+        console.error("Error processing shared file:", error);
+        Alert.alert(
+          "Error",
+          "An error occurred while processing the shared file."
+        );
       }
-    } else {
-      // Handle URLs that are not file-based
-      setSharedFileFromOutsideOfApp(url);
-    }
+    } 
+
   };
 
   useEffect(() => {
@@ -214,13 +169,19 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
 
   const updateNewMomentTextString = (text) => {
     if (newMomentTextRef && newMomentTextRef.current) {
+      const textLengthPrev = newMomentTextRef.current.getText().length;
+      if (textLengthPrev === 0) {
+        if (text.length - textLengthPrev > 1) {
+          //this is here to check if something is copy-pasted in or shared in
+          setShowMomentScreenButton(true);
+        }
+      }
       newMomentTextRef.current.setText(text);
       if (text.length === 0) {
         //console.log('text length is 0');
         setShowMomentScreenButton(false);
       }
-      if (text.length === 1) {
-        //console.log('text length is 1');
+      if (text.length === 1) { 
         setShowMomentScreenButton(true);
       }
 
@@ -228,17 +189,15 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
     }
   };
 
-  const { data, isLoadingCurrentLocation, error } = useCurrentLocationManual();
+  //const { data, isLoadingCurrentLocation, error } = useCurrentLocationManual();
 
   const showLastButton = true;
-  const screenHeight = Dimensions.get("window").height;
-  const maxButtonHeight = 100;  // Remaining height for buttons  // Divide remaining height by the number of buttons (5 buttons + footer)
-  const upcomingDatesTray = 100; 
+  const maxButtonHeight = 100; // Remaining height for buttons  // Divide remaining height by the number of buttons (5 buttons + footer)
+ 
 
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
   useEffect(() => {
-    if (currentLocationDetails) {
-      console.log("data in home screen", currentLocationDetails);
+    if (currentLocationDetails) { 
     }
   }, [currentLocationDetails]);
 
@@ -315,10 +274,6 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
     navigation.navigate("AddImage", { imageUri: imageUri });
   };
 
-  const navigateToAddImageScreenWithShared = () => {
-    navigation.navigate("AddImage", { imageUri: imageUri });
-  };
-
   useEffect(() => {
     requestPermission();
   }, []);
@@ -347,17 +302,6 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
         { text: "OK", onPress: () => console.log("OK Pressed") },
       ]);
     }
-
-    //Don't need -- it's already checking this at a higher level
-    // if (friendListLength < 1) {
-    //   Alert.alert(
-    //     `I'm sorry!`,
-    //     'You need to add friends before you can search and add locations.',
-    //     [
-    //       { text: 'OK', onPress: () => console.log('OK Pressed') }
-    //     ]
-    //   );
-    // }
   };
 
   return (
@@ -365,34 +309,42 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
       colors={[gradientColorsHome.darkColor, gradientColorsHome.lightColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={[styles.container, {height: isKeyboardVisible ? '200%' : '100%'}]}
+      style={[
+        styles.container,
+        { height: isKeyboardVisible ? "200%" : "100%" },
+      ]}
     >
-      
-    <KeyboardAvoidingView
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    style={{ flex: 1 }}
-  >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
         {authUserState.authenticated &&
         authUserState.user &&
         userAppSettings ? (
-          <View  style={{ flex: 1, paddingBottom: '1%', justifyContent: "space-between", flexDirection: 'column',   paddingHorizontal: '2%'}}>
+          <View
+            style={{
+              flex: 1,
+              paddingBottom: "1%",
+              justifyContent: "space-between",
+              flexDirection: "column",
+              paddingHorizontal: "2%",
+            }}
+          >
             <View
               style={{
-                height: isKeyboardVisible
-                  ? '76%' //'Dimensions.get("window").height / 2.5'
-                  : '32%' //Dimensions.get("window").height / 3,
+                height: isKeyboardVisible ? "76%" : "32%",
               }}
             >
+              {/* FOR TESTING
+              <TouchableOpacity onPress={() => navigation.navigate('MomentFocus', {momentText: 'hiiiii'})} style={{height: 40, width: 40, backgroundColor: 'blue'}}>
 
-               <TextMomentHomeScreenBox
+              </TouchableOpacity> */}
+
+              <TextMomentHomeScreenBox
                 width={"100%"}
                 height={"100%"}
                 ref={newMomentTextRef}
                 title={"Add a new moment?"}
-                // helperText={    not in use in child component
-                // 'Enter a future note, anecdote, joke, or whatever else you would like to share with your friend here:'
-                //   !isKeyboardVisible ? null : "Press enter to exit"
-                //}
                 iconColor={themeStyles.genericText.color}
                 mountingText={""}
                 onTextChange={updateNewMomentTextString}
@@ -412,7 +364,7 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
                   <HomeButtonMomentAddSmall
                     onPress={navigateToAddMomentScreen}
                     borderRadius={40}
-                    borderColor="black" 
+                    borderColor="black"
                   />
                 </View>
               )}
@@ -434,7 +386,7 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
             <Animated.View
               style={[
                 styles.buttonContainer,
-                { 
+                {
                   paddingTop: 10,
                   transform: [{ translateX: slideAnim }],
                 },
@@ -453,73 +405,65 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
                 )} */}
 
               {!selectedFriend && !friendLoaded && showLastButton && (
-               <View style={{maxHeight: 80}}>
-                
-               <HomeButtonGenericAdd
-                  label={"ADD FRIEND"}
-                  onPress={navigateToAddFriendScreen}
-                  borderRadius={40}
-                  borderColor="black"
-                  image={require("../assets/shapes/yellowleaves.png")}
-                  height={'100%'}
-                  maxHeight={maxButtonHeight}
-                />
-
-                
-               </View>
-              )}
-              {/* </View> */}
+                <View style={{ maxHeight: 80 }}>
+                  <HomeButtonGenericAdd
+                    label={"ADD FRIEND"}
+                    onPress={navigateToAddFriendScreen}
+                    borderRadius={40}
+                    borderColor="black"
+                    image={require("../assets/shapes/yellowleaves.png")}
+                    height={"100%"}
+                    maxHeight={maxButtonHeight}
+                  />
+                </View>
+              )} 
 
               {!selectedFriend && (
                 <HomeButtonUpNext
                   onPress={navigateToAddMomentScreen}
                   borderRadius={40}
-                  height={'100%'}
+                  height={"100%"}
                   borderColor="black"
                   maxHeight={190}
                 />
               )}
               {selectedFriend && (
-                  
                 <HomeButtonSelectedFriend
                   onPress={navigateToAddMomentScreen}
                   borderRadius={40}
                   borderColor="black"
-                  height={'100%'}  
+                  height={"100%"}
                 />
-                 
               )}
               <HomeScrollSoon
-                height={'20%'}
+                height={"20%"}
                 maxHeight={140}
                 borderRadius={40}
                 borderColor="black"
               />
-              {selectedFriend && ( 
+              {selectedFriend && (
                 <HomeScrollCalendarLights
-                  height={'5%'}
+                  height={"5%"}
                   borderRadius={40}
                   borderColor="black"
                 />
-                
-                   
-              )} 
+              )}
             </Animated.View>
           </View>
         ) : (
           <View style={styles.signInContainer}></View>
         )}
-        
-      <HelloFriendFooter />
+
+        <HelloFriendFooter />
       </KeyboardAvoidingView>
-    </LinearGradient> 
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...StyleSheet.absoluteFillObject,  
+    ...StyleSheet.absoluteFillObject,
     justifyContent: "space-between",
   },
   buttonContainer: {
@@ -528,7 +472,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     marginHorizontal: 0,
-    flex: 1, 
+    flex: 1,
   },
   loadingWrapper: {
     flex: 1,

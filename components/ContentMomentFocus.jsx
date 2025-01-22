@@ -86,6 +86,15 @@ const ContentMomentFocus = ({ momentText }) => {
 
   const updateMomentText = (text) => {
     if (momentTextRef && momentTextRef.current) {
+      const textLengthPrev = momentTextRef.current.getText().length;
+      if (textLengthPrev === 0) {
+        if ((text.length - textLengthPrev) > 1) {  //this is here to check if something is copy-pasted in or shared in
+          setShowCategoriesSlider(true);
+
+        } 
+      }
+
+      
       momentTextRef.current.setText(text);
      // console.log("in parent", momentTextRef.current.getText().length);
     }

@@ -32,7 +32,7 @@ const TextMomentHomeScreenBox = forwardRef(
   //width and height are original settings being used in location notes
   (
     {
-      title = "title",
+      title = "title", 
       mountingText = "Start typing",
       onTextChange, 
       width = "90%",

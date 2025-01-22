@@ -22,8 +22,7 @@ export const AuthUserProvider = ({ children }) => {
     });
     const [userAppSettings, setUserAppSettings] = useState({});
     const [userNotificationSettings, setUserNotificationSettings] = useState({});
-    const queryClient = useQueryClient();
-    const [incomingFile, setIncomingFile ] = useState(null);
+    const queryClient = useQueryClient(); 
 
     
     // Reinitialize user data function
@@ -280,9 +279,7 @@ const onSignUp = async (username, email, password) => {
             onSignOut,
             reInitialize, // Added to the context
             updateUserSettings: setUserAppSettings,
-            updateUserNotificationSettings: setUserNotificationSettings,
-            incomingFile,
-            setIncomingFile,
+            updateUserNotificationSettings: setUserNotificationSettings, 
         }}>
             {children}
         </AuthUserContext.Provider>

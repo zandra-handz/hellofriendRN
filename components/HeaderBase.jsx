@@ -14,6 +14,8 @@ import PhoneChatMessageHeartSvg from '../assets/svgs/phone-chat-message-heart';
 import ThoughtBubbleOutlineSvg from '../assets/svgs/thought-bubble-outline.svg'; // Import the SVG
 import HeartbeatLifeLineArrowSvg from '../assets/svgs/heartbeat-lifeline-arrow.svg';
 import CoffeeMugFancySteamSvg from '../assets/svgs/coffee-mug-fancy-steam';
+import ImageGallerySingleOutlineSvg from "../assets/svgs/image-gallery-single-outline.svg";
+import CoffeeSvg from '../assets/svgs/coffee-solid.svg';
  
 
 import { useNavigation } from '@react-navigation/native';
@@ -40,6 +42,8 @@ const HeaderBase = ({
       edit: EditPencilOutlineSvg,
       clock: ClockOutlineSvg,
       distanceZigZag: DistanceZigZagSvg,
+      image: ImageGallerySingleOutlineSvg,
+      coffee: CoffeeSvg,
   };
  
   const IconComponent = iconMap[icon] || null;
@@ -54,13 +58,16 @@ const HeaderBase = ({
           style={styles.headerContainer}
       >
           {!loadingNewFriend && (
-              <View style={styles.headerContent}>
+              <>
                   <View style={styles.leftButtonContainer}>
                       <TouchableOpacity onPress={() => navigation.goBack()}>
                           <ArrowLeftCircleOutline height={30} width={30} color={themeAheadOfLoading.fontColor} />
                       </TouchableOpacity>
                   </View>
 
+
+                  <View style={styles.rightIconContainer}>
+                    
                   <Text
                       style={[
                           styles.headerText,
@@ -72,11 +79,9 @@ const HeaderBase = ({
                   >
                       {headerTitle}
                   </Text>
-
-                  <View style={styles.rightIconContainer}>
                       {IconComponent ? (
                           <TouchableOpacity onPress={() => navigation.navigate(navigateTo)}>
-                              <IconComponent width={30} height={30} color={themeAheadOfLoading.fontColorSecondary}   />
+                              <IconComponent style={{marginHorizontal: '2%'}} width={30} height={30} color={themeAheadOfLoading.fontColorSecondary}   />
                           </TouchableOpacity>
                       ) : (
                           <View style={styles.defaultIconWrapper}>
@@ -84,7 +89,7 @@ const HeaderBase = ({
                           </View>
                       )}
                   </View>
-              </View>
+              </>
           )}
       </LinearGradient>
   );
@@ -95,29 +100,27 @@ const styles = StyleSheet.create({
   headerContainer: {
     padding: 10,
     paddingTop: 66,  
-    paddingHorizontal: 10, 
+    paddingHorizontal: '3%', 
     height: 110, 
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'row', 
+    width: '100%',
+    backgroundColor: 'pink',
     justifyContent: 'space-between',
-  },
+  }, 
   leftButtonContainer: {
     width: 40,  // Fixed width to keep it from moving
   },
-  headerText: {
-    position: 'absolute', 
-    right: 60,  // Maintain a fixed distance from the right icon
+  headerText: { // Maintain a fixed distance from the right icon
     fontSize: 20,
-    fontFamily: 'Poppins-Bold',
-    textTransform: 'uppercase',
-    width: '70%',  // Adjust width to prevent overlapping
-    textAlign: 'right',  // Keep the text aligned to the right
+    fontFamily: 'Poppins-Regular',
+    textTransform: 'uppercase',  
   },
-  rightIconContainer: {
-    width: 40,
+  rightIconContainer: { 
+   
+    flexDirection: 'row', 
     alignItems: 'center',
+    backgroundColor: 'teal',
+    justifyContent: 'space-between',
   },
   defaultIconWrapper: {
     height: 44,

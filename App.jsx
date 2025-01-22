@@ -98,12 +98,10 @@ const Stack = createNativeStackNavigator();
 export default function App() { 
  
   const [fontsLoaded, setFontsLoaded] = useState(false);
-  
-
-const [incomingFileUri, setIncomingFileUri] = useState(null);
+   
 
 const { hasShareIntent, shareIntent, resetShareIntent, error } = useShareIntentContext();
-const [imageUri, setImageUri] = useState(null);
+ 
 
 
 
@@ -124,20 +122,20 @@ useEffect(() => {
       }
     } else {
       permissionsGranted = true; // Assume permissions are not required for other cases
-      handleShareIntent();
+      //handleShareIntent();
     }
   }
 
-  function handleShareIntent() {
-    if (permissionsGranted && hasShareIntent && shareIntent?.files?.length > 0) {
-      const file = shareIntent.files[0]; // assuming the first file is the image
-      const uri = file.path || file.contentUri; // Use either path (iOS) or contentUri (Android)
-      setImageUri(uri);
-      Alert.alert("Shared Image", `Image URI: ${uri}`);
-    } else if (!permissionsGranted) {
-      console.warn("Cannot process share intent without permissions.");
-    }
-  }
+  // function handleShareIntent() {
+  //   if (permissionsGranted && hasShareIntent && shareIntent?.files?.length > 0) {
+  //     const file = shareIntent.files[0]; // assuming the first file is the image
+  //     const uri = file.path || file.contentUri; // Use either path (iOS) or contentUri (Android)
+  //     setImageUri(uri);
+  //     Alert.alert("Shared Image", `Image URI: ${uri}`);
+  //   } else if (!permissionsGranted) {
+  //     console.warn("Cannot process share intent without permissions.");
+  //   }
+  // }
 
   requestPermissions();
 }, [hasShareIntent, shareIntent]);
@@ -145,8 +143,7 @@ useEffect(() => {
 
 
 
-  useEffect(() => { 
-    // Load fonts and set loading status
+  useEffect(() => {  
     const fetchFonts = async () => {
       await loadFonts();
       setFontsLoaded(true);
@@ -164,39 +161,11 @@ useEffect(() => {
           notification.request.content.title,
           notification.request.content.body
         );
-      });
-    // Clean up subscription on unmount
+      }); 
     return () => notificationSubscription.remove();
   }, []);
 
-//  useEffect(() => {
-//     // Function to handle incoming file URI
-//     const handleFileUri = async (uri) => {
-//       if (uri && uri.startsWith('file://')) {
-//         setIncomingFileUri(uri);  // Store file URI in state
-//       }
-//     };
-
-//     // Get the initial URL that launched the app
-//     const getInitialFileUri = async () => {
-//       const url = await Linking.getInitialURL();
-//       handleFileUri(url);  // Handle the URI if it's a file URI
-//     };
-
-//     // Add listener for incoming URLs while the app is running
-//     const urlListener = Linking.addEventListener('url', ({ url }) => {
-//       handleFileUri(url);  // Handle the incoming file URI
-//     });
-
-//     // Call the function to handle the initial file URI when the app launches
-//     getInitialFileUri();
-
-//     // Cleanup the listener on component unmount
-//     return () => {
-//       urlListener.remove();
-//     };
-//   }, []);
-
+ 
 
   const colorScheme = useColorScheme();
 
@@ -223,7 +192,7 @@ useEffect(() => {
                     <CapsuleListProvider>
                       <HelloesProvider>
                         <MessageContextProvider>
-                          <Layout imageUri={imageUri || null} />
+                          <Layout />
                         </MessageContextProvider>
                       </HelloesProvider>
                     </CapsuleListProvider>
@@ -361,9 +330,9 @@ const linking = {
   },
 };
 
-export const Layout = ({imageUri}) => {//{incomingFileUri}
+export const Layout = () => { 
   const { themeStyles} = useGlobalStyle();
-  const { authUserState, incomingFile, setIncomingFile  } = useAuthUser();
+  const { authUserState } = useAuthUser();
 
 
   // useEffect(() => {
@@ -398,14 +367,12 @@ export const Layout = ({imageUri}) => {//{incomingFileUri}
               <>
                 <Stack.Screen
                   name="hellofriend"
-                  //component={ScreenHome}
+                  component={ScreenHome}
                   options={{
                     headerShown: true,
                     header: () => <HellofriendHeader />,
                   }}
-                  >
-                  {(props) => <ScreenHome {...props} incomingFileUri={imageUri} />}
-                  </Stack.Screen>
+                  />
                   <Stack.Screen
                   name="UserDetails"
                   component={ScreenUserDetails}
@@ -556,7 +523,7 @@ export const Layout = ({imageUri}) => {//{incomingFileUri}
                   options={{
                     headerShown: true,
                     header: () => (
-                      <HeaderBase headerTitle="Upload" navigateTo="Images" />
+                      <HeaderBase headerTitle="Upload" navigateTo="Images" icon="image" />
                     ),
                   }}
                 />
@@ -568,7 +535,7 @@ export const Layout = ({imageUri}) => {//{incomingFileUri}
                     header: () => (
                       <HeaderBase
                         headerTitle="Add hello"
-                        icon="heartbeat"
+                        icon="coffee"
                         navigateTo="Helloes"
                       />
                     ),
@@ -596,14 +563,12 @@ export const Layout = ({imageUri}) => {//{incomingFileUri}
             <>
 <Stack.Screen
   name="Welcome"
-  //component={ScreenWelcome}
+  component={ScreenWelcome}
   options={{
     headerShown: false,
     header: () => <HeaderBlank />,
-  }}> 
-                    {(props) => <ScreenWelcome {...props} incomingFileUri={null} />}
-                
-                </Stack.Screen> 
+  }}
+               />
 
               <Stack.Screen
                 name="Auth"

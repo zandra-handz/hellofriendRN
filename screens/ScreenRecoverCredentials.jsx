@@ -4,19 +4,23 @@ import {
   TextInput,
   StyleSheet,
   Text,
-  Dimensions, 
+  Dimensions,
   Keyboard,
   TouchableOpacity,
 } from "react-native";
 import { useAuthUser } from "../context/AuthUserContext";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
-import { useMessage } from "../context/MessageContext"; 
-import { useFonts } from "expo-font"; 
+import { useMessage } from "../context/MessageContext";
+import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute } from "@react-navigation/native";
 
-import { sendResetCodeEmail, verifyResetCodeEmail, resetPassword } from '../api';
+import {
+  sendResetCodeEmail,
+  verifyResetCodeEmail,
+  resetPassword,
+} from "../api";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -41,7 +45,7 @@ const ScreenRecoverCredentials = () => {
   const [newPassword, setNewPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isRequestCodeScreen, setIsRequestCodeScreen] = useState(true); 
+  const [isRequestCodeScreen, setIsRequestCodeScreen] = useState(true);
   const [isValidateCodeScreen, setIsValidateCodeScreen] = useState(false);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
   const {
@@ -75,9 +79,6 @@ const ScreenRecoverCredentials = () => {
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
   });
 
- 
-
-
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -101,9 +102,7 @@ const ScreenRecoverCredentials = () => {
       usernameInputRef.current.focus();
     }
   }, []);
- 
 
- 
   const handleBackToSignIn = () => {
     // setShowSignIn(true);
     // setUsername("");
@@ -120,22 +119,26 @@ const ScreenRecoverCredentials = () => {
     // }
     setUsernameInputVisible(true);
   };
- 
-  const handleSubmit = async () => { 
+
+  const handleSubmit = async () => {
     //need to do something to prevent double calling probably?
     if (!isRequestCodeScreen && !isValidateCodeScreen) {
       try {
         showMessage(true, null, `Resetting password for ${resetCode}`);
         const reset = await resetPassword({ email, resetCode, newPassword });
-        console.log('Logging reply from password reset:', reset);
-       
-        showMessage(false, null, "Password reset successfully! Please go back to login screen.");
-       
-    } catch (error) {
+        console.log("Logging reply from password reset:", reset);
+
+        showMessage(
+          false,
+          null,
+          "Password reset successfully! Please log in."
+        );
+
+        handleNavigateBackToAuthScreen();
+      } catch (error) {
         console.error(error);
         showMessage(true, null, `Error! Couldn't reset password.`);
-    }
-
+      }
     }
     if (isRequestCodeScreen) {
       try {
@@ -148,26 +151,27 @@ const ScreenRecoverCredentials = () => {
         console.error(error);
         showMessage(true, null, `Error! Can't send email.`);
       }
-    } 
+    }
     setLoading(false);
 
     if (isValidateCodeScreen) {
       try {
-          showMessage(true, null, `Checking reset code... ${resetCode}, ${email}`);
-          const verify = await verifyResetCodeEmail({ email, resetCode });
-          console.log('Logging reply from validate code:', verify);
-          // Handle success response
-          showMessage(false, null, "Reset code verified successfully!");
-          setIsValidateCodeScreen(false);
+        showMessage(
+          true,
+          null,
+          `Checking reset code... ${resetCode}, ${email}`
+        );
+        const verify = await verifyResetCodeEmail({ email, resetCode });
+        console.log("Logging reply from validate code:", verify);
+        // Handle success response
+        showMessage(false, null, "Reset code verified successfully!");
+        setIsValidateCodeScreen(false);
       } catch (error) {
-          console.error(error);
-          showMessage(true, null, `Error! Couldn't verify reset code.`);
+        console.error(error);
+        showMessage(true, null, `Error! Couldn't verify reset code.`);
       }
-
-  }
+    }
   };
-
- 
 
   const handleNavigateBackToAuthScreen = () => {
     navigation.goBack();
@@ -181,9 +185,7 @@ const ScreenRecoverCredentials = () => {
 
     console.log("password input current");
   };
- 
- 
- 
+
   if (!fontsLoaded) {
     return null; // Or any other loading indicator if fonts are not yet loaded
   }
@@ -223,69 +225,80 @@ const ScreenRecoverCredentials = () => {
               x
             </Text>
           </TouchableOpacity>
-           
-          <> 
-              <View
-                style={{ 
-                  height: 40,
-                  marginLeft: '2%',
-                  paddingTop: "3%",
-                }}
+
+          <>
+            <View
+              style={{
+                height: 40,
+                marginLeft: "2%",
+                paddingTop: "3%",
+              }}
+            >
+              <Text
+                style={styles.toggleButton}
+                onPress={handleNavigateBackToAuthScreen}
+                accessible={true}
+                accessibilityLabel="Toggle button"
+                accessibilityHint="Press to toggle between sign in and create account"
               >
-                <Text
-                  style={styles.toggleButton}
-                  onPress={handleNavigateBackToAuthScreen}
-                  accessible={true}
-                  accessibilityLabel="Toggle button"
-                  accessibilityHint="Press to toggle between sign in and create account"
-                >
-                  {"Go to sign in"}
-                </Text>
-              </View> 
-              
+                {"Go to sign in"}
+              </Text>
+            </View>
           </>
           {!loading && (username || email) && !isKeyboardVisible && (
-                <View style={{width: '100%', position: 'absolute', bottom: 0, paddingBottom: 60, right: 0}}> 
-                    <SimpleBottomButton
-                      onPress={handleSubmit}
-                      title={"Recover"}
-                      shapeSource={require("../assets/shapes/coffeecupdarkheart.png")}
-                      shapeWidth={190}
-                      shapeHeight={190}
-                      shapePosition="left"
-                      shapePositionValue={-48}
-                      shapePositionVerticalValue={-23}
-                      fontColor={themeStyles.genericText.color}
-                      accessible={true}
-                      accessibilityLabel={"Submit button"}
-                      accessibilityHint="Press to recover username or reset password"
-                    />  
-                </View>
-              )} 
+            <View
+              style={{
+                width: "100%",
+                position: "absolute",
+                bottom: 0,
+                paddingBottom: 60,
+                right: 0,
+              }}
+            >
+              <SimpleBottomButton
+                onPress={handleSubmit}
+                title={"Recover"}
+                shapeSource={require("../assets/shapes/coffeecupdarkheart.png")}
+                shapeWidth={190}
+                shapeHeight={190}
+                shapePosition="left"
+                shapePositionValue={-48}
+                shapePositionVerticalValue={-23}
+                fontColor={themeStyles.genericText.color}
+                accessible={true}
+                accessibilityLabel={"Submit button"}
+                accessibilityHint="Press to recover username or reset password"
+              />
+            </View>
+          )}
 
-
-{!loading && (username || email) && isRequestCodeScreen && (
-                <>
-                  <View style={{width: '100%', position: 'absolute', bottom: 0, paddingBottom: 60, right: 0}}> 
-                   
-                    <SimpleBottomButton
-                      onPress={handleSubmit}
-                      title={isRequestCodeScreen ? "Sign in" : "Create account"} 
-                      fontColor={themeStyles.genericText.color}
-                      accessible={true}
-                      accessibilityLabel={
-                        isRequestCodeScreen
-                          ? "Sign in button"
-                          : "Create account button"
-                      }
-                      accessibilityHint="Press to sign in or create an account"
-                    />
-                  </View>
-                  </>
-                  )}
-          
+          {!loading && (username || email) && isRequestCodeScreen && (
+            <>
+              <View
+                style={{
+                  width: "100%",
+                  position: "absolute",
+                  bottom: 0,
+                  paddingBottom: 60,
+                  right: 0,
+                }}
+              >
+                <SimpleBottomButton
+                  onPress={handleSubmit}
+                  title={isRequestCodeScreen ? "Sign in" : "Create account"}
+                  fontColor={themeStyles.genericText.color}
+                  accessible={true}
+                  accessibilityLabel={
+                    isRequestCodeScreen
+                      ? "Sign in button"
+                      : "Create account button"
+                  }
+                  accessibilityHint="Press to sign in or create an account"
+                />
+              </View>
+            </>
+          )}
         </SafeAreaView>
-
       </LinearGradient>
 
       {showSignIn && (
@@ -294,21 +307,31 @@ const ScreenRecoverCredentials = () => {
           accessible={true}
           accessibilityLabel="Form container"
         >
-                      <Text
-                  style={styles.inputHeaderText} 
-                  accessible={true} 
-                >
-                  {"Recover password"}
-                </Text> 
-          {/* <Text
-                  style={styles.inputSubHeaderText} 
-                  accessible={true} 
-                >
-                  {"Enter username or email: "}
-                </Text>  */}
-                
-{isRequestCodeScreen && (
-            <View style={{ flexDirection: "column", width: "100%" }}> 
+          <Text style={styles.inputHeaderText} accessible={true}>
+            {"Recover password"}
+          </Text>
+
+          {!isRequestCodeScreen && !isValidateCodeScreen && (
+            <Text style={styles.inputSubHeaderText} accessible={true}>
+              {"Reset code validated! Enter new password: "}
+            </Text>
+          )}
+          
+          {isRequestCodeScreen  && (
+            <Text style={styles.inputSubHeaderText} accessible={true}>
+              {"Enter email associated with account: "}
+            </Text>
+          )}
+
+
+{isValidateCodeScreen  && (
+            <Text style={styles.inputSubHeaderText} accessible={true}>
+              {"If an account with that email is found, you will be emailed a reset code shortly!"}
+            </Text>
+          )}
+
+          {isRequestCodeScreen && (
+            <View style={{ flexDirection: "column", width: "100%" }}>
               <TextInput
                 style={[styles.input, isEmailFocused && styles.inputFocused]}
                 placeholder="Email"
@@ -324,8 +347,8 @@ const ScreenRecoverCredentials = () => {
                 accessibilityHint="Enter your email address"
                 importantForAccessibility="yes"
               />
-            </View> 
-)}
+            </View>
+          )}
           {/* <View style={{ flexDirection: "column", width: "100%" }}> 
 
             <TextInput
@@ -345,12 +368,14 @@ const ScreenRecoverCredentials = () => {
             />
           </View> */}
 
-{isValidateCodeScreen && (
-  
-<View style={{ flexDirection: "column", width: "100%" }}> 
+          {isValidateCodeScreen && (
+            <View style={{ flexDirection: "column", width: "100%" }}>
               <TextInput
-                style={[styles.input, isResetCodeFocused && styles.inputFocused]}
-                placeholder="Reset code" 
+                style={[
+                  styles.input,
+                  isResetCodeFocused && styles.inputFocused,
+                ]}
+                placeholder="Reset code"
                 onChangeText={(text) => setResetCode(text)}
                 value={resetCode}
                 onSubmitEditing={handleSubmit}
@@ -362,41 +387,32 @@ const ScreenRecoverCredentials = () => {
                 accessibilityHint="Enter the reset code emailed to you"
                 importantForAccessibility="yes"
               />
-            </View> 
+            </View>
+          )}
 
-            
-)}
-
-
-{!isRequestCodeScreen && !isValidateCodeScreen && (
-  
-  <View style={{ flexDirection: "column", width: "100%" }}> 
-                <TextInput
-                  style={[styles.input, isNewPasswordFocused && styles.inputFocused]}
-                  placeholder="New password" 
-                  secureTextEntry={true}
-                  onChangeText={(text) => setNewPassword(text)}
-                  value={newPassword}
-                  onSubmitEditing={handleSubmit}
-                  ref={newPasswordInputRef}
-                  onFocus={() => setIsNewPasswordFocused(true)}
-                  onBlur={() => setIsNewPasswordFocused(false)}
-                  accessible={true}
-                  accessibilityLabel="New password input"
-                  accessibilityHint="Enter new password"
-                  importantForAccessibility="yes"
-                />
-              </View> 
-  
-              
-  )}
-
-          
-
-
-                       
+          {!isRequestCodeScreen && !isValidateCodeScreen && (
+            <View style={{ flexDirection: "column", width: "100%" }}>
+              <TextInput
+                style={[
+                  styles.input,
+                  isNewPasswordFocused && styles.inputFocused,
+                ]}
+                placeholder="New password"
+                secureTextEntry={true}
+                onChangeText={(text) => setNewPassword(text)}
+                value={newPassword}
+                onSubmitEditing={handleSubmit}
+                ref={newPasswordInputRef}
+                onFocus={() => setIsNewPasswordFocused(true)}
+                onBlur={() => setIsNewPasswordFocused(false)}
+                accessible={true}
+                accessibilityLabel="New password input"
+                accessibilityHint="Enter new password"
+                importantForAccessibility="yes"
+              />
+            </View>
+          )}
         </View>
-        
       )}
     </>
   );
@@ -418,7 +434,7 @@ const styles = StyleSheet.create({
     // right: 0,
   },
   input: {
-    fontFamily: "Poppins-Regular", 
+    fontFamily: "Poppins-Regular",
     //fontWeight: 'bold',
     placeholderTextColor: "black",
     height: "auto",
@@ -428,7 +444,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     borderRadius: 10,
     alignContent: "center",
-    justifyContent: "center", 
+    justifyContent: "center",
     borderColor: "black",
     fontSize: 15,
   },
@@ -469,22 +485,22 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
   },
   toggleButton: {
-    color: "black",  
-    fontFamily: 'Poppins-Bold',
+    color: "black",
+    fontFamily: "Poppins-Bold",
     fontSize: 14,
-    selfAlign: 'center', 
-  },  
+    selfAlign: "center",
+  },
   inputHeaderText: {
-    color: "black",  
-    fontFamily: 'Poppins-Bold',
+    color: "black",
+    fontFamily: "Poppins-Bold",
     fontSize: 16,
-    selfAlign: 'center', 
+    selfAlign: "center",
   },
   inputSubHeaderText: {
-    color: "black",  
-    fontFamily: 'Poppins-Bold',
+    color: "black",
+    fontFamily: "Poppins-Bold",
     fontSize: 14,
-    selfAlign: 'center', 
+    selfAlign: "center",
   },
   spinnerContainer: {
     ...StyleSheet.absoluteFillObject, // Cover the entire screen

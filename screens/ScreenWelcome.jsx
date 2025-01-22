@@ -24,7 +24,7 @@ import PhoneStatusBar from "../components/PhoneStatusBar";
 
 const TOKEN_KEY = "my-jwt";
 
-const ScreenWelcome = ({incomingFileUri}) => {
+const ScreenWelcome = () => {
   const { showMessage } = useMessage();
   const { themeStyles,   manualGradientColors } =
     useGlobalStyle();
@@ -45,13 +45,6 @@ const ScreenWelcome = ({incomingFileUri}) => {
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
   });
-
-  useEffect(() => {
-    if (incomingFileUri) {
-      showMessage(true, null, `incomingfileuri in welcome screen: ${incomingFileUri}`);
-    }
-
-  }, [incomingFileUri]);
  
 
   useEffect(() => {

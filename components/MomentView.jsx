@@ -152,7 +152,7 @@ const MomentView = ({
           <View
                 style={{
                   position: "absolute",
-                  height: 80,
+                  height: 70,
                   bottom: -6,
                   left: -4,
                   width: "103%", 
@@ -177,14 +177,14 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1, 
     width: "100%",
-    zIndex: 1,
+    zIndex: 1, 
   },
   container: {
     borderRadius: 30,
     width: "100%",
 
     paddingHorizontal: "5%",
-    paddingTop: "6%",
+    paddingTop: "5%",
     paddingBottom: "5%",
     flexDirection: "column",
     borderWidth: StyleSheet.hairlineWidth,
@@ -199,14 +199,14 @@ const styles = StyleSheet.create({
     //textAlign: "justify",
   },
   categoryHeader: {
-    paddingBottom: "3%",
+    paddingBottom: "2%",
     flexDirection: "row",
     alignContent: "center",
     justifyContent: "flex-start",
     width: "100%", 
     minHeight: 30,
     height: "auto",
-    maxHeight: 50,
+    maxHeight: 40,
   },
   modalContent: {
     width: "100%",
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignContent: "center",
     paddingHorizontal: "4%",
-    //paddingTop: "4%",
+    paddingTop: "4%",
     width: "101%",
     alignSelf: "center",
     borderWidth: 1,

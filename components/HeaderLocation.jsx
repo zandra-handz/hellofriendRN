@@ -77,7 +77,7 @@ const HeaderLocation = ({ title = "LOCATIONS", addView = false }) => {
   numberOfLines={1} // Limit to one line
   ellipsizeMode="tail" // Show "..." if text overflows
 >
-  {title}: {selectedFriend.name ? ` ${selectedFriend.name}` : ''}
+  {title}: {selectedFriend?.name ? ` ${selectedFriend.name}` : ''}
 </Text>
             
 </View>

@@ -127,17 +127,21 @@ const HeaderImageWithSlider = ({     itemData,
 };
 
 const styles = StyleSheet.create({
-    headerContainer: { 
-        padding: 10,
-        paddingTop: 10,
-        paddingHorizontal: 10,
-        alignItems: "center",
-        //justifyContent: "space-between",
-        height: 100, 
-      }, 
+  headerContainer: { 
+    padding: '3%',
+    paddingTop: '1%',
+    paddingHorizontal: '3%',
+    alignItems: "center",
+    //justifyContent: "space-between",
+    height: 80, 
+    flexDirection: 'column',
+    justifyContent: 'flex-start', 
+    paddingBottom: '1%',
+    
+  }, 
   headerText: { 
     fontSize: 20, 
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-Regular",
    
   },
   usernameText: {
@@ -150,13 +154,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-    sliderContainer: {
+  sliderContainer: {
     //position: "absolute",
     bottom: 0,
     left: -4,
     right: 0,
     zIndex: 3,
-    height: 30,
+    height: 28, 
     width: "100%",
   },
 });
