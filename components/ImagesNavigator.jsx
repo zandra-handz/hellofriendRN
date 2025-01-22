@@ -27,8 +27,7 @@ const ImagesNavigator = ({ archived = false, image, onClose }) => {
     }
   }, [image]);
 
-
-  //manually closing this for right now because I give up
+ 
  useEffect(() => { 
     if (deleteImageMutation.isSuccess) {
         //the length of the list is the old length before the deleted one is removed

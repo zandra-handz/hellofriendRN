@@ -95,18 +95,24 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
 
     if (hasShareIntent && shareIntent?.text?.length > 0) {
       const sharedText = shareIntent.text;
+      if (sharedText) {
+        
       showMessage(true, null, `Shared text exists! Text: ${sharedText}`);
-      navigation.navigate('MomentFocus', {momentText: sharedText });
+      //navigation.navigate('MomentFocus', {momentText: sharedText });
+      
+    } else {
+      showMessage(true, null, `length in shared text but data structure passed here is not valid`);
     }
-    if (hasShareIntent && (shareIntent?.type === "weburl")) {
-      const sharedWebUrlMeta = shareIntent?.meta || null;
-      const sharedWebUrl = shareIntent?.webUrl || null;
-       const sharedCombined = `${sharedWebUrlMeta || 'No Meta'}, ${sharedWebUrl || 'No URL'}`;
-      navigation.navigate('MomentFocus', {momentText: sharedCombined });
-      
-      
-      
     }
+    // if (hasShareIntent && (shareIntent?.type === "weburl")) {
+    //   const sharedWebUrlMeta = shareIntent?.meta || null;
+    //   const sharedWebUrl = shareIntent?.webUrl || null;
+    //    const sharedCombined = `${sharedWebUrlMeta || 'No Meta'}, ${sharedWebUrl || 'No URL'}`;
+    //   navigation.navigate('MomentFocus', {momentText: sharedCombined });
+      
+      
+      
+    // }
   }, [shareIntent, hasShareIntent]);
 
 // useEffect(() => {

@@ -11,14 +11,14 @@ import { useGlobalStyle } from '../context/GlobalStyleContext';
 const MomentsNavigator = ({ archived = false, moment, onClose }) => {
 
   const [isModalVisible, setIsModalVisible] = useState(true);
-  const { capsuleList, deleteMomentRQuery, deleteMomentMutation, updateCapsuleMutation } = useCapsuleList();
+  const { capsuleList, capsuleCount, deleteMomentRQuery, deleteMomentMutation, updateCapsuleMutation, updateCacheWithNewPreAdded } = useCapsuleList();
   const [currentIndex, setCurrentIndex] = useState(0); 
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend(); 
   const [ momentInView, setMomentInView ] = useState(moment || null);
  
   useEffect(() => {
-    if (moment) { 
+    if (moment) {  
       const index = capsuleList.findIndex(mom => mom.id === moment.id);
       setCurrentIndex(index); 
       setMomentInView(moment);
@@ -29,15 +29,45 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
   //manually closing this for right now because I give up
   useEffect(() => { 
     if (deleteMomentMutation.isSuccess) {
-      closeModal();
+
+        if (capsuleList.length > 1) {
+          if (currentIndex > 0) {
+            goToPreviousMoment();
+          } else {
+            goToNextMoment();
+          }
+        } else {
+          closeModal();
+        }
+ 
     }
   
   }, [deleteMomentMutation.isSuccess]);
 
 
   useEffect(() => { 
+    //This runs before capsule list length updates
     if (updateCapsuleMutation.isSuccess) {
-      closeModal();
+      updateCacheWithNewPreAdded();
+      console.log(`capsule list length after update: ${capsuleList?.length}`);
+
+
+      if (capsuleList?.length < 1) {
+        closeModal();
+      }
+
+      let lastIndex = capsuleList.length - 1;
+      console.log(`lastIndex value: ${lastIndex}, currentIndex value: ${currentIndex}, capsuleCount: ${capsuleCount}`);
+      if (currentIndex != lastIndex) {
+        if (currentIndex < lastIndex) {
+          goToNextMomentAfterRemovedPrev();
+        } else {
+          goToPreviousMoment();
+        }
+      } else {
+        goToFirstMoment();
+      }
+ 
     }
   
   }, [updateCapsuleMutation.isSuccess]);
@@ -46,6 +76,7 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
     onClose();
   };
   
+
    
 
   const goToPreviousMoment = () => {
@@ -62,6 +93,24 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
       setCurrentIndex(prevIndex => prevIndex + 1);
       console.log(capsuleList[currentIndex + 1]);
       setMomentInView(capsuleList[currentIndex + 1]);
+    }
+  };
+
+  const goToNextMomentAfterRemovedPrev = () => {
+    if (currentIndex < capsuleList.length - 1) {
+      //setCurrentIndex(prevIndex => prevIndex + 1);
+      //console.log(capsuleList[currentIndex + 1]);
+      setMomentInView(capsuleList[currentIndex + 1]);
+    }
+  };
+
+  const goToFirstMoment = () => {
+    if (capsuleList.length > 0) {
+      setCurrentIndex(prevIndex => prevIndex * 0);
+      //console.log(capsuleList[currentIndex + 1]);
+      setMomentInView(capsuleList[0]);
+    } else {
+      closeModal();
     }
   };
  
@@ -81,6 +130,21 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
       console.error('Error deleting moment:', error);
     }  
   };
+
+
+  //manually close if no more moments, since there is a delay in the update pre-add cache getting updated causing the modal to stay open
+  // and continue to display the last moment after it is added to pre-add
+  useEffect(() => {
+    if (capsuleList) {
+
+      if (capsuleCount < 1) {
+        console.log(`currentIndex: ${currentIndex}, capsuleCount: ${capsuleCount}, total moments length: ${capsuleList?.length || '0'}`);
+   
+        closeModal();
+      } 
+    }
+
+  }, [currentIndex, capsuleList]);
  
 
   return (

@@ -145,6 +145,9 @@ export const CapsuleListProvider = ({ children }) => {
   
   const timeoutRef = useRef(null);
 
+
+  //cache update is commented out because I needed to run an animation first; I put the cache update into a separate function
+  
   const updateCapsuleMutation = useMutation({
     mutationFn: (capsuleId) =>
       updateMomentAPI(selectedFriend?.id, capsuleId, {

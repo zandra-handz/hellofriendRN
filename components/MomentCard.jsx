@@ -56,8 +56,7 @@ const MomentCard = ({
       useNativeDriver: true, // Enable native driver for better performance
     }).start(() => {
       // onComplete callback
-      console.log("Animation finished, updating cache!");
-      //updateCacheWithNewPreAdded();  // Call updateCacheWithNewPreAdded once animation is done
+      console.log("Animation finished!"); 
     });
   };
 
