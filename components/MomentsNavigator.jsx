@@ -30,15 +30,23 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
   useEffect(() => { 
     if (deleteMomentMutation.isSuccess) {
 
-        if (capsuleList.length > 1) {
-          if (currentIndex > 0) {
-            goToPreviousMoment();
-          } else {
-            goToNextMoment();
-          }
+
+      if (capsuleList?.length < 1) {
+        closeModal();
+      }
+
+      let lastIndex = capsuleList.length - 1;
+      console.log(`lastIndex value: ${lastIndex}, currentIndex value: ${currentIndex}, capsuleCount: ${capsuleCount}`);
+      if (currentIndex != lastIndex) {
+        if (currentIndex < lastIndex) {
+          goToPreviousMoment();
+          
         } else {
-          closeModal();
+          goToNextMomentAfterRemovedPrev();
         }
+      } else {
+        goToFirstMoment();
+      }
  
     }
   
@@ -48,7 +56,7 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
   useEffect(() => { 
     //This runs before capsule list length updates
     if (updateCapsuleMutation.isSuccess) {
-      updateCacheWithNewPreAdded();
+      updateCacheWithNewPreAdded(); //The animation in the screen itself triggers this too but after a delay, not sure if I need this here 
       console.log(`capsule list length after update: ${capsuleList?.length}`);
 
 
