@@ -176,12 +176,12 @@ export const signinWithoutRefresh = async ({ username, password }) => {
     }
 };
 
-export const sendEmail = async ({email}) => {
+export const sendEmail = async (email) => {
   
     try {
-        return await axios.post('/users/sign-up/', { username, email, password });
+        return await axios.post('/users/send-email/', { 'email': email });
     } catch (e) {
-        console.log('error creating new account:', e);
+        console.log('error sending email:', e);
         return { error: true, msg: e.response.data.msg };
     }
 };

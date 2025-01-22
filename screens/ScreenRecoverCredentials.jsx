@@ -16,6 +16,8 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute } from "@react-navigation/native";
 
+import { sendEmail } from '../api';
+
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import PhoneStatusBar from "../components/PhoneStatusBar";
@@ -70,6 +72,18 @@ const ScreenRecoverCredentials = () => {
   });
 
 
+  const onSendEmail = async (email) => {
+    try {
+         
+        
+ 
+        await sendEmail(email); 
+    } catch (error) {
+        console.error('Sign up error', error); 
+    }
+};
+
+
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -114,7 +128,19 @@ const ScreenRecoverCredentials = () => {
     setUsernameInputVisible(true);
   };
  
- 
+  const handleSubmit = async () => { 
+    if (isSignInScreen) {
+      try {
+        showMessage(true, null, "Sending email...");
+
+        sendEmail(email);
+      } catch (error) {
+        console.error(error);
+        showMessage(true, null, `Error! Can't send email.`);
+      }
+    } 
+    setLoading(false);
+  };
 
  
 
@@ -134,9 +160,10 @@ const ScreenRecoverCredentials = () => {
  
 
   const handleEmailSubmit = () => {
-    if (usernameInputRef.current) {
-      usernameInputRef.current.focus();
-    }
+    handleSubmit();
+    // if (usernameInputRef.current) {
+    //   usernameInputRef.current.focus();
+    // }
   };
 
   if (!fontsLoaded) {
@@ -202,7 +229,7 @@ const ScreenRecoverCredentials = () => {
           {!loading && (username || email) && !isKeyboardVisible && (
                 <View style={{width: '100%', position: 'absolute', bottom: 0, paddingBottom: 60, right: 0}}> 
                     <SimpleBottomButton
-                      onPress={handleAuthentication}
+                      onPress={handleSubmit}
                       title={"Recover"}
                       shapeSource={require("../assets/shapes/coffeecupdarkheart.png")}
                       shapeWidth={190}
@@ -217,6 +244,27 @@ const ScreenRecoverCredentials = () => {
                     />  
                 </View>
               )} 
+
+
+{!loading && (username || email) && isSignInScreen && (
+                <>
+                  <View style={{width: '100%', position: 'absolute', bottom: 0, paddingBottom: 60, right: 0}}> 
+                   
+                    <SimpleBottomButton
+                      onPress={handleSubmit}
+                      title={isSignInScreen ? "Sign in" : "Create account"} 
+                      fontColor={themeStyles.genericText.color}
+                      accessible={true}
+                      accessibilityLabel={
+                        isSignInScreen
+                          ? "Sign in button"
+                          : "Create account button"
+                      }
+                      accessibilityHint="Press to sign in or create an account"
+                    />
+                  </View>
+                  </>
+                  )}
           
         </SafeAreaView>
 
