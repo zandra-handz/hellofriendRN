@@ -82,7 +82,8 @@ const ScreenHome = ({ navigation, incomingFileUri }) => {
   
       if (uri) {
         console.log('Shared File URI:', uri); // Log the URI to the console
-        setSharedFileFromOutsideOfApp(uri); // Optional: Set the URI in your state for further processing
+        processSharedFile(uri);
+        //setSharedFileFromOutsideOfApp(uri); // Optional: Set the URI in your state for further processing
         showMessage(true, null, `Shared file exists! URI: ${uri}`);
       } else {
         console.warn('No valid URI found for the shared file.');
@@ -119,54 +120,54 @@ const handleIncomingFileDetails = () => {
   }
 };  
 
-const processSharedFile = async (uri) => {
-  try {
-    const fileInfo = await FileSystem.getInfoAsync(uri);
-    if (fileInfo.exists) {
-      // Handle the file (resize, validate, etc.)
-      console.log('File Info:', fileInfo);
-      setSharedFileFromOutsideOfApp(fileInfo.uri);
-      Alert.alert('Yay', `file: ${fileInfo.uri}`);
-      //navigation.navigate('AddImage', { imageUri: fileInfo.uri });
+// const processSharedFile = async (uri) => {
+//   try {
+//     const fileInfo = await FileSystem.getInfoAsync(uri);
+//     if (fileInfo.exists) {
+//       // Handle the file (resize, validate, etc.)
+//       console.log('File Info:', fileInfo);
+//       setSharedFileFromOutsideOfApp(fileInfo.uri);
+//       Alert.alert('Yay', `file: ${fileInfo.uri}`);
+//       //navigation.navigate('AddImage', { imageUri: fileInfo.uri });
+//     } else {
+//       Alert.alert('Error', 'File not found or is invalid.');
+//     }
+//   } catch (error) {
+//     console.error('Error processing file:', error);
+//     Alert.alert('Error', 'Could not process shared file.');
+//   }
+// };
+  
+  const processSharedFile = async (url) => {
+    console.log('Processing shared file:', url);
+  
+    if (url.startsWith('content://') || url.startsWith('file://')) {
+      try {
+        const fileInfo = await FileSystem.getInfoAsync(url);
+  
+        if (fileInfo && fileInfo.exists) {
+          console.log('Shared File Info:', fileInfo);
+  
+          // Validate that it's an image (optional)
+          if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
+            const resizedImage = await resizeImage(fileInfo.uri);  
+            //setSharedFileFromOutsideOfApp(resizedImage.uri);  
+            navigation.navigate('AddImage', { imageUri: resizedImage.uri }); // Navigate with resized image URI
+          } else {
+            Alert.alert('Unsupported File', 'The shared file is not a valid image.');
+          }
+        } else {
+          Alert.alert('Error', 'Could not process the shared file.');
+        }
+      } catch (error) {
+        console.error('Error processing shared file:', error);
+        Alert.alert('Error', 'An error occurred while processing the shared file.');
+      }
     } else {
-      Alert.alert('Error', 'File not found or is invalid.');
+      // Handle URLs that are not file-based
+      setSharedFileFromOutsideOfApp(url);
     }
-  } catch (error) {
-    console.error('Error processing file:', error);
-    Alert.alert('Error', 'Could not process shared file.');
-  }
-};
-  
-  // const processSharedFile = async (url) => {
-  //   console.log('Processing shared file:', url);
-  
-  //   if (url.startsWith('content://') || url.startsWith('file://')) {
-  //     try {
-  //       const fileInfo = await FileSystem.getInfoAsync(url);
-  
-  //       if (fileInfo && fileInfo.exists) {
-  //         console.log('Shared File Info:', fileInfo);
-  
-  //         // Validate that it's an image (optional)
-  //         if (fileInfo.uri.match(/\.(jpg|jpeg|png|gif)$/)) {
-  //           const resizedImage = await resizeImage(fileInfo.uri);  
-  //           setSharedFileFromOutsideOfApp(resizedImage.uri);  
-  //           navigation.navigate('AddImage', { imageUri: resizedImage.uri }); // Navigate with resized image URI
-  //         } else {
-  //           Alert.alert('Unsupported File', 'The shared file is not a valid image.');
-  //         }
-  //       } else {
-  //         Alert.alert('Error', 'Could not process the shared file.');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error processing shared file:', error);
-  //       Alert.alert('Error', 'An error occurred while processing the shared file.');
-  //     }
-  //   } else {
-  //     // Handle URLs that are not file-based
-  //     setSharedFileFromOutsideOfApp(url);
-  //   }
-  // };
+  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
