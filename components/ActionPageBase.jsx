@@ -128,10 +128,10 @@ const styles = StyleSheet.create({
   container: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 20,
+    padding: 30,
     width: "100%",
     alignSelf: "flex-start",
-    flex: 1,
+    flex: .86,
   },
   subTitleRow: {
     flexDirection: "row",

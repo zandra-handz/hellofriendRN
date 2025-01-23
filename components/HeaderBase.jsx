@@ -118,8 +118,7 @@ const styles = StyleSheet.create({
   rightIconContainer: { 
    
     flexDirection: 'row', 
-    alignItems: 'center',
-    backgroundColor: 'teal',
+    alignItems: 'center', 
     justifyContent: 'space-between',
   },
   defaultIconWrapper: {

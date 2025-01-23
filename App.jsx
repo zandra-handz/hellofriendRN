@@ -2,18 +2,22 @@ import React, { useEffect, useState, createRef } from "react";
 
 import TopLevelNavigationHandler from "./TopLevelNavigationHandler"; // Adjust import path if necessary
 
-import { useShareIntentContext, ShareIntentProvider, ShareIntentModule,
-  getScheme,
-  getShareExtensionKey } from "expo-share-intent";
-
-import Constants from "expo-constants"; 
 import {
-  LinkingOptions, 
+  useShareIntentContext,
+  ShareIntentProvider,
+  ShareIntentModule,
+  getScheme,
+  getShareExtensionKey,
+} from "expo-share-intent";
+
+import Constants from "expo-constants";
+import {
+  LinkingOptions,
   NavigationContainer,
   NavigationContainerRef,
   getStateFromPath,
 } from "@react-navigation/native";
-import { Alert, View, Text, useColorScheme, Platform } from "react-native"; 
+import { Alert, View, Text, useColorScheme, Platform } from "react-native";
 import { MessageContextProvider } from "./context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthUserProvider, useAuthUser } from "./context/AuthUserContext";
@@ -27,10 +31,10 @@ import { SelectedFriendProvider } from "./context/SelectedFriendContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as Font from "expo-font";
 import * as Notifications from "expo-notifications";
-import * as FileSystem from 'expo-file-system'; 
-import * as Linking from 'expo-linking'; 
+import * as FileSystem from "expo-file-system";
+import * as Linking from "expo-linking";
 
-import * as MediaLibrary from 'expo-media-library';
+import * as MediaLibrary from "expo-media-library";
 
 import { useGlobalStyle } from "./context/GlobalStyleContext";
 import ResultMessage from "./components/ResultMessage";
@@ -55,7 +59,7 @@ import ScreenLocation from "./screens/ScreenLocation";
 import ScreenUserDetails from "./screens/ScreenUserDetails";
 
 import ScreenLocationSend from "./screens/ScreenLocationSend";
-import ScreenLocationEdit from "./screens/ScreenLocationEdit"; 
+import ScreenLocationEdit from "./screens/ScreenLocationEdit";
 
 import ScreenAddFriend from "./screens/ScreenAddFriend";
 import ScreenAddImage from "./screens/ScreenAddImage";
@@ -78,7 +82,6 @@ import HeaderUserDetails from "./components/HeaderUserDetails";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-
 import { RootStackParamList } from "./types";
 
 const queryClient = new QueryClient();
@@ -92,67 +95,56 @@ async function loadFonts() {
   });
 }
 
-
 const Stack = createNativeStackNavigator();
 
-export default function App() { 
- 
+export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
-   
 
-const { hasShareIntent, shareIntent, resetShareIntent, error } = useShareIntentContext();
- 
+  const { hasShareIntent, shareIntent, resetShareIntent, error } =
+    useShareIntentContext();
 
+  useEffect(() => {
+    let permissionsGranted = false;
 
+    async function requestPermissions() {
+      if (Platform.OS === "android" && Platform.Version >= 33) {
+        const { status } = await MediaLibrary.requestPermissionsAsync(); // Request media library permissions
 
-useEffect(() => {
-  let permissionsGranted = false;
-
-  async function requestPermissions() {
-    if (Platform.OS === 'android' && Platform.Version >= 33) {
-      const { status } = await MediaLibrary.requestPermissionsAsync(); // Request media library permissions
-
-      if (status === 'granted') {
-        console.log('Media permissions granted!');
-        permissionsGranted = true;
-        handleShareIntent(); // Process the share intent if permissions are granted
+        if (status === "granted") {
+          console.log("Media permissions granted!");
+          permissionsGranted = true;
+         // handleShareIntent(); // Process the share intent if permissions are granted
+        } else {
+          console.warn("Media permissions denied.");
+          permissionsGranted = false;
+        }
       } else {
-        console.warn('Media permissions denied.');
-        permissionsGranted = false;
+        permissionsGranted = true; // Assume permissions are not required for other cases
+        //handleShareIntent();
       }
-    } else {
-      permissionsGranted = true; // Assume permissions are not required for other cases
-      //handleShareIntent();
     }
-  }
 
-  // function handleShareIntent() {
-  //   if (permissionsGranted && hasShareIntent && shareIntent?.files?.length > 0) {
-  //     const file = shareIntent.files[0]; // assuming the first file is the image
-  //     const uri = file.path || file.contentUri; // Use either path (iOS) or contentUri (Android)
-  //     setImageUri(uri);
-  //     Alert.alert("Shared Image", `Image URI: ${uri}`);
-  //   } else if (!permissionsGranted) {
-  //     console.warn("Cannot process share intent without permissions.");
-  //   }
-  // }
+    // function handleShareIntent() {
+    //   if (permissionsGranted && hasShareIntent && shareIntent?.files?.length > 0) {
+    //     const file = shareIntent.files[0]; // assuming the first file is the image
+    //     const uri = file.path || file.contentUri; // Use either path (iOS) or contentUri (Android)
+    //     setImageUri(uri);
+    //     Alert.alert("Shared Image", `Image URI: ${uri}`);
+    //   } else if (!permissionsGranted) {
+    //     console.warn("Cannot process share intent without permissions.");
+    //   }
+    // }
 
-  requestPermissions();
-}, [hasShareIntent, shareIntent]);
+    requestPermissions();
+  }, [hasShareIntent, shareIntent]);
 
-
-
-
-  useEffect(() => {  
+  useEffect(() => {
     const fetchFonts = async () => {
       await loadFonts();
       setFontsLoaded(true);
     };
 
     fetchFonts();
-
-
-    
 
     const notificationSubscription =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -161,11 +153,9 @@ useEffect(() => {
           notification.request.content.title,
           notification.request.content.body
         );
-      }); 
+      });
     return () => notificationSubscription.remove();
   }, []);
-
- 
 
   const colorScheme = useColorScheme();
 
@@ -180,36 +170,33 @@ useEffect(() => {
 
   return (
     <ShareIntentProvider>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <AuthUserProvider>
-          <GlobalStyleProvider>
-            <UpcomingHelloesProvider>
-              <FriendListProvider>
-                <SelectedFriendProvider>
-                  <LocationsProvider>
-                    <PhoneStatusBar />
-                    <CapsuleListProvider>
-                      <HelloesProvider>
-                        <MessageContextProvider>
-                          <Layout />
-                        </MessageContextProvider>
-                      </HelloesProvider>
-                    </CapsuleListProvider>
-                  </LocationsProvider>
-                </SelectedFriendProvider>
-              </FriendListProvider>
-            </UpcomingHelloesProvider>
-          </GlobalStyleProvider>
-        </AuthUserProvider>
-      </QueryClientProvider>
-    </GestureHandlerRootView>
-    
-      
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <QueryClientProvider client={queryClient}>
+          <AuthUserProvider>
+            <GlobalStyleProvider>
+              <UpcomingHelloesProvider>
+                <FriendListProvider>
+                  <SelectedFriendProvider>
+                    <LocationsProvider>
+                      <PhoneStatusBar />
+                      <CapsuleListProvider>
+                        <HelloesProvider>
+                          <MessageContextProvider>
+                            <Layout />
+                          </MessageContextProvider>
+                        </HelloesProvider>
+                      </CapsuleListProvider>
+                    </LocationsProvider>
+                  </SelectedFriendProvider>
+                </FriendListProvider>
+              </UpcomingHelloesProvider>
+            </GlobalStyleProvider>
+          </AuthUserProvider>
+        </QueryClientProvider>
+      </GestureHandlerRootView>
     </ShareIntentProvider>
   );
 }
-
 
 // Linking setup for deep linking and share intents
 const PREFIX = Linking.createURL("/");
@@ -227,13 +214,13 @@ const linking = {
     PREFIX,
   ],
   screens: {
-    Welcome: 'first-screen',
-    hellofriend: 'home',
-    UserDetails: 'user-details',
-    FriendFocus: 'friend-settings',
-    Moments: 'moments',
-    Images: 'images',
-    Locations: 'locations',
+    Welcome: "first-screen",
+    hellofriend: "home",
+    UserDetails: "user-details",
+    FriendFocus: "friend-settings",
+    Moments: "moments",
+    Images: "images",
+    Locations: "locations",
     // Add other screens as needed
   },
   config: {
@@ -242,13 +229,13 @@ const linking = {
       Home: "home",
       ShareIntent: "shareintent",
     },
-  }, 
+  },
   getStateFromPath(path, config) {
     // REQUIRED FOR iOS FIRST LAUNCH
     if (path.includes(`dataUrl=${getShareExtensionKey()}`)) {
       // redirect to the ShareIntent Screen to handle data with the hook
       console.debug(
-        "react-navigation[getStateFromPath] redirect to ShareIntent screen",
+        "react-navigation[getStateFromPath] redirect to ShareIntent screen"
       );
       return {
         routes: [
@@ -267,9 +254,9 @@ const linking = {
         // REQUIRED FOR iOS WHEN APP IS IN BACKGROUND
         console.debug(
           "react-navigation[onReceiveURL] Redirect to ShareIntent Screen",
-          url,
+          url
         );
-        listener(`${getScheme()}://shareintent`);
+        listener(`${getScheme()}://home`);
       } else {
         console.debug("react-navigation[onReceiveURL] OPEN URL", url);
         listener(url);
@@ -281,12 +268,12 @@ const linking = {
         // REQUIRED FOR ANDROID WHEN APP IS IN BACKGROUND
         console.debug(
           "react-navigation[subscribe] shareIntentStateListener",
-          event.value,
+          event.value
         );
         if (event.value === "pending") {
-          listener(`${getScheme()}://shareintent`);
+          listener(`${getScheme()}://home`);
         }
-      },
+      }
     );
     const shareIntentValueSubscription = ShareIntentModule?.addListener(
       "onChange",
@@ -294,13 +281,13 @@ const linking = {
         // REQUIRED FOR IOS WHEN APP IS IN BACKGROUND
         console.debug(
           "react-navigation[subscribe] shareIntentValueListener",
-          event.value,
+          event.value
         );
         const url = await Linking.getInitialURL();
         if (url) {
           onReceiveURL({ url });
         }
-      },
+      }
     );
     const urlEventSubscription = Linking.addEventListener("url", onReceiveURL);
     return () => {
@@ -315,14 +302,14 @@ const linking = {
     console.debug("react-navigation[getInitialURL] ?");
     // REQUIRED FOR ANDROID FIRST LAUNCH
     const needRedirect = ShareIntentModule?.hasShareIntent(
-      getShareExtensionKey(),
+      getShareExtensionKey()
     );
     console.debug(
       "react-navigation[getInitialURL] redirect to ShareIntent screen:",
-      needRedirect,
+      needRedirect
     );
     if (needRedirect) {
-      return `${Constants.expoConfig?.scheme}://shareintent`;
+      return `${Constants.expoConfig?.scheme}://home`;
     }
     // As a fallback, do the default deep link handling
     const url = await Linking.getLinkingURL();
@@ -330,23 +317,12 @@ const linking = {
   },
 };
 
-export const Layout = () => { 
-  const { themeStyles} = useGlobalStyle();
+export const Layout = () => {
+  const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser();
-
-
-  // useEffect(() => {
-  //   if (incomingFileUri) {
-  //     setIncomingFile(incomingFileUri);
-  //   }
-
-
-  // }, [incomingFileUri]);
-
+ 
   return (
-    <NavigationContainer
-    ref={navigationRef}
-    linking={linking}>
+    <NavigationContainer ref={navigationRef} linking={linking}>
       <ResultMessage />
 
       <TopLevelNavigationHandler>
@@ -372,8 +348,8 @@ export const Layout = () => {
                     headerShown: true,
                     header: () => <HellofriendHeader />,
                   }}
-                  />
-                  <Stack.Screen
+                />
+                <Stack.Screen
                   name="UserDetails"
                   component={ScreenUserDetails}
                   options={{
@@ -523,7 +499,11 @@ export const Layout = () => {
                   options={{
                     headerShown: true,
                     header: () => (
-                      <HeaderBase headerTitle="Upload" navigateTo="Images" icon="image" />
+                      <HeaderBase
+                        headerTitle="Upload"
+                        navigateTo="Images"
+                        icon="image"
+                      />
                     ),
                   }}
                 />
@@ -561,14 +541,14 @@ export const Layout = () => {
             )
           ) : (
             <>
-<Stack.Screen
-  name="Welcome"
-  component={ScreenWelcome}
-  options={{
-    headerShown: false,
-    header: () => <HeaderBlank />,
-  }}
-               />
+              <Stack.Screen
+                name="Welcome"
+                component={ScreenWelcome}
+                options={{
+                  headerShown: false,
+                  header: () => <HeaderBlank />,
+                }}
+              />
 
               <Stack.Screen
                 name="Auth"
@@ -578,7 +558,7 @@ export const Layout = () => {
                   header: () => <HeaderBlank />,
                 }}
               />
-                            <Stack.Screen
+              <Stack.Screen
                 name="RecoverCredentials"
                 component={ScreenRecoverCredentials}
                 options={{

@@ -86,7 +86,7 @@ const ScreenHome = ({ navigation }) => {
     }
 
     if (hasShareIntent && shareIntent?.text?.length > 0) {
-      const sharedText = shareIntent.text;
+      const sharedText = shareIntent.text.replace(/^["']|["']$/g, "");
       if (sharedText) {
         //showMessage(true, null, `Shared text exists! Text: ${sharedText}`);
 
