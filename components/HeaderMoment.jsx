@@ -13,7 +13,7 @@ import LeavesSingleStemOutlineSvg from "../assets/svgs/leaves-single-stem-outlin
 import LeafSingleOutlineThickerSvg from "../assets/svgs/leaf-single-outline-thicker.svg";
 
 
-const HeaderMoment = ({ title = "ADD MOMENT", writeView = false }) => {
+const HeaderMoment = ({ title = "WRITE MOMENT", writeView = false }) => {
   const { themeStyles } = useGlobalStyle();
   const { loadingNewFriend, selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
@@ -92,8 +92,7 @@ const HeaderMoment = ({ title = "ADD MOMENT", writeView = false }) => {
 </View>
 <View
               style={{
-                flexDirection: "row",
-                //flexShrink: 1,
+                flexDirection: "row", 
                 justifyContent: "flex-end",
                 alignContent: "center",
                 alignItems: "center",
@@ -109,8 +108,8 @@ const HeaderMoment = ({ title = "ADD MOMENT", writeView = false }) => {
                 )}
                 {writeView && (
                   <LeafSingleOutlineThickerSvg
-                    height={36}
-                    width={36}
+                    height={30}
+                    width={30}
                     color={themeAheadOfLoading.fontColorSecondary}
                   />
                 )}
@@ -131,7 +130,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "space-between",
-    height: 110,
+    height: 110, 
   },
   headerTextContainer: {
     flexDirection: 'row',

@@ -15,8 +15,15 @@ import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCapsuleList } from "../context/CapsuleListContext";
 
+
+import { useNavigation } from "@react-navigation/native";
+
 import FormatMonthDay from "../components/FormatMonthDay";
 
+
+import BodyStyling from "../components/BodyStyling"; 
+
+import EditPencilOutlineSvg from "../assets/svgs/edit-pencil-outline.svg";
 
 
 
@@ -30,7 +37,9 @@ const MomentView = ({
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const { height: screenHeight } = Dimensions.get("window");
+  const navigation = useNavigation();
     const { updateCapsule } = useCapsuleList();
+
 
   //useEffect(() => {
   //if (momentData) {
@@ -48,6 +57,19 @@ const MomentView = ({
       .map((word) => word.toUpperCase())
       .concat(words.slice(5));
     return capitalizedWords.join(" ");
+  };
+
+  const handleEditMoment = () => {
+    if (momentData) {
+      toggleModal();
+      setTimeout(() => {
+        navigation.navigate('MomentFocus', {
+          momentText: momentData?.capsule || null,
+          updateExistingMoment: true,
+          existingMomentObject: momentData || null,
+        });
+      }, 300); // delay is necessary to prevent modal animation from interfering with AutoFocus in TextMomentBox on Moment Focus screen
+    }
   };
 
   const saveToHello = async () => {
@@ -95,21 +117,19 @@ const MomentView = ({
               onSliderPull={onSliderPull}
               headerTitle={"VIEW MOMENT"}
             />
-            <View
-              style={[
-                styles.innerContainer,
-                themeStyles.genericTextBackground,
-                {
-                  paddingHorizontal: 0,
-                  borderColor: themeAheadOfLoading.lightColor,
-                },
-              ]}
-            >
+      <BodyStyling
+        height={"100%"}
+        width={"101%"} 
+        paddingTop={"6%"}
+        paddingHorizontal={"6%"}
+        children={
+              <>
               <View style={[styles.container]}>
                 {momentData && momentData.typedCategory && (
                   <View style={styles.iconAndMomentContainer}>
                     <View style={styles.categoryHeader}>
-                      <View style={{ flexDirection: "row", width: "100%" }}>
+                      <View style={{ opacity: .8, flexDirection: "row", width: "100%", alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                         <Text
                           style={[styles.categoryText, themeStyles.genericText]}
                         >
@@ -124,12 +144,19 @@ const MomentView = ({
                           fontFamily={"Poppins-Regular"}
                           parentStyle={[styles.categoryText, themeStyles.genericText]}
                         />
+                        
+                        </View> 
+                                       <EditPencilOutlineSvg
+                                          height={20}
+                                          width={20}
+                                          onPress={handleEditMoment}
+                                          color={themeStyles.genericText.color}
+                                        /> 
                       </View>
                     </View> 
                       <ScrollView
                         contentContainerStyle={[
-                          styles.textWrapper,
-                          { paddingTop: '3%', paddingHorizontal: '2%', paddingBottom: 160 },
+                          styles.textWrapper
                         ]}
                          style={{width: '100%'  }}
                       >
@@ -145,10 +172,12 @@ const MomentView = ({
                   </View>
                 )}
               </View>
+              </>
+  }
+  />
 
 
-            </View>
-          </View>
+            </View> 
           <View
                 style={{
                   position: "absolute",
@@ -180,15 +209,7 @@ const styles = StyleSheet.create({
     zIndex: 1, 
   },
   container: {
-    borderRadius: 30,
-    width: "100%",
-
-    paddingHorizontal: "5%",
-    paddingTop: "5%",
-    paddingBottom: "5%",
-    flexDirection: "column",
-    borderWidth: StyleSheet.hairlineWidth,
-    overflow: "hidden",
+    backgroundColor: "transparent",
   },
   iconAndMomentContainer: {
     flexDirection: "column",
@@ -212,32 +233,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "column",
     flex: 1,
-  },
-  innerContainer: {
-    height: '90%', //440
-    width: '100%',
-    alignContent: "center",
-    paddingHorizontal: "4%",
-    paddingTop: "4%",
-    width: "101%",
-    alignSelf: "center",
-    borderWidth: 1,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderRadius: 30,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    overflow: "hidden",
-    zIndex: 2000,
-  },
-  momentContainer: {
-    width: "100%",
-    overflow: "hidden",
-    flexDirection: "column",
-    flex: 1,
-    padding: "5%",
-    paddingHorizontal: "2%", 
-  },
+  },  
   momentText: {
     //fontFamily: 'Poppins-Regular',
    
@@ -255,6 +251,9 @@ const styles = StyleSheet.create({
     
     // justifyContent: 'center',
     width: "100%", 
+    paddingTop: '3%', 
+    paddingHorizontal: '0%', 
+    paddingBottom: 160 
      
   },
   categoryText: {

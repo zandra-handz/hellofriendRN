@@ -9,8 +9,7 @@
 import React, { useLayoutEffect, useState } from "react";
 import {
   View,
-  Text,
-  TouchableOpacity,
+  Text, 
   ScrollView,
   StyleSheet,
 } from "react-native";

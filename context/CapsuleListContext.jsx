@@ -196,6 +196,52 @@ export const CapsuleListProvider = ({ children }) => {
     },
   });
 
+
+  const handleEditMoment = (capsuleId, capsuleEditData) => {
+    console.log(`${capsuleId} ${capsuleEditData}`);
+    editMomentMutation.mutate({capsuleId, capsuleEditData});
+  }
+
+  const editMomentMutation = useMutation({
+    mutationFn: ({capsuleId, capsuleEditData}) => 
+      updateMomentAPI(selectedFriend?.id, capsuleId, capsuleEditData),
+
+    onSuccess: (data) => {
+
+      queryClient.invalidateQueries(["Moments", selectedFriend?.id]);
+      queryClient.refetchQueries(["Moments", selectedFriend?.id]);
+ 
+    //   queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
+    //     return oldMoments
+    //       ? oldMoments.map((moment) =>
+    //           moment.id === updatedMoment.id ? updatedMoment : moment
+    //         )
+    //       : [];
+    //   });
+    },
+    onError: (error) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        editMomentMutation.reset();
+      }, 2000);
+
+      //  console.error('Error updating capsule:', error);
+    },
+    onSettled: () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        editMomentMutation.reset();
+      }, 2000);
+
+    }
+  });
+
   const updateCacheWithNewPreAdded = () => {
     if (momentData) {
       queryClient.setQueryData(
@@ -226,6 +272,38 @@ export const CapsuleListProvider = ({ children }) => {
       );
     }
   };
+
+  const updateCacheWithEditedMoment = () => {
+    if (momentData) {
+      queryClient.setQueryData(
+        ["Moments", selectedFriend?.id],
+        (oldMoments) => {
+          if (!oldMoments) return [momentData];
+
+          const updatedMoments = [...oldMoments];
+          const momentIndex = oldMoments.findIndex(
+            (moment) => moment.id === momentData.id
+          );
+          if (momentIndex !== -1) {
+            updatedMoments[momentIndex] = {
+              ...updatedMoments[momentIndex],
+              ...momentData,
+              //preAdded: true,
+            };
+          } else {
+            updatedMoments.unshift(momentData); // Add new moment if it doesn't exist
+          }
+
+          setMomentData(null);
+
+          updateCapsuleMutation.reset();
+
+          return updatedMoments;
+        }
+      );
+    }
+  };
+
 
   const updateCapsule = (capsuleId) => updateCapsuleMutation.mutate(capsuleId);
 
@@ -427,6 +505,9 @@ export const CapsuleListProvider = ({ children }) => {
         closeResultMessage,
         updateCapsule,
         updateCapsuleMutation,
+        handleEditMoment,
+        editMomentMutation,
+        updateCacheWithEditedMoment,
         sortByCategory,
         sortNewestFirst,
         momentIdToAnimate,

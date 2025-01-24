@@ -1,56 +1,52 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  useLayoutEffect,
-} from "react";
-import {
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { View, StyleSheet, Keyboard, Dimensions } from "react-native";
 
-import { LinearGradient } from "expo-linear-gradient";
 import { useAuthUser } from "../context/AuthUserContext";
 import { useFriendList } from "../context/FriendListContext";
 import { useCapsuleList } from "../context/CapsuleListContext";
-import { useGlobalStyle } from "../context/GlobalStyleContext"; 
+import { useGlobalStyle } from "../context/GlobalStyleContext";
 import ButtonBaseSpecialSave from "./ButtonBaseSpecialSave";
 
-import SimpleDisplayCard from '../components/SimpleDisplayCard';
+import SimpleDisplayCard from "../components/SimpleDisplayCard";
 
 import TextMomentBox from "../components/TextMomentBox";
 
 import { useNavigation } from "@react-navigation/native";
 
 import { useSelectedFriend } from "../context/SelectedFriendContext";
+import { LinearGradient } from "expo-linear-gradient";
 
 import FriendSelectModalVersionButtonOnly from "../components/FriendSelectModalVersionButtonOnly";
 
 import CardCategoriesAsButtons from "../components/CardCategoriesAsButtons";
 
-const ContentMomentFocus = ({ momentText }) => {
-  const { selectedFriend } =
-    useSelectedFriend();
-  const { handleCreateMoment, createMomentMutation } = useCapsuleList(); // NEED THIS TO ADD NEW
+import BodyStyling from "../components/BodyStyling";
+import BelowHeaderContainer from "../components/BelowHeaderContainer";
+
+const ContentMomentFocus = ({
+  momentText,
+  updateExistingMoment,
+  existingMomentObject,
+}) => {
+  const { selectedFriend } = useSelectedFriend();
+  const {
+    handleCreateMoment,
+    createMomentMutation,
+    handleEditMoment,
+    editMomentMutation,
+  } = useCapsuleList(); // NEED THIS TO ADD NEW
   const { authUserState } = useAuthUser();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
 
   const { width, height } = Dimensions.get("window");
- 
-  const oneEighthHeight = height / 8; 
+
+  const oneEighthHeight = height / 8;
   const oneHalfHeight = height / 2; //notes when keyboard is up
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
- 
+
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -74,29 +70,25 @@ const ContentMomentFocus = ({ momentText }) => {
     };
   }, []);
 
-
   useEffect(() => {
     if (momentText) {
       updateMomentText(momentText);
       setShowCategoriesSlider(true);
-
     }
-    
   }, [momentText]);
 
   const updateMomentText = (text) => {
     if (momentTextRef && momentTextRef.current) {
       const textLengthPrev = momentTextRef.current.getText().length;
       if (textLengthPrev === 0) {
-        if ((text.length - textLengthPrev) > 1) {  //this is here to check if something is copy-pasted in or shared in
+        if (text.length - textLengthPrev > 1) {
+          //this is here to check if something is copy-pasted in or shared in
           setShowCategoriesSlider(true);
-
-        } 
+        }
       }
 
-      
       momentTextRef.current.setText(text);
-     // console.log("in parent", momentTextRef.current.getText().length);
+      // console.log("in parent", momentTextRef.current.getText().length);
     }
     if (text.length < 1) {
       setShowCategoriesSlider(false);
@@ -107,21 +99,39 @@ const ContentMomentFocus = ({ momentText }) => {
     }
   };
 
+  useEffect(() => {
+    if (updateExistingMoment && existingMomentObject) {
+      console.log(existingMomentObject);
+      setSelectedCategory(existingMomentObject.typedCategory);
+    }
+  }, [updateExistingMoment, existingMomentObject]);
+
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-  }; 
+  };
 
   const handleSave = async () => {
     try {
       if (selectedFriend) {
-        const requestData = {
-          user: authUserState.user.id,
-          friend: selectedFriend.id,
-          selectedCategory: selectedCategory,
-          moment: momentTextRef.current.getText(),
-        };
+        if (!updateExistingMoment) {
+          const requestData = {
+            user: authUserState.user.id,
+            friend: selectedFriend.id,
+            selectedCategory: selectedCategory,
+            moment: momentTextRef.current.getText(),
+          };
 
-        await handleCreateMoment(requestData);
+          await handleCreateMoment(requestData);
+        } else {
+          console.log("attempting to save edits");
+
+          const editData = {
+            typed_category: selectedCategory,
+            capsule: momentTextRef.current.getText(),
+          };
+
+          await handleEditMoment(existingMomentObject?.id, editData);
+        }
       }
     } catch (error) {
       console.log("catching errors elsewhere, not sure i need this", error);
@@ -136,14 +146,16 @@ const ContentMomentFocus = ({ momentText }) => {
     }
   }, [createMomentMutation.isSuccess]);
 
+  useEffect(() => {
+    if (editMomentMutation.isSuccess) {
+      //resetTextInput();
+      //setSelectedCategory('');
+      navigation.goBack();
+    }
+  }, [editMomentMutation.isSuccess]);
+
   return (
-    <LinearGradient
-      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={[styles.container]}
-    >
-      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+    <View style={styles.container}> 
       <View
         style={{
           width: "100%",
@@ -152,61 +164,54 @@ const ContentMomentFocus = ({ momentText }) => {
           justifyContent: "space-between",
         }}
       >
-        <View style={[styles.selectFriendContainer, { marginBottom: "2%" }]}>
+        {!updateExistingMoment && (
+          
+              <BelowHeaderContainer
+        height={30}
+        alignItems="center"
+        marginBottom="2%" //default is currently set to 2
+        justifyContent="flex-end"
+        children={
           <FriendSelectModalVersionButtonOnly
-            includeLabel={true}
+            includeLabel={false}
             width="100%"
           />
-        </View>
-        <View
-          style={[
-            styles.innerContainer,
-            themeStyles.genericTextBackground,
-            { borderColor: themeAheadOfLoading.lightColor },
-          ]}
-        >
-          <View style={styles.paddingForElements}>
+          
+        
+        }
+        />
+        
+      )}
+              <BodyStyling
+        height={"100%"}
+        width={"101%"} 
+        paddingTop={"0%"}
+        paddingHorizontal={"0%"} //padding is in inner element in this case because it is a different color
+        children={
+          <View style={{flex: 1, flexDirection: 'column'}}>
             <TextMomentBox
               width={"100%"}
               height={!isKeyboardVisible ? oneHalfHeight : "100%"}
               ref={momentTextRef}
-              title={"Write new moment"}
+              title={updateExistingMoment ? "Edit moment" : "Write new moment"}
               onTextChange={updateMomentText}
               multiline={true}
             />
 
-<View style={[ { height: oneEighthHeight, marginTop: '4%' }]}>
+            <View style={[{ height: oneEighthHeight, marginTop: "4%" }]}>
+              <SimpleDisplayCard value={selectedCategory} />
+            </View> 
 
 
-<SimpleDisplayCard value={selectedCategory}/>
-</View> 
-          </View>
 
-          {!isKeyboardVisible && (
-            <ButtonBaseSpecialSave
-              label="SAVE MOMENT "
-              maxHeight={80}
-              onPress={handleSave}
-              isDisabled={!selectedCategory}
-              fontFamily={"Poppins-Bold"}
-              image={require("../assets/shapes/redheadcoffee.png")}
-            />
-          )}
-        </View>
-      </View>
-
-      {/* </TouchableWithoutFeedback>  */}
-
-      {!isKeyboardVisible && (
-        <ButtonBaseSpecialSave
-          label="SAVE MOMENT "
-          maxHeight={80}
-          onPress={handleSave}
-          isDisabled={!selectedCategory}
-          fontFamily={"Poppins-Bold"}
-          image={require("../assets/shapes/redheadcoffee.png")}
+         </View>
+        }
         />
-      )}
+        
+      </View>
+      
+ 
+ 
 
       {isKeyboardVisible && showCategoriesSlider && selectedFriend && (
         <View
@@ -222,13 +227,27 @@ const ContentMomentFocus = ({ momentText }) => {
           <View style={[styles.buttonContainer, { height: categoriesHeight }]}>
             <CardCategoriesAsButtons
               onCategorySelect={handleCategorySelect}
+              updateExistingMoment={updateExistingMoment}
+              existingCategory={existingMomentObject?.typedCategory || null}
               momentTextForDisplay={momentTextRef.current.getText()}
               onParentSave={handleSave}
             />
           </View>
         </View>
       )}
-    </LinearGradient>
+                  {!isKeyboardVisible && (
+                    <View style={{position: 'absolute', bottom: -10}}>
+            <ButtonBaseSpecialSave
+              label="SAVE MOMENT "
+              maxHeight={70}
+              onPress={handleSave}
+              isDisabled={!selectedCategory}
+              fontFamily={"Poppins-Bold"}
+              image={require("../assets/shapes/redheadcoffee.png")}
+            />
+            </View>
+          )} 
+    </View>
   );
 };
 
@@ -239,22 +258,7 @@ const styles = StyleSheet.create({
     //flexDirection: "column",
     justifyContent: "space-between",
     //top: 0,
-  },
-  innerContainer: {
-    height: "96%",
-    alignContent: "center",
-    //paddingHorizontal: "4%",
-    //paddingTop: "6%",
-    width: "101%",
-    alignSelf: "center",
-    borderWidth: 1,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderRadius: 30,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    // zIndex: 2000,
-  },
+  }, 
   loadingWrapper: {
     flex: 1,
     justifyContent: "center",
@@ -315,7 +319,7 @@ const styles = StyleSheet.create({
     height: "auto",
   },
   buttonContainer: {
-   // height: "22%",
+    // height: "22%",
     zIndex: 6000,
     elevation: 6000,
 

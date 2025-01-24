@@ -28,6 +28,8 @@ import ArrowLeftCircleOutline from "../assets/svgs/arrow-left-circle-outline.svg
 
 const CardCategoriesAsButtons = ({
   onCategorySelect,
+  updateExistingMoment,
+  existingCategory,
   momentTextForDisplay,
   onParentSave,
   showAllCategories = false,
@@ -133,13 +135,20 @@ const CardCategoriesAsButtons = ({
   };
 
   useEffect(() => {
-    if (categoryCount > 0) {
-      const mostCapsulesCategory = getMostCapsulesCategory();
-      if (mostCapsulesCategory) {
-        setSelectedCategory(mostCapsulesCategory);
+    if (updateExistingMoment && existingCategory) {
+      setSelectedCategory(existingCategory);
+
+    } else {
+      if (categoryCount > 0) {
+        const mostCapsulesCategory = getMostCapsulesCategory();
+        console.log(mostCapsulesCategory);
+        if (mostCapsulesCategory) {
+          setSelectedCategory(mostCapsulesCategory);
+        }
       }
-    }
-  }, [capsuleList, categoryCount, categoryNames]);
+    
+  }
+  }, [capsuleList, categoryCount, categoryNames, updateExistingMoment, existingCategory]);
 
   useEffect(() => {
     if (onCategorySelect) {
@@ -301,6 +310,7 @@ const CardCategoriesAsButtons = ({
                       >
                         <ButtonBottomActionBaseSmallLongPress
                           height={"80%"}
+                          buttonPrefix={updateExistingMoment && existingCategory ? 'Save to' : 'Add to'}
                           onPress={() => handlePressOut(item)} // Correct way to pass the function
                           onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
                           label={item}

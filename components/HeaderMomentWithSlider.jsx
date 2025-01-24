@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 import ArrowLeftCircleOutline from "../assets/svgs/arrow-left-circle-outline.svg";
@@ -12,37 +18,27 @@ import LeavesTwoFallingOutlineThickerSvg from "../assets/svgs/leaves-two-falling
 import LeavesSingleStemOutlineSvg from "../assets/svgs/leaves-single-stem-outline.svg";
 import LeafSingleOutlineThickerSvg from "../assets/svgs/leaf-single-outline-thicker.svg";
 
-import SlideToDeleteHeader from '../components/SlideToDeleteHeader';
+import SlideToDeleteHeader from "../components/SlideToDeleteHeader";
 
 import TrashOutlineSvg from "../assets/svgs/trash-outline.svg";
-
 
 //positioning doesn't entirely match HeaderMoments, may see issues on other screens/platforms
 //but this is an improvement over HeaderBaseItemView
 
-const HeaderMomentWithSlider = ({     itemData,
-    
-    onBackPress,
-    onMenuPress,
-    onSliderPull,
-    headerTitle='Header title here' }) => {
+const HeaderMomentWithSlider = ({
+  itemData,
 
-
-    const { width, height } = Dimensions.get('window'); 
+  onBackPress, 
+  onSliderPull,
+  headerTitle = "Header title here",
+}) => {
+  const { width, height } = Dimensions.get("window");
 
   const { themeStyles } = useGlobalStyle();
   const { loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
-  const navigation = useNavigation();
+  const { themeAheadOfLoading } = useFriendList(); 
 
-  const handleNavigateBack = () => {
-    navigation.goBack();
-  };
-
-  const handleNavigateToAllMoments = () => {
-    navigation.navigate("Moments");
-  };
-
+ 
   return (
     <>
       <LinearGradient
@@ -67,63 +63,80 @@ const HeaderMomentWithSlider = ({     itemData,
           </View>
         )}
         {!loadingNewFriend && (
-          <View style={{flexDirection: 'column', height: '100%', paddingHorizontal: '4%', justifyContent: 'space-between'}}>
-          <View style={{ flexDirection: 'row', width: width - 18, alignItems: 'center', alignContent: 'center', justifyContent: 'space-between'}}>
+          <View
+            style={{
+              flexDirection: "column",
+              height: "100%",
+              paddingHorizontal: "4%",
+              justifyContent: "space-between",
+            }}
+          >
             <View
               style={{
                 flexDirection: "row",
-                width: "50%", 
-                justifyContent: "flex-start",
-                alignContent: "center",
+                width: width - 18,
                 alignItems: "center",
+                alignContent: "center",
+                justifyContent: "space-between",
               }}
             >
-              <TouchableOpacity onPress={onBackPress}>
-                <ArrowLeftCircleOutline
-                  height={30}
-                  width={30}
-                  color={themeAheadOfLoading.fontColor}
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "50%",
+                  justifyContent: "flex-start",
+                  alignContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <TouchableOpacity onPress={onBackPress}>
+                  <ArrowLeftCircleOutline
+                    height={30}
+                    width={30}
+                    color={themeAheadOfLoading.fontColor}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "50%",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Text
+                  style={[
+                    styles.headerText,
+                    themeStyles.headerText,
+                    {
+                      color: themeAheadOfLoading.fontColorSecondary,
+                    },
+                  ]}
+                >
+                  {headerTitle}
+                </Text>
+                {/* <TouchableOpacity onPress={handleNavigateToAllMoments}> */}
+
+                <LeafSingleOutlineThickerSvg
+                  height={36}
+                  width={36}
+                  color={themeAheadOfLoading.fontColorSecondary}
+                  style={{ paddingHorizontal: 22 }}
                 />
-              </TouchableOpacity>
+                {/* </TouchableOpacity> */}
+              </View>
             </View>
-
-            <View style={{flexDirection: 'row', width: '50%', alignItems: 'center', justifyContent: 'flex-end'}}>
-            
-            <Text
-              style={[
-                styles.headerText,
-                themeStyles.headerText,
-                {
-                  color: themeAheadOfLoading.fontColorSecondary, 
-                },
-              ]}
-            >
-              {headerTitle}
-            </Text> 
-              {/* <TouchableOpacity onPress={handleNavigateToAllMoments}> */}
-                 
-                  <LeafSingleOutlineThickerSvg
-                    height={36}
-                    width={36}
-                    color={themeAheadOfLoading.fontColorSecondary}
-                    style={{paddingHorizontal: 22 }}
-
-                  /> 
-              {/* </TouchableOpacity> */}
-            </View>
-            
-            
-          </View>
             <View style={styles.sliderContainer}>
-          <SlideToDeleteHeader
-            itemToDelete={itemData}
-            onPress={onSliderPull}
-            sliderWidth={"100%"}
-            targetIcon={TrashOutlineSvg}
-          />
-        </View>
+              <SlideToDeleteHeader
+                itemToDelete={itemData}
+                onPress={onSliderPull}
+                sliderWidth={"100%"}
+                targetIcon={TrashOutlineSvg}
+              />
+            </View>
           </View>
-          
         )}
       </LinearGradient>
     </>
@@ -131,22 +144,20 @@ const HeaderMomentWithSlider = ({     itemData,
 };
 
 const styles = StyleSheet.create({
-    headerContainer: { 
-        padding: '3%',
-        paddingTop: '1%',
-        paddingHorizontal: '3%',
-        alignItems: "center",
-        //justifyContent: "space-between",
-        height: 80, 
-        flexDirection: 'column',
-        justifyContent: 'flex-start', 
-        paddingBottom: '1%',
-        
-      }, 
-  headerText: { 
-    fontSize: 20, 
+  headerContainer: {
+    padding: "3%",
+    paddingTop: "1%",
+    paddingHorizontal: "3%",
+    alignItems: "center",
+    //justifyContent: "space-between",
+    height: 90,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    paddingBottom: "1%",
+  },
+  headerText: {
+    fontSize: 20,
     fontFamily: "Poppins-Regular",
-   
   },
   usernameText: {
     fontSize: 14,
@@ -158,13 +169,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-    sliderContainer: {
+  sliderContainer: {
     //position: "absolute",
     bottom: 0,
     left: -4,
     right: 0,
-    zIndex: 3,
-    height: 28, 
+    zIndex: 3, 
+    height: 28,
     width: "100%",
   },
 });

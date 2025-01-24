@@ -1,33 +1,40 @@
- 
+import React from "react";
+import { StyleSheet } from "react-native"; 
+import { useFriendList } from "../context/FriendListContext";
+import { useRoute } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
-import React from 'react';
-import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext'; 
-import { useRoute } from '@react-navigation/native'; 
+import ContentMomentFocus from "../components/ContentMomentFocus";
 
-import ContentMomentFocus from '../components/ContentMomentFocus';
- 
-const ScreenMomentFocus = ( ) => { 
-        const route = useRoute();
-        const momentText = route.params?.momentText ?? null;  
+const ScreenMomentFocus = () => {
+  const route = useRoute();
+  const momentText = route.params?.momentText ?? null;
+  const updateExistingMoment = route.params?.updateExistingMoment ?? false;
+  const existingMomentObject = route.params?.existingMomentObject ?? null;
+  const { themeAheadOfLoading } = useFriendList();
 
-    const { themeStyles } = useGlobalStyle(); 
-
-
-     
-    return (
-        <View style={[styles.container, themeStyles.container]}> 
-            <ContentMomentFocus momentText={momentText || null} />
-        </View>
-    );
+  return (
+    <LinearGradient
+      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={[styles.container]}
+    >
+      <ContentMomentFocus
+        momentText={momentText || null}
+        updateExistingMoment={updateExistingMoment}
+        existingMomentObject={existingMomentObject}
+      />
+    </LinearGradient>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1, 
-        padding: 0,
-        paddingBottom: 0,
-    }, 
+  container: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "space-between",
+  },
 });
 
 export default ScreenMomentFocus;

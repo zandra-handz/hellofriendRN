@@ -829,6 +829,7 @@ export const deleteMomentAPI = async (data) => {
 };
 
 export const updateMomentAPI = async (friendId, capsuleId, capsuleData) => {
+    console.log(`data in updateMomentApi ${capsuleId}, ${capsuleData}`);
     try {
         const response = await axios.patch(`/friends/${friendId}/thoughtcapsule/${capsuleId}/`, capsuleData);
         return response.data;

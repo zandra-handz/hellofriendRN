@@ -12,8 +12,7 @@ import * as Sharing from "expo-sharing";
 import AlertConfirm from "../components/AlertConfirm";
 
 import { LinearGradient } from "expo-linear-gradient";
-
-import HeaderBaseItemView from "../components/HeaderBaseItemView";
+ 
 import HeaderImageWithSlider from "../components/HeaderImageWithSlider";
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 

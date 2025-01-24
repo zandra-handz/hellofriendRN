@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     lineHeight: 21,
+    fontFamily: 'Poppins-Regular',
     textTransform: "uppercase",
   },
   button: {

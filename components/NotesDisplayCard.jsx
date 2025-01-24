@@ -5,8 +5,7 @@ import { useGlobalStyle } from "../context/GlobalStyleContext";
 
 
 
-import NotesOutlineSvg from "../assets/svgs/notes-outline.svg";
-import NotesSolidSvg from "../assets/svgs/notes-solid.svg";
+import NotesOutlineSvg from "../assets/svgs/notes-outline.svg"; 
 
 
 const NotesDisplayCard = ({

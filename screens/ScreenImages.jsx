@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+import { View, Text, StyleSheet, ScrollView } from 'react-native'; 
 import { useFriendList } from "../context/FriendListContext";
 import ImageMenuButton from '../components/ImageMenuButton'; 
 import useImageFunctions from '../hooks/useImageFunctions';
@@ -10,8 +9,7 @@ import ImagesList from '../components/ImagesList';
 import { LinearGradient } from "expo-linear-gradient";
 
 const ScreenImages = ({ route, navigation }) => {
-    const { imageList } = useImageFunctions();
-    const { themeStyles } = useGlobalStyle();
+    const { imageList } = useImageFunctions(); 
       const { themeAheadOfLoading } = useFriendList();
     //const [isImageListReady, setIsImageListReady] = useState(false);
 
@@ -50,10 +48,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "space-between",
     },
-
-    mainContainer: {
-        flex: 1,
-    },   
+ 
 });
 
 export default ScreenImages;

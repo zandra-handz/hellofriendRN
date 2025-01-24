@@ -11,7 +11,7 @@ import ButtonSelectFriend from '../components/ButtonSelectFriend';
 
 import { Dimensions } from 'react-native';
 
-const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal, includeLabel=false, iconSize=26, width = '60%' }) => {  
+const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal, includeLabel=false, iconSize=22, width = '60%' }) => {  
   
   const { themeStyles } = useGlobalStyle();
   const globalStyles = useGlobalStyle();  
@@ -96,7 +96,7 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal,
           <LoadingPage
             loading={loadingNewFriend} 
             spinnerType='flow'
-            spinnerSize={60}
+            spinnerSize={36}
             color={themeAheadOfLoading.darkColor}
             includeLabel={false} 
           />
@@ -112,8 +112,18 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal,
         </Text>
         )}
 
+{!loadingNewFriend && !includeLabel && ( 
+        <Text
+          style={[styles.displaySelected, {color: themeAheadOfLoading.fontColorSecondary}]}
+          numberOfLines={1}  
+          ellipsizeMode='tail'  
+        >
+          {friendLoaded && `Switch friend: ` || 'Which friend is this for?'}
+        </Text>
+        )}
+
         </View>
-        <View style={[styles.selectorButtonContainer, {paddingHorizontal: '2%'}]}>
+        <View style={[styles.selectorButtonContainer]}>
           <TouchableOpacity
             onPress={openModal}
             accessible={true}
@@ -186,7 +196,7 @@ const styles = StyleSheet.create({
     maxHeight: 40,
     justifyContent: 'flex-end',
     alignItems: 'center', 
-    padding: 2,
+    padding: 2, 
 
     borderRadius: 0, 
   },
@@ -198,10 +208,9 @@ const styles = StyleSheet.create({
     width: '100%',   
     flex: 1,
   },
-  displaySelected: {
-    color: 'black',
+  displaySelected: { 
     fontFamily: 'Poppins-Regular',
-    fontSize: 16,
+    fontSize: 15,
     zIndex: 2,
   },
   selectorButtonContainer: {

@@ -30,6 +30,8 @@ const TextMomentBox = forwardRef(
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
     const textInputRef = useRef();
 
+    
+
     useEffect(() => {
       if (textInputRef.current) {
         textInputRef.current.setNativeProps({ text: mountingText });
@@ -51,7 +53,7 @@ const TextMomentBox = forwardRef(
           setEditedMessage("");
         }
       },
-      getText: () => editedMessage,
+      getText: () => editedMessage, 
     }));
 
     useEffect(() => {
@@ -81,13 +83,13 @@ const TextMomentBox = forwardRef(
             alignItems: 'center',
           }}
         >
-          <View style={{flexDirection: 'row', height: '100%', alignItems: 'center'}}>
+          <View style={{flexDirection: 'row', opacity: .8, height: '100%', alignItems: 'center'}}>
           <Text style={[styles.title, themeStyles.genericText]}>
             {title}
           </Text>
           </View>
 
-          <EditPencilOutlineSvg height={30} width={30} color={iconColor} />
+          <EditPencilOutlineSvg height={24} width={24} color={iconColor} />
         </View>
         <View style={{ flex: 1 }}>
 
@@ -130,8 +132,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 15,
-    lineHeight: 21,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 16,
+
+    lineHeight: 23,
     textTransform: "uppercase",
   },
   helperText: {
@@ -146,6 +150,10 @@ const styles = StyleSheet.create({
     paddingBottom: 76,
   },
   textInput: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 15,
+
+    lineHeight: 24,
     textAlignVertical: "top",
     borderRadius: 20,
     paddingVertical: 10,

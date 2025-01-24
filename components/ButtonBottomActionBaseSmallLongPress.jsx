@@ -5,9 +5,11 @@ import { TouchableOpacity, Text } from 'react-native';
 import { useFriendList } from '../context/FriendListContext';
 
 const ButtonBottomActionBaseSmallLongPress = ({ 
+  
   onPress,
   onLongPress,
   label,
+  buttonPrefix='Add to',
   fontFamily='Poppins-Regular', 
   selected=false,
   width=100,
@@ -59,7 +61,7 @@ const ButtonBottomActionBaseSmallLongPress = ({
         numberOfLines={1}          
         ellipsizeMode="tail"      
       >
-        {selected ? `Add to #` : `#`}
+        {selected ? `${buttonPrefix} #` : `#`}
         {label}
         {selected ? `?` : null}
       </Text> 

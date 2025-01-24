@@ -5,8 +5,7 @@ import useImageFunctions from "../hooks/useImageFunctions";
 
 import ImagesNavigator from "../components/ImagesNavigator";
 
-import { FlashList } from "@shopify/flash-list";
-import { useGlobalStyle } from "../context/GlobalStyleContext";
+import { FlashList } from "@shopify/flash-list"; 
 import ImageCard from "../components/ImageCard";
 import MomentsSearchBar from "../components/MomentsSearchBar";
 
@@ -18,8 +17,7 @@ const windowWidth = Dimensions.get("window").width;
 const ImagesList = ({ width, height, containerWidth = "100%" }) => {
   const { imageList } = useImageFunctions();
   const [selectedImageToView, setSelectedImageToView] = useState(null);
-  const { themeAheadOfLoading } = useFriendList();
-  const { themeStyles } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendList(); 
 
   const [isImageNavVisible, setImageNavVisible] = useState(false);
 
