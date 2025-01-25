@@ -25,7 +25,7 @@ import DisplayHelloNotes from "../components/DisplayHelloNotes";
 
 import ButtonReuseMoments from "../components/ButtonReuseMoments";
 
-
+import PickerReloadSavedMoments from '../components/PickerReloadSavedMoments';
 import HeaderBaseItemViewTwoOptions from "../components/HeaderBaseItemViewTwoOptions";
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import HelloMomentsDisplayCard from "./HelloMomentsDisplayCard";
@@ -53,7 +53,7 @@ const HelloView = ({
   const { imageList, updateImage, deleteImage } = useImageFunctions();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
-  const [isOldModalVisible, setIsOldModalVisible] = useState(true);
+  const [isReloadModalVisible, setReloadModalVisible] = useState(false);
   const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] =
     useState(false);
 
@@ -72,21 +72,24 @@ const HelloView = ({
     }
   }, [helloData]);
 
-  const closeModal = () => {
-    setIsOldModalVisible(false);
-    setIsEditing(false);
-    onClose();
+  const onMomentSelect = (moments) => {
+    setMomentsSelected(moments);
+
   };
 
-  //const handleUpdate = async () => {
-  //try {
-  // updateImage(image.id, { title });
-  // setIsEditing(false);
-  // onClose();
-  // } catch (error) {
-  //   console.error('Error updating image:', error);
-  // }
-  // };
+
+  const toggleReloadModal = () => {
+    setReloadModalVisible(prev => !prev);
+
+  };
+
+
+  const openReloadModal = () => {
+    setReloadModalVisible(true);
+
+  };
+
+ 
 
   const toggleOldModal = () => {
     setConfirmDeleteModalVisible(!isConfirmDeleteModalVisible);
@@ -198,6 +201,14 @@ const HelloView = ({
                   />
                   </View>
                 )}
+                                {helloData && helloData.pastCapsules && helloData.pastCapsules.length > 0 && (
+                  <View style={{flex: 1, marginTop: '4%' }}>
+                  <PickerReloadSavedMoments
+                  onMomentSelect={onMomentSelect}
+                    savedMoments={helloData.pastCapsules} 
+                  />
+                  </View>
+                )}
 
                 {helloData && helloData.pastCapsules && helloData.pastCapsules.length > 0 && (
                   <View style={{flex: 1, marginTop: '4%' }}>
@@ -233,23 +244,7 @@ const HelloView = ({
         </>
       </Modal>
 
-      <AlertConfirm
-        fixedHeight={true}
-        height={330}
-        isModalVisible={isConfirmDeleteModalVisible}
-        questionText="Delete image?"
-        isFetching={isDeleting}
-        useSpinner={true}
-        headerContent={
-          <Text style={{ fontFamily: "Poppins-Bold", fontSize: 18 }}>
-            {imageList[currentIndex]?.title || "Image"}
-          </Text>
-        }
-        onConfirm={() => handleDelete()}
-        onCancel={toggleOldModal}
-        confirmText="Delete"
-        cancelText="Cancel"
-      />
+ 
     </>
   );
 };
