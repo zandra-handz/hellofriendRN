@@ -11,19 +11,11 @@ import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 
 import { LinearGradient } from "expo-linear-gradient";
-
-import AlertConfirm from "../components/AlertConfirm";
+ 
 
 import HelloViewTitleCard from "../components/HelloViewTitleCard";
 import NotesDisplayCard from "../components/NotesDisplayCard";
-
-import FormatMonthDay from "../components/FormatMonthDay";
-
-import PickerMultiMomentsArchived from "../components/PickerMultiMomentsArchived";
-import ViewMultiMomentsArchived from "../components/ViewMultiMomentsArchived";
-import DisplayHelloNotes from "../components/DisplayHelloNotes";
-
-import ButtonReuseMoments from "../components/ButtonReuseMoments";
+ 
 
 import PickerReloadSavedMoments from '../components/PickerReloadSavedMoments';
 import HeaderBaseItemViewTwoOptions from "../components/HeaderBaseItemViewTwoOptions";
