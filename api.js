@@ -832,6 +832,7 @@ export const updateMomentAPI = async (friendId, capsuleId, capsuleData) => {
     console.log(`data in updateMomentApi ${capsuleId}, ${capsuleData}`);
     try {
         const response = await axios.patch(`/friends/${friendId}/thoughtcapsule/${capsuleId}/`, capsuleData);
+        console.log(response.capsule);
         return response.data;
     } catch (error) {
         if (error.response) {

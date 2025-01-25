@@ -168,7 +168,7 @@ const TextMomentHomeScreenBox = forwardRef(
                 style={{
                   flexDirection: "row",
                   height: "100%",
-                  alignItems: "center",
+                  alignItems: "center", 
                   //marginBottom: "1%",
                 }}
               >
@@ -178,7 +178,7 @@ const TextMomentHomeScreenBox = forwardRef(
                   {new Date(authUserState?.user?.created_on).toDateString() ===
                   new Date().toDateString()
                     ? `Hi ${authUserState?.user?.username}!`
-                    : `Welcome back, ${authUserState?.user?.username}!`}
+                    : `Hi ${authUserState?.user?.username}!`}
                 </Text>
               </View>
             </View>
@@ -189,8 +189,7 @@ const TextMomentHomeScreenBox = forwardRef(
                 justifyContent: "space-between",
                 width: "100%",
                 height: "auto",
-                alignItems: "center",
-                marginTop: '1%',
+                alignItems: "center", 
               }}
             >
               <View
@@ -221,13 +220,14 @@ const TextMomentHomeScreenBox = forwardRef(
               )}
             </View>
             <>
-              <View style={{ flex: 1, marginTop: "1%" }}>
+              <View style={{ flex: 1, marginTop: "0%" }}>
                 {friendListLength && !editedMessage && (
                   <View style={{position: 'absolute', top: 0, left: 46, right: 0}}>
 
                   <Text style={[styles.helperText, themeStyles.genericText]}>
-                    Enter a note, anecdote, joke, or whatever else you
-                    would like to share with{" "}
+                    Add a new moment for{" "}
+                    {/* Enter a note, anecdote, joke, or whatever else you
+                    would like to share with{" "} */}
                     {selectedFriend ? (
                                 //   <View style={{
                                 //     backgroundColor: selectedFriend ? themeAheadOfLoading.lightColor : 'transparent',  // Circle color
@@ -248,18 +248,17 @@ const TextMomentHomeScreenBox = forwardRef(
                       // </View>
                     ) : (
                       <Text>your friend</Text>
-                    )}{" "}
-                    here
+                    )}?
                   </Text>
                   </View>
                 )}
                 {friendListLength > 0 && (
                   
                 <View style={{ flexDirection: "row", marginTop: "0%" }}>
-                  <View style={{ flexShrink: 1, marginRight: '2%', justifyContent: 'flex-start', width: "auto" }}>
+                  <View style={{ flexShrink: 1,justifyContent: 'flex-start', width: "auto" }}>
                     <LeafSingleOutlineThickerSvg
-                      height={36}
-                      width={36}
+                      height={26}
+                      width={26}
                       color={themeStyles.genericText.color}
                     />
                   </View>
@@ -300,14 +299,17 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignSelf: "center",
     paddingHorizontal: '4%',
-    paddingVertical: '3%',
+    paddingVertical: '0%',
+    //backgroundColor: 'gray',
+    padding: '2%',
+    marginBottom: '2%',
   },
   selectFriendContainer: {
     width: 40,
     justifyContent: "center",
     minHeight: 30,
     maxHeight: 30,
-    height: 30,
+    height: 30, 
   },
   welcomeHeaderText: {
     fontSize: 15,
@@ -316,7 +318,7 @@ const styles = StyleSheet.create({
     //textTransform: "uppercase",
   },
   title: {
-    fontSize: 20,
+    fontSize: 17,
     lineHeight: 32,
 
     fontFamily: "Poppins-Regular",

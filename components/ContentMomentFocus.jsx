@@ -49,6 +49,7 @@ const ContentMomentFocus = ({
 
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
+  
 
   const [showCategoriesSlider, setShowCategoriesSlider] = useState(false);
 
@@ -148,11 +149,22 @@ const ContentMomentFocus = ({
 
   useEffect(() => {
     if (editMomentMutation.isSuccess) {
-      //resetTextInput();
-      //setSelectedCategory('');
+      const responseData = editMomentMutation.data;  // Access the response data from the mutation
+  
+      // You can now use the responseData directly here
+      console.log('Response data from mutation:', responseData);
+  
+      // Example actions:
+      // resetTextInput();
+      // setSelectedCategory('');
       navigation.goBack();
+    //   if (responseData) {
+    //   navigation.navigate('MomentView', {moment: responseData});
+      
+        
+    // }
     }
-  }, [editMomentMutation.isSuccess]);
+  }, [editMomentMutation.isSuccess, editMomentMutation.data]);
 
   return (
     <View style={styles.container}> 

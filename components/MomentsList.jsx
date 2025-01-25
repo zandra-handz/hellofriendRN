@@ -25,6 +25,8 @@ import MomentsSearchBar from "../components/MomentsSearchBar";
 import DiceRandom3dSolidSvg from "../assets/svgs/dice-random-3d-solid.svg";
 import { Easing } from "react-native-reanimated";
 
+import { useNavigation } from "@react-navigation/native";
+
 import { useGlobalStyle } from "../context/GlobalStyleContext";
 import { useCapsuleList } from "../context/CapsuleListContext";
 
@@ -38,7 +40,7 @@ const NUMBER_OF_LINES = 4;
 
 const CARD_BORDERRADIUS = 50; //30
 
-const MomentsList = (navigation) => {
+const MomentsList = () => {
   const {
     themeStyles,
     gradientColors,
@@ -55,6 +57,9 @@ const MomentsList = (navigation) => {
     categoryStartIndices, 
     updateCapsule,
   } = useCapsuleList();
+
+
+  const navigation = useNavigation();
 
   const [selectedMomentToView, setSelectedMomentToView] = useState(null);
   const [isMomentNavVisible, setMomentNavVisible] = useState(false);
@@ -142,6 +147,12 @@ const MomentsList = (navigation) => {
     } catch (error) {
       console.error("Error during pre-save:", error);
     }
+  };
+
+
+  const handleNavigateToMomentView = (moment) => {
+    navigation.navigate('MomentView', {moment: moment});
+
   };
 
   const openMomentNav = (moment) => {
@@ -278,7 +289,7 @@ const MomentsList = (navigation) => {
           index={index}
           size={dynamicTextSize}
           sliderVisible={dynamicVisibility}
-          onPress={() => openMomentNav(item)} // Open the moment view when the card is pressed
+          onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
           onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
         />
       </Animated.View>

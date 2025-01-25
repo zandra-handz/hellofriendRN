@@ -30,7 +30,7 @@ export const SelectedFriendProvider = ({ children }) => {
   const { data: friendDashboardData, isLoading, isPending, isError, isSuccess } = useQuery({
     queryKey: ['friendDashboardData', selectedFriend?.id],
     queryFn: () => fetchFriendDashboard(selectedFriend.id),
-    enabled: !!selectedFriend,
+    enabled: !!selectedFriend && !!selectedFriend.id,  
     onError: (err) => {
       console.error('Error fetching friend data:', err);
       
@@ -65,17 +65,20 @@ export const SelectedFriendProvider = ({ children }) => {
 
 
   const getFaveLocationIds = () => {
-    // const data = queryClient.getQueryData(['friendDashboardData', selectedFriend?.id]);
-    // console.log(
-    //   'Specific Cache:',
-    //   data
-    // );
+    if (!selectedFriend || !selectedFriend.id) {
+      console.warn('No selected friend or friend ID found');
+      return []; 
+    }
     
-    return queryClient.getQueryData(['friendDashboardData', selectedFriend?.id])?.[0]?.friend_faves?.locations || []
-  
+    const cachedData = queryClient.getQueryData(['friendDashboardData', selectedFriend.id]);
+    
+    if (cachedData && cachedData[0] && cachedData[0].friend_faves) {
+      return cachedData[0].friend_faves.locations || [];
+    }
+    
+    console.warn('No cached data found for selected friend');
+    return [];   
   };
- 
-
 
 
 

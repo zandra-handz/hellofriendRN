@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import MomentView from '../components/MomentView';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useCapsuleList } from '../context/CapsuleListContext';  
-import ButtonBaseSpecialSave from '../components/ButtonBaseSpecialSave';
+import { useCapsuleList } from '../context/CapsuleListContext';   
 
 import NavigationArrows from '../components/NavigationArrows'; 
 import { useGlobalStyle } from '../context/GlobalStyleContext';
 
-const MomentsNavigator = ({ archived = false, moment, onClose }) => {
+const MomentsNavigator = ({ moment, onClose }) => {
 
   const [isModalVisible, setIsModalVisible] = useState(true);
   const { capsuleList, capsuleCount, deleteMomentRQuery, deleteMomentMutation, updateCapsuleMutation, updateCacheWithNewPreAdded } = useCapsuleList();
@@ -169,7 +168,7 @@ const MomentsNavigator = ({ archived = false, moment, onClose }) => {
             <>
             {momentInView && (
               <>
-                {!archived && momentInView.typedCategory && (
+                {momentInView.typedCategory && (
                   <NavigationArrows 
                     currentIndex={currentIndex}
                     imageListLength={capsuleList.length}

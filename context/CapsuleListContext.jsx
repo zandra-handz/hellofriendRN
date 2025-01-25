@@ -389,6 +389,7 @@ export const CapsuleListProvider = ({ children }) => {
   };
 
   const handleCreateMoment = async (momentData) => {
+    console.log(momentData);
     const moment = {
       user: momentData.user,
       friend: momentData.friend,

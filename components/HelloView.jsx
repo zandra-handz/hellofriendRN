@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Image, StyleSheet, Text, Dimensions, Modal } from "react-native";
+import { View, StyleSheet,  Dimensions, Modal } from "react-native";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 import { useFriendList } from "../context/FriendListContext";
+import { useAuthUser } from '../context/AuthUserContext';
 import { useCapsuleList } from "../context/CapsuleListContext";
+ 
 
-import useImageFunctions from "../hooks/useImageFunctions";
-
-import { useGlobalStyle } from "../context/GlobalStyleContext";
-import * as FileSystem from "expo-file-system";
-import * as Sharing from "expo-sharing";
+import { useGlobalStyle } from "../context/GlobalStyleContext"; 
 
 import { LinearGradient } from "expo-linear-gradient";
  
@@ -22,15 +20,10 @@ import HeaderBaseItemViewTwoOptions from "../components/HeaderBaseItemViewTwoOpt
 import ButtonBaseSpecialSave from "../components/ButtonBaseSpecialSave";
 import HelloMomentsDisplayCard from "./HelloMomentsDisplayCard";
 
-const { width, height } = Dimensions.get("window");
+const { height } = Dimensions.get("window");
 
-const oneThirdHeight = height / 3;
-const oneFourthHeight = height / 4;
-const oneFifthHeight = height / 5;
-const oneSixthHeight = height / 6;
-const oneSeventhHeight = height / 7;
-const oneHalfHeight = height / 2;
-
+const oneThirdHeight = height / 3; 
+const oneSixthHeight = height / 6; 
 const HelloView = ({
   helloData,
   navigationArrows,
@@ -39,20 +32,16 @@ const HelloView = ({
   toggleModal,
 }) => {
   const { themeStyles } = useGlobalStyle();
+  const { authUserState } = useAuthUser();
   const [categories, setCategories] = useState([]);
   const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
-  const { imageList, updateImage, deleteImage } = useImageFunctions();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isEditing, setIsEditing] = useState(false);
+  const { themeAheadOfLoading } = useFriendList(); 
   const [isReloadModalVisible, setReloadModalVisible] = useState(false);
   const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] =
     useState(false);
 
-  const { capsuleList } = useCapsuleList();
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const [momentsToSave, setMomentsToSave] = useState(false);
+  const {  handleCreateMoment, createMomentMutation } = useCapsuleList(); 
+ 
 
   const [momentsSelected, setMomentsSelected] = useState([]);
 
@@ -87,51 +76,23 @@ const HelloView = ({
     setConfirmDeleteModalVisible(!isConfirmDeleteModalVisible);
   };
 
-  const handleShare = async () => {
-    if (!helloData?.moments) {
-      console.error("Error: Image URL is null or undefined");
-      return;
-    }
+  const handleBulkCreateMoments = () => {
+    momentsSelected.map((moment) => {
+      const momentData = {
+        user: authUserState.user.id,
+        friend: selectedFriend.id,
+  
+        selectedCategory: moment.typed_category,
+        moment: moment.capsule,
+      };
+ 
+      handleCreateMoment(momentData);
+      
+    });
 
-    const fileUri =
-      FileSystem.documentDirectory +
-      (helloData.title || "shared_image") +
-      ".jpg";
 
-    try {
-      const { uri } = await FileSystem.downloadAsync(helloData.image, fileUri);
-      await Sharing.shareAsync(uri);
-
-      setTimeout(async () => {
-        try {
-          setConfirmDeleteModalVisible(true);
-        } catch (error) {
-          console.error("Error deleting shared image:", error);
-        }
-      }, 500);
-    } catch (error) {
-      console.error("Error sharing image:", error);
-    }
   };
-
-  const handleDelete = async () => {
-    try {
-      setIsDeleting(true);
-      const imageToDelete = imageList[currentIndex];
-      deleteImage(imageList[currentIndex].id);
-
-      // Update currentIndex to prevent out-of-bounds access
-      if (currentIndex >= imageList.length - 1) {
-        setCurrentIndex(imageList.length - 2); // Move to the previous image
-      }
-    } catch (error) {
-      console.error("Error deleting image:", error);
-    } finally {
-      setConfirmDeleteModalVisible(false);
-      setIsDeleting(false);
-    }
-  };
-
+  
   return (
     <>
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
@@ -225,8 +186,8 @@ const HelloView = ({
                 <ButtonBaseSpecialSave
                   label={`RELOAD MOMENTS `}
                   maxHeight={80}
-                  onPress={handleShare}
-                  isDisabled={true}
+                  onPress={handleBulkCreateMoments}
+                  isDisabled={!momentsSelected}
                   fontFamily={"Poppins-Bold"}
                   image={require("../assets/shapes/chatmountain.png")}
                 />
@@ -280,7 +241,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     overflow: "hidden",
-    zIndex: 2000,
+    zIndex: 1000,
     paddingHorizontal: '4%',
     paddingBottom: '22%',
      

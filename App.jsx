@@ -66,6 +66,8 @@ import ScreenAddImage from "./screens/ScreenAddImage";
 import ScreenAddHello from "./screens/ScreenAddHello";
 import ScreenAddLocation from "./screens/ScreenAddLocation";
 
+import ScreenMomentView from './screens/ScreenMomentView';
+
 import HellofriendHeader from "./components/HellofriendHeader";
 //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
 import HeaderMoment from "./components/HeaderMoment";
@@ -379,6 +381,15 @@ export const Layout = () => {
                   options={{
                     headerShown: true,
                     header: () => <HeaderMoment title={"MOMENTS"} />,
+                  }}
+                />
+
+<Stack.Screen
+                  name="MomentView"
+                  component={ScreenMomentView}
+                  options={{
+                    headerShown: true,
+                    header: () => <HeaderMoment writeView={false} />,
                   }}
                 />
                 <Stack.Screen
