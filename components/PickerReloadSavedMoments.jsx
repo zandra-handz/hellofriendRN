@@ -7,12 +7,10 @@ import {
   Modal,
   Button,
   FlatList,
-  Dimensions,
-  useWindowDimensions,
+  Dimensions, 
 } from "react-native";
 import { CheckBox } from "react-native-elements";
-import { useGlobalStyle } from "../context/GlobalStyleContext";
-import { useCapsuleList } from "../context/CapsuleListContext";
+import { useGlobalStyle } from "../context/GlobalStyleContext"; 
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 import { useFriendList } from "../context/FriendListContext";
 import MomentAdded from "../components/MomentAdded";
@@ -26,7 +24,7 @@ const PickerReloadSavedMoments = ({
   showAllCategories = true,
   showInModal = true,
 }) => {
-  const { width, height } = useWindowDimensions();
+  const width = '100%';
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const [selectedCategory, setSelectedCategory] = useState(null);
