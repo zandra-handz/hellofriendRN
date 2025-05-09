@@ -76,6 +76,14 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+        [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "hellofriend",
+          "organization": "badrainbowz"
+        }
+      ],
       "expo-secure-store",
       "expo-font",
       "@react-native-firebase/app",  

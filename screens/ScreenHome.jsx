@@ -1,5 +1,5 @@
 import { useShareIntentContext } from "expo-share-intent";
-
+import * as Sentry from '@sentry/react-native';
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Button,
 } from "react-native";
 
 import {
@@ -339,7 +340,7 @@ const ScreenHome = ({ navigation }) => {
               <TouchableOpacity onPress={() => navigation.navigate('MomentFocus', {momentText: 'hiiiii'})} style={{height: 40, width: 40, backgroundColor: 'blue'}}>
 
               </TouchableOpacity> */}
-
+<Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/>
               <TextMomentHomeScreenBox
                 width={"100%"}
                 height={"100%"}

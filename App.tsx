@@ -94,6 +94,23 @@ import { RootStackParamList } from "./types";
 const queryClient = new QueryClient();
 
 import PhoneStatusBar from "./components/PhoneStatusBar";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://59c9aeed4bccc9cfaf418f4733827937@o4509079411752960.ingest.us.sentry.io/4509293682360320',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 async function loadFonts() {
   await Font.loadAsync({
@@ -104,7 +121,7 @@ async function loadFonts() {
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+export default Sentry.wrap(function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   const { hasShareIntent, shareIntent, resetShareIntent, error } =
@@ -210,7 +227,7 @@ export default function App() {
       </GestureHandlerRootView>
     </ShareIntentProvider>
   );
-}
+});
 
 // Linking setup for deep linking and share intents
 const PREFIX = Linking.createURL("/");
