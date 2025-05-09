@@ -1,7 +1,7 @@
 // NavigationHandler.js
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useAuthUser } from './context/AuthUserContext';
+import { useAuthUser } from './src/context/AuthUserContext';
 
 const TopLevelNavigationHandler = ({ children }) => {
     const navigation = useNavigation();

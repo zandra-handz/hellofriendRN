@@ -1,7 +1,7 @@
 import React, { useEffect, useState, createRef } from "react";
-
+import { useFonts } from "expo-font";
 import TopLevelNavigationHandler from "./TopLevelNavigationHandler"; // Adjust import path if necessary
-import CustomStatusBar from "./components/CustomStatusBar";
+import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
 import {
   useShareIntentContext,
   ShareIntentProvider,
@@ -12,6 +12,8 @@ import {
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import * as SplashScreen from "expo-splash-screen";
+
 import Constants from "expo-constants";
 import {
   LinkingOptions,
@@ -20,16 +22,16 @@ import {
   getStateFromPath,
 } from "@react-navigation/native";
 import { Alert, View, Text, useColorScheme, Platform } from "react-native";
-import { MessageContextProvider } from "./context/MessageContext";
+import { MessageContextProvider } from "./src/context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AuthUserProvider, useAuthUser } from "./context/AuthUserContext";
-import { GlobalStyleProvider } from "./context/GlobalStyleContext";
-import { FriendListProvider } from "./context/FriendListContext";
-import { HelloesProvider } from "./context/HelloesContext";
-import { LocationsProvider } from "./context/LocationsContext";
-import { UpcomingHelloesProvider } from "./context/UpcomingHelloesContext";
-import { CapsuleListProvider } from "./context/CapsuleListContext";
-import { SelectedFriendProvider } from "./context/SelectedFriendContext";
+import { AuthUserProvider, useAuthUser } from "./src/context/AuthUserContext";
+import { GlobalStyleProvider } from "./src/context/GlobalStyleContext";
+import { FriendListProvider } from "./src/context/FriendListContext";
+import { HelloesProvider } from "./src/context/HelloesContext";
+import { LocationsProvider } from "./src/context/LocationsContext";
+import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
+import { CapsuleListProvider } from "./src/context/CapsuleListContext";
+import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as Font from "expo-font";
 import * as Notifications from "expo-notifications";
@@ -38,66 +40,65 @@ import * as Linking from "expo-linking";
 
 import * as MediaLibrary from "expo-media-library";
 
-import { useGlobalStyle } from "./context/GlobalStyleContext";
-import ResultMessage from "./components/ResultMessage";
-import FullScreenSpinner from "./components/FullScreenSpinner";
+import { useGlobalStyle } from "./src/context/GlobalStyleContext";
+import ResultMessage from "./app/components/alerts/ResultMessage";
+import FullScreenSpinner from "./app/components/appwide/spinner/FullScreenSpinner";
 
-import ScreenOnboardingFlow from "./onboarding/ScreenOnboardingFlow";
-import ScreenHome from "./screens/ScreenHome";
-import ScreenFriendSettings from "./screens/ScreenFriendSettings";
-import ScreenMoments from "./screens/ScreenMoments";
-import ScreenImages from "./screens/ScreenImages";
-import ScreenHelloes from "./screens/ScreenHelloes";
-import ScreenLocations from "./screens/ScreenLocations";
-import ScreenLocationSearch from "./screens/ScreenLocationSearch";
-import ScreenMidpointLocationSearch from "./screens/ScreenMidpointLocationSearch";
-import ScreenCalculateTravelTimes from "./screens/ScreenCalculateTravelTimes";
-import ScreenWelcome from "./screens/ScreenWelcome";
-import ScreenAuth from "./screens/ScreenAuth";
-import ScreenRecoverCredentials from "./screens/ScreenRecoverCredentials";
-import ScreenMomentFocus from "./screens/ScreenMomentFocus";
-import ScreenLocation from "./screens/ScreenLocation";
+import ScreenOnboardingFlow from "./app/onboarding/ScreenOnboardingFlow";
+import ScreenHome from "./app/screens/home/ScreenHome";
+import ScreenFriendSettings from "./app/screens/friends/ScreenFriendSettings";
+import ScreenMoments from "./app/screens/moments/ScreenMoments";
+import ScreenImages from "./app/screens/images/ScreenImages";
+import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
+import ScreenLocations from "./app/screens/locations/ScreenLocations";
+import ScreenLocationSearch from "./app/screens/locations/ScreenLocationSearch";
+import ScreenMidpointLocationSearch from "./app/screens/locations/ScreenMidpointLocationSearch";
+import ScreenCalculateTravelTimes from "./app/screens/locations/ScreenCalculateTravelTimes";
+import ScreenWelcome from "./app/screens/authflow/ScreenWelcome";
+import ScreenAuth from "./app/screens/authflow/ScreenAuth";
+import ScreenRecoverCredentials from "./app/screens/authflow/ScreenRecoverCredentials";
+import ScreenMomentFocus from "./app/screens/moments/ScreenMomentFocus";
+import ScreenLocation from "./app/screens/locations/ScreenLocation";
 
-import ScreenUserDetails from "./screens/ScreenUserDetails";
+import ScreenUserDetails from "./app/screens/home/ScreenUserDetails";
 
-import ScreenLocationSend from "./screens/ScreenLocationSend";
-import ScreenLocationEdit from "./screens/ScreenLocationEdit";
+import ScreenLocationSend from "./app/screens/locations/ScreenLocationSend";
+import ScreenLocationEdit from "./app/screens/locations/ScreenLocationEdit";
 
-import ScreenAddFriend from "./screens/ScreenAddFriend";
-import ScreenAddImage from "./screens/ScreenAddImage";
-import ScreenAddHello from "./screens/ScreenAddHello";
-import ScreenAddLocation from "./screens/ScreenAddLocation";
+import ScreenAddFriend from "./app/screens/friends/ScreenAddFriend";
+import ScreenAddImage from "./app/screens/images/ScreenAddImage";
+import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
+import ScreenAddLocation from "./app/screens/locations/ScreenAddLocation";
 
-import ScreenMomentView from "./screens/ScreenMomentView";
+import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 
-import HellofriendHeader from "./components/HellofriendHeader";
+import HellofriendHeader from "./app/components/headers/HellofriendHeader";
 //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
-import HeaderMoment from "./components/HeaderMoment";
-import HeaderHelloes from "./components/HeaderHelloes";
-import HeaderImage from "./components/HeaderImage";
-import HeaderLocation from "./components/HeaderLocation";
-import HeaderFriendSettings from "./components/HeaderFriendSettings";
-import HeaderBase from "./components/HeaderBase";
-import HeaderBlank from "./components/HeaderBlank"; //can make a SignIn one in future if want to put info on top
+import HeaderMoment from "./app/components/headers/HeaderMoment";
+import HeaderHelloes from "./app/components/headers/HeaderHelloes";
+import HeaderImage from "./app/components/headers/HeaderImage";
+import HeaderLocation from "./app/components/headers/HeaderLocation";
+import HeaderFriendSettings from "./app/components/headers/HeaderFriendSettings";
+import HeaderBase from "./app/components/headers/HeaderBase";
+import HeaderBlank from "./app/components/headers/HeaderBlank"; //can make a SignIn one in future if want to put info on top
 
-import HeaderLocationSingle from "./components/HeaderLocationSingle";
+import HeaderLocationSingle from "./app/components/headers/HeaderLocationSingle";
 
-import HeaderUserDetails from "./components/HeaderUserDetails";
+import HeaderUserDetails from "./app/components/headers/HeaderUserDetails";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-
-import SafeView from "./components/SafeView";
+import SafeView from "./app/components/appwide/format/SafeView";
 
 import { RootStackParamList } from "./types";
 
 const queryClient = new QueryClient();
 
-import PhoneStatusBar from "./components/PhoneStatusBar";
-import * as Sentry from '@sentry/react-native';
+import PhoneStatusBar from "./app/components/appwide/statusbar/PhoneStatusBar";
+import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
-  dsn: 'https://59c9aeed4bccc9cfaf418f4733827937@o4509079411752960.ingest.us.sentry.io/4509293682360320',
+  dsn: "https://59c9aeed4bccc9cfaf418f4733827937@o4509079411752960.ingest.us.sentry.io/4509293682360320",
 
   // Adds more context data to events (IP address, cookies, user, etc.)
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
@@ -106,23 +107,32 @@ Sentry.init({
   // Configure Session Replay
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+  integrations: [
+    Sentry.mobileReplayIntegration(),
+    Sentry.feedbackIntegration(),
+  ],
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,
 });
 
-async function loadFonts() {
-  await Font.loadAsync({
-    "Poppins-Light": require("./assets/fonts/Poppins-Light.ttf"),
-    "Pacifico-Regular": require("./assets/fonts/Pacifico-Regular.ttf"),
-  });
-}
+// async function loadFonts() {
+//   await Font.loadAsync({
+//     "Poppins-Light": require("./app/app/assets/fonts/Poppins-Light.ttf"),
+//     "Pacifico-Regular": require("./app/assets/fonts/Pacifico-Regular.ttf"),
+//   });
+// }
 
 const Stack = createNativeStackNavigator();
 
 export default Sentry.wrap(function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [fontsLoaded] = useFonts({
+    "Poppins-Regular": require("./app/assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-Bold": require("./app/assets/fonts/Poppins-Bold.ttf"),
+    "Roboto-Regular": require("./app/assets/fonts/Roboto-Regular.ttf"),
+  });
+
+  SplashScreen.preventAutoHideAsync();
 
   const { hasShareIntent, shareIntent, resetShareIntent, error } =
     useShareIntentContext();
@@ -143,32 +153,20 @@ export default Sentry.wrap(function App() {
           permissionsGranted = false;
         }
       } else {
-        permissionsGranted = true; // Assume permissions are not required for other cases
-        //handleShareIntent();
+        permissionsGranted = true;
       }
     }
-
-    // function handleShareIntent() {
-    //   if (permissionsGranted && hasShareIntent && shareIntent?.files?.length > 0) {
-    //     const file = shareIntent.files[0]; // assuming the first file is the image
-    //     const uri = file.path || file.contentUri; // Use either path (iOS) or contentUri (Android)
-    //     setImageUri(uri);
-    //     Alert.alert("Shared Image", `Image URI: ${uri}`);
-    //   } else if (!permissionsGranted) {
-    //     console.warn("Cannot process share intent without permissions.");
-    //   }
-    // }
 
     requestPermissions();
   }, [hasShareIntent, shareIntent]);
 
   useEffect(() => {
-    const fetchFonts = async () => {
-      await loadFonts();
-      setFontsLoaded(true);
-    };
+    // const fetchFonts = async () => {
+    //   await loadFonts();
+    //   setFontsLoaded(true);
+    // };
 
-    fetchFonts();
+    // fetchFonts();
 
     const notificationSubscription =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -184,13 +182,31 @@ export default Sentry.wrap(function App() {
   const colorScheme = useColorScheme();
 
   // If fonts or other resources are not ready, show a loading placeholder
+
+  
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   if (!fontsLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ fontSize: 20 }}>Loading...</Text>
-      </View>
-    );
+        return null;
+        
+    //     (
+    //   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    //     <Text style={{ fontSize: 20 }}>Loading...</Text>
+    //   </View>
+    // );
   }
+
+  // if (!fontsLoaded) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <Text style={{ fontSize: 20 }}>Loading...</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <ShareIntentProvider>
@@ -207,12 +223,14 @@ export default Sentry.wrap(function App() {
                         <HelloesProvider>
                           <MessageContextProvider>
                             <SafeAreaProvider>
-                              
-                            <SafeView style={{flex: 1, backgroundColor: 'transparent'}}>
- 
-                            <Layout />
-                            </SafeView>
-                            
+                              <SafeView
+                                style={{
+                                  flex: 1,
+                                  backgroundColor: "transparent",
+                                }}
+                              >
+                                <Layout />
+                              </SafeView>
                             </SafeAreaProvider>
                           </MessageContextProvider>
                         </HelloesProvider>
@@ -359,7 +377,7 @@ export const Layout = () => {
 
       <TopLevelNavigationHandler>
         <FullScreenSpinner />
-       
+
         <Stack.Navigator
           screenOptions={{
             headerShown: true,
@@ -611,8 +629,6 @@ export const Layout = () => {
             </>
           )}
         </Stack.Navigator>
-        
-          
       </TopLevelNavigationHandler>
     </NavigationContainer>
   );

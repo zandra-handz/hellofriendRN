@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "newArchEnabled": true,
-    "icon": "./assets/shapes/lizard.png",
+    "icon": "./app/assets/shapes/lizard.png",
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.badrainbowz.sampleproject",  
@@ -65,7 +65,7 @@
 
     },
     "splash": {
-      "image": "./assets/shapes/happyskull.png",
+      "image": "./app/assets/shapes/happyskull.png",
       "resizeMode": "contain",
       "backgroundColor": "#000002"
     }, 
@@ -73,7 +73,7 @@
       "**/*"
     ],
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./app/assets/favicon.png"
     },
     "plugins": [
         [
