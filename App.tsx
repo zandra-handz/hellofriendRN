@@ -1,7 +1,7 @@
 import React, { useEffect, useState, createRef } from "react";
 
 import TopLevelNavigationHandler from "./TopLevelNavigationHandler"; // Adjust import path if necessary
-
+import CustomStatusBar from "./components/CustomStatusBar";
 import {
   useShareIntentContext,
   ShareIntentProvider,
@@ -9,6 +9,8 @@ import {
   getScheme,
   getShareExtensionKey,
 } from "expo-share-intent";
+
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import Constants from "expo-constants";
 import {
@@ -83,6 +85,9 @@ import HeaderLocationSingle from "./components/HeaderLocationSingle";
 import HeaderUserDetails from "./components/HeaderUserDetails";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+
+import SafeView from "./components/SafeView";
 
 import { RootStackParamList } from "./types";
 
@@ -184,7 +189,14 @@ export default function App() {
                       <CapsuleListProvider>
                         <HelloesProvider>
                           <MessageContextProvider>
+                            <SafeAreaProvider>
+                              
+                            <SafeView style={{flex: 1, backgroundColor: 'transparent'}}>
+ 
                             <Layout />
+                            </SafeView>
+                            
+                            </SafeAreaProvider>
                           </MessageContextProvider>
                         </HelloesProvider>
                       </CapsuleListProvider>
@@ -326,9 +338,11 @@ export const Layout = () => {
   return (
     <NavigationContainer ref={navigationRef} linking={linking}>
       <ResultMessage />
+      <CustomStatusBar />
 
       <TopLevelNavigationHandler>
         <FullScreenSpinner />
+       
         <Stack.Navigator
           screenOptions={{
             headerShown: true,
@@ -580,6 +594,8 @@ export const Layout = () => {
             </>
           )}
         </Stack.Navigator>
+        
+          
       </TopLevelNavigationHandler>
     </NavigationContainer>
   );

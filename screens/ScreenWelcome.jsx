@@ -22,7 +22,7 @@ import PhoneStatusBar from "../components/PhoneStatusBar";
 
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
 
-const TOKEN_KEY = "my-jwt";
+const TOKEN_KEY = "accessToken";
 
 const ScreenWelcome = () => {
   const { showMessage } = useMessage();

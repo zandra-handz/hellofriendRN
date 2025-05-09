@@ -18,7 +18,7 @@ export const setAuthHeader = (token) => {
     }
 };
 // not using these yet
-const TOKEN_KEY = 'my-jwt';
+const TOKEN_KEY = 'accessToken';
  
 export const getToken = async () => await SecureStore.getItemAsync(TOKEN_KEY);
 

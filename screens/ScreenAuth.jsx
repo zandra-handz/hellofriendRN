@@ -22,8 +22,7 @@ import PhoneStatusBar from "../components/PhoneStatusBar";
 import SimpleBottomButton from "../components/SimpleBottomButton";
 
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
-
-const TOKEN_KEY = "my-jwt";
+ 
 
 const ScreenAuth = () => {
   const route = useRoute();
@@ -149,25 +148,7 @@ const ScreenAuth = () => {
     }
   }, [signinMutation]);
 
-  // const checkIfSignedIn = async () => {
-  //   try {
-  //     const token = await SecureStore.getItemAsync(TOKEN_KEY);
-  //     if (token) {
-  //       console.log(token);
-  //       showMessage(true, null, "Reinitializing...");
-  //       reInitialize();
-  //       // Optionally, handle any other logic needed after re-initialization
-  //     } else {
-  //       // No token found, show sign in
-  //       setShowSignIn(true);
-  //       setConfirmedUserNotSignedIn(true);
-  //      // showMessage(true, null, "Signed out");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error checking sign-in status", error);
-  //     // Handle errors as necessary
-  //   }
-  // };
+
 
   const handleAuthentication = async () => {
     let result;

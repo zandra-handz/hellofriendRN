@@ -12,7 +12,7 @@ import { signup, signin, signinWithoutRefresh, signout, getCurrentUser, updateUs
 const AuthUserContext = createContext({});
 export const useAuthUser = () => useContext(AuthUserContext);
 
-const TOKEN_KEY = 'my-jwt';
+const TOKEN_KEY = 'accessToken';
 
 export const AuthUserProvider = ({ children }) => {
     const [authUserState, setAuthUserState] = useState({
@@ -37,8 +37,7 @@ export const AuthUserProvider = ({ children }) => {
                     authenticated: true,
                     loading: false, 
                 }));
-                setUserAppSettings(userData.settings || {});
-                console.log('user app settings in reinitialize', userData.settings);
+                setUserAppSettings(userData.settings || {}); 
                 setUserNotificationSettings({
                     receive_notifications: userData.settings?.receive_notifications || false
                 }); 
@@ -50,11 +49,7 @@ export const AuthUserProvider = ({ children }) => {
             setAuthUserState({ user: null, authenticated: false, loading: false });
         }
     };
-
-    useEffect(() => {
-        console.log('UUUUSEEEE EFFFFECCTT IN CONTEXXXXXXT', userAppSettings);
-
-    }, [userAppSettings]);
+ 
  
     const { data: currentUserData } = useQuery({
         queryKey: ['fetchUser'],
@@ -106,9 +101,9 @@ export const AuthUserProvider = ({ children }) => {
     
     const signinMutation = useMutation({
         mutationFn: signinWithoutRefresh, //swapped this out with signin 1/1/2025 could be buggy
-        onMutate: () => {  
-            console.log('signin is fetching from onMutate');
-        },
+        // onMutate: () => {  
+        //     console.log('signin is fetching from onMutate');
+        // },
         onSuccess: async (result) => { 
             if (result.data) {
                 const { access: token, refresh } = result.data;
@@ -159,15 +154,30 @@ const onSignUp = async (username, email, password) => {
 };
 
 
-    const signupMutation = useMutation({
-        mutationFn: signup,
-        onSuccess: async (result) => {
-            if (result.data) {
-                await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
-                await reInitialize(); // Refetch user data after sign-up
-            }
-        }
-    });
+const signupMutation = useMutation({
+    mutationFn: signup,
+    onSuccess: async (result) => {
+      // if (result.data) {
+      //     await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
+      //     await reInitialize(); // Refetch user data after sign-up
+      // }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        signupMutation.reset();
+      }, 2000);
+    },
+    onError: () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      } 
+      timeoutRef.current = setTimeout(() => {
+        signupMutation.reset();
+      }, 2000);
+    },
+  });
 
     const updateAppSettings = async (newSettings) => {
         try {

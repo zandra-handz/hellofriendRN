@@ -63,7 +63,7 @@ const ResultMessage = ({
   return (
     <View style={[styles.container]}>
       <Animated.View
-        style={[styles.textContainer, themeStyles.secondaryBackground, { transform: [{ translateY }] }]}
+        style={[styles.textContainer, themeStyles.primaryBackground, { transform: [{ translateY }] }]}
       >
         <Text style={[styles.loadingTextBold, themeStyles.primaryText]}>
           {messageQueue[0]?.resultsMessage}

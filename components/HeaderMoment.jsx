@@ -126,11 +126,11 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     padding: 10,
-    paddingTop: 66,
+    paddingTop: 0, //66
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "space-between",
-    height: 110, 
+    height: 70, // 110 
   },
   headerTextContainer: {
     flexDirection: 'row',

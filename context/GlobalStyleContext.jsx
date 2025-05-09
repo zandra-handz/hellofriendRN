@@ -170,6 +170,17 @@ const lightThemeStyles = StyleSheet.create({
   primaryText: {
     color: "#121212",
   },
+  primaryBackground: {
+    backgroundColor: "#ffffff",
+  },
+  darkerBackground: {
+    backgroundColor: "#ccc",
+  },
+  darkestBackground: {
+    backgroundColor: "#ccc",
+  },
+
+
   dangerZoneText: {
     color: "#B22222",
   },
@@ -310,8 +321,17 @@ const darkThemeStyles = StyleSheet.create({
     primaryText: {
         color: "#d3d3d3",
     },
+    primaryBackground: {
+        backgroundColor: "#121212",
+      },
+      darkerBackground: {
+        backgroundColor: "#2B2B2B",
+      },
+      darkestBackground: {
+        backgroundColor: "#242424",
+      },
 
-    
+
   dangerZoneText: {
     color: "#B22222",
   },
