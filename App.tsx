@@ -66,7 +66,7 @@ import ScreenAddImage from "./screens/ScreenAddImage";
 import ScreenAddHello from "./screens/ScreenAddHello";
 import ScreenAddLocation from "./screens/ScreenAddLocation";
 
-import ScreenMomentView from './screens/ScreenMomentView';
+import ScreenMomentView from "./screens/ScreenMomentView";
 
 import HellofriendHeader from "./components/HellofriendHeader";
 //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
@@ -115,7 +115,7 @@ export default function App() {
         if (status === "granted") {
           console.log("Media permissions granted!");
           permissionsGranted = true;
-         // handleShareIntent(); // Process the share intent if permissions are granted
+          // handleShareIntent(); // Process the share intent if permissions are granted
         } else {
           console.warn("Media permissions denied.");
           permissionsGranted = false;
@@ -322,7 +322,7 @@ const linking = {
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle();
   const { authUserState } = useAuthUser();
- 
+
   return (
     <NavigationContainer ref={navigationRef} linking={linking}>
       <ResultMessage />
@@ -384,7 +384,7 @@ export const Layout = () => {
                   }}
                 />
 
-<Stack.Screen
+                <Stack.Screen
                   name="MomentView"
                   component={ScreenMomentView}
                   options={{

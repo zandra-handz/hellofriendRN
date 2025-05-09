@@ -265,6 +265,7 @@ export const signin = async ({ username, password }) => {
 
 
 export const getCurrentUser = async () => {
+    
     try {
         const response = await axios.get('/users/get-current/');
         console.log('API GET Call getCurrentUser');

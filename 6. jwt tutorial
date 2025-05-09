@@ -9,3 +9,11 @@ npx tsc --init
 npm install axios
 npx expo install react-native-screens react-native-safe-area-context
 npx expo install expo-secure-store
+
+GOOGLE_MAPS_API_KEY = 'AIzaSyA7TtagaCz61SLn1M1HhNKabA_qj93V7QM'
+OPEN_MAP_API_KEY = '54a19c0e6cd35fb9f2d1ec6a87f22dba'
+
+up next:
+send message when new explore site chosen, and maybe when explore site expires too
+files to start (?):
+ClimateTwinFinderClass + climatevisitor/views
