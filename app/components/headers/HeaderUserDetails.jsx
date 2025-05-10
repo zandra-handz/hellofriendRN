@@ -59,11 +59,11 @@ const styles = StyleSheet.create({
     headerContainer: {
         flexDirection: 'row',
         padding: 10,
-        paddingTop: 56, // Adjust for device or build
+        paddingTop: 0, // Adjust for device or build
         paddingHorizontal: 10,
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 100, 
+        height: 80, 
     },
     leftIcon: {
         width: '10%', // Adjust width as necessary

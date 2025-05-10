@@ -6,8 +6,8 @@ import ArrowLeftCircleOutline from "@/app/assets/svgs/arrow-left-circle-outline.
 import { useNavigation } from "@react-navigation/native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useFriendList } from "@/src/context/FriendListContext";
-import { LinearGradient } from "expo-linear-gradient"; 
-import ImageGalleryOutlineSvg from '@/app/assets/svgs/image-gallery-outline.svg';
+import { LinearGradient } from "expo-linear-gradient";
+import ImageGalleryOutlineSvg from "@/app/assets/svgs/image-gallery-outline.svg";
 
 const HeaderImage = ({ title = "IMAGES", addView = false }) => {
   const { themeStyles } = useGlobalStyle();
@@ -17,13 +17,6 @@ const HeaderImage = ({ title = "IMAGES", addView = false }) => {
 
   const handleNavigateBack = () => {
     navigation.goBack();
-  };
-
-  const handleNavigateToAllMoments = () => {
-    if (selectedFriend) {
-    navigation.navigate("Moments");
-    
-  }
   };
 
   return (
@@ -68,25 +61,23 @@ const HeaderImage = ({ title = "IMAGES", addView = false }) => {
                 />
               </TouchableOpacity>
             </View>
-<View style={styles.headerTextContainer}>
-  
-<Text
-  style={[
-    styles.headerText,
-    themeStyles.headerText,
-    {
-      color: themeAheadOfLoading.fontColorSecondary,
-      paddingRight: 0,
-    },
-  ]}
-  numberOfLines={1} // Limit to one line
-  ellipsizeMode="tail" // Show "..." if text overflows
->
-  {title}: {selectedFriend?.name ? ` ${selectedFriend.name}` : ''}
-</Text>
-            
-</View>
-<View
+            <View style={styles.headerTextContainer}>
+              <Text
+                style={[
+                  styles.headerText,
+                  themeStyles.headerText,
+                  {
+                    color: themeAheadOfLoading.fontColorSecondary,
+                    paddingRight: 0,
+                  },
+                ]}
+                numberOfLines={1} // Limit to one line
+                ellipsizeMode="tail" // Show "..." if text overflows
+              >
+                {title}: {selectedFriend?.name ? ` ${selectedFriend.name}` : ""}
+              </Text>
+            </View>
+            <View
               style={{
                 flexDirection: "row",
                 //flexShrink: 1,
@@ -94,21 +85,21 @@ const HeaderImage = ({ title = "IMAGES", addView = false }) => {
                 alignContent: "center",
                 alignItems: "center",
               }}
-            > 
-                {!addView && (
-                  <ImageGalleryOutlineSvg
-                    height={36}
-                    width={36}
-                    color={themeAheadOfLoading.fontColorSecondary}
-                  />
-                )}
-                {addView && (
-                  <ImageGalleryOutlineSvg
-                    height={36}
-                    width={36}
-                    color={themeAheadOfLoading.fontColorSecondary}
-                  />
-                )} 
+            >
+              {!addView && (
+                <ImageGalleryOutlineSvg
+                  height={36}
+                  width={36}
+                  color={themeAheadOfLoading.fontColorSecondary}
+                />
+              )}
+              {addView && (
+                <ImageGalleryOutlineSvg
+                  height={36}
+                  width={36}
+                  color={themeAheadOfLoading.fontColorSecondary}
+                />
+              )}
             </View>
           </>
         )}
@@ -120,27 +111,22 @@ const HeaderImage = ({ title = "IMAGES", addView = false }) => {
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
-    padding: 10,
-    paddingTop: 66,
+    padding: 10, 
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "space-between",
-    height: 110,
+    height: 60,
   },
   headerTextContainer: {
-    flexDirection: 'row',
-    //backgroundColor: 'pink',
+    flexDirection: "row", 
     flex: 1,
-    justifyContent: 'flex-end',
-    paddingRight: '3%',
-    //flexWrap: 'wrap',
-
-
+    justifyContent: "flex-end",
+    paddingRight: "3%", 
   },
   headerText: {
-    fontSize: 20,  
+    fontSize: 20,
     fontFamily: "Poppins-Regular",
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   usernameText: {
     fontSize: 14,

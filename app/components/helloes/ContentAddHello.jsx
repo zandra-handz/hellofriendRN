@@ -43,6 +43,8 @@ import DoubleChecker from "@/app/components/alerts/DoubleChecker";
 
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
+ 
+
 const ContentAddHello = () => {
   const navigation = useNavigation();
 
@@ -78,10 +80,8 @@ const ContentAddHello = () => {
 
   const editedTextRef = useRef(null);
 
-  const { width, height } = Dimensions.get("window");
-
-  const oneFifthHeight = height / 5;
-  const oneSixthHeight = height / 6;
+  const {  height } = Dimensions.get("window");
+ 
   const oneSeventhHeight = height / 7;
   const oneHalfHeight = height / 2; //notes when keyboard is up
 
@@ -247,6 +247,8 @@ const ContentAddHello = () => {
   }, [createHelloMutation.isError]);
 
   return (
+
+      
     <View style={[styles.container]}>
       <>
         <View
@@ -446,6 +448,7 @@ const ContentAddHello = () => {
         )}
       </>
     </View>
+     
   );
 };
 

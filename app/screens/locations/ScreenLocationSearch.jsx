@@ -14,13 +14,11 @@ import {
 
 import { useHelloes } from '@/src/context/HelloesContext';
 import { useLocations } from '@/src/context/LocationsContext';
-import { useFriendList } from '@/src/context/FriendListContext';
-
+ 
 const ScreenLocationSearch = () => {
   
   useGeolocationWatcher(); 
-const {  updateSafeViewGradient  } = useFriendList();
- updateSafeViewGradient(true);
+ 
 
     const { locationList } = useLocations();
     const { getCurrentDay } = useLocationDetailFunctions();

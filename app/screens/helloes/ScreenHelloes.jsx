@@ -7,6 +7,7 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext"; 
 import HelloesSearchBar from "@/app/components/helloes/HelloesSearchBar";
 import { Ionicons } from "@expo/vector-icons";
+import SafeView from "@/app/components/appwide/format/SafeView";
 
 import HelloesList from "@/app/components/helloes/HelloesList";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -16,7 +17,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import CustomTabBar from "@/app/components/appwide/CustomTabBar";
   
 import HelloesNavigator from "@/app/components/helloes/HelloesNavigator";
-
+import HeaderHelloes from "@/app/components/headers/HeaderHelloes";
 import { LinearGradient } from "expo-linear-gradient"; 
 import CalendarLightsDataPrepLayer from "@/app/components/foranimations/CalendarLightsDataPrepLayer";
 
@@ -24,9 +25,9 @@ const Tab = createBottomTabNavigator();
 
 const ScreenHelloes = ({ route, navigation }) => {
   const { themeStyles } = useGlobalStyle();
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { themeAheadOfLoading, updateSafeViewGradient } = useFriendList();
-  updateSafeViewGradient(true);
+  const { selectedFriend } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
+ 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   //to transition over to
@@ -87,12 +88,15 @@ const ScreenHelloes = ({ route, navigation }) => {
   };
 
   return (
+    <SafeView style={{flex: 1}}>
+      
     <LinearGradient
       colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={[styles.container]}
     >
+      <HeaderHelloes />
       <>
         <View
           style={[styles.searchBarContent, { backgroundColor: "transparent" }]}
@@ -135,7 +139,7 @@ const ScreenHelloes = ({ route, navigation }) => {
           <Tab.Navigator
             tabBar={(props) => <CustomTabBar {...props} />}
             screenOptions={({ route }) => ({
-              //lazy: true,
+              //lazy: true, 
               tabBarStyle: {
                 backgroundColor: "transparent",
                 flexDirection: "row",
@@ -178,6 +182,8 @@ const ScreenHelloes = ({ route, navigation }) => {
         />
       )}
     </LinearGradient>
+    
+    </SafeView>
   );
 };
 

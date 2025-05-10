@@ -31,8 +31,8 @@ const ScreenLocations = ({}) => {
   const { locationList, faveLocationList,  handleAddToFaves, handleRemoveFromFaves } =
     useLocations();
   const [viewingAllLocations, setViewingAllLocations] = useState(false);
-  const { themeAheadOfLoading,  updateSafeViewGradient  } = useFriendList();
-   updateSafeViewGradient(true);
+  const { themeAheadOfLoading  } = useFriendList();
+ 
   const { selectedFriend, friendDashboardData, friendFavesData } = useSelectedFriend();
   const queryClient = useQueryClient();
   const [locationIdToScrollTo, setLocationIdToScrollTo] = useState(null);

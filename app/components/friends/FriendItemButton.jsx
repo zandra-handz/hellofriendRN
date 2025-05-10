@@ -18,7 +18,7 @@ const FriendItemButton = ({
             disabled={disabled} >
             <View style={styles.blurOverlay} />
 
-            <View style={{ height: '100%', width: '100%', textAlign: 'center',  justifyContent: 'center'}}>
+            <View style={{ height: '100%', width: '100%', textAlign: 'center', alignItems: 'center', justifyContent: 'center'}}>
            
                 <Text style={styles.text}>{buttonTitle}</Text>
  
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         padding: '4%',  
         borderColor: 'black',
-        borderRadius: 30,
+        borderRadius: 16,
         backgroundColor: 'rgba(255, 255, 255, 0.3)', 
         overflow: 'hidden',
     },

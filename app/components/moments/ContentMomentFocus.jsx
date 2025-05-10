@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Keyboard, Dimensions } from "react-native";
+import { View, StyleSheet, Keyboard, Dimensions, KeyboardAvoidingView } from "react-native";
 
 import { useAuthUser } from "@/src/context/AuthUserContext";
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -14,11 +14,11 @@ import TextMomentBox from "./TextMomentBox";
 import { useNavigation } from "@react-navigation/native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+
 import FriendSelectModalVersionButtonOnly from "@/app/components/friends/FriendSelectModalVersionButtonOnly";
- 
+
 import CardCategoriesAsButtons from "../scaffolding/CardCategoriesAsButtons";
- 
+
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 
@@ -48,7 +48,6 @@ const ContentMomentFocus = ({
 
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
-  
 
   const [showCategoriesSlider, setShowCategoriesSlider] = useState(false);
 
@@ -140,33 +139,21 @@ const ContentMomentFocus = ({
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
-      //resetTextInput();
-      //setSelectedCategory('');
+ 
       navigation.goBack();
     }
   }, [createMomentMutation.isSuccess]);
 
   useEffect(() => {
     if (editMomentMutation.isSuccess) {
-      const responseData = editMomentMutation.data;  // Access the response data from the mutation
-  
-      // You can now use the responseData directly here
-      console.log('Response data from mutation:', responseData);
-  
-      // Example actions:
-      // resetTextInput();
-      // setSelectedCategory('');
+ 
       navigation.goBack();
-    //   if (responseData) {
-    //   navigation.navigate('MomentView', {moment: responseData});
-      
-        
-    // }
+    
     }
   }, [editMomentMutation.isSuccess, editMomentMutation.data]);
 
   return (
-    <View style={styles.container}> 
+    <View style={styles.container}>
       <View
         style={{
           width: "100%",
@@ -176,66 +163,59 @@ const ContentMomentFocus = ({
         }}
       >
         {!updateExistingMoment && (
-          
-              <BelowHeaderContainer
-        height={30}
-        alignItems="center"
-        marginBottom="2%" //default is currently set to 2
-        justifyContent="flex-end"
-        children={
-          <FriendSelectModalVersionButtonOnly
-            includeLabel={false}
-            width="100%"
+          <BelowHeaderContainer
+            height={30}
+            alignItems="center"
+            marginBottom="2%" //default is currently set to 2
+            justifyContent="flex-end"
+            children={
+              <FriendSelectModalVersionButtonOnly
+                includeLabel={false}
+                width="100%"
+              />
+            }
           />
-          
-        
-        }
+        )}
+        <BodyStyling
+          height={"100%"}
+          width={"101%"}
+          paddingTop={"0%"}
+          paddingHorizontal={"0%"} //padding is in inner element in this case because it is a different color
+          children={
+            <View style={{ flex: 1, flexDirection: "column" }}>
+              <TextMomentBox
+                width={"100%"}
+                height={!isKeyboardVisible ? oneHalfHeight : "100%"}
+                ref={momentTextRef}
+                title={
+                  updateExistingMoment ? "Edit moment" : "Write new moment"
+                }
+                onTextChange={updateMomentText}
+                multiline={true}
+              />
+
+              <View style={[{ height: oneEighthHeight, marginTop: "4%" }]}>
+                <SimpleDisplayCard value={selectedCategory} />
+              </View>
+            </View>
+          }
         />
-        
-      )}
-              <BodyStyling
-        height={"100%"}
-        width={"101%"} 
-        paddingTop={"0%"}
-        paddingHorizontal={"0%"} //padding is in inner element in this case because it is a different color
-        children={
-          <View style={{flex: 1, flexDirection: 'column'}}>
-            <TextMomentBox
-              width={"100%"}
-              height={!isKeyboardVisible ? oneHalfHeight : "100%"}
-              ref={momentTextRef}
-              title={updateExistingMoment ? "Edit moment" : "Write new moment"}
-              onTextChange={updateMomentText}
-              multiline={true}
-            />
-
-            <View style={[{ height: oneEighthHeight, marginTop: "4%" }]}>
-              <SimpleDisplayCard value={selectedCategory} />
-            </View> 
-
-
-
-         </View>
-        }
-        />
-        
       </View>
-      
- 
- 
 
       {isKeyboardVisible && showCategoriesSlider && selectedFriend && (
+        <KeyboardAvoidingView >
+          
         <View
           style={{
             position: "absolute",
-            bottom: 0,
+            bottom: 460,
             left: 0,
             right: 0,
             width: "100%",
             flex: 1,
           }}
         >
-          <View style={[styles.buttonContainer, { height: categoriesHeight }]}>
+          <View style={[styles.buttonContainer, { height: 46 }]}>
             <CardCategoriesAsButtons
               onCategorySelect={handleCategorySelect}
               updateExistingMoment={updateExistingMoment}
@@ -245,19 +225,21 @@ const ContentMomentFocus = ({
             />
           </View>
         </View>
+        
+        </KeyboardAvoidingView>
       )}
-                  {!isKeyboardVisible && (
-                    <View style={{position: 'absolute', bottom: -10}}>
-            <ButtonBaseSpecialSave
-              label="SAVE MOMENT "
-              maxHeight={70}
-              onPress={handleSave}
-              isDisabled={!selectedCategory}
-              fontFamily={"Poppins-Bold"}
-              image={require("@/app/assets/shapes/redheadcoffee.png")}
-            />
-            </View>
-          )} 
+      {!isKeyboardVisible && (
+        <View style={{ position: "absolute", bottom: -10 }}>
+          <ButtonBaseSpecialSave
+            label="SAVE MOMENT "
+            maxHeight={70}
+            onPress={handleSave}
+            isDisabled={!selectedCategory}
+            fontFamily={"Poppins-Bold"}
+            image={require("@/app/assets/shapes/redheadcoffee.png")}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -269,7 +251,7 @@ const styles = StyleSheet.create({
     //flexDirection: "column",
     justifyContent: "space-between",
     //top: 0,
-  }, 
+  },
   loadingWrapper: {
     flex: 1,
     justifyContent: "center",

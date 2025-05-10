@@ -4,12 +4,9 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 import { useRoute } from "@react-navigation/native";
 import LocationInviteBody from "@/app/components/locations/LocationInviteBody";
-
-import { useFriendList } from "@/src/context/FriendListContext";
-
+ 
 const ScreenLocationSend = () => {
-  const {  updateSafeViewGradient  } = useFriendList();
-  updateSafeViewGradient(true);
+ 
   const route = useRoute();
   const location = route.params?.location ?? null;
   const weekdayTextData = route.params?.weekdayTextData ?? null;

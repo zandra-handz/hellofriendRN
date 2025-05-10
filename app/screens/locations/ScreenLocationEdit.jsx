@@ -39,9 +39,8 @@ const ScreenLocationEdit = () => {
   const { handleUpdateLocation, updateLocationMutation, handleDeleteLocation, deleteLocationMutation } = useLocations();
 
   const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading,  updateSafeViewGradient  } = useFriendList();
-
-   updateSafeViewGradient(true);
+  const { themeAheadOfLoading   } = useFriendList();
+ 
   const editedTextRef = useRef(null);
   const editedCategoryRef = useRef(null);
 

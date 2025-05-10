@@ -15,8 +15,8 @@ const ScreenAddLocation = () => {
 
   const navigation = useNavigation();
  
-  const { themeAheadOfLoading,  updateSafeViewGradient  } = useFriendList();
-  updateSafeViewGradient(true);
+  const { themeAheadOfLoading   } = useFriendList();
+ 
 
   const { createLocationMutation } = useLocations();
 

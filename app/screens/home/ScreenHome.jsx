@@ -15,6 +15,7 @@ import {
   Button,
 } from "react-native";
 
+import HellofriendHeader from "@/app/components/headers/HellofriendHeader";
 import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 
 import { useAuthUser } from "@/src/context/AuthUserContext";
@@ -45,6 +46,8 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 
 import * as FileSystem from "expo-file-system";
 
+import SafeView from "@/app/components/appwide/format/SafeView";
+
 const ScreenHome = ({ navigation }) => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
 
@@ -52,7 +55,7 @@ const ScreenHome = ({ navigation }) => {
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { authUserState, userAppSettings } = useAuthUser();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
-  const { friendListLength, updateSafeViewGradient } = useFriendList();
+  const { friendListLength  } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState();
   const {
     requestPermission,
@@ -70,7 +73,7 @@ const ScreenHome = ({ navigation }) => {
 
   const newMomentTextRef = useRef(null);
 
-  updateSafeViewGradient(false);
+ 
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
@@ -303,6 +306,9 @@ const ScreenHome = ({ navigation }) => {
   };
 
   return (
+    
+    <SafeView style={ {flex: 1 }}>
+      
    <LinearGradient
       colors={[gradientColorsHome.darkColor, gradientColorsHome.lightColor]}
       start={{ x: 0, y: 0 }}
@@ -310,13 +316,15 @@ const ScreenHome = ({ navigation }) => {
       style={[
         styles.container,
         
-        {  height: isKeyboardVisible ? "200%" : "100%" },
+        {  height: isKeyboardVisible ? "100%" : "100%" },
       ]}
     >
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
+              <HellofriendHeader />
         {authUserState.authenticated &&
         authUserState.user &&
         userAppSettings ? (
@@ -331,7 +339,7 @@ const ScreenHome = ({ navigation }) => {
           >
             <View
               style={{
-                height: isKeyboardVisible ? "76%" : "32%",
+                height: isKeyboardVisible ? "84%" : "32%",
               }}
             > 
               {/* <Button
@@ -391,18 +399,7 @@ const ScreenHome = ({ navigation }) => {
                   transform: [{ translateX: slideAnim }],
                 },
               ]}
-            >
-              {/* <View style={{flex: 1}}>  */}
-
-              {/* <HomeButtonGenericAdd label={'ADD IMAGE'}  onPress={navigateToAddImageScreen} borderRadius={40} borderColor="black" height={buttonHeight}/>
-               */}
-
-              {/* <HomeButtonGenericAdd label={'ADD HELLO'} onPress={navigateToAddHelloScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/coffeecupnoheart.png")} height={buttonHeight}/>
-               */}
-
-              {/* {(selectedFriend || friendLoaded) && showLastButton && (
-                  <HomeButtonGenericAdd label={'ADD MEETUP SPOT'}   onPress={navigateToAddLocationScreen} borderRadius={40} borderColor="black" image={require("../assets/shapes/hillylandscape.png")} height={buttonHeight} />
-                )} */}
+            > 
 
               {!selectedFriend && !friendLoaded && showLastButton && (
                 <View style={{ maxHeight: 80 }}>
@@ -458,6 +455,9 @@ const ScreenHome = ({ navigation }) => {
       </KeyboardAvoidingView>
     </LinearGradient>
     
+    </SafeView>
+  
+    
        
   );
 };
@@ -465,7 +465,7 @@ const ScreenHome = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...StyleSheet.absoluteFillObject,
+   // ...StyleSheet.absoluteFillObject,
     justifyContent: "space-between",
   },
   buttonContainer: {

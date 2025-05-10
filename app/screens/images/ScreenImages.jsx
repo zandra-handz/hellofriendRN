@@ -1,36 +1,39 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-
+import SafeView from "@/app/components/appwide/format/SafeView";
 import { useFriendList } from "@/src/context/FriendListContext";
 import ImageMenuButton from "@/app/components/images/ImageMenuButton";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
 import ImagesList from "@/app/components/images/ImagesList";
+import HeaderImage from "@/app/components/headers/HeaderImage";
 
 import { LinearGradient } from "expo-linear-gradient";
 
 const ScreenImages = () => {
   const { imageList } = useImageFunctions();
-  const { themeAheadOfLoading, updateSafeViewGradient } = useFriendList();
-  updateSafeViewGradient(true);
+  const { themeAheadOfLoading } = useFriendList();
 
   return (
-    <LinearGradient
-      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={[styles.container]}
-    >
-      <View style={{ flex: 1 }}>
-        {imageList.length > 0 ? (
-          <>
-            <ImagesList height={80} width={80} singleLineScroll={false} />
-          </>
-        ) : (
-          <Text></Text>
-        )}
-      </View>
-      <ImageMenuButton />
-    </LinearGradient>
+    <SafeView style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={[styles.container]}
+      >
+        <HeaderImage headerTitle="Images" />
+        <View style={{ flex: 1 }}>
+          {imageList.length > 0 ? (
+            <>
+              <ImagesList height={80} width={80} singleLineScroll={false} />
+            </>
+          ) : (
+            <Text></Text>
+          )}
+        </View>
+        <ImageMenuButton />
+      </LinearGradient>
+    </SafeView>
   );
 };
 

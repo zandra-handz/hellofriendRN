@@ -4,8 +4,7 @@ import { View, StyleSheet } from 'react-native';
 import ContentFindMidpoint from '@/app/components/locations/ContentFindMidpoint';
 import { useFriendList } from '@/src/context/FriendListContext';
 const ScreenMidpointLocationSearch = () => { 
-    const {  updateSafeViewGradient  } = useFriendList();
-     updateSafeViewGradient(true);
+ 
 
     return (
         <View style={styles.container}>

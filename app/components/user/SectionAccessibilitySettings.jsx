@@ -12,14 +12,13 @@ import LoadingPage from '../appwide/spinner/LoadingPage';
 //moved creation/removal of notification tokens completely out of this into auth context
 const SectionAccessibilitySettings = () => {
   const { authUserState, updateAppSettingsMutation, userAppSettings, updateUserNotificationSettings  } = useAuthUser();
-  const { themeStyles } = useGlobalStyle();  
-  const [  setReceiveNotifications] = useState(false);
+  const { themeStyles } = useGlobalStyle();   
   const [manualTheme, setManualTheme] = useState(false);  
   const [showAlert, setShowAlert] = useState(false); 
 
   useEffect(() => {
     if (userAppSettings) {  
-      setReceiveNotifications(userAppSettings.receive_notifications);
+     
         
 
       if (userAppSettings.manual_dark_mode === null) {

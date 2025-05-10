@@ -30,7 +30,7 @@ const ButtonSettings = () => {
     { title: 'ACCOUNT', content: <SectionAccountSettings /> }, 
   ];
 
-  const footerContent = "© Badrainbowz Studio 2024";
+  const footerContent = "© Badrainbowz Studio 2025";
 
   return (
     <>

@@ -6,17 +6,17 @@ import { useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
- 
-
+ import SafeView from "@/app/components/appwide/format/SafeView";
+import HeaderMoment from "@/app/components/headers/HeaderMoment";
 import ContentMomentView from "@/app/components/moments/ContentMomentView";
 import NavigationArrows from "@/app/components/appwide/button/NavigationArrows";
 
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
-  const { themeAheadOfLoading,  updateSafeViewGradient  } = useFriendList();
+  const { themeAheadOfLoading   } = useFriendList();
 
-  updateSafeViewGradient(true);
+ 
 
   const {
     capsuleList,
@@ -169,12 +169,14 @@ const ScreenMomentView = () => {
   }, [currentIndex, capsuleList]);
 
   return (
+    <SafeView style={{flex: 1}}>
     <LinearGradient
       colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={[styles.container]}
     >
+      <HeaderMoment writeView={false} />
       <ContentMomentView
         onSliderPull={handleDelete}
         momentCategory={
@@ -213,6 +215,9 @@ const ScreenMomentView = () => {
         </>
       )}
     </LinearGradient>
+    
+      
+    </SafeView>
   );
 };
 

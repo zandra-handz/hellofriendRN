@@ -99,11 +99,12 @@ const HeaderBase = ({
 const styles = StyleSheet.create({
   headerContainer: {
     padding: 10,
-    paddingTop: 66,  
+    paddingTop: 0,  
     paddingHorizontal: '3%', 
-    height: 110, 
+    height: 80, 
     flexDirection: 'row', 
     width: '100%',
+    alignItems: 'center',
     backgroundColor: 'pink',
     justifyContent: 'space-between',
   }, 

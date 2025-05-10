@@ -122,8 +122,7 @@ const HeaderHelloes = ({ title = "HELLOES", writeView = false }) => {
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
-    padding: 10,
-    paddingTop: 0,
+    padding: 10, 
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "space-between",

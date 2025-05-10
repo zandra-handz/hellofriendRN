@@ -5,180 +5,180 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-} from "react-native"; 
+} from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { LinearGradient } from "expo-linear-gradient";
 import DoubleChecker from "@/app/components/alerts/DoubleChecker";
-
+import HeaderUserDetails from "@/app/components/headers/HeaderUserDetails";
 import DetailRow from "@/app/components/appwide/display/DetailRow";
 
 import WrenchOutlineSvg from "@/app/assets/svgs/wrench-outline.svg";
- 
+
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
+import SafeView from "@/app/components/appwide/format/SafeView";
 
-const ScreenUserDetails = () => { 
-
+const ScreenUserDetails = () => {
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
-  const {  updateSafeViewGradient } = useFriendList();
+  const { updateSafeViewGradient } = useFriendList();
   const { darkColor, lightColor } = gradientColorsHome;
-    const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
-updateSafeViewGradient(false);
+  const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
+  updateSafeViewGradient(false);
 
-    const openDoubleChecker = () => {
-        setIsDoubleCheckerVisible(true);
-      };
-    
-      const toggleDoubleChecker = () => {
-        setIsDoubleCheckerVisible((prev) => !prev);
-      };
-  
+  const openDoubleChecker = () => {
+    setIsDoubleCheckerVisible(true);
+  };
+
+  const toggleDoubleChecker = () => {
+    setIsDoubleCheckerVisible((prev) => !prev);
+  };
 
   return (
-    <LinearGradient
-      colors={[darkColor, lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={[styles.container, themeStyles.container]}
-    >
-      <ScrollView
-        contentContainerStyle={[styles.backColorContainer, { padding: 10 }]}
-        style={{ width: "100%" }}
+    <SafeView style={{flex: 1}}>
+      <LinearGradient
+        colors={[darkColor, lightColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.container, themeStyles.container]}
       >
-        <View style={styles.section}>
-          <View style={styles.subTitleRow}>
-            <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
-              USERNAME
-            </Text>
-            <View style={styles.subTitleButtonContainer}>
-                              <WrenchOutlineSvg
-                                onPress={() => {}}
-                                height={26}
-                                width={26}
-                                color={themeStyles.genericText.color}
-                              />
-                            </View>
-          </View>
-        </View>
-        <View
-          style={[
-            styles.divider,
-            { borderBottomColor: themeStyles.modalText.color },
-          ]}
-        ></View>
-                        <View style={styles.section}>
-          <View style={styles.subTitleRow}>
-            <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
-              EMAIL
-            </Text>
-            <View style={styles.subTitleButtonContainer}>
-                              <WrenchOutlineSvg
-                                onPress={() => {}}
-                                height={26}
-                                width={26}
-                                color={themeStyles.genericText.color}
-                              />
-                            </View>
-          </View>
-        </View>
-        <View
-          style={[
-            styles.divider,
-            { borderBottomColor: themeStyles.modalText.color },
-          ]}
-        ></View>
-                        <View style={styles.section}>
-          <View style={styles.subTitleRow}>
-            <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
-              PHONE
-            </Text>
-            <View style={styles.subTitleButtonContainer}>
-                              <WrenchOutlineSvg
-                                onPress={() => {}}
-                                height={26}
-                                width={26}
-                                color={themeStyles.genericText.color}
-                              />
-                            </View>
-          </View>
-        </View>
-        <View
-          style={[
-            styles.divider,
-            { borderBottomColor: themeStyles.modalText.color },
-          ]}
-        ></View>
-                <View style={styles.section}>
-          <View style={styles.subTitleRow}>
-            <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
-              PASSWORD
-            </Text>
-            <View style={styles.subTitleButtonContainer}>
-                              <WrenchOutlineSvg
-                                onPress={() => {}}
-                                height={26}
-                                width={26}
-                                color={themeStyles.genericText.color}
-                              />
-                            </View>
-          </View>
-        </View>
-        <View
-          style={[
-            styles.divider,
-            { borderBottomColor: themeStyles.modalText.color },
-          ]}
-        ></View>
-                        <View style={styles.section}>
-          <View style={styles.subTitleRow}>
-            <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
-              ADDRESSES
-            </Text>
-                            <View style={styles.subTitleButtonContainer}>
-                              <WrenchOutlineSvg
-                                onPress={() => {}}
-                                height={26}
-                                width={26}
-                                color={themeStyles.genericText.color}
-                              />
-                            </View>
-          </View>
-        </View>
-        <View
-          style={[
-            styles.divider,
-            { borderBottomColor: themeStyles.modalText.color },
-          ]}
-        ></View>
-                    <View style={styles.section}>
-              <View style={styles.subTitleRow}>
-                <Text
-                  style={[styles.modalSubTitle, themeStyles.dangerZoneText]}
-                >
-                  DANGER ZONE
-                </Text>
-              </View>
-
-              <TouchableOpacity onPress={openDoubleChecker}>
-                <DetailRow
-                  iconSize={20}
-                  label={`Delete`}
-                  svg={TrashOutlineSvg}
-                  color={themeStyles.dangerZoneText.color}
+        <HeaderUserDetails />
+        <ScrollView
+          contentContainerStyle={[styles.backColorContainer, { padding: 10 }]}
+          style={{ width: "100%" }}
+        >
+          <View style={styles.section}>
+            <View style={styles.subTitleRow}>
+              <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
+                USERNAME
+              </Text>
+              <View style={styles.subTitleButtonContainer}>
+                <WrenchOutlineSvg
+                  onPress={() => {}}
+                  height={26}
+                  width={26}
+                  color={themeStyles.genericText.color}
                 />
-              </TouchableOpacity>
+              </View>
             </View>
-      </ScrollView>
+          </View>
+          <View
+            style={[
+              styles.divider,
+              { borderBottomColor: themeStyles.modalText.color },
+            ]}
+          ></View>
+          <View style={styles.section}>
+            <View style={styles.subTitleRow}>
+              <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
+                EMAIL
+              </Text>
+              <View style={styles.subTitleButtonContainer}>
+                <WrenchOutlineSvg
+                  onPress={() => {}}
+                  height={26}
+                  width={26}
+                  color={themeStyles.genericText.color}
+                />
+              </View>
+            </View>
+          </View>
+          <View
+            style={[
+              styles.divider,
+              { borderBottomColor: themeStyles.modalText.color },
+            ]}
+          ></View>
+          <View style={styles.section}>
+            <View style={styles.subTitleRow}>
+              <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
+                PHONE
+              </Text>
+              <View style={styles.subTitleButtonContainer}>
+                <WrenchOutlineSvg
+                  onPress={() => {}}
+                  height={26}
+                  width={26}
+                  color={themeStyles.genericText.color}
+                />
+              </View>
+            </View>
+          </View>
+          <View
+            style={[
+              styles.divider,
+              { borderBottomColor: themeStyles.modalText.color },
+            ]}
+          ></View>
+          <View style={styles.section}>
+            <View style={styles.subTitleRow}>
+              <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
+                PASSWORD
+              </Text>
+              <View style={styles.subTitleButtonContainer}>
+                <WrenchOutlineSvg
+                  onPress={() => {}}
+                  height={26}
+                  width={26}
+                  color={themeStyles.genericText.color}
+                />
+              </View>
+            </View>
+          </View>
+          <View
+            style={[
+              styles.divider,
+              { borderBottomColor: themeStyles.modalText.color },
+            ]}
+          ></View>
+          <View style={styles.section}>
+            <View style={styles.subTitleRow}>
+              <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
+                ADDRESSES
+              </Text>
+              <View style={styles.subTitleButtonContainer}>
+                <WrenchOutlineSvg
+                  onPress={() => {}}
+                  height={26}
+                  width={26}
+                  color={themeStyles.genericText.color}
+                />
+              </View>
+            </View>
+          </View>
+          <View
+            style={[
+              styles.divider,
+              { borderBottomColor: themeStyles.modalText.color },
+            ]}
+          ></View>
+          <View style={styles.section}>
+            <View style={styles.subTitleRow}>
+              <Text style={[styles.modalSubTitle, themeStyles.dangerZoneText]}>
+                DANGER ZONE
+              </Text>
+            </View>
 
-      {isDoubleCheckerVisible && (
-            <DoubleChecker
-              isVisible={isDoubleCheckerVisible}
-              toggleVisible={toggleDoubleChecker}
-              singleQuestionText={`Delete account?`}
-              onPress={() => {}}
-            />
-          )}
-    </LinearGradient>
+            <TouchableOpacity onPress={openDoubleChecker}>
+              <DetailRow
+                iconSize={20}
+                label={`Delete`}
+                svg={TrashOutlineSvg}
+                color={themeStyles.dangerZoneText.color}
+              />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+
+        {isDoubleCheckerVisible && (
+          <DoubleChecker
+            isVisible={isDoubleCheckerVisible}
+            toggleVisible={toggleDoubleChecker}
+            singleQuestionText={`Delete account?`}
+            onPress={() => {}}
+          />
+        )}
+      </LinearGradient>
+    </SafeView>
   );
 };
 

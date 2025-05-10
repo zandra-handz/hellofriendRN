@@ -223,14 +223,14 @@ export default Sentry.wrap(function App() {
                         <HelloesProvider>
                           <MessageContextProvider>
                             <SafeAreaProvider>
-                              <SafeView
+                              {/* <SafeView
                                 style={{
                                   flex: 1,
                                   backgroundColor: "transparent",
                                 }}
-                              >
+                              > */}
                                 <Layout />
-                              </SafeView>
+                              {/* </SafeView> */}
                             </SafeAreaProvider>
                           </MessageContextProvider>
                         </HelloesProvider>
@@ -396,7 +396,7 @@ export const Layout = () => {
                   name="hellofriend"
                   component={ScreenHome}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => <HellofriendHeader />,
                   }}
                 />
@@ -404,7 +404,7 @@ export const Layout = () => {
                   name="UserDetails"
                   component={ScreenUserDetails}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => <HeaderUserDetails />,
                   }}
                 />
@@ -412,7 +412,7 @@ export const Layout = () => {
                   name="FriendFocus"
                   component={ScreenFriendSettings}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => <HeaderFriendSettings />,
                   }}
                 />
@@ -420,7 +420,7 @@ export const Layout = () => {
                   name="MomentFocus"
                   component={ScreenMomentFocus}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => <HeaderMoment writeView={true} />,
                   }}
                 />
@@ -428,7 +428,7 @@ export const Layout = () => {
                   name="Moments"
                   component={ScreenMoments}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => <HeaderMoment title={"MOMENTS"} />,
                   }}
                 />
@@ -437,7 +437,7 @@ export const Layout = () => {
                   name="MomentView"
                   component={ScreenMomentView}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => <HeaderMoment writeView={false} />,
                   }}
                 />
@@ -445,7 +445,7 @@ export const Layout = () => {
                   name="Images"
                   component={ScreenImages}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => <HeaderImage headerTitle="Images" />,
                   }}
                 />
@@ -453,7 +453,7 @@ export const Layout = () => {
                   name="Helloes"
                   component={ScreenHelloes}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => <HeaderHelloes />,
                   }}
                 />
@@ -557,7 +557,7 @@ export const Layout = () => {
                   name="AddImage"
                   component={ScreenAddImage}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => (
                       <HeaderBase
                         headerTitle="Upload"
@@ -571,7 +571,7 @@ export const Layout = () => {
                   name="AddHello"
                   component={ScreenAddHello}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => (
                       <HeaderBase
                         headerTitle="Add hello"

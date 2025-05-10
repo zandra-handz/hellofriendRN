@@ -13,10 +13,11 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native"; 
+import SafeView from "@/app/components/appwide/format/SafeView";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-
+import HeaderFriendSettings from "@/app/components/headers/HeaderFriendSettings";
 import { useMessage } from "@/src/context/MessageContext";
 
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
@@ -122,12 +123,15 @@ const ScreenFriendSettings = () => {
   }, [deleteFriendMutation.isSuccess]);
 
   return (
+    <SafeView styles={{flex: 1}}>
+      
     <LinearGradient
       colors={[darkColor, lightColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.container]}
     >
+      <HeaderFriendSettings />
       {loadingNewFriend && themeAheadOfLoading && (
         <View
           style={[
@@ -276,6 +280,8 @@ const ScreenFriendSettings = () => {
         </>
       )}
     </LinearGradient>
+    
+    </SafeView>
   );
 };
 
