@@ -207,7 +207,7 @@ const ContentMomentFocus = ({
           
         <View
           style={{
-            position: "absolute",
+            //position: "absolute",
             bottom: 32,
             left: 0,
             right: 0,
