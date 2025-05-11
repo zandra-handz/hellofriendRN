@@ -1,19 +1,18 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useFriendList } from './FriendListContext';
-import { useAuthUser } from './AuthUserContext';  
-import { fetchFriendDashboard } from '../calls/api';  
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { useFriendList } from "./FriendListContext";
+import { useAuthUser } from "./AuthUserContext";
+import { fetchFriendDashboard } from "../calls/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const SelectedFriendContext = createContext({});
 
 export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const { authUserState } = useAuthUser(); 
-  const { friendList, resetTheme } = useFriendList();  
-  const [friendFavesData, setFriendFavesData ] = useState({
+  const { authUserState } = useAuthUser();
+  const { friendList, resetTheme } = useFriendList();
+  const [friendFavesData, setFriendFavesData] = useState({
     friendFaveLocations: null,
-  })
+  });
 
   const [friendColorTheme, setFriendColorTheme] = useState({
     useFriendColorTheme: null,
@@ -21,45 +20,46 @@ export const SelectedFriendProvider = ({ children }) => {
     lightColor: null,
     darkColor: null,
   });
- 
+
   const queryClient = useQueryClient();
-
-
-  const [favoriteLocationIds, setFavoriteLocationIds] = useState([]);
-    
-  const { data: friendDashboardData, isLoading, isPending, isError, isSuccess } = useQuery({
-    queryKey: ['friendDashboardData', selectedFriend?.id],
-    queryFn: () => fetchFriendDashboard(selectedFriend.id),
-    enabled: !!selectedFriend && !!selectedFriend.id,  
-    onError: (err) => {
-      console.error('Error fetching friend data:', err);
-      
-    }, 
-  });
  
 
+  const {
+    data: friendDashboardData,
+    isLoading,
+    isPending,
+    isError,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["friendDashboardData", selectedFriend?.id],
+    queryFn: () => fetchFriendDashboard(selectedFriend.id),
+    enabled: !!selectedFriend && !!selectedFriend.id,
+    onError: (err) => {
+      console.error("Error fetching friend data:", err);
+    },
+  });
 
   const getFaveLocationIds = () => {
     if (!selectedFriend || !selectedFriend.id) {
-      console.warn('No selected friend or friend ID found');
-      return []; 
+      console.warn("No selected friend or friend ID found");
+      return [];
     }
-    
-    const cachedData = queryClient.getQueryData(['friendDashboardData', selectedFriend.id]);
-    
+
+    const cachedData = queryClient.getQueryData([
+      "friendDashboardData",
+      selectedFriend.id,
+    ]);
+
     if (cachedData && cachedData[0] && cachedData[0].friend_faves) {
       return cachedData[0].friend_faves.locations || [];
     }
-    
-    console.warn('No cached data found for selected friend');
-    return [];   
+
+    console.warn("No cached data found for selected friend");
+    return [];
   };
-
-
 
   useEffect(() => {
     if (isError) {
-
       deselectFriend();
     }
   }, [isError]);
@@ -67,112 +67,91 @@ export const SelectedFriendProvider = ({ children }) => {
   const loadingNewFriend = isLoading;
   const friendLoaded = isSuccess;
   const errorLoadingFriend = isError;
- 
 
   useEffect(() => {
     if (friendDashboardData) {
+ 
+      const cachedData = queryClient.getQueryData([
+        "friendDashboardData",
+        selectedFriend.id,
+      ]);
 
-      // console.log(
-      //   'Specific Cache:',
-      //   queryClient.getQueryData(['friendDashboardData', selectedFriend.id])
-      // );
-
-      const cachedData = queryClient.getQueryData(['friendDashboardData', selectedFriend.id]);
-
-const cachedDataLower = cachedData[0].friend_faves?.locations || null;
-      const lowerLayerData = Array.isArray(friendDashboardData) ? friendDashboardData[0] : friendDashboardData;
-     
-      //const lowerLayerData = Array.isArray(friendDashboardData) ? friendDashboardData[0] : friendDashboardData;
-     
+      const cachedDataLower = cachedData[0].friend_faves?.locations || null;
+      const lowerLayerData = Array.isArray(friendDashboardData)
+        ? friendDashboardData[0]
+        : friendDashboardData;
+ 
       const colorThemeData = {
-        useFriendColorTheme: lowerLayerData?.friend_faves?.use_friend_color_theme || false,
-        invertGradient: lowerLayerData?.friend_faves?.second_color_option || false,
+        useFriendColorTheme:
+          lowerLayerData?.friend_faves?.use_friend_color_theme || false,
+        invertGradient:
+          lowerLayerData?.friend_faves?.second_color_option || false,
         lightColor: lowerLayerData?.friend_faves?.light_color || null,
         darkColor: lowerLayerData?.friend_faves?.dark_color || null,
       };
       const friendFavesData = {
         friendFaveLocations: cachedDataLower || null,
       };
-      console.log('Setting color theme data in useEffect:', colorThemeData);
+      console.log("Setting color theme data in useEffect:", colorThemeData);
       setFriendFavesData(friendFavesData);
-      console.log('Setting color theme data in useEffect:', friendFavesData);
+      console.log("Setting color theme data in useEffect:", friendFavesData);
       setFriendColorTheme(colorThemeData);
     }
-  }, [friendDashboardData]); 
+  }, [friendDashboardData]);
 
-
-
-  
-  
-
-  const deselectFriend = () => {
-    console.log('friend deselected via deselectFriend()');
+  const deselectFriend = () => { 
     setSelectedFriend(null);
     resetTheme();
-    queryClient.resetQueries(['friendDashboardData']);
+    queryClient.resetQueries(["friendDashboardData"]);
     setFriendColorTheme({
       useFriendColorTheme: null,
       invertGradient: null,
       lightColor: null,
       darkColor: null,
-  });
-  
+    });
   };
 
-
   //HMM WHAT IS THIS
-  useEffect(() => {
-    
-    console.log('friend getting deselected when no authuserstate');
+  useEffect(() => { 
     deselectFriend();
   }, [authUserState]);
 
   useEffect(() => {
     if (!selectedFriend) {
       deselectFriend();
-    
     }
   }, [selectedFriend]);
-  
+
  
 
-  const updateFriendDashboardData = (newData) => {
-    console.log('update');
-    //setFriendDashboardData(newData);
-
-  };
-
   const updateFriendColorTheme = (newColorTheme) => {
-    setFriendColorTheme(prev => ({
+    setFriendColorTheme((prev) => ({
       ...prev,
-      ...newColorTheme
+      ...newColorTheme,
     }));
   };
 
-
   return (
-    <SelectedFriendContext.Provider value={{ 
-      selectedFriend, 
-      setFriend: setSelectedFriend, 
-      deselectFriend,
-      friendLoaded,
-      errorLoadingFriend,
-      friendList,
-      isPending,
-      isLoading,
-      isSuccess,
-      friendDashboardData, 
-      favoriteLocationIds,
-      friendColorTheme,
-      setFriendColorTheme,
-      friendFavesData, 
-      //calculatedThemeColors,
-      loadingNewFriend,
-      updateFriendDashboardData,
-      updateFriendColorTheme,
-      favoriteLocationIds,
-      getFaveLocationIds,
-    }}>
+    <SelectedFriendContext.Provider
+      value={{
+        selectedFriend,
+        setFriend: setSelectedFriend,
+        deselectFriend,
+        friendLoaded,
+        errorLoadingFriend,
+        friendList,
+        isPending,
+        isLoading,
+        isSuccess,
+        friendDashboardData, 
+        friendColorTheme,
+        setFriendColorTheme,
+        friendFavesData, 
+        loadingNewFriend, 
+        updateFriendColorTheme, 
+        getFaveLocationIds,
+      }}
+    >
       {children}
     </SelectedFriendContext.Provider>
   );
@@ -182,7 +161,9 @@ export const useSelectedFriend = () => {
   const context = useContext(SelectedFriendContext);
 
   if (!context) {
-    throw new Error('useSelectedFriend must be used within a SelectedFriendProvider');
+    throw new Error(
+      "useSelectedFriend must be used within a SelectedFriendProvider"
+    );
   }
 
   return context;

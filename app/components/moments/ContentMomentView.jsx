@@ -127,6 +127,7 @@ const ContentMomentView = ({
                       </View>
                     </View> 
                       <ScrollView
+                      fadingEdgeLength={60}
                         contentContainerStyle={[
                           styles.textWrapper
                         ]}

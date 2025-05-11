@@ -1018,7 +1018,7 @@ export const updateAppSetup = async () => {
 export const fetchFriendImagesByCategory = async (friendId) => {
     try {
         const response = await axios.get(`/friends/${friendId}/images/by-category/`);
-        console.log("API GET CALL fetchFriendImagesByCategory");
+        console.log("API GET CALL fetchFriendImagesByCategory"); //, response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching friend images by category:', error);

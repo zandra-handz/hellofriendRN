@@ -168,8 +168,7 @@ const TextMomentHomeScreenBox = forwardRef(
                 style={{
                   flexDirection: "row",
                   height: "100%",
-                  alignItems: "center", 
-                  //marginBottom: "1%",
+                  alignItems: "center",  
                 }}
               >
                 <Text
@@ -335,6 +334,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     borderRadius: 20,
     paddingVertical: 0,
+    marginLeft: 14,
     flex: 1,
     fontSize: 15,
     lineHeight: 21,

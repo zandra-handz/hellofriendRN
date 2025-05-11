@@ -27,7 +27,7 @@ const HeaderBase = ({
   navigateTo = 'Moments', 
   icon,
 }) => {
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appContainerStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const { loadingNewFriend } = useSelectedFriend();
   const navigation = useNavigation();
@@ -55,7 +55,7 @@ const HeaderBase = ({
           ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={styles.headerContainer}
+          style={appContainerStyles.headerContainer}
       >
           {!loadingNewFriend && (
               <>
@@ -97,17 +97,7 @@ const HeaderBase = ({
 
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    padding: 10,
-    paddingTop: 0,  
-    paddingHorizontal: '3%', 
-    height: 80, 
-    flexDirection: 'row', 
-    width: '100%',
-    alignItems: 'center',
-    backgroundColor: 'pink',
-    justifyContent: 'space-between',
-  }, 
+ 
   leftButtonContainer: {
     width: 40,  // Fixed width to keep it from moving
   },

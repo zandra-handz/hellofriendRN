@@ -585,7 +585,7 @@ export const Layout = () => {
                   name="AddFriend"
                   component={ScreenAddFriend}
                   options={{
-                    headerShown: true,
+                    headerShown: false,
                     header: () => <HeaderBase headerTitle="Add new friend" />,
                   }}
                 />

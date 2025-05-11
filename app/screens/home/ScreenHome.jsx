@@ -1,6 +1,6 @@
 import { useShareIntentContext } from "expo-share-intent";
 import * as Sentry from "@sentry/react-native";
-import React, { useEffect, useState, useRef } from "react"; 
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Alert,
@@ -11,8 +11,7 @@ import {
   FlatList,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Platform,
-  Button,
+  Platform, 
 } from "react-native";
 
 import HellofriendHeader from "@/app/components/headers/HellofriendHeader";
@@ -30,7 +29,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import HomeScrollSoon from "@/app/components/home/HomeScrollSoon";
 
 import HomeScrollCalendarLights from "@/app/components/home/HomeScrollCalendarLights";
-import HomeButtonGenericAdd from "@/app/components/home/HomeButtonGenericAdd";
+import HomeScreenButton from "@/app/components/home/HomeScreenButton";
 import HomeButtonMomentAddSmall from "@/app/components/home/HomeButtonMomentAddSmall";
 
 import HomeButtonUpNext from "@/app/components/home/HomeButtonUpNext";
@@ -55,7 +54,7 @@ const ScreenHome = ({ navigation }) => {
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { authUserState, userAppSettings } = useAuthUser();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
-  const { friendListLength  } = useFriendList();
+  const { friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState();
   const {
     requestPermission,
@@ -69,11 +68,7 @@ const ScreenHome = ({ navigation }) => {
 
   const { showMessage } = useMessage();
 
-  
-
   const newMomentTextRef = useRef(null);
-
- 
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
@@ -186,17 +181,13 @@ const ScreenHome = ({ navigation }) => {
       if (text.length === 1) {
         setShowMomentScreenButton(true);
       }
-
-      // console.log("new moment in home screen", newMomentTextRef.current.getText());
     }
   };
-
-  //const { data, isLoadingCurrentLocation, error } = useCurrentLocationManual();
 
   const showLastButton = true;
   const maxButtonHeight = 100; // Remaining height for buttons  // Divide remaining height by the number of buttons (5 buttons + footer)
 
-  const { currentLocationDetails, currentRegion } = useCurrentLocation();
+  const { currentLocationDetails } = useCurrentLocation();
   useEffect(() => {
     if (currentLocationDetails) {
     }
@@ -306,180 +297,151 @@ const ScreenHome = ({ navigation }) => {
   };
 
   return (
-    
-    <SafeView style={ {flex: 1 }}>
-      
-   <LinearGradient
-      colors={[gradientColorsHome.darkColor, gradientColorsHome.lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={[
-        styles.container,
-        
-        {  height: isKeyboardVisible ? "100%" : "100%" },
-      ]}
-    >
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+    <SafeView style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[gradientColorsHome.darkColor, gradientColorsHome.lightColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          flex: 1,
+          justifyContent: "space-between",
+        }}
       >
-              <HellofriendHeader />
-        {authUserState.authenticated &&
-        authUserState.user &&
-        userAppSettings ? (
-          <View
-            style={{
-              flex: 1,
-              paddingBottom: "1%",
-              justifyContent: "space-between",
-              flexDirection: "column",
-              paddingHorizontal: "2%",
-            }}
-          >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <HellofriendHeader />
+          {authUserState.authenticated &&
+          authUserState.user &&
+          userAppSettings ? (
             <View
               style={{
-                height: isKeyboardVisible ? "84%" : "32%",
+                flex: 1,
+                paddingBottom: "1%",
+                justifyContent: "space-between",
+                flexDirection: "column",
+                paddingHorizontal: "2%",
               }}
-            > 
-              {/* <Button
+            >
+              <View
+                style={{
+                  height: isKeyboardVisible ? "84%" : "32%",
+                }}
+              >
+                {/* <Button
                 title="Try!"
                 onPress={() => {
                   Sentry.captureException(new Error("First error"));
                 }}
               /> */}
-              <TextMomentHomeScreenBox
-                width={"100%"}
-                height={"100%"}
-                ref={newMomentTextRef}
-                title={"Add a new moment?"}
-                iconColor={themeStyles.genericText.color}
-                mountingText={""}
-                onTextChange={updateNewMomentTextString}
-                multiline={true}
-              />
+                <TextMomentHomeScreenBox
+                  width={"100%"}
+                  height={"100%"}
+                  ref={newMomentTextRef}
+                  title={"Add a new moment?"}
+                  iconColor={themeStyles.genericText.color}
+                  mountingText={""}
+                  onTextChange={updateNewMomentTextString}
+                  multiline={true}
+                />
 
-              {selectedFriend && showMomentScreenButton && (
-                <View
-                  style={{
-                    width: "30%",
-                    height: 36,
-                    position: "absolute",
-                    bottom: 20,
-                    right: 0,
-                  }}
-                >
-                  <HomeButtonMomentAddSmall
+                {selectedFriend && showMomentScreenButton && (
+                  <View
+                    style={{
+                      width: "30%",
+                      height: 36,
+                      position: "absolute",
+                      bottom: 20,
+                      right: 0,
+                    }}
+                  >
+                    <HomeButtonMomentAddSmall
+                      onPress={navigateToAddMomentScreen}
+                      borderRadius={40}
+                      borderColor="black"
+                    />
+                  </View>
+                )}
+              </View>
+              {friendListLength > 0 && (
+                <View style={{ height: "auto", width: "100%" }}>
+                  <FlatList
+                    data={otherOptions}
+                    horizontal
+                    keyExtractor={(item, index) => `satellite-${index}`}
+                    renderItem={(
+                      { item, index } // Correctly destructure the item and index
+                    ) => renderOptionButton(item, index)}
+                    ListFooterComponent={() => <View style={{ width: 140 }} />}
+                    showsHorizontalScrollIndicator={false}
+                  />
+                </View>
+              )}
+              <Animated.View
+                style={[
+                  {
+                    alignItems: "center",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    flex: 1,
+                    paddingTop: 10,
+                    transform: [{ translateX: slideAnim }],
+                  },
+                ]}
+              >
+                {!selectedFriend && !friendLoaded && showLastButton && (
+                  <View style={{ height: 80, paddingVertical: 4 }}>
+                    <HomeScreenButton
+                      label={"ADD FRIEND"}
+                      onPress={navigateToAddFriendScreen}
+                      image={require("@/app/assets/shapes/yellowleaves.png")}
+                    />
+                  </View>
+                )}
+
+                {!selectedFriend && (
+                  <HomeButtonUpNext
+                    onPress={navigateToAddMomentScreen}
+                    borderRadius={40}
+                    height={"100%"}
+                    borderColor="black"
+                    maxHeight={190}
+                  />
+                )}
+                {selectedFriend && (
+                  <HomeButtonSelectedFriend
                     onPress={navigateToAddMomentScreen}
                     borderRadius={40}
                     borderColor="black"
+                    height={"100%"}
                   />
-                </View>
-              )}
-            </View>
-            {friendListLength > 0 && (
-              <View style={{ height: "auto", width: "100%" }}>
-                <FlatList
-                  data={otherOptions}
-                  horizontal
-                  keyExtractor={(item, index) => `satellite-${index}`}
-                  renderItem={(
-                    { item, index } // Correctly destructure the item and index
-                  ) => renderOptionButton(item, index)}
-                  ListFooterComponent={() => <View style={{ width: 140 }} />}
-                  showsHorizontalScrollIndicator={false}
+                )}
+                <HomeScrollSoon
+                  height={"20%"}
+                  maxHeight={140}
+                  borderRadius={40}
+                  borderColor="black"
                 />
-              </View>
-            )}
-            <Animated.View
-              style={[
-                styles.buttonContainer,
-                {
-                  paddingTop: 10,
-                  transform: [{ translateX: slideAnim }],
-                },
-              ]}
-            > 
-
-              {!selectedFriend && !friendLoaded && showLastButton && (
-                <View style={{ maxHeight: 80 }}>
-                  <HomeButtonGenericAdd
-                    label={"ADD FRIEND"}
-                    onPress={navigateToAddFriendScreen}
+                {selectedFriend && (
+                  <HomeScrollCalendarLights
+                    height={"5%"}
                     borderRadius={40}
                     borderColor="black"
-                    image={require("@/app/assets/shapes/yellowleaves.png")}
-                    height={"100%"}
-                    maxHeight={maxButtonHeight}
                   />
-                </View>
-              )}
+                )}
+              </Animated.View>
+            </View>
+          ) : (
+            <View style={styles.signInContainer}></View>
+          )}
 
-              {!selectedFriend && (
-                <HomeButtonUpNext
-                  onPress={navigateToAddMomentScreen}
-                  borderRadius={40}
-                  height={"100%"}
-                  borderColor="black"
-                  maxHeight={190}
-                />
-              )}
-              {selectedFriend && (
-                <HomeButtonSelectedFriend
-                  onPress={navigateToAddMomentScreen}
-                  borderRadius={40}
-                  borderColor="black"
-                  height={"100%"}
-                />
-              )}
-              <HomeScrollSoon
-                height={"20%"}
-                maxHeight={140}
-                borderRadius={40}
-                borderColor="black"
-              />
-              {selectedFriend && (
-                <HomeScrollCalendarLights
-                  height={"5%"}
-                  borderRadius={40}
-                  borderColor="black"
-                />
-              )}
-            </Animated.View>
-          </View>
-        ) : (
-          <View style={styles.signInContainer}></View>
-        )}
-
-        <HelloFriendFooter />
-      </KeyboardAvoidingView>
-    </LinearGradient>
-    
+          <HelloFriendFooter />
+        </KeyboardAvoidingView>
+      </LinearGradient>
     </SafeView>
-  
-    
-       
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-   // ...StyleSheet.absoluteFillObject,
-    justifyContent: "space-between",
-  },
-  buttonContainer: {
-    height: "100%",
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    marginHorizontal: 0,
-    flex: 1,
-  },
-  loadingWrapper: {
-    flex: 1,
-    width: "100%",
-  },
-});
+ 
 
 export default ScreenHome;

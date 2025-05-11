@@ -16,7 +16,6 @@ export const GlobalStyleProvider = ({ children }) => {
     updateUserSettings,
   } = useAuthUser();
   const colorScheme = useColorScheme();
-  const [nonCustomHeaderPage, setNonCustomHeaderPage] = useState(false);
 
   // Default state
   const [styles, setStyles] = useState({
@@ -151,8 +150,6 @@ export const GlobalStyleProvider = ({ children }) => {
         appFontStyles,
         ConstantColorsStyles,
         themeStyleSpinners,
-        nonCustomHeaderPage,
-        setNonCustomHeaderPage,
       }}
     >
       {children}
@@ -160,9 +157,53 @@ export const GlobalStyleProvider = ({ children }) => {
   );
 };
 
-const containerStyles = StyleSheet.create({});
+const containerStyles = StyleSheet.create({
+  homeHeaderContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 18,
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 70,
+    borderBottomWidth: 0.4,
+    borderColor: "transparent",
+  },
+  headerContainer: {  
+    paddingHorizontal: 18, 
+    height: 70, 
+    flexDirection: 'row', 
+    width: '100%',
+    alignItems: 'center',  
+    justifyContent: 'space-between',
 
-const fontStyles = StyleSheet.create({});
+  },
+  homeScreenButton: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    flex: 1,
+    width: "100%",
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "space-between",
+    overflow: "hidden",
+    borderRadius: 30,
+  },
+  loadingSpinnerWrapper: {
+    flex: 1,
+    width: "100%",
+  },
+});
+
+const fontStyles = StyleSheet.create({
+  homeHeaderText: {
+    fontSize: 20,
+    fontFamily: "Poppins-Regular",
+  },
+  homeScreenButtonText: {
+    fontSize: 18,
+    fontFamily: "Poppins-Bold",
+    textTransform: "uppercase",
+  },
+});
 
 const constantColors = StyleSheet.create({});
 
@@ -179,7 +220,6 @@ const lightThemeStyles = StyleSheet.create({
   darkestBackground: {
     backgroundColor: "#ccc",
   },
-
 
   dangerZoneText: {
     color: "#B22222",
@@ -270,11 +310,7 @@ const lightThemeStyles = StyleSheet.create({
     borderTopWidth: 0.4,
     borderColor: "black",
   },
-  headerContainer: {
-    backgroundColor: "white",
-    borderBottomWidth: 0.4,
-    borderColor: "transparent",
-  },
+  headerContainer: {},
   headerContainerNoBorder: {
     backgroundColor: "white",
   },
@@ -317,20 +353,18 @@ const lightThemeStyles = StyleSheet.create({
 });
 
 const darkThemeStyles = StyleSheet.create({
-
-    primaryText: {
-        color: "#d3d3d3",
-    },
-    primaryBackground: {
-        backgroundColor: "#121212",
-      },
-      darkerBackground: {
-        backgroundColor: "#2B2B2B",
-      },
-      darkestBackground: {
-        backgroundColor: "#242424",
-      },
-
+  primaryText: {
+    color: "#d3d3d3",
+  },
+  primaryBackground: {
+    backgroundColor: "#121212",
+  },
+  darkerBackground: {
+    backgroundColor: "#2B2B2B",
+  },
+  darkestBackground: {
+    backgroundColor: "#242424",
+  },
 
   dangerZoneText: {
     color: "#B22222",
@@ -425,11 +459,7 @@ const darkThemeStyles = StyleSheet.create({
     borderTopWidth: 0.2,
     borderColor: "#4caf50",
   },
-  headerContainer: {
-    backgroundColor: "#000002",
-    borderBottomWidth: 0.4,
-    borderColor: "transparent",
-  },
+  headerContainer: {},
   headerContainerNoBorder: {
     backgroundColor: "#121212",
   },
