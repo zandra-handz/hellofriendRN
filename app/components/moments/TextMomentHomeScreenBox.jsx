@@ -149,8 +149,7 @@ const TextMomentHomeScreenBox = forwardRef(
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View
           style={[
-            styles.container,
-            //themeStyles.genericTextBackground,
+            styles.container, 
             { width: width, height: height },
           ]}
         >

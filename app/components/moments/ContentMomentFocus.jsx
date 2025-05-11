@@ -1,10 +1,16 @@
 import { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Keyboard, Dimensions, KeyboardAvoidingView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  Dimensions,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 import { useAuthUser } from "@/src/context/AuthUserContext";
-import { useFriendList } from "@/src/context/FriendListContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import LeafTopContainer from "./LeafTopContainer";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 
 import SimpleDisplayCard from "../appwide/display/SimpleDisplayCard";
@@ -17,9 +23,8 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import FriendSelectModalVersionButtonOnly from "@/app/components/friends/FriendSelectModalVersionButtonOnly";
 
-import CardCategoriesAsButtons from "../scaffolding/CardCategoriesAsButtons";
+import CategoryCreator from "./CategoryCreator";
 
-import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 
 const ContentMomentFocus = ({
@@ -35,14 +40,7 @@ const ContentMomentFocus = ({
     editMomentMutation,
   } = useCapsuleList(); // NEED THIS TO ADD NEW
   const { authUserState } = useAuthUser();
-  const { themeAheadOfLoading } = useFriendList();
-  const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
-
-  const { width, height } = Dimensions.get("window");
-
-  const oneEighthHeight = height / 8;
-  const oneHalfHeight = height / 2; //notes when keyboard is up
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -50,8 +48,6 @@ const ContentMomentFocus = ({
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const [showCategoriesSlider, setShowCategoriesSlider] = useState(false);
-
-  const categoriesHeight = 46; // Default height
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -69,10 +65,14 @@ const ContentMomentFocus = ({
     };
   }, []);
 
+ 
+
   useEffect(() => {
     if (momentText) {
       updateMomentText(momentText);
-      setShowCategoriesSlider(true);
+      if (!showCategoriesSlider) {
+        setShowCategoriesSlider(true);
+      }
     }
   }, [momentText]);
 
@@ -82,7 +82,9 @@ const ContentMomentFocus = ({
       if (textLengthPrev === 0) {
         if (text.length - textLengthPrev > 1) {
           //this is here to check if something is copy-pasted in or shared in
-          setShowCategoriesSlider(true);
+          if (!showCategoriesSlider) {
+            setShowCategoriesSlider(true);
+          }
         }
       }
 
@@ -90,11 +92,15 @@ const ContentMomentFocus = ({
       // console.log("in parent", momentTextRef.current.getText().length);
     }
     if (text.length < 1) {
-      setShowCategoriesSlider(false);
+      if (showCategoriesSlider) {
+        setShowCategoriesSlider(false);
+      }
     }
 
     if (text.length === 1) {
-      setShowCategoriesSlider(true);
+      if (!showCategoriesSlider) {
+        setShowCategoriesSlider(true);
+      }
     }
   };
 
@@ -139,108 +145,103 @@ const ContentMomentFocus = ({
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
- 
       navigation.goBack();
     }
   }, [createMomentMutation.isSuccess]);
 
   useEffect(() => {
     if (editMomentMutation.isSuccess) {
- 
       navigation.goBack();
-    
     }
   }, [editMomentMutation.isSuccess, editMomentMutation.data]);
 
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          width: "100%",
-
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        {!updateExistingMoment && (
-          <BelowHeaderContainer
-            height={30}
-            alignItems="center"
-            marginBottom="2%" //default is currently set to 2
-            justifyContent="flex-end"
-            children={
-              <FriendSelectModalVersionButtonOnly
-                includeLabel={false}
-                width="100%"
-              />
-            }
-          />
-        )}
-        <BodyStyling
-          height={"100%"}
-          width={"101%"}
-          paddingTop={"0%"}
-          paddingHorizontal={"0%"} //padding is in inner element in this case because it is a different color
-          children={
-            <View style={{ flex: 1, flexDirection: "column" }}>
-              <TextMomentBox
-                width={"100%"}
-                height={!isKeyboardVisible ? oneHalfHeight : "100%"}
-                ref={momentTextRef}
-                title={
-                  updateExistingMoment ? "Edit moment" : "Write new moment"
-                }
-                onTextChange={updateMomentText}
-                multiline={true}
-              />
-
-              <View style={[{ height: oneEighthHeight, marginTop: "4%" }]}>
-                <SimpleDisplayCard value={selectedCategory} />
-              </View>
-            </View>
-          }
-        />
-      </View>
-
-      {isKeyboardVisible && showCategoriesSlider && selectedFriend && (
-        <KeyboardAvoidingView >
-          
+    <TouchableWithoutFeedback onPress={() => {}}>
+      <View style={styles.container}>
         <View
           style={{
-            //position: "absolute",
-            bottom: 32,
-            left: 0,
-            right: 0,
             width: "100%",
-            flex: 1,
+
+            flexDirection: "column",
+            justifyContent: "space-between",
           }}
         >
-          <View style={[styles.buttonContainer, { height: 46 }]}>
-            <CardCategoriesAsButtons
-              onCategorySelect={handleCategorySelect}
-              updateExistingMoment={updateExistingMoment}
-              existingCategory={existingMomentObject?.typedCategory || null}
-              momentTextForDisplay={momentTextRef.current.getText()}
-              onParentSave={handleSave}
+          {!updateExistingMoment && (
+            <BelowHeaderContainer
+              height={30}
+              alignItems="center"
+              marginBottom="2%" //default is currently set to 2
+              justifyContent="flex-end"
+              children={
+                <FriendSelectModalVersionButtonOnly
+                  includeLabel={false}
+                  width="100%"
+                />
+              }
             />
-          </View>
-        </View>
-        
-        </KeyboardAvoidingView>
-      )}
-      {!isKeyboardVisible && (
-        <View style={{ position: "absolute", bottom: -10 }}>
-          <ButtonBaseSpecialSave
-            label="SAVE MOMENT "
-            maxHeight={70}
-            onPress={handleSave}
-            isDisabled={!selectedCategory}
-            fontFamily={"Poppins-Bold"}
-            image={require("@/app/assets/shapes/redheadcoffee.png")}
+          )}
+          <LeafTopContainer
+            paddingHorizontal={0} //padding is in inner element in this case because it is a different color
+            children={
+              <View style={{ flex: 1, flexDirection: "column" }}>
+                <TextMomentBox
+                  width={"100%"}
+                  height={"100%"}
+                  ref={momentTextRef}
+                  title={
+                    updateExistingMoment ? "Edit moment" : "Write new moment"
+                  }
+                  onTextChange={updateMomentText}
+                  multiline={true}
+                />
+
+                {/* <View style={[{ height: 100, marginTop: 4 }]}>
+                <SimpleDisplayCard value={selectedCategory} />
+              </View> */}
+              </View>
+            }
           />
         </View>
-      )}
-    </View>
+
+        {showCategoriesSlider && selectedFriend && (
+          // <View
+          //   style={{
+          //     position: "absolute",
+
+          //     bottom: 32,
+          //     left: 0,
+          //     right: 0,
+          //     width: "100%",
+          //     //  flex: 1,
+          //     backgroundColor: "pink",
+          //                   zIndex: 6000,
+          //       elevation: 6000,
+          //   }}
+          // >
+
+          <CategoryCreator
+            onCategorySelect={handleCategorySelect}
+            updateExistingMoment={updateExistingMoment}
+            existingCategory={existingMomentObject?.typedCategory || null}
+            momentTextForDisplay={momentTextRef.current.getText()}
+            onParentSave={handleSave}
+            isKeyboardVisible={isKeyboardVisible}
+          />
+        )}
+        {!isKeyboardVisible && (
+          <View style={{ position: "absolute", bottom: -10 }}>
+            <ButtonBaseSpecialSave
+              label="SAVE MOMENT "
+              maxHeight={70}
+              onPress={handleSave}
+              isDisabled={!selectedCategory}
+              fontFamily={"Poppins-Bold"}
+              image={require("@/app/assets/shapes/redheadcoffee.png")}
+            />
+          </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -311,14 +312,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     height: "auto",
   },
-  buttonContainer: {
-    // height: "22%",
-    zIndex: 6000,
-    elevation: 6000,
 
-    marginBottom: 10,
-    width: "100%",
-  },
   categoryContainer: {
     width: "100%",
     flex: 1,

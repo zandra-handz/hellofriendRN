@@ -2,35 +2,32 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   FlatList,
-  ScrollView,
   StyleSheet,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Platform,
+  Keyboard,
 } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import AlertFormSubmit from "../alerts/AlertFormSubmit";
 
-import ThoughtBubbleOutlineSvg from "@/app/assets/svgs/thought-bubble-outline.svg"; // Import the SVG
-import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg"; // Import the SVG
+import ThoughtBubbleOutlineSvg from "@/app/assets/svgs/thought-bubble-outline.svg";
+import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
 
 import SingleLineEnterBox from "@/app/components/appwide/input/SingleLineEnterBox";
-
 import ButtonBottomActionBaseSmallLongPress from "../buttons/scaffolding/ButtonBottomActionBaseSmallLongPress";
- 
-
 import ArrowLeftCircleOutline from "@/app/assets/svgs/arrow-left-circle-outline.svg";
- 
-const CardCategoriesAsButtons = ({
+
+const CategoryCreator = ({
   onCategorySelect,
   updateExistingMoment,
   existingCategory,
   momentTextForDisplay,
   onParentSave,
-  showAllCategories = false,
-  showInModal = true,
+  isKeyboardVisible = true,
 }) => {
   const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -45,7 +42,6 @@ const CardCategoriesAsButtons = ({
   const [newCategoryEntered, setNewCategoryEntered] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [pressedOnce, setPressedOnce] = useState(false);
-  const { themeAheadOfLoading } = useFriendList();
 
   const newCategoryRef = useRef(null);
 
@@ -54,7 +50,6 @@ const CardCategoriesAsButtons = ({
   const updateNewCategoryText = (text) => {
     if (newCategoryRef && newCategoryRef.current) {
       newCategoryRef.current.setText(text);
-      // console.log("in parent", newCategoryRef.current.getText());
     }
   };
 
@@ -76,9 +71,6 @@ const CardCategoriesAsButtons = ({
   }, [categoryCount]);
 
   const fetchCategoryLimitData = async () => {
-    //  console.log("category names: ", categoryNames);
-    //  console.log("category counts: ", categoryCount);
-
     if (categoryCount < 3) {
       setContainerHeight("100%");
     } else if (categoryCount > 8) {
@@ -105,10 +97,6 @@ const CardCategoriesAsButtons = ({
     setRemainingCategories(categoryLimit - categoryCount);
   }, [categoryCount, categoryLimit]);
 
-  // useEffect(() => {
-  //   console.log("remaining categories updated: ", remainingCategories);
-  // }, [remainingCategories]);
-
   const getMostCapsulesCategory = () => {
     if (capsuleList.length === 0) return null;
     const categoryCounts = {};
@@ -134,18 +122,22 @@ const CardCategoriesAsButtons = ({
   useEffect(() => {
     if (updateExistingMoment && existingCategory) {
       setSelectedCategory(existingCategory);
-
     } else {
       if (categoryCount > 0) {
         const mostCapsulesCategory = getMostCapsulesCategory();
-        console.log(mostCapsulesCategory);
+      
         if (mostCapsulesCategory) {
           setSelectedCategory(mostCapsulesCategory);
         }
       }
-    
-  }
-  }, [capsuleList, categoryCount, categoryNames, updateExistingMoment, existingCategory]);
+    }
+  }, [
+    capsuleList,
+    categoryCount,
+    categoryNames,
+    updateExistingMoment,
+    existingCategory,
+  ]);
 
   useEffect(() => {
     if (onCategorySelect) {
@@ -164,7 +156,6 @@ const CardCategoriesAsButtons = ({
   const handleCategoryPress = (category) => {
     setSelectedCategory(category);
     setModalVisible(true);
-    // console.log("SELECTED CATEGORY!!!");
   };
 
   const handlePressOut = (category) => {
@@ -183,10 +174,6 @@ const CardCategoriesAsButtons = ({
     }
   };
 
-  const handleAllCategoriesPress = () => {
-    setSelectedCategory(null);
-  };
-
   const handleNewCategory = (newCategory) => {
     setSelectedCategory(newCategory);
     onCategorySelect(newCategory, []);
@@ -200,25 +187,6 @@ const CardCategoriesAsButtons = ({
     }
   }, [newCategoryEntered]);
 
-  const renderCapsules = () => {
-    if (selectedCategory === null) {
-      return capsuleList.map((capsule, index) => (
-        <Text key={index} style={styles.capsulesText}>
-          {capsule.capsule}
-        </Text>
-      ));
-    } else {
-      return capsuleList
-        .filter((capsule) => capsule.typedCategory === selectedCategory)
-
-        .map((capsule, index) => (
-          <Text key={index} style={styles.capsulesText}>
-            {capsule.capsule}
-          </Text>
-        ));
-    }
-  };
-
   useEffect(() => {
     setSelectedCategoryCapsules(
       capsuleList.filter(
@@ -228,15 +196,21 @@ const CardCategoriesAsButtons = ({
   }, [selectedCategory]);
 
   return (
-    <View style={[themeStyles.genericTextBackgroundShadeTwo, { flex: 1 }]}>
-      <View
-        style={[
-          styles.container,
-          themeStyles.genericTextBackgroundShadeTwo,
-          { maxHeight: containerHeight, minHeight: 130 },
-        ]}
-      >
-        {friendDashboardData && categoryNames && !loadingNewFriend && (
+    <View
+      style={{
+        position: "absolute",
+        width: "100%",
+        zIndex: 1000,
+        top:  isKeyboardVisible ? "48%" : "92%",
+        transform: [{ translateY: -50 }],
+        alignItems: "center", 
+      }}
+    >
+      {/* <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : 100}
+   
+      > */}
+        {friendDashboardData && capsuleList && categoryNames && !loadingNewFriend && (
           <>
             <View
               style={[
@@ -244,50 +218,15 @@ const CardCategoriesAsButtons = ({
                 themeStyles.genericTextBackgroundShadeTwo,
               ]}
             >
-              {showAllCategories && (
-                <TouchableOpacity
-                  style={[
-                    styles.categoryButton,
-                    selectedCategory === null && styles.selectedCategoryButton,
-                  ]}
-                  onPress={handleAllCategoriesPress}
-                >
-                  <Text
-                    style={[
-                      styles.categoryText,
-                      selectedCategory === null && styles.selectedCategoryText,
-                    ]}
-                    numberOfLines={1}
-                    ellipsizeMode="end"
-                  >
-                    All Categories
-                  </Text>
-                </TouchableOpacity>
-              )}
-
               <View
                 style={{
                   flexDirection: "row",
                   height: "100%",
                   width: "100%",
                   paddingLeft: "4%",
+                
                 }}
               >
-                {/* {categoryCount === 0 && viewExistingCategories && (
-                  <View  style={[
-                    styles.noCategoriesText,
-                    { width: "auto", flex: 1, height: '100%', alignSelf: 'center', alignItems: 'center', justifyContent: 'center'  },
-                  ]}>
-
-                  <Text
-                    style={[
-                      styles.noCategoriesText, 
-                    ]}
-                  >
-                    Please enter a category
-                  </Text>
-                  </View>
-                )} */}
                 {categoryCount > 0 && viewExistingCategories && (
                   <FlatList
                     data={categoryNames}
@@ -307,7 +246,11 @@ const CardCategoriesAsButtons = ({
                       >
                         <ButtonBottomActionBaseSmallLongPress
                           height={"80%"}
-                          buttonPrefix={updateExistingMoment && existingCategory ? 'Save to' : 'Add to'}
+                          buttonPrefix={
+                            updateExistingMoment && existingCategory
+                              ? "Save to"
+                              : "Add to"
+                          }
                           onPress={() => handlePressOut(item)} // Correct way to pass the function
                           onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
                           label={item}
@@ -322,10 +265,8 @@ const CardCategoriesAsButtons = ({
                         />
                       </View>
                     )}
-                    // Set the FlatList's contentContainerStyle to push items to the bottom
                     contentContainerStyle={{
-                      //flexGrow: 1, // Allow the FlatList to grow and fill space
-                      justifyContent: "space-around", // Push items to the bottom
+                      justifyContent: "space-around",
                       maxHeight: containerHeight,
                     }}
                     ListFooterComponent={
@@ -393,106 +334,99 @@ const CardCategoriesAsButtons = ({
               </View>
             </View>
 
-            {!showInModal && (
-              <View style={styles.capsulesContainer}>
-                <ScrollView>{renderCapsules()}</ScrollView>
-              </View>
-            )}
-            {showInModal && (
-              <AlertFormSubmit
-                isModalVisible={modalVisible}
-                headerContent={
-                  <ThoughtBubbleOutlineSvg
-                    width={38}
-                    height={38}
-                    color={"transparent"}
-                  />
-                }
-                questionIsSubTitle={false}
-                questionText={`${momentTextForDisplay}`}
-                saveMoment={true}
-                onCancel={() => setModalVisible(false)}
-                onConfirm={onParentSave}
-                confirmText={"Add to category"}
-                cancelText={"Cancel"}
-                useSvgForCancelInstead={
-                  <ArrowLeftCircleOutline
-                    height={34}
-                    width={34}
-                    color={themeStyles.genericText.color}
-                  />
-                }
-                formHeight={300}
-                formBody={
-                  <View style={styles.selectMomentListContainer}>
-                    <View
-                      style={{
-                        height: 40,
-                        paddingBottom: 30,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        alignContent: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <AddOutlineSvg
-                        width={42}
-                        height={42}
-                        color={themeStyles.modalIconColor.color}
-                      />
-                    </View>
+            <AlertFormSubmit
+              isModalVisible={modalVisible}
+              headerContent={
+                <ThoughtBubbleOutlineSvg
+                  width={38}
+                  height={38}
+                  color={"transparent"}
+                />
+              }
+              questionIsSubTitle={false}
+              questionText={`${momentTextForDisplay}`}
+              saveMoment={true}
+              onCancel={() => setModalVisible(false)}
+              onConfirm={onParentSave}
+              confirmText={"Add to category"}
+              cancelText={"Cancel"}
+              useSvgForCancelInstead={
+                <ArrowLeftCircleOutline
+                  height={34}
+                  width={34}
+                  color={themeStyles.genericText.color}
+                />
+              }
+              formHeight={300}
+              formBody={
+                <View style={styles.selectMomentListContainer}>
+                  <View
+                    style={{
+                      height: 40,
+                      paddingBottom: 30,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      alignContent: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AddOutlineSvg
+                      width={42}
+                      height={42}
+                      color={themeStyles.modalIconColor.color}
+                    />
+                  </View>
 
-                    <View
+                  <View
+                    style={[
+                      styles.momentModalContainer,
+                      themeStyles.genericTextBackgroundShadeTwo,
+                    ]}
+                  >
+                    <Text
                       style={[
-                        styles.momentModalContainer,
-                        themeStyles.genericTextBackgroundShadeTwo,
+                        styles.momentModalTitle,
+                        themeStyles.subHeaderText,
                       ]}
                     >
-                      <Text
-                        style={[
-                          styles.momentModalTitle,
-                          themeStyles.subHeaderText,
-                        ]}
-                      >
-                        {selectedCategory}
-                      </Text>
-                      <FlatList
-                        data={selectedCategoryCapsules}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => (
-                          <View style={styles.momentCheckboxContainer}>
-                            <View style={styles.momentItemTextContainer}>
-                              <View style={{ height: "100%" }}>
-                                <View style={styles.checkboxContainer}>
-                                  <ThoughtBubbleOutlineSvg
-                                    height={24}
-                                    width={24}
-                                    color={themeStyles.modalIconColor.color}
-                                  />
-                                </View>
-                              </View>
-                              <View style={{ width: "86%" }}>
-                                <Text
-                                  style={[
-                                    styles.momentItemText,
-                                    themeStyles.genericText,
-                                  ]}
-                                >
-                                  {item.capsule}
-                                </Text>
+                      {selectedCategory}
+                    </Text>
+                    <FlatList
+                      data={selectedCategoryCapsules}
+                      keyExtractor={(item, index) => index.toString()}
+                      renderItem={({ item }) => (
+                        <View style={styles.momentCheckboxContainer}>
+                          <View style={styles.momentItemTextContainer}>
+                            <View style={{ height: "100%" }}>
+                              <View style={styles.checkboxContainer}>
+                                <ThoughtBubbleOutlineSvg
+                                  height={24}
+                                  width={24}
+                                  color={themeStyles.modalIconColor.color}
+                                />
                               </View>
                             </View>
+                            <View style={{ width: "86%" }}>
+                              <Text
+                                style={[
+                                  styles.momentItemText,
+                                  themeStyles.genericText,
+                                ]}
+                              >
+                                {item.capsule}
+                              </Text>
+                            </View>
                           </View>
-                        )}
-                      />
-                    </View>
+                        </View>
+                      )}
+                    />
                   </View>
-                }
-              />
-            )}
+                </View>
+              }
+            />
           </>
         )}
-      </View>
+      {/* </KeyboardAvoidingView> */}
     </View>
   );
 };
@@ -500,15 +434,17 @@ const CardCategoriesAsButtons = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    zIndex: 6000,
+    elevation: 6000,
+    bottom: 200,
+    left: 0,
+    right: 0,
     borderRadius: 2,
-    padding: 0,
-    borderWidth: 0,
-    paddingVertical: 0,
+    height: 66,
     paddingHorizontal: 2,
     flex: 1,
     alignContent: "center",
     flexDirection: "row",
-    height: "auto",
   },
   loadingWrapper: {
     flex: 1,
@@ -655,4 +591,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CardCategoriesAsButtons;
+export default CategoryCreator;

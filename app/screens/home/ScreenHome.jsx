@@ -299,7 +299,10 @@ const ScreenHome = ({ navigation }) => {
   return (
     <SafeView style={{ flex: 1 }}>
       <LinearGradient
-        colors={[gradientColorsHome.darkColor, gradientColorsHome.lightColor]}
+        colors={[gradientColorsHome.darkColor, 
+                isKeyboardVisible ? 
+                    gradientColorsHome.midpointColor : 
+                    gradientColorsHome.lightColor]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{

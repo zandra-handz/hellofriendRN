@@ -61,7 +61,7 @@ const TextMomentBox = forwardRef(
     }, [mountingText]);
 
     const handleTextInputChange = (text) => {
-      console.log(text);
+     // console.log(text);
       setEditedMessage(text);
       onTextChange(text);
     };
@@ -108,12 +108,13 @@ const TextMomentBox = forwardRef(
             style={[
               styles.textInput,
               themeStyles.genericText,
-              themeStyles.genericTextBackgroundShadeTwo,
+              {paddingBottom: 80} // this leaves space for category button component overlaying it
             ]}
             value={editedMessage}
             onChangeText={handleTextInputChange} // Update local state
             multiline={multiline}
           />
+          <View style={{height: 1, flex: 1 }}></View>
           </KeyboardAvoidingView>
         </View>
       </View>
@@ -147,7 +148,8 @@ const styles = StyleSheet.create({
   },
   textInputKeyboardAvoidContainer: {
     flex: 1,
-    paddingBottom: 76,
+    width: '100%', 
+    height: 200,
   },
   textInput: {
     fontFamily: 'Poppins-Regular',

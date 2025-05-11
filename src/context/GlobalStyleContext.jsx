@@ -30,13 +30,14 @@ export const GlobalStyleProvider = ({ children }) => {
     },
     gradientColorsHome: {
       darkColor: "#000002",
+      midpointColor: "#0B1C04", // using this as second color when keyboard visible on home screen because the gradient shrinks
       lightColor: "#163805",
     },
     manualGradientColors: {
       darkColor: "#4caf50",
       lightColor: "#a0f143",
       homeDarkColor: "#000002",
-      homeLightColor: "#163805",
+      homeLightColor: "#163805", 
     },
     gradientDirection: { x: 1, y: 0 },
   });

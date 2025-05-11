@@ -420,6 +420,8 @@ export const Layout = () => {
                   name="MomentFocus"
                   component={ScreenMomentFocus}
                   options={{
+                    gestureEnabled: false,
+                    animation: 'none',
                     headerShown: false,
                     header: () => <HeaderMoment writeView={true} />,
                   }}
