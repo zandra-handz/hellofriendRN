@@ -201,7 +201,7 @@ const CategoryCreator = ({
         position: "absolute",
         width: "100%",
         zIndex: 1000,
-        top:  isKeyboardVisible ? "48%" : "92%",
+        top:  isKeyboardVisible ? "84%" : "92%",
         transform: [{ translateY: -50 }],
         alignItems: "center", 
       }}

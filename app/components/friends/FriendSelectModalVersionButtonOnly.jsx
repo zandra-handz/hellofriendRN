@@ -118,7 +118,7 @@ const FriendSelectModalVersionButtonOnly = ({ addToPress, color, addToOpenModal,
           numberOfLines={1}  
           ellipsizeMode='tail'  
         >
-          {friendLoaded && `Switch friend: ` || 'Which friend is this for?'}
+          {friendLoaded && `Switch friend? ` || 'Which friend is this for?'}
         </Text>
         )}
 
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     maxHeight: 40,
     justifyContent: 'flex-end',
     alignItems: 'center', 
-    padding: 2, 
+    padding: 2,  
 
     borderRadius: 0, 
   },
@@ -209,7 +209,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   displaySelected: { 
-    fontFamily: 'Poppins-Regular',
+   // fontFamily: 'Poppins-Regular',
+    fontWeight: 'bold',
     fontSize: 15,
     zIndex: 2,
   },

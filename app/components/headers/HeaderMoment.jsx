@@ -60,6 +60,7 @@ const HeaderMoment = ({ title = "WRITE MOMENT", writeView = false }) => {
                 justifyContent: "flex-start",
                 alignContent: "center",
                 alignItems: "center",
+                zIndex: 7000,
               }}
             >
               <TouchableOpacity onPress={handleNavigateBack}>

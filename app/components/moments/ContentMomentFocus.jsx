@@ -158,6 +158,14 @@ const ContentMomentFocus = ({
   return (
     <TouchableWithoutFeedback onPress={() => {}}>
       <View style={styles.container}>
+        <View style={{position: 'absolute', zIndex: 6000, elevation: 6000, top: -20, right: 60}}>
+          
+         <FriendSelectModalVersionButtonOnly
+                  includeLabel={false}
+                  width="100%"
+                />
+                
+        </View>
         <View
           style={{
             width: "100%",
@@ -165,25 +173,26 @@ const ContentMomentFocus = ({
             flexDirection: "column",
             justifyContent: "space-between",
           }}
-        >
+        > 
+               
           {!updateExistingMoment && (
             <BelowHeaderContainer
-              height={30}
+              height={140} //60
               alignItems="center"
-              marginBottom="2%" //default is currently set to 2
-              justifyContent="flex-end"
-              children={
-                <FriendSelectModalVersionButtonOnly
-                  includeLabel={false}
-                  width="100%"
-                />
-              }
+              //marginBottom="2%" //default is currently set to 2
+              justifyContent="flex-start"
+              // children={
+              //   <FriendSelectModalVersionButtonOnly
+              //     includeLabel={false}
+              //     width="100%"
+              //   />
+              // }
             />
           )}
-          <LeafTopContainer
+          <LeafTopContainer 
             paddingHorizontal={0} //padding is in inner element in this case because it is a different color
             children={
-              <View style={{ flex: 1, flexDirection: "column" }}>
+              <View style={{ flex: 1, flexDirection: "column", top: -18,  justifyContent: 'flex-start' }}>
                 <TextMomentBox
                   width={"100%"}
                   height={"100%"}
