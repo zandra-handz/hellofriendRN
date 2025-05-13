@@ -14,8 +14,7 @@ import { Easing } from "react-native-reanimated";
 
 import { useFriendList } from "@/src/context/FriendListContext";
 
-const MomentCard = ({
-  key, // not using? item.id from parent
+const MomentCard = ({ 
   index,
   onPress,
   onSliderPull,
@@ -31,13 +30,20 @@ const MomentCard = ({
   borderColor,
   size,
   sliderVisible,
+  highlightsVisible,
   disabled = false,
 }) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
   const { updateCapsuleMutation, momentData } = useCapsuleList();
   const { themeAheadOfLoading } = useFriendList();
 
   const indexIsEven = index % 2 === 0;
+
+  const fillColor =  gradientColorsHome.darkColor; // themeStyles.genericTextBackgroundShadeTwo.backgroundColor;
+  const strokeColor = gradientColors.darkColor; //themeAheadOfLoading.lightColor;
+  const momentBackgroundColor = gradientColors.lightColor;
+  const momentTextColor = gradientColorsHome.darkColor ; //    themeStyles.genericText,
+ const categoryTextColor = gradientColorsHome.darkColor ; //    themeStyles.genericText,
 
   useEffect(() => {
     if (updateCapsuleMutation.isSuccess && moment.id === momentData?.id) {
@@ -92,28 +98,24 @@ const MomentCard = ({
       <Animated.View
         style={{
           position: "absolute",
-          top: -180,
+          top: -20,
           // backgroundColor: 'pink',
           flex: 1,
           //height: heightToMatchWithFlatList,
           width: "100%",
           opacity: sliderVisible,
-          right: indexIsEven ? 80 : null,
-          left: indexIsEven ? null : 80,
-      zIndex: 0,
-          transform: [
-            { scaleX: indexIsEven ? 1 : -1 },
-            { rotate: indexIsEven ? "20deg" : "20deg" },
-            
-          ],
+          right: indexIsEven ? 70 : null,
+          left: indexIsEven ? null : 70,
+          zIndex: 0,
+          transform: [{ scaleX: indexIsEven ? 1 : -1 }, { rotate: "0deg" }],
         }}
       >
         <LeafDoubleOutlineInvertedSvg
-          fill={themeStyles.genericTextBackgroundShadeTwo.backgroundColor}
-          stroke={themeAheadOfLoading.lightColor}
-          height={470}
+          fill={fillColor}
+          stroke={strokeColor}
+          height={380}
           width={470}
-          strokeWidth={5}
+          strokeWidth={4}
         />
       </Animated.View>
       <TouchableOpacity
@@ -122,37 +124,61 @@ const MomentCard = ({
         disabled={disabled}
       >
         <View style={styles.iconAndMomentContainer}>
-          <View style={styles.categoryHeader}>
+          <Animated.View
+            style={[
+              styles.categoryHeader,
+              {
+                      opacity: highlightsVisible,
+                backgroundColor: momentBackgroundColor,
+                padding: 6,
+              
+                borderRadius: 10,
+                height: 60,
+                right: !indexIsEven ? 42 : null,
+                left: !indexIsEven ? null : 40,
+                top: 54,
+                width: 90,
+              },
+            ]}
+          >
             <View style={{ flexDirection: "row", width: "100%" }}>
               <Animated.Text
                 style={[
                   styles.categoryText,
-                  { color: "darkgrey", opacity: sliderVisible },
+                  { color: categoryTextColor, opacity: sliderVisible },
                 ]}
               >
-                {moment.typedCategory.length > 20
-                  ? `${moment.typedCategory.substring(0, 20)}...`
+                #{moment.typedCategory.length > 12
+                  ? `${moment.typedCategory.substring(0, 12)}...`
                   : moment.typedCategory}{" "}
                 • added{" "}
-              </Animated.Text>
-              <FormatMonthDay
+                              <FormatMonthDay
                 date={moment.created}
                 fontSize={13}
                 fontFamily={"Poppins-Regular"}
-                parentStyle={styles.categoryText}
+                parentStyle={[styles.categoryText,
+                   { color: categoryTextColor, opacity: sliderVisible },
+                ]}
                 opacity={sliderVisible}
               />
+              </Animated.Text>
+        
             </View>
-          </View>
-          <View
+          </Animated.View>
+          <Animated.View
             style={[
               styles.textWrapper,
               {
                 borderRadius: borderRadius,
-                paddingLeft: indexIsEven ? 100 : 40,
-                paddingRight: indexIsEven ? null : 130,
-                width: 300,
-                top: indexIsEven ? 68 : 58,
+                //right: indexIsEven ? 30 : null,
+                left: indexIsEven ? 180 : 70,
+                width: 130,
+                top: 146,
+                height: 88,
+                 opacity: highlightsVisible,
+                backgroundColor: momentBackgroundColor,
+                padding: 12,
+                borderRadius: 10,
               },
             ]}
           >
@@ -160,13 +186,13 @@ const MomentCard = ({
               numberOfLines={numberOfLinesToMatchWithFlatList}
               style={[
                 styles.momentText,
-                themeStyles.genericText,
-                { fontSize: size, opacity: sliderVisible },
+            
+                { color: momentTextColor, fontSize: size, opacity: sliderVisible },
               ]}
             >
               {capitalizeFirstFiveWords(moment.capsule)}
             </Animated.Text>
-          </View>
+          </Animated.View>
         </View>
       </TouchableOpacity>
       <Animated.View
@@ -216,12 +242,12 @@ const styles = StyleSheet.create({
     ],
   },
   sliderContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     flex: 1,
     left: 7,
     right: 0,
-    height: 24, 
+    height: 24,
     borderRadius: 20,
     zIndex: 300,
     elevation: 300,
@@ -240,36 +266,39 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   momentText: {
-    fontFamily: "Poppins-Regular",
+   // fontFamily: "Poppins-Regular",
     flexShrink: 1,
+    fontWeight: 'bold',
     fontSize: 10,
-    lineHeight: 22,
+    lineHeight: 18,
     alignSelf: "left",
   },
   textWrapper: {
     flexGrow: 1,
     textAlign: "left",
+    position: 'absolute',
     // justifyContent: 'center',
     width: "100%",
     // overflow: 'hidden',
   },
   categoryText: {
-    fontSize: 13,
+    fontSize: 11,
     flexShrink: 1,
-    lineHeight: 21,
+    fontWeight: 'bold',
+    lineHeight: 16,
     color: "darkgrey",
     overflow: "hidden",
     textTransform: "uppercase",
   },
   categoryHeader: {
-    paddingBottom: "3%",
+    position: "absolute",
+ 
     flexDirection: "row",
-    alignContent: "center",
+    alignContent: "left",
     justifyContent: "flex-start",
-    width: "100%",
-    minHeight: 30,
+    
     height: "auto",
-    maxHeight: 50,
+    flexWrap: "flex",
   },
   iconContainer: {
     justifyContent: "center",

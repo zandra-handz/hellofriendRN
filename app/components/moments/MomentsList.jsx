@@ -21,6 +21,7 @@ import ButtonGoToAddMoment from "../buttons/moments/ButtonGoToAddMoment";
 import LizardSvg from "@/app/assets/svgs/lizard.svg";
 import MomentCard from "./MomentCard";
 import MomentsNavigator from "./MomentsNavigator";
+import CategoryNavigator from "./CategoryNavigator";
 import MomentsSearchBar from "./MomentsSearchBar";
 import DiceRandom3dSolidSvg from "@/app/assets/svgs/dice-random-3d-solid.svg";
 import { Easing } from "react-native-reanimated";
@@ -34,19 +35,16 @@ import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-inverted";
 
-const ITEM_HEIGHT = 230;
+const ITEM_HEIGHT = 280;
 const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
-const NUMBER_OF_LINES = 3;
+const NUMBER_OF_LINES = 5;
 
 
 const CARD_BORDERRADIUS = 50; //30
 
 const MomentsList = () => {
   const {
-    themeStyles,
-    gradientColors,
-    gradientColorsHome,
-    manualGradientColors,
+    themeStyles, 
   } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const {
@@ -156,10 +154,6 @@ const MomentsList = () => {
 
   };
 
-  const openMomentNav = (moment) => {
-    setSelectedMomentToView(moment);
-    setMomentNavVisible(true);
-  };
 
   const closeMomentNav = () => {
     setMomentNavVisible(false);
@@ -175,56 +169,7 @@ const MomentsList = () => {
       });
     }
   };
-
-  const renderCategoryButtons = () => {
-    return (
-      <View
-        style={[
-          styles.categoryContainer,
-          { backgroundColor: gradientColorsHome.darkColor },
-        ]}
-      >
-        <Text
-          style={[
-            themeStyles.genericText,
-            { paddingVertical: 4, paddingHorizontal: 4 },
-          ]}
-        >
-          CATEGORIES
-        </Text>
-        <FlatList
-          data={categoryNames}
-          horizontal={false}
-          snapToInterval={44}
-          ListFooterComponent={() => <View style={{ height: 0 }} />}
-          keyExtractor={(categoryName) =>
-            categoryName ? categoryName.toString() : "Uncategorized"
-          }
-          renderItem={({ item: categoryName }) => (
-            <TouchableOpacity
-              style={[
-                styles.categoryButton,
-                { backgroundColor: gradientColors.darkColor },
-              ]}
-              onPress={() => {
-                scrollToCategoryStart(categoryName);
-              }}
-            >
-              <Text
-                numberOfLines={1}
-                style={[
-                  styles.categoryText,
-                  { color: gradientColorsHome.darkColor },
-                ]}
-              >
-                {categoryName}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-    );
-  };
+ 
   const renderMomentCard = ({ item, index }) => {
     // Calculate the offset of the current item in relation to the scroll position
     const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
@@ -235,7 +180,7 @@ const MomentsList = () => {
         offset,
         offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
       ],
-      outputRange: [0.92, 0.94, 0.84], //[0.93, 0.98, 0.84],
+      outputRange: [0.86, .97, 0.82], //[0.92, 0.94, 0.84],
       extrapolate: "clamp",
     });
 
@@ -258,6 +203,17 @@ const MomentsList = () => {
       outputRange: [0.2, 1, 0], // 0 = fully transparent, 1 = fully visible
       extrapolate: "clamp",
     });
+
+        const dynamicHighlightsVisibility = scrollY.interpolate({
+      inputRange: [
+        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+        offset,
+        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+      ],
+      outputRange: [0, 1, 0], // 0 = fully transparent, 1 = fully visible
+      extrapolate: "clamp",
+    });
+
 
     const opacity =
       item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
@@ -291,6 +247,7 @@ const MomentsList = () => {
           index={index}
           size={dynamicTextSize}
           sliderVisible={dynamicVisibility}
+          highlightsVisible={dynamicHighlightsVisibility}
           onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
           onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
         />
@@ -308,7 +265,9 @@ const MomentsList = () => {
       />
       {!isKeyboardVisible && (
         <>
-          {renderCategoryButtons()}
+
+        <CategoryNavigator categoryNames={categoryNames} onPress={scrollToCategoryStart} />
+     
 
           <ButtonGoToAddMoment />
         </>
