@@ -8,6 +8,7 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { LinearGradient } from "expo-linear-gradient"; 
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg"; 
+
 import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
 
 

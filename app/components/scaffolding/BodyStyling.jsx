@@ -4,15 +4,17 @@ import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 import { useFriendList } from '@/src/context/FriendListContext';
 
 
-const BodyStyling = ({height='100%', width='100%', minHeight='96%', paddingTop='6%', paddingBottom='0%', paddingHorizontal='0%', children}) => {
+const BodyStyling = ({height='100%', width='100%', minHeight='96%', paddingTop='6%', paddingBottom='0%', paddingHorizontal='0%', transparentBackground=false, children}) => {
 
 
     const { themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
     
     return(
-        <View style={[styles.container, themeStyles.genericTextBackground,
-            { width: width,
+        <View style={[styles.container,
+            // themeStyles.genericTextBackground,
+            { backgroundColor: transparentBackground ? 'transparent' : themeStyles.genericTextBackground.backgroundColor,
+                width: width,
                 height: height,
                 minHeight: minHeight,
                 paddingTop: paddingTop,

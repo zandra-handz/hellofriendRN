@@ -32,10 +32,11 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
+import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-inverted";
 
-const ITEM_HEIGHT = 210;
+const ITEM_HEIGHT = 230;
 const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
-const NUMBER_OF_LINES = 4;
+const NUMBER_OF_LINES = 3;
 
 
 const CARD_BORDERRADIUS = 50; //30
@@ -240,11 +241,11 @@ const MomentsList = () => {
 
     const dynamicTextSize = scrollY.interpolate({
       inputRange: [
-        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN - 4,
         offset,
-        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN - 4,
       ],
-      outputRange: [16, 16, 16], //turned off for now  [14, 15, 13]
+      outputRange: [12, 12, 12], //turned off for now  [14, 15, 13]
       extrapolate: "clamp",
     });
 
@@ -279,10 +280,11 @@ const MomentsList = () => {
           marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
           numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
           backgroundColor={
-            themeStyles.genericTextBackgroundShadeTwo.backgroundColor
+            'transparent'
+           // themeStyles.genericTextBackgroundShadeTwo.backgroundColor
           }
           borderRadius={CARD_BORDERRADIUS }
-          paddingHorizontal={'10%'}
+          paddingHorizontal={0}
           
           borderColor={"transparent"} //manualGradientColors.lightColor}
           moment={item}
@@ -344,12 +346,14 @@ const MomentsList = () => {
         width={"100%"}
         minHeight={"87%"}
         paddingTop={"4%"}
-        paddingHorizontal={"2%"}
+        transparentBackground={true}
+        paddingHorizontal={0}
         children={
           <>
             <Animated.FlatList
               ref={flatListRef}
               data={capsuleList}
+              //fadingEdgeLength={10}
               renderItem={renderMomentCard}
               keyExtractor={(item, index) =>
                 item.id ? item.id.toString() : `placeholder-${index}`
@@ -440,6 +444,8 @@ const styles = StyleSheet.create({
   cardContainer: {
     height: "auto",
     alignItems: "center",
+   // marginTop: 10,
+ 
   },
   selectFriendContainer: {
     width: "100%",

@@ -28,12 +28,12 @@
 import React from 'react';
 import Svg, { Path } from 'react-native-svg';
 
-const LeafSingleOutlineInvertedSvg = ({ fill, stroke, width, height }) => (
+const LeafSingleOutlineInvertedSvg = ({ fill, stroke, width, height, strokeWidth=3 }) => (
   <Svg width={width} height={height} viewBox="0 0 512 512">
     <Path
       fill={fill} // Dynamically pass the fill color
       stroke={stroke} // Dynamically pass the stroke color
-      strokeWidth="3" // Optional: You can adjust stroke width here
+      strokeWidth={strokeWidth} // Optional: You can adjust stroke width here
       d="
         M391.37,28.21 
         c-2-3.1-3.19-4.9-3.3-5
