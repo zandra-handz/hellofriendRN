@@ -168,8 +168,7 @@ const HomeButtonSelectedFriend = ({
               <View
                 style={{ 
                   borderRadius: 20,
-                  height: "100%",
-                  //backgroundColor: 'teal',
+                  height: "100%", 
                   minWidth: '10%',
                   maxWidth: '12%',  
                   alignItems: 'center',

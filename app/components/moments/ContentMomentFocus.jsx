@@ -12,7 +12,7 @@ import { useAuthUser } from "@/src/context/AuthUserContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import LeafTopContainer from "./LeafTopContainer";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
-
+import SafeView from "../appwide/format/SafeView";
 import SimpleDisplayCard from "../appwide/display/SimpleDisplayCard";
 
 import TextMomentBox from "./TextMomentBox";
@@ -156,6 +156,8 @@ const ContentMomentFocus = ({
   }, [editMomentMutation.isSuccess, editMomentMutation.data]);
 
   return (
+    <SafeView style={{flex: 1}}>
+      
     <TouchableWithoutFeedback onPress={() => {}}>
       <View style={styles.container}>
         <View style={{position: 'absolute', zIndex: 6000, elevation: 6000, top: -20, right: 60}}>
@@ -251,6 +253,8 @@ const ContentMomentFocus = ({
         )}
       </View>
     </TouchableWithoutFeedback>
+    
+    </SafeView>
   );
 };
 

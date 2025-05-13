@@ -77,10 +77,8 @@ const ScreenHome = ({ navigation }) => {
       const file = shareIntent.files[0];
       const uri = file?.path || file?.contentUri; // Support both iOS and Android URIs
 
-      if (uri) {
-        //console.log('Shared File URI:', uri); // Log the URI to the console
-        processSharedFile(uri);
-        // showMessage(true, null, `Shared file exists! URI: ${uri}`);
+      if (uri) { 
+        processSharedFile(uri); 
       } else {
         console.warn("No valid URI found for the shared file.");
       }
@@ -101,14 +99,7 @@ const ScreenHome = ({ navigation }) => {
           `length in shared text but data structure passed here is not valid`
         );
       }
-    }
-    // if (hasShareIntent && (shareIntent?.type === "weburl")) {
-    //   const sharedWebUrlMeta = shareIntent?.meta || null;
-    //   const sharedWebUrl = shareIntent?.webUrl || null;
-    //    const sharedCombined = `${sharedWebUrlMeta || 'No Meta'}, ${sharedWebUrl || 'No URL'}`;
-    //   navigation.navigate('MomentFocus', {momentText: sharedCombined });
-
-    // }
+    } 
   }, [shareIntent, hasShareIntent]);
 
   const processSharedFile = async (url) => {
@@ -155,14 +146,7 @@ const ScreenHome = ({ navigation }) => {
       keyboardDidHideListener.remove();
     };
   }, []);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (newMomentTextRef.current) {
-  //       newMomentTextRef.current.focus();
-  //     }
-  //   }, [])
-  // );
+ 
 
   const updateNewMomentTextString = (text) => {
     if (newMomentTextRef && newMomentTextRef.current) {

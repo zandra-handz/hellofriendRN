@@ -3,14 +3,16 @@ import React, { useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 
-const FlashAnim = ({
-    children,
+// this one will auto height to what is inside it
+// width is 100%
+const FlashAnimNonCircle = ({
+    children, 
     circleTextSize = 11,
     circleColor = 'red',
     countColor = 'white',
     flashToColor = 'yellow',  
-    textFlashToColor = 'black', 
-    active = true,
+    textFlashToColor = 'black',  
+    minHeight,
 }) => {
     const { appAnimationStyles } = useGlobalStyle();
     const flashAnim = useRef(new Animated.Value(0)).current;
@@ -47,24 +49,17 @@ const FlashAnim = ({
     });
 
     return (
-        <>
-        {active && (
+        <> 
             
-        <Animated.View style={[appAnimationStyles.flashAnimContainer, { borderRadius: circleTextSize, height: circleTextSize * 2, width: circleTextSize * 2, backgroundColor: animatedCircleColor }]}>
+        <Animated.View style={[appAnimationStyles.flashAnimContainer, { borderRadius: 20, padding: 10, height: 'auto', minHeight: minHeight, width: '100%', backgroundColor: animatedCircleColor }]}>
             <Animated.Text style={[appAnimationStyles.flashAnimText, { color: animatedCountColor, fontSize: circleTextSize }]}>
                 {children}
             </Animated.Text>
         </Animated.View>
-        
-        )}
-        {!active && (
-            <Animated.View>
-                {children}
-            </Animated.View>
-        )}
+          
         </>
     );
 };
  
 
-export default FlashAnim;
+export default FlashAnimNonCircle;

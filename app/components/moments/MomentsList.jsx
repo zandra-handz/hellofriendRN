@@ -35,7 +35,7 @@ import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-inverted";
 
-const ITEM_HEIGHT = 280;
+const ITEM_HEIGHT = 300;
 const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
 const NUMBER_OF_LINES = 5;
 

@@ -12,9 +12,12 @@ import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-
 import LeafDoubleOutlineInvertedSvg from "@/app/assets/svgs/LeafDoubleOutlineInvertedSvg";
 import { Easing } from "react-native-reanimated";
 
+import FlashAnim from "@/app/animations/FlashAnim";
+import FlashAnimNonCircle from "@/app/animations/FlashAnimNonCircle";
+import BobbingAnim from "@/app/animations/BobbingAnim";
 import { useFriendList } from "@/src/context/FriendListContext";
 
-const MomentCard = ({ 
+const MomentCard = ({
   index,
   onPress,
   onSliderPull,
@@ -33,17 +36,17 @@ const MomentCard = ({
   highlightsVisible,
   disabled = false,
 }) => {
-  const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
+  const { themeStyles, gradientColors, gradientColorsHome, manualGradientColors } = useGlobalStyle();
   const { updateCapsuleMutation, momentData } = useCapsuleList();
   const { themeAheadOfLoading } = useFriendList();
 
   const indexIsEven = index % 2 === 0;
 
-  const fillColor =  gradientColorsHome.darkColor; // themeStyles.genericTextBackgroundShadeTwo.backgroundColor;
+  const fillColor = gradientColorsHome.darkColor; // themeStyles.genericTextBackgroundShadeTwo.backgroundColor;
   const strokeColor = gradientColors.darkColor; //themeAheadOfLoading.lightColor;
   const momentBackgroundColor = gradientColors.lightColor;
-  const momentTextColor = gradientColorsHome.darkColor ; //    themeStyles.genericText,
- const categoryTextColor = gradientColorsHome.darkColor ; //    themeStyles.genericText,
+  const momentTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
+  const categoryTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
 
   useEffect(() => {
     if (updateCapsuleMutation.isSuccess && moment.id === momentData?.id) {
@@ -128,16 +131,16 @@ const MomentCard = ({
             style={[
               styles.categoryHeader,
               {
-                      opacity: highlightsVisible,
+                opacity: highlightsVisible,
                 backgroundColor: momentBackgroundColor,
                 padding: 6,
-              
+
                 borderRadius: 10,
                 height: 60,
-                right: !indexIsEven ? 42 : null,
-                left: !indexIsEven ? null : 40,
-                top: 54,
-                width: 90,
+                //right: !indexIsEven ? 42 : null,
+                left: !indexIsEven ? 266 : 10,
+                top: 10,
+                width: 100,
               },
             ]}
           >
@@ -148,51 +151,82 @@ const MomentCard = ({
                   { color: categoryTextColor, opacity: sliderVisible },
                 ]}
               >
-                #{moment.typedCategory.length > 12
+                #
+                {moment.typedCategory.length > 12
                   ? `${moment.typedCategory.substring(0, 12)}...`
                   : moment.typedCategory}{" "}
                 • added{" "}
-                              <FormatMonthDay
-                date={moment.created}
-                fontSize={13}
-                fontFamily={"Poppins-Regular"}
-                parentStyle={[styles.categoryText,
-                   { color: categoryTextColor, opacity: sliderVisible },
-                ]}
-                opacity={sliderVisible}
-              />
+                <FormatMonthDay
+                  date={moment.created}
+                  fontSize={13}
+                  fontFamily={"Poppins-Regular"}
+                  parentStyle={[
+                    styles.categoryText,
+                    { color: categoryTextColor, opacity: sliderVisible },
+                  ]}
+                  opacity={sliderVisible}
+                />
               </Animated.Text>
-        
             </View>
           </Animated.View>
-          <Animated.View
-            style={[
-              styles.textWrapper,
-              {
-                borderRadius: borderRadius,
-                //right: indexIsEven ? 30 : null,
-                left: indexIsEven ? 180 : 70,
-                width: 130,
-                top: 146,
-                height: 88,
-                 opacity: highlightsVisible,
-                backgroundColor: momentBackgroundColor,
-                padding: 12,
-                borderRadius: 10,
-              },
-            ]}
-          >
-            <Animated.Text
-              numberOfLines={numberOfLinesToMatchWithFlatList}
+          <BobbingAnim bobbingDistance={4} duration={2000}>
+            <Animated.View
               style={[
-                styles.momentText,
-            
-                { color: momentTextColor, fontSize: size, opacity: sliderVisible },
+                {
+                  borderRadius: borderRadius,
+                  //right: indexIsEven ? 30 : null,
+                  ///  left: indexIsEven ? 180 : 70,
+                  //    left: indexIsEven ? 150 : 60,
+                  left: indexIsEven ? 30 : 60,
+                  //   width: 130,
+                  //  top: 146,
+
+                  bottom: -110,
+                  //  height: 88,
+                  opacity: highlightsVisible,
+                  // backgroundColor: momentBackgroundColor,
+                },
               ]}
             >
-              {capitalizeFirstFiveWords(moment.capsule)}
-            </Animated.Text>
-          </Animated.View>
+              <FlashAnimNonCircle
+                circleColor={momentBackgroundColor}
+                flashToColor={manualGradientColors.lighterLightColor}
+                //circleTextSize={40}
+                active={sliderVisible !== 1}
+                minHeight={80}
+
+              >
+                <View
+                  style={[
+                    styles.textWrapper,
+                    {
+                       height: "auto",
+                      maxHeight: 100, 
+                     // height: 100,
+                      width: 260,
+                      padding: 12,
+                      borderRadius: 10,
+                    },
+                  ]}
+                >
+                  <Animated.Text
+                    numberOfLines={numberOfLinesToMatchWithFlatList}
+                    style={[
+                      styles.momentText,
+
+                      {
+                        color: momentTextColor,
+                        fontSize: size,
+                        opacity: sliderVisible,
+                      },
+                    ]}
+                  >
+                    {capitalizeFirstFiveWords(moment.capsule)}
+                  </Animated.Text>
+                </View>
+              </FlashAnimNonCircle>
+            </Animated.View>
+          </BobbingAnim>
         </View>
       </TouchableOpacity>
       <Animated.View
@@ -266,25 +300,26 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   momentText: {
-   // fontFamily: "Poppins-Regular",
-    flexShrink: 1,
-    fontWeight: 'bold',
+    // fontFamily: "Poppins-Regular",
+  //  flexShrink: 1,
+    fontWeight: "bold",
     fontSize: 10,
     lineHeight: 18,
     alignSelf: "left",
   },
   textWrapper: {
-    flexGrow: 1,
+   // flexGrow: 1,
     textAlign: "left",
-    position: 'absolute',
+    position: "absolute",
     // justifyContent: 'center',
     width: "100%",
     // overflow: 'hidden',
   },
   categoryText: {
     fontSize: 11,
+    fontFamily: 'Poppins-Regular',
     flexShrink: 1,
-    fontWeight: 'bold',
+    //fontWeight: "bold",
     lineHeight: 16,
     color: "darkgrey",
     overflow: "hidden",
@@ -292,11 +327,11 @@ const styles = StyleSheet.create({
   },
   categoryHeader: {
     position: "absolute",
- 
+
     flexDirection: "row",
     alignContent: "left",
     justifyContent: "flex-start",
-    
+
     height: "auto",
     flexWrap: "flex",
   },

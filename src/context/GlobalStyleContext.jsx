@@ -27,6 +27,7 @@ export const GlobalStyleProvider = ({ children }) => {
     gradientColors: {
       darkColor: "#4caf50",
       lightColor: "#a0f143",
+  
     },
     gradientColorsHome: {
       darkColor: "#000002",
@@ -36,8 +37,11 @@ export const GlobalStyleProvider = ({ children }) => {
     manualGradientColors: {
       darkColor: "#4caf50",
       lightColor: "#a0f143",
+          lighterLightColor: "#b2f45c",
+      darkerLightColor: "#8fd83a",
       homeDarkColor: "#000002",
-      homeLightColor: "#163805", 
+      homeLightColor: "#163805",
+      
     },
     gradientDirection: { x: 1, y: 0 },
   });
@@ -137,6 +141,7 @@ export const GlobalStyleProvider = ({ children }) => {
   const appContainerStyles = containerStyles;
   const appFontStyles = fontStyles;
   const ConstantColorsStyles = constantColors;
+  const appAnimationStyles = animationStyles;
 
   const themeStyleSpinners = {
     homeScreen: "flow",
@@ -149,6 +154,7 @@ export const GlobalStyleProvider = ({ children }) => {
         themeStyles,
         appContainerStyles,
         appFontStyles,
+        appAnimationStyles,
         ConstantColorsStyles,
         themeStyleSpinners,
       }}
@@ -168,14 +174,13 @@ const containerStyles = StyleSheet.create({
     borderBottomWidth: 0.4,
     borderColor: "transparent",
   },
-  headerContainer: {  
-    paddingHorizontal: 18, 
-    height: 70, 
-    flexDirection: 'row', 
-    width: '100%',
-    alignItems: 'center',  
-    justifyContent: 'space-between',
-
+  headerContainer: {
+    paddingHorizontal: 18,
+    height: 70,
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   homeScreenButton: {
     flexDirection: "row",
@@ -192,6 +197,28 @@ const containerStyles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
+  loadingFriendProfileButtonWrapper: {
+        flex: .4,
+    paddingRight: 0,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    alignContent: 'flex-start',
+
+  },
+});
+
+const animationStyles = StyleSheet.create({
+  flashAnimContainer: {
+    alignItems: "center",
+    alignContents: "center",
+    justifyContent: "center",
+    
+    textAlign: "center",
+  },
+  flashAnimText: {
+       fontFamily: 'Poppins-Bold',
+        alignSelf: 'center',
+  },
 });
 
 const fontStyles = StyleSheet.create({
@@ -203,6 +230,14 @@ const fontStyles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Poppins-Bold",
     textTransform: "uppercase",
+  },
+  friendProfileButtonText: {
+    fontSize: 17,
+    paddingVertical: 0,
+    alignSelf: 'center',
+    fontFamily: 'Poppins-Bold',
+    paddingLeft: 0,
+
   },
 });
 

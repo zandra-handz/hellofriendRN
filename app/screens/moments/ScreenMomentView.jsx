@@ -174,7 +174,9 @@ const ScreenMomentView = () => {
       colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      style={[styles.container]}
+      style={{    flex: 1,
+    width: "100%",
+    justifyContent: "space-between"}}
     >
       <HeaderMoment writeView={false} />
       <ContentMomentView
@@ -194,23 +196,13 @@ const ScreenMomentView = () => {
       {momentInView && (
         <>
           {momentInView.typedCategory && (
-            <View
-              style={{
-                position: "absolute",
-                width: "100%",
-                zIndex: 1000,
-                top: "50%",
-                transform: [{ translateY: -50 }],
-                alignItems: "center",
-              }}
-            >
+    
               <NavigationArrows
                 currentIndex={currentIndex}
                 imageListLength={capsuleList.length}
                 onPrevPress={goToPreviousMoment}
                 onNextPress={goToNextMoment}
-              />
-            </View>
+              /> 
           )}
         </>
       )}
@@ -220,13 +212,5 @@ const ScreenMomentView = () => {
     </SafeView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    justifyContent: "space-between",
-  },
-});
-
+ 
 export default ScreenMomentView;
