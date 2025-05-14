@@ -1,6 +1,6 @@
 //<LeafGreenOutlineSvg color={manualGradientColors.lightColor} width={80} height={80} />
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -18,13 +18,12 @@ import BobbingAnim from "@/app/animations/BobbingAnim";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 const MomentCard = ({
+  distanceFromTop,
   index,
   onPress,
-  scrollY,
   onSliderPull,
+  scrollY,
   moment,
-  itemHeight,
-  itemMargin,
   heightToMatchWithFlatList, //match THIS if using FlatList
   marginToMatchWithFlatList,
   numberOfLinesToMatchWithFlatList,
@@ -33,7 +32,7 @@ const MomentCard = ({
   paddingHorizontal = "5%",
   paddingTop = "6%",
   paddingBottom = "5%",
-  borderColor='transparent',
+  borderColor,
   size,
   sliderVisible,
   highlightsVisible,
@@ -55,58 +54,39 @@ const MomentCard = ({
   const momentBackgroundColor = gradientColors.lightColor;
   const momentTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
   const categoryTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
-
-console.log('moment card rendered', moment.id[moment.id.length - 1]);
-
-  const offset = index * (heightToMatchWithFlatList + marginToMatchWithFlatList);
-
-const distanceFromTop = scrollY.interpolate({
-  inputRange: [
-    offset - (heightToMatchWithFlatList - marginToMatchWithFlatList),
-    offset,
-    offset + heightToMatchWithFlatList + marginToMatchWithFlatList,
-  ],
-  outputRange: [0.88, 0.97, 0.82],
-  extrapolate: "clamp",
-});
-
-const dynamicTextSize = scrollY.interpolate({
-  inputRange: [
-    offset - heightToMatchWithFlatList - marginToMatchWithFlatList - 4,
-    offset,
-    offset + heightToMatchWithFlatList + marginToMatchWithFlatList - 4,
-  ],
-  outputRange: [12, 12, 12], // tweak if needed
-  extrapolate: "clamp",
-});
-
-const dynamicVisibility = scrollY.interpolate({
-  inputRange: [
-    offset - heightToMatchWithFlatList - marginToMatchWithFlatList,
-    offset,
-    offset + heightToMatchWithFlatList + marginToMatchWithFlatList,
-  ],
-  outputRange: [0.2, 1, 0],
-  extrapolate: "clamp",
-});
-
-const dynamicHighlightsVisibility = scrollY.interpolate({
-  inputRange: [
-    offset - heightToMatchWithFlatList - marginToMatchWithFlatList,
-    offset,
-    offset + heightToMatchWithFlatList + marginToMatchWithFlatList,
-  ],
-  outputRange: [0, 1, 0],
-  extrapolate: "clamp",
-});
-
-
+  const [ showAnimations, setShowAnimations ] = useState();
+ 
   useEffect(() => {
     if (updateCapsuleMutation.isSuccess && moment.id === momentData?.id) {
-      triggerAnimation();
-      console.log("removed triggering animation in moment card for now");
+      triggerAnimation(); 
     }
   }, [updateCapsuleMutation.isSuccess]);
+
+
+useEffect(() => {
+  let timeoutId;
+
+  setShowAnimations(false);
+
+  const listener = distanceFromTop.addListener(({ value }) => {
+    // Clear any previous timeout to avoid stacking
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    timeoutId = setTimeout(() => {
+      setShowAnimations(value > 0.89);
+    }, 100); // 1 second delay
+  });
+
+  return () => {
+    // Clean up the listener and any pending timeout
+    distanceFromTop.removeListener(listener);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  };
+}, [distanceFromTop]);
 
   const translateX = new Animated.Value(0);
 
@@ -147,7 +127,7 @@ const dynamicHighlightsVisibility = scrollY.interpolate({
           // paddingBottom: paddingBottom,
           backgroundColor: backgroundColor,
           borderColor: borderColor,
-          transform: [{ translateX },  {scale: distanceFromTop}],
+          transform: [{ translateX }],
         },
       ]}
     >
@@ -159,8 +139,7 @@ const dynamicHighlightsVisibility = scrollY.interpolate({
           flex: 1,
           //height: heightToMatchWithFlatList,
           width: "100%",
-          opacity: dynamicVisibility,
-         // opacity: sliderVisible,
+          opacity: sliderVisible,
           right: indexIsEven ? 70 : null,
           left: indexIsEven ? null : 70,
           zIndex: 0,
@@ -223,36 +202,31 @@ const dynamicHighlightsVisibility = scrollY.interpolate({
               </Animated.Text>
             </View>
           </Animated.View> */}
-          <BobbingAnim bobbingDistance={4} duration={2000}>
+
+ {showAnimations && (
+          <BobbingAnim showAnimation={showAnimations} bobbingDistance={4} duration={2000}>
             <Animated.View
               style={[
                 {
-                  borderRadius: borderRadius,
-                  //right: indexIsEven ? 30 : null,
-                  ///  left: indexIsEven ? 180 : 70,
-                  //    left: indexIsEven ? 150 : 60,
-                  //  left: indexIsEven ? 30 : 60,
-                  //   width: 130,
-                  //  top: 146,
+                  borderRadius: borderRadius, 
                   alignItems: "center",
                   justifyContent: "center",
                   flex: 1,
                   flexDirection: "row",
-                  width: "100%",
-                  // bottom: -110,
-                  //  height: 88,
-                 // opacity: highlightsVisible,
-                  opacity: dynamicHighlightsVisibility,
-                  // backgroundColor: momentBackgroundColor,
+                  width: "100%", 
+                  opacity: highlightsVisible, 
                 },
               ]}
             >
+             
+                
               <FlashAnimNonCircle
                 circleColor={momentBackgroundColor}
                 flashToColor={manualGradientColors.lighterLightColor}
-                //circleTextSize={40}
-                active={true}
+                staticColor={momentBackgroundColor}
+                //circleTextSize={40} 
                 minHeight={80} // mot in use but can be hooked up
+                returnAnimation={showAnimations}
               >
                 <View
                   style={[
@@ -270,7 +244,7 @@ const dynamicHighlightsVisibility = scrollY.interpolate({
                                 <Animated.Text
                 style={[
                   styles.categoryText,
-                  { color: categoryTextColor, opacity: dynamicVisibility },
+                  { color: categoryTextColor, opacity: sliderVisible },
                 ]}
               >
                 #
@@ -284,9 +258,9 @@ const dynamicHighlightsVisibility = scrollY.interpolate({
                   fontFamily={"Poppins-Regular"}
                   parentStyle={[
                     styles.categoryText,
-                    { color: categoryTextColor, opacity: dynamicVisibility },
+                    { color: categoryTextColor, opacity: sliderVisible },
                   ]}
-                  opacity={dynamicVisibility}
+                  opacity={sliderVisible}
                 />
               </Animated.Text>
                   <Animated.Text
@@ -296,8 +270,8 @@ const dynamicHighlightsVisibility = scrollY.interpolate({
 
                       {
                         color: momentTextColor,
-                        fontSize: dynamicTextSize,
-                        opacity: dynamicVisibility,
+                        fontSize: size,
+                        opacity: sliderVisible,
                       },
                     ]}
                   >
@@ -305,20 +279,22 @@ const dynamicHighlightsVisibility = scrollY.interpolate({
                   </Animated.Text>
                 </View>
               </FlashAnimNonCircle>
+               
             </Animated.View>
           </BobbingAnim>
+             )}
         </View>
       </TouchableOpacity>
       <Animated.View
-        style={[styles.sliderContainer, { opacity: dynamicVisibility }]}
+        style={[styles.sliderContainer, { opacity: sliderVisible }]}
       >
         <SlideToAdd
           onPress={onSliderPull}
           sliderText="ADD TO HELLO"
           sliderTextSize={13}
-          sliderTextVisible={dynamicVisibility}
+          sliderTextVisible={sliderVisible}
           targetIcon={CheckmarkOutlineSvg}
-          disabled={false}
+          disabled={sliderVisible !== 1}
         />
       </Animated.View>
       {/* <Animated.View style={[styles.leafTransform, { opacity: sliderVisible }]}>

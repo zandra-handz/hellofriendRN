@@ -74,7 +74,7 @@ const MomentsList = () => {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const moments = capsuleList;
-  const momentListBottomSpacer = Dimensions.get("screen").height - 200;
+  const momentListBottomSpacer = 700;
 
   const translateX = new Animated.Value(0);
 
@@ -152,7 +152,7 @@ const MomentsList = () => {
     }
   };
 
-
+  
 
   const handleNavigateToMomentView = (moment) => {
     navigation.navigate('MomentView', {moment: moment});
@@ -174,132 +174,96 @@ const MomentsList = () => {
       });
     }
   };
-
-
-  const renderMomentCard = useCallback(({ item, index }) => {
-  const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
-  const translate = item.id === momentIdToAnimate ? translateY : 0;
-  const opacity = item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
-
-  return (
-    <Animated.View
-      style={[
-        styles.cardContainer,
-        {
-          transform: [{ translateY: translate }],
-          opacity,
-        },
-      ]}
-    >
-      <MomentCard
-        moment={item}
-        index={index}
-        scrollY={scrollY}
-        itemHeight={ITEM_HEIGHT}
-        itemMargin={ITEM_BOTTOM_MARGIN}
-        borderRadius={CARD_BORDERRADIUS}
-        backgroundColor={'transparent'}
-        heightToMatchWithFlatList={ITEM_HEIGHT}
-        marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
-        numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
-        onPress={() => handleNavigateToMomentView(item)}
-        onSliderPull={() => saveToHello(item)}
-      />
-    </Animated.View>
-  );
-}, [scrollY, fadeAnim, translateY, momentIdToAnimate]);
-
  
-  // const renderMomentCard = ({ item, index }) => {
+  const renderMomentCard = useCallback(({ item, index }) => {
+  //const renderMomentCard = ({ item, index }) => {
+    // Calculate the offset of the current item in relation to the scroll position
+    const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
 
-  //   console.log('card renderedddkk');
-  //   // Calculate the offset of the current item in relation to the scroll position
-  //   const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
+    const distanceFromTop = scrollY.interpolate({
+      inputRange: [
+        offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN),
+        offset,
+        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+      ],
+      outputRange: [0.88, .97, 0.82], //[0.92, 0.94, 0.84],
+      extrapolate: "clamp",
+    });
+ 
+    const dynamicTextSize = scrollY.interpolate({
+      inputRange: [
+        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN - 4,
+        offset,
+        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN - 4,
+      ],
+      outputRange: [12, 12, 12], //turned off for now  [14, 15, 13]
+      extrapolate: "clamp",
+    });
 
-  //   const distanceFromTop = scrollY.interpolate({
-  //     inputRange: [
-  //       offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN),
-  //       offset,
-  //       offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-  //     ],
-  //     outputRange: [0.88, .97, 0.82], //[0.92, 0.94, 0.84],
-  //     extrapolate: "clamp",
-  //   });
-
-
-
-  //   const dynamicTextSize = scrollY.interpolate({
-  //     inputRange: [
-  //       offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN - 4,
-  //       offset,
-  //       offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN - 4,
-  //     ],
-  //     outputRange: [12, 12, 12], //turned off for now  [14, 15, 13]
-  //     extrapolate: "clamp",
-  //   });
-
-  //   const dynamicVisibility = scrollY.interpolate({
-  //     inputRange: [
-  //       offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
-  //       offset,
-  //       offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-  //     ],
-  //     outputRange: [0.2, 1, 0], // 0 = fully transparent, 1 = fully visible
-  //     extrapolate: "clamp",
-  //   });
-
-  //   console.log(dynamicVisibility);
-
-  //       const dynamicHighlightsVisibility = scrollY.interpolate({
-  //     inputRange: [
-  //       offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
-  //       offset,
-  //       offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-  //     ],
-  //     outputRange: [0, 1, 0], // 0 = fully transparent, 1 = fully visible
-  //     extrapolate: "clamp",
-  //   });
+    const dynamicVisibility = scrollY.interpolate({
+      inputRange: [
+        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+        offset,
+        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+      ],
+      outputRange: [0.2, 1, 0], // 0 = fully transparent, 1 = fully visible
+      extrapolate: "clamp",
+    }); 
+        const dynamicHighlightsVisibility = scrollY.interpolate({
+      inputRange: [
+        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+        offset,
+        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+      ],
+      outputRange: [0, 1, 0], // 0 = fully transparent, 1 = fully visible
+      extrapolate: "clamp",
+    });
+  
 
 
-  //   const opacity =
-  //     item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
-  //   // Fade out when it's being animated
-  //   const translate = item.id === momentIdToAnimate ? translateY : 0;
+    const opacity =
+      item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
+    // Fade out when it's being animated
+    const translate = item.id === momentIdToAnimate ? translateY : 0;
+  
 
-  //   return (
-  //     <Animated.View
-  //       style={[
-  //         styles.cardContainer,
-  //         {
-  //           transform: [{ scale: distanceFromTop }, { translateY: translate }],
-  //           opacity,
-  //         },
-  //       ]}
-  //     >
-  //       <MomentCard
-  //         key={item.id}
-  //         heightToMatchWithFlatList={ITEM_HEIGHT}
-  //         marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
-  //         numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
-  //         backgroundColor={
-  //           'transparent'
-  //          // themeStyles.genericTextBackgroundShadeTwo.backgroundColor
-  //         }
-  //         borderRadius={CARD_BORDERRADIUS }
-  //         paddingHorizontal={0}
+    return (
+      <Animated.View
+        style={[
+          styles.cardContainer,
+          {
+            transform: [{ scale: distanceFromTop }, { translateY: translate }],
+            opacity,
+          },
+        ]}
+      >
+        <MomentCard 
+          key={item.id}
+          distanceFromTop={distanceFromTop}
+          scrollY={scrollY}
+          heightToMatchWithFlatList={ITEM_HEIGHT}
+          marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
+          numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
+          backgroundColor={
+            'transparent'
+           // themeStyles.genericTextBackgroundShadeTwo.backgroundColor
+          }
+          borderRadius={CARD_BORDERRADIUS }
+          paddingHorizontal={0}
           
-  //         borderColor={"transparent"} //manualGradientColors.lightColor}
-  //         moment={item}
-  //         index={index}
-  //         size={dynamicTextSize}
-  //         sliderVisible={dynamicVisibility}
-  //         highlightsVisible={dynamicHighlightsVisibility}
-  //         onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
-  //         onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
-  //       />
-  //     </Animated.View>
-  //   );
-  // };
+          borderColor={"transparent"} //manualGradientColors.lightColor}
+          moment={item}
+          index={index}
+          size={dynamicTextSize}
+          sliderVisible={dynamicVisibility}
+          highlightsVisible={dynamicHighlightsVisibility}
+          onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
+          onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
+        />
+      </Animated.View>
+    );
+    }, [scrollY, momentIdToAnimate, fadeAnim, translateY, heightAnim, updateCacheWithNewPreAdded]);
+ // };
 
   return (
     <View style={styles.container}>
