@@ -180,7 +180,7 @@ const MomentsList = () => {
         offset,
         offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
       ],
-      outputRange: [0.80, .99, 0.82], //[0.92, 0.94, 0.84],
+      outputRange: [0.88, .97, 0.82], //[0.92, 0.94, 0.84],
       extrapolate: "clamp",
     });
 
@@ -190,7 +190,7 @@ const MomentsList = () => {
         offset,
         offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN - 4,
       ],
-      outputRange: [12, 14, 12], //turned off for now  [14, 15, 13]
+      outputRange: [12, 12, 12], //turned off for now  [14, 15, 13]
       extrapolate: "clamp",
     });
 
