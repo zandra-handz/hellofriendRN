@@ -20,8 +20,11 @@ import { useFriendList } from "@/src/context/FriendListContext";
 const MomentCard = ({
   index,
   onPress,
+  scrollY,
   onSliderPull,
   moment,
+  itemHeight,
+  itemMargin,
   heightToMatchWithFlatList, //match THIS if using FlatList
   marginToMatchWithFlatList,
   numberOfLinesToMatchWithFlatList,
@@ -30,7 +33,7 @@ const MomentCard = ({
   paddingHorizontal = "5%",
   paddingTop = "6%",
   paddingBottom = "5%",
-  borderColor,
+  borderColor='transparent',
   size,
   sliderVisible,
   highlightsVisible,
@@ -52,6 +55,51 @@ const MomentCard = ({
   const momentBackgroundColor = gradientColors.lightColor;
   const momentTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
   const categoryTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
+
+console.log('moment card rendered', moment.id[moment.id.length - 1]);
+
+  const offset = index * (heightToMatchWithFlatList + marginToMatchWithFlatList);
+
+const distanceFromTop = scrollY.interpolate({
+  inputRange: [
+    offset - (heightToMatchWithFlatList - marginToMatchWithFlatList),
+    offset,
+    offset + heightToMatchWithFlatList + marginToMatchWithFlatList,
+  ],
+  outputRange: [0.88, 0.97, 0.82],
+  extrapolate: "clamp",
+});
+
+const dynamicTextSize = scrollY.interpolate({
+  inputRange: [
+    offset - heightToMatchWithFlatList - marginToMatchWithFlatList - 4,
+    offset,
+    offset + heightToMatchWithFlatList + marginToMatchWithFlatList - 4,
+  ],
+  outputRange: [12, 12, 12], // tweak if needed
+  extrapolate: "clamp",
+});
+
+const dynamicVisibility = scrollY.interpolate({
+  inputRange: [
+    offset - heightToMatchWithFlatList - marginToMatchWithFlatList,
+    offset,
+    offset + heightToMatchWithFlatList + marginToMatchWithFlatList,
+  ],
+  outputRange: [0.2, 1, 0],
+  extrapolate: "clamp",
+});
+
+const dynamicHighlightsVisibility = scrollY.interpolate({
+  inputRange: [
+    offset - heightToMatchWithFlatList - marginToMatchWithFlatList,
+    offset,
+    offset + heightToMatchWithFlatList + marginToMatchWithFlatList,
+  ],
+  outputRange: [0, 1, 0],
+  extrapolate: "clamp",
+});
+
 
   useEffect(() => {
     if (updateCapsuleMutation.isSuccess && moment.id === momentData?.id) {
@@ -99,7 +147,7 @@ const MomentCard = ({
           // paddingBottom: paddingBottom,
           backgroundColor: backgroundColor,
           borderColor: borderColor,
-          transform: [{ translateX }],
+          transform: [{ translateX },  {scale: distanceFromTop}],
         },
       ]}
     >
@@ -111,7 +159,8 @@ const MomentCard = ({
           flex: 1,
           //height: heightToMatchWithFlatList,
           width: "100%",
-          opacity: sliderVisible,
+          opacity: dynamicVisibility,
+         // opacity: sliderVisible,
           right: indexIsEven ? 70 : null,
           left: indexIsEven ? null : 70,
           zIndex: 0,
@@ -192,7 +241,8 @@ const MomentCard = ({
                   width: "100%",
                   // bottom: -110,
                   //  height: 88,
-                  opacity: highlightsVisible,
+                 // opacity: highlightsVisible,
+                  opacity: dynamicHighlightsVisibility,
                   // backgroundColor: momentBackgroundColor,
                 },
               ]}
@@ -201,7 +251,7 @@ const MomentCard = ({
                 circleColor={momentBackgroundColor}
                 flashToColor={manualGradientColors.lighterLightColor}
                 //circleTextSize={40}
-                active={sliderVisible !== 1}
+                active={true}
                 minHeight={80} // mot in use but can be hooked up
               >
                 <View
@@ -220,7 +270,7 @@ const MomentCard = ({
                                 <Animated.Text
                 style={[
                   styles.categoryText,
-                  { color: categoryTextColor, opacity: sliderVisible },
+                  { color: categoryTextColor, opacity: dynamicVisibility },
                 ]}
               >
                 #
@@ -234,9 +284,9 @@ const MomentCard = ({
                   fontFamily={"Poppins-Regular"}
                   parentStyle={[
                     styles.categoryText,
-                    { color: categoryTextColor, opacity: sliderVisible },
+                    { color: categoryTextColor, opacity: dynamicVisibility },
                   ]}
-                  opacity={sliderVisible}
+                  opacity={dynamicVisibility}
                 />
               </Animated.Text>
                   <Animated.Text
@@ -246,8 +296,8 @@ const MomentCard = ({
 
                       {
                         color: momentTextColor,
-                        fontSize: size,
-                        opacity: sliderVisible,
+                        fontSize: dynamicTextSize,
+                        opacity: dynamicVisibility,
                       },
                     ]}
                   >
@@ -260,15 +310,15 @@ const MomentCard = ({
         </View>
       </TouchableOpacity>
       <Animated.View
-        style={[styles.sliderContainer, { opacity: sliderVisible }]}
+        style={[styles.sliderContainer, { opacity: dynamicVisibility }]}
       >
         <SlideToAdd
           onPress={onSliderPull}
           sliderText="ADD TO HELLO"
           sliderTextSize={13}
-          sliderTextVisible={sliderVisible}
+          sliderTextVisible={dynamicVisibility}
           targetIcon={CheckmarkOutlineSvg}
-          disabled={sliderVisible !== 1}
+          disabled={false}
         />
       </Animated.View>
       {/* <Animated.View style={[styles.leafTransform, { opacity: sliderVisible }]}>

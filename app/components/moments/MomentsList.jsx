@@ -2,7 +2,7 @@
 //    listContainer: {
 //    height: Dimensions.get("screen").height - 440,
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -94,6 +94,7 @@ const MomentsList = () => {
     };
   }, []);
 
+// removal animation triggered by context
   useEffect(() => {
     if (momentIdToAnimate) {
       Animated.timing(translateX, {
@@ -121,6 +122,7 @@ const MomentsList = () => {
     }
   }, [momentIdToAnimate]);
 
+
   const scrollToMoment = (moment) => {
     if (moment.uniqueIndex !== undefined) {
       flatListRef.current?.scrollToIndex({
@@ -129,6 +131,7 @@ const MomentsList = () => {
       });
     }
   };
+
 
   const scrollToRandomItem = () => {
     if (capsuleList.length === 0) return;
@@ -140,6 +143,7 @@ const MomentsList = () => {
     });
   };
 
+
   const saveToHello = async (moment) => {
     try {
       updateCapsule(moment.id);
@@ -147,6 +151,7 @@ const MomentsList = () => {
       console.error("Error during pre-save:", error);
     }
   };
+
 
 
   const handleNavigateToMomentView = (moment) => {
@@ -169,91 +174,132 @@ const MomentsList = () => {
       });
     }
   };
+
+
+  const renderMomentCard = useCallback(({ item, index }) => {
+  const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
+  const translate = item.id === momentIdToAnimate ? translateY : 0;
+  const opacity = item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
+
+  return (
+    <Animated.View
+      style={[
+        styles.cardContainer,
+        {
+          transform: [{ translateY: translate }],
+          opacity,
+        },
+      ]}
+    >
+      <MomentCard
+        moment={item}
+        index={index}
+        scrollY={scrollY}
+        itemHeight={ITEM_HEIGHT}
+        itemMargin={ITEM_BOTTOM_MARGIN}
+        borderRadius={CARD_BORDERRADIUS}
+        backgroundColor={'transparent'}
+        heightToMatchWithFlatList={ITEM_HEIGHT}
+        marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
+        numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
+        onPress={() => handleNavigateToMomentView(item)}
+        onSliderPull={() => saveToHello(item)}
+      />
+    </Animated.View>
+  );
+}, [scrollY, fadeAnim, translateY, momentIdToAnimate]);
+
  
-  const renderMomentCard = ({ item, index }) => {
-    // Calculate the offset of the current item in relation to the scroll position
-    const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
+  // const renderMomentCard = ({ item, index }) => {
 
-    const distanceFromTop = scrollY.interpolate({
-      inputRange: [
-        offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN),
-        offset,
-        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-      ],
-      outputRange: [0.88, .97, 0.82], //[0.92, 0.94, 0.84],
-      extrapolate: "clamp",
-    });
+  //   console.log('card renderedddkk');
+  //   // Calculate the offset of the current item in relation to the scroll position
+  //   const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
 
-    const dynamicTextSize = scrollY.interpolate({
-      inputRange: [
-        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN - 4,
-        offset,
-        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN - 4,
-      ],
-      outputRange: [12, 12, 12], //turned off for now  [14, 15, 13]
-      extrapolate: "clamp",
-    });
-
-    const dynamicVisibility = scrollY.interpolate({
-      inputRange: [
-        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
-        offset,
-        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-      ],
-      outputRange: [0.2, 1, 0], // 0 = fully transparent, 1 = fully visible
-      extrapolate: "clamp",
-    });
-
-        const dynamicHighlightsVisibility = scrollY.interpolate({
-      inputRange: [
-        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
-        offset,
-        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-      ],
-      outputRange: [0, 1, 0], // 0 = fully transparent, 1 = fully visible
-      extrapolate: "clamp",
-    });
+  //   const distanceFromTop = scrollY.interpolate({
+  //     inputRange: [
+  //       offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN),
+  //       offset,
+  //       offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+  //     ],
+  //     outputRange: [0.88, .97, 0.82], //[0.92, 0.94, 0.84],
+  //     extrapolate: "clamp",
+  //   });
 
 
-    const opacity =
-      item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
-    // Fade out when it's being animated
-    const translate = item.id === momentIdToAnimate ? translateY : 0;
 
-    return (
-      <Animated.View
-        style={[
-          styles.cardContainer,
-          {
-            transform: [{ scale: distanceFromTop }, { translateY: translate }],
-            opacity,
-          },
-        ]}
-      >
-        <MomentCard
-          key={item.id}
-          heightToMatchWithFlatList={ITEM_HEIGHT}
-          marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
-          numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
-          backgroundColor={
-            'transparent'
-           // themeStyles.genericTextBackgroundShadeTwo.backgroundColor
-          }
-          borderRadius={CARD_BORDERRADIUS }
-          paddingHorizontal={0}
+  //   const dynamicTextSize = scrollY.interpolate({
+  //     inputRange: [
+  //       offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN - 4,
+  //       offset,
+  //       offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN - 4,
+  //     ],
+  //     outputRange: [12, 12, 12], //turned off for now  [14, 15, 13]
+  //     extrapolate: "clamp",
+  //   });
+
+  //   const dynamicVisibility = scrollY.interpolate({
+  //     inputRange: [
+  //       offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+  //       offset,
+  //       offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+  //     ],
+  //     outputRange: [0.2, 1, 0], // 0 = fully transparent, 1 = fully visible
+  //     extrapolate: "clamp",
+  //   });
+
+  //   console.log(dynamicVisibility);
+
+  //       const dynamicHighlightsVisibility = scrollY.interpolate({
+  //     inputRange: [
+  //       offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+  //       offset,
+  //       offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+  //     ],
+  //     outputRange: [0, 1, 0], // 0 = fully transparent, 1 = fully visible
+  //     extrapolate: "clamp",
+  //   });
+
+
+  //   const opacity =
+  //     item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
+  //   // Fade out when it's being animated
+  //   const translate = item.id === momentIdToAnimate ? translateY : 0;
+
+  //   return (
+  //     <Animated.View
+  //       style={[
+  //         styles.cardContainer,
+  //         {
+  //           transform: [{ scale: distanceFromTop }, { translateY: translate }],
+  //           opacity,
+  //         },
+  //       ]}
+  //     >
+  //       <MomentCard
+  //         key={item.id}
+  //         heightToMatchWithFlatList={ITEM_HEIGHT}
+  //         marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
+  //         numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
+  //         backgroundColor={
+  //           'transparent'
+  //          // themeStyles.genericTextBackgroundShadeTwo.backgroundColor
+  //         }
+  //         borderRadius={CARD_BORDERRADIUS }
+  //         paddingHorizontal={0}
           
-          borderColor={"transparent"} //manualGradientColors.lightColor}
-          moment={item}
-          index={index}
-          size={dynamicTextSize}
-          sliderVisible={dynamicVisibility}
-          highlightsVisible={dynamicHighlightsVisibility}
-          onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
-          onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
-        />
-      </Animated.View>
-    );
-  };
+  //         borderColor={"transparent"} //manualGradientColors.lightColor}
+  //         moment={item}
+  //         index={index}
+  //         size={dynamicTextSize}
+  //         sliderVisible={dynamicVisibility}
+  //         highlightsVisible={dynamicHighlightsVisibility}
+  //         onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
+  //         onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
+  //       />
+  //     </Animated.View>
+  //   );
+  // };
 
   return (
     <View style={styles.container}>
