@@ -155,8 +155,7 @@ const ContentMomentFocus = ({
     }
   }, [editMomentMutation.isSuccess, editMomentMutation.data]);
 
-  return (
-    <SafeView style={{flex: 1}}>
+  return ( 
       
     <TouchableWithoutFeedback onPress={() => {}}>
       <View style={styles.container}>
@@ -253,8 +252,7 @@ const ContentMomentFocus = ({
         )}
       </View>
     </TouchableWithoutFeedback>
-    
-    </SafeView>
+     
   );
 };
 

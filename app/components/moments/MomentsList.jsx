@@ -35,7 +35,7 @@ import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-inverted";
 
-const ITEM_HEIGHT = 300;
+const ITEM_HEIGHT = 290;
 const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
 const NUMBER_OF_LINES = 5;
 
@@ -180,7 +180,7 @@ const MomentsList = () => {
         offset,
         offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
       ],
-      outputRange: [0.86, .97, 0.82], //[0.92, 0.94, 0.84],
+      outputRange: [0.80, .99, 0.82], //[0.92, 0.94, 0.84],
       extrapolate: "clamp",
     });
 
@@ -190,7 +190,7 @@ const MomentsList = () => {
         offset,
         offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN - 4,
       ],
-      outputRange: [12, 12, 12], //turned off for now  [14, 15, 13]
+      outputRange: [12, 14, 12], //turned off for now  [14, 15, 13]
       extrapolate: "clamp",
     });
 
@@ -304,7 +304,7 @@ const MomentsList = () => {
         height={"87%"}
         width={"100%"}
         minHeight={"87%"}
-        paddingTop={"4%"}
+        paddingTop={0}
         transparentBackground={true}
         paddingHorizontal={0}
         children={

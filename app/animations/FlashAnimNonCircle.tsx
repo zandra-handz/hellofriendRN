@@ -51,7 +51,7 @@ const FlashAnimNonCircle = ({
     return (
         <> 
             
-        <Animated.View style={[appAnimationStyles.flashAnimContainer, { borderRadius: 20, padding: 10, height: 'auto', minHeight: minHeight, width: '100%', backgroundColor: animatedCircleColor }]}>
+        <Animated.View style={[appAnimationStyles.flashAnimContainer, { borderRadius: 40, padding: 20, height: 'auto', minHeight: 130, width: '90%', backgroundColor: animatedCircleColor }]}>
             <Animated.Text style={[appAnimationStyles.flashAnimText, { color: animatedCountColor, fontSize: circleTextSize }]}>
                 {children}
             </Animated.Text>

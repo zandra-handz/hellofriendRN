@@ -36,7 +36,12 @@ const MomentCard = ({
   highlightsVisible,
   disabled = false,
 }) => {
-  const { themeStyles, gradientColors, gradientColorsHome, manualGradientColors } = useGlobalStyle();
+  const {
+    themeStyles,
+    gradientColors,
+    gradientColorsHome,
+    manualGradientColors,
+  } = useGlobalStyle();
   const { updateCapsuleMutation, momentData } = useCapsuleList();
   const { themeAheadOfLoading } = useFriendList();
 
@@ -118,7 +123,7 @@ const MomentCard = ({
           stroke={strokeColor}
           height={380}
           width={470}
-          strokeWidth={4}
+          strokeWidth={3}
         />
       </Animated.View>
       <TouchableOpacity
@@ -127,7 +132,7 @@ const MomentCard = ({
         disabled={disabled}
       >
         <View style={styles.iconAndMomentContainer}>
-          <Animated.View
+          {/* <Animated.View
             style={[
               styles.categoryHeader,
               {
@@ -138,9 +143,9 @@ const MomentCard = ({
                 borderRadius: 10,
                 height: 60,
                 //right: !indexIsEven ? 42 : null,
-                left: !indexIsEven ? 266 : 10,
+               // left: !indexIsEven ? 266 : 10,
                 top: 10,
-                width: 100,
+                width: 'auto',
               },
             ]}
           >
@@ -168,7 +173,7 @@ const MomentCard = ({
                 />
               </Animated.Text>
             </View>
-          </Animated.View>
+          </Animated.View> */}
           <BobbingAnim bobbingDistance={4} duration={2000}>
             <Animated.View
               style={[
@@ -177,11 +182,15 @@ const MomentCard = ({
                   //right: indexIsEven ? 30 : null,
                   ///  left: indexIsEven ? 180 : 70,
                   //    left: indexIsEven ? 150 : 60,
-                  left: indexIsEven ? 30 : 60,
+                  //  left: indexIsEven ? 30 : 60,
                   //   width: 130,
                   //  top: 146,
-
-                  bottom: -110,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flex: 1,
+                  flexDirection: "row",
+                  width: "100%",
+                  // bottom: -110,
                   //  height: 88,
                   opacity: highlightsVisible,
                   // backgroundColor: momentBackgroundColor,
@@ -193,22 +202,43 @@ const MomentCard = ({
                 flashToColor={manualGradientColors.lighterLightColor}
                 //circleTextSize={40}
                 active={sliderVisible !== 1}
-                minHeight={80}
-
+                minHeight={80} // mot in use but can be hooked up
               >
                 <View
                   style={[
                     styles.textWrapper,
                     {
-                       height: "auto",
-                      maxHeight: 100, 
-                     // height: 100,
-                      width: 260,
+                      height: "auto",
+                      maxHeight: 200,
+                      // height: 100,
+                      width: "100%",
                       padding: 12,
                       borderRadius: 10,
                     },
                   ]}
                 >
+                                <Animated.Text
+                style={[
+                  styles.categoryText,
+                  { color: categoryTextColor, opacity: sliderVisible },
+                ]}
+              >
+                #
+                {moment.typedCategory.length > 12
+                  ? `${moment.typedCategory.substring(0, 12)}...`
+                  : moment.typedCategory}{" "}
+                • added{" "}
+                <FormatMonthDay
+                  date={moment.created}
+                  fontSize={13}
+                  fontFamily={"Poppins-Regular"}
+                  parentStyle={[
+                    styles.categoryText,
+                    { color: categoryTextColor, opacity: sliderVisible },
+                  ]}
+                  opacity={sliderVisible}
+                />
+              </Animated.Text>
                   <Animated.Text
                     numberOfLines={numberOfLinesToMatchWithFlatList}
                     style={[
@@ -300,15 +330,15 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   momentText: {
-    // fontFamily: "Poppins-Regular",
-  //  flexShrink: 1,
+    fontFamily: "Poppins-Bold",
+    //  flexShrink: 1,
     fontWeight: "bold",
     fontSize: 10,
     lineHeight: 18,
     alignSelf: "left",
   },
   textWrapper: {
-   // flexGrow: 1,
+    // flexGrow: 1,
     textAlign: "left",
     position: "absolute",
     // justifyContent: 'center',
@@ -316,8 +346,8 @@ const styles = StyleSheet.create({
     // overflow: 'hidden',
   },
   categoryText: {
-    fontSize: 11,
-    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    fontFamily: "Poppins-Regular",
     flexShrink: 1,
     //fontWeight: "bold",
     lineHeight: 16,
