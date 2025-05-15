@@ -38,6 +38,7 @@ const FlashAnimNonCircle = ({
             ).start();
         };
         if (returnAnimation) {
+            console.log('RENDERING FLASH COMPONENT');
                   animateFlash();
         }
 

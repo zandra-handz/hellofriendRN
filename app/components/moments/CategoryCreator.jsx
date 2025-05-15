@@ -28,15 +28,19 @@ const CategoryCreator = ({
   momentTextForDisplay,
   onParentSave,
   isKeyboardVisible = true,
+  selectedFriend,
+  friendDashboardData,
+  loadingNewFriend,
 }) => {
   const { themeStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCategoryCapsules, setSelectedCategoryCapsules] =
     useState(null);
-  const { selectedFriend, friendDashboardData, loadingNewFriend } =
-    useSelectedFriend();
+  // const { selectedFriend, friendDashboardData, loadingNewFriend } =
+  //   useSelectedFriend();
   const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
-  const [containerHeight, setContainerHeight] = useState(0);
+ 
+  const containerHeight = `100%`;
   const [categoryLimit, setCategoryLimit] = useState("");
   const [remainingCategories, setRemainingCategories] = useState(null);
   const [newCategoryEntered, setNewCategoryEntered] = useState(false);
@@ -53,31 +57,38 @@ const CategoryCreator = ({
     }
   };
 
+    const resetNewCategoryText = () => {
+    if (newCategoryRef && newCategoryRef.current) {
+      newCategoryRef.current.setText(null);
+    }
+  };
+
   useEffect(() => {
-    if (selectedFriend) {
+    if (selectedFriend && friendDashboardData) {
       setSelectedCategory(null);
+      resetNewCategoryText();
       fetchCategoryLimitData();
     }
   }, [selectedFriend, friendDashboardData]);
 
-  useEffect(() => {
-    if (categoryCount < 3) {
-      setContainerHeight("100%");
-    } else if (categoryCount > 8) {
-      setContainerHeight("100%");
-    } else {
-      setContainerHeight(`100%`);
-    }
-  }, [categoryCount]);
+  // useEffect(() => {
+  //   if (categoryCount < 3) {
+  //     setContainerHeight("100%");
+  //   } else if (categoryCount > 8) {
+  //     setContainerHeight("100%");
+  //   } else {
+  //     setContainerHeight(`100%`);
+  //   }
+  // }, [categoryCount]);
 
-  const fetchCategoryLimitData = async () => {
-    if (categoryCount < 3) {
-      setContainerHeight("100%");
-    } else if (categoryCount > 8) {
-      setContainerHeight("100%");
-    } else {
-      setContainerHeight(`100%`);
-    }
+  const fetchCategoryLimitData = () => {
+    // if (categoryCount < 3) {
+    //   setContainerHeight("100%");
+    // } else if (categoryCount > 8) {
+    //   setContainerHeight("100%");
+    // } else {
+    //   setContainerHeight(`100%`);
+    // }
 
     try {
       if (friendDashboardData && friendDashboardData.length > 0) {
@@ -152,6 +163,7 @@ const CategoryCreator = ({
       }
     }
   }, [selectedCategory]);
+
 
   const handleCategoryPress = (category) => {
     setSelectedCategory(category);

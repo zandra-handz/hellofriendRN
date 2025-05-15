@@ -39,7 +39,7 @@ const SingleLineEnterBox = forwardRef(
         textInputRef.current.setNativeProps({ text: mountingText });
         setEditedMessage(mountingText);
       }
-    }, []);
+    }, [mountingText]);
 
     // Expose the current value of the TextInput via the ref
     useImperativeHandle(ref, () => ({
@@ -131,7 +131,7 @@ const SingleLineEnterBox = forwardRef(
               multiline={false}
             />
           </View> 
-          {editedMessage.length > 0 && (
+          {editedMessage && editedMessage?.length > 0 && (
             <View
               style={{
                 height: "100%", 

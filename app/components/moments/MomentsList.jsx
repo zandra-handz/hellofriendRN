@@ -316,6 +316,7 @@ const MomentsList = () => {
         minHeight={"87%"}
         paddingTop={0}
         transparentBackground={true}
+        transparentBorder={true}
         paddingHorizontal={0}
         children={
           <>

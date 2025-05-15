@@ -1,6 +1,6 @@
 //<LeafGreenOutlineSvg color={manualGradientColors.lightColor} width={80} height={80} />
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { View, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -49,44 +49,49 @@ const MomentCard = ({
 
   const indexIsEven = index % 2 === 0;
 
+  const isFirstItem = index + 1 === 1;
+  //console.log(isFirstItem);
   const fillColor = gradientColorsHome.darkColor; // themeStyles.genericTextBackgroundShadeTwo.backgroundColor;
   const strokeColor = gradientColors.darkColor; //themeAheadOfLoading.lightColor;
   const momentBackgroundColor = gradientColors.lightColor;
   const momentTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
   const categoryTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
-  const [ showAnimations, setShowAnimations ] = useState();
- 
+  const [showAnimations, setShowAnimations] = useState(isFirstItem);
+
   useEffect(() => {
     if (updateCapsuleMutation.isSuccess && moment.id === momentData?.id) {
-      triggerAnimation(); 
+      triggerAnimation();
     }
   }, [updateCapsuleMutation.isSuccess]);
 
+  useEffect(() => {
+    let timeoutId;
 
-useEffect(() => {
-  let timeoutId;
+    // setShowAnimations(false);
 
-  setShowAnimations(false);
+    const listener = distanceFromTop.addListener(({ value }) => {
+      // Clear any previous timeout to avoid stacking
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
 
-  const listener = distanceFromTop.addListener(({ value }) => {
-    // Clear any previous timeout to avoid stacking
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
+      timeoutId = setTimeout(() => {
+        setShowAnimations(value > 0.89);
+        if (value > 0.89) {
+          // console.log(value);
+          // console.log(sliderVisible);
+        }
+      }, 100); // 1 second delay
+    });
 
-    timeoutId = setTimeout(() => {
-      setShowAnimations(value > 0.89);
-    }, 100); // 1 second delay
-  });
-
-  return () => {
-    // Clean up the listener and any pending timeout
-    distanceFromTop.removeListener(listener);
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-  };
-}, [distanceFromTop]);
+    return () => {
+      // Clean up the listener and any pending timeout
+      distanceFromTop.removeListener(listener);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [distanceFromTop]);
 
   const translateX = new Animated.Value(0);
 
@@ -203,86 +208,87 @@ useEffect(() => {
             </View>
           </Animated.View> */}
 
- {showAnimations && (
-          <BobbingAnim showAnimation={showAnimations} bobbingDistance={4} duration={2000}>
-            <Animated.View
-              style={[
-                {
-                  borderRadius: borderRadius, 
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flex: 1,
-                  flexDirection: "row",
-                  width: "100%", 
-                  opacity: highlightsVisible, 
-                },
-              ]}
+          {showAnimations && (
+            <BobbingAnim
+              showAnimation={showAnimations}
+              bobbingDistance={4}
+              duration={2000}
             >
-             
-                
-              <FlashAnimNonCircle
-                circleColor={momentBackgroundColor}
-                flashToColor={manualGradientColors.lighterLightColor}
-                staticColor={momentBackgroundColor}
-                //circleTextSize={40} 
-                minHeight={80} // mot in use but can be hooked up
-                returnAnimation={showAnimations}
-              >
-                <View
-                  style={[
-                    styles.textWrapper,
-                    {
-                      height: "auto",
-                      maxHeight: 200,
-                      // height: 100,
-                      width: "100%",
-                      padding: 12,
-                      borderRadius: 10,
-                    },
-                  ]}
-                >
-                                <Animated.Text
+              <Animated.View
                 style={[
-                  styles.categoryText,
-                  { color: categoryTextColor, opacity: sliderVisible },
+                  {
+                    borderRadius: borderRadius,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flex: 1,
+                    flexDirection: "row",
+                    width: "100%",
+                    opacity: highlightsVisible,
+                  },
                 ]}
               >
-                #
-                {moment.typedCategory.length > 12
-                  ? `${moment.typedCategory.substring(0, 12)}...`
-                  : moment.typedCategory}{" "}
-                • added{" "}
-                <FormatMonthDay
-                  date={moment.created}
-                  fontSize={13}
-                  fontFamily={"Poppins-Regular"}
-                  parentStyle={[
-                    styles.categoryText,
-                    { color: categoryTextColor, opacity: sliderVisible },
-                  ]}
-                  opacity={sliderVisible}
-                />
-              </Animated.Text>
-                  <Animated.Text
-                    numberOfLines={numberOfLinesToMatchWithFlatList}
+                <FlashAnimNonCircle
+                  circleColor={momentBackgroundColor}
+                  flashToColor={manualGradientColors.lighterLightColor}
+                  staticColor={momentBackgroundColor}
+                  //circleTextSize={40}
+                  minHeight={80} // mot in use but can be hooked up
+                  returnAnimation={showAnimations}
+                >
+                  <View
                     style={[
-                      styles.momentText,
-
+                      styles.textWrapper,
                       {
-                        color: momentTextColor,
-                        fontSize: size,
-                        opacity: sliderVisible,
+                        height: "auto",
+                        maxHeight: 200,
+                        // height: 100,
+                        width: "100%",
+                        padding: 12,
+                        borderRadius: 10,
                       },
                     ]}
                   >
-                    {capitalizeFirstFiveWords(moment.capsule)}
-                  </Animated.Text>
-                </View>
-              </FlashAnimNonCircle>
-               
-            </Animated.View>
-          </BobbingAnim>
-             )}
+                    <Animated.Text
+                      style={[
+                        styles.categoryText,
+                        { color: categoryTextColor, opacity: sliderVisible },
+                      ]}
+                    >
+                      #
+                      {moment.typedCategory.length > 12
+                        ? `${moment.typedCategory.substring(0, 12)}...`
+                        : moment.typedCategory}{" "}
+                      • added{" "}
+                      <FormatMonthDay
+                        date={moment.created}
+                        fontSize={13}
+                        fontFamily={"Poppins-Regular"}
+                        parentStyle={[
+                          styles.categoryText,
+                          { color: categoryTextColor, opacity: sliderVisible },
+                        ]}
+                        opacity={sliderVisible}
+                      />
+                    </Animated.Text>
+                    <Animated.Text
+                      numberOfLines={numberOfLinesToMatchWithFlatList}
+                      style={[
+                        styles.momentText,
+
+                        {
+                          color: momentTextColor,
+                          fontSize: size,
+                          opacity: sliderVisible,
+                        },
+                      ]}
+                    >
+                      {capitalizeFirstFiveWords(moment.capsule)}
+                    </Animated.Text>
+                  </View>
+                </FlashAnimNonCircle>
+              </Animated.View>
+            </BobbingAnim>
+          )}
         </View>
       </TouchableOpacity>
       <Animated.View

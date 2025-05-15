@@ -9,7 +9,6 @@ import {
 } from "react-native";
 
 import { useAuthUser } from "@/src/context/AuthUserContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import LeafTopContainer from "./LeafTopContainer";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import SafeView from "../appwide/format/SafeView";
@@ -20,6 +19,7 @@ import TextMomentBox from "./TextMomentBox";
 import { useNavigation } from "@react-navigation/native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 import FriendSelectModalVersionButtonOnly from "@/app/components/friends/FriendSelectModalVersionButtonOnly";
 
@@ -32,8 +32,12 @@ const ContentMomentFocus = ({
   updateExistingMoment,
   existingMomentObject,
 }) => {
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData, loadingNewFriend } =
+    useSelectedFriend();
   const {
+    capsuleList,
+    categoryCount,
+    categoryNames,
     handleCreateMoment,
     createMomentMutation,
     handleEditMoment,
@@ -64,8 +68,6 @@ const ContentMomentFocus = ({
       keyboardDidHideListener.remove();
     };
   }, []);
-
- 
 
   useEffect(() => {
     if (momentText) {
@@ -155,17 +157,22 @@ const ContentMomentFocus = ({
     }
   }, [editMomentMutation.isSuccess, editMomentMutation.data]);
 
-  return ( 
-      
+  return (
     <TouchableWithoutFeedback onPress={() => {}}>
       <View style={styles.container}>
-        <View style={{position: 'absolute', zIndex: 6000, elevation: 6000, top: -20, right: 60}}>
-          
-         <FriendSelectModalVersionButtonOnly
-                  includeLabel={false}
-                  width="100%"
-                />
-                
+        <View
+          style={{
+            position: "absolute",
+            zIndex: 6000,
+            elevation: 6000,
+            top: -20,
+            right: 60,
+          }}
+        >
+          <FriendSelectModalVersionButtonOnly
+            includeLabel={false}
+            width="100%"
+          />
         </View>
         <View
           style={{
@@ -174,8 +181,7 @@ const ContentMomentFocus = ({
             flexDirection: "column",
             justifyContent: "space-between",
           }}
-        > 
-               
+        >
           {!updateExistingMoment && (
             <BelowHeaderContainer
               height={140} //60
@@ -190,10 +196,17 @@ const ContentMomentFocus = ({
               // }
             />
           )}
-          <LeafTopContainer 
+          <LeafTopContainer
             paddingHorizontal={0} //padding is in inner element in this case because it is a different color
             children={
-              <View style={{ flex: 1, flexDirection: "column", top: -18,  justifyContent: 'flex-start' }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  top: -18,
+                  justifyContent: "flex-start",
+                }}
+              >
                 <TextMomentBox
                   width={"100%"}
                   height={"100%"}
@@ -213,31 +226,38 @@ const ContentMomentFocus = ({
           />
         </View>
 
-        {showCategoriesSlider && selectedFriend && (
-          // <View
-          //   style={{
-          //     position: "absolute",
+        {showCategoriesSlider &&
+          selectedFriend &&
+          friendDashboardData &&
+    
+           (
+            // <View
+            //   style={{
+            //     position: "absolute",
 
-          //     bottom: 32,
-          //     left: 0,
-          //     right: 0,
-          //     width: "100%",
-          //     //  flex: 1,
-          //     backgroundColor: "pink",
-          //                   zIndex: 6000,
-          //       elevation: 6000,
-          //   }}
-          // >
+            //     bottom: 32,
+            //     left: 0,
+            //     right: 0,
+            //     width: "100%",
+            //     //  flex: 1,
+            //     backgroundColor: "pink",
+            //                   zIndex: 6000,
+            //       elevation: 6000,
+            //   }}
+            // >
 
-          <CategoryCreator
-            onCategorySelect={handleCategorySelect}
-            updateExistingMoment={updateExistingMoment}
-            existingCategory={existingMomentObject?.typedCategory || null}
-            momentTextForDisplay={momentTextRef.current.getText()}
-            onParentSave={handleSave}
-            isKeyboardVisible={isKeyboardVisible}
-          />
-        )}
+            <CategoryCreator
+              onCategorySelect={handleCategorySelect}
+              updateExistingMoment={updateExistingMoment}
+              existingCategory={existingMomentObject?.typedCategory || null}
+              momentTextForDisplay={momentTextRef.current.getText()}
+              onParentSave={handleSave}
+              selectedFriend={selectedFriend}
+              friendDashboardData={friendDashboardData}
+              loadingNewFriend={loadingNewFriend}
+              isKeyboardVisible={isKeyboardVisible} 
+            />
+          )}
         {!isKeyboardVisible && (
           <View style={{ position: "absolute", bottom: -10 }}>
             <ButtonBaseSpecialSave
@@ -252,7 +272,6 @@ const ContentMomentFocus = ({
         )}
       </View>
     </TouchableWithoutFeedback>
-     
   );
 };
 
