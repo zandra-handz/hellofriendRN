@@ -15,7 +15,7 @@ import {
   deleteLocation,
 } from "../calls/api"; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuthUser } from "../context/AuthUserContext"; // Import the AuthUser context
+import { useUser } from "./UserContext"; // Import the AuthUser context
 
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 
@@ -33,18 +33,14 @@ export const LocationsProvider = ({ children }) => {
   const [loadingSelectedLocation, setLoadingSelectedLocation] = useState(false);
   const [additionalDetails, setAdditionalDetails] = useState(null);
   const [loadingAdditionalDetails, setLoadingAdditionalDetails] =
-    useState(false);
-  const [isTemp, setIsTemp] = useState(false);
-  const [isFave, setIsFave] = useState(false);
-  const { authUserState } = useAuthUser();
+    useState(false); 
+  const { user } = useUser();
   const queryClient = useQueryClient();
   const [isDeletingLocation, setIsDeletingLocation] = useState(false);
 
   const {
-    selectedFriend,
-    favoriteLocationIds,
-    friendFavesData,
-    friendDataDashboard,
+    selectedFriend, 
+    friendFavesData, 
   } = useSelectedFriend();
 
   const timeoutRef = useRef(null);
@@ -58,7 +54,7 @@ export const LocationsProvider = ({ children }) => {
   } = useQuery({
     queryKey: ["locationList"],
     queryFn: () => fetchAllLocations(),
-    enabled: !!authUserState.authenticated,
+    enabled: !!user.authenticated,
     onSuccess: (data) => {
       //console.log('Raw data in RQ onSuccess:', data);
       if (!data) {
@@ -244,7 +240,7 @@ export const LocationsProvider = ({ children }) => {
       parking_score: parkingTypeText,
       custom_title: trimmedCustomTitle,
       personal_experience_info: personalExperience,
-      user: authUserState.user.id,
+      user: user.user.id,
     };
 
     //console.log('Payload before sending:', locationData);
@@ -254,19 +250,19 @@ export const LocationsProvider = ({ children }) => {
     } catch (error) {
       console.error("Error saving location:", error);
     }
-  };
-  const RESET_DELAY = 1000;
+  }; 
 
   const removeFromFavesMutation = useMutation({
     mutationFn: (data) => removeFromFriendFavesLocations(data),
     onSuccess: (data) => {
       const friendData = queryClient.getQueryData([
         "friendDashboardData",
+        user?.user?.id,
         selectedFriend?.id,
       ]);
 
       queryClient.setQueryData(
-        ["friendDashboardData", selectedFriend?.id],
+        ["friendDashboardData",  user?.user?.id, selectedFriend?.id],
         (old) => {
           if (!old || !old[0]) {
             return {
@@ -316,7 +312,7 @@ export const LocationsProvider = ({ children }) => {
   const handleRemoveFromFaves = async (friendId, locationId) => {
     const favoriteLocationData = {
       friendId: friendId,
-      userId: authUserState.user.id,
+      userId: user.user.id,
       locationId: locationId,
     };
 
@@ -338,10 +334,11 @@ export const LocationsProvider = ({ children }) => {
     onSuccess: (data, variables) => {
       const friendData = queryClient.getQueryData([
         "friendDashboardData",
+         user?.user?.id,
         selectedFriend?.id,
       ]);
       queryClient.setQueryData(
-        ["friendDashboardData", selectedFriend?.id],
+        ["friendDashboardData",  user?.user?.id, selectedFriend?.id],
         (old) => {
           if (!old || !old[0]) {
             return {
@@ -390,7 +387,7 @@ export const LocationsProvider = ({ children }) => {
   const handleAddToFaves = async (friendId, locationId) => {
     const favoriteLocationData = {
       friendId: friendId,
-      userId: authUserState.user.id,
+      userId: user.user.id,
       locationId: locationId,
     };
 
@@ -432,7 +429,7 @@ export const LocationsProvider = ({ children }) => {
     setIsDeletingLocation(true);
     const locationData = {
       id: locationId,
-      user: authUserState.user.id,
+      user: user.user.id,
     };
 
     //console.log('Payload before sending:', locationData);

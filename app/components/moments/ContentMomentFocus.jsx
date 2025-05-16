@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 import LeafTopContainer from "./LeafTopContainer";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import SafeView from "../appwide/format/SafeView";
@@ -43,7 +43,7 @@ const ContentMomentFocus = ({
     handleEditMoment,
     editMomentMutation,
   } = useCapsuleList(); // NEED THIS TO ADD NEW
-  const { authUserState } = useAuthUser();
+  const { user } = useUser();
   const navigation = useNavigation();
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -90,8 +90,7 @@ const ContentMomentFocus = ({
         }
       }
 
-      momentTextRef.current.setText(text);
-      // console.log("in parent", momentTextRef.current.getText().length);
+      momentTextRef.current.setText(text); 
     }
     if (text.length < 1) {
       if (showCategoriesSlider) {
@@ -122,7 +121,7 @@ const ContentMomentFocus = ({
       if (selectedFriend) {
         if (!updateExistingMoment) {
           const requestData = {
-            user: authUserState.user.id,
+            user: user.user.id,
             friend: selectedFriend.id,
             selectedCategory: selectedCategory,
             moment: momentTextRef.current.getText(),
@@ -226,38 +225,34 @@ const ContentMomentFocus = ({
           />
         </View>
 
-        {showCategoriesSlider &&
-          selectedFriend &&
-          friendDashboardData &&
-    
-           (
-            // <View
-            //   style={{
-            //     position: "absolute",
+        {showCategoriesSlider && selectedFriend && friendDashboardData && (
+          // <View
+          //   style={{
+          //     position: "absolute",
 
-            //     bottom: 32,
-            //     left: 0,
-            //     right: 0,
-            //     width: "100%",
-            //     //  flex: 1,
-            //     backgroundColor: "pink",
-            //                   zIndex: 6000,
-            //       elevation: 6000,
-            //   }}
-            // >
+          //     bottom: 32,
+          //     left: 0,
+          //     right: 0,
+          //     width: "100%",
+          //     //  flex: 1,
+          //     backgroundColor: "pink",
+          //                   zIndex: 6000,
+          //       elevation: 6000,
+          //   }}
+          // >
 
-            <CategoryCreator
-              onCategorySelect={handleCategorySelect}
-              updateExistingMoment={updateExistingMoment}
-              existingCategory={existingMomentObject?.typedCategory || null}
-              momentTextForDisplay={momentTextRef.current.getText()}
-              onParentSave={handleSave}
-              selectedFriend={selectedFriend}
-              friendDashboardData={friendDashboardData}
-              loadingNewFriend={loadingNewFriend}
-              isKeyboardVisible={isKeyboardVisible} 
-            />
-          )}
+          <CategoryCreator
+            onCategorySelect={handleCategorySelect}
+            updateExistingMoment={updateExistingMoment}
+            existingCategory={existingMomentObject?.typedCategory || null}
+            momentTextForDisplay={momentTextRef.current.getText()}
+            onParentSave={handleSave}
+            selectedFriend={selectedFriend}
+            friendDashboardData={friendDashboardData}
+            loadingNewFriend={loadingNewFriend}
+            isKeyboardVisible={isKeyboardVisible}
+          />
+        )}
         {!isKeyboardVisible && (
           <View style={{ position: "absolute", bottom: -10 }}>
             <ButtonBaseSpecialSave

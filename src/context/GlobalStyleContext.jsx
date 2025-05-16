@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { StyleSheet, AccessibilityInfo } from "react-native";
-import { useAuthUser } from "./AuthUserContext";
-import { updateUserAccessibilitySettings } from "../calls/api";
+import { useUser } from "./UserContext";
+//import { updateUserAccessibilitySettings } from "../calls/api";
 import { useColorScheme } from "react-native";
 
 const GlobalStyleContext = createContext();
@@ -9,12 +9,7 @@ const GlobalStyleContext = createContext();
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
-  const {
-    authUserState,
-    userAppSettings,
-    updateAppSettingsMutation,
-    updateUserSettings,
-  } = useAuthUser();
+  const { user, userAppSettings, updateAppSettingsMutation } = useUser();
   const colorScheme = useColorScheme();
 
   // Default state
@@ -27,7 +22,6 @@ export const GlobalStyleProvider = ({ children }) => {
     gradientColors: {
       darkColor: "#4caf50",
       lightColor: "#a0f143",
-  
     },
     gradientColorsHome: {
       darkColor: "#000002",
@@ -37,17 +31,16 @@ export const GlobalStyleProvider = ({ children }) => {
     manualGradientColors: {
       darkColor: "#4caf50",
       lightColor: "#a0f143",
-          lighterLightColor: "#b2f45c",
+      lighterLightColor: "#b2f45c",
       darkerLightColor: "#8fd83a",
       homeDarkColor: "#000002",
       homeLightColor: "#163805",
-      
     },
     gradientDirection: { x: 1, y: 0 },
   });
 
   useEffect(() => {
-    if (authUserState.authenticated && userAppSettings) {
+    if (user.authenticated && userAppSettings) {
       const determineTheme = () => {
         if (userAppSettings.manual_dark_mode !== null) {
           return userAppSettings.manual_dark_mode ? "dark" : "light";
@@ -69,7 +62,7 @@ export const GlobalStyleProvider = ({ children }) => {
         theme: colorScheme || "light",
       }));
     }
-  }, [authUserState.authenticated, userAppSettings, colorScheme]);
+  }, [user.authenticated, userAppSettings, colorScheme]);
 
   useEffect(() => {
     if (styles.theme === "light") {
@@ -114,7 +107,7 @@ export const GlobalStyleProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!authUserState.authenticated) {
+    if (!user.authenticated) {
       return;
     }
 
@@ -123,9 +116,9 @@ export const GlobalStyleProvider = ({ children }) => {
 
       async (isActive) => {
         console.log("SCREEN READER GLOBAL STYLE");
-        if (authUserState.user) {
+        if (user.user) {
           updateAppSettingsMutation.mutate({
-            userId: authUserState.user.id,
+            userId: user.user.id,
             setting: { screen_reader: isActive },
           });
         }
@@ -134,7 +127,7 @@ export const GlobalStyleProvider = ({ children }) => {
     return () => {
       screenReaderListener.remove();
     };
-  }, [authUserState.authenticated]);
+  }, [user.authenticated]);
 
   const themeStyles =
     styles.theme === "dark" ? darkThemeStyles : lightThemeStyles;
@@ -174,14 +167,7 @@ const containerStyles = StyleSheet.create({
     borderBottomWidth: 0.4,
     borderColor: "transparent",
   },
-  headerContainer: {
-    paddingHorizontal: 18,
-    height: 70,
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
+
   homeScreenButton: {
     flexDirection: "row",
     paddingHorizontal: 20,
@@ -193,17 +179,59 @@ const containerStyles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 30,
   },
+  headerContainer: {
+    paddingHorizontal: 18,
+    height: 70,
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerAutoHeightContainer: {
+    flexDirection: "row", 
+    paddingHorizontal: 10,
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    height: "auto", 
+    maxHeight: 60,
+  },
+  settingsHeaderContainer: {
+    // friend and user settings screens
+    flexDirection: "row",
+    padding: 10,
+    paddingTop: 0,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: 80,
+  },
+  settingsHeaderLeftContainer: {
+    width: "10%",
+    alignItems: "flex-start",
+  },
+  settingsHeaderRightContainer: {
+    width: "10%",
+    alignItems: "flex-start",
+  },
+  settingsHeaderMiddleContainer: {
+    flex: 1,
+    flexGrow: 1,
+    alignItems: "center",
+    textAlign: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+  },
   loadingSpinnerWrapper: {
     flex: 1,
     width: "100%",
   },
   loadingFriendProfileButtonWrapper: {
-        flex: .4,
+    flex: 0.4,
     paddingRight: 0,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    alignContent: 'flex-start',
-
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    alignContent: "flex-start",
   },
 });
 
@@ -212,12 +240,12 @@ const animationStyles = StyleSheet.create({
     alignItems: "center",
     alignContents: "center",
     justifyContent: "center",
-    
+
     textAlign: "center",
   },
   flashAnimText: {
-       fontFamily: 'Poppins-Bold',
-        alignSelf: 'center',
+    fontFamily: "Poppins-Bold",
+    alignSelf: "center",
   },
 });
 
@@ -226,18 +254,30 @@ const fontStyles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Poppins-Regular",
   },
+  globalAppHeaderText: {
+        fontSize: 18,
+    fontFamily: "Poppins-Regular",
+    textTransform: "uppercase",
+
+
+  },
   homeScreenButtonText: {
     fontSize: 18,
     fontFamily: "Poppins-Bold",
     textTransform: "uppercase",
   },
+  settingsHeaderText: {
+    fontSize: 24,
+    fontFamily: "Poppins-Regular",
+    textTransform: "uppercase",
+    textAlign: "center",
+  },
   friendProfileButtonText: {
     fontSize: 17,
     paddingVertical: 0,
-    alignSelf: 'center',
-    fontFamily: 'Poppins-Bold',
+    alignSelf: "center",
+    fontFamily: "Poppins-Bold",
     paddingLeft: 0,
-
   },
 });
 

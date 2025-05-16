@@ -3,7 +3,7 @@ import { FlatList,   Text  } from 'react-native';
  
 import { useUpcomingHelloes } from '@/src/context/UpcomingHelloesContext';
 
-import { useAuthUser } from '@/src/context/AuthUserContext';
+import { useUser } from '@/src/context/UserContext';
 import { useFriendList } from '@/src/context/FriendListContext';
 import ButtonToggleSize from '../scaffolding/ButtonToggleSize'; 
 import AlertList from '../../alerts/AlertList';
@@ -23,7 +23,7 @@ const ButtonManageFriends = ({ title, onPress, confirmationAlert = true }) => {
     
     const [isAttemptingToRemix, setIsAttemptingToRemix] = useState(false);
 
-    const { authUserState } = useAuthUser();
+    const { user } = useUser();
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
@@ -34,7 +34,7 @@ const ButtonManageFriends = ({ title, onPress, confirmationAlert = true }) => {
     const confirmResetHelloes = async () => { // Add 'async' keyword here
         try {
             setIsAttemptingToRemix(true);
-            await remixAllNextHelloes(authUserState.user.id);
+            await remixAllNextHelloes(user.user.id);
             setIsAttemptingToRemix(false);
             console.log('Reset hello dates button pressed!');
             setSuccessModalVisible(true);  

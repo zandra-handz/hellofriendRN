@@ -150,16 +150,19 @@ axios.interceptors.response.use(
 
 export const signinWithoutRefresh = async ({ username, password }) => {
     try {
-        const result = await axios.post('/users/token/', { username, password });
-        console.log(`API POST CALL signinWithoutRefresh`);
+        const response = await axios.post('/users/token/', { username, password });
 
-        if (result.data && result.data.access) {
-            console.log("Access token received:", result.data.access);
-            setAuthHeader(result.data.access); // Store the token for later use
-            return result; // Successful response
-        } else {
-            throw new Error("Unexpected response format");
-        }
+        // set in onSuccess
+        const newAccessToken = response.data.access;
+        // const newRefreshToken = response.data.refresh;
+
+        // await SecureStore.setItemAsync('accessToken',  newAccessToken);
+        // await SecureStore.setItemAsync('refreshToken', newRefreshToken);
+            
+            
+        setAuthHeader(newAccessToken); 
+
+        return response; 
     } catch (e) {
         console.error("Error during signinWithoutRefresh:", e);
 
@@ -269,7 +272,7 @@ export const getCurrentUser = async () => {
     try {
         const response = await axios.get('/users/get-current/');
         console.log('API GET Call getCurrentUser');
-        //console.log("API getCurrentUser: ", response);
+       // console.log("API getCurrentUser: ", response);
         return response.data;
     } catch (error) {
         if (error.response) {
@@ -285,6 +288,23 @@ export const getCurrentUser = async () => {
         throw error;
     }
 };
+
+
+
+  export const updateSubscription = async (userId, fieldUpdates) => {  //is_subscribed_user, subscription_id, subscription_expiration_date
+    try {
+        const response = await axios.patch(`/users/${userId}/subscription/update/`, fieldUpdates);
+        console.log('API PATCH CALL updateSubscription');
+        //console.log('API response:', response.data); // Log the response data
+        return response.data; // Ensure this returns the expected structure
+    } catch (error) {
+        console.error('Error updating user subscription:', error);
+        throw error;
+    }
+  };
+
+
+
 
 
 export const refreshAccessToken = async (refToken) => {
@@ -366,6 +386,7 @@ export const addFriendAddress = async (friendId, addressData) => {
    // path('<int:user_id>/settings/update/', views.UserSettingsDetail.as_view()),
    // path('<int:user_id>/profile/', views.UserProfileDetail.as_view()),
    // path('<int:user_id>/profile/update/', views.UserProfileDetail.as_view()),
+    // path('<int:user_id>/subscription/update/', views.UpdateSubscriptionView.as_view()),
 
    // path('addresses/all/', views.UserAddressesAll.as_view()),
    // path('addresses/validated/', views.UserAddressesValidated.as_view()),  

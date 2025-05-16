@@ -1,11 +1,11 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { View, TextInput, StyleSheet, Text } from 'react-native';
 import { addFriendAddress } from '@/src/calls/api';
-import { useAuthUser } from '@/src/context/AuthUserContext';
+import { useUser } from '@/src/context/UserContext';
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 
 const FormFriendAddressCreate = forwardRef(({ friendId }, ref) => {
-  const { authUserState  } = useAuthUser();
+  const {   user  } = useUser();
   const [address, setAddress] = useState('');
   const [title, setTitle] = useState('');
   const [showSaveMessage, setShowSaveMessage] = useState(false);
@@ -22,7 +22,7 @@ const FormFriendAddressCreate = forwardRef(({ friendId }, ref) => {
         title,
         address,
         friend: friendId,
-        user: authUserState.user.id,
+        user: user.user.id,
       };
   
       await addFriendAddress(friendId, addressData);

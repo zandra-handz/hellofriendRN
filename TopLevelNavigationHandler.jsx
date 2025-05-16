@@ -1,20 +1,20 @@
 // NavigationHandler.js
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useAuthUser } from './src/context/AuthUserContext';
+import { useUser } from './src/context/UserContext';
 
 const TopLevelNavigationHandler = ({ children }) => {
     const navigation = useNavigation();
-    const { authUserState, onSignOut } = useAuthUser();
+    const { user, onSignOut } = useUser();
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
     useEffect(() => {
         const checkAuthentication = async () => {
-            if (authUserState.loading) {
+            if (user.loading) {
                 return; // Wait until loading is complete
             }
 
-            if (!authUserState.authenticated) {
+            if (!user.authenticated) {
                 if (!isCheckingAuth) {
                     setIsCheckingAuth(true); // Prevent re-triggering
                     await onSignOut(); // Ensure the user is signed out
@@ -25,7 +25,7 @@ const TopLevelNavigationHandler = ({ children }) => {
         };
 
         checkAuthentication();
-    }, [authUserState, navigation, onSignOut, isCheckingAuth]);
+    }, [user, navigation, onSignOut, isCheckingAuth]);
 
     return <>{children}</>;
 };

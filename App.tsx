@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef } from "react";
+import React, { useEffect,  createRef } from "react";
 import { useFonts } from "expo-font";
 import TopLevelNavigationHandler from "./TopLevelNavigationHandler"; // Adjust import path if necessary
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
@@ -21,10 +21,10 @@ import {
   NavigationContainerRef,
   getStateFromPath,
 } from "@react-navigation/native";
-import { Alert, View, Text, useColorScheme, Platform } from "react-native";
+import { Alert,   useColorScheme, Platform } from "react-native";
 import { MessageContextProvider } from "./src/context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AuthUserProvider, useAuthUser } from "./src/context/AuthUserContext";
+import { UserProvider, useUser } from "./src/context/UserContext";
 import { GlobalStyleProvider } from "./src/context/GlobalStyleContext";
 import { FriendListProvider } from "./src/context/FriendListContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
@@ -33,9 +33,9 @@ import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import * as Font from "expo-font";
+// import * as Font from "expo-font";
 import * as Notifications from "expo-notifications";
-import * as FileSystem from "expo-file-system";
+// import * as FileSystem from "expo-file-system";
 import * as Linking from "expo-linking";
 
 import * as MediaLibrary from "expo-media-library";
@@ -72,25 +72,25 @@ import ScreenAddLocation from "./app/screens/locations/ScreenAddLocation";
 
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 
-import HellofriendHeader from "./app/components/headers/HellofriendHeader";
-//import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
-import HeaderMoment from "./app/components/headers/HeaderMoment";
-import HeaderHelloes from "./app/components/headers/HeaderHelloes";
-import HeaderImage from "./app/components/headers/HeaderImage";
+// import HellofriendHeader from "./app/components/headers/HellofriendHeader";
+// //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme'; 
+// import HeaderHelloes from "./app/components/headers/HeaderHelloes";
+// import HeaderImage from "./app/components/headers/HeaderImage";
+// import HeaderFriendSettings from "./app/components/headers/HeaderFriendSettings";
+// import HeaderUserDetails from "./app/components/headers/HeaderUserDetails";
+
+
 import HeaderLocation from "./app/components/headers/HeaderLocation";
-import HeaderFriendSettings from "./app/components/headers/HeaderFriendSettings";
 import HeaderBase from "./app/components/headers/HeaderBase";
 import HeaderBlank from "./app/components/headers/HeaderBlank"; //can make a SignIn one in future if want to put info on top
-
 import HeaderLocationSingle from "./app/components/headers/HeaderLocationSingle";
 
-import HeaderUserDetails from "./app/components/headers/HeaderUserDetails";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import SafeView from "./app/components/appwide/format/SafeView";
+// import SafeView from "./app/components/appwide/format/SafeView";
 
-import { RootStackParamList } from "./types";
+// import { RootStackParamList } from "./types";
 
 const queryClient = new QueryClient();
 
@@ -212,7 +212,7 @@ export default Sentry.wrap(function App() {
     <ShareIntentProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <QueryClientProvider client={queryClient}>
-          <AuthUserProvider>
+          <UserProvider>
             <GlobalStyleProvider>
               <UpcomingHelloesProvider>
                 <FriendListProvider>
@@ -240,7 +240,7 @@ export default Sentry.wrap(function App() {
                 </FriendListProvider>
               </UpcomingHelloesProvider>
             </GlobalStyleProvider>
-          </AuthUserProvider>
+          </UserProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>
     </ShareIntentProvider>
@@ -368,7 +368,7 @@ const linking = {
 
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle();
-  const { authUserState } = useAuthUser();
+  const { authUserState } = useUser();
 
   return (
     <NavigationContainer ref={navigationRef} linking={linking}>
@@ -397,7 +397,7 @@ export const Layout = () => {
                   component={ScreenHome}
                   options={{
                     headerShown: false,
-                    header: () => <HellofriendHeader />,
+                    // header: () => <HellofriendHeader />,
                   }}
                 />
                 <Stack.Screen
@@ -405,7 +405,7 @@ export const Layout = () => {
                   component={ScreenUserDetails}
                   options={{
                     headerShown: false,
-                    header: () => <HeaderUserDetails />,
+              
                   }}
                 />
                 <Stack.Screen
@@ -413,7 +413,6 @@ export const Layout = () => {
                   component={ScreenFriendSettings}
                   options={{
                     headerShown: false,
-                    header: () => <HeaderFriendSettings />,
                   }}
                 />
                 <Stack.Screen
@@ -422,16 +421,14 @@ export const Layout = () => {
                   options={{
                     gestureEnabled: false,
                     animation: 'none',
-                    headerShown: false,
-                    header: () => <HeaderMoment writeView={true} />,
+                    headerShown: false, 
                   }}
                 />
                 <Stack.Screen
                   name="Moments"
                   component={ScreenMoments}
                   options={{
-                    headerShown: false,
-                    header: () => <HeaderMoment title={"MOMENTS"} />,
+                    headerShown: false, 
                   }}
                 />
 
@@ -439,8 +436,7 @@ export const Layout = () => {
                   name="MomentView"
                   component={ScreenMomentView}
                   options={{
-                    headerShown: false,
-                    header: () => <HeaderMoment writeView={false} />,
+                    headerShown: false, 
                   }}
                 />
                 <Stack.Screen
@@ -448,7 +444,7 @@ export const Layout = () => {
                   component={ScreenImages}
                   options={{
                     headerShown: false,
-                    header: () => <HeaderImage headerTitle="Images" />,
+                    // header: () => <HeaderImage headerTitle="Images" />,
                   }}
                 />
                 <Stack.Screen
@@ -456,7 +452,7 @@ export const Layout = () => {
                   component={ScreenHelloes}
                   options={{
                     headerShown: false,
-                    header: () => <HeaderHelloes />,
+                    // header: () => <HeaderHelloes />,
                   }}
                 />
                 <Stack.Screen

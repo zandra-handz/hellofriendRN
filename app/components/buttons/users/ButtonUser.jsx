@@ -7,18 +7,18 @@ import BugSvg from '@/app/assets/svgs/bug.svg';
 import AlertFormNoSubmit from '../../alerts/AlertFormNoSubmit';
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 import { Linking } from 'react-native';
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 
 
 const ButtonUser = () => {
-  const { authUserState  } = useAuthUser();
+  const { user } = useUser();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const [isModalVisible, setModalVisible] = useState(false);
 
   const generateUniqueEmailURL = () => {
     const uniqueId = uuidv4(); // Generate a unique ID
     const subject = `Hellofriend Bug Report\n\nID: ${uniqueId}`;
-    const body = `Hi ${authUserState.user.username}! Thank you for taking the time to provide feedback. Please describe what went wrong while using the app:\n\n`;
+    const body = `Hi ${user.user.username}! Thank you for taking the time to provide feedback. Please describe what went wrong while using the app:\n\n`;
     return `mailto:tzandrabuilds@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 

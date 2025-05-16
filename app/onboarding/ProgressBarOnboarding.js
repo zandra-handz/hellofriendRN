@@ -4,11 +4,11 @@ import HeaderBaseTitleOnly from '@/app/components/headers/HeaderBaseTitleOnly';
 
 const ProgressBarOnboarding = ({ percentage }) => (
   <>
-  <HeaderBaseTitleOnly  headerTitle={'Getting started'}/>
+  <HeaderBaseTitleOnly />
     <ProgressBar
       progress={percentage}
-      color="darkgreen" // Replace with your desired color
-      style={{ height: 4 }} // Adjust the height as needed
+      color="darkgreen" 
+      style={{ height: 4 }}  
     />
     
   </>

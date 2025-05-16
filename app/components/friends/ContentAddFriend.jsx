@@ -17,12 +17,12 @@ import MessagePage from "../alerts/MessagePage";
 import AlertList from "../alerts/AlertList";
 import AlertSuccessFail from "../alerts/AlertSuccessFail";
 
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 
 const ContentAddFriend = () => {
-  const { authUserState } = useAuthUser();
+  const { user } = useUser();
   const { setUpdateTrigger } = useUpcomingHelloes();
   const { friendList  } = useFriendList();
 
@@ -90,7 +90,7 @@ const ContentAddFriend = () => {
       //     priority_level: friendPriority,
       // });
 
-      if (!authUserState.user.app_setup_complete) {
+      if (!user.user.app_setup_complete) {
         //move this into RQ onSuccess when refactoring?
         await updateAppSetup();
       }

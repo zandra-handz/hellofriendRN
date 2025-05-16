@@ -1,19 +1,22 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text,  TouchableOpacity } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import ArrowLeftCircleOutline from "@/app/assets/svgs/arrow-left-circle-outline.svg";
 import { useNavigation } from "@react-navigation/native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useFriendList } from "@/src/context/FriendListContext";
-import { LinearGradient } from "expo-linear-gradient"; 
-import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg"; 
+import { LinearGradient } from "expo-linear-gradient";
 
-import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
-
-
-const HeaderMoment = ({ title = "WRITE MOMENT", writeView = false }) => {
-  const { themeStyles } = useGlobalStyle();
+// adjust 'height' by changing the padding next to the top container style
+const GlobalAppHeader = ({
+  title = "TITLE HERE",
+  navigateTo = null,
+  altView = false,
+  icon: Icon,
+  altViewIcon: AltViewIcon,
+}) => {
+  const { appContainerStyles, appFontStyles } = useGlobalStyle();
   const { loadingNewFriend, selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const navigation = useNavigation();
@@ -22,11 +25,10 @@ const HeaderMoment = ({ title = "WRITE MOMENT", writeView = false }) => {
     navigation.goBack();
   };
 
-  const handleNavigateToAllMoments = () => {
-    if (selectedFriend) {
-    navigation.navigate("Moments");
-    
-  }
+  const handleNavigate = () => {
+    if (selectedFriend && navigateTo) {
+      navigation.navigate(navigateTo); // screen name
+    }
   };
 
   return (
@@ -35,13 +37,20 @@ const HeaderMoment = ({ title = "WRITE MOMENT", writeView = false }) => {
         colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={[styles.headerContainer]}
+        style={[
+          appContainerStyles.headerAutoHeightContainer,
+          { paddingVertical: 4 },
+        ]} // maxHeight is 60, it autos smaller than that
       >
         {loadingNewFriend && themeAheadOfLoading && (
           <View
             style={[
-              styles.loadingWrapper,
-              { backgroundColor: themeAheadOfLoading.darkColor },
+              {
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: themeAheadOfLoading.darkColor,
+              },
             ]}
           >
             <LoadingPage
@@ -57,7 +66,6 @@ const HeaderMoment = ({ title = "WRITE MOMENT", writeView = false }) => {
             <View
               style={{
                 flexDirection: "row",
-                //flexShrink: 1,
                 justifyContent: "flex-start",
                 alignContent: "center",
                 alignItems: "center",
@@ -72,42 +80,46 @@ const HeaderMoment = ({ title = "WRITE MOMENT", writeView = false }) => {
                 />
               </TouchableOpacity>
             </View>
-<View style={styles.headerTextContainer}>
-  
-<Text
-  style={[
-    styles.headerText,
-    themeStyles.headerText,
-    {
-      color: themeAheadOfLoading.fontColorSecondary,
-      paddingRight: 0,
-    },
-  ]}
-  numberOfLines={1} // Limit to one line
-  ellipsizeMode="tail" // Show "..." if text overflows
->
-  {title}: {selectedFriend?.name ? ` ${selectedFriend.name}` : ''}
-</Text>
-            
-</View>
-<View
+            <View
               style={{
-                flexDirection: "row", 
+                flexDirection: "row",
+                flex: 1,
+                justifyContent: "flex-end",
+                paddingRight: "3%",
+              }}
+            >
+              <Text
+                style={[
+                  appFontStyles.globalAppHeaderText,
+                  {
+                    color: themeAheadOfLoading.fontColorSecondary,
+                    paddingRight: 0,
+                  },
+                ]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {title} {selectedFriend?.name ? ` ${selectedFriend.name}` : ""}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
                 justifyContent: "flex-end",
                 alignContent: "center",
                 alignItems: "center",
               }}
             >
-              <TouchableOpacity onPress={handleNavigateToAllMoments}>
-                {!writeView && (
-                  <LeavesTwoFallingOutlineThickerSvg
+              <TouchableOpacity onPress={handleNavigate}>
+                {!altView && Icon && (
+                  <Icon
                     height={36}
                     width={36}
                     color={themeAheadOfLoading.fontColorSecondary}
                   />
                 )}
-                {writeView && (
-                  <LeafSingleOutlineThickerSvg
+                {altView && AltViewIcon && (
+                  <AltViewIcon
                     height={30}
                     width={30}
                     color={themeAheadOfLoading.fontColorSecondary}
@@ -121,42 +133,6 @@ const HeaderMoment = ({ title = "WRITE MOMENT", writeView = false }) => {
     </>
   );
 };
+ 
 
-const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: "row",
-    padding: 10,
-    paddingTop: 0, //66
-    paddingHorizontal: 10,
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: 60, // 110 
-  },
-  headerTextContainer: {
-    flexDirection: 'row',
-    //backgroundColor: 'pink',
-    flex: 1,
-    justifyContent: 'flex-end',
-    paddingRight: '3%',
-    //flexWrap: 'wrap',
-
-
-  },
-  headerText: {
-    fontSize: 20,  
-    fontFamily: "Poppins-Regular",
-    textTransform: 'uppercase',
-  },
-  usernameText: {
-    fontSize: 14,
-    paddingVertical: 2,
-    fontFamily: "Poppins-Bold",
-  },
-  loadingWrapper: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
-
-export default HeaderMoment;
+export default GlobalAppHeader;

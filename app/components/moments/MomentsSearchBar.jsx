@@ -16,7 +16,7 @@ import SearchBigMagSvg from "@/app/assets/svgs/search-big-mag.svg";
 
 const MomentsSearchBar = ({
   data,
-  height = 48,
+  height = '100%',
   width = "100%", 
   backgroundColor,
   textAndIconColor = "gray", 
@@ -24,6 +24,7 @@ const MomentsSearchBar = ({
   borderColor = "#ccc",
   onPress,
   searchKeys,
+  iconSize = 26,
 }) => {
   // Updated to accept `searchKeys`
   const [searchQuery, setSearchQuery] = useState("");
@@ -93,8 +94,8 @@ const MomentsSearchBar = ({
           />
           <View>
             <SearchBigMagSvg
-              height={26}
-              width={26}
+              height={iconSize}
+              width={iconSize}
               color={textAndIconColor}
               style={styles.icon}
             />
@@ -142,18 +143,20 @@ const styles = StyleSheet.create({
     alignContent: "center",
     height: "100%",
     borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
+     
     //height: 30,
   },
   searchInput: {
     flex: 1,
     alignItems: "center",
     alignContent: "center",
-    fontSize: 16,
+    fontSize: 13,
     textAlign: "right",
     overflow: "hidden",
-    paddingHorizontal: "5%",
-    marginRight: 6,
-    height: 50,
+    paddingHorizontal: 4,
+    marginRight: 4,
+    height: 50, 
     fontFamily: "Poppins-Regular",
   },
   icon: {

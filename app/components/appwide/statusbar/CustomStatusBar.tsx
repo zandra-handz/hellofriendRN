@@ -1,11 +1,11 @@
 import React, { useEffect, useState  } from 'react';
 // import { StatusBar } from 'react-native'; 
 import { StatusBar } from 'expo-status-bar';
-import { useAuthUser } from '@/src/context/AuthUserContext'; 
+import { useUser } from '@/src/context/UserContext'; 
 import { useColorScheme } from "react-native";  
 
 const CustomStatusBar = () => { 
-    const { userAppSettings } = useAuthUser();  
+    const { userAppSettings } = useUser();  
     const colorScheme = useColorScheme();
     const [color, setColor] = useState(); 
 

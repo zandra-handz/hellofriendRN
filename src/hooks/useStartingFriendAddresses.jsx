@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelectedFriend } from '../context/SelectedFriendContext';
-import { useAuthUser } from '../context/AuthUserContext';
+import { useUser } from '../context/UserContext';
 import {  
   addFriendAddress, 
   updateFriendAddress, 
@@ -13,7 +13,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
  
 const useStartingFriendAddresses = () => {  
-    const { authUserState } = useAuthUser(); 
+    const { user } = useUser(); 
     const { selectedFriend } = useSelectedFriend();  
     const queryClient = useQueryClient(); 
     const { showMessage } = useMessage(); 
@@ -205,7 +205,7 @@ const useStartingFriendAddresses = () => {
             address,
             is_default: true,
             friend: selectedFriend.id,
-            user: authUserState.user.id,
+            user: user.user.id,
           };
 
           createFriendAddressMutation.mutate(addressData);
@@ -235,7 +235,7 @@ const useStartingFriendAddresses = () => {
         try {
           await updateFriendAddressMutation.mutateAsync({
             friend: friendId,
-            user: authUserState.user.id,
+            user: user.user.id,
             id: addressId,
             fieldUpdates: newData,
           });

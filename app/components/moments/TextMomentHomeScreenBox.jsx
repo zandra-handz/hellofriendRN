@@ -20,7 +20,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import FriendSelectModalVersionButtonOnly from "../friends/FriendSelectModalVersionButtonOnly";
  
 import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext"; 
 import { useFocusEffect } from "@react-navigation/native";
@@ -42,31 +42,15 @@ const TextMomentHomeScreenBox = forwardRef(
     ref
   ) => {
     const { themeStyles } = useGlobalStyle();
-    const { authUserState, userAppSettings } = useAuthUser();
+    const { user, userAppSettings } = useUser();
     const {   friendListLength } = useFriendList();
-    const { selectedFriend } = useSelectedFriend();
-    const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+    const { selectedFriend } = useSelectedFriend(); 
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
      const [ autoFocusSelected, setAutoFocusSelected ] = useState(true);
 
     const textInputRef = useRef();
 
-
-    useEffect(() => {
-      const keyboardDidShowListener = Keyboard.addListener(
-        "keyboardDidShow",
-        () => setIsKeyboardVisible(true)
-      );
-      const keyboardDidHideListener = Keyboard.addListener(
-        "keyboardDidHide",
-        () => setIsKeyboardVisible(false)
-      );
-
-      return () => {
-        keyboardDidShowListener.remove();
-        keyboardDidHideListener.remove();
-      };
-    }, []);
+ 
 
     // useEffect(() => {
     //   if (authUserState && authUserState.user) {
@@ -173,10 +157,10 @@ const TextMomentHomeScreenBox = forwardRef(
                 <Text
                   style={[styles.welcomeHeaderText, themeStyles.genericText]}
                 >
-                  {new Date(authUserState?.user?.created_on).toDateString() ===
+                  {new Date(user?.user?.created_on).toDateString() ===
                   new Date().toDateString()
-                    ? `Hi ${authUserState?.user?.username}!`
-                    : `Hi ${authUserState?.user?.username}!`}
+                    ? `Hi ${user?.user?.username}!`
+                    : `Hi ${user?.user?.username}!`}
                 </Text>
               </View>
             </View>

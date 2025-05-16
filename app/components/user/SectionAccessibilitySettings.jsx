@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Text} from 'react-native'; 
-import { useAuthUser } from '@/src/context/AuthUserContext';
+import { useUser } from '@/src/context/UserContext';
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; 
 import BaseModalFooterSection from '../scaffolding/BaseModalFooterSection';
 import BaseRowModalFooter from '../scaffolding/BaseRowModalFooter';
@@ -11,7 +11,7 @@ import LoadingPage from '../appwide/spinner/LoadingPage';
 //fix loading spinner
 //moved creation/removal of notification tokens completely out of this into auth context
 const SectionAccessibilitySettings = () => {
-  const { authUserState, updateAppSettingsMutation, userAppSettings, updateUserNotificationSettings  } = useAuthUser();
+  const {  user, updateAppSettingsMutation, userAppSettings, updateUserNotificationSettings  } = useUser();
   const { themeStyles } = useGlobalStyle();   
   const [manualTheme, setManualTheme] = useState(false);  
   const [showAlert, setShowAlert] = useState(false); 
@@ -27,13 +27,13 @@ const SectionAccessibilitySettings = () => {
         setManualTheme(true); 
       }
     }
-  }, [authUserState.authenticated]);
+  }, [user.authenticated]);
 
   const updateSetting = async (setting) => { 
     try {
         const newSettings = { ...userAppSettings, ...setting };  
         await updateAppSettingsMutation.mutateAsync({
-            userId: authUserState.user.id,  
+            userId: user.user.id,  
             setting: newSettings  
         }); 
         console.log('User settings updated successfully');

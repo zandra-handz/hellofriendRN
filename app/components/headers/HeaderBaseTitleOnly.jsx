@@ -1,21 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
-import { useNavigation } from "@react-navigation/native";
-
-const HeaderBaseTitleOnly = ({ headerTitle = "Header title here" }) => {
-  const { authUserState } = useAuthUser();
+const HeaderBaseTitleOnly = () => {
+  const { user } = useUser();
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
-  const navigation = useNavigation();
-
-  const handleNavigateBack = () => {
-    navigation.goBack(); // This will navigate to the previous screen
-  };
 
   return (
     <View
@@ -44,7 +37,7 @@ const HeaderBaseTitleOnly = ({ headerTitle = "Header title here" }) => {
             },
           ]}
         >
-          {`Setting up account for ${authUserState.user.username}`}
+          {`Setting up account for ${user.user.username}`}
         </Text>
       </View>
     </View>

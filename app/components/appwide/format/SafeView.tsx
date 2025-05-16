@@ -2,7 +2,7 @@ import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomStatusBar from "../statusbar/CustomStatusBar";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute } from "@react-navigation/native";
@@ -15,11 +15,11 @@ export const SafeView = ({
   primaryBackground = false,
 }) => {
   const { themeAheadOfLoading, useGradientInSafeView } = useFriendList();
-  const { authUserState } = useAuthUser();
+  const { user } = useUser();
   const insets = useSafeAreaInsets();
 
   const route = useRoute();
-  console.log(route.name);
+ // console.log(route.name);
 
   const top = typeof insets.top === "number" ? insets.top : 0;
   const bottom = typeof insets.bottom === "number" ? insets.bottom : 0;
@@ -48,10 +48,10 @@ export const SafeView = ({
       end={{ x: 1, y: 0 }}
       style={[
         {
-          paddingTop: authUserState?.authenticated ? top : 0,
-          paddingBottom: authUserState?.authenticated ? bottom : 0,
-          paddingLeft: authUserState?.authenticated ? left : 0,
-          paddingRight: authUserState?.authenticated ? right : 0,
+          paddingTop: user?.authenticated ? top : 0,
+          paddingBottom: user?.authenticated ? bottom : 0,
+          paddingLeft: user?.authenticated ? left : 0,
+          paddingRight: user?.authenticated ? right : 0,
           backgroundColor: primaryBackground
             ? themeStyles.primaryBackground.backgroundColor
             : "transparent",

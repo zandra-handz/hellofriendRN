@@ -16,8 +16,8 @@ import {
 import SafeView from "@/app/components/appwide/format/SafeView";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import HeaderFriendSettings from "@/app/components/headers/HeaderFriendSettings";
+import { useNavigation, useFocusEffect } from "@react-navigation/native"; 
+import SettingsStyleHeader from "@/app/components/appwide/SettingsStyleHeader";
 import { useMessage } from "@/src/context/MessageContext";
 
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
@@ -131,7 +131,7 @@ const ScreenFriendSettings = () => {
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.container]}
     >
-      <HeaderFriendSettings />
+      <SettingsStyleHeader isLoadingComplete={!loadingNewFriend} displayText={selectedFriend && selectedFriend?.name}/>
       {loadingNewFriend && themeAheadOfLoading && (
         <View
           style={[

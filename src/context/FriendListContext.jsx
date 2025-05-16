@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuthUser } from './AuthUserContext'; // Import useAuthUser hook
-import { fetchFriendList } from '../calls/api';
-import { useGlobalStyle } from './GlobalStyleContext';
- 
+import { useUser } from './UserContext'; // Import useAuthUser hook
+import { fetchFriendList } from '../calls/api'; 
+ import { useQuery } from "@tanstack/react-query";
 
 const FriendListContext = createContext({
   friendList: [], 
@@ -16,8 +15,7 @@ const FriendListContext = createContext({
 export const useFriendList = () => useContext(FriendListContext);
 
 export const FriendListProvider = ({ children }) => {
-  const { authUserState } = useAuthUser();  
-  const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
+  const {  user } = useUser();   
   const [friendList, setFriendList] = useState([]);
   const [ useGradientInSafeView, setUseGradientInSafeView] = useState(false);
    
@@ -51,38 +49,75 @@ export const FriendListProvider = ({ children }) => {
  
 
 
+const {
+  data: friendListData = [],
+  isLoading,
+  isFetching,
+  isSuccess: friendListIsSuccess,
+  isError,
+} = useQuery({
+  queryKey: ["friendList", user?.user?.id],
+  queryFn: async () => {
+    const friendData = await fetchFriendList();
+    return friendData.map((friend) => ({
+      id: friend.id,
+      name: friend.name,
+      savedDarkColor: friend.saved_color_dark || "#4caf50",
+      savedLightColor: friend.saved_color_light || "#a0f143",
+      darkColor: friend.theme_color_dark || "#4caf50",
+      lightColor: friend.theme_color_light || "#a0f143",
+      fontColor: friend.theme_color_font || "#000000",
+      fontColorSecondary: friend.theme_color_font_secondary || "#000000",
+    }));
+  },
+  enabled: !!(user?.user?.id && user?.authenticated),
+  staleTime: 1000 * 60 * 60 * 10, // 10 hours
+  // onSuccess: (data) => {
+  //   setFriendList(data); // updates your local state
+  // },
+  // onError: (error) => {
+  //   console.error("Error fetching friend list:", error);
+  // },
+});
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (authUserState.authenticated) { 
-          const friendData = await fetchFriendList(); 
-          const friendList = friendData.map(friend => ({ 
-            id: friend.id, 
-            name: friend.name, 
-            savedDarkColor: friend.saved_color_dark || '#4caf50',
-            savedLightColor: friend.saved_color_light || '#a0f143',
-            darkColor: friend.theme_color_dark || '#4caf50', 
-            lightColor: friend.theme_color_light || '#a0f143',
-            fontColor: friend.theme_color_font || '#000000',
-            fontColorSecondary: friend.theme_color_font_secondary || '#000000',
-          }));
+useEffect(() => {
+  if (friendListIsSuccess && friendListData) {
+    setFriendList(friendListData);
+  }
+
+}, [friendListIsSuccess] );
+
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       if (user.authenticated) { 
+  //         const friendData = await fetchFriendList(); 
+  //         const friendList = friendData.map(friend => ({ 
+  //           id: friend.id, 
+  //           name: friend.name, 
+  //           savedDarkColor: friend.saved_color_dark || '#4caf50',
+  //           savedLightColor: friend.saved_color_light || '#a0f143',
+  //           darkColor: friend.theme_color_dark || '#4caf50', 
+  //           lightColor: friend.theme_color_light || '#a0f143',
+  //           fontColor: friend.theme_color_font || '#000000',
+  //           fontColorSecondary: friend.theme_color_font_secondary || '#000000',
+  //         }));
           
-          setFriendList(friendList);
-        }
-      } catch (error) {
-        console.error('Error fetching friend list:', error);
-      }
-    };
+  //         setFriendList(friendList);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching friend list:', error);
+  //     }
+  //   };
 
-    fetchData();
-  }, [authUserState.authenticated]);  
-
-
+  //   fetchData();
+  // }, [user.authenticated]);  
 
 
-  const addToFriendList = (newFriend) => {
-    console.log('adding to friend list!');
+
+
+  const addToFriendList = (newFriend) => { 
     setFriendList(prevFriendList => { 
       const isAlreadyFriend = prevFriendList.some(friend => friend.id === newFriend.id);
       if (!isAlreadyFriend) {

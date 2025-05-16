@@ -11,13 +11,13 @@ import {
   FlatList,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Platform, 
+  Platform,
 } from "react-native";
 
 import HellofriendHeader from "@/app/components/headers/HellofriendHeader";
 import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext"; //to check if any friends, don't render Up Next component or upcoming scroll if so
 
@@ -52,7 +52,7 @@ const ScreenHome = ({ navigation }) => {
 
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
-  const { authUserState, userAppSettings } = useAuthUser();
+  const { user, userAppSettings } = useUser();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
   const { friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState();
@@ -77,8 +77,8 @@ const ScreenHome = ({ navigation }) => {
       const file = shareIntent.files[0];
       const uri = file?.path || file?.contentUri; // Support both iOS and Android URIs
 
-      if (uri) { 
-        processSharedFile(uri); 
+      if (uri) {
+        processSharedFile(uri);
       } else {
         console.warn("No valid URI found for the shared file.");
       }
@@ -87,8 +87,6 @@ const ScreenHome = ({ navigation }) => {
     if (hasShareIntent && shareIntent?.text?.length > 0) {
       const sharedText = shareIntent.text.replace(/^["']|["']$/g, "");
       if (sharedText) {
-        //showMessage(true, null, `Shared text exists! Text: ${sharedText}`);
-
         navigation.navigate("MomentFocus", {
           momentText: sharedText,
         });
@@ -99,7 +97,7 @@ const ScreenHome = ({ navigation }) => {
           `length in shared text but data structure passed here is not valid`
         );
       }
-    } 
+    }
   }, [shareIntent, hasShareIntent]);
 
   const processSharedFile = async (url) => {
@@ -146,7 +144,6 @@ const ScreenHome = ({ navigation }) => {
       keyboardDidHideListener.remove();
     };
   }, []);
- 
 
   const updateNewMomentTextString = (text) => {
     if (newMomentTextRef && newMomentTextRef.current) {
@@ -283,10 +280,12 @@ const ScreenHome = ({ navigation }) => {
   return (
     <SafeView style={{ flex: 1 }}>
       <LinearGradient
-        colors={[gradientColorsHome.darkColor, 
-                isKeyboardVisible ? 
-                    gradientColorsHome.midpointColor : 
-                    gradientColorsHome.lightColor]}
+        colors={[
+          gradientColorsHome.darkColor,
+          isKeyboardVisible
+            ? gradientColorsHome.midpointColor
+            : gradientColorsHome.lightColor,
+        ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
@@ -299,9 +298,7 @@ const ScreenHome = ({ navigation }) => {
           style={{ flex: 1 }}
         >
           <HellofriendHeader />
-          {authUserState.authenticated &&
-          authUserState.user &&
-          userAppSettings ? (
+          {user.authenticated && user.user && userAppSettings ? (
             <View
               style={{
                 flex: 1,
@@ -429,6 +426,5 @@ const ScreenHome = ({ navigation }) => {
     </SafeView>
   );
 };
- 
 
 export default ScreenHome;

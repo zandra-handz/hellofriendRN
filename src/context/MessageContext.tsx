@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { useAuthUser } from './AuthUserContext';
+import { useUser } from './UserContext';
 import { useCapsuleList } from './CapsuleListContext'; 
 import { useUpcomingHelloes } from './UpcomingHelloesContext';
 
@@ -38,7 +38,7 @@ export const MessageContextProvider: React.FC<MessageContextProviderProps> = ({ 
 
     const { createMomentMutation, updateCapsuleMutation, deleteMomentMutation } = useCapsuleList();
     const { upcomingHelloesIsSuccess } = useUpcomingHelloes();
-    const { authUserState, signinMutation } = useAuthUser(); 
+    const {  signinMutation } = useUser(); 
 
 
     const showMessage = (

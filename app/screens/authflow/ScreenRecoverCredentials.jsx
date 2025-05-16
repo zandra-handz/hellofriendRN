@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   TextInput,
@@ -8,13 +8,13 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import { useAuthUser } from "@/src/context/AuthUserContext";
+// import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useMessage } from "@/src/context/MessageContext";
- 
+
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRoute } from "@react-navigation/native";
+// import { useRoute } from "@react-navigation/native";
 
 import {
   sendResetCodeEmail,
@@ -28,11 +28,10 @@ import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
- 
 
 const ScreenRecoverCredentials = () => {
-  const route = useRoute();
-  const createNewAccount = route.params?.createNewAccount ?? false;
+  // const route = useRoute();
+  // const createNewAccount = route.params?.createNewAccount ?? false;
 
   const { showMessage } = useMessage();
   const { themeStyles, gradientColors, manualGradientColors } =
@@ -42,25 +41,25 @@ const ScreenRecoverCredentials = () => {
   const [email, setEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [verifyPassword, setVerifyPassword] = useState("");
+  // const [verifyPassword, setVerifyPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isRequestCodeScreen, setIsRequestCodeScreen] = useState(true);
   const [isValidateCodeScreen, setIsValidateCodeScreen] = useState(false);
-  const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const {
-    onSignin,
-    signinMutation,
-    signupMutation,
-    onSignUp,
-    handleSignUp,
-    reInitialize,
-  } = useAuthUser();
+  // const [signUpSuccess, setSignUpSuccess] = useState(false);
+  // const {
+  //   onSignin,
+  //   signinMutation,
+  //   signupMutation,
+  //   onSignUp,
+  //   handleSignUp,
+  //   reInitialize,
+  // } = useUser();
   const usernameInputRef = useRef(null);
   const resetCodeRef = useRef(null);
   const newPasswordInputRef = useRef(null);
-  const verifyPasswordInputRef = useRef(null);
+  // const verifyPasswordInputRef = useRef(null);
   const emailInputRef = useRef(null);
-  const [isUsernameFocused, setIsUsernameFocused] = useState(false);
+  // const [isUsernameFocused, setIsUsernameFocused] = useState(false);
   const [usernameInputVisible, setUsernameInputVisible] = useState(true);
   const [isNewPasswordFocused, setIsNewPasswordFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -102,22 +101,22 @@ const ScreenRecoverCredentials = () => {
     }
   }, []);
 
-  const handleBackToSignIn = () => {
-    // setShowSignIn(true);
-    // setUsername("");
-    // setEmail("");
-    // setPassword("");
-    // setVerifyPassword("");
-    // setShowSignIn(true);
-    // setSignInScreen(true);
-    // setSignUpSuccess(false);
-    // if (usernameInputRef.current) {
-    //   setUsernameInputVisible(true);
+  // const handleBackToSignIn = () => {
+  //   // setShowSignIn(true);
+  //   // setUsername("");
+  //   // setEmail("");
+  //   // setPassword("");
+  //   // setVerifyPassword("");
+  //   // setShowSignIn(true);
+  //   // setSignInScreen(true);
+  //   // setSignUpSuccess(false);
+  //   // if (usernameInputRef.current) {
+  //   //   setUsernameInputVisible(true);
 
-    //   usernameInputRef.current.focus();
-    // }
-    setUsernameInputVisible(true);
-  };
+  //   //   usernameInputRef.current.focus();
+  //   // }
+  //   setUsernameInputVisible(true);
+  // };
 
   const handleSubmit = async () => {
     //need to do something to prevent double calling probably?
@@ -125,13 +124,8 @@ const ScreenRecoverCredentials = () => {
       try {
         showMessage(true, null, `Resetting password for ${resetCode}`);
         const reset = await resetPassword({ email, resetCode, newPassword });
-        console.log("Logging reply from password reset:", reset);
 
-        showMessage(
-          false,
-          null,
-          "Password reset successfully! Please log in."
-        );
+        showMessage(false, null, "Password reset successfully! Please log in.");
 
         handleNavigateBackToAuthScreen();
       } catch (error) {
@@ -161,8 +155,8 @@ const ScreenRecoverCredentials = () => {
           `Checking reset code... ${resetCode}, ${email}`
         );
         const verify = await verifyResetCodeEmail({ email, resetCode });
-        console.log("Logging reply from validate code:", verify);
-        // Handle success response
+        // console.log("Logging reply from validate code:", verify);
+        // // Handle success response
         showMessage(false, null, "Reset code verified successfully!");
         setIsValidateCodeScreen(false);
       } catch (error) {
@@ -176,14 +170,14 @@ const ScreenRecoverCredentials = () => {
     navigation.goBack();
   };
 
-  const handleUsernameSubmit = () => {
-    setUsernameInputVisible(false);
-    if (newPasswordInputRef.current && username) {
-      newPasswordInputRef.current.focus();
-    }
+  // const handleUsernameSubmit = () => {
+  //   setUsernameInputVisible(false);
+  //   if (newPasswordInputRef.current && username) {
+  //     newPasswordInputRef.current.focus();
+  //   }
 
-    console.log("password input current");
-  };
+  //   console.log("password input current");
+  // };
 
   // if (!fontsLoaded) {
   //   return null; // Or any other loading indicator if fonts are not yet loaded
@@ -315,17 +309,18 @@ const ScreenRecoverCredentials = () => {
               {"Reset code validated! Enter new password: "}
             </Text>
           )}
-          
-          {isRequestCodeScreen  && (
+
+          {isRequestCodeScreen && (
             <Text style={styles.inputSubHeaderText} accessible={true}>
               {"Enter email associated with account: "}
             </Text>
           )}
 
-
-{isValidateCodeScreen  && (
+          {isValidateCodeScreen && (
             <Text style={styles.inputSubHeaderText} accessible={true}>
-              {"If an account with that email is found, you will be emailed a reset code shortly!"}
+              {
+                "If an account with that email is found, you will be emailed a reset code shortly!"
+              }
             </Text>
           )}
 

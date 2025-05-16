@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 import { useMessage } from "@/src/context/MessageContext";
@@ -28,7 +28,7 @@ import ExclamationDiamondOutlineSvg from '@/app/assets/svgs/exclamation-diamond-
 
 
 const ModalEffortAndPriority = ({ mountingSettings, isModalVisible, closeModal }) => {
-  const { authUserState } = useAuthUser();
+  const { user } = useUser();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
@@ -39,7 +39,7 @@ const ModalEffortAndPriority = ({ mountingSettings, isModalVisible, closeModal }
   // State for friendEffort
   const [friendEffort, setFriendEffort] = useState(3); // Set initial value as needed
   const [friendPriority, setFriendPriority] = useState(3);
-  const formRef = useRef(null);
+ 
 
   
  
@@ -97,7 +97,7 @@ const effortLabels = {
 
       console.log(priorityRef.current.getValue());
       handleUpdateFriendSettings(
-        authUserState.user.id,
+        user.user.id,
         selectedFriend.id,
         effortRef.current.getValue(),
         priorityRef.current.getValue()

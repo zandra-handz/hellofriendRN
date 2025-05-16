@@ -5,19 +5,17 @@
 // based on if app_setup_complete is not already true for current user
 
 import {  useRef } from 'react';
-import {  useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSelectedFriend } from '@/src/context/SelectedFriendContext'; // Adjust the import path as needed
+import {  useMutation, useQueryClient } from '@tanstack/react-query'; 
 import { useMessage } from '@/src/context/MessageContext';
-import { useAuthUser } from '@/src/context/AuthUserContext';
+import { useUser } from '@/src/context/UserContext';
 import { useFriendList } from '@/src/context/FriendListContext';
 
-import { createFriend, updateFriendSugSettings, deleteFriend, updateAppSetup } from '@/src/calls/api';
+import { createFriend, updateFriendSugSettings, deleteFriend  } from '@/src/calls/api';
 
 
-const useFriendFunctions = () => {
-    const { selectedFriend } = useSelectedFriend();
+const useFriendFunctions = () => { 
     const { addToFriendList, removeFromFriendList } = useFriendList();
-    const { authUserState } = useAuthUser();
+    const {  user } = useUser();
     const queryClient = useQueryClient(); 
     const { showMessage } = useMessage();
 
@@ -78,7 +76,7 @@ const useFriendFunctions = () => {
 
     const handleUpdateFriendSettings = async (user, friendId, effort, priority) => {
         const update = {
-            user: authUserState.user.id,
+            user: user.user.id,
             friend: friendId,
             effort_required: effort,
             priority_level: priority,
@@ -124,7 +122,7 @@ const useFriendFunctions = () => {
             if (friendId) {
 
                 // Trigger the update function with original input values
-                handleUpdateFriendSettings(authUserState.user, friendId, effort, priority);
+                handleUpdateFriendSettings(user.user, friendId, effort, priority);
                 
             }
      

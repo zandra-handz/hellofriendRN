@@ -8,10 +8,10 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useMessage } from "@/src/context/MessageContext"; 
-import { useFonts } from "expo-font"; 
+// import { useFonts } from "expo-font"; 
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute } from "@react-navigation/native";
@@ -41,32 +41,29 @@ const ScreenAuth = () => {
   const [signUpSuccess, setSignUpSuccess] = useState(false);
   const {
     onSignin,
-    signinMutation,
-    signupMutation,
-    onSignUp,
-    handleSignUp,
-    reInitialize,
-  } = useAuthUser();
+    signinMutation, 
+    onSignUp, 
+  } = useUser();
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const verifyPasswordInputRef = useRef(null);
   const emailInputRef = useRef(null);
   const [isUsernameFocused, setIsUsernameFocused] = useState(false);
-  const [usernameInputVisible, setUsernameInputVisible] = useState(true);
+  // const [usernameInputVisible, setUsernameInputVisible] = useState(true);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const navigation = useNavigation();
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
-    useState(false);
+  // const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
+  //   useState(false);
 
-  const [fontsLoaded] = useFonts({
-    "Poppins-Regular": require("@/app/assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-Bold": require("@/app/assets/fonts/Poppins-Bold.ttf"),
-    "Roboto-Regular": require("@/app/assets/fonts/Roboto-Regular.ttf"),
-  });
+  // const [fontsLoaded] = useFonts({
+  //   "Poppins-Regular": require("@/app/assets/fonts/Poppins-Regular.ttf"),
+  //   "Poppins-Bold": require("@/app/assets/fonts/Poppins-Bold.ttf"),
+  //   "Roboto-Regular": require("@/app/assets/fonts/Roboto-Regular.ttf"),
+  // });
 
   useLayoutEffect(() => {
     if (createNewAccount === true) {
@@ -91,13 +88,13 @@ const ScreenAuth = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (usernameInputRef.current) {
-      setUsernameInputVisible(true);
+  // useEffect(() => {
+  //   if (usernameInputRef.current) {
+  //     setUsernameInputVisible(true);
 
-      usernameInputRef.current.focus();
-    }
-  }, []);
+  //     usernameInputRef.current.focus();
+  //   }
+  // }, []);
 
   // useEffect(() => {
   //   checkIfSignedIn();
@@ -110,7 +107,7 @@ const ScreenAuth = () => {
     setVerifyPassword("");
     setSignInScreen(false);
     setSignUpSuccess(false);
-    setUsernameInputVisible(true);
+    //setUsernameInputVisible(true);
 
     // Delay the focus function by 500ms (for example)
     setTimeout(() => {
@@ -127,24 +124,24 @@ const ScreenAuth = () => {
     setShowSignIn(true);
     setSignInScreen(true);
     setSignUpSuccess(false);
-    if (usernameInputRef.current) {
-      setUsernameInputVisible(true);
+    // if (usernameInputRef.current) {
+    //   setUsernameInputVisible(true);
 
-      usernameInputRef.current.focus();
-    }
-    setUsernameInputVisible(true);
+    //   usernameInputRef.current.focus();
+    // }
+    // setUsernameInputVisible(true);
   };
 
   useEffect(() => {
     if (signinMutation.isError) {
       setPassword(null);
-      console.log("useeffect for sign in mutation error");
-      setUsernameInputVisible(true);
+    //  console.log("useeffect for sign in mutation error");
+      // setUsernameInputVisible(true);
 
-      if (usernameInputRef.current) {
-        setUsernameInputVisible(true);
-        usernameInputRef.current.focus();
-      }
+      // if (usernameInputRef.current) {
+      //   setUsernameInputVisible(true);
+      //   usernameInputRef.current.focus();
+      // }
     }
   }, [signinMutation]);
 
@@ -186,7 +183,7 @@ const ScreenAuth = () => {
   };
 
   const handleUsernameSubmit = () => {
-    setUsernameInputVisible(false);
+    // setUsernameInputVisible(false);
     if (passwordInputRef.current && username) {
       passwordInputRef.current.focus();
     }
@@ -195,7 +192,7 @@ const ScreenAuth = () => {
   };
 
   const handleFirstPasswordSubmit = () => {
-    setUsernameInputVisible(false);
+    // setUsernameInputVisible(false);
     if (verifyPasswordInputRef.current) {
       verifyPasswordInputRef.current.focus();
     }
@@ -215,9 +212,9 @@ const ScreenAuth = () => {
     }
   };
 
-  if (!fontsLoaded) {
-    return null; // Or any other loading indicator if fonts are not yet loaded
-  }
+  // if (!fontsLoaded) {
+  //   return null; // Or any other loading indicator if fonts are not yet loaded
+  // }
 
   return (
     <>

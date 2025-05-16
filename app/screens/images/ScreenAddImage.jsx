@@ -1,7 +1,9 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import SafeView from "@/app/components/appwide/format/SafeView";
-import HeaderBase from "@/app/components/headers/HeaderBase";
+import SafeView from "@/app/components/appwide/format/SafeView"; 
+import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
+import ImageGallerySingleOutlineSvg from "@/app/assets/svgs/image-gallery-single-outline.svg";
+
 
 // state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -19,7 +21,7 @@ const ScreenAddImage = () => {
   return (
     <SafeView style={{ flex: 1 }}>
       <View style={[styles.container, themeStyles.container]}>
-        <HeaderBase headerTitle="Upload" navigateTo="Images" icon="image" />
+        <GlobalAppHeader title="Upload for" navigateTo="Images" icon={ImageGallerySingleOutlineSvg} altView={false}/>
         <ContentAddImage imageUri={imageUri} />
       </View>
     </SafeView>

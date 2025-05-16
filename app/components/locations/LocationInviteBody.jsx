@@ -23,7 +23,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useQueryClient } from "@tanstack/react-query"; 
 
 import LocationTitleCard from './LocationTitleCard';
-import { useAuthUser } from "@/src/context/AuthUserContext";
+import { useUser } from "@/src/context/UserContext";
 import LocationDayAndHrsSelector from "./LocationDayAndHrsSelector";
 
 // weekday data passed from LocationHoursOfOperation to ScreenLocationSend to here
@@ -32,7 +32,7 @@ const LocationInviteBody = ({
   weekdayTextData,
   initiallySelectedDay,
 }) => {
-  const { authUserState } = useAuthUser();
+  const {  user } = useUser();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const [editedMessage, setEditedMessage] = useState("");
@@ -160,7 +160,7 @@ const LocationInviteBody = ({
       const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}`;
       setMessage(directionsLink);
       setEditedMessage(
-        `${authUserState.user.username} has sent you a meet up site from the hellofriend app!`
+        `${user.user.username} has sent you a meet up site from the hellofriend app!`
       ); // Default message for editing
     } else {
       setMessage("Directions not available.");

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useAuthUser } from "@/src/context/AuthUserContext"; 
+import { useUser } from "@/src/context/UserContext"; 
 
 import { useMessage } from "@/src/context/MessageContext";
 
@@ -24,7 +24,7 @@ import HeartbeatActivitySimpleSvg from '@/app/assets/svgs/heartbeat-activity-sim
 import WristwatchOutlineSvg from '@/app/assets/svgs/wristwatch-outline.svg';
 
 const ModalFriendDetails = ({ mountingDetails }) => {
-  const { authUserState } = useAuthUser(); 
+  const { user } = useUser(); 
   const { selectedFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
   const { showMessage } = useMessage();
@@ -32,12 +32,7 @@ const ModalFriendDetails = ({ mountingDetails }) => {
     useFriendFunctions();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
- useEffect(() => {
-    if (mountingDetails) {
-        console.log(`MOUNTING TEXT IN FRIEND DETAILS DELETE`, mountingDetails);
-    }
-
- },[]);
+ 
  
 
   const friendName = selectedFriend?.name || "friend";
@@ -71,7 +66,7 @@ const ModalFriendDetails = ({ mountingDetails }) => {
   const handleSave = () => {
     try {
       handleUpdateFriendSettings(
-        authUserState.user.id,
+        user.user.id,
         selectedFriend.id,
         effortRef.current.getValue(),
         priorityRef.current.getValue()
@@ -83,9 +78,7 @@ const ModalFriendDetails = ({ mountingDetails }) => {
 
   const effortRef = useRef();
   const priorityRef = useRef();
-
-  const closeModal = () => setIsModalVisible(false);
-  const toggleModal = () => setIsModalVisible(true);
+ 
 
   const MODAL_BODY_HEIGHT = 610;
 

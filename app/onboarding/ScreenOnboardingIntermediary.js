@@ -3,12 +3,12 @@ import { View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Spinner from '@/app/components/appwide/spinner/Spinner';
 import AlertFullSize from '@/app/components/alerts/AlertFullSize';
-import { useAuthUser } from '@/src/context/AuthUserContext';
+import { useUser } from '@/src/context/UserContext';
 import { createFriend, updateFriendSugSettings, saveThoughtCapsule } from '@/src/calls/api';
 
 const ScreenOnboardingIntermediary = ({ finalizingData, resetFinalizingData }) => {
     const navigation = useNavigation();  
-    const { authUserState  } = useAuthUser();
+    const { user  } = useUser();
     const [loading, setLoading] = useState(true);
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertType, setAlertType] = useState('');
@@ -35,7 +35,7 @@ const ScreenOnboardingIntermediary = ({ finalizingData, resetFinalizingData }) =
             const friendResponse = await createFriend(postData);
             console.log(friendResponse);
             await saveThoughtCapsule({
-                user: authUserState.user.id,
+                user: user.user.id,
                 friend: friendResponse.id,  
                 typed_category: finalizingData.category,
                 capsule: finalizingData.thoughtCapsule,
@@ -43,7 +43,7 @@ const ScreenOnboardingIntermediary = ({ finalizingData, resetFinalizingData }) =
 
             
             await updateFriendSugSettings({
-                user: authUserState.user.id,
+                user: user.user.id,
                 friend: friendResponse.id,  
                 effort_required: finalizingData.friendEffort,
                 priority_level: finalizingData.friendPriority,

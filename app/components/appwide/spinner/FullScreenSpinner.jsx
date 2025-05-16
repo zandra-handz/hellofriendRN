@@ -4,7 +4,7 @@ import { Flow, Swing, Chase, Circle, CircleFade, Fold, Grid, Pulse, Wander, Wave
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 import { useFriendList } from '@/src/context/FriendListContext'; 
 import useImageFunctions from '@/src/hooks/useImageFunctions';
-import { useAuthUser } from '@/src/context/AuthUserContext';
+import { useUser } from '@/src/context/UserContext';
 import { useUpcomingHelloes } from '@/src/context/UpcomingHelloesContext';
 import { useCapsuleList } from '@/src/context/CapsuleListContext';
 import { useHelloes } from '@/src/context/HelloesContext';
@@ -30,7 +30,7 @@ const FullScreenSpinner = ({
   spinnerSize = 90, 
   spinnerType = 'flow'}) => {
  
-  const { signinMutation } = useAuthUser(); 
+  const { signinMutation } = useUser(); 
   const { createMomentMutation } = useCapsuleList();
   const { travelTimesMutation } = useTravelTimes();
     
@@ -43,9 +43,7 @@ const FullScreenSpinner = ({
   const { currentLocationIsCalculating } = useCurrentLocation();
   const { createImageMutation } = useImageFunctions();
 
-  useEffect(() => {
-    console.log('FULL SCREEN SPINNER RERENDERED');
-  }, []);
+ 
 
   useEffect(() => {
     if (signinMutation.isPending) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,21 +9,23 @@ import {
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { LinearGradient } from "expo-linear-gradient";
-import DoubleChecker from "@/app/components/alerts/DoubleChecker";
-import HeaderUserDetails from "@/app/components/headers/HeaderUserDetails";
+import DoubleChecker from "@/app/components/alerts/DoubleChecker"; 
 import DetailRow from "@/app/components/appwide/display/DetailRow";
-
+import SettingsStyleHeader from "@/app/components/appwide/SettingsStyleHeader";
 import WrenchOutlineSvg from "@/app/assets/svgs/wrench-outline.svg";
-
+import { useUser } from "@/src/context/UserContext";
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import SafeView from "@/app/components/appwide/format/SafeView";
 
 const ScreenUserDetails = () => {
+  const { user } = useUser();
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { updateSafeViewGradient } = useFriendList();
   const { darkColor, lightColor } = gradientColorsHome;
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
+  useEffect(() => {
   updateSafeViewGradient(false);
+}, []);
 
   const openDoubleChecker = () => {
     setIsDoubleCheckerVisible(true);
@@ -41,7 +43,7 @@ const ScreenUserDetails = () => {
         end={{ x: 1, y: 1 }}
         style={[styles.container, themeStyles.container]}
       >
-        <HeaderUserDetails />
+        <SettingsStyleHeader isLoadingComplete={!!(user && user.authenticated && user.user)} displayText={user?.user.username} />
         <ScrollView
           contentContainerStyle={[styles.backColorContainer, { padding: 10 }]}
           style={{ width: "100%" }}

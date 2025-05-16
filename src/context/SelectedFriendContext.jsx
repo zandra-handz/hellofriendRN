@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { useFriendList } from "./FriendListContext";
-import { useAuthUser } from "./AuthUserContext";
+import { useUser } from "./UserContext";
 import { fetchFriendDashboard } from "../calls/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -8,7 +8,7 @@ const SelectedFriendContext = createContext({});
 
 export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const { authUserState } = useAuthUser();
+  const { user } = useUser();
   const { friendList, resetTheme } = useFriendList();
   const [friendFavesData, setFriendFavesData] = useState({
     friendFaveLocations: null,
@@ -31,9 +31,11 @@ export const SelectedFriendProvider = ({ children }) => {
     isError,
     isSuccess,
   } = useQuery({
-    queryKey: ["friendDashboardData", selectedFriend?.id],
+    queryKey: ["friendDashboardData", user?.user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendDashboard(selectedFriend.id),
-    enabled: !!selectedFriend && !!selectedFriend.id,
+    enabled: !!(selectedFriend && selectedFriend?.id && user?.user?.id),
+    staleTime: 1000 * 60 * 10, // 10 minutes
+
     onError: (err) => {
       console.error("Error fetching friend data:", err);
     },
@@ -47,6 +49,7 @@ export const SelectedFriendProvider = ({ children }) => {
 
     const cachedData = queryClient.getQueryData([
       "friendDashboardData",
+      user?.user?.id,
       selectedFriend.id,
     ]);
 
@@ -73,6 +76,7 @@ export const SelectedFriendProvider = ({ children }) => {
  
       const cachedData = queryClient.getQueryData([
         "friendDashboardData",
+        user?.user?.id,
         selectedFriend.id,
       ]);
 
@@ -112,9 +116,9 @@ export const SelectedFriendProvider = ({ children }) => {
   };
 
   //HMM WHAT IS THIS
-  useEffect(() => { 
-    deselectFriend();
-  }, [authUserState]);
+  // useEffect(() => { 
+  //   deselectFriend();
+  // }, [user]);
 
   useEffect(() => {
     if (!selectedFriend) {

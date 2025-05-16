@@ -2,7 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'rea
 import { View, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import ColorPicker, { Panel1, HueSlider } from 'reanimated-color-picker'; // Correct import
 import { updateFriendFavesColorTheme } from '@/src/calls/api'; // Import the updateFriendFavesColorTheme function
-import { useAuthUser } from '@/src/context/AuthUserContext';
+import { useUser } from '@/src/context/UserContext';
 import { useSelectedFriend } from '@/src/context/SelectedFriendContext';
 import { useFriendList } from '@/src/context/FriendListContext';
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
@@ -10,7 +10,7 @@ import tinycolor from 'tinycolor2';
 
 
 const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
-  const { authUserState } = useAuthUser();
+  const {   user } = useUser();
   const { updateFriendListColors, themeAheadOfLoading, setThemeAheadOfLoading } = useFriendList();
   const { selectedFriend, friendColorTheme, updateFriendColorTheme } = useSelectedFriend();
   const [darkColor, setDarkColor] = useState(themeAheadOfLoading.darkColor || '#000000'); // Default to black
@@ -89,7 +89,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
  
 
     try { 
-      await updateFriendFavesColorTheme(authUserState.user.id, selectedFriend.id, darkColor, lightColor, fontColor, fontColorSecondary);
+      await updateFriendFavesColorTheme(user.user.id, selectedFriend.id, darkColor, lightColor, fontColor, fontColorSecondary);
       //selectedFriend function, should remove eventually
       updateFriendColorTheme({
         darkColor: darkColor, 

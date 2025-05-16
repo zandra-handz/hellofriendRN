@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
  
 import { useSelectedFriend } from '@/src/context/SelectedFriendContext';
-import { useAuthUser } from '@/src/context/AuthUserContext';
+import { useUser } from '@/src/context/UserContext';
 import { useFriendList } from '@/src/context/FriendListContext'; 
 import {
   updateFriendFavesColorThemeSetting,
@@ -19,7 +19,7 @@ import BaseRowModalFooter from '@/app/components/scaffolding/BaseRowModalFooter'
 import tinycolor from 'tinycolor2';
 
 const ModalColorTheme = ({isModalVisible, closeModal}) => {
-  const { authUserState } = useAuthUser(); 
+  const {  user } = useUser(); 
   const { friendList, updateFriendListColorsExcludeSaved } = useFriendList();
   const { selectedFriend, friendColorTheme, setFriendColorTheme } = useSelectedFriend();
   
@@ -85,7 +85,7 @@ const ModalColorTheme = ({isModalVisible, closeModal}) => {
     if (useFriendColorTheme) { // if state before toggling Color Theme is off
       try {
         await resetFriendFavesColorThemeToDefault(
-          authUserState.user.id,selectedFriend.id, 
+          user.user.id,selectedFriend.id, 
           setting,
           //To make this reset, this api call also sets use_friend_color_theme to false
         );
@@ -117,7 +117,7 @@ const ModalColorTheme = ({isModalVisible, closeModal}) => {
             false);
         
         console.log(response);
-        await updateFriendFavesColorThemeSetting(authUserState.user.id, selectedFriend.id, response.savedDarkColor, response.savedLightColor, fontColor, fontColorSecondary);
+        await updateFriendFavesColorThemeSetting(user.user.id, selectedFriend.id, response.savedDarkColor, response.savedLightColor, fontColor, fontColorSecondary);
         
         //This also includes setThemeAheadOfLoading
         updateFriendListColorsExcludeSaved(selectedFriend.id, response.savedDarkColor, response.savedLightColor, fontColor, fontColorSecondary);

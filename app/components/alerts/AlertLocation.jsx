@@ -6,6 +6,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import HeaderBase from "../headers/HeaderBase";
+import GlobalAppHeader from "../headers/GlobalAppHeader";
+
 
 const AlertLocation = ({
   isModalVisible,

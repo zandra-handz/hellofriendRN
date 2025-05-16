@@ -15,6 +15,7 @@ import ThoughtBubbleOutlineSvg from '@/app/assets/svgs/thought-bubble-outline.sv
 import HeartbeatLifeLineArrowSvg from '@/app/assets/svgs/heartbeat-lifeline-arrow.svg';
 import CoffeeMugFancySteamSvg from '@/app/assets/svgs/coffee-mug-fancy-steam';
 import ImageGallerySingleOutlineSvg from "@/app/assets/svgs/image-gallery-single-outline.svg";
+
 import CoffeeSvg from '@/app/assets/svgs/coffee-solid.svg';
  
 

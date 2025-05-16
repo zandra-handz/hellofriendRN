@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { useAuthUser } from './AuthUserContext';
+import { useUser } from './UserContext';
 import { fetchUpcomingHelloes } from '../calls/api';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery,   useQueryClient } from '@tanstack/react-query';
  
 
 const UpcomingHelloesContext = createContext({});
@@ -14,7 +14,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
     const queryClient = useQueryClient();
  
 
-    const { authUserState } = useAuthUser(); 
+    const { user } = useUser(); 
     const [updateTrigger, setUpdateTrigger] = useState(false); // Introducing updateTrigger state
     const timeoutRef = useRef(null);
     const [newSuccess, setNewSuccess ] = useState(false);
@@ -23,12 +23,10 @@ export const UpcomingHelloesProvider = ({ children }) => {
     const { data: upcomingHelloes, isLoading, isFetching, isSuccess, isError } = useQuery({
         queryKey: ['upcomingHelloes'],
         queryFn: () => fetchUpcomingHelloes(),
-        enabled: !!authUserState.authenticated,
-        onSuccess: (data) => {
-          console.log('Raw data in RQ onSuccess:', data);
+        enabled: !!user.authenticated,
+        onSuccess: (data) => { 
           setNewSuccess(true); 
-          if (!data) {
-              console.log('No data received');
+          if (!data) { 
               return;
           }
 
@@ -70,13 +68,13 @@ export const UpcomingHelloesProvider = ({ children }) => {
     }, [updateTrigger, queryClient]);
 
     useEffect(() => {
-        if (!authUserState.authenticated) {
+        if (!user.authenticated) {
             console.log('upcoming helloes detecting when user is no longer authenticated!');
             setUpdateTrigger(false); 
             queryClient.removeQueries(['upcomingHelloes']); 
             queryClient.clear();
         }
-    }, [authUserState.authenticated, queryClient]);
+    }, [user.authenticated, queryClient]);
 
 
 

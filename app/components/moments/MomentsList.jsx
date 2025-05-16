@@ -9,9 +9,9 @@ import {
   Text,
   Animated,
   LayoutAnimation,
-  Dimensions,
-  TouchableOpacity,
-  FlatList,
+  // Dimensions,
+  // TouchableOpacity,
+  // FlatList,
   Keyboard,
 } from "react-native";
 
@@ -33,30 +33,26 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
-import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-inverted";
+// import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-inverted";
 
 const ITEM_HEIGHT = 290;
 const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
 const NUMBER_OF_LINES = 5;
 
-
 const CARD_BORDERRADIUS = 50; //30
 
 const MomentsList = () => {
-  const {
-    themeStyles, 
-  } = useGlobalStyle();
+  const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const {
     capsuleList,
     setMomentIdToAnimate,
     momentIdToAnimate,
-    updateCacheWithNewPreAdded, 
+    updateCacheWithNewPreAdded,
     categoryNames,
-    categoryStartIndices, 
+    categoryStartIndices,
     updateCapsule,
   } = useCapsuleList();
-
 
   const navigation = useNavigation();
 
@@ -72,11 +68,12 @@ const MomentsList = () => {
   const translateY = useRef(new Animated.Value(0)).current;
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
-  const moments = capsuleList;
+ 
   const momentListBottomSpacer = 700;
 
   const translateX = new Animated.Value(0);
+
+  const belowHeaderIconSize = 28;
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -94,7 +91,7 @@ const MomentsList = () => {
     };
   }, []);
 
-// removal animation triggered by context
+  // removal animation triggered by context
   useEffect(() => {
     if (momentIdToAnimate) {
       Animated.timing(translateX, {
@@ -122,7 +119,6 @@ const MomentsList = () => {
     }
   }, [momentIdToAnimate]);
 
-
   const scrollToMoment = (moment) => {
     if (moment.uniqueIndex !== undefined) {
       flatListRef.current?.scrollToIndex({
@@ -131,7 +127,6 @@ const MomentsList = () => {
       });
     }
   };
-
 
   const scrollToRandomItem = () => {
     if (capsuleList.length === 0) return;
@@ -143,7 +138,6 @@ const MomentsList = () => {
     });
   };
 
-
   const saveToHello = async (moment) => {
     try {
       updateCapsule(moment.id);
@@ -152,13 +146,9 @@ const MomentsList = () => {
     }
   };
 
-  
-
   const handleNavigateToMomentView = (moment) => {
-    navigation.navigate('MomentView', {moment: moment});
-
+    navigation.navigate("MomentView", { moment: moment });
   };
-
 
   const closeMomentNav = () => {
     setMomentNavVisible(false);
@@ -174,96 +164,105 @@ const MomentsList = () => {
       });
     }
   };
- 
-  const renderMomentCard = useCallback(({ item, index }) => {
-  //const renderMomentCard = ({ item, index }) => {
-    // Calculate the offset of the current item in relation to the scroll position
-    const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
 
-    const distanceFromTop = scrollY.interpolate({
-      inputRange: [
-        offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN),
-        offset,
-        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-      ],
-      outputRange: [0.88, .97, 0.82], //[0.92, 0.94, 0.84],
-      extrapolate: "clamp",
-    });
- 
-    const dynamicTextSize = scrollY.interpolate({
-      inputRange: [
-        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN - 4,
-        offset,
-        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN - 4,
-      ],
-      outputRange: [12, 12, 12], //turned off for now  [14, 15, 13]
-      extrapolate: "clamp",
-    });
+  const renderMomentCard = useCallback(
+    ({ item, index }) => {
+      //const renderMomentCard = ({ item, index }) => {
+      // Calculate the offset of the current item in relation to the scroll position
+      const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
 
-    const dynamicVisibility = scrollY.interpolate({
-      inputRange: [
-        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
-        offset,
-        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-      ],
-      outputRange: [0.2, 1, 0], // 0 = fully transparent, 1 = fully visible
-      extrapolate: "clamp",
-    }); 
-        const dynamicHighlightsVisibility = scrollY.interpolate({
-      inputRange: [
-        offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
-        offset,
-        offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-      ],
-      outputRange: [0, 1, 0], // 0 = fully transparent, 1 = fully visible
-      extrapolate: "clamp",
-    });
-  
+      const distanceFromTop = scrollY.interpolate({
+        inputRange: [
+          offset - (ITEM_HEIGHT - ITEM_BOTTOM_MARGIN),
+          offset,
+          offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+        ],
+        outputRange: [0.88, 0.97, 0.82], //[0.92, 0.94, 0.84],
+        extrapolate: "clamp",
+      });
 
+      const dynamicTextSize = scrollY.interpolate({
+        inputRange: [
+          offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN - 4,
+          offset,
+          offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN - 4,
+        ],
+        outputRange: [12, 12, 12], //turned off for now  [14, 15, 13]
+        extrapolate: "clamp",
+      });
 
-    const opacity =
-      item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
-    // Fade out when it's being animated
-    const translate = item.id === momentIdToAnimate ? translateY : 0;
-  
+      const dynamicVisibility = scrollY.interpolate({
+        inputRange: [
+          offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+          offset,
+          offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+        ],
+        outputRange: [0.2, 1, 0], // 0 = fully transparent, 1 = fully visible
+        extrapolate: "clamp",
+      });
+      const dynamicHighlightsVisibility = scrollY.interpolate({
+        inputRange: [
+          offset - ITEM_HEIGHT - ITEM_BOTTOM_MARGIN,
+          offset,
+          offset + ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+        ],
+        outputRange: [0, 1, 0], // 0 = fully transparent, 1 = fully visible
+        extrapolate: "clamp",
+      });
 
-    return (
-      <Animated.View
-        style={[
-          styles.cardContainer,
-          {
-            transform: [{ scale: distanceFromTop }, { translateY: translate }],
-            opacity,
-          },
-        ]}
-      >
-        <MomentCard 
-          key={item.id}
-          distanceFromTop={distanceFromTop}
-          scrollY={scrollY}
-          heightToMatchWithFlatList={ITEM_HEIGHT}
-          marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
-          numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
-          backgroundColor={
-            'transparent'
-           // themeStyles.genericTextBackgroundShadeTwo.backgroundColor
-          }
-          borderRadius={CARD_BORDERRADIUS }
-          paddingHorizontal={0}
-          
-          borderColor={"transparent"} //manualGradientColors.lightColor}
-          moment={item}
-          index={index}
-          size={dynamicTextSize}
-          sliderVisible={dynamicVisibility}
-          highlightsVisible={dynamicHighlightsVisibility}
-          onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
-          onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
-        />
-      </Animated.View>
-    );
-    }, [scrollY, momentIdToAnimate, fadeAnim, translateY, heightAnim, updateCacheWithNewPreAdded]);
- // };
+      const opacity =
+        item.id === momentIdToAnimate ? fadeAnim : fadeAnim.__getValue();
+      // Fade out when it's being animated
+      const translate = item.id === momentIdToAnimate ? translateY : 0;
+
+      return (
+        <Animated.View
+          style={[
+            styles.cardContainer,
+            {
+              transform: [
+                { scale: distanceFromTop },
+                { translateY: translate },
+              ],
+              opacity,
+            },
+          ]}
+        >
+          <MomentCard
+            key={item.id}
+            distanceFromTop={distanceFromTop}
+            scrollY={scrollY}
+            heightToMatchWithFlatList={ITEM_HEIGHT}
+            marginToMatchWithFlatList={ITEM_BOTTOM_MARGIN}
+            numberOfLinesToMatchWithFlatList={NUMBER_OF_LINES}
+            backgroundColor={
+              "transparent"
+              // themeStyles.genericTextBackgroundShadeTwo.backgroundColor
+            }
+            borderRadius={CARD_BORDERRADIUS}
+            paddingHorizontal={0}
+            borderColor={"transparent"} //manualGradientColors.lightColor}
+            moment={item}
+            index={index}
+            size={dynamicTextSize}
+            sliderVisible={dynamicVisibility}
+            highlightsVisible={dynamicHighlightsVisibility}
+            onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
+            onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
+          />
+        </Animated.View>
+      );
+    },
+    [
+      scrollY,
+      momentIdToAnimate,
+      fadeAnim,
+      translateY,
+      heightAnim,
+      updateCacheWithNewPreAdded,
+    ]
+  );
+  // };
 
   return (
     <View style={styles.container}>
@@ -273,38 +272,40 @@ const MomentsList = () => {
         color={themeStyles.genericTextBackground.backgroundColor}
         style={styles.lizardTransform}
       />
-      {!isKeyboardVisible && (
-        <>
 
-        <CategoryNavigator categoryNames={categoryNames} onPress={scrollToCategoryStart} />
-     
-
-          <ButtonGoToAddMoment />
-        </>
-      )}
       <BelowHeaderContainer
         height={30}
         alignItems="center"
-        marginBottom="2%"
+        marginBottom={4}
         justifyContent="flex-end"
         children={
           <>
+          <View style={{flexDirection: 'row', marginHorizontal: 10}}>
+            <View style={{ height: 30, justifyContent: "center" }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                pick random{" "}
+              </Text>
+            </View>
             <DiceRandom3dSolidSvg
-              height={36}
-              width={36}
+              height={belowHeaderIconSize}
+              width={belowHeaderIconSize}
               color={themeAheadOfLoading.fontColorSecondary}
               onPress={scrollToRandomItem}
             />
+            
+            
+          </View>
             <MomentsSearchBar
               data={capsuleList}
-              height={30}
-              width={"27%"}
-              borderColor={"transparent"}
+              height={25}
+              width={"47%"}
+              borderColor={themeAheadOfLoading.fontColorSecondary}
               placeholderText={"Search"}
               textAndIconColor={themeAheadOfLoading.fontColorSecondary}
               backgroundColor={"transparent"}
               onPress={scrollToMoment}
               searchKeys={["capsule", "typedCategory"]}
+              iconSize={belowHeaderIconSize * .7}
             />
           </>
         }
@@ -354,6 +355,17 @@ const MomentsList = () => {
           </>
         }
       />
+
+      {!isKeyboardVisible && (
+        <>
+          <CategoryNavigator
+            categoryNames={categoryNames}
+            onPress={scrollToCategoryStart}
+          />
+
+          <ButtonGoToAddMoment />
+        </>
+      )}
 
       {isMomentNavVisible && selectedMomentToView && (
         <MomentsNavigator
@@ -414,8 +426,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     height: "auto",
     alignItems: "center",
-   // marginTop: 10,
- 
+    // marginTop: 10,
   },
   selectFriendContainer: {
     width: "100%",

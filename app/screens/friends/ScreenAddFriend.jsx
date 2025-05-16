@@ -1,11 +1,10 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import ContentAddFriend from "@/app/components/friends/ContentAddFriend";
-
+import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import SafeView from "@/app/components/appwide/format/SafeView";
-
-import HeaderBase from "@/app/components/headers/HeaderBase";
+ 
 
 const ScreenAddFriend = () => {
   const { themeStyles } = useGlobalStyle();
@@ -13,7 +12,7 @@ const ScreenAddFriend = () => {
   return (
     <SafeView style={{ flex: 1 }}>
       <View style={[styles.container, themeStyles.container]}>
-        <HeaderBase headerTitle="Add new friend" />
+        <GlobalAppHeader title={'Add new friend'} /> 
         <View style={styles.mainContainer}>
           <ContentAddFriend />
         </View>

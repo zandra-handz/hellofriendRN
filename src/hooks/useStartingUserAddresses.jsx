@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Geocoder from 'react-native-geocoding';
 import { GOOGLE_API_KEY } from '@env'; 
-import { useAuthUser } from '../context/AuthUserContext';
+import { useUser } from '../context/UserContext';
 import { 
   addUserAddress,
   updateUserAddress,
@@ -17,7 +17,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 Geocoder.init(GOOGLE_API_KEY);
 
 const useStartingUserAddresses = () => {
-     const { authUserState } = useAuthUser(); 
+     const {  user } = useUser(); 
     const queryClient = useQueryClient(); 
     const { showMessage } = useMessage(); 
     const [ userAddressMenu, setUserAddressMenu ] = useState([]);
@@ -36,7 +36,7 @@ const useStartingUserAddresses = () => {
     const { data: userAddresses = [], isLoadingUserAddresses, isFetchingUserAddresses, isSuccessUserAddresses, isErrorUserAddresses } = useQuery({
       queryKey: ['userAddresses'],
       queryFn: () => fetchUserAddresses(),
-      enabled: !!authUserState?.authenticated,
+      enabled: !!user?.authenticated,
       onSuccess: (data) => { 
           console.log(userAddresses);
           
@@ -190,7 +190,7 @@ const useStartingUserAddresses = () => {
         const addressData = {
           title,
           address, 
-          user: authUserState.user.id,
+          user: user.user.id,
         };
 
         createUserAddressMutation.mutate(addressData);
@@ -206,7 +206,7 @@ const useStartingUserAddresses = () => {
       console.log(`updateUserAddress: `, addressId, newData);
       try {
         await updateUserAddressMutation.mutateAsync({ 
-          user: authUserState.user.id,
+          user: user.user.id,
           id: addressId,
           fieldUpdates: newData,
         });

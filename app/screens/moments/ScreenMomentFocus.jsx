@@ -5,7 +5,10 @@ import { useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import SafeView from "@/app/components/appwide/format/SafeView";
 import ContentMomentFocus from "@/app/components/moments/ContentMomentFocus";
-import HeaderMoment from "@/app/components/headers/HeaderMoment";
+import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
+ 
+import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
+
 
 const ScreenMomentFocus = () => {
   const route = useRoute();
@@ -22,7 +25,8 @@ const ScreenMomentFocus = () => {
         end={{ x: 1, y: 0 }}
         style={[styles.container]}
       >
-        <HeaderMoment writeView={true} />
+          <GlobalAppHeader title={"WRITE MOMENT: "} navigateTo={"Moments"} altView={true} altViewIcon={LeafSingleOutlineThickerSvg} />
+        
         <ContentMomentFocus
           momentText={momentText || null}
           updateExistingMoment={updateExistingMoment}

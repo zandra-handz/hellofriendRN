@@ -3,8 +3,9 @@ import { StyleSheet } from "react-native";
 import ContentAddHello from "@/app/components/helloes/ContentAddHello";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFriendList } from "@/src/context/FriendListContext";
-import SafeView from "@/app/components/appwide/format/SafeView";
-import HeaderBase from "@/app/components/headers/HeaderBase";
+import SafeView from "@/app/components/appwide/format/SafeView"; 
+import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
+import CoffeeSvg from '@/app/assets/svgs/coffee-solid.svg';
 
 const ScreenAddHello = () => {
   const { themeAheadOfLoading } = useFriendList();
@@ -17,11 +18,9 @@ const ScreenAddHello = () => {
         end={{ x: 1, y: 0 }}
         style={[styles.container]}
       >
-        <HeaderBase
-          headerTitle="Add hello"
-          icon="coffee"
-          navigateTo="Helloes"
-        />
+
+          <GlobalAppHeader title={'Add hello for'} navigateTo="Helloes" icon={CoffeeSvg} /> 
+ 
 
         <ContentAddHello /> 
       </LinearGradient>

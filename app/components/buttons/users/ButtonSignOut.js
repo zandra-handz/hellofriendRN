@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { useAuthUser } from '@/src/context/AuthUserContext';
+import { useUser } from '@/src/context/UserContext';
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 import LogoutOutlineSvg from '@/app/assets/svgs/logout-outline.svg';
  
@@ -10,7 +10,7 @@ const ButtonSignOut = ({
   label=null, 
   confirmationAlert = true 
 }) => {
-  const { onSignOut } = useAuthUser();
+  const { onSignOut } = useUser();
   const { themeStyles } = useGlobalStyle();
    const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);

@@ -1,57 +1,51 @@
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
-import { StyleSheet } from "react-native";
+
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
- import SafeView from "@/app/components/appwide/format/SafeView";
-import HeaderMoment from "@/app/components/headers/HeaderMoment";
+import SafeView from "@/app/components/appwide/format/SafeView";
+import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import ContentMomentView from "@/app/components/moments/ContentMomentView";
 import NavigationArrows from "@/app/components/appwide/button/NavigationArrows";
-
+import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
+ 
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
-  const { themeAheadOfLoading   } = useFriendList();
-
- 
+  const { themeAheadOfLoading } = useFriendList();
 
   const {
     capsuleList,
     capsuleCount,
     deleteMomentRQuery,
-    deleteMomentMutation, 
+    deleteMomentMutation,
     updateCapsuleMutation,
     updateCacheWithNewPreAdded,
   } = useCapsuleList();
-  const [currentIndex, setCurrentIndex] = useState(0); 
+  const [currentIndex, setCurrentIndex] = useState(0);
   const { selectedFriend } = useSelectedFriend();
   const [momentInView, setMomentInView] = useState(moment || null);
 
   useEffect(() => {
     if (moment) {
-        const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
+      const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
       const index = capsuleList.findIndex((mom) => mom.id === moment.id);
       setCurrentIndex(index);
       setMomentInView(matchingMoment);
     }
   }, [moment]);
 
-
-//Updates if one is edited
+  //Updates if one is edited
   useEffect(() => {
     if (capsuleList) {
-        const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
+      const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
       const index = capsuleList.findIndex((mom) => mom.id === moment.id);
       setCurrentIndex(index);
       setMomentInView(matchingMoment);
     }
   }, [capsuleList]);
-
-
-  
 
   //manually closing this for right now because I give up
   useEffect(() => {
@@ -169,48 +163,49 @@ const ScreenMomentView = () => {
   }, [currentIndex, capsuleList]);
 
   return (
-    <SafeView style={{flex: 1}}>
-    <LinearGradient
-      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={{    flex: 1,
-    width: "100%",
-    justifyContent: "space-between"}}
-    >
-      <HeaderMoment writeView={false} />
-      <ContentMomentView
-        onSliderPull={handleDelete}
-        momentCategory={
-          capsuleList[currentIndex]
-            ? capsuleList[currentIndex].typedCategory
-            : "No category"
-        }
-        momentText={
-          capsuleList[currentIndex]
-            ? capsuleList[currentIndex].capsule
-            : "No moment"
-        }
-        momentData={momentInView || null}
-      />
-      {momentInView && (
-        <>
-          {momentInView.typedCategory && (
-    
+    <SafeView style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{ flex: 1, width: "100%", justifyContent: "space-between" }}
+      >
+        <GlobalAppHeader
+          title={"MOMENTS: "}
+          navigateTo={"Moments"}
+          icon={LeavesTwoFallingOutlineThickerSvg}
+          altView={false}
+        />
+ 
+        <ContentMomentView
+          onSliderPull={handleDelete}
+          momentCategory={
+            capsuleList[currentIndex]
+              ? capsuleList[currentIndex].typedCategory
+              : "No category"
+          }
+          momentText={
+            capsuleList[currentIndex]
+              ? capsuleList[currentIndex].capsule
+              : "No moment"
+          }
+          momentData={momentInView || null}
+        />
+        {momentInView && (
+          <>
+            {momentInView.typedCategory && (
               <NavigationArrows
                 currentIndex={currentIndex}
                 imageListLength={capsuleList.length}
                 onPrevPress={goToPreviousMoment}
                 onNextPress={goToNextMoment}
-              /> 
-          )}
-        </>
-      )}
-    </LinearGradient>
-    
-      
+              />
+            )}
+          </>
+        )}
+      </LinearGradient>
     </SafeView>
   );
 };
- 
+
 export default ScreenMomentView;
