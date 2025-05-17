@@ -72,14 +72,15 @@ const SearchBarGoogleAddress = forwardRef(
       onTextChange?.(text); // Notify parent of the change
     };
 
-    useEffect(() => {
-      console.log("Current search text:", searchText);
-    }, [searchText]);
+    // useEffect(() => {
+    //   console.log("Current search text:", searchText);
+    // }, [searchText]);
 
     return (
       <GooglePlacesAutocomplete
         ref={googlePlacesRef}
         placeholder="Search Google maps"
+        predefinedPlaces={[]}
         textInputProps={{
           autoFocus: mountingText.length > 0 ? true : false,
           placeholderTextColor: themeStyles.genericText.color,

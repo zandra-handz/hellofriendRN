@@ -81,8 +81,7 @@ import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 
 
 import HeaderLocation from "./app/components/headers/HeaderLocation";
-import HeaderBase from "./app/components/headers/HeaderBase";
-import HeaderBlank from "./app/components/headers/HeaderBlank"; //can make a SignIn one in future if want to put info on top
+import HeaderBase from "./app/components/headers/HeaderBase";  
 import HeaderLocationSingle from "./app/components/headers/HeaderLocationSingle";
 
 
@@ -115,14 +114,7 @@ Sentry.init({
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,
 });
-
-// async function loadFonts() {
-//   await Font.loadAsync({
-//     "Poppins-Light": require("./app/app/assets/fonts/Poppins-Light.ttf"),
-//     "Pacifico-Regular": require("./app/assets/fonts/Pacifico-Regular.ttf"),
-//   });
-// }
-
+ 
 const Stack = createNativeStackNavigator();
 
 export default Sentry.wrap(function App() {
@@ -199,15 +191,7 @@ export default Sentry.wrap(function App() {
     //   </View>
     // );
   }
-
-  // if (!fontsLoaded) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //       <Text style={{ fontSize: 20 }}>Loading...</Text>
-  //     </View>
-  //   );
-  // }
-
+ 
   return (
     <ShareIntentProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
@@ -223,7 +207,7 @@ export default Sentry.wrap(function App() {
                         <HelloesProvider>
                           <MessageContextProvider>
                             <SafeAreaProvider>
-                              {/* <SafeView
+                              {/* <SafeView  // in screen components instead
                                 style={{
                                   flex: 1,
                                   backgroundColor: "transparent",
@@ -396,8 +380,7 @@ export const Layout = () => {
                   name="hellofriend"
                   component={ScreenHome}
                   options={{
-                    headerShown: false,
-                    // header: () => <HellofriendHeader />,
+                    headerShown: false, 
                   }}
                 />
                 <Stack.Screen
@@ -443,16 +426,14 @@ export const Layout = () => {
                   name="Images"
                   component={ScreenImages}
                   options={{
-                    headerShown: false,
-                    // header: () => <HeaderImage headerTitle="Images" />,
+                    headerShown: false, 
                   }}
                 />
                 <Stack.Screen
                   name="Helloes"
                   component={ScreenHelloes}
                   options={{
-                    headerShown: false,
-                    // header: () => <HeaderHelloes />,
+                    headerShown: false, 
                   }}
                 />
                 <Stack.Screen
@@ -556,13 +537,6 @@ export const Layout = () => {
                   component={ScreenAddImage}
                   options={{
                     headerShown: false,
-                    header: () => (
-                      <HeaderBase
-                        headerTitle="Upload"
-                        navigateTo="Images"
-                        icon="image"
-                      />
-                    ),
                   }}
                 />
                 <Stack.Screen
@@ -570,13 +544,6 @@ export const Layout = () => {
                   component={ScreenAddHello}
                   options={{
                     headerShown: false,
-                    header: () => (
-                      <HeaderBase
-                        headerTitle="Add hello"
-                        icon="coffee"
-                        navigateTo="Helloes"
-                      />
-                    ),
                   }}
                 />
                 <Stack.Screen
@@ -584,7 +551,6 @@ export const Layout = () => {
                   component={ScreenAddFriend}
                   options={{
                     headerShown: false,
-                    header: () => <HeaderBase headerTitle="Add new friend" />,
                   }}
                 />
               </>
@@ -603,8 +569,7 @@ export const Layout = () => {
                 name="Welcome"
                 component={ScreenWelcome}
                 options={{
-                  headerShown: false,
-                  header: () => <HeaderBlank />,
+                  headerShown: false, 
                 }}
               />
 
@@ -612,16 +577,14 @@ export const Layout = () => {
                 name="Auth"
                 component={ScreenAuth}
                 options={{
-                  headerShown: false,
-                  header: () => <HeaderBlank />,
+                  headerShown: false, 
                 }}
               />
               <Stack.Screen
                 name="RecoverCredentials"
                 component={ScreenRecoverCredentials}
                 options={{
-                  headerShown: false,
-                  header: () => <HeaderBlank />,
+                  headerShown: false, 
                 }}
               />
             </>

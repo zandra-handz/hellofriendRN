@@ -8,16 +8,16 @@ import LocationsMapView from '@/app/components/locations/LocationsMapView';
  
 import useLocationHelloFunctions from '@/src/hooks/useLocationHelloFunctions';
 import useLocationDetailFunctions from '@/src/hooks/useLocationDetailFunctions';
-import { 
-  useGeolocationWatcher,
-} from "@/src/hooks/useCurrentLocationAndWatcher"; 
+// import { 
+//   useGeolocationWatcher,
+// } from "@/src/hooks/useCurrentLocationAndWatcher"; 
 
 import { useHelloes } from '@/src/context/HelloesContext';
 import { useLocations } from '@/src/context/LocationsContext';
  
 const ScreenLocationSearch = () => {
   
-  useGeolocationWatcher(); 
+  // useGeolocationWatcher(); 
  
 
     const { locationList } = useLocations();
@@ -29,8 +29,7 @@ const ScreenLocationSearch = () => {
     
     const [ sortedLocations, setSortedLocations ] = useState([]);
     
-    useLayoutEffect(() => {
-      console.log('use layout in screen');
+    useLayoutEffect(() => { 
       if (locationList && inPersonHelloes) {
 
         const newList = createLocationListWithHelloes(locationList, inPersonHelloes);
@@ -47,6 +46,7 @@ const ScreenLocationSearch = () => {
                     <>
                     <View style={styles.mapContainer}>
                         <LocationsMapView sortedLocations={sortedLocations} currentDayDrilledOnce={getCurrentDay()} bermudaCoordsDrilledOnce={bermudaCoords} />
+                   
                     </View> 
                     </>
                 )} 

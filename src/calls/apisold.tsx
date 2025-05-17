@@ -1,47 +1,54 @@
-   
+import axios from 'axios';  
 import * as SecureStore from 'expo-secure-store'; 
 //export const API_URL = 'https://ac67e9fa-7838-487d-a3bc-e7a176f4bfbf-dev.e1-us-cdp-2.choreoapis.dev/hellofriend/hellofriend/rest-api-be2/v1.0/';
 
 //export const API_URL = 'http://167.99.233.148:8000/';
-//export const API_URL = 'https://badrainbowz.com/';
-
-
-import { helloFriendApiClient, setAuthHeader } from './helloFriendApiClient';
+export const API_URL = 'https://badrainbowz.com/';
 
  
 
-//axios.defaults.baseURL = API_URL;
+axios.defaults.baseURL = API_URL;
  
 
-// export const setAuthHeader = (token) => {
-//     if (token) {
-//         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-//     } else {
-//         delete axios.defaults.headers.common['Authorization'];
-//     }
-// }; 
+export const setAuthHeader = (token) => {
+    if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+        delete axios.defaults.headers.common['Authorization'];
+    }
+};
+// not using these yet
+const TOKEN_KEY = 'accessToken';
  
- 
+export const getToken = async () => await SecureStore.getItemAsync(TOKEN_KEY);
+
+export const setToken = async (token) => await SecureStore.setItemAsync(TOKEN_KEY, token);
+
+export const deleteTokens = async () => {
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await SecureStore.deleteItemAsync('refreshToken');
+    await SecureStore.deleteItemAsync('pushToken');
+};
 //
 
-// const refreshTokenFunct = async () => {
-//     const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
-//     if (!storedRefreshToken) {
-//         console.warn('No refresh token available');
-//         return null;  // Return early if there's no refresh token
-//     }
+const refreshTokenFunct = async () => {
+    const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
+    if (!storedRefreshToken) {
+        console.warn('No refresh token available');
+        return null;  // Return early if there's no refresh token
+    }
 
-//     try {
-//         const response = await axios.post('/users/token/refresh/', { refresh: storedRefreshToken });
-//         const newAccessToken = response.data.access;
+    try {
+        const response = await axios.post('/users/token/refresh/', { refresh: storedRefreshToken });
+        const newAccessToken = response.data.access;
 
-//         await SecureStore.setItemAsync('accessToken', newAccessToken);
-//         return newAccessToken;
-//     } catch (error) {
-//         console.error('Error refreshing token api file:', error);
-//         throw error;
-//     }
-// };
+        await SecureStore.setItemAsync('accessToken', newAccessToken);
+        return newAccessToken;
+    } catch (error) {
+        console.error('Error refreshing token api file:', error);
+        throw error;
+    }
+};
 
 export const signout = async () => {
     try {
@@ -58,92 +65,92 @@ export const signout = async () => {
 };
 
 // Function to handle token refresh
-// let isRefreshing = false;
-// let refreshSubscribers = [];
+let isRefreshing = false;
+let refreshSubscribers = [];
 
-// // Subscribe to token refresh completion
-// const subscribeTokenRefresh = (callback) => {
-//     refreshSubscribers.push(callback);
-// };
+// Subscribe to token refresh completion
+const subscribeTokenRefresh = (callback) => {
+    refreshSubscribers.push(callback);
+};
 
-// // Notify subscribers after token refresh
-// const onRefreshed = (newAccessToken) => {
-//     refreshSubscribers.forEach(callback => callback(newAccessToken));
-//     refreshSubscribers = [];
-// };
+// Notify subscribers after token refresh
+const onRefreshed = (newAccessToken) => {
+    refreshSubscribers.forEach(callback => callback(newAccessToken));
+    refreshSubscribers = [];
+};
  
 // Axios Request Interceptor
-// axios.interceptors.request.use(
-//     async (config) => {
-//         const token = await SecureStore.getItemAsync('accessToken');
-//         if (token) {
-//             config.headers['Authorization'] = `Bearer ${token}`;
-//         }
-//         return config;
-//     },
-//     (error) => {
-//         return Promise.reject(error);
-//     }
-// );
+axios.interceptors.request.use(
+    async (config) => {
+        const token = await SecureStore.getItemAsync('accessToken');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
-// // Axios Response Interceptor
-// axios.interceptors.response.use(
+// Axios Response Interceptor
+axios.interceptors.response.use(
 
     
-//     (response) => {
-//         console.log('Interceptor was here!');
-//         return response;
-//     },
-//     async (error) => {
-//         const { config, response } = error;
-//         const originalRequest = config;
+    (response) => {
+        console.log('Interceptor was here!');
+        return response;
+    },
+    async (error) => {
+        const { config, response } = error;
+        const originalRequest = config;
 
-//         // If the error is a 401 and the request has not been retried yet
-//         if (response && response.status === 401 && !originalRequest._retry) {
-//             console.log('Interceptor caught a 401!');
-//             if (!isRefreshing) {
-//                 isRefreshing = true;
-//                 originalRequest._retry = true;
+        // If the error is a 401 and the request has not been retried yet
+        if (response && response.status === 401 && !originalRequest._retry) {
+            console.log('Interceptor caught a 401!');
+            if (!isRefreshing) {
+                isRefreshing = true;
+                originalRequest._retry = true;
 
-//                 try {
-//                     const newAccessToken = await refreshTokenFunct();
+                try {
+                    const newAccessToken = await refreshTokenFunct();
 
-//                     if (!newAccessToken) {
-//                         throw new Error("Failed to refresh token: new access token is null or undefined");
-//                     }
-//                     console.log('Interceptor acquired new token utilizing refreshTokenFunct!', newAccessToken);
+                    if (!newAccessToken) {
+                        throw new Error("Failed to refresh token: new access token is null or undefined");
+                    }
+                    console.log('Interceptor acquired new token utilizing refreshTokenFunct!', newAccessToken);
         
                     
-//                     console.log('Interceptor acquired new token utilizing refreshToken!', newAccessToken);
-//                     isRefreshing = false;
+                    console.log('Interceptor acquired new token utilizing refreshToken!', newAccessToken);
+                    isRefreshing = false;
 
-//                     // Update the Authorization header for all queued requests
-//                     onRefreshed(newAccessToken);
-//                     setAuthHeader(newAccessToken);
-//                     originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-//                     return axios(originalRequest);
-//                 } catch (err) {
-//                     isRefreshing = false;
-//                     return Promise.reject(err);
-//                 }
-//             } else {
-//                 // If token refresh is already in progress, queue the request
-//                 return new Promise((resolve) => {
-//                     subscribeTokenRefresh((newAccessToken) => {
-//                         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-//                         resolve(axios(originalRequest));
-//                     });
-//                 });
-//             }
-//         }
+                    // Update the Authorization header for all queued requests
+                    onRefreshed(newAccessToken);
+                    setAuthHeader(newAccessToken);
+                    originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                    return axios(originalRequest);
+                } catch (err) {
+                    isRefreshing = false;
+                    return Promise.reject(err);
+                }
+            } else {
+                // If token refresh is already in progress, queue the request
+                return new Promise((resolve) => {
+                    subscribeTokenRefresh((newAccessToken) => {
+                        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                        resolve(axios(originalRequest));
+                    });
+                });
+            }
+        }
 
-//         return Promise.reject(error);
-//     } 
-// );
+        return Promise.reject(error);
+    } 
+);
 
 export const signinWithoutRefresh = async ({ username, password }) => {
     try {
-        const response = await helloFriendApiClient.post('/users/token/', { username, password });
+        const response = await axios.post('/users/token/', { username, password });
 
         // set in onSuccess
         const newAccessToken = response.data.access;
@@ -175,7 +182,7 @@ export const signinWithoutRefresh = async ({ username, password }) => {
 export const sendResetCodeEmail = async (email) => {
   
     try {
-        return await helloFriendApiClient.post('/users/send-reset-code/', { 'email': email });
+        return await axios.post('/users/send-reset-code/', { 'email': email });
     } catch (e) {
         console.log('error sending email:', e);
         return { error: true, msg: e.response.data.msg };
@@ -184,12 +191,12 @@ export const sendResetCodeEmail = async (email) => {
 
 
 export const verifyResetCodeEmail = async ({email, resetCode}) => {
-    // console.log(email);
-    // console.log(resetCode);
+    console.log(email);
+    console.log(resetCode);
   
     try {
-        response = await helloFriendApiClient.post('/users/verify-reset-code/', { 'email': email, 'reset_code': resetCode });
-       
+        response = await axios.post('/users/verify-reset-code/', { 'email': email, 'reset_code': resetCode });
+        console.log(response);
         return response;
     } catch (e) {
         console.log('error checking reset code:', e);
@@ -198,11 +205,11 @@ export const verifyResetCodeEmail = async ({email, resetCode}) => {
 };
 
 export const resetPassword = async ({email, resetCode, newPassword }) => {
-    // console.log(email);
-    // console.log(resetCode);
+    console.log(email);
+    console.log(resetCode);
   
     try {
-        response = await helloFriendApiClient.post('/users/reset-password/', { 'email': email, 'reset_code': resetCode, 'new_password' : newPassword});
+        response = await axios.post('/users/reset-password/', { 'email': email, 'reset_code': resetCode, 'new_password' : newPassword});
         console.log(response);
         return response;
     } catch (e) {
@@ -214,7 +221,7 @@ export const resetPassword = async ({email, resetCode, newPassword }) => {
 export const sendEmail = async (email) => {
   
     try {
-        return await helloFriendApiClient.post('/users/send-email/', { 'email': email });
+        return await axios.post('/users/send-email/', { 'email': email });
     } catch (e) {
         console.log('error sending email:', e);
         return { error: true, msg: e.response.data.msg };
@@ -224,7 +231,7 @@ export const sendEmail = async (email) => {
 export const signup = async ({username, email, password}) => {
   
     try {
-        return await helloFriendApiClient.post('/users/sign-up/', { username, email, password });
+        return await axios.post('/users/sign-up/', { username, email, password });
     } catch (e) {
         console.log('error creating new account:', e);
         return { error: true, msg: e.response.data.msg };
@@ -234,23 +241,27 @@ export const signup = async ({username, email, password}) => {
 export const signin = async ({ username, password }) => {
     //console.log("Signing in with credentials:", { username, password });
     try {
-        const result = await helloFriendApiClient.post('/users/token/', { username, password });
-        console.log(`API POST CALL signin`); 
+        const result = await axios.post('/users/token/', { username, password });
+        console.log(`API POST CALL signin`);
+        //console.log("API response received:", result);
 
-        if (result.data && result.data.access) { 
-            setAuthHeader(result.data.access);  
-            return result;  
+        if (result.data && result.data.access) {
+            //console.log("Access token:", result.data.access);
+            setAuthHeader(result.data.access); // Assuming setAuthHeader is defined elsewhere
+            return result; // Successful response
         } else {
             throw new Error("Unexpected response format");
         }
     } catch (e) {
-        console.error("Error during signin:", e);  
+        console.error("Error during signin:", e); // Log the full error object
+        // Check if e.response exists before accessing its properties
         if (e.response) {
             console.log("Server responded with:", e.response.data);
-            throw new Error(e.response.data.msg || 'Invalid credentials');  
-        } else { 
+            throw new Error(e.response.data.msg || 'Invalid credentials'); // Explicit rejection
+        } else {
+            // Handle network errors or other unexpected errors
             console.log("Network error or server not reachable");
-            throw new Error('Network error or server not reachable'); 
+            throw new Error('Network error or server not reachable'); // Explicit rejection
         }
     }
 };
@@ -259,7 +270,7 @@ export const signin = async ({ username, password }) => {
 export const getCurrentUser = async () => {
     
     try {
-        const response = await helloFriendApiClient.get('/users/get-current/');
+        const response = await axios.get('/users/get-current/');
         console.log('API GET Call getCurrentUser');
        // console.log("API getCurrentUser: ", response);
         return response.data;
@@ -282,7 +293,7 @@ export const getCurrentUser = async () => {
 
   export const updateSubscription = async (userId, fieldUpdates) => {  //is_subscribed_user, subscription_id, subscription_expiration_date
     try {
-        const response = await helloFriendApiClient.patch(`/users/${userId}/subscription/update/`, fieldUpdates);
+        const response = await axios.patch(`/users/${userId}/subscription/update/`, fieldUpdates);
         console.log('API PATCH CALL updateSubscription');
         //console.log('API response:', response.data); // Log the response data
         return response.data; // Ensure this returns the expected structure
@@ -298,7 +309,7 @@ export const getCurrentUser = async () => {
 
 export const refreshAccessToken = async (refToken) => {
     try {
-        const response = await helloFriendApiClient.post('/users/token/refresh/', { refresh: refToken });
+        const response = await axios.post('/users/token/refresh/', { refresh: refToken });
         const newAccessToken = response.data.access;
         setAuthHeader(newAccessToken);
         return response;
@@ -310,7 +321,7 @@ export const refreshAccessToken = async (refToken) => {
 
 export const fetchFriendList = async () => {
     try {
-        const response = await helloFriendApiClient.get('/friends/all/');
+        const response = await axios.get('/friends/all/');
         return response.data;
     } catch (error) {
         console.error('Error fetching friend list:', error);
@@ -321,7 +332,7 @@ export const fetchFriendList = async () => {
 
 export const fetchFriendAddresses = async (friendId) => {
     try {
-        const response = await helloFriendApiClient.get(`/friends/${friendId}/addresses/all/`);
+        const response = await axios.get(`/friends/${friendId}/addresses/all/`);
         return response.data;
     } catch (error) {
         console.error('Error fetching friend dashboard data:', error);
@@ -333,7 +344,7 @@ export const fetchFriendAddresses = async (friendId) => {
 export const addFriendAddress = async (friendId, addressData) => {
     
     try {  
-      const response = await helloFriendApiClient.post(`/friends/${friendId}/addresses/add/`, addressData); // Include friendId in the URL
+      const response = await axios.post(`/friends/${friendId}/addresses/add/`, addressData); // Include friendId in the URL
       return response.data;
     } catch (error) {
       console.error('Error adding friend address:', error);
@@ -346,7 +357,7 @@ export const addFriendAddress = async (friendId, addressData) => {
   export const updateFriendAddress = async (friendId, addressId, fieldUpdates) => {
     
     try {  
-      const response = await helloFriendApiClient.patch(`/friends/${friendId}/address/${addressId}/`, fieldUpdates); 
+      const response = await axios.patch(`/friends/${friendId}/address/${addressId}/`, fieldUpdates); 
       
       console.log('API PATCH CALL updateFriendAddress: ', addressId, fieldUpdates);
         
@@ -360,7 +371,7 @@ export const addFriendAddress = async (friendId, addressData) => {
 
   export const deleteFriendAddress = async (friendId, addressId) => {
     try {
-        const response = await helloFriendApiClient.delete(`/friends/${friendId}/address/${addressId}/`);
+        const response = await axios.delete(`/friends/${friendId}/address/${addressId}/`);
         return response.data;
     } catch (error) {
         console.error('Error deleting user address:', error);
@@ -384,7 +395,7 @@ export const addFriendAddress = async (friendId, addressData) => {
 
    export const fetchUserAddresses = async () => {
     try {
-        const response = await helloFriendApiClient.get(`/users/addresses/all/`);
+        const response = await axios.get(`/users/addresses/all/`);
         return response.data;
     } catch (error) {
         console.error('Error fetching user addresses:', error);
@@ -396,7 +407,7 @@ export const addUserAddress = async (addressData) => {
     try {
         console.log(addressData);
 
-      const response = await helloFriendApiClient.post(`/users/addresses/add/`, addressData); // Pass addressData directly
+      const response = await axios.post(`/users/addresses/add/`, addressData); // Pass addressData directly
       return response.data;
     } catch (error) {
       console.error('Error adding user address:', error);
@@ -409,7 +420,7 @@ export const addUserAddress = async (addressData) => {
   export const updateUserAddress = async (addressId, fieldUpdates) => {
     
     try {  
-      const response = await helloFriendApiClient.patch(`/users/address/${addressId}/`, fieldUpdates); 
+      const response = await axios.patch(`/users/address/${addressId}/`, fieldUpdates); 
       
       console.log('API PATCH CALL updateUserAddress: ', addressId, fieldUpdates);
         
@@ -423,7 +434,7 @@ export const addUserAddress = async (addressData) => {
 
   export const deleteUserAddress = async (addressId) => {
     try { 
-        const response = await helloFriendApiClient.delete(`/users/address/${addressId}/`); 
+        const response = await axios.delete(`/users/address/${addressId}/`); 
 
         if (response.status === 200) {
             console.log('Address deleted successfully');
@@ -447,7 +458,7 @@ export const addUserAddress = async (addressData) => {
 
 export const validateAddress = async (userId, address) => {
     try {
-        const response = await helloFriendApiClient.post(`/friends/location/validate-only/`, {
+        const response = await axios.post(`/friends/location/validate-only/`, {
             user: userId,
             address: address,
         });
@@ -461,7 +472,7 @@ export const validateAddress = async (userId, address) => {
 export const GetTravelComparisons = async (locationData) => {
       try {
  
-        const response = await helloFriendApiClient.post(`/friends/places/`, locationData);
+        const response = await axios.post(`/friends/places/`, locationData);
         //console.log('Consider the Drive Response', response.data);
         return response.data;
       } catch (error) {
@@ -472,7 +483,7 @@ export const GetTravelComparisons = async (locationData) => {
 export const SearchForMidpointLocations = async (locationData) => {
     try {
  
-      const response = await helloFriendApiClient.post(`/friends/places/near-midpoint/`, locationData);
+      const response = await axios.post(`/friends/places/near-midpoint/`, locationData);
       //console.log('Search for Midpoint Response:', response.data);
       return response.data.suggested_places;
     } catch (error) {
@@ -482,7 +493,7 @@ export const SearchForMidpointLocations = async (locationData) => {
 
 export const updateUserAccessibilitySettings = async (userId, fieldUpdates) => {
     try {
-        const response = await helloFriendApiClient.patch(`/users/${userId}/settings/update/`, fieldUpdates);
+        const response = await axios.patch(`/users/${userId}/settings/update/`, fieldUpdates);
         console.log('API PATCH CALL updateUserAccessibilitySettings');
         //console.log('API response:', response.data); // Log the response data
         return response.data; // Ensure this returns the expected structure
@@ -496,7 +507,7 @@ export const updateUserAccessibilitySettings = async (userId, fieldUpdates) => {
 
 export const updateUserProfile = async (userId, firstName, lastName, dateOfBirth, gender, address) => {
     try {
-      await helloFriendApiClient.put(`/users/${userId}/profile/update/`, {
+      await axios.put(`/users/${userId}/profile/update/`, {
         user: userId,
         first_name: firstName,
         last_name: lastName,
@@ -514,7 +525,7 @@ export const updateUserProfile = async (userId, firstName, lastName, dateOfBirth
 
 export const fetchFriendDashboard = async (friendId) => {
     try {
-        const response = await helloFriendApiClient.get(`/friends/${friendId}/dashboard/`);
+        const response = await axios.get(`/friends/${friendId}/dashboard/`);
         console.log('API GET CALL fetchFriendDashboard', response.data );
       
         return response.data;
@@ -526,7 +537,7 @@ export const fetchFriendDashboard = async (friendId) => {
 
 export const remixAllNextHelloes = async (userId) => {
     try {
-        const response = await helloFriendApiClient.post(`/friends/remix/all/`, userId);
+        const response = await axios.post(`/friends/remix/all/`, userId);
         return response.data;
     } catch (error) {
         console.error('Error remixing next helloes:', error);
@@ -537,7 +548,7 @@ export const remixAllNextHelloes = async (userId) => {
 export const addToFriendFavesLocations = async (data) => {
     //console.log(data);
     try {
-        const response = await helloFriendApiClient.patch(`/friends/${data.friendId}/faves/add/location/`, {
+        const response = await axios.patch(`/friends/${data.friendId}/faves/add/location/`, {
             
             friend: data.friendId,
             user: data.userId, 
@@ -556,7 +567,7 @@ export const addToFriendFavesLocations = async (data) => {
 export const removeFromFriendFavesLocations = async (data) => {
     
     try {
-        const response = await helloFriendApiClient.patch(`/friends/${data.friendId}/faves/remove/location/`, {
+        const response = await axios.patch(`/friends/${data.friendId}/faves/remove/location/`, {
             user: data.userId,
             friend: data.friendId,
             location_id: data.locationId  
@@ -571,7 +582,7 @@ export const removeFromFriendFavesLocations = async (data) => {
 export const updateFriendFavesColorThemeSetting = async (userId, friendId, savedDarkColor, savedLightColor) => { 
      
     try {
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/faves/`, {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
             
             friend: friendId,
             user: userId, 
@@ -591,7 +602,7 @@ export const resetFriendFavesColorThemeToDefault = async (userId, friendId, sett
 
     
     try {
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/faves/`, {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
             
             friend: friendId,
             user: userId, 
@@ -614,7 +625,7 @@ export const resetFriendFavesColorThemeToDefault = async (userId, friendId, sett
 export const updateFriendFavesColorThemeGradientDirection = async (userId, friendId, setting) => {
     //console.log(`color theme gradient direction call, ${userId}, ${friendId}, ${setting}`);
     try {
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/faves/`, {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
             
             friend: friendId,
             user: userId, 
@@ -632,7 +643,7 @@ export const updateFriendFavesColorThemeGradientDirection = async (userId, frien
 export const updateFriendFavesColorTheme = async (userId, friendId, darkColor, lightColor, fontColor, fontColorSecondary) => {
     
     try {
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/faves/`, {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
             
             friend: friendId,
             user: userId, 
@@ -655,7 +666,7 @@ export const updateFriendFavesColorTheme = async (userId, friendId, darkColor, l
 export const resetFriendFavesColorThemeToDefaultOld = async (userId, friendId, darkColor, lightColor, fontColor, fontColorSecondary) => {
     
     try {
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/faves/`, {
+        const response = await axios.patch(`/friends/${friendId}/faves/`, {
             
             friend: friendId,
             user: userId, 
@@ -678,7 +689,7 @@ export const resetFriendFavesColorThemeToDefaultOld = async (userId, friendId, d
 
 export const fetchUpcomingHelloes = async () => {
     try {
-        const response = await helloFriendApiClient.get('/friends/upcoming/');
+        const response = await axios.get('/friends/upcoming/');
         console.log("API GET CALL fetchUpcomingHelloes");
         return response.data;
     } catch (error) {
@@ -708,7 +719,7 @@ export const fetchUpcomingHelloes = async () => {
 
 export const fetchMomentsAPI = async (friendId) => {
     try {
-        const response = await helloFriendApiClient.get(`/friends/${friendId}/thoughtcapsules/`);
+        const response = await axios.get(`/friends/${friendId}/thoughtcapsules/`);
         if (response && response.data) { 
             const capsules = response.data.map(capsule => ({
                 id: capsule.id,
@@ -732,7 +743,7 @@ export const fetchMomentsAPI = async (friendId) => {
 
 export const deleteHelloAPI = async (data) => {
     try {
-        const response = await helloFriendApiClient.delete(`/friends/${data.friend}/helloes/${data.id}/`);
+        const response = await axios.delete(`/friends/${data.friend}/helloes/${data.id}/`);
         return response.data;
     } catch (error) {
         console.error('Error deleting hello:', error);
@@ -743,7 +754,7 @@ export const deleteHelloAPI = async (data) => {
 // NOT CORRECT OR COMPLETE
 // export const updateHelloAPI = async (friendId, helloId, helloesData) => {
 //     try {
-//         const response = await helloFriendApiClient.patch(`/friends/${friendId}/helloes/${helloId}/`, helloesData);
+//         const response = await axios.patch(`/friends/${friendId}/helloes/${helloId}/`, helloesData);
 //         return response.data;
 //     } catch (error) {
 //         if (error.response) {
@@ -762,7 +773,7 @@ export const deleteHelloAPI = async (data) => {
 
 export const fetchPastHelloes = async (friendId) => {
     try {
-        const response = await helloFriendApiClient.get(`/friends/${friendId}/helloes/`);
+        const response = await axios.get(`/friends/${friendId}/helloes/`);
         if (response && response.data) {
             const helloesData = response.data;
             console.log('API GET CALL fetchPastHelloes');
@@ -804,7 +815,7 @@ export const fetchPastHelloes = async (friendId) => {
 export const saveMomentAPI = async (requestData) => {
     
     try {
-        const response = await helloFriendApiClient.post(`/friends/${requestData.friend}/thoughtcapsules/add/`, requestData);
+        const response = await axios.post(`/friends/${requestData.friend}/thoughtcapsules/add/`, requestData);
         return response.data;
     } catch (error) {
         console.error('Error saving thought capsule:', error);
@@ -816,7 +827,7 @@ export const saveMomentAPI = async (requestData) => {
 export const saveHello = async (requestData) => {
 
     try {
-        const response = await helloFriendApiClient.post(`/friends/${requestData.friend}/helloes/add/`, requestData);
+        const response = await axios.post(`/friends/${requestData.friend}/helloes/add/`, requestData);
         console.log('response from saveHello endpoint: ', response);
         return response;
         
@@ -831,7 +842,7 @@ export const saveHello = async (requestData) => {
 
 export const deleteMomentAPI = async (data) => {
     try {
-        const response = await helloFriendApiClient.delete(`/friends/${data.friend}/thoughtcapsule/${data.id}/`);
+        const response = await axios.delete(`/friends/${data.friend}/thoughtcapsule/${data.id}/`);
         return response.data;
     } catch (error) {
         console.error('Error deleting thought capsule:', error);
@@ -842,7 +853,7 @@ export const deleteMomentAPI = async (data) => {
 export const updateMomentAPI = async (friendId, capsuleId, capsuleData) => {
     console.log(`data in updateMomentApi ${capsuleId}, ${capsuleData}`);
     try {
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/thoughtcapsule/${capsuleId}/`, capsuleData);
+        const response = await axios.patch(`/friends/${friendId}/thoughtcapsule/${capsuleId}/`, capsuleData);
         console.log(response.capsule);
         return response.data;
     } catch (error) {
@@ -871,7 +882,7 @@ export const updateMultMomentsAPI = async (friendId, capsulesAndChanges) => {
 
         console.log('updateThoughtCapsules payload data: ', capsuleData);
 
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/thoughtcapsules/batch-update/`, capsuleData);
+        const response = await axios.patch(`/friends/${friendId}/thoughtcapsules/batch-update/`, capsuleData);
         return response.data;
     } catch (error) {
         console.error('Error batch-updating thought capsules:', error);
@@ -885,7 +896,7 @@ export const updateMultMomentsAPI = async (friendId, capsulesAndChanges) => {
 
 export const fetchAllLocations = async () => {
     try {
-        const response = await helloFriendApiClient.get('/friends/locations/all/');
+        const response = await axios.get('/friends/locations/all/');
 
         const formattedLocations = response.data.map(location => ({
             id: location.id,
@@ -913,7 +924,7 @@ export const fetchAllLocations = async () => {
 
 export const createLocation = async (locationData) => {
     try { 
-        const response = await helloFriendApiClient.post('/friends/locations/add/', locationData);
+        const response = await axios.post('/friends/locations/add/', locationData);
         console.log('API Response:', response); // Log the full response for debugging
         return response.data; // Ensure that this is what you expect
     } catch (error) {
@@ -925,7 +936,7 @@ export const createLocation = async (locationData) => {
 export const deleteLocation = async (locationId) => {
     console.log(locationId);
     try {
-        const response = await helloFriendApiClient.delete(`friends/location/${locationId}/`);
+        const response = await axios.delete(`friends/location/${locationId}/`);
         return response.data;
     } catch (error) {
         console.error('Error deleting location:', error);
@@ -937,7 +948,7 @@ export const deleteLocation = async (locationId) => {
 export const updateLocation = async (locationId, locationData) => {
     console.log('updateLocation payload in api file: ', locationData);
     try {
-        const response = await helloFriendApiClient.patch(`friends/location/${locationId}/`, locationData);
+        const response = await axios.patch(`friends/location/${locationId}/`, locationData);
         return response.data;
     } catch (error) {
         console.error('Error updating location:', error);
@@ -949,7 +960,7 @@ export const updateLocation = async (locationId, locationData) => {
 // Not being used
 export const fetchValidatedLocations = async () => {
     try {
-        const response = await helloFriendApiClient.get('/friends/locations/validated/');
+        const response = await axios.get('/friends/locations/validated/');
 
         const formattedLocations = response.data.map(location => ({
             id: location.id,
@@ -980,7 +991,7 @@ export const fetchValidatedLocations = async () => {
 
 export const createFriend = async (friendData) => {
     try {
-        const res = await helloFriendApiClient.post('/friends/create/', friendData);
+        const res = await axios.post('/friends/create/', friendData);
         return res.data;
     } catch (error) {
         console.log(error);
@@ -991,7 +1002,7 @@ export const createFriend = async (friendData) => {
 export const deleteFriend = async (friendId) => {
 
     try {
-        const response = await helloFriendApiClient.delete(`/friends/${friendId}/info/`);
+        const response = await axios.delete(`/friends/${friendId}/info/`);
         return response.data;
     } catch (error) {
         console.error('Error deleting friend:', error);
@@ -1003,7 +1014,7 @@ export const deleteFriend = async (friendId) => {
 
 export const updateFriendSugSettings = async (SugSettingsData) => {
     try {
-        const res = await helloFriendApiClient.put(`/friends/${SugSettingsData.friend}/settings/update/`, SugSettingsData);
+        const res = await axios.put(`/friends/${SugSettingsData.friend}/settings/update/`, SugSettingsData);
         return res.data;
     } catch (error) {
         console.log(error);
@@ -1016,7 +1027,7 @@ export const updateFriendSugSettings = async (SugSettingsData) => {
 
 export const updateAppSetup = async () => {
     try {
-        const response = await helloFriendApiClient.post('/friends/update-app-setup/');
+        const response = await axios.post('/friends/update-app-setup/');
         return response.data;
     } catch (error) {
         console.error('Error updating app setup:', error);
@@ -1027,7 +1038,7 @@ export const updateAppSetup = async () => {
 
 export const fetchFriendImagesByCategory = async (friendId) => {
     try {
-        const response = await helloFriendApiClient.get(`/friends/${friendId}/images/by-category/`);
+        const response = await axios.get(`/friends/${friendId}/images/by-category/`);
         console.log("API GET CALL fetchFriendImagesByCategory"); //, response.data);
         return response.data;
     } catch (error) {
@@ -1042,7 +1053,7 @@ export const createFriendImage = async (friendId, formData) => {
     console.log('FormData in createFriendImage:', friendId, formData);
     
     try {
-        const response = await helloFriendApiClient.post(`/friends/${friendId}/images/add/`, formData, {
+        const response = await axios.post(`/friends/${friendId}/images/add/`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -1060,7 +1071,7 @@ export const createFriendImage = async (friendId, formData) => {
 export const fetchFriendImage = async (friendId, imageId) => {
     
     try {
-        const response = await helloFriendApiClient.get(`/friends/${friendId}/image/${imageId}/`);
+        const response = await axios.get(`/friends/${friendId}/image/${imageId}/`);
 
         console.log('API fetchFriendImage response: ', response.data);
         return response.data; 
@@ -1073,7 +1084,7 @@ export const fetchFriendImage = async (friendId, imageId) => {
 export const updateFriendImage = async (friendId, imageId) => {
     
     try {
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/image/${imageId}/`);
+        const response = await axios.patch(`/friends/${friendId}/image/${imageId}/`);
 
         console.log('API updateFriendImage response: ', response.data);
         return response.data; 
@@ -1087,7 +1098,7 @@ export const updateFriendImage = async (friendId, imageId) => {
 export const deleteFriendImage = async (friendId, imageId) => {
     
     try {
-        const response = await helloFriendApiClient.delete(`/friends/${friendId}/image/${imageId}/`);
+        const response = await axios.delete(`/friends/${friendId}/image/${imageId}/`);
 
         console.log('API fetchFriendImage response: ', response.data);
         return response.data; 
@@ -1101,7 +1112,7 @@ export const deleteFriendImage = async (friendId, imageId) => {
 
 export const fetchTypeChoices = async () => {
     try {
-        const response = await helloFriendApiClient.get('friends/dropdown/hello-type-choices/');
+        const response = await axios.get('friends/dropdown/hello-type-choices/');
         return response.data.type_choices;
     } catch (error) {
         console.error('Error fetching type choices:', error);
@@ -1111,7 +1122,7 @@ export const fetchTypeChoices = async () => {
 
 export const fetchParkingChoices = async () => {
     try {
-        const response = await helloFriendApiClient.get('friends/dropdown/location-parking-type-choices/');
+        const response = await axios.get('friends/dropdown/location-parking-type-choices/');
         console.log('fetchParkingChoices: ', response.data.type_choices);
         return response.data.type_choices;
     } catch (error) {
@@ -1125,7 +1136,7 @@ export const fetchParkingChoices = async () => {
 export const fetchLocationDetails = async (locationData) => {
     try {
          
-      const response = await helloFriendApiClient.post('/friends/places/get-details/', locationData);
+      const response = await axios.post('/friends/places/get-details/', locationData);
   
       console.log(`API POST CALL fetchLocationDetails`);
       return response.data;

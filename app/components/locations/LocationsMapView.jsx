@@ -398,7 +398,7 @@ const LocationsMapView = ({
         zoomEnabled={true}
         //customMapStyle={colorScheme === 'dark' ? darkMapStyle : null}
       >
-        {locations
+        {locations && locations
           .filter(
             (location) =>
               location.latitude !== 25.0 || location.longitude !== -71.0 // Exclude Bermuda Triangle coordinates

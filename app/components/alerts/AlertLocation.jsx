@@ -4,8 +4,7 @@ import { TouchableOpacity, StyleSheet, View, Modal, Text } from "react-native";
 import { useLocations } from "@/src/context/LocationsContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import LoadingPage from "../appwide/spinner/LoadingPage";
-import HeaderBase from "../headers/HeaderBase";
+import LoadingPage from "../appwide/spinner/LoadingPage"; 
 import GlobalAppHeader from "../headers/GlobalAppHeader";
 
 
@@ -25,7 +24,9 @@ const AlertLocation = ({
 
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-      <HeaderBase />
+      <GlobalAppHeader title={'!! Component not configured'} />
+       
+      {/* <HeaderBase /> */}
 
       <View style={[styles.modalContent, themeStyles.genericTextBackground]}>
         <View style={styles.header}>
