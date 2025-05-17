@@ -369,6 +369,10 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: false }
               )}
+  initialNumToRender={10}
+  maxToRenderPerBatch={10}
+  windowSize={10}
+  removeClippedSubviews={false}
               showsVerticalScrollIndicator={false}
               ListFooterComponent={() => (
                 <View style={{ height: momentListBottomSpacer }} />
