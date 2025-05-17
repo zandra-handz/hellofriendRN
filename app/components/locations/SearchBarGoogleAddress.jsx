@@ -87,12 +87,16 @@ const SearchBarGoogleAddress = forwardRef(
           onChangeText: handleTextInputChange, // Capture typing updates
         }}
         minLength={2}
+        numberOfLines={1}
+        timeout={1000}
         fetchDetails
         onPress={handlePress}
+        nearbyPlacesAPI="GooglePlacesSearch"
         query={{
           key: "AIzaSyAY-lQdQaVSKpPz9h2GiX_Jde47nv3FsNg",
           language: "en",
         }}
+        enablePoweredByContainer={false}
         styles={{
           textInputContainer: [
             styles.inputContainer,

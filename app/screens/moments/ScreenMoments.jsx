@@ -23,8 +23,8 @@ const ScreenMoments = () => {
         end={{ x: 1, y: 0 }}
         style={{
           flex: 1,
-          width: "101%",
-          left: -1,
+          width: "100%",
+         // left: -1,
           padding: 0,
           justifyContent: "space-between",
         }}

@@ -11,8 +11,7 @@ import LeavesOnBranchSolidSvg from "@/app/assets/svgs/leaves-on-branch-solid.svg
 import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-inverted";
 import LeafDoubleOutlineInvertedSvg from "@/app/assets/svgs/LeafDoubleOutlineInvertedSvg";
 import { Easing } from "react-native-reanimated";
-
-import FlashAnim from "@/app/animations/FlashAnim";
+ import MomentLeavesUI from "./MomentLeavesUI";
 import FlashAnimNonCircle from "@/app/animations/FlashAnimNonCircle";
 import BobbingAnim from "@/app/animations/BobbingAnim";
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -37,6 +36,7 @@ const MomentCard = ({
   sliderVisible,
   highlightsVisible,
   disabled = false,
+  currentVisibleIndex,
 }) => {
   const {
     themeStyles,
@@ -57,6 +57,26 @@ const MomentCard = ({
   const momentTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
   const categoryTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
   const [showAnimations, setShowAnimations] = useState(isFirstItem);
+  
+  
+  useEffect(() => {
+
+    if (!currentVisibleIndex) return;
+  
+      // console.log(currentVisibleIndex, index);
+      // console.log(currentVisibleIndex === index);
+
+      const isVisible = currentVisibleIndex === index;
+
+      if (showAnimations != isVisible) {
+         setShowAnimations(isVisible);
+
+      } 
+    
+
+  }, [currentVisibleIndex]);
+  
+ 
 
   useEffect(() => {
     if (updateCapsuleMutation.isSuccess && moment.id === momentData?.id) {
@@ -64,34 +84,65 @@ const MomentCard = ({
     }
   }, [updateCapsuleMutation.isSuccess]);
 
-  useEffect(() => {
-    let timeoutId;
+  // useEffect(() => {
+  //   let timeoutId;
 
-    // setShowAnimations(false);
+  //   // setShowAnimations(false);
 
-    const listener = distanceFromTop.addListener(({ value }) => {
-      // Clear any previous timeout to avoid stacking
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
+  //   const listener = distanceFromTop.addListener(({ value }) => {
+  //     // Clear any previous timeout to avoid stacking
+  //     if (timeoutId) {
+  //       clearTimeout(timeoutId);
+  //     }
 
-      timeoutId = setTimeout(() => {
-        setShowAnimations(value > 0.89);
-        if (value > 0.89) {
-          // console.log(value);
-          // console.log(sliderVisible);
-        }
-      }, 100); // 1 second delay
-    });
+  //     timeoutId = setTimeout(() => {
+  //       console.log(value);
+  //       setShowAnimations(value > 0.89);
+  //       if (value > 0.89) {
+  //         // console.log(value);
+  //         // console.log(sliderVisible);
+  //       }
+  //     }, 100); // 1 second delay
+  //   });
 
-    return () => {
-      // Clean up the listener and any pending timeout
-      distanceFromTop.removeListener(listener);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [distanceFromTop]);
+  //   return () => {
+  //     // Clean up the listener and any pending timeout
+  //     distanceFromTop.removeListener(listener);
+  //     if (timeoutId) {
+  //       clearTimeout(timeoutId);
+  //     }
+  //   };
+  // }, [distanceFromTop]);
+
+  //   useEffect(() => {
+  //   let timeoutId;
+
+  //   // setShowAnimations(false);
+
+  //   const listener = distanceFromTop.addListener(({ value }) => {
+  //     // Clear any previous timeout to avoid stacking
+  //     if (timeoutId) {
+  //       clearTimeout(timeoutId);
+  //     }
+
+  //     timeoutId = setTimeout(() => {
+  //       setShowAnimations(currentVisibleIndex === index);
+  //       // if (value > 0.89) {
+  //       //   // console.log(value);
+  //       //   // console.log(sliderVisible);
+  //       // }
+  //     }, 400); // 1 second delay
+  //   });
+
+  //   return () => {
+  //     // Clean up the listener and any pending timeout
+  //     distanceFromTop.removeListener(listener);
+  //     if (timeoutId) {
+  //       clearTimeout(timeoutId);
+  //     }
+  //   };
+  // }, [currentVisibleIndex]);
+  
 
   const translateX = new Animated.Value(0);
 
@@ -122,7 +173,7 @@ const MomentCard = ({
     <Animated.View
       style={[
         styles.container,
-        //themeStyles.genericTextBackgroundShadeTwo,
+       // themeStyles.genericTextBackgroundShadeTwo,
         {
           height: heightToMatchWithFlatList,
           marginBottom: marginToMatchWithFlatList,
@@ -130,13 +181,25 @@ const MomentCard = ({
           // paddingHorizontal: paddingHorizontal,
           // paddingTop: paddingTop,
           // paddingBottom: paddingBottom,
-          backgroundColor: backgroundColor,
+         // backgroundColor: 'red',
           borderColor: borderColor,
           transform: [{ translateX }],
         },
       ]}
     >
-      <Animated.View
+      <MomentLeavesUI 
+      fillColor={fillColor}
+      strokeColor={strokeColor}
+      height={heightToMatchWithFlatList}
+      opacity={sliderVisible}
+      flipHorizontally={indexIsEven}
+      width={'100%'}
+      largeLeafSize={400}
+      smallLeafSize={420}
+
+
+      />
+      {/* <Animated.View
         style={{
           position: "absolute",
           top: -20,
@@ -158,55 +221,14 @@ const MomentCard = ({
           width={470}
           strokeWidth={3}
         />
-      </Animated.View>
+      </Animated.View> */}
       <TouchableOpacity
         style={{ width: "100%", flex: 1 }}
         onPress={!disabled ? onPress : null} // Disable onPress if the button is disabled
         disabled={disabled}
       >
         <View style={styles.iconAndMomentContainer}>
-          {/* <Animated.View
-            style={[
-              styles.categoryHeader,
-              {
-                opacity: highlightsVisible,
-                backgroundColor: momentBackgroundColor,
-                padding: 6,
-
-                borderRadius: 10,
-                height: 60,
-                //right: !indexIsEven ? 42 : null,
-               // left: !indexIsEven ? 266 : 10,
-                top: 10,
-                width: 'auto',
-              },
-            ]}
-          >
-            <View style={{ flexDirection: "row", width: "100%" }}>
-              <Animated.Text
-                style={[
-                  styles.categoryText,
-                  { color: categoryTextColor, opacity: sliderVisible },
-                ]}
-              >
-                #
-                {moment.typedCategory.length > 12
-                  ? `${moment.typedCategory.substring(0, 12)}...`
-                  : moment.typedCategory}{" "}
-                • added{" "}
-                <FormatMonthDay
-                  date={moment.created}
-                  fontSize={13}
-                  fontFamily={"Poppins-Regular"}
-                  parentStyle={[
-                    styles.categoryText,
-                    { color: categoryTextColor, opacity: sliderVisible },
-                  ]}
-                  opacity={sliderVisible}
-                />
-              </Animated.Text>
-            </View>
-          </Animated.View> */}
+        
 
           {showAnimations && (
             <BobbingAnim
@@ -233,7 +255,7 @@ const MomentCard = ({
                   staticColor={momentBackgroundColor}
                   //circleTextSize={40}
                   minHeight={80} // mot in use but can be hooked up
-                  returnAnimation={showAnimations}
+                  returnAnimation={true}
                 >
                   <View
                     style={[
@@ -317,9 +339,9 @@ const MomentCard = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: "5%",
+   // paddingHorizontal: 20,
+    //paddingTop: 20,
+   // paddingBottom: "5%",
     flexDirection: "column",
     borderWidth: StyleSheet.hairlineWidth,
     // overflow: 'hidden',

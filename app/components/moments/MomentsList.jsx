@@ -56,6 +56,20 @@ const MomentsList = () => {
 
   const navigation = useNavigation();
 
+  const [currentVisibleIndex, setCurrentVisibleIndex] = useState(null);
+const viewabilityConfig = {
+  itemVisiblePercentThreshold: 50,
+};
+
+const onViewableItemsChanged = useRef(({ viewableItems }) => {
+  if (viewableItems.length > 0) {
+    const currentIndex = viewableItems[0].index;
+    console.log(currentIndex);
+    setCurrentVisibleIndex(currentIndex);
+  }
+}).current;
+
+
   const [selectedMomentToView, setSelectedMomentToView] = useState(null);
   const [isMomentNavVisible, setMomentNavVisible] = useState(false);
   const flatListRef = useRef(null);
@@ -90,6 +104,15 @@ const MomentsList = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (!currentVisibleIndex) return;
+
+    console.log(`current visible index in parent`, currentVisibleIndex);
+  
+ 
+  }, [currentVisibleIndex]);
+
 
   // removal animation triggered by context
   useEffect(() => {
@@ -154,6 +177,9 @@ const MomentsList = () => {
     setMomentNavVisible(false);
   };
 
+
+
+
   const scrollToCategoryStart = (category) => {
     const categoryIndex = categoryStartIndices[category];
 
@@ -166,7 +192,7 @@ const MomentsList = () => {
   };
 
   const renderMomentCard = useCallback(
-    ({ item, index }) => {
+    ({ item, index, currentVisibleIndex }) => {
       //const renderMomentCard = ({ item, index }) => {
       // Calculate the offset of the current item in relation to the scroll position
       const offset = index * (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
@@ -240,6 +266,8 @@ const MomentsList = () => {
               // themeStyles.genericTextBackgroundShadeTwo.backgroundColor
             }
             borderRadius={CARD_BORDERRADIUS}
+           
+            
             paddingHorizontal={0}
             borderColor={"transparent"} //manualGradientColors.lightColor}
             moment={item}
@@ -249,6 +277,7 @@ const MomentsList = () => {
             highlightsVisible={dynamicHighlightsVisibility}
             onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
             onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
+          currentVisibleIndex={currentVisibleIndex}
           />
         </Animated.View>
       );
@@ -325,7 +354,9 @@ const MomentsList = () => {
               ref={flatListRef}
               data={capsuleList}
               //fadingEdgeLength={10}
-              renderItem={renderMomentCard}
+               renderItem={({ item, index }) =>
+    renderMomentCard({ item, index, currentVisibleIndex })
+  }
               keyExtractor={(item, index) =>
                 item.id ? item.id.toString() : `placeholder-${index}`
               }
@@ -338,6 +369,7 @@ const MomentsList = () => {
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: false }
               )}
+              showsVerticalScrollIndicator={false}
               ListFooterComponent={() => (
                 <View style={{ height: momentListBottomSpacer }} />
               )}
@@ -351,6 +383,8 @@ const MomentsList = () => {
               snapToAlignment="start" // Align items to the top of the list when snapped
               decelerationRate="fast" // Optional: makes the scroll feel snappier
               keyboardDismissMode="on-drag"
+                onViewableItemsChanged={onViewableItemsChanged}
+  viewabilityConfig={viewabilityConfig}
             />
           </>
         }
@@ -361,6 +395,10 @@ const MomentsList = () => {
           <CategoryNavigator
             categoryNames={categoryNames}
             onPress={scrollToCategoryStart}
+            scrollY={scrollY}
+            itemHeight={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN}
+            currentVisibleIndex={currentVisibleIndex}
+
           />
 
           <ButtonGoToAddMoment />
@@ -376,6 +414,7 @@ const MomentsList = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

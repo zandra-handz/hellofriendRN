@@ -3,14 +3,9 @@ import {
   View,
   Text,
   FlatList,
-  StyleSheet,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Platform,
-  Keyboard,
+  StyleSheet, 
 } from "react-native";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import AlertFormSubmit from "../alerts/AlertFormSubmit";
 
@@ -32,7 +27,7 @@ const CategoryCreator = ({
   friendDashboardData,
   loadingNewFriend,
 }) => {
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appContainerStyles } = useGlobalStyle();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCategoryCapsules, setSelectedCategoryCapsules] =
     useState(null);
@@ -226,7 +221,7 @@ const CategoryCreator = ({
           <>
             <View
               style={[
-                styles.categoriesContainer,
+                appContainerStyles.categoryCreatorContainer,
                 themeStyles.genericTextBackgroundShadeTwo,
               ]}
             >
@@ -463,13 +458,6 @@ const styles = StyleSheet.create({
     paddingRight: 40,
     justifyContent: "center",
     alignItems: "center",
-  },
-  categoriesContainer: {
-    width: "100%",
-    borderRadius: 20,
-    flexWrap: "wrap", // Change this to flex-start
-    flexDirection: "column",
-    flex: 1, // Allows it to grow to fill available space, if necessary
   },
 
   categoryButton: {

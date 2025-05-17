@@ -3,7 +3,7 @@ import { StyleSheet, AccessibilityInfo } from "react-native";
 import { useUser } from "./UserContext";
 //import { updateUserAccessibilitySettings } from "../calls/api";
 import { useColorScheme } from "react-native";
-
+ 
 const GlobalStyleContext = createContext();
 
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
@@ -133,6 +133,7 @@ export const GlobalStyleProvider = ({ children }) => {
     styles.theme === "dark" ? darkThemeStyles : lightThemeStyles;
   const appContainerStyles = containerStyles;
   const appFontStyles = fontStyles;
+  const appSpacingStyles = spacingStyles;
   const ConstantColorsStyles = constantColors;
   const appAnimationStyles = animationStyles;
 
@@ -147,6 +148,7 @@ export const GlobalStyleProvider = ({ children }) => {
         themeStyles,
         appContainerStyles,
         appFontStyles,
+        appSpacingStyles,
         appAnimationStyles,
         ConstantColorsStyles,
         themeStyleSpinners,
@@ -188,12 +190,12 @@ const containerStyles = StyleSheet.create({
     justifyContent: "space-between",
   },
   headerAutoHeightContainer: {
-    flexDirection: "row", 
+    flexDirection: "row",
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    height: "auto", 
+    height: "auto",
     maxHeight: 60,
   },
   settingsHeaderContainer: {
@@ -222,6 +224,36 @@ const containerStyles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
   },
+  categoryNavigatorContainer: {
+    position: "absolute",
+    bottom: 18, //20
+    left: 4,
+    zIndex: 5, 
+    height: "auto",
+    maxHeight: "20%",
+    width: "74%", 
+  },
+  categoryButton: {
+    // borderBottomWidth: 0.8,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignText: "left",
+    alignContent: "center",
+    justifyContent: "center", 
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    marginHorizontal: 6,
+    borderRadius: 16,
+    marginBottom: "3%",
+    height: "auto",
+  },
+  categoryCreatorContainer: {
+    width: "100%",
+    borderRadius: 20,
+    flexWrap: "wrap", // Change this to flex-start
+    flexDirection: "column",
+    flex: 1,
+  },
+
   loadingSpinnerWrapper: {
     flex: 1,
     width: "100%",
@@ -243,9 +275,25 @@ const animationStyles = StyleSheet.create({
 
     textAlign: "center",
   },
+  flashAnimMomentsContainer: {
+    alignItems: "center",
+    alignContents: "center",
+    justifyContent: "center",
+    textAlign: "center",
+
+    height: "auto",
+    minHeight: 130,
+  },
   flashAnimText: {
     fontFamily: "Poppins-Bold",
     alignSelf: "center",
+  },
+});
+
+const spacingStyles = StyleSheet.create({
+  momentsScreenPrimarySpacing: {
+    borderRadius: 40,
+    padding: 20,
   },
 });
 
@@ -255,11 +303,9 @@ const fontStyles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
   },
   globalAppHeaderText: {
-        fontSize: 18,
+    fontSize: 18,
     fontFamily: "Poppins-Regular",
     textTransform: "uppercase",
-
-
   },
   homeScreenButtonText: {
     fontSize: 18,
@@ -278,6 +324,11 @@ const fontStyles = StyleSheet.create({
     alignSelf: "center",
     fontFamily: "Poppins-Bold",
     paddingLeft: 0,
+  },
+  categoryButtonText: {
+    fontWeight: "bold",
+    fontSize: 11,
+    textTransform: "uppercase",
   },
 });
 
