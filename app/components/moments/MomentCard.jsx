@@ -15,6 +15,7 @@ import { Easing } from "react-native-reanimated";
 import FlashAnimNonCircle from "@/app/animations/FlashAnimNonCircle";
 import BobbingAnim from "@/app/animations/BobbingAnim";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useSharedValue  } from "react-native-reanimated";
 
 const MomentCard = ({
   distanceFromTop,
@@ -26,17 +27,13 @@ const MomentCard = ({
   heightToMatchWithFlatList, //match THIS if using FlatList
   marginToMatchWithFlatList,
   numberOfLinesToMatchWithFlatList,
-  backgroundColor,
-  borderRadius,
-  paddingHorizontal = "5%",
-  paddingTop = "6%",
-  paddingBottom = "5%",
+  borderRadius, 
   borderColor,
   size,
   sliderVisible,
   highlightsVisible,
   disabled = false,
-  currentVisibleIndex,
+  currentVisibleIndex, 
 }) => {
   const {
     themeStyles,
@@ -83,66 +80,7 @@ const MomentCard = ({
       triggerAnimation();
     }
   }, [updateCapsuleMutation.isSuccess]);
-
-  // useEffect(() => {
-  //   let timeoutId;
-
-  //   // setShowAnimations(false);
-
-  //   const listener = distanceFromTop.addListener(({ value }) => {
-  //     // Clear any previous timeout to avoid stacking
-  //     if (timeoutId) {
-  //       clearTimeout(timeoutId);
-  //     }
-
-  //     timeoutId = setTimeout(() => {
-  //       console.log(value);
-  //       setShowAnimations(value > 0.89);
-  //       if (value > 0.89) {
-  //         // console.log(value);
-  //         // console.log(sliderVisible);
-  //       }
-  //     }, 100); // 1 second delay
-  //   });
-
-  //   return () => {
-  //     // Clean up the listener and any pending timeout
-  //     distanceFromTop.removeListener(listener);
-  //     if (timeoutId) {
-  //       clearTimeout(timeoutId);
-  //     }
-  //   };
-  // }, [distanceFromTop]);
-
-  //   useEffect(() => {
-  //   let timeoutId;
-
-  //   // setShowAnimations(false);
-
-  //   const listener = distanceFromTop.addListener(({ value }) => {
-  //     // Clear any previous timeout to avoid stacking
-  //     if (timeoutId) {
-  //       clearTimeout(timeoutId);
-  //     }
-
-  //     timeoutId = setTimeout(() => {
-  //       setShowAnimations(currentVisibleIndex === index);
-  //       // if (value > 0.89) {
-  //       //   // console.log(value);
-  //       //   // console.log(sliderVisible);
-  //       // }
-  //     }, 400); // 1 second delay
-  //   });
-
-  //   return () => {
-  //     // Clean up the listener and any pending timeout
-  //     distanceFromTop.removeListener(listener);
-  //     if (timeoutId) {
-  //       clearTimeout(timeoutId);
-  //     }
-  //   };
-  // }, [currentVisibleIndex]);
-  
+ 
 
   const translateX = new Animated.Value(0);
 
@@ -152,9 +90,7 @@ const MomentCard = ({
       duration: 200, // Duration of the animation
       easing: Easing.ease,
       useNativeDriver: true, // Enable native driver for better performance
-    }).start(() => {
-      // onComplete callback
-      console.log("Animation finished!");
+    }).start(() => { 
     });
   };
 
@@ -198,30 +134,7 @@ const MomentCard = ({
       smallLeafSize={420}
 
 
-      />
-      {/* <Animated.View
-        style={{
-          position: "absolute",
-          top: -20,
-          // backgroundColor: 'pink',
-          flex: 1,
-          //height: heightToMatchWithFlatList,
-          width: "100%",
-          opacity: sliderVisible,
-          right: indexIsEven ? 70 : null,
-          left: indexIsEven ? null : 70,
-          zIndex: 0,
-          transform: [{ scaleX: indexIsEven ? 1 : -1 }, { rotate: "0deg" }],
-        }}
-      >
-        <LeafDoubleOutlineInvertedSvg
-          fill={fillColor}
-          stroke={strokeColor}
-          height={380}
-          width={470}
-          strokeWidth={3}
-        />
-      </Animated.View> */}
+      /> 
       <TouchableOpacity
         style={{ width: "100%", flex: 1 }}
         onPress={!disabled ? onPress : null} // Disable onPress if the button is disabled
@@ -324,41 +237,18 @@ const MomentCard = ({
           targetIcon={CheckmarkOutlineSvg}
           disabled={sliderVisible !== 1}
         />
-      </Animated.View>
-      {/* <Animated.View style={[styles.leafTransform, { opacity: sliderVisible }]}>
-        <LeavesOnBranchSolidSvg
-          color={manualGradientColors.lightColor}
-          width={80}
-          height={80}
-        />
-      </Animated.View> */}
+      </Animated.View> 
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-   // paddingHorizontal: 20,
-    //paddingTop: 20,
-   // paddingBottom: "5%",
+    width: "100%", 
     flexDirection: "column",
     borderWidth: StyleSheet.hairlineWidth,
-    // overflow: 'hidden',
-  },
-  leafTransform: {
-    position: "absolute",
-    zIndex: 0,
-    bottom: -20,
-    right: 4,
-    transform: [
-      {
-        //rotate: "34deg",
-        rotate: "2deg",
-      },
-      // Flip horizontally (mirror image)
-    ],
-  },
+
+  }, 
   sliderContainer: {
     position: "absolute",
     top: 0,

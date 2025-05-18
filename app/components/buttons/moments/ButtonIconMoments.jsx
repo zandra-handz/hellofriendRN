@@ -4,6 +4,7 @@ import { useCapsuleList } from '@/src/context/CapsuleListContext';
 import LeavesTwoFallingOutlineThickerSvg from '@/app/assets/svgs/leaves-two-falling-outline-thicker.svg';
 import BobbingAnim from '../../../animations/BobbingAnim';
 import FlashAnim from '../../../animations/FlashAnim'; 
+import   { useSharedValue, withRepeat, withTiming } from "react-native-reanimated";
 
 const ButtonIconMoments = ({
     height=50,
@@ -15,11 +16,15 @@ const ButtonIconMoments = ({
     onPress,
 }) => {
     const { capsuleCount } = useCapsuleList();
+        const progress = useSharedValue(1);
+      const [animating, setAnimating] = React.useState(false);
+
+      
 
     return (
         <TouchableOpacity onPress={onPress ? onPress : () => {}} style={[styles.container, {height: height}]}>
                    
-            <BobbingAnim bobbingDistance={2} duration={800}>
+            <BobbingAnim bobbingDistance={2} duration={800}  >
                 <View style={styles.animatedContainer}>
                       <View style={{ backgroundColor: 'transparent', flex: 1, width: '100%', justifyContent: 'center'}}>
                         

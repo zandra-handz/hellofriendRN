@@ -57,18 +57,17 @@ const MomentsList = () => {
   const navigation = useNavigation();
 
   const [currentVisibleIndex, setCurrentVisibleIndex] = useState(null);
-const viewabilityConfig = {
-  itemVisiblePercentThreshold: 50,
-};
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50,
+  };
 
-const onViewableItemsChanged = useRef(({ viewableItems }) => {
-  if (viewableItems.length > 0) {
-    const currentIndex = viewableItems[0].index;
-    console.log(currentIndex);
-    setCurrentVisibleIndex(currentIndex);
-  }
-}).current;
-
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      const currentIndex = viewableItems[0].index;
+      console.log(currentIndex);
+      setCurrentVisibleIndex(currentIndex);
+    }
+  }).current;
 
   const [selectedMomentToView, setSelectedMomentToView] = useState(null);
   const [isMomentNavVisible, setMomentNavVisible] = useState(false);
@@ -82,7 +81,7 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
   const translateY = useRef(new Animated.Value(0)).current;
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
- 
+
   const momentListBottomSpacer = 700;
 
   const translateX = new Animated.Value(0);
@@ -109,10 +108,7 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (!currentVisibleIndex) return;
 
     console.log(`current visible index in parent`, currentVisibleIndex);
-  
- 
   }, [currentVisibleIndex]);
-
 
   // removal animation triggered by context
   useEffect(() => {
@@ -176,9 +172,6 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
   const closeMomentNav = () => {
     setMomentNavVisible(false);
   };
-
-
-
 
   const scrollToCategoryStart = (category) => {
     const categoryIndex = categoryStartIndices[category];
@@ -266,8 +259,6 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
               // themeStyles.genericTextBackgroundShadeTwo.backgroundColor
             }
             borderRadius={CARD_BORDERRADIUS}
-           
-            
             paddingHorizontal={0}
             borderColor={"transparent"} //manualGradientColors.lightColor}
             moment={item}
@@ -277,7 +268,7 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
             highlightsVisible={dynamicHighlightsVisibility}
             onPress={() => handleNavigateToMomentView(item)} // Open the moment view when the card is pressed
             onSliderPull={() => saveToHello(item)} // Save moment to Hello when slider is pulled
-          currentVisibleIndex={currentVisibleIndex}
+            currentVisibleIndex={currentVisibleIndex}
           />
         </Animated.View>
       );
@@ -309,21 +300,19 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
         justifyContent="flex-end"
         children={
           <>
-          <View style={{flexDirection: 'row', marginHorizontal: 10}}>
-            <View style={{ height: 30, justifyContent: "center" }}>
-              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                pick random{" "}
-              </Text>
+            <View style={{ flexDirection: "row", marginHorizontal: 10 }}>
+              <View style={{ height: 30, justifyContent: "center" }}>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                  pick random{" "}
+                </Text>
+              </View>
+              <DiceRandom3dSolidSvg
+                height={belowHeaderIconSize}
+                width={belowHeaderIconSize}
+                color={themeAheadOfLoading.fontColorSecondary}
+                onPress={scrollToRandomItem}
+              />
             </View>
-            <DiceRandom3dSolidSvg
-              height={belowHeaderIconSize}
-              width={belowHeaderIconSize}
-              color={themeAheadOfLoading.fontColorSecondary}
-              onPress={scrollToRandomItem}
-            />
-            
-            
-          </View>
             <MomentsSearchBar
               data={capsuleList}
               height={25}
@@ -334,7 +323,7 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
               backgroundColor={"transparent"}
               onPress={scrollToMoment}
               searchKeys={["capsule", "typedCategory"]}
-              iconSize={belowHeaderIconSize * .7}
+              iconSize={belowHeaderIconSize * 0.7}
             />
           </>
         }
@@ -354,9 +343,9 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
               ref={flatListRef}
               data={capsuleList}
               //fadingEdgeLength={10}
-               renderItem={({ item, index }) =>
-    renderMomentCard({ item, index, currentVisibleIndex })
-  }
+              renderItem={({ item, index }) =>
+                renderMomentCard({ item, index, currentVisibleIndex })
+              }
               keyExtractor={(item, index) =>
                 item.id ? item.id.toString() : `placeholder-${index}`
               }
@@ -369,10 +358,10 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: false }
               )}
-  initialNumToRender={10}
-  maxToRenderPerBatch={10}
-  windowSize={10}
-  removeClippedSubviews={false}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={10}
+              removeClippedSubviews={false}
               showsVerticalScrollIndicator={false}
               ListFooterComponent={() => (
                 <View style={{ height: momentListBottomSpacer }} />
@@ -387,8 +376,8 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
               snapToAlignment="start" // Align items to the top of the list when snapped
               decelerationRate="fast" // Optional: makes the scroll feel snappier
               keyboardDismissMode="on-drag"
-                onViewableItemsChanged={onViewableItemsChanged}
-  viewabilityConfig={viewabilityConfig}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
             />
           </>
         }
@@ -402,7 +391,6 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
             scrollY={scrollY}
             itemHeight={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN}
             currentVisibleIndex={currentVisibleIndex}
-
           />
 
           <ButtonGoToAddMoment />
@@ -418,7 +406,6 @@ const onViewableItemsChanged = useRef(({ viewableItems }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {

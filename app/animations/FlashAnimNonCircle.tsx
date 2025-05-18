@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Animated } from "react-native";
+import { useDerivedValue } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 // this one will auto height to what is inside it
