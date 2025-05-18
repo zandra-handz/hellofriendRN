@@ -5,6 +5,7 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 import LeafSingleOutlineSvg from "@/app/assets/svgs/leaf-single-outline.svg";
 import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-inverted.tsx";
+import SmallMomentLeaf from "@/app/assets/svgs/SmallMomentLeaf"; 
 
 const LeafTopContainer = ({
   height = "100%",

@@ -1,35 +1,40 @@
-import { View, StyleSheet, Animated, Dimensions } from "react-native";
+import { View, StyleSheet } from "react-native"; 
 import React from "react";
 import LargeMomentLeaf from "@/app/assets/svgs/LargeMomentLeaf";
 import SmallMomentLeaf from "@/app/assets/svgs/SmallMomentLeaf";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
-const { width: screenWidth } = Dimensions.get("window");
 
 const MomentLeavesUI = ({
+  index,
   fillColor,
   strokeColor,
   smallLeafSize = 60,
   largeLeafSize = 120,
   height = 200,
-  flipHorizontally = false,
-  opacity = 1,
 }) => {
-  const { themeStyles } = useGlobalStyle();
-
   return (
-    <Animated.View
+    <View
       style={[
-        styles.container,
         {
+          width: "100%",
+          position: "absolute",
+          paddingHorizontal: 0,
+          zIndex: 0,
+          flexDirection: "row",
           height,
-          opacity,
-          transform: [{ scaleX: flipHorizontally ? -1 : 1 }],
+          transform: [{ scaleX: index % 2 === 0 ? -1 : 1 }],
         },
       ]}
     >
-      <View style={styles.row}>
-         <View style={[styles.leafWrapper, {  }]}>
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",  
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          width: "100%",
+        }}
+      >
+        <View style={styles.leafWrapper}>
           <SmallMomentLeaf
             fill={fillColor}
             stroke={strokeColor}
@@ -38,7 +43,7 @@ const MomentLeavesUI = ({
             strokeWidth={3}
           />
         </View>
-      <View style={[styles.leafWrapper, {  }]}>
+        <View style={styles.leafWrapper}>
           <LargeMomentLeaf
             fill={fillColor}
             stroke={strokeColor}
@@ -48,31 +53,18 @@ const MomentLeavesUI = ({
           />
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    position: "absolute",
-    paddingHorizontal: 0,
-    zIndex: 0,
-    flexDirection: 'row', 
-  },
-  row: {
-    flexDirection: "row",
-    flexWrap: "wrap", // Allows wrapping
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    width: "100%",
-  },
+ 
   leafWrapper: {
     flexShrink: 1,
-    maxWidth: "50%", // Prevents overflow
+    maxWidth: "50%", 
     alignItems: "center",
     justifyContent: "center",
-  //  padding: 4,
+   
   },
 });
 

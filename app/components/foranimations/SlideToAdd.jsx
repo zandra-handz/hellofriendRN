@@ -343,6 +343,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     color: "#333",
     fontSize: 16,
+    fontFamily: 'Poppins-Regular',
   },
   slider: {
     alignSelf: "flex-start",

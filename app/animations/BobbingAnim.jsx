@@ -1,50 +1,51 @@
-// BobbingEffect.js
-import React, { useEffect, useRef } from "react";
-import { Animated } from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 
 const BobbingAnim = ({
   children,
-  showAnimation,
+  showAnimation = true,
   bobbingDistance = 5,
   duration = 1000,
 }) => {
-  const bobbingValue = useRef(new Animated.Value(0)).current;
+  const translateY = useSharedValue(0);
 
   useEffect(() => {
-    const animateBobbing = () => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(bobbingValue, {
-            toValue: 1,
-            duration,
-            useNativeDriver: true,
-          }),
-          Animated.timing(bobbingValue, {
-            toValue: 0,
-            duration,
-            useNativeDriver: true,
-          }),
-        ])
-      ).start();
-    };
-
     if (showAnimation) {
-      animateBobbing();
+      translateY.value = withRepeat(
+        withSequence(
+          withTiming(-bobbingDistance, { duration }),
+          withTiming(0, { duration })
+        ),
+        -1, 
+        false  
+      );
+    } else {
+      translateY.value = withTiming(0, { duration: 200 });  
     }
-  }, [bobbingValue, showAnimation, duration]);
+  }, [showAnimation, bobbingDistance, duration]);
 
-  const bobbingStyle = {
-    transform: [
-      {
-        translateY: bobbingValue.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, -bobbingDistance],
-        }),
-      },
-    ],
-  };
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
 
-  return <Animated.View style={showAnimation ? bobbingStyle : null}>{children}</Animated.View>;
+  return (
+    <Animated.View style={[styles.container, showAnimation && animatedStyle]}>
+      {children}
+    </Animated.View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    // Optional styling if needed
+  },
+});
 
 export default BobbingAnim;

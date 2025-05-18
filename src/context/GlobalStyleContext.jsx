@@ -3,7 +3,7 @@ import { StyleSheet, AccessibilityInfo } from "react-native";
 import { useUser } from "./UserContext";
 //import { updateUserAccessibilitySettings } from "../calls/api";
 import { useColorScheme } from "react-native";
- 
+
 const GlobalStyleContext = createContext();
 
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
@@ -160,6 +160,12 @@ export const GlobalStyleProvider = ({ children }) => {
 };
 
 const containerStyles = StyleSheet.create({
+  screenContainer: {
+    width: "100%",
+    flex: 1,
+    zIndex: 1,
+  },
+
   homeHeaderContainer: {
     flexDirection: "row",
     paddingHorizontal: 18,
@@ -228,17 +234,17 @@ const containerStyles = StyleSheet.create({
     position: "absolute",
     bottom: 18, //20
     left: 4,
-    zIndex: 5, 
+    zIndex: 5,
     height: "auto",
     maxHeight: "20%",
-    width: "74%", 
+    width: "74%",
   },
   categoryButton: {
     // borderBottomWidth: 0.8,
     borderWidth: StyleSheet.hairlineWidth,
     alignText: "left",
     alignContent: "center",
-    justifyContent: "center", 
+    justifyContent: "center",
     paddingVertical: 2,
     paddingHorizontal: 10,
     marginHorizontal: 6,
@@ -253,6 +259,45 @@ const containerStyles = StyleSheet.create({
     flexDirection: "column",
     flex: 1,
   },
+  searchBarContainer: {
+    zIndex: 2,
+  },
+
+  searchBarInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignContent: "center",
+    height: "100%",
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+
+  searchBarDropDownContainer: {
+    position: "absolute",
+    padding: 10,
+    top: 30,
+    right: -10,
+    width: 300, 
+    maxHeight: 100,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    zIndex: 1000,
+    elevation: 1000,
+  },
+  searchBarResultsListContainer: {
+    paddingHorizontal: 6,
+    borderRadius: 20,
+    zIndex: 1000,
+
+  },
+  searchBarResultListItem: {
+    paddingVertical: 4,
+    borderBottomWidth: 1, 
+    borderRadius: 0,
+  },
 
   loadingSpinnerWrapper: {
     flex: 1,
@@ -264,6 +309,17 @@ const containerStyles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     alignContent: "flex-start",
+  },
+  bigLizardRotate: {
+    position: "absolute",
+    zIndex: 0,
+    bottom: -100,
+    left: -90,
+    transform: [
+      { rotate: "60deg" },
+      // Flip horizontally (mirror image)
+    ],
+    opacity: 0.8,
   },
 });
 
@@ -329,6 +385,22 @@ const fontStyles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 11,
     textTransform: "uppercase",
+  },
+  searchBarInputText: {
+    flex: 1,
+    alignItems: "center",
+    alignContent: "center",
+    fontSize: 13,
+    textAlign: "right",
+    overflow: "hidden",
+    paddingHorizontal: 4,
+    marginRight: 4,
+    height: 50,
+    fontFamily: "Poppins-Regular",
+  },
+  searchBarResultListItemText: {
+      fontSize: 15,
+
   },
 });
 

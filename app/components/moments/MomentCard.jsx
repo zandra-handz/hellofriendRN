@@ -1,98 +1,41 @@
-//<LeafGreenOutlineSvg color={manualGradientColors.lightColor} width={80} height={80} />
-
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Animated } from "react-native";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
 import SlideToAdd from "../foranimations/SlideToAdd";
 import FormatMonthDay from "@/app/components/appwide/format/FormatMonthDay";
 import CheckmarkOutlineSvg from "@/app/assets/svgs/checkmark-outline.svg";
-import LeavesOnBranchSolidSvg from "@/app/assets/svgs/leaves-on-branch-solid.svg";
-import LeafSingleOutlineInvertedSvg from "@/app/assets/svgs/leaf-single-outline-inverted";
-import LeafDoubleOutlineInvertedSvg from "@/app/assets/svgs/LeafDoubleOutlineInvertedSvg";
-import { Easing } from "react-native-reanimated";
- import MomentLeavesUI from "./MomentLeavesUI";
-import FlashAnimNonCircle from "@/app/animations/FlashAnimNonCircle";
-import BobbingAnim from "@/app/animations/BobbingAnim";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useSharedValue  } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
+import MomentLeavesUI from "./MomentLeavesUI";
+import SlideAwayOnSuccess from "./SlideAwayOnSuccessAnimation";
+
+import MomentPulseAnimation from "@/app/animations/MomentPulseAnimation";
 
 const MomentCard = ({
-  distanceFromTop,
+  animatedCardsStyle,
+
   index,
   onPress,
   onSliderPull,
-  scrollY,
   moment,
   heightToMatchWithFlatList, //match THIS if using FlatList
   marginToMatchWithFlatList,
   numberOfLinesToMatchWithFlatList,
-  borderRadius, 
+  borderRadius,
   borderColor,
   size,
   sliderVisible,
   highlightsVisible,
   disabled = false,
-  currentVisibleIndex, 
 }) => {
-  const {
-    themeStyles,
-    gradientColors,
-    gradientColorsHome,
-    manualGradientColors,
-  } = useGlobalStyle();
+  const { gradientColors, gradientColorsHome } = useGlobalStyle();
   const { updateCapsuleMutation, momentData } = useCapsuleList();
-  const { themeAheadOfLoading } = useFriendList();
-
-  const indexIsEven = index % 2 === 0;
-
-  const isFirstItem = index + 1 === 1;
-  //console.log(isFirstItem);
-  const fillColor = gradientColorsHome.darkColor; // themeStyles.genericTextBackgroundShadeTwo.backgroundColor;
-  const strokeColor = gradientColors.darkColor; //themeAheadOfLoading.lightColor;
-  const momentBackgroundColor = gradientColors.lightColor;
-  const momentTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
-  const categoryTextColor = gradientColorsHome.darkColor; //    themeStyles.genericText,
-  const [showAnimations, setShowAnimations] = useState(isFirstItem);
-  
-  
-  useEffect(() => {
-
-    if (!currentVisibleIndex) return;
-  
-      // console.log(currentVisibleIndex, index);
-      // console.log(currentVisibleIndex === index);
-
-      const isVisible = currentVisibleIndex === index;
-
-      if (showAnimations != isVisible) {
-         setShowAnimations(isVisible);
-
-      } 
-    
-
-  }, [currentVisibleIndex]);
-  
  
-
-  useEffect(() => {
-    if (updateCapsuleMutation.isSuccess && moment.id === momentData?.id) {
-      triggerAnimation();
-    }
-  }, [updateCapsuleMutation.isSuccess]);
- 
-
-  const translateX = new Animated.Value(0);
-
-  const triggerAnimation = () => {
-    Animated.timing(translateX, {
-      toValue: 500, // Adjust to slide it off-screen
-      duration: 200, // Duration of the animation
-      easing: Easing.ease,
-      useNativeDriver: true, // Enable native driver for better performance
-    }).start(() => { 
-    });
-  };
+  const fillColor = gradientColorsHome.darkColor;
+  const strokeColor = gradientColors.darkColor;
+  const momentTextColor = gradientColorsHome.darkColor;
+  const categoryTextColor = gradientColorsHome.darkColor;
 
   //Added from chatGPT
   const capitalizeFirstFiveWords = (text) => {
@@ -105,150 +48,123 @@ const MomentCard = ({
     return capitalizedWords.join(" ");
   };
 
+  
+ 
+
   return (
-    <Animated.View
-      style={[
-        styles.container,
-       // themeStyles.genericTextBackgroundShadeTwo,
-        {
-          height: heightToMatchWithFlatList,
-          marginBottom: marginToMatchWithFlatList,
-          borderRadius: borderRadius,
-          // paddingHorizontal: paddingHorizontal,
-          // paddingTop: paddingTop,
-          // paddingBottom: paddingBottom,
-         // backgroundColor: 'red',
-          borderColor: borderColor,
-          transform: [{ translateX }],
-        },
-      ]}
-    >
-      <MomentLeavesUI 
-      fillColor={fillColor}
-      strokeColor={strokeColor}
+    <SlideAwayOnSuccess
+      localItem={moment}
+      contextItem={momentData}
+      contextItemUpdateMutation={updateCapsuleMutation}
       height={heightToMatchWithFlatList}
-      opacity={sliderVisible}
-      flipHorizontally={indexIsEven}
-      width={'100%'}
-      largeLeafSize={400}
-      smallLeafSize={420}
-
-
-      /> 
+      marginBottom={marginToMatchWithFlatList}
+      borderRadius={borderRadius}
+      borderColor={borderColor}
+    >
+      <MomentLeavesUI
+      index={index}
+        fillColor={fillColor}
+        strokeColor={strokeColor}
+        height={heightToMatchWithFlatList}
+   
+        width={"100%"}
+        largeLeafSize={400}
+        smallLeafSize={420}
+      />
       <TouchableOpacity
         style={{ width: "100%", flex: 1 }}
         onPress={!disabled ? onPress : null} // Disable onPress if the button is disabled
         disabled={disabled}
       >
         <View style={styles.iconAndMomentContainer}>
-        
-
-          {showAnimations && (
-            <BobbingAnim
-              showAnimation={showAnimations}
-              bobbingDistance={4}
-              duration={2000}
+          <Animated.View
+            style={[
+              {
+                borderRadius: borderRadius,
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+                flexDirection: "row",
+                width: "100%",
+                opacity: highlightsVisible,
+              },
+            ]}
+          >
+            <MomentPulseAnimation
+              animatedCardsStyle={animatedCardsStyle}
+              circleTextSize={40}
+              pulseDuration={2400}
             >
               <Animated.View
                 style={[
+                  styles.textWrapper,
                   {
-                    borderRadius: borderRadius,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flex: 1,
-                    flexDirection: "row",
+                    height: "auto",
+                    maxHeight: 200,
                     width: "100%",
-                    opacity: highlightsVisible,
+                    padding: 12,
+                    borderRadius: 10,
                   },
                 ]}
               >
-                <FlashAnimNonCircle
-                  circleColor={momentBackgroundColor}
-                  flashToColor={manualGradientColors.lighterLightColor}
-                  staticColor={momentBackgroundColor}
-                  //circleTextSize={40}
-                  minHeight={80} // mot in use but can be hooked up
-                  returnAnimation={true}
+                <Animated.Text
+                  style={[
+                    styles.categoryText,
+                    { color: categoryTextColor, opacity: 1 },
+                  ]}
                 >
-                  <View
-                    style={[
-                      styles.textWrapper,
-                      {
-                        height: "auto",
-                        maxHeight: 200,
-                        // height: 100,
-                        width: "100%",
-                        padding: 12,
-                        borderRadius: 10,
-                      },
+                  #
+                  {moment.typedCategory.length > 12
+                    ? `${moment.typedCategory.substring(0, 12)}...`
+                    : moment.typedCategory}{" "}
+                  • added{" "}
+                  <FormatMonthDay
+                    date={moment.created}
+                    fontSize={13}
+                    fontFamily={"Poppins-Regular"}
+                    parentStyle={[
+                      styles.categoryText,
+                      { color: categoryTextColor, opacity: 1 },
                     ]}
-                  >
-                    <Animated.Text
-                      style={[
-                        styles.categoryText,
-                        { color: categoryTextColor, opacity: sliderVisible },
-                      ]}
-                    >
-                      #
-                      {moment.typedCategory.length > 12
-                        ? `${moment.typedCategory.substring(0, 12)}...`
-                        : moment.typedCategory}{" "}
-                      • added{" "}
-                      <FormatMonthDay
-                        date={moment.created}
-                        fontSize={13}
-                        fontFamily={"Poppins-Regular"}
-                        parentStyle={[
-                          styles.categoryText,
-                          { color: categoryTextColor, opacity: sliderVisible },
-                        ]}
-                        opacity={sliderVisible}
-                      />
-                    </Animated.Text>
-                    <Animated.Text
-                      numberOfLines={numberOfLinesToMatchWithFlatList}
-                      style={[
-                        styles.momentText,
+                    opacity={1}
+                  />
+                </Animated.Text>
+                <Animated.Text
+                  numberOfLines={numberOfLinesToMatchWithFlatList}
+                  style={[
+                    styles.momentText,
 
-                        {
-                          color: momentTextColor,
-                          fontSize: size,
-                          opacity: sliderVisible,
-                        },
-                      ]}
-                    >
-                      {capitalizeFirstFiveWords(moment.capsule)}
-                    </Animated.Text>
-                  </View>
-                </FlashAnimNonCircle>
+                    {
+                      color: momentTextColor,
+                      fontSize: size,
+                      opacity: 1,
+                    },
+                  ]}
+                >
+                  {capitalizeFirstFiveWords(moment.capsule)}
+                </Animated.Text>
               </Animated.View>
-            </BobbingAnim>
-          )}
+            </MomentPulseAnimation>
+          </Animated.View>
         </View>
       </TouchableOpacity>
       <Animated.View
-        style={[styles.sliderContainer, { opacity: sliderVisible }]}
+        style={[styles.sliderContainer, { opacity: 1 }]}
       >
         <SlideToAdd
           onPress={onSliderPull}
           sliderText="ADD TO HELLO"
           sliderTextSize={13}
-          sliderTextVisible={sliderVisible}
+          sliderTextVisible={1}
           targetIcon={CheckmarkOutlineSvg}
-          disabled={sliderVisible !== 1}
+        //  disabled={sliderVisible !== 1}
         />
-      </Animated.View> 
-    </Animated.View>
+      </Animated.View>
+    </SlideAwayOnSuccess>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%", 
-    flexDirection: "column",
-    borderWidth: StyleSheet.hairlineWidth,
-
-  }, 
   sliderContainer: {
     position: "absolute",
     top: 0,

@@ -4,11 +4,9 @@ import {
   TextInput,
   FlatList,
   Text,
-  StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
-  Dimensions,
 } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -16,24 +14,22 @@ import SearchBigMagSvg from "@/app/assets/svgs/search-big-mag.svg";
 
 const MomentsSearchBar = ({
   data,
-  height = '100%',
-  width = "100%", 
+  height = "100%",
+  width = "100%",
   backgroundColor,
-  textAndIconColor = "gray", 
+  textAndIconColor = "gray",
   placeholderText = "Search",
   borderColor = "#ccc",
   onPress,
   searchKeys,
   iconSize = 26,
 }) => {
-  // Updated to accept `searchKeys`
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
 
   const handleItemPress = (item) => {
-    console.log(item);
-    onPress(item); //mow scrolls to moment in list instead of opening it
+    onPress(item);
     handleOutsidePress();
     setSearchQuery("");
   };
@@ -59,23 +55,21 @@ const MomentsSearchBar = ({
   };
 
   const handleBlur = () => {
-    // Clear search query when input loses focus
     setSearchQuery("");
-    setFilteredData([]); // Optionally clear the filtered results
+    setFilteredData([]);
   };
 
   const handleOutsidePress = () => {
-    // Close the keyboard if the user taps outside
     Keyboard.dismiss();
-    handleBlur(); // Also clear the search bar
+    handleBlur();
   };
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
-      <View style={[styles.container, { width: width }]}>
+      <View style={[appContainerStyles.searchBarContainer, { width: width }]}>
         <View
           style={[
-            styles.inputContainer,
+            appContainerStyles.searchBarInputContainer,
             {
               backgroundColor: backgroundColor,
               height: height,
@@ -84,7 +78,7 @@ const MomentsSearchBar = ({
           ]}
         >
           <TextInput
-            style={[styles.searchInput, themeStyles.genericText]}
+            style={appFontStyles.searchBarInputText}
             placeholder={placeholderText}
             placeholderTextColor={textAndIconColor}
             color={textAndIconColor}
@@ -97,28 +91,46 @@ const MomentsSearchBar = ({
               height={iconSize}
               width={iconSize}
               color={textAndIconColor}
-              style={styles.icon}
+              style={{ paddingHorizontal: 10, overflow: "hidden" }}
             />
           </View>
         </View>
 
-        {searchQuery.length > 0 && (
-          <View style={styles.dropdownContainer}>
+        {filteredData && filteredData.length > 0 && searchQuery.length > 0 && (
+          <View
+            style={[
+              appContainerStyles.searchBarDropDownContainer,
+              themeStyles.genericTextBackground,
+            ]}
+          >
             <FlatList
               data={filteredData}
               keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <TouchableOpacity
                   onPress={() => handleItemPress(item)}
-                  style={styles.itemContainer}
+                  style={[
+                    appContainerStyles.searchBarResultListItem,
+                    {
+                      borderBottomColor:
+                        index != 0
+                          ? themeStyles.genericText.color
+                          : "transparent",
+                    },
+                  ]}
                 >
-                  <Text numberOfLines={1} style={styles.itemText}>
+                  <Text
+                    numberOfLines={1}
+                    style={[
+                      appFontStyles.searchBarResultListItemText,
+                      themeStyles.genericText,
+                    ]}
+                  >
                     {searchKeys.map((key) => item[key]).join(" - ")}{" "}
-                    {/* Display all matching fields */}
                   </Text>
                 </TouchableOpacity>
               )}
-              style={styles.dropdownList}
+              style={appContainerStyles.searchBarResultsListContainer}
               keyboardShouldPersistTaps="handled"
               nestedScrollEnabled // Enable nested scroll for the FlatList
             />
@@ -128,73 +140,5 @@ const MomentsSearchBar = ({
     </TouchableWithoutFeedback>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    //width: '100%',
-    // flex: 1,
-     
-
-    zIndex: 2,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignContent: "center",
-    height: "100%",
-    borderRadius: 20,
-    borderWidth: StyleSheet.hairlineWidth,
-     
-    //height: 30,
-  },
-  searchInput: {
-    flex: 1,
-    alignItems: "center",
-    alignContent: "center",
-    fontSize: 13,
-    textAlign: "right",
-    overflow: "hidden",
-    paddingHorizontal: 4,
-    marginRight: 4,
-    height: 50, 
-    fontFamily: "Poppins-Regular",
-  },
-  icon: {
-    paddingHorizontal: 10,
-    overflow: "hidden",
-  },
-  dropdownContainer: {
-    position: "absolute",
-    top: 30,  
-    right: -10,
-    backgroundColor: "#fff",
-    maxHeight: 100,
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 5, 
-    width: Dimensions.get("screen").width - 200,
-    zIndex: 1000,
-    elevation: 1000,
-  },
-  dropdownList: {
-    paddingHorizontal: '4%',
-    borderRadius: 20,
-    zIndex: 1000,
-  },
-  itemContainer: {
-    paddingVertical: '2%',
-    paddingHorizontal: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    backgroundColor: "#f9f9f9",
-    borderRadius: 26,
-  },
-  itemText: {
-    fontSize: 16,
-    color: "#333",
-  },
-});
 
 export default MomentsSearchBar;
