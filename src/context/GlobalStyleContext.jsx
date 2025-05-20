@@ -278,7 +278,8 @@ const containerStyles = StyleSheet.create({
     top: 30,
     right: -10,
     width: 300, 
-    maxHeight: 100,
+    //height: 100,
+    maxHeight: 300,
     borderRadius: 20,
     shadowColor: "#000",
     shadowOpacity: 0.2,
@@ -289,12 +290,21 @@ const containerStyles = StyleSheet.create({
   },
   searchBarResultsListContainer: {
     paddingHorizontal: 6,
+  
     borderRadius: 20,
     zIndex: 1000,
 
   },
   searchBarResultListItem: {
-    paddingVertical: 4,
+    paddingVertical: 6,
+    marginVertical: 4,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    textAlign: 'left',
+    justifyContent: 'flex-start',
+
+    height: 'auto',
     borderBottomWidth: 1, 
     borderRadius: 0,
   },

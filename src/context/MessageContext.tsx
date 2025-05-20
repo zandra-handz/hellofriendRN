@@ -1,7 +1,14 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { useUser } from './UserContext';
-import { useCapsuleList } from './CapsuleListContext'; 
-import { useUpcomingHelloes } from './UpcomingHelloesContext';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useUser } from "./UserContext";
+import { useCapsuleList } from "./CapsuleListContext";
+import { useUpcomingHelloes } from "./UpcomingHelloesContext";
+import { useSharedValue } from "react-native-reanimated";
 
 interface MessageData {
   result: boolean | null;
@@ -9,111 +16,142 @@ interface MessageData {
   resultsMessage: string;
 }
 
-
 interface MessageContextType {
   messageQueue: MessageData[]; // Now it's a queue (array)
-  showAppMessage: (result: boolean, resultData: any, resultsMessage?: string) => void;
+
+  showAppMessage: (
+    result: boolean,
+    resultData: any,
+    resultsMessage?: string
+  ) => void;
   hideAppMessage: () => void;
   removeMessage: () => void; // Removes message from the queue
-} 
+}
 
 const MessageContext = createContext<MessageContextType | undefined>(undefined);
-
 
 export const useMessage = () => {
   const context = useContext(MessageContext);
   if (!context) {
-    throw new Error('useAppMessage must be used within an AppMessageContextProvider');
+    throw new Error(
+      "useAppMessage must be used within an AppMessageContextProvider"
+    );
   }
   return context;
 };
- 
-
 
 interface MessageContextProviderProps {
   children: ReactNode;
 }
-export const MessageContextProvider: React.FC<MessageContextProviderProps> = ({ children }) => {
-  const [messageQueue, setMessageQueue] = useState<MessageData[]>([]);
+export const MessageContextProvider: React.FC<MessageContextProviderProps> = ({
+  children,
+}) => {
+  // const [messageQueue, setMessageQueue] = useState<MessageData[]>([]);
+  const messageQueue = useSharedValue<MessageData[]>([]);
 
-    const { createMomentMutation, updateCapsuleMutation, deleteMomentMutation } = useCapsuleList();
-    const { upcomingHelloesIsSuccess } = useUpcomingHelloes();
-    const {  signinMutation } = useUser(); 
+  const { createMomentMutation, updateCapsuleMutation, deleteMomentMutation } =
+    useCapsuleList();
+  const { upcomingHelloesIsSuccess } = useUpcomingHelloes();
+  const { signinMutation } = useUser();
 
+const showMessage = (
+  result: boolean,
+  resultData: any,
+  resultsMessage = "Action successful",
+  buttonPress: (() => void) | null = null,
+  buttonLabel = "",
+  duration = 2000,
+  delay = 400
+) => {
+  const newMessage = {
+    result,
+    resultData,
+    resultsMessage,
+    buttonPress,
+    buttonLabel,
+  };
 
-    const showMessage = (
-      result: boolean,
-      resultData: any,
-      resultsMessage = 'Action successful',
-      buttonPress: (() => void) | null = null,
-      buttonLabel = ''
-    ) => {
-  
-      setMessageQueue(prevQueue => [...prevQueue, { result, resultData, resultsMessage, buttonPress, buttonLabel }]);
-    };
-  
-    const hideMessage = () => {
-      setMessageQueue([]);
-    };
-  
-    const removeMessage = () => {
-      setMessageQueue(prevQueue => prevQueue.slice(1));  
-    };
-  
-  
+  messageQueue.value = [...messageQueue.value, newMessage];
 
-useEffect(() => {
-  if (upcomingHelloesIsSuccess) {
+  // Automatically remove after duration + delay
+  setTimeout(() => {
+    removeMessage();
+  }, duration + delay);
+};
+
+  // const showMessage = (
+  //   result: boolean,
+  //   resultData: any,
+  //   resultsMessage = "Action successful",
+  //   buttonPress: (() => void) | null = null,
+  //   buttonLabel = ""
+  // ) => {
+  //   setMessageQueue((prevQueue) => [
+  //     ...prevQueue,
+  //     { result, resultData, resultsMessage, buttonPress, buttonLabel },
+  //   ]);
+  // };
+
+  const hideMessage = () => {
+    messageQueue.value = ([]);
+  };
+
+const removeMessage = () => {
+  console.log('removing');
+  messageQueue.value = messageQueue.value.slice(1);
+};
+
+  useEffect(() => {
+    if (upcomingHelloesIsSuccess) {
       showMessage(true, null, `Next helloes are up to date!`);
-  }
-}, [upcomingHelloesIsSuccess]); 
+    }
+  }, [upcomingHelloesIsSuccess]);
 
-useEffect(() => {
-  if (signinMutation.isError) {
-      showMessage(true, null, 'Oops! Could not sign in.');
-  }
-}, [signinMutation]);
- 
+  useEffect(() => {
+    if (signinMutation.isError) {
+      showMessage(true, null, "Oops! Could not sign in.");
+    }
+  }, [signinMutation]);
 
-useEffect(() => {
+  useEffect(() => {
     if (createMomentMutation.isSuccess) {
-        showMessage(true, null, 'Moment saved!');
+      showMessage(true, null, "Moment saved!");
     }
-}, [createMomentMutation]);
+  }, [createMomentMutation]);
 
+  useEffect(() => {
+    if (createMomentMutation.isError) {
+      showMessage(
+        true,
+        null,
+        "!! Moment could not be saved. Please try again."
+      );
+    }
+  }, [createMomentMutation]);
 
-useEffect(() => {
-  if (createMomentMutation.isError) {
-      showMessage(true, null, '!! Moment could not be saved. Please try again.');
-  }
-}, [createMomentMutation]);
-
-useEffect(() => {
+  useEffect(() => {
     if (deleteMomentMutation.isSuccess) {
-        showMessage(true, null, "Moment deleted!");
+      showMessage(true, null, "Moment deleted!");
     }
+  }, [deleteMomentMutation]);
 
-}, [deleteMomentMutation]);
-
-useEffect(() => {
+  useEffect(() => {
     if (updateCapsuleMutation.isSuccess) {
-        showMessage(true, null, 'Moment sent to hello!');
+      showMessage(true, null, "Moment sent to hello!");
     }
-}, [updateCapsuleMutation]);
+  }, [updateCapsuleMutation]);
 
-
-useEffect(() => {
-  if (updateCapsuleMutation.isError) {
-      showMessage(true, null, '!! Moment could not be sent.');
-  }
-}, [updateCapsuleMutation]);
-
-
+  useEffect(() => {
+    if (updateCapsuleMutation.isError) {
+      showMessage(true, null, "!! Moment could not be sent.");
+    }
+  }, [updateCapsuleMutation]);
 
   return (
-    <MessageContext.Provider value={{ messageQueue, showMessage, hideMessage, removeMessage }}>
+    <MessageContext.Provider
+      value={{ messageQueue, showMessage, hideMessage, removeMessage }}
+    >
       {children}
     </MessageContext.Provider>
   );
-}; 
- 
+};

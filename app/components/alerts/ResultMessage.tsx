@@ -1,18 +1,20 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Animated,
-  TouchableOpacity,
-} from "react-native";
+import React from "react";
+import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useMessage } from "@/src/context/MessageContext";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useAnimatedProps,
+  useDerivedValue,
+  useAnimatedReaction,
+  withTiming,
+  withSequence,
+  withDelay,
+  runOnJS,
+} from "react-native-reanimated";
 
-const ResultMessage = ({
-  resultsDisplayDuration = 1600, // Duration to show results message (default 3 seconds)
-  messageDelay = 0, // Delay before the message appears (2 seconds)
-}) => {
+const ResultMessage = ({ resultsDisplayDuration = 2000, messageDelay = 0 }) => {
   const { messageQueue, removeMessage } = useMessage();
   const {
     themeStyles,
@@ -20,72 +22,115 @@ const ResultMessage = ({
     appFontStyles,
     constantColorsStyles,
   } = useGlobalStyle();
-  const [showResultsMessage, setShowResultsMessage] = useState(false);
-  const translateY = useRef(new Animated.Value(-100)).current;
 
-  useEffect(() => {
-    if (messageQueue.length > 0) {
-      const message = messageQueue[0]; // Get the first message in the queue
+  // UI-thread controlled visibility
+  const translateY = useSharedValue(-160);
+  const visible = useSharedValue(false);
+  const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
-      let timeout;
-      let resultsTimeout;
-      let delay = messageQueue[0]?.buttonPress ? 5000 : resultsDisplayDuration;
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+    opacity: visible.value ? 1 : 1,
+  }));
 
-      timeout = setTimeout(() => {
-        if (message.result) {
-          setShowResultsMessage(true);
-          setTimeout(() => {
-            // Slide in animation
-            Animated.timing(translateY, {
-              toValue: 0,
-              duration: 120,
-              useNativeDriver: true,
-            }).start();
-          }, 200);
+  const messageText = useSharedValue("");
 
-          resultsTimeout = setTimeout(() => {
-            // Slide back up animation
-            Animated.timing(translateY, {
-              toValue: -120,
-              duration: 120,
-              useNativeDriver: true,
-            }).start(() => {
-              removeMessage(); // Remove the message from the queue once it's finished
-              setShowResultsMessage(false);
-            });
-          }, delay);
-        }
-      }, messageDelay); // Delay before showing the message
+useAnimatedReaction(
+  () => messageQueue.value.length > 0,
+  (hasMessage, prevHasMessage) => {
+    if (hasMessage && !prevHasMessage) { 
+      
+      messageText.value = messageQueue.value?.[0]?.resultsMessage || '';
 
-      return () => {
-        clearTimeout(timeout);
-        clearTimeout(resultsTimeout);
-      };
+      // Slide in, wait, then slide out
+      translateY.value = withSequence(
+        withTiming(10, { duration: 180 }), // Slide up
+        withDelay(resultsDisplayDuration + messageDelay, withTiming(-160, { duration: 180 }, () => {
+          // Remove message only after sliding out
+          //  runOnJS(removeMessage)(); // running in context right now because not working here
+        }))
+      );
     }
-  }, [
-    messageQueue,
-    messageDelay,
-    resultsDisplayDuration,
-    translateY,
-    removeMessage,
-  ]);
+  },
+  [messageQueue]
+);
 
-  if (!showResultsMessage || messageQueue.length === 0) return null;
+
+  // const derivedMessage = useDerivedValue(() => {
+  //     const message = messageQueue?.value?.value[0]?.resultsMessage || 'No message';
+  //     return message;
+  //  // return messageQueue; 
+  // });
+
+  const derivedMessage = useDerivedValue(() => {
+   const message = messageQueue.value?.[0]?.resultsMessage || '';
+   console.log(messageQueue.value);
+  return message;
+});
+
+useAnimatedReaction(
+  () => messageQueue.value[0]?.resultsMessage || '',
+  (newMessage, prevMessage) => {
+    if (newMessage !== prevMessage) {
+      messageText.value = newMessage;
+    }
+  },
+  [messageQueue]
+);
+
+
+  const animatedMessageText = useAnimatedProps(() => {
+     const message = messageQueue.value?.[0]?.resultsMessage || '';
+   // const message = derivedMessage.value;
+   // const message = derivedMessage.value;
+   // console.log(derivedMessage);
+
+    return {
+      text: `${messageText.value}`,
+      defaultValue: `${messageText.value}`,
+      color: themeStyles.genericText.color,
+ 
+    };
+  });
+
+  // Hide the component if not visible and messageQueue is empty
+  // if (!visible.value || messageQueue.value.length === 0) {
+  //   console.log('RETURNING NOTHING');
+  //   return null;
+  // }
 
   return (
-    <View style={[styles.container]}>
+    // <View style={[styles.container]}>
       <Animated.View
         style={[
-          styles.textContainer,
-          themeStyles.primaryBackground,
-          { transform: [{ translateY }] },
+          
+          styles.container,
+       
+            animatedStyle,
         ]}
       >
-        <Text style={[styles.loadingTextBold, themeStyles.primaryText]}>
-          {messageQueue[0]?.resultsMessage}
-        </Text>
-        {messageQueue[0]?.buttonPress && messageQueue[0]?.buttonLabel && (
-          <View style={{ marginTop: 10, marginBottom: 4 }}>
+        <Animated.View
+        style={[styles.textContainer, themeStyles.primaryBackground]}>
+          
+        <AnimatedTextInput
+          style={[themeStyles.primaryText]}
+          animatedProps={animatedMessageText}
+          editable={false}
+          defaultValue={""}
+        />
+        
+        </Animated.View>
+        {/* <Animated.Text
+          style={[
+            appFontStyles.appMessageButtonText,
+            themeStyles.primaryText,
+          ]}
+        >
+          {currentMessage.resultsMessage}
+        </Animated.Text> */}
+
+        {/* {currentMessage.buttonPress && currentMessage.buttonLabel && (
+          <View style={{ marginTop: 10 }}>
             <TouchableOpacity
               style={[
                 appContainerStyles.appMessageButton,
@@ -94,50 +139,60 @@ const ResultMessage = ({
                     constantColorsStyles.v1LogoColor.backgroundColor,
                 },
               ]}
-              onPress={messageQueue[0]?.buttonPress}
+              onPress={currentMessage.buttonPress}
             >
-              <Text
+              <AnimatedTextInput
+                style={[themeStyles.primaryText]}
+                animatedProps={animatedMessageText}
+                editable={false}
+                defaultValue={""}
+              />
+              {/* <Text
                 style={[
                   constantColorsStyles.v1LogoColor,
                   appFontStyles.appMessageButtonText,
                 ]}
               >
-                {messageQueue[0]?.buttonLabel}
-              </Text>
+                {currentMessage.buttonLabel}
+              </Text> 
             </TouchableOpacity>
-          </View>
-        )}
+          </View> //  )} */}
+
+
       </Animated.View>
-    </View>
+    // </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: { 
     position: "absolute",
+  //  backgroundColor: 'red',
     top: 40,
     left: 0,
-    zIndex: 10000,
-    elevation: 10000,
-    width: "100%",
-    padding: 10,
-    height: "auto",
+   // flex: 1,
+    zIndex: 100000,
+    elevation: 100000,
+    width: '100%',
+    padding: 4,
+    height: 'auto',
     minHeight: 100,
     maxHeight: "50%",
     justifyContent: "center",
     alignItems: "center",
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
+    borderRadius: 20,
+ //   borderTopLeftRadius: 20,
   },
   textContainer: {
     justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    width: "100%",
+    alignItems: "center", 
+    width: "100%", 
     height: "100%",
-    borderRadius: 20,
-    paddingVertical: "3%",
-    paddingHorizontal: "4%",
+    borderRadius: 30,
+    paddingHorizontal: 20,
+    padding: 10,
+    flexWrap: 'wrap',
+    textAlign: 'center',
   },
   loadingTextBold: {
     fontSize: 16,

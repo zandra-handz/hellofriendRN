@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect  } from "react";
+import React, { useRef, useState, useEffect, useCallback  } from "react";
 import {
   View, 
   Text, 
@@ -6,15 +6,16 @@ import {
   ViewToken,
 } from "react-native";
 
-import { useFriendList } from "@/src/context/FriendListContext";
 
+import { useFriendList } from "@/src/context/FriendListContext";
+import throttle from 'lodash.throttle';
 import ButtonGoToAddMoment from "../buttons/moments/ButtonGoToAddMoment";
 import LizardSvg from "@/app/assets/svgs/lizard.svg"; 
 import MomentsNavigator from "./MomentsNavigator";
 import CategoryNavigator from "./CategoryNavigator";
 import MomentsSearchBar from "./MomentsSearchBar";
 import DiceRandom3dSolidSvg from "@/app/assets/svgs/dice-random-3d-solid.svg";
-
+import { FlashList } from "@shopify/flash-list";
 import MomentCardAnimationWrapper from "./MomentCardAnimationWrapper";
  
 import Animated, {
@@ -31,6 +32,11 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
+
+// import { enableLayoutAnimations } from "react-native-reanimated";
+// enableLayoutAnimations(true);
+// import { enableFreeze } from "react-native-screens";
+// enableFreeze(true);
 
 const ITEM_HEIGHT = 290;
 const ITEM_BOTTOM_MARGIN = 0; 
@@ -92,8 +98,7 @@ const MomentsList = () => {
  
 
 useEffect(() => {
-  if (momentIdToAnimate) {
-    console.log('use effect in momentslist triggered!');
+  if (momentIdToAnimate) { 
   
     translateX.value = withTiming(500, { duration: 0 }, () => { 
       heightAnim.value = withTiming(0, { duration: 200 }, () => { 
@@ -127,17 +132,30 @@ useEffect(() => {
     });
   };
 
-  const saveToHello = async (moment) => {
-    try {
+  // const saveToHello = async (moment) => {
+  //   try {
+  //     updateCapsule(moment.id);
+  //   } catch (error) {
+  //     console.error("Error during pre-save:", error);
+  //   }
+  // };
+
+  const saveToHello = useCallback((moment) => {
+      try {
       updateCapsule(moment.id);
     } catch (error) {
       console.error("Error during pre-save:", error);
     }
-  };
+}, []);
 
-  const handleNavigateToMomentView = (moment) => {
-    navigation.navigate("MomentView", { moment: moment });
-  };
+  const handleNavigateToMomentView = useCallback((moment) => {
+     navigation.navigate("MomentView", { moment: moment });
+ 
+}, []);
+
+  // const handleNavigateToMomentView = (moment) => {
+  //   navigation.navigate("MomentView", { moment: moment });
+  // };
 
   const closeMomentNav = () => {
     setMomentNavVisible(false);
@@ -161,6 +179,7 @@ useEffect(() => {
   });
  
   const viewableItemsArray = useSharedValue<ViewToken[]>([]);
+  
 
   return (
     <View style={appContainerStyles.screenContainer}>
@@ -221,6 +240,7 @@ useEffect(() => {
               ref={flatListRef}
               data={capsuleList}
               fadingEdgeLength={20}
+              
               onViewableItemsChanged={({ viewableItems: vItems }) => {
                 // console.log(vItems[0]);
                 viewableItemsArray.value = vItems;
@@ -249,7 +269,8 @@ useEffect(() => {
               initialNumToRender={10}
               maxToRenderPerBatch={10}
               windowSize={10}
-              removeClippedSubviews={false}
+              
+              removeClippedSubviews={true}
               showsVerticalScrollIndicator={false}
               ListFooterComponent={() => (
                 <View style={{ height: momentListBottomSpacer }} />

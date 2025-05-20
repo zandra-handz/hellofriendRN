@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ViewToken } from "react-native";
 import Animated, {
-  useAnimatedStyle, 
+  useAnimatedStyle,
   withTiming,
   SharedValue,
   useSharedValue,
@@ -11,9 +11,10 @@ import Animated, {
   useAnimatedReaction,
 } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { cancelAnimation } from "react-native-reanimated";
 
 import MomentCard from "./MomentCard";
- 
+
 type MomentCardAnimationWrapperProps = {
   viewableItemsArray: SharedValue<ViewToken[]>;
   item: {
@@ -24,7 +25,7 @@ type MomentCardAnimationWrapperProps = {
 const MomentCardAnimationWrapper: React.FC<MomentCardAnimationWrapperProps> = ({
   viewableItemsArray,
   item,
-  index, 
+  index,
   momentIdToAnimate,
   fadeAnim,
   translateY,
@@ -41,8 +42,6 @@ const MomentCardAnimationWrapper: React.FC<MomentCardAnimationWrapperProps> = ({
   const ITEM_BOTTOM_MARGIN = 0; //Add to value for snapToInterval
   const NUMBER_OF_LINES = 5;
   const CARD_BORDERRADIUS = 50;
-
- 
 
   const scaleCardsStyle = useAnimatedStyle(() => {
     const isVisible = Boolean(
@@ -67,6 +66,7 @@ const MomentCardAnimationWrapper: React.FC<MomentCardAnimationWrapperProps> = ({
   const progress = useSharedValue(0);
   const translateYx2 = useSharedValue(0);
 
+  const cardOpacity = useSharedValue(0);
   // 2. Trigger animation based on visibility
   useAnimatedReaction(
     () => {
@@ -85,23 +85,28 @@ const MomentCardAnimationWrapper: React.FC<MomentCardAnimationWrapperProps> = ({
             -1,
             true
           );
-          translateYx2.value = withRepeat(
-            withSequence(
-              withTiming(-bobbingDistance, { duration: bobbingDuration }),
-              withTiming(0, { duration: bobbingDuration })
-            ),
-            -1,
-            false
-          );
+          (cardOpacity.value = 1),
+            (translateYx2.value = withRepeat(
+              withSequence(
+                withTiming(-bobbingDistance, { duration: bobbingDuration }),
+                withTiming(0, { duration: bobbingDuration })
+              ),
+              -1,
+              false
+            ));
         } else {
-          progress.value = withTiming(0, { duration: 200 });
-          translateYx2.value = withTiming(0, { duration: 200 });
+          cancelAnimation(progress);
+          cancelAnimation(translateYx2);
+          cancelAnimation(cardOpacity);
+          progress.value = 0;
+          translateYx2.value = 0;
+          cardOpacity.value = 0;
         }
       }
     },
     [viewableItemsArray]
   );
- 
+
   const animatedCardsStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
       progress.value,
@@ -111,16 +116,28 @@ const MomentCardAnimationWrapper: React.FC<MomentCardAnimationWrapperProps> = ({
 
     return {
       backgroundColor,
+      opacity: cardOpacity.value,
       transform: [{ translateY: translateYx2.value }],
     };
   });
 
 
+  useEffect(() => {
+  return () => {
+       cancelAnimation(progress);
+          cancelAnimation(translateYx2);
+          cancelAnimation(cardOpacity);
+          progress.value = 0;
+          translateYx2.value = 0;
+          cardOpacity.value = 0;
+  };
+}, []);
 
   return (
     <>
       <Animated.View
         key={item.id}
+        
         style={[scaleCardsStyle, { height: "auto", alignItems: "center" }]}
       >
         <MomentCard

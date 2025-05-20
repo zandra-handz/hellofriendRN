@@ -10,7 +10,7 @@ import Animated from "react-native-reanimated";
 import MomentLeavesUI from "./MomentLeavesUI";
 import SlideAwayOnSuccess from "./SlideAwayOnSuccessAnimation";
 
-import MomentPulseAnimation from "@/app/animations/MomentPulseAnimation";
+import MomentPulseBobReceiver from "@/app/animations/MomentPulseBobReceiver";
 
 const MomentCard = ({
   animatedCardsStyle,
@@ -90,7 +90,7 @@ const MomentCard = ({
               },
             ]}
           >
-            <MomentPulseAnimation
+            <MomentPulseBobReceiver
               animatedCardsStyle={animatedCardsStyle}
               circleTextSize={40}
               pulseDuration={2400}
@@ -144,7 +144,7 @@ const MomentCard = ({
                   {capitalizeFirstFiveWords(moment.capsule)}
                 </Animated.Text>
               </Animated.View>
-            </MomentPulseAnimation>
+            </MomentPulseBobReceiver>
           </Animated.View>
         </View>
       </TouchableOpacity>

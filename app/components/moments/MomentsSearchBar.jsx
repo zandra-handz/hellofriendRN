@@ -113,7 +113,7 @@ const MomentsSearchBar = ({
                     appContainerStyles.searchBarResultListItem,
                     {
                       borderBottomColor:
-                        index != 0
+                        filteredData?.length > 1
                           ? themeStyles.genericText.color
                           : "transparent",
                     },
