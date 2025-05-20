@@ -180,6 +180,28 @@ useEffect(() => {
  
   const viewableItemsArray = useSharedValue<ViewToken[]>([]);
   
+const renderMomentItem = useCallback(
+  ({ item, index }) => (
+    <MomentCardAnimationWrapper
+      viewableItemsArray={viewableItemsArray}
+      item={item}
+      index={index}
+      momentIdToAnimate={momentIdToAnimate}
+      fadeAnim={fadeAnim}
+      translateY={translateY}
+      handleNavigateToMomentView={handleNavigateToMomentView}
+      saveToHello={saveToHello}
+    />
+  ),
+  [
+    viewableItemsArray,
+    momentIdToAnimate,
+    fadeAnim,
+    translateY,
+    handleNavigateToMomentView,
+    saveToHello,
+  ]
+);
 
   return (
     <View style={appContainerStyles.screenContainer}>
@@ -245,18 +267,20 @@ useEffect(() => {
                 // console.log(vItems[0]);
                 viewableItemsArray.value = vItems;
               }}
-              renderItem={({ item, index }) => (
-                <MomentCardAnimationWrapper
-                  viewableItemsArray={viewableItemsArray}
-                  item={item}
-                  index={index} 
-                  momentIdToAnimate={momentIdToAnimate}
-                  fadeAnim={fadeAnim}
-                  translateY={translateY}
-                  handleNavigateToMomentView={handleNavigateToMomentView}
-                  saveToHello={saveToHello}  
-                />
-              )}
+              renderItem={renderMomentItem}
+
+              // renderItem={({ item, index }) => (
+              //   <MomentCardAnimationWrapper
+              //     viewableItemsArray={viewableItemsArray}
+              //     item={item}
+              //     index={index} 
+              //     momentIdToAnimate={momentIdToAnimate}
+              //     fadeAnim={fadeAnim}
+              //     translateY={translateY}
+              //     handleNavigateToMomentView={handleNavigateToMomentView}
+              //     saveToHello={saveToHello}  
+              //   />
+              // )}
               keyExtractor={(item, index) =>
                 item?.id ? item?.id.toString() : `placeholder-${index}`
               }
