@@ -33,7 +33,7 @@ const { theme, nonCustomHeaderPage } = useGlobalStyle();
     <StatusBar
       barStyle={color ? 'dark-content' : 'light-content'} 
       translucent={true}
-      backgroundColor="transparent" 
+      //backgroundColor="transparent" 
     /> 
     </>
   );

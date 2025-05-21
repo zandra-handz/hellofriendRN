@@ -1,16 +1,22 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, TextInput } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useSharedValue, useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useAnimatedProps,
+  useDerivedValue,
+} from "react-native-reanimated";
 import SlideToAdd from "../foranimations/SlideToAdd";
 import FormatMonthDay from "@/app/components/appwide/format/FormatMonthDay";
 import CheckmarkOutlineSvg from "@/app/assets/svgs/checkmark-outline.svg";
-import Animated from "react-native-reanimated";
 import MomentLeavesUI from "./MomentLeavesUI";
 import SlideAwayOnSuccess from "./SlideAwayOnSuccessAnimation";
-
+import { ReText } from "react-native-redash";
 import MomentPulseBobReceiver from "@/app/animations/MomentPulseBobReceiver";
+
+import moment from 'moment';
 
 const MomentCard = ({
   animatedCardsStyle,
@@ -31,11 +37,22 @@ const MomentCard = ({
 }) => {
   const { gradientColors, gradientColorsHome } = useGlobalStyle();
   const { updateCapsuleMutation, momentData } = useCapsuleList();
- 
+
+  const momentText = useSharedValue(moment?.capsule || "");
+  const momentCategoryText = useSharedValue(moment?.typedCategory || "");
+const date = new Date(moment?.created);
+
+const formattedText = !isNaN(date)
+  ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(date)
+  : '';
+const momentCreatedText = useSharedValue(formattedText);
+
   const fillColor = gradientColorsHome.darkColor;
   const strokeColor = gradientColors.darkColor;
   const momentTextColor = gradientColorsHome.darkColor;
   const categoryTextColor = gradientColorsHome.darkColor;
+
+  const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
   //Added from chatGPT
   const capitalizeFirstFiveWords = (text) => {
@@ -47,9 +64,34 @@ const MomentCard = ({
       .concat(words.slice(5));
     return capitalizedWords.join(" ");
   };
-
-  
  
+
+  const animatedProps = useAnimatedProps(() => {
+    return {
+      text: momentText.value,
+      value: momentText.value,
+    };
+  });
+
+
+  //   const animatedCategoryProps = useAnimatedProps(() => {
+  //   return {
+  //    // text: momentCategoryText.value,
+  //     value: `# ${momentCategoryText.value}`,
+  //   };
+  // });
+
+const animatedCategoryProps = useAnimatedProps(() => {
+  const original = momentCategoryText.value;
+
+  const truncated = original.length > 26
+    ? original.slice(0, 26) + '...'
+    : original;
+
+  return {
+    value: `# ${truncated} • added ${momentCreatedText.value}`,
+  };
+});
 
   return (
     <SlideAwayOnSuccess
@@ -62,11 +104,10 @@ const MomentCard = ({
       borderColor={borderColor}
     >
       <MomentLeavesUI
-      index={index}
+        index={index}
         fillColor={fillColor}
         strokeColor={strokeColor}
         height={heightToMatchWithFlatList}
-   
         width={"100%"}
         largeLeafSize={400}
         smallLeafSize={420}
@@ -107,7 +148,20 @@ const MomentCard = ({
                   },
                 ]}
               >
-                <Animated.Text
+                <AnimatedTextInput
+                  multiline={false}
+                  animatedProps={animatedCategoryProps}
+                  editable={false}
+                  numberOfLines={numberOfLinesToMatchWithFlatList}
+                  style={[
+                    styles.categoryText,
+                    { color: categoryTextColor, opacity: 1 },
+                  ]}
+                  underlineColorAndroid="transparent"  
+                  pointerEvents="none"  
+                />
+
+               {/* <Animated.Text
                   style={[
                     styles.categoryText,
                     { color: categoryTextColor, opacity: 1 },
@@ -127,9 +181,12 @@ const MomentCard = ({
                       { color: categoryTextColor, opacity: 1 },
                     ]}
                     opacity={1}
-                  />
-                </Animated.Text>
-                <Animated.Text
+                  />    </Animated.Text>  */}
+
+                <AnimatedTextInput
+                  multiline={true}
+                  animatedProps={animatedProps} 
+                  editable={false}
                   numberOfLines={numberOfLinesToMatchWithFlatList}
                   style={[
                     styles.momentText,
@@ -137,28 +194,27 @@ const MomentCard = ({
                     {
                       color: momentTextColor,
                       fontSize: size,
-                      opacity: 1,
+                      textAlignVertical: 'top', 
+                      // opacity: 1,
                     },
                   ]}
-                >
-                  {capitalizeFirstFiveWords(moment.capsule)}
-                </Animated.Text>
+                  underlineColorAndroid="transparent" // Optional: removes underline on Android
+                  pointerEvents="none" // Optional: disable interaction if acting like static Text
+                />
               </Animated.View>
             </MomentPulseBobReceiver>
           </Animated.View>
         </View>
       </TouchableOpacity>
-      <Animated.View
-        style={[styles.sliderContainer, { opacity: 1 }]}
-      >
-        <SlideToAdd
+      <Animated.View style={[styles.sliderContainer, { opacity: 1 }]}>
+        {/* <SlideToAdd
           onPress={onSliderPull}
           sliderText="ADD TO HELLO"
           sliderTextSize={13}
           sliderTextVisible={1}
           targetIcon={CheckmarkOutlineSvg}
-        //  disabled={sliderVisible !== 1}
-        />
+          //  disabled={sliderVisible !== 1}
+        /> */}
       </Animated.View>
     </SlideAwayOnSuccess>
   );

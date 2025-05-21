@@ -32,7 +32,7 @@ const CustomStatusBar = () => {
             <StatusBar
                 style={color} 
                 translucent={true}
-                backgroundColor="transparent"
+                //backgroundColor="transparent"
             /> 
         </>
     );
