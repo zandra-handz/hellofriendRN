@@ -14,6 +14,7 @@ import {
   deleteMomentAPI,
 } from "../calls/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useUser } from "./UserContext";
 
 const CapsuleListContext = createContext({
   capsuleList: [],
@@ -41,6 +42,7 @@ export const useCapsuleList = () => {
 
 export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
+  const { user } = useUser();
   const queryClient = useQueryClient();
 
   const [sortedByCategory, setSortedByCategory] = useState([]);
@@ -48,15 +50,15 @@ export const CapsuleListProvider = ({ children }) => {
 
   const [resultMessage, setResultMessage] = useState(null);
   const [closeResultMessage, setCloseResultMessage] = useState(true);
-  const [momentIdToAnimate, setMomentIdToAnimate] = useState(null);
-  const [momentSaveToAnimate, setMomentSaveToAnimate] = useState({});
+  const [momentIdToAnimate, setMomentIdToAnimate] = useState(null); 
+   const [momentIdToUpdate, setMomentIdToUpdate] = useState(null); 
   const [newMomentInput, setNewMomentInput] = useState("");
 
   const { data: sortedCapsuleList = [], isLoading: isCapsuleContextLoading } =
     useQuery({
       queryKey: ["Moments", selectedFriend?.id],
       queryFn: () => fetchMomentsAPI(selectedFriend.id),
-      enabled: !!selectedFriend,
+      enabled: !!(selectedFriend && user?.authenticated),
       staleTime: 0,
       onSuccess: (data) => {
         const initialCache = queryClient.getQueryData([
@@ -152,11 +154,10 @@ export const CapsuleListProvider = ({ children }) => {
       }),
 
     onSuccess: (data) => { 
-      setMomentData(data);
-
+      setMomentData(data); 
       setMomentIdToAnimate(data.id);
  
-      const oldMoments = queryClient.getQueryData([
+      queryClient.getQueryData([
         "Moments",
         selectedFriend?.id,
       ]); 
@@ -177,7 +178,7 @@ export const CapsuleListProvider = ({ children }) => {
 
 
   const handleEditMoment = (capsuleId, capsuleEditData) => {
-    console.log(`${capsuleId} ${capsuleEditData}`);
+  
     editMomentMutation.mutate({capsuleId, capsuleEditData});
   }
 
@@ -186,17 +187,31 @@ export const CapsuleListProvider = ({ children }) => {
       updateMomentAPI(selectedFriend?.id, capsuleId, capsuleEditData),
 
     onSuccess: (data) => {
+            setMomentData(data); 
+      setMomentIdToUpdate(data.id); 
 
-      queryClient.invalidateQueries(["Moments", selectedFriend?.id]);
-      queryClient.refetchQueries(["Moments", selectedFriend?.id]);
+       queryClient.invalidateQueries(["Moments", selectedFriend?.id]);
+      // queryClient.refetchQueries(["Moments", selectedFriend?.id]);
  
-    //   queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
-    //     return oldMoments
-    //       ? oldMoments.map((moment) =>
-    //           moment.id === updatedMoment.id ? updatedMoment : moment
-    //         )
-    //       : [];
-    //   });
+queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
+ // console.log("Old moments:", oldMoments);
+
+  // const updatedMoments = oldMoments
+  //   ? oldMoments.map((moment) =>
+  //       moment.id === data.id ? data : moment
+  //     )
+  //   : [];
+
+
+  //REMOVING TO CHANGE CAPSULE LIST LENGTH IN MOMENTS SCREEN OTHERWISE WON'T UPDATE
+  const updatedMoments = oldMoments
+  ? oldMoments.filter((moment) => moment.id !== data.id)
+  : [];
+
+ // console.log("Updated moments:", updatedMoments);
+  return updatedMoments;
+});
+
     },
     onError: (error) => {
       if (timeoutRef.current) {
@@ -206,8 +221,7 @@ export const CapsuleListProvider = ({ children }) => {
       timeoutRef.current = setTimeout(() => {
         editMomentMutation.reset();
       }, 2000);
-
-      //  console.error('Error updating capsule:', error);
+ 
     },
     onSettled: () => {
       if (timeoutRef.current) {
@@ -268,7 +282,8 @@ export const CapsuleListProvider = ({ children }) => {
               ...updatedMoments[momentIndex],
               ...momentData,
               //preAdded: true,
-            };
+            }; 
+
           } else {
             updatedMoments.unshift(momentData); // Add new moment if it doesn't exist
           }
@@ -297,19 +312,19 @@ export const CapsuleListProvider = ({ children }) => {
   const updateCapsules = (updatedCapsules) =>
     updateCapsulesMutation.mutate(updatedCapsules);
 
+
+
+
   const createMomentMutation = useMutation({
     mutationFn: (data) => saveMomentAPI(data),
     onError: (error) => {
       setResultMessage("Oh no! :( Please try again");
-
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
-      }
-
-      // Set new timeout to reset the state after 2 seconds
+      } 
       timeoutRef.current = setTimeout(() => {
         createMomentMutation.reset();
-        setCloseResultMessage(true);
+       // setCloseResultMessage(true);
         setResultMessage(null);
       }, 2000);
     },
@@ -320,35 +335,25 @@ export const CapsuleListProvider = ({ children }) => {
         capsule: data.capsule,
         created: data.created_on,
         preAdded: data.pre_added_to_hello,
-      };
-
-      setMomentSaveToAnimate(data);
+      }; 
 
       queryClient.setQueryData(["Moments", selectedFriend?.id], (old) =>
         old ? [formattedMoment, ...old] : [formattedMoment]
       );
 
       // Log the updated moments cache
-      const updatedCache = queryClient.getQueryData([
-        "Moments",
-        selectedFriend?.id,
-      ]);
-      // console.log(
-      //   "Updated moments cache after saving a new moment:",
-      //   updatedCache
-      // );
+      // const updatedCache = queryClient.getQueryData([
+      //   "Moments",
+      //   selectedFriend?.id,
+      // ]); 
 
-      setResultMessage("Moment saved!");
-
-      // Clear previous timeout if any
+      setResultMessage("Moment saved!"); 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
-      }
-
-      // Set new timeout to reset the state after 2 seconds
+      } 
       timeoutRef.current = setTimeout(() => {
         createMomentMutation.reset();
-        setCloseResultMessage(true);
+       // setCloseResultMessage(true);
         setNewMomentInput("");
         setResultMessage(null);
       }, 2000);
@@ -356,19 +361,19 @@ export const CapsuleListProvider = ({ children }) => {
   });
  
 
-  useEffect(() => {
-    if (createMomentMutation.isPending) {
-      setCloseResultMessage(false);
-    }
-  }),
-    [createMomentMutation.isPending];
+  // useEffect(() => {
+  //   if (createMomentMutation.isPending) {
+  //     setCloseResultMessage(false);
+  //   }
+  // }),
+  //   [createMomentMutation.isPending];
 
   const resetCreateMomentInputs = ({ setMomentText }) => {
     setMomentText("");
   };
 
   const handleCreateMoment = async (momentData) => {
-    console.log(momentData);
+ 
     const moment = {
       user: momentData.user,
       friend: momentData.friend,
@@ -384,8 +389,7 @@ export const CapsuleListProvider = ({ children }) => {
     }
   };
 
-  const deleteMomentRQuery = async (data) => {
-    //console.log("handleDeleteMoment requires completion!", data);
+  const deleteMomentRQuery = async (data) => { 
 
     try {
       await deleteMomentMutation.mutateAsync(data);
@@ -410,7 +414,7 @@ export const CapsuleListProvider = ({ children }) => {
 
       timeoutRef.current = setTimeout(() => {
         deleteMomentMutation.reset();
-        setCloseResultMessage(true);
+      //  setCloseResultMessage(true);
         setNewMomentInput("");
         setResultMessage(null);
       }, 2000);
@@ -425,18 +429,18 @@ export const CapsuleListProvider = ({ children }) => {
       // Set new timeout to reset the state after 2 seconds
       timeoutRef.current = setTimeout(() => {
         deleteMomentMutation.reset();
-        setCloseResultMessage(true);
+      //  setCloseResultMessage(true);
         setResultMessage(null);
       }, 2000);
     },
   });
 
-  useEffect(() => {
-    if (deleteMomentMutation.isPending) {
-      setCloseResultMessage(false);
-    }
-  }),
-    [deleteMomentMutation.isPending];
+  // useEffect(() => {
+  //   if (deleteMomentMutation.isPending) {
+  //     setCloseResultMessage(false);
+  //   }
+  // }),
+  //   [deleteMomentMutation.isPending];
 
   const removeCapsules = (capsuleIdsToRemove) => {
     queryClient.setQueryData(["Moments", selectedFriend?.id], (oldCapsules) =>
@@ -482,7 +486,7 @@ export const CapsuleListProvider = ({ children }) => {
         createMomentMutation,
         resetCreateMomentInputs,
         resultMessage,
-        closeResultMessage,
+       // closeResultMessage,
         updateCapsule,
         updateCapsuleMutation,
         handleEditMoment,
@@ -492,6 +496,8 @@ export const CapsuleListProvider = ({ children }) => {
         sortNewestFirst,
         momentIdToAnimate,
         setMomentIdToAnimate,
+        momentIdToUpdate,
+        setMomentIdToUpdate,
       }}
     >
       {children}

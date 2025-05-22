@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
@@ -10,19 +10,21 @@ const BodyStyling = ({
   paddingTop = "6%",
   paddingBottom = "0%",
   paddingHorizontal = "0%",
+  borderWidth = 1,
   transparentBackground = false,
   transparentBorder = false,
   children,
 }) => {
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appContainerStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
 
   return (
     <View
       style={[
-        styles.container,
+        appContainerStyles.bodyContainer,
         // themeStyles.genericTextBackground,
         {
+          
           backgroundColor: transparentBackground
             ? "transparent"
             : themeStyles.genericTextBackground.backgroundColor,
@@ -32,6 +34,7 @@ const BodyStyling = ({
           paddingTop: paddingTop,
           paddingBottom: paddingBottom,
           paddingHorizontal: paddingHorizontal,
+          borderWidth: borderWidth,
           borderColor: transparentBorder
           ? "transparent" 
           : themeAheadOfLoading.lightColor,
@@ -42,18 +45,6 @@ const BodyStyling = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignContent: "center",
-    alignSelf: "center",
-    borderWidth: 1,
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderRadius: 30,
-    flexDirection: "column",
-    justifyContent: "space-between",
-  },
-});
+ 
 
 export default BodyStyling;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useRoute } from "@react-navigation/native";
@@ -10,7 +10,7 @@ import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import ContentMomentView from "@/app/components/moments/ContentMomentView";
 import NavigationArrows from "@/app/components/appwide/button/NavigationArrows";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
- 
+import { useFocusEffect } from "@react-navigation/native";
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
@@ -30,6 +30,7 @@ const ScreenMomentView = () => {
 
   useEffect(() => {
     if (moment) {
+      console.log('mment triggered in view', moment);
       const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
       const index = capsuleList.findIndex((mom) => mom.id === moment.id);
       setCurrentIndex(index);
@@ -38,14 +39,29 @@ const ScreenMomentView = () => {
   }, [moment]);
 
   //Updates if one is edited
-  useEffect(() => {
+
+useFocusEffect(
+  useCallback(() => {
     if (capsuleList) {
+      console.log('MOMENT VIEW FOCUSED');
+      console.log(currentIndex);
+      console.log(momentInView);
       const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
       const index = capsuleList.findIndex((mom) => mom.id === moment.id);
       setCurrentIndex(index);
       setMomentInView(matchingMoment);
     }
-  }, [capsuleList]);
+  }, [capsuleList, moment.id]) // dependencies for the useCallback
+);
+  
+  // useEffect(() => {
+  //   if (capsuleList) {
+  //     const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
+  //     const index = capsuleList.findIndex((mom) => mom.id === moment.id);
+  //     setCurrentIndex(index);
+  //     setMomentInView(matchingMoment);
+  //   }
+  // }, [capsuleList]);
 
   //manually closing this for right now because I give up
   useEffect(() => {
@@ -74,16 +90,16 @@ const ScreenMomentView = () => {
     //This runs before capsule list length updates
     if (updateCapsuleMutation.isSuccess) {
       updateCacheWithNewPreAdded(); //The animation in the screen itself triggers this too but after a delay, not sure if I need this here
-      console.log(`capsule list length after update: ${capsuleList?.length}`);
+    //  console.log(`capsule list length after update: ${capsuleList?.length}`);
 
       if (capsuleList?.length < 1) {
         closeModal();
       }
 
       let lastIndex = capsuleList.length - 1;
-      console.log(
-        `lastIndex value: ${lastIndex}, currentIndex value: ${currentIndex}, capsuleCount: ${capsuleCount}`
-      );
+      // console.log(
+      //   `lastIndex value: ${lastIndex}, currentIndex value: ${currentIndex}, capsuleCount: ${capsuleCount}`
+      // );
       if (currentIndex != lastIndex) {
         if (currentIndex < lastIndex) {
           goToNextMomentAfterRemovedPrev();

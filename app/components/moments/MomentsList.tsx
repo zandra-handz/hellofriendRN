@@ -1,26 +1,21 @@
-import React, { useRef, useState, useEffect, useCallback  } from "react";
-import {
-  View, 
-  Text, 
-  Keyboard,
-  ViewToken,
-} from "react-native";
-
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { View,  Keyboard, ViewToken } from "react-native";
 
 import { useFriendList } from "@/src/context/FriendListContext";
-import throttle from 'lodash.throttle';
+
 import ButtonGoToAddMoment from "../buttons/moments/ButtonGoToAddMoment";
-import LizardSvg from "@/app/assets/svgs/lizard.svg"; 
+import LizardSvg from "@/app/assets/svgs/lizard.svg";
 import MomentsNavigator from "./MomentsNavigator";
 import CategoryNavigator from "./CategoryNavigator";
-import MomentsSearchBar from "./MomentsSearchBar";
-import DiceRandom3dSolidSvg from "@/app/assets/svgs/dice-random-3d-solid.svg";
-import { FlashList } from "@shopify/flash-list";
+import MomentsSearchBar from "./MomentsSearchBar"; 
+import DiceRollScroll from "./DiceRollScroll";
 import MomentCardAnimationWrapper from "./MomentCardAnimationWrapper";
- 
+
+import LargeCornerLizard from "./LargeCornerLizard";
+
 import Animated, {
   useSharedValue,
-  useAnimatedScrollHandler, 
+  useAnimatedScrollHandler,
   withTiming,
   runOnJS,
 } from "react-native-reanimated";
@@ -39,33 +34,34 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 // enableFreeze(true);
 
 const ITEM_HEIGHT = 290;
-const ITEM_BOTTOM_MARGIN = 0; 
+const ITEM_BOTTOM_MARGIN = 0;
 
 const MomentsList = () => {
-  const { themeStyles, appContainerStyles } = useGlobalStyle();
+  const {   appContainerStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const {
     capsuleList,
     setMomentIdToAnimate,
+
     momentIdToAnimate,
+    momentIdToUpdate,
+    setMomentIdToUpdate,
     updateCacheWithNewPreAdded,
+    updateCacheWithEditedMoment,
     categoryNames,
     categoryStartIndices,
     updateCapsule,
   } = useCapsuleList();
 
   const navigation = useNavigation();
-
-  const [currentVisibleIndex, setCurrentVisibleIndex] = useState(null);
+ 
   const viewabilityConfig = {
     itemVisiblePercentThreshold: 50,
   };
- 
 
   const [selectedMomentToView, setSelectedMomentToView] = useState(null);
   const [isMomentNavVisible, setMomentNavVisible] = useState(false);
   const flatListRef = useRef(null);
- 
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -95,23 +91,31 @@ const MomentsList = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
- 
 
-useEffect(() => {
-  if (momentIdToAnimate) { 
-  
-    translateX.value = withTiming(500, { duration: 0 }, () => { 
-      heightAnim.value = withTiming(0, { duration: 200 }, () => { 
-        runOnJS(updateCacheWithNewPreAdded)();
-        runOnJS(setMomentIdToAnimate)(null);
- 
-        fadeAnim.value = 1;
-        heightAnim.value = withTiming(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN, { duration: 0 });
-        translateX.value = withTiming(0, { duration: 0 });
+  useEffect(() => {
+    if (momentIdToAnimate) {
+      translateX.value = withTiming(500, { duration: 0 }, () => {
+        heightAnim.value = withTiming(0, { duration: 200 }, () => {
+          runOnJS(updateCacheWithNewPreAdded)();
+          runOnJS(setMomentIdToAnimate)(null);
+
+          fadeAnim.value = 1;
+          heightAnim.value = withTiming(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN, {
+            duration: 0,
+          });
+          translateX.value = withTiming(0, { duration: 0 });
+        });
       });
-    });
-  }
-}, [momentIdToAnimate]);
+    }
+  }, [momentIdToAnimate]);
+
+  useEffect(() => {
+    if (momentIdToUpdate) {
+      console.log("moment updated!");
+      runOnJS(updateCacheWithEditedMoment)();
+      runOnJS(setMomentIdToUpdate)(null);
+    }
+  }, [momentIdToUpdate]);
 
   const scrollToMoment = (moment) => {
     if (moment.uniqueIndex !== undefined) {
@@ -122,41 +126,44 @@ useEffect(() => {
     }
   };
 
-  const scrollToRandomItem = () => {
-    if (capsuleList.length === 0) return;
+// may not need to be in a callback since not inside an animated view
+  const scrollToRandomItem = useCallback(() => {
+  if (capsuleList.length === 0) return;
 
-    const randomIndex = Math.floor(Math.random() * capsuleList.length);
-    flatListRef.current?.scrollToIndex({
-      index: randomIndex,
-      animated: true,
-    });
-  };
+  const randomIndex = Math.floor(Math.random() * capsuleList.length);
+  flatListRef.current?.scrollToIndex({
+    index: randomIndex,
+    animated: true,
+  });
+}, [capsuleList]);
 
-  // const saveToHello = async (moment) => {
-  //   try {
-  //     updateCapsule(moment.id);
-  //   } catch (error) {
-  //     console.error("Error during pre-save:", error);
-  //   }
+  // const scrollToRandomItem = () => {
+  //   if (capsuleList.length === 0) return;
+
+  //   const randomIndex = Math.floor(Math.random() * capsuleList.length);
+  //   flatListRef.current?.scrollToIndex({
+  //     index: randomIndex,
+  //     animated: true,
+  //   });
   // };
+ 
 
+   // changed to a callback to help list animation performance
   const saveToHello = useCallback((moment) => {
-      try {
+    try {
       updateCapsule(moment.id);
     } catch (error) {
       console.error("Error during pre-save:", error);
     }
-}, []);
+  }, []);
 
+
+  // changed to a callback to help list animation performance
   const handleNavigateToMomentView = useCallback((moment) => {
-     navigation.navigate("MomentView", { moment: moment });
+    navigation.navigate("MomentView", { moment: moment });
+  }, []);
+
  
-}, []);
-
-  // const handleNavigateToMomentView = (moment) => {
-  //   navigation.navigate("MomentView", { moment: moment });
-  // };
-
   const closeMomentNav = () => {
     setMomentNavVisible(false);
   };
@@ -177,40 +184,35 @@ useEffect(() => {
       scrollY.value = event.contentOffset.y;
     },
   });
- 
+
   const viewableItemsArray = useSharedValue<ViewToken[]>([]);
-  
-const renderMomentItem = useCallback(
-  ({ item, index }) => (
-    <MomentCardAnimationWrapper
-      viewableItemsArray={viewableItemsArray}
-      item={item}
-      index={index}
-      momentIdToAnimate={momentIdToAnimate}
-      fadeAnim={fadeAnim}
-      translateY={translateY}
-      handleNavigateToMomentView={handleNavigateToMomentView}
-      saveToHello={saveToHello}
-    />
-  ),
-  [
-    viewableItemsArray,
-    momentIdToAnimate,
-    fadeAnim,
-    translateY,
-    handleNavigateToMomentView,
-    saveToHello,
-  ]
-);
+
+  const renderMomentItem = useCallback(
+    ({ item, index }) => (
+      <MomentCardAnimationWrapper
+        viewableItemsArray={viewableItemsArray}
+        item={item}
+        index={index}
+        momentIdToAnimate={momentIdToAnimate}
+        fadeAnim={fadeAnim}
+        translateY={translateY}
+        handleNavigateToMomentView={handleNavigateToMomentView}
+        saveToHello={saveToHello}
+      />
+    ),
+    [
+      viewableItemsArray,
+      momentIdToAnimate,
+      fadeAnim,
+      translateY,
+      handleNavigateToMomentView,
+      saveToHello,
+    ]
+  );
 
   return (
     <View style={appContainerStyles.screenContainer}>
-      <LizardSvg
-        height={300}
-        width={300}
-        color={themeStyles.genericTextBackground.backgroundColor}
-        style={appContainerStyles.bigLizardRotate}
-      />
+      <LargeCornerLizard />
 
       <BelowHeaderContainer
         height={30}
@@ -218,20 +220,12 @@ const renderMomentItem = useCallback(
         marginBottom={4}
         justifyContent="flex-end"
         children={
-          <>
-            <View style={{ flexDirection: "row", marginHorizontal: 10 }}>
-              <View style={{ height: 30, justifyContent: "center" }}>
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                  pick random{" "}
-                </Text>
-              </View>
-              <DiceRandom3dSolidSvg
-                height={belowHeaderIconSize}
-                width={belowHeaderIconSize}
-                color={themeAheadOfLoading.fontColorSecondary}
-                onPress={scrollToRandomItem}
-              />
-            </View>
+          <> 
+            <DiceRollScroll
+              size={belowHeaderIconSize}
+              color={themeAheadOfLoading.fontColorSecondary}
+              onPress={scrollToRandomItem}
+            />
             <MomentsSearchBar
               data={capsuleList}
               height={25}
@@ -242,45 +236,42 @@ const renderMomentItem = useCallback(
               backgroundColor={"transparent"}
               onPress={scrollToMoment}
               searchKeys={["capsule", "typedCategory"]}
-              iconSize={belowHeaderIconSize * 0.7}
+              iconSize={belowHeaderIconSize * 0.5}
             />
           </>
         }
       />
 
-      <BodyStyling
+<View style={{
+ // flex: 1,
+  alignContent: "center",
+    alignSelf: "center",
+    width: '100%',
+      flexDirection: "column",
+    justifyContent: "space-between",
+    height: '87%',
+    
+
+
+}}>
+      {/* <BodyStyling
         height={"87%"}
         width={"100%"}
         minHeight={"87%"}
-        paddingTop={0}
+        paddingTop={'0%'}
         transparentBackground={true}
         transparentBorder={true}
-        paddingHorizontal={0}
-        children={
+        paddingHorizontal={'0%'}
+        children={ */}
           <>
             <Animated.FlatList
               ref={flatListRef}
               data={capsuleList}
               fadingEdgeLength={20}
-              
               onViewableItemsChanged={({ viewableItems: vItems }) => {
-                // console.log(vItems[0]);
                 viewableItemsArray.value = vItems;
               }}
               renderItem={renderMomentItem}
-
-              // renderItem={({ item, index }) => (
-              //   <MomentCardAnimationWrapper
-              //     viewableItemsArray={viewableItemsArray}
-              //     item={item}
-              //     index={index} 
-              //     momentIdToAnimate={momentIdToAnimate}
-              //     fadeAnim={fadeAnim}
-              //     translateY={translateY}
-              //     handleNavigateToMomentView={handleNavigateToMomentView}
-              //     saveToHello={saveToHello}  
-              //   />
-              // )}
               keyExtractor={(item, index) =>
                 item?.id ? item?.id.toString() : `placeholder-${index}`
               }
@@ -289,38 +280,42 @@ const renderMomentItem = useCallback(
                 offset: (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN) * index,
                 index,
               })}
-              onScroll={scrollHandler} 
+              onScroll={scrollHandler}
               initialNumToRender={10}
               maxToRenderPerBatch={10}
               windowSize={10}
-              
               removeClippedSubviews={true}
               showsVerticalScrollIndicator={false}
               ListFooterComponent={() => (
                 <View style={{ height: momentListBottomSpacer }} />
               )}
-              onScrollToIndexFailed={(info) => { //scroll to beginning maybe instead? not sure what this is doing
+              onScrollToIndexFailed={(info) => {
+                //scroll to beginning maybe instead? not sure what this is doing
                 flatListRef.current?.scrollToOffset({
                   offset: info.averageItemLength * info.index,
                   animated: true,
                 });
               }}
-              snapToInterval={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN} // Set the snapping interval to the height of each item
-              snapToAlignment="start" // Align items to the top of the list when snapped
+              snapToInterval={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN}
+              snapToAlignment="start"  
               decelerationRate="fast" // Optional: makes the scroll feel snappier
               keyboardDismissMode="on-drag"
               viewabilityConfig={viewabilityConfig}
             />
           </>
-        }
-      />
+
+        {/* }
+      /> */}
+      
+  
+</View>
 
       {!isKeyboardVisible && (
         <>
           <CategoryNavigator
             viewableItemsArray={viewableItemsArray}
             categoryNames={categoryNames}
-            onPress={scrollToCategoryStart} 
+            onPress={scrollToCategoryStart}
           />
 
           <ButtonGoToAddMoment />
@@ -336,5 +331,5 @@ const renderMomentItem = useCallback(
     </View>
   );
 };
- 
+
 export default MomentsList;

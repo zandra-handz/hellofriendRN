@@ -207,14 +207,14 @@ const animatedCategoryProps = useAnimatedProps(() => {
         </View>
       </TouchableOpacity>
       <Animated.View style={[styles.sliderContainer, { opacity: 1 }]}>
-        <SlideToAdd
+        {/* <SlideToAdd
           onPress={onSliderPull}
           sliderText="ADD TO HELLO"
           sliderTextSize={13}
           sliderTextVisible={1}
           targetIcon={CheckmarkOutlineSvg}
           //  disabled={sliderVisible !== 1}
-        />
+        /> */}
       </Animated.View>
     </SlideAwayOnSuccess>
   );

@@ -1,17 +1,11 @@
 import {
   View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Animated,
+  Text, 
   ScrollView,
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import CategoryButton from "./CategoryButton";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useAnimatedStyle, useSharedValue, useAnimatedReaction, withRepeat, withTiming } from 'react-native-reanimated';
-
+import React from "react";
+import CategoryButton from "./CategoryButton"; 
 const CategoryNavigator = ({
   viewableItemsArray,
   categoryNames,

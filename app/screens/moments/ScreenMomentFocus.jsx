@@ -6,7 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import SafeView from "@/app/components/appwide/format/SafeView";
 import ContentMomentFocus from "@/app/components/moments/ContentMomentFocus";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
- 
+
 import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
 
 

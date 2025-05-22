@@ -707,6 +707,7 @@ export const fetchUpcomingHelloes = async () => {
 
 
 export const fetchMomentsAPI = async (friendId) => {
+    console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
     try {
         const response = await helloFriendApiClient.get(`/friends/${friendId}/thoughtcapsules/`);
         if (response && response.data) { 
@@ -716,7 +717,7 @@ export const fetchMomentsAPI = async (friendId) => {
                 capsule: capsule.capsule,
                 created: capsule.created_on,
                 preAdded: capsule.pre_added_to_hello,
-            }));
+            })); 
             return capsules;
         } else {
             console.log("fetchThoughtCapsules: no capsules added yet");
@@ -843,7 +844,7 @@ export const updateMomentAPI = async (friendId, capsuleId, capsuleData) => {
     console.log(`data in updateMomentApi ${capsuleId}, ${capsuleData}`);
     try {
         const response = await helloFriendApiClient.patch(`/friends/${friendId}/thoughtcapsule/${capsuleId}/`, capsuleData);
-        console.log(response.capsule);
+        console.log(response.status);
         return response.data;
     } catch (error) {
         if (error.response) {

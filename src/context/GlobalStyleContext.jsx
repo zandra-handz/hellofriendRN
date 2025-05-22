@@ -164,6 +164,21 @@ const containerStyles = StyleSheet.create({
     width: "100%",
     flex: 1,
     zIndex: 1,
+    elevation: 1,
+  },
+
+  bodyContainer: {
+    alignContent: "center",
+    alignSelf: "center",
+    borderWidth: 0,
+    width: '100%', 
+    borderTopRightRadius: 30,
+    borderTopLeftRadius: 30,
+    // borderRadius: 30, 
+    flexDirection: "column",
+    justifyContent: "space-between",
+    zIndex: 1,
+    elevation: 1,
   },
 
   homeHeaderContainer: {
@@ -277,7 +292,7 @@ const containerStyles = StyleSheet.create({
     padding: 10,
     top: 30,
     right: -10,
-    width: 300, 
+    width: 300,
     //height: 100,
     maxHeight: 300,
     borderRadius: 20,
@@ -290,22 +305,21 @@ const containerStyles = StyleSheet.create({
   },
   searchBarResultsListContainer: {
     paddingHorizontal: 6,
-  
+
     borderRadius: 20,
     zIndex: 1000,
-
   },
   searchBarResultListItem: {
     paddingVertical: 6,
     marginVertical: 4,
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    textAlign: 'left',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    textAlign: "left",
+    justifyContent: "flex-start",
 
-    height: 'auto',
-    borderBottomWidth: 1, 
+    height: "auto",
+    borderBottomWidth: 1,
     borderRadius: 0,
   },
 
@@ -330,6 +344,19 @@ const containerStyles = StyleSheet.create({
       // Flip horizontally (mirror image)
     ],
     opacity: 0.8,
+  },
+  bigGeckoRotate: {
+    zIndex: 50000,
+    elevation: 50000,
+    position: "absolute",
+    zIndex: 0,
+    bottom: -100,
+    left: -90,
+    transform: [
+      { rotate: "-0deg" },
+      // Flip horizontally (mirror image)
+    ],
+    opacity: 1,
   },
 });
 
@@ -409,8 +436,7 @@ const fontStyles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
   },
   searchBarResultListItemText: {
-      fontSize: 15,
-
+    fontSize: 15,
   },
 });
 

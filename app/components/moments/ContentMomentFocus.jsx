@@ -3,16 +3,12 @@ import {
   View,
   StyleSheet,
   Keyboard,
-  Dimensions,
-  KeyboardAvoidingView,
   TouchableWithoutFeedback,
 } from "react-native";
 
 import { useUser } from "@/src/context/UserContext";
 import LeafTopContainer from "./LeafTopContainer";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
-import SafeView from "../appwide/format/SafeView";
-import SimpleDisplayCard from "../appwide/display/SimpleDisplayCard";
 
 import TextMomentBox from "./TextMomentBox";
 
@@ -20,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 import FriendSelectModalVersionButtonOnly from "@/app/components/friends/FriendSelectModalVersionButtonOnly";
 
@@ -45,7 +42,7 @@ const ContentMomentFocus = ({
   } = useCapsuleList(); // NEED THIS TO ADD NEW
   const { user } = useUser();
   const navigation = useNavigation();
-
+  const { themeStyles, appContainerStyles } = useGlobalStyle();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const momentTextRef = useRef(null);
@@ -90,7 +87,7 @@ const ContentMomentFocus = ({
         }
       }
 
-      momentTextRef.current.setText(text); 
+      momentTextRef.current.setText(text);
     }
     if (text.length < 1) {
       if (showCategoriesSlider) {
@@ -152,27 +149,27 @@ const ContentMomentFocus = ({
 
   useEffect(() => {
     if (editMomentMutation.isSuccess) {
-      navigation.goBack();
+      navigation.navigate("Moments");
     }
   }, [editMomentMutation.isSuccess, editMomentMutation.data]);
 
   return (
     <TouchableWithoutFeedback onPress={() => {}}>
-      <View style={styles.container}>
-        <View
-          style={{
-            position: "absolute",
-            zIndex: 6000,
-            elevation: 6000,
-            top: -20,
-            right: 60,
-          }}
-        >
-          <FriendSelectModalVersionButtonOnly
-            includeLabel={false}
-            width="100%"
-          />
-        </View>
+      <View style={appContainerStyles.screenContainer}>
+   
+
+        <BelowHeaderContainer
+          height={30}
+          alignItems="center"
+          marginBottom={4}
+          justifyContent="flex-end"
+          children={
+            <FriendSelectModalVersionButtonOnly
+              includeLabel={false}
+              width="100%"
+            />
+          }
+        /> 
         <View
           style={{
             width: "100%",
