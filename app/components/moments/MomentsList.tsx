@@ -1,5 +1,11 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { View,  Keyboard, ViewToken } from "react-native";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { View, Keyboard, ViewToken } from "react-native";
 
 import { useFriendList } from "@/src/context/FriendListContext";
 
@@ -7,7 +13,7 @@ import ButtonGoToAddMoment from "../buttons/moments/ButtonGoToAddMoment";
 import LizardSvg from "@/app/assets/svgs/lizard.svg";
 import MomentsNavigator from "./MomentsNavigator";
 import CategoryNavigator from "./CategoryNavigator";
-import MomentsSearchBar from "./MomentsSearchBar"; 
+import MomentsSearchBar from "./MomentsSearchBar";
 import DiceRollScroll from "./DiceRollScroll";
 import MomentCardAnimationWrapper from "./MomentCardAnimationWrapper";
 
@@ -15,6 +21,7 @@ import LargeCornerLizard from "./LargeCornerLizard";
 
 import Animated, {
   useSharedValue,
+  useDerivedValue,
   useAnimatedScrollHandler,
   withTiming,
   runOnJS,
@@ -37,7 +44,7 @@ const ITEM_HEIGHT = 290;
 const ITEM_BOTTOM_MARGIN = 0;
 
 const MomentsList = () => {
-  const {   appContainerStyles } = useGlobalStyle();
+  const { appContainerStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const {
     capsuleList,
@@ -54,10 +61,33 @@ const MomentsList = () => {
   } = useCapsuleList();
 
   const navigation = useNavigation();
- 
-  const viewabilityConfig = {
-    itemVisiblePercentThreshold: 50,
-  };
+
+  // const viewabilityConfig = {
+  //  itemVisiblePercentThreshold: 50,
+  //  // viewAreaCoveragePercentThreshold: 50,
+
+  // };
+
+  // Move this inside your component:
+const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+  viewableItemsArray.value = viewableItems;
+}, []);
+
+const viewabilityConfig = useRef({
+  minimumViewTime: 100,
+  itemVisiblePercentThreshold: 50,
+  //viewAreaCoveragePercentThreshold: 50,
+  waitForInteraction: false,
+}).current;
+
+
+
+  const viewabilityConfigCallbackPairs = useRef([
+    {
+      viewabilityConfig,
+      onViewableItemsChanged,
+    },
+  ]);
 
   const [selectedMomentToView, setSelectedMomentToView] = useState(null);
   const [isMomentNavVisible, setMomentNavVisible] = useState(false);
@@ -72,9 +102,9 @@ const MomentsList = () => {
 
   const belowHeaderIconSize = 28;
 
-  const scrollY = useSharedValue(0);
-  const fadeAnim = useSharedValue(1);
-  const translateY = useSharedValue(0);
+  // const scrollY = useSharedValue(0);
+   const fadeAnim = useSharedValue(1);
+  // const translateY = useSharedValue(0);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -109,35 +139,36 @@ const MomentsList = () => {
     }
   }, [momentIdToAnimate]);
 
-  useEffect(() => {
-    if (momentIdToUpdate) {
-      console.log("moment updated!");
-      runOnJS(updateCacheWithEditedMoment)();
-      runOnJS(setMomentIdToUpdate)(null);
-    }
-  }, [momentIdToUpdate]);
+  // useEffect(() => {
+  //   if (momentIdToUpdate) {
+  //     console.log("moment updated!");
+  //     runOnJS(updateCacheWithEditedMoment)();
+  //     runOnJS(setMomentIdToUpdate)(null);
+  //   }
+  // }, [momentIdToUpdate]);
+
+  // const scrollToMoment = (moment) => {
+  //   if (moment.uniqueIndex !== undefined) {
+  //     flatListRef.current?.scrollToIndex({
+  //       index: moment.uniqueIndex,
+  //       animated: true,
+  //     });
+  //   }
+  // };
 
   const scrollToMoment = (moment) => {
-    if (moment.uniqueIndex !== undefined) {
-      flatListRef.current?.scrollToIndex({
-        index: moment.uniqueIndex,
-        animated: true,
-      });
-    }
-  };
+  if (moment.uniqueIndex !== undefined) {
+    flatListRef.current?.scrollToOffset({
+      offset: ITEM_HEIGHT * moment.uniqueIndex,
+      animated: false, // disables the "intermediate" rendering problem
+    });
+  }
+};
 
-// may not need to be in a callback since not inside an animated view
-  const scrollToRandomItem = useCallback(() => {
-  if (capsuleList.length === 0) return;
 
-  const randomIndex = Math.floor(Math.random() * capsuleList.length);
-  flatListRef.current?.scrollToIndex({
-    index: randomIndex,
-    animated: true,
-  });
-}, [capsuleList]);
 
-  // const scrollToRandomItem = () => {
+  // may not need to be in a callback since not inside an animated view
+  // const scrollToRandomItem = useCallback(() => {
   //   if (capsuleList.length === 0) return;
 
   //   const randomIndex = Math.floor(Math.random() * capsuleList.length);
@@ -145,10 +176,43 @@ const MomentsList = () => {
   //     index: randomIndex,
   //     animated: true,
   //   });
-  // };
- 
+  // }, [capsuleList]);
 
-   // changed to a callback to help list animation performance
+
+//   const scrollToRandomItem = useCallback(() => {
+//   if (capsuleList.length === 0) return;
+
+//   const randomIndex = Math.floor(Math.random() * capsuleList.length);
+//   const threshold = 10;
+//   const jumpIndex = Math.max(0, randomIndex - threshold);
+
+//   // Jump close to the item (no animation to skip intermediate renders)
+//   flatListRef.current?.scrollToOffset({
+    
+//     offset: ITEM_HEIGHT * jumpIndex,
+//     animated: false,
+//   });
+
+//   // Then smooth scroll the rest of the way
+//   setTimeout(() => {
+//     flatListRef.current?.scrollToIndex({
+//       index: randomIndex,
+//       animated: true,
+//     });
+//   }, 50);
+// }, [capsuleList]);
+
+  const scrollToRandomItem = () => {
+    if (capsuleList.length === 0) return;
+
+    const randomIndex = Math.floor(Math.random() * capsuleList.length);
+    flatListRef.current?.scrollToIndex({
+      index: randomIndex,
+      animated: false,
+    });
+  };
+
+  // changed to a callback to help list animation performance
   const saveToHello = useCallback((moment) => {
     try {
       updateCapsule(moment.id);
@@ -157,13 +221,11 @@ const MomentsList = () => {
     }
   }, []);
 
-
   // changed to a callback to help list animation performance
   const handleNavigateToMomentView = useCallback((moment) => {
     navigation.navigate("MomentView", { moment: moment });
   }, []);
 
- 
   const closeMomentNav = () => {
     setMomentNavVisible(false);
   };
@@ -179,23 +241,57 @@ const MomentsList = () => {
     }
   };
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
+  // const scrollHandler = useAnimatedScrollHandler({
+  //   onScroll: (event) => {
+  //     scrollY.value = event.contentOffset.y;
+  //   },
+  // });
 
   const viewableItemsArray = useSharedValue<ViewToken[]>([]);
 
+  const memoizedMomentData = useMemo(() => {
+    return capsuleList.map((item) => {
+      const rawDate = item?.created || "";
+      const date = new Date(rawDate);
+
+      const formattedDate = !isNaN(date.getTime())
+        ? new Intl.DateTimeFormat("en-US", {
+            month: "short",
+            day: "numeric",
+          }).format(date)
+        : "lol";
+
+      return { ...item, formattedDate };
+    });
+  }, [capsuleList]);
+
+  // const getFormattedDate = (item) => {
+  //   let rawDate = item?.created || '';
+  //   const date = new Date(rawDate);
+
+  //   const formattedDate = !isNaN(date.getTime())
+  //     ? new Intl.DateTimeFormat("en-US", {
+  //         month: "short",
+  //         day: "numeric",
+  //       }).format(date)
+  //     : "lol";
+
+  //   return formattedDate;
+  // };
+ const visibleItemId = useDerivedValue(() => {
+  const topItems = viewableItemsArray.value.slice(0, 1);
+  return topItems.length > 0 && topItems[0].isViewable ? topItems[0].item.id : null;
+});
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <MomentCardAnimationWrapper
         viewableItemsArray={viewableItemsArray}
         item={item}
+        date={item.formattedDate} // ✅ use precomputed date
         index={index}
         momentIdToAnimate={momentIdToAnimate}
-        fadeAnim={fadeAnim}
-        translateY={translateY}
+        visibleItemId={visibleItemId}
+        fadeAnim={fadeAnim} 
         handleNavigateToMomentView={handleNavigateToMomentView}
         saveToHello={saveToHello}
       />
@@ -203,12 +299,40 @@ const MomentsList = () => {
     [
       viewableItemsArray,
       momentIdToAnimate,
-      fadeAnim,
-      translateY,
+      fadeAnim, 
       handleNavigateToMomentView,
       saveToHello,
     ]
   );
+
+  // const renderMomentItem = useCallback(
+
+  //   ({ item, index }) => (
+
+  //     <MomentCardAnimationWrapper
+  //       viewableItemsArray={viewableItemsArray}
+  //       item={item}
+  //       date={getFormattedDate(item)}
+  //       index={index}
+  //       momentIdToAnimate={momentIdToAnimate}
+  //       fadeAnim={fadeAnim}
+  //       translateY={translateY}
+  //       handleNavigateToMomentView={handleNavigateToMomentView}
+  //       saveToHello={saveToHello}
+  //     />
+  //   ),
+  //   [
+  //     viewableItemsArray,
+  //     momentIdToAnimate,
+  //     fadeAnim,
+  //     translateY,
+  //     handleNavigateToMomentView,
+  //     saveToHello,
+  //   ]
+  // );
+
+  const extractItemKey = (item, index) =>
+  item?.id ? item.id.toString() : `placeholder-${index}`;
 
   return (
     <View style={appContainerStyles.screenContainer}>
@@ -220,7 +344,7 @@ const MomentsList = () => {
         marginBottom={4}
         justifyContent="flex-end"
         children={
-          <> 
+          <>
             <DiceRollScroll
               size={belowHeaderIconSize}
               color={themeAheadOfLoading.fontColorSecondary}
@@ -242,19 +366,18 @@ const MomentsList = () => {
         }
       />
 
-<View style={{
- // flex: 1,
-  alignContent: "center",
-    alignSelf: "center",
-    width: '100%',
-      flexDirection: "column",
-    justifyContent: "space-between",
-    height: '87%',
-    
-
-
-}}>
-      {/* <BodyStyling
+      <View
+        style={{
+          // flex: 1,
+          alignContent: "center",
+          alignSelf: "center",
+          width: "100%",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          height: "87%",
+        }}
+      >
+        {/* <BodyStyling
         height={"87%"}
         width={"100%"}
         minHeight={"87%"}
@@ -263,52 +386,51 @@ const MomentsList = () => {
         transparentBorder={true}
         paddingHorizontal={'0%'}
         children={ */}
-          <>
-            <Animated.FlatList
-              ref={flatListRef}
-              data={capsuleList}
-              fadingEdgeLength={20}
-              onViewableItemsChanged={({ viewableItems: vItems }) => {
-                viewableItemsArray.value = vItems;
-              }}
-              renderItem={renderMomentItem}
-              keyExtractor={(item, index) =>
-                item?.id ? item?.id.toString() : `placeholder-${index}`
-              }
-              getItemLayout={(data, index) => ({
-                length: ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-                offset: (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN) * index,
-                index,
-              })}
-              onScroll={scrollHandler}
-              initialNumToRender={10}
-              maxToRenderPerBatch={10}
-              windowSize={10}
-              removeClippedSubviews={true}
-              showsVerticalScrollIndicator={false}
-              ListFooterComponent={() => (
-                <View style={{ height: momentListBottomSpacer }} />
-              )}
-              onScrollToIndexFailed={(info) => {
-                //scroll to beginning maybe instead? not sure what this is doing
-                flatListRef.current?.scrollToOffset({
-                  offset: info.averageItemLength * info.index,
-                  animated: true,
-                });
-              }}
-              snapToInterval={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN}
-              snapToAlignment="start"  
-              decelerationRate="fast" // Optional: makes the scroll feel snappier
-              keyboardDismissMode="on-drag"
-              viewabilityConfig={viewabilityConfig}
-            />
-          </>
+        <>
+          <Animated.FlatList
+            ref={flatListRef}
+            data={memoizedMomentData}
+            // data={capsuleList}
+            fadingEdgeLength={20}
+            // viewabilityConfig={viewabilityConfig}
+            //  onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfigCallbackPairs={
+              viewabilityConfigCallbackPairs.current
+            }
+           
+            renderItem={renderMomentItem}
+            keyExtractor={extractItemKey}
+            getItemLayout={(data, index) => ({
+              length: ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
+              offset: (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN) * index,
+              index,
+            })}
+            // onScroll={scrollHandler}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={10}
+            removeClippedSubviews={true}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={() => (
+              <View style={{ height: momentListBottomSpacer }} />
+            )}
+            onScrollToIndexFailed={(info) => {
+              //scroll to beginning maybe instead? not sure what this is doing
+              flatListRef.current?.scrollToOffset({
+                offset: info.averageItemLength * info.index,
+                animated: true,
+              });
+            }}
+            snapToInterval={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN}
+            snapToAlignment="start"
+            decelerationRate="fast" // Optional: makes the scroll feel snappier
+            keyboardDismissMode="on-drag"
+          />
+        </>
 
         {/* }
       /> */}
-      
-  
-</View>
+      </View>
 
       {!isKeyboardVisible && (
         <>

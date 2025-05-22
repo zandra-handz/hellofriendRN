@@ -1,30 +1,29 @@
-import React from "react";
-import { View, TouchableOpacity, StyleSheet, TextInput } from "react-native";
+import React, { useMemo } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+} from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import Animated, {
   useSharedValue,
-  useAnimatedStyle,
   useAnimatedProps,
-  useDerivedValue,
 } from "react-native-reanimated";
 import SlideToAdd from "../foranimations/SlideToAdd";
-import FormatMonthDay from "@/app/components/appwide/format/FormatMonthDay";
-import CheckmarkOutlineSvg from "@/app/assets/svgs/checkmark-outline.svg";
 import MomentLeavesUI from "./MomentLeavesUI";
 import SlideAwayOnSuccess from "./SlideAwayOnSuccessAnimation";
-import { ReText } from "react-native-redash";
 import MomentPulseBobReceiver from "@/app/animations/MomentPulseBobReceiver";
-
-import moment from 'moment';
-
+import CheckmarkOutlineSvg from "@/app/assets/svgs/checkmark-outline.svg";
 const MomentCard = ({
   animatedCardsStyle,
-
   index,
   onPress,
   onSliderPull,
   moment,
+  date,
   heightToMatchWithFlatList, //match THIS if using FlatList
   marginToMatchWithFlatList,
   numberOfLinesToMatchWithFlatList,
@@ -35,44 +34,44 @@ const MomentCard = ({
   highlightsVisible,
   disabled = false,
 }) => {
-  const { gradientColors, gradientColorsHome } = useGlobalStyle();
+  const { gradientColorsHome } = useGlobalStyle();
   const { updateCapsuleMutation, momentData } = useCapsuleList();
 
-  const momentText = useSharedValue(moment?.capsule || "");
-  const momentCategoryText = useSharedValue(moment?.typedCategory || "");
-const date = new Date(moment?.created);
+  // const momentCreatedText = useSharedValue(date);
+  // const momentText = useSharedValue(moment?.capsule || "");
+  // const momentCategoryText = useSharedValue(moment?.typedCategory || "");
 
-const formattedText = !isNaN(date)
-  ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(date)
-  : '';
-const momentCreatedText = useSharedValue(formattedText);
+ // console.log(`Moment card ${moment.id} rerendered`);
 
-  const fillColor = gradientColorsHome.darkColor;
-  const strokeColor = gradientColors.darkColor;
+  // const fillColor = gradientColorsHome.darkColor;
+  // const strokeColor = gradientColors.darkColor;
   const momentTextColor = gradientColorsHome.darkColor;
   const categoryTextColor = gradientColorsHome.darkColor;
 
-  const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+  const original = moment?.typedCategory;
 
-  //Added from chatGPT
-  const capitalizeFirstFiveWords = (text) => {
-    if (!text) return "";
-    const words = text.split(" ");
-    const capitalizedWords = words
-      .slice(0, 5)
-      .map((word) => word.toUpperCase())
-      .concat(words.slice(5));
-    return capitalizedWords.join(" ");
-  };
- 
+  const truncated =
+    original.length > 26 ? original.slice(0, 26) + "..." : original;
 
-  const animatedProps = useAnimatedProps(() => {
-    return {
-      text: momentText.value,
-      value: momentText.value,
-    };
-  });
+  const header = `# ${truncated} • added ${date}`;
 
+  // const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+
+  // const animatedProps = useAnimatedProps(() => {
+  //    if (global._WORKLET) {
+  //   console.log('animatedProps function triggered');
+  //   return {
+  //    // text: momentText.value,
+  //     value: momentText.value,
+  //   };
+  // } else {
+  //   console.log('animatedProps running on JS');
+  //   return {
+  //   //  text: '',
+  //     value: '',
+  //   }
+  // }
+  // });
 
   //   const animatedCategoryProps = useAnimatedProps(() => {
   //   return {
@@ -81,17 +80,16 @@ const momentCreatedText = useSharedValue(formattedText);
   //   };
   // });
 
-const animatedCategoryProps = useAnimatedProps(() => {
-  const original = momentCategoryText.value;
+  // const animatedCategoryProps = useAnimatedProps(() => {
+  //   const original = momentCategoryText.value;
 
-  const truncated = original.length > 26
-    ? original.slice(0, 26) + '...'
-    : original;
+  //   const truncated =
+  //     original.length > 26 ? original.slice(0, 26) + "..." : original;
 
-  return {
-    value: `# ${truncated} • added ${momentCreatedText.value}`,
-  };
-});
+  //   return {
+  //     value: `# ${truncated} • added ${momentCreatedText.value}`,
+  //   };
+  // });
 
   return (
     <SlideAwayOnSuccess
@@ -103,14 +101,23 @@ const animatedCategoryProps = useAnimatedProps(() => {
       borderRadius={borderRadius}
       borderColor={borderColor}
     >
+    <Animated.View
+      style={{
+        width: "100%",
+        flexDirection: "column",
+        height: heightToMatchWithFlatList,
+        marginBottom: marginToMatchWithFlatList,
+       // borderWidth: StyleSheet.hairlineWidth,
+      }}
+    >
       <MomentLeavesUI
         index={index}
-        fillColor={fillColor}
-        strokeColor={strokeColor}
+        // fillColor={fillColor}
+        // strokeColor={strokeColor}
         height={heightToMatchWithFlatList}
         width={"100%"}
-        largeLeafSize={400}
-        smallLeafSize={420}
+        // largeLeafSize={400}
+        // smallLeafSize={420}
       />
       <TouchableOpacity
         style={{ width: "100%", flex: 1 }}
@@ -136,10 +143,11 @@ const animatedCategoryProps = useAnimatedProps(() => {
               circleTextSize={40}
               pulseDuration={2400}
             >
-              <Animated.View
+              <View
                 style={[
-                  styles.textWrapper,
                   {
+                    textAlign: "left",
+                    position: "absolute",
                     height: "auto",
                     maxHeight: 200,
                     width: "100%",
@@ -148,7 +156,18 @@ const animatedCategoryProps = useAnimatedProps(() => {
                   },
                 ]}
               >
-                <AnimatedTextInput
+                <Text
+                  multiline={false}
+                  numberOfLines={numberOfLinesToMatchWithFlatList}
+                  style={[
+                    styles.categoryText,
+                    { color: categoryTextColor, opacity: 1 },
+                  ]}
+                >
+                  {header && header}
+                </Text>
+
+                {/* <AnimatedTextInput
                   multiline={false}
                   animatedProps={animatedCategoryProps}
                   editable={false}
@@ -157,35 +176,12 @@ const animatedCategoryProps = useAnimatedProps(() => {
                     styles.categoryText,
                     { color: categoryTextColor, opacity: 1 },
                   ]}
-                  underlineColorAndroid="transparent"  
-                  pointerEvents="none"  
-                />
+                  underlineColorAndroid="transparent"
+                  pointerEvents="none"
+                /> */}
 
-               {/* <Animated.Text
-                  style={[
-                    styles.categoryText,
-                    { color: categoryTextColor, opacity: 1 },
-                  ]}
-                >
-                  #
-                  {moment.typedCategory.length > 12
-                    ? `${moment.typedCategory.substring(0, 12)}...`
-                    : moment.typedCategory}{" "}
-                  • added{" "}
-                  <FormatMonthDay
-                    date={moment.created}
-                    fontSize={13}
-                    fontFamily={"Poppins-Regular"}
-                    parentStyle={[
-                      styles.categoryText,
-                      { color: categoryTextColor, opacity: 1 },
-                    ]}
-                    opacity={1}
-                  />    </Animated.Text>  */}
-
-                <AnimatedTextInput
+                <Text
                   multiline={true}
-                  animatedProps={animatedProps} 
                   editable={false}
                   numberOfLines={numberOfLinesToMatchWithFlatList}
                   style={[
@@ -194,29 +190,49 @@ const animatedCategoryProps = useAnimatedProps(() => {
                     {
                       color: momentTextColor,
                       fontSize: size,
-                      textAlignVertical: 'top', 
+                      textAlignVertical: "top",
+                      // opacity: 1,
+                    },
+                  ]}
+                >
+                  {moment && moment.capsule}
+                </Text>
+
+                {/* <AnimatedTextInput
+                  multiline={true}
+                  animatedProps={animatedProps}
+                  editable={false}
+                  numberOfLines={numberOfLinesToMatchWithFlatList}
+                  style={[
+                    styles.momentText,
+
+                    {
+                      color: momentTextColor,
+                      fontSize: size,
+                      textAlignVertical: "top",
                       // opacity: 1,
                     },
                   ]}
                   underlineColorAndroid="transparent" // Optional: removes underline on Android
                   pointerEvents="none" // Optional: disable interaction if acting like static Text
-                />
-              </Animated.View>
+                /> */}
+              </View>
             </MomentPulseBobReceiver>
           </Animated.View>
         </View>
       </TouchableOpacity>
       <Animated.View style={[styles.sliderContainer, { opacity: 1 }]}>
-        {/* <SlideToAdd
+        <SlideToAdd
           onPress={onSliderPull}
           sliderText="ADD TO HELLO"
           sliderTextSize={13}
           sliderTextVisible={1}
           targetIcon={CheckmarkOutlineSvg}
           //  disabled={sliderVisible !== 1}
-        /> */}
+        />
       </Animated.View>
-    </SlideAwayOnSuccess>
+    </Animated.View>
+       </SlideAwayOnSuccess>
   );
 };
 
@@ -253,14 +269,6 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     alignSelf: "left",
   },
-  textWrapper: {
-    // flexGrow: 1,
-    textAlign: "left",
-    position: "absolute",
-    // justifyContent: 'center',
-    width: "100%",
-    // overflow: 'hidden',
-  },
   categoryText: {
     fontSize: 12,
     fontFamily: "Poppins-Regular",
@@ -271,30 +279,21 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     textTransform: "uppercase",
   },
-  categoryHeader: {
-    position: "absolute",
-
-    flexDirection: "row",
-    alignContent: "left",
-    justifyContent: "flex-start",
-
-    height: "auto",
-    flexWrap: "flex",
-  },
-  iconContainer: {
-    justifyContent: "center",
-  },
-  creationDateSection: {
-    borderRadius: 20,
-    paddingHorizontal: "4%",
-    paddingVertical: "4%",
-    backgroundColor: "transparent",
-    justifyContent: "flex-end",
-    alignContent: "flex-end",
-    alignItems: "flex-end",
-    width: "100%",
-    zIndex: 2,
-  },
 });
 
-export default MomentCard;
+
+// export default MomentCard;
+
+function areEqual(prevProps, nextProps) {
+  return (
+    prevProps.moment?.id === nextProps.moment?.id &&
+    prevProps.moment?.capsule === nextProps.moment?.capsule &&
+    prevProps.moment?.typedCategory === nextProps.moment?.typedCategory &&
+    prevProps.date === nextProps.date &&
+    prevProps.disabled === nextProps.disabled &&
+    prevProps.highlightsVisible === nextProps.highlightsVisible &&
+    prevProps.sliderVisible === nextProps.sliderVisible
+  );
+}
+
+export default React.memo(MomentCard, areEqual);

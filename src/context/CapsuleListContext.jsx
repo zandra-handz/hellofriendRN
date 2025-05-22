@@ -50,8 +50,8 @@ export const CapsuleListProvider = ({ children }) => {
 
   const [resultMessage, setResultMessage] = useState(null);
   const [closeResultMessage, setCloseResultMessage] = useState(true);
-  const [momentIdToAnimate, setMomentIdToAnimate] = useState(null); 
-   const [momentIdToUpdate, setMomentIdToUpdate] = useState(null); 
+  const [momentIdToAnimate, setMomentIdToAnimate] = useState(null);
+  const [momentIdToUpdate, setMomentIdToUpdate] = useState(null);
   const [newMomentInput, setNewMomentInput] = useState("");
 
   const { data: sortedCapsuleList = [], isLoading: isCapsuleContextLoading } =
@@ -144,24 +144,19 @@ export const CapsuleListProvider = ({ children }) => {
 
   const [momentData, setMomentData] = useState(null);
 
-  
   const timeoutRef = useRef(null);
- 
+
   const updateCapsuleMutation = useMutation({
     mutationFn: (capsuleId) =>
       updateMomentAPI(selectedFriend?.id, capsuleId, {
         pre_added_to_hello: true,
       }),
 
-    onSuccess: (data) => { 
-      setMomentData(data); 
+    onSuccess: (data) => {
+      setMomentData(data);
       setMomentIdToAnimate(data.id);
- 
-      queryClient.getQueryData([
-        "Moments",
-        selectedFriend?.id,
-      ]); 
 
+      queryClient.getQueryData(["Moments", selectedFriend?.id]);
     },
     onError: (error) => {
       if (timeoutRef.current) {
@@ -176,42 +171,41 @@ export const CapsuleListProvider = ({ children }) => {
     },
   });
 
-
   const handleEditMoment = (capsuleId, capsuleEditData) => {
-  
-    editMomentMutation.mutate({capsuleId, capsuleEditData});
-  }
+    editMomentMutation.mutate({ capsuleId, capsuleEditData });
+  };
 
   const editMomentMutation = useMutation({
-    mutationFn: ({capsuleId, capsuleEditData}) => 
+    mutationFn: ({ capsuleId, capsuleEditData }) =>
       updateMomentAPI(selectedFriend?.id, capsuleId, capsuleEditData),
 
     onSuccess: (data) => {
-            setMomentData(data); 
-      setMomentIdToUpdate(data.id); 
+      setMomentData(data);
+      setMomentIdToUpdate(data.id);
 
-       queryClient.invalidateQueries(["Moments", selectedFriend?.id]);
+      queryClient.invalidateQueries(["Moments", selectedFriend?.id]);
       // queryClient.refetchQueries(["Moments", selectedFriend?.id]);
- 
-queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
- // console.log("Old moments:", oldMoments);
 
-  // const updatedMoments = oldMoments
-  //   ? oldMoments.map((moment) =>
-  //       moment.id === data.id ? data : moment
-  //     )
-  //   : [];
+      queryClient.setQueryData(
+        ["Moments", selectedFriend?.id],
+        (oldMoments) => {
+          // console.log("Old moments:", oldMoments);
 
+          // const updatedMoments = oldMoments
+          //   ? oldMoments.map((moment) =>
+          //       moment.id === data.id ? data : moment
+          //     )
+          //   : [];
 
-  //REMOVING TO CHANGE CAPSULE LIST LENGTH IN MOMENTS SCREEN OTHERWISE WON'T UPDATE
-  const updatedMoments = oldMoments
-  ? oldMoments.filter((moment) => moment.id !== data.id)
-  : [];
+          //REMOVING TO CHANGE CAPSULE LIST LENGTH IN MOMENTS SCREEN OTHERWISE WON'T UPDATE
+          const updatedMoments = oldMoments
+            ? oldMoments.filter((moment) => moment.id !== data.id)
+            : [];
 
- // console.log("Updated moments:", updatedMoments);
-  return updatedMoments;
-});
-
+          // console.log("Updated moments:", updatedMoments);
+          return updatedMoments;
+        }
+      );
     },
     onError: (error) => {
       if (timeoutRef.current) {
@@ -221,7 +215,6 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
       timeoutRef.current = setTimeout(() => {
         editMomentMutation.reset();
       }, 2000);
- 
     },
     onSettled: () => {
       if (timeoutRef.current) {
@@ -231,8 +224,7 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
       timeoutRef.current = setTimeout(() => {
         editMomentMutation.reset();
       }, 2000);
-
-    }
+    },
   });
 
   const updateCacheWithNewPreAdded = () => {
@@ -282,8 +274,7 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
               ...updatedMoments[momentIndex],
               ...momentData,
               //preAdded: true,
-            }; 
-
+            };
           } else {
             updatedMoments.unshift(momentData); // Add new moment if it doesn't exist
           }
@@ -298,7 +289,6 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
     }
   };
 
-
   const updateCapsule = (capsuleId) => updateCapsuleMutation.mutate(capsuleId);
 
   const updateCapsulesMutation = useMutation({
@@ -312,19 +302,16 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
   const updateCapsules = (updatedCapsules) =>
     updateCapsulesMutation.mutate(updatedCapsules);
 
-
-
-
   const createMomentMutation = useMutation({
     mutationFn: (data) => saveMomentAPI(data),
     onError: (error) => {
       setResultMessage("Oh no! :( Please try again");
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
-      } 
+      }
       timeoutRef.current = setTimeout(() => {
         createMomentMutation.reset();
-       // setCloseResultMessage(true);
+        // setCloseResultMessage(true);
         setResultMessage(null);
       }, 2000);
     },
@@ -335,7 +322,7 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
         capsule: data.capsule,
         created: data.created_on,
         preAdded: data.pre_added_to_hello,
-      }; 
+      };
 
       queryClient.setQueryData(["Moments", selectedFriend?.id], (old) =>
         old ? [formattedMoment, ...old] : [formattedMoment]
@@ -345,21 +332,20 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
       // const updatedCache = queryClient.getQueryData([
       //   "Moments",
       //   selectedFriend?.id,
-      // ]); 
+      // ]);
 
-      setResultMessage("Moment saved!"); 
+      setResultMessage("Moment saved!");
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
-      } 
+      }
       timeoutRef.current = setTimeout(() => {
         createMomentMutation.reset();
-       // setCloseResultMessage(true);
+        // setCloseResultMessage(true);
         setNewMomentInput("");
         setResultMessage(null);
       }, 2000);
     },
   });
- 
 
   // useEffect(() => {
   //   if (createMomentMutation.isPending) {
@@ -373,7 +359,6 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
   };
 
   const handleCreateMoment = async (momentData) => {
- 
     const moment = {
       user: momentData.user,
       friend: momentData.friend,
@@ -389,8 +374,7 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
     }
   };
 
-  const deleteMomentRQuery = async (data) => { 
-
+  const deleteMomentRQuery = async (data) => {
     try {
       await deleteMomentMutation.mutateAsync(data);
     } catch (error) {
@@ -414,7 +398,7 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
 
       timeoutRef.current = setTimeout(() => {
         deleteMomentMutation.reset();
-      //  setCloseResultMessage(true);
+        //  setCloseResultMessage(true);
         setNewMomentInput("");
         setResultMessage(null);
       }, 2000);
@@ -429,7 +413,7 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
       // Set new timeout to reset the state after 2 seconds
       timeoutRef.current = setTimeout(() => {
         deleteMomentMutation.reset();
-      //  setCloseResultMessage(true);
+        //  setCloseResultMessage(true);
         setResultMessage(null);
       }, 2000);
     },
@@ -486,7 +470,7 @@ queryClient.setQueryData(["Moments", selectedFriend?.id], (oldMoments) => {
         createMomentMutation,
         resetCreateMomentInputs,
         resultMessage,
-       // closeResultMessage,
+        // closeResultMessage,
         updateCapsule,
         updateCapsuleMutation,
         handleEditMoment,

@@ -2,16 +2,21 @@ import { View, StyleSheet } from "react-native";
 import React from "react";
 import LargeMomentLeaf from "@/app/assets/svgs/LargeMomentLeaf";
 import SmallMomentLeaf from "@/app/assets/svgs/SmallMomentLeaf";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 const MomentLeavesUI = ({
   index,
-  fillColor,
-  strokeColor,
-  smallLeafSize = 60,
-  largeLeafSize = 120,
+  // fillColor,
+  // strokeColor,
+  // smallLeafSize = 400,
+  // largeLeafSize = 420,
   height = 200,
 }) => {
+
+     const { gradientColors, gradientColorsHome } = useGlobalStyle();
   return (
+
+   
     <View
       style={[
         {
@@ -36,19 +41,19 @@ const MomentLeavesUI = ({
       >
         <View style={styles.leafWrapper}>
           <SmallMomentLeaf
-            fill={fillColor}
-            stroke={strokeColor}
-            height={smallLeafSize}
-            width={smallLeafSize * 0.6}
+            fill={gradientColorsHome.darkColor}
+            stroke={gradientColors.darkColor}
+            height={420}
+            width={420 * 0.6}
             strokeWidth={3}
           />
         </View>
         <View style={styles.leafWrapper}>
           <LargeMomentLeaf
-            fill={fillColor}
-            stroke={strokeColor}
-            height={largeLeafSize}
-            width={largeLeafSize * 0.6}
+            fill={gradientColorsHome.darkColor}
+            stroke={gradientColors.darkColor}
+            height={400}
+            width={400 * 0.6}
             strokeWidth={3}
           />
         </View>
