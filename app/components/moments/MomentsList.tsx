@@ -20,6 +20,12 @@ import MomentCardAnimationWrapper from "./MomentCardAnimationWrapper";
 import LargeCornerLizard from "./LargeCornerLizard";
 
 import Animated, {
+  LinearTransition,
+  JumpingTransition,
+  CurvedTransition,
+  EntryExitTransition,
+  SequencedTransition,
+  FadingTransition,
   useSharedValue,
   useDerivedValue,
   useAnimatedScrollHandler,
@@ -69,18 +75,16 @@ const MomentsList = () => {
   // };
 
   // Move this inside your component:
-const onViewableItemsChanged = useCallback(({ viewableItems }) => {
-  viewableItemsArray.value = viewableItems;
-}, []);
+  const onViewableItemsChanged = useCallback(({ viewableItems }) => {
+    viewableItemsArray.value = viewableItems;
+  }, []);
 
-const viewabilityConfig = useRef({
-  minimumViewTime: 100,
-  itemVisiblePercentThreshold: 50,
-  //viewAreaCoveragePercentThreshold: 50,
-  waitForInteraction: false,
-}).current;
-
-
+  const viewabilityConfig = useRef({
+    minimumViewTime: 100,
+    itemVisiblePercentThreshold: 50,
+    //viewAreaCoveragePercentThreshold: 50,
+    waitForInteraction: false,
+  }).current;
 
   const viewabilityConfigCallbackPairs = useRef([
     {
@@ -103,7 +107,7 @@ const viewabilityConfig = useRef({
   const belowHeaderIconSize = 28;
 
   // const scrollY = useSharedValue(0);
-   const fadeAnim = useSharedValue(1);
+  const fadeAnim = useSharedValue(1);
   // const translateY = useSharedValue(0);
 
   useEffect(() => {
@@ -157,15 +161,13 @@ const viewabilityConfig = useRef({
   // };
 
   const scrollToMoment = (moment) => {
-  if (moment.uniqueIndex !== undefined) {
-    flatListRef.current?.scrollToOffset({
-      offset: ITEM_HEIGHT * moment.uniqueIndex,
-      animated: false, // disables the "intermediate" rendering problem
-    });
-  }
-};
-
-
+    if (moment.uniqueIndex !== undefined) {
+      flatListRef.current?.scrollToOffset({
+        offset: ITEM_HEIGHT * moment.uniqueIndex,
+        animated: false, // disables the "intermediate" rendering problem
+      });
+    }
+  };
 
   // may not need to be in a callback since not inside an animated view
   // const scrollToRandomItem = useCallback(() => {
@@ -178,29 +180,28 @@ const viewabilityConfig = useRef({
   //   });
   // }, [capsuleList]);
 
+  //   const scrollToRandomItem = useCallback(() => {
+  //   if (capsuleList.length === 0) return;
 
-//   const scrollToRandomItem = useCallback(() => {
-//   if (capsuleList.length === 0) return;
+  //   const randomIndex = Math.floor(Math.random() * capsuleList.length);
+  //   const threshold = 10;
+  //   const jumpIndex = Math.max(0, randomIndex - threshold);
 
-//   const randomIndex = Math.floor(Math.random() * capsuleList.length);
-//   const threshold = 10;
-//   const jumpIndex = Math.max(0, randomIndex - threshold);
+  //   // Jump close to the item (no animation to skip intermediate renders)
+  //   flatListRef.current?.scrollToOffset({
 
-//   // Jump close to the item (no animation to skip intermediate renders)
-//   flatListRef.current?.scrollToOffset({
-    
-//     offset: ITEM_HEIGHT * jumpIndex,
-//     animated: false,
-//   });
+  //     offset: ITEM_HEIGHT * jumpIndex,
+  //     animated: false,
+  //   });
 
-//   // Then smooth scroll the rest of the way
-//   setTimeout(() => {
-//     flatListRef.current?.scrollToIndex({
-//       index: randomIndex,
-//       animated: true,
-//     });
-//   }, 50);
-// }, [capsuleList]);
+  //   // Then smooth scroll the rest of the way
+  //   setTimeout(() => {
+  //     flatListRef.current?.scrollToIndex({
+  //       index: randomIndex,
+  //       animated: true,
+  //     });
+  //   }, 50);
+  // }, [capsuleList]);
 
   const scrollToRandomItem = () => {
     if (capsuleList.length === 0) return;
@@ -278,10 +279,12 @@ const viewabilityConfig = useRef({
 
   //   return formattedDate;
   // };
- const visibleItemId = useDerivedValue(() => {
-  const topItems = viewableItemsArray.value.slice(0, 1);
-  return topItems.length > 0 && topItems[0].isViewable ? topItems[0].item.id : null;
-});
+  const visibleItemId = useDerivedValue(() => {
+    const topItems = viewableItemsArray.value.slice(0, 1);
+    return topItems.length > 0 && topItems[0].isViewable
+      ? topItems[0].item.id
+      : null;
+  });
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <MomentCardAnimationWrapper
@@ -291,7 +294,7 @@ const viewabilityConfig = useRef({
         index={index}
         momentIdToAnimate={momentIdToAnimate}
         visibleItemId={visibleItemId}
-        fadeAnim={fadeAnim} 
+        fadeAnim={fadeAnim}
         handleNavigateToMomentView={handleNavigateToMomentView}
         saveToHello={saveToHello}
       />
@@ -299,7 +302,7 @@ const viewabilityConfig = useRef({
     [
       viewableItemsArray,
       momentIdToAnimate,
-      fadeAnim, 
+      fadeAnim,
       handleNavigateToMomentView,
       saveToHello,
     ]
@@ -332,7 +335,7 @@ const viewabilityConfig = useRef({
   // );
 
   const extractItemKey = (item, index) =>
-  item?.id ? item.id.toString() : `placeholder-${index}`;
+    item?.id ? item.id.toString() : `placeholder-${index}`;
 
   return (
     <View style={appContainerStyles.screenContainer}>
@@ -388,6 +391,11 @@ const viewabilityConfig = useRef({
         children={ */}
         <>
           <Animated.FlatList
+            // itemLayoutAnimation={JumpingTransition} 
+           itemLayoutAnimation={CurvedTransition}
+            // itemLayoutAnimation={EntryExitTransition}
+           //  itemLayoutAnimation={SequencedTransition}
+            // itemLayoutAnimation={FadingTransition}
             ref={flatListRef}
             data={memoizedMomentData}
             // data={capsuleList}
@@ -397,7 +405,6 @@ const viewabilityConfig = useRef({
             viewabilityConfigCallbackPairs={
               viewabilityConfigCallbackPairs.current
             }
-           
             renderItem={renderMomentItem}
             keyExtractor={extractItemKey}
             getItemLayout={(data, index) => ({
