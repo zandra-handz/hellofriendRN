@@ -16,7 +16,7 @@ import {
 
 import HellofriendHeader from "@/app/components/headers/HellofriendHeader";
 import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
-
+import SmallAddButton from "@/app/components/home/SmallAddButton";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext"; //to check if any friends, don't render Up Next component or upcoming scroll if so
@@ -168,11 +168,11 @@ const ScreenHome = ({ navigation }) => {
   const showLastButton = true;
   const maxButtonHeight = 100; // Remaining height for buttons  // Divide remaining height by the number of buttons (5 buttons + footer)
 
-  const { currentLocationDetails } = useCurrentLocation();
-  useEffect(() => {
-    if (currentLocationDetails) {
-    }
-  }, [currentLocationDetails]);
+  // const { currentLocationDetails } = useCurrentLocation();
+  // useEffect(() => {
+  //   if (currentLocationDetails) {
+  //   }
+  // }, [currentLocationDetails]);
 
   // Animated values for slide-in effect
   const [slideAnim] = useState(new Animated.Value(1)); // Value for animating the button container
@@ -193,31 +193,18 @@ const ScreenHome = ({ navigation }) => {
     () => navigateToAddLocationScreen(),
   ];
 
+  const otherOptions = [
+    "Add new photo",
+    "Add upload",
+    "Add hello",
+    "Pick meet-up location",
+  ];
+
   const renderOptionButton = (item, index) => {
     return (
-      <TouchableOpacity
-        style={{
-          height: "auto",
-          width: "auto",
-          paddingHorizontal: 18,
-          paddingVertical: 6,
-          borderRadius: 30,
-          marginRight: "6%",
-          borderWidth: 1,
-          borderColor: themeStyles.genericText.color,
-          opacity: 0.8,
-        }}
-        onPress={itemActions[index]} // Use the index to match the corresponding action
-      >
-        <Text
-          style={[
-            themeStyles.genericText,
-            { fontFamily: "Poppins-Regular", fontSize: 13 },
-          ]}
-        >
-          {item}
-        </Text>
-      </TouchableOpacity>
+      <View style={{ marginRight: 12 }}>
+        <SmallAddButton label={item} onPress={itemActions[index]} />
+      </View>
     );
   };
 
@@ -225,16 +212,8 @@ const ScreenHome = ({ navigation }) => {
     if (newMomentTextRef && newMomentTextRef.current) {
       newMomentTextRef.current.setText("");
       setShowMomentScreenButton(false);
-      console.log("Cleared new moment text.");
     }
   };
-
-  const otherOptions = [
-    "Add new photo",
-    "Add upload",
-    "Add hello",
-    "Pick meet-up location",
-  ];
 
   const navigateToAddMomentScreen = () => {
     navigation.navigate("MomentFocus", {
@@ -310,7 +289,7 @@ const ScreenHome = ({ navigation }) => {
             >
               <View
                 style={{
-                  height: isKeyboardVisible ? "84%" : "32%",
+                  height: isKeyboardVisible ? "89%" : "38%",
                 }}
               >
                 {/* <Button
@@ -375,7 +354,7 @@ const ScreenHome = ({ navigation }) => {
                 ]}
               >
                 {!selectedFriend && !friendLoaded && showLastButton && (
-                  <View style={{ height: 80, paddingVertical: 4 }}>
+                  <View style={{ height: 60, paddingVertical: 4 }}>
                     <HomeScreenButton
                       label={"ADD FRIEND"}
                       onPress={navigateToAddFriendScreen}

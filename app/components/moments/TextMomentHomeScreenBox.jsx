@@ -41,7 +41,7 @@ const TextMomentHomeScreenBox = forwardRef(
     },
     ref
   ) => {
-    const { themeStyles } = useGlobalStyle();
+    const { themeStyles, appFontStyles, appContainerStyles  } = useGlobalStyle();
     const { user, userAppSettings } = useUser();
     const {   friendListLength } = useFriendList();
     const { selectedFriend } = useSelectedFriend(); 
@@ -90,7 +90,7 @@ const TextMomentHomeScreenBox = forwardRef(
 
       useEffect(() => {
         if (userAppSettings) {
-          console.log('userappsettings focus: ', userAppSettings.simplify_app_for_focus);
+          // console.log('userappsettings focus: ', userAppSettings.simplify_app_for_focus);
           setAutoFocusSelected(userAppSettings.simplify_app_for_focus);
         }
     
@@ -133,7 +133,7 @@ const TextMomentHomeScreenBox = forwardRef(
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View
           style={[
-            styles.container, 
+            appContainerStyles.homeScreenNewMomentContainer, 
             { width: width, height: height },
           ]}
         >
@@ -144,7 +144,7 @@ const TextMomentHomeScreenBox = forwardRef(
                 justifyContent: "space-between",
                 width: "100%",
                 height: "auto",
-                alignItems: "center",
+                alignItems: "center", 
               }}
             >
               <View
@@ -152,10 +152,11 @@ const TextMomentHomeScreenBox = forwardRef(
                   flexDirection: "row",
                   height: "100%",
                   alignItems: "center",  
+                   textAlignVertical: 'top', 
                 }}
               >
                 <Text
-                  style={[styles.welcomeHeaderText, themeStyles.genericText]}
+                  style={[appFontStyles.welcomeText, themeStyles.genericText]}
                 >
                   {new Date(user?.user?.created_on).toDateString() ===
                   new Date().toDateString()
@@ -202,7 +203,7 @@ const TextMomentHomeScreenBox = forwardRef(
               )}
             </View>
             <>
-              <View style={{ flex: 1, marginTop: "0%" }}>
+              <View style={{ flex: 1 }}>
                 {friendListLength && !editedMessage && (
                   <View style={{position: 'absolute', top: 0, left: 46, right: 0}}>
 
@@ -229,7 +230,7 @@ const TextMomentHomeScreenBox = forwardRef(
                       
                       // </View>
                     ) : (
-                      <Text>your friend</Text>
+                      <Text>a friend</Text>
                     )}?
                   </Text>
                   </View>
@@ -277,15 +278,7 @@ const TextMomentHomeScreenBox = forwardRef(
 
 const styles = StyleSheet.create({
  
-  container: {
-    borderRadius: 30,
-    alignSelf: "center",
-    paddingHorizontal: '4%',
-    paddingVertical: '0%',
-    //backgroundColor: 'gray',
-    padding: '2%',
-    marginBottom: '2%',
-  },
+ 
   selectFriendContainer: {
     width: 40,
     justifyContent: "center",
@@ -293,14 +286,9 @@ const styles = StyleSheet.create({
     maxHeight: 30,
     height: 30, 
   },
-  welcomeHeaderText: {
-    fontSize: 15,
-    lineHeight: 22,
-    fontFamily: "Poppins-Regular",
-    //textTransform: "uppercase",
-  },
+ 
   title: {
-    fontSize: 17,
+    fontSize: 15,
     lineHeight: 32,
 
     fontFamily: "Poppins-Regular",

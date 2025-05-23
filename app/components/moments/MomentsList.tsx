@@ -391,10 +391,10 @@ const MomentsList = () => {
         children={ */}
         <>
           <Animated.FlatList
-            // itemLayoutAnimation={JumpingTransition} 
-           itemLayoutAnimation={CurvedTransition}
+            itemLayoutAnimation={JumpingTransition}
+            // itemLayoutAnimation={CurvedTransition}
             // itemLayoutAnimation={EntryExitTransition}
-           //  itemLayoutAnimation={SequencedTransition}
+            //  itemLayoutAnimation={SequencedTransition}
             // itemLayoutAnimation={FadingTransition}
             ref={flatListRef}
             data={memoizedMomentData}

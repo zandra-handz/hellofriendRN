@@ -11,9 +11,7 @@ import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 const HellofriendHeader = () => {
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
-
-  const ICON_SIZE = 28;
-
+ 
  
   return (
     <View style={[appContainerStyles.homeHeaderContainer]}>
@@ -49,7 +47,7 @@ const HellofriendHeader = () => {
 
       <View style={{ flex: 1, alignItems: "flex-end", top: 0 }}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <ButtonInfo iconSize={ICON_SIZE} />
+          <ButtonInfo iconSize={28} />
         </View>
       </View>
     </View>
