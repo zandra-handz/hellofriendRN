@@ -86,8 +86,8 @@ const MomentsList = () => {
   }, []);
 
   const viewabilityConfig = useRef({
-    minimumViewTime: 60,
-    itemVisiblePercentThreshold: 2,
+    minimumViewTime: 40,
+    itemVisiblePercentThreshold: 5,
     //viewAreaCoveragePercentThreshold: 50,
     waitForInteraction: false,
   }).current;
@@ -174,122 +174,94 @@ const MomentsList = () => {
       });
     }
   };
-
-  // may not need to be in a callback since not inside an animated view
-  // const scrollToRandomItem = useCallback(() => {
-  //   if (capsuleList.length === 0) return;
-
-  //   const randomIndex = Math.floor(Math.random() * capsuleList.length);
-  //   flatListRef.current?.scrollToIndex({
-  //     index: randomIndex,
-  //     animated: true,
-  //   });
-  // }, [capsuleList]);
-
-  //   const scrollToRandomItem = useCallback(() => {
-  //   if (capsuleList.length === 0) return;
-
-  //   const randomIndex = Math.floor(Math.random() * capsuleList.length);
-  //   const threshold = 10;
-  //   const jumpIndex = Math.max(0, randomIndex - threshold);
-
-  //   // Jump close to the item (no animation to skip intermediate renders)
-  //   flatListRef.current?.scrollToOffset({
-
-  //     offset: ITEM_HEIGHT * jumpIndex,
-  //     animated: false,
-  //   });
-
-  //   // Then smooth scroll the rest of the way
-  //   setTimeout(() => {
-  //     flatListRef.current?.scrollToIndex({
-  //       index: randomIndex,
-  //       animated: true,
-  //     });
-  //   }, 50);
-  // }, [capsuleList]);
-
-  // const scrollToRandomItem = () => {
-  //   if (capsuleList.length === 0) return;
-
-  //   const randomIndex = Math.floor(Math.random() * capsuleList.length);
-  //   flatListRef.current?.scrollToIndex({
-  //     index: randomIndex,
-  //     animated: false,
-  //   });
-  // };
-  const scrollY = useSharedValue(0);
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      // console.log(scrollY.value);
-      scrollY.value = event.contentOffset.y;
-    },
-  });// Configuration
-const ITEM_HEIGHT = 290;
-const PIXELS_PER_SECOND = 600; // Fixed speed (600px per second)
-const MIN_DURATION = 500; // Minimum animation time
-const MAX_DURATION = 10000; // Safety cap (optional)
-
-const currentOffset = useSharedValue(0);
-const targetOffset = useSharedValue(0);
-const shouldScroll = useSharedValue(false);
-const timeoutId = React.useRef<NodeJS.Timeout | null>(null);
-
-// Animation driver - CONSTANT SPEED
-const animatedOffset = useDerivedValue(() => {
-  const distance = Math.abs(targetOffset.value - currentOffset.value);
   
-  // Pure linear duration calculation
-  const duration = Math.min(
-    MAX_DURATION,
-    Math.max(
-      MIN_DURATION,
-      (distance / PIXELS_PER_SECOND) * 1000 // ms = (px / (px/s)) * 1000
-    )
-  );
 
-  return withTiming(targetOffset.value, {
-    duration,
-    easing: Easing.linear, // Constant speed
-  });
-});
+  const scrollToRandomItem = () => {
+    if (capsuleList.length === 0) return;
 
-// Apply scroll position (unchanged)
-useDerivedValue(() => {
-  if (shouldScroll.value) {
-    scrollTo(flatListRef, 0, animatedOffset.value, false);
-    currentOffset.value = animatedOffset.value;
-  }
-});
+    const randomIndex = Math.floor(Math.random() * capsuleList.length);
+   // flatListRef.current?.scrollToIndex({
+      flatListRef.current?.scrollToOffset({
+         offset: ITEM_HEIGHT * randomIndex,
+     // index: randomIndex,
+      animated: false,
+    });
+  };
 
-const scrollToRandomItem = () => {
-  if (!capsuleList?.length) return;
 
-  // Clear any pending timeout
-  if (timeoutId.current) {
-    clearTimeout(timeoutId.current);
-    timeoutId.current = null;
-  }
+  // FOR WRAPPER: 
+//   const scrollY = useSharedValue(0);
+//   const scrollHandler = useAnimatedScrollHandler({
+//     onScroll: (event) => {
+//       // console.log(scrollY.value);
+//       scrollY.value = event.contentOffset.y;
+//     },
+//   });// Configuration
+// const ITEM_HEIGHT = 290;
+// const PIXELS_PER_SECOND = 600; // Fixed speed (600px per second)
+// const MIN_DURATION = 500; // Minimum animation time
+// const MAX_DURATION = 10000; // Safety cap (optional)
 
-  const randomIndex = Math.floor(Math.random() * capsuleList.length);
-  targetOffset.value = randomIndex * ITEM_HEIGHT;
-  shouldScroll.value = true;
+// const currentOffset = useSharedValue(0);
+// const targetOffset = useSharedValue(0);
+// const shouldScroll = useSharedValue(false);
+// const timeoutId = React.useRef<NodeJS.Timeout | null>(null);
 
-  const distance = Math.abs(targetOffset.value - currentOffset.value);
+// // Animation driver - CONSTANT SPEED
+// const animatedOffset = useDerivedValue(() => {
+//   const distance = Math.abs(targetOffset.value - currentOffset.value);
   
-  // Match the animation duration
-  const duration = Math.min(
-    MAX_DURATION,
-    Math.max(
-      MIN_DURATION,
-      (distance / PIXELS_PER_SECOND) * 1000
-    )
-  );
+//   // Pure linear duration calculation
+//   const duration = Math.min(
+//     MAX_DURATION,
+//     Math.max(
+//       MIN_DURATION,
+//       (distance / PIXELS_PER_SECOND) * 1000 // ms = (px / (px/s)) * 1000
+//     )
+//   );
 
-  timeoutId.current = setTimeout(() => {
-    shouldScroll.value = false;
-  }, duration);
-};
+//   return withTiming(targetOffset.value, {
+//     duration,
+//     easing: Easing.linear, // Constant speed
+//   });
+// });
+
+// // Apply scroll position (unchanged)
+// useDerivedValue(() => {
+//   if (shouldScroll.value) {
+//     scrollTo(flatListRef, 0, animatedOffset.value, false);
+//     currentOffset.value = animatedOffset.value;
+//   }
+// });
+
+// const scrollToRandomItem = () => {
+//   if (!capsuleList?.length) return;
+
+//   // Clear any pending timeout
+//   if (timeoutId.current) {
+//     clearTimeout(timeoutId.current);
+//     timeoutId.current = null;
+//   }
+
+//   const randomIndex = Math.floor(Math.random() * capsuleList.length);
+//   targetOffset.value = randomIndex * ITEM_HEIGHT;
+//   shouldScroll.value = true;
+
+//   const distance = Math.abs(targetOffset.value - currentOffset.value);
+  
+//   // Match the animation duration
+//   const duration = Math.min(
+//     MAX_DURATION,
+//     Math.max(
+//       MIN_DURATION,
+//       (distance / PIXELS_PER_SECOND) * 1000
+//     )
+//   );
+
+//   timeoutId.current = setTimeout(() => {
+//     shouldScroll.value = false;
+//   }, duration);
+// };
 
   // changed to a callback to help list animation performance
   const saveToHello = useCallback((moment) => {
@@ -314,7 +286,9 @@ const scrollToRandomItem = () => {
 
     if (categoryIndex !== undefined) {
       flatListRef.current?.scrollToIndex({
+       // flatListRef.current?.scrollToOffset({
         index: categoryIndex > 0 ? categoryIndex : 0,
+       //  offset: categoryIndex > 0 ? ITEM_HEIGHT * categoryIndex : 0,
         animated: true,
       });
     }
@@ -474,8 +448,8 @@ const scrollToRandomItem = () => {
             //  itemLayoutAnimation={SequencedTransition}
             // itemLayoutAnimation={FadingTransition}
             ref={flatListRef}
-            //data={memoizedMomentData}
-            data={capsuleList}
+            data={memoizedMomentData}
+           // data={capsuleList}
             // fadingEdgeLength={20}
             // viewabilityConfig={viewabilityConfig}
             //  onViewableItemsChanged={onViewableItemsChanged}
@@ -483,14 +457,14 @@ const scrollToRandomItem = () => {
               viewabilityConfigCallbackPairs.current
             }
             // scrollEventThrottle={16}
-            onScroll={scrollHandler}
+           // onScroll={scrollHandler}
             renderItem={renderMomentItem}
             keyExtractor={extractItemKey}
             getItemLayout={getItemLayout}
             // onScroll={scrollHandler}
             initialNumToRender={10}
             maxToRenderPerBatch={10}
-            windowSize={14}
+            windowSize={10}
             removeClippedSubviews={true}
             showsVerticalScrollIndicator={false}
             ListFooterComponent={() => (

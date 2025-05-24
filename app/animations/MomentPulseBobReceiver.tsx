@@ -4,7 +4,7 @@ import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
-import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
+// import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 const MomentPulseBobReceiver = ({
   animatedCardsStyle,
   index,
@@ -34,7 +34,7 @@ const MomentPulseBobReceiver = ({
           },
         ]}
       >
-        <View
+        {/* <View
           style={[
             {
               position: "absolute",
@@ -54,7 +54,7 @@ const MomentPulseBobReceiver = ({
             color={'red'}
             style={appContainerStyles.bigGeckoRotate}
           />
-        </View>
+        </View> */}
         <Animated.Text>{children}</Animated.Text>
       </Animated.View>
     </>
