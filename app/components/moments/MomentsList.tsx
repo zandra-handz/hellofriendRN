@@ -27,10 +27,15 @@ import Animated, {
   SequencedTransition,
   FadingTransition,
   useSharedValue,
+  useAnimatedRef,
   useDerivedValue,
   useAnimatedScrollHandler,
+  useAnimatedReaction,
   withTiming,
   runOnJS,
+  runOnUI,
+  scrollTo,
+  Easing,
 } from "react-native-reanimated";
 
 import { useNavigation } from "@react-navigation/native";
@@ -48,6 +53,7 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 
 const ITEM_HEIGHT = 290;
 const ITEM_BOTTOM_MARGIN = 0;
+const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
 const MomentsList = () => {
   const { appContainerStyles } = useGlobalStyle();
@@ -80,8 +86,8 @@ const MomentsList = () => {
   }, []);
 
   const viewabilityConfig = useRef({
-    minimumViewTime: 100,
-    itemVisiblePercentThreshold: 50,
+    minimumViewTime: 60,
+    itemVisiblePercentThreshold: 2,
     //viewAreaCoveragePercentThreshold: 50,
     waitForInteraction: false,
   }).current;
@@ -95,7 +101,7 @@ const MomentsList = () => {
 
   const [selectedMomentToView, setSelectedMomentToView] = useState(null);
   const [isMomentNavVisible, setMomentNavVisible] = useState(false);
-  const flatListRef = useRef(null);
+  const flatListRef = useAnimatedRef(null);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -134,7 +140,7 @@ const MomentsList = () => {
           runOnJS(setMomentIdToAnimate)(null);
 
           fadeAnim.value = 1;
-          heightAnim.value = withTiming(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN, {
+          heightAnim.value = withTiming(COMBINED_HEIGHT, {
             duration: 0,
           });
           translateX.value = withTiming(0, { duration: 0 });
@@ -203,15 +209,87 @@ const MomentsList = () => {
   //   }, 50);
   // }, [capsuleList]);
 
-  const scrollToRandomItem = () => {
-    if (capsuleList.length === 0) return;
+  // const scrollToRandomItem = () => {
+  //   if (capsuleList.length === 0) return;
 
-    const randomIndex = Math.floor(Math.random() * capsuleList.length);
-    flatListRef.current?.scrollToIndex({
-      index: randomIndex,
-      animated: false,
-    });
-  };
+  //   const randomIndex = Math.floor(Math.random() * capsuleList.length);
+  //   flatListRef.current?.scrollToIndex({
+  //     index: randomIndex,
+  //     animated: false,
+  //   });
+  // };
+  const scrollY = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      // console.log(scrollY.value);
+      scrollY.value = event.contentOffset.y;
+    },
+  });// Configuration
+const ITEM_HEIGHT = 290;
+const PIXELS_PER_SECOND = 600; // Fixed speed (600px per second)
+const MIN_DURATION = 500; // Minimum animation time
+const MAX_DURATION = 10000; // Safety cap (optional)
+
+const currentOffset = useSharedValue(0);
+const targetOffset = useSharedValue(0);
+const shouldScroll = useSharedValue(false);
+const timeoutId = React.useRef<NodeJS.Timeout | null>(null);
+
+// Animation driver - CONSTANT SPEED
+const animatedOffset = useDerivedValue(() => {
+  const distance = Math.abs(targetOffset.value - currentOffset.value);
+  
+  // Pure linear duration calculation
+  const duration = Math.min(
+    MAX_DURATION,
+    Math.max(
+      MIN_DURATION,
+      (distance / PIXELS_PER_SECOND) * 1000 // ms = (px / (px/s)) * 1000
+    )
+  );
+
+  return withTiming(targetOffset.value, {
+    duration,
+    easing: Easing.linear, // Constant speed
+  });
+});
+
+// Apply scroll position (unchanged)
+useDerivedValue(() => {
+  if (shouldScroll.value) {
+    scrollTo(flatListRef, 0, animatedOffset.value, false);
+    currentOffset.value = animatedOffset.value;
+  }
+});
+
+const scrollToRandomItem = () => {
+  if (!capsuleList?.length) return;
+
+  // Clear any pending timeout
+  if (timeoutId.current) {
+    clearTimeout(timeoutId.current);
+    timeoutId.current = null;
+  }
+
+  const randomIndex = Math.floor(Math.random() * capsuleList.length);
+  targetOffset.value = randomIndex * ITEM_HEIGHT;
+  shouldScroll.value = true;
+
+  const distance = Math.abs(targetOffset.value - currentOffset.value);
+  
+  // Match the animation duration
+  const duration = Math.min(
+    MAX_DURATION,
+    Math.max(
+      MIN_DURATION,
+      (distance / PIXELS_PER_SECOND) * 1000
+    )
+  );
+
+  timeoutId.current = setTimeout(() => {
+    shouldScroll.value = false;
+  }, duration);
+};
 
   // changed to a callback to help list animation performance
   const saveToHello = useCallback((moment) => {
@@ -337,6 +415,14 @@ const MomentsList = () => {
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `placeholder-${index}`;
 
+  const getItemLayout = (item, index) => {
+    return {
+      length: COMBINED_HEIGHT,
+      offset: COMBINED_HEIGHT * index,
+      index,
+    };
+  };
+
   return (
     <View style={appContainerStyles.screenContainer}>
       <LargeCornerLizard />
@@ -380,63 +466,50 @@ const MomentsList = () => {
           height: "87%",
         }}
       >
-        {/* <BodyStyling
-        height={"87%"}
-        width={"100%"}
-        minHeight={"87%"}
-        paddingTop={'0%'}
-        transparentBackground={true}
-        transparentBorder={true}
-        paddingHorizontal={'0%'}
-        children={ */}
         <>
           <Animated.FlatList
-            itemLayoutAnimation={JumpingTransition}
+            //  itemLayoutAnimation={JumpingTransition}
             // itemLayoutAnimation={CurvedTransition}
             // itemLayoutAnimation={EntryExitTransition}
             //  itemLayoutAnimation={SequencedTransition}
             // itemLayoutAnimation={FadingTransition}
             ref={flatListRef}
-            data={memoizedMomentData}
-            // data={capsuleList}
-            fadingEdgeLength={20}
+            //data={memoizedMomentData}
+            data={capsuleList}
+            // fadingEdgeLength={20}
             // viewabilityConfig={viewabilityConfig}
             //  onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfigCallbackPairs={
               viewabilityConfigCallbackPairs.current
             }
+            // scrollEventThrottle={16}
+            onScroll={scrollHandler}
             renderItem={renderMomentItem}
             keyExtractor={extractItemKey}
-            getItemLayout={(data, index) => ({
-              length: ITEM_HEIGHT + ITEM_BOTTOM_MARGIN,
-              offset: (ITEM_HEIGHT + ITEM_BOTTOM_MARGIN) * index,
-              index,
-            })}
+            getItemLayout={getItemLayout}
             // onScroll={scrollHandler}
             initialNumToRender={10}
             maxToRenderPerBatch={10}
-            windowSize={10}
+            windowSize={14}
             removeClippedSubviews={true}
             showsVerticalScrollIndicator={false}
             ListFooterComponent={() => (
               <View style={{ height: momentListBottomSpacer }} />
             )}
-            onScrollToIndexFailed={(info) => {
-              //scroll to beginning maybe instead? not sure what this is doing
-              flatListRef.current?.scrollToOffset({
-                offset: info.averageItemLength * info.index,
-                animated: true,
-              });
-            }}
-            snapToInterval={ITEM_HEIGHT + ITEM_BOTTOM_MARGIN}
-            snapToAlignment="start"
-            decelerationRate="fast" // Optional: makes the scroll feel snappier
+            // onScrollToIndexFailed={(info) => {
+            //   //scroll to beginning maybe instead? not sure what this is doing
+            //   flatListRef.current?.scrollToOffset({
+            //     offset: info.averageItemLength * info.index,
+            //     animated: true,
+            //   });
+            // }}
+            snapToInterval={COMBINED_HEIGHT}
+            //snapToAlignment="start"
+            // decelerationRate="fast" // Optional: makes the scroll feel snappier
+            decelerationRate="normal"
             keyboardDismissMode="on-drag"
           />
         </>
-
-        {/* }
-      /> */}
       </View>
 
       {!isKeyboardVisible && (

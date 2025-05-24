@@ -139,6 +139,7 @@ const MomentCard = ({
             ]}
           >
             <MomentPulseBobReceiver
+            index={index}
               animatedCardsStyle={animatedCardsStyle}
               circleTextSize={40}
               pulseDuration={2400}

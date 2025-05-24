@@ -177,11 +177,10 @@
 //   );
 // });
 
-import React, { useEffect } from "react";
+import React  from "react";
 import { ViewToken } from "react-native";
 import Animated, {
-  useAnimatedStyle,
-  useDerivedValue,
+  useAnimatedStyle, 
   withTiming,
   SharedValue,
   useSharedValue,
@@ -292,8 +291,8 @@ useAnimatedReaction(
   (isVisible, wasVisible) => {
     if (isVisible !== wasVisible) {
       if (isVisible) {
-        scale.value = withTiming(0.97, { duration: 220 });
-        opacityShared.value = withTiming(1, { duration: 220 });
+        scale.value = withTiming(0.97, { duration: 0 });
+        opacityShared.value = withTiming(1, { duration: 0 });
         progress.value = withRepeat(withTiming(1, { duration: pulseDuration }), -1, true);
         translateYx2.value = withRepeat(
           withSequence(
@@ -306,7 +305,7 @@ useAnimatedReaction(
         cardOpacity.value = 1;
       } else {
 
-        scale.value = withTiming(0.7, { duration: 220 });
+        scale.value = withTiming(0.94, { duration: 220 });
      
         cancelAnimation(opacityShared);
         cancelAnimation(progress);
