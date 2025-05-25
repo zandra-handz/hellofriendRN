@@ -5,8 +5,10 @@ import {
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import React from "react";
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import CategoryButton from "./CategoryButton"; 
 const CategoryNavigator = ({
+  visibilityValue,
   viewableItemsArray,
   categoryNames,
   onPress, 
@@ -19,15 +21,20 @@ const CategoryNavigator = ({
   } = useGlobalStyle();
 
  
+  const visibilityStyle = useAnimatedStyle(() => ({
+    opacity: visibilityValue.value,
+
+  }))
   
 
   return (
-    <View
+    <Animated.View
       style={[
         appContainerStyles.categoryNavigatorContainer,
         appSpacingStyles.momentsScreenPrimarySpacing,
 
         { backgroundColor: gradientColorsHome.darkColor },
+        visibilityStyle,
       ]}
     >
       <Text
@@ -52,7 +59,7 @@ const CategoryNavigator = ({
       
         
       </ScrollView> 
-    </View>
+    </Animated.View>
   );
 };
 

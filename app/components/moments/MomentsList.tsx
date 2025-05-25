@@ -5,10 +5,10 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { View, Keyboard, ViewToken } from "react-native";
+import { View, Keyboard, ViewToken, TouchableOpacity } from "react-native";
 
 import { useFriendList } from "@/src/context/FriendListContext";
-
+import { useFocusEffect } from "@react-navigation/native";
 import ButtonGoToAddMoment from "../buttons/moments/ButtonGoToAddMoment";
 import LizardSvg from "@/app/assets/svgs/lizard.svg";
 import MomentsNavigator from "./MomentsNavigator";
@@ -16,9 +16,9 @@ import CategoryNavigator from "./CategoryNavigator";
 import MomentsSearchBar from "./MomentsSearchBar";
 import DiceRollScroll from "./DiceRollScroll";
 import MomentCardAnimationWrapper from "./MomentCardAnimationWrapper";
-
+import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
-
+import { AnimatedFlashList, FlashList } from "@shopify/flash-list";
 import Animated, {
   LinearTransition,
   JumpingTransition,
@@ -36,6 +36,7 @@ import Animated, {
   runOnUI,
   scrollTo,
   Easing,
+  withSpring,
 } from "react-native-reanimated";
 
 import { useNavigation } from "@react-navigation/native";
@@ -51,8 +52,9 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 // import { enableFreeze } from "react-native-screens";
 // enableFreeze(true);
 
-const ITEM_HEIGHT = 290;
-const ITEM_BOTTOM_MARGIN = 0;
+//const ITEM_HEIGHT = 290;
+const ITEM_HEIGHT = 80;
+const ITEM_BOTTOM_MARGIN = 4;
 const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
 const MomentsList = () => {
@@ -105,7 +107,7 @@ const MomentsList = () => {
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const momentListBottomSpacer = 700;
+  const momentListBottomSpacer = 600;
 
   const translateX = useSharedValue(0);
   const heightAnim = useSharedValue(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
@@ -149,14 +151,6 @@ const MomentsList = () => {
     }
   }, [momentIdToAnimate]);
 
-  // useEffect(() => {
-  //   if (momentIdToUpdate) {
-  //     console.log("moment updated!");
-  //     runOnJS(updateCacheWithEditedMoment)();
-  //     runOnJS(setMomentIdToUpdate)(null);
-  //   }
-  // }, [momentIdToUpdate]);
-
   // const scrollToMoment = (moment) => {
   //   if (moment.uniqueIndex !== undefined) {
   //     flatListRef.current?.scrollToIndex({
@@ -174,96 +168,19 @@ const MomentsList = () => {
       });
     }
   };
-  
 
   const scrollToRandomItem = () => {
     if (capsuleList.length === 0) return;
 
     const randomIndex = Math.floor(Math.random() * capsuleList.length);
-   // flatListRef.current?.scrollToIndex({
-      flatListRef.current?.scrollToOffset({
-         offset: ITEM_HEIGHT * randomIndex,
-     // index: randomIndex,
+    // flatListRef.current?.scrollToIndex({
+    flatListRef.current?.scrollToOffset({
+      offset: ITEM_HEIGHT * randomIndex,
+      // index: randomIndex,
       animated: false,
     });
   };
 
-
-  // FOR WRAPPER: 
-//   const scrollY = useSharedValue(0);
-//   const scrollHandler = useAnimatedScrollHandler({
-//     onScroll: (event) => {
-//       // console.log(scrollY.value);
-//       scrollY.value = event.contentOffset.y;
-//     },
-//   });// Configuration
-// const ITEM_HEIGHT = 290;
-// const PIXELS_PER_SECOND = 600; // Fixed speed (600px per second)
-// const MIN_DURATION = 500; // Minimum animation time
-// const MAX_DURATION = 10000; // Safety cap (optional)
-
-// const currentOffset = useSharedValue(0);
-// const targetOffset = useSharedValue(0);
-// const shouldScroll = useSharedValue(false);
-// const timeoutId = React.useRef<NodeJS.Timeout | null>(null);
-
-// // Animation driver - CONSTANT SPEED
-// const animatedOffset = useDerivedValue(() => {
-//   const distance = Math.abs(targetOffset.value - currentOffset.value);
-  
-//   // Pure linear duration calculation
-//   const duration = Math.min(
-//     MAX_DURATION,
-//     Math.max(
-//       MIN_DURATION,
-//       (distance / PIXELS_PER_SECOND) * 1000 // ms = (px / (px/s)) * 1000
-//     )
-//   );
-
-//   return withTiming(targetOffset.value, {
-//     duration,
-//     easing: Easing.linear, // Constant speed
-//   });
-// });
-
-// // Apply scroll position (unchanged)
-// useDerivedValue(() => {
-//   if (shouldScroll.value) {
-//     scrollTo(flatListRef, 0, animatedOffset.value, false);
-//     currentOffset.value = animatedOffset.value;
-//   }
-// });
-
-// const scrollToRandomItem = () => {
-//   if (!capsuleList?.length) return;
-
-//   // Clear any pending timeout
-//   if (timeoutId.current) {
-//     clearTimeout(timeoutId.current);
-//     timeoutId.current = null;
-//   }
-
-//   const randomIndex = Math.floor(Math.random() * capsuleList.length);
-//   targetOffset.value = randomIndex * ITEM_HEIGHT;
-//   shouldScroll.value = true;
-
-//   const distance = Math.abs(targetOffset.value - currentOffset.value);
-  
-//   // Match the animation duration
-//   const duration = Math.min(
-//     MAX_DURATION,
-//     Math.max(
-//       MIN_DURATION,
-//       (distance / PIXELS_PER_SECOND) * 1000
-//     )
-//   );
-
-//   timeoutId.current = setTimeout(() => {
-//     shouldScroll.value = false;
-//   }, duration);
-// };
-
-  // changed to a callback to help list animation performance
   const saveToHello = useCallback((moment) => {
     try {
       updateCapsule(moment.id);
@@ -286,19 +203,13 @@ const MomentsList = () => {
 
     if (categoryIndex !== undefined) {
       flatListRef.current?.scrollToIndex({
-       // flatListRef.current?.scrollToOffset({
+        // flatListRef.current?.scrollToOffset({
         index: categoryIndex > 0 ? categoryIndex : 0,
-       //  offset: categoryIndex > 0 ? ITEM_HEIGHT * categoryIndex : 0,
+        //  offset: categoryIndex > 0 ? ITEM_HEIGHT * categoryIndex : 0,
         animated: true,
       });
     }
   };
-
-  // const scrollHandler = useAnimatedScrollHandler({
-  //   onScroll: (event) => {
-  //     scrollY.value = event.contentOffset.y;
-  //   },
-  // });
 
   const viewableItemsArray = useSharedValue<ViewToken[]>([]);
 
@@ -337,26 +248,93 @@ const MomentsList = () => {
       ? topItems[0].item.id
       : null;
   });
+
+  const categoryNavVisibility = useSharedValue(1);
+  const listVisibility = useSharedValue(0);
+
+  //   const scrollHandler = useAnimatedScrollHandler({
+  //   onScroll: (event) => {
+  //     const y = event.contentOffset.y;
+  //   },
+  // });
+
+  useFocusEffect(
+    useCallback(() => {
+      listVisibility.value = withSpring(1, { duration: 800 });
+
+      return () => {
+        listVisibility.value = 0;
+      };
+    }, [])
+  );
+
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      //console.log(event.contentOffset.y);
+      const y = event.contentOffset.y;
+      scrollY.value = event.contentOffset.y;
+      if (y < 10) {  // if less than ten pixels (on the top of the screen)
+        // listVisibility.value = withTiming(1);
+        categoryNavVisibility.value = withTiming(1);
+      } else { 
+        categoryNavVisibility.value = withTiming(1, { duration: 1000 });
+      }
+    },
+    onBeginDrag: (event) => {
+      if (listVisibility.value < 1) {
+        listVisibility.value = withSpring(1);
+      } 
+    },
+    onEndDrag: (event) => {
+      if (event.contentOffset.y <= 0) {
+        listVisibility.value = withSpring(0);
+      }
+      categoryNavVisibility.value = withTiming(1, { duration: 3000 });
+    },
+  });
+
   const renderMomentItem = useCallback(
     ({ item, index }) => (
-      <MomentCardAnimationWrapper
-        viewableItemsArray={viewableItemsArray}
-        item={item}
-        date={item.formattedDate} // ✅ use precomputed date
-        index={index}
-        momentIdToAnimate={momentIdToAnimate}
-        visibleItemId={visibleItemId}
-        fadeAnim={fadeAnim}
-        handleNavigateToMomentView={handleNavigateToMomentView}
-        saveToHello={saveToHello}
-      />
+      <TouchableOpacity
+        onPress={() => navigation.navigate("MomentView", { moment: item })}
+        style={{
+          flex: 1,
+          height: ITEM_HEIGHT,
+          marginBottom: ITEM_BOTTOM_MARGIN,
+          paddingHorizontal: 2,
+        }}
+      >
+        <MomentItem
+          momentData={item}
+          combinedHeight={COMBINED_HEIGHT}
+          index={index} //ADD to component if want to alternative moment item layout
+          momentDate={item.formattedDate}
+          itemHeight={ITEM_HEIGHT}
+          visibilityValue={listVisibility}
+          scrollYValue={scrollY}
+          onSend={saveToHello}
+        />
+      </TouchableOpacity>
+      // <MomentCardAnimationWrapper
+      //   viewableItemsArray={viewableItemsArray}
+      //   item={item}
+      //   date={item.formattedDate} // ✅ use precomputed date
+      //   index={index}
+      //   momentIdToAnimate={momentIdToAnimate}
+      //   visibleItemId={visibleItemId}
+      //   fadeAnim={fadeAnim}
+      //   handleNavigateToMomentView={handleNavigateToMomentView}
+      //   saveToHello={saveToHello}
+      // />
     ),
     [
-      viewableItemsArray,
-      momentIdToAnimate,
-      fadeAnim,
+      // viewableItemsArray,
+      // momentIdToAnimate,
+      // fadeAnim,
       handleNavigateToMomentView,
-      saveToHello,
+      // saveToHello,
     ]
   );
 
@@ -408,11 +386,11 @@ const MomentsList = () => {
         justifyContent="flex-end"
         children={
           <>
-            <DiceRollScroll
+            {/* <DiceRollScroll
               size={belowHeaderIconSize}
               color={themeAheadOfLoading.fontColorSecondary}
               onPress={scrollToRandomItem}
-            />
+            /> */}
             <MomentsSearchBar
               data={capsuleList}
               height={25}
@@ -442,26 +420,26 @@ const MomentsList = () => {
       >
         <>
           <Animated.FlatList
-            //  itemLayoutAnimation={JumpingTransition}
+              itemLayoutAnimation={JumpingTransition}
             // itemLayoutAnimation={CurvedTransition}
             // itemLayoutAnimation={EntryExitTransition}
             //  itemLayoutAnimation={SequencedTransition}
             // itemLayoutAnimation={FadingTransition}
             ref={flatListRef}
             data={memoizedMomentData}
-           // data={capsuleList}
+            estimatedItemSize={83}
+            // data={capsuleList}
             // fadingEdgeLength={20}
             // viewabilityConfig={viewabilityConfig}
             //  onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfigCallbackPairs={
               viewabilityConfigCallbackPairs.current
             }
-            // scrollEventThrottle={16}
-           // onScroll={scrollHandler}
+            scrollEventThrottle={16}
+            onScroll={scrollHandler}
             renderItem={renderMomentItem}
             keyExtractor={extractItemKey}
             getItemLayout={getItemLayout}
-            // onScroll={scrollHandler}
             initialNumToRender={10}
             maxToRenderPerBatch={10}
             windowSize={10}
@@ -489,6 +467,7 @@ const MomentsList = () => {
       {!isKeyboardVisible && (
         <>
           <CategoryNavigator
+            visibilityValue={listVisibility}
             viewableItemsArray={viewableItemsArray}
             categoryNames={categoryNames}
             onPress={scrollToCategoryStart}
