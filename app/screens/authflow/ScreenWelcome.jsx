@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, onLayoutEffect } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -6,76 +6,77 @@ import { useMessage } from "@/src/context/MessageContext";
 import SignInButton from "@/app/components/user/SignInButton";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller";
-import { LinearGradient } from "expo-linear-gradient";
-
-import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
+import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller"; 
+import SafeView from "@/app/components/appwide/format/SafeView";
+import GradientBackground from "@/app/components/appwide/display/GradientBackground";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, interpolate, Extrapolation } from 'react-native-reanimated';
+// import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
 
 const ScreenWelcome = () => {
   const { showMessage } = useMessage();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const [showSignIn, setShowSignIn] = useState(true);
   const { reInitialize } = useUser();
-  const usernameInputRef = useRef(null);
   const navigation = useNavigation();
+
+  const translateY = useSharedValue(500);
 
   const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
     useState(false);
 
-  useEffect(() => {
-    if (usernameInputRef.current) {
-      setUsernameInputVisible(true);
-
-      usernameInputRef.current.focus();
-    }
-  }, []);
-
   const handleNavigateToAuthScreen = (userHitCreateAccount) => {
     navigation.navigate("Auth", { createNewAccount: !!userHitCreateAccount });
   };
-
-  // const dismissKeyboard = (e) => {
-  //   // Prevents dismissing the keyboard, I don't like this approach
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  // };
+ 
 
   useEffect(() => {
     checkIfSignedIn();
   }, []);
 
+
+  useEffect(() => {
+  translateY.value = withSpring(0, { duration: 3000})
+
+  }, []);
+
+
+  const logoRiseStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {translateY: translateY.value}
+      ] 
+  }})
+
   const checkIfSignedIn = async () => {
     try {
       const token = await SecureStore.getItemAsync("accessToken");
-      if (token) {
-        console.log(token);
+      if (token) { 
         showMessage(true, null, "Reinitializing...");
         reInitialize();
         //handleNavigateToAuthScreen(); //don't need, conditional check in App.tsx will send it straight to the home page once has credentials
       } else {
-        setShowSignIn(true);
         setConfirmedUserNotSignedIn(true);
         showMessage(true, null, "Signed out");
       }
     } catch (error) {
       console.error("Error checking sign-in status", error);
-      // Handle errors as necessary
     }
   };
 
   return (
-    <>
-      <PhoneStatusBar />
-      <LinearGradient
-        colors={[
-          manualGradientColors.darkColor,
-          manualGradientColors.lightColor,
-        ]}
-        start={{ x: 0, y: 1 }} // REVERSED:  start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }} //end={{ x: 1, y: 1 }}
-        style={[styles.container]}
+    <SafeView style={{ flex: 1 }}>
+      {/* <PhoneStatusBar /> */}
+      <GradientBackground
+        useFriendColors={false}
+        startColor={manualGradientColors.darkColor}
+        endColor={manualGradientColors.lightColor}
+        reverse={false}
+        additionalStyles={{
+          ...StyleSheet.absoluteFillObject,
+
+          alignItems: "center",
+        }}
       >
         <View
           style={{
@@ -88,19 +89,19 @@ const ScreenWelcome = () => {
           <>
             {confirmedUserNotSignedIn && (
               <>
-                <View
-                  style={{
+                <Animated.View
+                  style={[logoRiseStyle, {
                     width: "100%",
                     paddingBottom: "20%",
                     paddingHorizontal: "3%",
-                  }}
+                  }]}
                 >
                   <LogoSmaller
                     accessible={true} //field not in component
                     accessibilityLabel="App Logo" //field not in component
                     accessibilityHint="This is the logo of the app" //field not in component
                   />
-                </View>
+                </Animated.View>
                 <View
                   style={{
                     bottom: "3%",
@@ -127,7 +128,14 @@ const ScreenWelcome = () => {
 
                   <View style={{ paddingTop: "3%" }}>
                     <Text
-                      style={styles.nonSignInButtonText}
+                      style={{
+                        color: "black",
+                        marginTop: 2,
+                        textAlign: "center",
+                        fontFamily: "Poppins-Bold",
+                        fontSize: 14,
+                        lineHeight: 21,
+                      }}
                       onPress={() => handleNavigateToAuthScreen(true)}
                       accessible={true}
                       accessibilityLabel="Toggle button"
@@ -141,83 +149,10 @@ const ScreenWelcome = () => {
             )}
           </>
         </View>
-      </LinearGradient>
-    </>
+      </GradientBackground>
+    </SafeView>
   );
 };
-
-const styles = StyleSheet.create({
-  form: {
-    gap: 10,
-    height: 200,
-    width: "100%",
-    fontFamily: "Poppins-Regular",
-    bottom: 10,
-    position: "absolute",
-    backgroundColor: "blue",
-    justifyContent: "flex-end",
-    flex: 1,
-    // width: "100%",
-    // right: 0,
-  },
-  input: {
-    fontFamily: "Poppins-Regular",
-    placeholderTextColor: "lightgray",
-    height: "auto",
-    borderBottomWidth: 1,
-    padding: 10,
-    paddingTop: 14,
-    //borderRadius: 10,
-    alignContent: "center",
-    justifyContent: "center",
-    fontFamily: "Poppins-Regular",
-    fontSize: 16,
-  },
-  inputFocused: {
-    borderColor: "orange",
-    borderBottomWidth: 1,
-  },
-  container: {
-    flex: 1,
-    ...StyleSheet.absoluteFillObject,
-
-    // position: "absolute",
-    // width: Dimensions.get("window").width,
-    // height: Dimensions.get("window").height + 100,
-    justifyContent: "space-between",
-
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: "3%",
-  },
-  title: {
-    fontSize: 62,
-    marginBottom: 10,
-    fontFamily: "Poppins-Bold",
-    textAlign: "center",
-  },
-  inputTitleTextAndPadding: {
-    paddingLeft: "3%",
-    //paddingBottom: "2%",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  appDescription: {
-    textAlign: "center",
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    fontSize: 16,
-    fontFamily: "Poppins-Regular",
-  },
-  nonSignInButtonText: {
-    color: "black",
-    marginTop: 2,
-    textAlign: "center",
-    fontFamily: "Poppins-Bold",
-    //fontWeight: "bold",
-    fontSize: 14,
-    lineHeight: 21,
-  },
-});
+ 
 
 export default ScreenWelcome;

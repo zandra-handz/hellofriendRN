@@ -3,27 +3,22 @@ import {
   View,
   TextInput,
   StyleSheet,
-  Text,
-  Dimensions, 
+  Text, 
   Keyboard,
   TouchableOpacity,
 } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useMessage } from "@/src/context/MessageContext"; 
-// import { useFonts } from "expo-font"; 
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRoute } from "@react-navigation/native";
+import { useMessage } from "@/src/context/MessageContext";
 
+import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
+import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
-
-//a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
  
-
 const ScreenAuth = () => {
   const route = useRoute();
   const createNewAccount = route.params?.createNewAccount ?? false;
@@ -39,11 +34,7 @@ const ScreenAuth = () => {
   const [loading, setLoading] = useState(false);
   const [isSignInScreen, setSignInScreen] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const {
-    onSignin,
-    signinMutation, 
-    onSignUp, 
-  } = useUser();
+  const { onSignin, signinMutation, onSignUp } = useUser();
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const verifyPasswordInputRef = useRef(null);
@@ -55,15 +46,6 @@ const ScreenAuth = () => {
   const navigation = useNavigation();
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
-  // const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
-  //   useState(false);
-
-  // const [fontsLoaded] = useFonts({
-  //   "Poppins-Regular": require("@/app/assets/fonts/Poppins-Regular.ttf"),
-  //   "Poppins-Bold": require("@/app/assets/fonts/Poppins-Bold.ttf"),
-  //   "Roboto-Regular": require("@/app/assets/fonts/Roboto-Regular.ttf"),
-  // });
 
   useLayoutEffect(() => {
     if (createNewAccount === true) {
@@ -88,18 +70,6 @@ const ScreenAuth = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (usernameInputRef.current) {
-  //     setUsernameInputVisible(true);
-
-  //     usernameInputRef.current.focus();
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   checkIfSignedIn();
-  // }, []);
-
   const toggleMode = () => {
     setUsername("");
     setEmail("");
@@ -107,12 +77,9 @@ const ScreenAuth = () => {
     setVerifyPassword("");
     setSignInScreen(false);
     setSignUpSuccess(false);
-    //setUsernameInputVisible(true);
-
-    // Delay the focus function by 500ms (for example)
     setTimeout(() => {
       handleCreateAccountInitialFocus();
-    }, 100); // Delay in milliseconds (500ms = 0.5 seconds)
+    }, 100);
   };
 
   const handleBackToSignIn = () => {
@@ -124,28 +91,13 @@ const ScreenAuth = () => {
     setShowSignIn(true);
     setSignInScreen(true);
     setSignUpSuccess(false);
-    // if (usernameInputRef.current) {
-    //   setUsernameInputVisible(true);
-
-    //   usernameInputRef.current.focus();
-    // }
-    // setUsernameInputVisible(true);
   };
 
   useEffect(() => {
     if (signinMutation.isError) {
       setPassword(null);
-    //  console.log("useeffect for sign in mutation error");
-      // setUsernameInputVisible(true);
-
-      // if (usernameInputRef.current) {
-      //   setUsernameInputVisible(true);
-      //   usernameInputRef.current.focus();
-      // }
     }
   }, [signinMutation]);
-
-
 
   const handleAuthentication = async () => {
     let result;
@@ -212,21 +164,14 @@ const ScreenAuth = () => {
     }
   };
 
-  // if (!fontsLoaded) {
-  //   return null; // Or any other loading indicator if fonts are not yet loaded
-  // }
-
   return (
     <>
       <PhoneStatusBar />
-      <LinearGradient
-        colors={[
-          manualGradientColors.darkColor,
-          manualGradientColors.lightColor,
-        ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[styles.container]}
+      <GradientBackground
+        useFriendColors={false}
+        startColor={manualGradientColors.darkColor}
+        endColor={manualGradientColors.lightColor}
+        reverse={false}
       >
         <SafeAreaView
           style={{
@@ -243,6 +188,7 @@ const ScreenAuth = () => {
               width: 40,
               alignItems: "center",
               justifyContent: "center",
+
               backgroundColor: manualGradientColors.homeDarkColor,
               borderRadius: 20, // Half of the height/width to create a circle
             }}
@@ -251,105 +197,133 @@ const ScreenAuth = () => {
               x
             </Text>
           </TouchableOpacity>
-          
-          {/* <Text
-                  style={styles.toggleButton} 
-                  accessible={true} 
-                >
-                  {isSignInScreen ? "Sign in" : "Create new account"}
-                </Text> */}
-          <> 
+
+          <>
+            <View
+              style={{
+                height: 40,
+                marginLeft: "2%",
+                paddingTop: "3%",
+              }}
+            >
+              <Text
+                style={styles.toggleButton}
+                onPress={isSignInScreen ? toggleMode : handleBackToSignIn}
+                accessible={true}
+                accessibilityLabel="Toggle button"
+                accessibilityHint="Press to toggle between sign in and create account"
+              >
+                {isSignInScreen ? "Create new account?" : "Go to sign in"}
+              </Text>
+            </View>
+          </>
+          {!loading &&
+            username &&
+            password &&
+            !isSignInScreen &&
+            !isKeyboardVisible && (
               <View
-                style={{ 
-                  height: 40,
-                  marginLeft: '2%',
-                  paddingTop: "3%",
+                style={{
+                  width: "100%",
+                  position: "absolute",
+                  bottom: 0,
+                  paddingBottom: 60,
+                  right: 0,
                 }}
               >
-                <Text
-                  style={styles.toggleButton}
-                  onPress={isSignInScreen ? toggleMode : handleBackToSignIn}
+                <SimpleBottomButton
+                  onPress={handleAuthentication}
+                  title={isSignInScreen ? "Sign in" : "Create account"}
+                  shapeSource={require("@/app/assets/shapes/coffeecupdarkheart.png")}
+                  shapeWidth={190}
+                  shapeHeight={190}
+                  shapePosition="left"
+                  shapePositionValue={-48}
+                  shapePositionVerticalValue={-23}
+                  fontColor={themeStyles.genericText.color}
                   accessible={true}
-                  accessibilityLabel="Toggle button"
-                  accessibilityHint="Press to toggle between sign in and create account"
+                  accessibilityLabel={
+                    isSignInScreen ? "Sign in button" : "Create account button"
+                  }
+                  accessibilityHint="Press to sign in or create an account"
+                />
+              </View>
+            )}
+          {!loading && username && password && isSignInScreen && (
+            <>
+              <View
+                style={{
+                  width: "100%",
+                  position: "absolute",
+                  bottom: 0,
+                  paddingBottom: 60,
+                  right: 0,
+                }}
+              >
+                <SimpleBottomButton
+                  onPress={handleAuthentication}
+                  title={isSignInScreen ? "Sign in" : "Create account"}
+                  fontColor={themeStyles.genericText.color}
+                  accessible={true}
+                  accessibilityLabel={
+                    isSignInScreen ? "Sign in button" : "Create account button"
+                  }
+                  accessibilityHint="Press to sign in or create an account"
+                />
+              </View>
+
+              {signUpSuccess && (
+                <Text
+                  style={{
+                    marginTop: 10,
+                    color: "green",
+                    textAlign: "center",
+                    fontFamily: "Poppins-Regular",
+                  }}
+                  accessible={true}
+                  accessibilityLabel="Sign up success message"
+                  accessibilityHint="Message indicating sign up was successful"
                 >
-                  {isSignInScreen ? "Create new account?" : "Go to sign in"}
+                  Sign up successful! Please log in.
                 </Text>
-              </View> 
-              
-          </>
-          {!loading && username && password && !isSignInScreen && !isKeyboardVisible && (
-                <View style={{width: '100%', position: 'absolute', bottom: 0, paddingBottom: 60, right: 0}}> 
-                    <SimpleBottomButton
-                      onPress={handleAuthentication}
-                      title={isSignInScreen ? "Sign in" : "Create account"}
-                      shapeSource={require("@/app/assets/shapes/coffeecupdarkheart.png")}
-                      shapeWidth={190}
-                      shapeHeight={190}
-                      shapePosition="left"
-                      shapePositionValue={-48}
-                      shapePositionVerticalValue={-23}
-                      fontColor={themeStyles.genericText.color}
-                      accessible={true}
-                      accessibilityLabel={
-                        isSignInScreen
-                          ? "Sign in button"
-                          : "Create account button"
-                      }
-                      accessibilityHint="Press to sign in or create an account"
-                    />  
-                </View>
               )}
-                            {!loading && username && password && isSignInScreen && (
-                <>
-                  <View style={{width: '100%', position: 'absolute', bottom: 0, paddingBottom: 60, right: 0}}> 
-                   
-                    <SimpleBottomButton
-                      onPress={handleAuthentication}
-                      title={isSignInScreen ? "Sign in" : "Create account"} 
-                      fontColor={themeStyles.genericText.color}
-                      accessible={true}
-                      accessibilityLabel={
-                        isSignInScreen
-                          ? "Sign in button"
-                          : "Create account button"
-                      }
-                      accessibilityHint="Press to sign in or create an account"
-                    />
-                  </View>
-
-                  {signUpSuccess && (
-                    <Text
-                      style={styles.successMessage}
-                      accessible={true}
-                      accessibilityLabel="Sign up success message"
-                      accessibilityHint="Message indicating sign up was successful"
-                    >
-                      Sign up successful! Please log in.
-                    </Text>
-                  )}
-                </>
-              )}
-
-          
+            </>
+          )}
         </SafeAreaView>
-
-      </LinearGradient>
+      </GradientBackground>
 
       {showSignIn && (
         <View
-          style={[styles.form, { bottom: isKeyboardVisible ? 10 : "47%" }]}
+          style={[
+            {
+              gap: 20,
+              height: 200,
+              width: "100%",
+              fontFamily: "Poppins-Regular",
+              bottom: 10,
+              paddingHorizontal: "4%",
+              position: "absolute",
+              justifyContent: "flex-end",
+              flex: 1,
+              bottom: isKeyboardVisible ? 10 : "47%",
+            },
+          ]}
           accessible={true}
           accessibilityLabel="Form container"
         >
           <Text
-                  style={styles.inputHeaderText} 
-                  accessible={true} 
-                >
-                  {isSignInScreen ? "Sign in" : "Create new account"}
-                </Text>
-          {!isSignInScreen  && (
-            <View style={{ flexDirection: "column", width: "100%" }}> 
+            style={{
+              color: "black",
+              fontFamily: "Poppins-Bold",
+              fontSize: 16,
+              selfAlign: "center",
+            }}
+            accessible={true}
+          >
+            {isSignInScreen ? "Sign in" : "Create new account"}
+          </Text>
+          {!isSignInScreen && (
+            <View style={{ flexDirection: "column", width: "100%" }}>
               <TextInput
                 style={[styles.input, isEmailFocused && styles.inputFocused]}
                 placeholder="Email"
@@ -365,9 +339,8 @@ const ScreenAuth = () => {
                 importantForAccessibility="yes"
               />
             </View>
-          )} 
-          <View style={{ flexDirection: "column", width: "100%" }}> 
-
+          )}
+          <View style={{ flexDirection: "column", width: "100%" }}>
             <TextInput
               style={[styles.input, isUsernameFocused && styles.inputFocused]}
               placeholder="Username"
@@ -385,49 +358,44 @@ const ScreenAuth = () => {
             />
           </View>
 
-         
-            <View style={{ flexDirection: "column", width: "100%" }}> 
-              <TextInput
-                style={[styles.input, isPasswordFocused && styles.inputFocused]}
-                placeholder="Password"
-                autoFocus={false} //true
-                secureTextEntry={true}
-                onChangeText={(text) => setPassword(text)}
-                onSubmitEditing={
-                  isSignInScreen
-                    ? handleAuthentication
-                    : handleFirstPasswordSubmit
-                }
-                value={password}
-                ref={passwordInputRef}
-                onFocus={() => setIsPasswordFocused(true)}
-                onBlur={() => setIsPasswordFocused(false)}
+          <View style={{ flexDirection: "column", width: "100%" }}>
+            <TextInput
+              style={[styles.input, isPasswordFocused && styles.inputFocused]}
+              placeholder="Password"
+              autoFocus={false} //true
+              secureTextEntry={true}
+              onChangeText={(text) => setPassword(text)}
+              onSubmitEditing={
+                isSignInScreen
+                  ? handleAuthentication
+                  : handleFirstPasswordSubmit
+              }
+              value={password}
+              ref={passwordInputRef}
+              onFocus={() => setIsPasswordFocused(true)}
+              onBlur={() => setIsPasswordFocused(false)}
+              accessible={true}
+              accessibilityLabel="Password input"
+              accessibilityHint="Enter your password"
+              importantForAccessibility="yes"
+            />
+          </View>
+
+          {isSignInScreen && (
+            <View style={{ flexDirection: "row", width: "100%" }}>
+              <Text
+                style={styles.toggleButton}
+                onPress={() => navigation.navigate("RecoverCredentials")}
                 accessible={true}
-                accessibilityLabel="Password input"
-                accessibilityHint="Enter your password"
-                importantForAccessibility="yes"
-              />
-
-            </View> 
-
-{isSignInScreen && (
-            <View style={{ flexDirection: "row", width: "100%" }}> 
-                <Text
-                  style={styles.toggleButton}
-                  onPress={() => navigation.navigate('RecoverCredentials')}
-                  accessible={true}
-                  accessibilityLabel="Toggle button"
-                  accessibilityHint="Press to toggle between sign in and create account"
-                >
-                  {"Forgot username or password"}
-                </Text>
-              </View> 
-              
-  
-)}
+                accessibilityLabel="Toggle button"
+                accessibilityHint="Press to toggle between sign in and create account"
+              >
+                {"Forgot username or password"}
+              </Text>
+            </View>
+          )}
           {!isSignInScreen && (
             <View style={{ flexDirection: "column", width: "100%" }}>
-          
               <TextInput
                 style={[styles.input, isPasswordFocused && styles.inputFocused]}
                 ref={verifyPasswordInputRef}
@@ -442,44 +410,25 @@ const ScreenAuth = () => {
                 accessibilityHint="Re-enter your password for verification"
                 importantForAccessibility="yes"
               />
-
             </View>
           )}
-                       
         </View>
-        
       )}
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  form: {
-    gap: 20,
-    height: 200,
-    width: "100%",
-    fontFamily: "Poppins-Regular",
-    bottom: 10,
-    paddingHorizontal: "4%",
-    position: "absolute",
-    //backgroundColor: 'blue',
-    justifyContent: "flex-end",
-    flex: 1,
-    // width: "100%",
-    // right: 0,
-  },
   input: {
-    fontFamily: "Poppins-Regular", 
-    //fontWeight: 'bold',
+    fontFamily: "Poppins-Regular",
     placeholderTextColor: "black",
     height: "auto",
-    // borderBottomWidth: 3,
     borderWidth: 2.6,
     padding: 10,
     paddingTop: 10,
     borderRadius: 10,
     alignContent: "center",
-    justifyContent: "center", 
+    justifyContent: "center",
     borderColor: "black",
     fontSize: 15,
   },
@@ -487,65 +436,23 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     borderWidth: 3,
   },
-  container: {
-    flex: 1,
-    ...StyleSheet.absoluteFillObject,
-
-    position: "absolute",
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height + 100,
-    justifyContent: "space-between",
-
-    alignItems: "center",
-    width: "100%",
-    paddingHorizontal: "3%",
-  },
   title: {
     fontSize: 62,
     marginBottom: 10,
     fontFamily: "Poppins-Bold",
     textAlign: "center",
-  },
-  inputTitleTextAndPadding: {
-    paddingLeft: "3%",
-    //paddingBottom: "2%",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  appDescription: {
-    textAlign: "center",
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    fontSize: 16,
-    fontFamily: "Poppins-Regular",
-  },
+  }, 
   toggleButton: {
-    color: "black",  
-    fontFamily: 'Poppins-Bold',
+    color: "black",
+    fontFamily: "Poppins-Bold",
     fontSize: 14,
-    selfAlign: 'center', 
-  },  
-  inputHeaderText: {
-    color: "black",  
-    fontFamily: 'Poppins-Bold',
-    fontSize: 16,
-    selfAlign: 'center', 
-  },
+    selfAlign: "center",
+  }, 
   spinnerContainer: {
     ...StyleSheet.absoluteFillObject, // Cover the entire screen
     backgroundColor: "transparent", // Semi-transparent background
     justifyContent: "center",
     alignItems: "center",
-  },
-  successMessage: {
-    marginTop: 10,
-    color: "green",
-    textAlign: "center",
-    fontFamily: "Poppins-Regular",
-  },
-  xButtonText: {
-    color: "black",
-    fontSize: 30,
   },
 });
 

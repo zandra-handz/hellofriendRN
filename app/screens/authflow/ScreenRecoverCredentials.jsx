@@ -8,13 +8,11 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
-// import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useMessage } from "@/src/context/MessageContext";
 
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-// import { useRoute } from "@react-navigation/native";
 
 import {
   sendResetCodeEmail,
@@ -27,55 +25,27 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 
-//a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
-
 const ScreenRecoverCredentials = () => {
-  // const route = useRoute();
-  // const createNewAccount = route.params?.createNewAccount ?? false;
-
   const { showMessage } = useMessage();
-  const { themeStyles, gradientColors, manualGradientColors } =
-    useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const [showSignIn, setShowSignIn] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  // const [verifyPassword, setVerifyPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isRequestCodeScreen, setIsRequestCodeScreen] = useState(true);
   const [isValidateCodeScreen, setIsValidateCodeScreen] = useState(false);
-  // const [signUpSuccess, setSignUpSuccess] = useState(false);
-  // const {
-  //   onSignin,
-  //   signinMutation,
-  //   signupMutation,
-  //   onSignUp,
-  //   handleSignUp,
-  //   reInitialize,
-  // } = useUser();
-  const usernameInputRef = useRef(null);
+
   const resetCodeRef = useRef(null);
   const newPasswordInputRef = useRef(null);
-  // const verifyPasswordInputRef = useRef(null);
   const emailInputRef = useRef(null);
-  // const [isUsernameFocused, setIsUsernameFocused] = useState(false);
-  const [usernameInputVisible, setUsernameInputVisible] = useState(true);
   const [isNewPasswordFocused, setIsNewPasswordFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isResetCodeFocused, setIsResetCodeFocused] = useState(false);
   const navigation = useNavigation();
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
-  // const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
-  //   useState(false);
-
-  // const [fontsLoaded] = useFonts({
-  //   "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
-  //   "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-  //   "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
-  // });
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -92,31 +62,6 @@ const ScreenRecoverCredentials = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
-
-  useEffect(() => {
-    if (usernameInputRef.current) {
-      setUsernameInputVisible(true);
-
-      usernameInputRef.current.focus();
-    }
-  }, []);
-
-  // const handleBackToSignIn = () => {
-  //   // setShowSignIn(true);
-  //   // setUsername("");
-  //   // setEmail("");
-  //   // setPassword("");
-  //   // setVerifyPassword("");
-  //   // setShowSignIn(true);
-  //   // setSignInScreen(true);
-  //   // setSignUpSuccess(false);
-  //   // if (usernameInputRef.current) {
-  //   //   setUsernameInputVisible(true);
-
-  //   //   usernameInputRef.current.focus();
-  //   // }
-  //   setUsernameInputVisible(true);
-  // };
 
   const handleSubmit = async () => {
     //need to do something to prevent double calling probably?
@@ -155,8 +100,7 @@ const ScreenRecoverCredentials = () => {
           `Checking reset code... ${resetCode}, ${email}`
         );
         const verify = await verifyResetCodeEmail({ email, resetCode });
-        // console.log("Logging reply from validate code:", verify);
-        // // Handle success response
+ 
         showMessage(false, null, "Reset code verified successfully!");
         setIsValidateCodeScreen(false);
       } catch (error) {
@@ -169,19 +113,6 @@ const ScreenRecoverCredentials = () => {
   const handleNavigateBackToAuthScreen = () => {
     navigation.goBack();
   };
-
-  // const handleUsernameSubmit = () => {
-  //   setUsernameInputVisible(false);
-  //   if (newPasswordInputRef.current && username) {
-  //     newPasswordInputRef.current.focus();
-  //   }
-
-  //   console.log("password input current");
-  // };
-
-  // if (!fontsLoaded) {
-  //   return null; // Or any other loading indicator if fonts are not yet loaded
-  // }
 
   return (
     <>
@@ -293,8 +224,7 @@ const ScreenRecoverCredentials = () => {
           )}
         </SafeAreaView>
       </LinearGradient>
-
-      {showSignIn && (
+ 
         <View
           style={[styles.form, { bottom: isKeyboardVisible ? 10 : "47%" }]}
           accessible={true}
@@ -343,24 +273,6 @@ const ScreenRecoverCredentials = () => {
               />
             </View>
           )}
-          {/* <View style={{ flexDirection: "column", width: "100%" }}> 
-
-            <TextInput
-              style={[styles.input, isUsernameFocused && styles.inputFocused]}
-              placeholder="Username"
-              //autoFocus={true}
-              onChangeText={(text) => setUsername(text)}
-              value={username}
-              onSubmitEditing={() => handleUsernameSubmit()}
-              ref={usernameInputRef}
-              onFocus={() => setIsUsernameFocused(true)}
-              onBlur={() => setIsUsernameFocused(false)}
-              accessible={true}
-              accessibilityLabel="Username input"
-              accessibilityHint="Enter your username"
-              importantForAccessibility="yes"
-            />
-          </View> */}
 
           {isValidateCodeScreen && (
             <View style={{ flexDirection: "column", width: "100%" }}>
@@ -406,8 +318,7 @@ const ScreenRecoverCredentials = () => {
               />
             </View>
           )}
-        </View>
-      )}
+        </View> 
     </>
   );
 };
@@ -420,19 +331,14 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     bottom: 10,
     paddingHorizontal: "4%",
-    position: "absolute",
-    //backgroundColor: 'blue',
+    position: "absolute", 
     justifyContent: "flex-end",
-    flex: 1,
-    // width: "100%",
-    // right: 0,
+    flex: 1, 
   },
   input: {
-    fontFamily: "Poppins-Regular",
-    //fontWeight: 'bold',
+    fontFamily: "Poppins-Regular", 
     placeholderTextColor: "black",
-    height: "auto",
-    // borderBottomWidth: 3,
+    height: "auto", 
     borderWidth: 2.6,
     padding: 10,
     paddingTop: 10,
