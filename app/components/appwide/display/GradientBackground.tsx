@@ -1,39 +1,48 @@
-
-import React from "react";
+import React, { ReactNode } from "react";
+import { ViewStyle, StyleProp } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
-const GradientBackground = ({
+interface GradientBackgroundProps {
+  useFriendColors?: boolean;
+  startColor?: string;
+  endColor?: string;
+  reverse?: boolean;
+  additionalStyles?: StyleProp<ViewStyle>;
+  children: ReactNode;
+}
+
+const GradientBackground: React.FC<GradientBackgroundProps> = ({
   useFriendColors = false,
   startColor,
   endColor,
   reverse = false,
   additionalStyles,
   children,
-}) => { 
+}) => {
   const { themeAheadOfLoading } = useFriendList();
 
-  const direction = useFriendColors ? [0,0,1,0] : 
-                                    reverse ? [0, 0, 1, 1] : 
-                                              [0, 1, 1, 0];
+  const direction = useFriendColors
+    ? [0, 0, 1, 0]
+    : reverse
+    ? [0, 0, 1, 1]
+    : [0, 1, 1, 0];
 
   const beginningColor = useFriendColors
     ? themeAheadOfLoading.darkColor
-    : startColor;
+    : startColor || "red";
   const endingColor = useFriendColors
     ? themeAheadOfLoading.lightColor
-    : endColor;
+    : endColor || "red";
 
   return (
     <LinearGradient
       colors={[beginningColor, endingColor]}
       start={{ x: direction[0], y: direction[1] }}
       end={{ x: direction[2], y: direction[3] }}
-   
       style={[
-        additionalStyles && additionalStyles,
-        { 
+        additionalStyles,
+        {
           flex: 1,
           justifyContent: "space-between",
           width: "100%",

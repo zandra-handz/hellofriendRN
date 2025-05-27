@@ -165,7 +165,7 @@ export const CapsuleListProvider = ({ children }) => {
 
       timeoutRef.current = setTimeout(() => {
         updateCapsuleMutation.reset();
-      }, 2000);
+      }, 500);
 
       //  console.error('Error updating capsule:', error);
     },
@@ -214,7 +214,7 @@ export const CapsuleListProvider = ({ children }) => {
 
       timeoutRef.current = setTimeout(() => {
         editMomentMutation.reset();
-      }, 2000);
+      }, 500);
     },
     onSettled: () => {
       if (timeoutRef.current) {
@@ -223,7 +223,7 @@ export const CapsuleListProvider = ({ children }) => {
 
       timeoutRef.current = setTimeout(() => {
         editMomentMutation.reset();
-      }, 2000);
+      }, 500);
     },
   });
 
@@ -313,7 +313,7 @@ export const CapsuleListProvider = ({ children }) => {
         createMomentMutation.reset();
         // setCloseResultMessage(true);
         setResultMessage(null);
-      }, 2000);
+      }, 500);
     },
     onSuccess: (data) => {
       const formattedMoment = {
@@ -343,7 +343,7 @@ export const CapsuleListProvider = ({ children }) => {
         // setCloseResultMessage(true);
         setNewMomentInput("");
         setResultMessage(null);
-      }, 2000);
+      }, 500);
     },
   });
 
@@ -401,7 +401,7 @@ export const CapsuleListProvider = ({ children }) => {
         //  setCloseResultMessage(true);
         setNewMomentInput("");
         setResultMessage(null);
-      }, 2000);
+      }, 500);
     },
     onError: (error) => {
       setResultMessage("Oh no! :( Please try again");
@@ -415,7 +415,7 @@ export const CapsuleListProvider = ({ children }) => {
         deleteMomentMutation.reset();
         //  setCloseResultMessage(true);
         setResultMessage(null);
-      }, 2000);
+      }, 500);
     },
   });
 

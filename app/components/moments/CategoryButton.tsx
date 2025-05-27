@@ -14,14 +14,14 @@ import {
 } from "react-native-reanimated";
 
 const CategoryButton = ({
+  
   viewableItemsArray,
   label,
   onPress,
   pulseDuration = 2000,
 }) => {
   const {
-    themeStyles,
-    gradientColors,
+    themeStyles, 
     appContainerStyles,
     appFontStyles,
     manualGradientColors,
@@ -30,8 +30,7 @@ const CategoryButton = ({
   const { themeAheadOfLoading } = useFriendList();
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
-
-  const momentBackgroundColor = gradientColors.lightColor;
+ 
   const progress = useSharedValue(0);
   const translateYx2 = useSharedValue(0);
   const startColor = useSharedValue("transparent");
@@ -56,16 +55,7 @@ const CategoryButton = ({
             withTiming(1, { duration: pulseDuration }),
             -1,
             true
-          );
-
-          // translateYx2.value = withRepeat(
-          //   withSequence(
-          //     withTiming(-bobbingDistance, { duration: bobbingDuration }),
-          //     withTiming(0, { duration: bobbingDuration })
-          //   ),
-          //   -1,
-          //   false
-          // );
+          ); 
         } else {
           progress.value = withTiming(0, { duration: 200 });
           translateYx2.value = withTiming(0, { duration: 200 });
@@ -78,8 +68,7 @@ const CategoryButton = ({
     [viewableItemsArray]
   );
 
-  const animatedCardsStyle = useAnimatedStyle(() => {
-    // console.log(`IN CAT BUTTON`, viewableItemsArray?.value[0]?.item);
+  const animatedCardsStyle = useAnimatedStyle(() => { 
 
     const backgroundColor = interpolateColor(
       progress.value,

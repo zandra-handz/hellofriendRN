@@ -3,17 +3,17 @@ import * as Sentry from "@sentry/react-native";
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
-  Alert,
-  StyleSheet,
+  Alert, 
   Text,
   Keyboard,
   Animated,
-  FlatList,
-  TouchableOpacity,
+  FlatList, 
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
 
+import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
+import HomeFriendItems from "@/app/components/home/HomeFriendItems";
 import HellofriendHeader from "@/app/components/headers/HellofriendHeader";
 import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 import SmallAddButton from "@/app/components/home/SmallAddButton";
@@ -35,8 +35,7 @@ import HomeButtonMomentAddSmall from "@/app/components/home/HomeButtonMomentAddS
 import HomeButtonUpNext from "@/app/components/home/HomeButtonUpNext";
 import HomeButtonSelectedFriend from "@/app/components/home/HomeButtonSelectedFriend";
 
-import useCurrentLocation from "@/src/hooks/useCurrentLocation";
-
+ 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
 import TextMomentHomeScreenBox from "@/app/components/moments/TextMomentHomeScreenBox";
@@ -54,8 +53,9 @@ const ScreenHome = ({ navigation }) => {
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { user, userAppSettings } = useUser();
   const { selectedFriend, friendLoaded } = useSelectedFriend();
-  const { friendListLength } = useFriendList();
+  const { friendList, friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState();
+
   const {
     requestPermission,
     imageUri,
@@ -166,15 +166,7 @@ const ScreenHome = ({ navigation }) => {
   };
 
   const showLastButton = true;
-  const maxButtonHeight = 100; // Remaining height for buttons  // Divide remaining height by the number of buttons (5 buttons + footer)
-
-  // const { currentLocationDetails } = useCurrentLocation();
-  // useEffect(() => {
-  //   if (currentLocationDetails) {
-  //   }
-  // }, [currentLocationDetails]);
-
-  // Animated values for slide-in effect
+  const maxButtonHeight = 100;  
   const [slideAnim] = useState(new Animated.Value(1)); // Value for animating the button container
 
   // Trigger the slide-in animation when the screen mounts
@@ -197,7 +189,7 @@ const ScreenHome = ({ navigation }) => {
     "Add new photo",
     "Add upload",
     "Add hello",
-    "Pick meet-up location",
+    "Pick meet-up location", 
   ];
 
   const renderOptionButton = (item, index) => {
@@ -277,7 +269,7 @@ const ScreenHome = ({ navigation }) => {
           style={{ flex: 1 }}
         >
           <HellofriendHeader />
-          {user.authenticated && user.user && userAppSettings ? (
+          {user.authenticated && user.user && userAppSettings && friendList && friendList.length > 0  ? (
             <View
               style={{
                 flex: 1,
@@ -287,6 +279,7 @@ const ScreenHome = ({ navigation }) => {
                 paddingHorizontal: "2%",
               }}
             >
+            
               <View
                 style={{
                   height: isKeyboardVisible ? "89%" : "38%",
@@ -308,6 +301,10 @@ const ScreenHome = ({ navigation }) => {
                   onTextChange={updateNewMomentTextString}
                   multiline={true}
                 />
+
+
+
+
 
                 {selectedFriend && showMomentScreenButton && (
                   <View
@@ -353,7 +350,7 @@ const ScreenHome = ({ navigation }) => {
                   },
                 ]}
               >
-                {!selectedFriend && !friendLoaded && showLastButton && (
+                {/* {!selectedFriend && !friendLoaded && showLastButton && (
                   <View style={{ height: 60, paddingVertical: 4 }}>
                     <HomeScreenButton
                       label={"ADD FRIEND"}
@@ -361,42 +358,50 @@ const ScreenHome = ({ navigation }) => {
                       image={require("@/app/assets/shapes/yellowleaves.png")}
                     />
                   </View>
-                )}
+                )} */}
 
-                {!selectedFriend && (
+                {!selectedFriend && friendListLength > 0 && (
                   <HomeButtonUpNext
                     onPress={navigateToAddMomentScreen}
-                    borderRadius={40}
-                    height={"100%"}
-                    borderColor="black"
-                    maxHeight={190}
+                    borderRadius={10}
+                    height={400}
+                    borderColor="black" 
                   />
                 )}
                 {selectedFriend && (
+                  <>
                   <HomeButtonSelectedFriend
                     onPress={navigateToAddMomentScreen}
-                    borderRadius={40}
+                    borderRadius={10}
                     borderColor="black"
                     height={"100%"}
                   />
+                  <HomeFriendItems 
+                  borderRadius={10}/>
+                  
+                  </>
                 )}
+                {friendListLength > 0 && (
+                  
                 <HomeScrollSoon
-                  height={"20%"}
-                  maxHeight={140}
-                  borderRadius={40}
+                  height={"100%"}
+                  maxHeight={600}
+                  borderRadius={10}
                   borderColor="black"
                 />
-                {selectedFriend && (
+                
+                )}
+                {/* {selectedFriend && (
                   <HomeScrollCalendarLights
                     height={"5%"}
                     borderRadius={40}
                     borderColor="black"
                   />
-                )}
+                )} */}
               </Animated.View>
             </View>
           ) : (
-            <View style={styles.signInContainer}></View>
+            <NoFriendsMessageUI username={user?.user?.username || ''} userCreatedOn={user?.user?.created_on || ''}/>
           )}
 
           <HelloFriendFooter />

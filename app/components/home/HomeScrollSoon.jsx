@@ -4,8 +4,7 @@ import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFriendList } from "@/src/context/FriendListContext";
 import SoonButton from "../home/SoonButton";
- 
-import FriendItemButton from "../friends/FriendItemButton";
+  
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 import { useNavigation } from "@react-navigation/native";
@@ -19,128 +18,62 @@ const HomeScrollSoon = ({
   maxHeight = 130,
   borderRadius = 20,
   borderColor = "transparent",
-}) => {
-  const navigation = useNavigation();
+}) => { 
   const { themeStyles, themeStyleSpinners, manualGradientColors } =
     useGlobalStyle();
+    const navigation = useNavigation();
   const { darkColor, lightColor } = manualGradientColors;
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { selectedFriend, setFriend } = useSelectedFriend();
   const { friendList, friendListLength, getThemeAheadOfLoading } =
     useFriendList();
-
-  const soonButtonWidth = 140;
-  // const friendItemButtonWidth = 160;
-
-  const soonListRightSpacer = Dimensions.get("screen").width - 136;
-
-  const friendItemButtonWidth = Dimensions.get("screen").width / 2.6;
-
-  const buttonRightSpacer = 6;
-
-  const calendarButtonHeight = height / 0.6;
-
-  const handlePress = (hello) => {
-    console.log("next hello date: ", hello.future_date_in_words);
+  
+ 
+  const handlePress = (hello) => { 
     const { id, name } = hello.friend;
     const selectedFriend = id === null ? null : { id: id, name: name };
     setFriend(selectedFriend);
     const friend = friendList.find((friend) => friend.id === hello.friend.id);
     getThemeAheadOfLoading(friend);
+    navigation.navigate('Moments');
   };
-
-  const handleNavigationPress = (name) => {
-    navigation.navigate({ name });
-  };
+ 
 
   const renderUpcomingHelloes = () => {
     return (
       <Animated.FlatList
         data={upcomingHelloes.slice(0)}
-        horizontal={true}
+        //horizontal={true}
         keyExtractor={(item, index) => `satellite-${index}`}
-        getItemLayout={(data, index) => ({
-          length: soonButtonWidth,
-          offset: soonButtonWidth * index,
-          index,
-        })}
+        // getItemLayout={(data, index) => ({
+        //   length: soonButtonWidth,
+        //   offset: soonButtonWidth * index,
+        //   index,
+        // })}
         renderItem={({ item }) => (
           <View
-            style={{ marginRight: buttonRightSpacer, height: "80%", flex: 1 }}
+            style={{ marginBottom: 2, height: 50, width: '100%' , flexDirection: 'row'  }}
           >
             <SoonButton
               height={"100%"}
               friendName={item.friend_name}
               dateAsString={item.future_date_in_words}
-              width={soonButtonWidth}
+           width={'100%'}
               onPress={() => handlePress(item)}
             />
           </View>
-        )}
-        showsHorizontalScrollIndicator={false}
-        scrollIndicatorInsets={{ right: 1 }}
-        initialScrollIndex={0}
+        )}   
         ListFooterComponent={() => (
-          <View style={{ width: soonListRightSpacer }} />
-        )}
-        snapToInterval={soonButtonWidth + buttonRightSpacer} // Set the snapping interval to the height of each item
-        snapToAlignment="start" // Align items to the top of the list when snapped
-        decelerationRate="fast"
+          <View style={{ height: 100 }} />
+        )} 
+        //  snapToAlignment="start" // Align items to the top of the list when snapped
+        // decelerationRate="fast"
       />
     );
   };
+ 
 
-  const friendOptions = [
-    {
-      name: "Helloes",
-      message: selectedFriend?.name ? `Past helloes` : "View past helloes!", // Fallback message if selectedFriend.name does not exist
-    },
-    {
-      name: "Locations",
-      message: "Saved locations",
-    },
-
-    {
-      name: "Helloes",
-      message: "More options coming soon!",
-    },
-  ];
-
-  const renderFriendItems = () => {
-    return (
-      <Animated.FlatList
-        data={friendOptions}
-        horizontal={true}
-        keyExtractor={(item, index) => `satellite-${index}`}
-        getItemLayout={(data, index) => ({
-          length: friendItemButtonWidth,
-          offset: friendItemButtonWidth * index,
-          index,
-        })}
-        renderItem={({ item }) => (
-          <View
-            style={{ marginRight: buttonRightSpacer, height: "100%", flex: 1 }}
-          >
-            <FriendItemButton
-              height={"100%"}
-              buttonTitle={item.message}
-              width={friendItemButtonWidth}
-              onPress={() => handleNavigationPress(item.name)}
-            />
-          </View>
-        )}
-        showsHorizontalScrollIndicator={false}
-        scrollIndicatorInsets={{ right: 1 }}
-        initialScrollIndex={0}
-        ListFooterComponent={() => (
-          <View style={{ width: soonListRightSpacer }} />
-        )}
-        snapToInterval={friendItemButtonWidth + buttonRightSpacer} // Set the snapping interval to the height of each item
-        snapToAlignment="start"
-        decelerationRate="fast"
-      />
-    );
-  };
+ 
 
   return (
     <View
@@ -155,7 +88,8 @@ const HomeScrollSoon = ({
       ]}
     >
       <LinearGradient
-        colors={[darkColor, lightColor]}
+       // colors={[darkColor, 'pink']}
+        colors={['transparent', 'transparent']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
@@ -178,11 +112,8 @@ const HomeScrollSoon = ({
       {!isLoading && (
         <>
           <View style={styles.headerContainer}>
-            {!selectedFriend && <Text style={styles.headerText}>SOON</Text>}
-
-            {selectedFriend && (
-              <Text style={styles.headerText}>HELLO HELPERS</Text>
-            )}
+             <Text style={styles.headerText}>SOON</Text>
+ 
           </View>
 
           {friendListLength === 0 && (
@@ -202,14 +133,11 @@ const HomeScrollSoon = ({
 
           {friendListLength > 0 && (
             <View
-              style={[styles.buttonContainer, { height: calendarButtonHeight }]}
-            >
-              {!selectedFriend && friendListLength > 0 && (
+              style={[styles.buttonContainer ]}
+            > 
                 <>{renderUpcomingHelloes()}</>
-              )}
-              {selectedFriend && friendListLength > 0 && (
-                <>{renderFriendItems()}</>
-              )}
+           
+            
             </View>
           )}
         </>
@@ -222,12 +150,13 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flexDirection: "column",
-    flex: 1,
+    flex: 1, 
+    flexGrow: 1,
+    height: '100%',
     overflow: "hidden",
     marginVertical: "1%",
     borderWidth: 0,
-    borderColor: "black",
-    paddingHorizontal: "4%",
+    borderColor: "black", 
     paddingVertical: "4%",
   },
   text: {
@@ -271,11 +200,13 @@ const styles = StyleSheet.create({
     alignContents: "center",
     justifyContent: "space-around",
   },
-  buttonContainer: {
-    flexDirection: "row",
-    flex: 1,
-    borderRadius: 30,
-    paddingHorizontal: "3%",
+  buttonContainer: { 
+    flex: 1, 
+   flexDirection: 'column',
+    height: 200,
+    width: '100%',
+   // backgroundColor: 'pink',
+    alignItems: 'center',
   },
   button: {
     justifyContent: "center",

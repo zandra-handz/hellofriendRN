@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useState,
+  useRef,
   useEffect,
   AccessibilityInfo,
 } from "react";
@@ -31,6 +32,8 @@ import {
 const UserContext = createContext({});
 export const useUser = () => useContext(UserContext);
 
+
+
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState({
     user: null,
@@ -40,6 +43,8 @@ export const UserProvider = ({ children }) => {
   const [userAppSettings, setUserAppSettings] = useState({});
   const [userNotificationSettings, setUserNotificationSettings] = useState({});
   const queryClient = useQueryClient();
+
+  const timeoutRef = useRef(null);
 
   const reInitialize = async () => {
     const token = await SecureStore.getItemAsync("accessToken");

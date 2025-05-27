@@ -160,6 +160,15 @@ export const GlobalStyleProvider = ({ children }) => {
 };
 
 const containerStyles = StyleSheet.create({
+  signInButtonContainer: {
+    borderRadius: 30,
+    paddingVertical: "3%",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    overflow: "hidden",
+  },
   screenContainer: {
     width: "100%",
     flex: 1,
@@ -403,6 +412,10 @@ const spacingStyles = StyleSheet.create({
 });
 
 const fontStyles = StyleSheet.create({
+  signInButtonLabel: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 14,
+  },
   homeHeaderText: {
     fontSize: 20,
     fontFamily: "Poppins-Regular",
@@ -412,25 +425,24 @@ const fontStyles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
     textTransform: "uppercase",
   },
-  welcomeText: { 
+  welcomeText: {
     fontSize: 30,
-   // lineHeight: 22,
-   fontFamily: "Poppins-Regular",
+    // lineHeight: 22,
+    fontFamily: "Poppins-Regular",
   },
   homeScreenNewMomentContainer: {
-        borderRadius: 30,
+    borderRadius: 30,
     alignSelf: "center",
-    paddingHorizontal: '4%',
-    paddingVertical: '0%', 
-    padding: '2%',
-    marginBottom: '2%',
-
+    paddingHorizontal: "4%",
+    paddingVertical: "0%",
+    padding: "2%",
+    marginBottom: "2%",
   },
   homeScreenButtonText: {
     fontSize: 16,
-   // fontFamily: "Poppins-Bold",
-   fontWeight: 'bold',
-   // textTransform: "uppercase",
+    // fontFamily: "Poppins-Bold",
+    fontWeight: "bold",
+    // textTransform: "uppercase",
   },
   smallAddButtonText: {
     fontSize: 12,
@@ -625,6 +637,10 @@ const darkThemeStyles = StyleSheet.create({
   primaryBackground: {
     backgroundColor: "#121212",
   },
+
+  signInButton: {
+    backgroundColor: "#ebebeb", //'#e0e0e0',
+  },
   darkerBackground: {
     backgroundColor: "#2B2B2B",
   },
@@ -634,10 +650,6 @@ const darkThemeStyles = StyleSheet.create({
 
   dangerZoneText: {
     color: "#B22222",
-  },
-  signinText: {
-    color: "white",
-    fontFamily: "Poppins-Bold",
   },
   signInAppDescription: {
     fontColor: "black",

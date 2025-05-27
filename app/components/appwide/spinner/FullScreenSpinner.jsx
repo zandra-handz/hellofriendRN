@@ -9,7 +9,7 @@ import { useUpcomingHelloes } from '@/src/context/UpcomingHelloesContext';
 import { useCapsuleList } from '@/src/context/CapsuleListContext';
 import { useHelloes } from '@/src/context/HelloesContext';
 import { useLocations } from '@/src/context/LocationsContext';
- 
+ import { useSelectedFriend } from '@/src/context/SelectedFriendContext';
 import useCurrentLocation from '@/src/hooks/useCurrentLocation';
 import useTravelTimes from '@/src/hooks/useTravelTimes';
 
@@ -34,7 +34,7 @@ const FullScreenSpinner = ({
   const { createMomentMutation } = useCapsuleList();
   const { travelTimesMutation } = useTravelTimes();
     
-  const [ showSpinner, setShowSpinner ] = useState(false); // Initialize state with the loading prop
+  const [ showSpinner, setShowSpinner ] = useState(true); // Initialize state with the loading prop
   const { themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const{ locationsIsFetching } = useLocations();
@@ -43,7 +43,7 @@ const FullScreenSpinner = ({
   const { currentLocationIsCalculating } = useCurrentLocation();
   const { createImageMutation } = useImageFunctions();
 
- 
+ const { loadingNewFriend } = useSelectedFriend();
 
   useEffect(() => {
     if (signinMutation.isPending) {
@@ -52,6 +52,8 @@ const FullScreenSpinner = ({
       setShowSpinner(false);
     }
   }, [signinMutation]);
+ 
+
 
 
   useEffect(() => {

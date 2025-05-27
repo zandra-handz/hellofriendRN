@@ -9,6 +9,7 @@ import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import LizardSvg from "@/app/assets/svgs/lizard";
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
+import HomeScrollSoon from "./HomeScrollSoon";
 
 // Press function is internal
 const HomeButtonUpNext = ({
@@ -42,7 +43,7 @@ const HomeButtonUpNext = ({
           borderRadius: borderRadius,
           borderColor: borderColor,
           height: height,
-          maxHeight: maxHeight,
+          // maxHeight: maxHeight,
         },
       ]}
     >
@@ -67,11 +68,11 @@ const HomeButtonUpNext = ({
         ))}
 
       {!loadingNewFriend && !isLoading && (
-        <TouchableOpacity
-          onPress={onPress}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <View style={styles.textContainer}>
+        <View style={{ height: "100%", width: "100%" , flexDirection: 'column', justifyContent: 'space-between'}}>
+          <TouchableOpacity
+            onPress={onPress}
+            style={[styles.textContainer ]}
+          >
             <Text style={styles.headerText}>{header}</Text>
 
             <Text
@@ -90,23 +91,22 @@ const HomeButtonUpNext = ({
                 : "Please add a friend to use this feature!"}
             </Text>
 
-            <Text style={styles.subtitleText}>
+            <Text style={styles.subtitleText}>Say hi on{' '}
               {upcomingHelloes && !isLoading && upcomingHelloes[0]
                 ? upcomingHelloes[0].future_date_in_words
-                : ""}
+                : ""}!
             </Text>
-          </View>
-          {/* <View
-            style={{
-              position: "absolute",
-              right: -66,
-              top: -66,
-              transform: [{ rotate: "240deg" }],
-            }}
-          >
-            <LizardSvg color={"black"} width={180} height={180} />
-          </View> */}
-                    <View
+          </TouchableOpacity> 
+          <View style={{zIndex: 30000, height: 400, marginTop: 100, width: '100%'}}>
+
+          <HomeScrollSoon
+            height={"100%"}
+            maxHeight={300}
+            borderRadius={10}
+            borderColor="black"
+          />
+</View>
+          <View
             style={{
               position: "absolute",
               right: -56,
@@ -116,7 +116,7 @@ const HomeButtonUpNext = ({
           >
             <GeckoSvg color={"black"} width={200} height={200} />
           </View>
-        </TouchableOpacity>
+        </View>
       )}
     </View>
   );

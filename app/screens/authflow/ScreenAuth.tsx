@@ -12,17 +12,18 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useMessage } from "@/src/context/MessageContext";
 
 import { useNavigation } from "@react-navigation/native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, RouteProp } from "@react-navigation/native";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
+import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
  
-const ScreenAuth = () => {
-  const route = useRoute();
-  const createNewAccount = route.params?.createNewAccount ?? false;
 
+const ScreenAuth = () => {
+  const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
+  const createNewAccount = route.params?.createNewAccount ?? false;
   const { showMessage } = useMessage();
   const { themeStyles, gradientColors, manualGradientColors } =
     useGlobalStyle();

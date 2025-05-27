@@ -1,0 +1,11 @@
+
+
+
+STYLE PROPS:
+
+For View components: StyleProp<ViewStyle>
+
+For Text components: StyleProp<TextStyle>
+
+For Image components: StyleProp<ImageStyle>
+

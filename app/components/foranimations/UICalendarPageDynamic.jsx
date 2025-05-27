@@ -21,14 +21,12 @@ const UICalendarPageDynamic = ({ numberDate = '30', month = 'JUN', showMonth = t
   const dateContainerDimensions = calculateDateContainerDimensions(width, height);
 
   return (
-    <View style={styles.componentContainer}>
-      <View style={[styles.relativeContainer, { width, height }]}>
+     <View style={[styles.relativeContainer, { width, height }]}>
         <CalendarBlankSvg width={width} height={height} style={[styles.svgImage, { color: color }]} />
         <View style={[styles.dateContainer, dateContainerDimensions, { paddingLeft: calculateLeftPadding(dateContainerDimensions.width) }]}>
           <Text style={[styles.numberDateText, { color: color, fontFamily: 'Poppins-Bold', fontSize: calculateFontSize(width), top: dateContainerDimensions.height * 0.5 }]}>{numberDate}</Text>
         </View>
-      </View>
-    </View>
+      </View> 
   );
 };
 
@@ -38,7 +36,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   relativeContainer: {
-    position: 'relative',
+    flex: 1,
   },
   dateContainer: {
     position: 'absolute',

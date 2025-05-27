@@ -1,4 +1,4 @@
-import React, { useState, useEffect, onLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -9,23 +9,22 @@ import { useNavigation } from "@react-navigation/native";
 import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller"; 
 import SafeView from "@/app/components/appwide/format/SafeView";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, interpolate, Extrapolation } from 'react-native-reanimated';
-// import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated'; 
+import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
 
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
+ 
 
 const ScreenWelcome = () => {
   const { showMessage } = useMessage();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { reInitialize } = useUser();
-  const navigation = useNavigation();
-
-  const translateY = useSharedValue(500);
+  const navigation = useNavigation<AuthScreenNavigationProp>();
 
   const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
     useState(false);
 
-  const handleNavigateToAuthScreen = (userHitCreateAccount) => {
+  const handleNavigateToAuthScreen = (userHitCreateAccount: boolean) => {
     navigation.navigate("Auth", { createNewAccount: !!userHitCreateAccount });
   };
  
@@ -34,10 +33,12 @@ const ScreenWelcome = () => {
     checkIfSignedIn();
   }, []);
 
+// experimenting with this, not super great right now 
+
+  const translateY = useSharedValue(500); 
 
   useEffect(() => {
   translateY.value = withSpring(0, { duration: 3000})
-
   }, []);
 
 
@@ -65,8 +66,7 @@ const ScreenWelcome = () => {
   };
 
   return (
-    <SafeView style={{ flex: 1 }}>
-      {/* <PhoneStatusBar /> */}
+    <SafeView style={{ flex: 1 }}> 
       <GradientBackground
         useFriendColors={false}
         startColor={manualGradientColors.darkColor}
@@ -96,11 +96,7 @@ const ScreenWelcome = () => {
                     paddingHorizontal: "3%",
                   }]}
                 >
-                  <LogoSmaller
-                    accessible={true} //field not in component
-                    accessibilityLabel="App Logo" //field not in component
-                    accessibilityHint="This is the logo of the app" //field not in component
-                  />
+                  <LogoSmaller />
                 </Animated.View>
                 <View
                   style={{
@@ -113,17 +109,8 @@ const ScreenWelcome = () => {
                 >
                   <SignInButton
                     onPress={() => handleNavigateToAuthScreen(false)}
-                    title={"Sign in"}
-                    shapeSource={require("@/app/assets/shapes/coffeecupdarkheart.png")}
-                    shapeWidth={190}
-                    shapeHeight={190}
-                    shapePosition="left"
-                    shapePositionValue={-48}
-                    shapePositionVerticalValue={-23}
-                    fontColor={themeStyles.genericText.color}
-                    accessible={true}
-                    accessibilityLabel={"Sign in button"}
-                    accessibilityHint="Press to sign in or create an account"
+            
+              
                   />
 
                   <View style={{ paddingTop: "3%" }}>

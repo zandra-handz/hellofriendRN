@@ -18,6 +18,9 @@ import DiceRollScroll from "./DiceRollScroll";
 import MomentCardAnimationWrapper from "./MomentCardAnimationWrapper";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
+import ButtonIconImages from "../buttons/images/ButtonIconImages";
+import ButtonIconMoments from "../buttons/moments/ButtonIconMoments";
+import MomentsStaticButton from "../buttons/moments/MomentsStaticButton";
 import { AnimatedFlashList, FlashList } from "@shopify/flash-list";
 import Animated, {
   LinearTransition,
@@ -275,17 +278,18 @@ const MomentsList = () => {
       //console.log(event.contentOffset.y);
       const y = event.contentOffset.y;
       scrollY.value = event.contentOffset.y;
-      if (y < 10) {  // if less than ten pixels (on the top of the screen)
+      if (y < 10) {
+        // if less than ten pixels (on the top of the screen)
         // listVisibility.value = withTiming(1);
         categoryNavVisibility.value = withTiming(1);
-      } else { 
+      } else {
         categoryNavVisibility.value = withTiming(1, { duration: 1000 });
       }
     },
     onBeginDrag: (event) => {
       if (listVisibility.value < 1) {
         listVisibility.value = withSpring(1);
-      } 
+      }
     },
     onEndDrag: (event) => {
       if (event.contentOffset.y <= 0) {
@@ -391,6 +395,52 @@ const MomentsList = () => {
               color={themeAheadOfLoading.fontColorSecondary}
               onPress={scrollToRandomItem}
             /> */}
+            <View
+              style={{
+                flexDirection: "row",
+                height: "100%",
+                alignItems: "center",
+                width: "50%",
+                justifyContent: "flex-end",
+              //  overflow: "hidden",
+                marginRight: 10, 
+                height: 30,
+              }}
+            > 
+            <View style={{width: 30, marginHorizontal: 4}}>
+              
+                <MomentsStaticButton
+                  height={"100%"}
+                  iconSize={24}
+                  onPress={() => navigation.navigate("Moments")}
+                  circleColor={"orange"}
+                  countTextSize={8}
+                  countColor={
+                    themeAheadOfLoading
+                      ? themeAheadOfLoading.fontColorSecondary
+                      : "orange"
+                  }
+                />  
+                
+            </View>
+               <View style={{width: 30, marginHorizontal: 4}}>
+              
+                <ButtonIconImages
+                  height={"40%"} //ADJUST POSITION HERE
+                  iconSize={24}
+                  onPress={() => navigation.navigate("Images")}
+                  circleColor={"orange"}
+                  countTextSize={8}
+                  countColor={
+                    themeAheadOfLoading
+                      ? themeAheadOfLoading.fontColorSecondary
+                      : "orange"
+                  }
+                /> 
+                
+             </View>
+            </View>
+
             <MomentsSearchBar
               data={capsuleList}
               height={25}
@@ -420,7 +470,7 @@ const MomentsList = () => {
       >
         <>
           <Animated.FlatList
-              itemLayoutAnimation={JumpingTransition}
+            itemLayoutAnimation={JumpingTransition}
             // itemLayoutAnimation={CurvedTransition}
             // itemLayoutAnimation={EntryExitTransition}
             //  itemLayoutAnimation={SequencedTransition}
