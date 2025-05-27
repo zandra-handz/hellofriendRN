@@ -1,28 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import {
   View,
-  StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-
-import { useUser } from "@/src/context/UserContext";
-import LeafTopContainer from "./LeafTopContainer";
+import BodyStyling from "../scaffolding/BodyStyling";
+import { useUser } from "@/src/context/UserContext"; 
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
-
 import TextMomentBox from "./TextMomentBox";
-
 import { useNavigation } from "@react-navigation/native";
-
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
-import FriendSelectModalVersionButtonOnly from "@/app/components/friends/FriendSelectModalVersionButtonOnly";
-
+import FriendModalIntegrator from "@/app/components/friends/FriendModalIntegrator";
 import CategoryCreator from "./CategoryCreator";
-
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
+import moment from "moment";
 
 const ContentMomentFocus = ({
   momentText,
@@ -32,9 +25,6 @@ const ContentMomentFocus = ({
   const { selectedFriend, friendDashboardData, loadingNewFriend } =
     useSelectedFriend();
   const {
-    capsuleList,
-    categoryCount,
-    categoryNames,
     handleCreateMoment,
     createMomentMutation,
     handleEditMoment,
@@ -42,7 +32,7 @@ const ContentMomentFocus = ({
   } = useCapsuleList(); // NEED THIS TO ADD NEW
   const { user } = useUser();
   const navigation = useNavigation();
-  const { themeStyles, appContainerStyles } = useGlobalStyle();
+  const { appContainerStyles } = useGlobalStyle();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const momentTextRef = useRef(null);
@@ -126,8 +116,6 @@ const ContentMomentFocus = ({
 
           await handleCreateMoment(requestData);
         } else {
-          console.log("attempting to save edits");
-
           const editData = {
             typed_category: selectedCategory,
             capsule: momentTextRef.current.getText(),
@@ -144,6 +132,7 @@ const ContentMomentFocus = ({
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
       navigation.goBack();
+      createMomentMutation.reset(); //additional immediate reset to allow user to return back to screen instantly
     }
   }, [createMomentMutation.isSuccess]);
 
@@ -156,44 +145,30 @@ const ContentMomentFocus = ({
   return (
     <TouchableWithoutFeedback onPress={() => {}}>
       <View style={appContainerStyles.screenContainer}>
-   
-
+        {!updateExistingMoment && (
+          
         <BelowHeaderContainer
           height={30}
           alignItems="center"
           marginBottom={4}
           justifyContent="flex-end"
-          children={
-            <FriendSelectModalVersionButtonOnly
-              includeLabel={false}
-              width="100%"
-            />
-          }
-        /> 
+          children={<FriendModalIntegrator includeLabel={false} navigationDisabled={true} width="100%" />}
+        />
+        
+        )}
         <View
           style={{
             width: "100%",
-
             flexDirection: "column",
             justifyContent: "space-between",
           }}
         >
-          {!updateExistingMoment && (
-            <BelowHeaderContainer
-              height={140} //60
-              alignItems="center"
-              //marginBottom="2%" //default is currently set to 2
-              justifyContent="flex-start"
-              // children={
-              //   <FriendSelectModalVersionButtonOnly
-              //     includeLabel={false}
-              //     width="100%"
-              //   />
-              // }
-            />
-          )}
-          <LeafTopContainer
-            paddingHorizontal={0} //padding is in inner element in this case because it is a different color
+          <BodyStyling
+            height={"100%"}
+            width={"100%"}
+            paddingTop={"6%"}
+            paddingHorizontal={0}
+            paddingBottom={"0%"}
             children={
               <View
                 style={{
@@ -204,19 +179,13 @@ const ContentMomentFocus = ({
                 }}
               >
                 <TextMomentBox
-                  width={"100%"}
-                  height={"100%"}
-                  ref={momentTextRef}
+                  ref={momentTextRef} 
                   title={
                     updateExistingMoment ? "Edit moment" : "Write new moment"
                   }
                   onTextChange={updateMomentText}
-                  multiline={true}
+                
                 />
-
-                {/* <View style={[{ height: 100, marginTop: 4 }]}>
-                <SimpleDisplayCard value={selectedCategory} />
-              </View> */}
               </View>
             }
           />
@@ -266,103 +235,5 @@ const ContentMomentFocus = ({
     </TouchableWithoutFeedback>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    flex: 1,
-    //flexDirection: "column",
-    justifyContent: "space-between",
-    //top: 0,
-  },
-  loadingWrapper: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  selectFriendContainer: {
-    width: "100%",
-    justifyContent: "center",
-    minHeight: 30,
-    maxHeight: 30,
-    height: 30,
-  },
-  blurView: {
-    overflow: "hidden",
-    width: "100%",
-    flex: 1,
-    borderRadius: 30,
-  },
-  modalTextInput: {
-    fontSize: 16,
-    color: "white",
-    alignSelf: "center",
-    padding: 24,
-    textAlignVertical: "top",
-    borderWidth: 1.8,
-    borderRadius: 50,
-    marginBottom: 10,
-    width: "99%",
-    flex: 1,
-    height: "auto",
-  },
-  displayText: {
-    fontSize: 16,
-    fontFamily: "Poppins-Regular",
-    color: "white",
-    padding: 10,
-    textAlignVertical: "top",
-    borderWidth: 0,
-    borderRadius: 20,
-    width: "100%",
-    flexShrink: 1,
-  },
-  wordCountText: {
-    fontSize: 16,
-    fontFamily: "Poppins-Bold",
-    color: "white",
-    textAlign: "right",
-  },
-  displayTextContainer: {
-    width: "100%",
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
-    height: "auto",
-    backgroundColor: "transparent",
-    flexShrink: 1,
-    height: "auto",
-  },
-
-  categoryContainer: {
-    width: "100%",
-    flex: 1,
-    height: "auto",
-    maxHeight: "90%",
-    borderRadius: 8,
-    paddingTop: 10,
-  },
-  closeButton: {
-    marginTop: 14,
-    borderRadius: 0,
-    padding: 4,
-    height: "auto",
-
-    alignItems: "center",
-  },
-  closeButtonText: {
-    fontSize: 18,
-    fontFamily: "Poppins-Regular",
-  },
-  backButton: {
-    marginTop: 0,
-    borderRadius: 0,
-    padding: 4,
-    height: "auto",
-
-    alignItems: "center",
-  },
-});
 
 export default ContentMomentFocus;

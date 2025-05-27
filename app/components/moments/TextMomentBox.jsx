@@ -17,16 +17,11 @@ const TextMomentBox = forwardRef(
       title = "title",
       mountingText = "",
       onTextChange,
-      helperText,
-      autoFocus = true,
-      width = "90%",
-      height = "60%",
-      multiline = true,
-      iconColor = 'red',
+      helperText,   
     },
     ref
   ) => {
-    const { themeStyles } = useGlobalStyle();
+    const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
     const textInputRef = useRef();
 
@@ -70,8 +65,8 @@ const TextMomentBox = forwardRef(
       <View
         style={[
           styles.container,
-          themeStyles.genericTextBackgroundShadeTwo,
-          { width: width, height: height },
+          // themeStyles.genericTextBackground,
+          { width: '100%', height: '100%' },
         ]}
       >
         <View
@@ -89,7 +84,7 @@ const TextMomentBox = forwardRef(
           </Text>
           </View>
 
-          <EditPencilOutlineSvg height={24} width={24} color={iconColor} />
+          <EditPencilOutlineSvg height={24} width={24} color={manualGradientColors.lightColor} />
         </View>
         <View style={{ flex: 1 }}>
 
@@ -104,17 +99,17 @@ const TextMomentBox = forwardRef(
     >
           <TextInput
             ref={textInputRef}
-            autoFocus={autoFocus}
+            autoFocus={true}
             style={[
-              styles.textInput,
+              // styles.textInput,
+              appFontStyles.momentViewText,
               themeStyles.genericText,
               {paddingBottom: 80} // this leaves space for category button component overlaying it
             ]}
             value={editedMessage}
             onChangeText={handleTextInputChange} // Update local state
-            multiline={multiline}
-          />
-          <View style={{height: 1, flex: 1 }}></View>
+            multiline={true}
+          /> 
           </KeyboardAvoidingView>
         </View>
       </View>
@@ -134,13 +129,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Poppins-Regular',
-    fontSize: 16,
+    fontSize: 15,
 
     lineHeight: 23,
     textTransform: "uppercase",
   },
   helperText: {
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 20,
     opacity: .5,
     //marginLeft: '6%'
@@ -152,10 +147,10 @@ const styles = StyleSheet.create({
     height: 200,
   },
   textInput: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 15,
+    // fontFamily: 'Poppins-Regular',
+    // fontSize: 15,
 
-    lineHeight: 24,
+    // lineHeight: 24,
     textAlignVertical: "top",
     borderRadius: 20,
     paddingVertical: 10,

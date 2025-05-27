@@ -34,7 +34,6 @@ const MomentItem = ({
   const visibilityStyle = useAnimatedStyle(() => {
     const pos1 = startingPosition - containerHeight;
     const pos2 = startingPosition + combinedHeight - containerHeight;
- 
 
     if (visibilityValue.value >= 1) {
       return {
@@ -56,8 +55,7 @@ const MomentItem = ({
             ),
           },
         ],
-        opacity: interpolate(scrollYValue.value, [pos1, pos2], [0, 1]), 
- 
+        opacity: interpolate(scrollYValue.value, [pos1, pos2], [0, 1]),
       };
     } else {
       return {
@@ -75,7 +73,7 @@ const MomentItem = ({
             scale: interpolate(visibilityValue.value, [0, 1], [0.8, 1]),
           },
         ],
-        opacity: visibilityValue.value, 
+        opacity: visibilityValue.value,
       };
     }
   });
@@ -108,12 +106,7 @@ const MomentItem = ({
           numberOfLines={1}
           style={[
             themeStyles.genericText,
-            {
-              fontSize: 11,
-              lineHeight: 16,
-              fontWeight: "bold",
-              textTransform: "uppercase",
-            },
+            appFontStyles.momentHeaderText,
           ]}
         >
           {header && header}
@@ -122,13 +115,16 @@ const MomentItem = ({
       <View style={{ flexWrap: "wrap", width: "100%", overflow: "hidden" }}>
         <Text
           numberOfLines={1}
-          style={[themeStyles.genericText, { fontSize: 11, lineHeight: 16 }]}
+          style={[themeStyles.genericText, appFontStyles.momentText]}
         >
           {momentData && momentData?.capsule}
         </Text>
       </View>
-      <TouchableOpacity onPress={() => onSend(momentData)} style={{position: 'absolute', bottom: 10, right: 10}}>
-                <Text
+      <TouchableOpacity
+        onPress={() => onSend(momentData)}
+        style={{ position: "absolute", bottom: 10, right: 10 }}
+      >
+        <Text
           numberOfLines={1}
           style={[
             themeStyles.genericText,
@@ -139,10 +135,10 @@ const MomentItem = ({
               textTransform: "uppercase",
             },
           ]}
-        > SEND
-
+        >
+          {" "}
+          SEND
         </Text>
-
       </TouchableOpacity>
     </Animated.View>
   );

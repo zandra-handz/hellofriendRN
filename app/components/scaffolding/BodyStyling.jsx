@@ -10,7 +10,7 @@ const BodyStyling = ({
   paddingTop = "6%",
   paddingBottom = "0%",
   paddingHorizontal = "0%",
-  borderWidth = 1,
+  borderWidth = 0,
   transparentBackground = false,
   transparentBorder = false,
   children,

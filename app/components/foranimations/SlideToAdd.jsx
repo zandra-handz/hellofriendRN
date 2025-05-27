@@ -14,16 +14,17 @@ import LizardHandsHorizontal from "../appwide/logo/LizardHandsHorizontal";
 const SlideToAdd = ({
   onPress,
   sliderText = "Label",
-  sliderTextSize= 11,
+  sliderTextSize = 14,
+  sliderTextColor = "black",
   targetIcon: TargetIcon,
-  width = Dimensions.get("window").width - 50,
-  disabled = false,
+  width = Dimensions.get("window").width - 0,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
   const isDraggingRef = useRef(false); // Use ref for immediate updates
   const { themeStyles, gradientColors, gradientColorsHome } = useGlobalStyle();
+  const dragHandIconSize = sliderTextSize + 8;
 
   const [firstLizardVisible, setFirstLizardVisible] = useState(false);
   const [secondLizardVisible, setSecondLizardVisible] = useState(false);
@@ -123,7 +124,6 @@ const SlideToAdd = ({
           setIsPressed(true);
         }
 
-        
         setFirstLizardVisible(false);
         setSecondLizardVisible(false);
         setThirdLizardVisible(false);
@@ -165,23 +165,30 @@ const SlideToAdd = ({
           styles.slider,
           {
             flexDirection: "row",
-            backgroundColor: isDragging
-              ? "#000002"
-              : 'transparent', //themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+            backgroundColor: isDragging ? "#000002" : "transparent", //themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
             transform: [{ translateX: position }],
             width: "auto",
           },
         ]}
       >
-        <Text style={[themeStyles.genericText, {fontSize: sliderTextSize, opacity: .5}]}>
+        <Text
+          style={[
+            {
+              fontSize: sliderTextSize,
+              fontWeight: "bold",
+              color: sliderTextColor,
+              opacity: 1,
+            },
+          ]}
+        >
           {sliderText}
         </Text>
 
         <View style={{ paddingHorizontal: "2%" }}>
           <DragRightThickOutlineSvg
-            height={18}
-            width={18}
-            style={[themeStyles.genericText, {opacity: .6}]}
+            height={dragHandIconSize}
+            width={dragHandIconSize}
+            style={[{ opacity: 1, color: sliderTextColor }]}
           />
         </View>
       </Animated.View>
@@ -337,13 +344,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 30,
     margin: 0,
-    overflow:'hidden',
+    overflow: "hidden",
   },
   text: {
     position: "absolute",
     color: "#333",
     fontSize: 16,
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
   },
   slider: {
     alignSelf: "flex-start",
@@ -356,7 +363,7 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
     zIndex: 4000,
     elevation: 4000,
-  }, 
+  },
   iconContainer: {
     position: "absolute",
     right: 20,

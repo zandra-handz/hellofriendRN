@@ -13,7 +13,7 @@ import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave"
 import InputSingleValue from "@/app/components/appwide/input/InputSingleValue";
 
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
-import FriendSelectModalVersionButtonOnly from "../friends/FriendSelectModalVersionButtonOnly";
+import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -154,7 +154,7 @@ const ContentAddImage = ({ imageUri }) => {
           }}
         >
           <View style={[styles.selectFriendContainer, { marginBottom: "2%" }]}>
-            <FriendSelectModalVersionButtonOnly
+            <FriendModalIntegrator
               includeLabel={true}
               width="100%"
             />

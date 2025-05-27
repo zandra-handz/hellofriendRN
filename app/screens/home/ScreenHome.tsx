@@ -1,74 +1,66 @@
 import { useShareIntentContext } from "expo-share-intent";
-import * as Sentry from "@sentry/react-native";
+//import * as Sentry from "@sentry/react-native";
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
-  Alert, 
-  Text,
+  Alert,  
   Keyboard,
-  Animated,
-  FlatList, 
+  Animated,  
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-
+import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 import HomeFriendItems from "@/app/components/home/HomeFriendItems";
 import HellofriendHeader from "@/app/components/headers/HellofriendHeader";
-import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
-import SmallAddButton from "@/app/components/home/SmallAddButton";
+import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher"; 
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext"; //to check if any friends, don't render Up Next component or upcoming scroll if so
-
+import AddOptionsList from "@/app/components/home/AddOptionsList";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
 import { useMessage } from "@/src/context/MessageContext";
-
 import { LinearGradient } from "expo-linear-gradient";
 import HomeScrollSoon from "@/app/components/home/HomeScrollSoon";
-
+import { useNavigation } from "@react-navigation/native";
 import HomeScrollCalendarLights from "@/app/components/home/HomeScrollCalendarLights";
-import HomeScreenButton from "@/app/components/home/HomeScreenButton";
-import HomeButtonMomentAddSmall from "@/app/components/home/HomeButtonMomentAddSmall";
+ 
+import KeyboardCoasterMomentOrFriend from "@/app/components/home/KeyboardCoasterMomentOrFriend";
+import KeyboardCoasterNotNow from "@/app/components/home/KeyboardCoasterNotNow";
+
 
 import HomeButtonUpNext from "@/app/components/home/HomeButtonUpNext";
 import HomeButtonSelectedFriend from "@/app/components/home/HomeButtonSelectedFriend";
-
- 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
-
-import TextMomentHomeScreenBox from "@/app/components/moments/TextMomentHomeScreenBox";
-
+import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 
 import * as FileSystem from "expo-file-system";
 
 import SafeView from "@/app/components/appwide/format/SafeView";
 
-const ScreenHome = ({ navigation }) => {
+const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
-
+const navigation = useNavigation();
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { user, userAppSettings } = useUser();
-  const { selectedFriend, friendLoaded } = useSelectedFriend();
+  const { selectedFriend  } = useSelectedFriend();
   const { friendList, friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState();
 
   const {
     requestPermission,
     imageUri,
-    resizeImage,
-    handleCaptureImage,
-    handleSelectImage,
+    resizeImage, 
   } = useImageUploadFunctions();
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
   const { showMessage } = useMessage();
 
   const newMomentTextRef = useRef(null);
+  const isNewUser = new Date(user?.user?.created_on).toDateString() === new Date().toDateString();
+ 
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
@@ -155,8 +147,7 @@ const ScreenHome = ({ navigation }) => {
         }
       }
       newMomentTextRef.current.setText(text);
-      if (text.length === 0) {
-        //console.log('text length is 0');
+      if (text.length === 0) { 
         setShowMomentScreenButton(false);
       }
       if (text.length === 1) {
@@ -164,41 +155,19 @@ const ScreenHome = ({ navigation }) => {
       }
     }
   };
-
-  const showLastButton = true;
-  const maxButtonHeight = 100;  
+  
   const [slideAnim] = useState(new Animated.Value(1)); // Value for animating the button container
 
   // Trigger the slide-in animation when the screen mounts
-  useEffect(() => {
-    Animated.timing(slideAnim, {
-      toValue: 0, // Slide in from the right
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  }, []);
+  // useEffect(() => {
+  //   Animated.timing(slideAnim, {
+  //     toValue: 0, // Slide in from the right
+  //     duration: 500,
+  //     useNativeDriver: true,
+  //   }).start();
+  // }, []);
 
-  const itemActions = [
-    () => handleCaptureImage(),
-    () => handleSelectImage(),
-    () => navigateToAddHelloScreen(),
-    () => navigateToAddLocationScreen(),
-  ];
-
-  const otherOptions = [
-    "Add new photo",
-    "Add upload",
-    "Add hello",
-    "Pick meet-up location", 
-  ];
-
-  const renderOptionButton = (item, index) => {
-    return (
-      <View style={{ marginRight: 12 }}>
-        <SmallAddButton label={item} onPress={itemActions[index]} />
-      </View>
-    );
-  };
+ 
 
   const clearNewMomentText = () => {
     if (newMomentTextRef && newMomentTextRef.current) {
@@ -227,26 +196,12 @@ const ScreenHome = ({ navigation }) => {
       navigateToAddImageScreen();
     }
   }, [imageUri]);
-
-  const navigateToAddHelloScreen = () => {
-    navigation.navigate("AddHello");
-  };
-
+ 
   const navigateToAddFriendScreen = () => {
     navigation.navigate("AddFriend");
   };
 
-  const navigateToAddLocationScreen = () => {
-    if (selectedFriend) {
-      navigation.navigate("LocationSearch");
-    }
-
-    if (!selectedFriend) {
-      Alert.alert(`I'm sorry!`, "Please select a friend first.", [
-        { text: "OK", onPress: () => console.log("OK Pressed") },
-      ]);
-    }
-  };
+ 
 
   return (
     <SafeView style={{ flex: 1 }}>
@@ -291,7 +246,8 @@ const ScreenHome = ({ navigation }) => {
                   Sentry.captureException(new Error("First error"));
                 }}
               /> */}
-                <TextMomentHomeScreenBox
+              <WelcomeMessageUI username={user?.user?.username} isNewUser={isNewUser} />
+                <QuickWriteMoment
                   width={"100%"}
                   height={"100%"}
                   ref={newMomentTextRef}
@@ -302,41 +258,28 @@ const ScreenHome = ({ navigation }) => {
                   multiline={true}
                 />
 
-
-
-
-
+                {isKeyboardVisible && (
+                  <KeyboardCoasterNotNow 
+                  onPress={() => Keyboard.dismiss()}/>
+                )}
+  
                 {selectedFriend && showMomentScreenButton && (
-                  <View
-                    style={{
-                      width: "30%",
-                      height: 36,
-                      position: "absolute",
-                      bottom: 20,
-                      right: 0,
-                    }}
-                  >
-                    <HomeButtonMomentAddSmall
+                 
+                    <KeyboardCoasterMomentOrFriend
                       onPress={navigateToAddMomentScreen}
-                      borderRadius={40}
-                      borderColor="black"
-                    />
-                  </View>
+                      borderRadius={40} 
+                    /> 
+                )}
+                  {!selectedFriend && (
+                 
+                    <KeyboardCoasterMomentOrFriend
+                      onPress={navigateToAddMomentScreen}
+                      borderRadius={40} 
+                    /> 
                 )}
               </View>
               {friendListLength > 0 && (
-                <View style={{ height: "auto", width: "100%" }}>
-                  <FlatList
-                    data={otherOptions}
-                    horizontal
-                    keyExtractor={(item, index) => `satellite-${index}`}
-                    renderItem={(
-                      { item, index } // Correctly destructure the item and index
-                    ) => renderOptionButton(item, index)}
-                    ListFooterComponent={() => <View style={{ width: 140 }} />}
-                    showsHorizontalScrollIndicator={false}
-                  />
-                </View>
+                <AddOptionsList />
               )}
               <Animated.View
                 style={[
@@ -350,15 +293,6 @@ const ScreenHome = ({ navigation }) => {
                   },
                 ]}
               >
-                {/* {!selectedFriend && !friendLoaded && showLastButton && (
-                  <View style={{ height: 60, paddingVertical: 4 }}>
-                    <HomeScreenButton
-                      label={"ADD FRIEND"}
-                      onPress={navigateToAddFriendScreen}
-                      image={require("@/app/assets/shapes/yellowleaves.png")}
-                    />
-                  </View>
-                )} */}
 
                 {!selectedFriend && friendListLength > 0 && (
                   <HomeButtonUpNext

@@ -3,7 +3,7 @@ import { View, Text, Animated, PanResponder, Dimensions, StyleSheet } from 'reac
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
  import DragRightThickOutlineSvg from '@/app/assets/svgs/drag-right-thick-outline.svg';
 
- const SlideToDelete = ({ onPress, buttonBackgroundColor='white', sliderText = 'Label', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50, disabled=false }) => {
+ const SlideToDelete = ({ onPress, buttonBackgroundColor='white', sliderText = 'Label', sliderTextColor = 'black', targetIcon: TargetIcon, width = Dimensions.get('window').width - 50, disabled=false }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const position = useRef(new Animated.Value(0)).current;
@@ -75,7 +75,7 @@ import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
           },
         ]}
       >        
-        <Text style={[styles.sliderText, themeStyles.genericText]}>{sliderText}</Text>
+        <Text style={[styles.sliderText, themeStyles.genericText, { color: sliderTextColor}]}>{sliderText}</Text>
 
         <View style={{paddingHorizontal: '2%' }}>
       <DragRightThickOutlineSvg height={18} width={18} style={themeStyles.genericText} />
@@ -83,7 +83,7 @@ import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
       </Animated.View>
       {TargetIcon && (
         <View style={styles.iconContainer}>
-          <TargetIcon height={30} width={30} color={isDragging ? themeStyles.genericText.color : 'transparent'} />
+          <TargetIcon height={30} width={30} color={isDragging ? themeStyles.genericText.color : sliderTextColor} />
         </View>
       )}
     </View>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   text: {
     position: 'absolute',
-    color: '#333',
+ 
     fontSize: 16,
   },
   slider: {

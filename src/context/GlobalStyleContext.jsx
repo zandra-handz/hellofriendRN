@@ -181,8 +181,8 @@ const containerStyles = StyleSheet.create({
     alignSelf: "center",
     borderWidth: 0,
     width: "100%",
-    borderTopRightRadius: 30,
-    borderTopLeftRadius: 30,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
     // borderRadius: 30,
     flexDirection: "column",
     justifyContent: "space-between",
@@ -195,9 +195,7 @@ const containerStyles = StyleSheet.create({
     paddingHorizontal: 18,
     alignItems: "center",
     justifyContent: "space-between",
-    height: 60,
-    borderBottomWidth: 0.4,
-    borderColor: "transparent",
+    height: 38,
   },
 
   homeScreenButton: {
@@ -480,6 +478,26 @@ const fontStyles = StyleSheet.create({
   },
   searchBarResultListItemText: {
     fontSize: 15,
+  },
+  momentHeaderText: {
+    fontSize: 11,
+    lineHeight: 16,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+  },
+  momentText: {
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  momentViewHeaderText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+  },
+  momentViewText: {
+    fontSize: 13,
+    lineHeight: 18,
   },
 });
 

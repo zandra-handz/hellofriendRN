@@ -6,26 +6,36 @@ import {
   View,
   Modal,
   Text,
-  Animated, 
+  Animated,
   StatusBar,
   Touchable,
 } from "react-native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import ArrowLeftCircleOutlineSvg from "@/app/assets/svgs/arrow-left-circle-outline.svg";
- import SmallAddButton from "../home/SmallAddButton";
+import SmallAddButton from "../home/SmallAddButton";
 import MomentsSearchBar from "../moments/MomentsSearchBar";
-import { Dimensions } from "react-native"; 
+import { Dimensions } from "react-native";
 import { useFriendList } from "@/src/context/FriendListContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import FriendListUI from "./FriendListUI";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 
-const FriendModal = ({
+interface FriendModalProps {
+  isVisible: boolean;
+  navigationDisabled: boolean;
+  animType: string;
+  toggle: () => void;
+  questionText: string;
+  onCancel: () => void;
+}
+
+const FriendModal: React.FC<FriendModalProps> = ({
   isVisible,
+  navigationDisabled,
   animType = "slide",
   toggle,
   questionText = "Switch friend",
-  content,
+
   onCancel,
 }) => {
   const { themeStyles } = useGlobalStyle();
@@ -51,17 +61,16 @@ const FriendModal = ({
     toggle();
   };
 
-  
-
   const handleSelectFriend = (itemId) => {
     const selectedOption = friendList.find((friend) => friend.id === itemId);
-  
+
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
-    getThemeAheadOfLoading(selectedFriend); 
+    getThemeAheadOfLoading(selectedFriend);
     toggle();
-    navigation.navigate('Moments');
-    
+    if (!navigationDisabled) {
+      navigation.navigate("Moments");
+    }
   };
 
   useEffect(() => {
@@ -81,7 +90,6 @@ const FriendModal = ({
   }, [isVisible]);
 
   return (
-    
     <Modal
       transparent={true}
       //transparent={false}
@@ -89,44 +97,43 @@ const FriendModal = ({
       animationType={animType}
       onRequestClose={toggle}
       style={{ margin: 0 }}
-   //   presentationStyle="fullScreen"
+      //   presentationStyle="fullScreen"
     >
       {/* <SafeView style={{flex: 1}}> */}
-{friendList && (
-  
-      <Animated.View style={[styles.modalContainer, { opacity: fadeAnim }]}>
-        {/* <KeyboardAvoidingView
+      {friendList && (
+        <Animated.View style={[styles.modalContainer, { opacity: fadeAnim }]}>
+          {/* <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
         >  */}
 
-        <View
-          style={[
-            styles.modalContent,
-            themeStyles.genericTextBackground,
-            {
-              // height: modalHeight,
-              height: "auto",
-              borderColor:
-                themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-            },
-          ]}
-        >
-          <View style={[styles.headerContainer, themeStyles.genericText]}>
-            <View style={styles.firstSection}>
-              <TouchableOpacity
-                onPress={onCancel}
-                style={styles.closeButtonTop}
-              >
-                <ArrowLeftCircleOutlineSvg
-                  width={26}
-                  height={26}
-                  color={themeStyles.genericText.color}
-                />
-              </TouchableOpacity>
-            </View>
+          <View
+            style={[
+              styles.modalContent,
+              themeStyles.genericTextBackground,
+              {
+                // height: modalHeight,
+                height: "auto",
+                borderColor:
+                  themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+              },
+            ]}
+          >
+            <View style={[styles.headerContainer, themeStyles.genericText]}>
+              <View style={styles.firstSection}>
+                <TouchableOpacity
+                  onPress={onCancel}
+                  style={styles.closeButtonTop}
+                >
+                  <ArrowLeftCircleOutlineSvg
+                    width={26}
+                    height={26}
+                    color={themeStyles.genericText.color}
+                  />
+                </TouchableOpacity>
+              </View>
 
-            {/* <View style={[styles.headerSection, styles.middleSection]}>
+              {/* <View style={[styles.headerSection, styles.middleSection]}>
                             <ProfileTwoUsersSvg
                               width={42}
                               height={42}
@@ -134,66 +141,68 @@ const FriendModal = ({
                             />
                 </View> */}
 
-            <View style={styles.lastSection}>
-              {includeSearch && friendList && friendList?.length > 0 && (
+              <View style={styles.lastSection}>
+                {includeSearch && friendList && friendList?.length > 0 && (
+                  <View
+                    style={{
+                      width: "90%",
+                      flexDirection: "row",
+                      maxHeight: 50,
+                      height: "auto",
+                    }}
+                  >
+                    <MomentsSearchBar
+                      height={30}
+                      iconSize={15}
+                      borderColor={"transparent"}
+                      data={friendList}
+                      placeholderText="Search friends"
+                      onPress={handleSearchFriends}
+                      searchKeys={searchKeys}
+                    />
+                  </View>
+                )}
+              </View>
+            </View>
+            {questionText && (
+              <View style={styles.questionTextContainer}>
+                <Text style={[styles.questionText, themeStyles.genericText]}>
+                  {questionText}
+                </Text>
+                <SmallAddButton
+                  label={"Add friend"}
+                  onPress={() => navigation.navigate("AddFriend")}
+                />
+              </View>
+            )}
+
+            {isFetching ? (
+              <LoadingPage loading={isFetching} spinnerType="circle" />
+            ) : (
+              <>
                 <View
                   style={{
-                    width: "90%",
-                    flexDirection: "row",
-                    maxHeight: 50,
-                    height: "auto",
+                    alignContent: "center",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "70%",
+                    minWidth: 300,
+                    width: "100%",
+                    flexGrow: 1,
                   }}
                 >
-                  <MomentsSearchBar
-                    height={30}
-                    iconSize={15}
-                    borderColor={"transparent"}
-                    data={friendList}
-                    placeholderText="Search friends"
-                    onPress={handleSearchFriends}
-                    searchKeys={searchKeys}
-                  />
-                </View>
-              )}
-            </View>
-          </View>
-          {questionText && (
-            <View style={styles.questionTextContainer}>
-              <Text style={[styles.questionText, themeStyles.genericText]}>
-                {questionText}
-              </Text>
-              <SmallAddButton label={'Add friend'} onPress={() => navigation.navigate('AddFriend')}/>
-             
-            </View>
-          )}
-
-          {isFetching ? (
-            <LoadingPage loading={isFetching} spinnerType="circle" />
-          ) : (
-            <>
-              <View
-                style={{
-                  alignContent: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "70%",
-                  minWidth: 300,
-                  width: '100%',
-                  flexGrow: 1,
-                }}
-              > 
                   {friendList && friendList.length > 0 && (
-                    
-                <FriendListUI data={friendList} onPress={handleSelectFriend}/>
-                 
+                    <FriendListUI
+                      data={friendList}
+                      onPress={handleSelectFriend}
+                    />
                   )}
-              </View>
-            </>
-          )}
-        </View> 
-      </Animated.View> 
-      
-)}
+                </View>
+              </>
+            )}
+          </View>
+        </Animated.View>
+      )}
     </Modal>
   );
 };

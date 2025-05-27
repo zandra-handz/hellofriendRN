@@ -9,9 +9,7 @@ import { View, Keyboard, ViewToken, TouchableOpacity } from "react-native";
 
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
-import ButtonGoToAddMoment from "../buttons/moments/ButtonGoToAddMoment";
-import LizardSvg from "@/app/assets/svgs/lizard.svg";
-import MomentsNavigator from "./MomentsNavigator";
+import ButtonGoToAddMoment from "../buttons/moments/ButtonGoToAddMoment"; 
 import CategoryNavigator from "./CategoryNavigator";
 import MomentsSearchBar from "./MomentsSearchBar";
 import DiceRollScroll from "./DiceRollScroll";
@@ -67,11 +65,8 @@ const MomentsList = () => {
     capsuleList,
     setMomentIdToAnimate,
 
-    momentIdToAnimate,
-    momentIdToUpdate,
-    setMomentIdToUpdate,
-    updateCacheWithNewPreAdded,
-    updateCacheWithEditedMoment,
+    momentIdToAnimate, 
+    updateCacheWithNewPreAdded, 
     categoryNames,
     categoryStartIndices,
     updateCapsule,
@@ -79,11 +74,7 @@ const MomentsList = () => {
 
   const navigation = useNavigation();
 
-  // const viewabilityConfig = {
-  //  itemVisiblePercentThreshold: 50,
-  //  // viewAreaCoveragePercentThreshold: 50,
-
-  // };
+ 
 
   // Move this inside your component:
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
@@ -103,8 +94,7 @@ const MomentsList = () => {
       onViewableItemsChanged,
     },
   ]);
-
-  const [selectedMomentToView, setSelectedMomentToView] = useState(null);
+ 
   const [isMomentNavVisible, setMomentNavVisible] = useState(false);
   const flatListRef = useAnimatedRef(null);
 
@@ -525,14 +515,7 @@ const MomentsList = () => {
 
           <ButtonGoToAddMoment />
         </>
-      )}
-
-      {isMomentNavVisible && selectedMomentToView && (
-        <MomentsNavigator
-          onClose={closeMomentNav}
-          moment={selectedMomentToView}
-        />
-      )}
+      )} 
     </View>
   );
 };

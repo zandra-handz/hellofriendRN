@@ -14,6 +14,7 @@ const SlideToDeleteHeader = ({
   onPress,
   itemToDelete,
   sliderText = "DELETE?",
+  sliderTextColor = 'black',
   sliderColor = "red",
   targetIcon: TargetIcon,
   width = Dimensions.get("window").width - 50,
@@ -23,7 +24,7 @@ const SlideToDeleteHeader = ({
   const position = useRef(new Animated.Value(0)).current;
   const isDraggingRef = useRef(false);
   const deleteItemRef = useRef(null);
-  const { gradientColorsHome } = useGlobalStyle();
+  const { gradientColorsHome  } = useGlobalStyle();
   const [deleteItem, setDeleteItem] = useState();
 
   const handlePress = () => {
@@ -104,7 +105,7 @@ const SlideToDeleteHeader = ({
           <Text
             style={[
               styles.sliderText,
-              { color: isDragging ? "white" : "black" },
+              { color: isDragging ? "white" : sliderTextColor },
             ]}
           >
             {sliderText}
@@ -114,7 +115,7 @@ const SlideToDeleteHeader = ({
             <DragRightThickOutlineSvg
               height={18}
               width={18}
-              color={isDragging ? "white" : "black"}
+              color={isDragging ? "white" : sliderTextColor}
             />
           </View>
         </Animated.View>

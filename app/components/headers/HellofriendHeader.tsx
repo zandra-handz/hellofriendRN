@@ -24,6 +24,7 @@ const HellofriendHeader = () => {
       <View
         style={{
           flex: 1,
+      
           alignItems: "center",
           alignContent: "center",
           justifyContent: "center",

@@ -11,6 +11,7 @@ import ContentMomentView from "@/app/components/moments/ContentMomentView";
 import NavigationArrows from "@/app/components/appwide/button/NavigationArrows";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 import { useFocusEffect } from "@react-navigation/native";
+
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
@@ -43,9 +44,7 @@ const ScreenMomentView = () => {
 useFocusEffect(
   useCallback(() => {
     if (capsuleList) {
-      console.log('MOMENT VIEW FOCUSED');
-      console.log(currentIndex);
-      console.log(momentInView);
+
       const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
       const index = capsuleList.findIndex((mom) => mom.id === moment.id);
       setCurrentIndex(index);

@@ -20,7 +20,7 @@ import { useMessage } from "@/src/context/MessageContext";
 
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 
-import FriendSelectModalVersionButtonOnly from "../friends/FriendSelectModalVersionButtonOnly";
+import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -267,8 +267,9 @@ const ContentAddHello = () => {
             marginBottom="2%"
             justifyContent="center"
             children={
-              <FriendSelectModalVersionButtonOnly
+              <FriendModalIntegrator
                 includeLabel={true}
+                navigationDisabled={true}
                 width="100%"
               />
             }

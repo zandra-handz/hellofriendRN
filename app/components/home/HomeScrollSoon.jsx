@@ -28,6 +28,7 @@ const HomeScrollSoon = ({
   const { friendList, friendListLength, getThemeAheadOfLoading } =
     useFriendList();
   
+
  
   const handlePress = (hello) => { 
     const { id, name } = hello.friend;
@@ -42,7 +43,7 @@ const HomeScrollSoon = ({
   const renderUpcomingHelloes = () => {
     return (
       <Animated.FlatList
-        data={upcomingHelloes.slice(0)}
+        data={upcomingHelloes.slice(0).slice(1)} // skip first
         //horizontal={true}
         keyExtractor={(item, index) => `satellite-${index}`}
         // getItemLayout={(data, index) => ({
