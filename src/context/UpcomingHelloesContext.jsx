@@ -14,7 +14,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
     const queryClient = useQueryClient();
  
 
-    const { user } = useUser(); 
+    const {  isAuthenticated } = useUser(); 
     const [updateTrigger, setUpdateTrigger] = useState(false); // Introducing updateTrigger state
     const timeoutRef = useRef(null);
     const [newSuccess, setNewSuccess ] = useState(false);
@@ -23,7 +23,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
     const { data: upcomingHelloes, isLoading, isFetching, isSuccess, isError } = useQuery({
         queryKey: ['upcomingHelloes'],
         queryFn: () => fetchUpcomingHelloes(),
-        enabled: !!user.authenticated,
+        enabled: !!(isAuthenticated),
         onSuccess: (data) => { 
           setNewSuccess(true); 
           if (!data) { 
@@ -68,13 +68,13 @@ export const UpcomingHelloesProvider = ({ children }) => {
     }, [updateTrigger, queryClient]);
 
     useEffect(() => {
-        if (!user.authenticated) {
+        if (!isAuthenticated) {
             console.log('upcoming helloes detecting when user is no longer authenticated!');
             setUpdateTrigger(false); 
             queryClient.removeQueries(['upcomingHelloes']); 
             queryClient.clear();
         }
-    }, [user.authenticated, queryClient]);
+    }, [isAuthenticated, queryClient]);
 
 
 

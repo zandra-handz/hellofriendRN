@@ -43,20 +43,29 @@ import { helloFriendApiClient, setAuthHeader } from './helloFriendApiClient';
 //     }
 // };
 
+export const deleteTokens = async () => {
+    await SecureStore.deleteItemAsync('accessToken');
+    await SecureStore.deleteItemAsync('refreshToken');
+    await SecureStore.deleteItemAsync('pushToken');
+    await SecureStore.deleteItemAsync('tokenExpiry');
+};
+
+
 export const signout = async () => {
     try {
-        await SecureStore.deleteItemAsync('accessToken');
-        await SecureStore.deleteItemAsync('refreshToken');
-        await SecureStore.deleteItemAsync('tokenExpiry');
-        setAuthHeader(null); 
-        console.log("API signout: Authorization header cleared");
+
+        await deleteTokens(); // does all the below:
+        // await SecureStore.deleteItemAsync('accessToken');
+        // await SecureStore.deleteItemAsync('refreshToken');
+        // await SecureStore.deleteItemAsync('pushToken');
+        // await SecureStore.deleteItemAsync('tokenExpiry');
+        setAuthHeader(null);  
         return true;
     } catch (e) {
         console.log("API signout error", e);
         return false;
     }
 };
-
 // Function to handle token refresh
 // let isRefreshing = false;
 // let refreshSubscribers = [];
@@ -144,18 +153,17 @@ export const signout = async () => {
 export const signinWithoutRefresh = async ({ username, password }) => {
     try {
         const response = await helloFriendApiClient.post('/users/token/', { username, password });
-
-        // set in onSuccess
         const newAccessToken = response.data.access;
-        // const newRefreshToken = response.data.refresh;
+        const newRefreshToken = response.data.refresh;
 
-        // await SecureStore.setItemAsync('accessToken',  newAccessToken);
-        // await SecureStore.setItemAsync('refreshToken', newRefreshToken);
+        await SecureStore.setItemAsync('accessToken',  newAccessToken);
+        await SecureStore.setItemAsync('refreshToken', newRefreshToken);
             
             
         setAuthHeader(newAccessToken); 
 
         return response; 
+        
     } catch (e) {
         console.error("Error during signinWithoutRefresh:", e);
 
@@ -171,6 +179,7 @@ export const signinWithoutRefresh = async ({ username, password }) => {
         }
     }
 };
+
 
 export const sendResetCodeEmail = async (email) => {
   
@@ -260,7 +269,7 @@ export const getCurrentUser = async () => {
     
     try {
         const response = await helloFriendApiClient.get('/users/get-current/');
-        console.log('API GET Call getCurrentUser');
+        console.log('API GET Call getCurrentUser');//, response.data);
        // console.log("API getCurrentUser: ", response);
         return response.data;
     } catch (error) {
@@ -311,6 +320,7 @@ export const refreshAccessToken = async (refToken) => {
 export const fetchFriendList = async () => {
     try {
         const response = await helloFriendApiClient.get('/friends/all/');
+    
         return response.data;
     } catch (error) {
         console.error('Error fetching friend list:', error);

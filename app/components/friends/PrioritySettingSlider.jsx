@@ -9,7 +9,7 @@ import Slider from "@react-native-community/slider";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 const PrioritySettingSlider = forwardRef(
-  ({ height=200, friendPriority, setFriendPriority, sliderColor='limegreen', trackColor='limegreen'  }, ref) => {
+  ({ height=200, friendPriority,  sliderColor='limegreen', trackColor='limegreen'  }, ref) => {
     const { themeStyles } = useGlobalStyle();
 
     // Messages for the slider
@@ -75,7 +75,7 @@ const PrioritySettingSlider = forwardRef(
             value={sliderValue}
             onValueChange={(value) => {
               setSliderValue(value);
-              if (setFriendPriority) setFriendPriority(value);
+              // if (setFriendPriority) setFriendPriority(value);
             }}
             step={1}
             thumbTintColor={sliderColor}

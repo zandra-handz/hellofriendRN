@@ -18,7 +18,7 @@ const ButtonUser = () => {
   const generateUniqueEmailURL = () => {
     const uniqueId = uuidv4(); // Generate a unique ID
     const subject = `Hellofriend Bug Report\n\nID: ${uniqueId}`;
-    const body = `Hi ${user.user.username}! Thank you for taking the time to provide feedback. Please describe what went wrong while using the app:\n\n`;
+    const body = `Hi ${user.username}! Thank you for taking the time to provide feedback. Please describe what went wrong while using the app:\n\n`;
     return `mailto:tzandrabuilds@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 

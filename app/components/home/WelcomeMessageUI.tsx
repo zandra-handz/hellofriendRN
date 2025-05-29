@@ -21,7 +21,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 }) => {
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-
+ 
   const message = isNewUser
     ? `Hi ${username}! Welcome to hellofriend!`
     : `Welcome back, ${username}!`;

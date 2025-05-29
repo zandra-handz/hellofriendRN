@@ -34,7 +34,7 @@ export const LocationsProvider = ({ children }) => {
   const [additionalDetails, setAdditionalDetails] = useState(null);
   const [loadingAdditionalDetails, setLoadingAdditionalDetails] =
     useState(false); 
-  const { user } = useUser();
+  const { user, isAuthenticated } = useUser();
   const queryClient = useQueryClient();
   const [isDeletingLocation, setIsDeletingLocation] = useState(false);
 
@@ -54,7 +54,7 @@ export const LocationsProvider = ({ children }) => {
   } = useQuery({
     queryKey: ["locationList"],
     queryFn: () => fetchAllLocations(),
-    enabled: !!user.authenticated,
+    enabled: !!(user && isAuthenticated),
     onSuccess: (data) => {
       //console.log('Raw data in RQ onSuccess:', data);
       if (!data) {
@@ -240,7 +240,7 @@ export const LocationsProvider = ({ children }) => {
       parking_score: parkingTypeText,
       custom_title: trimmedCustomTitle,
       personal_experience_info: personalExperience,
-      user: user.user.id,
+      user: user.id,
     };
 
     //console.log('Payload before sending:', locationData);
@@ -257,12 +257,12 @@ export const LocationsProvider = ({ children }) => {
     onSuccess: (data) => {
       const friendData = queryClient.getQueryData([
         "friendDashboardData",
-        user?.user?.id,
+        user?.id,
         selectedFriend?.id,
       ]);
 
       queryClient.setQueryData(
-        ["friendDashboardData",  user?.user?.id, selectedFriend?.id],
+        ["friendDashboardData",  user?.id, selectedFriend?.id],
         (old) => {
           if (!old || !old[0]) {
             return {
@@ -312,7 +312,7 @@ export const LocationsProvider = ({ children }) => {
   const handleRemoveFromFaves = async (friendId, locationId) => {
     const favoriteLocationData = {
       friendId: friendId,
-      userId: user.user.id,
+      userId: user.id,
       locationId: locationId,
     };
 
@@ -334,11 +334,11 @@ export const LocationsProvider = ({ children }) => {
     onSuccess: (data, variables) => {
       const friendData = queryClient.getQueryData([
         "friendDashboardData",
-         user?.user?.id,
+         user?.id,
         selectedFriend?.id,
       ]);
       queryClient.setQueryData(
-        ["friendDashboardData",  user?.user?.id, selectedFriend?.id],
+        ["friendDashboardData",  user?.id, selectedFriend?.id],
         (old) => {
           if (!old || !old[0]) {
             return {
@@ -387,7 +387,7 @@ export const LocationsProvider = ({ children }) => {
   const handleAddToFaves = async (friendId, locationId) => {
     const favoriteLocationData = {
       friendId: friendId,
-      userId: user.user.id,
+      userId: user.id,
       locationId: locationId,
     };
 
@@ -429,7 +429,7 @@ export const LocationsProvider = ({ children }) => {
     setIsDeletingLocation(true);
     const locationData = {
       id: locationId,
-      user: user.user.id,
+      user: user.id,
     };
 
     //console.log('Payload before sending:', locationData);

@@ -35,7 +35,7 @@ const ScreenOnboardingIntermediary = ({ finalizingData, resetFinalizingData }) =
             const friendResponse = await createFriend(postData);
             console.log(friendResponse);
             await saveThoughtCapsule({
-                user: user.user.id,
+                user: user.id,
                 friend: friendResponse.id,  
                 typed_category: finalizingData.category,
                 capsule: finalizingData.thoughtCapsule,
@@ -43,7 +43,7 @@ const ScreenOnboardingIntermediary = ({ finalizingData, resetFinalizingData }) =
 
             
             await updateFriendSugSettings({
-                user: user.user.id,
+                user: user.id,
                 friend: friendResponse.id,  
                 effort_required: finalizingData.friendEffort,
                 priority_level: finalizingData.friendPriority,

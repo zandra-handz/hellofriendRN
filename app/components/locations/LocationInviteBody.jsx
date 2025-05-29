@@ -160,7 +160,7 @@ const LocationInviteBody = ({
       const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}`;
       setMessage(directionsLink);
       setEditedMessage(
-        `${user.user.username} has sent you a meet up site from the hellofriend app!`
+        `${user.username} has sent you a meet up site from the hellofriend app!`
       ); // Default message for editing
     } else {
       setMessage("Directions not available.");

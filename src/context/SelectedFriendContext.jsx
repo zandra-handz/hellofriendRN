@@ -8,7 +8,7 @@ const SelectedFriendContext = createContext({});
 
 export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const { user } = useUser();
+  const { user, isAuthenticated } = useUser();
   const { friendList, resetTheme } = useFriendList();
   const [friendFavesData, setFriendFavesData] = useState({
     friendFaveLocations: null,
@@ -31,9 +31,9 @@ export const SelectedFriendProvider = ({ children }) => {
     isError,
     isSuccess,
   } = useQuery({
-    queryKey: ["friendDashboardData", user?.user?.id, selectedFriend?.id],
+    queryKey: ["friendDashboardData", user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendDashboard(selectedFriend.id),
-    enabled: !!(selectedFriend && selectedFriend?.id && user?.user?.id),
+    enabled: !!(isAuthenticated && selectedFriend && selectedFriend?.id),
     staleTime: 1000 * 60 * 10, // 10 minutes
 
     onError: (err) => {
@@ -49,7 +49,7 @@ export const SelectedFriendProvider = ({ children }) => {
 
     const cachedData = queryClient.getQueryData([
       "friendDashboardData",
-      user?.user?.id,
+      user?.id,
       selectedFriend.id,
     ]);
 
@@ -76,7 +76,7 @@ export const SelectedFriendProvider = ({ children }) => {
  
       const cachedData = queryClient.getQueryData([
         "friendDashboardData",
-        user?.user?.id,
+        user?.id,
         selectedFriend.id,
       ]);
 

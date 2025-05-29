@@ -17,7 +17,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 Geocoder.init(GOOGLE_API_KEY);
 
 const useStartingUserAddresses = () => {
-     const {  user } = useUser(); 
+     const {  user, isAuthenticated } = useUser(); 
     const queryClient = useQueryClient(); 
     const { showMessage } = useMessage(); 
     const [ userAddressMenu, setUserAddressMenu ] = useState([]);
@@ -36,7 +36,7 @@ const useStartingUserAddresses = () => {
     const { data: userAddresses = [], isLoadingUserAddresses, isFetchingUserAddresses, isSuccessUserAddresses, isErrorUserAddresses } = useQuery({
       queryKey: ['userAddresses'],
       queryFn: () => fetchUserAddresses(),
-      enabled: !!user?.authenticated,
+      enabled: !!(isAuthenticated),
       onSuccess: (data) => { 
           console.log(userAddresses);
           
@@ -190,7 +190,7 @@ const useStartingUserAddresses = () => {
         const addressData = {
           title,
           address, 
-          user: user.user.id,
+          user: user.id,
         };
 
         createUserAddressMutation.mutate(addressData);
@@ -206,7 +206,7 @@ const useStartingUserAddresses = () => {
       console.log(`updateUserAddress: `, addressId, newData);
       try {
         await updateUserAddressMutation.mutateAsync({ 
-          user: user.user.id,
+          user: user.id,
           id: addressId,
           fieldUpdates: newData,
         });

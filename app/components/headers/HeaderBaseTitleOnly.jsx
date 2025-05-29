@@ -37,7 +37,7 @@ const HeaderBaseTitleOnly = () => {
             },
           ]}
         >
-          {`Setting up account for ${user.user.username}`}
+          {`Setting up account for ${user.username}`}
         </Text>
       </View>
     </View>

@@ -15,7 +15,7 @@ const FriendListContext = createContext({
 export const useFriendList = () => useContext(FriendListContext);
 
 export const FriendListProvider = ({ children }) => {
-  const {  user } = useUser();   
+  const {  user, isAuthenticated } = useUser();   
   const [friendList, setFriendList] = useState([]);
   const [ useGradientInSafeView, setUseGradientInSafeView] = useState(false);
    
@@ -56,7 +56,7 @@ const {
   isSuccess: friendListIsSuccess,
   isError,
 } = useQuery({
-  queryKey: ["friendList", user?.user?.id],
+  queryKey: ["friendList", user?.id],
   queryFn: async () => {
     const friendData = await fetchFriendList();
     return friendData.map((friend) => ({
@@ -70,7 +70,7 @@ const {
       fontColorSecondary: friend.theme_color_font_secondary || "#000000",
     }));
   },
-  enabled: !!(user?.user?.id && user?.authenticated),
+  enabled: !!(isAuthenticated),
   staleTime: 1000 * 60 * 60 * 10, // 10 hours
   // onSuccess: (data) => {
   //   setFriendList(data); // updates your local state
@@ -150,6 +150,7 @@ useEffect(() => {
       );
     });
   }; 
+ 
 
   const updateFriendListColors = (friendId, darkColor, lightColor, fontColor, fontColorSecondary) => {
     setFriendList(prevFriendList => {

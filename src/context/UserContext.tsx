@@ -4,14 +4,22 @@ import React, {
   useState,
   useRef,
   useEffect,
-  AccessibilityInfo,
+
 } from "react";
+import {   AccessibilityInfo,
+  Platform } from 'react-native';
 import * as SecureStore from "expo-secure-store";
-import * as Notifications from "expo-notifications";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import * as Device from "expo-device";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
-import { Platform } from "react-native";
+import * as Notifications from "expo-notifications";
+//import useProtectedRoute from "../hooks/useProtectedRoute";
+// import {
+//   signup,
+//   signinWithoutRefresh,
+//   signout,
+//   getCurrentUser,
+//   deleteUserAccount,
+// } from "../calls/apicalls";
 import {
   signup,
   signin,
@@ -22,151 +30,146 @@ import {
   updateSubscription,
 } from "../calls/api";
 
-import {
-  User,
-  UserProfile,
-  UserSettings,
-  UserAddress,
-} from "../types/UserContextTypes";
+import { User } from "../types/UserContextTypes";
 
-const UserContext = createContext({});
-export const useUser = () => useContext(UserContext);
+interface UserContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  isInitializing: boolean;
+  userAppSettings: Record<string, any | null>;
+  userNotificationSettings: Record<string, any>;
+  onSignin: (username: string, password: string) => Promise<void>;
+  onSignOut: () => void;
+  onSignUp: (
+    username: string,
+    email: string,
+    password: string
+  ) => Promise<void>;
+  reInitialize: () => Promise<void>;
+  updateSettings: (newSettings: Record<string, any>) => Promise<void>;
+  deAuthUser: () => void;
+  handleDeleteUserAccount: () => void;
+}
 
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+  return context;
+};
 
-export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    user: null,
-    authenticated: false,
-    loading: true,
-  });
-  const [userAppSettings, setUserAppSettings] = useState({});
-  const [userNotificationSettings, setUserNotificationSettings] = useState({});
+const TOKEN_KEY = "accessToken";
+
+interface UserProviderProps {
+  children: React.ReactNode;
+}
+
+export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [userAppSettings, setUserAppSettings] = useState<Record<
+    string,
+    any
+  > | null>(null);
+  const [userNotificationSettings, setUserNotificationSettings] = useState<
+    Record<string, any>
+  >({});
   const queryClient = useQueryClient();
 
-  const timeoutRef = useRef(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  let isReinitializing = false;
 
   const reInitialize = async () => {
-    const token = await SecureStore.getItemAsync("accessToken");
-    if (token) {
-      const userData = await getCurrentUser();
-      if (userData) {
-        // console.log(`USER DATA: ~~~~~~~~~~~~~~~~~~~~~~~`, userData);
-        setUser((prev) => ({
-          ...prev,
-          user: userData,
-          authenticated: true,
-          loading: false,
-        }));
-        setUserAppSettings(userData.settings || {});
-        setUserNotificationSettings({
-          receive_notifications:
-            userData.settings?.receive_notifications || false,
-        });
+    console.log("REINT TRIGGERED");
+    if (isReinitializing) {
+      return;
+    }
+
+    isReinitializing = true;
+    try {
+      const token = await SecureStore.getItemAsync(TOKEN_KEY);
+      console.log("stored token: ", token);
+
+      if (token) {
+        let userData = null;
+
+        try {
+          userData = await getCurrentUser();
+        } catch (error) {
+          await onSignOut();
+          return;
+        }
+
+        if (userData) {
+          setUser(userData);
+          setAuthenticated(true);
+
+          // FIX
+          setUserAppSettings(userData.settings || {});
+          setUserNotificationSettings({
+            receive_notifications:
+              userData.settings?.receive_notifications || false,
+          });
+          /////////////////////////////////////////////////////////
+
+        } else {
+          console.log("setting user auth to false");
+          setAuthenticated(false);
+          queryClient.clear();
+        }
       } else {
-        // Handle case where user data is null
-        setUser((prev) => ({
-          ...prev,
-          authenticated: false,
-          loading: false,
-        }));
+        setUser(null);
+        setAuthenticated(false);
+        queryClient.clear();
       }
-    } else {
-      setUser({ user: null, authenticated: false, loading: false });
+    } finally {
+      isReinitializing = false;
     }
   };
 
-  const { data: currentUserData } = useQuery({
-    queryKey: ["fetchUser"],
-    queryFn: async () => {
-      const token = await SecureStore.getItemAsync("accessToken");
-      if (token) return await getCurrentUser();
-      return null;
-    },
-    enabled: !!user.authenticated,
-    onSuccess: (data) => {
-      if (data) {
-        setUser((prev) => ({
-          ...prev,
-          user: data,
-          authenticated: true,
-          loading: false,
-        }));
-        setUserAppSettings(data.settings || {});
-        // console.log("user app settings", userAppSettings);
-        setUserNotificationSettings({
-          receive_notifications: data.settings?.receive_notifications || false,
-        });
-      }
-    },
-    onError: () => {
-      setUser((prev) => ({ ...prev, loading: false }));
-    },
-  });
-
-  useEffect(() => {
-    const fetchInitialSettings = async () => {
-      //  console.log("SCREEN READER CONTEXT");
-      try {
-        const isActive = await AccessibilityInfo.isScreenReaderEnabled();
-        setUserAppSettings((prevSettings) => ({
-          ...prevSettings,
-          screen_reader: isActive,
-        }));
-      } catch (error) {
-        console.error("Error fetching initial screen reader status:", error);
-      }
-    };
-
-    if (user.authenticated && currentUserData && userAppSettings) {
-      fetchInitialSettings();
-    }
-  }, [user.authenticated]);
+  function usePrevious<T>(value: T): T | undefined {
+    const ref = useRef<T>();
+    useEffect(() => {
+      ref.current = value;
+    }, [value]);
+    return ref.current;
+  }
 
   const signinMutation = useMutation({
-    mutationFn: signinWithoutRefresh, //swapped this out with signin 1/1/2025 could be buggy
-    // onMutate: () => {
-    //     console.log('signin is fetching from onMutate');
-    // },
-    onSuccess: async (result) => {
-      const { access, refresh } = result.data;
+    mutationFn: signinWithoutRefresh,
+    onSuccess: () => {
+      console.log("sign in successful!");
+      reInitialize();
 
-      // moved this here to ensure it sets before reinit runs
-      await SecureStore.setItemAsync("accessToken", access);
-      await SecureStore.setItemAsync("refreshToken", refresh);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
 
-      await reInitialize();
+      timeoutRef.current = setTimeout(() => {
+        signinMutation.reset();
+      }, 2000);
     },
     onError: (error) => {
       console.error("Sign in mutation error:", error);
-      //alert("Sign-in failed: " + (error.response?.data.msg || 'Unknown error occurred'));
-    },
-    onSettled: () => {
-      //  signinMutation.reset();
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        signinMutation.reset();
+      }, 2000);
     },
   });
 
-  const onSignin = async (username, password) => {
+  const onSignin = async (username: string, password: string) => {
     try {
-      const credentials = { username, password };
-
-      await signinMutation.mutateAsync(credentials);
+      await signinMutation.mutateAsync({ username, password });
     } catch (error) {
       console.error("Sign in error", error);
-    }
-  };
-
-  //giving me a lot of errors when I try to log the new user in but it does log them in
-  const onSignUp = async (username, email, password) => {
-    try {
-      const credentials = { username, email, password };
-
-      console.log("Signing in with credentials:", credentials);
-
-      await signupMutation.mutateAsync(credentials);
-      onSignin(username, password);
-    } catch (error) {
-      console.error("Sign up error", error);
     }
   };
 
@@ -174,7 +177,7 @@ export const UserProvider = ({ children }) => {
     mutationFn: signup,
     onSuccess: async (result) => {
       // if (result.data) {
-      //     await SecureStore.setItemAsync("accessToken", result.data.token);
+      //     await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
       //     await reInitialize(); // Refetch user data after sign-up
       // }
       if (timeoutRef.current) {
@@ -194,6 +197,82 @@ export const UserProvider = ({ children }) => {
       }, 2000);
     },
   });
+
+  const onSignUp = async (
+    username: string,
+    email: string,
+    password: string
+  ) => {
+    try {
+      const credentials = { username, email, password };
+      await signupMutation.mutateAsync(credentials);
+      onSignin(username, password);
+    } catch (error) {
+      console.error("Sign up error", error);
+    }
+  };
+    useEffect(() => {
+      const fetchInitialSettings = async () => {
+        //  console.log("SCREEN READER CONTEXT");
+        try {
+          const isActive = await AccessibilityInfo.isScreenReaderEnabled();
+          setUserAppSettings((prevSettings) => ({
+            ...prevSettings,
+            screen_reader: isActive,
+          }));
+        } catch (error) {
+          console.error("Error fetching initial screen reader status:", error);
+        }
+      };
+  
+      if (authenticated && userAppSettings) {
+        fetchInitialSettings();
+      }
+    }, [authenticated]);
+
+  const onSignOut = async () => {
+    await signout();
+    setUser(null);
+    setUserAppSettings(null);
+    setUserNotificationSettings(null);
+    setAuthenticated(false);
+
+    queryClient.clear();
+  };
+
+  //   const deleteUserAccountMutation = useMutation({
+  //     mutationFn: deleteUserAccount,
+  //     onSuccess: () => {
+  //       console.log("User deleted");
+  //       onSignOut();
+
+  //       if (timeoutRef.current) {
+  //         clearTimeout(timeoutRef.current);
+  //       }
+
+  //       timeoutRef.current = setTimeout(() => {
+  //         deleteUserAccountMutation.reset();
+  //       }, 2000);
+  //     },
+  //     onError: (error) => {
+  //       console.error("Sign in mutation error:", error);
+  //       if (timeoutRef.current) {
+  //         clearTimeout(timeoutRef.current);
+  //       }
+
+  //       timeoutRef.current = setTimeout(() => {
+  //         deleteUserAccountMutation.reset();
+  //       }, 2000);
+  //     },
+  //   });
+
+  //   const handleDeleteUserAccount = async () => {
+  //     try {
+  //       await deleteUserAccountMutation.mutateAsync();
+  //     } catch (error) {
+  //       console.error("Delete user error", error);
+  //     }
+  //   };
 
   const updateAppSettings = async (newSettings) => {
     try {
@@ -222,53 +301,7 @@ export const UserProvider = ({ children }) => {
     },
   });
 
-  //   const handleUpdateSubscription = async (newSettings) => {
-  //   try {
-  //     await updateSubscriptionMutation.mutateAsync({
-  //       userId: user.user.id, // User ID
-  //       fieldUpdates: newSettings, // Pass newSettings directly as fieldUpdates
-  //     });
-  //   } catch (error) {
-  //     console.error("Error updating subscription:", error);
-  //   }
-  // };
-
-  // const updateSubscriptionMutation = useMutation({
-  //   mutationFn: (data) =>
-  //     updateSubscription(data.userId, data.setting),
-  //   onSuccess: (data) => {
-  //     setUserAppSettings(data); // Assuming the API returns updated settings
-
-  //     queryClient.setQueryData(["fetchUser"], (oldData) => ({
-  //       ...oldData,
-  //       subscription: data.settings,
-  //     }));
-  //   },
-  //   onError: (error) => {
-  //     console.error("Update app settings error:", error);
-  //   },
-  // });
-
-  const onSignOut = async () => {
-    await signout();
-    await SecureStore.deleteItemAsync("accessToken");
-    await SecureStore.deleteItemAsync("refreshToken");
-    await SecureStore.deleteItemAsync("pushToken");
-
-    setUser({
-      user: null,
-      authenticated: false,
-      loading: false,
-      credentials: {
-        token: null,
-      },
-    });
-
-    setUserAppSettings(null);
-    setUserNotificationSettings(null);
-    queryClient.clear();
-  };
-
+  
   useEffect(() => {
     if (userNotificationSettings?.receive_notifications) {
       // register
@@ -306,7 +339,7 @@ export const UserProvider = ({ children }) => {
           await Notifications.getExpoPushTokenAsync({ projectId })
         ).data;
         await SecureStore.setItemAsync("pushToken", pushTokenString);
-        await updateUserAccessibilitySettings(user.user.id, {
+        await updateUserAccessibilitySettings(user.id, {
           receive_notifications: true,
           expo_push_token: pushTokenString,
         });
@@ -316,8 +349,8 @@ export const UserProvider = ({ children }) => {
 
   const removeNotificationPermissions = async () => {
     await SecureStore.deleteItemAsync("pushToken");
-    if (user.user) {
-      await updateUserAccessibilitySettings(user.user.id, {
+    if (user) {
+      await updateUserAccessibilitySettings(user.id, {
         receive_notifications: false,
         expo_push_token: null,
       });
@@ -327,21 +360,23 @@ export const UserProvider = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        authUserState: user,
         user,
+        isAuthenticated: authenticated,
         userAppSettings,
         userNotificationSettings,
-        handleSignup: signupMutation.mutate,
         onSignin,
         onSignUp,
+        onSignOut,
+        reInitialize,
+        // handleDeleteUserAccount,
+        // deleteUserAccountMutation,
         updateAppSettingsMutation,
         updateAppSettings,
+
+        updateUserSettings: setUserAppSettings, // .... ?????
+        updateUserNotificationSettings: setUserNotificationSettings,
         signinMutation,
         signupMutation,
-        onSignOut,
-        reInitialize, // Added to the context
-        updateUserSettings: setUserAppSettings,
-        updateUserNotificationSettings: setUserNotificationSettings,
       }}
     >
       {children}

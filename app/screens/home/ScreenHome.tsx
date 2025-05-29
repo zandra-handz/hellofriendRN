@@ -44,7 +44,7 @@ const ScreenHome = () => {
 const navigation = useNavigation();
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
-  const { user, userAppSettings } = useUser();
+  const { user, isAuthenticated, isInitializing, userAppSettings } = useUser();
   const { selectedFriend  } = useSelectedFriend();
   const { friendList, friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState();
@@ -59,7 +59,7 @@ const navigation = useNavigation();
   const { showMessage } = useMessage();
 
   const newMomentTextRef = useRef(null);
-  const isNewUser = new Date(user?.user?.created_on).toDateString() === new Date().toDateString();
+  const isNewUser = new Date(user?.created_on).toDateString() === new Date().toDateString();
  
 
   useEffect(() => {
@@ -224,7 +224,7 @@ const navigation = useNavigation();
           style={{ flex: 1 }}
         >
           <HellofriendHeader />
-          {user.authenticated && user.user && userAppSettings && friendList && friendList.length > 0  ? (
+          {isAuthenticated   && userAppSettings && friendList && friendList.length > 0  ? (
             <View
               style={{
                 flex: 1,
@@ -237,7 +237,7 @@ const navigation = useNavigation();
             
               <View
                 style={{
-                  height: isKeyboardVisible ? "89%" : "38%",
+                  height: isKeyboardVisible ? "89%" : "30%",
                 }}
               >
                 {/* <Button
@@ -246,8 +246,12 @@ const navigation = useNavigation();
                   Sentry.captureException(new Error("First error"));
                 }}
               /> */}
-              <WelcomeMessageUI username={user?.user?.username} isNewUser={isNewUser} />
-                <QuickWriteMoment
+              {isAuthenticated && !isInitializing && (
+                
+              <WelcomeMessageUI username={user.username} isNewUser={isNewUser} />
+              
+              )} 
+              <QuickWriteMoment
                   width={"100%"}
                   height={"100%"}
                   ref={newMomentTextRef}
@@ -298,7 +302,7 @@ const navigation = useNavigation();
                   <HomeButtonUpNext
                     onPress={navigateToAddMomentScreen}
                     borderRadius={10}
-                    height={400}
+                    height={500}
                     borderColor="black" 
                   />
                 )}
@@ -315,7 +319,7 @@ const navigation = useNavigation();
                   
                   </>
                 )}
-                {friendListLength > 0 && (
+                {friendListLength > 0 && selectedFriend && (
                   
                 <HomeScrollSoon
                   height={"100%"}
@@ -335,7 +339,7 @@ const navigation = useNavigation();
               </Animated.View>
             </View>
           ) : (
-            <NoFriendsMessageUI username={user?.user?.username || ''} userCreatedOn={user?.user?.created_on || ''}/>
+            <NoFriendsMessageUI username={user?.username || ''} userCreatedOn={user?.created_on || ''}/>
           )}
 
           <HelloFriendFooter />

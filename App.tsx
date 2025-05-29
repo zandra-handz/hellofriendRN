@@ -352,7 +352,7 @@ const linking = {
 
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle();
-  const { authUserState } = useUser();
+  const { isAuthenticated, user } = useUser();
 
   return (
     <NavigationContainer ref={navigationRef} linking={linking}>
@@ -372,9 +372,9 @@ export const Layout = () => {
             cardStyle: { backgroundColor: "#000002" },
           }}
         >
-          {authUserState?.authenticated && authUserState?.user ? (
-            authUserState.user.app_setup_complete ||
-            !authUserState.user.app_setup_complete ? (
+          {isAuthenticated ? (
+            user.app_setup_complete ||
+            !user.app_setup_complete ? (
               <>
                 <Stack.Screen
                   name="hellofriend"

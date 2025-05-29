@@ -19,7 +19,7 @@ export const useHelloes = () => {
 export const HelloesProvider = ({ children }) => {
   const queryClient = useQueryClient();
   const { selectedFriend } = useSelectedFriend();
-  const {  user } = useUser();
+  const {  user, isAuthenticated } = useUser();
 
   const timeoutRef = useRef(null);
 
@@ -35,7 +35,7 @@ export const HelloesProvider = ({ children }) => {
       //console.log('Fetching past helloes for:', selectedFriend?.id);
       return fetchPastHelloes(selectedFriend.id);
     },
-    enabled: !!selectedFriend,
+    enabled: !!(user && isAuthenticated && selectedFriend),
     onSuccess: () => {
       // groupByMonthAndYear(data);
       // const inPerson = data[0].filter(hello => hello.type === 'in person');
@@ -149,7 +149,7 @@ export const HelloesProvider = ({ children }) => {
 
   const handleCreateHello = async (helloData) => {
     const hello = {
-      user: user.user.id,
+      user: user.id,
       friend: helloData.friend,
       type: helloData.type,
       typed_location: helloData.manualLocation,

@@ -89,7 +89,7 @@ const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
  
 
     try { 
-      await updateFriendFavesColorTheme(user.user.id, selectedFriend.id, darkColor, lightColor, fontColor, fontColorSecondary);
+      await updateFriendFavesColorTheme(user.id, selectedFriend.id, darkColor, lightColor, fontColor, fontColorSecondary);
       //selectedFriend function, should remove eventually
       updateFriendColorTheme({
         darkColor: darkColor, 

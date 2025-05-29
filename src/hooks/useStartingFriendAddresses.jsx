@@ -205,7 +205,7 @@ const useStartingFriendAddresses = () => {
             address,
             is_default: true,
             friend: selectedFriend.id,
-            user: user.user.id,
+            user: user.id,
           };
 
           createFriendAddressMutation.mutate(addressData);
@@ -235,7 +235,7 @@ const useStartingFriendAddresses = () => {
         try {
           await updateFriendAddressMutation.mutateAsync({
             friend: friendId,
-            user: user.user.id,
+            user: user.id,
             id: addressId,
             fieldUpdates: newData,
           });

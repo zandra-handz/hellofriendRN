@@ -1,5 +1,4 @@
 import React, {
-  useEffect,
   useRef,
   createContext,
   useContext,
@@ -14,7 +13,7 @@ import {
   deleteMomentAPI,
 } from "../calls/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "./UserContext";
+import { useUser } from "./UserContext"; 
 
 const CapsuleListContext = createContext({
   capsuleList: [],
@@ -42,14 +41,13 @@ export const useCapsuleList = () => {
 
 export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
-  const { user } = useUser();
+  const { isAuthenticated } = useUser();
   const queryClient = useQueryClient();
 
   const [sortedByCategory, setSortedByCategory] = useState([]);
   const [newestFirst, setNewestFirst] = useState([]);
 
-  const [resultMessage, setResultMessage] = useState(null);
-  const [closeResultMessage, setCloseResultMessage] = useState(true);
+  const [resultMessage, setResultMessage] = useState(null); 
   const [momentIdToAnimate, setMomentIdToAnimate] = useState(null);
   const [momentIdToUpdate, setMomentIdToUpdate] = useState(null);
   const [newMomentInput, setNewMomentInput] = useState("");
@@ -58,7 +56,7 @@ export const CapsuleListProvider = ({ children }) => {
     useQuery({
       queryKey: ["Moments", selectedFriend?.id],
       queryFn: () => fetchMomentsAPI(selectedFriend.id),
-      enabled: !!(selectedFriend && user?.authenticated),
+      enabled: !!(selectedFriend && isAuthenticated),
       staleTime: 0,
       onSuccess: (data) => {
         const initialCache = queryClient.getQueryData([

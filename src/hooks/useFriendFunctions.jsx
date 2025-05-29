@@ -76,7 +76,7 @@ const useFriendFunctions = () => {
 
     const handleUpdateFriendSettings = async (user, friendId, effort, priority) => {
         const update = {
-            user: user.user.id,
+            user: user.id,
             friend: friendId,
             effort_required: effort,
             priority_level: priority,
@@ -122,7 +122,7 @@ const useFriendFunctions = () => {
             if (friendId) {
 
                 // Trigger the update function with original input values
-                handleUpdateFriendSettings(user.user, friendId, effort, priority);
+                handleUpdateFriendSettings(user, friendId, effort, priority);
                 
             }
      

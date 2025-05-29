@@ -25,7 +25,7 @@ const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const createNewAccount = route.params?.createNewAccount ?? false;
   const { showMessage } = useMessage();
-  const { themeStyles, gradientColors, manualGradientColors } =
+  const { themeStyles, manualGradientColors } =
     useGlobalStyle();
   const [showSignIn, setShowSignIn] = useState(true);
   const [username, setUsername] = useState("");
@@ -35,7 +35,7 @@ const ScreenAuth = () => {
   const [loading, setLoading] = useState(false);
   const [isSignInScreen, setSignInScreen] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const { onSignin, signinMutation, onSignUp } = useUser();
+  const { onSignin, signinMutation, onSignUp  } = useUser();
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const verifyPasswordInputRef = useRef(null);
@@ -49,8 +49,7 @@ const ScreenAuth = () => {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   useLayoutEffect(() => {
-    if (createNewAccount === true) {
-      console.log("user wants to create new account");
+    if (createNewAccount === true) { 
       toggleMode();
     }
   }, [createNewAccount]);
@@ -96,28 +95,29 @@ const ScreenAuth = () => {
 
   useEffect(() => {
     if (signinMutation.isError) {
+      showMessage(true, null, 'Oops! Could not sign you in.');
       setPassword(null);
+    }
+    if (signinMutation.isPending) {
+       showMessage(true, null, "Signing you in...");
     }
   }, [signinMutation]);
 
   const handleAuthentication = async () => {
     let result;
     if (isSignInScreen) {
-      try {
-        showMessage(true, null, "Signing you in...");
+      try { 
 
         onSignin(username, password);
       } catch (error) {
-        console.error(error);
-        showMessage(true, null, `Error! Not signed in.`);
+        console.error(error); 
       }
     } else {
       if (password !== verifyPassword) {
         //alert("Passwords do not match!");
-        showMessage(true, null, "Oops! Passwords do not match");
+        // showMessage(true, null, "Oops! Passwords do not match");
         return;
-      }
-      console.log("passwords match, sending data...");
+      } 
       result = await onSignUp(username, email, password);
       if (result && result.status === 201) {
         alert("Sign up was successful!");
@@ -189,13 +189,17 @@ const ScreenAuth = () => {
               width: 40,
               alignItems: "center",
               justifyContent: "center",
+              alignContent: 'center',
+              marginLeft: 10,
+              textAlign: 'center',
+              flexDirection: 'row',
 
               backgroundColor: manualGradientColors.homeDarkColor,
               borderRadius: 20, // Half of the height/width to create a circle
             }}
           >
-            <Text style={{ fontSize: 18, color: "white", textAlign: "center" }}>
-              x
+            <Text style={{ fontSize: 18, paddingBottom: 4, color: "white", textAlign: "center" }}>
+            x
             </Text>
           </TouchableOpacity>
 
@@ -205,6 +209,7 @@ const ScreenAuth = () => {
                 height: 40,
                 marginLeft: "2%",
                 paddingTop: "3%",
+                paddingHorizontal: 10,
               }}
             >
               <Text

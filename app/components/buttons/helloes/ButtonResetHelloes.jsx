@@ -28,7 +28,7 @@ const ButtonResetHelloes = ({ title, onPress, confirmationAlert = true }) => {
     // Add 'async' keyword here
     try {
       setIsAttemptingToRemix(true);
-      await remixAllNextHelloes(user.user.id);
+      await remixAllNextHelloes(user.id);
       setIsAttemptingToRemix(false);
       setSuccessModalVisible(true);
     } catch (error) {

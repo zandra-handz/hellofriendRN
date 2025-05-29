@@ -104,7 +104,7 @@ const ContentAddImage = ({ imageUri }) => {
   const handleSave = async () => {
     console.log(imageUri);
 
-    if (imageUri && imageTitle.trim() && selectedFriend && user.user) {
+    if (imageUri && imageTitle.trim() && selectedFriend && user) {
       try {
         const manipResult = await resizeImage(imageUri);
 
@@ -120,7 +120,7 @@ const ContentAddImage = ({ imageUri }) => {
         formData.append("image_category", imageCategory.trim());
         formData.append("image_notes", "");
         formData.append("friend", selectedFriend.id);
-        formData.append("user", user.user.id);
+        formData.append("user", user.id);
         formData.append("thought_capsules", "");
 
         //removed the await here, the function is not async

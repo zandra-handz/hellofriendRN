@@ -9,7 +9,7 @@ const GlobalStyleContext = createContext();
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
-  const { user, userAppSettings, updateAppSettingsMutation } = useUser();
+  const { user, isAuthenticated, userAppSettings, updateAppSettingsMutation } = useUser();
   const colorScheme = useColorScheme();
 
   // Default state
@@ -40,7 +40,7 @@ export const GlobalStyleProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    if (user.authenticated && userAppSettings) {
+    if (isAuthenticated && userAppSettings) {
       const determineTheme = () => {
         if (userAppSettings.manual_dark_mode !== null) {
           return userAppSettings.manual_dark_mode ? "dark" : "light";
@@ -62,7 +62,7 @@ export const GlobalStyleProvider = ({ children }) => {
         theme: colorScheme || "light",
       }));
     }
-  }, [user.authenticated, userAppSettings, colorScheme]);
+  }, [isAuthenticated, userAppSettings, colorScheme]);
 
   useEffect(() => {
     if (styles.theme === "light") {
@@ -107,7 +107,7 @@ export const GlobalStyleProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!user.authenticated) {
+    if (isAuthenticated) {
       return;
     }
 
@@ -116,9 +116,9 @@ export const GlobalStyleProvider = ({ children }) => {
 
       async (isActive) => {
         console.log("SCREEN READER GLOBAL STYLE");
-        if (user.user) {
+        if (user) {
           updateAppSettingsMutation.mutate({
-            userId: user.user.id,
+            userId: user.id,
             setting: { screen_reader: isActive },
           });
         }
@@ -127,15 +127,15 @@ export const GlobalStyleProvider = ({ children }) => {
     return () => {
       screenReaderListener.remove();
     };
-  }, [user.authenticated]);
+  }, [isAuthenticated]);
 
   const themeStyles =
     styles.theme === "dark" ? darkThemeStyles : lightThemeStyles;
   const appContainerStyles = containerStyles;
   const appFontStyles = fontStyles;
-  const appSpacingStyles = spacingStyles;
-  const ConstantColorsStyles = constantColors;
+  const appSpacingStyles = spacingStyles; 
   const appAnimationStyles = animationStyles;
+  const appCrossThemeStyles = crossThemeStyles;
 
   const themeStyleSpinners = {
     homeScreen: "flow",
@@ -149,8 +149,8 @@ export const GlobalStyleProvider = ({ children }) => {
         appContainerStyles,
         appFontStyles,
         appSpacingStyles,
-        appAnimationStyles,
-        ConstantColorsStyles,
+        appAnimationStyles, 
+        appCrossThemeStyles,
         themeStyleSpinners,
       }}
     >
@@ -342,6 +342,44 @@ const containerStyles = StyleSheet.create({
     borderRadius: 0,
   },
 
+  appMessageContainer: {
+    position: "absolute", 
+    top: 40,
+    left: 0, 
+    zIndex: 100000,
+    elevation: 100000,
+    width: "100%",
+    paddingVertical: 10, 
+    paddingHorizontal: 4,
+    height: "auto",
+    //flexGrow: 1,
+    //flexWrap: 'wrap',
+    flex: 1,
+    minHeight: 100,
+    maxHeight: 300,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+  
+
+  },
+
+  appMessageTextWrapper: { //this the colored body too
+      borderWidth: 1,
+  
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: 'row', 
+    width: "100%",
+    height: "auto",
+    padding: 30, 
+    minHeight: 100,
+    borderRadius: 20, 
+    
+    flexWrap: "wrap",
+    textAlign: "center",
+  },
+
   loadingSpinnerWrapper: {
     flex: 1,
     width: "100%",
@@ -499,9 +537,18 @@ const fontStyles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
   },
+  appMessageText: {
+    fontSize: 14,
+    lineHeight: 22,
+
+  },
 });
 
-const constantColors = StyleSheet.create({});
+const crossThemeStyles = StyleSheet.create({
+  primaryDarkText: {
+    color: "#121212",
+  }
+});
 
 const lightThemeStyles = StyleSheet.create({
   primaryText: {

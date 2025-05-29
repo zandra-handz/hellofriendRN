@@ -22,7 +22,7 @@ const FormFriendAddressCreate = forwardRef(({ friendId }, ref) => {
         title,
         address,
         friend: friendId,
-        user: user.user.id,
+        user: user.id,
       };
   
       await addFriendAddress(friendId, addressData);

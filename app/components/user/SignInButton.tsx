@@ -19,7 +19,7 @@ const SignInButton: React.FC<SignInButtonProps> = ({
   onPress,
   title = "Sign in",
 }) => {
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles, appContainerStyles, appFontStyles, appCrossThemeStyles } = useGlobalStyle();
   const coffeeCupHeartPng: ImageSourcePropType = require("@/app/assets/shapes/coffeecupdarkheart.png");
    
   // const shapeSize: number = 190;
@@ -53,7 +53,7 @@ const SignInButton: React.FC<SignInButtonProps> = ({
         }}
         resizeMode="contain"
       />
-      <Text style={[appFontStyles.signInButtonLabel, themeStyles.primaryText]}>
+      <Text style={[appFontStyles.signInButtonLabel, appCrossThemeStyles.primaryDarkText]}>
         {title}
       </Text>
     </TouchableOpacity>

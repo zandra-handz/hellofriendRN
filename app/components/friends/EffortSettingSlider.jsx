@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 
-const EffortSettingSlider = forwardRef(({ height=200, friendEffort, setFriendEffort, sliderColor='limegreen', trackColor='limegreen' }, ref) => {
+const EffortSettingSlider = forwardRef(({ height=200, friendEffort,  sliderColor='limegreen', trackColor='limegreen' }, ref) => {
   const { themeStyles } = useGlobalStyle();
   
   // Messages for the slider
@@ -50,8 +50,7 @@ const EffortSettingSlider = forwardRef(({ height=200, friendEffort, setFriendEff
           maximumValue={5}
           value={sliderValue}
           onValueChange={(value) => {
-            setSliderValue(value);
-            if (setFriendEffort) setFriendEffort(value);
+            setSliderValue(value); 
           }}
           step={1}
           thumbTintColor={sliderColor}

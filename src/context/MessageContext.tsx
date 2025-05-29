@@ -1,14 +1,11 @@
 import React, {
   createContext,
-  useState,
-  useContext,
-  useEffect,
+  useContext, 
+  useLayoutEffect,
   ReactNode,
 } from "react";
-import { useUser } from "./UserContext";
-import { useCapsuleList } from "./CapsuleListContext";
-import { useUpcomingHelloes } from "./UpcomingHelloesContext";
-import { useSharedValue } from "react-native-reanimated";
+import { useUser } from "./UserContext";  
+import { useSharedValue, SharedValue, runOnUI } from "react-native-reanimated";
 
 interface MessageData {
   result: boolean | null;
@@ -17,14 +14,17 @@ interface MessageData {
 }
 
 interface MessageContextType {
-  messageQueue: MessageData[]; // Now it's a queue (array)
+  messageQueue: SharedValue<MessageData[]>;
 
-  showAppMessage: (
+
+  // all messages are called locally in screen/subscreens inside of useEffects; 
+  // will NOT work properly in a context component, including this one
+  showMessage: (
     result: boolean,
     resultData: any,
     resultsMessage?: string
   ) => void;
-  hideAppMessage: () => void;
+  hideMessage: () => void;
   removeMessage: () => void; // Removes message from the queue
 }
 
@@ -49,29 +49,30 @@ export const MessageContextProvider: React.FC<MessageContextProviderProps> = ({
   // const [messageQueue, setMessageQueue] = useState<MessageData[]>([]);
   const messageQueue = useSharedValue<MessageData[]>([]);
 
-  const { createMomentMutation, updateCapsuleMutation, deleteMomentMutation } =
-    useCapsuleList();
-  const { upcomingHelloesIsSuccess } = useUpcomingHelloes();
+    
   const { signinMutation } = useUser();
 
 const showMessage = (
   result: boolean,
   resultData: any,
   resultsMessage = "Action successful",
-  buttonPress: (() => void) | null = null,
-  buttonLabel = "",
+  // buttonPress: (() => void) | null = null,
+  // buttonLabel = "",
   duration = 2000,
-  delay = 400
+  delay = 4000 //400
 ) => {
   const newMessage = {
     result,
     resultData,
     resultsMessage,
-    buttonPress,
-    buttonLabel,
+    // buttonPress,
+    // buttonLabel,
   };
 
+  runOnUI(() => {
   messageQueue.value = [...messageQueue.value, newMessage];
+})();
+  // messageQueue.value = [...messageQueue.value, newMessage];
 
   // Automatically remove after duration + delay
   setTimeout(() => {
@@ -79,73 +80,23 @@ const showMessage = (
   }, duration + delay);
 };
 
-  // const showMessage = (
-  //   result: boolean,
-  //   resultData: any,
-  //   resultsMessage = "Action successful",
-  //   buttonPress: (() => void) | null = null,
-  //   buttonLabel = ""
-  // ) => {
-  //   setMessageQueue((prevQueue) => [
-  //     ...prevQueue,
-  //     { result, resultData, resultsMessage, buttonPress, buttonLabel },
-  //   ]);
-  // };
-
+ 
   const hideMessage = () => {
     messageQueue.value = ([]);
   };
 
 const removeMessage = () => {
-  console.log('removing');
-  messageQueue.value = messageQueue.value.slice(1);
+  runOnUI(() => {
+     messageQueue.value = messageQueue.value.slice(1); // moved back here from ResultMessage
+  })();
 };
-
-  useEffect(() => {
-    if (upcomingHelloesIsSuccess) {
-      showMessage(true, null, `Next helloes are up to date!`);
-    }
-  }, [upcomingHelloesIsSuccess]);
-
-  useEffect(() => {
+ 
+  useLayoutEffect(() => {
     if (signinMutation.isError) {
       showMessage(true, null, "Oops! Could not sign in.");
     }
   }, [signinMutation]);
 
-  useEffect(() => {
-    if (createMomentMutation.isSuccess) {
-      showMessage(true, null, "Moment saved!");
-    }
-  }, [createMomentMutation]);
-
-  useEffect(() => {
-    if (createMomentMutation.isError) {
-      showMessage(
-        true,
-        null,
-        "!! Moment could not be saved. Please try again."
-      );
-    }
-  }, [createMomentMutation]);
-
-  useEffect(() => {
-    if (deleteMomentMutation.isSuccess) {
-      showMessage(true, null, "Moment deleted!");
-    }
-  }, [deleteMomentMutation]);
-
-  useEffect(() => {
-    if (updateCapsuleMutation.isSuccess) {
-      showMessage(true, null, "Moment sent to hello!");
-    }
-  }, [updateCapsuleMutation]);
-
-  useEffect(() => {
-    if (updateCapsuleMutation.isError) {
-      showMessage(true, null, "!! Moment could not be sent.");
-    }
-  }, [updateCapsuleMutation]);
 
   return (
     <MessageContext.Provider

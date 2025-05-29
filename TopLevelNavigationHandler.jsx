@@ -5,18 +5,21 @@ import { useUser } from './src/context/UserContext';
 
 const TopLevelNavigationHandler = ({ children }) => {
     const navigation = useNavigation();
-    const { user, onSignOut } = useUser();
+    const { isAuthenticated, isInitializing, onSignOut } = useUser();
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-    useEffect(() => {
+    useEffect(() => { 
         const checkAuthentication = async () => {
-            if (user.loading) {
+            // if (user.loading) {
+            if (isInitializing) { 
                 return; // Wait until loading is complete
             }
 
-            if (!user.authenticated) {
+            // if (!user.authenticated) {
+            if (!isAuthenticated) {
                 if (!isCheckingAuth) {
                     setIsCheckingAuth(true); // Prevent re-triggering
+                 
                     await onSignOut(); // Ensure the user is signed out
                     navigation.navigate('Signin'); // Navigate to Signin
                     setIsCheckingAuth(false); // Allow further checks if needed
@@ -25,7 +28,7 @@ const TopLevelNavigationHandler = ({ children }) => {
         };
 
         checkAuthentication();
-    }, [user, navigation, onSignOut, isCheckingAuth]);
+    }, [  navigation, onSignOut, isCheckingAuth, isAuthenticated]);
 
     return <>{children}</>;
 };

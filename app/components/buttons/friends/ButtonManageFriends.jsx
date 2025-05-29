@@ -34,7 +34,7 @@ const ButtonManageFriends = ({ title, onPress, confirmationAlert = true }) => {
     const confirmResetHelloes = async () => { // Add 'async' keyword here
         try {
             setIsAttemptingToRemix(true);
-            await remixAllNextHelloes(user.user.id);
+            await remixAllNextHelloes(user.id);
             setIsAttemptingToRemix(false);
             console.log('Reset hello dates button pressed!');
             setSuccessModalVisible(true);  

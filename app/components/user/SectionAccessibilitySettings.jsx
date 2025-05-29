@@ -11,7 +11,7 @@ import LoadingPage from '../appwide/spinner/LoadingPage';
 //fix loading spinner
 //moved creation/removal of notification tokens completely out of this into auth context
 const SectionAccessibilitySettings = () => {
-  const {  user, updateAppSettingsMutation, userAppSettings, updateUserNotificationSettings  } = useUser();
+  const {  user, isAuthenticated, updateAppSettingsMutation, userAppSettings, updateUserNotificationSettings  } = useUser();
   const { themeStyles } = useGlobalStyle();   
   const [manualTheme, setManualTheme] = useState(false);  
   const [showAlert, setShowAlert] = useState(false); 
@@ -27,13 +27,14 @@ const SectionAccessibilitySettings = () => {
         setManualTheme(true); 
       }
     }
-  }, [user.authenticated]);
+      }, [isAuthenticated]);
+  // }, [user.authenticated]);
 
   const updateSetting = async (setting) => { 
     try {
         const newSettings = { ...userAppSettings, ...setting };  
         await updateAppSettingsMutation.mutateAsync({
-            userId: user.user.id,  
+            userId: user.id,  
             setting: newSettings  
         }); 
         console.log('User settings updated successfully');

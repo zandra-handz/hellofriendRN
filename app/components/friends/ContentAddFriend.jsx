@@ -81,16 +81,9 @@ const ContentAddFriend = () => {
         friendPriority: friendPriority,
       };
       await handleCreateFriend(postData);
-      // addToFriendList(friendResponse);
 
-      // await updateFriendSugSettings({
-      //     user: authUserState.user.id,
-      //     friend: friendResponse.id,
-      //     effort_required: friendEffort,
-      //     priority_level: friendPriority,
-      // });
 
-      if (!user.user.app_setup_complete) {
+      if (!user.app_setup_complete) {
         //move this into RQ onSuccess when refactoring?
         await updateAppSetup();
       }

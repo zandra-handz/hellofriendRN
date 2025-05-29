@@ -72,7 +72,7 @@ const HelloView = ({
   const handleBulkCreateMoments = () => {
     momentsSelected.map((moment) => {
       const momentData = {
-        user: user.user.id,
+        user: user.id,
         friend: selectedFriend.id,
 
         selectedCategory: moment.typed_category,

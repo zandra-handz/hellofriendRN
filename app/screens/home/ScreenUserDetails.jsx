@@ -18,7 +18,7 @@ import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import SafeView from "@/app/components/appwide/format/SafeView";
 
 const ScreenUserDetails = () => {
-  const { user } = useUser();
+  const { user, isAuthenticated } = useUser();
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { updateSafeViewGradient } = useFriendList();
   const { darkColor, lightColor } = gradientColorsHome;
@@ -43,7 +43,7 @@ const ScreenUserDetails = () => {
         end={{ x: 1, y: 1 }}
         style={[styles.container, themeStyles.container]}
       >
-        <SettingsStyleHeader isLoadingComplete={!!(user && user.authenticated && user.user)} displayText={user?.user.username} />
+        <SettingsStyleHeader isLoadingComplete={!!(user && isAuthenticated)} displayText={user?.username} />
         <ScrollView
           contentContainerStyle={[styles.backColorContainer, { padding: 10 }]}
           style={{ width: "100%" }}

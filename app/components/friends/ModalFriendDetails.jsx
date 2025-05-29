@@ -66,7 +66,7 @@ const ModalFriendDetails = ({ mountingDetails }) => {
   const handleSave = () => {
     try {
       handleUpdateFriendSettings(
-        user.user.id,
+        user.id,
         selectedFriend.id,
         effortRef.current.getValue(),
         priorityRef.current.getValue()

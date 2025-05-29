@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Text,
   StyleSheet,
@@ -67,7 +67,7 @@ const ScreenOnboardingOne = ({ messageContent }) => {
       end={{ x: 1, y: 1 }}
       style={[styles.container, themeStyles.signinContainer]}
     >
-      <Text style={styles.title}>Hi {user.user.username}!</Text>
+      <Text style={styles.title}>Hi {user.username}!</Text>
       <Text style={styles.message}>{messageContent}</Text>
 
       <TouchableOpacity onPress={goToNextScreen}>

@@ -15,7 +15,7 @@ export const SafeView = ({
   primaryBackground = false,
 }) => {
   const { themeAheadOfLoading, useGradientInSafeView } = useFriendList();
-  const { user } = useUser();
+  const { isAuthenticated } = useUser();
   const insets = useSafeAreaInsets();
 
   const route = useRoute();
@@ -48,10 +48,14 @@ export const SafeView = ({
       end={{ x: 1, y: 0 }}
       style={[
         {
-          paddingTop: user?.authenticated ? top : 0,
-          paddingBottom: user?.authenticated ? bottom : 0,
-          paddingLeft: user?.authenticated ? left : 0,
-          paddingRight: user?.authenticated ? right : 0,
+          // paddingTop: user?.authenticated ? top : 0,
+          // paddingBottom: user?.authenticated ? bottom : 0,
+          // paddingLeft: user?.authenticated ? left : 0,
+          // paddingRight: user?.authenticated ? right : 0,
+                    paddingTop: isAuthenticated ? top : 0,
+          paddingBottom: isAuthenticated ? bottom : 0,
+          paddingLeft: isAuthenticated ? left : 0,
+          paddingRight: isAuthenticated ? right : 0,
           backgroundColor: primaryBackground
             ? themeStyles.primaryBackground.backgroundColor
             : "transparent",

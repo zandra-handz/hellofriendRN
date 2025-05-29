@@ -17,6 +17,8 @@ import CategoryCreator from "./CategoryCreator";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import moment from "moment";
 
+import { useMessage } from "@/src/context/MessageContext";
+
 const ContentMomentFocus = ({
   momentText,
   updateExistingMoment,
@@ -30,6 +32,7 @@ const ContentMomentFocus = ({
     handleEditMoment,
     editMomentMutation,
   } = useCapsuleList(); // NEED THIS TO ADD NEW
+  const { showMessage } = useMessage();
   const { user } = useUser();
   const navigation = useNavigation();
   const { appContainerStyles } = useGlobalStyle();
@@ -108,7 +111,7 @@ const ContentMomentFocus = ({
       if (selectedFriend) {
         if (!updateExistingMoment) {
           const requestData = {
-            user: user.user.id,
+            user: user.id,
             friend: selectedFriend.id,
             selectedCategory: selectedCategory,
             moment: momentTextRef.current.getText(),
@@ -131,6 +134,7 @@ const ContentMomentFocus = ({
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
+      showMessage(true, null, "Momemt saved!");
       navigation.goBack();
       createMomentMutation.reset(); //additional immediate reset to allow user to return back to screen instantly
     }
@@ -138,6 +142,7 @@ const ContentMomentFocus = ({
 
   useEffect(() => {
     if (editMomentMutation.isSuccess) {
+      showMessage(true, null, "Edited moment saved!");
       navigation.navigate("Moments");
     }
   }, [editMomentMutation.isSuccess, editMomentMutation.data]);
