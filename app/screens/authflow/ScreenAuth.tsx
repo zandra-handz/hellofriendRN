@@ -7,6 +7,8 @@ import {
   Keyboard,
   TouchableOpacity,
 } from "react-native";
+
+ 
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useMessage } from "@/src/context/MessageContext";
@@ -19,12 +21,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
+
+import useMessageCentralizer from "@/src/hooks/useMessageCentralizer";
  
 
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const createNewAccount = route.params?.createNewAccount ?? false;
   const { showMessage } = useMessage();
+
+   const { showVerifyingCredentialsMessage, showSigninErrorMessage } = useMessageCentralizer();
   const { themeStyles, manualGradientColors } =
     useGlobalStyle();
   const [showSignIn, setShowSignIn] = useState(true);
@@ -95,11 +101,11 @@ const ScreenAuth = () => {
 
   useEffect(() => {
     if (signinMutation.isError) {
-      showMessage(true, null, 'Oops! Could not sign you in.');
+      showSigninErrorMessage();
       setPassword(null);
     }
     if (signinMutation.isPending) {
-       showMessage(true, null, "Signing you in...");
+       showVerifyingCredentialsMessage();
     }
   }, [signinMutation]);
 

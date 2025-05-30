@@ -18,12 +18,10 @@ import AlertList from "../alerts/AlertList";
 import AlertSuccessFail from "../alerts/AlertSuccessFail";
 
 import { useUser } from "@/src/context/UserContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+import { useFriendList } from "@/src/context/FriendListContext"; 
 
 const ContentAddFriend = () => {
-  const { user } = useUser();
-  const { setUpdateTrigger } = useUpcomingHelloes();
+  const { user } = useUser(); 
   const { friendList  } = useFriendList();
 
   const navigation = useNavigation();
@@ -97,8 +95,7 @@ const ContentAddFriend = () => {
     }
   };
 
-  const successOk = () => {
-    setUpdateTrigger((prev) => !prev);
+  const successOk = () => { 
     navigateToMainScreen();
     setSuccessModalVisible(false);
   };

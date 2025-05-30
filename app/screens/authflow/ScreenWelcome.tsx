@@ -11,7 +11,7 @@ import SafeView from "@/app/components/appwide/format/SafeView";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated'; 
 import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
-
+import { runOnJS, runOnUI } from 'react-native-reanimated';
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
  
 
@@ -52,18 +52,40 @@ const ScreenWelcome = () => {
   const checkIfSignedIn = async () => {
     try {
       const token = await SecureStore.getItemAsync("accessToken");
-      if (token) { 
-        showMessage(true, null, "Reinitializing...");
+      if (token) {  
+        updateTriggerMessage('validating');
+ 
+   
         reInitialize();
         //handleNavigateToAuthScreen(); //don't need, conditional check in App.tsx will send it straight to the home page once has credentials
       } else {
         setConfirmedUserNotSignedIn(true);
-        showMessage(true, null, "Signed out");
+
+       updateTriggerMessage('signedout');
       }
     } catch (error) {
       console.error("Error checking sign-in status", error);
     }
   };
+
+
+
+  const [ triggerMessage, updateTriggerMessage ] = useState('none');
+
+    useEffect(() => {
+      if (triggerMessage === 'validating') {
+       // showMessage(true, null, "Validating...");
+        updateTriggerMessage('none');
+
+      } else if (triggerMessage === 'signedout') {
+        showMessage(true, null, "Signed out");
+        updateTriggerMessage('none');
+
+      }
+
+  },[triggerMessage] );
+
+ 
 
   return (
     <SafeView style={{ flex: 1 }}> 

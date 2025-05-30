@@ -32,12 +32,9 @@ const HelloView = ({
   const { user } = useUser();
   const [categories, setCategories] = useState([]);
   const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
-  const [isReloadModalVisible, setReloadModalVisible] = useState(false);
-  const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] =
-    useState(false);
+  const { themeAheadOfLoading } = useFriendList(); 
 
-  const { handleCreateMoment, createMomentMutation } = useCapsuleList();
+  const { handleCreateMoment  } = useCapsuleList();
 
   const [momentsSelected, setMomentsSelected] = useState([]);
 

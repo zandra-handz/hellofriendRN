@@ -23,8 +23,7 @@ import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { useNavigation } from "@react-navigation/native";
 
 import PickerMultiMoments from "../selectors/PickerMultiMoments";
@@ -87,8 +86,7 @@ const ContentAddHello = () => {
 
   const { locationList, locationListIsSuccess } = useLocations();
 
-  const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
-
+ 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -128,7 +126,7 @@ const ContentAddHello = () => {
   useEffect(() => {
     if (createHelloMutation.isSuccess) {
       showMessage(true, null, "Hello saved!");
-      setUpdateTrigger((prev) => !prev);
+      // setUpdateTrigger((prev) => !prev);
       setFriend(null);
       navigateToMainScreen();
     }
@@ -139,7 +137,7 @@ const ContentAddHello = () => {
       true,
       null,
       "Changes made on this page will not be saved if you exit."
-    );
+    ); 
   }, []);
 
   const toggleDeleteMoments = () => {
@@ -211,7 +209,7 @@ const ContentAddHello = () => {
     //console.log("Selected Moments in Parent:", selectedMoments);
   };
 
-  const handleSave = async () => {
+  const handleSave =   () => {
     try {
       if (selectedFriend) {
         const formattedDate = helloDate.toISOString().split("T")[0];
@@ -233,7 +231,7 @@ const ContentAddHello = () => {
           deleteMoments: deleteMoments ? true : false,
         };
 
-        await handleCreateHello(requestData);
+          handleCreateHello(requestData);
       }
     } catch (error) {
       console.log("catching errors elsewhere, not sure i need this", error);

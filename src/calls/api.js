@@ -537,7 +537,8 @@ export const fetchFriendDashboard = async (friendId) => {
 export const remixAllNextHelloes = async (userId) => {
     try {
         const response = await helloFriendApiClient.post(`/friends/remix/all/`, userId);
-        return response.data;
+        console.log(response.data);
+        return response.status;
     } catch (error) {
         console.error('Error remixing next helloes:', error);
         throw error;

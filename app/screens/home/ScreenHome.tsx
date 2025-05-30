@@ -3,9 +3,8 @@ import { useShareIntentContext } from "expo-share-intent";
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
-  Alert,  
+  Alert,
   Keyboard,
-  Animated,  
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
@@ -13,7 +12,7 @@ import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 import HomeFriendItems from "@/app/components/home/HomeFriendItems";
 import HellofriendHeader from "@/app/components/headers/HellofriendHeader";
-import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher"; 
+import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext"; //to check if any friends, don't render Up Next component or upcoming scroll if so
@@ -24,10 +23,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import HomeScrollSoon from "@/app/components/home/HomeScrollSoon";
 import { useNavigation } from "@react-navigation/native";
 import HomeScrollCalendarLights from "@/app/components/home/HomeScrollCalendarLights";
- 
+
 import KeyboardCoasterMomentOrFriend from "@/app/components/home/KeyboardCoasterMomentOrFriend";
 import KeyboardCoasterNotNow from "@/app/components/home/KeyboardCoasterNotNow";
 
+import Animated, { SlideInLeft, SlideOutRight, useSharedValue } from "react-native-reanimated";
 
 import HomeButtonUpNext from "@/app/components/home/HomeButtonUpNext";
 import HomeButtonSelectedFriend from "@/app/components/home/HomeButtonSelectedFriend";
@@ -41,26 +41,23 @@ import SafeView from "@/app/components/appwide/format/SafeView";
 
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
-const navigation = useNavigation();
+  const navigation = useNavigation();
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { user, isAuthenticated, isInitializing, userAppSettings } = useUser();
-  const { selectedFriend  } = useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
   const { friendList, friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState();
 
-  const {
-    requestPermission,
-    imageUri,
-    resizeImage, 
-  } = useImageUploadFunctions();
+  const { requestPermission, imageUri, resizeImage } =
+    useImageUploadFunctions();
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { showMessage } = useMessage();
 
   const newMomentTextRef = useRef(null);
-  const isNewUser = new Date(user?.created_on).toDateString() === new Date().toDateString();
- 
+  const isNewUser =
+    new Date(user?.created_on).toDateString() === new Date().toDateString();
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
@@ -147,7 +144,7 @@ const navigation = useNavigation();
         }
       }
       newMomentTextRef.current.setText(text);
-      if (text.length === 0) { 
+      if (text.length === 0) {
         setShowMomentScreenButton(false);
       }
       if (text.length === 1) {
@@ -155,9 +152,9 @@ const navigation = useNavigation();
       }
     }
   };
-  
-  const [slideAnim] = useState(new Animated.Value(1)); // Value for animating the button container
 
+  //const [slideAnim] = useState(new Animated.Value(1)); // Value for animating the button container
+  const slideAnim = useSharedValue(1);
   // Trigger the slide-in animation when the screen mounts
   // useEffect(() => {
   //   Animated.timing(slideAnim, {
@@ -166,8 +163,6 @@ const navigation = useNavigation();
   //     useNativeDriver: true,
   //   }).start();
   // }, []);
-
- 
 
   const clearNewMomentText = () => {
     if (newMomentTextRef && newMomentTextRef.current) {
@@ -196,12 +191,6 @@ const navigation = useNavigation();
       navigateToAddImageScreen();
     }
   }, [imageUri]);
- 
-  const navigateToAddFriendScreen = () => {
-    navigation.navigate("AddFriend");
-  };
-
- 
 
   return (
     <SafeView style={{ flex: 1 }}>
@@ -224,7 +213,10 @@ const navigation = useNavigation();
           style={{ flex: 1 }}
         >
           <HellofriendHeader />
-          {isAuthenticated   && userAppSettings && friendList && friendList.length > 0  ? (
+          {isAuthenticated &&
+          userAppSettings &&
+          friendList &&
+          friendList.length > 0 ? (
             <View
               style={{
                 flex: 1,
@@ -234,7 +226,6 @@ const navigation = useNavigation();
                 paddingHorizontal: "2%",
               }}
             >
-            
               <View
                 style={{
                   height: isKeyboardVisible ? "89%" : "30%",
@@ -246,12 +237,13 @@ const navigation = useNavigation();
                   Sentry.captureException(new Error("First error"));
                 }}
               /> */}
-              {isAuthenticated && !isInitializing && (
-                
-              <WelcomeMessageUI username={user.username} isNewUser={isNewUser} />
-              
-              )} 
-              <QuickWriteMoment
+                {isAuthenticated && !isInitializing && (
+                  <WelcomeMessageUI
+                    username={user.username}
+                    isNewUser={isNewUser}
+                  />
+                )}
+                <QuickWriteMoment
                   width={"100%"}
                   height={"100%"}
                   ref={newMomentTextRef}
@@ -263,29 +255,27 @@ const navigation = useNavigation();
                 />
 
                 {isKeyboardVisible && (
-                  <KeyboardCoasterNotNow 
-                  onPress={() => Keyboard.dismiss()}/>
+                  <KeyboardCoasterNotNow onPress={() => Keyboard.dismiss()} />
                 )}
-  
+
                 {selectedFriend && showMomentScreenButton && (
-                 
-                    <KeyboardCoasterMomentOrFriend
-                      onPress={navigateToAddMomentScreen}
-                      borderRadius={40} 
-                    /> 
+                  <KeyboardCoasterMomentOrFriend
+                    onPress={navigateToAddMomentScreen}
+                    borderRadius={40}
+                  />
                 )}
-                  {!selectedFriend && (
-                 
-                    <KeyboardCoasterMomentOrFriend
-                      onPress={navigateToAddMomentScreen}
-                      borderRadius={40} 
-                    /> 
+                {!selectedFriend && (
+                  <KeyboardCoasterMomentOrFriend
+                    onPress={navigateToAddMomentScreen}
+                    borderRadius={40}
+                  />
                 )}
               </View>
-              {friendListLength > 0 && (
-                <AddOptionsList />
-              )}
+
+              {friendListLength > 0 && <AddOptionsList />}
               <Animated.View
+              entering={SlideInLeft}
+              exiting={SlideOutRight}
                 style={[
                   {
                     alignItems: "center",
@@ -297,37 +287,32 @@ const navigation = useNavigation();
                   },
                 ]}
               >
-
                 {!selectedFriend && friendListLength > 0 && (
                   <HomeButtonUpNext
                     onPress={navigateToAddMomentScreen}
                     borderRadius={10}
                     height={500}
-                    borderColor="black" 
+                    borderColor="black"
                   />
                 )}
                 {selectedFriend && (
                   <>
-                  <HomeButtonSelectedFriend
-                    onPress={navigateToAddMomentScreen}
-                    borderRadius={10}
-                    borderColor="black"
-                    height={"100%"}
-                  />
-                  <HomeFriendItems 
-                  borderRadius={10}/>
-                  
+                    <HomeButtonSelectedFriend
+                      onPress={navigateToAddMomentScreen}
+                      borderRadius={10}
+                      borderColor="black"
+                      height={"100%"}
+                    />
+                    <HomeFriendItems borderRadius={10} />
                   </>
                 )}
                 {friendListLength > 0 && selectedFriend && (
-                  
-                <HomeScrollSoon
-                  height={"100%"}
-                  maxHeight={600}
-                  borderRadius={10}
-                  borderColor="black"
-                />
-                
+                  <HomeScrollSoon
+                    height={"100%"}
+                    maxHeight={600}
+                    borderRadius={10}
+                    borderColor="black"
+                  />
                 )}
                 {/* {selectedFriend && (
                   <HomeScrollCalendarLights
@@ -339,7 +324,10 @@ const navigation = useNavigation();
               </Animated.View>
             </View>
           ) : (
-            <NoFriendsMessageUI username={user?.username || ''} userCreatedOn={user?.created_on || ''}/>
+            <NoFriendsMessageUI
+              username={user?.username || ""}
+              userCreatedOn={user?.created_on || ""}
+            />
           )}
 
           <HelloFriendFooter />

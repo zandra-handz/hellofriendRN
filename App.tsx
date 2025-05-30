@@ -359,8 +359,7 @@ export const Layout = () => {
       <ResultMessage />
       <CustomStatusBar />
 
-      <TopLevelNavigationHandler>
-        <FullScreenSpinner />
+      <TopLevelNavigationHandler> 
 
         <Stack.Navigator
           screenOptions={{

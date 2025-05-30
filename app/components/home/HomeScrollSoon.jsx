@@ -19,12 +19,11 @@ const HomeScrollSoon = ({
   borderRadius = 20,
   borderColor = "transparent",
 }) => { 
-  const { themeStyles, themeStyleSpinners, manualGradientColors } =
+  const { themeStyles, themeStyleSpinners  } =
     useGlobalStyle();
-    const navigation = useNavigation();
-  const { darkColor, lightColor } = manualGradientColors;
+    const navigation = useNavigation(); 
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { selectedFriend, setFriend } = useSelectedFriend();
+  const {   setFriend } = useSelectedFriend();
   const { friendList, friendListLength, getThemeAheadOfLoading } =
     useFriendList();
   

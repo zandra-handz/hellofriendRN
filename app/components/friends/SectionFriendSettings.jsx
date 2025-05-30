@@ -2,35 +2,15 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import ButtonResetHelloes from "@/app/components/buttons/helloes/ButtonResetHelloes";
- 
-import ButtonManageFriends from "@/app/components/buttons/friends/ButtonManageFriends";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+  
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 
 const SectionFriendSettings = () => {
-  const { themeStyles } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
+  const { themeStyles } = useGlobalStyle(); 
 
   return (
     <View style={[styles.container, themeStyles.modalContainer]}>
-       {!selectedFriend && (
-      <View style={styles.friendSettingsRow}>
-       
-          <View style={{ flexDirection: "row" }}>
-            <FontAwesome5
-              name="users"
-              size={20}
-              style={[styles.icon, themeStyles.modalIconColor]}
-            />
-
-            <Text style={[styles.sectionTitle, themeStyles.modalText]}>
-              Manage friends
-            </Text>
-          </View>
-        
-        <ButtonManageFriends />
-      </View>
-      )}
+ 
       <View style={styles.friendSettingsRow}>
         <View style={{ flexDirection: "row" }}>
           <FontAwesome5
@@ -40,7 +20,7 @@ const SectionFriendSettings = () => {
           />
 
           <Text style={[styles.sectionTitle, themeStyles.modalText]}>
-            Reset All
+            Reset all dates
           </Text>
         </View>
         <ButtonResetHelloes />

@@ -150,10 +150,12 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: "Poppins-Regular",
-    fontSize: 28,
+      fontWeight: 'bold',
+    fontSize: 20,
   },
   subtitleText: {
     fontFamily: "Poppins-Regular",
+  
     fontSize: 16,
   },
   loadingWrapper: {

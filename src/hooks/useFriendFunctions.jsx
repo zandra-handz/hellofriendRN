@@ -10,6 +10,8 @@ import { useMessage } from '@/src/context/MessageContext';
 import { useUser } from '@/src/context/UserContext';
 import { useFriendList } from '@/src/context/FriendListContext';
 
+import { useUpcomingHelloes } from '../context/UpcomingHelloesContext';
+
 import { createFriend, updateFriendSugSettings, deleteFriend  } from '@/src/calls/api';
 
 
@@ -18,6 +20,7 @@ const useFriendFunctions = () => {
     const {  user } = useUser();
     const queryClient = useQueryClient(); 
     const { showMessage } = useMessage();
+    const { refetchUpcomingHelloes } = useUpcomingHelloes();
 
  
 
@@ -49,7 +52,7 @@ const useFriendFunctions = () => {
         mutationFn: (data) => updateFriendSugSettings(data),
         onSuccess: () => {
             console.log('Friend suggestion settings updated successfully.');
-            queryClient.invalidateQueries(['upcomingHelloes']);
+            refetchUpcomingHelloes();
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
             }
@@ -74,9 +77,9 @@ const useFriendFunctions = () => {
     });
 
 
-    const handleUpdateFriendSettings = async (user, friendId, effort, priority) => {
+    const handleUpdateFriendSettings = async (userId, friendId, effort, priority) => {
         const update = {
-            user: user.id,
+            user: userId,
             friend: friendId,
             effort_required: effort,
             priority_level: priority,
@@ -112,6 +115,7 @@ const useFriendFunctions = () => {
                 ...oldData, // preserve any existing data
                 newFriend: data, // update with the new data
             }));
+            refetchUpcomingHelloes();
     
             // Extract the friendId from the response
             const friendId = data?.id; // Adjust based on the API response structure
@@ -156,7 +160,8 @@ const useFriendFunctions = () => {
                 //this was behaving inconsistently in Expo and I'm not sure why
                 removeFromFriendList(data.id);
                 
-                queryClient.invalidateQueries(['upcomingHelloes']);
+                refetchUpcomingHelloes();
+                
      
                 if (timeoutRef.current) {
                     clearTimeout(timeoutRef.current);

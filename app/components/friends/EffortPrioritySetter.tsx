@@ -25,7 +25,13 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import CommunicationPersonSolidSvg from "@/app/assets/svgs/communication-person-solid.svg";
 import ExclamationDiamondOutlineSvg from "@/app/assets/svgs/exclamation-diamond-outline.svg";
 
-const ModalEffortAndPriority = ({
+
+interface EffortPrioritySetterProps {
+  mountingSettings: object;
+  isModalVisible: boolean;
+  closeModal: () => void;
+}
+const EffortPrioritySetter: React.FC<EffortPrioritySetterProps> = ({
   mountingSettings,
   isModalVisible,
   closeModal,
@@ -39,6 +45,8 @@ const ModalEffortAndPriority = ({
     useFriendFunctions(); 
 
   const friendName = selectedFriend?.name || "friend";
+
+  console.log('EFFORTPRIORITYSETTER RERENDERED');
 
   const priorityLabels = {
     3: "Low",
@@ -58,6 +66,9 @@ const ModalEffortAndPriority = ({
     if (updateFriendSettingsMutation.isSuccess) {
       closeModal();
       showMessage(true, null, `Settings for ${friendName} have been updated!`);
+      
+      showMessage(true, null, `QUEUE TEST`);
+      updateFriendSettingsMutation.reset(); //OTHERWISE IF THIS COMPONENT RERENDERS THIS'LL GET TRIGGERED AGAIN
     } else if (updateFriendSettingsMutation.isError) {
       Alert.alert(
         `I'm sorry!`,
@@ -70,6 +81,7 @@ const ModalEffortAndPriority = ({
   const handleSave = () => {
     try {
       console.log(priorityRef.current.getValue());
+      console.log(`user id`, user.id);
       handleUpdateFriendSettings(
         user.id,
         selectedFriend.id,
@@ -183,4 +195,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalEffortAndPriority;
+export default EffortPrioritySetter;

@@ -59,7 +59,8 @@ const showMessage = (
   // buttonPress: (() => void) | null = null,
   // buttonLabel = "",
   duration = 2000,
-  delay = 4000 //400
+  delay = 4000 //400,
+  
 ) => {
   const newMessage = {
     result,
@@ -67,11 +68,15 @@ const showMessage = (
     resultsMessage,
     // buttonPress,
     // buttonLabel,
+    timestamp: Date.now(),
   };
 
   runOnUI(() => {
   messageQueue.value = [...messageQueue.value, newMessage];
+  
 })();
+
+ //removeMessage();
   // messageQueue.value = [...messageQueue.value, newMessage];
 
   // Automatically remove after duration + delay
@@ -88,7 +93,8 @@ const showMessage = (
 const removeMessage = () => {
   runOnUI(() => {
      messageQueue.value = messageQueue.value.slice(1); // moved back here from ResultMessage
-  })();
+  console.log('message removed:', messageQueue.value[0]);
+    })();
 };
  
   useLayoutEffect(() => {

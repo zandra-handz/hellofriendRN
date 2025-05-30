@@ -1,22 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useUser } from "@/src/context/UserContext";
 import ButtonToggleSize from "../scaffolding/ButtonToggleSize"; // Adjust the path as needed
 import AlertConfirm from "../../alerts/AlertConfirm";
-import AlertSuccessFail from "../../alerts/AlertSuccessFail";
-
+import AlertSuccessFail from "../../alerts/AlertSuccessFail"; 
 import ByeSvg from "@/app/assets/svgs/bye.svg";
-import { remixAllNextHelloes } from "@/src/calls/api"; // Ensure correct import
-
+ 
 const ButtonResetHelloes = ({ title, onPress, confirmationAlert = true }) => {
-  const { setUpdateTrigger } = useUpcomingHelloes(); // Removed unused variables
+  const {  handleRemixAllNextHelloes, remixAllNextHelloesMutation } = useUpcomingHelloes(); // MOVE TO CONTEXT
   const [isModalVisible, setModalVisible] = useState(false);
-
+ 
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
   const [isFailModalVisible, setFailModalVisible] = useState(false);
-
-  const [isAttemptingToRemix, setIsAttemptingToRemix] = useState(false);
+ 
 
   const { user } = useUser();
 
@@ -24,31 +21,43 @@ const ButtonResetHelloes = ({ title, onPress, confirmationAlert = true }) => {
     setModalVisible(!isModalVisible);
   };
 
-  const confirmResetHelloes = async () => {
-    // Add 'async' keyword here
-    try {
-      setIsAttemptingToRemix(true);
-      await remixAllNextHelloes(user.id);
-      setIsAttemptingToRemix(false);
-      setSuccessModalVisible(true);
-    } catch (error) {
-      setIsAttemptingToRemix(false);
-      setFailModalVisible(true);
-      console.error("Error resetting hello dates:", error);
-    } finally {
-      setModalVisible(false);
+  const confirmResetHelloes = async (userId) => {
+    console.log('resetting helloes');
+    if (!userId) {
+      
+      return;
     }
+
+    await handleRemixAllNextHelloes(userId);
+
   };
 
-  const successOk = () => {
-    setUpdateTrigger((prev) => !prev);
+ 
+
+  const successOk = () => {  
     setSuccessModalVisible(false);
+    toggleModal();
   };
 
   const failOk = () => {
     setFailModalVisible(false);
   };
 
+
+  useEffect(() => {
+    if (remixAllNextHelloesMutation.isSuccess) {
+      console.log('success!');
+     // toggleModal();
+      
+      setSuccessModalVisible(true);
+     // toggleModal();
+      // showMessage(true, null, `All friend dates reset!`);
+    } else if (remixAllNextHelloesMutation.isError) {
+      console.log('error');
+      setFailModalVisible(true);
+    }
+
+  }, [remixAllNextHelloesMutation]);
   return (
     <>
       <ButtonToggleSize
@@ -67,12 +76,12 @@ const ButtonResetHelloes = ({ title, onPress, confirmationAlert = true }) => {
           fixedHeight={true}
           height={330}
           isModalVisible={isModalVisible}
-          isFetching={isAttemptingToRemix}
+          isFetching={remixAllNextHelloesMutation.isPending}
           useSpinner={true}
           toggleModal={toggleModal}
           headerContent={<ByeSvg width={36} height={36} />}
           questionText="Reset all hello dates? (This can't be reversed!)"
-          onConfirm={confirmResetHelloes}
+          onConfirm={() => confirmResetHelloes(user.id)}
           onCancel={toggleModal}
           confirmText="Reset All"
           cancelText="Nevermind"
@@ -91,7 +100,7 @@ const ButtonResetHelloes = ({ title, onPress, confirmationAlert = true }) => {
         onClose={failOk}
         tryAgain={false}
         onRetry={confirmResetHelloes}
-        isFetching={isAttemptingToRemix}
+        isFetching={remixAllNextHelloesMutation.isPending}
         type="failure"
       />
     </>

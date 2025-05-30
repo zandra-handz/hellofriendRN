@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native"; 
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg"; 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import AlertList from "../../alerts/AlertList";
-import RowItemFriendDelete from "../../friends/RowItemFriendDelete";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
@@ -12,8 +10,7 @@ const ButtonSelectFriend = ({ friend }) => {
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
-  const [isFriendDetailsModalVisible, setIsFriendDetailsModalVisible] =
-    useState(false);
+ 
   const [rowColor, setRowColor] = useState(
     themeStyles.genericTextBackgroundShadeTwo.backgroundColor || "transparent"
   );
@@ -21,9 +18,7 @@ const ButtonSelectFriend = ({ friend }) => {
   const [darkColor, setDarkColor] = useState(friend.darkColor || "gray");
   const [textColor, setTextColor] = useState(themeStyles.genericText.color);
 
-  const toggleFriendDetailsModal = () => {
-    setIsFriendDetailsModalVisible(true);
-  };
+ 
 
   useEffect(() => {
     if (selectedFriend && themeAheadOfLoading) {
@@ -55,10 +50,7 @@ const ButtonSelectFriend = ({ friend }) => {
         </View>
     );
   };
-
-  const closeFriendDetailsModal = () => {
-    setIsFriendDetailsModalVisible(false);
-  };
+ 
 
   return (
     <View
@@ -73,25 +65,7 @@ const ButtonSelectFriend = ({ friend }) => {
         {friend.name}
       </Text>
 
-      <AlertList
-        fixedHeight={true}
-        isModalVisible={isFriendDetailsModalVisible}
-        content={
-          <View>
-            <RowItemFriendDelete friend={friend} />
-          </View>
-        }
-        useSpinner={false}
-        toggleModal={closeFriendDetailsModal}
-        headerContent={
-          <Text style={{ fontFamily: "Poppins-Bold", fontSize: 18 }}>
-            {friend.name}
-          </Text>
-        }
-        onConfirm={closeFriendDetailsModal}
-        onCancel={closeFriendDetailsModal}
-        cancelText="Go Back"
-      />
+ 
     </View>
   );
 };

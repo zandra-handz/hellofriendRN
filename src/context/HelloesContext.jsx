@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo, useRef } from "react";
 import { useUser } from "./UserContext";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
+import { useUpcomingHelloes } from "./UpcomingHelloesContext";
 import { fetchPastHelloes, saveHello, deleteHelloAPI } from "../calls/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -17,9 +18,10 @@ export const useHelloes = () => {
 };
 
 export const HelloesProvider = ({ children }) => {
+  const { refetchUpcomingHelleos } = useUpcomingHelloes();
   const queryClient = useQueryClient();
   const { selectedFriend } = useSelectedFriend();
-  const {  user, isAuthenticated } = useUser();
+  const {  user, isAuthenticated, isInitializing } = useUser();
 
   const timeoutRef = useRef(null);
 
@@ -30,12 +32,12 @@ export const HelloesProvider = ({ children }) => {
     isSuccess,
     isError,
   } = useQuery({
-    queryKey: ["pastHelloes", selectedFriend?.id],
+    queryKey: ["pastHelloes", user?.id, selectedFriend?.id],
     queryFn: () => {
       //console.log('Fetching past helloes for:', selectedFriend?.id);
       return fetchPastHelloes(selectedFriend.id);
     },
-    enabled: !!(user && isAuthenticated && selectedFriend),
+    enabled: !!(user && isAuthenticated && !isInitializing && selectedFriend),
     onSuccess: () => {
       // groupByMonthAndYear(data);
       // const inPerson = data[0].filter(hello => hello.type === 'in person');
@@ -59,7 +61,7 @@ export const HelloesProvider = ({ children }) => {
         (hello) => hello.type === "in person"
       );
       queryClient.setQueryData(
-        ["inPersonHelloes", selectedFriend?.id],
+        ["inPersonHelloes", user?.id, selectedFriend?.id],
         inPerson
       );
 
@@ -69,7 +71,7 @@ export const HelloesProvider = ({ children }) => {
   }, [helloesList]);
 
   const getCachedInPersonHelloes = () => {
-    return queryClient.getQueryData(["inPersonHelloes", selectedFriend?.id]);
+    return queryClient.getQueryData(["inPersonHelloes", user?.id, selectedFriend?.id]);
   };
 
   //   useEffect(() => {
@@ -119,6 +121,7 @@ export const HelloesProvider = ({ children }) => {
 
   const createHelloMutation = useMutation({
     mutationFn: (data) => saveHello(data),
+ 
     onError: (error) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -129,12 +132,14 @@ export const HelloesProvider = ({ children }) => {
       }, 2000);
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["pastHelloes"], (old) => {
+      queryClient.setQueryData(["pastHelloes", user?.id, selectedFriend?.id], (old) => {
         const updatedHelloes = old ? [data, ...old] : [data];
         return updatedHelloes;
       });
+       //refetchUpcomingHelleos();
+      
 
-      const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
+      // const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
       //console.log("Actual HelloesList after mutation:", actualHelloesList);
 
       if (timeoutRef.current) {
@@ -147,7 +152,8 @@ export const HelloesProvider = ({ children }) => {
     },
   });
 
-  const handleCreateHello = async (helloData) => {
+ // const handleCreateHello = async (helloData) => {
+    const handleCreateHello =  (helloData) => {
     const hello = {
       user: user.id,
       friend: helloData.friend,
@@ -163,7 +169,8 @@ export const HelloesProvider = ({ children }) => {
     //console.log("Payload before sending:", hello);
 
     try {
-      await createHelloMutation.mutateAsync(hello); // Call the mutation with the location data
+       createHelloMutation.mutate(hello);
+      // await createHelloMutation.mutateAsync(hello); // Call the mutation with the location data
     } catch (error) {
       console.error("Error saving hello:", error);
     }
@@ -180,9 +187,11 @@ export const HelloesProvider = ({ children }) => {
   const deleteHelloMutation = useMutation({
     mutationFn: (data) => deleteHelloAPI(data),
     onSuccess: (data) => {
-      queryClient.setQueryData(["pastHelloes", selectedFriend?.id], (old) => {
+      queryClient.setQueryData(["pastHelloes", user?.id, selectedFriend?.id], (old) => {
         return old ? old.filter((hello) => hello.id !== data.id) : [];
       });
+
+      refetchUpcomingHelleos();
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);

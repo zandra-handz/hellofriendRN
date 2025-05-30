@@ -12,6 +12,7 @@ import * as SecureStore from "expo-secure-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import * as Device from 'expo-device';
 //import useProtectedRoute from "../hooks/useProtectedRoute";
 // import {
 //   signup,

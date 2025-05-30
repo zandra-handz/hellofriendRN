@@ -12,11 +12,11 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
-} from "react-native"; 
+} from "react-native";
 import SafeView from "@/app/components/appwide/format/SafeView";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, useFocusEffect } from "@react-navigation/native"; 
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import SettingsStyleHeader from "@/app/components/appwide/SettingsStyleHeader";
 import { useMessage } from "@/src/context/MessageContext";
 
@@ -26,11 +26,10 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import ModalColorTheme from "@/app/components/friends/ModalColorTheme";
-import ModalEffortAndPriority from "@/app/components/friends/ModalEffortAndPriority";
+import EffortPrioritySetter from "@/app/components/friends/EffortPrioritySetter";
 import ModalFriendDetails from "@/app/components/friends/ModalFriendDetails";
 
-import DoubleChecker from "@/app/components/alerts/DoubleChecker";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+import DoubleChecker from "@/app/components/alerts/DoubleChecker"; 
 
 import WrenchOutlineSvg from "@/app/assets/svgs/wrench-outline.svg";
 
@@ -52,8 +51,7 @@ const ScreenFriendSettings = () => {
   const [isEffortPriorityModalVisible, setIsEffortPriorityModalVisible] =
     useState(false);
   const [isColorThemeModalVisible, setIsColorThemeModalVisible] =
-    useState(false);
-  const { updateTrigger, setUpdateTrigger } = useUpcomingHelloes();
+    useState(false); 
 
   const openEffortPriorityModal = () => {
     setIsEffortPriorityModalVisible(true);
@@ -123,164 +121,168 @@ const ScreenFriendSettings = () => {
   }, [deleteFriendMutation.isSuccess]);
 
   return (
-    <SafeView styles={{flex: 1}}>
-      
-    <LinearGradient
-      colors={[darkColor, lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={[styles.container, themeStyles.container]}
-    >
-      <SettingsStyleHeader isLoadingComplete={!loadingNewFriend} displayText={selectedFriend && selectedFriend?.name}/>
-      {loadingNewFriend && themeAheadOfLoading && (
-        <View
-          style={[
-            styles.loadingWrapper,
-            { backgroundColor: themeAheadOfLoading.lightColor },
-          ]}
-        >
-          <LoadingPage
-            loading={loadingNewFriend}
-            spinnerType="wander"
-            color={themeAheadOfLoading.darkColor}
-            includeLabel={true}
-            label="Loading"
-          />
-        </View>
-      )}
-      {!loadingNewFriend && selectedFriend && (
-        <>
-          <ScrollView
-            contentContainerStyle={[styles.backColorContainer, { padding: 10 }]}
-            style={{ width: "100%" }}
+    <SafeView styles={{ flex: 1 }}>
+      <LinearGradient
+        colors={[darkColor, lightColor]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.container, themeStyles.container]}
+      >
+        <SettingsStyleHeader
+          isLoadingComplete={!loadingNewFriend}
+          displayText={selectedFriend && selectedFriend?.name}
+        />
+        {loadingNewFriend && themeAheadOfLoading && (
+          <View
+            style={[
+              styles.loadingWrapper,
+              { backgroundColor: themeAheadOfLoading.lightColor },
+            ]}
           >
-            <View style={styles.section}>
-              <View style={styles.subTitleRow}>
-                <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
-                  DETAILS
-                </Text>
-              </View>
-              <ModalFriendDetails mountingDetails={friendDashboardData[0]} />
-              <Text style={themeStyles.genericText}></Text>
-            </View>
-
-            <View
-              style={[
-                styles.divider,
-                { borderBottomColor: themeStyles.modalText.color },
-              ]}
-            ></View>
-
-            <View style={styles.section}>
-              <View style={styles.subTitleRow}>
-                <Text style={[styles.modalSubTitle, themeStyles.genericText]}>
-                  SETTINGS
-                </Text>
-
-                <View style={styles.subTitleButtonContainer}>
-                  <WrenchOutlineSvg
-                    onPress={openEffortPriorityModal}
-                    height={26}
-                    width={26}
-                    color={themeStyles.genericText.color}
-                  />
-                </View>
-              </View>
-
-              <ModalEffortAndPriority
-                isModalVisible={isEffortPriorityModalVisible}
-                closeModal={closeEffortPriorityModal}
-                mountingSettings={friendDashboardData[0].suggestion_settings}
-              />
-            </View>
-
-            <View
-              style={[
-                styles.divider,
-                { borderBottomColor: themeStyles.modalText.color },
-              ]}
-            ></View>
-
-            <View style={styles.section}>
-              <View style={styles.subTitleRow}>
-                <Text style={[styles.modalSubTitle, themeStyles.genericText]}>
-                  CUSTOM COLOR THEME
-                </Text>
-
-                <View style={styles.subTitleButtonContainer}>
-                  {/* <WrenchOutlineSvg onPress={openColorThemeModal} height={26} width={26} color={themeStyles.genericText.color}/>
-                   */}
-
-                  <TouchableOpacity onPress={openColorThemeModal}>
-                    <ColorSwatchesSvg
-                      onPress={openColorThemeModal}
-                      darkColor={themeAheadOfLoading.darkColor}
-                      lightColor={themeAheadOfLoading.lightColor}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <ModalColorTheme
-                isModalVisible={isColorThemeModalVisible}
-                closeModal={closeColorThemeModal}
-              />
-            </View>
-
-            <View
-              style={[
-                styles.divider,
-                { borderBottomColor: themeStyles.modalText.color },
-              ]}
-            ></View>
-
-            <View style={styles.section}>
-              <View style={styles.subTitleRow}>
-                <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
-                  ADDRESSES
-                </Text>
-              </View>
-              <Text style={themeStyles.genericText}></Text>
-            </View>
-
-            <View
-              style={[
-                styles.divider,
-                { borderBottomColor: themeStyles.modalText.color },
-              ]}
-            ></View>
-
-            <View style={styles.section}>
-              <View style={styles.subTitleRow}>
-                <Text
-                  style={[styles.modalSubTitle, themeStyles.dangerZoneText]}
-                >
-                  DANGER ZONE
-                </Text>
-              </View>
-
-              <TouchableOpacity onPress={openDoubleChecker}>
-                <DetailRow
-                  iconSize={20}
-                  label={`Delete`}
-                  svg={TrashOutlineSvg}
-                  color={themeStyles.dangerZoneText.color}
-                />
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-
-          {isDoubleCheckerVisible && (
-            <DoubleChecker
-              isVisible={isDoubleCheckerVisible}
-              toggleVisible={toggleDoubleChecker}
-              singleQuestionText={`Delete ${friendName}?`}
-              onPress={() => handleDelete()}
+            <LoadingPage
+              loading={loadingNewFriend}
+              spinnerType="wander"
+              color={themeAheadOfLoading.darkColor}
+              includeLabel={true}
+              label="Loading"
             />
-          )}
-        </>
-      )}
-    </LinearGradient>
-    
+          </View>
+        )}
+        {!loadingNewFriend && selectedFriend && (
+          <>
+            <ScrollView
+              contentContainerStyle={[
+                styles.backColorContainer,
+                { padding: 10 },
+              ]}
+              style={{ width: "100%" }}
+            >
+              <View style={styles.section}>
+                <View style={styles.subTitleRow}>
+                  <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
+                    DETAILS
+                  </Text>
+                </View>
+                <ModalFriendDetails mountingDetails={friendDashboardData[0]} />
+                <Text style={themeStyles.genericText}></Text>
+              </View>
+
+              <View
+                style={[
+                  styles.divider,
+                  { borderBottomColor: themeStyles.modalText.color },
+                ]}
+              ></View>
+
+              <View style={styles.section}>
+                <View style={styles.subTitleRow}>
+                  <Text style={[styles.modalSubTitle, themeStyles.genericText]}>
+                    SETTINGS
+                  </Text>
+
+                  <View style={styles.subTitleButtonContainer}>
+                    <WrenchOutlineSvg
+                      onPress={openEffortPriorityModal}
+                      height={26}
+                      width={26}
+                      color={themeStyles.genericText.color}
+                    />
+                  </View>
+                </View>
+
+                <EffortPrioritySetter
+                  mountingSettings={friendDashboardData[0].suggestion_settings}
+                  isModalVisible={isEffortPriorityModalVisible}
+                  closeModal={closeEffortPriorityModal}
+                />
+              </View>
+
+              <View
+                style={[
+                  styles.divider,
+                  { borderBottomColor: themeStyles.modalText.color },
+                ]}
+              ></View>
+
+              <View style={styles.section}>
+                <View style={styles.subTitleRow}>
+                  <Text style={[styles.modalSubTitle, themeStyles.genericText]}>
+                    CUSTOM COLOR THEME
+                  </Text>
+
+                  <View style={styles.subTitleButtonContainer}>
+                    {/* <WrenchOutlineSvg onPress={openColorThemeModal} height={26} width={26} color={themeStyles.genericText.color}/>
+                     */}
+
+                    <TouchableOpacity onPress={openColorThemeModal}>
+                      <ColorSwatchesSvg
+                        onPress={openColorThemeModal}
+                        darkColor={themeAheadOfLoading.darkColor}
+                        lightColor={themeAheadOfLoading.lightColor}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <ModalColorTheme
+                  isModalVisible={isColorThemeModalVisible}
+                  closeModal={closeColorThemeModal}
+                />
+              </View>
+
+              <View
+                style={[
+                  styles.divider,
+                  { borderBottomColor: themeStyles.modalText.color },
+                ]}
+              ></View>
+
+              <View style={styles.section}>
+                <View style={styles.subTitleRow}>
+                  <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
+                    ADDRESSES
+                  </Text>
+                </View>
+                <Text style={themeStyles.genericText}></Text>
+              </View>
+
+              <View
+                style={[
+                  styles.divider,
+                  { borderBottomColor: themeStyles.modalText.color },
+                ]}
+              ></View>
+
+              <View style={styles.section}>
+                <View style={styles.subTitleRow}>
+                  <Text
+                    style={[styles.modalSubTitle, themeStyles.dangerZoneText]}
+                  >
+                    DANGER ZONE
+                  </Text>
+                </View>
+
+                <TouchableOpacity onPress={openDoubleChecker}>
+                  <DetailRow
+                    iconSize={20}
+                    label={`Delete`}
+                    svg={TrashOutlineSvg}
+                    color={themeStyles.dangerZoneText.color}
+                  />
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+
+            {isDoubleCheckerVisible && (
+              <DoubleChecker
+                isVisible={isDoubleCheckerVisible}
+                toggleVisible={toggleDoubleChecker}
+                singleQuestionText={`Delete ${friendName}?`}
+                onPress={() => handleDelete()}
+              />
+            )}
+          </>
+        )}
+      </LinearGradient>
     </SafeView>
   );
 };

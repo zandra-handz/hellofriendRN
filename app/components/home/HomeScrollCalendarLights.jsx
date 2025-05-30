@@ -27,12 +27,11 @@ const HomeScrollCalendarLights= ({
 }) => { 
 
   const navigation = useNavigation();
-  const { themeStyles, themeStyleSpinners, manualGradientColors } = useGlobalStyle();
-  const { darkColor, lightColor, homeDarkColor } = manualGradientColors;
+  const { themeStyles, themeStyleSpinners  } = useGlobalStyle(); 
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { selectedFriend, setFriend, friendDashboardData  } = useSelectedFriend();
   const { friendList, friendListLength, themeAheadOfLoading, getThemeAheadOfLoading } = useFriendList();
-    const { helloesList, flattenHelloes, getCachedInPersonHelloes } =
+    const { helloesList  } =
       useHelloes(); //useHelloesData();
 
 

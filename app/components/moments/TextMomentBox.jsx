@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'Poppins-Regular',
     fontSize: 15,
+    fontWeight: 'bold',
 
     lineHeight: 23,
     textTransform: "uppercase",

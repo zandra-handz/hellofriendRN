@@ -16,7 +16,7 @@ import Animated, {
   useAnimatedReaction,
   withTiming,
   withSequence,
-  withDelay, 
+  withDelay,
 } from "react-native-reanimated";
 
 interface ResultMessageProps {
@@ -48,40 +48,43 @@ const ResultMessage: React.FC<ResultMessageProps> = ({
 
   const messageText = useSharedValue("");
 
-useAnimatedReaction(
-  () => {
-    const message = messageQueue.value?.[0]?.resultsMessage ?? null;
-    return message;
-  },
-  (newMessage, prevMessage) => {
-    const isNew = newMessage !== null;
-    if (isNew) {
-      messageText.value = newMessage;
+  useAnimatedReaction(
+    () => {
+      const message = messageQueue.value?.[0]?.resultsMessage ?? null;
+      console.log("message in animtedreaction: ", message);
+      return message;
+    },
+    (newMessage, prevMessage) => {
+      //const isNew = newMessage != prevMessage && newMessage !== null;
+      const isNew =
+        newMessage != prevMessage && newMessage !== null && newMessage !== "";
+      //const isNew = newMessage !== null;
+      if (isNew) {
+        messageText.value = "";
+        messageText.value = newMessage;
 
-      // Slide in, wait, then slide out
-      translateY.value = withSequence(
-        withTiming(10, { duration: 180 }), // Slide up
-        withDelay(
-          resultsDisplayDuration + messageDelay,
-          withTiming(-200, { duration: 180 }, (finished) => {
-            if (finished) {
-              
-          console.log('REMOVING MESSAGE');
-              //  messageQueue.value = messageQueue.value.slice(1); moved back to context
-           
-            }
-          })
-        )
-      );
-    }
-  },
-  [messageQueue]
-);
+        // Slide in, wait, then slide out
+        translateY.value = withSequence(
+          withTiming(10, { duration: 180 }), // Slide up
+          withDelay(
+            resultsDisplayDuration + messageDelay,
+            withTiming(-200, { duration: 180 }, (finished) => {
+              if (finished) {
+                 messageText.value = "";
+              //  console.log("REMOVING MESSAGE");
+               // messageQueue.value = messageQueue.value.slice(1); //moved back to context
+              }
+            })
+          )
+        );
+      }
+    },
+    [messageQueue]
+  );
 
- 
   const animatedMessageText = useAnimatedProps(() => {
-    console.log("animatedProps triggered!");
-    console.log(`message text: `, messageText.value);
+  
+    console.log(`message in animatedProps: `, messageText.value);
     return {
       text: `${messageText.value}`,
 
@@ -97,22 +100,26 @@ useAnimatedReaction(
   // }
 
   return (
-    <Animated.View style={[appContainerStyles.appMessageContainer, animatedStyle]}>
+    <Animated.View
+      style={[appContainerStyles.appMessageContainer, animatedStyle]}
+    >
       <Animated.View
-        style={[appContainerStyles.appMessageTextWrapper, themeStyles.primaryBackground, { borderColor: themeStyles.primaryText.color}]}
+        style={[
+          appContainerStyles.appMessageTextWrapper,
+          themeStyles.primaryBackground,
+          { borderColor: themeStyles.primaryText.color },
+        ]}
       >
         <AnimatedTextInput
           style={[appFontStyles.appMessageText, themeStyles.primaryText]}
           animatedProps={animatedMessageText}
           editable={false}
-          defaultValue={''}
+          defaultValue={""}
           multiline={true}
         />
       </Animated.View>
     </Animated.View>
   );
 };
-
- 
 
 export default ResultMessage;
