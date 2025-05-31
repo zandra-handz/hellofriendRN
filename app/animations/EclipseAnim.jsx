@@ -3,7 +3,7 @@ import { View, Animated, StyleSheet, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSelectedFriend } from '@/src/context/SelectedFriendContext';
 
-const EclipseAnim = ({ children, borderRadius=40, innerColor='#000000', marginVertical='0%', color='163805', speed = 100, delay = 300 }) => {
+const EclipseAnim = ({ children, borderRadius=10, innerColor='#000000', marginVertical='0%', color='163805', speed = 100, delay = 300 }) => {
     const { loadingNewFriend, friendLoaded, errorLoadingFriend } = useSelectedFriend();
     const screenWidth = Dimensions.get('window').width;
     const glintAnim = useRef(new Animated.Value(screenWidth)).current; // Start off-screen to the right

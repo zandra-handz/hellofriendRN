@@ -1,20 +1,14 @@
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  View, 
-} from "react-native";
- 
+import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
- 
 
 const KeyboardCoasterNotNow = ({
   onPress,
   borderRadius = 20,
   borderColor = "transparent",
   maxHeight = 100,
-}) => { 
+}) => {
   const { themeStyles } = useGlobalStyle();
 
   return (
@@ -53,30 +47,35 @@ const KeyboardCoasterNotNow = ({
             justifyContent: "flex-start",
           }}
         >
-        <View
-  style={{
-    marginTop: 10,
-    width: 20, // cropped width
-    height: 14, // cropped height
-    overflow: 'hidden', // this hides the overflowing part
-  }}
->
-  <View
-    style={{
-      height: 20,
-      width: 20,
-      paddingLeft: 8,
-      transform: [{ rotate: '270deg' }],
-    }}
-  >
-    <BackArrowLongerStemSvg
-      height={20}
-      width={20}
-      color={themeStyles.primaryText.color}
-    />
-  </View>
-</View>
-          <Text style={[themeStyles.primaryText, { fontSize: 15, fontWeight: 'bold' }]}>
+          <View
+            style={{
+              marginTop: 10,
+              width: 20, // cropped width
+              height: 14, // cropped height
+              overflow: "hidden", // this hides the overflowing part
+            }}
+          >
+            <View
+              style={{
+                height: 20,
+                width: 20,
+                paddingLeft: 8,
+                transform: [{ rotate: "270deg" }],
+              }}
+            >
+              <BackArrowLongerStemSvg
+                height={20}
+                width={20}
+                color={themeStyles.primaryText.color}
+              />
+            </View>
+          </View>
+          <Text
+            style={[
+              themeStyles.primaryText,
+              { fontSize: 15, fontWeight: "bold" },
+            ]}
+          >
             dashboard
           </Text>
         </View>
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     height: 36,
     position: "absolute",
     bottom: 20,
-    left: 0, 
+    left: 0,
     zIndex: 3,
     elevation: 3,
   },

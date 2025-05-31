@@ -2,11 +2,14 @@ import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
- import LeavesSingleStemOutlineSvg from "@/app/assets/svgs/leaves-single-stem-outline.svg";
+  import { Feather } from "@expo/vector-icons";
  
-import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
 
-const ButtonGoToAddMoment = () => {
+interface AddMomentButtonProps {
+    disabled: boolean;
+}
+
+const AddMomentButton = ({disabled}) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
 
@@ -19,13 +22,13 @@ const ButtonGoToAddMoment = () => {
   return (
     <View style={[styles.container]}>
       <TouchableOpacity
-        onPress={handleGoToMomentScreen}
+        onPress={disabled ? () => {} : handleGoToMomentScreen}
         style={[
           styles.circleButton,
           themeStyles.footerIcon,
           {
-            borderColor: manualGradientColors.lightColor,
-            backgroundColor: manualGradientColors.homeDarkColor,
+            borderColor: 'transparent',
+            backgroundColor: manualGradientColors.lightColor,
           },
         ]}
       >
@@ -36,18 +39,22 @@ const ButtonGoToAddMoment = () => {
         )}
         {viewSvg && (
           <>
-            <View style={{ position: "absolute", bottom: 13, right: 4 }}>
+            {/* <View style={{ position: "absolute", bottom: 13, right: 4 }}>
               <AddOutlineSvg
                 width={20}
                 height={20}
                 color={manualGradientColors.darkColor}
               />
-            </View>
-            <LeavesSingleStemOutlineSvg
+            </View> */}
+            <Feather
+            name="plus"
+            size={40}
+            color={manualGradientColors.homeDarkColor} />
+            {/* <LeavesSingleStemOutlineSvg
               width={40}
               height={40}
               color={manualGradientColors.darkColor}
-            />
+            /> */}
           </>
         )}
       </TouchableOpacity>
@@ -58,13 +65,13 @@ const ButtonGoToAddMoment = () => {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    position: "absolute",
+   // position: "absolute",
     flexWrap: "wrap",
     width: 73,
     alignContent: "center",
     justifyContent: "center",
-    right: 10,
-    bottom: 170,
+   // right: 10,
+   // bottom: 170,
     zIndex: 1,
   },
   controlButton: {
@@ -101,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ButtonGoToAddMoment;
+export default AddMomentButton;

@@ -1,30 +1,35 @@
 import React, { useEffect } from "react";
 import { View, TouchableOpacity, Animated } from "react-native";
-import { SvgProps } from "react-native-svg";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
 
-
-interface SpeedDialRootUIProps {
+// 'faster' just means uses vector icons instead of svgs
+interface SpeedDialRootFasterUIProps {
   expanded: boolean;
   onPress: () => void;
-  icon: React.FC<SvgProps>;
+  icon: React.ReactElement;
   iconSize: number; 
+  iconColor: string;
+  iconOpacity: Animated.Value;
+  backgroundColor: string;
+
   rotation: Animated.Value;
 }
 
-const SpeedDialRootUI: React.FC<SpeedDialRootUIProps> = ({
+const SpeedDialRootFasterUI: React.FC<SpeedDialRootFasterUIProps> = ({
   expanded,
   onPress=() => console.warn('Warning! No function passed to SpeedDialRootUI press'),
-  icon: Icon,
-  iconSize = 52, 
+  icon,
+  iconColor,
+  iconOpacity,
+  backgroundColor,
   rotation,
 }) => {
   const { appContainerStyles, manualGradientColors } = useGlobalStyle();
 
 
-  const iconColor = manualGradientColors.lightColor;
-  const backgroundColor = manualGradientColors.homeDarkColor;
+//   const iconColor = manualGradientColors.lightColor;
+//   const backgroundColor = manualGradientColors.homeDarkColor;
 
   useEffect(() => {
     Animated.timing(rotation, {
@@ -44,17 +49,19 @@ const SpeedDialRootUI: React.FC<SpeedDialRootUIProps> = ({
       onPress={onPress}
       style={[
         appContainerStyles.speedDialRootButton,
-        { backgroundColor: backgroundColor, borderColor: iconColor },
+        { backgroundColor: backgroundColor, borderColor: iconColor,
+           
+         },
       ]}
     >
-      <View style={{ position: "absolute", bottom: 13, right: 4 }}>
+      {/* <View style={{ position: "absolute", bottom: 13, right: 4 }}>
         <AddOutlineSvg width={20} height={20} color={iconColor} />
-      </View>
-      <Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
-        {Icon && <Icon width={iconSize} height={iconSize} color={iconColor} />}
+      </View> */}
+      <Animated.View style={{ transform: [{ rotate: rotateInterpolate }], opacity: iconOpacity }}>
+        {icon}
       </Animated.View>
     </TouchableOpacity>
   );
 };
 
-export default SpeedDialRootUI;
+export default SpeedDialRootFasterUI;

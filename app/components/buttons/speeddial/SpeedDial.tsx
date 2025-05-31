@@ -10,11 +10,7 @@ interface SpeedDialProps {
     topIcon: React.FC<SvgProps>;
     topOnPress: () => void;
     midIcon: React.FC<SvgProps>;
-    midOnPress: () => void;
-    // topMidIconSize: number;
-    // topMidDiameter: number;
-    // topAnimatedHeight: number;
-    // midAnimatedHeight: number;
+    midOnPress: () => void; 
 }
 
 const SpeedDial: React.FC<SpeedDialProps> = ({
@@ -22,11 +18,7 @@ const SpeedDial: React.FC<SpeedDialProps> = ({
   topIcon,
   topOnPress,
   midIcon,
-  midOnPress,
-//   topMidIconSize = 32,
-//   topMidDiameter = 50,
-//   topAnimatedHeight = -60,
-//   midAnimatedHeight = -38,
+  midOnPress, 
 }) => {
 
     const topAnimatedHeight = -60;
@@ -107,9 +99,7 @@ const SpeedDial: React.FC<SpeedDialProps> = ({
           containerWidth={"auto"}
           circleSize={topMidDiameter}
           icon={topIcon}
-          iconSize={topMidIconSize}
-          iconColor={manualGradientColors.lightColor}
-          backgroundColor={manualGradientColors.homeDarkColor}
+          iconSize={topMidIconSize} 
         />
       </Animated.View>
 
@@ -128,9 +118,7 @@ const SpeedDial: React.FC<SpeedDialProps> = ({
           containerWidth={"auto"}
           circleSize={topMidDiameter}
           icon={midIcon}
-          iconSize={topMidIconSize}
-          iconColor={manualGradientColors.lightColor}
-          backgroundColor={manualGradientColors.homeDarkColor}
+          iconSize={topMidIconSize} 
         />
       </Animated.View>
 
@@ -138,9 +126,7 @@ const SpeedDial: React.FC<SpeedDialProps> = ({
         expanded={expanded}
         icon={rootIcon}
         iconSize={42}
-        onPress={toggleButtons}
-        backgroundColor={manualGradientColors.homeDarkColor}
-        iconColor={manualGradientColors.lightColor}
+        onPress={toggleButtons} 
         rotation={rotation} // Pass rotation to the main button
       />
     </View>

@@ -20,7 +20,7 @@ import CalendarLightsDataPrepLayer from "../foranimations/CalendarLightsDataPrep
  
 import LoadingPage from "../appwide/spinner/LoadingPage";
 
-const HomeScrollCalendarLights= ({
+const HomeScrollCalendarLights = ({
   height,
   borderRadius = 20,
   borderColor = "transparent", 

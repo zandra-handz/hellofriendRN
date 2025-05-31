@@ -66,7 +66,7 @@ helloFriendApiClient.interceptors.request.use(
 
 helloFriendApiClient.interceptors.response.use(
   (response) => {
-    console.log('Interceptor was here!');
+    // console.log('Interceptor was here!');
     return response;
   },
   async (error) => {

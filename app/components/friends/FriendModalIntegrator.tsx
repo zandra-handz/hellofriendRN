@@ -14,6 +14,7 @@ interface FriendModalIntegratorProps {
   addToOpenModal: () => void;
   includeLabel: boolean;
   navigationDisabled: boolean;
+  useGenericTextColor?: boolean;
   iconSize: number;
   width: string;
 }
@@ -22,6 +23,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   addToPress,
   color,
   addToOpenModal,
+  useGenericTextColor = false,
   includeLabel = false,
   navigationDisabled = false,
   iconSize = 22,
@@ -41,6 +43,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   //kind of aggressive that it tries to refocus every time it toggles whether open or closed
   // but android is being a butt about opening the keyboard
   const toggleModal = () => {
+    console.log('toggle modal triggered');
     if (addToPress) {
       addToPress();
     }
@@ -54,6 +57,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
     }
 
     setIsFriendMenuModalVisible(true);
+ 
   };
 
   return (
@@ -87,7 +91,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
             <Text
               style={[ 
                 {
-                  color: selectedFriend ? themeAheadOfLoading.fontColorSecondary : themeStyles.primaryText.color,
+                  color: (selectedFriend && !useGenericTextColor) ? themeAheadOfLoading.fontColorSecondary : themeStyles.primaryText.color,
                   fontWeight: "bold",
                   fontSize: 15,
                   zIndex: 2,
@@ -96,8 +100,8 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
               numberOfLines={1}
               ellipsizeMode="tail"
             >
-              {(friendLoaded && `For:  ${selectedFriend?.name}`) ||
-                "pick friend"}
+              {((friendLoaded && !useGenericTextColor) && `For:  ${selectedFriend?.name}`) ||
+                friendLoaded ? "switch friend" : "pick friend"}
             </Text>
           )}
 
@@ -108,7 +112,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
                   fontWeight: "bold",
                   fontSize: 15,
                   zIndex: 2,
-                  color: themeAheadOfLoading.fontColorSecondary,
+                  color: !useGenericTextColor ? themeAheadOfLoading.fontColorSecondary : themeStyles.primaryText.color,
                 },
               ]}
               numberOfLines={1}
@@ -133,7 +137,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
                 color={
                   loadingNewFriend
                     ? "transparent"
-                    : selectedFriend ? color || themeAheadOfLoading.fontColorSecondary :
+                    : (selectedFriend && !useGenericTextColor) ? color || themeAheadOfLoading.fontColorSecondary :
                     themeStyles.primaryText.color
                 }
               />

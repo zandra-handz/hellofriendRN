@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
   Keyboard,
@@ -15,7 +15,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import FriendModalIntegrator from "@/app/components/friends/FriendModalIntegrator";
 import CategoryCreator from "./CategoryCreator";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
- 
+ import { useFocusEffect } from "@react-navigation/native";
 
 import { useMessage } from "@/src/context/MessageContext";
 
@@ -42,6 +42,22 @@ const ContentMomentFocus = ({
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const [showCategoriesSlider, setShowCategoriesSlider] = useState(false);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      if (momentText) {
+         momentTextRef.current.setText(momentText);
+         setShowCategoriesSlider(true);
+      } else {
+        setShowCategoriesSlider(false);
+      }
+      return () => {
+        setShowCategoriesSlider(false);
+      };
+
+     }, [])
+    );
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -224,7 +240,7 @@ const ContentMomentFocus = ({
             isKeyboardVisible={isKeyboardVisible}
           />
         )}
-        {!isKeyboardVisible && (
+        {/* {!isKeyboardVisible && (
           <View style={{ position: "absolute", bottom: -10 }}>
             <ButtonBaseSpecialSave
               label="SAVE MOMENT "
@@ -235,7 +251,7 @@ const ContentMomentFocus = ({
               image={require("@/app/assets/shapes/redheadcoffee.png")}
             />
           </View>
-        )}
+        )} */}
       </View>
     </TouchableWithoutFeedback>
   );

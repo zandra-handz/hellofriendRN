@@ -68,11 +68,15 @@ const HomeButtonUpNext = ({
         ))}
 
       {!loadingNewFriend && !isLoading && (
-        <View style={{ height: "100%", width: "100%" , flexDirection: 'column', justifyContent: 'space-between'}}>
-          <TouchableOpacity
-            onPress={onPress}
-            style={[styles.textContainer ]}
-          >
+        <View
+          style={{
+            height: "100%",
+            width: "100%",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <TouchableOpacity onPress={onPress} style={[styles.textContainer]}>
             <Text style={styles.headerText}>{header}</Text>
 
             <Text
@@ -91,21 +95,29 @@ const HomeButtonUpNext = ({
                 : "Please add a friend to use this feature!"}
             </Text>
 
-            <Text style={styles.subtitleText}>Say hi on{' '}
+            <Text style={styles.subtitleText}>
+              Say hi on{" "}
               {upcomingHelloes && !isLoading && upcomingHelloes[0]
                 ? upcomingHelloes[0].future_date_in_words
-                : ""}!
+                : ""}
+              !
             </Text>
-          </TouchableOpacity> 
-          <View style={{zIndex: 30000, height: 400, marginTop: 100, width: '100%'}}>
-
-          <HomeScrollSoon
-            height={"100%"}
-            maxHeight={300}
-            borderRadius={10}
-            borderColor="black"
-          />
-</View>
+          </TouchableOpacity>
+          <View
+            style={{
+              zIndex: 30000,
+              height: 400,
+              marginTop: 100,
+              width: "100%",
+            }}
+          >
+            <HomeScrollSoon
+              height={"100%"}
+              maxHeight={360}
+              borderRadius={10}
+              borderColor="black"
+            />
+          </View>
           <View
             style={{
               position: "absolute",
@@ -150,12 +162,12 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: "Poppins-Regular",
-      fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 20,
   },
   subtitleText: {
     fontFamily: "Poppins-Regular",
-  
+
     fontSize: 16,
   },
   loadingWrapper: {

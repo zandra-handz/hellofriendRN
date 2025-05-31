@@ -12,8 +12,9 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
- 
-import SpeedDial from "@/app/components/buttons/speeddial/SpeedDial";
+ import { MaterialCommunityIcons } from "@expo/vector-icons";
+import SpeedDialDelux from "@/app/components/buttons/speeddial/SpeedDialDelux"; 
+import AddMomentButton from "@/app/components/buttons/moments/AddMomentButton";
 
 const ScreenMoments = () => {
   const { capsuleList } = useCapsuleList();
@@ -49,14 +50,14 @@ const ScreenMoments = () => {
         )}
         {selectedFriend && (
           
-        <SpeedDial
+        <SpeedDialDelux
             rootIcon={AddOutlineSvg}
             topIcon={AddOutlineSvg}
             topOnPress={() => navigation.navigate('LocationSearch')} // selectedFriend needed for this screen I believe
-            midIcon={AddOutlineSvg}
+            midIcon={<MaterialCommunityIcons
+                      name="hand-wave-outline"/>}
             midOnPress={() =>  navigation.navigate('AddHello')}
-            // topMidIconSize={32}
-            // topMidDiameter={58}
+           deluxButton={<AddMomentButton/>} 
               />
               
         )}

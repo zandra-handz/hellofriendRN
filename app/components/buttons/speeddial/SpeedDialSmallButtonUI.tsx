@@ -1,14 +1,13 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet, DimensionValue } from "react-native";
+import { View, TouchableOpacity, DimensionValue } from "react-native";
 import { SvgProps } from "react-native-svg";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 interface SpeedDialSmallButtonUIProps {
   containerWidth: DimensionValue | undefined;
   circleSize: number;
   icon: React.FC<SvgProps>;
-  iconSize: number;
-  iconColor: string;
-  backgroundColor: string;
+  iconSize: number; 
   onPress: () => void;
 }
 
@@ -17,17 +16,23 @@ const SpeedDialSmallButtonUI: React.FC<SpeedDialSmallButtonUIProps> = ({
   circleSize = 70,
   icon: Icon,
   iconSize = 40,
-  iconColor = "gray",
-  backgroundColor = "black",
+  // iconColor = "",
+  // backgroundColor = "",
   onPress = () =>
     console.warn("Warning! No function passed to SpeedDialSmallButtonUI press"),
 }) => {
+
+  const { appContainerStyles, manualGradientColors } = useGlobalStyle();
+
+  const iconColor = manualGradientColors.lightColor;
+  const backgroundColor = manualGradientColors.homeDarkColor;
+
   return (
-    <View style={[styles.container, { width: containerWidth }]}>
+    <View style={[appContainerStyles.speedDialSmallButtonContainer, { width: containerWidth }]}>
       <TouchableOpacity
         onPress={onPress}
         style={[
-          styles.circleButton,
+          appContainerStyles.speedDialSmallButton,
           {
             width: circleSize,
             height: circleSize,
@@ -40,27 +45,6 @@ const SpeedDialSmallButtonUI: React.FC<SpeedDialSmallButtonUIProps> = ({
       </TouchableOpacity>
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    position: "absolute",
-    flexWrap: "wrap",
-    alignContent: "center",
-    justifyContent: "center",
-    zIndex: 1,
-  },
-  circleButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f0f",
-  },
-});
+}; 
 
 export default SpeedDialSmallButtonUI;

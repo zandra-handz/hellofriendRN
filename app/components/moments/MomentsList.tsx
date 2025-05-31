@@ -513,7 +513,6 @@ const MomentsList = () => {
             onPress={scrollToCategoryStart}
           />
 
-          <ButtonGoToAddMoment />
         </>
       )} 
     </View>

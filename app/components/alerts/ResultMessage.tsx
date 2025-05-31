@@ -51,7 +51,7 @@ const ResultMessage: React.FC<ResultMessageProps> = ({
   useAnimatedReaction(
     () => {
       const message = messageQueue.value?.[0]?.resultsMessage ?? null;
-      console.log("message in animtedreaction: ", message);
+     // console.log("message in animtedreaction: ", message);
       return message;
     },
     (newMessage, prevMessage) => {
@@ -84,7 +84,7 @@ const ResultMessage: React.FC<ResultMessageProps> = ({
 
   const animatedMessageText = useAnimatedProps(() => {
   
-    console.log(`message in animatedProps: `, messageText.value);
+   // console.log(`message in animatedProps: `, messageText.value);
     return {
       text: `${messageText.value}`,
 

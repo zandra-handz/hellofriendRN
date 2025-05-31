@@ -342,6 +342,17 @@ const containerStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderRadius: 0,
   },
+  speedDialPositioning: {
+        alignItems: "center",
+    position: "absolute",
+    flexWrap: "wrap",
+    width: 73,
+    alignContent: "center",
+    justifyContent: "center",
+    right: 20,
+    bottom: 20,
+    zIndex: 3000,
+  },
   speedDialRootButton: {
     width: 70,
     height: 70,
@@ -351,6 +362,24 @@ const containerStyles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  speedDialSmallButtonContainer: {
+    alignItems: "center",
+    position: "absolute",
+    flexWrap: "wrap",
+    alignContent: "center",
+    justifyContent: "center",
+    zIndex: 1, 
+  },
+
+  speedDialSmallButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35, 
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: "center",
+    alignItems: "center",  
   },
 
   appMessageContainer: {

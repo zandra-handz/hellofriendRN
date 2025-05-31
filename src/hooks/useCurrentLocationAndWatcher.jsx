@@ -21,7 +21,7 @@ const fetchCurrentLocation = async () => {
       accuracy: Location.Accuracy.High, 
     });
 
-    console.log('Current location fetched:', location);   
+   // console.log('Current location fetched:', location);   
     
     
     const { latitude, longitude } = location.coords;
@@ -71,7 +71,7 @@ export const useGeolocationWatcher = () => {
             accuracy: Location.Accuracy.High,  
           },
           async (position) => { // Use async function here for geocode call
-            console.log('Location updated by watcher:', position);
+          //  console.log('Location updated by watcher:', position);
             const { latitude, longitude } = position.coords;
 
             try {
@@ -98,7 +98,7 @@ export const useGeolocationWatcher = () => {
                 longitudeDelta: 0.0421,
               };
 
-              console.log('Formatted Location updated by watcher:', formattedData);
+             console.log('Formatted Location updated by watcher:', formattedData);
 
               // Set formatted data in query client cache
               queryClient.setQueryData('currentLocation', formattedData);
@@ -113,7 +113,7 @@ export const useGeolocationWatcher = () => {
 
         // Cleanup function to stop watching location when the component is unmounted
         return () => {
-          console.log('Cleaning up geolocation watcher...');
+         // console.log('Cleaning up geolocation watcher...');
           watchId.remove();
         };
       } catch (error) {

@@ -3,22 +3,51 @@ import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 
 const KeyboardCoasterMomentOrFriend = ({
   onPress,
+  isFriendSelected,
+  showMomentScreenButton,
   borderRadius = 20,
   borderColor = "transparent",
   maxHeight = 100,
 }) => {
-  const { selectedFriend } = useSelectedFriend();
-  const { manualGradientColors  } = useGlobalStyle();
+  const { manualGradientColors } = useGlobalStyle();
 
   return (
     <View style={styles.absoluteContainer}>
-      
-      {selectedFriend && (
+      <View
+        style={[
+          styles.container,
+          {
+            borderRadius: borderRadius,
+            borderColor: borderColor,
+            height: 40,
+            maxHeight: maxHeight,
+          },
+        ]}
+      >
+        <View
+          style={{
+            width: "100%",
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: 10,
+            justifyContent: "center",
+          }}
+        >
+          <FriendModalIntegrator
+            includeLabel={true}
+            navigationDisabled={true}
+            useGenericTextColor={true}
+            width={"100%"}
+            iconSize={18}
+          />
+        </View>
+      </View>
+      {isFriendSelected && showMomentScreenButton && (
         <TouchableOpacity
           onPress={onPress}
           style={[
@@ -45,7 +74,7 @@ const KeyboardCoasterMomentOrFriend = ({
 
           <View
             style={{
-              width: "100%",
+              width: 60,
               flex: 1,
               flexDirection: "row",
               alignItems: "center",
@@ -74,36 +103,8 @@ const KeyboardCoasterMomentOrFriend = ({
         </TouchableOpacity>
       )}
 
-      {!selectedFriend && (
-        <View
-          style={[
-            styles.container,
-            {
-              borderRadius: borderRadius,
-              borderColor: borderColor,
-              height: 40,
-              maxHeight: maxHeight,
-            },
-          ]}
-        >
-          <View
-            style={{
-              width: "100%",
-             flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              paddingHorizontal: 10,
-              justifyContent: "center", 
-            }}
-          >
-            {/* <Text style={[ themeStyles.primaryText, { fontSize: 15,  fontWeight: 'bold' }]}>
-          pick friend
-        </Text>  */}
-            <FriendModalIntegrator includeLabel={true} navigationDisabled={true} width={"100%"} iconSize={18}/>
-          </View>
-        </View>
-      )}
-    
+      {/* {!isFriendSelected && ( */}
+      
     </View>
   );
 };
@@ -114,8 +115,9 @@ const styles = StyleSheet.create({
     width: "50%",
     height: 36,
     position: "absolute",
+    flexDirection: "row",
     bottom: 20,
-    right: 0, 
+    right: 0,
   },
   container: {
     flexDirection: "row",
