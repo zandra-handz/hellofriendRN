@@ -10,11 +10,16 @@ import GradientBackground from "@/app/components/appwide/display/GradientBackgro
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useNavigation } from "@react-navigation/native";
+import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
+ 
+import SpeedDial from "@/app/components/buttons/speeddial/SpeedDial";
 
 const ScreenMoments = () => {
   const { capsuleList } = useCapsuleList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
+  const navigation = useNavigation();
 
   return (
     <SafeView style={{ flex: 1 }}>
@@ -42,6 +47,20 @@ const ScreenMoments = () => {
         
           </>
         )}
+        {selectedFriend && (
+          
+        <SpeedDial
+            rootIcon={AddOutlineSvg}
+            topIcon={AddOutlineSvg}
+            topOnPress={() => navigation.navigate('LocationSearch')} // selectedFriend needed for this screen I believe
+            midIcon={AddOutlineSvg}
+            midOnPress={() =>  navigation.navigate('AddHello')}
+            // topMidIconSize={32}
+            // topMidDiameter={58}
+              />
+              
+        )}
+
       </GradientBackground>
     </SafeView>
   );

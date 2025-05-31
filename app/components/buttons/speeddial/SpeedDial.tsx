@@ -1,21 +1,40 @@
 import React, { useState, useRef } from "react";
 import { View, Animated, StyleSheet } from "react-native";
+import { SvgProps } from "react-native-svg";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";  
+import SpeedDialSmallButtonUI from "./SpeedDialSmallButtonUI";
+import SpeedDialRootUI from "./SpeedDialRootUI";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import ButtonRoot from "../buttons/scaffolding/ButtonRoot";
-import ButtonMenuOption from "../buttons/scaffolding/ButtonMenuOption"; 
+interface SpeedDialProps {
+    rootIcon: React.FC<SvgProps>;
+    topIcon: React.FC<SvgProps>;
+    topOnPress: () => void;
+    midIcon: React.FC<SvgProps>;
+    midOnPress: () => void;
+    // topMidIconSize: number;
+    // topMidDiameter: number;
+    // topAnimatedHeight: number;
+    // midAnimatedHeight: number;
+}
 
-const AnimatedSpeedDialTemplate = ({
-  rootButtonIcon: RootButtonIcon,
-  topOptionIcon: TopOptionIcon,
-  topOptionOnPress,
-  secondTopOptionIcon: SecondTopOptionIcon,
-  secondTopOptionOnPress,
-  optionButtonIconSize = 32,
-  optionButtonDiameter = 50,
-  animatedHeightTopOption = -60,
-  animatedHeightSecondTopOption = -38,
+const SpeedDial: React.FC<SpeedDialProps> = ({
+  rootIcon,
+  topIcon,
+  topOnPress,
+  midIcon,
+  midOnPress,
+//   topMidIconSize = 32,
+//   topMidDiameter = 50,
+//   topAnimatedHeight = -60,
+//   midAnimatedHeight = -38,
 }) => {
+
+    const topAnimatedHeight = -60;
+  const midAnimatedHeight = -38;
+
+ const topMidIconSize = 32;
+  const topMidDiameter = 50;
+
   const { manualGradientColors } = useGlobalStyle();
   const [expanded, setExpanded] = useState(false);
   const animation1 = useRef(new Animated.Value(0)).current;
@@ -64,12 +83,12 @@ const AnimatedSpeedDialTemplate = ({
 
   const buttonTranslateY1 = animation1.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, animatedHeightSecondTopOption],
+    outputRange: [0, midAnimatedHeight],
   });
 
   const buttonTranslateY2 = animation2.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, animatedHeightTopOption],
+    outputRange: [0, topAnimatedHeight],
   });
 
   return (
@@ -83,12 +102,12 @@ const AnimatedSpeedDialTemplate = ({
           },
         ]}
       >
-        <ButtonMenuOption
-          onPress={topOptionOnPress}
+        <SpeedDialSmallButtonUI
+          onPress={topOnPress}
           containerWidth={"auto"}
-          circleSize={optionButtonDiameter}
-          icon={TopOptionIcon}
-          iconSize={optionButtonIconSize}
+          circleSize={topMidDiameter}
+          icon={topIcon}
+          iconSize={topMidIconSize}
           iconColor={manualGradientColors.lightColor}
           backgroundColor={manualGradientColors.homeDarkColor}
         />
@@ -104,20 +123,20 @@ const AnimatedSpeedDialTemplate = ({
           },
         ]}
       >
-        <ButtonMenuOption
-          onPress={secondTopOptionOnPress}
+        <SpeedDialSmallButtonUI
+          onPress={midOnPress}
           containerWidth={"auto"}
-          circleSize={optionButtonDiameter}
-          icon={SecondTopOptionIcon}
-          iconSize={optionButtonIconSize}
+          circleSize={topMidDiameter}
+          icon={midIcon}
+          iconSize={topMidIconSize}
           iconColor={manualGradientColors.lightColor}
           backgroundColor={manualGradientColors.homeDarkColor}
         />
       </Animated.View>
 
-      <ButtonRoot
+      <SpeedDialRootUI
         expanded={expanded}
-        icon={RootButtonIcon}
+        icon={rootIcon}
         iconSize={42}
         onPress={toggleButtons}
         backgroundColor={manualGradientColors.homeDarkColor}
@@ -148,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AnimatedSpeedDialTemplate;
+export default SpeedDial;

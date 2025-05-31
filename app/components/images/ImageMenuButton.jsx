@@ -1,16 +1,11 @@
 import React, {  useEffect  } from "react"; 
-
 import useImageUploadFunctions from '@/src/hooks/useImageUploadFunctions'; 
-
-import AnimatedSpeedDialTemplate from '../foranimations/AnimatedSpeedDialTemplate';
- 
+import SpeedDial from "../buttons/speeddial/SpeedDial";
 import ImageGalleryOutlineSvg from "@/app/assets/svgs/image-gallery-outline.svg";
 import CameraMinimalisticSvg from "@/app/assets/svgs/camera-minimalistic.svg"; 
 import UploadMinimalisticSvg from '@/app/assets/svgs/upload-minimalistic.svg';
+import { useNavigation } from "@react-navigation/native";
 
-import { useNavigation
-
- } from "@react-navigation/native";
 const ImageMenuButton = () => { 
   
   const navigation = useNavigation();
@@ -18,7 +13,6 @@ const ImageMenuButton = () => {
   
   const navigateToAddImageScreen = () => {
     navigation.navigate('AddImage', {imageUri: imageUri});
-
   };
 
    useEffect(() => {
@@ -34,16 +28,15 @@ const ImageMenuButton = () => {
    
 
   return (
-    <AnimatedSpeedDialTemplate
-    rootButtonIcon={ImageGalleryOutlineSvg}
-    topOptionIcon={CameraMinimalisticSvg}
-    topOptionOnPress={() => handleCaptureImage()}
-    secondTopOptionIcon={UploadMinimalisticSvg}
-    secondTopOptionOnPress={() =>  handleSelectImage()}
-    optionButtonIconSize={32}
-    optionButtonDiameter={58}
-    animatedHeightTopOption={-60}
-    animatedHeightSecondTopOption={-38} />
+    <SpeedDial
+    rootIcon={ImageGalleryOutlineSvg}
+    topIcon={CameraMinimalisticSvg}
+    topOnPress={() => handleCaptureImage()}
+    midIcon={UploadMinimalisticSvg}
+    midOnPress={() =>  handleSelectImage()}
+    // topMidIconSize={32}
+    // topMidDiameter={58}
+      />
   );
 };
  

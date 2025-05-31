@@ -9,7 +9,8 @@ const GlobalStyleContext = createContext();
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
-  const { user, isAuthenticated, userAppSettings, updateAppSettingsMutation } = useUser();
+  const { user, isAuthenticated, userAppSettings, updateAppSettingsMutation } =
+    useUser();
   const colorScheme = useColorScheme();
 
   // Default state
@@ -133,7 +134,7 @@ export const GlobalStyleProvider = ({ children }) => {
     styles.theme === "dark" ? darkThemeStyles : lightThemeStyles;
   const appContainerStyles = containerStyles;
   const appFontStyles = fontStyles;
-  const appSpacingStyles = spacingStyles; 
+  const appSpacingStyles = spacingStyles;
   const appAnimationStyles = animationStyles;
   const appCrossThemeStyles = crossThemeStyles;
 
@@ -149,7 +150,7 @@ export const GlobalStyleProvider = ({ children }) => {
         appContainerStyles,
         appFontStyles,
         appSpacingStyles,
-        appAnimationStyles, 
+        appAnimationStyles,
         appCrossThemeStyles,
         themeStyleSpinners,
       }}
@@ -341,15 +342,25 @@ const containerStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderRadius: 0,
   },
+  speedDialRootButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    zIndex: 3000,
+    elevation: 3000,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
   appMessageContainer: {
-    position: "absolute", 
+    position: "absolute",
     top: 40,
-    left: 0, 
+    left: 0,
     zIndex: 100000,
     elevation: 100000,
     width: "100%",
-    paddingVertical: 10, 
+    paddingVertical: 10,
     paddingHorizontal: 4,
     height: "auto",
     //flexGrow: 1,
@@ -360,22 +371,21 @@ const containerStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,
-  
-
   },
 
-  appMessageTextWrapper: { //this the colored body too
-      borderWidth: 1,
-  
+  appMessageTextWrapper: {
+    //this the colored body too
+    borderWidth: 1,
+
     justifyContent: "center",
     alignItems: "center",
-    flexDirection: 'row', 
+    flexDirection: "row",
     width: "100%",
     height: "auto",
-    padding: 30, 
+    padding: 30,
     minHeight: 100,
-    borderRadius: 20, 
-    
+    borderRadius: 20,
+
     flexWrap: "wrap",
     textAlign: "center",
   },
@@ -540,14 +550,13 @@ const fontStyles = StyleSheet.create({
   appMessageText: {
     fontSize: 14,
     lineHeight: 22,
-
   },
 });
 
 const crossThemeStyles = StyleSheet.create({
   primaryDarkText: {
     color: "#121212",
-  }
+  },
 });
 
 const lightThemeStyles = StyleSheet.create({

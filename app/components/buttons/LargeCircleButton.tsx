@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
     right: 10,
-    bottom: 170,
+    bottom: 20,
     zIndex: 1,
   },
   controlButton: {
