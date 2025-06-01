@@ -343,7 +343,7 @@ const containerStyles = StyleSheet.create({
     borderRadius: 0,
   },
   speedDialPositioning: {
-        alignItems: "center",
+    alignItems: "center",
     position: "absolute",
     flexWrap: "wrap",
     width: 73,
@@ -370,16 +370,16 @@ const containerStyles = StyleSheet.create({
     flexWrap: "wrap",
     alignContent: "center",
     justifyContent: "center",
-    zIndex: 1, 
+    zIndex: 1,
   },
 
   speedDialSmallButton: {
     width: 70,
     height: 70,
-    borderRadius: 35, 
+    borderRadius: 35,
     borderWidth: StyleSheet.hairlineWidth,
     justifyContent: "center",
-    alignItems: "center",  
+    alignItems: "center",
   },
 
   appMessageContainer: {
@@ -589,6 +589,9 @@ const crossThemeStyles = StyleSheet.create({
 });
 
 const lightThemeStyles = StyleSheet.create({
+  overlayBackgroundColor: {
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
   primaryText: {
     color: "#121212",
   },
@@ -734,6 +737,9 @@ const lightThemeStyles = StyleSheet.create({
 });
 
 const darkThemeStyles = StyleSheet.create({
+  overlayBackgroundColor: {
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
   primaryText: {
     color: "#d3d3d3",
   },

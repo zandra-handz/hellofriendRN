@@ -1,15 +1,50 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  TouchableOpacity,
+  TouchableHighlight,
+  DimensionValue,
+} from "react-native";
 import Animated, {
   useAnimatedStyle,
+  useSharedValue,
   interpolate,
   interpolateColor,
   Extrapolation,
+  withTiming,
+  withRepeat,
 } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useWindowDimensions } from "react-native";
+import { SharedValue } from "react-native-reanimated";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const MomentItem = ({
+import { useFriendList } from "@/src/context/FriendListContext";
+
+import { Moment } from "@/src/types/MomentContextTypes";
+
+// interface Moment {
+//   typedCategory: string;  // string value should always exist here per backend, I am like 90% sure
+//   capsule: string;
+//   created: string;
+// }
+
+interface MomentItemsProps {
+  index: number;
+  momentData: Moment;
+  momentDate: Date; //JS date object calculated in MomentsList.tsx
+  itemHeight: number;
+  combinedHeight: number;
+  visibilityValue: SharedValue<number>;
+  scrollYValue: SharedValue<number>;
+  pressedIndexValue: SharedValue<number | null>;
+  pulseValue: SharedValue<number>;
+  onSend: (moment: Moment) => void;
+}
+
+const MomentItem: React.FC<MomentItemsProps> = ({
   index,
   momentData,
   momentDate,
@@ -17,19 +52,64 @@ const MomentItem = ({
   combinedHeight,
   visibilityValue,
   scrollYValue,
+  pressedIndexValue,
+  pulseValue,
   onSend,
 }) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
 
   const startingPosition = index * combinedHeight;
-
   const { height } = useWindowDimensions();
-
   const containerHeight = height - 410;
+  const { themeAheadOfLoading } = useFriendList();
+  const textContainerWidth = "88%";
+
+  const sendButtonWidth = `${100 - Number(textContainerWidth.slice(0, -1))}%`;
 
   if (!momentData) {
     return;
   }
+
+  const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+  const handleSave = () => {
+    onSend(momentData);
+    pressedIndexValue.value = null;
+  };
+  //const pressed = useSharedValue(false);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const isPressed = pressedIndexValue.value === index;
+
+    // const scale = isPressed
+    //   ? interpolate(pulseValue.value, [0, 1], [1, 1.15], Extrapolation.CLAMP)
+    //   : 1;
+
+    const backgroundColor = isPressed
+      ? interpolateColor(
+          pulseValue.value,
+          [0, 1],
+          [manualGradientColors.lightColor, themeAheadOfLoading.darkColor]
+        )
+      : manualGradientColors.homeDarkColor;
+
+    const iconColor = isPressed
+      ? manualGradientColors.homeDarkColor
+      : // interpolateColor(
+        //     pulseValue.value,
+        //     [0, 1],
+        //     [themeStyles.primaryText.color, manualGradientColors.homeDarkColor]
+        //   )
+
+        themeStyles.primaryText.color;
+
+    return {
+      backgroundColor,
+      // transform: [{ scale }],
+      color: iconColor,
+    };
+  });
 
   const visibilityStyle = useAnimatedStyle(() => {
     const pos1 = startingPosition - containerHeight;
@@ -91,55 +171,113 @@ const MomentItem = ({
 
         {
           textAlign: "left",
-          flexDirection: "column",
+          flexDirection: "row",
+          justifyContent: "space-between",
           height: itemHeight,
           width: "100%",
-          paddingHorizontal: 20,
-          paddingVertical: 20,
+          paddingHorizontal: 0, // adjust this/remove from View directly below to give padding to send button
+          paddingVertical: 0, // adjust this/remove from View directly below to give padding to send button
+
           borderRadius: 10,
+          overflow: "hidden", // needed here to hide corners of send button when send button has no padding
         },
         visibilityStyle,
       ]}
     >
-      <View style={{ flexWrap: "wrap", width: "100%", overflow: "hidden" }}>
-        <Text
-          numberOfLines={1}
-          style={[
-            themeStyles.genericText,
-            appFontStyles.momentHeaderText,
-          ]}
-        >
-          {header && header}
-        </Text>
-      </View>
-      <View style={{ flexWrap: "wrap", width: "100%", overflow: "hidden" }}>
-        <Text
-          numberOfLines={1}
-          style={[themeStyles.genericText, appFontStyles.momentText]}
-        >
-          {momentData && momentData?.capsule}
-        </Text>
-      </View>
-      <TouchableOpacity
-        onPress={() => onSend(momentData)}
-        style={{ position: "absolute", bottom: 10, right: 10 }}
+      <View
+        style={{
+          flexDirection: "column",
+          paddingHorizontal: 20,
+          paddingVertical: 20,
+        }}
       >
-        <Text
-          numberOfLines={1}
-          style={[
-            themeStyles.genericText,
-            {
-              fontSize: 11,
-              lineHeight: 16,
-              fontWeight: "bold",
-              textTransform: "uppercase",
-            },
-          ]}
+        <View
+          style={{
+            flexWrap: "wrap",
+            width: textContainerWidth,
+            overflow: "hidden",
+          }}
         >
-          {" "}
-          SEND
-        </Text>
-      </TouchableOpacity>
+          <Text
+            numberOfLines={1}
+            style={[themeStyles.genericText, appFontStyles.momentHeaderText]}
+          >
+            {header && header}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexWrap: "wrap",
+            width: textContainerWidth,
+            overflow: "hidden",
+          }}
+        >
+          <Text
+            numberOfLines={1}
+            style={[themeStyles.genericText, appFontStyles.momentText]}
+          >
+            {momentData && momentData?.capsule}
+          </Text>
+        </View>
+      </View>
+      <AnimatedPressable
+        onPress={() => handleSave()}
+        style={[
+          animatedStyle,
+          {
+            borderRadius: 10,
+            overflow: "hidden",
+            backgroundColor: manualGradientColors.homeDarkColor,
+            height: "100%",
+            textAlign: "center",
+            alignItems: "center",
+            justifyContent: "center",
+            width: sendButtonWidth,
+          },
+        ]}
+        onPressIn={() => {
+          pressedIndexValue.value = index;
+          console.log(index);
+          pulseValue.value = withRepeat(
+            withTiming(1, { duration: 1000 }),
+            -1,
+            true
+          );
+        }}
+        onPressOut={() => {
+          pressedIndexValue.value = null;
+          pulseValue.value = 0;
+        }}
+      >
+        <AnimatedIcon
+          name="comment-check-outline"
+          size={24}
+          style={animatedStyle}
+        />
+      </AnimatedPressable>
+      {/* <TouchableHighlight
+        //testOnly_pressed={true}
+        underlayColor={manualGradientColors.lightColor}
+        onPress={() => onSend(momentData)}
+        onShowUnderlay={iconColorOnPress}
+        onHideUnderlay={iconColorOnRelease}
+        style={{
+          backgroundColor: manualGradientColors.homeDarkColor,
+          height: "100%",
+          textAlign: "center",
+          alignItems: "center",
+          justifyContent: "center",
+          width: sendButtonWidth,
+        }}
+      >
+        <MaterialCommunityIcons
+          name="comment-check-outline"
+          size={24}
+          // color={themeStyles.primaryText.color}
+          color={iconColor}
+          opacity={0.5}
+        /> 
+      </TouchableHighlight> */}
     </Animated.View>
   );
 };

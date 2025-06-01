@@ -1,4 +1,4 @@
-import React, { useEffect,  createRef } from "react";
+import React, { useEffect, createRef } from "react";
 import { useFonts } from "expo-font";
 import TopLevelNavigationHandler from "./TopLevelNavigationHandler"; // Adjust import path if necessary
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
@@ -21,7 +21,7 @@ import {
   NavigationContainerRef,
   getStateFromPath,
 } from "@react-navigation/native";
-import { Alert,   useColorScheme, Platform } from "react-native";
+import { Alert, useColorScheme, Platform } from "react-native";
 import { MessageContextProvider } from "./src/context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserProvider, useUser } from "./src/context/UserContext";
@@ -47,6 +47,7 @@ import FullScreenSpinner from "./app/components/appwide/spinner/FullScreenSpinne
 import ScreenOnboardingFlow from "./app/onboarding/ScreenOnboardingFlow";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenFriendSettings from "./app/screens/friends/ScreenFriendSettings";
+import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenMoments from "./app/screens/moments/ScreenMoments";
 import ScreenImages from "./app/screens/images/ScreenImages";
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
@@ -73,17 +74,15 @@ import ScreenAddLocation from "./app/screens/locations/ScreenAddLocation";
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 
 // import HellofriendHeader from "./app/components/headers/HellofriendHeader";
-// //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme'; 
+// //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
 // import HeaderHelloes from "./app/components/headers/HeaderHelloes";
 // import HeaderImage from "./app/components/headers/HeaderImage";
 // import HeaderFriendSettings from "./app/components/headers/HeaderFriendSettings";
 // import HeaderUserDetails from "./app/components/headers/HeaderUserDetails";
 
-
 import HeaderLocation from "./app/components/headers/HeaderLocation";
-import HeaderBase from "./app/components/headers/HeaderBase";  
+import HeaderBase from "./app/components/headers/HeaderBase";
 import HeaderLocationSingle from "./app/components/headers/HeaderLocationSingle";
-
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -114,7 +113,7 @@ Sentry.init({
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,
 });
- 
+
 const Stack = createNativeStackNavigator();
 
 export default Sentry.wrap(function App() {
@@ -175,7 +174,6 @@ export default Sentry.wrap(function App() {
 
   // If fonts or other resources are not ready, show a loading placeholder
 
-  
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
@@ -183,15 +181,15 @@ export default Sentry.wrap(function App() {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-        return null;
-        
+    return null;
+
     //     (
     //   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
     //     <Text style={{ fontSize: 20 }}>Loading...</Text>
     //   </View>
     // );
   }
- 
+
   return (
     <ShareIntentProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
@@ -213,7 +211,7 @@ export default Sentry.wrap(function App() {
                                   backgroundColor: "transparent",
                                 }}
                               > */}
-                                <Layout />
+                              <Layout />
                               {/* </SafeView> */}
                             </SafeAreaProvider>
                           </MessageContextProvider>
@@ -359,8 +357,7 @@ export const Layout = () => {
       <ResultMessage />
       <CustomStatusBar />
 
-      <TopLevelNavigationHandler> 
-
+      <TopLevelNavigationHandler>
         <Stack.Navigator
           screenOptions={{
             headerShown: true,
@@ -372,14 +369,13 @@ export const Layout = () => {
           }}
         >
           {isAuthenticated ? (
-            user.app_setup_complete ||
-            !user.app_setup_complete ? (
+            user.app_setup_complete || !user.app_setup_complete ? (
               <>
                 <Stack.Screen
                   name="hellofriend"
                   component={ScreenHome}
                   options={{
-                    headerShown: false, 
+                    headerShown: false,
                   }}
                 />
                 <Stack.Screen
@@ -387,7 +383,6 @@ export const Layout = () => {
                   component={ScreenUserDetails}
                   options={{
                     headerShown: false,
-              
                   }}
                 />
                 <Stack.Screen
@@ -402,15 +397,22 @@ export const Layout = () => {
                   component={ScreenMomentFocus}
                   options={{
                     gestureEnabled: false,
-                    animation: 'none',
-                    headerShown: false, 
+                    animation: "none",
+                    headerShown: false,
                   }}
                 />
                 <Stack.Screen
                   name="Moments"
                   component={ScreenMoments}
                   options={{
-                    headerShown: false, 
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="PreAdded"
+                  component={ScreenPreAdded}
+                  options={{
+                    headerShown: false,
                   }}
                 />
 
@@ -418,21 +420,21 @@ export const Layout = () => {
                   name="MomentView"
                   component={ScreenMomentView}
                   options={{
-                    headerShown: false, 
+                    headerShown: false,
                   }}
                 />
                 <Stack.Screen
                   name="Images"
                   component={ScreenImages}
                   options={{
-                    headerShown: false, 
+                    headerShown: false,
                   }}
                 />
                 <Stack.Screen
                   name="Helloes"
                   component={ScreenHelloes}
                   options={{
-                    headerShown: false, 
+                    headerShown: false,
                   }}
                 />
                 <Stack.Screen
@@ -568,7 +570,7 @@ export const Layout = () => {
                 name="Welcome"
                 component={ScreenWelcome}
                 options={{
-                  headerShown: false, 
+                  headerShown: false,
                 }}
               />
 
@@ -576,14 +578,14 @@ export const Layout = () => {
                 name="Auth"
                 component={ScreenAuth}
                 options={{
-                  headerShown: false, 
+                  headerShown: false,
                 }}
               />
               <Stack.Screen
                 name="RecoverCredentials"
                 component={ScreenRecoverCredentials}
                 options={{
-                  headerShown: false, 
+                  headerShown: false,
                 }}
               />
             </>

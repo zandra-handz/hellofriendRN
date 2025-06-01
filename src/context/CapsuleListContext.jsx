@@ -124,6 +124,7 @@ export const CapsuleListProvider = ({ children }) => {
           categoryStartIndices,
           preAdded,
           momentsSavedToHello,
+        //  filterPreAdded,
         };
       },
     });
@@ -145,16 +146,19 @@ export const CapsuleListProvider = ({ children }) => {
   const timeoutRef = useRef(null);
 
   const updateCapsuleMutation = useMutation({
-    mutationFn: (capsuleId) =>
+    mutationFn: ({capsuleId, isPreAdded}) =>
       updateMomentAPI(selectedFriend?.id, capsuleId, {
-        pre_added_to_hello: true,
+        pre_added_to_hello: isPreAdded,
       }),
 
     onSuccess: (data) => {
       setMomentData(data);
       setMomentIdToAnimate(data.id);
+       queryClient.getQueryData(["Moments", selectedFriend?.id]);
+         
+    updateCacheWithNewPreAdded(data, data?.pre_added_to_hello);
 
-      queryClient.getQueryData(["Moments", selectedFriend?.id]);
+     
     },
     onError: (error) => {
       if (timeoutRef.current) {
@@ -225,36 +229,74 @@ export const CapsuleListProvider = ({ children }) => {
     },
   });
 
-  const updateCacheWithNewPreAdded = () => {
-    if (momentData) {
-      queryClient.setQueryData(
-        ["Moments", selectedFriend?.id],
-        (oldMoments) => {
-          if (!oldMoments) return [momentData];
+const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
+  // console.log('updatingCache');
+  // console.log(momentData);
+  // console.log(isPreAdded);
 
-          const updatedMoments = [...oldMoments];
-          const momentIndex = oldMoments.findIndex(
-            (moment) => moment.id === momentData.id
-          );
-          if (momentIndex !== -1) {
-            updatedMoments[momentIndex] = {
-              ...updatedMoments[momentIndex],
-              ...momentData,
-              preAdded: true,
-            };
-          } else {
-            updatedMoments.unshift(momentData); // Add new moment if it doesn't exist
-          }
+  queryClient.setQueryData(
+    ["Moments", selectedFriend?.id],
+    (oldMoments) => {
+      if (!oldMoments) return [{ ...momentData, preAdded: isPreAdded }];
 
-          setMomentData(null);
-
-          updateCapsuleMutation.reset();
-
-          return updatedMoments;
-        }
+      const updatedMoments = [...oldMoments];
+      const momentIndex = updatedMoments.findIndex(
+        (moment) => moment.id === momentData.id
       );
+
+      if (momentIndex !== -1) {
+        // Update existing moment
+        updatedMoments[momentIndex] = {
+          ...updatedMoments[momentIndex],
+          ...momentData,
+          preAdded: isPreAdded,
+        };
+      } else {
+        // Insert new moment with preAdded status
+        updatedMoments.unshift({
+          ...momentData,
+          preAdded: isPreAdded,
+        });
+      }
+
+      updateCapsuleMutation.reset();
+
+      return updatedMoments;
     }
-  };
+  );
+};
+
+
+  // const updateCacheWithNewPreAdded = (isPreAdded) => {
+  //   if (momentData) {
+  //     queryClient.setQueryData(
+  //       ["Moments", selectedFriend?.id],
+  //       (oldMoments) => {
+  //         if (!oldMoments) return [momentData];
+
+  //         const updatedMoments = [...oldMoments];
+  //         const momentIndex = oldMoments.findIndex(
+  //           (moment) => moment.id === momentData.id
+  //         );
+  //         if (momentIndex !== -1) {
+  //           updatedMoments[momentIndex] = {
+  //             ...updatedMoments[momentIndex],
+  //             ...momentData,
+  //             preAdded: isPreAdded,
+  //           };
+  //         } else {
+  //           updatedMoments.unshift(momentData); // Add new moment if it doesn't exist
+  //         }
+
+  //         setMomentData(null);
+
+  //         updateCapsuleMutation.reset();
+
+  //         return updatedMoments;
+  //       }
+  //     );
+  //   }
+  // };
 
   const updateCacheWithEditedMoment = () => {
     if (momentData) {
@@ -287,13 +329,14 @@ export const CapsuleListProvider = ({ children }) => {
     }
   };
 
-  const updateCapsule = (capsuleId) => updateCapsuleMutation.mutate(capsuleId);
+  const updateCapsule = (capsuleId, isPreAdded) => updateCapsuleMutation.mutate({capsuleId, isPreAdded});
 
   const updateCapsulesMutation = useMutation({
     mutationFn: (updatedCapsules) =>
       updateMultMomentsAPI(selectedFriend?.id, updatedCapsules),
-    onSuccess: () =>
+    onSuccess: () =>  
       queryClient.invalidateQueries(["Moments", selectedFriend?.id]),
+   
     onError: (error) => console.error("Error updating capsule:", error),
   });
 

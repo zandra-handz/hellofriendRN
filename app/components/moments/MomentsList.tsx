@@ -9,17 +9,15 @@ import { View, Keyboard, ViewToken, TouchableOpacity } from "react-native";
 
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
-import ButtonGoToAddMoment from "../buttons/moments/ButtonGoToAddMoment"; 
+ 
+import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
-import MomentsSearchBar from "./MomentsSearchBar";
-import DiceRollScroll from "./DiceRollScroll";
-import MomentCardAnimationWrapper from "./MomentCardAnimationWrapper";
+import MomentsSearchBar from "./MomentsSearchBar"; 
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
-import ButtonIconImages from "../buttons/images/ButtonIconImages";
-import ButtonIconMoments from "../buttons/moments/ButtonIconMoments";
+import ButtonIconImages from "../buttons/images/ButtonIconImages"; 
 import MomentsStaticButton from "../buttons/moments/MomentsStaticButton";
-import { AnimatedFlashList, FlashList } from "@shopify/flash-list";
+ 
 import Animated, {
   LinearTransition,
   JumpingTransition,
@@ -28,10 +26,8 @@ import Animated, {
   SequencedTransition,
   FadingTransition,
   useSharedValue,
-  useAnimatedRef,
-  useDerivedValue,
-  useAnimatedScrollHandler,
-  useAnimatedReaction,
+  useAnimatedRef, 
+  useAnimatedScrollHandler, 
   withTiming,
   runOnJS,
   runOnUI,
@@ -104,6 +100,9 @@ const MomentsList = () => {
 
   const translateX = useSharedValue(0);
   const heightAnim = useSharedValue(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
+ 
+  const pressedIndex = useSharedValue(null);
+   const pulseValue = useSharedValue(0);
 
   const belowHeaderIconSize = 28;
 
@@ -127,22 +126,22 @@ const MomentsList = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (momentIdToAnimate) {
-      translateX.value = withTiming(500, { duration: 0 }, () => {
-        heightAnim.value = withTiming(0, { duration: 200 }, () => {
-          runOnJS(updateCacheWithNewPreAdded)();
-          runOnJS(setMomentIdToAnimate)(null);
+  // useEffect(() => {
+  //   if (momentIdToAnimate) {
+  //     translateX.value = withTiming(500, { duration: 0 }, () => {
+  //       heightAnim.value = withTiming(0, { duration: 200 }, () => {
+  //         runOnJS(updateCacheWithNewPreAdded)(true);
+  //         runOnJS(setMomentIdToAnimate)(null);
 
-          fadeAnim.value = 1;
-          heightAnim.value = withTiming(COMBINED_HEIGHT, {
-            duration: 0,
-          });
-          translateX.value = withTiming(0, { duration: 0 });
-        });
-      });
-    }
-  }, [momentIdToAnimate]);
+  //         fadeAnim.value = 1;
+  //         heightAnim.value = withTiming(COMBINED_HEIGHT, {
+  //           duration: 0,
+  //         });
+  //         translateX.value = withTiming(0, { duration: 0 });
+  //       });
+  //     });
+  //   }
+  // }, [momentIdToAnimate]);
 
   // const scrollToMoment = (moment) => {
   //   if (moment.uniqueIndex !== undefined) {
@@ -162,21 +161,21 @@ const MomentsList = () => {
     }
   };
 
-  const scrollToRandomItem = () => {
-    if (capsuleList.length === 0) return;
+  // const scrollToRandomItem = () => {
+  //   if (capsuleList.length === 0) return;
 
-    const randomIndex = Math.floor(Math.random() * capsuleList.length);
-    // flatListRef.current?.scrollToIndex({
-    flatListRef.current?.scrollToOffset({
-      offset: ITEM_HEIGHT * randomIndex,
-      // index: randomIndex,
-      animated: false,
-    });
-  };
+  //   const randomIndex = Math.floor(Math.random() * capsuleList.length);
+  //   // flatListRef.current?.scrollToIndex({
+  //   flatListRef.current?.scrollToOffset({
+  //     offset: ITEM_HEIGHT * randomIndex,
+  //     // index: randomIndex,
+  //     animated: false,
+  //   });
+  // };
 
   const saveToHello = useCallback((moment) => {
     try {
-      updateCapsule(moment.id);
+      updateCapsule(moment.id, true);
     } catch (error) {
       console.error("Error during pre-save:", error);
     }
@@ -187,9 +186,9 @@ const MomentsList = () => {
     navigation.navigate("MomentView", { moment: moment });
   }, []);
 
-  const closeMomentNav = () => {
-    setMomentNavVisible(false);
-  };
+  // const closeMomentNav = () => {
+  //   setMomentNavVisible(false);
+  // };
 
   const scrollToCategoryStart = (category) => {
     const categoryIndex = categoryStartIndices[category];
@@ -222,34 +221,12 @@ const MomentsList = () => {
     });
   }, [capsuleList]);
 
-  // const getFormattedDate = (item) => {
-  //   let rawDate = item?.created || '';
-  //   const date = new Date(rawDate);
-
-  //   const formattedDate = !isNaN(date.getTime())
-  //     ? new Intl.DateTimeFormat("en-US", {
-  //         month: "short",
-  //         day: "numeric",
-  //       }).format(date)
-  //     : "lol";
-
-  //   return formattedDate;
-  // };
-  const visibleItemId = useDerivedValue(() => {
-    const topItems = viewableItemsArray.value.slice(0, 1);
-    return topItems.length > 0 && topItems[0].isViewable
-      ? topItems[0].item.id
-      : null;
-  });
-
+ 
+ 
   const categoryNavVisibility = useSharedValue(1);
   const listVisibility = useSharedValue(0);
 
-  //   const scrollHandler = useAnimatedScrollHandler({
-  //   onScroll: (event) => {
-  //     const y = event.contentOffset.y;
-  //   },
-  // });
+ 
 
   useFocusEffect(
     useCallback(() => {
@@ -308,20 +285,12 @@ const MomentsList = () => {
           itemHeight={ITEM_HEIGHT}
           visibilityValue={listVisibility}
           scrollYValue={scrollY}
+          pressedIndexValue={pressedIndex}
+          pulseValue={pulseValue}
           onSend={saveToHello}
         />
       </TouchableOpacity>
-      // <MomentCardAnimationWrapper
-      //   viewableItemsArray={viewableItemsArray}
-      //   item={item}
-      //   date={item.formattedDate} // ✅ use precomputed date
-      //   index={index}
-      //   momentIdToAnimate={momentIdToAnimate}
-      //   visibleItemId={visibleItemId}
-      //   fadeAnim={fadeAnim}
-      //   handleNavigateToMomentView={handleNavigateToMomentView}
-      //   saveToHello={saveToHello}
-      // />
+ 
     ),
     [
       // viewableItemsArray,
@@ -332,31 +301,7 @@ const MomentsList = () => {
     ]
   );
 
-  // const renderMomentItem = useCallback(
-
-  //   ({ item, index }) => (
-
-  //     <MomentCardAnimationWrapper
-  //       viewableItemsArray={viewableItemsArray}
-  //       item={item}
-  //       date={getFormattedDate(item)}
-  //       index={index}
-  //       momentIdToAnimate={momentIdToAnimate}
-  //       fadeAnim={fadeAnim}
-  //       translateY={translateY}
-  //       handleNavigateToMomentView={handleNavigateToMomentView}
-  //       saveToHello={saveToHello}
-  //     />
-  //   ),
-  //   [
-  //     viewableItemsArray,
-  //     momentIdToAnimate,
-  //     fadeAnim,
-  //     translateY,
-  //     handleNavigateToMomentView,
-  //     saveToHello,
-  //   ]
-  // );
+ 
 
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `placeholder-${index}`;
@@ -446,7 +391,7 @@ const MomentsList = () => {
           </>
         }
       />
-
+  <MomentsAdded visibilityValue={listVisibility} />
       <View
         style={{
           // flex: 1,
@@ -459,6 +404,7 @@ const MomentsList = () => {
         }}
       >
         <>
+      
           <Animated.FlatList
             itemLayoutAnimation={JumpingTransition}
             // itemLayoutAnimation={CurvedTransition}
@@ -503,6 +449,8 @@ const MomentsList = () => {
           />
         </>
       </View>
+
+      
 
       {!isKeyboardVisible && (
         <>

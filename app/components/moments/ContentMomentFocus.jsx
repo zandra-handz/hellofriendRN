@@ -150,7 +150,7 @@ const ContentMomentFocus = ({
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
-      showMessage(true, null, "Momemt saved!");
+      // showMessage(true, null, "Momemt saved!");
       navigation.goBack();
       createMomentMutation.reset(); //additional immediate reset to allow user to return back to screen instantly
     }
@@ -212,27 +212,14 @@ const ContentMomentFocus = ({
           />
         </View>
 
-        {showCategoriesSlider && selectedFriend && friendDashboardData && (
-          // <View
-          //   style={{
-          //     position: "absolute",
-
-          //     bottom: 32,
-          //     left: 0,
-          //     right: 0,
-          //     width: "100%",
-          //     //  flex: 1,
-          //     backgroundColor: "pink",
-          //                   zIndex: 6000,
-          //       elevation: 6000,
-          //   }}
-          // >
-
+        {selectedFriend && friendDashboardData && (
+ 
           <CategoryCreator
+          show={showCategoriesSlider}
             onCategorySelect={handleCategorySelect}
             updateExistingMoment={updateExistingMoment}
             existingCategory={existingMomentObject?.typedCategory || null}
-            momentTextForDisplay={momentTextRef.current.getText()}
+            momentTextForDisplay={momentTextRef?.current?.getText() || null}
             onParentSave={handleSave}
             selectedFriend={selectedFriend}
             friendDashboardData={friendDashboardData}

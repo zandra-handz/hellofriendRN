@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet, 
-} from "react-native";
-import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
+import { View, Text, FlatList, StyleSheet } from "react-native";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import AlertFormSubmit from "../alerts/AlertFormSubmit";
 
@@ -23,6 +18,7 @@ const CategoryCreator = ({
   momentTextForDisplay,
   onParentSave,
   isKeyboardVisible = true,
+  show = true,
   selectedFriend,
   friendDashboardData,
   loadingNewFriend,
@@ -31,10 +27,8 @@ const CategoryCreator = ({
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedCategoryCapsules, setSelectedCategoryCapsules] =
     useState(null);
-  // const { selectedFriend, friendDashboardData, loadingNewFriend } =
-  //   useSelectedFriend();
   const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
- 
+
   const containerHeight = `100%`;
   const [categoryLimit, setCategoryLimit] = useState("");
   const [remainingCategories, setRemainingCategories] = useState(null);
@@ -52,7 +46,7 @@ const CategoryCreator = ({
     }
   };
 
-    const resetNewCategoryText = () => {
+  const resetNewCategoryText = () => {
     if (newCategoryRef && newCategoryRef.current) {
       newCategoryRef.current.setText(null);
     }
@@ -66,25 +60,7 @@ const CategoryCreator = ({
     }
   }, [selectedFriend, friendDashboardData]);
 
-  // useEffect(() => {
-  //   if (categoryCount < 3) {
-  //     setContainerHeight("100%");
-  //   } else if (categoryCount > 8) {
-  //     setContainerHeight("100%");
-  //   } else {
-  //     setContainerHeight(`100%`);
-  //   }
-  // }, [categoryCount]);
-
   const fetchCategoryLimitData = () => {
-    // if (categoryCount < 3) {
-    //   setContainerHeight("100%");
-    // } else if (categoryCount > 8) {
-    //   setContainerHeight("100%");
-    // } else {
-    //   setContainerHeight(`100%`);
-    // }
-
     try {
       if (friendDashboardData && friendDashboardData.length > 0) {
         const firstFriendData = friendDashboardData[0];
@@ -131,7 +107,7 @@ const CategoryCreator = ({
     } else {
       if (categoryCount > 0) {
         const mostCapsulesCategory = getMostCapsulesCategory();
-      
+
         if (mostCapsulesCategory) {
           setSelectedCategory(mostCapsulesCategory);
         }
@@ -158,7 +134,6 @@ const CategoryCreator = ({
       }
     }
   }, [selectedCategory]);
-
 
   const handleCategoryPress = (category) => {
     setSelectedCategory(category);
@@ -206,18 +181,19 @@ const CategoryCreator = ({
     <View
       style={{
         position: "absolute",
+        backgroundColor: 'red',
+        height: 38,
         width: "100%",
         zIndex: 1000,
         top: "92%",
         transform: [{ translateY: -50 }],
-        alignItems: "center", 
+        alignItems: "center",
       }}
     >
-      {/* <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : 100}
-   
-      > */}
-        {friendDashboardData && capsuleList && categoryNames && !loadingNewFriend && (
+      {show && friendDashboardData &&
+        capsuleList &&
+        categoryNames &&
+        !loadingNewFriend && (
           <>
             <View
               style={[
@@ -231,7 +207,6 @@ const CategoryCreator = ({
                   height: "100%",
                   width: "100%",
                   paddingLeft: "4%",
-                
                 }}
               >
                 {categoryCount > 0 && viewExistingCategories && (
@@ -293,6 +268,7 @@ const CategoryCreator = ({
                   >
                     <SingleLineEnterBox
                       ref={newCategoryRef}
+                      autoFocus={false}
                       onEnterPress={onCategorySelect}
                       onSave={handleNewCategory}
                       title={"New category: "}
@@ -333,8 +309,6 @@ const CategoryCreator = ({
                           setViewExistingCategories((prev) => !prev)
                         }
                       />
-                      {/* <ButtonAddCategory color={themeStyles.subHeaderText.color} onInputValueChange={handleNewCategory} width={32} height={32} />
-                       */}
                     </View>
                   )}
                 </View>
@@ -433,7 +407,6 @@ const CategoryCreator = ({
             />
           </>
         )}
-      {/* </KeyboardAvoidingView> */}
     </View>
   );
 };

@@ -165,10 +165,11 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   title: {
-    fontSize: 15,
+    fontSize: 14,
     lineHeight: 21,
     alignItems: "center",
-    textTransform: "uppercase",
+    fontWeight: 'bold',
+    //textTransform: "uppercase",
     height: "auto",
   },
   helperText: {

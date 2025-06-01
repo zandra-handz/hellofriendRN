@@ -34,7 +34,7 @@ const SpeedDialSmallButtonFasterUI: React.FC<
 }) => {
   const { themeStyles, appFontStyles, appContainerStyles } = useGlobalStyle();
 
-  const overlayBackgroundColor = "rgba(0, 0, 0, 0.6)";
+ 
   return (
     <View
       style={[
@@ -76,8 +76,8 @@ const SpeedDialSmallButtonFasterUI: React.FC<
         {icon}
       </TouchableOpacity>
 <View
-  style={{
-    backgroundColor: overlayBackgroundColor, // semi-transparent black
+  style={[themeStyles.overlayBackgroundColor, {
+    // semi-transparent black
     position: "absolute",
     bottom: -28,
     marginVertical: 2,
@@ -88,7 +88,7 @@ const SpeedDialSmallButtonFasterUI: React.FC<
     flexDirection: "row",
     justifyContent: "center",
     height: 'auto',
-  }}
+  }]}
 >
         <Text
           numberOfLines={1}

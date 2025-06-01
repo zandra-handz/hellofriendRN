@@ -852,10 +852,10 @@ export const deleteMomentAPI = async (data) => {
 };
 
 export const updateMomentAPI = async (friendId, capsuleId, capsuleData) => {
-    console.log(`data in updateMomentApi ${capsuleId}, ${capsuleData}`);
+    console.log(`data in updateMomentApi ${capsuleId}, ${capsuleData?.pre_added_to_hello}`);
     try {
         const response = await helloFriendApiClient.patch(`/friends/${friendId}/thoughtcapsule/${capsuleId}/`, capsuleData);
-        console.log(response.status);
+        console.log(response.data);
         return response.data;
     } catch (error) {
         if (error.response) {
