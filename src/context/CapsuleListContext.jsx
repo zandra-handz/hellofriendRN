@@ -41,26 +41,25 @@ export const useCapsuleList = () => {
 
 export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
-  const { isAuthenticated } = useUser();
+  const { user, isInitializing, isAuthenticated } = useUser();
   const queryClient = useQueryClient();
 
   const [sortedByCategory, setSortedByCategory] = useState([]);
   const [newestFirst, setNewestFirst] = useState([]);
 
   const [resultMessage, setResultMessage] = useState(null); 
-  const [momentIdToAnimate, setMomentIdToAnimate] = useState(null);
-  const [momentIdToUpdate, setMomentIdToUpdate] = useState(null);
-  const [newMomentInput, setNewMomentInput] = useState("");
+  // const [momentIdToAnimate, setMomentIdToAnimate] = useState(null);
+  // const [momentIdToUpdate, setMomentIdToUpdate] = useState(null); 
 
   const { data: sortedCapsuleList = [], isLoading: isCapsuleContextLoading } =
     useQuery({
-      queryKey: ["Moments", selectedFriend?.id],
+      queryKey: ["Moments", user?.id, selectedFriend?.id],
       queryFn: () => fetchMomentsAPI(selectedFriend.id),
-      enabled: !!(selectedFriend && isAuthenticated),
+      enabled: !!(selectedFriend && isAuthenticated && !isInitializing),
       staleTime: 0,
       onSuccess: (data) => {
         const initialCache = queryClient.getQueryData([
-          "Moments",
+          "Moments", user?.id,
           selectedFriend?.id,
         ]);
         //console.log("Initial moments cache after fetch:", initialCache);
@@ -152,9 +151,9 @@ export const CapsuleListProvider = ({ children }) => {
       }),
 
     onSuccess: (data) => {
-      setMomentData(data);
-      setMomentIdToAnimate(data.id);
-       queryClient.getQueryData(["Moments", selectedFriend?.id]);
+      // setMomentData(data);
+      // setMomentIdToAnimate(data.id);
+       queryClient.getQueryData(["Moments", user?.id, selectedFriend?.id]);
          
     updateCacheWithNewPreAdded(data, data?.pre_added_to_hello);
 
@@ -182,14 +181,14 @@ export const CapsuleListProvider = ({ children }) => {
       updateMomentAPI(selectedFriend?.id, capsuleId, capsuleEditData),
 
     onSuccess: (data) => {
-      setMomentData(data);
-      setMomentIdToUpdate(data.id);
+      // setMomentData(data);
+      // setMomentIdToUpdate(data.id);
 
-      queryClient.invalidateQueries(["Moments", selectedFriend?.id]);
+      queryClient.invalidateQueries(["Moments", user?.id, selectedFriend?.id]);
       // queryClient.refetchQueries(["Moments", selectedFriend?.id]);
 
       queryClient.setQueryData(
-        ["Moments", selectedFriend?.id],
+        ["Moments", user?.id, selectedFriend?.id],
         (oldMoments) => {
           // console.log("Old moments:", oldMoments);
 
@@ -235,7 +234,7 @@ const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
   // console.log(isPreAdded);
 
   queryClient.setQueryData(
-    ["Moments", selectedFriend?.id],
+    ["Moments", user?.id, selectedFriend?.id],
     (oldMoments) => {
       if (!oldMoments) return [{ ...momentData, preAdded: isPreAdded }];
 
@@ -301,7 +300,7 @@ const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
   const updateCacheWithEditedMoment = () => {
     if (momentData) {
       queryClient.setQueryData(
-        ["Moments", selectedFriend?.id],
+        ["Moments", user?.id, selectedFriend?.id],
         (oldMoments) => {
           if (!oldMoments) return [momentData];
 
@@ -335,7 +334,7 @@ const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
     mutationFn: (updatedCapsules) =>
       updateMultMomentsAPI(selectedFriend?.id, updatedCapsules),
     onSuccess: () =>  
-      queryClient.invalidateQueries(["Moments", selectedFriend?.id]),
+      queryClient.invalidateQueries(["Moments", user?.id, selectedFriend?.id]),
    
     onError: (error) => console.error("Error updating capsule:", error),
   });
@@ -365,7 +364,7 @@ const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
         preAdded: data.pre_added_to_hello,
       };
 
-      queryClient.setQueryData(["Moments", selectedFriend?.id], (old) =>
+      queryClient.setQueryData(["Moments", user?.id, selectedFriend?.id], (old) =>
         old ? [formattedMoment, ...old] : [formattedMoment]
       );
 
@@ -381,8 +380,7 @@ const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
       }
       timeoutRef.current = setTimeout(() => {
         createMomentMutation.reset();
-        // setCloseResultMessage(true);
-        setNewMomentInput("");
+        // setCloseResultMessage(true); 
         setResultMessage(null);
       }, 500);
     },
@@ -428,7 +426,7 @@ const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
     onSuccess: (data) => {
       //console.log("data", data);
 
-      queryClient.setQueryData(["Moments", selectedFriend?.id], (old) => {
+      queryClient.setQueryData(["Moments", user?.id, selectedFriend?.id], (old) => {
         return old ? old.filter((moment) => moment.id !== data.id) : [];
       });
       setResultMessage("Moment deleted!");
@@ -439,8 +437,7 @@ const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
 
       timeoutRef.current = setTimeout(() => {
         deleteMomentMutation.reset();
-        //  setCloseResultMessage(true);
-        setNewMomentInput("");
+        //  setCloseResultMessage(true); 
         setResultMessage(null);
       }, 500);
     },
@@ -468,7 +465,7 @@ const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
   //   [deleteMomentMutation.isPending];
 
   const removeCapsules = (capsuleIdsToRemove) => {
-    queryClient.setQueryData(["Moments", selectedFriend?.id], (oldCapsules) =>
+    queryClient.setQueryData(["Moments", user?.id, selectedFriend?.id], (oldCapsules) =>
       oldCapsules.filter((capsule) => !capsuleIdsToRemove.includes(capsule.id))
     );
   };
@@ -519,10 +516,10 @@ const updateCacheWithNewPreAdded = (momentData, isPreAdded) => {
         updateCacheWithEditedMoment,
         sortByCategory,
         sortNewestFirst,
-        momentIdToAnimate,
-        setMomentIdToAnimate,
-        momentIdToUpdate,
-        setMomentIdToUpdate,
+        // momentIdToAnimate,
+        // setMomentIdToAnimate,
+        // momentIdToUpdate,
+        // setMomentIdToUpdate,
       }}
     >
       {children}

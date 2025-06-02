@@ -23,7 +23,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
   } = useQuery({
     queryKey: ["upcomingHelloes", user?.id],
     queryFn: () => fetchUpcomingHelloes(),
-    enabled: !!isAuthenticated && !isInitializing,
+    enabled: isAuthenticated && !isInitializing,
     onSuccess: (data) => {
       if (!data) {
         return;

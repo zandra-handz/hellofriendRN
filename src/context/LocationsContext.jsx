@@ -34,7 +34,7 @@ export const LocationsProvider = ({ children }) => {
   const [additionalDetails, setAdditionalDetails] = useState(null);
   const [loadingAdditionalDetails, setLoadingAdditionalDetails] =
     useState(false); 
-  const { user, isAuthenticated } = useUser();
+  const { user, isAuthenticated, isInitializing } = useUser();
   const queryClient = useQueryClient();
   const [isDeletingLocation, setIsDeletingLocation] = useState(false);
 
@@ -52,9 +52,9 @@ export const LocationsProvider = ({ children }) => {
     isSuccess,
     isError,
   } = useQuery({
-    queryKey: ["locationList"],
+    queryKey: ["locationList", user?.id],
     queryFn: () => fetchAllLocations(),
-    enabled: !!(user && isAuthenticated),
+    enabled: !!(user && isAuthenticated && !isInitializing),
     onSuccess: (data) => {
       //console.log('Raw data in RQ onSuccess:', data);
       if (!data) {
@@ -78,7 +78,7 @@ export const LocationsProvider = ({ children }) => {
       setValidatedLocationList(validated);
       setSavedLocationList(saved);
 
-      queryClient.setQueryData(["locationCategories"], () => {
+      queryClient.setQueryData(["locationCategories", user?.id], () => {
         const uniqueCategories = Array.from(
           new Set(
             data
@@ -120,7 +120,7 @@ export const LocationsProvider = ({ children }) => {
   //MIGHT NEED TO REFETCH THIS DATA IF NO LONGER IN CACHE
   useEffect(() => {
     if (locationList) {
-      queryClient.setQueryData(["locationCategories"], (oldData) => {
+      queryClient.setQueryData(["locationCategories", user?.id], (oldData) => {
         // Assuming `location` is an array of objects with a `category` field
         const locationCategories = locationList.map((loc) => loc.category);
 
@@ -140,7 +140,7 @@ export const LocationsProvider = ({ children }) => {
   const createLocationMutation = useMutation({
     mutationFn: (data) => createLocation(data),
     onSuccess: (data) => {
-      queryClient.setQueryData(["locationList"], (old) => {
+      queryClient.setQueryData(["locationList", user?.id], (old) => {
         const updatedList = old ? [data, ...old] : [data];
         return updatedList;
       });
@@ -192,7 +192,7 @@ export const LocationsProvider = ({ children }) => {
   const updateLocationMutation = useMutation({
     mutationFn: ({ id, ...locationData }) => updateLocation(id, locationData),
     onSuccess: (data) => {
-      queryClient.setQueryData(["locationList"], (old) => {
+      queryClient.setQueryData(["locationList", user?.id], (old) => {
         if (!old) return [data];
         return old.map((location) =>
           location.id === data.id ? { ...location, ...data } : location
@@ -216,7 +216,7 @@ export const LocationsProvider = ({ children }) => {
   const accessLocationListCacheData = () => {
     if (isSuccess) {
       try {
-        const locationCache = queryClient.getQueryData(["locationList"]);
+        const locationCache = queryClient.getQueryData(["locationList", user?.id]);
         return locationCache;
       } catch (error) {
         console.error("no location cached data");
@@ -402,14 +402,14 @@ export const LocationsProvider = ({ children }) => {
     mutationFn: (data) => deleteLocation(data),
 
     onSuccess: (data) => {
-      queryClient.setQueryData(["locationList"], (old) => {
+      queryClient.setQueryData(["locationList", user?.id], (old) => {
         const updatedList = old
           ? old.filter((location) => location.id !== data.id)
           : [];
         return updatedList;
       });
 
-      queryClient.invalidateQueries(["locationList"]); 
+      queryClient.invalidateQueries(["locationList", user?.id]); 
     },
     onError: (error) => {
       console.error("Error deleting location:", error);

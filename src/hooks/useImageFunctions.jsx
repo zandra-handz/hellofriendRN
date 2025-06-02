@@ -8,16 +8,18 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";  
 import { useMessage } from "@/src/context/MessageContext";
+import { useUser } from "../context/UserContext";
 
 const useImageFunctions = () => {
   const { selectedFriend } = useSelectedFriend();
+  const { user, isAuthenticated, isInitializing } = useUser();
   const queryClient = useQueryClient();
   const { showMessage } = useMessage();
 
   const { data: imageList = [], isLoading: isImageContextLoading } = useQuery({
-    queryKey: ["friendImages", selectedFriend?.id],
+    queryKey: ["friendImages", user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendImagesByCategory(selectedFriend.id),
-    enabled: !!selectedFriend, 
+    enabled: !!(selectedFriend && isAuthenticated && !isInitializing), 
     select: (imagesData) => { 
       const flattenedImages = [];
       Object.keys(imagesData).forEach((category) => {
@@ -45,7 +47,7 @@ const useImageFunctions = () => {
     mutationFn: (imageData) =>
       updateFriendImage(selectedFriend.id, imageData.id, imageData.updatedData), // Pass friendId and imageId
     onSuccess: () => {
-      queryClient.invalidateQueries(["friendImages", selectedFriend?.id]);
+      queryClient.invalidateQueries(["friendImages"]);
     },
     onError: (error) => {
       console.error("Error updating image:", error);
@@ -60,7 +62,7 @@ const useImageFunctions = () => {
     mutationFn: (id) => deleteFriendImage(selectedFriend.id, id), // Pass friendId and imageId
     onSuccess: () => {
       showMessage(true, null, "Image deleted!");
-      queryClient.invalidateQueries(["friendImages", selectedFriend?.id]);
+      queryClient.invalidateQueries(["friendImages"]);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -91,7 +93,7 @@ const useImageFunctions = () => {
     mutationFn: (formData) => createFriendImage(selectedFriend.id, formData), // Use the imported function
     onSuccess: () => {
       showMessage(true, null, "Image uploaded!");
-      queryClient.invalidateQueries(["friendImages", selectedFriend?.id]);
+      queryClient.invalidateQueries(["friendImages"]);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
