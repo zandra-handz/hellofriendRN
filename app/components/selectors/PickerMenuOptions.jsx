@@ -23,6 +23,7 @@ const PickerMenuOptions = ({
   useSvg = true,
   svgIcons = [],
   labels = [], 
+  height = 100,
 }) => { 
 
  
@@ -35,15 +36,14 @@ const PickerMenuOptions = ({
 
   return (
     <View style={[
-      styles.container, 
+      styles.container, {height: height}
       // themeStyles.genericTextBackgroundShadeTwo
       ]}>
       <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          width: "100%",
-          height: "auto",
+          width: "100%", 
         }}
       >
         <Text style={[styles.title, themeStyles.genericText]}>{title}</Text>
@@ -60,7 +60,7 @@ const PickerMenuOptions = ({
                   themeStyles.genericIcon,
                   themeStyles.genericTextBackgroundShadeTwo,
                   {
-                    height: oneThirteenthHeight,
+                    height: '100%',
                     borderColor: themeStyles.genericText.color,
                   },
                   selectedOption === index && [
@@ -217,10 +217,10 @@ const styles = StyleSheet.create({
     //height: "auto",
     borderRadius: 10,
     alignSelf: "center",
-    padding: 10,
+    padding: 0,
     overflow: "hidden",
 
-    //backgroundColor: 'red',
+  //  backgroundColor: 'red',
   },
   title: {
     fontSize: 15,

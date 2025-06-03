@@ -14,6 +14,7 @@ const BodyStyling = ({
   transparentBackground = false,
   transparentBorder = false,
   children,
+  justifyContent = 'space-between',
 }) => {
   const { themeStyles, appContainerStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
@@ -24,7 +25,7 @@ const BodyStyling = ({
         appContainerStyles.bodyContainer,
         // themeStyles.genericTextBackground,
         {
-          
+          justifyContent: justifyContent,
           backgroundColor: transparentBackground
             ? "transparent"
             : themeStyles.genericTextBackground.backgroundColor,

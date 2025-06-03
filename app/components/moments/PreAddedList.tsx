@@ -27,6 +27,7 @@ const PreAddedList = () => {
           // themeStyles.overlayBackgroundColor,
           {
             height: isSelected? 'auto' : ITEM_HEIGHT,
+            minHeight: ITEM_HEIGHT,
             flexDirection: "row",
             width: "100%", 
             paddingRight: 0,
@@ -63,7 +64,7 @@ const PreAddedList = () => {
 
 //   }, [updateCapsuleMutation]);
 
-  const filterNonAdded = allCapsulesList.filter((capsule) =>
+  const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)
   );
 
@@ -91,7 +92,7 @@ const handleRestore = () => {
   };
 
   const extractItemKey = (item, index) =>
-    item?.id ? item.id.toString() : `placeholder-${index}`;
+    item?.id ? item.id.toString() : `preAdded-${index}`;
 
   //   const getItemLayout = (item, index) => {
   //     return {
@@ -105,7 +106,7 @@ const handleRestore = () => {
     <>
     <View style={[themeStyles.overlayBackgroundColor,{ flex: 1, width: 500 }]}>
       <FlashList
-        data={filterNonAdded} 
+        data={filterOutNonAdded} 
         estimatedItemSize={90}
         renderItem={renderListItem}
         keyExtractor={extractItemKey}

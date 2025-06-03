@@ -5,18 +5,18 @@ import { useNavigation } from "@react-navigation/native";
   import { Feather } from "@expo/vector-icons";
  
 
-interface AddMomentButtonProps {
-    disabled?: boolean;
+interface AddHelloButtonProps {
+    disabled: boolean;
 }
 
-const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false}) => {
+const AddHelloButton: React.FC<AddHelloButtonProps> = ({disabled}) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
 
   const viewSvg = true;
 
   const handleGoToMomentScreen = () => {
-    navigation.navigate("MomentFocus");
+    navigation.navigate("AddHello");
   };
 
   return (
@@ -32,11 +32,11 @@ const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false}) => {
           },
         ]}
       >
-        {!viewSvg && (
+        {/* {!viewSvg && (
           <Text style={[styles.controlButtonText, themeStyles.footerText]}>
             Add moment
           </Text>
-        )}
+        )} */}
         {viewSvg && (
           <>
             {/* <View style={{ position: "absolute", bottom: 13, right: 4 }}>
@@ -108,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddMomentButton;
+export default AddHelloButton;

@@ -34,7 +34,7 @@ const PickerHelloType = ({
    return (  
             <PickerMenuOptions
                 options={typeChoices}
-                title={'PICK TYPE'}
+                title={' '} // 'PICK TYPE
                 widthForHorizontal={widthInPercentage}
                 containerText={containerText}
                 onSelectOption={onTypeChoiceChange}
@@ -42,6 +42,7 @@ const PickerHelloType = ({
                 useSvg={useSvg}
                 svgIcons={svgIcons} 
                 labels={labels}
+                height={120}
             />  
 
    );

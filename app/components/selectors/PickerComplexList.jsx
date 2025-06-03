@@ -123,7 +123,7 @@ const PickerComplexList = ({
 
   return (
     <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
-      <View
+      {/* <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
@@ -132,7 +132,7 @@ const PickerComplexList = ({
         }}
       >
         <Text style={[styles.title, themeStyles.genericText]}>{title}</Text>
-      </View>
+      </View> */}
       <TouchableOpacity
         style={[styles.button, themeStyles.genericTextBackgroundShadeTwo]}
         onPress={() => setModalVisible(true)}
@@ -238,7 +238,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     //margin: "4%",
     alignSelf: "center",
-    padding: 20,
+    //padding: 20,
+    height: 'auto',
   },
   inlineContainer: {
     flexDirection: "row",

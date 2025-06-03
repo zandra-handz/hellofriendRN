@@ -4,7 +4,7 @@
 import React, {
   useState,
   useEffect,
-  useLayoutEffect,
+  useCallback,
   useRef,
   useMemo,
 } from "react";
@@ -15,40 +15,41 @@ import {
   TouchableOpacity,
   Keyboard,
   Dimensions,
-} from "react-native"; 
+} from "react-native";
 import { useMessage } from "@/src/context/MessageContext";
 
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
-
-import FriendModalIntegrator from "../friends/FriendModalIntegrator";
-
+import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
+import TitleContainerUI from "./TitleContainerUI";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
-
-import PickerMultiMoments from "../selectors/PickerMultiMoments";
-
 import { useHelloes } from "@/src/context/HelloesContext";
 import { useLocations } from "@/src/context/LocationsContext";
-
 import Icon from "react-native-vector-icons/FontAwesome";
 import PickerDate from "../selectors/PickerDate";
 import PickerHelloType from "../selectors/PickerHelloType";
 import PickerHelloLocation from "../selectors/PickerHelloLocation";
-
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
 import DoubleChecker from "@/app/components/alerts/DoubleChecker";
-
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
- 
+import { useFocusEffect } from "@react-navigation/native";
+import { Title } from "react-native-paper";
 
 const ContentAddHello = () => {
   const navigation = useNavigation();
 
   const { showMessage } = useMessage();
+  const { preAdded, allCapsulesList } = useCapsuleList();
 
+  const filterOutNonAdded = allCapsulesList.filter((capsule) =>
+    preAdded?.includes(capsule.id)
+  );
+
+  const [momentsAdded, setMomentsAdded] = useState([]);
   const { createHelloMutation, handleCreateHello } = useHelloes();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -74,19 +75,27 @@ const ContentAddHello = () => {
   const [existingLocationId, setExistingLocationId] = useState("");
   const [customLocation, setCustomLocation] = useState("");
   const [locationModalVisible, setLocationModalVisible] = useState(false);
-  const [momentsSelected, setMomentsSelected] = useState([]);
   const [deleteMoments, setDeleteMoments] = useState(false);
 
   const editedTextRef = useRef(null);
 
-  const {  height } = Dimensions.get("window");
- 
+  const { height } = Dimensions.get("window");
+
   const oneSeventhHeight = height / 7;
   const oneHalfHeight = height / 2; //notes when keyboard is up
 
   const { locationList, locationListIsSuccess } = useLocations();
 
- 
+  useFocusEffect(
+    useCallback(() => {
+      // const moments = filterOutNonAdded;
+      setMomentsAdded(filterOutNonAdded);
+      return () => {
+        setMomentsAdded([]);
+      };
+    }, [allCapsulesList])
+  );
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -132,13 +141,13 @@ const ContentAddHello = () => {
     }
   }, [createHelloMutation.isSuccess]);
 
-  useLayoutEffect(() => {
-    showMessage(
-      true,
-      null,
-      "Changes made on this page will not be saved if you exit."
-    ); 
-  }, []);
+  // useLayoutEffect(() => {
+  //   showMessage(
+  //     true,
+  //     null,
+  //     "Changes made on this page will not be saved if you exit."
+  //   );
+  // }, []);
 
   const toggleDeleteMoments = () => {
     setDeleteMoments(!deleteMoments);
@@ -151,7 +160,6 @@ const ContentAddHello = () => {
   const updateNoteEditString = (text) => {
     if (editedTextRef && editedTextRef.current) {
       editedTextRef.current.setText(text);
-      console.log("in parent", editedTextRef.current.getText());
     }
   };
 
@@ -166,7 +174,6 @@ const ContentAddHello = () => {
 
     setHelloDate(dateWithoutTime);
     setShowDatePicker(false);
-    console.log(dateWithoutTime);
   };
 
   const handleLocationChange = (item) => {
@@ -188,33 +195,27 @@ const ContentAddHello = () => {
   const handleTypeChoiceChange = (index) => {
     setSelectedTypeChoice(index);
     setSelectedTypeChoiceText(`${typeChoices[index]}`);
-    console.log(`Hello type selected: ${typeChoices[index]}`);
 
     if (index === 1 || index === 2) {
-      console.log("open location modal");
+      // console.log("open location modal");
 
       toggleLocationModal();
     } else {
       setSelectedHelloLocation("None");
     }
-    console.log(index);
+    // console.log(index);
   };
 
   const toggleLocationModal = () => {
     setLocationModalVisible(!locationModalVisible);
   };
 
-  const handleMomentSelect = (selectedMoments) => {
-    setMomentsSelected(selectedMoments);
-    //console.log("Selected Moments in Parent:", selectedMoments);
-  };
-
-  const handleSave =   () => {
+  const handleSave = () => {
     try {
       if (selectedFriend) {
         const formattedDate = helloDate.toISOString().split("T")[0];
         const momentsDictionary = {};
-        momentsSelected.forEach((moment) => {
+        momentsAdded.forEach((moment) => {
           momentsDictionary[moment.id] = {
             typed_category: moment.typedCategory,
             capsule: moment.capsule,
@@ -231,7 +232,7 @@ const ContentAddHello = () => {
           deleteMoments: deleteMoments ? true : false,
         };
 
-          handleCreateHello(requestData);
+        handleCreateHello(requestData);
       }
     } catch (error) {
       console.log("catching errors elsewhere, not sure i need this", error);
@@ -245,8 +246,6 @@ const ContentAddHello = () => {
   }, [createHelloMutation.isError]);
 
   return (
-
-      
     <View style={[styles.container]}>
       <>
         <View
@@ -254,27 +253,19 @@ const ContentAddHello = () => {
             width: "100%",
 
             flexDirection: "column",
-            justifyContent: "space-between",
           }}
         >
           <BelowHeaderContainer
-            height={30}
-            minHeight={30}
-            maxHeight={30}
+            height={10}
+            minHeight={10}
+            maxHeight={10}
             alignItems="center"
             marginBottom="2%"
             justifyContent="center"
-            children={
-              <FriendModalIntegrator
-                includeLabel={true}
-                navigationDisabled={true}
-                width="100%"
-              />
-            }
           />
 
           <BodyStyling
-            height={"97%"}
+            height={"100%"}
             width={"100%"}
             minHeight={"96%"}
             paddingTop={0}
@@ -284,11 +275,17 @@ const ContentAddHello = () => {
                 <View style={styles.paddingForElements}>
                   <>
                     {!isKeyboardVisible && (
-                      <PickerHelloType
-                        containerText=""
-                        selectedTypeChoice={selectedTypeChoice}
-                        onTypeChoiceChange={handleTypeChoiceChange}
-                        useSvg={true}
+                      <TitleContainerUI
+                        height={140}
+                        title={"Type"}
+                        children={
+                          <PickerHelloType
+                            containerText=""
+                            selectedTypeChoice={selectedTypeChoice}
+                            onTypeChoiceChange={handleTypeChoiceChange}
+                            useSvg={true}
+                          />
+                        }
                       />
                     )}
 
@@ -298,16 +295,20 @@ const ContentAddHello = () => {
                           {!isKeyboardVisible && (
                             <>
                               {locationListIsSuccess && (
-                                <View style={{}}>
-                                  <PickerHelloLocation
-                                    faveLocations={faveLocations}
-                                    savedLocations={locationList}
-                                    onLocationChange={handleLocationChange}
-                                    modalVisible={locationModalVisible}
-                                    setModalVisible={setLocationModalVisible}
-                                    selectedLocation={selectedHelloLocation}
-                                  />
-                                </View>
+                                <TitleContainerUI
+                                  height={60}
+                                  title={"Location"}
+                                  children={
+                                    <PickerHelloLocation
+                                      faveLocations={faveLocations}
+                                      savedLocations={locationList}
+                                      onLocationChange={handleLocationChange}
+                                      modalVisible={locationModalVisible}
+                                      setModalVisible={setLocationModalVisible}
+                                      selectedLocation={selectedHelloLocation}
+                                    />
+                                  }
+                                />
                               )}
                             </>
                           )}
@@ -353,9 +354,7 @@ const ContentAddHello = () => {
                           />
 
                           <View style={{}}>
-                            <PickerMultiMoments
-                              onMomentSelect={handleMomentSelect}
-                            />
+                            <TotalMomentsAddedUI momentsAdded={momentsAdded} />
                           </View>
                           <View style={[styles.deleteRemainingContainer]}>
                             <TouchableOpacity
@@ -404,7 +403,6 @@ const ContentAddHello = () => {
                           isDisabled={
                             selectedFriend && !loadingNewFriend ? false : true
                           }
-                          fontFamily={"Poppins-Bold"}
                           image={require("@/app/assets/shapes/redheadcoffee.png")}
                         />
                       )}
@@ -447,7 +445,6 @@ const ContentAddHello = () => {
         )}
       </>
     </View>
-     
   );
 };
 
@@ -455,7 +452,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    justifyContent: "space-between",
+
     zIndex: 1,
   },
   loadingWrapper: {
@@ -485,8 +482,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   deleteRemainingContainer: {
-    position: "absolute",
-    bottom: 0,
+    // position: "absolute",
+    // bottom: 0,
     flexDirection: "row",
     justifyContent: "flex-end",
     width: "100%",
@@ -497,7 +494,7 @@ const styles = StyleSheet.create({
     //backgroundColor: 'pink',
     paddingBottom: "5%",
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
   },
   checkbox: {
     paddingLeft: 10,

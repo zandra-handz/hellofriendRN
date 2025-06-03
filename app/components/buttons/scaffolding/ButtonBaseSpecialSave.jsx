@@ -9,34 +9,19 @@ const ButtonBaseSpecialSave = ({
   label = "ADD NEW IMAGE",
   labelSize = 20,
   height = "100%",
-  fontFamily = "Poppins-Bold",
+  fontFamily = "Poppins-Regular",
   maxHeight = 90,
   imageSize = 90,
   image = require("@/app/assets/shapes/chatmountain.png"),
   imagePositionHorizontal = 0,
   imagePositionVertical = 8,
   borderColor = "transparent",
-  borderRadius = 10,
-  darkColor = "#4caf50",
-  lightColor = "rgb(160, 241, 67)",
+  borderRadius = 10, 
   isDisabled = true,
-}) => {
-  const globalStyles = useGlobalStyle();
+}) => { 
 
-  const adjustFontSize = (fontSize) => {
-    return globalStyles.fontSize === 20 ? fontSize + 2 : fontSize;
-  };
-
-  const textStyles = (fontSize, color) => ({
-    fontSize: adjustFontSize(fontSize),
-    color,
-    ...(globalStyles.highContrast && {
-      textShadowColor: "rgba(0, 0, 0, 0.75)",
-      textShadowOffset: { width: 2, height: 2 },
-      textShadowRadius: 1,
-    }),
-  });
-
+  const { manualGradientColors } = useGlobalStyle();
+ 
   return (
     <TouchableOpacity
       onPress={isDisabled ? null : onPress}
@@ -52,8 +37,8 @@ const ButtonBaseSpecialSave = ({
     >
       <LinearGradient
         colors={[
-          isDisabled ? "gray" : darkColor,
-          isDisabled ? "gray" : lightColor,
+          isDisabled ? "gray" : manualGradientColors.darkColor,
+          isDisabled ? "gray" : manualGradientColors.lightColor,
         ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -76,12 +61,12 @@ const ButtonBaseSpecialSave = ({
       )}
 
       <Text
-        style={[
-          textStyles(labelSize, "black"),
+        style={[ 
           {
             fontFamily: fontFamily,
             textTransform: "uppercase",
             paddingRight: 20,
+            fontSize: labelSize,
           },
         ]}
       >

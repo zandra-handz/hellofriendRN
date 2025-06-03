@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { View } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import SafeView from "@/app/components/appwide/format/SafeView";
-import MomentsList from "@/app/components/moments/MomentsList";
+import SafeView from "@/app/components/appwide/format/SafeView"; 
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
@@ -10,17 +9,33 @@ import GradientBackground from "@/app/components/appwide/display/GradientBackgro
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
-import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
- import { MaterialCommunityIcons } from "@expo/vector-icons";
-import SpeedDialDelux from "@/app/components/buttons/speeddial/SpeedDialDelux"; 
-import AddMomentButton from "@/app/components/buttons/moments/AddMomentButton";
-
-const ScreenMoments = () => {
-  const { capsuleList } = useCapsuleList();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+import { useNavigation } from "@react-navigation/native"; 
+import PreAddedList from "@/app/components/moments/PreAddedList";
+import FinalizeList from "@/app/components/moments/FinalizeList";
+import AddHelloButton from "@/app/components/buttons/helloes/AddHelloButton";
+import { useFocusEffect } from "@react-navigation/native";
+import { Moment } from "@/src/types/MomentContextTypes";
+const ScreenFinalize = () => {
+  const {  allCapsulesList, capsuleList, preAdded  } = useCapsuleList();
+  
+  const { selectedFriend, loadingNewFriend, FriendDashboardData } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
+  const [ uniqueCategories, setUniqueCategories ] = useState<string[]>([]);
   const navigation = useNavigation();
+
+useFocusEffect(
+  useCallback(() => {
+    const categories: string[] = [
+      ...new Set(
+        allCapsulesList.map((moment: Moment) => moment.typedCategory)
+      ),
+    ];
+    setUniqueCategories(categories);
+    return () => {
+        setUniqueCategories([]);
+    };
+  }, [allCapsulesList])
+);
 
   return (
     <SafeView style={{ flex: 1 }}>
@@ -38,33 +53,22 @@ const ScreenMoments = () => {
           <>
         <GlobalAppHeader
           //title={"MOMENTS: "}
-          title={""}
-          navigateTo={"Moments"}
+          title={"Add to hello for "}
+          navigateTo={"Helloes"}
           icon={LeavesTwoFallingOutlineThickerSvg}
           altView={false}
           altViewIcon={LeafSingleOutlineThickerSvg}
         />
-        <View style={{ flex: 1 }}>{capsuleList && <MomentsList />}</View>
+
+
+        <View style={{ flex: 1 }}>{preAdded && uniqueCategories?.length > 0 && <FinalizeList data={allCapsulesList} preSelected={preAdded} categories={uniqueCategories}/>}</View>
         
           </>
-        )}
-        {selectedFriend && (
-          
-        <SpeedDialDelux
-            rootIcon={AddOutlineSvg}
-            topIcon={AddOutlineSvg}
-            topOnPress={() => navigation.navigate('LocationSearch')} // selectedFriend needed for this screen I believe
-            midIcon={<MaterialCommunityIcons
-                      name="hand-wave-outline"/>}
-            midOnPress={() =>  navigation.navigate('Finalize')}
-           deluxButton={<AddMomentButton/>} 
-              />
-              
-        )}
+        )}  
 
       </GradientBackground>
     </SafeView>
   );
 };
 
-export default ScreenMoments;
+export default ScreenFinalize;
