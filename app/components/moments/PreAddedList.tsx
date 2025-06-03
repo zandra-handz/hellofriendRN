@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { FlashList } from "@shopify/flash-list";
@@ -15,31 +15,44 @@ const PreAddedList = () => {
   const { updateCapsule, capsuleList, preAdded, allCapsulesList, updateCapsuleMutation } =
     useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
+
   const renderListItem = ({ item, index }) => {
+    
+
+    const isSelected = !!(selectedMoments.find((moment) => moment.id === item.id));
+
     return (
       <View
         style={[
-          themeStyles.overlayBackgroundColor,
+          // themeStyles.overlayBackgroundColor,
           {
-            height: ITEM_HEIGHT,
+            height: isSelected? 'auto' : ITEM_HEIGHT,
             flexDirection: "row",
-            width: "100%",
-            padding: 20,
+            width: "100%", 
             paddingRight: 0,
+            paddingVertical: 10,
             overflow: "hidden",
+            backgroundColor: isSelected ? manualGradientColors.homeDarkColor : 'transparent',
           },
         ]}
       >
-        <View style={{ width: "70%" }}>
-          <Text numberOfLines={2} style={[themeStyles.primaryText, {fontSize: 13}]}>
+        {/* <View style={{ width: "0%" }}>
+          <Text numberOfLines={2} style={[{color: isSelected? manualGradientColors.lightColor : themeStyles.primaryText.color, fontSize: 13}]}>
             {item?.capsule}
           </Text>
-        </View>
-        <View style={{ height: 30, width: "30&",  alignItems: 'center', justifyContent: 'center' }}>
+        </View> */}
+        <View style={{ height: '100%', width:  400, alignItems: 'center', justifyContent: 'center' }}>
           <CheckBox
             checked={selectedMoments?.includes(item)}
             onPress={() => handleCheckboxChange(item)}
-            containerStyle={{ margin: 0, padding: 0 }}
+            title={`#${item.typedCategory} - ${item.capsule}`}
+            containerStyle={{  borderWidth: 0, backgroundColor: isSelected ? manualGradientColors.homeDarkColor : 'transparent',  padding: 0, flex: 1, width: '100%' }}
+           wrapperStyle={{  height: '100%', lexDirection: 'row', justifyContent: 'space-between'}}
+           textStyle={{width: '82%', color: isSelected? manualGradientColors.lightColor : themeStyles.primaryText.color, fontSize: 13}}
+           uncheckedColor={themeStyles.primaryText.color}
+            checkedColor={manualGradientColors.lightColor}
+           iconRight={true}
+           right={true}
           />
         </View>
       </View>
@@ -90,9 +103,9 @@ const handleRestore = () => {
 
   return (
     <>
-    <View style={{ height: 500, width: 500 }}>
+    <View style={[themeStyles.overlayBackgroundColor,{ flex: 1, width: 500 }]}>
       <FlashList
-        data={filterNonAdded}
+        data={filterNonAdded} 
         estimatedItemSize={90}
         renderItem={renderListItem}
         keyExtractor={extractItemKey}
@@ -105,7 +118,7 @@ const handleRestore = () => {
         ListFooterComponent={() => <View style={{ height: 100 }} />}
       />
     </View>
-    <TouchableOpacity onPress={handleRestore} style={[{width: '100%', height: 'auto', alignItems: 'center', padding: 10, borderRadius: 20, backgroundColor: manualGradientColors.homeDarkColor}]}>
+    <TouchableOpacity onPress={handleRestore} style={[{width: '100%', height: 'auto', position: 'absolute', bottom: 0, alignItems: 'center', padding: 10, borderRadius: 20, backgroundColor: manualGradientColors.homeDarkColor}]}>
         <Text style={{color: manualGradientColors.lightColor}}>
             Restore
         </Text>

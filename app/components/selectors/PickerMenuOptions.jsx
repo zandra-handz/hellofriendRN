@@ -8,8 +8,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  FlatList,
-  Dimensions,
+  FlatList, 
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -24,20 +23,21 @@ const PickerMenuOptions = ({
   useSvg = true,
   svgIcons = [],
   labels = [], 
-}) => {
-  const { width, height } = Dimensions.get("window");
+}) => { 
 
-  // Calculate 1/5 of the screen's width and height
-  const oneFifthWidth = width / 5; //button width for FlatList version
-  const oneFourthWidth = width / 4.3; //button width for fewer than 5 options/no flatlist
-  const oneThirteenthHeight = height / 13; //just used for non-Flatlist.
-  //I think FlatList buttons are slightly taller
+ 
+  const oneFifthWidth = '23%';  
+  const oneFourthWidth = '25%'; 
+  const oneThirteenthHeight = 'auto';  
 
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
 
   return (
-    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
+    <View style={[
+      styles.container, 
+      // themeStyles.genericTextBackgroundShadeTwo
+      ]}>
       <View
         style={{
           flexDirection: "row",
@@ -67,8 +67,8 @@ const PickerMenuOptions = ({
                     styles.selectedOptionButton,
                     {
                       borderWidth: 1,
-                      borderColor: themeAheadOfLoading.darkColor,
-                      backgroundColor: themeAheadOfLoading.darkColor,
+                      borderColor: manualGradientColors.lightColor,
+                      backgroundColor: manualGradientColors.homeDarkColor,
                     },
                   ],
 
@@ -84,7 +84,7 @@ const PickerMenuOptions = ({
                         height: 24,
                         color:
                           selectedOption === index
-                            ? themeAheadOfLoading.fontColor
+                            ? manualGradientColors.lightColor
                             : themeStyles.genericText.color,
                       })}
 
@@ -95,7 +95,7 @@ const PickerMenuOptions = ({
                             {
                               color:
                                 selectedOption === index
-                                  ? themeAheadOfLoading.fontColor
+                                  ? manualGradientColors.lightColor
                                   : themeStyles.genericText.color,
                             },
                             selectedOption === index &&
@@ -215,9 +215,9 @@ const styles = StyleSheet.create({
     width: "100%",
     //flex: 1,
     //height: "auto",
-    borderRadius: 30,
+    borderRadius: 10,
     alignSelf: "center",
-    padding: 20,
+    padding: 10,
     overflow: "hidden",
 
     //backgroundColor: 'red',
@@ -260,6 +260,7 @@ const styles = StyleSheet.create({
   optionContent: {
     flexDirection: "row",
     width: "100%",
+    padding: 8,
   },
   labelBelow: {
     width: "100%",

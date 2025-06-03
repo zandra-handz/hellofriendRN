@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     //flex: 1,
-    borderRadius: 30,
+    borderRadius: 10,
     //margin: "4%",
     alignSelf: "center",
     padding: 20,

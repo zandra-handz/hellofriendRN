@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     width: "100%",
     //flex: 1,
     height: "auto",
-    borderRadius: 30, 
+    borderRadius: 10, 
     alignSelf: "center",
     padding: 20,
     overflow: "hidden",

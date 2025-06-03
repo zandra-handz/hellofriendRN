@@ -274,11 +274,11 @@ const ContentAddHello = () => {
           />
 
           <BodyStyling
-            height={"96%"}
-            width={"101%"}
+            height={"97%"}
+            width={"100%"}
             minHeight={"96%"}
-            paddingTop={"4%"}
-            paddingHorizontal={"0%"} //too much padding will cause the Type picker to flow to next line
+            paddingTop={0}
+            paddingHorizontal={0} //too much padding will cause the Type picker to flow to next line
             children={
               <>
                 <View style={styles.paddingForElements}>
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   paddingForElements: {
-    paddingHorizontal: "4%",
+    paddingHorizontal: 0,
     flex: 1,
     //backgroundColor: 'pink',
     paddingBottom: "5%",

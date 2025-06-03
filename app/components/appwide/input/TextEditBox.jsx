@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     padding: "4%",
   },
   container: {
-    borderRadius: 30,
+    borderRadius: 10,
     alignSelf: "center",
     padding: 20,
   },
