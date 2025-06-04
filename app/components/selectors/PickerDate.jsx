@@ -6,11 +6,10 @@ import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 import CalendarAddOutlineSvg from '@/app/assets/svgs/calendar-add-outline.svg';
 
 const PickerDate = ({
-  title='PICK DATE',
+  title='',
   value,
   mode, 
-  display,
-  maximumDate,
+  display, 
   onChange,
   showDatePicker,
   setShowDatePicker,   
@@ -20,7 +19,7 @@ const PickerDate = ({
   
   return (
     <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
-      <View
+      {/* <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
@@ -31,7 +30,7 @@ const PickerDate = ({
         <Text style={[styles.title, themeStyles.genericText]}>
           {title}
           </Text> 
-          </View>
+          </View> */}
         <TouchableOpacity
           onPress={() => setShowDatePicker(true)}
           style={[
@@ -40,7 +39,7 @@ const PickerDate = ({
           ]}
           >
             <View style={{paddingRight: 8}}>
-            <CalendarAddOutlineSvg height={30} width={30} color={themeStyles.genericText.color} />
+            <CalendarAddOutlineSvg height={20} width={20} color={themeStyles.genericText.color} />
             </View>
 
           <Text style={[styles.dateText, themeStyles.genericText]}>
@@ -54,7 +53,7 @@ const PickerDate = ({
           value={value}
           mode={mode}
           display={display}
-          maximumDate={maximumDate}
+          maximumDate={new Date()}
           onChange={onChange}
         />
       )}
@@ -69,7 +68,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     //margin: "4%",
     alignSelf: "center",
-    padding: 20,
+    padding: 0,
   },
   title: {
     fontSize: 15,

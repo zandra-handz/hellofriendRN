@@ -81,13 +81,14 @@ const TextEditBox = forwardRef(
             alignItems: 'center',
           }}
         >
+           <EditPencilOutlineSvg height={20} width={20} color={iconColor} />
           <View style={{flexDirection: 'row', height: '100%', alignItems: 'center'}}>
           <Text style={[styles.title, themeStyles.genericText]}>
             {title}
           </Text>
           </View>
 
-          <EditPencilOutlineSvg height={30} width={30} color={iconColor} />
+         
         </View>
         <View style={{ flex: 1 }}>
 
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 10,
     alignSelf: "center",
-    padding: 20,
+    padding: 0,
   },
   title: {
     fontSize: 15,

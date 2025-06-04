@@ -37,8 +37,9 @@ import DoubleChecker from "@/app/components/alerts/DoubleChecker";
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import { useFocusEffect } from "@react-navigation/native";
-import { Title } from "react-native-paper";
-
+ 
+// WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
+// otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = () => {
   const navigation = useNavigation();
 
@@ -280,10 +281,8 @@ const ContentAddHello = () => {
                         title={"Type"}
                         children={
                           <PickerHelloType
-                            containerText=""
                             selectedTypeChoice={selectedTypeChoice}
                             onTypeChoiceChange={handleTypeChoiceChange}
-                            useSvg={true}
                           />
                         }
                       />
@@ -314,76 +313,101 @@ const ContentAddHello = () => {
                           )}
 
                           {!isKeyboardVisible && (
-                            <View style={{}}>
-                              <PickerDate
-                                buttonHeight={36}
-                                value={helloDate}
-                                mode="date"
-                                display="default"
-                                containerText=""
-                                maximumDate={new Date()}
-                                onChange={onChangeDate}
-                                showDatePicker={showDatePicker}
-                                setShowDatePicker={setShowDatePicker}
-                                inline={true}
-                              />
-                            </View>
+                            <TitleContainerUI
+                              height={60}
+                              title={"Date"}
+                              children={
+                                <PickerDate
+                                  buttonHeight={36}
+                                  value={helloDate}
+                                  mode="date"
+                                  display="default"
+                                  onChange={onChangeDate}
+                                  showDatePicker={showDatePicker}
+                                  setShowDatePicker={setShowDatePicker}
+                                />
+                              }
+                            />
                           )}
-
-                          <TextEditBox
-                            width={"100%"}
+                          <TitleContainerUI
                             height={
                               !isKeyboardVisible
                                 ? oneSeventhHeight
                                 : oneHalfHeight
                             }
-                            ref={editedTextRef}
-                            autoFocus={false}
-                            title={"Add notes"}
-                            helperText={
-                              !isKeyboardVisible ? null : "Press enter to exit"
+                            title={"Notes"}
+                            children={
+                              <TextEditBox
+                                width={"100%"}
+                                height={
+                                  !isKeyboardVisible
+                                    ? oneSeventhHeight
+                                    : oneHalfHeight
+                                }
+                                ref={editedTextRef}
+                                autoFocus={false}
+                                title={""}
+                                helperText={
+                                  !isKeyboardVisible
+                                    ? null
+                                    : "Press enter to exit"
+                                }
+                                iconColor={
+                                  !isKeyboardVisible
+                                    ? themeStyles.genericText.color
+                                    : "red"
+                                }
+                                mountingText={""}
+                                onTextChange={updateNoteEditString}
+                                multiline={false}
+                              />
                             }
-                            iconColor={
-                              !isKeyboardVisible
-                                ? themeStyles.genericText.color
-                                : "red"
-                            }
-                            mountingText={""}
-                            onTextChange={updateNoteEditString}
-                            multiline={false}
                           />
 
-                          <View style={{}}>
-                            <TotalMomentsAddedUI momentsAdded={momentsAdded} />
-                          </View>
-                          <View style={[styles.deleteRemainingContainer]}>
-                            <TouchableOpacity
-                              onPress={toggleDeleteMoments}
-                              style={[
-                                styles.controlButton,
-                                themeStyles.footerIcon,
-                              ]}
-                            >
-                              <Text
+                          <TitleContainerUI
+                            height={180}
+                            title={`Talked: ${momentsAdded.length}`}
+                            children={
+                              <TotalMomentsAddedUI
+                                momentsAdded={momentsAdded}
+                              />
+                            }
+                          />
+
+                          <TitleContainerUI
+                            height={40}
+                            title={""}
+                            children={
+                              <TouchableOpacity
+                                onPress={toggleDeleteMoments}
                                 style={[
-                                  styles.controlButtonText,
-                                  { color: themeStyles.footerText.color },
-                                ]}
-                              >
-                                {"Delete unused?"}
-                              </Text>
-                              <Icon
-                                name={
-                                  deleteMoments ? "check-square-o" : "square-o"
-                                }
-                                size={20}
-                                style={[
-                                  styles.checkbox,
+                                  styles.controlButton,
                                   themeStyles.footerIcon,
                                 ]}
-                              />
-                            </TouchableOpacity>
-                          </View>
+                              >
+                                <Text
+                                  style={[
+                                    styles.controlButtonText,
+                                    { color: themeStyles.footerText.color },
+                                  ]}
+                                >
+                                  {"Delete unused?"}
+                                </Text>
+                                <Icon
+                                  name={
+                                    deleteMoments
+                                      ? "check-square-o"
+                                      : "square-o"
+                                  }
+                                  size={20}
+                                  style={[
+                                    styles.checkbox,
+                                    themeStyles.footerIcon,
+                                  ]}
+                                />
+                              </TouchableOpacity>
+                            }
+                          />
                         </>
                       </>
                     )}
@@ -484,6 +508,7 @@ const styles = StyleSheet.create({
   deleteRemainingContainer: {
     // position: "absolute",
     // bottom: 0,
+    flex: 1,
     flexDirection: "row",
     justifyContent: "flex-end",
     width: "100%",
@@ -491,8 +516,9 @@ const styles = StyleSheet.create({
   paddingForElements: {
     paddingHorizontal: 0,
     flex: 1,
+
     //backgroundColor: 'pink',
-    paddingBottom: "5%",
+    paddingBottom: 0,
     flexDirection: "column",
     justifyContent: "flex-start",
   },

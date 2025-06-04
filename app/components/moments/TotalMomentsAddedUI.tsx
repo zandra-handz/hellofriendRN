@@ -19,7 +19,8 @@ const TotalMomentsAddedUI: React.FC<TotalMomentsAddedUIProps> = ({
 
   return (
     <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, { height: CONTAINER_HEIGHT}]}>
-      <View
+     
+      {/* <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
@@ -29,9 +30,10 @@ const TotalMomentsAddedUI: React.FC<TotalMomentsAddedUIProps> = ({
       >
         <Text style={[styles.title, themeStyles.subHeaderText]}>
           TALKED: {momentsAdded.length}
-          {/* {containerText} ({selectedMoments.length}/{allCapsulesList.length}) */}
-        </Text>
-      </View>
+         </Text>
+
+      </View> */}
+
       <View
         style={{
          // backgroundColor: "red",

@@ -28,8 +28,7 @@ const PickerMenuOptions = ({
 
  
   const oneFifthWidth = '23%';  
-  const oneFourthWidth = '25%'; 
-  const oneThirteenthHeight = 'auto';  
+  const oneFourthWidth = '25%';  
 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
