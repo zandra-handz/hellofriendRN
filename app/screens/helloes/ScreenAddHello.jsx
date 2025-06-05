@@ -3,10 +3,9 @@ import { StyleSheet } from "react-native";
 import ContentAddHello from "@/app/components/helloes/ContentAddHello";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFriendList } from "@/src/context/FriendListContext";
-import SafeView from "@/app/components/appwide/format/SafeView";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
+import SafeView from "@/app/components/appwide/format/SafeView"; 
 import GlobalAppHeaderIconVersion from "@/app/components/headers/GlobalAppHeaderIconVersion";
-import CoffeeSvg from "@/app/assets/svgs/coffee-solid.svg";
+ 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const ScreenAddHello = () => {

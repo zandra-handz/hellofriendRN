@@ -7,8 +7,7 @@ const ButtonHello = ({
   hello,
   height = "auto",
   onPress,
-  color = "white",
-  iconColor = "white",
+  color = "white", 
   icon: Icon,
   iconSize = 34,
 }) => {
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "auto",
-    borderRadius: 30,
+    borderRadius: 10,
     alignSelf: "center",
     padding: 20,
     overflow: "hidden",

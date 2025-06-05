@@ -7,33 +7,26 @@ import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useNavigation } from "@react-navigation/native";
 import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
  import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SpeedDialDelux from "@/app/components/buttons/speeddial/SpeedDialDelux"; 
 import AddMomentButton from "@/app/components/buttons/moments/AddMomentButton";
 
+import Loading from "@/app/components/appwide/display/Loading";
+
 const ScreenMoments = () => {
   const { capsuleList } = useCapsuleList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeStyles } = useGlobalStyle();
+ 
   const navigation = useNavigation();
 
   return (
     <SafeView style={{ flex: 1 }}>
       <GradientBackground useFriendColors={true}>
-        {loadingNewFriend && (
-        <View style={{flex: 1, width: '100%'}}>
-        <LoadingPage loading={true} spinnerSize={30} spinnerType={'flow'} color={themeStyles.primaryBackground.backgroundColor}/>
-  
-        
-          
-        </View>
-              
-        )}
+        <Loading isLoading={loadingNewFriend}/>
+
         {selectedFriend && !loadingNewFriend && (
           <>
         <GlobalAppHeader

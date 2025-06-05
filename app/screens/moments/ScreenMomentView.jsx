@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 
-import { useFriendList } from "@/src/context/FriendListContext";
 import { useRoute } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeView from "@/app/components/appwide/format/SafeView";
@@ -11,11 +9,11 @@ import ContentMomentView from "@/app/components/moments/ContentMomentView";
 import NavigationArrows from "@/app/components/appwide/button/NavigationArrows";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 import { useFocusEffect } from "@react-navigation/native";
+import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
-  const { themeAheadOfLoading } = useFriendList();
 
   const {
     capsuleList,
@@ -31,7 +29,7 @@ const ScreenMomentView = () => {
 
   useEffect(() => {
     if (moment) {
-      console.log('mment triggered in view', moment);
+      console.log("mment triggered in view", moment);
       const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
       const index = capsuleList.findIndex((mom) => mom.id === moment.id);
       setCurrentIndex(index);
@@ -41,18 +39,17 @@ const ScreenMomentView = () => {
 
   //Updates if one is edited
 
-useFocusEffect(
-  useCallback(() => {
-    if (capsuleList) {
+  useFocusEffect(
+    useCallback(() => {
+      if (capsuleList) {
+        const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
+        const index = capsuleList.findIndex((mom) => mom.id === moment.id);
+        setCurrentIndex(index);
+        setMomentInView(matchingMoment);
+      }
+    }, [capsuleList, moment.id]) // dependencies for the useCallback
+  );
 
-      const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
-      const index = capsuleList.findIndex((mom) => mom.id === moment.id);
-      setCurrentIndex(index);
-      setMomentInView(matchingMoment);
-    }
-  }, [capsuleList, moment.id]) // dependencies for the useCallback
-);
-  
   // useEffect(() => {
   //   if (capsuleList) {
   //     const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
@@ -89,7 +86,7 @@ useFocusEffect(
     //This runs before capsule list length updates
     if (updateCapsuleMutation.isSuccess) {
       updateCacheWithNewPreAdded(); //The animation in the screen itself triggers this too but after a delay, not sure if I need this here
-    //  console.log(`capsule list length after update: ${capsuleList?.length}`);
+      //  console.log(`capsule list length after update: ${capsuleList?.length}`);
 
       if (capsuleList?.length < 1) {
         closeModal();
@@ -179,19 +176,14 @@ useFocusEffect(
 
   return (
     <SafeView style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={{ flex: 1, width: "100%", justifyContent: "space-between" }}
-      >
+      <GradientBackground useFriendColors={true}>
         <GlobalAppHeader
           title={"MOMENTS: "}
           navigateTo={"Moments"}
           icon={LeavesTwoFallingOutlineThickerSvg}
           altView={false}
         />
- 
+
         <ContentMomentView
           onSliderPull={handleDelete}
           momentCategory={
@@ -218,7 +210,7 @@ useFocusEffect(
             )}
           </>
         )}
-      </LinearGradient>
+      </GradientBackground>
     </SafeView>
   );
 };

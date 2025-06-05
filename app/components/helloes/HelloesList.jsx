@@ -72,7 +72,7 @@ const HelloesList = ({
 
 const styles = StyleSheet.create({
     container: { 
-        paddingHorizontal: '4%',
+        paddingHorizontal: 0,
         backgroundColor: 'transparent',
         width: '100%',
         minHeight: 2,

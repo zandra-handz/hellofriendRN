@@ -9,15 +9,15 @@ import { View, Keyboard, ViewToken, TouchableOpacity } from "react-native";
 
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
- 
+
 import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
-import MomentsSearchBar from "./MomentsSearchBar"; 
+import MomentsSearchBar from "./MomentsSearchBar";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
-import ButtonIconImages from "../buttons/images/ButtonIconImages"; 
+import ButtonIconImages from "../buttons/images/ButtonIconImages";
 import MomentsStaticButton from "../buttons/moments/MomentsStaticButton";
- 
+
 import Animated, {
   LinearTransition,
   JumpingTransition,
@@ -26,8 +26,8 @@ import Animated, {
   SequencedTransition,
   FadingTransition,
   useSharedValue,
-  useAnimatedRef, 
-  useAnimatedScrollHandler, 
+  useAnimatedRef,
+  useAnimatedScrollHandler,
   withTiming,
   runOnJS,
   runOnUI,
@@ -41,7 +41,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
-import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 
 // import { enableLayoutAnimations } from "react-native-reanimated";
@@ -61,16 +60,14 @@ const MomentsList = () => {
     capsuleList,
     setMomentIdToAnimate,
 
-    momentIdToAnimate, 
-    updateCacheWithNewPreAdded, 
+    momentIdToAnimate,
+    updateCacheWithNewPreAdded,
     categoryNames,
     categoryStartIndices,
     updateCapsule,
   } = useCapsuleList();
 
   const navigation = useNavigation();
-
- 
 
   // Move this inside your component:
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
@@ -90,7 +87,7 @@ const MomentsList = () => {
       onViewableItemsChanged,
     },
   ]);
- 
+
   const [isMomentNavVisible, setMomentNavVisible] = useState(false);
   const flatListRef = useAnimatedRef(null);
 
@@ -100,9 +97,9 @@ const MomentsList = () => {
 
   const translateX = useSharedValue(0);
   const heightAnim = useSharedValue(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
- 
+
   const pressedIndex = useSharedValue(null);
-   const pulseValue = useSharedValue(0);
+  const pulseValue = useSharedValue(0);
 
   const belowHeaderIconSize = 28;
 
@@ -221,12 +218,8 @@ const MomentsList = () => {
     });
   }, [capsuleList]);
 
- 
- 
   const categoryNavVisibility = useSharedValue(1);
   const listVisibility = useSharedValue(0);
-
- 
 
   useFocusEffect(
     useCallback(() => {
@@ -290,7 +283,6 @@ const MomentsList = () => {
           onSend={saveToHello}
         />
       </TouchableOpacity>
- 
     ),
     [
       // viewableItemsArray,
@@ -300,8 +292,6 @@ const MomentsList = () => {
       // saveToHello,
     ]
   );
-
- 
 
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `placeholder-${index}`;
@@ -337,13 +327,12 @@ const MomentsList = () => {
                 alignItems: "center",
                 width: "50%",
                 justifyContent: "flex-end",
-              //  overflow: "hidden",
-                marginRight: 10, 
+                //  overflow: "hidden",
+                marginRight: 10,
                 height: 30,
               }}
-            > 
-            <View style={{width: 30, marginHorizontal: 4}}>
-              
+            >
+              <View style={{ width: 30, marginHorizontal: 4 }}>
                 <MomentsStaticButton
                   height={"100%"}
                   iconSize={24}
@@ -355,11 +344,9 @@ const MomentsList = () => {
                       ? themeAheadOfLoading.fontColorSecondary
                       : "orange"
                   }
-                />  
-                
-            </View>
-               <View style={{width: 30, marginHorizontal: 4}}>
-              
+                />
+              </View>
+              <View style={{ width: 30, marginHorizontal: 4 }}>
                 <ButtonIconImages
                   height={"40%"} //ADJUST POSITION HERE
                   iconSize={24}
@@ -371,9 +358,8 @@ const MomentsList = () => {
                       ? themeAheadOfLoading.fontColorSecondary
                       : "orange"
                   }
-                /> 
-                
-             </View>
+                />
+              </View>
             </View>
 
             <MomentsSearchBar
@@ -391,7 +377,7 @@ const MomentsList = () => {
           </>
         }
       />
-  <MomentsAdded visibilityValue={listVisibility} />
+      <MomentsAdded visibilityValue={listVisibility} />
       <View
         style={{
           // flex: 1,
@@ -404,7 +390,6 @@ const MomentsList = () => {
         }}
       >
         <>
-      
           <Animated.FlatList
             itemLayoutAnimation={JumpingTransition}
             // itemLayoutAnimation={CurvedTransition}
@@ -450,8 +435,6 @@ const MomentsList = () => {
         </>
       </View>
 
-      
-
       {!isKeyboardVisible && (
         <>
           <CategoryNavigator
@@ -460,9 +443,8 @@ const MomentsList = () => {
             categoryNames={categoryNames}
             onPress={scrollToCategoryStart}
           />
-
         </>
-      )} 
+      )}
     </View>
   );
 };

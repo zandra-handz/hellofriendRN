@@ -15,9 +15,9 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import SearchBigMagSvg from "@/app/assets/svgs/search-big-mag.svg";
 
 const HelloesSearchBar = ({
-  data,
+ 
   formattedData, 
-  originalData, 
+  // originalData, 
   height = 48,
   width = "100%", 
   backgroundColor,
@@ -31,17 +31,17 @@ const HelloesSearchBar = ({
   const [filteredData, setFilteredData] = useState([]);
   const { themeStyles } = useGlobalStyle();
 
-  const handleItemPress = (item) => {
-    console.log(findOriginalItem(item));
+  const handleItemPress = (item) => { 
 
-    onPress(findOriginalItem(item));  
+    // onPress(findOriginalItem(item));  
+    onPress(item);
     handleOutsidePress();
     setSearchQuery("");
   };
 
-  const findOriginalItem = (formattedItem) => {
-    return originalData.find(item => item.id === formattedItem.id);
-  };
+  // const findOriginalItem = (formattedItem) => {
+  //   return originalData.find(item => item.id === formattedItem.id);
+  // };
 
   const handleSearch = (text) => {
     setSearchQuery(text);
