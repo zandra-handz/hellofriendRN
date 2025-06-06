@@ -73,6 +73,8 @@ import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
 import ScreenAddLocation from "./app/screens/locations/ScreenAddLocation";
 
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
+import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
+import ScreenImageView from "./app/screens/images/ScreenImageView";
 
 // import HellofriendHeader from "./app/components/headers/HellofriendHeader";
 // //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
@@ -439,8 +441,22 @@ export const Layout = () => {
                   }}
                 />
                 <Stack.Screen
+                  name="ImageView"
+                  component={ScreenImageView}
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
                   name="Helloes"
                   component={ScreenHelloes}
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="HelloView"
+                  component={ScreenHelloView}
                   options={{
                     headerShown: false,
                   }}

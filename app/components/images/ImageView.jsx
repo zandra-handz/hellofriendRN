@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View,   StyleSheet, Text, Dimensions, Modal } from "react-native";
+import { View, StyleSheet, Text, Dimensions, Modal } from "react-native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { Image } from "expo-image";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
@@ -12,7 +12,7 @@ import * as Sharing from "expo-sharing";
 import AlertConfirm from "../alerts/AlertConfirm";
 
 import { LinearGradient } from "expo-linear-gradient";
- 
+
 import HeaderImageWithSlider from "../headers/HeaderImageWithSlider";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 
@@ -42,8 +42,7 @@ const ImageView = ({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
+    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -132,34 +131,30 @@ const ImageView = ({
             }}
           >
             {navigationArrows}
-          </View> 
+          </View>
 
-
-        <LinearGradient
-          colors={[
-            themeAheadOfLoading.darkColor,
-            themeAheadOfLoading.lightColor,
-          ]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={[styles.modalContainer]}
-        >
-           <View
-                          style={[
-                            styles.modalContent,
-                            themeStyles.genericText,
-                            { maxHeight: screenHeight },
-                          ]}
-                        >
-
-                          
+          <LinearGradient
+            colors={[
+              themeAheadOfLoading.darkColor,
+              themeAheadOfLoading.lightColor,
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.modalContainer]}
+          >
+            <View
+              style={[
+                styles.modalContent,
+                themeStyles.genericText,
+                { maxHeight: screenHeight },
+              ]}
+            >
               <HeaderImageWithSlider
                 onBackPress={toggleModal}
                 itemData={imageData}
                 onSliderPull={onSliderPull}
                 headerTitle={"VIEW IMAGE"}
               />
-                       
 
               <View
                 style={[
@@ -173,50 +168,47 @@ const ImageView = ({
               >
                 <View style={styles.container}>
                   <View style={styles.categoryHeader}>
-                  <Text style={[styles.titleText, themeStyles.genericText]}>
-                    {imageData.title}{' '}
-                  </Text>
-                  <Text style={[styles.categoryText, themeStyles.genericText]}>
-                    {imageData.image_category}  
-                  </Text>
-
+                    <Text style={[styles.titleText, themeStyles.genericText]}>
+                      {imageData.title}{" "}
+                    </Text>
+                    <Text
+                      style={[styles.categoryText, themeStyles.genericText]}
+                    >
+                      {imageData.image_category}
+                    </Text>
                   </View>
 
                   <View style={styles.imageContainer}>
                     <Image
-                    placeholder={{ blurhash }}
+                      placeholder={{ blurhash }}
                       source={{ uri: imageData.image }}
                       style={styles.modalImage}
                       contentFit="cover" //switch to cover to see full image
                       cachePolicy={"memory-disk"}
                     />
                   </View>
-                  
                 </View>
-
               </View>
-              
-           </View>
-           <View
-                                style={{
-                                  position: "absolute",
-                                  height: 70,
-                                  bottom: -6,
-                                  left: -4,
-                                  width: "103%", 
-                                }}
-                              >
-
-                <ButtonBaseSpecialSave
-                  label={`SEND TO ${selectedFriend.name} `}
-                  maxHeight={80}
-                  onPress={handleShare}
-                  isDisabled={false}
-                  fontFamily={"Poppins-Bold"}
-                  image={require("@/app/assets/shapes/redheadcoffee.png")}
-                />
-                 </View>
-          </LinearGradient> 
+            </View>
+            <View
+              style={{
+                position: "absolute",
+                height: 70,
+                bottom: -6,
+                left: -4,
+                width: "103%",
+              }}
+            >
+              <ButtonBaseSpecialSave
+                label={`SEND TO ${selectedFriend.name} `}
+                maxHeight={80}
+                onPress={handleShare}
+                isDisabled={false}
+                fontFamily={"Poppins-Bold"}
+                image={require("@/app/assets/shapes/redheadcoffee.png")}
+              />
+            </View>
+          </LinearGradient>
         </>
       </Modal>
 
@@ -244,7 +236,7 @@ const ImageView = ({
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    width: "100%", 
+    width: "100%",
     zIndex: 1,
   },
   modalContent: {
@@ -256,15 +248,15 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     width: "100%",
 
-    paddingHorizontal: "5%", 
+    paddingHorizontal: "5%",
     paddingBottom: "5%",
     flexDirection: "column",
     borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
   },
   innerContainer: {
-    height: '90%', //440
-    width: '100%',
+    height: "90%", //440
+    width: "100%",
     alignContent: "center",
     paddingHorizontal: "4%",
     paddingTop: "2%",
@@ -280,7 +272,7 @@ const styles = StyleSheet.create({
     zIndex: 2000,
   },
   imageContainer: {
-    paddingTop: '3%',
+    paddingTop: "3%",
     width: "100%",
     height: "90%",
     overflow: "hidden",
@@ -288,26 +280,26 @@ const styles = StyleSheet.create({
   },
   categoryHeader: {
     paddingBottom: "2%",
-    paddingVertical: '2%',
+    paddingVertical: "2%",
     flexDirection: "row",
     alignContent: "center",
     justifyContent: "flex-start",
-    width: "100%", 
+    width: "100%",
     minHeight: 30,
     height: "auto",
     maxHeight: 40,
-  }, 
+  },
   titleText: {
-    fontSize: 14, 
+    fontSize: 14,
     fontFamily: "Poppins-Regular",
   },
   categoryText: {
-    fontSize: 14, 
+    fontSize: 14,
     lineHeight: 21,
     color: "darkgrey",
     overflow: "hidden",
     textTransform: "uppercase",
-  }, 
+  },
   imageText: {
     //fontWeight: 'bold',
     fontSize: 16,

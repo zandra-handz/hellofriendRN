@@ -2,9 +2,11 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";  
 import { Image } from "expo-image";
+import { useNavigation } from "@react-navigation/native";
 
 const ImageCard = ({
   image,
+  index,
   height = "auto",
   imageWidth,
   imageHeight,
@@ -18,7 +20,7 @@ const ImageCard = ({
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
   const handlePress = async () => {
-    await onPress();
+    await onPress(image, index);
   };
 
   return (

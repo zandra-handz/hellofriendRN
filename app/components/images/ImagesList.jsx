@@ -4,8 +4,9 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
 
 import ImagesNavigator from "./ImagesNavigator";
+import { useNavigation } from "@react-navigation/native";
 
-import { FlashList } from "@shopify/flash-list"; 
+import { FlashList } from "@shopify/flash-list";
 import ImageCard from "./ImageCard";
 import MomentsSearchBar from "../moments/MomentsSearchBar";
 
@@ -17,13 +18,14 @@ const windowWidth = Dimensions.get("window").width;
 const ImagesList = ({ width, height, containerWidth = "100%" }) => {
   const { imageList } = useImageFunctions();
   const [selectedImageToView, setSelectedImageToView] = useState(null);
-  const { themeAheadOfLoading } = useFriendList(); 
-
+  const { themeAheadOfLoading } = useFriendList();
+  const navigation = useNavigation();
   const [isImageNavVisible, setImageNavVisible] = useState(false);
 
-  const openImageNav = (image) => {
-    setSelectedImageToView(image);
-    setImageNavVisible(true);
+  const openImageNav = (image, index) => {
+    navigation.navigate("ImageView", {image: image, index: index})
+    // setSelectedImageToView(image);
+    // setImageNavVisible(true);
   };
 
   const closeImageNav = () => {
@@ -58,45 +60,42 @@ const ImagesList = ({ width, height, containerWidth = "100%" }) => {
       />
       <BodyStyling
         height={"100%"}
-        width={"101%"} 
+        width={"101%"}
         paddingTop={"6%"}
         paddingHorizontal={"4%"}
         children={
-
-        <> 
-        <FlashList
-          data={imageList}
-          horizontal={false}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={{ marginBottom: "2%" }}>
-              <ImageCard
-                image={item}
-                imageWidth={width || windowWidth / 3 - 20}
-                imageHeight={height || windowWidth / 3 - 20}
-                onPress={() => openImageNav(item)}
-              />
-            </View>
-          )}
-          numColumns={1}
-          estimatedItemSize={100}
-          showsHorizontalScrollIndicator={false}
-          scrollIndicatorInsets={{ right: 1 }}
-          ListFooterComponent={() => (
-            <View style={{ height: 100, width: "100%" }} />
-          )}
-        />
-        </>
+          <>
+            <FlashList
+              data={imageList}
+              horizontal={false}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item, index }) => (
+                <View style={{ marginBottom: "2%" }}>
+                  <ImageCard
+                    image={item}
+                    index={index}
+                    imageWidth={width || windowWidth / 3 - 20}
+                    imageHeight={height || windowWidth / 3 - 20}
+                    onPress={() => openImageNav(item)}
+                  />
+                </View>
+              )}
+              numColumns={1}
+              estimatedItemSize={100}
+              showsHorizontalScrollIndicator={false}
+              scrollIndicatorInsets={{ right: 1 }}
+              ListFooterComponent={() => (
+                <View style={{ height: 100, width: "100%" }} />
+              )}
+            />
+          </>
         }
-        />
+      />
 
-        {isImageNavVisible && selectedImageToView && (
-          <ImagesNavigator
-            onClose={closeImageNav}
-            image={selectedImageToView}
-          />
-        )}
-      </View> 
+      {isImageNavVisible && selectedImageToView && (
+        <ImagesNavigator onClose={closeImageNav} image={selectedImageToView} />
+      )}
+    </View>
   );
 };
 

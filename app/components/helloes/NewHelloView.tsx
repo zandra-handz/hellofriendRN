@@ -18,36 +18,14 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 
-const ContentMomentView = ({ momentData, onSliderPull }) => {
+const NewHelloView = ({ data, onSliderPull }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const navigation = useNavigation();
   const { updateCapsule } = useCapsuleList();
   const { themeAheadOfLoading } = useFriendList();
 
-  //useEffect(() => {
-  //if (momentData) {
-  //  console.log('moment data changed: ', momentData);
-  //  }
-
-  // }, [momentData]);
-
-  //Added from chatGPT
-
-  const handleEditMoment = () => {
-    navigation.navigate("MomentFocus", {
-      momentText: momentData?.capsule || null,
-      updateExistingMoment: true,
-      existingMomentObject: momentData || null,
-    });
-  };
-
-  const saveToHello = async () => {
-    try {
-      updateCapsule(momentData.id);
-    } catch (error) {
-      console.error("Error during pre-save:", error);
-    }
-  };
+ 
+ 
 
   return (
     <View style={[styles.container]}>
@@ -58,8 +36,8 @@ const ContentMomentView = ({ momentData, onSliderPull }) => {
         justifyContent="center"
         children={
           <SlideToAdd
-            onPress={saveToHello}
-            sliderText={"Add to hello"}
+            onPress={() => {}}
+            sliderText={"Empty"}
             sliderTextSize={15}
             sliderTextColor={themeAheadOfLoading.fontColor}
           />
@@ -74,7 +52,7 @@ const ContentMomentView = ({ momentData, onSliderPull }) => {
         children={
           <>
             <View style={[styles.container]}>
-              {momentData && momentData.typedCategory && (
+              {data && (
                 <View style={styles.iconAndMomentContainer}>
                   <View style={styles.categoryHeader}>
                     <View
@@ -86,40 +64,13 @@ const ContentMomentView = ({ momentData, onSliderPull }) => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "flex-start",
-                        }}
-                      >
-                        <Text
-                          style={[
-                            appFontStyles.momentViewHeaderText,
-                            themeStyles.genericText,
-                          ]}
-                        >
-                          {momentData.typedCategory.length > 40
-                            ? `${momentData.typedCategory.substring(0, 40)}...`
-                            : momentData.typedCategory}{" "}
-                          • added{" "}
-                        </Text>
-                        <FormatMonthDay
-                          date={momentData.created}
-                          fontSize={13}
-                          fontFamily={"Poppins-Regular"}
-                          parentStyle={[
-                            appFontStyles.momentViewHeaderText,
-                            themeStyles.genericText,
-                          ]}
-                        />
-                      </View>
-                      <EditPencilOutlineSvg
+
+                      {/* <EditPencilOutlineSvg
                         height={20}
                         width={20}
                         onPress={handleEditMoment}
                         color={themeStyles.genericText.color}
-                      />
+                      /> */}
                     </View>
                   </View>
                   <ScrollView
@@ -127,7 +78,7 @@ const ContentMomentView = ({ momentData, onSliderPull }) => {
                     contentContainerStyle={[styles.textWrapper]}
                     style={{ width: "100%" }}
                   >
-                    {momentData && momentData.capsule && (
+                    {data && (
                       <Text
                         selectable={true}
                         style={[
@@ -135,7 +86,7 @@ const ContentMomentView = ({ momentData, onSliderPull }) => {
                           themeStyles.genericText,
                         ]}
                       >
-                        {momentData.capsule}
+                        {data.id}
                       </Text>
                     )}
                   </ScrollView>
@@ -156,13 +107,14 @@ const ContentMomentView = ({ momentData, onSliderPull }) => {
         }}
       >
         {" "}
-        <SlideToDeleteHeader
-          itemToDelete={momentData}
+        {/* <SlideToDeleteHeader
+          itemToDelete={data}
           onPress={onSliderPull}
           sliderWidth={"100%"}
           targetIcon={TrashOutlineSvg}
           sliderTextColor={themeStyles.primaryText.color}
-        />
+        /> */}
+        
         {/* <ButtonBaseSpecialSave
           label="ADD TO HELLO "
           maxHeight={80}
@@ -261,4 +213,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ContentMomentView;
+export default NewHelloView;

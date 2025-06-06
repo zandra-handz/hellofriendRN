@@ -63,15 +63,25 @@ export const HelloesProvider = ({ children }) => {
       queryClient.setQueryData(
         ["inPersonHelloes", user?.id, selectedFriend?.id],
         inPerson
-      );
-
-      console.log("filtering helloes in useMemo function");
+      ); 
       return inPerson;
     }
   }, [helloesList]);
 
   const getCachedInPersonHelloes = () => {
-    return queryClient.getQueryData(["inPersonHelloes", user?.id, selectedFriend?.id]);
+
+    const cached = queryClient.getQueryData(["inPersonHelloes", user?.id, selectedFriend?.id]);
+
+    if (!cached || cached === undefined) {
+      return inPersonHelloes;
+
+    } else {
+      return cached;
+    }
+
+  
+
+   // return queryClient.getQueryData(["inPersonHelloes", user?.id, selectedFriend?.id]);
   };
 
   //   useEffect(() => {

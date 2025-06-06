@@ -15,12 +15,16 @@ import HelloesNavigator from "./HelloesNavigator";
 import { Ionicons } from "@expo/vector-icons";
 import BodyStyling from "../scaffolding/BodyStyling";
 
+
+import { useNavigation } from "@react-navigation/native";
+
 const Tab = createBottomTabNavigator();
 
 const HelloesTabs = () => {
   const { themeStyles, appContainerStyles, manualGradientColors } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
+  const navigation = useNavigation();
 
   const [isHelloesNavVisible, setHelloesNavVisible] = useState(false);
   const [selectedHelloToView, setSelectedHelloToView] = useState(null);
@@ -34,8 +38,9 @@ const HelloesTabs = () => {
 
   const openHelloesNav = (formattedItem) => {
     const originalItem = findOriginalItem(formattedItem);
-    setSelectedHelloToView(originalItem);
-    setHelloesNavVisible(true);
+    navigation.navigate('HelloView', {hello: originalItem});
+    // setSelectedHelloToView(originalItem);
+    // setHelloesNavVisible(true);
   };
 
   const findOriginalItem = (formattedItem) => {

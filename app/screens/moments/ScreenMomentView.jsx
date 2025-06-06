@@ -4,16 +4,17 @@ import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeView from "@/app/components/appwide/format/SafeView";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
-import ContentMomentView from "@/app/components/moments/ContentMomentView";
-import NavigationArrows from "@/app/components/appwide/button/NavigationArrows";
+import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader"; 
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 import { useFocusEffect } from "@react-navigation/native";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
+import CarouselSlider from "@/app/components/appwide/CarouselSlider";
+import MomentViewPage from "@/app/components/moments/MomentViewPage";
 
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
+   const currentIndex = route.params?.index ?? null;
 
   const {
     capsuleList,
@@ -23,131 +24,75 @@ const ScreenMomentView = () => {
     updateCapsuleMutation,
     updateCacheWithNewPreAdded,
   } = useCapsuleList();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const { selectedFriend } = useSelectedFriend();
-  const [momentInView, setMomentInView] = useState(moment || null);
+  // const [currentIndex, setCurrentIndex] = useState(0);
+  const { selectedFriend } = useSelectedFriend(); 
 
-  useEffect(() => {
-    if (moment) {
-      console.log("mment triggered in view", moment);
-      const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
-      const index = capsuleList.findIndex((mom) => mom.id === moment.id);
-      setCurrentIndex(index);
-      setMomentInView(matchingMoment);
-    }
-  }, [moment]);
+  // useEffect(() => {
+  //   if (moment) { 
+  //     // const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
+  //     const index = capsuleList.findIndex((mom) => mom.id === moment.id);
+  //     setCurrentIndex(index);
+  //     // setMomentInView(matchingMoment);
+  //   }
+  // }, [moment]);
 
   //Updates if one is edited
 
-  useFocusEffect(
-    useCallback(() => {
-      if (capsuleList) {
-        const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
-        const index = capsuleList.findIndex((mom) => mom.id === moment.id);
-        setCurrentIndex(index);
-        setMomentInView(matchingMoment);
-      }
-    }, [capsuleList, moment.id]) // dependencies for the useCallback
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (capsuleList) {
+  //       const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
+  //       const index = capsuleList.findIndex((mom) => mom.id === moment.id);
+  //       setCurrentIndex(index);
+  //       setMomentInView(matchingMoment);
+  //     }
+  //   }, [capsuleList, moment.id]) // dependencies for the useCallback
+  // );
 
-  // useEffect(() => {
-  //   if (capsuleList) {
-  //     const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
-  //     const index = capsuleList.findIndex((mom) => mom.id === moment.id);
-  //     setCurrentIndex(index);
-  //     setMomentInView(matchingMoment);
-  //   }
-  // }, [capsuleList]);
+ 
 
   //manually closing this for right now because I give up
-  useEffect(() => {
-    if (deleteMomentMutation.isSuccess) {
-      if (capsuleList?.length < 1) {
-        closeModal();
-      }
+  // DONT THINK WE NEED THIS WITH THE NEW CAROUSEL COMPONENT
+  // useEffect(() => {
+  //   if (deleteMomentMutation.isSuccess) {
+  //     if (capsuleList?.length < 1) {
+  //       // closeModal();
+  //     }
 
-      let lastIndex = capsuleList.length - 1;
-      console.log(
-        `lastIndex value: ${lastIndex}, currentIndex value: ${currentIndex}, capsuleCount: ${capsuleCount}`
-      );
-      if (currentIndex != lastIndex) {
-        if (currentIndex < lastIndex) {
-          goToPreviousMoment();
-        } else {
-          goToNextMomentAfterRemovedPrev();
-        }
-      } else {
-        goToFirstMoment();
-      }
-    }
-  }, [deleteMomentMutation.isSuccess]);
+  //     let lastIndex = capsuleList.length - 1;
+  //     console.log(
+  //       `lastIndex value: ${lastIndex}, currentIndex value: ${currentIndex}, capsuleCount: ${capsuleCount}`
+  //     );
+  //     if (currentIndex != lastIndex) {
+  //       if (currentIndex < lastIndex) {
+  //         goToPreviousMoment();
+  //       } else {
+  //         goToNextMomentAfterRemovedPrev();
+  //       }
+  //     } else {
+  //       goToFirstMoment();
+  //     }
+  //   }
+  // }, [deleteMomentMutation.isSuccess]);
 
   useEffect(() => {
     //This runs before capsule list length updates
     if (updateCapsuleMutation.isSuccess) {
       updateCacheWithNewPreAdded(); //The animation in the screen itself triggers this too but after a delay, not sure if I need this here
       //  console.log(`capsule list length after update: ${capsuleList?.length}`);
-
-      if (capsuleList?.length < 1) {
-        closeModal();
-      }
-
-      let lastIndex = capsuleList.length - 1;
-      // console.log(
-      //   `lastIndex value: ${lastIndex}, currentIndex value: ${currentIndex}, capsuleCount: ${capsuleCount}`
-      // );
-      if (currentIndex != lastIndex) {
-        if (currentIndex < lastIndex) {
-          goToNextMomentAfterRemovedPrev();
-        } else {
-          goToPreviousMoment();
-        }
-      } else {
-        goToFirstMoment();
-      }
+ 
+ 
     }
   }, [updateCapsuleMutation.isSuccess]);
 
-  const closeModal = () => {
-    onClose();
-  };
+ 
+ 
 
-  const goToPreviousMoment = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex((prevIndex) => prevIndex - 1);
-      console.log(capsuleList[currentIndex - 1]);
-      setMomentInView(capsuleList[currentIndex - 1]);
-    }
-  };
+ 
 
-  const goToNextMoment = () => {
-    if (currentIndex < capsuleList.length - 1) {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-      console.log(capsuleList[currentIndex + 1]);
-      setMomentInView(capsuleList[currentIndex + 1]);
-    }
-  };
-
-  const goToNextMomentAfterRemovedPrev = () => {
-    if (currentIndex < capsuleList.length - 1) {
-      //setCurrentIndex(prevIndex => prevIndex + 1);
-      //console.log(capsuleList[currentIndex + 1]);
-      setMomentInView(capsuleList[currentIndex + 1]);
-    }
-  };
-
-  const goToFirstMoment = () => {
-    if (capsuleList.length > 0) {
-      setCurrentIndex((prevIndex) => prevIndex * 0);
-      //console.log(capsuleList[currentIndex + 1]);
-      setMomentInView(capsuleList[0]);
-    } else {
-      closeModal();
-    }
-  };
-
+ 
   const handleDelete = (item) => {
-    console.log("handle delete moment in navigator triggered: ", item);
+    // console.log("handle delete moment in navigator triggered: ", item);
     try {
       const momentData = {
         friend: selectedFriend.id,
@@ -162,17 +107,17 @@ const ScreenMomentView = () => {
 
   //manually close if no more moments, since there is a delay in the update pre-add cache getting updated causing the modal to stay open
   // and continue to display the last moment after it is added to pre-add
-  useEffect(() => {
-    if (capsuleList) {
-      if (capsuleCount < 1) {
-        console.log(
-          `currentIndex: ${currentIndex}, capsuleCount: ${capsuleCount}, total moments length: ${capsuleList?.length || "0"}`
-        );
+  // useEffect(() => {
+  //   if (capsuleList) {
+  //     if (capsuleCount < 1) {
+  //       console.log(
+  //         `currentIndex: ${currentIndex}, capsuleCount: ${capsuleCount}, total moments length: ${capsuleList?.length || "0"}`
+  //       );
 
-        closeModal();
-      }
-    }
-  }, [currentIndex, capsuleList]);
+  //       closeModal();
+  //     }
+  //   }
+  // }, [currentIndex, capsuleList]);
 
   return (
     <SafeView style={{ flex: 1 }}>
@@ -184,7 +129,9 @@ const ScreenMomentView = () => {
           altView={false}
         />
 
-        <ContentMomentView
+        <CarouselSlider initialIndex={currentIndex} data={capsuleList} children={MomentViewPage} />
+
+        {/* <MomentView
           onSliderPull={handleDelete}
           momentCategory={
             capsuleList[currentIndex]
@@ -197,8 +144,10 @@ const ScreenMomentView = () => {
               : "No moment"
           }
           momentData={momentInView || null}
-        />
-        {momentInView && (
+        /> */}
+
+
+        {/* {momentInView && (
           <>
             {momentInView.typedCategory && (
               <NavigationArrows
@@ -209,7 +158,7 @@ const ScreenMomentView = () => {
               />
             )}
           </>
-        )}
+        )} */}
       </GradientBackground>
     </SafeView>
   );

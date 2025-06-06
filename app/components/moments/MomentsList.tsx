@@ -262,7 +262,7 @@ const MomentsList = () => {
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <TouchableOpacity
-        onPress={() => navigation.navigate("MomentView", { moment: item })}
+        onPress={() => navigation.navigate("MomentView", { moment: item, index: index })}
         style={{
           flex: 1,
           height: ITEM_HEIGHT,
@@ -294,7 +294,7 @@ const MomentsList = () => {
   );
 
   const extractItemKey = (item, index) =>
-    item?.id ? item.id.toString() : `placeholder-${index}`;
+    item?.id ? item.id.toString() : `moment-${index}`;
 
   const getItemLayout = (item, index) => {
     return {
