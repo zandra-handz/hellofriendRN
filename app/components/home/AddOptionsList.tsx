@@ -1,4 +1,4 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Alert } from "react-native";
 import React from "react"; 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import { useNavigation } from "@react-navigation/native";
@@ -36,10 +36,10 @@ const AddOptionsList = () => {
   ];
 
   const otherOptions = [
-    "Add new photo",
-    "Add upload",
-    "Add hello",
-    "Pick meet-up location",
+    "photo",
+    "upload",
+    "hello",
+    "meet-up location",
   ];
 
   const renderOptionButton = (item : string, index : number) => {

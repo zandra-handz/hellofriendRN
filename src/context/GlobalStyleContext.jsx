@@ -196,6 +196,8 @@ const containerStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     height: 38,
+    width: '100%',
+    
   },
 
   homeScreenButton: {
@@ -214,9 +216,9 @@ const containerStyles = StyleSheet.create({
     width: "auto",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingRight: 14,
-    paddingLeft: 6,
-    paddingVertical: 6,
+    paddingRight: 6,
+    paddingLeft: 0,
+    paddingVertical: 2,
     borderRadius: 16,
     borderWidth: 1,
     opacity: 0.8,
@@ -500,17 +502,14 @@ const fontStyles = StyleSheet.create({
     textTransform: "uppercase",
   },
   welcomeText: {
-    fontSize: 30,
+    fontSize: 26,
     // lineHeight: 22,
     fontFamily: "Poppins-Regular",
   },
   homeScreenNewMomentContainer: {
     borderRadius: 30,
-    alignSelf: "center",
-    paddingHorizontal: "4%",
-    paddingVertical: "0%",
-    padding: "2%",
-    marginBottom: "2%",
+    alignSelf: "center", 
+    padding: 4, 
   },
   homeScreenButtonText: {
     fontSize: 16,
@@ -590,6 +589,10 @@ const crossThemeStyles = StyleSheet.create({
 const lightThemeStyles = StyleSheet.create({
   overlayBackgroundColor: {
     backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
+    lighterOverlayBackgroundColor: {
+      backgroundColor: "rgba(255, 255, 255, 0.3)",
+
   },
   primaryText: {
     color: "#121212",
@@ -738,6 +741,10 @@ const lightThemeStyles = StyleSheet.create({
 const darkThemeStyles = StyleSheet.create({
   overlayBackgroundColor: {
     backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
+  lighterOverlayBackgroundColor: {
+      backgroundColor: "rgba(255, 255, 255, 0.3)",
+
   },
   primaryText: {
     color: "#d3d3d3",

@@ -15,7 +15,7 @@ import SettingsStyleHeader from "@/app/components/appwide/SettingsStyleHeader";
 import WrenchOutlineSvg from "@/app/assets/svgs/wrench-outline.svg";
 import { useUser } from "@/src/context/UserContext";
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
-import SafeView from "@/app/components/appwide/format/SafeView";
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 const ScreenUserDetails = () => {
   const { user, isAuthenticated } = useUser();
@@ -36,7 +36,7 @@ const ScreenUserDetails = () => {
   };
 
   return (
-    <SafeView style={{flex: 1}}>
+    <SafeViewAndGradientBackground style={{flex: 1}}>
       <LinearGradient
         colors={[darkColor, lightColor]}
         start={{ x: 0, y: 0 }}
@@ -180,7 +180,7 @@ const ScreenUserDetails = () => {
           />
         )}
       </LinearGradient>
-    </SafeView>
+    </SafeViewAndGradientBackground>
   );
 };
 

@@ -64,7 +64,7 @@ const HomeScrollSoon = ({
           </View>
         )}   
         ListFooterComponent={() => (
-          <View style={{ height: 100 }} />
+          <View style={{ height: 300 }} />
         )} 
         //  snapToAlignment="start" // Align items to the top of the list when snapped
         // decelerationRate="fast"

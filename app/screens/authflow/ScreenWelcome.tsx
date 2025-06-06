@@ -7,7 +7,7 @@ import SignInButton from "@/app/components/user/SignInButton";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller"; 
-import SafeView from "@/app/components/appwide/format/SafeView";
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated'; 
 import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
@@ -88,7 +88,7 @@ const ScreenWelcome = () => {
  
 
   return (
-    <SafeView style={{ flex: 1 }}> 
+    <SafeViewAndGradientBackground style={{ flex: 1 }}> 
       <GradientBackground
         useFriendColors={false}
         startColor={manualGradientColors.darkColor}
@@ -159,7 +159,7 @@ const ScreenWelcome = () => {
           </>
         </View>
       </GradientBackground>
-    </SafeView>
+    </SafeViewAndGradientBackground>
   );
 };
  

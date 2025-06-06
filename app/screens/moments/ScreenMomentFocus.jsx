@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import SafeView from "@/app/components/appwide/format/SafeView";
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import ContentMomentFocus from "@/app/components/moments/ContentMomentFocus";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader"; 
+import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
-
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 const ScreenMomentFocus = () => {
   const route = useRoute();
@@ -15,30 +15,41 @@ const ScreenMomentFocus = () => {
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
   const existingMomentObject = route.params?.existingMomentObject ?? null;
   const { themeAheadOfLoading } = useFriendList();
+  const { selectedFriend, loadingNewFriend  } = useSelectedFriend();
+
+  const renderHeader = useCallback(() => (
+        <GlobalAppHeader
+          title={"WRITE MOMENT: "}
+          navigateTo={"Moments"}
+          altView={true}
+          altViewIcon={LeafSingleOutlineThickerSvg}
+        />
+), [selectedFriend, loadingNewFriend, themeAheadOfLoading]);
+  
 
   return (
-    <SafeView styles={{ flex: 1 }}>
+    <SafeViewAndGradientBackground header={renderHeader} styles={{ flex: 1 }}>
       <LinearGradient
         colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={[styles.container]}
       >
-          <GlobalAppHeader title={"WRITE MOMENT: "} navigateTo={"Moments"} altView={true} altViewIcon={LeafSingleOutlineThickerSvg} />
-        
+
+
         <ContentMomentFocus
           momentText={momentText || null}
           updateExistingMoment={updateExistingMoment}
           existingMomentObject={existingMomentObject}
         />
       </LinearGradient>
-    </SafeView>
+    </SafeViewAndGradientBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    height: "100%",
     width: "100%",
     justifyContent: "space-between",
   },

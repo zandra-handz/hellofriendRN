@@ -25,30 +25,37 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   const message = isNewUser
     ? `Hi ${username}! Welcome to hellofriend!`
     : `Welcome back, ${username}!`;
-  const friendSelectedMessage = `Selected: ${selectedFriend?.name}`;
+  const friendSelectedMessage = `${selectedFriend?.name}`;
 
   return (
     <Animated.View
       entering={ZoomInEasyUp}
       exiting={FadeOut}
-      style={{
+      style={[  {
         //alignItems: "center",
         alignText: "flex-start",
         flexWrap: "flex",
-        width: "60%",
-      }}
+        width: "100%", 
+      }]}
     >
       {selectedFriend && !loadingNewFriend && (
+        <>
+                <Animated.Text
+          style={[  appFontStyles.welcomeText, { color: themeStyles.primaryText.color}]}
+        >
+          Selected:
+        </Animated.Text>
         <Animated.Text
-          style={[themeStyles.primaryText, appFontStyles.welcomeText]}
+          style={[  appFontStyles.welcomeText, { color: themeStyles.primaryText.color}]}
         >
           {friendSelectedMessage}
         </Animated.Text>
+        </>
       )}
 
       {!selectedFriend && (
         <Animated.Text
-          style={[themeStyles.primaryText, appFontStyles.welcomeText]}
+     style={[  appFontStyles.welcomeText, { color: themeStyles.primaryText.color}]}
         >
           {message}
         </Animated.Text>

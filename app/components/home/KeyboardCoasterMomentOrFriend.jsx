@@ -12,6 +12,7 @@ const KeyboardCoasterMomentOrFriend = ({
   borderRadius = 20,
   borderColor = "transparent",
   maxHeight = 100,
+  isKeyboardVisible,
 }) => {
   const { manualGradientColors } = useGlobalStyle();
 
@@ -24,7 +25,8 @@ const KeyboardCoasterMomentOrFriend = ({
             borderRadius: borderRadius,
             borderColor: borderColor,
             height: 40,
-            maxHeight: maxHeight,
+            maxHeight: maxHeight, 
+            opacity: isKeyboardVisible ? 1 : 0,
           },
         ]}
       >

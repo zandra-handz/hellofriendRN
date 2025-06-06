@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import ContentAddHello from "@/app/components/helloes/ContentAddHello";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFriendList } from "@/src/context/FriendListContext";
-import SafeView from "@/app/components/appwide/format/SafeView"; 
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground"; 
 import GlobalAppHeaderIconVersion from "@/app/components/headers/GlobalAppHeaderIconVersion";
  
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -12,7 +12,7 @@ const ScreenAddHello = () => {
   const { themeAheadOfLoading } = useFriendList();
 
   return (
-    <SafeView styles={[{ flex: 1 }]}>
+    <SafeViewAndGradientBackground styles={[{ flex: 1 }]}>
       <LinearGradient
         colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
         start={{ x: 0, y: 0 }}
@@ -33,7 +33,7 @@ const ScreenAddHello = () => {
 
         <ContentAddHello />
       </LinearGradient>
-    </SafeView>
+    </SafeViewAndGradientBackground>
   );
 };
 

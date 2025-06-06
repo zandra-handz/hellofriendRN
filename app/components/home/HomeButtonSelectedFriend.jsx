@@ -12,6 +12,8 @@ import ButtonIconImages from "../buttons/images/ButtonIconImages";
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
 import HomeFriendItems from "./HomeFriendItems";
 import EclipseAnim from "@/app/animations/EclipseAnim";
+import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
+ 
 
 const DOUBLE_PRESS_DELAY = 300;
 
@@ -22,7 +24,7 @@ const HomeButtonSelectedFriend = ({
   borderColor = "transparent",
 }) => {
   const navigation = useNavigation();
-  const { themeStyleSpinners, manualGradientColors } = useGlobalStyle();
+  const { themeStyleSpinners, manualGradientColors, themeStyles } = useGlobalStyle();
   const { darkColor, lightColor, homeDarkColor, homeLightColor } =
     manualGradientColors;
   const { themeAheadOfLoading } = useFriendList();
@@ -80,32 +82,25 @@ const HomeButtonSelectedFriend = ({
   };
 
   return (
-    <View style={{ maxHeight: maxHeight, borderRadius: borderRadius }}>
-      <EclipseAnim
-        color={homeLightColor ? homeLightColor : "lightgreen"}
-        innerColor={homeDarkColor ? homeDarkColor : "darkgreen"}
-        delay={10}
-        speed={100}
-      >
+    <View style={{ borderRadius: borderRadius }}>
+ 
         <View
           style={[
             styles.container,
             {
+           //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
               borderRadius: borderRadius,
               borderColor: borderColor,
-              height: height,
-              maxHeight: maxHeight,
+              justifyContent: 'flex-start',
+              flexDirection: 'column',
+              //height: height, 
             },
           ]}
         >
-          <LinearGradient
-            colors={[darkColor, lightColor]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              ...StyleSheet.absoluteFillObject,
-            }}
-          />
+
+          <View style={{width: '100%',   height: 170}}>
+          
+   
 
           {isLoading && !friendLoaded && (
             <>
@@ -222,32 +217,40 @@ const HomeButtonSelectedFriend = ({
                 />
                 
               </View>
-              
-              
+               
 
             </View>
           )}
-          
+          </View>
+            <HomeFriendItems borderRadius={10} height={40} />
+                                {selectedFriend && (
+                              <HomeScrollCalendarLights
+                                height={"5%"}
+                                borderRadius={40}
+                                borderColor="black"
+                              />
+                            )}
+
         </View>
         
-      </EclipseAnim>
+         
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 130,
     flexDirection: "row",
     width: "100%",
     flex: 1,
-    padding: "5%",
+    padding: 10,
     alignContent: "center",
-    borderWidth: 0,
-    marginVertical: "1%",
+    borderWidth: 0, 
+    height: '100%',
     alignItems: "center",
-    justifyContent: "space-between",
-    overflow: "hidden",
-    backgroundColor: "teal",
+    justifyContent: "flex-start",
+    overflow: "hidden",  
   },
   textContainer: {
     zIndex: 5,

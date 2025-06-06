@@ -10,7 +10,7 @@ const SmallAddButton = ({ label, onPress }) => {
       style={[
         appContainerStyles.smallAddButton,
         {
-          borderColor: themeStyles.genericText.color,
+          borderColor: themeStyles.primaryBackground.backgroundColor,
         },
       ]}
       onPress={onPress}
@@ -20,12 +20,12 @@ const SmallAddButton = ({ label, onPress }) => {
           width: 14,
           height: "100%",
           alignItems: "center",
-          marginHorizontal: 5,
+          marginHorizontal: 2,
         }}
       >
-        <Feather name="plus" size={14} color={themeStyles.genericText.color} />
+        <Feather name="plus" size={14} color={themeStyles.primaryBackground.backgroundColor} />
       </View>
-      <Text style={[themeStyles.genericText, appFontStyles.smallAddButtonText]}>
+      <Text style={[ appFontStyles.smallAddButtonText, {color: themeStyles.primaryBackground.backgroundColor}]}>
         {label}
       </Text>
     </TouchableOpacity>

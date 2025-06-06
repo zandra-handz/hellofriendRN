@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import LizardSvg from "@/app/assets/svgs/lizard.svg";
-import SafeView from "../format/SafeView";
+import SafeViewAndGradientBackground from "../format/SafeViewAndGradBackground";
 
 const LogoSmaller = () => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();

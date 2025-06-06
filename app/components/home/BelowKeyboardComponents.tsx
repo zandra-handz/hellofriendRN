@@ -43,7 +43,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           },
         ]}
     >
-      {friendListLength > 0 && <AddOptionsList />}
+     
 
       <Animated.View
         style={[
@@ -57,11 +57,16 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           },
         ]}
       >
+        {/* <View style={{position: 'absolute', zIndex: 40000, elevation: 40000, left: 0, top: -16}}>
+         {friendListLength > 0 && <AddOptionsList />}
+         
+          
+        </View> */}
         {!isFriendSelected && friendListLength > 0 && (
           <HomeButtonUpNext
             onPress={onPress}
             borderRadius={10}
-            height={500}
+            height={'100%'}
             borderColor="black"
           />
         )}
@@ -74,6 +79,13 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
               height={"100%"}
             />
             <HomeFriendItems borderRadius={10} height={100} />
+                    {isFriendSelected && (
+                  <HomeScrollCalendarLights
+                    height={"5%"}
+                    borderRadius={40}
+                    borderColor="black"
+                  />
+                )}
           </>
         )}
         {/* {isFriendSelected && (
@@ -86,13 +98,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
         )} */}
         <View>
             
-        {isFriendSelected && (
-                  <HomeScrollCalendarLights
-                    height={"5%"}
-                    borderRadius={40}
-                    borderColor="black"
-                  />
-                )}
+
                 
         </View>
       </Animated.View>

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import UICalendarPageDynamic from "@/app/components/foranimations/UICalendarPageDynamic"; // Import the calendar component
-
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 const SoonButton = ({
   width = "100%",
   height = 40,
@@ -10,6 +10,8 @@ const SoonButton = ({
   onPress,
   disabled = false,
 }) => {
+
+  const { themeStyles } = useGlobalStyle();
   const formatNumDate = (dateString) => {
     const match = dateString.match(/\d+/);
     return match ? match[0] : "";
@@ -23,7 +25,7 @@ const SoonButton = ({
   return (
     <TouchableOpacity
       onPress={onPress ? onPress : () => {}}
-      style={[styles.container, { width: width }]}
+      style={[styles.container, { width: width, backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor }]}
       disabled={disabled}
     >
       <View style={styles.blurOverlay} />
@@ -57,8 +59,7 @@ const styles = StyleSheet.create({
   
     width: '100%',
     padding: 10,
-    borderRadius: 14,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 14, 
     overflow: "hidden",
   },
   blurOverlay: {

@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
-
 import HellofriendHeader from "@/app/components/headers/HellofriendHeader";
 import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 import { useUser } from "@/src/context/UserContext";
@@ -18,8 +17,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext"; //to check if any friends, don't render Up Next component or upcoming scroll if so
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useMessage } from "@/src/context/MessageContext";
-import { LinearGradient } from "expo-linear-gradient";
+import { useMessage } from "@/src/context/MessageContext"; 
 import { useNavigation } from "@react-navigation/native";
 import BelowKeyboardComponents from "@/app/components/home/BelowKeyboardComponents";
 import { useFocusEffect } from "@react-navigation/native";
@@ -32,7 +30,7 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 
 import * as FileSystem from "expo-file-system";
 
-import SafeView from "@/app/components/appwide/format/SafeView";
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
@@ -201,94 +199,93 @@ const ScreenHome = () => {
   }, [imageUri]);
 
   return (
-    <SafeView style={{ flex: 1 }}>
-      <LinearGradient
-        colors={[
-          gradientColorsHome.darkColor,
-          isKeyboardVisible
-            ? gradientColorsHome.midpointColor
-            : gradientColorsHome.lightColor,
-        ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          flex: 1,
-          justifyContent: "space-between",
-        }}
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1 }}
-        >
-          <HellofriendHeader />
-          {isAuthenticated &&
-          userAppSettings &&
-          friendList &&
-          friendList.length > 0 ? (
+    <SafeViewAndGradientBackground
+      includeBackgroundOverlay={true}
+      backgroundOverlayHeight={ isKeyboardVisible ? '100%' : 230}
+      backgroundOverlayBottomRadius={20}
+      style={{ flex: 1 }}
+      header={HellofriendHeader}
+    >
+      <KeyboardAvoidingView
+    
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={[{ flex: 1 }]}
+      > 
+        {isAuthenticated &&
+        userAppSettings &&
+        friendList &&
+        friendList.length > 0 ? (
+          <View
+            style={{
+              flex: 1, 
+              justifyContent: "space-between",
+              flexDirection: "column",
+              paddingHorizontal: 0,
+            }}
+          >
             <View
               style={{
-                flex: 1,
-                paddingBottom: "1%",
-                justifyContent: "space-between",
-                flexDirection: "column",
-                paddingHorizontal: "2%",
+                position: 'absolute', zIndex: 3000,
+                width: '100%',
+              //  backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor,
+                borderRadius: 10,
+                paddingHorizontal: 0, 
+                
+                
+                height: isKeyboardVisible ? "89%" : "18%", // doesn't control height of quickwritemoment now -- prop 'multiline' does 
               }}
             >
-              <View
-                style={{
-                  height: isKeyboardVisible ? "89%" : "30%",
-                }}
-              >
-                {/* <Button
+              {/* <Button
                 title="Try!"
                 onPress={() => {
                   Sentry.captureException(new Error("First error"));
                 }}
               /> */}
-                {isAuthenticated && !isInitializing && (
-                  <WelcomeMessageUI
-                    username={user.username}
-                    isNewUser={isNewUser}
-                  />
-                )}
-                <QuickWriteMoment
-                  width={"100%"}
-                  height={"100%"}
-                  ref={newMomentTextRef}
-                  title={"Add a new moment?"}
-                  iconColor={themeStyles.genericText.color}
-                  mountingText={""}
-                  onTextChange={updateNewMomentTextString}
-                  multiline={true}
-                />
+              {isAuthenticated && !isInitializing && (
+                <View style={{width: '70%', paddingHorizontal: 10, marginTop: 0}}>
 
-                <KeyboardCoasters
-                  isKeyboardVisible={isKeyboardVisible}
-                  isFriendSelected={!!selectedFriend}
-                  showMomentScreenButton={showMomentScreenButton}
-                  onPress={navigateToAddMomentScreen}
+                <WelcomeMessageUI
+                  username={user.username}
+                  isNewUser={isNewUser}
                 />
-              </View>
-              {!isKeyboardVisible && (
-                <BelowKeyboardComponents
-                  slideAnim={slideAnim}
-                  friendListLength={friendListLength}
-                  isFriendSelected={!!selectedFriend}
-                  onPress={navigateToAddMomentScreen}
-                />
+                </View>
               )}
-            </View>
-          ) : (
-            <NoFriendsMessageUI
-              username={user?.username || ""}
-              userCreatedOn={user?.created_on || ""}
-            />
-          )}
+              <QuickWriteMoment
+                width={"100%"}
+                height={"100%"}
+                ref={newMomentTextRef}
+                title={"Add a new moment?"}
+                iconColor={themeStyles.genericText.color}
+                mountingText={""}
+                onTextChange={updateNewMomentTextString}
+                multiline={isKeyboardVisible}
+              />
 
-          <HelloFriendFooter />
-        </KeyboardAvoidingView>
-      </LinearGradient>
-    </SafeView>
+              <KeyboardCoasters
+                isKeyboardVisible={isKeyboardVisible}
+                isFriendSelected={!!selectedFriend}
+                showMomentScreenButton={showMomentScreenButton}
+                onPress={navigateToAddMomentScreen}
+              />
+            </View>
+            {!isKeyboardVisible && (
+              <BelowKeyboardComponents
+                slideAnim={slideAnim}
+                friendListLength={friendListLength}
+                isFriendSelected={!!selectedFriend}
+                onPress={navigateToAddMomentScreen}
+              />
+            )}
+          </View>
+        ) : (
+          <NoFriendsMessageUI
+            username={user?.username || ""}
+            userCreatedOn={user?.created_on || ""}
+          />
+        )}
+      </KeyboardAvoidingView>
+      <HelloFriendFooter />
+    </SafeViewAndGradientBackground>
   );
 };
 

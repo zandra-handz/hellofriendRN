@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text,  TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import ArrowLeftCircleOutline from "@/app/assets/svgs/arrow-left-circle-outline.svg";
@@ -15,6 +15,9 @@ const GlobalAppHeader = ({
   altView = false,
   icon: Icon,
   altViewIcon: AltViewIcon,
+  transparentBackground = false,
+  counter = null,
+  totalCount = null,
 }) => {
   const { appContainerStyles, appFontStyles } = useGlobalStyle();
   const { loadingNewFriend, selectedFriend } = useSelectedFriend();
@@ -34,7 +37,11 @@ const GlobalAppHeader = ({
   return (
     <>
       <LinearGradient
-        colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
+        colors={[  
+          // temporary to see how looks/if good approach
+          transparentBackground ? "transparent" : themeAheadOfLoading.darkColor,
+          transparentBackground ? "transparent" : themeAheadOfLoading.lightColor,
+        ]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={[
@@ -99,7 +106,7 @@ const GlobalAppHeader = ({
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {title} {selectedFriend?.name ? ` ${selectedFriend.name}` : ""}
+                {title}{" "}{counter && totalCount && `${counter}/${totalCount} `}{selectedFriend?.name ? `${selectedFriend.name}` : ""}
               </Text>
             </View>
             <View
@@ -133,6 +140,5 @@ const GlobalAppHeader = ({
     </>
   );
 };
- 
 
 export default GlobalAppHeader;

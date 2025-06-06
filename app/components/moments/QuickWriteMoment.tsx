@@ -13,17 +13,21 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Keyboard,
 } from "react-native";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import FriendModalIntegrator from "../friends/FriendModalIntegrator";
-import { AntDesign } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { AntDesign } from "@expo/vector-icons";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { useFriendList } from "@/src/context/FriendListContext";
-import { useFocusEffect } from "@react-navigation/native"; 
+import { useFocusEffect } from "@react-navigation/native";
+
+import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
 interface QuickWriteMomentProps {
   title?: string;
@@ -47,16 +51,18 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
     },
     ref
   ) => {
-    const { themeStyles, appFontStyles, appContainerStyles } = useGlobalStyle();
-    const {   userAppSettings } = useUser();
+    const { themeStyles, appFontStyles, manualGradientColors, appContainerStyles } = useGlobalStyle();
+    const { userAppSettings } = useUser();
     // const { friendListLength } = useFriendList(); checking higher up
     const { selectedFriend } = useSelectedFriend();
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
     const [autoFocusSelected, setAutoFocusSelected] = useState(true);
- 
-    const textInputRef = useRef();
+      const { 
+    handleCaptureImage,
+    handleSelectImage,
+  } = useImageUploadFunctions();
 
-     
+    const textInputRef = useRef();
 
     //This is what turns moment text input autofocus on/off depending on user's settings
     useFocusEffect(
@@ -134,86 +140,173 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
         <View
           style={[
             appContainerStyles.homeScreenNewMomentContainer,
-            { width: width, height: height },
+            { width: '100%', height: multiline? '100%' : 30, paddingLeft: 16, paddingTop: multiline? 16 : 0, borderRadius: 10, backgroundColor: multiline ? manualGradientColors.homeDarkColor : 'transparent' },
           ]}
         > 
-
-            {/* <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                height: "auto",
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "column",
-                  height: "100%",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={[styles.title, themeStyles.genericText]}>
-                  {title}
-                </Text>
-            
-              </View>
- 
+          <>
+            <View style={{ flex: 1 }}>
+              {!editedMessage && (
+                <>
                 <View
-                  style={[styles.selectFriendContainer, { marginBottom: "2%" }]}
+                  style={{
+                    position: "absolute",
+                    flexDirection: "row",
+                   // backgroundColor: 'red',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 30,
+                    alignItems: 'center',
+                    opacity: multiline ? .5 : 1,
+                  }}
                 >
-                  <FriendSelectModalVersionButtonOnly
-                    color={themeStyles.genericText.color}
-                    includeLabel={true}
-                    width="auto"
-                  />
-                </View> 
-            </View> */}
-            <>
-              <View style={{ flex: 1 }}>
-                { !editedMessage && (
                   <View
-                    style={{ position: "absolute", top: 0, left: 0, right: 0 }}
+                    style={{
+                      height: 24,
+                      width: 24,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 12,
+                      borderWidth: 1,
+                      borderColor: themeStyles.primaryText.color,
+                    }}
                   >
-                    <Text style={[styles.helperText, themeStyles.genericText]}>
-                      Add a new talking point for{" "} 
-                      {selectedFriend ? ( 
+                    <MaterialCommunityIcons
+                      name="plus"
+                      color={themeStyles.primaryText.color}
+                      size={20}
+                    />
+                  </View>
+                  <Text style={[styles.helperText, themeStyles.primaryText]}>
+                    {"  "}Talking point
+                    {/* {selectedFriend ? ( 
                         <Text style={{ fontWeight: "bold" }}>
                           {selectedFriend.name}
                         </Text>
                       ) : ( 
                         <Text>a friend</Text>
-                      )}
-                      ?
-                    </Text>
+                      )} */}
+                    {/* ? */}
+                  </Text>
+                </View>
+
+                {/* <TouchableOpacity
+                onPress={handleCaptureImage}
+                  style={{
+                    position: "absolute",
+                    flexDirection: "row",
+                  zIndex: 4000,
+                   // backgroundColor: 'red',
+                    top: 0,
+                    left: 134, 
+                    height: 30,
+                    width: 60,
+                    //backgroundColor: 'pink',
+                    alignItems: 'center',
+                    opacity: multiline ? 0 : 1,
+                  }}
+                >
+                  <View
+                    style={{
+                      height: 24,
+                      width: 24,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 12,
+                      borderWidth: 1,
+                      borderColor: themeStyles.primaryText.color,
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="plus"
+                      color={themeStyles.primaryText.color}
+                      size={20}
+                    />
                   </View>
-                )} 
-                  <View style={{ flexDirection: "row", marginTop: "0%" }}>
-                    <View
-                      style={{
-                        flexShrink: 1,
-                        justifyContent: "flex-start",
-                        width: "auto",
-                      }}
+                  <Text style={[styles.helperText, themeStyles.primaryText]}>
+                    {"  "}Pic 
+                  </Text>
+                </TouchableOpacity> */}
+                
+                  {/* <TouchableOpacity
+                 onPress={handleSelectImage}
+                  style={{
+                 //   position: "absolute",
+                    flexDirection: "row",
+                    zIndex: 5000,
+                    elevation: 5000,
+                    width: 60,
+                   // backgroundColor: 'red',
+                    top: 0,
+                    left: 200,
+                    right: 0,
+                    height: 30,
+                    //backgroundColor: 'orange',
+                    alignItems: 'center',
+                    opacity: multiline ? 0 : 1,
+                  }}
+                >
+                  <View
+                    style={{
+                      height: 24,
+                      width: 24,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 12,
+                      borderWidth: 1,
+                      borderColor: themeStyles.primaryText.color,
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="plus"
+                      color={themeStyles.primaryText.color}
+                      size={20}
+                    />
+                  </View>
+                  <Text style={[styles.helperText, themeStyles.primaryText]}>
+                    {"  "}Upl
+                    {/* {selectedFriend ? ( 
+                        <Text style={{ fontWeight: "bold" }}>
+                          {selectedFriend.name}
+                        </Text>
+                      ) : ( 
+                        <Text>a friend</Text>
+                      )} */}
+                    {/* ? */}
+
+                  {/* </Text>
+                </TouchableOpacity> */} 
+                </>
+                
+                
+              )}
+                    <KeyboardAvoidingView
+                      keyboardVerticalOffset={130}
+                      behavior={Platform.OS === "ios" ? "padding" : "height"}
+                      style={[{ flex: 1 , paddingBottom: multiline? 70 : 0}]}
                     > 
-                    </View> 
-                      <TextInput
-                        ref={textInputRef}
-                        autoFocus={autoFocusSelected || false}
-                        style={[
-                          styles.textInput,
-                          themeStyles.genericText, 
-                        ]}
-                        value={editedMessage}
-                        placeholder={""}
-                        placeholderTextColor={"white"}
-                        onChangeText={handleTextInputChange} // Update local state
-                        multiline={multiline}
-                      /> 
-                  </View> 
+              <View style={{ flexDirection: "row", paddingTop: 3, paddingLeft: 4 }}>
+                {/* <View
+                  style={{
+                    flexShrink: 1,
+                    justifyContent: "flex-start",
+                    width: "auto",
+                  }}
+                ></View> */}
+                <TextInput
+                  ref={textInputRef}
+                  autoFocus={autoFocusSelected || false}
+                  style={[styles.textInput, themeStyles.genericText]}
+                  value={editedMessage}
+                  placeholder={""}
+                  placeholderTextColor={"white"}
+                  onChangeText={handleTextInputChange} // Update local state
+                  multiline={multiline}
+                />
               </View>
-            </> 
+              </KeyboardAvoidingView>
+            </View>
+          </>
         </View>
       </TouchableWithoutFeedback>
     );
@@ -233,12 +326,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 32,
 
-    fontFamily: "Poppins-Regular", 
+    fontFamily: "Poppins-Regular",
   },
   helperText: {
     fontSize: 16,
     lineHeight: 20,
-    opacity: 0.5, 
   },
   textInput: {
     textAlignVertical: "top",

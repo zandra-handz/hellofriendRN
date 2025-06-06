@@ -23,13 +23,16 @@ const KeyboardCoasters: React.FC<KeyboardCoastersProps> = ({
       {isKeyboardVisible && (
         <KeyboardCoasterNotNow onPress={() => Keyboard.dismiss()} />
       )}
-
+ 
+  
       <KeyboardCoasterMomentOrFriend  // can't put this inside of isKeyboardVisible too unstable to open modal correctly
         onPress={onPress}
         borderRadius={40}
         isFriendSelected={isFriendSelected}
         showMomentScreenButton={showMomentScreenButton}
+        isKeyboardVisible={isKeyboardVisible}
       />
+       
     </>
   );
 };

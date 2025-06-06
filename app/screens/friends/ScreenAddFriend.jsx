@@ -3,21 +3,21 @@ import { View, StyleSheet } from "react-native";
 import ContentAddFriend from "@/app/components/friends/ContentAddFriend";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import SafeView from "@/app/components/appwide/format/SafeView";
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
  
 
 const ScreenAddFriend = () => {
   const { themeStyles } = useGlobalStyle();
 
   return (
-    <SafeView style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground style={{ flex: 1 }}>
       <View style={[styles.container, themeStyles.container]}>
         <GlobalAppHeader title={'Add new friend'} /> 
         <View style={styles.mainContainer}>
           <ContentAddFriend />
         </View>
       </View>
-    </SafeView>
+    </SafeViewAndGradientBackground>
   );
 };
 

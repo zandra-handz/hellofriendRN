@@ -15,8 +15,11 @@ export default function HelloFriendFooter() {
   const isOnActionPage = currentRouteName === "hellofriend";
   const { themeStyles } = useGlobalStyle();
 
+
+  //themeStyles.footerContainer, 
+
   return (
-    <View style={[styles.container, themeStyles.footerContainer]}>
+    <View style={[styles.container, {backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor}]}> 
       {isOnActionPage ? (
         <View style={styles.section}>
           <ButtonSignOut
@@ -55,7 +58,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     zIndex: 1,
-    height: 50,
+    height: 60,
+  
   },
   section: {
     flex: 1,

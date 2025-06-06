@@ -13,7 +13,7 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import SafeView from "@/app/components/appwide/format/SafeView";
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
@@ -121,7 +121,7 @@ const ScreenFriendSettings = () => {
   }, [deleteFriendMutation.isSuccess]);
 
   return (
-    <SafeView styles={{ flex: 1 }}>
+    <SafeViewAndGradientBackground styles={{ flex: 1 }}>
       <LinearGradient
         colors={[darkColor, lightColor]}
         start={{ x: 0, y: 0 }}
@@ -283,7 +283,7 @@ const ScreenFriendSettings = () => {
           </>
         )}
       </LinearGradient>
-    </SafeView>
+    </SafeViewAndGradientBackground>
   );
 };
 

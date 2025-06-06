@@ -203,7 +203,7 @@ export default Sentry.wrap(function App() {
                 <FriendListProvider>
                   <SelectedFriendProvider>
                     <LocationsProvider>
-                      <PhoneStatusBar />
+                      {/* <PhoneStatusBar /> */}
                       <CapsuleListProvider>
                         <HelloesProvider>
                           <MessageContextProvider>

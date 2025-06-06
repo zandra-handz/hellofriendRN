@@ -48,7 +48,8 @@ const HomeButtonUpNext = ({
       ]}
     >
       <LinearGradient
-        colors={[darkColor, lightColor]}
+       // colors={[darkColor, lightColor]}
+         colors={['transparent', 'transparent']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
@@ -76,13 +77,14 @@ const HomeButtonUpNext = ({
             justifyContent: "space-between",
           }}
         >
+          <View style={{width: '100%', height: 200}}></View>
           <TouchableOpacity onPress={onPress} style={[styles.textContainer]}>
             <Text style={styles.headerText}>{header}</Text>
 
             <Text
               style={[
                 {
-                  color: themeStyles.genericTextBackground.backgroundColor,
+                  color: themeStyles.primaryBackground.backgroundColor,
                   fontSize: 18,
                 },
               ]}
@@ -106,14 +108,14 @@ const HomeButtonUpNext = ({
           <View
             style={{
               zIndex: 30000,
-              height: 400,
-              marginTop: 100,
+              height: '100%', 
               width: "100%",
+              marginTop: 10,
             }}
           >
             <HomeScrollSoon
               height={"100%"}
-              maxHeight={360}
+              maxHeight={700}
               borderRadius={10}
               borderColor="black"
             />
@@ -122,7 +124,7 @@ const HomeButtonUpNext = ({
             style={{
               position: "absolute",
               right: -56,
-              top: -76,
+              top: 20,
               transform: [{ rotate: "180deg" }],
             }}
           >
@@ -138,10 +140,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    padding: "5%",
+    padding: 10,
     minHeight: 190,
-    alignContent: "center",
-    marginVertical: "1%",
+    alignContent: "center", 
     borderWidth: 0,
     alignItems: "center",
     justifyContent: "space-between",
@@ -156,6 +157,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     paddingLeft: "2%",
     paddingRight: "16%",
+    top: 130,
     flexDirection: "column",
     width: "100%",
     justifyContent: "space-around",

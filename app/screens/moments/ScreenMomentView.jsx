@@ -3,18 +3,18 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import SafeView from "@/app/components/appwide/format/SafeView";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader"; 
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 import { useFocusEffect } from "@react-navigation/native";
-import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
+import { useFriendList } from "@/src/context/FriendListContext";
 
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
-   const currentIndex = route.params?.index ?? null;
+  const currentIndex = route.params?.index ?? null;
 
   const {
     capsuleList,
@@ -25,10 +25,23 @@ const ScreenMomentView = () => {
     updateCacheWithNewPreAdded,
   } = useCapsuleList();
   // const [currentIndex, setCurrentIndex] = useState(0);
-  const { selectedFriend } = useSelectedFriend(); 
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
+
+  const renderHeader = useCallback(
+    () => (
+      <GlobalAppHeader
+        title={"MOMENTS: "}
+        navigateTo={"Moments"}
+        icon={LeavesTwoFallingOutlineThickerSvg}
+        altView={false}
+      />
+    ),
+    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
+  );
 
   // useEffect(() => {
-  //   if (moment) { 
+  //   if (moment) {
   //     // const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
   //     const index = capsuleList.findIndex((mom) => mom.id === moment.id);
   //     setCurrentIndex(index);
@@ -48,8 +61,6 @@ const ScreenMomentView = () => {
   //     }
   //   }, [capsuleList, moment.id]) // dependencies for the useCallback
   // );
-
- 
 
   //manually closing this for right now because I give up
   // DONT THINK WE NEED THIS WITH THE NEW CAROUSEL COMPONENT
@@ -80,17 +91,9 @@ const ScreenMomentView = () => {
     if (updateCapsuleMutation.isSuccess) {
       updateCacheWithNewPreAdded(); //The animation in the screen itself triggers this too but after a delay, not sure if I need this here
       //  console.log(`capsule list length after update: ${capsuleList?.length}`);
- 
- 
     }
   }, [updateCapsuleMutation.isSuccess]);
 
- 
- 
-
- 
-
- 
   const handleDelete = (item) => {
     // console.log("handle delete moment in navigator triggered: ", item);
     try {
@@ -120,18 +123,14 @@ const ScreenMomentView = () => {
   // }, [currentIndex, capsuleList]);
 
   return (
-    <SafeView style={{ flex: 1 }}>
-      <GradientBackground useFriendColors={true}>
-        <GlobalAppHeader
-          title={"MOMENTS: "}
-          navigateTo={"Moments"}
-          icon={LeavesTwoFallingOutlineThickerSvg}
-          altView={false}
-        />
+    <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
+      <CarouselSlider
+        initialIndex={currentIndex}
+        data={capsuleList}
+        children={MomentViewPage}
+      />
 
-        <CarouselSlider initialIndex={currentIndex} data={capsuleList} children={MomentViewPage} />
-
-        {/* <MomentView
+      {/* <MomentView
           onSliderPull={handleDelete}
           momentCategory={
             capsuleList[currentIndex]
@@ -145,22 +144,7 @@ const ScreenMomentView = () => {
           }
           momentData={momentInView || null}
         /> */}
-
-
-        {/* {momentInView && (
-          <>
-            {momentInView.typedCategory && (
-              <NavigationArrows
-                currentIndex={currentIndex}
-                imageListLength={capsuleList.length}
-                onPrevPress={goToPreviousMoment}
-                onNextPress={goToNextMoment}
-              />
-            )}
-          </>
-        )} */}
-      </GradientBackground>
-    </SafeView>
+    </SafeViewAndGradientBackground>
   );
 };
 

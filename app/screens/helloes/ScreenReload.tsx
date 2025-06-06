@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import SafeView from "@/app/components/appwide/format/SafeView";
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
@@ -24,8 +24,8 @@ const ScreenReload = () => {
   const navigation = useNavigation();
 
   return (
-    <SafeView style={{ flex: 1 }}>
-      <GradientBackground useFriendColors={true}>
+    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+  
         {loadingNewFriend && (
           <View style={{ flex: 1, width: "100%" }}>
             <LoadingPage
@@ -49,9 +49,8 @@ const ScreenReload = () => {
 
             <View style={{ flex: 1 }}>{preAdded && <PreAddedList />}</View>
           </>
-        )}
-      </GradientBackground>
-    </SafeView>
+        )} 
+    </SafeViewAndGradientBackground>
   );
 };
 

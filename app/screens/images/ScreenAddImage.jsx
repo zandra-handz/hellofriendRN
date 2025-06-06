@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeView from "@/app/components/appwide/format/SafeView"; 
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import ImageGallerySingleOutlineSvg from "@/app/assets/svgs/image-gallery-single-outline.svg";
-
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendList } from "@/src/context/FriendListContext";
 
 // state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -17,14 +18,27 @@ const ScreenAddImage = () => {
   const imageUri = route.params?.imageUri ?? false;
 
   const { themeStyles } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendList();
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+
+  const renderHeader = useCallback(
+    () => (
+      <GlobalAppHeader
+        title="Upload for"
+        navigateTo="Images"
+        icon={ImageGallerySingleOutlineSvg}
+        altView={false}
+      />
+    ),
+    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
+  );
 
   return (
-    <SafeView style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
       <View style={[styles.container, themeStyles.container]}>
-        <GlobalAppHeader title="Upload for" navigateTo="Images" icon={ImageGallerySingleOutlineSvg} altView={false}/>
         <ContentAddImage imageUri={imageUri} />
       </View>
-    </SafeView>
+    </SafeViewAndGradientBackground>
   );
 };
 

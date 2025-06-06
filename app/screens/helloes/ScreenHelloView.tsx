@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react"; 
 import { useRoute } from "@react-navigation/native"; 
-import SafeView from "@/app/components/appwide/format/SafeView";
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
  
-import { useFocusEffect } from "@react-navigation/native";
-import GradientBackground from "@/app/components/appwide/display/GradientBackground";
+import { useFocusEffect } from "@react-navigation/native"; 
 import GlobalAppHeaderIconVersion from "@/app/components/headers/GlobalAppHeaderIconVersion";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -37,8 +36,8 @@ const ScreenHelloView = () => {
   
   
   return (
-    <SafeView style={{ flex: 1 }}>
-      <GradientBackground useFriendColors={true}>
+    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+    
         <GlobalAppHeaderIconVersion
           title={"Helloes with"}
           navigateTo="Helloes"
@@ -52,8 +51,8 @@ const ScreenHelloView = () => {
         />
 
         <CarouselSlider initialIndex={currentIndex} data={helloesList} children={HelloViewPage} />
-      </GradientBackground>
-    </SafeView>
+ 
+    </SafeViewAndGradientBackground>
   );
 };
 
