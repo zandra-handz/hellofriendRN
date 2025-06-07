@@ -32,9 +32,10 @@ const HomeScrollSoon = ({
   const handlePress = (hello) => { 
     const { id, name } = hello.friend;
     const selectedFriend = id === null ? null : { id: id, name: name };
-    setFriend(selectedFriend);
+    
     const friend = friendList.find((friend) => friend.id === hello.friend.id);
     getThemeAheadOfLoading(friend);
+    setFriend(selectedFriend);
     navigation.navigate('Moments');
   };
  
@@ -63,6 +64,7 @@ const HomeScrollSoon = ({
             />
           </View>
         )}   
+        showsVerticalScrollIndicator={false}
         ListFooterComponent={() => (
           <View style={{ height: 300 }} />
         )} 
@@ -111,10 +113,10 @@ const HomeScrollSoon = ({
       )}
       {!isLoading && (
         <>
-          <View style={styles.headerContainer}>
+          {/* <View style={styles.headerContainer}>
              <Text style={styles.headerText}>SOON</Text>
  
-          </View>
+          </View> */}
 
           {friendListLength === 0 && (
             <View style={styles.noFriendsTextContainer}>
@@ -153,11 +155,9 @@ const styles = StyleSheet.create({
     flex: 1, 
     flexGrow: 1,
     height: '100%',
-    overflow: "hidden",
-    marginVertical: "1%",
+    overflow: "hidden", 
     borderWidth: 0,
-    borderColor: "black", 
-    paddingVertical: "4%",
+    borderColor: "black",  
   },
   text: {
     fontSize: 16,
@@ -185,21 +185,7 @@ const styles = StyleSheet.create({
     paddingLeft: "3%",
 
     fontSize: 18,
-  },
-  satelliteSection: {
-    width: "33.33%",
-    borderRadius: 0,
-    marginLeft: -20,
-    paddingLeft: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "lightblue",
-  },
-  satelliteButton: {
-    alignItems: "center",
-    alignContents: "center",
-    justifyContent: "space-around",
-  },
+  }, 
   buttonContainer: { 
     flex: 1, 
    flexDirection: 'column',
@@ -207,24 +193,7 @@ const styles = StyleSheet.create({
     width: '100%',
    // backgroundColor: 'pink',
     alignItems: 'center',
-  },
-  button: {
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    marginLeft: ".6%",
-    borderRightWidth: 0.8,
-    paddingTop: 0,
-    backgroundColor: "transparent",
-    backgroundColor: "rgba(41, 41, 41, 0.1)",
-  },
-  satelliteText: {
-    fontSize: 16,
-    fontFamily: "Poppins-Bold",
-    fontWeight: "bold",
-    color: "white",
-  },
+  }, 
 });
 
 export default HomeScrollSoon;

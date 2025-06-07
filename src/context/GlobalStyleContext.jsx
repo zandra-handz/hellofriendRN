@@ -502,8 +502,15 @@ const fontStyles = StyleSheet.create({
     textTransform: "uppercase",
   },
   welcomeText: {
-    fontSize: 26,
-    // lineHeight: 22,
+    fontSize: 27,
+     lineHeight: 30,
+    //fontWeight: 'bold',
+    fontFamily: "Poppins-Regular",
+  },
+    subWelcomeText: {
+    fontSize: 14,
+     lineHeight: 20,
+    //fontWeight: 'bold',
     fontFamily: "Poppins-Regular",
   },
   homeScreenNewMomentContainer: {

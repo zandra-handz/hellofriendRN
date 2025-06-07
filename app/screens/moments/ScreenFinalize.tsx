@@ -50,7 +50,7 @@ const ScreenFinalize = () => {
   return (
     <SafeViewAndGradientBackground
       header={renderHeader}
-      includeBackgroundOverlay={true}
+    //  includeBackgroundOverlay={true}
       style={{ flex: 1 }}
     >
       {loadingNewFriend && (

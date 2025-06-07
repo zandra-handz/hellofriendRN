@@ -38,7 +38,7 @@ const ScreenHome = () => {
   useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { user, isAuthenticated, isInitializing, userAppSettings } = useUser();
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { friendList, friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
@@ -201,10 +201,10 @@ const ScreenHome = () => {
   return (
     <SafeViewAndGradientBackground
       includeBackgroundOverlay={true}
-      backgroundOverlayHeight={ isKeyboardVisible ? '100%' : 230}
-      backgroundOverlayBottomRadius={20}
+      backgroundOverlayHeight={ isKeyboardVisible ? '100%' : 254}
+       backgroundOverlayBottomRadius={10}
       style={{ flex: 1 }}
-      header={HellofriendHeader}
+     // header={HellofriendHeader}
     >
       <KeyboardAvoidingView
     
@@ -242,7 +242,7 @@ const ScreenHome = () => {
                 }}
               /> */}
               {isAuthenticated && !isInitializing && (
-                <View style={{width: '70%', paddingHorizontal: 10, marginTop: 0}}>
+                <View style={{width: '100%', paddingHorizontal: 10, marginTop: 0}}>
 
                 <WelcomeMessageUI
                   username={user.username}
@@ -268,7 +268,7 @@ const ScreenHome = () => {
                 onPress={navigateToAddMomentScreen}
               />
             </View>
-            {!isKeyboardVisible && (
+            {!isKeyboardVisible && !loadingNewFriend && (
               <BelowKeyboardComponents
                 slideAnim={slideAnim}
                 friendListLength={friendListLength}

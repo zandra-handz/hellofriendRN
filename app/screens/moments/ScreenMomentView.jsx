@@ -129,21 +129,7 @@ const ScreenMomentView = () => {
         data={capsuleList}
         children={MomentViewPage}
       />
-
-      {/* <MomentView
-          onSliderPull={handleDelete}
-          momentCategory={
-            capsuleList[currentIndex]
-              ? capsuleList[currentIndex].typedCategory
-              : "No category"
-          }
-          momentText={
-            capsuleList[currentIndex]
-              ? capsuleList[currentIndex].capsule
-              : "No moment"
-          }
-          momentData={momentInView || null}
-        /> */}
+ 
     </SafeViewAndGradientBackground>
   );
 };

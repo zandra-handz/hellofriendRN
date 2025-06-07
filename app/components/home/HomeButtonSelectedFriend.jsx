@@ -240,7 +240,7 @@ const HomeButtonSelectedFriend = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 130,
+    marginTop: 200,
     flexDirection: "row",
     width: "100%",
     flex: 1,

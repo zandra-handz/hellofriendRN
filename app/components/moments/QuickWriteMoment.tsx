@@ -20,7 +20,7 @@ import {
   Keyboard,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { AntDesign } from "@expo/vector-icons";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -51,16 +51,18 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
     },
     ref
   ) => {
-    const { themeStyles, appFontStyles, manualGradientColors, appContainerStyles } = useGlobalStyle();
+    const {
+      themeStyles,
+      appFontStyles,
+      manualGradientColors,
+      appContainerStyles,
+    } = useGlobalStyle();
     const { userAppSettings } = useUser();
     // const { friendListLength } = useFriendList(); checking higher up
     const { selectedFriend } = useSelectedFriend();
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
-    const [autoFocusSelected, setAutoFocusSelected] = useState(true);
-      const { 
-    handleCaptureImage,
-    handleSelectImage,
-  } = useImageUploadFunctions();
+
+    const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 
     const textInputRef = useRef();
 
@@ -72,15 +74,16 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
             textInputRef.current &&
             userAppSettings.simplify_app_for_focus === true
           ) {
-            console.log("Focusing TextInput");
             textInputRef.current.focus();
           } else {
-            console.log("Not focusing TextInput");
+            //  console.log("Not focusing TextInput");
           }
         }, 50); // Small delay for rendering
         return () => clearTimeout(timeout); // Cleanup timeout
       }, [userAppSettings])
     );
+
+    const addIconSize = 22;
 
     //  (CHATGIPITY EXPLANATION ON WHY I NEEDED TO PASS IN USERAPPSETTINGS IN THE DEPEND ARRAY ABOVE:
     //
@@ -95,12 +98,12 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
     // Recreate the useCallback whenever userAppSettings changes.
     // This ensures that the useFocusEffect re-executes with the latest value of userAppSettings.)
 
-    useEffect(() => {
-      if (userAppSettings) {
-        // console.log('userappsettings focus: ', userAppSettings.simplify_app_for_focus);
-        setAutoFocusSelected(userAppSettings.simplify_app_for_focus);
-      }
-    }, [userAppSettings]);
+    // useEffect(() => {
+    //   if (userAppSettings) {
+    //     // console.log('userappsettings focus: ', userAppSettings.simplify_app_for_focus);
+    //     setAutoFocusSelected(userAppSettings.simplify_app_for_focus);
+    //   }
+    // }, [userAppSettings]);
 
     useEffect(() => {
       if (textInputRef.current) {
@@ -140,170 +143,193 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
         <View
           style={[
             appContainerStyles.homeScreenNewMomentContainer,
-            { width: '100%', height: multiline? '100%' : 30, paddingLeft: 16, paddingTop: multiline? 16 : 0, borderRadius: 10, backgroundColor: multiline ? manualGradientColors.homeDarkColor : 'transparent' },
+            {
+              width: "100%",
+              height: multiline ? "100%" : 30,
+              paddingLeft: 18,
+           marginTop: 8,
+              paddingTop: multiline ? 0 : 0,
+              borderRadius: 10,
+              backgroundColor: multiline
+                   ? themeStyles.primaryBackground.backgroundColor
+                // ? manualGradientColors.homeDarkColor
+                : "transparent",
+                  //  backgroundColor: 'red',
+            },
           ]}
-        > 
+        >
           <>
             <View style={{ flex: 1 }}>
+              <></>
               {!editedMessage && (
                 <>
+                  <View
+                    style={{
+                      position: "absolute",
+                      flexDirection: "row",
+                      // backgroundColor: 'red',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 30,
+                      alignItems: "center",
+                      opacity: multiline ? 0.5 : 1,
+                    }}
+                  >
+                    <View
+                      style={{
+                        height: addIconSize,
+                        width: addIconSize,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: addIconSize / 2,
+                        borderWidth: 1,
+                        borderColor: themeStyles.primaryText.color,
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name="plus"
+                        color={themeStyles.primaryText.color}
+                        size={20}
+                      />
+                    </View>
+                    <Text style={[styles.helperText, themeStyles.primaryText, { fontFamily: 'Poppins-Regular'}]}>
+                      {"  "}Add talking point
+                      {/* {selectedFriend ? ( 
+                        <Text style={{ fontWeight: "bold" }}>
+                          {selectedFriend.name}
+                        </Text>
+                      ) : ( 
+                        <Text>a friend</Text>
+                      )} */}
+                      {/* ? */}
+                    </Text>
+
+                    {!multiline && (
+                      <TouchableOpacity
+                        onPress={handleCaptureImage}
+                        style={{
+                          flexDirection: "row",
+                          marginLeft: 30,
+                          zIndex: 6000,
+                          // position: "absolute",
+                          flexDirection: "row",
+                          zIndex: 4000,
+                          // backgroundColor: 'red',
+                          // top: 0,
+                          // left: 180,
+                          height: 30,
+                          width: 'auto',
+                          alignItems: "center",
+                          opacity: multiline ? 0 : .9,
+                        }}
+                      >
+                        <View
+                          style={{
+                            height: addIconSize,
+                            width: addIconSize,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: addIconSize / 2,
+                            borderWidth: 1,
+                            borderColor: themeStyles.primaryText.color,
+                          }}
+                        >
+                          <MaterialCommunityIcons
+                            name="plus"
+                            color={themeStyles.primaryText.color}
+                            size={20}
+                          />
+                        </View>
+                        <Text
+                          style={[styles.helperText, themeStyles.primaryText, {  fontFamily: 'Poppins-Regular'}]}
+                        >
+                          {"  "}Pic
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                    {!multiline && (
+                      <TouchableOpacity
+                        onPress={handleSelectImage}
+                        style={{
+                          //  position: "absolute",
+                   flexDirection: 'row',
+                          marginLeft: 30,
+                          zIndex: 5000,
+                          zIndex: 5000,
+                          elevation: 5000,
+                         // width: 60,
+                          width: 'auto',
+                          // backgroundColor: 'red',
+                          // top: 0,
+                          // left: 266,
+                          // right: 0,
+                          height: 30,
+                          //backgroundColor: 'orange',
+                          alignItems: "center",
+                          opacity: multiline ? 0 : .9,
+                        }}
+                      >
+                        <View
+                          style={{
+                            height: addIconSize,
+                            width: addIconSize,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: addIconSize / 2,
+                            borderWidth: 1,
+                            borderColor: themeStyles.primaryText.color,
+                          }}
+                        >
+                          <MaterialCommunityIcons
+                            name="plus"
+                            color={themeStyles.primaryText.color}
+                            size={20}
+                          />
+                        </View>
+                        <Text
+                        // numberOfLines={1}
+                          style={[styles.helperText, themeStyles.primaryText, { fontFamily: 'Poppins-Regular'}]}
+                        >
+                          {"  "}Upload
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </>
+              )}
+              <KeyboardAvoidingView
+                // keyboardVerticalOffset={100}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={[{ flex: 1, paddingBottom: multiline ? 120 : 0 }]}
+              >
                 <View
                   style={{
-                    position: "absolute",
                     flexDirection: "row",
-                   // backgroundColor: 'red',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 30,
-                    alignItems: 'center',
-                    opacity: multiline ? .5 : 1,
+                    paddingTop: 3,
+                    paddingLeft: 4,
                   }}
                 >
-                  <View
-                    style={{
-                      height: 24,
-                      width: 24,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 12,
-                      borderWidth: 1,
-                      borderColor: themeStyles.primaryText.color,
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                      name="plus"
-                      color={themeStyles.primaryText.color}
-                      size={20}
-                    />
-                  </View>
-                  <Text style={[styles.helperText, themeStyles.primaryText]}>
-                    {"  "}Talking point
-                    {/* {selectedFriend ? ( 
-                        <Text style={{ fontWeight: "bold" }}>
-                          {selectedFriend.name}
-                        </Text>
-                      ) : ( 
-                        <Text>a friend</Text>
-                      )} */}
-                    {/* ? */}
-                  </Text>
-                </View>
-
-                {/* <TouchableOpacity
-                onPress={handleCaptureImage}
-                  style={{
-                    position: "absolute",
-                    flexDirection: "row",
-                  zIndex: 4000,
-                   // backgroundColor: 'red',
-                    top: 0,
-                    left: 134, 
-                    height: 30,
-                    width: 60,
-                    //backgroundColor: 'pink',
-                    alignItems: 'center',
-                    opacity: multiline ? 0 : 1,
-                  }}
-                >
-                  <View
-                    style={{
-                      height: 24,
-                      width: 24,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 12,
-                      borderWidth: 1,
-                      borderColor: themeStyles.primaryText.color,
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                      name="plus"
-                      color={themeStyles.primaryText.color}
-                      size={20}
-                    />
-                  </View>
-                  <Text style={[styles.helperText, themeStyles.primaryText]}>
-                    {"  "}Pic 
-                  </Text>
-                </TouchableOpacity> */}
-                
-                  {/* <TouchableOpacity
-                 onPress={handleSelectImage}
-                  style={{
-                 //   position: "absolute",
-                    flexDirection: "row",
-                    zIndex: 5000,
-                    elevation: 5000,
-                    width: 60,
-                   // backgroundColor: 'red',
-                    top: 0,
-                    left: 200,
-                    right: 0,
-                    height: 30,
-                    //backgroundColor: 'orange',
-                    alignItems: 'center',
-                    opacity: multiline ? 0 : 1,
-                  }}
-                >
-                  <View
-                    style={{
-                      height: 24,
-                      width: 24,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 12,
-                      borderWidth: 1,
-                      borderColor: themeStyles.primaryText.color,
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                      name="plus"
-                      color={themeStyles.primaryText.color}
-                      size={20}
-                    />
-                  </View>
-                  <Text style={[styles.helperText, themeStyles.primaryText]}>
-                    {"  "}Upl
-                    {/* {selectedFriend ? ( 
-                        <Text style={{ fontWeight: "bold" }}>
-                          {selectedFriend.name}
-                        </Text>
-                      ) : ( 
-                        <Text>a friend</Text>
-                      )} */}
-                    {/* ? */}
-
-                  {/* </Text>
-                </TouchableOpacity> */} 
-                </>
-                
-                
-              )}
-                    <KeyboardAvoidingView
-                      keyboardVerticalOffset={130}
-                      behavior={Platform.OS === "ios" ? "padding" : "height"}
-                      style={[{ flex: 1 , paddingBottom: multiline? 70 : 0}]}
-                    > 
-              <View style={{ flexDirection: "row", paddingTop: 3, paddingLeft: 4 }}>
-                {/* <View
+                  {/* <View
                   style={{
                     flexShrink: 1,
                     justifyContent: "flex-start",
                     width: "auto",
                   }}
                 ></View> */}
-                <TextInput
-                  ref={textInputRef}
-                  autoFocus={autoFocusSelected || false}
-                  style={[styles.textInput, themeStyles.genericText]}
-                  value={editedMessage}
-                  placeholder={""}
-                  placeholderTextColor={"white"}
-                  onChangeText={handleTextInputChange} // Update local state
-                  multiline={multiline}
-                />
-              </View>
+                  {userAppSettings && (
+                    <TextInput
+                      ref={textInputRef}
+                      autoFocus={userAppSettings.simplify_app_for_focus}
+                      style={[styles.textInput, themeStyles.genericText]}
+                      value={editedMessage}
+                      placeholder={""}
+                      placeholderTextColor={"white"}
+                      onChangeText={handleTextInputChange} // Update local state
+                      multiline={multiline}
+                    />
+                  )}
+                </View>
               </KeyboardAvoidingView>
             </View>
           </>
@@ -329,7 +355,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Regular",
   },
   helperText: {
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 20,
   },
   textInput: {

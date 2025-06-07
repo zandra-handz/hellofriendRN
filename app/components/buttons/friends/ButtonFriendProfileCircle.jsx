@@ -73,6 +73,7 @@ const ButtonFriendProfileCircle = () => {
               width: ICON_SIZE - 1, // Circle diameter
               height: ICON_SIZE - 1,
               alignItems: "center",
+              left: -5,
               justifyContent: "center",
               marginLeft: 4, // Adjust spacing between circle and ProfileCircleSvg if needed
             }}
@@ -97,7 +98,7 @@ const ButtonFriendProfileCircle = () => {
   };
 
   return (
-    <View style={{ flexDirection: "row" }}>
+    <View style={{ flexDirection: "row", width: 50 }}>
       {loadingNewFriend && (
         <View style={appContainerStyles.loadingFriendProfileButtonWrapper}>
           <LoadingPage
@@ -122,7 +123,7 @@ const ButtonFriendProfileCircle = () => {
               style={{
                 position: "absolute",
                 top: -2,
-                left: 34,
+                left: 27,
                 zIndex: 1000,
               }}
             >

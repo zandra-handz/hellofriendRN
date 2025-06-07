@@ -13,7 +13,7 @@ import HomeScrollSoon from "./HomeScrollSoon";
 
 // Press function is internal
 const HomeButtonUpNext = ({
-  header = "UP NEXT",
+  header = "Up next",
   height = "100%",
   maxHeight = 100,
   borderRadius = 20,
@@ -22,7 +22,7 @@ const HomeButtonUpNext = ({
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { friendList, friendListLength, getThemeAheadOfLoading } =
     useFriendList();
-  const { themeStyles, themeStyleSpinners, manualGradientColors } =
+  const { themeStyles, appFontStyles, themeStyleSpinners, manualGradientColors } =
     useGlobalStyle();
   const { darkColor, lightColor } = manualGradientColors;
   const { setFriend, loadingNewFriend } = useSelectedFriend();
@@ -43,11 +43,12 @@ const HomeButtonUpNext = ({
           borderRadius: borderRadius,
           borderColor: borderColor,
           height: height,
+          overflow: 'hidden',
           // maxHeight: maxHeight,
         },
       ]}
     >
-      <LinearGradient
+      {/* <LinearGradient
        // colors={[darkColor, lightColor]}
          colors={['transparent', 'transparent']}
         start={{ x: 0, y: 0 }}
@@ -55,13 +56,13 @@ const HomeButtonUpNext = ({
         style={{
           ...StyleSheet.absoluteFillObject,
         }}
-      />
+      /> */}
       {loadingNewFriend ||
         (isLoading && (
           <View style={styles.loadingWrapper}>
             <LoadingPage
               loading={loadingNewFriend || isLoading}
-              spinnerSize={70}
+              spinnerSize={30}
               color="#000002"
               spinnerType={themeStyleSpinners?.homeScreen}
             />
@@ -75,17 +76,19 @@ const HomeButtonUpNext = ({
             width: "100%",
             flexDirection: "column",
             justifyContent: "space-between",
+            overflow: 'hidden',
           }}
         >
           <View style={{width: '100%', height: 200}}></View>
           <TouchableOpacity onPress={onPress} style={[styles.textContainer]}>
-            <Text style={styles.headerText}>{header}</Text>
+            <Text style={[styles.headerText, appFontStyles.welcomeText]}>{header}</Text>
 
             <Text
-              style={[
+              style={[appFontStyles.welcomeText,
                 {
                   color: themeStyles.primaryBackground.backgroundColor,
-                  fontSize: 18,
+                  
+                
                 },
               ]}
             >
@@ -97,7 +100,7 @@ const HomeButtonUpNext = ({
                 : "Please add a friend to use this feature!"}
             </Text>
 
-            <Text style={styles.subtitleText}>
+            <Text style={[styles.subtitleText, appFontStyles.subWelcomeText]}>
               Say hi on{" "}
               {upcomingHelloes && !isLoading && upcomingHelloes[0]
                 ? upcomingHelloes[0].future_date_in_words
@@ -110,7 +113,7 @@ const HomeButtonUpNext = ({
               zIndex: 30000,
               height: '100%', 
               width: "100%",
-              marginTop: 10,
+              marginTop: 140,
             }}
           >
             <HomeScrollSoon
@@ -124,11 +127,12 @@ const HomeButtonUpNext = ({
             style={{
               position: "absolute",
               right: -56,
-              top: 20,
+              top: 120,
               transform: [{ rotate: "180deg" }],
+          
             }}
           >
-            <GeckoSvg color={"black"} width={200} height={200} />
+            <GeckoSvg color={manualGradientColors.homeDarkColor} width={200} height={200} />
           </View>
         </View>
       )}
@@ -157,15 +161,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     paddingLeft: "2%",
     paddingRight: "16%",
-    top: 130,
+    top: 200,
     flexDirection: "column",
     width: "100%",
     justifyContent: "space-around",
   },
   headerText: {
-    fontFamily: "Poppins-Regular",
-    fontWeight: "bold",
-    fontSize: 20,
+    // fontFamily: "Poppins-Regular",
+    // fontWeight: "bold",
+    // fontSize: 20,
   },
   subtitleText: {
     fontFamily: "Poppins-Regular",

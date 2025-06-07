@@ -61,8 +61,7 @@ const HomeScreenSelectFriend = ({ addToPress, color, addToOpenModal, includeLabe
   };
 
   const handleSelectFriend = (itemId) => { 
-    const selectedOption = friendList.find(friend => friend.id === itemId);
-    console.log('S ELE ECCTING FRIEND', selectedOption);
+    const selectedOption = friendList.find(friend => friend.id === itemId); 
     const selectedFriend = selectedOption || null;
     setFriend(selectedFriend);
     getThemeAheadOfLoading(selectedFriend); 

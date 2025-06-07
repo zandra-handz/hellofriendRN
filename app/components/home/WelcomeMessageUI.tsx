@@ -24,7 +24,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
  
   const message = isNewUser
     ? `Hi ${username}! Welcome to hellofriend!`
-    : `Welcome back, ${username}!`;
+    : `Hi ${username}! Who will you say hi to next?`;
   const friendSelectedMessage = `${selectedFriend?.name}`;
 
   return (
@@ -33,9 +33,12 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
       exiting={FadeOut}
       style={[  {
         //alignItems: "center",
-        alignText: "flex-start",
+        alignText: "center",
         flexWrap: "flex",
         width: "100%", 
+        padding: 10,
+        paddingTop: 40,
+        paddingBottom: 40,
       }]}
     >
       {selectedFriend && !loadingNewFriend && (

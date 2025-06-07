@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     height: 36,
     position: "absolute",
     flexDirection: "row",
-    bottom: 20,
+    bottom: 10,
     right: 0,
   },
   container: {

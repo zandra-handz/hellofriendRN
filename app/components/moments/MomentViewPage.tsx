@@ -3,10 +3,15 @@ import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
-
+import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import SlideToAdd from "../foranimations/SlideToAdd";
+import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
+import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
+
+
 
 interface MomentViewPageProps {
   item: object;
@@ -22,7 +27,9 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
   height,
 }) => {
   const { themeStyles } = useGlobalStyle();
-  const { updateCapsule } = useCapsuleList();
+  const { updateCapsule,     deleteMomentRQuery,
+    deleteMomentMutation } = useCapsuleList();
+    const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const navigation = useNavigation();
 
@@ -39,6 +46,20 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
       updateCapsule(item.id, true);
     } catch (error) {
       console.error("Error during pre-save:", error);
+    }
+  };
+
+    const handleDelete = (item) => {
+    // console.log("handle delete moment in navigator triggered: ", item);
+    try {
+      const momentData = {
+        friend: selectedFriend.id,
+        id: item.id,
+      };
+
+      deleteMomentRQuery(momentData);
+    } catch (error) {
+      console.error("Error deleting moment:", error);
     }
   };
 
@@ -84,6 +105,19 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
               />
         <Text style={themeStyles.primaryText}> {item.typedCategory}</Text>
         <Text style={themeStyles.primaryText}> {item.capsule}</Text>
+                              <EditPencilOutlineSvg
+                                height={20}
+                                width={20}
+                                onPress={handleEditMoment}
+                                color={themeStyles.genericText.color}
+                              />
+                <SlideToDeleteHeader
+                  itemToDelete={item}
+                  onPress={handleDelete}
+                  sliderWidth={"100%"}
+                  targetIcon={TrashOutlineSvg}
+                  sliderTextColor={themeStyles.primaryText.color}
+                />
       </View>
     </View>
   );

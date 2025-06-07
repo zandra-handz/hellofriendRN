@@ -91,10 +91,11 @@ export const SafeViewAndGradientBackground = ({
             bottom: 0,
             right: 0,
             left: 0,
-            opacity: .6,
-            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-            // borderBottomLeftRadius: backgroundOverlayBottomRadius,
-            // borderBottomRightRadius: backgroundOverlayBottomRadius,
+            opacity: 1,
+            // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+             backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            borderBottomLeftRadius: backgroundOverlayBottomRadius,
+            borderBottomRightRadius: backgroundOverlayBottomRadius,
           }}
         ></View>
       )}

@@ -8,18 +8,23 @@ import ButtonData from "../buttons/scaffolding/ButtonData";
 import AlertConfirm from "../alerts/AlertConfirm";
 import { useNavigationState } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; // Import the context hook
-
+import ButtonInfo from "../buttons/users/ButtonInfo";
+import ButtonFriendProfileCircle from "../buttons/friends/ButtonFriendProfileCircle";
 export default function HelloFriendFooter() {
   const navigationState = useNavigationState((state) => state);
   const currentRouteName = navigationState.routes[navigationState.index]?.name;
   const isOnActionPage = currentRouteName === "hellofriend";
   const { themeStyles } = useGlobalStyle();
 
-
-  //themeStyles.footerContainer, 
+  //themeStyles.footerContainer,
 
   return (
-    <View style={[styles.container, {backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor}]}> 
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor },
+      ]}
+    >
       {isOnActionPage ? (
         <View style={styles.section}>
           <ButtonSignOut
@@ -41,13 +46,29 @@ export default function HelloFriendFooter() {
         </View>
       </>
 
+      
+      <View style={[styles.divider, themeStyles.divider]} />
+      <>
+        <View style={styles.section}>
+          <ButtonFriendProfileCircle />
+        </View>
+      </>
+
       <View style={[styles.divider, themeStyles.divider]} />
       <>
         <View style={styles.section}>
           <ButtonUser />
         </View>
       </>
+      
+      <View style={[styles.divider, themeStyles.divider]} />
+      <>
+        <View style={styles.section}>
+          <ButtonInfo />
+        </View>
+      </>
     </View>
+    
   );
 }
 
@@ -59,7 +80,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 1,
     height: 60,
-  
   },
   section: {
     flex: 1,
