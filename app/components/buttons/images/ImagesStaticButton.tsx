@@ -1,9 +1,10 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+ 
+import useImageFunctions from '@/src/hooks/useImageFunctions';
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 // import BobbingAnim from "../../../animations/BobbingAnim";
-import { MaterialIcons } from "@expo/vector-icons";
+import ImageGalleryOutlineSvg from '@/app/assets/svgs/image-gallery-outline.svg';
 import FlashAnim from "../../../animations/FlashAnim";
 // import {
 //   useSharedValue,
@@ -11,7 +12,7 @@ import FlashAnim from "../../../animations/FlashAnim";
 //   withTiming,
 // } from "react-native-reanimated";
 
-const MomentsStaticButton = ({
+const ImagesStaticButton = ({
   height = 50,
   iconSize = 36,
   iconColor = "black",
@@ -20,7 +21,8 @@ const MomentsStaticButton = ({
   countTextSize = 12,
   onPress,
 }) => {
-  const { capsuleCount } = useCapsuleList();
+     const { imageList } = useImageFunctions();
+     const imageCount = imageList?.length || 0; 
 //   const progress = useSharedValue(1);
 //   const [animating, setAnimating] = React.useState(false);
 
@@ -38,23 +40,18 @@ const MomentsStaticButton = ({
             justifyContent: "center",
           }}
         >
-                    <MaterialIcons
-                      name="tips-and-updates"
-                      size={iconSize}
-                      color={iconColor}
-                      />
-          {/* <LeavesTwoFallingOutlineThickerSvg
+          <ImageGalleryOutlineSvg
             height={iconSize}
             width={iconSize}
             color={iconColor}
-          /> */}
+          />
           <View style={{ top: "-7%", right: "1%", position: "absolute" }}>
             <FlashAnim
               circleColor={circleColor}
               circleTextSize={countTextSize}
               countColor={countColor}
             >
-              {capsuleCount}
+              {imageCount}
             </FlashAnim>
           </View>
         </View>
@@ -81,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MomentsStaticButton;
+export default ImagesStaticButton;

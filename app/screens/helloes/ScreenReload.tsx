@@ -8,20 +8,18 @@ import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-t
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
-import PreAddedList from "@/app/components/moments/PreAddedList";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import ReloadList from "@/app/components/helloes/ReloadList";
 import { useRoute } from "@react-navigation/native";
 
 const ScreenReload = () => {
     const route = useRoute();
-    const { savedMoments = [] } = route.params || {};
+    const savedMoments = route.params?.items ?? [];
 
     // use: navigation.navigate("ScreenReload", { dataArray: myArray });
   const { capsuleList, preAdded } = useCapsuleList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeStyles } = useGlobalStyle();
-  const navigation = useNavigation();
+  const { themeStyles } = useGlobalStyle(); 
 
   return (
     <SafeViewAndGradientBackground style={{ flex: 1 }}>
@@ -47,7 +45,7 @@ const ScreenReload = () => {
               altViewIcon={LeafSingleOutlineThickerSvg}
             />
 
-            <View style={{ flex: 1 }}>{preAdded && <PreAddedList />}</View>
+            <View style={{ flex: 1 }}>{preAdded && <ReloadList items={savedMoments}  />}</View>
           </>
         )} 
     </SafeViewAndGradientBackground>

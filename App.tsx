@@ -49,6 +49,7 @@ import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenFriendSettings from "./app/screens/friends/ScreenFriendSettings";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
+import ScreenReload from "./app/screens/helloes/ScreenReload";
 import ScreenMoments from "./app/screens/moments/ScreenMoments";
 import ScreenImages from "./app/screens/images/ScreenImages";
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
@@ -421,6 +422,13 @@ export const Layout = () => {
                 <Stack.Screen
                   name="Finalize"
                   component={ScreenFinalize}
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="Reload"
+                  component={ScreenReload}
                   options={{
                     headerShown: false,
                   }}

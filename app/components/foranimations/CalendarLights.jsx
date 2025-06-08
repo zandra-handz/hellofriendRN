@@ -177,6 +177,7 @@ const CalendarLights = ({
           ref={flatListRef}
           data={combinedData}
           horizontal
+          showsHorizontalScrollIndicator={false}
           initialNumToRender={30}
           keyExtractor={(item, index) =>
             `${item.monthData.month}-${item.monthData.year}`

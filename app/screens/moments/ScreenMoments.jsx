@@ -13,7 +13,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SpeedDialDelux from "@/app/components/buttons/speeddial/SpeedDialDelux";
 import AddMomentButton from "@/app/components/buttons/moments/AddMomentButton";
 import { useFriendList } from "@/src/context/FriendListContext";
-
+import GlobalAppHeaderIconVersion from "@/app/components/headers/GlobalAppHeaderIconVersion";
+import { MaterialIcons } from "@expo/vector-icons";
 import Loading from "@/app/components/appwide/display/Loading";
 
 const ScreenMoments = () => {
@@ -23,17 +24,37 @@ const ScreenMoments = () => {
 
   const navigation = useNavigation();
 
- 
-
-  const renderHeader = useCallback(() => (
-  <GlobalAppHeader
-    title={""}
-    navigateTo={"Moments"}
-    icon={LeavesTwoFallingOutlineThickerSvg}
-    altView={false}
-    altViewIcon={LeafSingleOutlineThickerSvg}
-  />
-), [selectedFriend, loadingNewFriend, themeAheadOfLoading]);
+  const renderHeader = useCallback(
+    () => (
+      // <GlobalAppHeader
+      //   title={""}
+      //   navigateTo={"Moments"}
+      //   icon={LeavesTwoFallingOutlineThickerSvg}
+      //   altView={false}
+      //   altViewIcon={LeafSingleOutlineThickerSvg}
+      // />
+      <GlobalAppHeaderIconVersion
+        title={""}
+        navigateTo={"Moments"}
+        icon={
+          <MaterialIcons
+           // name="tips-and-updates"
+            name="person-pin"
+            size={30}
+            color={themeAheadOfLoading.fontColorSecondary}
+          />
+        }
+        altView={false}
+        altViewIcon={      <MaterialIcons
+            // name="tips-and-updates"
+             name="person-pin"
+            size={30}
+            color={themeAheadOfLoading.fontColorSecondary}
+          />}
+      />
+    ),
+    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
+  );
 
   return (
     <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>

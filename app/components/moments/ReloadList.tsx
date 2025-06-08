@@ -6,7 +6,8 @@ import { CheckBox } from "react-native-elements";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 
-const ReloadList = ({items}) => {
+
+const ReloadList = ({data}) => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
@@ -15,7 +16,6 @@ const ReloadList = ({items}) => {
   const { updateCapsule, capsuleList, preAdded, allCapsulesList, updateCapsuleMutation } =
     useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
- 
 
   const renderListItem = ({ item, index }) => {
     
@@ -47,7 +47,7 @@ const ReloadList = ({items}) => {
           <CheckBox
             checked={selectedMoments?.includes(item)}
             onPress={() => handleCheckboxChange(item)}
-            title={`#${item.typed_category} - ${item.capsule}`}
+            title={`#${item.typedCategory} - ${item.capsule}`}
             containerStyle={{  borderWidth: 0, backgroundColor: isSelected ? manualGradientColors.homeDarkColor : 'transparent',  padding: 0, flex: 1, width: '100%' }}
            wrapperStyle={{  height: '100%', lexDirection: 'row', justifyContent: 'space-between'}}
            textStyle={{width: '82%', color: isSelected? manualGradientColors.lightColor : themeStyles.primaryText.color, fontSize: 13}}
@@ -107,7 +107,7 @@ const handleRestore = () => {
     <>
     <View style={[themeStyles.overlayBackgroundColor,{ flex: 1, width: 500 }]}>
       <FlashList
-        data={items} 
+        data={filterOutNonAdded} 
         estimatedItemSize={90}
         renderItem={renderListItem}
         keyExtractor={extractItemKey}
@@ -122,7 +122,7 @@ const handleRestore = () => {
     </View>
     <TouchableOpacity onPress={handleRestore} style={[{width: '100%', height: 'auto', position: 'absolute', bottom: 0, alignItems: 'center', padding: 10, borderRadius: 20, backgroundColor: manualGradientColors.homeDarkColor}]}>
         <Text style={{color: manualGradientColors.lightColor}}>
-            Reload
+            Restore
         </Text>
 
     </TouchableOpacity>

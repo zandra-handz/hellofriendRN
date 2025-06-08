@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, DimensionValue } from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -8,42 +8,54 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import FriendModal from "../alerts/FriendModal";
 
+import { FontAwesome5 } from "@expo/vector-icons";
+
 interface FriendModalIntegratorProps {
   addToPress: () => void;
   color: string;
+  height: DimensionValue;
   addToOpenModal: () => void;
   includeLabel: boolean;
   navigationDisabled: boolean;
   useGenericTextColor?: boolean;
   iconSize: number;
-  width: string;
+  width: DimensionValue;
+  customLabel: string | null;
+  customFontStyle: object | null;
 }
 
 const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   addToPress,
   color,
+  height = "auto",
+  customLabel = "",
+  customFontStyle,
   addToOpenModal,
   useGenericTextColor = false,
   includeLabel = false,
   navigationDisabled = false,
   iconSize = 22,
-  width = "60%",
+  width = "auto",
 }) => {
-  const { themeStyles } = useGlobalStyle(); 
-  const { selectedFriend, friendLoaded,  loadingNewFriend } =
+  const { themeStyles } = useGlobalStyle();
+  const { selectedFriend, friendLoaded, loadingNewFriend } =
     useSelectedFriend();
-  const { themeAheadOfLoading } =
-    useFriendList();
+  const { themeAheadOfLoading } = useFriendList();
   const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] =
     useState(false);
   //const [forceUpdate, setForceUpdate] = useState(false);
 
- 
- 
+  const firstSelectLabel = customLabel ? customLabel : `Pick friend: `;
+
+  const defaultLabelStyle = {
+    fontWeight: "bold",
+    fontSize: 15,
+  };
+
   //kind of aggressive that it tries to refocus every time it toggles whether open or closed
   // but android is being a butt about opening the keyboard
   const toggleModal = () => {
-    console.log('toggle modal triggered');
+    // console.log("toggle modal triggered");
     if (addToPress) {
       addToPress();
     }
@@ -57,31 +69,40 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
     }
 
     setIsFriendMenuModalVisible(true);
- 
   };
 
   return (
     <>
-      <View
-        style={{
+      <TouchableOpacity
+        onPress={openModal}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel="Friend selector button"
+        style={{ 
           flexDirection: "row",
-          height: "auto",
-          maxHeight: 40,
-          justifyContent: "flex-end",
-          alignItems: "center",
-          padding: 2,
-
-          borderRadius: 0,
+          height: height,  
+          alignItems: "center", 
+ 
           width: width,
         }}
       >
-        <View style={{ alignItems: "flex-end", width: "100%", flex: 1 }}>
+        <View
+          style={{ 
+            width: "auto",
+                        height: "100%",
+            flexDirection: 'row',
+            alignItems: 'flex-end',  
+          
+            
+           // flex: 1,
+          }}
+        >
           {loadingNewFriend && (
             <View style={{ paddingRight: "14%" }}>
               <LoadingPage
                 loading={loadingNewFriend}
                 spinnerType="flow"
-                spinnerSize={36}
+                spinnerSize={30}
                 color={themeAheadOfLoading.darkColor}
                 includeLabel={false}
               />
@@ -89,62 +110,49 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
           )}
           {!loadingNewFriend && includeLabel && (
             <Text
-              style={[ 
-                {
-                  color: (selectedFriend && !useGenericTextColor) ? themeAheadOfLoading.fontColorSecondary : themeStyles.primaryText.color,
-                  fontWeight: "bold",
-                  fontSize: 15,
-                  zIndex: 2,
-                },
-              ]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {((friendLoaded && !useGenericTextColor) && `For:  ${selectedFriend?.name}`) ||
-                friendLoaded ? "switch friend" : "pick friend"}
-            </Text>
-          )}
-
-          {!loadingNewFriend && !includeLabel && (
-            <Text
               style={[
+                customFontStyle ? customFontStyle : defaultLabelStyle,
                 {
-                  fontWeight: "bold",
-                  fontSize: 15,
+                  color:
+                    selectedFriend && !useGenericTextColor
+                      ? themeAheadOfLoading.fontColorSecondary
+                      : themeStyles.primaryText.color,
+
                   zIndex: 2,
-                  color: !useGenericTextColor ? themeAheadOfLoading.fontColorSecondary : themeStyles.primaryText.color,
                 },
               ]}
               numberOfLines={1}
               ellipsizeMode="tail"
             >
-              {(friendLoaded && `Switch friend? `) ||
-                "Which friend is this for?"}
+              {(friendLoaded &&
+                !useGenericTextColor &&
+                `For:  ${selectedFriend?.name}`) ||
+              friendLoaded
+                ? "switch friend"
+                : firstSelectLabel}
             </Text>
-          )}
-        </View>
-        <View style={{ alignItems: "flex-end" }}>
-          <TouchableOpacity
-            onPress={openModal}
-            accessible={true}
-            accessibilityRole="button"
-            accessibilityLabel="Friend selector button"
-          >
-            <View style={{  paddingLeft: 6 }}>
-              <ProfileTwoUsersSvg
-                height={iconSize}
-                width={iconSize}
-                color={
-                  loadingNewFriend
-                    ? "transparent"
-                    : (selectedFriend && !useGenericTextColor) ? color || themeAheadOfLoading.fontColorSecondary :
-                    themeStyles.primaryText.color
-                }
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
+          )} 
+
+          <View style={{ paddingLeft: 0, marginLeft: 6}}>
+            <FontAwesome5
+            name="user-friends"
+            size={iconSize}
+              // height={iconSize}
+              // width={iconSize}
+              color={
+                loadingNewFriend
+                  ? "transparent"
+                  : selectedFriend && !useGenericTextColor
+                    ? color || themeAheadOfLoading.fontColorSecondary
+                    : themeStyles.primaryText.color
+              }
+            />
+          </View> 
+
+
+        </View> 
+
+      </TouchableOpacity>
 
       <FriendModal
         isVisible={isFriendMenuModalVisible}
@@ -156,6 +164,6 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
       />
     </>
   );
-}; 
+};
 
 export default FriendModalIntegrator;

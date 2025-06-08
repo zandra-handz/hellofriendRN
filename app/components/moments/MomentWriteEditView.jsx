@@ -19,7 +19,7 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 
 import { useMessage } from "@/src/context/MessageContext";
 
-const ContentMomentFocus = ({
+const MomentWriteEditView = ({
   momentText,
   updateExistingMoment,
   existingMomentObject,
@@ -173,7 +173,14 @@ const ContentMomentFocus = ({
           alignItems="center"
           marginBottom={4}
           justifyContent="flex-end"
-          children={<FriendModalIntegrator includeLabel={false} navigationDisabled={true} width="100%" />}
+          children={ 
+          <View style={{flexDirection: 'row', width: 120, justifyContent: 'flex-end'}}>
+
+            <FriendModalIntegrator includeLabel={true} width={120} navigationDisabled={true} iconSize={22} width="100%" />
+       
+       
+       </View>
+       }
         />
         
         )}
@@ -244,4 +251,4 @@ const ContentMomentFocus = ({
   );
 };
 
-export default ContentMomentFocus;
+export default MomentWriteEditView;

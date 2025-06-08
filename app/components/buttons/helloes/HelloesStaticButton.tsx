@@ -1,9 +1,10 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import { useHelloes } from "@/src/context/HelloesContext";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
 // import BobbingAnim from "../../../animations/BobbingAnim";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FlashAnim from "../../../animations/FlashAnim";
 // import {
 //   useSharedValue,
@@ -11,7 +12,7 @@ import FlashAnim from "../../../animations/FlashAnim";
 //   withTiming,
 // } from "react-native-reanimated";
 
-const MomentsStaticButton = ({
+const HelloesStaticButton = ({
   height = 50,
   iconSize = 36,
   iconColor = "black",
@@ -20,9 +21,11 @@ const MomentsStaticButton = ({
   countTextSize = 12,
   onPress,
 }) => {
-  const { capsuleCount } = useCapsuleList();
-//   const progress = useSharedValue(1);
-//   const [animating, setAnimating] = React.useState(false);
+    const { helloesList } = useHelloes(); 
+
+    const helloesCount = helloesList?.length || 0;
+  //   const progress = useSharedValue(1);
+  //   const [animating, setAnimating] = React.useState(false);
 
   return (
     <TouchableOpacity
@@ -38,23 +41,19 @@ const MomentsStaticButton = ({
             justifyContent: "center",
           }}
         >
-                    <MaterialIcons
-                      name="tips-and-updates"
-                      size={iconSize}
-                      color={iconColor}
-                      />
-          {/* <LeavesTwoFallingOutlineThickerSvg
-            height={iconSize}
-            width={iconSize}
+          <MaterialCommunityIcons
+            name="hand-wave-outline"
+            size={iconSize}
             color={iconColor}
-          /> */}
+          />
+
           <View style={{ top: "-7%", right: "1%", position: "absolute" }}>
             <FlashAnim
               circleColor={circleColor}
               circleTextSize={countTextSize}
               countColor={countColor}
             >
-              {capsuleCount}
+              {helloesCount}
             </FlashAnim>
           </View>
         </View>
@@ -81,4 +80,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MomentsStaticButton;
+export default HelloesStaticButton;

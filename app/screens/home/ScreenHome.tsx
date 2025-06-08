@@ -31,6 +31,7 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import * as FileSystem from "expo-file-system";
 
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+import FriendHeaderMessageUI from "@/app/components/home/FriendHeaderMessageUI";
 
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
@@ -243,11 +244,21 @@ const ScreenHome = () => {
               /> */}
               {isAuthenticated && !isInitializing && (
                 <View style={{width: '100%', paddingHorizontal: 10, marginTop: 0}}>
-
+                  {!selectedFriend && (
+                    
                 <WelcomeMessageUI
                   username={user.username}
                   isNewUser={isNewUser}
+                  isKeyboardVisible={isKeyboardVisible}
                 />
+                
+                  )}
+                  {selectedFriend && (
+                    <FriendHeaderMessageUI
+                    isKeyboardVisible={isKeyboardVisible}
+
+                    />
+                  )}
                 </View>
               )}
               <QuickWriteMoment

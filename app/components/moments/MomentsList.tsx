@@ -14,9 +14,11 @@ import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
 import MomentsSearchBar from "./MomentsSearchBar";
 import MomentItem from "./MomentItem";
-import LargeCornerLizard from "./LargeCornerLizard";
-import ButtonIconImages from "../buttons/images/ButtonIconImages";
+import LargeCornerLizard from "./LargeCornerLizard"; 
+
 import MomentsStaticButton from "../buttons/moments/MomentsStaticButton";
+import HelloesStaticButton from "../buttons/helloes/HelloesStaticButton";
+import ImagesStaticButton from "../buttons/images/ImagesStaticButton";
 
 import Animated, {
   LinearTransition,
@@ -262,7 +264,9 @@ const MomentsList = () => {
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <TouchableOpacity
-        onPress={() => navigation.navigate("MomentView", { moment: item, index: index })}
+        onPress={() =>
+          navigation.navigate("MomentView", { moment: item, index: index })
+        }
         style={{
           flex: 1,
           height: ITEM_HEIGHT,
@@ -333,6 +337,20 @@ const MomentsList = () => {
               }}
             >
               <View style={{ width: 30, marginHorizontal: 4 }}>
+                <HelloesStaticButton
+                  height={"100%"}
+                  iconSize={24}
+                  onPress={() => navigation.navigate("Helloes")}
+                  circleColor={"orange"}
+                  countTextSize={8}
+                  countColor={
+                    themeAheadOfLoading
+                      ? themeAheadOfLoading.fontColorSecondary
+                      : "orange"
+                  }
+                />
+              </View>
+              <View style={{ width: 30, marginHorizontal: 4 }}>
                 <MomentsStaticButton
                   height={"100%"}
                   iconSize={24}
@@ -347,8 +365,8 @@ const MomentsList = () => {
                 />
               </View>
               <View style={{ width: 30, marginHorizontal: 4 }}>
-                <ButtonIconImages
-                  height={"40%"} //ADJUST POSITION HERE
+                <ImagesStaticButton
+                  height={"100%"}
                   iconSize={24}
                   onPress={() => navigation.navigate("Images")}
                   circleColor={"orange"}
@@ -359,7 +377,7 @@ const MomentsList = () => {
                       : "orange"
                   }
                 />
-              </View>
+              </View> 
             </View>
 
             <MomentsSearchBar

@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
-import FriendModalIntegrator from "../friends/FriendModalIntegrator";
+import ActionUnlockedButton from "../appwide/button/ActionUnlockedButton";
 
 const KeyboardCoasterMomentOrFriend = ({
   onPress,
@@ -18,91 +18,62 @@ const KeyboardCoasterMomentOrFriend = ({
 
   return (
     <View style={styles.absoluteContainer}>
-      <View
-        style={[
-          styles.container,
-          {
-            borderRadius: borderRadius,
-            borderColor: borderColor,
-            height: 40,
-            maxHeight: maxHeight, 
-            opacity: isKeyboardVisible ? 1 : 0,
-          },
-        ]}
-      >
-        <View
-          style={{
-            width: "100%",
-            flex: 1,
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: 10,
-            justifyContent: "center",
-          }}
-        >
-          <FriendModalIntegrator
-            includeLabel={true}
-            navigationDisabled={true}
-            useGenericTextColor={true}
-            width={"100%"}
-            iconSize={18}
-          />
-        </View>
-      </View>
+ 
       {isFriendSelected && showMomentScreenButton && (
-        <TouchableOpacity
-          onPress={onPress}
-          style={[
-            styles.container,
-            {
-              borderRadius: borderRadius,
-              borderColor: borderColor,
-              height: 40,
-              maxHeight: maxHeight,
-            },
-          ]}
-        >
-          <LinearGradient
-            colors={[
-              manualGradientColors.darkColor,
-              manualGradientColors.lightColor,
-            ]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              ...StyleSheet.absoluteFillObject,
-            }}
-          />
+        <ActionUnlockedButton onPress={onPress} label={'Pick category'} isUnlocked={true} includeArrow={true} />
+        // <TouchableOpacity
+        //   onPress={onPress}
+        //   style={[
+        //     styles.container,
+        //     {
+        //       borderRadius: borderRadius,
+        //       borderColor: borderColor,
+        //       height: 40,
+        //       maxHeight: maxHeight,
+        //     },
+        //   ]}
+        // >
+        //   <LinearGradient
+        //     colors={[
+        //       manualGradientColors.darkColor,
+        //       manualGradientColors.lightColor,
+        //     ]}
+        //     start={{ x: 0, y: 0 }}
+        //     end={{ x: 1, y: 1 }}
+        //     style={{
+        //       ...StyleSheet.absoluteFillObject,
+        //     }}
+        //   />
 
-          <View
-            style={{
-              width: 60,
-              flex: 1,
-              flexDirection: "row",
-              alignItems: "center",
-              paddingHorizontal: 20,
-              justifyContent: "flex-end",
-            }}
-          >
-            <Text style={[{ fontSize: 15, fontFamily: "Poppins-Regular" }]}>
-              finish
-            </Text>
-            <View
-              style={{
-                transform: [{ rotate: "180deg" }],
-                paddingRight: 10,
-                height: "100%",
-                alignItems: "center",
-              }}
-            >
-              <BackArrowLongerStemSvg
-                height={20}
-                width={20}
-                color={"#121212"}
-              />
-            </View>
-          </View>
-        </TouchableOpacity>
+        //   <View
+        //     style={{
+        //       width: 60,
+        //       flex: 1,
+        //       flexDirection: "row",
+        //       alignItems: "center",
+        //       paddingHorizontal: 20,
+        //       justifyContent: "flex-end",
+        //     }}
+        //   >
+        //     <Text style={[{ fontSize: 15, fontFamily: "Poppins-Regular" }]}>
+        //       finish
+        //     </Text>
+        //     <View
+        //       style={{
+        //         transform: [{ rotate: "180deg" }],
+        //         paddingRight: 10,
+        //         height: "100%",
+        //         alignItems: "center",
+        //       }}
+        //     >
+        //       <BackArrowLongerStemSvg
+        //         height={20}
+        //         width={20}
+        //         color={"#121212"}
+        //       />
+        //     </View>
+        //   </View>
+        // </TouchableOpacity>
       )}
 
       {/* {!isFriendSelected && ( */}
@@ -118,6 +89,8 @@ const styles = StyleSheet.create({
     height: 36,
     position: "absolute",
     flexDirection: "row",
+    justifyContent: 'flex-end',
+    marginHorizontal: 10,
     bottom: 10,
     right: 0,
   },

@@ -4,7 +4,7 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import ContentMomentFocus from "@/app/components/moments/ContentMomentFocus";
+import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -29,20 +29,13 @@ const ScreenMomentFocus = () => {
 
   return (
     <SafeViewAndGradientBackground header={renderHeader} styles={{ flex: 1 }}>
-      <LinearGradient
-        colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={[styles.container]}
-      >
+   
 
-
-        <ContentMomentFocus
+        <MomentWriteEditView
           momentText={momentText || null}
           updateExistingMoment={updateExistingMoment}
           existingMomentObject={existingMomentObject}
-        />
-      </LinearGradient>
+        /> 
     </SafeViewAndGradientBackground>
   );
 };
