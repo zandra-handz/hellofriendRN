@@ -41,7 +41,7 @@ const MomentWriteEditView = ({
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const [showCategoriesSlider, setShowCategoriesSlider] = useState(false);
+  const [showCategoriesSlider, setShowCategoriesSlider] = useState(!!momentText);
 
 
   useFocusEffect(
@@ -56,7 +56,7 @@ const MomentWriteEditView = ({
         setShowCategoriesSlider(false);
       };
 
-     }, [])
+     }, [momentText])
     );
 
   useEffect(() => {
@@ -223,14 +223,11 @@ const MomentWriteEditView = ({
  
           <CategoryCreator
           show={showCategoriesSlider}
-            onCategorySelect={handleCategorySelect}
+            updateCategoryInParent={handleCategorySelect}
             updateExistingMoment={updateExistingMoment}
             existingCategory={existingMomentObject?.typedCategory || null}
             momentTextForDisplay={momentTextRef?.current?.getText() || null}
-            onParentSave={handleSave}
-            selectedFriend={selectedFriend}
-            friendDashboardData={friendDashboardData}
-            loadingNewFriend={loadingNewFriend}
+            onParentSave={handleSave} 
             isKeyboardVisible={isKeyboardVisible}
           />
         )}

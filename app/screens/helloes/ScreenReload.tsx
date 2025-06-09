@@ -4,8 +4,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
-import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
-import GradientBackground from "@/app/components/appwide/display/GradientBackground";
+import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
@@ -14,10 +13,9 @@ import { useRoute } from "@react-navigation/native";
 
 const ScreenReload = () => {
     const route = useRoute();
+    const helloId = route.params?.helloId ?? false;
     const savedMoments = route.params?.items ?? [];
-
-    // use: navigation.navigate("ScreenReload", { dataArray: myArray });
-  const { capsuleList, preAdded } = useCapsuleList();
+ 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeStyles } = useGlobalStyle(); 
 
@@ -45,7 +43,7 @@ const ScreenReload = () => {
               altViewIcon={LeafSingleOutlineThickerSvg}
             />
 
-            <View style={{ flex: 1 }}>{preAdded && <ReloadList items={savedMoments}  />}</View>
+            <View style={{ flex: 1 }}> <ReloadList helloId={helloId} items={savedMoments}  /></View>
           </>
         )} 
     </SafeViewAndGradientBackground>

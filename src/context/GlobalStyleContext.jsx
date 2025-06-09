@@ -274,19 +274,21 @@ const containerStyles = StyleSheet.create({
     height: "auto",
     maxHeight: "20%",
     width: "74%",
+ 
   },
   categoryButton: {
     // borderBottomWidth: 0.8,
     borderWidth: StyleSheet.hairlineWidth,
     alignText: "left",
     alignContent: "center",
-    justifyContent: "center",
-    
+    justifyContent: "center", 
+    alignItems: 'center',
+    flexDirection: 'row',
     paddingVertical: 2,
     paddingHorizontal: 10,
     marginHorizontal: 6,
-    borderRadius: 16,
-     marginBottom: "3%",
+    borderRadius: 16, 
+   // marginBottom: "3%",
     height: "auto",
   },
 

@@ -13,7 +13,8 @@ import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg
 import HomeFriendItems from "./HomeFriendItems";
 import EclipseAnim from "@/app/animations/EclipseAnim";
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
- 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import HomeScrollSoon from "./HomeScrollSoon";
 
 const DOUBLE_PRESS_DELAY = 300;
 
@@ -24,10 +25,13 @@ const HomeButtonSelectedFriend = ({
   borderColor = "transparent",
 }) => {
   const navigation = useNavigation();
-  const { themeStyleSpinners, manualGradientColors, themeStyles } = useGlobalStyle();
+  const { themeStyleSpinners, manualGradientColors, themeStyles } =
+    useGlobalStyle();
   const { darkColor, lightColor, homeDarkColor, homeLightColor } =
     manualGradientColors;
   const { themeAheadOfLoading } = useFriendList();
+
+  const spacerAroundCalendar = 10;
   //friendLoaded = dashboard data retrieved successfully
   const {
     selectedFriend,
@@ -83,25 +87,95 @@ const HomeButtonSelectedFriend = ({
 
   return (
     <View style={{ borderRadius: borderRadius }}>
- 
-        <View
-          style={[
-            styles.container,
-            {
-           //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-              borderRadius: borderRadius,
-              borderColor: borderColor,
-              justifyContent: 'flex-start',
-              flexDirection: 'column',
-              //height: height, 
-            },
-          ]}
-        >
-
-          <View style={{width: '100%',   height: 170}}>
-          
-   
-
+      <View
+        style={[
+          styles.container,
+          {
+            //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            borderRadius: borderRadius,
+            borderColor: borderColor,
+            justifyContent: "flex-start",
+            flexDirection: "column",
+            //height: height,
+          },
+        ]}
+      >
+        <View style={[{ paddingHorizontal: 10, borderRadius: 20 }]}>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              alignItems: "center",
+            }}
+          >
+            <MaterialCommunityIcons
+              name="hand-wave-outline"
+              size={20}
+              color={themeStyles.primaryBackground.backgroundColor}
+              style={{ marginBottom: 6 }}
+            />
+            <Text
+              style={[
+                manualGradientColors.homeDarkColor,
+                { marginLeft: 6, marginBottom: spacerAroundCalendar, fontWeight: "bold" },
+              ]}
+            >
+              Past Helloes
+            </Text>
+          </View>
+          {selectedFriend && (
+            <HomeScrollCalendarLights
+              height={70}
+              borderRadius={20}
+              borderColor="black"
+            />
+          )}
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "flex-end",
+              alignItems: "center", 
+              marginTop: spacerAroundCalendar,
+              marginBottom: 10, // place this spacing elsewhere
+            }}
+          >
+            <TouchableOpacity
+              style={{ 
+                flexDirection: "row",
+                height: "100%",
+                alignItems: "center",
+              }}
+              onPress={() => navigation.navigate("Helloes")}
+            >
+              <Text
+                style={[
+                  manualGradientColors.homeDarkColor,
+                  { marginRight: 6, marginBottom: 10, fontWeight: "bold" },
+                ]}
+              >
+                View
+              </Text>
+              <View
+                style={{
+                  transform: [{ rotate: "180deg" }],
+                  paddingRight: 20,
+                  marginBottom: 8,
+                  width: 20,
+                  
+                  // alignItems: "center",
+                }}
+              >
+                <BackArrowLongerStemSvg
+                  height={20}
+                  width={20}
+                  color={manualGradientColors.homeDarkColor}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ width: "100%", height: 170 }}>
           {isLoading && !friendLoaded && (
             <>
               <View style={styles.loadingWrapper}>
@@ -155,12 +229,13 @@ const HomeButtonSelectedFriend = ({
                           {
                             fontFamily: "Poppins-Regular",
                             fontSize: 23,
-                            fontColor: "#000002",
+                            fontColor: manualGradientColors.homeDarkColor,
                           },
                         ]}
                       >
                         {selectedFriend && friendDashboardData
-                          ? selectedFriend.name
+                          // ? selectedFriend.name
+                          ?  `Next suggested hello`
                           : "None"}
                       </Text>
                     </>
@@ -169,15 +244,14 @@ const HomeButtonSelectedFriend = ({
                         {friendDashboardData &&
                         friendDashboardData[0] &&
                         friendDashboardData[0].future_date_in_words
-                          ? `Suggested: Say hi on ${friendDashboardData[0].future_date_in_words}`
+                          ? `${friendDashboardData[0].future_date_in_words}`
                           : "No date available"}
                       </Text>
                     </>
                   </>
                 </TouchableOpacity>
-                  
               </View>
-              
+
               <View
                 style={{
                   borderRadius: 20,
@@ -189,6 +263,7 @@ const HomeButtonSelectedFriend = ({
                   flexDirection: "column",
                   justifyContent: "space-between", //ADJUST POSITION HERE
                   paddingTop: "2%", //ADJUST POSITION HERE
+                  paddingRight: 10,
                 }}
               >
                 <ButtonIconMoments
@@ -215,42 +290,45 @@ const HomeButtonSelectedFriend = ({
                       : "orange"
                   }
                 />
-                
               </View>
-               
-
             </View>
           )}
-          </View>
-            <HomeFriendItems borderRadius={10} height={40} />
-                                {selectedFriend && (
-                              <HomeScrollCalendarLights
-                                height={"5%"}
-                                borderRadius={40}
-                                borderColor="black"
-                              />
-                            )}
-
         </View>
-        
-         
+                  <View
+            style={{
+              zIndex: 30000,
+              height: '100%', 
+              width: "100%",
+              marginTop: 10,
+              paddingHorizontal: 10,
+            }}
+          >
+            <HomeScrollSoon
+              height={"100%"}
+              maxHeight={700}
+              borderRadius={10}
+              borderColor="black"
+            />
+          </View>
+        {/* <HomeFriendItems borderRadius={10} height={40} /> */}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 200,
+    marginTop: 194,
     flexDirection: "row",
     width: "100%",
     flex: 1,
-    padding: 10,
+    padding: 0,
     alignContent: "center",
-    borderWidth: 0, 
-    height: '100%',
+    borderWidth: 0,
+    height: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
-    overflow: "hidden",  
+    overflow: "hidden",
   },
   textContainer: {
     zIndex: 5,

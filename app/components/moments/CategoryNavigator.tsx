@@ -48,12 +48,16 @@ const CategoryNavigator = ({
       <ScrollView style={{maxHeight: 100}}>
       <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
         {categoryNames.map((categoryName) => (
+          <View style={{marginHorizontal: 6, marginBottom: 6}}>
+
           <CategoryButton
+         height={'auto'}
           viewableItemsArray={viewableItemsArray} 
             key={categoryName || "Uncategorized"}
             label={categoryName}
             onPress={() => onPress(categoryName)} 
           />
+          </View>
         ))}
       </View>
       

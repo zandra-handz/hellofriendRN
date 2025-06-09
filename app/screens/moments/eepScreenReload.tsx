@@ -12,12 +12,19 @@ import { useNavigation } from "@react-navigation/native";
 import PreAddedList from "@/app/components/moments/PreAddedList";
 import ReloadList from "@/app/components/helloes/ReloadList";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useHelloes } from "@/src/context/HelloesContext";
+import { useRoute } from "@react-navigation/native";
 
-const ScreenReload = () => {
+const eeScreenReload = () => {
+  const route = useRoute();
+
+  const items = route.params?.items ?? false;
+  console.log(`items in screen reload`, items);
   const { capsuleList, preAdded } = useCapsuleList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
+
   const navigation = useNavigation();
 
   const useDimAppBackground = true;
@@ -55,10 +62,10 @@ const ScreenReload = () => {
         </View>
       )}
       {selectedFriend && !loadingNewFriend && (
-        <View style={{ flex: 1 }}>{preAdded && <ReloadList />}</View>
+        <View style={{ flex: 1 }}>{ <ReloadList items={items} />}</View>
       )}
     </SafeViewAndGradientBackground>
   );
 };
 
-export default ScreenReload;
+export default eeScreenReload;

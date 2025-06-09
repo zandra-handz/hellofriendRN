@@ -27,7 +27,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 
   const message = isNewUser
     ? `Hi ${username}! Welcome to hellofriend!`
-    : `Hi ${username}! Who will you say hi to next?`;
+    : `Hi ${username}! What would you like to do?`;
   const friendSelectedMessage = `${selectedFriend?.name}`;
 
   const compositionMessage = selectedFriend

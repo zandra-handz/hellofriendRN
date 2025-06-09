@@ -18,6 +18,7 @@ const CategoryButton = ({
   viewableItemsArray,
   label,
   onPress,
+  height = 30,
   pulseDuration = 2000,
 }) => {
   const {
@@ -85,7 +86,7 @@ const CategoryButton = ({
 
   return (
     <AnimatedTouchableOpacity
-      style={[animatedCardsStyle, appContainerStyles.categoryButton]}
+      style={[animatedCardsStyle, appContainerStyles.categoryButton, { height: height}]}
       onPress={() => {
         onPress(label);
       }}

@@ -10,8 +10,7 @@ import MomentsSearchBar from "@/app/components/moments/MomentsSearchBar";
 import CalendarLightsDataPrepLayer from "@/app/components/foranimations/CalendarLightsDataPrepLayer";
 import { BlurView } from "expo-blur";
 import HelloesList from "./HelloesList";
-import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
-import HelloesNavigator from "./HelloesNavigator";
+import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer"; 
 import { Ionicons } from "@expo/vector-icons";
 import BodyStyling from "../scaffolding/BodyStyling";
 
@@ -187,13 +186,7 @@ headerShown: false,
             <Tab.Screen name="In person" component={HelloesInPersonScreen} />
           </Tab.Navigator>
         }
-      />
-      {isHelloesNavVisible && selectedHelloToView && (
-        <HelloesNavigator
-          onClose={closeHelloesNav}
-          hello={selectedHelloToView}
-        />
-      )}
+      /> 
     </View>
   );
 };

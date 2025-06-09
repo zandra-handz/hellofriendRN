@@ -7,8 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import HelloViewTitleCard from "./HelloViewTitleCard";
+import { useFocusEffect } from "@react-navigation/native"; 
 import { FlashList } from "@shopify/flash-list";
 import {
   Fontisto,
@@ -47,7 +46,7 @@ const HelloViewPage = ({ item, index, width, height }) => {
   };
 
   const handleNavToReload = () => {
-    navigation.navigate("Reload", { items: item.pastCapsules });
+    navigation.navigate("Reload", { helloId: item.id, items: item.pastCapsules });
   };
 
   return (

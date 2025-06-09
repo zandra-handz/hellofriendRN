@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import {
   View,
   Animated,
@@ -7,19 +7,21 @@ import {
   StyleSheet,
 } from "react-native"; 
 import HelloDayWrapper from "@/app/components/helloes/HelloDayWrapper";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
  
 
 const CalendarLights = ({
     
   combinedData,
-  daySquareBorderRadius=0,
-  daySquareBorderColor='black', 
-  opacityMinusAnimation=1,
+  daySquareBorderRadius=0, 
+  // opacityMinusAnimation=1,
   animationColor='orange',
 }) => {  
   // const [combinedData, setCombinedData] = useState([]);
  
-
+  const { themeStyles } = useGlobalStyle();
+const daySquareBorderColor = themeStyles.primaryBackground.backgroundColor;
+const opacityMinusAnimation = 1;
   const flatListRef = useRef(null);  
 
   useEffect(() => {
@@ -140,38 +142,71 @@ const CalendarLights = ({
   //break down into months, then pass lightup days into month component
   //render each month block + lightup list in the main flatlist
 
-  const renderCalendarMonth = ({ item }) => {
+  // const renderCalendarMonth = ({ item }) => {
    
-    const indexRangeStart = indexDays[item.monthData.startsOn];
-    const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
+  //   const indexRangeStart = indexDays[item.monthData.startsOn];
+  //   const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
   
-    // Ensure helloData exists and has `days`
-    const highlightDays = item.helloData?.days || [];
+  //   // Ensure helloData exists and has `days`
+  //   const highlightDays = item.helloData?.days || [];
   
-    return (
-      <View style={styles.calendarContainer}>
-        <Text
-          style={{
-            fontFamily: 'Poppins-Regular',
-            fontSize: 12,
-            opacity: opacityMinusAnimation,
-            color: daySquareBorderColor,
-          }}
-        >
-          {item.monthData.month.slice(0, 3)} {item.monthData.year.slice(0, 4)}
-        </Text>
-        <View style={styles.innerCalendarContainer}>
-          {renderWeeks(item.monthData.daysInMonth, indexRangeStart, highlightDays)}
-        </View>
+  //   return (
+  //     <View style={styles.calendarContainer}>
+  //       <Text
+  //         style={{
+  //           fontFamily: 'Poppins-Regular',
+  //           fontSize: 12,
+  //           opacity: opacityMinusAnimation,
+  //           color: daySquareBorderColor,
+  //         }}
+  //       >
+  //         {item.monthData.month.slice(0, 3)} {item.monthData.year.slice(0, 4)}
+  //       </Text>
+  //       <View style={styles.innerCalendarContainer}>
+  //         {renderWeeks(item.monthData.daysInMonth, indexRangeStart, highlightDays)}
+  //       </View>
+  //     </View>
+  //   );
+  // };
+
+
+  const renderCalendarMonth = useCallback(({ item }) => {
+  const indexRangeStart = indexDays[item.monthData.startsOn];
+  const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
+
+  const highlightDays = item.helloData?.days || [];
+
+  return (
+    <View style={styles.calendarContainer}>
+      <Text
+        style={{
+          fontFamily: 'Poppins-Regular',
+          fontSize: 12,
+          opacity: opacityMinusAnimation,
+          color: daySquareBorderColor,
+        }}
+      >
+        {item.monthData.month.slice(0, 3)} {item.monthData.year.slice(0, 4)}
+      </Text>
+      <View style={styles.innerCalendarContainer}>
+        {renderWeeks(item.monthData.daysInMonth, indexRangeStart, highlightDays)}
       </View>
-    );
-  };
+    </View>
+  );
+}, [
+  indexDays,
+  opacityMinusAnimation,
+  daySquareBorderColor,
+  renderWeeks,
+  styles.calendarContainer,
+  styles.innerCalendarContainer,
+]);
   
  
  
 
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, {backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor}]}>
       {combinedData && (
         <FlatList
           ref={flatListRef}
@@ -182,7 +217,8 @@ const CalendarLights = ({
           keyExtractor={(item, index) =>
             `${item.monthData.month}-${item.monthData.year}`
           } // Use month and year as key
-          renderItem={renderCalendarMonth}
+          renderItem={renderCalendarMonth} 
+          
         />
       )}
     </View>
@@ -194,16 +230,18 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     flexDirection: "row",
     width: "100%",
-    height: "auto", 
+    height: 100, 
+        borderRadius: 20,
+        padding: 10,
   },
   calendarContainer: {
     height: 80,
     width: 80,
-
-    backgroundColor: "transparent",
+ 
+    borderRadius: 10,
   },
   innerCalendarContainer: {
-    paddingHorizontal: "4%",
+    paddingHorizontal: "4%", 
     flex: 1,
   },
   weekRow: {
