@@ -11,20 +11,20 @@ const ImageMenuButton = () => {
   const navigation = useNavigation();
   const { requestPermission, imageUri, resizeImage, handleCaptureImage, handleSelectImage} = useImageUploadFunctions();
   
-  const navigateToAddImageScreen = () => {
-    navigation.navigate('AddImage', {imageUri: imageUri});
-  };
+  // const navigateToAddImageScreen = () => {
+  //   navigation.navigate('AddImage', {imageUri: imageUri});
+  // };
 
    useEffect(() => {
      requestPermission();
    }, []);
 
-   useEffect(() => {
-     if (imageUri) {
-       navigateToAddImageScreen();
-     }
+  //  useEffect(() => {
+  //    if (imageUri) {
+  //      navigateToAddImageScreen();
+  //    }
    
-   }, [imageUri]);
+  //  }, [imageUri]);
    
 
   return (

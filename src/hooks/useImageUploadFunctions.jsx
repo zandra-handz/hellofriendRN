@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useGlobalStyle } from '../context/GlobalStyleContext';
-
+import { useNavigation } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking'; 
@@ -11,6 +11,9 @@ import * as ImageManipulator from 'expo-image-manipulator';
 
 // HAS ALL UPLOAD FORMATTING CODING
 const useImageUploadFunctions = () => {
+
+
+  const navigation = useNavigation();
 
     const [imageUri, setImageUri] = useState(null);
 
@@ -30,7 +33,8 @@ const useImageUploadFunctions = () => {
         });
     
         if (!result.cancelled) {
-          setImageUri(result.assets[0].uri);
+          // setImageUri(result.assets[0].uri);
+          navigation.navigate('AddImage', {imageUri: result.assets[0].uri });
         }
       };
 
@@ -43,7 +47,8 @@ const useImageUploadFunctions = () => {
           });
       
           if (!result.cancelled) {
-            setImageUri(result.assets[0].uri);
+           // setImageUri(result.assets[0].uri);
+            navigation.navigate('AddImage', {imageUri: result.assets[0].uri });
           }
         };
 

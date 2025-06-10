@@ -37,8 +37,8 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           flexWrap: "flex",
           width: "100%",
           padding: 10,
-          paddingTop: 40,
-          paddingBottom: 40,
+          paddingTop: 35,
+          paddingBottom: 35,
         },
       ]}
     >

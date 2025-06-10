@@ -33,7 +33,7 @@ const { user } = useUser();
   } = useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 
-  const [totalCategories, setTotalCategories] = useState(categoryNames);
+  const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(categoryNames);
   //  const { helloesList } = useHelloes();
   //  const hello = helloesList.find((hello) => hello.id === helloId);
 
@@ -139,11 +139,11 @@ const { user } = useUser();
   };
 
   const handleCheckboxChange = (item) => {
-    const isNewCategory = !totalCategories.includes(item.typed_category);
+    const isNewCategory = !combinedCategoryTotal.includes(item.typed_category);
 
     if (isNewCategory) {
-      const total = getCategoryCap();
-      if (total >= totalCategories.length) {
+      const categoryLimit = getCategoryCap();
+      if (categoryLimit <= combinedCategoryTotal.length) {
         Alert.alert(
           `I'm sorry!`,
           "You can't add any additional categories for this round.",
@@ -152,7 +152,7 @@ const { user } = useUser();
 
         return;
       } else {
-        setTotalCategories([...totalCategories, item.typedCategory]);
+        setCombinedCategoryTotal([...combinedCategoryTotal, item.typed_category]);
       }
     }
     setSelectedMoments((prevSelectedMoments) => {

@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View, Dimensions, Animated } from "react-native";
+import { StyleSheet, Text, View, Dimensions, Animated, DimensionValue } from "react-native";
 
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFriendList } from "@/src/context/FriendListContext";
-import SoonButton from "../home/SoonButton";
+import SoonButton from "./SoonButton";
   
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
@@ -13,7 +13,16 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
  
 
-const HomeScrollSoon = ({
+interface HomeScrollSoonProps {
+  startAtIndex: number;
+  height: DimensionValue,
+  maxHeight: DimensionValue,
+  borderRadius: number;
+  borderColor: string;
+}
+
+const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
+  startAtIndex = 1,
   height,
   maxHeight = 130,
   borderRadius = 20,
@@ -43,7 +52,7 @@ const HomeScrollSoon = ({
   const renderUpcomingHelloes = () => {
     return (
       <Animated.FlatList
-        data={upcomingHelloes.slice(0).slice(1)} // skip first
+        data={upcomingHelloes.slice(0).slice(startAtIndex)} // skip first
         //horizontal={true}
         keyExtractor={(item, index) => `satellite-${index}`}
         // getItemLayout={(data, index) => ({

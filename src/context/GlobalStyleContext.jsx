@@ -522,8 +522,8 @@ const fontStyles = StyleSheet.create({
     textTransform: "uppercase",
   },
   welcomeText: {
-    fontSize: 27,
-     lineHeight: 30,
+    fontSize: 32,
+     lineHeight: 34,
     //fontWeight: 'bold',
     fontFamily: "Poppins-Regular",
   },

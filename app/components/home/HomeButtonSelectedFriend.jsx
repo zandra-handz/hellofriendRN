@@ -10,6 +10,7 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 import ButtonIconMoments from "../buttons/moments/ButtonIconMoments";
 import ButtonIconImages from "../buttons/images/ButtonIconImages";
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
+
 import HomeFriendItems from "./HomeFriendItems";
 import EclipseAnim from "@/app/animations/EclipseAnim";
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
@@ -117,7 +118,11 @@ const HomeButtonSelectedFriend = ({
             <Text
               style={[
                 manualGradientColors.homeDarkColor,
-                { marginLeft: 6, marginBottom: spacerAroundCalendar, fontWeight: "bold" },
+                {
+                  marginLeft: 6,
+                  marginBottom: spacerAroundCalendar,
+                  fontWeight: "bold",
+                },
               ]}
             >
               Past Helloes
@@ -135,12 +140,12 @@ const HomeButtonSelectedFriend = ({
               flexDirection: "row",
               width: "100%",
               justifyContent: "flex-end",
-              alignItems: "center", 
+              alignItems: "center",
               marginTop: spacerAroundCalendar,
               marginBottom: 10, // place this spacing elsewhere
             }}
           >
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{ 
                 flexDirection: "row",
                 height: "100%",
@@ -172,7 +177,7 @@ const HomeButtonSelectedFriend = ({
                   color={manualGradientColors.homeDarkColor}
                 />
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
         <View style={{ width: "100%", height: 170 }}>
@@ -234,8 +239,8 @@ const HomeButtonSelectedFriend = ({
                         ]}
                       >
                         {selectedFriend && friendDashboardData
-                          // ? selectedFriend.name
-                          ?  `Next suggested hello`
+                          ? // ? selectedFriend.name
+                            `Next suggested hello`
                           : "None"}
                       </Text>
                     </>
@@ -294,22 +299,23 @@ const HomeButtonSelectedFriend = ({
             </View>
           )}
         </View>
-                  <View
-            style={{
-              zIndex: 30000,
-              height: '100%', 
-              width: "100%",
-              marginTop: 10,
-              paddingHorizontal: 10,
-            }}
-          >
-            <HomeScrollSoon
-              height={"100%"}
-              maxHeight={700}
-              borderRadius={10}
-              borderColor="black"
-            />
-          </View>
+        <View
+          style={{
+            zIndex: 30000,
+            height: "100%",
+            width: "100%",
+            marginTop: 10,
+            paddingHorizontal: 10,
+          }}
+        >
+          <HomeScrollSoon
+            startAtIndex={0}
+            height={"100%"}
+            maxHeight={700}
+            borderRadius={10}
+            borderColor="black"
+          />
+        </View>
         {/* <HomeFriendItems borderRadius={10} height={40} /> */}
       </View>
     </View>
