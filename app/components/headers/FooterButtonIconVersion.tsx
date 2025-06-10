@@ -1,8 +1,6 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 

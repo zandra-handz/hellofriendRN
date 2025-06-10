@@ -1,90 +1,113 @@
-import { StyleSheet, Text, View, Dimensions, Animated, DimensionValue } from "react-native";
-
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import { LinearGradient } from "expo-linear-gradient";
+import {
+  StyleSheet,
+  Text,
+  View, 
+  Animated,
+  DimensionValue,
+} from "react-native";
+import React, { useCallback } from "react";
+import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext"; 
 import { useFriendList } from "@/src/context/FriendListContext";
-import SoonButton from "./SoonButton";
-  
+import SoonItemButton from "./SoonItemButton"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
 import { useNavigation } from "@react-navigation/native";
-
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
- 
 
 interface HomeScrollSoonProps {
   startAtIndex: number;
-  height: DimensionValue,
-  maxHeight: DimensionValue,
+  height: DimensionValue;
+  maxHeight: DimensionValue;
   borderRadius: number;
   borderColor: string;
 }
 
+//single press will select friend but remain on home screen, double press will select friend and take user directly to moments screen
 const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   startAtIndex = 1,
   height,
   maxHeight = 130,
   borderRadius = 20,
   borderColor = "transparent",
-}) => { 
-  const { themeStyles, themeStyleSpinners  } =
-    useGlobalStyle();
-    const navigation = useNavigation(); 
+}) => {
+  const { themeStyles, themeStyleSpinners } = useGlobalStyle();
+  const navigation = useNavigation();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const {   setFriend } = useSelectedFriend();
+  const { setFriend } = useSelectedFriend();
   const { friendList, friendListLength, getThemeAheadOfLoading } =
     useFriendList();
-  
 
- 
-  const handlePress = (hello) => { 
-    const { id, name } = hello.friend;
-    const selectedFriend = id === null ? null : { id: id, name: name };
+
     
-    const friend = friendList.find((friend) => friend.id === hello.friend.id);
-    getThemeAheadOfLoading(friend);
-    setFriend(selectedFriend);
-    navigation.navigate('Moments');
-  };
- 
+const handleDoublePress = useCallback((hello) => {
+  const { id, name } = hello.friend;
+  const selectedFriend = id === null ? null : { id: id, name: name };
+
+  const friend = friendList.find((friend) => friend.id === hello.friend.id);
+  getThemeAheadOfLoading(friend);
+  setFriend(selectedFriend);
+  navigation.navigate("Moments");
+}, [friendList, getThemeAheadOfLoading, setFriend, navigation]);
+
+const handlePress = useCallback((hello) => {
+  const { id, name } = hello.friend;
+  const selectedFriend = id === null ? null : { id: id, name: name };
+
+  const friend = friendList.find((friend) => friend.id === hello.friend.id);
+  getThemeAheadOfLoading(friend);
+  setFriend(selectedFriend); 
+}, [friendList, getThemeAheadOfLoading, setFriend, navigation]);
+
+
+    const renderListItem = useCallback(
+    ({ item, index }) => (
+      <View
+        style={{
+          marginBottom: 2,
+          height: 50,
+          width: "100%",
+          flexDirection: "row",
+        }}
+      >
+        <SoonItemButton
+          height={"100%"}
+          friendName={item.friend_name}
+          date={item.future_date_in_words}
+          width={"100%"}
+          onPress={() => handlePress(item)}
+           onDoublePress={() => handleDoublePress(item)}
+        />
+      </View>
+    ),
+    [handlePress]
+  );
+
+    const extractItemKey = (item, index) =>
+    item?.id ? item.id.toString() : `upcoming-${index}`;
 
   const renderUpcomingHelloes = () => {
     return (
       <Animated.FlatList
         data={upcomingHelloes.slice(0).slice(startAtIndex)} // skip first
-        //horizontal={true}
-        keyExtractor={(item, index) => `satellite-${index}`}
+        //horizontal={true} 
         // getItemLayout={(data, index) => ({
         //   length: soonButtonWidth,
         //   offset: soonButtonWidth * index,
         //   index,
         // })}
-        renderItem={({ item }) => (
-          <View
-            style={{ marginBottom: 2, height: 50, width: '100%' , flexDirection: 'row'  }}
-          >
-            <SoonButton
-              height={"100%"}
-              friendName={item.friend_name}
-              dateAsString={item.future_date_in_words}
-           width={'100%'}
-              onPress={() => handlePress(item)}
-            />
-          </View>
-        )}   
+        renderItem={renderListItem}
+        keyExtractor={extractItemKey}
+                    initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={10}
+            removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={() => (
-          <View style={{ height: 300 }} />
-        )} 
+        ListFooterComponent={() => <View style={{ height: 300 }} />}
         //  snapToAlignment="start" // Align items to the top of the list when snapped
         // decelerationRate="fast"
       />
     );
   };
- 
-
- 
 
   return (
     <View
@@ -97,16 +120,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
           maxHeight: maxHeight,
         },
       ]}
-    >
-      <LinearGradient
-       // colors={[darkColor, 'pink']}
-        colors={['transparent', 'transparent']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          ...StyleSheet.absoluteFillObject,
-        }}
-      />
+    > 
 
       {isLoading && !upcomingHelloes && (
         <View style={styles.loadingWrapper}>
@@ -143,12 +157,8 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
           )}
 
           {friendListLength > 0 && (
-            <View
-              style={[styles.buttonContainer ]}
-            > 
-                <>{renderUpcomingHelloes()}</>
-           
-            
+            <View style={[styles.buttonContainer]}>
+              <>{renderUpcomingHelloes()}</>
             </View>
           )}
         </>
@@ -161,12 +171,12 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flexDirection: "column",
-    flex: 1, 
+    flex: 1,
     flexGrow: 1,
-    height: '100%',
-    overflow: "hidden", 
+    height: "100%",
+    overflow: "hidden",
     borderWidth: 0,
-    borderColor: "black",  
+    borderColor: "black",
   },
   text: {
     fontSize: 16,
@@ -194,15 +204,15 @@ const styles = StyleSheet.create({
     paddingLeft: "3%",
 
     fontSize: 18,
-  }, 
-  buttonContainer: { 
-    flex: 1, 
-   flexDirection: 'column',
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: "column",
     height: 200,
-    width: '100%',
-   // backgroundColor: 'pink',
-    alignItems: 'center',
-  }, 
+    width: "100%",
+    // backgroundColor: 'pink',
+    alignItems: "center",
+  },
 });
 
 export default HomeScrollSoon;

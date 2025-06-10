@@ -1,35 +1,32 @@
 import { useRef } from "react";
-import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
-
-import { LinearGradient } from "expo-linear-gradient";
+import { TouchableOpacity, Text, StyleSheet, View, DimensionValue } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useNavigation } from "@react-navigation/native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
-import ButtonIconMoments from "../buttons/moments/ButtonIconMoments";
-import ButtonIconImages from "../buttons/images/ButtonIconImages";
+import LoadedMoments from "../buttons/moments/LoadedMoments";
+import LoadedImages from "../buttons/images/LoadedImages";
+ 
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
-
-import HomeFriendItems from "./HomeFriendItems";
-import EclipseAnim from "@/app/animations/EclipseAnim";
+ 
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeScrollSoon from "./HomeScrollSoon";
 
-const DOUBLE_PRESS_DELAY = 300;
+interface SelectedFriendHomeProps {
+  borderRadius: DimensionValue,
+  borderColor: string;
+}
 
-const HomeButtonSelectedFriend = ({
-  height = "100%",
-  maxHeight = 190,
+const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
+ 
   borderRadius = 20,
   borderColor = "transparent",
 }) => {
   const navigation = useNavigation();
-  const { themeStyleSpinners, manualGradientColors, themeStyles } =
-    useGlobalStyle();
-  const { darkColor, lightColor, homeDarkColor, homeLightColor } =
-    manualGradientColors;
+  const { themeStyleSpinners, manualGradientColors, themeStyles, appFontStyles } =
+    useGlobalStyle(); 
   const { themeAheadOfLoading } = useFriendList();
 
   const spacerAroundCalendar = 10;
@@ -39,22 +36,23 @@ const HomeButtonSelectedFriend = ({
     friendLoaded,
     friendDashboardData,
     isPending,
-    isLoading,
-    setFriend,
-    deselectFriend,
+    isLoading, 
     loadingNewFriend,
   } = useSelectedFriend();
+
+
+  const DOUBLE_PRESS_DELAY = 300;
 
   const lastPress = useRef(0);
   const pressTimeout = useRef(null);
 
+    const SELECTED_FRIEND_CARD_HEIGHT = 130;
+    const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
+    const SELECTED_FRIEND_CARD_PADDING = 10; 
+
   const navigateToMoments = () => {
     navigation.navigate("Moments");
-  };
-
-  //const navigateToLocations = () => {
-  //  navigation.navigate('Locations');
-  // };
+  }; 
 
   const navigateToImages = () => {
     navigation.navigate("Images");
@@ -68,8 +66,7 @@ const HomeButtonSelectedFriend = ({
     navigateToMoments();
   };
 
-  const handleDoublePress = () => {
-    console.log("Double press detected");
+  const handleDoublePress = () => { 
     navigateToAddMoment();
   };
 
@@ -91,13 +88,12 @@ const HomeButtonSelectedFriend = ({
       <View
         style={[
           styles.container,
-          {
-            //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          { 
+            marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
             borderRadius: borderRadius,
             borderColor: borderColor,
             justifyContent: "flex-start",
-            flexDirection: "column",
-            //height: height,
+            flexDirection: "column", 
           },
         ]}
       >
@@ -145,7 +141,7 @@ const HomeButtonSelectedFriend = ({
               marginBottom: 10, // place this spacing elsewhere
             }}
           >
-            {/* <TouchableOpacity
+            <TouchableOpacity
               style={{ 
                 flexDirection: "row",
                 height: "100%",
@@ -177,10 +173,10 @@ const HomeButtonSelectedFriend = ({
                   color={manualGradientColors.homeDarkColor}
                 />
               </View>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
         </View>
-        <View style={{ width: "100%", height: 170 }}>
+        <View style={{ width: "100%",   height: SELECTED_FRIEND_CARD_HEIGHT }}>
           {isLoading && !friendLoaded && (
             <>
               <View style={styles.loadingWrapper}>
@@ -198,33 +194,12 @@ const HomeButtonSelectedFriend = ({
                 height: "100%",
                 flexDirection: "row",
                 justifyContent: "space-between",
-                borderRadius: borderRadius,
-                //backgroundColor: 'pink',
+                borderRadius: borderRadius, 
+               // backgroundColor: 'orange',
+                padding: SELECTED_FRIEND_CARD_PADDING,
                 width: "100%",
               }}
-            >
-              <TouchableOpacity
-                onPress={() => deselectFriend()}
-                style={{ zIndex: 3000, position: "absolute", top: 0, left: 10 }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <BackArrowLongerStemSvg
-                    height={20}
-                    width={20}
-                    color={"#121212"}
-                  />
-
-                  <Text
-                    style={{
-                      fontFamily: "Poppins-Bold",
-                      fontSize: 14,
-                      color: "#121212",
-                    }}
-                  >
-                    {`  `}Back
-                  </Text>
-                </View>
-              </TouchableOpacity>
+            > 
               <View style={styles.textContainer}>
                 <TouchableOpacity onPress={onPress}>
                   <>
@@ -232,14 +207,15 @@ const HomeButtonSelectedFriend = ({
                       <Text
                         style={[
                           {
-                            fontFamily: "Poppins-Regular",
-                            fontSize: 23,
+                            fontFamily: "Poppins-Regular", 
+                            fontSize: appFontStyles.welcomeText.fontSize - 4,
                             fontColor: manualGradientColors.homeDarkColor,
+                         
                           },
                         ]}
                       >
                         {selectedFriend && friendDashboardData
-                          ? // ? selectedFriend.name
+                          ?  
                             `Next suggested hello`
                           : "None"}
                       </Text>
@@ -261,18 +237,16 @@ const HomeButtonSelectedFriend = ({
                 style={{
                   borderRadius: 20,
                   height: "100%",
-                  minWidth: "10%",
-                  maxWidth: "12%",
+                  width: '13%',
                   alignItems: "center",
                   alignContent: "center",
                   flexDirection: "column",
-                  justifyContent: "space-between", //ADJUST POSITION HERE
-                  paddingTop: "2%", //ADJUST POSITION HERE
-                  paddingRight: 10,
+                  justifyContent: "space-between",  
+            
                 }}
               >
-                <ButtonIconMoments
-                  height={"40%"} //ADJUST POSITION HERE
+                <LoadedMoments
+                  height={"40%"}  
                   iconSize={46}
                   onPress={onPress}
                   circleColor={"orange"}
@@ -283,7 +257,7 @@ const HomeButtonSelectedFriend = ({
                       : "orange"
                   }
                 />
-                <ButtonIconImages
+                <LoadedImages
                   height={"40%"} //ADJUST POSITION HERE
                   iconSize={46}
                   onPress={navigateToImages}
@@ -315,8 +289,7 @@ const HomeButtonSelectedFriend = ({
             borderRadius={10}
             borderColor="black"
           />
-        </View>
-        {/* <HomeFriendItems borderRadius={10} height={40} /> */}
+        </View> 
       </View>
     </View>
   );
@@ -324,26 +297,22 @@ const HomeButtonSelectedFriend = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 194,
     flexDirection: "row",
     width: "100%",
-    flex: 1,
-    padding: 0,
-    alignContent: "center",
-    borderWidth: 0,
+    flex: 1, 
+    alignContent: "center", 
     height: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
     overflow: "hidden",
   },
   textContainer: {
-    zIndex: 5,
-    paddingLeft: "2%",
-    //paddingTop: '6%',
+    zIndex: 5,  
     flexDirection: "column",
-    width: "58%",
+    width: "70%",
+    flexWrap: 'wrap', 
     height: "100%",
-    justifyContent: "center", //'space-between'
+    justifyContent: "flex-start",  
   },
   subtitleText: {
     fontFamily: "Poppins-Regular",
@@ -357,4 +326,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeButtonSelectedFriend;
+export default SelectedFriendHome;

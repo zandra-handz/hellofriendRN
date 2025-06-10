@@ -5,20 +5,15 @@
 //  color={themeStyles.genericTextBackgroundShadeTwo.backgroundColor}
 // />
 
-
 //TO TRY LATER TO FLIP THE BUTTON?
 //const lizardHandsFlip = position.interpolate({
 //  inputRange: [-screenHeight / 20, 0],
 //  outputRange: [-1, 1],  // Flip horizontally when the position is negative
 //  extrapolate: "clamp",
 //});
-import React, { useState, useRef  } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native"; 
-import SwitchSvg from "@/app/assets/svgs/switch.svg"; 
+import React, { useState, useRef } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import SwitchSvg from "@/app/assets/svgs/switch.svg";
 import SearchBarGoogleAddress from "./SearchBarGoogleAddress";
 import SearchBarSavedLocations from "./SearchBarSavedLocations";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -29,7 +24,8 @@ const DualLocationSearcher = ({
   isFavoritesList = false,
   locationListDrilledOnce,
 }) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+    const HEADER_HEIGHT = 60;
+  const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
   const searchStringRef = useRef(null);
   const [savedLocationsSearchIsVisible, setSavedLocationsVisibility] =
     useState(false);
@@ -43,16 +39,34 @@ const DualLocationSearcher = ({
       searchStringRef.current.setText(text);
     }
   };
-  
 
   const switchViews = () => {
     setMountingText(searchString);
     setSavedLocationsVisibility(!savedLocationsSearchIsVisible);
   };
 
+
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {}]}>
       <>
+        <View
+          style={{
+            width: "100%",
+            padding: 10,
+            paddingBottom: 0,
+            position: "absolute",
+            top: 0,
+            flex: 1,
+            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            height: HEADER_HEIGHT,
+          }}
+        >
+        {savedLocationsSearchIsVisible && <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: appFontStyles.welcomeText.fontSize - 6}]}>
+           Saved locations </Text>}
+                   {!savedLocationsSearchIsVisible && <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: appFontStyles.welcomeText.fontSize - 6}]}>
+           Google maps </Text>}
+        </View>
         {!savedLocationsSearchIsVisible && (
           <View
             style={{
@@ -60,10 +74,12 @@ const DualLocationSearcher = ({
               flexDirection: "row",
               position: "absolute",
               justifyContent: "flex-end",
-              width: "100%",
+              right: 0,
+              left: 0,
+              top: HEADER_HEIGHT,
             }}
           >
-            <View style={styles.googleSearchContainer}>
+            <View style={[styles.googleSearchContainer, themeStyles.primaryBackground]}>
               <SearchBarAnimationWrapper>
                 <SearchBarGoogleAddress
                   ref={searchStringRef}
@@ -86,9 +102,10 @@ const DualLocationSearcher = ({
               position: "absolute",
               justifyContent: "flex-end",
               width: "100%",
+              top: HEADER_HEIGHT,
             }}
           >
-            <View style={styles.savedLocationsContainer}>
+            <View style={[styles.savedLocationsContainer, themeStyles.primaryBackground, {backgroundColor: themeStyles.primaryBackground.backgroundColor}]}>
               <SearchBarAnimationWrapper>
                 <SearchBarSavedLocations
                   locationListDrilledTwice={locationListDrilledOnce}
@@ -96,6 +113,7 @@ const DualLocationSearcher = ({
                   mountingText={mountingText}
                   triggerAnimation={savedLocationsSearchIsVisible}
                   onTextChange={updateSearchString}
+
                   onPress={onPress}
                   searchStringRef={searchStringRef}
                 />
@@ -104,12 +122,12 @@ const DualLocationSearcher = ({
           </View>
         )}
 
-        <View style={styles.buttonContainer}>
+        <View style={[styles.buttonContainer, themeStyles.primaryBackground]}> 
           <TouchableOpacity
             onPress={switchViews}
             style={[
               styles.circleButton,
-              themeStyles.footerIcon,
+              //themeStyles.footerIcon,
               { backgroundColor: manualGradientColors.homeDarkColor },
             ]}
           >
@@ -146,16 +164,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
-    padding: 0,
+
     zIndex: 1000,
   },
   buttonContainer: {
     alignItems: "center",
     flexDirection: "row",
     position: "absolute",
-    right: "1%",
+    right: 0, 
+    zIndex: 6000,
     marginBottom: 2,
     height: "auto",
     width: 54,
@@ -169,7 +188,6 @@ const styles = StyleSheet.create({
     width: "100%",
     top: 0,
     right: 36,
-    backgroundColor: "pink",
     borderRadius: 20,
     padding: "8%",
   },
@@ -184,8 +202,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     width: "100%",
     marginTop: 0,
-    borderTopWidth: 0,
-    borderBottomWidth: 0,
     paddingRight: 2,
   },
   inputContainer: {
@@ -195,7 +211,6 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 30,
     height: 48,
-    backgroundColor: "transparent",
   },
   searchIcon: {
     position: "absolute",
@@ -225,22 +240,22 @@ const styles = StyleSheet.create({
     color: "#1faadb",
   },
   iconStyle: {
-    marginRight: 10,
+    marginRight: 0,
   },
   savedLocationsContainer: {
     flexDirection: "row",
     justifyContent: "flex-start",
-    width: "86%",
+    width: "100%", 
     zIndex: 2200,
-    elevation: 2200,
+    elevation: 2200, 
   },
   googleSearchContainer: {
-    justifyContent: "flex-start",
-    width: "86%",
-    backgroundColor: "transparent",
-    padding: 0,
+    justifyContent: "center",
+    width: "100%", 
+    //backgroundColor: 'pink',
+    // flex: 1, 
+
     zIndex: 3000,
-    position: "absolute",
   },
 });
 

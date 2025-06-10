@@ -12,7 +12,7 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
   const [ showFullList, setShowFullList ] = useState(true);
 
 
-
+const INPUT_CONTAINER_BORDER_RADIUS = 10;
  
   useEffect(() => { 
     if (textInputRef.current) {
@@ -101,13 +101,13 @@ const SearchBarSavedLocations = forwardRef(({ locationListDrilledTwice, onPress,
 
   return ( 
     <>
-      <TouchableWithoutFeedback onPress={handleOutsidePress}>
-        <View style={[styles.inputContainer, themeStyles.genericTextBackground]}>
+      <TouchableWithoutFeedback  onPress={handleOutsidePress}>
+        <View style={[styles.inputContainer, themeStyles.genericTextBackground, { borderRadius: INPUT_CONTAINER_BORDER_RADIUS, borderColor: themeStyles.primaryText.color}]}>
           <TextInput
             ref={textInputRef}
             autoFocus={mountingText.length > 0 ? true : false}
             style={[styles.searchInput, themeStyles.genericText]}
-            placeholder={'Search saved locations'}
+            placeholder={'Search'}
             placeholderTextColor={themeStyles.genericText.color}
             value={searchQuery} 
             onChangeText={handleSearch}
@@ -144,12 +144,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
     alignItems: 'center', 
     justifyContent: 'center',
-    width: '100%',
-    borderRadius: 30,
+    width: '100%', 
     height: 48,
     backgroundColor: "transparent",
     paddingLeft: "4%", 
     paddingVertical: '3%',
+    borderWidth: StyleSheet.hairlineWidth
   },
   searchInput: {
     flex: 1,

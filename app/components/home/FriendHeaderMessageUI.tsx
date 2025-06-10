@@ -19,10 +19,10 @@ interface FriendHeaderMessageUIProps {
 const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   isKeyboardVisible = false,
 }) => {
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles,   appFontStyles } = useGlobalStyle();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
 
-  const friendModalButtonHeight = 20;
+  const friendModalButtonHeight = 16;
   const message = `Selected: ${selectedFriend.name}`;
   const compositionMessage = `Talking point for ${selectedFriend.name}`;
 
@@ -52,7 +52,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           ? message
           : selectedFriend && !loadingNewFriend && isKeyboardVisible
             ? compositionMessage
-            : ""}{" "}{"("}
+            : ""}{" "} 
         <View
           style={{
             height: appFontStyles.welcomeText.fontSize,
@@ -69,7 +69,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
             useGenericTextColor={true}
           />
         </View>
-        {")"}
+     
       </Animated.Text>
     </Animated.View>
   );

@@ -45,7 +45,8 @@ const CategoryCreator = ({
   const [remainingCategories, setRemainingCategories] = useState(
     getCreationsRemaining
   );
-  const [categoryLimit, setCategoryLimit] = useState(getCategoryCap);
+
+  // const [categoryLimit, setCategoryLimit] = useState(getCategoryCap);
 
   // for data updates after initial render
   useEffect(() => {
@@ -55,7 +56,7 @@ const CategoryCreator = ({
       resetNewCategoryText();
 
       setRemainingCategories(getCreationsRemaining());
-      setCategoryLimit(getCategoryCap());
+      // setCategoryLimit(getCategoryCap());
 
       if (updateExistingMoment && existingCategory) {
         setSelectedCategory(existingCategory);
@@ -66,12 +67,7 @@ const CategoryCreator = ({
     }
   }, [capsuleList, friendDashboardData, loadingNewFriend]);
 
-
-  // useEffect(() => {
-  //   if (!categoryCount || categoryCount < 1) {
-  //     setViewExistingCategories(false);
-  //   }
-  // }, [categoryCount]);
+ 
 
   const updateNewCategoryText = (text) => {
     if (newCategoryRef && newCategoryRef.current) {

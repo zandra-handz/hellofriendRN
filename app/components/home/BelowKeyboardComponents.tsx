@@ -5,7 +5,7 @@ import HomeButtonUpNext from "./HomeButtonUpNext";
 import HomeScrollCalendarLights from './HomeScrollCalendarLights';
 import HomeScrollSoon from "./HomeScrollSoon";
 import HomeFriendItems from "./HomeFriendItems";
-import HomeButtonSelectedFriend from "./HomeButtonSelectedFriend";
+import SelectedFriendHome from "./SelectedFriendHome";
 import Animated, {
   SharedValue,
   SlideInLeft,
@@ -72,7 +72,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
         )}
         {isFriendSelected && (
           <>
-            <HomeButtonSelectedFriend
+            <SelectedFriendHome
               onPress={onPress}
               borderRadius={10}
               borderColor="black"

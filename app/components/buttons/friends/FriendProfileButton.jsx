@@ -6,22 +6,27 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../../appwide/spinner/LoadingPage";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-import GearsTwoBiggerCircleSvg from "@/app/assets/svgs/gears-two-bigger-circle.svg";
-
-const ButtonFriendProfileCircle = () => {
+const FriendProfileButton = () => {
   const {
     selectedFriend,
     friendLoaded,
     friendDashboardData,
     loadingNewFriend,
   } = useSelectedFriend();
-  const { themeStyles, appFontStyles, appContainerStyles } = useGlobalStyle();
+  const {
+    themeStyles,
+    appFontStyles,
+    appContainerStyles,
+    manualGradientColors,
+  } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const [profileIconColor, setProfileIconColor] = useState();
   const navigation = useNavigation();
 
-  const ICON_SIZE = 28;
+  const circleSize = 27;
+  const iconSize = 28;
 
   useEffect(() => {
     if (
@@ -29,8 +34,8 @@ const ButtonFriendProfileCircle = () => {
       themeStyles.genericTextBackground.backgroundColor
     ) {
       setProfileIconColor([
-        themeAheadOfLoading.darkColor || "#4caf50",
-        themeAheadOfLoading.lightColor || "rgb(160, 241, 67)",
+        themeAheadOfLoading.darkColor || manualGradientColors.darkColor,
+        themeAheadOfLoading.lightColor || manualGradientColors.lightColor,
       ]);
     } else {
       setProfileIconColor([
@@ -63,42 +68,45 @@ const ButtonFriendProfileCircle = () => {
   const renderProfileIcon = () => {
     if (Array.isArray(profileIconColor) && profileIconColor.length === 2) {
       return (
-        <View style={{ flexDirection: "row" }}>
-          {/* <ProfileCircleSvg width={ICON_SIZE} height={ICON_SIZE} startColor={themeAheadOfLoading.lightColor} endColor={themeAheadOfLoading.darkColor} />
-           */}
-          <View
-            style={{
-              backgroundColor: themeAheadOfLoading.lightColor, // Circle color
-              borderRadius: 16, // Half of width/height to make it circular
-              width: ICON_SIZE - 1, // Circle diameter
-              height: ICON_SIZE - 1,
-              alignItems: "center",
-              left: -5,
-              justifyContent: "center",
-              marginLeft: 4, // Adjust spacing between circle and ProfileCircleSvg if needed
-            }}
+        <View
+          style={{
+            backgroundColor: themeAheadOfLoading.lightColor,
+            borderRadius: 16,
+            width: circleSize,
+            height: circleSize,
+            alignItems: "center",
+            justifyContent: "center",
+            alignSelf: "center",
+          }}
+        >
+          <Text
+            style={[
+              appFontStyles.friendProfileButtonText,
+              {
+                color:
+                  friendLoaded && friendDashboardData && selectedFriend
+                    ? themeAheadOfLoading.fontColorSecondary
+                    : "black",
+              },
+            ]}
           >
-            <Text
-              style={[
-                appFontStyles.friendProfileButtonText,
-                {
-                  color:
-                    friendLoaded && friendDashboardData && selectedFriend
-                      ? themeAheadOfLoading.fontColorSecondary
-                      : "black",
-                },
-              ]}
-            >
-              {selectedFriend && friendLoaded && selectedFriend.name.charAt(0)}
-            </Text>
-          </View>
+            {selectedFriend && friendLoaded && selectedFriend.name.charAt(0)}
+          </Text>
         </View>
       );
     }
   };
 
   return (
-    <View style={{ flexDirection: "row", width: 50 }}>
+    <View
+      style={{
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        alignContent: "center",
+        flexDirection: "row",
+      }}
+    >
       {loadingNewFriend && (
         <View style={appContainerStyles.loadingFriendProfileButtonWrapper}>
           <LoadingPage
@@ -113,8 +121,7 @@ const ButtonFriendProfileCircle = () => {
 
       {!loadingNewFriend && (
         <TouchableOpacity
-          onPress={navigateToFriendFocus} // Regular tap navigates to friend focus screen
-          // onLongPress={handleLongPress} // Long press triggers the alert
+          onPress={() => navigation.navigate("FriendFocus")}
           style={{ flex: 1 }}
         >
           <View>
@@ -122,22 +129,23 @@ const ButtonFriendProfileCircle = () => {
             <View
               style={{
                 position: "absolute",
-                top: -2,
-                left: 27,
+                top: -13,
+               right: 13,
                 zIndex: 1000,
               }}
             >
-              <GearsTwoBiggerCircleSvg
-                width={26}
-                height={26}
-                color={themeAheadOfLoading.darkColor}
-              />
+              <MaterialIcons
+                name="display-settings"
+                size={iconSize - 2}
+                color={themeStyles.footerIcon.color}
+                fill="black"
+              /> 
             </View>
           </View>
         </TouchableOpacity>
       )}
     </View>
   );
-}; 
+};
 
-export default ButtonFriendProfileCircle;
+export default FriendProfileButton;

@@ -4,7 +4,13 @@
 //<Image source={require('../assets/shapes/coffeecupnoheart.png')} style={{ height: 35, width: 35 }}/>
 //midpoints screen is crashing right now so commented out
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   View,
   StyleSheet,
@@ -14,31 +20,30 @@ import {
   Text,
   Dimensions,
   Animated,
+  FlatList,
   Image,
 } from "react-native";
-import MapView, { 
-  Marker,
-  PROVIDER_GOOGLE,
-} from "react-native-maps"; 
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import LocationOverMapButton from "./LocationOverMapButton";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
- 
+
 import CheckmarkOutlineSvg from "@/app/assets/svgs/checkmark-outline.svg";
 
 import { useMessage } from "@/src/context/MessageContext";
 import SlideUpToOpen from "../foranimations/SlideUpToOpen";
 import SlideDownToClose from "../foranimations/SlideDownToClose";
-  
-import { useLocations } from '@/src/context/LocationsContext';
+
+import { useLocations } from "@/src/context/LocationsContext";
 
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 
 import ExpandableUpCard from "@/app/components/foranimations/ExpandableUpCard";
-import DualLocationSearcher from "./DualLocationSearcher"; 
+import DualLocationSearcher from "./DualLocationSearcher";
 import HorizontalScrollAnimationWrapper from "@/app/components/foranimations/HorizontalScrollAnimationWrapper";
 import FadeInOutWrapper from "@/app/components/foranimations/FadeInOutWrapper"; //pass in isVisible prop
 import LocationDetailsBody from "./LocationDetailsBody";
@@ -57,15 +62,40 @@ const LocationsMapView = ({
   const { locationList } = useLocations();
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const navigation = useNavigation();
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const [focusedLocation, setFocusedLocation] = useState(null);
   const [locationDetailsAreOpen, setLocationDetailsAreOpen] = useState(false);
- 
 
   const [expandStateFromParent, setExpandStateFromParent] = useState(false);
 
   const [appOnlyLocationData, setAppOnlyLocationData] = useState(null);
+
+  const renderLocationItem = useCallback(
+    ({ item, index }) => (
+      <TouchableOpacity
+        style={{
+          height: 60,
+          padding: 10,
+          width: "100%",
+          flexDirection: "column",
+          backgroundColor:
+            themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+          marginVertical: 2,
+        }}
+        onPress={() => console.log("navigate to location view once made!")}
+      >
+        <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+          {item.title}
+        </Text>
+
+        <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+          {item.address}
+        </Text>
+      </TouchableOpacity>
+    ),
+    [sortedLocations]
+  );
 
   const toggleCardWithSlider = () => {
     setExpandStateFromParent((prev) => !prev);
@@ -74,6 +104,8 @@ const LocationsMapView = ({
   const toggleLocationDetailsState = () => {
     setLocationDetailsAreOpen((prev) => !prev);
   };
+  const extractItemKey = (item, index) =>
+    item?.id ? item.id.toString() : `location-${index}`;
 
   useEffect(() => {
     if (currentLocationDetails && currentRegion) {
@@ -99,11 +131,11 @@ const LocationsMapView = ({
       );
       locationIsOutsideFaves = true;
     }
-    showMessage(
-      matchedLocation && addMessage && locationIsOutsideFaves,
-      null,
-      "Location already in list!"
-    );
+    // showMessage(
+    //   matchedLocation && addMessage && locationIsOutsideFaves,
+    //   null,
+    //   "Location already in list!"
+    // );
     setFocusedLocation(matchedLocation || locationDetails);
   };
 
@@ -192,6 +224,26 @@ const LocationsMapView = ({
     }
   };
 
+  const renderListItem = useCallback(
+    ({ item, index }) => (
+      <View
+        style={{
+          marginRight: buttonRightSpacer,
+          paddingVertical: 4,
+          height: "90%",
+        }}
+      >
+        <LocationOverMapButton
+          height={"100%"}
+          friendName={item.title || item.address}
+          width={soonButtonWidth}
+          onPress={() => handlePress(item)}
+        />
+      </View>
+    ),
+    [handlePress]
+  );
+
   const renderBottomScrollList = () => {
     return (
       <Animated.FlatList
@@ -203,22 +255,7 @@ const LocationsMapView = ({
           offset: soonButtonWidth * index,
           index,
         })}
-        renderItem={({ item }) => (
-          <View
-            style={{
-              marginRight: buttonRightSpacer,
-              paddingVertical: 4,
-              height: "90%",
-            }}
-          >
-            <LocationOverMapButton
-              height={"100%"}
-              friendName={item.title || item.address}
-              width={soonButtonWidth}
-              onPress={() => handlePress(item)}
-            />
-          </View>
-        )}
+        renderItem={renderListItem}
         showsHorizontalScrollIndicator={false}
         scrollIndicatorInsets={{ right: 1 }}
         initialScrollIndex={0}
@@ -383,6 +420,56 @@ const LocationsMapView = ({
     },
   ];
 
+  const MemoizedMarker = React.memo(({ location }) => {
+    if (location.latitude === 25.0 && location.longitude === -71.0) {
+      return null; // Skip Bermuda Triangle
+    }
+
+    return (
+      <Marker
+        key={location.id.toString()}
+        coordinate={{
+          latitude: parseFloat(location.latitude),
+          longitude: parseFloat(location.longitude),
+        }}
+        title={location.title}
+        description={location.address}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            padding: 5,
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                zIndex: 1000,
+                position: "absolute",
+                top: -12,
+                right: -8,
+                backgroundColor: "yellow",
+                padding: 4,
+                borderRadius: 20,
+                fontSize: 12,
+              }}
+            >
+              {location.helloCount}
+            </Text>
+          </View>
+          <MaterialCommunityIcons
+            name="map-marker-star"
+            size={35}
+            color="red"
+          />
+        </View>
+      </Marker>
+    );
+  });
+
   const renderLocationsMap = (locations) => (
     <>
       <MapView
@@ -398,105 +485,57 @@ const LocationsMapView = ({
         zoomEnabled={true}
         //customMapStyle={colorScheme === 'dark' ? darkMapStyle : null}
       >
-        {locations && locations
-          .filter(
-            (location) =>
-              location.latitude !== 25.0 || location.longitude !== -71.0 // Exclude Bermuda Triangle coordinates
-          )
-          .map((location) => (
-            <Marker
-              key={location.id.toString()}
-              coordinate={{
-                latitude: parseFloat(location.latitude),
-                longitude: parseFloat(location.longitude),
-              }}
-              title={location.title}
-              description={location.address}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  alignContent: "center",
-                  justifyContent: "flex-start",
-                  padding: 5,
-                  pinColor: "limegreen", //haven't tested if this works
-                }}
-              >
-                <View style={{ flex: 1 }}>
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      zIndex: 1000,
-                      position: "absolute",
-                      top: -12,
-                      right: -8,
-                      backgroundColor: "yellow",
-                      padding: 4,
-                      borderRadius: 20,
-                      fontSize: 12,
-                    }}
-                  >
-                    {location && location.helloCount}
-                  </Text>
-                </View>
-                <Image
-                  source={require("@/app/assets/shapes/coffeecupnoheart.png")}
-                  style={{ height: 35, width: 35 }}
-                />
-              </View>
-            </Marker>
-          ))}
+        {locations?.map((location) => (
+          <MemoizedMarker key={location.id.toString()} location={location} />
+        ))}
       </MapView>
       {!isKeyboardVisible && (
-        
-      <TouchableOpacity
-        style={[
-          styles.midpointsButton,
-          {zIndex: 7000,
-            backgroundColor: themeStyles.genericTextBackground.backgroundColor,
-          },
-        ]}
-        onPress={handleGoToMidpointLocationSearchScreen}
-      >
-        <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
-          Midpoints
-        </Text>
-      </TouchableOpacity>
-
-      
+        <TouchableOpacity
+          style={[
+            styles.midpointsButton,
+            {
+              zIndex: 7000,
+              backgroundColor:
+                themeStyles.genericTextBackground.backgroundColor,
+            },
+          ]}
+          onPress={handleGoToMidpointLocationSearchScreen}
+        >
+          <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
+            Midpoints
+          </Text>
+        </TouchableOpacity>
       )}
 
       {!isKeyboardVisible && (
-
-      <TouchableOpacity
-        style={[
-          styles.zoomOutButton,
-          {
-            zIndex: 7000,
-            backgroundColor: themeStyles.genericTextBackground.backgroundColor,
-          },
-        ]}
-        onPress={fitToMarkers}
-      >
-        <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
-          Show All
-        </Text>
-      </TouchableOpacity>
-      
-    )}
+        <TouchableOpacity
+          style={[
+            styles.zoomOutButton,
+            {
+              zIndex: 7000,
+              backgroundColor:
+                themeStyles.genericTextBackground.backgroundColor,
+            },
+          ]}
+          onPress={fitToMarkers}
+        >
+          <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
+            Show All
+          </Text>
+        </TouchableOpacity>
+      )}
       <View style={styles.dualLocationSearcherContainer}>
-      <DualLocationSearcher
-        onPress={handlePress}
-        locationListDrilledOnce={locationList}
-      />  
+        <DualLocationSearcher
+          onPress={handlePress}
+          locationListDrilledOnce={locationList}
+        />
       </View>
     </>
   );
 
   return (
     <View style={styles.container}>
-      {locationDetailsAreOpen && (
+      {/* {locationDetailsAreOpen && (
         <FadeInOutWrapper
           isVisible={locationDetailsAreOpen}
           children={
@@ -514,7 +553,7 @@ const LocationsMapView = ({
             />
           }
         />
-      )}
+      )} */}
 
       {sortedLocations && (
         <>
@@ -524,17 +563,56 @@ const LocationsMapView = ({
             <View
               style={{
                 width: "100%",
-                height: 70,
+                // height: 70,
                 zIndex: 1200,
                 elevation: 1200,
                 flexDirection: "column",
                 position: "absolute",
-                bottom: "28%",
+                bottom: 0,
                 justifyContent: "space-between",
                 width: "100%",
               }}
             >
-              <HorizontalScrollAnimationWrapper>
+              <View
+                style={{
+                  backgroundColor:
+                    themeStyles.primaryBackground.backgroundColor,
+                  padding: 10,
+                  height: 110,
+                  width: "100%",
+                }}
+              >
+                <Text
+                  style={[themeStyles.primaryText, appFontStyles.welcomeText]}
+                >
+                  {focusedLocation && focusedLocation.title}
+                </Text>
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    appFontStyles.subWelcomeText,
+                  ]}
+                >
+                  {focusedLocation && focusedLocation.address}
+                </Text>
+              </View>
+              <View
+                style={{
+                  backgroundColor: "red",
+                  // flex: 1,
+                  height: 230,
+                  width: "100%",
+                }}
+              >
+                {sortedLocations && (
+                  <FlatList
+                    data={sortedLocations}
+                    keyExtractor={extractItemKey}
+                    renderItem={renderLocationItem}
+                  />
+                )}
+              </View>
+              {/* <HorizontalScrollAnimationWrapper>
                 <View style={styles.scrollContainer}>
                   <View style={styles.scrollTitleContainer}>
                     <Text
@@ -542,19 +620,19 @@ const LocationsMapView = ({
                         styles.friendNameText,
                         { color: themeAheadOfLoading.fontColor },
                       ]}
-                    > 
-                      Faved for {selectedFriend?.name || 'friend'}
+                    >
+                      Faved for {selectedFriend?.name || "friend"}
                     </Text>
                   </View>
                   {renderBottomScrollList()}
                 </View>
-              </HorizontalScrollAnimationWrapper>
+              </HorizontalScrollAnimationWrapper> */}
             </View>
           )}
         </>
       )}
 
-      {!isKeyboardVisible && (
+      {/* {!isKeyboardVisible && (
         <LinearGradient
           colors={[
             themeAheadOfLoading.darkColor,
@@ -564,8 +642,8 @@ const LocationsMapView = ({
           end={{ x: 1, y: 0 }}
           style={styles.gradientBelowFaves}
         />
-      )}
-
+      )} */}
+      {/* 
       <ExpandableUpCard
         onPress={() => {
           //handleGoToLocationViewScreen(focusedLocation) //scaffolding during transition to keep build functional
@@ -583,21 +661,20 @@ const LocationsMapView = ({
           ) : null //I'm not sure if this would return error, the LocationDetailsBody has checks in place already
           //and will return an empty container if no focusedLocation
         }
-      />
+      /> */}
 
-      <Animated.View style={[styles.sliderContainer, { opacity: 1 }]}>
-       
-          <SlideUpToOpen
-            onPress={toggleCardWithSlider}
-            triggerReappear={!locationDetailsAreOpen}
-            onDoubleTap={handleDoubleTapSliderUpPress}
-            //onDoubleTap={handleGoToLocationSendScreen(focusedLocation)}
-            sliderText="OPEN"
-            targetIcon={CheckmarkOutlineSvg}
-            disabled={false}
-          /> 
-      </Animated.View>
-      {locationDetailsAreOpen && (
+      {/* <Animated.View style={[styles.sliderContainer, { opacity: 1 }]}>
+        <SlideUpToOpen
+          onPress={toggleCardWithSlider}
+          triggerReappear={!locationDetailsAreOpen}
+          onDoubleTap={handleDoubleTapSliderUpPress}
+          //onDoubleTap={handleGoToLocationSendScreen(focusedLocation)}
+          sliderText="OPEN"
+          targetIcon={CheckmarkOutlineSvg}
+          disabled={false}
+        />
+      </Animated.View> */}
+      {/* {locationDetailsAreOpen && (
         <Animated.View
           style={[styles.sliderStartAtTopContainer, { opacity: 1 }]}
         >
@@ -609,7 +686,7 @@ const LocationsMapView = ({
             disabled={false}
           />
         </Animated.View>
-      )}
+      )} */}
     </View>
   );
 };
@@ -619,12 +696,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
+    backgroundColor: "orange",
   },
   dualLocationSearcherContainer: {
     position: "absolute",
-    top: 90,
-    flex: 1, 
-    width: '100%',
+    top: 0,
+    flex: 1,
+    width: "100%",
+    flexDirection: "row",
+    backgroundColor: "pink",
   },
   gradientCover: {
     width: "100%",
@@ -638,8 +718,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     height: "37%",
-    borderTopRightRadius: 40,
-    borderTopLeftRadius: 40,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -691,13 +771,11 @@ const styles = StyleSheet.create({
   midpointsButton: {
     position: "absolute",
     zIndex: 3000,
-    width: "auto",
-    paddingHorizontal: "2%",
-    bottom: "44%",
-    right: 8,
-    backgroundColor: "red",
+    top: 120,
+    right: 4,
     padding: 10,
-    borderRadius: 30,
+    paddingHorizontal: 14,
+    borderRadius: 10,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -706,13 +784,11 @@ const styles = StyleSheet.create({
   zoomOutButton: {
     position: "absolute",
     zIndex: 4,
-    width: "auto",
-    paddingHorizontal: "2%",
-    bottom: "38%",
-    right: 8,
-    backgroundColor: "red",
+    right: 4,
+    top: 170,
     padding: 10,
-    borderRadius: 30,
+    paddingHorizontal: 14,
+    borderRadius: 10,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },

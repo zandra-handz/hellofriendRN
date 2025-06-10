@@ -690,19 +690,15 @@ export const resetFriendFavesColorThemeToDefaultOld = async (userId, friendId, d
 export const fetchUpcomingHelloes = async () => {
     try {
         const response = await helloFriendApiClient.get('/friends/upcoming/');
-        console.log("API GET CALL fetchUpcomingHelloes");
+       // console.log("API GET CALL fetchUpcomingHelloes", response.data);
         return response.data;
-    } catch (error) {
-        // Log the entire error object for debugging
-        //console.error('ERROR API GET CALL fetchUpcomingHelloes:', error);
-
-        // Log specific details about the error if they exist
+    } catch (error) { 
+        console.error('ERROR API GET CALL fetchUpcomingHelloes:', error);
+ 
         if (error.response) {
-            // If the server responded with a status code out of the 2xx range
-            //console.error('Error Response:', error.response);
-            console.error('Response Status:', error.response.status); // e.g., 500
-            console.error('Response Headers:', error.response.headers);
-           //console.error('Response Data:', error.response.data); // Error message from server
+            // console.error('Response Status:', error.response.status); 
+            // console.error('Response Headers:', error.response.headers);
+            console.error('Response Data:', error.response.data); // Error message from server
         } else if (error.request) {
             // If the request was made but no response was received
            // console.error('Error Request:', error.request);
@@ -718,7 +714,7 @@ export const fetchUpcomingHelloes = async () => {
 
 
 export const fetchMomentsAPI = async (friendId) => {
-    console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+   // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
     try {
         const response = await helloFriendApiClient.get(`/friends/${friendId}/thoughtcapsules/`);
         if (response && response.data) { 
@@ -731,7 +727,7 @@ export const fetchMomentsAPI = async (friendId) => {
             })); 
             return capsules;
         } else {
-            console.log("fetchThoughtCapsules: no capsules added yet");
+            // console.log("fetchThoughtCapsules: no capsules added yet");
             return []; // Return an empty array if no capsules
         }
     } catch (error) {
@@ -926,7 +922,7 @@ export const fetchAllLocations = async () => {
 export const createLocation = async (locationData) => {
     try { 
         const response = await helloFriendApiClient.post('/friends/locations/add/', locationData);
-        console.log('API Response:', response); // Log the full response for debugging
+      //  console.log('API Response:', response); // Log the full response for debugging
         return response.data; // Ensure that this is what you expect
     } catch (error) {
         console.error('Error creating location:', error, locationData);

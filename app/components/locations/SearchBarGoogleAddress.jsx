@@ -20,6 +20,8 @@ const SearchBarGoogleAddress = forwardRef(
     const googlePlacesRef = useRef();
     const [searchText, setSearchText] = useState("");
 
+    const INPUT_CONTAINER_BORDER_RADIUS = 10;
+
     useEffect(() => {
       if (googlePlacesRef.current) {
         googlePlacesRef.current.setAddressText(mountingText);
@@ -79,7 +81,7 @@ const SearchBarGoogleAddress = forwardRef(
     return (
       <GooglePlacesAutocomplete
         ref={googlePlacesRef}
-        placeholder="Search Google maps"
+        placeholder="Search"
         predefinedPlaces={[]}
         textInputProps={{
           autoFocus: mountingText.length > 0 ? true : false,
@@ -100,11 +102,11 @@ const SearchBarGoogleAddress = forwardRef(
         styles={{
           textInputContainer: [
             styles.inputContainer,
-            themeStyles.genericTextBackground,
+            themeStyles.genericTextBackground, {borderRadius: INPUT_CONTAINER_BORDER_RADIUS, borderColor: themeStyles.primaryText.color}
           ],
-          textInput: [styles.inputContainer, themeStyles.genericText],
+          textInput: [[ themeStyles.genericText, {paddingHorizontal: 5, height: 24, backgroundColor: 'transparent'}]],
         }}
-        renderRightButton={() => (
+        renderLeftButton={() => (
           <GoogleLogoSvg width={26} height={26} style={styles.iconStyle} />
         )}
       />
@@ -113,26 +115,19 @@ const SearchBarGoogleAddress = forwardRef(
 );
 
 const styles = StyleSheet.create({
-  //moved to parent because animation wrapper goes under this
-  //container: {
-  //justifyContent: 'flex-start',
-  //width: '86%',
-  //backgroundColor: 'transparent',
-  //padding: 0,
-  //zIndex: 1,
-  //},
+ 
   textInputContainer: {
     backgroundColor: "transparent",
     width: "100%", 
-    paddingRight: 2,
+    paddingRight: 2, 
   },
   inputContainer: {
-    flexDirection: "row-reverse", 
+    //flexDirection: "row-reverse", 
     alignItems: "center",
-    width: "100%", // Make input field take up full width
-    borderRadius: 30,
-    height: 48,
-    backgroundColor: "transparent",
+   // width: "80%", // Make input field take up full width
+    borderWidth: StyleSheet.hairlineWidth,
+     
+    backgroundColor: "transparent", // NEED THIS TO OVERRIDE
     paddingLeft: "4%",
     paddingVertical: '3%',
   }, 

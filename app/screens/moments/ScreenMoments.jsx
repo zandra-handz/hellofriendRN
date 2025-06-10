@@ -25,32 +25,27 @@ const ScreenMoments = () => {
   const navigation = useNavigation();
 
   const renderHeader = useCallback(
-    () => (
-      // <GlobalAppHeader
-      //   title={""}
-      //   navigateTo={"Moments"}
-      //   icon={LeavesTwoFallingOutlineThickerSvg}
-      //   altView={false}
-      //   altViewIcon={LeafSingleOutlineThickerSvg}
-      // />
+    () => ( 
       <GlobalAppHeaderIconVersion
         title={""}
         navigateTo={"Moments"}
         icon={
           <MaterialIcons
-           // name="tips-and-updates"
+            // name="tips-and-updates"
             name="person-pin"
             size={30}
             color={themeAheadOfLoading.fontColorSecondary}
           />
         }
         altView={false}
-        altViewIcon={      <MaterialIcons
+        altViewIcon={
+          <MaterialIcons
             // name="tips-and-updates"
-             name="person-pin"
+            name="person-pin"
             size={30}
             color={themeAheadOfLoading.fontColorSecondary}
-          />}
+          />
+        }
       />
     ),
     [selectedFriend, loadingNewFriend, themeAheadOfLoading]
@@ -69,7 +64,7 @@ const ScreenMoments = () => {
         <SpeedDialDelux
           rootIcon={AddOutlineSvg}
           topIcon={AddOutlineSvg}
-          topOnPress={() => navigation.navigate("LocationSearch")} // selectedFriend needed for this screen I believe
+          topOnPress={() => navigation.navigate("LocationNav")} // selectedFriend needed for this screen I believe
           midIcon={<MaterialCommunityIcons name="hand-wave-outline" />}
           midOnPress={() => navigation.navigate("Finalize")}
           deluxButton={<AddMomentButton />}

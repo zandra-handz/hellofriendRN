@@ -1,26 +1,30 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { View, StyleSheet, Platform } from "react-native";
-import ButtonSignOut from "../buttons/users/ButtonSignOut";
-import ButtonDeselect from "./ButtonDeselect";
-import ButtonSettings from "../buttons/users/ButtonSettings";
-import ButtonFriendAddresses from "../buttons/locations/ButtonFriendAddresses";
-import ButtonUser from "../buttons/users/ButtonUser";
-import ButtonData from "../buttons/scaffolding/ButtonData";
-import AlertConfirm from "../alerts/AlertConfirm";
-import { useNavigationState } from "@react-navigation/native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; // Import the context hook
+import React, {  useState, useCallback } from "react";
+import { View, StyleSheet  } from "react-native"; 
+
+// app state
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";  
 import { useUser } from "@/src/context/UserContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import ButtonInfo from "../buttons/users/ButtonInfo";
-import FooterButtonIconVersion from "./FooterButtonIconVersion";
-import ButtonFriendProfileCircle from "../buttons/friends/ButtonFriendProfileCircle";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+
+ 
+// app components
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import SettingsModal from "./SettingsModal";
 
-export default function HelloFriendFooter() {
+
+// app display/templates
+import FooterButtonIconVersion from "./FooterButtonIconVersion";
+
+ 
+import ButtonData from "../buttons/scaffolding/ButtonData"; 
+import { useNavigationState } from "@react-navigation/native";  
+
+import FriendProfileButton from "../buttons/friends/FriendProfileButton";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+ 
+const HelloFriendFooter = () => {
   const navigationState = useNavigationState((state) => state);
   const { onSignOut } = useUser();
   const currentRouteName = navigationState.routes[navigationState.index]?.name;
@@ -32,10 +36,14 @@ export default function HelloFriendFooter() {
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
-  //themeStyles.footerContainer,
-
+ 
+  // these are the only dimensions I foresee potentially changing, hence why they are at top here
+  const footerHeight = 90;
+  const footerPaddingBottom = 20;
   const footerIconSize = 28;
 
+
+  // buttons rendered in callbacks, all using the same template except for the friend profile button
   const RenderSignOutButton = useCallback(
     () => (
       <FooterButtonIconVersion
@@ -137,27 +145,25 @@ export default function HelloFriendFooter() {
       <View
         style={[
           styles.container,
-          {
+          { height: footerHeight,
+            paddingBottom: footerPaddingBottom,
             backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
           },
         ]}
-      >
-        {isOnActionPage ? (
+      > 
           <View style={styles.section}>
             {
               !selectedFriend ? (
                 <RenderSignOutButton />
               ) : (
                 <RenderDeselectButton />
-              )
-              // <ButtonDeselect iconSize={footerIconSize}/>
+              ) 
             }
-          </View>
-        ) : (
-          <View style={styles.section}>
+          </View> 
+          {/* <View style={styles.section}>
             <ButtonData />
           </View>
-        )}
+       */}
 
         <View style={[styles.divider, themeStyles.divider]} />
         <>
@@ -169,7 +175,7 @@ export default function HelloFriendFooter() {
         <View style={[styles.divider, themeStyles.divider]} />
         <>
           <View style={styles.section}>
-            <ButtonFriendProfileCircle />
+            <FriendProfileButton />
           </View>
         </>
 
@@ -183,8 +189,7 @@ export default function HelloFriendFooter() {
         <View style={[styles.divider, themeStyles.divider]} />
         <>
           <View style={styles.section}>
-            <RenderAboutAppButton />
-            {/* <ButtonInfo /> */}
+            <RenderAboutAppButton /> 
           </View>
         </>
       </View>
@@ -225,19 +230,17 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "absolute",
     bottom: 0,
-    zIndex: 1,
-    height: 90,
-    paddingBottom: 20,
+    zIndex: 1,  
   },
   section: {
     flex: 1,
     flexDirection: "column",
-    alignItems: "center",
-    alignContent: "center",
+    alignItems: "center", 
     justifyContent: "center",
   },
   divider: {
-    marginVertical: 10,
-    backgroundColor: "transparent",
+    marginVertical: 10, 
   },
 });
+
+export default HelloFriendFooter;

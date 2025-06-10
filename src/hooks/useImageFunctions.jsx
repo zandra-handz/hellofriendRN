@@ -20,6 +20,7 @@ const useImageFunctions = () => {
     queryKey: ["friendImages", user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendImagesByCategory(selectedFriend.id),
     enabled: !!(selectedFriend && isAuthenticated && !isInitializing), 
+    staleTime: 1000 * 60 * 20, // 20 minutes
     select: (imagesData) => { 
       const flattenedImages = [];
       Object.keys(imagesData).forEach((category) => {
