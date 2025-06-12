@@ -19,37 +19,29 @@ import {
   Keyboard,
   Text,
   Dimensions,
-  Animated,
   FlatList,
-  Image,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import LocationOverMapButton from "./LocationOverMapButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
-import CheckmarkOutlineSvg from "@/app/assets/svgs/checkmark-outline.svg";
+import FocusedLocationCardUI from "./FocusedLocationCardUI";
 
 import { useMessage } from "@/src/context/MessageContext";
-import SlideUpToOpen from "../foranimations/SlideUpToOpen";
-import SlideDownToClose from "../foranimations/SlideDownToClose";
 
 import { useLocations } from "@/src/context/LocationsContext";
 
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 
-import ExpandableUpCard from "@/app/components/foranimations/ExpandableUpCard";
 import DualLocationSearcher from "./DualLocationSearcher";
-import HorizontalScrollAnimationWrapper from "@/app/components/foranimations/HorizontalScrollAnimationWrapper";
-import FadeInOutWrapper from "@/app/components/foranimations/FadeInOutWrapper"; //pass in isVisible prop
-import LocationDetailsBody from "./LocationDetailsBody";
 
 const LocationsMapView = ({
-  sortedLocations,
+  pastHelloLocations,
+  faveLocations,
+  nonFaveLocations,
   currentDayDrilledOnce,
   bermudaCoordsDrilledOnce,
 }) => {
@@ -58,19 +50,23 @@ const LocationsMapView = ({
   const mapRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { showMessage } = useMessage();
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
   const { locationList } = useLocations();
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const navigation = useNavigation();
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const [focusedLocation, setFocusedLocation] = useState(null);
-  const [locationDetailsAreOpen, setLocationDetailsAreOpen] = useState(false);
-
-  const [expandStateFromParent, setExpandStateFromParent] = useState(false);
-
   const [appOnlyLocationData, setAppOnlyLocationData] = useState(null);
 
+  const listItemIconSize = 15;
+  const listItemIconPadding = 6;
+  const listItemIconDiameter = listItemIconSize + listItemIconPadding * 2;
+
+  const listItemIconTwoSize = 15;
+  const listItemIconTwoPadding = 6;
+  const listItemIconTwoDiameter = listItemIconSize + listItemIconPadding * 2;
+
+  // use item.isFave (property added when sorting in parent screen) to differentiate UI for saved locations
   const renderLocationItem = useCallback(
     ({ item, index }) => (
       <TouchableOpacity
@@ -78,32 +74,85 @@ const LocationsMapView = ({
           height: 60,
           padding: 10,
           width: "100%",
-          flexDirection: "column",
-          backgroundColor:
-            themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-          marginVertical: 2,
+          flexDirection: "row",
+          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          marginVertical: 0.5,
+          justifyContent: "space-between",
         }}
-        onPress={() => console.log("navigate to location view once made!")}
+        onPress={() => handlePress(item)}
       >
-        <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
-          {item.title}
-        </Text>
+        <View
+          style={{ flexDirection: "column", alignText: "left", flexShrink: 1 }}
+        >
+          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+            {item.title}
+          </Text>
 
-        <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
-          {item.address}
-        </Text>
+          <Text style={[themeStyles.primaryText, { fontSize: 11 }]}>
+            {item.address}
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          {item.isPastHello && (
+            <View
+              style={{
+                marginHorizontal: 2, // CAREFUL, switch this if putting this on the outer side again
+                padding: listItemIconTwoPadding,
+                height: listItemIconTwoDiameter,
+                width: listItemIconTwoDiameter,
+                borderRadius: listItemIconTwoDiameter / 2,
+                backgroundColor: themeStyles.primaryText.color,
+              }}
+            >
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                  {item.helloCount}
+                </Text>
+              </View>
+              <MaterialCommunityIcons
+                name="hand-wave-outline"
+                //  name="heart"
+                size={listItemIconTwoSize}
+                color={themeAheadOfLoading.darkColor}
+                opacity={0.6}
+              />
+            </View>
+          )}
+          {item.isFave && (
+            <View
+              style={{
+                marginLeft: 2,
+                padding: listItemIconPadding,
+                height: listItemIconDiameter,
+                width: listItemIconDiameter,
+                borderRadius: listItemIconDiameter / 2,
+                backgroundColor: themeStyles.primaryText.color,
+              }}
+            >
+              <MaterialCommunityIcons
+                // name="map-marker-star"
+                name="heart"
+                size={listItemIconSize}
+                color={themeAheadOfLoading.darkColor}
+              />
+            </View>
+          )}
+        </View>
       </TouchableOpacity>
     ),
-    [sortedLocations]
+    [faveLocations, nonFaveLocations]
   );
 
-  const toggleCardWithSlider = () => {
-    setExpandStateFromParent((prev) => !prev);
-  };
-
-  const toggleLocationDetailsState = () => {
-    setLocationDetailsAreOpen((prev) => !prev);
-  };
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `location-${index}`;
 
@@ -115,29 +164,34 @@ const LocationsMapView = ({
     }
   }, [currentRegion]);
 
-  const handleLocationAlreadyExists = (locationDetails, addMessage) => {
-    let matchedLocation;
+const handleLocationAlreadyExists = (locationDetails, addMessage) => {
+  let matchedLocation;
+  let locationIsOutsideFaves = false;
 
-    let locationIsOutsideFaves = false;
+  let index = pastHelloLocations.findIndex(
+    (location) => String(location.address) === String(locationDetails.address)
+  );
 
-    matchedLocation = sortedLocations.find(
+  if (index !== -1) {
+    matchedLocation = { ...pastHelloLocations[index], matchedIndex: index };
+  } else {
+    index = locationList.findIndex(
       (location) => String(location.address) === String(locationDetails.address)
     );
 
-    if (matchedLocation === undefined) {
-      matchedLocation = locationList.find(
-        (location) =>
-          String(location.address) === String(locationDetails.address)
-      );
+    if (index !== -1) {
+      matchedLocation = { ...locationList[index], matchedIndex: index };
       locationIsOutsideFaves = true;
     }
-    // showMessage(
-    //   matchedLocation && addMessage && locationIsOutsideFaves,
-    //   null,
-    //   "Location already in list!"
-    // );
-    setFocusedLocation(matchedLocation || locationDetails);
+  }
+
+  setFocusedLocation(matchedLocation || locationDetails);
+
+  return {
+    matchedLocation: matchedLocation || locationDetails,
+    locationIsOutsideFaves,
   };
+};
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -163,9 +217,12 @@ const LocationsMapView = ({
     });
   };
 
-  const handleDoubleTapSliderUpPress = () => {
-    handleGoToLocationSendScreen();
-  };
+  const handleGoToLocationViewScreen = () => {
+    navigation.navigate("LocationView", {
+      index: focusedLocation.matchedIndex,
+    });
+      
+  }
 
   const handleGoToMidpointLocationSearchScreen = () => {
     navigation.navigate("MidpointLocationSearch");
@@ -175,18 +232,35 @@ const LocationsMapView = ({
   //list for the bottom scroll, it doesn't update when a new favorite is added;
   //i don't like having both sortedLocations passed in AND using the locationFuctions
   //for this
-  const faveLocations = useMemo(() => {
-    //console.log('Filtering favorite locations');
-    if (locationList) {
-      return locationList.filter((location) =>
-        friendDashboardData[0].friend_faves.locations.includes(location.id)
-      );
-    }
-  }, [locationList, friendDashboardData]);
+
+  // Moved to parent
+  //   const makeSplitLists = (list, condition) => {
+  //   return list.reduce(
+  //     ([fave, notFave], item) => {
+  //       const isFave = condition(item);
+  //       const newItem = { ...item, isFave };
+
+  //       return isFave
+  //         ? [[...fave, newItem], notFave]
+  //         : [fave, [...notFave, newItem]];
+  //     },
+  //     [[], []]
+  //   );
+  // };
+
+  // Moved to parent to calculate while calculating the helloes
+  // const [faveLocations, nonFaveLocations] = useMemo(() => {
+  //   if (locationList) {
+  //     return makeSplitLists(locationList, (location) =>
+  // friendDashboardData[0].friend_faves.locations.includes(location.id)
+  //   );
+
+  //   }
+  // }, [locationList, friendDashboardData]);
 
   // Function to fit all markers
   const fitToMarkers = () => {
-    if (mapRef.current && faveLocations && sortedLocations.length > 0) {
+    if (mapRef.current && faveLocations && pastHelloLocations.length > 0) {
       const coordinates = faveLocations
         .filter(
           (location) =>
@@ -219,7 +293,9 @@ const LocationsMapView = ({
   const handlePress = (location) => {
     if (location) {
       handleLocationAlreadyExists(location, true); //true is for addMessage
-      const appOnly = sortedLocations.find((item) => item.id === location.id);
+      const appOnly = pastHelloLocations.find(
+        (item) => item.id === location.id
+      );
       setAppOnlyLocationData(appOnly || null);
     }
   };
@@ -243,31 +319,6 @@ const LocationsMapView = ({
     ),
     [handlePress]
   );
-
-  const renderBottomScrollList = () => {
-    return (
-      <Animated.FlatList
-        data={faveLocations}
-        horizontal={true}
-        keyExtractor={(item, index) => `fl-${index}`}
-        getItemLayout={(data, index) => ({
-          length: soonButtonWidth,
-          offset: soonButtonWidth * index,
-          index,
-        })}
-        renderItem={renderListItem}
-        showsHorizontalScrollIndicator={false}
-        scrollIndicatorInsets={{ right: 1 }}
-        initialScrollIndex={0}
-        ListFooterComponent={() => (
-          <View style={{ width: soonListRightSpacer }} />
-        )}
-        snapToInterval={soonButtonWidth + buttonRightSpacer} // Set the snapping interval to the height of each item
-        snapToAlignment="start" // Align items to the top of the list when snapped
-        decelerationRate="fast"
-      />
-    );
-  };
 
   useEffect(() => {
     if (focusedLocation) {
@@ -461,7 +512,8 @@ const LocationsMapView = ({
             </Text>
           </View>
           <MaterialCommunityIcons
-            name="map-marker-star"
+            // name="map-marker-star"
+            name="hand-wave-outline"
             size={35}
             color="red"
           />
@@ -555,9 +607,9 @@ const LocationsMapView = ({
         />
       )} */}
 
-      {sortedLocations && (
+      {pastHelloLocations && (
         <>
-          {renderLocationsMap(sortedLocations)}
+          {renderLocationsMap(pastHelloLocations)}
 
           {!isKeyboardVisible && (
             <View
@@ -573,76 +625,34 @@ const LocationsMapView = ({
                 width: "100%",
               }}
             >
+            
+              <FocusedLocationCardUI focusedLocation={focusedLocation} onSendPress={handleGoToLocationSendScreen} onViewPress={handleGoToLocationViewScreen} />
               <View
                 style={{
                   backgroundColor:
-                    themeStyles.primaryBackground.backgroundColor,
-                  padding: 10,
-                  height: 110,
-                  width: "100%",
-                }}
-              >
-                <Text
-                  style={[themeStyles.primaryText, appFontStyles.welcomeText]}
-                >
-                  {focusedLocation && focusedLocation.title}
-                </Text>
-                <Text
-                  style={[
-                    themeStyles.primaryText,
-                    appFontStyles.subWelcomeText,
-                  ]}
-                >
-                  {focusedLocation && focusedLocation.address}
-                </Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: "red",
+                    themeStyles.overlayBackgroundColor.backgroundColor,
                   // flex: 1,
                   height: 230,
                   width: "100%",
                 }}
               >
-                {sortedLocations && (
+                {pastHelloLocations && (
                   <FlatList
-                    data={sortedLocations}
+                    data={[...faveLocations, ...nonFaveLocations]}
                     keyExtractor={extractItemKey}
                     renderItem={renderLocationItem}
+                    initialNumToRender={10}
+                    maxToRenderPerBatch={10}
+                    windowSize={10}
+                    removeClippedSubviews={true}
                   />
                 )}
               </View>
-              {/* <HorizontalScrollAnimationWrapper>
-                <View style={styles.scrollContainer}>
-                  <View style={styles.scrollTitleContainer}>
-                    <Text
-                      style={[
-                        styles.friendNameText,
-                        { color: themeAheadOfLoading.fontColor },
-                      ]}
-                    >
-                      Faved for {selectedFriend?.name || "friend"}
-                    </Text>
-                  </View>
-                  {renderBottomScrollList()}
-                </View>
-              </HorizontalScrollAnimationWrapper> */}
             </View>
           )}
         </>
       )}
 
-      {/* {!isKeyboardVisible && (
-        <LinearGradient
-          colors={[
-            themeAheadOfLoading.darkColor,
-            themeAheadOfLoading.lightColor,
-          ]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.gradientBelowFaves}
-        />
-      )} */}
       {/* 
       <ExpandableUpCard
         onPress={() => {
@@ -662,31 +672,6 @@ const LocationsMapView = ({
           //and will return an empty container if no focusedLocation
         }
       /> */}
-
-      {/* <Animated.View style={[styles.sliderContainer, { opacity: 1 }]}>
-        <SlideUpToOpen
-          onPress={toggleCardWithSlider}
-          triggerReappear={!locationDetailsAreOpen}
-          onDoubleTap={handleDoubleTapSliderUpPress}
-          //onDoubleTap={handleGoToLocationSendScreen(focusedLocation)}
-          sliderText="OPEN"
-          targetIcon={CheckmarkOutlineSvg}
-          disabled={false}
-        />
-      </Animated.View> */}
-      {/* {locationDetailsAreOpen && (
-        <Animated.View
-          style={[styles.sliderStartAtTopContainer, { opacity: 1 }]}
-        >
-          <SlideDownToClose
-            onPress={toggleCardWithSlider}
-            triggerReappear={locationDetailsAreOpen}
-            sliderText="CLOSE"
-            targetIcon={CheckmarkOutlineSvg}
-            disabled={false}
-          />
-        </Animated.View>
-      )} */}
     </View>
   );
 };

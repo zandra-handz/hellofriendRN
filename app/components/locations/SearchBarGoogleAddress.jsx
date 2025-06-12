@@ -48,8 +48,10 @@ const SearchBarGoogleAddress = forwardRef(
     };
 
     const handlePress = (data, details = null) => {
+      console.log('handlePress triggered in SearchBarGoogleAddress');
       if (details) {
         const { lat, lng } = details.geometry.location;
+        console.log(lat, lng);
         const newLocation = {
           id: generateTemporaryId(),
           address: details.formatted_address,

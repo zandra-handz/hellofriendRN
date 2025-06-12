@@ -29,6 +29,7 @@ import { GlobalStyleProvider } from "./src/context/GlobalStyleContext";
 import { FriendListProvider } from "./src/context/FriendListContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
+import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
 import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
@@ -77,6 +78,8 @@ import ScreenAddLocation from "./app/screens/locations/ScreenAddLocation";
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
 import ScreenImageView from "./app/screens/images/ScreenImageView";
+import ScreenLocationView from "./app/screens/locations/ScreenLocationView";
+import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLocationView";
 
 // import HellofriendHeader from "./app/components/headers/HellofriendHeader";
 // //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
@@ -208,18 +211,20 @@ export default Sentry.wrap(function App() {
                       {/* <PhoneStatusBar /> */}
                       <CapsuleListProvider>
                         <HelloesProvider>
-                          <MessageContextProvider>
-                            <SafeAreaProvider>
-                              {/* <SafeView  // in screen components instead
+                          <FriendLocationsProvider>
+                            <MessageContextProvider>
+                              <SafeAreaProvider>
+                                {/* <SafeView  // in screen components instead
                                 style={{
                                   flex: 1,
                                   backgroundColor: "transparent",
                                 }}
                               > */}
-                              <Layout />
-                              {/* </SafeView> */}
-                            </SafeAreaProvider>
-                          </MessageContextProvider>
+                                <Layout />
+                                {/* </SafeView> */}
+                              </SafeAreaProvider>
+                            </MessageContextProvider>
+                          </FriendLocationsProvider>
                         </HelloesProvider>
                       </CapsuleListProvider>
                     </LocationsProvider>
@@ -477,6 +482,22 @@ export const Layout = () => {
                     headerMode: "screen",
                     headerShown: true,
                     header: () => <HeaderLocation headerTitle="Locations" />,
+                  }}
+                />
+                <Stack.Screen
+                  name="LocationView"
+                  component={ScreenLocationView}
+                  options={{
+                    headerMode: "screen",
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="UnsavedLocationView"
+                  component={ScreenUnsavedLocationView}
+                  options={{
+                    headerMode: "screen",
+                    headerShown: false,
                   }}
                 />
                 <Stack.Screen

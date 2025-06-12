@@ -21,7 +21,7 @@ export const HelloesProvider = ({ children }) => {
   const { refetchUpcomingHelleos } = useUpcomingHelloes();
   const queryClient = useQueryClient();
   const { selectedFriend } = useSelectedFriend();
-  const {  user, isAuthenticated, isInitializing } = useUser();
+  const { user, isAuthenticated, isInitializing } = useUser();
 
   const timeoutRef = useRef(null);
 
@@ -36,8 +36,9 @@ export const HelloesProvider = ({ children }) => {
     queryFn: () => {
       //console.log('Fetching past helloes for:', selectedFriend?.id);
       return fetchPastHelloes(selectedFriend.id);
-    },
+    }, 
     enabled: !!(user && isAuthenticated && !isInitializing && selectedFriend),
+    staleTime: 1000 * 60 * 20, // 20 minutes, same as selected friend data
     onSuccess: () => {
       // groupByMonthAndYear(data);
       // const inPerson = data[0].filter(hello => hello.type === 'in person');
@@ -54,45 +55,6 @@ export const HelloesProvider = ({ children }) => {
   const helloesIsLoading = isLoading;
   const helloesIsError = isError;
   const helloesIsSuccess = isSuccess;
-
-  const inPersonHelloes = useMemo(() => {
-    if (helloesList) {
-      const inPerson = helloesList.filter(
-        (hello) => hello.type === "in person"
-      );
-      queryClient.setQueryData(
-        ["inPersonHelloes", user?.id, selectedFriend?.id],
-        inPerson
-      ); 
-      return inPerson;
-    }
-  }, [helloesList]);
-
-  const getCachedInPersonHelloes = () => {
-
-    const cached = queryClient.getQueryData(["inPersonHelloes", user?.id, selectedFriend?.id]);
-
-    if (!cached || cached === undefined) {
-      return inPersonHelloes;
-
-    } else {
-      return cached;
-    }
-
-  
-
-   // return queryClient.getQueryData(["inPersonHelloes", user?.id, selectedFriend?.id]);
-  };
-
-  //   useEffect(() => {
-  //     // Log the cached data for 'pastHelloes'
-  //     const cachedHelloes = queryClient.getQueryData(['pastHelloes', selectedFriend?.id]);
-  //     console.log('Cached pastHelloes:', cachedHelloes);
-
-  //     // Log the cached data for 'inPersonHelloes'
-  //     const cachedInPersonHelloes = queryClient.getQueryData(['inPersonHelloes', selectedFriend?.id]);
-  //     console.log('Cached inPersonHelloes:', cachedInPersonHelloes);
-  // }, [helloesList, selectedFriend, queryClient]);
 
   const flattenHelloes = useMemo(() => {
     if (helloesList) {
@@ -131,7 +93,7 @@ export const HelloesProvider = ({ children }) => {
 
   const createHelloMutation = useMutation({
     mutationFn: (data) => saveHello(data),
- 
+
     onError: (error) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -142,12 +104,14 @@ export const HelloesProvider = ({ children }) => {
       }, 2000);
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["pastHelloes", user?.id, selectedFriend?.id], (old) => {
-        const updatedHelloes = old ? [data, ...old] : [data];
-        return updatedHelloes;
-      });
-       //refetchUpcomingHelleos();
-      
+      queryClient.setQueryData(
+        ["pastHelloes", user?.id, selectedFriend?.id],
+        (old) => {
+          const updatedHelloes = old ? [data, ...old] : [data];
+          return updatedHelloes;
+        }
+      );
+      //refetchUpcomingHelleos();
 
       // const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
       //console.log("Actual HelloesList after mutation:", actualHelloesList);
@@ -162,8 +126,8 @@ export const HelloesProvider = ({ children }) => {
     },
   });
 
- // const handleCreateHello = async (helloData) => {
-    const handleCreateHello =  (helloData) => {
+  // const handleCreateHello = async (helloData) => {
+  const handleCreateHello = (helloData) => {
     const hello = {
       user: user.id,
       friend: helloData.friend,
@@ -179,7 +143,7 @@ export const HelloesProvider = ({ children }) => {
     //console.log("Payload before sending:", hello);
 
     try {
-       createHelloMutation.mutate(hello);
+      createHelloMutation.mutate(hello);
       // await createHelloMutation.mutateAsync(hello); // Call the mutation with the location data
     } catch (error) {
       console.error("Error saving hello:", error);
@@ -197,9 +161,12 @@ export const HelloesProvider = ({ children }) => {
   const deleteHelloMutation = useMutation({
     mutationFn: (data) => deleteHelloAPI(data),
     onSuccess: (data) => {
-      queryClient.setQueryData(["pastHelloes", user?.id, selectedFriend?.id], (old) => {
-        return old ? old.filter((hello) => hello.id !== data.id) : [];
-      });
+      queryClient.setQueryData(
+        ["pastHelloes", user?.id, selectedFriend?.id],
+        (old) => {
+          return old ? old.filter((hello) => hello.id !== data.id) : [];
+        }
+      );
 
       refetchUpcomingHelleos();
 
@@ -367,7 +334,6 @@ export const HelloesProvider = ({ children }) => {
         helloesIsError,
         createHelloMutation,
         handleCreateHello,
-        getCachedInPersonHelloes,
         helloesListMonthYear,
         latestHelloDate,
         earliestHelloDate,

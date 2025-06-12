@@ -1,8 +1,7 @@
 import { View, Text, DimensionValue } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
@@ -11,54 +10,48 @@ import SlideToAdd from "../foranimations/SlideToAdd";
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 
-interface MomentViewPageProps {
+interface LocationPageViewProps {
   item: object;
   index: number;
   width: DimensionValue;
   height: DimensionValue;
 }
 
-const MomentViewPage: React.FC<MomentViewPageProps> = ({
+const LocationViewPage: React.FC<LocationPageViewProps> = ({
   item,
   index,
   width,
   height,
 }) => {
-  const { themeStyles } = useGlobalStyle();
-  const { updateCapsule, deleteMomentRQuery, deleteMomentMutation } =
-    useCapsuleList();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { faveLocations, nonFaveLocations } = useFriendLocationsContext();
   const navigation = useNavigation();
 
-  const handleEditMoment = () => {
-    navigation.navigate("MomentFocus", {
-      momentText: item?.capsule || null,
-      updateExistingMoment: true,
-      existingMomentObject: item || null,
-    });
-  };
-
-  const saveToHello = async () => {
-    try {
-      updateCapsule(item.id, true);
-    } catch (error) {
-      console.error("Error during pre-save:", error);
-    }
+  const handleEditLocation = () => {
+    console.log(
+      "maybe i will create a screen for editing locations (if does not already exist"
+    );
+    // navigation.navigate("MomentFocus", {
+    //   momentText: item?.capsule || null,
+    //   updateExistingMoment: true,
+    //   existingMomentObject: item || null,
+    // });
   };
 
   const handleDelete = (item) => {
     // console.log("handle delete moment in navigator triggered: ", item);
-    try {
-      const momentData = {
-        friend: selectedFriend.id,
-        id: item.id,
-      };
+    console.log("handleDelete in LocationEditLocation sliderided");
+    // try {
+    //   const momentData = {
+    //     friend: selectedFriend.id,
+    //     id: item.id,
+    //   };
 
-      deleteMomentRQuery(momentData);
-    } catch (error) {
-      console.error("Error deleting moment:", error);
-    }
+    //   deleteMomentRQuery(momentData);
+    // } catch (error) {
+    //   console.error("Error deleting moment:", error);
+    // }
   };
 
   return (
@@ -90,22 +83,22 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
           alignItems="center"
           marginBottom={0} //default is currently set to 2
           justifyContent="center"
-          children={
-            <SlideToAdd
-              onPress={saveToHello}
-              sliderText={"Add to hello"}
-              sliderTextSize={15}
-              sliderTextColor={themeStyles.primaryText.color}
-              // sliderTextColor={themeAheadOfLoading.fontColor}
-            />
-          }
+          // children={
+          //   <SlideToAdd
+          //     onPress={saveToHello}
+          //     sliderText={"Add to hello"}
+          //     sliderTextSize={15}
+          //     sliderTextColor={themeStyles.primaryText.color}
+          //     // sliderTextColor={themeAheadOfLoading.fontColor}
+          //   />
+          // }
         />
-        <Text style={themeStyles.primaryText}> {item.typedCategory}</Text>
-        <Text style={themeStyles.primaryText}> {item.capsule}</Text>
+        <Text style={themeStyles.primaryText}> {item.title}</Text>
+        <Text style={themeStyles.primaryText}> {item.address}</Text>
         <EditPencilOutlineSvg
           height={20}
           width={20}
-          onPress={handleEditMoment}
+          onPress={handleEditLocation}
           color={themeStyles.genericText.color}
         />
         <SlideToDeleteHeader
@@ -120,4 +113,4 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
   );
 };
 
-export default MomentViewPage;
+export default LocationViewPage;

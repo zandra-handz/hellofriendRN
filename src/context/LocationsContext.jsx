@@ -55,6 +55,7 @@ export const LocationsProvider = ({ children }) => {
     queryKey: ["locationList", user?.id],
     queryFn: () => fetchAllLocations(),
     enabled: !!(user && isAuthenticated && !isInitializing),
+    staleTime: 1000 * 60 * 20, // 20 minutes
     onSuccess: (data) => {
       //console.log('Raw data in RQ onSuccess:', data);
       if (!data) {

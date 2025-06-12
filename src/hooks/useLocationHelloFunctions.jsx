@@ -20,16 +20,12 @@ const useLocationHelloFunctions = () => {
         return groupedHelloes;
       };
       
-      const createLocationListWithHelloes = (allLocations, helloesListToSort) => {
-        if (allLocations && helloesListToSort) {
+      const createLocationListWithHelloes = (helloesListToSort, faveLocations) => {
+        if (faveLocations && helloesListToSort) {
           const groupedHelloes = groupHelloesByLocations(helloesListToSort);
       
-  
-          const faves = allLocations
-            .filter(location =>
-              friendDashboardData[0].friend_faves.locations.includes(location.id)
-            )
-            .map(location => {
+  // i think this is because if you delete from a friend's faves it'll lose this connection
+          const faves = faveLocations.map(location => {
               //console.log(location.latitude, location.longitude);
               // Validate latitude and longitude
               const isLatitudeValid =
