@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import { View,  StyleSheet } from "react-native";
+import React, { useMemo  } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
@@ -24,14 +24,18 @@ const HelloesTabs = () => {
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const navigation = useNavigation();
+ 
 
-  const [isHelloesNavVisible, setHelloesNavVisible] = useState(false);
-  const [selectedHelloToView, setSelectedHelloToView] = useState(null);
-
-  const { helloesList, flattenHelloes, getCachedInPersonHelloes } =
+  const { helloesList, flattenHelloes  } =
     useHelloes();
 
-  const inPersonHelloesNew = getCachedInPersonHelloes();
+
+      const inPersonHelloesNew = useMemo(() => {
+        if (helloesList) {
+          return helloesList?.filter((hello) => hello.type === "in person");
+        }
+      }, [helloesList]);
+ 
 
   const belowHeaderIconSize = 28;
 
@@ -46,9 +50,7 @@ const HelloesTabs = () => {
     return helloesList.find((item) => item.id === formattedItem.id);
   };
 
-  const closeHelloesNav = () => {
-    setHelloesNavVisible(false);
-  };
+ 
 
   const HelloesScreen = () => (
     <View style={[styles.sectionContainer, themeStyles.genericTextBackground]}>

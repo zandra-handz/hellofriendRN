@@ -4,22 +4,7 @@ const useLocationHelloFunctions = () => {
     const { friendDashboardData } = useSelectedFriend(); 
     const bermudaCoords = { latitude: 27.0000, longitude: -71.0000 };
   
-    const groupHelloesByLocations = (helloesListToSort) => {
-        const groupedHelloes = helloesListToSort.reduce((acc, item) => {
-          const locationId = item.location; 
-
-          if (!acc[locationId]) {
-            acc[locationId] = [];
-          }
-      
-          acc[locationId].push(item);
-    
-          return acc;
-        }, {});
-      
-        return groupedHelloes;
-      };
-
+ 
 
       // old code that did not filter out helloCounts of 0
       
@@ -115,8 +100,7 @@ const useLocationHelloFunctions = () => {
 
     
 
-    return {
-        groupHelloesByLocations,
+    return { 
         createLocationListWithHelloes,
         bermudaCoords,
 

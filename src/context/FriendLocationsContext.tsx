@@ -28,9 +28,7 @@ export const FriendLocationsProvider = ({ children }) => {
   const { createLocationListWithHelloes, bermudaCoords } =
     useLocationHelloFunctions();
 
-  const [locationListWithFriendData, setLocationListWithFriendData] = useState(
-    []
-  );
+ 
 
   const makeSplitLists = (list, isFaveCondition, helloCheck) => {
     return list.reduce(
