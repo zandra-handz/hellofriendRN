@@ -85,6 +85,7 @@ const SearchBarGoogleAddress = forwardRef(
         ref={googlePlacesRef}
         placeholder="Search"
         predefinedPlaces={[]}
+        keepResultsAfterBlur={true} // if remove, onPress won't work
         textInputProps={{
           autoFocus: mountingText.length > 0 ? true : false,
           placeholderTextColor: themeStyles.genericText.color,
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
     maxHeight: 300,
-    width: "100%",
+    width: "100%", 
   },
   predefinedPlacesDescription: {
     color: "#1faadb",

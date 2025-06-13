@@ -19,54 +19,100 @@ const useLocationHelloFunctions = () => {
       
         return groupedHelloes;
       };
+
+
+      // old code that did not filter out helloCounts of 0
       
-      const createLocationListWithHelloes = (helloesListToSort, faveLocations) => {
-        if (faveLocations && helloesListToSort) {
-          const groupedHelloes = groupHelloesByLocations(helloesListToSort);
+      // const createLocationListWithHelloes = (helloesListToSort, allLocations) => {
+      //   if (allLocations && helloesListToSort) {
+      //     const groupedHelloes = groupHelloesByLocations(helloesListToSort);
       
-  // i think this is because if you delete from a friend's faves it'll lose this connection
-          const faves = faveLocations.map(location => {
-              //console.log(location.latitude, location.longitude);
-              // Validate latitude and longitude
-              const isLatitudeValid =
-                location.latitude !== undefined &&
-                isFinite(location.latitude) &&
-                location.latitude >= -90 &&
-                location.latitude <= 90;
+      //   const helloLocations = allLocations.map(location => {
+ 
+      //         const isLatitudeValid =
+      //           location.latitude !== undefined &&
+      //           isFinite(location.latitude) &&
+      //           location.latitude >= -90 &&
+      //           location.latitude <= 90;
       
-              const isLongitudeValid =
-                location.longitude !== undefined &&
-                isFinite(location.longitude) &&
-                location.longitude >= -180 &&
-                location.longitude <= 180;
+      //         const isLongitudeValid =
+      //           location.longitude !== undefined &&
+      //           isFinite(location.longitude) &&
+      //           location.longitude >= -180 &&
+      //           location.longitude <= 180;
       
-              // If either is invalid, replace both with Bermuda Triangle coordinates
-              const latitude = isLatitudeValid && isLongitudeValid
-                ? location.latitude
-                : bermudaCoords.latitude;
+      //         // If either is invalid, replace both with Bermuda Triangle coordinates
+      //         const latitude = isLatitudeValid && isLongitudeValid
+      //           ? location.latitude
+      //           : bermudaCoords.latitude;
       
-              const longitude = isLatitudeValid && isLongitudeValid
-                ? location.longitude
-                : bermudaCoords.longitude;
+      //         const longitude = isLatitudeValid && isLongitudeValid
+      //           ? location.longitude
+      //           : bermudaCoords.longitude;
       
-              const helloGroup = groupedHelloes[location.id] || [];
-              const helloIds = helloGroup.map(hello => hello.id);
+      //         const helloGroup = groupedHelloes[location.id] || [];
+      //         const helloIds = helloGroup.map(hello => hello.id);
       
-              return {
-                ...location,
-                latitude,
-                longitude,
-                helloIds,
-                helloCount: helloIds.length,
-              };
-            });
+      //         return {
+      //           ...location,
+      //           latitude,
+      //           longitude,
+      //           helloIds,
+      //           helloCount: helloIds.length,
+      //         };
+      //       });
       
-          return faves;
-        }
+      //     return helloLocations;
+      //   }
       
-        return [];
-      };
+      //   return [];
+      // };
       
+// filters out locations with helloCounts of 0. this is only used for the map display
+    const createLocationListWithHelloes = (helloesListToSort, allLocations) => {
+  if (allLocations && helloesListToSort) {
+    const helloLocations = allLocations
+      .filter((location) => location.isPastHello) // ✅ Only include locations with helloes
+      .map((location) => {
+        const isLatitudeValid =
+          location.latitude !== undefined &&
+          isFinite(location.latitude) &&
+          location.latitude >= -90 &&
+          location.latitude <= 90;
+
+        const isLongitudeValid =
+          location.longitude !== undefined &&
+          isFinite(location.longitude) &&
+          location.longitude >= -180 &&
+          location.longitude <= 180;
+
+        const latitude =
+          isLatitudeValid && isLongitudeValid
+            ? location.latitude
+            : bermudaCoords.latitude;
+
+        const longitude =
+          isLatitudeValid && isLongitudeValid
+            ? location.longitude
+            : bermudaCoords.longitude;
+
+        return {
+          ...location,
+          latitude,
+          longitude,
+          // Since you're not grouping anymore, these can be removed or populated differently
+          helloIds: [],            // optional: fill this if needed
+          helloCount: location.helloCount || 1, // fallback to 1 or known count
+        };
+      });
+
+    return helloLocations;
+  }
+
+  return [];
+};
+
+
     
 
     return {

@@ -9,7 +9,8 @@
 import React, { useLayoutEffect, useState } from "react";
 import {
   View,
-  Text, 
+  Text,
+  TouchableOpacity,
   ScrollView,
   StyleSheet,
 } from "react-native";
@@ -17,14 +18,11 @@ import AlertList from "../alerts/AlertList";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import NotesOutlineSvg from "@/app/assets/svgs/notes-outline.svg";
-import NotesSolidSvg from "@/app/assets/svgs/notes-solid.svg";
 import { useNavigation } from "@react-navigation/native";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const LocationNotes = ({
-  location, 
-  iconSize = 34, 
-}) => {
+const LocationNotes = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
   const { themeAheadOfLoading } = useFriendList();
   const [isModalVisible, setModalVisible] = useState(false);
   const { themeStyles } = useGlobalStyle();
@@ -45,7 +43,7 @@ const LocationNotes = ({
       category: location.category || "",
       notes: location.personal_experience_info || "",
       parking: location.parking_score || "",
-      focusOn: 'focusNotes',
+      focusOn: "focusNotes",
     });
     //doesn't help
     closeModalAfterDelay();
@@ -71,24 +69,36 @@ const LocationNotes = ({
     <View>
       {location && !String(location.id).startsWith("temp") && (
         <View style={styles.container}>
-          <View style={styles.iconContainer}>
-            {!hasNotes && (
-              <NotesOutlineSvg
-                width={iconSize}
-                height={iconSize}
+          {!hasNotes && (
+            <TouchableOpacity
+              onPress={handlePress}
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <MaterialCommunityIcons
+                name={"note-plus-outline"}
+                size={iconSize}
                 color={themeStyles.genericText.color}
-                onPress={handlePress}
+                opacity={fadeOpacity} 
+                 style={{ marginRight: 4 }}
               />
-            )}
-            {hasNotes && (
-              <NotesSolidSvg
-                width={iconSize}
-                height={iconSize}
+                <Text style={[themeStyles.primaryText, {}]}>Add notes</Text>
+            </TouchableOpacity>
+          )}
+          {hasNotes && (
+            <TouchableOpacity
+              onPress={handlePress}
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <MaterialCommunityIcons
+                name={"note-check"}
+                size={iconSize}
                 color={themeAheadOfLoading.lightColor}
-                onPress={handlePress}
+                 style={{ marginRight: 4 }}
+           
               />
-            )}
-          </View>
+                <Text style={[themeStyles.primaryText, {}]}>Notes</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
 

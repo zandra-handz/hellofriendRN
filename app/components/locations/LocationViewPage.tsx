@@ -10,6 +10,12 @@ import SlideToAdd from "../foranimations/SlideToAdd";
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 
+import LocationSavingActions from "./LocationSavingActions";
+import LocationNotes from "./LocationNotes";
+import LocationParking from "./LocationParking";
+
+import LocationUtilityTray from "./LocationUtilityTray";
+
 interface LocationPageViewProps {
   item: object;
   index: number;
@@ -27,6 +33,8 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   const { selectedFriend } = useSelectedFriend();
   const { faveLocations, nonFaveLocations } = useFriendLocationsContext();
   const navigation = useNavigation();
+
+
 
   const handleEditLocation = () => {
     console.log(
@@ -78,7 +86,7 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
           overflow: "hidden",
         }}
       >
-        <BelowHeaderContainer
+        {/* <BelowHeaderContainer
           height={30}
           alignItems="center"
           marginBottom={0} //default is currently set to 2
@@ -92,9 +100,15 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
           //     // sliderTextColor={themeAheadOfLoading.fontColor}
           //   />
           // }
-        />
-        <Text style={themeStyles.primaryText}> {item.title}</Text>
-        <Text style={themeStyles.primaryText}> {item.address}</Text>
+        /> */}
+        <View style={{flexDirection: 'column', flexWrap: 'wrap',   width: '100%', paddingHorizontal: 0, paddingTop: 20}}>
+        <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {flexDirection: 'row', width: '90%', flexWrap: 'wrap'}]}>{item.title}</Text>
+          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText,  {flexDirection: 'row', width: '90%', flexWrap: 'wrap'} ]}> {item.address}</Text>
+      
+          
+        </View>
+        <LocationUtilityTray location={item} />
+
         <EditPencilOutlineSvg
           height={20}
           width={20}

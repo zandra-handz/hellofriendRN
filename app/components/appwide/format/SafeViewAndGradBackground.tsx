@@ -17,7 +17,7 @@ export const SafeViewAndGradientBackground = ({
   includeBackgroundOverlay = false,
   useGradientBackground = false,
   primaryBackground = false,
-  backgroundOverlayHeight = '100%',
+  backgroundOverlayHeight = '100%', // not sure why this needs to be more than 100% to cover the bottom
   backgroundOverlayBottomRadius = 0,
   header: Header,
 }) => {

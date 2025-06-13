@@ -38,6 +38,8 @@ import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 
 import DualLocationSearcher from "./DualLocationSearcher";
 
+import MapViewWithHelloes from "./MapViewWithHelloes";
+
 const LocationsMapView = ({
   pastHelloLocations,
   faveLocations,
@@ -45,6 +47,8 @@ const LocationsMapView = ({
   currentDayDrilledOnce,
   bermudaCoordsDrilledOnce,
 }) => {
+  const MemoizedDualLocationSearcher = React.memo(DualLocationSearcher);
+
   //i think when i put this in the parent screen it starts up faster?
   //useGeolocationWatcher();
   const mapRef = useRef(null);
@@ -164,34 +168,37 @@ const LocationsMapView = ({
     }
   }, [currentRegion]);
 
-const handleLocationAlreadyExists = (locationDetails, addMessage) => {
-  let matchedLocation;
-  let locationIsOutsideFaves = false;
+  const handleLocationAlreadyExists = (locationDetails, addMessage) => {
+    let matchedLocation;
+    let locationIsOutsideFaves = false;
 
-  let index = pastHelloLocations.findIndex(
-    (location) => String(location.address) === String(locationDetails.address)
-  );
-
-  if (index !== -1) {
-    matchedLocation = { ...pastHelloLocations[index], matchedIndex: index };
-  } else {
-    index = locationList.findIndex(
+    let index = pastHelloLocations.findIndex(
       (location) => String(location.address) === String(locationDetails.address)
     );
 
     if (index !== -1) {
-      matchedLocation = { ...locationList[index], matchedIndex: index };
-      locationIsOutsideFaves = true;
+      matchedLocation = { ...pastHelloLocations[index], matchedIndex: index };
+    } else {
+      index = locationList.findIndex(
+        (location) =>
+          String(location.address) === String(locationDetails.address)
+      );
+
+
+      //if no match is found, findIndex returns -1, whereas if index 0 will return 0
+      if (index !== -1) {
+        matchedLocation = { ...locationList[index], matchedIndex: index };
+        locationIsOutsideFaves = true;
+      }
     }
-  }
 
-  setFocusedLocation(matchedLocation || locationDetails);
+    setFocusedLocation(matchedLocation || locationDetails);
 
-  return {
-    matchedLocation: matchedLocation || locationDetails,
-    locationIsOutsideFaves,
+    return {
+      matchedLocation: matchedLocation || locationDetails,
+      locationIsOutsideFaves,
+    };
   };
-};
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -218,11 +225,21 @@ const handleLocationAlreadyExists = (locationDetails, addMessage) => {
   };
 
   const handleGoToLocationViewScreen = () => {
+    console.log(focusedLocation);
+  if (
+  typeof focusedLocation.matchedIndex === "number" &&
+  focusedLocation.matchedIndex !== -1
+) {
+  
     navigation.navigate("LocationView", {
       index: focusedLocation.matchedIndex,
     });
-      
+  } else {
+    navigation.navigate("UnsavedLocationView", {
+      unsavedLocation: focusedLocation,
+    })
   }
+  };
 
   const handleGoToMidpointLocationSearchScreen = () => {
     navigation.navigate("MidpointLocationSearch");
@@ -277,18 +294,7 @@ const handleLocationAlreadyExists = (locationDetails, addMessage) => {
     }
   };
 
-  // const findHelloesAtLocation = (singleLocationId) => {
-  // if (singleLocationId) {
-  // const matchingHelloes = inPersonHelloes.filter(
-  // hello => hello.location === singleLocationId
-  // );
-  // return matchingHelloes.length;
-  // }
-  // };
-
-  const soonButtonWidth = 190;
-  const soonListRightSpacer = Dimensions.get("screen").width - 136;
-  const buttonRightSpacer = 6;
+ 
 
   const handlePress = (location) => {
     if (location) {
@@ -296,29 +302,9 @@ const handleLocationAlreadyExists = (locationDetails, addMessage) => {
       const appOnly = pastHelloLocations.find(
         (item) => item.id === location.id
       );
-      setAppOnlyLocationData(appOnly || null);
+      setAppOnlyLocationData(appOnly || null); // this is just the id... ??????????
     }
   };
-
-  const renderListItem = useCallback(
-    ({ item, index }) => (
-      <View
-        style={{
-          marginRight: buttonRightSpacer,
-          paddingVertical: 4,
-          height: "90%",
-        }}
-      >
-        <LocationOverMapButton
-          height={"100%"}
-          friendName={item.title || item.address}
-          width={soonButtonWidth}
-          onPress={() => handlePress(item)}
-        />
-      </View>
-    ),
-    [handlePress]
-  );
 
   useEffect(() => {
     if (focusedLocation) {
@@ -492,6 +478,8 @@ const handleLocationAlreadyExists = (locationDetails, addMessage) => {
             alignItems: "center",
             justifyContent: "flex-start",
             padding: 5,
+            width: 'auto',
+            flex: 1,
           }}
         >
           <View style={{ flex: 1 }}>
@@ -501,11 +489,11 @@ const handleLocationAlreadyExists = (locationDetails, addMessage) => {
                 zIndex: 1000,
                 position: "absolute",
                 top: -12,
-                right: -8,
+                right: -20,
                 backgroundColor: "yellow",
                 padding: 4,
                 borderRadius: 20,
-                fontSize: 12,
+                fontSize: 12, 
               }}
             >
               {location.helloCount}
@@ -522,13 +510,16 @@ const handleLocationAlreadyExists = (locationDetails, addMessage) => {
     );
   });
 
+
+ 
+
   const renderLocationsMap = (locations) => (
     <>
       <MapView
         {...(Platform.OS === "android" && { provider: PROVIDER_GOOGLE })}
         ref={mapRef}
         liteMode={isKeyboardVisible ? true : false}
-        style={[styles.map, { height: isKeyboardVisible ? "100%" : "100%" }]}
+        style={[ { width: '100%', height: isKeyboardVisible ? "100%" : "100%" }]}
         initialRegion={currentRegion || null}
         scrollEnabled={isKeyboardVisible ? false : true}
         enableZoomControl={true}
@@ -541,6 +532,8 @@ const handleLocationAlreadyExists = (locationDetails, addMessage) => {
           <MemoizedMarker key={location.id.toString()} location={location} />
         ))}
       </MapView>
+
+{/* 
       {!isKeyboardVisible && (
         <TouchableOpacity
           style={[
@@ -581,34 +574,67 @@ const handleLocationAlreadyExists = (locationDetails, addMessage) => {
           onPress={handlePress}
           locationListDrilledOnce={locationList}
         />
-      </View>
+      </View> */}
     </>
   );
 
+  // COMPONENT RETURN
   return (
-    <View style={styles.container}>
-      {/* {locationDetailsAreOpen && (
-        <FadeInOutWrapper
-          isVisible={locationDetailsAreOpen}
-          children={
-            <LinearGradient
-              colors={[
-                themeAheadOfLoading.darkColor,
-                themeAheadOfLoading.lightColor,
-              ]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={[
-                styles.gradientCover,
-                { zIndex: locationDetailsAreOpen ? 4000 : 1000 },
-              ]}
-            />
-          }
-        />
-      )} */}
-
+    <View
+      style={{ flex: 1, justifyContent: "flex-start", alignItems: "center" }}
+    >
       {pastHelloLocations && (
         <>
+          <View style={styles.dualLocationSearcherContainer}>
+            <DualLocationSearcher
+              onPress={handlePress}
+              locationListDrilledOnce={locationList}
+            />
+          </View>
+          {!isKeyboardVisible && (
+            <TouchableOpacity
+              style={[
+                styles.midpointsButton,
+                {
+                  zIndex: 7000,
+                  backgroundColor:
+                    themeStyles.genericTextBackground.backgroundColor,
+                },
+              ]}
+              onPress={handleGoToMidpointLocationSearchScreen}
+            >
+              <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
+                Midpoints
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {!isKeyboardVisible && (
+            <TouchableOpacity
+              style={[
+                styles.zoomOutButton,
+                {
+                  zIndex: 7000,
+                  backgroundColor:
+                    themeStyles.genericTextBackground.backgroundColor,
+                },
+              ]}
+              onPress={fitToMarkers}
+            >
+              <Text style={[styles.zoomOutButtonText, themeStyles.genericText]}>
+                Show All
+              </Text>
+            </TouchableOpacity>
+          )}
+
+
+{/* performance seems worse using the separated component below */}
+          {/* <MapViewWithHelloes
+            ref={mapRef}
+            locations={pastHelloLocations}
+            currentRegion={currentRegion}
+            isKeyboardVisible={isKeyboardVisible}
+          /> */}
           {renderLocationsMap(pastHelloLocations)}
 
           {!isKeyboardVisible && (
@@ -625,8 +651,11 @@ const handleLocationAlreadyExists = (locationDetails, addMessage) => {
                 width: "100%",
               }}
             >
-            
-              <FocusedLocationCardUI focusedLocation={focusedLocation} onSendPress={handleGoToLocationSendScreen} onViewPress={handleGoToLocationViewScreen} />
+              <FocusedLocationCardUI
+                focusedLocation={focusedLocation}
+                onSendPress={handleGoToLocationSendScreen}
+                onViewPress={handleGoToLocationViewScreen}
+              />
               <View
                 style={{
                   backgroundColor:
@@ -681,7 +710,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "orange",
   },
   dualLocationSearcherContainer: {
     position: "absolute",

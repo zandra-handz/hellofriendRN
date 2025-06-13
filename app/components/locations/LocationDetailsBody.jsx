@@ -1,24 +1,4 @@
-//{locationDetails.personal_experience_info && (
-//    <View style={styles.rowContainer}>
-//      <Text style={[styles.subtitle, themeStyles.genericText]}>
-//        Notes:{" "}
-//      </Text>
-//      <Text style={themeStyles.genericText}>
-//        {locationDetails.personal_experience_info || "None"}
-//      </Text>
-//    </View>
-//  )}
-
-//  {locationDetails.parking_score && (
-//   <View style={styles.rowContainer}>
-//     <Text style={[styles.subtitle, themeStyles.genericText]}>
-//      Parking:{" "}
-//   </Text>
-//   <Text style={themeStyles.genericText}>
-//    {locationDetails && locationDetails.parking_score}
-//  </Text>
-// </View>
-// )}
+ 
 
 import React, { useEffect, useState } from "react";
 import {
@@ -67,6 +47,8 @@ const LocationDetailsBody = ({
   } = useLocations();
   const [isFetching, setIsFetching] = useState(false);
   const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
+    const [locationDetails, setLocationDetails] = useState(null);
+    
   const {
     data: additionalDetails,
     isLoading,
@@ -74,7 +56,7 @@ const LocationDetailsBody = ({
     error,
   } = useFetchAdditionalDetails(locationObject || locationDetails, isFetching);
   const queryClient = useQueryClient();
-  const [locationDetails, setLocationDetails] = useState(null);
+
 
   const handleRefresh = () => {
     setIsFetching(true);

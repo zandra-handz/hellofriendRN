@@ -7,20 +7,17 @@
 //  }
 
 import React, { useLayoutEffect, useState } from "react";
-import { View, Text,   StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import AlertList from "../alerts/AlertList";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import NotesOutlineSvg from "@/app/assets/svgs/notes-outline.svg"; 
-import ParkingCircleOutlineSvg from "@/app/assets/svgs/parking-circle-outline.svg";
-import ParkingCircleSolidSvg from "@/app/assets/svgs/parking-circle-solid.svg";
+import NotesOutlineSvg from "@/app/assets/svgs/notes-outline.svg";
+// import ParkingCircleOutlineSvg from "@/app/assets/svgs/parking-circle-outline.svg";
+// import ParkingCircleSolidSvg from "@/app/assets/svgs/parking-circle-solid.svg";
 import { useNavigation } from "@react-navigation/native";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
-
-const LocationParking = ({
-  location,
-  iconSize=34,
-}) => {
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+const LocationParking = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
   const { themeAheadOfLoading } = useFriendList();
   const [isModalVisible, setModalVisible] = useState(false);
   const { themeStyles } = useGlobalStyle();
@@ -42,7 +39,7 @@ const LocationParking = ({
       category: location.category || "",
       notes: location.personal_experience_info || "",
       parking: location.parking_score || "",
-      focusOn: 'focusParking',
+      focusOn: "focusParking",
     });
     //doesn't help
     closeModalAfterDelay();
@@ -68,24 +65,35 @@ const LocationParking = ({
     <View>
       {location && !String(location.id).startsWith("temp") && (
         <View style={styles.container}>
-          <View style={styles.iconContainer}>
-            {!hasNotes && (
-              <ParkingCircleOutlineSvg
-                width={iconSize}
-                height={iconSize}
+          {!hasNotes && (
+            <TouchableOpacity
+              onPress={handlePress}
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <MaterialCommunityIcons
+                name={"car-cog"}
+                size={iconSize}
                 color={themeStyles.genericText.color}
-                onPress={handlePress}
+                opacity={fadeOpacity}
+                style={{ marginRight: 4 }}
               />
-            )}
-            {hasNotes && (
-              <ParkingCircleSolidSvg
-                width={iconSize}
-                height={iconSize}
+              <Text style={[themeStyles.primaryText, {}]}>Parking info</Text>
+            </TouchableOpacity>
+          )}
+          {hasNotes && (
+            <TouchableOpacity
+              onPress={handlePress}
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <MaterialCommunityIcons
+                name={"car"}
+                size={iconSize}
                 color={themeAheadOfLoading.lightColor}
-                onPress={handlePress}
+                style={{ marginRight: 4 }}
               />
-            )}
-          </View>
+              <Text style={[themeStyles.primaryText, {}]}>Parking info</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
 
@@ -105,41 +113,40 @@ const LocationParking = ({
         }
         content={
           <View style={styles.contentContainer}>
-
+            <View
+              style={[
+                styles.parkingScoreContainer,
+                {
+                  backgroundColor:
+                    themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+                },
+              ]}
+            >
               <View
-                style={[
-                  styles.parkingScoreContainer,
-                  {
-                    backgroundColor:
-                      themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-                  },
-                ]}
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  height: "auto",
+                }}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    height: "auto",
-                  }}
-                >
-                  <Text style={themeStyles.subHeaderText}>PARKING</Text>
-                  <EditPencilOutlineSvg
-                    height={30}
-                    width={30}
-                    onPress={handleGoToLocationEditScreenFocusParking}
-                    color={themeStyles.genericText.color}
-                  />
-                </View>
-                
-            {location.parking_score && (
+                <Text style={themeStyles.subHeaderText}>PARKING</Text>
+                <EditPencilOutlineSvg
+                  height={30}
+                  width={30}
+                  onPress={handleGoToLocationEditScreenFocusParking}
+                  color={themeStyles.genericText.color}
+                />
+              </View>
+
+              {location.parking_score && (
                 <View style={{ flex: 1, width: "100%", padding: "6%" }}>
                   <Text style={[styles.notesText, themeStyles.genericText]}>
                     {location.parking_score}
                   </Text>
                 </View>
-            )}
-              </View> 
+              )}
+            </View>
           </View>
         }
         onCancel={toggleModal}

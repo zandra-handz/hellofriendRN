@@ -67,27 +67,24 @@ import ScreenLocation from "./app/screens/locations/ScreenLocation";
 
 import ScreenUserDetails from "./app/screens/home/ScreenUserDetails";
 
-import ScreenLocationSend from "./app/screens/locations/ScreenLocationSend";
+import ScreenLocationCreate from "./app/screens/locations/ScreenLocationCreate";
 import ScreenLocationEdit from "./app/screens/locations/ScreenLocationEdit";
+
+import ScreenLocationSend from "./app/screens/locations/ScreenLocationSend";
 
 import ScreenAddFriend from "./app/screens/friends/ScreenAddFriend";
 import ScreenAddImage from "./app/screens/images/ScreenAddImage";
 import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
-import ScreenAddLocation from "./app/screens/locations/ScreenAddLocation";
+
+//DELETE
+// import ScreenAddLocation from "./app/screens/locations/ScreenAddLocation";
 
 import ScreenMomentView from "./app/screens/moments/ScreenMomentView";
 import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
 import ScreenImageView from "./app/screens/images/ScreenImageView";
 import ScreenLocationView from "./app/screens/locations/ScreenLocationView";
 import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLocationView";
-
-// import HellofriendHeader from "./app/components/headers/HellofriendHeader";
-// //import HeaderBaseMainTheme from './components/HeaderBaseMainTheme';
-// import HeaderHelloes from "./app/components/headers/HeaderHelloes";
-// import HeaderImage from "./app/components/headers/HeaderImage";
-// import HeaderFriendSettings from "./app/components/headers/HeaderFriendSettings";
-// import HeaderUserDetails from "./app/components/headers/HeaderUserDetails";
-
+     
 import HeaderLocation from "./app/components/headers/HeaderLocation";
 import HeaderBase from "./app/components/headers/HeaderBase";
 import HeaderLocationSingle from "./app/components/headers/HeaderLocationSingle";
@@ -538,7 +535,7 @@ export const Layout = () => {
                 <Stack.Screen
                   name="LocationEdit"
                   component={ScreenLocationEdit}
-                  options={({ route }) => ({
+                  options={() => ({
                     headerShown: true,
                     header: () => (
                       <HeaderBase
@@ -550,9 +547,17 @@ export const Layout = () => {
                   })}
                 />
                 <Stack.Screen
+                  name="LocationCreate"
+                  component={ScreenLocationCreate}
+                  options={() => ({
+                    headerShown: false,
+                
+                  })}
+                />
+                {/* <Stack.Screen
                   name="LocationSave"
                   component={ScreenAddLocation}
-                  options={({ route }) => ({
+                  options={() => ({
                     headerShown: true,
                     header: () => (
                       <HeaderBase
@@ -562,7 +567,7 @@ export const Layout = () => {
                       />
                     ),
                   })}
-                />
+                /> */}
                 <Stack.Screen
                   name="LocationSearch"
                   component={ScreenLocationSearch}

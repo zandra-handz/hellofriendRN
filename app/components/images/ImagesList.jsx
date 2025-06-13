@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { useFriendList } from "@/src/context/FriendListContext";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
-
-import ImagesNavigator from "./ImagesNavigator";
+ 
 import { useNavigation } from "@react-navigation/native";
 
 import { FlashList } from "@shopify/flash-list";
@@ -16,22 +15,16 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 const windowWidth = Dimensions.get("window").width;
 
 const ImagesList = ({ width, height, containerWidth = "100%" }) => {
-  const { imageList } = useImageFunctions();
-  const [selectedImageToView, setSelectedImageToView] = useState(null);
+  const { imageList } = useImageFunctions(); 
   const { themeAheadOfLoading } = useFriendList();
   const navigation = useNavigation();
-  const [isImageNavVisible, setImageNavVisible] = useState(false);
-
+ 
   const openImageNav = (image, index) => {
     navigation.navigate("ImageView", {image: image, index: index})
     // setSelectedImageToView(image);
     // setImageNavVisible(true);
   };
-
-  const closeImageNav = () => {
-    setImageNavVisible(false);
-  };
-
+ 
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
@@ -90,11 +83,7 @@ const ImagesList = ({ width, height, containerWidth = "100%" }) => {
             />
           </>
         }
-      />
-
-      {isImageNavVisible && selectedImageToView && (
-        <ImagesNavigator onClose={closeImageNav} image={selectedImageToView} />
-      )}
+      /> 
     </View>
   );
 };
