@@ -121,10 +121,11 @@ const LocationTravelTimes = ({
   
 
   const handleGoToCalculateTravelTimesScreen = () => {
-    navigation.navigate("CalculateTravelTimes", {
-      location: location,
-      currentLocation: currentLocationDetails || null,
-    });
+    //disabled at least for now because of the address selectors
+    // navigation.navigate("CalculateTravelTimes", {
+    //   location: location,
+    //   currentLocation: currentLocationDetails || null,
+    // });
     //doesn't help
     closeModalAfterDelay();
   };

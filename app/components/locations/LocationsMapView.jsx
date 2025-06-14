@@ -41,6 +41,8 @@ import DualLocationSearcher from "./DualLocationSearcher";
 import MapViewWithHelloes from "./MapViewWithHelloes";
 
 const LocationsMapView = ({
+  userAddress,
+  friendAddress,
   pastHelloLocations,
   faveLocations,
   nonFaveLocations,
@@ -242,7 +244,7 @@ const LocationsMapView = ({
   };
 
   const handleGoToMidpointLocationSearchScreen = () => {
-    navigation.navigate("MidpointLocationSearch");
+    navigation.navigate("MidpointLocationSearch", { userAddress: userAddress, friendAddress: friendAddress});
   };
 
   //i had taken this out but brought it back in because if i use sorted

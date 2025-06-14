@@ -7,75 +7,37 @@ import { View, Text, StyleSheet  } from 'react-native';
  import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 import { useSelectedFriend } from '@/src/context/SelectedFriendContext'; 
  
- 
-import AddressSelectorFriend from '../selectors/AddressSelectorFriend';
-import AddressSelectorUser from '../selectors/AddressSelectorUser';
+ //DELETED. use the new components or just the default settings from the address hooks
+// import AddressSelectorFriend from '../selectors/AddressSelectorFriend';
+// import AddressSelectorUser from '../selectors/AddressSelectorUser';
 
 import TravelTimesResults from '../locations/TravelTimesResults';
+import useStartingFriendAddresses from '@/src/hooks/useStartingFriendAddresses';
+import useStartingUserAddresses from '@/src/hooks/useStartingUserAddresses';
 
 import ButtonBaseSpecialSave from '../buttons/scaffolding/ButtonBaseSpecialSave';
  
 
+// THREW IN DEFAULTS JUST TO REMOVE OTHER STUFF, THIS COMPONENT MIGHT NOT WORK IN CURRENT FORM
 const CalculateTravelTimesBody = ({location }) => { 
+
+    const {defaultUserAddress } = useStartingUserAddresses();
+    const { defaultAddress } = useStartingFriendAddresses();
    
     const { themeStyles } = useGlobalStyle();
     const { selectedFriend } = useSelectedFriend();   
     const [triggerFetch, setTriggerFetch] = useState(false);
 
-
-    const selectedUserAddressRef = useRef(null);
-    const selectedFriendAddressRef = useRef(null);
-
+ 
     const [ friendAddressIsSelected, setFriendAddressIsSelected ] = useState(false);
     const [ userAddressIsSelected, setUserAddressIsSelected ] = useState(false);
   
   
 
-   const handleFriendAddressSelect = (address) => {
-    console.log('friend address selected');
-    detectFriendAddress(address);
-
-    //setSelectedFriendAddress(address);  this causes component to rerender every time
-    selectedFriendAddressRef.current = address;
-
-   }
- 
-    const handleUserAddressSelect = (address) => { 
-        console.log('user address selected');
-        detectUserAddress(address);
-       
-        //setSelectedUserAddress(address); this causes component to rerender every time
-        selectedUserAddressRef.current = address;
-    }; 
-
-    const detectFriendAddress = (address) => {
-        console.log('running detectFriendAddress');
-        if (address) {
-            setFriendAddressIsSelected(true);
-        } else {
-            setFriendAddressIsSelected(false);
-        }
-
-    };
-
-
-    const detectUserAddress = (address) => {
-        console.log('running detectUserAddress');
-        if (address) { 
-            setUserAddressIsSelected(true);
-        } else {
-            console.log('OOOOOPS..');
-            setUserAddressIsSelected(false);
-        }
-
-    };
+  
     
     
- 
- 
-useEffect(() => {
-    console.log('!!!CALCULATETRAVELTIMESBODY RERENDERED!!!');
-}), [];
+  
     
  
     const handleCalculate = () => {
@@ -92,14 +54,16 @@ useEffect(() => {
                 </View>
                 <View style={{flexDirection: 'column', maxHeight: 120, height: '30%', justifyContent: 'center', marginVertical: '4%',width: '100%'}}> 
                 <View style={{marginBottom: '1%'}}>
-                        <AddressSelectorUser
+
+                    {/* deleted */}
+                        {/* <AddressSelectorUser
                             setAddressInParent={handleUserAddressSelect}
                             tellParentIfExistsOnMount={detectUserAddress}
                             currentLocation={null} //feature not available at this time
                             height={'auto'}
                             titleBottomMargin={'2%'} 
                             contextTitle={`My startpoint`}
-                        /> 
+                        />  */}
                     </View>
 
                
@@ -108,7 +72,8 @@ useEffect(() => {
                 
                 <View style={{flexDirection: 'column', height: '30%', maxHeight: 120, justifyContent: 'center', marginVertical: '4%',width: '100%'}}> 
                    <View style={{marginBottom: '1%'}}>
-                        <AddressSelectorFriend
+                    {/* deleted */}
+                        {/* <AddressSelectorFriend
                             selectedFriendName={selectedFriend.name || ''}
                             selectedFriendId={selectedFriend.id || null}
                             setAddressInParent={handleFriendAddressSelect}
@@ -117,7 +82,7 @@ useEffect(() => {
                             height={'auto'}
                             titleBottomMargin={'2%'} 
                             contextTitle={`${selectedFriend.name}'s startpoint`}
-                        /> 
+                        />  */}
                     </View>
                 </View> 
             </View>
@@ -125,8 +90,8 @@ useEffect(() => {
 
            
             <TravelTimesResults
-                userAddress={selectedUserAddressRef.current  || { address: 'User Address', lat: '0', lng: '0' }}
-                friendAddress={selectedFriendAddressRef.current || { address: 'Friend Address', lat: '0', lng: '0' }}
+                userAddress={defaultUserAddress || { address: 'User Address', lat: '0', lng: '0' }}
+                friendAddress={defaultAddress || { address: 'Friend Address', lat: '0', lng: '0' }}
                 friendName={selectedFriend?.name || null}
                 destinationLocation={location}
                 triggerFetch={triggerFetch}
@@ -137,7 +102,7 @@ useEffect(() => {
                 label="CALCULATE "
                 maxHeight={80}
                 onPress={handleCalculate} 
-                isDisabled={!userAddressIsSelected || !friendAddressIsSelected}
+                isDisabled={!defaultUserAddress || !defaultAddress}
                 fontFamily={'Poppins-Bold'}
                 image={require("@/app/assets/shapes/redheadcoffee.png")}
             /> 

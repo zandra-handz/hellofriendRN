@@ -164,7 +164,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
               buttonOnBottom={true}
               customButton={
                 <View style={{ flexDirection: "row" }}>
-                  {friendAddress && (
+                  {friendAddress && friendAddress?.id?.slice?.(0, 4) !== "temp" && (
                     <MakeAddressDefault
                       onPress={() =>
                         handleFriendAddressDefault(friendAddress.id)
