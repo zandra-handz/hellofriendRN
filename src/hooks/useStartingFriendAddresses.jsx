@@ -21,9 +21,10 @@ const useStartingFriendAddresses = () => {
     const [ defaultAddress, setDefaultAddress ] = useState(null);
 
     const { data: friendAddresses = [], isLoading, isFetching, isSuccess, isError } = useQuery({
-        queryKey: ['friendAddresses', selectedFriend?.id],
+        queryKey: ['friendAddresses', user?.id, selectedFriend?.id],
         queryFn: () => fetchFriendAddresses(selectedFriend.id),
         enabled: !!selectedFriend,
+         staleTime: 1000 * 60 * 20, // 20 minutes
         onSuccess: (data) => { 
             console.log(friendAddresses);
             
@@ -71,7 +72,7 @@ const useStartingFriendAddresses = () => {
         onSuccess: (newAddress) => {
           showMessage(true, null, `Address added for ${selectedFriend.name}!`);
         
-          queryClient.setQueryData(['friendAddresses', selectedFriend?.id], (oldData) => {
+          queryClient.setQueryData(['friendAddresses', user?.id, selectedFriend?.id], (oldData) => {
             // If no existing data, just return the new address in an array
             if (!oldData || !Array.isArray(oldData)) return [newAddress];
         
@@ -116,7 +117,7 @@ const useStartingFriendAddresses = () => {
         onSuccess: (data) => {
             showMessage(true, null, `Address deleted for ${selectedFriend.name}!`);
             
-            queryClient.setQueryData(['friendAddresses', selectedFriend?.id], (oldData) => {
+            queryClient.setQueryData(['friendAddresses', user?.id, selectedFriend?.id], (oldData) => {
               if (!oldData || !Array.isArray(oldData)) return []; // If no existing data, return an empty array
               return oldData.filter((address) => address.id !== data.id); // Filter out the deleted address
             });
@@ -150,7 +151,7 @@ const useStartingFriendAddresses = () => {
         onSuccess: (updatedAddress) => {
           showMessage(true, null, `Address updated for ${selectedFriend.name}!`);
        
-          queryClient.setQueryData(['friendAddresses', selectedFriend?.id], (oldData) => {
+          queryClient.setQueryData(['friendAddresses', user?.id, selectedFriend?.id], (oldData) => {
             if (!oldData || !Array.isArray(oldData)) return [];  
       
             return oldData.map((address) => {

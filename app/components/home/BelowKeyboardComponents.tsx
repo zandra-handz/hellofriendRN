@@ -1,9 +1,8 @@
 import React from "react";
-import { View } from 'react-native';
-import AddOptionsList from "./AddOptionsList";
+import { View } from 'react-native'; 
 import HomeButtonUpNext from "./HomeButtonUpNext";
 import HomeScrollCalendarLights from './HomeScrollCalendarLights';
-import HomeScrollSoon from "./HomeScrollSoon";
+ 
 import HomeFriendItems from "./HomeFriendItems";
 import SelectedFriendHome from "./SelectedFriendHome";
 import Animated, {

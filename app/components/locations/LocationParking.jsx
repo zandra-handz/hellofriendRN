@@ -12,6 +12,8 @@ import AlertList from "../alerts/AlertList";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import NotesOutlineSvg from "@/app/assets/svgs/notes-outline.svg";
+import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
+import useDynamicUIFunctions from "@/src/hooks/useDynamicUIFunctions";
 // import ParkingCircleOutlineSvg from "@/app/assets/svgs/parking-circle-outline.svg";
 // import ParkingCircleSolidSvg from "@/app/assets/svgs/parking-circle-solid.svg";
 import { useNavigation } from "@react-navigation/native";
@@ -21,8 +23,18 @@ const LocationParking = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
   const { themeAheadOfLoading } = useFriendList();
   const [isModalVisible, setModalVisible] = useState(false);
   const { themeStyles } = useGlobalStyle();
-  const [hasNotes, setHasNotes] = useState(false);
+    const { getNumericParkingScore } = useLocationDetailFunctions();
+
+    const { getScoreColor } = useDynamicUIFunctions();
+  const [hasNotes, setHasNotes] = useState(location.parking_score);
+  const { label,score } = getNumericParkingScore(location.parking_score);
+ 
+  const [scoreColor, setScoreColor ] = useState(getScoreColor([1, 6], score));
+  const [scoreLabel, setScoreLabel ] = useState(label);
+ 
   const [hasParkingScore, setHasParkingScore] = useState(false);
+
+
 
   const navigation = useNavigation();
 
@@ -53,9 +65,17 @@ const LocationParking = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
     setModalVisible((prev) => !prev);
   };
 
+ 
+
   useLayoutEffect(() => {
     if (location && location.parking_score) {
+
+       let { label,score } = getNumericParkingScore(location.parking_score);
+ 
+   setScoreColor(getScoreColor([1, 6], score));
+   setScoreLabel(label);
       setHasNotes(true);
+
     } else {
       setHasNotes(false);
     }
@@ -72,7 +92,7 @@ const LocationParking = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
             >
               <MaterialCommunityIcons
                 name={"car-cog"}
-                size={iconSize}
+                size={iconSize} 
                 color={themeStyles.genericText.color}
                 opacity={fadeOpacity}
                 style={{ marginRight: 4 }}
@@ -88,10 +108,11 @@ const LocationParking = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
               <MaterialCommunityIcons
                 name={"car"}
                 size={iconSize}
-                color={themeAheadOfLoading.lightColor}
+                //color={themeAheadOfLoading.lightColor}
+                color={scoreColor}
                 style={{ marginRight: 4 }}
               />
-              <Text style={[themeStyles.primaryText, {}]}>Parking info</Text>
+              <Text style={[themeStyles.primaryText, {}]}>{scoreLabel}</Text>
             </TouchableOpacity>
           )}
         </View>

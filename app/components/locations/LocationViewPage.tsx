@@ -102,8 +102,8 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
           // }
         /> */}
         <View style={{flexDirection: 'column', flexWrap: 'wrap',   width: '100%', paddingHorizontal: 0, paddingTop: 20}}>
-        <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {flexDirection: 'row', width: '90%', flexWrap: 'wrap'}]}>{item.title}</Text>
-          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText,  {flexDirection: 'row', width: '90%', flexWrap: 'wrap'} ]}> {item.address}</Text>
+        <Text numberOfLines={2} style={[themeStyles.primaryText, appFontStyles.welcomeText, {flexDirection: 'row', width: '90%', flexWrap: 'wrap'}]}>{item.title}</Text>
+          <Text numberOfLines={1} style={[themeStyles.primaryText, appFontStyles.subWelcomeText,  {flexDirection: 'row', width: '90%', flexWrap: 'wrap'} ]}> {item.address}</Text>
       
           
         </View>

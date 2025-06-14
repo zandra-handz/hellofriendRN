@@ -30,6 +30,39 @@ const useLocationDetailFunctions = () => {
         return days[currentDayIndex];
       };
 
+
+      const getNumericParkingScore = (parkingScore) => {
+    if (!parkingScore) {
+      return {label: 'Not specified', score: 0};
+    }
+
+    if (parkingScore === "location has free parking lot") {
+      return {label: "Free parking", score: 1};
+    }
+
+    if (parkingScore === "free parking lot nearby") {
+      return {label: "Free parking nearby", score: 2};
+    }
+
+    if (parkingScore === "street parking") {
+      return {label: "Stret parking", score: 3};
+    }
+
+    if (parkingScore === "fairly stressful or unreliable street parking") {
+      return {label: "Stressful parking", score: 4};
+    }
+
+      if (parkingScore === "no parking whatsoever") {
+          return {label: "No parking", score: 5};
+      }
+
+      if (parkingScore === "unspecified") {
+            return {label: 'Not specified', score: 0};
+      }
+
+          return {label: 'Not specified', score: 0};
+    } 
+
       const getCurrentTime = () => {
         const now = new Date();
         const hours = now.getHours();
@@ -138,9 +171,21 @@ const useLocationDetailFunctions = () => {
 
     
     
-    
-   
-    
+const getScoreColor = (range, score) => {
+  const [min, max] = range;
+  const clampedScore = Math.max(min, Math.min(score, max));
+  const percent = (clampedScore - min) / (max - min);
+
+  const r = percent < 0.5
+    ? Math.round(255 * (percent * 2))        // 0 → 255 (green to yellow)
+    : 255;                                   // red stays max after midpoint
+
+  const g = percent < 0.5
+    ? 255                                   // green stays max before midpoint
+    : Math.round(255 * (1 - (percent - 0.5) * 2)); // 255 → 0 (yellow to red)
+
+  return `rgb(${r}, ${g}, 0)`;
+};
 
 
 
@@ -151,6 +196,9 @@ const useLocationDetailFunctions = () => {
         getTodayHours,
         getTomorrow,
         getSoonestAvailable,
+        getNumericParkingScore,
+        getScoreColor,
+
 
 })
 

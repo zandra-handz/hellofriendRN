@@ -9,6 +9,7 @@ import LoadedMoments from "../buttons/moments/LoadedMoments";
 import LoadedImages from "../buttons/images/LoadedImages";
  
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
+import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
  
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -103,26 +104,39 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               flexDirection: "row",
               width: "100%",
               alignItems: "center",
+              justifyContent: "space-between",
+              // backgroundColor: 'orange',
+               marginBottom: spacerAroundCalendar,
+              
             }}
           >
+            <View style={{flexDirection: 'row'}}> 
             <MaterialCommunityIcons
               name="hand-wave-outline"
               size={20}
               color={themeStyles.primaryBackground.backgroundColor}
-              style={{ marginBottom: 6 }}
+              style={{ marginBottom: 0 }}
             />
             <Text
               style={[
                 manualGradientColors.homeDarkColor,
                 {
+                
                   marginLeft: 6,
-                  marginBottom: spacerAroundCalendar,
+                 marginRight: 12,
                   fontWeight: "bold",
                 },
               ]}
             >
               Past Helloes
             </Text>
+            </View>
+                      <LabeledArrowButton
+            label="View"
+            opacity={.7}
+            onPress={() => navigation.navigate("Helloes")}
+            />
+            
           </View>
           {selectedFriend && (
             <HomeScrollCalendarLights
@@ -131,50 +145,24 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               borderColor="black"
             />
           )}
-          <View
+          <View style={{width: '100%', height: 10}}></View>
+          {/* <View
             style={{
               flexDirection: "row",
               width: "100%",
               justifyContent: "flex-end",
               alignItems: "center",
+              backgroundColor: 'pink',
               marginTop: spacerAroundCalendar,
               marginBottom: 10, // place this spacing elsewhere
             }}
           >
-            <TouchableOpacity
-              style={{ 
-                flexDirection: "row",
-                height: "100%",
-                alignItems: "center",
-              }}
-              onPress={() => navigation.navigate("Helloes")}
-            >
-              <Text
-                style={[
-                  manualGradientColors.homeDarkColor,
-                  { marginRight: 6, marginBottom: 10, fontWeight: "bold" },
-                ]}
-              >
-                View
-              </Text>
-              <View
-                style={{
-                  transform: [{ rotate: "180deg" }],
-                  paddingRight: 20,
-                  marginBottom: 8,
-                  width: 20,
-                  
-                  // alignItems: "center",
-                }}
-              >
-                <BackArrowLongerStemSvg
-                  height={20}
-                  width={20}
-                  color={manualGradientColors.homeDarkColor}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
+            <LabeledArrowButton
+            label="View"
+            onPress={() => navigation.navigate("Helloes")}/>
+
+         
+          </View> */}
         </View>
         <View style={{ width: "100%",   height: SELECTED_FRIEND_CARD_HEIGHT }}>
           {isLoading && !friendLoaded && (

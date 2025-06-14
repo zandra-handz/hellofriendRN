@@ -33,28 +33,19 @@ const ContentFindMidpoint = () => {
   const selectedUserAddressRef = useRef(null);
   const selectedFriendAddressRef = useRef(null);
 
-  const detectFriendAddress = (address) => {
-    console.log("running detectFriendAddress");
+  const detectFriendAddress = (address) => { 
     if (address) {
       setFriendAddressIsSelected(true);
     } else {
       setFriendAddressIsSelected(false);
     }
   };
+ 
 
-useEffect(() => {
-    if (searchKeyword) {
-        console.log('search keyword text changed!');
-    }
-
-}, [searchKeyword]);
-
-  const detectUserAddress = (address) => {
-    console.log("running detectUserAddress");
+  const detectUserAddress = (address) => { 
     if (address) {
       setUserAddressIsSelected(true);
-    } else {
-      console.log("OOOOOPS..");
+    } else { 
       setUserAddressIsSelected(false);
     }
   };

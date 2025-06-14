@@ -894,7 +894,9 @@ export const updateMultMomentsAPI = async (friendId, capsulesAndChanges) => {
 export const fetchAllLocations = async () => {
     try {
         const response = await helloFriendApiClient.get('/friends/locations/all/');
+ 
 
+        // why did i do this?
         const formattedLocations = response.data.map(location => ({
             id: location.id,
             address: location.address,

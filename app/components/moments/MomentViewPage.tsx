@@ -1,4 +1,4 @@
-import { View, Text, DimensionValue } from "react-native";
+import { View, Text, DimensionValue, ScrollView } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -91,30 +91,45 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
           marginBottom={0} //default is currently set to 2
           justifyContent="center"
           children={
-            <SlideToAdd
-              onPress={saveToHello}
-              sliderText={"Add to hello"}
-              sliderTextSize={15}
-              sliderTextColor={themeStyles.primaryText.color}
-              // sliderTextColor={themeAheadOfLoading.fontColor}
-            />
+            <>
+              <SlideToAdd
+                onPress={saveToHello}
+                sliderText={"Add to hello"}
+                sliderTextSize={15}
+                sliderTextColor={themeStyles.primaryText.color}
+                // sliderTextColor={themeAheadOfLoading.fontColor}
+              />
+              <EditPencilOutlineSvg
+                height={20}
+                width={20}
+                onPress={handleEditMoment}
+                color={themeStyles.genericText.color}
+                style={{position: 'absolute', right: 0}}
+              />
+            </>
           }
         />
-        <Text style={themeStyles.primaryText}> {item.typedCategory}</Text>
-        <Text style={themeStyles.primaryText}> {item.capsule}</Text>
-        <EditPencilOutlineSvg
-          height={20}
-          width={20}
-          onPress={handleEditMoment}
-          color={themeStyles.genericText.color}
-        />
-        <SlideToDeleteHeader
+        <View style={{ height: "90%", width: "100%" }}>
+          <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
+            <Text style={themeStyles.primaryText}> {item.typedCategory}</Text>
+            <Text style={themeStyles.primaryText}> {item.capsule}</Text>
+                    <SlideToDeleteHeader
           itemToDelete={item}
           onPress={handleDelete}
           sliderWidth={"100%"}
           targetIcon={TrashOutlineSvg}
           sliderTextColor={themeStyles.primaryText.color}
         />
+          </ScrollView>
+        </View>
+
+        {/* <SlideToDeleteHeader
+          itemToDelete={item}
+          onPress={handleDelete}
+          sliderWidth={"100%"}
+          targetIcon={TrashOutlineSvg}
+          sliderTextColor={themeStyles.primaryText.color}
+        /> */}
       </View>
     </View>
   );

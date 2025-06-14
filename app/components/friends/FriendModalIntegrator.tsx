@@ -8,7 +8,7 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import FriendModal from "../alerts/FriendModal";
 
-import { FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
 interface FriendModalIntegratorProps {
   addToPress: () => void;
@@ -134,8 +134,8 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
           )} 
 
           <View style={{ paddingLeft: 0, marginLeft: 6}}>
-            <FontAwesome5
-            name="user-friends"
+            <MaterialCommunityIcons
+            name="account-switch-outline"
             size={iconSize}
               // height={iconSize}
               // width={iconSize}

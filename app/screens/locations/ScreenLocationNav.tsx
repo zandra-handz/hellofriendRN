@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+import OverlayLargeButton from "@/app/components/appwide/button/OverlayLargeButton";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import SpeedDialDelux from "@/app/components/buttons/speeddial/SpeedDialDelux";
@@ -11,6 +11,8 @@ import GlobalAppHeaderIconVersion from "@/app/components/headers/GlobalAppHeader
 import { MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
 import Loading from "@/app/components/appwide/display/Loading";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+
+import ActiveAddresses from "@/app/components/locations/ActiveAddresses";
 const ScreenLocationNav = () => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
@@ -53,7 +55,7 @@ const ScreenLocationNav = () => {
         <>
           <View
             style={[
-                //REMOVE IF USING momentsAdded code
+              //REMOVE IF USING momentsAdded code
               //appContainerStyles.screenContainer,
               { flexDirection: "column", justifyContent: "center" },
             ]}
@@ -70,57 +72,18 @@ const ScreenLocationNav = () => {
                 right: 0,
                 left: 0,
                 height: 300,
-                // END 
+                // END
               }}
             >
-              <TouchableOpacity
-                style={[
-                  themeStyles.overlayBackgroundColor,
-                  {
-                    marginVertical: 2,
-                    padding: 20,
-                    width: "100%",
-                    height: "auto",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 10,
-                    textAlign: "center",
-                    flexWrap: "wrap",
-                  },
-                ]}
+              <OverlayLargeButton
+                label={"Map Search"}
                 onPress={() => navigation.navigate("LocationSearch")}
-              >
-                <Text
-                  style={[themeStyles.primaryText, appFontStyles.welcomeText]}
-                >
-                  Map Search
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  themeStyles.overlayBackgroundColor,
-                  {
-                    marginVertical: 2,
-                    padding: 20,
-                    width: "100%",
-                    height: "auto",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 10,
-                    textAlign: "center",
-                    flexWrap: "wrap",
-                  },
-                ]}
+              />
+              <OverlayLargeButton
+                label={"Saved Locations"}
                 onPress={() => navigation.navigate("Locations")}
-              >
-                <Text
-                  style={[themeStyles.primaryText, appFontStyles.welcomeText]}
-                >
-                  Saved Locations
-                </Text>
-              </TouchableOpacity>
+              />
+              <ActiveAddresses />
             </View>
           </View>
         </>
