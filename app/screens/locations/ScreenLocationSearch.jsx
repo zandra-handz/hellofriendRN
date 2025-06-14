@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect} from "react";
 import { View, StyleSheet } from "react-native";
 // import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -13,7 +13,16 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 
+import useCurrentLocation from "@/src/hooks/useCurrentLocation";
+
+import { useRoute } from "@react-navigation/native";
+
 const ScreenLocationSearch = () => {
+
+  const route = useRoute();
+
+  const userAddress = route?.params?.userAddress ?? null;
+  const friendAddress = route?.params?.friendAddress ?? null;
   // useGeolocationWatcher();
   const { getCurrentDay } = useLocationDetailFunctions();
   const { faveLocations, nonFaveLocations, pastHelloLocations } =
@@ -21,6 +30,22 @@ const ScreenLocationSearch = () => {
 
   const { bermudaCoords } = useLocationHelloFunctions();
   4;
+
+  useEffect(() => {
+    if (userAddress) {
+      console.log(userAddress);
+    }
+
+  }, [userAddress]);
+
+
+  
+  useEffect(() => {
+    if (friendAddress) {
+      console.log(friendAddress);
+    }
+
+  }, [friendAddress]);
 
   return (
     // <GestureHandlerRootView style={{flex: 1}}>
@@ -33,6 +58,8 @@ const ScreenLocationSearch = () => {
         <>
           <View style={styles.mapContainer}>
             <LocationsMapView
+            userAddress={userAddress}
+            friendAddress={friendAddress}
               pastHelloLocations={pastHelloLocations}
               faveLocations={faveLocations}
               nonFaveLocations={nonFaveLocations}

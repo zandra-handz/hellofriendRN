@@ -1,63 +1,89 @@
-import React  from "react";
+import React, { useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { TouchableOpacity, AccessibilityInfo } from "react-native";
 
 import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import AlertFormNoSubmit from "../alerts/AlertFormNoSubmit";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+
+import DualLocationSearcher from "./DualLocationSearcher";
+import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 
 interface SelectAddressModalProps {
-  isVisible: boolean;
+  isVisible: boolean; // = is editing address
   closeModal: () => void;
+  addressSetter: React.Dispatch<React.SetStateAction<string | null>>; // the set of a useState
 }
 
-const SelectAddressModal: React.FC<SelectAddressModalProps> = ({ isVisible, closeModal }) => {
-  const { themeStyles } = useGlobalStyle();
+const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
+  isVisible,
+  closeModal,
+  addressSetter,
+}) => {
+  const { themeStyles, appSpacingStyles } = useGlobalStyle();
 
-  return ( 
-      <AlertFormNoSubmit
-        isModalVisible={isVisible}
-        headerContent={
-          <InfoOutlineSvg
-            width={38}
-            height={38}
-            color={themeStyles.modalIconColor.color}
+  const {
+    usingCurrent,
+    userAddressMenu,
+    defaultUserAddress,
+    updateUserDefaultAddress,
+    createUserAddress,
+    removeUserAddress,
+  } = useStartingUserAddresses();
+
+  const [selectedAddress, setSelectedAddress] = useState(defaultUserAddress);
+  const [isExistingAddress, setIsExistingAddress] = useState(false);
+
+  const handleCheckIfExistingAndSelect = (address) => {
+    setIsExistingAddress(false); //to clear
+    const isExisting = userAddressMenu.find(
+      (menuAddress) =>
+        menuAddress.address === address.address || menuAddress.id === address.id
+    );
+
+    if (isExisting) {
+      addressSetter(isExisting);
+      console.log(
+        `isExisting set friend address in selector via parent function`,
+        address
+      );
+    } else {
+      addressSetter(address);
+      console.log(`set friend address in selector via parent function`);
+    }
+    setIsExistingAddress(!!isExisting);
+  };
+
+  const handleAddressSelect = (address) => {
+    if (address) {
+      handleCheckIfExistingAndSelect(address);
+
+      closeModal();
+    }
+  };
+
+  return (
+    <ModalWithoutSubmit
+      isVisible={isVisible}
+      headerIcon={
+        <MaterialIcons
+          name={"edit-location-alt"}
+          size={appSpacingStyles.modalHeaderIconSize}
+          color={themeStyles.modalIconColor.color}
+        />
+      }
+      questionText="Select address"
+      children={
+        <View style={styles.bodyContainer}>
+          <DualLocationSearcher
+            onPress={handleAddressSelect}
+            locationListDrilledOnce={userAddressMenu}
           />
-        }
-        questionText="Select address"
-        formBody={
-          <ScrollView contentContainerStyle={styles.bodyContainer}>
-            <View style={styles.sectionContainer}>
-              <Text style={[styles.text, themeStyles.genericText]}>
-                Thank you for downloading!
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={[styles.text, themeStyles.genericText]}>
-                Hellofriend is an IRL-meet-up assistant that lets you store
-                notes (moments) to share with friends ahead of meeting up with
-                them. It generates suggestions for meet-up dates and helps you
-                decide locations as well!
-              </Text>
-            </View>
-
-            <View style={styles.headerContainer}>
-              <Text style={[styles.headerText, themeStyles.subHeaderText]}>
-                What is a 'Moment'?
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={[styles.text, themeStyles.genericText]}>
-                A moment is literally any thought or idea you want to share with
-                your friend the next time you see them.
-              </Text>
-            </View> 
-          </ScrollView>
-        }
-        formHeight={610}
-        onCancel={closeModal}
-        cancelText="Back"
-      /> 
+        </View>
+      }
+      onClose={closeModal}
+    />
   );
 };
 

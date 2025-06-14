@@ -9,9 +9,8 @@ import {
   Platform,
 } from "react-native";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
-import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
-import HellofriendHeader from "@/app/components/headers/HellofriendHeader";
-import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
+import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI"; 
+// import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext"; //to check if any friends, don't render Up Next component or upcoming scroll if so
@@ -36,7 +35,8 @@ import FriendHeaderMessageUI from "@/app/components/home/FriendHeaderMessageUI";
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
   const navigation = useNavigation();
-  useGeolocationWatcher(); // Starts watching for location changes
+  // using DeviceLocationContext now
+  // useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { user, isAuthenticated, isInitializing, userAppSettings } = useUser();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();

@@ -97,10 +97,8 @@ const AddressSelectorFriend = ({
   };
 
   const handleUpdateFriendDefaultAddress = (addressId) => {
-    const newData = {
-      is_default: true, //backend will turn the previous one to false
-    };
-    updateFriendDefaultAddress(selectedFriendId, addressId, newData);
+ 
+    updateFriendDefaultAddress(addressId);
   };
 
   const handleAddFriendAddress = (title, address) => {

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import OverlayLargeButton from "@/app/components/appwide/button/OverlayLargeButton";
@@ -17,6 +17,15 @@ const ScreenLocationNav = () => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
+
+  const [userAddress, setUserAddress] = useState({
+    address: `No address selected`,
+    id: "",
+  });
+  const [friendAddress, setFriendAddress] = useState({
+    address: `No address selected`,
+    id: "",
+  });
 
   const navigation = useNavigation();
 
@@ -77,13 +86,22 @@ const ScreenLocationNav = () => {
             >
               <OverlayLargeButton
                 label={"Map Search"}
-                onPress={() => navigation.navigate("LocationSearch")}
+                onPress={() => navigation.navigate("LocationSearch", {userAddress: userAddress, friendAddress: friendAddress})}
               />
               <OverlayLargeButton
                 label={"Saved Locations"}
                 onPress={() => navigation.navigate("Locations")}
               />
-              <ActiveAddresses />
+              {userAddress && friendAddress && (
+                
+              <ActiveAddresses
+                userAddress={userAddress}
+                setUserAddress={setUserAddress}
+                friendAddress={friendAddress}
+                setFriendAddress={setFriendAddress}
+              />
+              
+              )}
             </View>
           </View>
         </>

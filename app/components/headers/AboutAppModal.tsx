@@ -3,8 +3,9 @@ import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { TouchableOpacity, AccessibilityInfo } from "react-native";
 
 import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import AlertFormNoSubmit from "../alerts/AlertFormNoSubmit";
+import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
 
 interface AboutAppModalProps {
   isVisible: boolean;
@@ -12,7 +13,9 @@ interface AboutAppModalProps {
 }
 
 const AboutAppModal: React.FC<AboutAppModalProps> = ({ isVisible, closeModal }) => {
-  const { themeStyles } = useGlobalStyle(); 
+  const { themeStyles, appSpacingStyles } = useGlobalStyle(); 
+
+    const headerIconSize = 26;
 
  
   // React.useEffect(() => {
@@ -22,17 +25,17 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({ isVisible, closeModal }) 
   // }, [isModalVisible]);
 
   return ( 
-      <AlertFormNoSubmit
-        isModalVisible={isVisible}
-        headerContent={
-          <InfoOutlineSvg
-            width={38}
-            height={38}
-            color={themeStyles.modalIconColor.color}
+      <ModalWithoutSubmit
+        isVisible={isVisible}
+        headerIcon={
+          <MaterialCommunityIcons
+            name={"information-outline"}
+            size={appSpacingStyles.modalHeaderIconSize}
+            color={themeStyles.footerIcon.color}
           />
         }
-        questionText="How do I use this app?"
-        formBody={
+        questionText="How to use"
+        children={
           <ScrollView contentContainerStyle={styles.bodyContainer}>
             <View style={styles.sectionContainer}>
               <Text style={[styles.text, themeStyles.genericText]}>
@@ -198,10 +201,8 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({ isVisible, closeModal }) 
               </Text>
             </View>
           </ScrollView>
-        }
-        formHeight={610}
-        onCancel={closeModal}
-        cancelText="Back"
+        } 
+        onClose={closeModal} 
       /> 
   );
 };
@@ -219,13 +220,14 @@ const styles = StyleSheet.create({
   sectionContainer: {
     margin: "2%",
   },
-  headerText: {
-    fontFamily: "Poppins-Bold",
+  headerText: { 
+    fontWeight: 'bold',
     fontSize: 18,
+    lineHeight: 30,
   },
-  text: {
-    fontFamily: "Poppins-Regular",
-    fontSize: 15,
+  text: { 
+    fontSize: 14,
+    lineHeight: 21,
   },
 });
 

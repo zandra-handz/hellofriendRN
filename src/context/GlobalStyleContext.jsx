@@ -505,6 +505,8 @@ const spacingStyles = StyleSheet.create({
     borderRadius: 40,
     padding: 20,
   },
+  modalHeaderIconSize: 30,
+ 
 });
 
 const fontStyles = StyleSheet.create({

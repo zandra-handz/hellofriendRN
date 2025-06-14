@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -7,16 +7,20 @@ interface OverlayLargeButtonProps {
   label: string;
   onPress: () => void;
   buttonOnBottom: boolean;
+  customButton?: React.ReactElement;
+
 }
 
 const OverlayLargeButton: React.FC<OverlayLargeButtonProps> = ({
   label,
   onPress,
   buttonOnBottom = false,
+  customButton,
+  addressSetter,
 }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
 
-  const iconSize = 30; 
+  const iconSize = 30;
 
   return (
     <TouchableOpacity
@@ -42,16 +46,42 @@ const OverlayLargeButton: React.FC<OverlayLargeButtonProps> = ({
         {label}
       </Text>
       {buttonOnBottom && (
-        <TouchableOpacity onPress={onPress} style={{width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
-            <MaterialCommunityIcons
-            //name={"menu-swap"}
-            name={"swap-horizontal-circle"}
-            size={iconSize}
-            color={themeStyles.primaryText.color}
-            
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <>
+            {customButton && customButton}
 
-            />
-        </TouchableOpacity>
+            <TouchableOpacity
+              onPress={onPress}
+              style={{
+                marginLeft: 20,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={[
+                  themeStyles.primaryText,
+                  { fontWeight: "bold", fontSize: 13, marginRight: 6 },
+                ]}
+              >
+                Change
+              </Text>
+              <MaterialCommunityIcons
+                //name={"menu-swap"}
+                name={"swap-horizontal-circle"}
+                size={iconSize}
+                color={themeStyles.primaryText.color}
+              />
+            </TouchableOpacity>
+          </>
+        </View>
       )}
     </TouchableOpacity>
   );

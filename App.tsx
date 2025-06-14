@@ -22,6 +22,7 @@ import {
   getStateFromPath,
 } from "@react-navigation/native";
 import { Alert, useColorScheme, Platform } from "react-native";
+import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { MessageContextProvider } from "./src/context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserProvider, useUser } from "./src/context/UserContext";
@@ -201,6 +202,8 @@ export default Sentry.wrap(function App() {
         <QueryClientProvider client={queryClient}>
           <UserProvider>
             <GlobalStyleProvider>
+              <DeviceLocationProvider>
+                
               <UpcomingHelloesProvider>
                 <FriendListProvider>
                   <SelectedFriendProvider>
@@ -228,6 +231,8 @@ export default Sentry.wrap(function App() {
                   </SelectedFriendProvider>
                 </FriendListProvider>
               </UpcomingHelloesProvider>
+              
+              </DeviceLocationProvider>
             </GlobalStyleProvider>
           </UserProvider>
         </QueryClientProvider>

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import React  from "react";
+import React from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -10,15 +10,17 @@ import {
 } from "react-native";
 
 import BugSvg from "@/app/assets/svgs/bug.svg";
- 
-import AlertFormNoSubmit from "../alerts/AlertFormNoSubmit";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { Linking } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 
 const ReportIssueModal = ({ isVisible, closeModal }) => {
   const { user } = useUser();
-  const { themeStyles, manualGradientColors } = useGlobalStyle(); 
+  const { themeStyles, appSpacingStyles, manualGradientColors } =
+    useGlobalStyle();
 
   const generateUniqueEmailURL = () => {
     const uniqueId = uuidv4(); // Generate a unique ID
@@ -27,32 +29,30 @@ const ReportIssueModal = ({ isVisible, closeModal }) => {
     return `mailto:tzandrabuilds@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
- 
-
-//   React.useEffect(() => {
-//     if (isModalVisible) {
-//       AccessibilityInfo.announceForAccessibility("Information opened");
-//     }
-//   }, [isModalVisible]);
+  //   React.useEffect(() => {
+  //     if (isModalVisible) {
+  //       AccessibilityInfo.announceForAccessibility("Information opened");
+  //     }
+  //   }, [isModalVisible]);
 
   return (
-    <AlertFormNoSubmit
-      isModalVisible={isVisible}
-      headerContent={
-        <BugSvg
-          width={38}
-          height={38}
-          color={themeStyles.modalIconColor.color}
+    <ModalWithoutSubmit
+      isVisible={isVisible}
+      headerIcon={
+        <MaterialCommunityIcons
+          name={"bug-outline"}
+          size={appSpacingStyles.modalHeaderIconSize}
+          color={themeStyles.footerIcon.color}
         />
       }
-      questionText="Feedback"
-      formBody={
+      questionText="Report a bug"
+      children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
-          <View style={styles.headerContainer}>
+          {/* <View style={styles.headerContainer}>
             <Text style={[styles.headerText, themeStyles.subHeaderText]}>
               Found a bug?
             </Text>
-          </View>
+          </View> */}
           <View style={styles.sectionContainer}>
             <Text style={[styles.text, themeStyles.genericText]}>
               I am so sorry for the inconvenience and potential frustration!
@@ -73,7 +73,7 @@ const ReportIssueModal = ({ isVisible, closeModal }) => {
         </ScrollView>
       }
       formHeight={610}
-      onCancel={closeModal}
+      onClose={closeModal}
       cancelText="Back"
     />
   );
@@ -99,12 +99,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   text: {
-    fontFamily: "Poppins-Regular",
-    fontSize: 15,
+    lineHeight: 21,
+    fontSize: 14,
   },
-  linkText: {
-    fontFamily: "Poppins-Regular",
-    fontSize: 15,
+  linkText: { 
+    fontSize: 14,
     fontWeight: "bold",
   },
 });

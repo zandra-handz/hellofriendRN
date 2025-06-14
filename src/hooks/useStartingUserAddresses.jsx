@@ -189,8 +189,10 @@ const useStartingUserAddresses = () => {
     }
   };
 
-  const updateUserDefaultAddress = async (addressId, newData) => {
-    console.log(`updateUserAddress: `, addressId, newData);
+  const updateUserDefaultAddress = async (addressId) => {
+        const newData = {
+      is_default: true, //backend will turn the previous one to false
+    }; 
     try {
       await updateUserAddressMutation.mutateAsync({
         user: user.id,

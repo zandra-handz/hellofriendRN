@@ -6,10 +6,8 @@ import LocationOutlineSvg from '@/app/assets/svgs/location-outline.svg';
 
 const SelectAddressModal = ({ 
   isEditingAddress, 
-  setIsEditingAddress, 
-  currentlySelected, 
-  content,
-  setShowAddressOptions 
+  setIsEditingAddress,  
+  content, 
 }) => {
   return (
     <AlertList

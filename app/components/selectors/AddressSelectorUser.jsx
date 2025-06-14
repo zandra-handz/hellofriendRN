@@ -47,8 +47,7 @@ const AddressSelectorUser = ({
   } = useStartingUserAddresses();
 
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
-  const [showAddressOptions, setShowAddressOptions] = useState(false);
+  const [isEditingAddress, setIsEditingAddress] = useState(false); 
   const { themeStyles } = useGlobalStyle();
   const [isExistingAddress, setIsExistingAddress] = useState(false);
 
@@ -72,13 +71,11 @@ const AddressSelectorUser = ({
     if (isExisting) {
       setSelectedAddress(isExisting);
       setAddressInParent(isExisting);
-      tellParentIfExistsOnMount(isExisting);
-      console.log(`set address in selector via parent function`);
+      tellParentIfExistsOnMount(isExisting); 
     } else {
       setSelectedAddress(address);
       setAddressInParent(address);
-      tellParentIfExistsOnMount(address);
-      console.log(`set address in selector via parent function`);
+      tellParentIfExistsOnMount(address); 
     }
     setIsExistingAddress(!!isExisting);
   };
@@ -91,10 +88,8 @@ const AddressSelectorUser = ({
   };
 
   const handleUpdateUserDefaultAddress = (addressId) => {
-    const newData = {
-      is_default: true, //backend will turn the previous one to false
-    };
-    updateUserDefaultAddress(addressId, newData);
+ 
+    updateUserDefaultAddress(addressId);
   };
 
   const handleAddUserAddress = (title, address) => {
@@ -295,8 +290,7 @@ const AddressSelectorUser = ({
         selectedAddress={selectedAddress}
         onAddressSelect={(address) => {
           handleCheckIfExistingAndSelect(address);
-        }}
-        setShowAddressOptions={setShowAddressOptions}
+        }} 
       />
     </>
   );
