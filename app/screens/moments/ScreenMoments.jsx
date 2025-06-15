@@ -17,10 +17,13 @@ import GlobalAppHeaderIconVersion from "@/app/components/headers/GlobalAppHeader
 import { MaterialIcons } from "@expo/vector-icons";
 import Loading from "@/app/components/appwide/display/Loading";
 
+import usePrefetches from "@/src/hooks/usePrefetches";
+
 const ScreenMoments = () => {
   const { capsuleList } = useCapsuleList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
+  const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
 
   const navigation = useNavigation();
 
@@ -51,6 +54,13 @@ const ScreenMoments = () => {
     [selectedFriend, loadingNewFriend, themeAheadOfLoading]
   );
 
+  const handleRootPressPrefetch = () => {
+    console.log('prefetch here!')
+    prefetchUserAddresses();
+    prefetchFriendAddresses();
+
+  };
+
   return (
     <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
       <Loading isLoading={loadingNewFriend} />
@@ -64,6 +74,7 @@ const ScreenMoments = () => {
         <SpeedDialDelux
           rootIcon={AddOutlineSvg}
           topIcon={AddOutlineSvg}
+          rootOnPressPrefetches={handleRootPressPrefetch}
           topOnPress={() => navigation.navigate("LocationNav")} // selectedFriend needed for this screen I believe
           midIcon={<MaterialCommunityIcons name="hand-wave-outline" />}
           midOnPress={() => navigation.navigate("Finalize")}

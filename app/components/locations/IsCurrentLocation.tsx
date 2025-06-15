@@ -27,7 +27,7 @@ const IsCurrentLocation: React.FC<Props> = ({ onPress,   isCurrent=false }) => {
           { fontWeight: "bold", fontSize: 13, marginRight: 6 },
         ]}
       >
-        {isCurrent && `Current address`}
+        {isCurrent && `Current`}
         {!isCurrent && `Stored address`}
       </Text>
       {isCurrent && (

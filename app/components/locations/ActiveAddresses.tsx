@@ -20,8 +20,8 @@ import MakeAddressDefault from "./MakeAddressDefault";
 interface ActiveAddressesProps {
   userAddress: object;
   friendAddress: object;
-   setUserAddress: React.Dispatch<React.SetStateAction<string | null>>; 
-    setFriendAddress: React.Dispatch<React.SetStateAction<string | null>>; 
+  setUserAddress: React.Dispatch<React.SetStateAction<string | null>>;
+  setFriendAddress: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
@@ -65,12 +65,11 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
       updateFriendDefaultAddress(friendAddress.id);
     }
   };
-    const handleUserAddressDefault = () => {
+  const handleUserAddressDefault = () => {
     if (!userAddress.isDefault) {
       updateUserDefaultAddress(userAddress.id);
     }
   };
-
 
   const handleBookmarkFriendAddress = () => {
     if (friendAddress?.id?.slice?.(0, 4) === "temp") {
@@ -132,6 +131,18 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
           <OverlayLargeButton
             label={`My Address: ${userAddress && userAddress.address}`}
             onPress={() => setUserAddressModalVisible(true)}
+            addTopRowElement={true}
+            topRowElement={
+              <>
+                {" "}
+                {isUserAddressCurrent && ( 
+                    <IsCurrentLocation
+                      onPress={() => console.log("hiiii")}
+                      isCurrent={true}
+                    /> 
+                )}{" "}
+              </>
+            }
             buttonOnBottom={true}
             customButton={
               <>
@@ -147,13 +158,6 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
                     (address) => address.address === userAddress.address
                   )}
                 />
-
-                {isUserAddressCurrent && (
-                  <IsCurrentLocation
-                    onPress={() => console.log("hiiii")}
-                    isCurrent={true}
-                  />
-                )}
               </>
             }
           />
@@ -164,15 +168,16 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
               buttonOnBottom={true}
               customButton={
                 <View style={{ flexDirection: "row" }}>
-                  {friendAddress && friendAddress?.id?.slice?.(0, 4) !== "temp" && (
-                    <MakeAddressDefault
-                      onPress={() =>
-                        handleFriendAddressDefault(friendAddress.id)
-                      }
-                      isDefault={friendAddress?.isDefault}
-                      disabled={friendAddress?.isDefault}
-                    />
-                  )}
+                  {friendAddress &&
+                    friendAddress?.id?.slice?.(0, 4) !== "temp" && (
+                      <MakeAddressDefault
+                        onPress={() =>
+                          handleFriendAddressDefault(friendAddress.id)
+                        }
+                        isDefault={friendAddress?.isDefault}
+                        disabled={friendAddress?.isDefault}
+                      />
+                    )}
 
                   <BookmarkAddress
                     onPress={() => handleBookmarkFriendAddress(friendAddress)}

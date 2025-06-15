@@ -1137,7 +1137,7 @@ export const fetchLocationDetails = async (locationData) => {
          
       const response = await helloFriendApiClient.post('/friends/places/get-details/', locationData);
   
-      console.log(`API POST CALL fetchLocationDetails`);
+     // console.log(`API POST CALL fetchLocationDetails`, response.data);
       return response.data;
   
     } catch (error) {

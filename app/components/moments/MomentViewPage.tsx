@@ -16,6 +16,7 @@ interface MomentViewPageProps {
   index: number;
   width: DimensionValue;
   height: DimensionValue;
+  currentIndex: number;
 }
 
 const MomentViewPage: React.FC<MomentViewPageProps> = ({
@@ -23,6 +24,7 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
   index,
   width,
   height,
+  currentIndex,
 }) => {
   const { themeStyles } = useGlobalStyle();
   const { updateCapsule, deleteMomentRQuery, deleteMomentMutation } =

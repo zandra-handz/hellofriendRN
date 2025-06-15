@@ -33,15 +33,12 @@ export const LocationsProvider = ({ children }) => {
   const [loadingSelectedLocation, setLoadingSelectedLocation] = useState(false);
   const [additionalDetails, setAdditionalDetails] = useState(null);
   const [loadingAdditionalDetails, setLoadingAdditionalDetails] =
-    useState(false); 
+    useState(false);
   const { user, isAuthenticated, isInitializing } = useUser();
   const queryClient = useQueryClient();
   const [isDeletingLocation, setIsDeletingLocation] = useState(false);
 
-  const {
-    selectedFriend, 
-    friendFavesData, 
-  } = useSelectedFriend();
+  const { selectedFriend, friendFavesData } = useSelectedFriend();
 
   const timeoutRef = useRef(null);
 
@@ -199,10 +196,9 @@ export const LocationsProvider = ({ children }) => {
           location.id === data.id ? { ...location, ...data } : location
         );
       });
- 
     },
     onError: (error) => {
-      console.error("Update failed:", error); 
+      console.error("Update failed:", error);
     },
     onSettled: () => {
       if (timeoutRef.current) {
@@ -217,7 +213,10 @@ export const LocationsProvider = ({ children }) => {
   const accessLocationListCacheData = () => {
     if (isSuccess) {
       try {
-        const locationCache = queryClient.getQueryData(["locationList", user?.id]);
+        const locationCache = queryClient.getQueryData([
+          "locationList",
+          user?.id,
+        ]);
         return locationCache;
       } catch (error) {
         console.error("no location cached data");
@@ -251,7 +250,7 @@ export const LocationsProvider = ({ children }) => {
     } catch (error) {
       console.error("Error saving location:", error);
     }
-  }; 
+  };
 
   const removeFromFavesMutation = useMutation({
     mutationFn: (data) => removeFromFriendFavesLocations(data),
@@ -263,7 +262,7 @@ export const LocationsProvider = ({ children }) => {
       ]);
 
       queryClient.setQueryData(
-        ["friendDashboardData",  user?.id, selectedFriend?.id],
+        ["friendDashboardData", user?.id, selectedFriend?.id],
         (old) => {
           if (!old || !old[0]) {
             return {
@@ -291,18 +290,14 @@ export const LocationsProvider = ({ children }) => {
           return updatedDashboardData;
         }
       );
-
-
     },
     onError: (error) => {
       console.error("Error removing location to friend faves:", error);
- 
-    }, 
+    },
     onSettled: () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-
 
       timeoutRef.current = setTimeout(() => {
         removeFromFavesMutation.reset();
@@ -325,21 +320,20 @@ export const LocationsProvider = ({ children }) => {
   };
 
   const [locationFaveAction, setLocationFaveAction] = useState(null);
- 
 
   const addToFavesMutation = useMutation({
-    mutationFn: (data) => { 
+    mutationFn: (data) => {
       setLocationFaveAction(data.locationId); // Set the loading state before the mutation starts
       return addToFriendFavesLocations(data);
     },
     onSuccess: (data, variables) => {
       const friendData = queryClient.getQueryData([
         "friendDashboardData",
-         user?.id,
+        user?.id,
         selectedFriend?.id,
       ]);
       queryClient.setQueryData(
-        ["friendDashboardData",  user?.id, selectedFriend?.id],
+        ["friendDashboardData", user?.id, selectedFriend?.id],
         (old) => {
           if (!old || !old[0]) {
             return {
@@ -370,18 +364,17 @@ export const LocationsProvider = ({ children }) => {
         }
       );
     },
-    onError: (error) => { 
+    onError: (error) => {
       console.error("Error adding location to friend faves:", error);
     },
-    onSettled: () => { 
+    onSettled: () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
 
-
       timeoutRef.current = setTimeout(() => {
         addToFavesMutation.reset();
-      }, 2000); 
+      }, 2000);
     },
   });
 
@@ -410,11 +403,10 @@ export const LocationsProvider = ({ children }) => {
         return updatedList;
       });
 
-      queryClient.invalidateQueries(["locationList", user?.id]); 
+      queryClient.invalidateQueries(["locationList", user?.id]);
     },
     onError: (error) => {
       console.error("Error deleting location:", error);
- 
     },
     onSettled: () => {
       if (timeoutRef.current) {
@@ -484,40 +476,16 @@ export const LocationsProvider = ({ children }) => {
   };
 
   const useFetchAdditionalDetails = (location, enabled) => {
-    const queryClient = useQueryClient();
-
     return useQuery({
       queryKey: ["additionalDetails", location?.id],
-      queryFn: async () => {
-        //console.log(location);
-        if (location && location.id) {
-          const cachedData = queryClient.getQueryData([
-            "additionalDetails",
-            location.id,
-          ]);
-          if (cachedData) {
-            //console.log('Cache hit for location:', location.id);
-            //console.log('Cached data:', cachedData);
-            return cachedData;
-          }
+      enabled: !!(location && location.id && enabled),
+      queryFn: async () =>
+        fetchLocationDetails({
+          address: encodeURIComponent(`${location.title} ${location.address}`),
+          lat: parseFloat(location.latitude),
+          lon: parseFloat(location.longitude),
+        }),
 
-          //console.log('Cache miss for location:', location.id);
-          const details = await fetchLocationDetails({
-            address: encodeURIComponent(
-              `${location.title} ${location.address}`
-            ),
-            lat: parseFloat(location.latitude),
-            lon: parseFloat(location.longitude),
-          });
-
-          //console.log('Fetched additional location details...');
-          return details;
-        } else {
-          console.log("No location provided. Returning null.");
-          return null;
-        }
-      },
-      enabled,
       onError: (err) => {
         console.error("Error fetching location details:", err);
       },
@@ -544,7 +512,7 @@ export const LocationsProvider = ({ children }) => {
   return (
     <LocationsContext.Provider
       value={{
-        locationList, 
+        locationList,
         faveLocationList,
         locationsIsFetching,
         isFetching,
@@ -566,7 +534,7 @@ export const LocationsProvider = ({ children }) => {
         additionalDetails,
         setSelectedLocation,
         addLocationToFaves,
-        addToFavesMutation, 
+        addToFavesMutation,
         removeLocationFromFaves,
         removeFromFavesMutation,
         loadingSelectedLocation,

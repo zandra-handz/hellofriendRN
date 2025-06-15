@@ -25,7 +25,7 @@ const LocationCustomerReviewCard = ({
         <LoadingPage loading={loadingAdditionalDetails} spinnerType="wander" />
       )}
       {!loadingAdditionalDetails && (
-        <ScrollView>
+        <ScrollView nestedScrollEnabled>
           <View
             style={[
               styles.reviewAuthorRatingContainer,
@@ -35,16 +35,18 @@ const LocationCustomerReviewCard = ({
             <Text style={[styles.reviewAuthor, { color: textColor }]}>
               {review.author_name}
             </Text>
-            <StylingRating
+                      <Text style={[styles.reviewDate, { color: textColor }]}>
+            {formatDate(review.time)}
+          </Text>
+
+          </View>
+
+                      <StylingRating
               rating={review.rating}
               starSize={11}
               fontSize={13}
               starColor="orange"
             />
-          </View>
-          <Text style={[styles.reviewDate, { color: textColor }]}>
-            {formatDate(review.time)}
-          </Text>
           <Text style={[styles.reviewText, { color: textColor }]}>
             {review.text}
           </Text>
@@ -56,31 +58,31 @@ const LocationCustomerReviewCard = ({
 
 const styles = StyleSheet.create({
   review: {
-    padding: "10%",
-    borderRadius: 30,
+    padding: 10,
+    borderRadius: 10,
     width: 240,
     height: "100%",
-    //borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "limegreen",
+    borderWidth: StyleSheet.hairlineWidth, 
   },
   reviewAuthorRatingContainer: {
     flexDirection: "row",
-    marginBottom: 10,
+    marginBottom: 0,
     justifyContent: "space-between",
   },
   reviewAuthor: {
     //fontFamily: 'Poppins-Bold',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "bold",
   },
   reviewDate: {
     fontSize: 12,
+    lineHeight: 18,
     marginBottom: 10,
     //fontFamily: 'Poppins-Regular',
   },
   reviewText: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 12,
+    lineHeight: 19,
     //fontFamily: 'Poppins-Regular',
   },
 });

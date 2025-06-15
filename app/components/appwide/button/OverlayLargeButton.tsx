@@ -6,6 +6,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 interface OverlayLargeButtonProps {
   label: string;
   onPress: () => void;
+  addTopRowElement: boolean;
+  topRowElement?: React.ReactElement;
+  topRowJustify: string;
   buttonOnBottom: boolean;
   customButton?: React.ReactElement;
 
@@ -14,6 +17,9 @@ interface OverlayLargeButtonProps {
 const OverlayLargeButton: React.FC<OverlayLargeButtonProps> = ({
   label,
   onPress,
+  addTopRowElement = false,
+  topRowElement,
+  topRowJustify = 'flex-end',
   buttonOnBottom = false,
   customButton,
   addressSetter,
@@ -42,6 +48,13 @@ const OverlayLargeButton: React.FC<OverlayLargeButtonProps> = ({
       onPress={!buttonOnBottom ? onPress : () => {}}
       disabled={buttonOnBottom}
     >
+      {addTopRowElement && (
+        
+      <View style={{flex: 1, height: 'auto',flexDirection: 'row', width: '100%', justifyContent: topRowJustify,    }}>
+        {topRowElement}
+      </View>
+      
+      )}
       <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}>
         {label}
       </Text>

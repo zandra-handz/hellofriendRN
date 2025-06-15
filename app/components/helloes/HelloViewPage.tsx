@@ -18,7 +18,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
-const HelloViewPage = ({ item, index, width, height }) => {
+const HelloViewPage = ({ item, index, width, height, currentIndex }) => {
   const { themeStyles } = useGlobalStyle();
   const [momentsViewing, setMomentsViewing] = useState(item.pastCapsules);
   const [selectedCategory, setSelectedCategory] = useState(null);

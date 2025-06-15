@@ -189,11 +189,7 @@ export default Sentry.wrap(function App() {
   if (!fontsLoaded) {
     return null;
 
-    //     (
-    //   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-    //     <Text style={{ fontSize: 20 }}>Loading...</Text>
-    //   </View>
-    // );
+ 
   }
 
   return (

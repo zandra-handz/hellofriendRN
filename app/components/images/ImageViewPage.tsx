@@ -15,6 +15,7 @@ interface ImageViewPageProps {
   index: number;
   width: DimensionValue;
   height: DimensionValue;
+  currentIndex: number;
 }
 
 const ImageViewPage: React.FC<ImageViewPageProps> = ({
@@ -22,6 +23,7 @@ const ImageViewPage: React.FC<ImageViewPageProps> = ({
   index,
   width,
   height,
+  currentIndex,
 }) => {
   const { themeStyles } = useGlobalStyle();
   const { updateCapsule } = useCapsuleList();

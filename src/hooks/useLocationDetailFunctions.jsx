@@ -8,17 +8,17 @@ const useLocationDetailFunctions = () => {
 
     const checkIfOpen = (data) => {
         if (data && data.open_now) {
-            console.log('location is open');
+            // console.log('location is open');
             return true;
         }
 
         if (data && data.open_now === false) {
-            console.log('location is closed');
+            // console.log('location is closed');
             return false;
 
         }
 
-        console.log('unknown if location is currently open');
+        // console.log('unknown if location is currently open');
 
         return null;
 
@@ -45,7 +45,7 @@ const useLocationDetailFunctions = () => {
     }
 
     if (parkingScore === "street parking") {
-      return {label: "Stret parking", score: 3};
+      return {label: "Street parking", score: 3};
     }
 
     if (parkingScore === "fairly stressful or unreliable street parking") {
@@ -104,22 +104,22 @@ const useLocationDetailFunctions = () => {
             .replace(/\s+/g, ' ')  
             .trim(); 
 
-        console.log("Sanitized todayHours length:", sanitizedHours.length);
-        console.log("Sanitized todayHours:", sanitizedHours);
+        // console.log("Sanitized todayHours length:", sanitizedHours.length);
+        // console.log("Sanitized todayHours:", sanitizedHours);
     
         const dayTimeRegex = /([A-Za-z]+:\s*)?(\d{1,2}:\d{2})\s*(AM|PM|am|pm)?\s*–\s*(\d{1,2}:\d{2})\s*(AM|PM|am|pm)/;
     
         let match = dayTimeRegex.exec(sanitizedHours);
     
         if (!match) {
-            console.log(sanitizedHours);
-            console.log('no match');
+            // console.log(sanitizedHours);
+            // console.log('no match');
 
                 if (checkIfOpen(allHours) === false) {
-                    console.log('returning tomorrow');
+                    // console.log('returning tomorrow');
                     return getTomorrow();
                 } else {
-                    console.log('returning unknown');
+                    // console.log('returning unknown');
                     return 'Unknown';
                 
 
@@ -134,7 +134,7 @@ const useLocationDetailFunctions = () => {
         period = match[5]; 
 
         if (!endTime || !period) {
-            console.log('Invalid time or period format');
+            // console.log('Invalid time or period format');
             if (checkIfOpen(allHours) === false) {
                 return getTomorrow();
             } else {
@@ -147,7 +147,7 @@ const useLocationDetailFunctions = () => {
     
         // Check if hour and minute are valid numbers
         if (isNaN(hour) || isNaN(minute)) {
-            console.log('Invalid time format');
+            // console.log('Invalid time format');
             return getCurrentDay();
         }
     
@@ -161,10 +161,10 @@ const useLocationDetailFunctions = () => {
     
         // Compare the current time with the end time
         if (currentHour > endHour24 || (currentHour === endHour24 && currentMinute > minute)) {
-            console.log('returning tomorrow\'s date'); 
+            // console.log('returning tomorrow\'s date'); 
             return getTomorrow();
         } else {
-            console.log('returning today', currentHour, endHour24);
+            // console.log('returning today', currentHour, endHour24);
             return getCurrentDay();
         }
     };

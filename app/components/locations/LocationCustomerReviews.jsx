@@ -12,38 +12,31 @@ const LocationCustomerReviews = ({ reviews }) => {
   }
 
   return (
-    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
-      <View style={styles.header}>
-        <Text style={[styles.title, themeStyles.genericText]}>Reviews</Text> 
-        </View>
-        <ScrollView horizontal contentContainerStyle={[styles.reviewsContainer]}>
+    <View style={[styles.container]}>
+ 
+        <ScrollView horizontal nestedScrollEnabled snapToAlignment='start' pagingEnabled contentContainerStyle={[styles.reviewsContainer]} >
           {reviews.map((review, index) => (
             <View key={index} style={styles.reviewCard}>
               <LocationCustomerReviewCard review={review} backgroundColor={themeStyles.genericTextBackground.backgroundColor} textColor={themeStyles.genericText.color} />
             </View>
           ))}
+          <View style={{width: 400}}></View>
         </ScrollView> 
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {  
-    borderRadius: 30, 
-    margin: '4%',
+  container: {   
+    
     
     alignContents: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    padding: 20,  
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
+      flexDirection: 'row',
+ 
+  }, 
   title: {
     fontSize: 15,
     lineHeight: 21,
@@ -54,7 +47,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',
-    maxHeight: 300,
+    maxHeight: 200,
   },
   reviewCard: {
     marginRight: 8,

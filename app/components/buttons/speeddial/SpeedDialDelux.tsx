@@ -14,6 +14,7 @@ import AddMomentButton from "../moments/AddMomentButton";
 interface SpeedDialDeluxProps {
   rootIcon: React.FC<SvgProps>;
   topIcon: React.FC<SvgProps>;
+  rootOnPressPrefetches: () => void; // in toggleButtons
   topOnPress: () => void;
   icon: React.ReactElement;
   midOnPress: () => void;
@@ -24,6 +25,7 @@ interface SpeedDialDeluxProps {
 const SpeedDialDelux: React.FC<SpeedDialDeluxProps> = ({
   rootIcon,
   topIcon,
+  rootOnPressPrefetches=() => {},
   topOnPress,
   midIcon,
   midOnPress,
@@ -33,6 +35,8 @@ const SpeedDialDelux: React.FC<SpeedDialDeluxProps> = ({
   const midAnimatedHeight = -38;
 
   const moveDeluxButtonOffScreen = -200;
+  //console.log('hi!');
+    rootOnPressPrefetches();
 
   const topMidIconSize = 32;
   const topMidDiameter = 50;
@@ -92,7 +96,8 @@ const SpeedDialDelux: React.FC<SpeedDialDeluxProps> = ({
 
   const toggleButtons = () => {
     if (!expanded) {
-      setExpanded(true);
+      setExpanded(true); 
+      
 
       Animated.parallel([
         Animated.timing(animation1, {

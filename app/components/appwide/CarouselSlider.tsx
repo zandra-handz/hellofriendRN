@@ -4,12 +4,15 @@ import { useWindowDimensions } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import ItemFooter from "../headers/ItemFooter";
 
 const CarouselSlider = ({
   initialIndex,
   data,
   children: Children,
   onIndexChange,
+  type,
+  footerData,
 }) => {
   const { height, width } = useWindowDimensions();
   const { themeStyles } = useGlobalStyle();
@@ -18,8 +21,7 @@ const CarouselSlider = ({
   const ITEM_WIDTH = width - 40;
   const ITEM_MARGIN = 20;
 
-  const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2;
-
+  const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2; 
   const flatListRef = useAnimatedRef(null);
 
   const extractItemKey = (item, index) =>
@@ -67,9 +69,9 @@ const CarouselSlider = ({
   const renderHelloPage = useCallback(
     ({ item, index }) => (
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
-      <>
-        <Children item={item} index={index} width={width} height={height} />
-      </>
+      <View style={{flex: 1, height: '91%'}}>
+        <Children item={item} index={index} width={width} height={height} currentIndex={currentIndex} />
+      </View>
 
       //   <View
       //     style={{
@@ -94,13 +96,13 @@ const CarouselSlider = ({
 
       // </View>
     ),
-    [width]
+     [width, height, currentIndex] 
   );
 
   return (
     <>
       <View
-        style={{
+        style={{ 
           //position: "absolute",
           zIndex: 1000,
 
@@ -195,6 +197,7 @@ const CarouselSlider = ({
         horizontal={true}
         renderItem={renderHelloPage}
         initialScrollIndex={initialIndex}
+        nestedScrollEnabled
         //           viewabilityConfigCallbackPairs={
         //   viewabilityConfigCallbackPairs.current
         // }
@@ -204,9 +207,9 @@ const CarouselSlider = ({
         onScroll={handleScroll}
         keyExtractor={extractItemKey}
         getItemLayout={getItemLayout}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={10}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
+        windowSize={5}
         removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
         snapToAlignment={"start"}
@@ -215,6 +218,11 @@ const CarouselSlider = ({
         //   snapToOffsets={true}
         ListFooterComponent={() => <View style={{ width: 100 }} />}
       />
+      {type === 'location' && (
+        
+      <ItemFooter location={data[currentIndex - 1]} extraData={footerData}/>
+      
+      )}
     </>
   );
 };

@@ -21,14 +21,18 @@ import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useTravelTimes from "@/src/hooks/useTravelTimes";
+import LoadingPage from "../appwide/spinner/LoadingPage";
+
 const LocationTravelTimes = ({
   location, 
+  userAddress,
+  friendAddress,
   smallClockIconSize=20,
   iconSize=34, 
 }) => {
   const { themeAheadOfLoading } = useFriendList();
   const [isModalVisible, setModalVisible] = useState(false);
-  const { themeStyles } = useGlobalStyle(); 
+  const { themeStyles, appContainerStyles } = useGlobalStyle(); 
   const { currentLocationDetails } = useCurrentLocation();
   const { checkCache, travelTimesMutation, travelTimeResults } = useTravelTimes();
   const [cachedTravelTimes, setCachedTravelTimes] = useState([]);
@@ -65,19 +69,19 @@ const LocationTravelTimes = ({
   };
 
   useEffect(() => {
-    if (triggerFetch && location && defaultUserAddress && defaultAddress) {
+    if (triggerFetch && location && userAddress && friendAddress) {
       try {
         //console.log(location);
         //console.log(defaultUserAddress);
         //console.log(defaultAddress);
   
         const locationData = {
-          address_a_address: defaultUserAddress.address,
-          address_a_lat: parseFloat(defaultUserAddress.lat),
-          address_a_long: parseFloat(defaultUserAddress.lng),
-          address_b_address: defaultAddress.address,
-          address_b_lat: parseFloat(defaultAddress.lat),
-          address_b_long: parseFloat(defaultAddress.lng),
+          address_a_address: userAddress.address,
+          address_a_lat: parseFloat(userAddress.lat),
+          address_a_long: parseFloat(userAddress.lng),
+          address_b_address: friendAddress.address,
+          address_b_lat: parseFloat(friendAddress.lat),
+          address_b_long: parseFloat(friendAddress.lng),
           destination_address: location.address,
           destination_lat: parseFloat(location.latitude),
           destination_long: parseFloat(location.longitude),
@@ -96,7 +100,7 @@ const LocationTravelTimes = ({
       // Reset the trigger
       setTriggerFetch(false);
     }
-  }, [triggerFetch, defaultUserAddress, defaultAddress, location, travelTimesMutation]);
+  }, [triggerFetch, userAddress, friendAddress, location, travelTimesMutation]);
   
 
   const handlePress = () => {
@@ -136,8 +140,7 @@ const LocationTravelTimes = ({
  
         setCachedTravelTimes(
           checkCache(defaultUserAddress, defaultAddress, location)
-        );
-        console.log('use effect for cached data,', location.id, defaultAddress?.address);
+        ); 
         //setIsCached(cachedData);
       }
     }, [location, defaultUserAddress, defaultAddress, isModalVisible])
@@ -147,13 +150,28 @@ const LocationTravelTimes = ({
  
 
   return (
-    <View>
+    <View style={styles.container}>
       {location && !String(location.id).startsWith("temp") && (
-        <View style={styles.container}>
+        <>
+
+              {travelTimesMutation.isPending && (
+        <View style={appContainerStyles.loadingFriendProfileButtonWrapper}>
+          <LoadingPage
+            loading={true}
+            color={themeAheadOfLoading.darkColor}
+            spinnerType="flow"
+            spinnerSize={30}
+            includeLabel={false}
+          />
+        </View>
+      )}
+
+      {!travelTimesMutation.isPending && (
+        <>
          
             {(!cachedTravelTimes || !defaultUserAddress || !defaultAddress) && (
               <>
-                <View style={{ position: "absolute", top: -6 }}>
+                <View style={{ position: "absolute", top: 4 }}>
                   <ClockOutlineSvg
                     width={smallClockIconSize}
                     height={smallClockIconSize}
@@ -192,7 +210,9 @@ const LocationTravelTimes = ({
                 </View>
               </View>
             )}
-          </View> 
+          </> 
+      )}
+      </>
       )}
 
     </View>
@@ -204,7 +224,9 @@ const styles = StyleSheet.create({
     justifyContent: "center", 
     flexSrink: 1,
     width: 'auto', 
-    alignItems: 'center',
+    alignItems: 'center', 
+    height: '100%',
+    overflow: 'hidden',
      
     
     

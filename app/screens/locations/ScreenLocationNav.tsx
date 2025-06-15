@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import OverlayLargeButton from "@/app/components/appwide/button/OverlayLargeButton";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -28,6 +28,36 @@ const ScreenLocationNav = () => {
   });
 
   const navigation = useNavigation();
+
+  const handleGoToMapSearch = () => {
+    if (!friendAddress?.id || !userAddress?.id) {
+      Alert.alert(
+        "Warning!",
+        `Some features will not be available to you unless both addresses are set.`,
+        [
+          {
+            text: "Go back",
+            onPress: () => {},
+            style: "cancel",
+          },
+          {
+            text: "Proceed anyway",
+            onPress: () =>
+              navigation.navigate("LocationSearch", {
+                userAddress: userAddress,
+                friendAddress: friendAddress,
+              }),
+          },
+        ]
+      );
+    }
+    if (friendAddress?.id && userAddress?.id) {
+      navigation.navigate("LocationSearch", {
+        userAddress: userAddress,
+        friendAddress: friendAddress,
+      });
+    }
+  };
 
   const renderHeader = useCallback(
     () => (
@@ -84,24 +114,23 @@ const ScreenLocationNav = () => {
                 // END
               }}
             >
-              <OverlayLargeButton
-                label={"Map Search"}
-                onPress={() => navigation.navigate("LocationSearch", {userAddress: userAddress, friendAddress: friendAddress})}
-              />
-              <OverlayLargeButton
+
+              {/* <OverlayLargeButton
                 label={"Saved Locations"}
                 onPress={() => navigation.navigate("Locations")}
-              />
+              /> */}
               {userAddress && friendAddress && (
-                
-              <ActiveAddresses
-                userAddress={userAddress}
-                setUserAddress={setUserAddress}
-                friendAddress={friendAddress}
-                setFriendAddress={setFriendAddress}
-              />
-              
+                <ActiveAddresses
+                  userAddress={userAddress}
+                  setUserAddress={setUserAddress}
+                  friendAddress={friendAddress}
+                  setFriendAddress={setFriendAddress}
+                />
               )}
+                            <OverlayLargeButton
+                label={"Map Search"}
+                onPress={handleGoToMapSearch}
+              />
             </View>
           </View>
         </>

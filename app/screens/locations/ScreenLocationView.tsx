@@ -17,7 +17,12 @@ import LocationViewPage from "@/app/components/locations/LocationViewPage";
 const ScreenLocationView = () => {
   const route = useRoute();
   const currentIndex = route.params?.index ?? null; 
+    const userAddress = route?.params?.userAddress ?? null;
+  const friendAddress = route?.params?.friendAddress ?? null;
   const { themeStyles, appFontStyles } = useGlobalStyle();
+
+  const now = new Date(); 
+const dayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
 
   const { capsuleList, deleteMomentRQuery } = useCapsuleList();
   // const [currentIndex, setCurrentIndex] = useState(0);
@@ -43,6 +48,8 @@ const ScreenLocationView = () => {
         initialIndex={currentIndex}
         data={[...faveLocations, ...nonFaveLocations]}
         children={LocationViewPage}
+        type={'location'}
+        footerData={{ userAddress, friendAddress }}
          
  
       

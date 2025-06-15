@@ -227,7 +227,7 @@ const LocationsMapView = ({
   };
 
   const handleGoToLocationViewScreen = () => {
-    console.log(focusedLocation);
+   
   if (
   typeof focusedLocation.matchedIndex === "number" &&
   focusedLocation.matchedIndex !== -1
@@ -235,10 +235,14 @@ const LocationsMapView = ({
   
     navigation.navigate("LocationView", {
       index: focusedLocation.matchedIndex,
+      userAddress: userAddress,
+      friendAddress: friendAddress,
     });
   } else {
     navigation.navigate("UnsavedLocationView", {
       unsavedLocation: focusedLocation,
+      userAddress: userAddress,
+      friendAddress: friendAddress,
     })
   }
   };

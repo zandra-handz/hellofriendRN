@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, ScrollView, Image, StyleSheet, Text } from 'react-native';
+import { View, ScrollView,   StyleSheet, Text } from 'react-native';
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
+import { Image } from 'expo-image';
  
 const LocationImages = ({ photos }) => { 
 
