@@ -24,7 +24,7 @@ import ModalAddNewLocation from "./ModalAddNewLocation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useLocations } from "@/src/context/LocationsContext";
-
+import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
@@ -40,7 +40,7 @@ const LocationSavingActions = ({
 }) => {
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { handleAddToFaves, handleRemoveFromFaves } = useLocations();
+  const { handleAddToFaves, handleRemoveFromFaves } = useFriendLocationsContext();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModal2Visible, setModal2Visible] = useState(false);

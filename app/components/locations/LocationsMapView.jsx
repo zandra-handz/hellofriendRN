@@ -51,6 +51,8 @@ const LocationsMapView = ({
 }) => {
   const MemoizedDualLocationSearcher = React.memo(DualLocationSearcher);
 
+  const combinedLocations = [...faveLocations, ...nonFaveLocations];
+
   //i think when i put this in the parent screen it starts up faster?
   //useGeolocationWatcher();
   const mapRef = useRef(null);
@@ -170,36 +172,42 @@ const LocationsMapView = ({
     }
   }, [currentRegion]);
 
+  //pastHelloes is ALL LOCATIONS with the additional helloes data
   const handleLocationAlreadyExists = (locationDetails, addMessage) => {
     let matchedLocation;
     let locationIsOutsideFaves = false;
 
-    let index = pastHelloLocations.findIndex(
+    let index = combinedLocations.findIndex(
       (location) => String(location.address) === String(locationDetails.address)
     );
+ 
 
     if (index !== -1) {
-      matchedLocation = { ...pastHelloLocations[index], matchedIndex: index };
-    } else {
-      index = locationList.findIndex(
-        (location) =>
-          String(location.address) === String(locationDetails.address)
-      );
+      console.log('LOCATION EXISTS!');
+      matchedLocation = { ...combinedLocations[index], matchedIndex: index };
+       setFocusedLocation(matchedLocation);
+    } 
+    
+    else {
+      // index = locationList.findIndex(
+      //   (location) =>
+      //     String(location.address) === String(locationDetails.address)
+      // );
 
 
       //if no match is found, findIndex returns -1, whereas if index 0 will return 0
-      if (index !== -1) {
-        matchedLocation = { ...locationList[index], matchedIndex: index };
+      // if (index !== -1) {
+      //   matchedLocation = { ...locationList[index], matchedIndex: index };
         locationIsOutsideFaves = true;
-      }
-    }
+          setFocusedLocation( locationDetails);
+      // }
+    } 
+  
 
-    setFocusedLocation(matchedLocation || locationDetails);
-
-    return {
-      matchedLocation: matchedLocation || locationDetails,
-      locationIsOutsideFaves,
-    };
+    // return {
+    //   matchedLocation: matchedLocation || locationDetails,
+    //   locationIsOutsideFaves,
+    // };
   };
 
   useEffect(() => {
@@ -234,6 +242,7 @@ const LocationsMapView = ({
 ) {
   
     navigation.navigate("LocationView", {
+      startingLocation: focusedLocation,
       index: focusedLocation.matchedIndex,
       userAddress: userAddress,
       friendAddress: friendAddress,
@@ -305,10 +314,11 @@ const LocationsMapView = ({
   const handlePress = (location) => {
     if (location) {
       handleLocationAlreadyExists(location, true); //true is for addMessage
-      const appOnly = pastHelloLocations.find(
-        (item) => item.id === location.id
-      );
-      setAppOnlyLocationData(appOnly || null); // this is just the id... ??????????
+      // const appOnly = pastHelloLocations.find(
+      //   (item) => item.id === location.id
+      // );
+      // setAppOnlyLocationData(appOnly || null); // this is just the id... ??????????
+  
     }
   };
 

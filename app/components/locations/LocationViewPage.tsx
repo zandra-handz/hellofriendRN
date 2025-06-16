@@ -71,7 +71,7 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
 
   const { data: additionalDetails } = useFetchAdditionalDetails(
   item,
-  Math.abs(index - currentIndex) <= 2
+  Math.abs(index - currentIndex) <= 1
 );
   //  useEffect(() => {
   //   if (additionalDetails) {

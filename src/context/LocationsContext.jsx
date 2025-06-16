@@ -5,9 +5,7 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import {
-  addToFriendFavesLocations,
-  removeFromFriendFavesLocations,
+import { 
   fetchAllLocations,
   fetchLocationDetails,
   createLocation,
@@ -17,7 +15,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "./UserContext"; // Import the AuthUser context
 
-import { useSelectedFriend } from "../context/SelectedFriendContext";
+ 
 
 const LocationsContext = createContext([]);
 
@@ -37,10 +35,11 @@ export const LocationsProvider = ({ children }) => {
   const { user, isAuthenticated, isInitializing } = useUser();
   const queryClient = useQueryClient();
   const [isDeletingLocation, setIsDeletingLocation] = useState(false);
-
-  const { selectedFriend, friendFavesData } = useSelectedFriend();
+  const [stickToLocation, setStickToLocation] = useState(null); 
 
   const timeoutRef = useRef(null);
+
+  console.log("LOCATION CONTEXT RERENDERED");
 
   const {
     data: locationList,
@@ -51,7 +50,7 @@ export const LocationsProvider = ({ children }) => {
   } = useQuery({
     queryKey: ["locationList", user?.id],
     queryFn: () => fetchAllLocations(),
-    enabled: !!(user && isAuthenticated && !isInitializing),
+    enabled: !!(isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 20, // 20 minutes
     onSuccess: (data) => {
       //console.log('Raw data in RQ onSuccess:', data);
@@ -89,32 +88,7 @@ export const LocationsProvider = ({ children }) => {
       });
     },
   });
-
-  const filterFaveLocations = (locations, favorites) => {
-    //console.log('filterfavelocations', favorites);
-    if (locations && favorites) {
-      const faveLocations = locations.filter((location) =>
-        favorites.includes(location.id)
-      );
-      //console.log(`fave locations: `, faveLocations);
-      setFaveLocationList(faveLocations);
-    } else {
-      const faveLocations = [];
-      //console.log(`fave locations: `, faveLocations);
-      setFaveLocationList(faveLocations);
-    }
-  };
-
-  //THIS IS WHAT FILTERS THE FAVES AND THE DATA COMES FROM THE CACHE IN SELECTEDFRIEND
-  useEffect(() => {
-    //console.log('use effect for faaaave locations triggered', friendFavesData);
-    if (locationList && friendFavesData) {
-      //console.log('heading to function');
-      const favorites = friendFavesData.friendFaveLocations || null;
-      filterFaveLocations(locationList, favorites);
-    }
-  }, [locationList, friendFavesData]);
-
+ 
   //MIGHT NEED TO REFETCH THIS DATA IF NO LONGER IN CACHE
   useEffect(() => {
     if (locationList) {
@@ -251,147 +225,11 @@ export const LocationsProvider = ({ children }) => {
       console.error("Error saving location:", error);
     }
   };
+ 
 
-  const removeFromFavesMutation = useMutation({
-    mutationFn: (data) => removeFromFriendFavesLocations(data),
-    onSuccess: (data) => {
-      const friendData = queryClient.getQueryData([
-        "friendDashboardData",
-        user?.id,
-        selectedFriend?.id,
-      ]);
+ 
 
-      queryClient.setQueryData(
-        ["friendDashboardData", user?.id, selectedFriend?.id],
-        (old) => {
-          if (!old || !old[0]) {
-            return {
-              0: {
-                friend_faves: {
-                  locations: data.locations,
-                },
-                ...old?.[0],
-              },
-            };
-          }
-
-          const updatedDashboardData = {
-            ...old,
-            0: {
-              ...old[0],
-              friend_faves: {
-                ...old[0].friend_faves,
-                locations: data.locations,
-              },
-            },
-          };
-
-          //console.log(updatedDashboardData);
-          return updatedDashboardData;
-        }
-      );
-    },
-    onError: (error) => {
-      console.error("Error removing location to friend faves:", error);
-    },
-    onSettled: () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        removeFromFavesMutation.reset();
-      }, 2000);
-    },
-  });
-
-  const handleRemoveFromFaves = async (friendId, locationId) => {
-    const favoriteLocationData = {
-      friendId: friendId,
-      userId: user.id,
-      locationId: locationId,
-    };
-
-    try {
-      await removeFromFavesMutation.mutateAsync(favoriteLocationData);
-    } catch (error) {
-      console.error("Error removing location from friend faves: ", error);
-    }
-  };
-
-  const [locationFaveAction, setLocationFaveAction] = useState(null);
-
-  const addToFavesMutation = useMutation({
-    mutationFn: (data) => {
-      setLocationFaveAction(data.locationId); // Set the loading state before the mutation starts
-      return addToFriendFavesLocations(data);
-    },
-    onSuccess: (data, variables) => {
-      const friendData = queryClient.getQueryData([
-        "friendDashboardData",
-        user?.id,
-        selectedFriend?.id,
-      ]);
-      queryClient.setQueryData(
-        ["friendDashboardData", user?.id, selectedFriend?.id],
-        (old) => {
-          if (!old || !old[0]) {
-            return {
-              0: {
-                friend_faves: {
-                  locations: data.locations,
-                },
-                ...old?.[0],
-              },
-            };
-          }
-
-          const updatedDashboardData = {
-            ...old,
-            0: {
-              ...old[0],
-              friend_faves: {
-                ...old[0].friend_faves,
-                locations: data.locations,
-              },
-            },
-          };
-
-          setLocationFaveAction(null);
-
-          //console.log(updatedDashboardData);
-          return updatedDashboardData;
-        }
-      );
-    },
-    onError: (error) => {
-      console.error("Error adding location to friend faves:", error);
-    },
-    onSettled: () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        addToFavesMutation.reset();
-      }, 2000);
-    },
-  });
-
-  const handleAddToFaves = async (friendId, locationId) => {
-    const favoriteLocationData = {
-      friendId: friendId,
-      userId: user.id,
-      locationId: locationId,
-    };
-
-    try {
-      await addToFavesMutation.mutateAsync(favoriteLocationData);
-    } catch (error) {
-      console.error("Error adding location to friend faves: ", error);
-    }
-  };
-
+ 
   const deleteLocationMutation = useMutation({
     mutationFn: (data) => deleteLocation(data),
 
@@ -512,8 +350,7 @@ export const LocationsProvider = ({ children }) => {
   return (
     <LocationsContext.Provider
       value={{
-        locationList,
-        faveLocationList,
+        locationList, 
         locationsIsFetching,
         isFetching,
         locationListIsSuccess,
@@ -521,9 +358,7 @@ export const LocationsProvider = ({ children }) => {
         handleCreateLocation,
         createLocationMutation,
         handleUpdateLocation,
-        updateLocationMutation,
-        handleAddToFaves,
-        handleRemoveFromFaves,
+        updateLocationMutation, 
         handleDeleteLocation,
         deleteLocationMutation,
         isDeletingLocation,
@@ -533,16 +368,16 @@ export const LocationsProvider = ({ children }) => {
         selectedLocation,
         additionalDetails,
         setSelectedLocation,
-        addLocationToFaves,
-        addToFavesMutation,
-        removeLocationFromFaves,
-        removeFromFavesMutation,
+        addLocationToFaves, 
+        removeLocationFromFaves, 
         loadingSelectedLocation,
         loadingAdditionalDetails,
         useFetchAdditionalDetails,
         clearAdditionalDetails,
 
         accessLocationListCacheData,
+        stickToLocation,
+        setStickToLocation,
       }}
     >
       {children}

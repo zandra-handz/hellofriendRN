@@ -10,9 +10,7 @@ export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const { user, isAuthenticated } = useUser();
   const { friendList, resetTheme } = useFriendList();
-  const [friendFavesData, setFriendFavesData] = useState({
-    friendFaveLocations: null,
-  });
+  const [friendFavesData, setFriendFavesData] = useState(null);
 
   const [friendColorTheme, setFriendColorTheme] = useState({
     useFriendColorTheme: null,
@@ -36,9 +34,7 @@ export const SelectedFriendProvider = ({ children }) => {
     enabled: !!(isAuthenticated && selectedFriend && selectedFriend?.id),
     staleTime: 1000 * 60 * 20, // 20 minutes
 
-    onError: (err) => {
-      console.error("Error fetching friend data:", err);
-    },
+     
   });
 
 
@@ -58,43 +54,43 @@ const colorThemeData = useMemo(() => {
 }, [friendDashboardData, isSuccess]);
 
 const favesData = useMemo(() => {
-  if (!friendDashboardData || !isSuccess) return null;
-  const cachedDataLower = friendDashboardData[0]?.friend_faves?.locations || null;
-
-  return {
-    friendFaveLocations: cachedDataLower,
-  };
-}, [friendDashboardData, isSuccess]);
+  if (!friendDashboardData) return null;
+  return friendDashboardData[0]?.friend_faves?.locations || null;
+ 
+}, [friendDashboardData ]);
 
 useEffect(() => {
-  if (colorThemeData && favesData) {
-    console.log("Setting color theme data in selectedFriend useEffect:", colorThemeData);
-    setFriendColorTheme(colorThemeData);
-    console.log("Setting friend faves data in selectedFriend useEffect:", favesData);
-    setFriendFavesData(favesData);
+  if (colorThemeData ) {
+   setFriendColorTheme(colorThemeData); 
   }
-}, [colorThemeData, favesData]);
+}, [colorThemeData ]);
+
+useEffect(() => {
+  if ( favesData) {
+  setFriendFavesData(favesData);
+  }
+}, [ favesData]);
 
 
-  const getFaveLocationIds = () => {
-    if (!selectedFriend || !selectedFriend.id) {
-      console.warn("No selected friend or friend ID found");
-      return [];
-    }
+  // const getFaveLocationIds = () => {
+  //   if (!selectedFriend || !selectedFriend.id) {
+  //     console.warn("No selected friend or friend ID found");
+  //     return [];
+  //   }
 
-    const cachedData = queryClient.getQueryData([
-      "friendDashboardData",
-      user?.id,
-      selectedFriend.id,
-    ]);
+  //   const cachedData = queryClient.getQueryData([
+  //     "friendDashboardData",
+  //     user?.id,
+  //     selectedFriend.id,
+  //   ]);
 
-    if (cachedData && cachedData[0] && cachedData[0].friend_faves) {
-      return cachedData[0].friend_faves.locations || [];
-    }
+  //   if (cachedData && cachedData[0] && cachedData[0].friend_faves) {
+  //     return cachedData[0].friend_faves.locations || [];
+  //   }
 
-    console.warn("No cached data found for selected friend");
-    return [];
-  };
+  //   console.warn("No cached data found for selected friend");
+  //   return [];
+  // };
 
   useEffect(() => {
     if (isError) {
@@ -139,9 +135,10 @@ useEffect(() => {
   // }, [friendDashboardData]);
 
   const deselectFriend = () => { 
-    setSelectedFriend(null);
+
+    queryClient.resetQueries(["friendDashboardData", user?.id, selectedFriend?.id]);
+        setSelectedFriend(null);
     resetTheme();
-    queryClient.resetQueries(["friendDashboardData"]);
     setFriendColorTheme({
       useFriendColorTheme: null,
       invertGradient: null,
@@ -186,9 +183,10 @@ useEffect(() => {
         friendColorTheme,
         setFriendColorTheme,
         friendFavesData, 
+        setFriendFavesData,
         loadingNewFriend, 
         updateFriendColorTheme, 
-        getFaveLocationIds,
+      //  getFaveLocationIds,
       }}
     >
       {children}

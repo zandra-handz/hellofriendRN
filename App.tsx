@@ -85,7 +85,7 @@ import ScreenHelloView from "./app/screens/helloes/ScreenHelloView";
 import ScreenImageView from "./app/screens/images/ScreenImageView";
 import ScreenLocationView from "./app/screens/locations/ScreenLocationView";
 import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLocationView";
-     
+
 import HeaderLocation from "./app/components/headers/HeaderLocation";
 import HeaderBase from "./app/components/headers/HeaderBase";
 import HeaderLocationSingle from "./app/components/headers/HeaderLocationSingle";
@@ -188,8 +188,6 @@ export default Sentry.wrap(function App() {
 
   if (!fontsLoaded) {
     return null;
-
- 
   }
 
   return (
@@ -199,35 +197,33 @@ export default Sentry.wrap(function App() {
           <UserProvider>
             <GlobalStyleProvider>
               <DeviceLocationProvider>
-                
-              <UpcomingHelloesProvider>
-                <FriendListProvider>
-                  <SelectedFriendProvider>
-                    <LocationsProvider>
-                      {/* <PhoneStatusBar /> */}
-                      <CapsuleListProvider>
-                        <HelloesProvider>
-                          <FriendLocationsProvider>
-                            <MessageContextProvider>
-                              <SafeAreaProvider>
-                                {/* <SafeView  // in screen components instead
+                <LocationsProvider>
+                  <UpcomingHelloesProvider>
+                    <FriendListProvider>
+                      <SelectedFriendProvider>
+                        {/* <PhoneStatusBar /> */}
+                        <CapsuleListProvider>
+                          <HelloesProvider>
+                            <FriendLocationsProvider>
+                              <MessageContextProvider>
+                                <SafeAreaProvider>
+                                  {/* <SafeView  // in screen components instead
                                 style={{
                                   flex: 1,
                                   backgroundColor: "transparent",
                                 }}
                               > */}
-                                <Layout />
-                                {/* </SafeView> */}
-                              </SafeAreaProvider>
-                            </MessageContextProvider>
-                          </FriendLocationsProvider>
-                        </HelloesProvider>
-                      </CapsuleListProvider>
-                    </LocationsProvider>
-                  </SelectedFriendProvider>
-                </FriendListProvider>
-              </UpcomingHelloesProvider>
-              
+                                  <Layout />
+                                  {/* </SafeView> */}
+                                </SafeAreaProvider>
+                              </MessageContextProvider>
+                            </FriendLocationsProvider>
+                          </HelloesProvider>
+                        </CapsuleListProvider>
+                      </SelectedFriendProvider>
+                    </FriendListProvider>
+                  </UpcomingHelloesProvider>
+                </LocationsProvider>
               </DeviceLocationProvider>
             </GlobalStyleProvider>
           </UserProvider>
@@ -552,7 +548,6 @@ export const Layout = () => {
                   component={ScreenLocationCreate}
                   options={() => ({
                     headerShown: false,
-                
                   })}
                 />
                 {/* <Stack.Screen

@@ -1,13 +1,17 @@
 import { View, Text, Dimensions, TouchableOpacity } from "react-native";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useWindowDimensions } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, { useAnimatedRef } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ItemFooter from "../headers/ItemFooter";
+import { useLocations } from "@/src/context/LocationsContext";
+import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 
 const CarouselSlider = ({
   initialIndex,
+  scrollToEdit,
+  scrollToEditCompleted,
   data,
   children: Children,
   onIndexChange,
@@ -16,13 +20,21 @@ const CarouselSlider = ({
 }) => {
   const { height, width } = useWindowDimensions();
   const { themeStyles } = useGlobalStyle();
+  const { stickToLocation, setStickToLocation } = useFriendLocationsContext();
   //const { width } = Dimensions.get('screen');
   const ITEM_HEIGHT = "100%";
   const ITEM_WIDTH = width - 40;
   const ITEM_MARGIN = 20;
-
+console.log('CAROUSEL RERENDERED');
+console.log(stickToLocation);
   const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2; 
   const flatListRef = useAnimatedRef(null);
+
+
+    const [currentIndex, setCurrentIndex] = useState(initialIndex + 1);
+  const [currentCategory, setCurrentCategory] = useState(
+    data[initialIndex + 1]?.typedCategory || data[initialIndex + 1]?.image_category
+  );
 
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `hello-${index}`;
@@ -33,6 +45,25 @@ const CarouselSlider = ({
       offset: COMBINED * index,
       index,
     };
+  };
+
+useEffect(() => {
+  if (stickToLocation) {
+    console.log('scrolling to index for location id', stickToLocation);
+    const newIndex = data.findIndex((item) => item.id === stickToLocation);
+    console.log('scrolling to index', newIndex);
+    scrollToIndexAfterEdit(newIndex);
+    //scrollToEditCompleted();
+    
+  }
+}, [stickToLocation]);
+
+    const scrollToIndexAfterEdit = (index) => {
+    flatListRef.current?.scrollToIndex({
+      index: index,
+      animated: false,
+    });
+    setStickToLocation(null);
   };
 
   const scrollToStart = () => {
@@ -46,10 +77,7 @@ const CarouselSlider = ({
     flatListRef.current?.scrollToEnd({ animated: true });
   };
 
-  const [currentIndex, setCurrentIndex] = useState(initialIndex + 1);
-  const [currentCategory, setCurrentCategory] = useState(
-    data[initialIndex]?.typedCategory || data[initialIndex]?.image_category
-  );
+
 
   const handleScroll = useCallback(
     (event) => {

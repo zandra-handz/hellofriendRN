@@ -24,7 +24,7 @@ const ScreenMoments = () => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
-
+console.log('MOMENTS RERENDERED');
   const navigation = useNavigation();
 
   const renderHeader = useCallback(

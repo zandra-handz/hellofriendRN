@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { View, Text } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -16,6 +16,7 @@ import LocationViewPage from "@/app/components/locations/LocationViewPage";
 
 const ScreenLocationView = () => {
   const route = useRoute();
+  const startingLocation = route.params?.startingLocation ?? null;
   const currentIndex = route.params?.index ?? null; 
     const userAddress = route?.params?.userAddress ?? null;
   const friendAddress = route?.params?.friendAddress ?? null;
@@ -23,12 +24,11 @@ const ScreenLocationView = () => {
 
   const now = new Date(); 
 const dayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
-
-  const { capsuleList, deleteMomentRQuery } = useCapsuleList();
+ 
   // const [currentIndex, setCurrentIndex] = useState(0);
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
-  const { faveLocations, nonFaveLocations } = useFriendLocationsContext();
+  const { faveLocations, nonFaveLocations, stickToLocation, setStickToLocation } = useFriendLocationsContext();
 
   const renderHeader = useCallback(
     () => (
@@ -42,10 +42,18 @@ const dayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
     [selectedFriend, loadingNewFriend, themeAheadOfLoading]
   );
 
+    useEffect(() => {
+      console.log(`stickto location`, stickToLocation);
+  
+    }, [stickToLocation]);
+  
+
   return (
     <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
       <CarouselSlider
         initialIndex={currentIndex}
+        scrollToEdit={stickToLocation}
+        scrollToEditCompleted={() => setStickToLocation(null)}
         data={[...faveLocations, ...nonFaveLocations]}
         children={LocationViewPage}
         type={'location'}
