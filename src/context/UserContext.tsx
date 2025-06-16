@@ -4,15 +4,14 @@ import React, {
   useState,
   useRef,
   useEffect,
-
 } from "react";
-import {   AccessibilityInfo,
-  Platform } from 'react-native';
+import { AccessibilityInfo, Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
-import * as Device from 'expo-device';
+import * as Device from "expo-device";
+import { startTransition } from "react";
 //import useProtectedRoute from "../hooks/useProtectedRoute";
 // import {
 //   signup,
@@ -93,7 +92,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     isReinitializing = true;
     try {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
-      console.log("stored token: ", token);
 
       if (token) {
         let userData = null;
@@ -106,19 +104,40 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
 
         if (userData) {
-          setUser(userData);
-          setAuthenticated(true);
-
-          // FIX
-          setUserAppSettings(userData.settings || {});
-          setUserNotificationSettings({
-            receive_notifications:
-              userData.settings?.receive_notifications || false,
+          console.log('userData returned from backend');
+          startTransition(() => {
+            setUser(userData);
+            console.log('userdata set');
+            setAuthenticated(true);
+            console.log('authenticated set');
+            setUserAppSettings(userData.settings || {});
+            console.log('app settings set');
+            setUserNotificationSettings({
+              receive_notifications:
+                userData.settings?.receive_notifications || false,
+            });
+            console.log('notifications set');
           });
-          /////////////////////////////////////////////////////////
+          // setUser(userData);
+          // console.log('USERDATA SET');
+          // if (authenticated !== true) {
 
+          // setAuthenticated(true);
+          // console.log('AUTHENICATED SET TO TRUE');
+          // }
+
+          // // FIX
+          // setUserAppSettings(userData.settings || {});
+          // console.log('APP SETTINGS SET');
+          // setUserNotificationSettings({
+          //   receive_notifications:
+          //     userData.settings?.receive_notifications || false,
+          // });
+          // console.log('NOTIFS SET');
+          /////////////////////////////////////////////////////////
         } else {
-          console.log("setting user auth to false");
+          console.log("not authenticated");
+          setUser(null);
           setAuthenticated(false);
           queryClient.clear();
         }
@@ -131,14 +150,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       isReinitializing = false;
     }
   };
-
-  function usePrevious<T>(value: T): T | undefined {
-    const ref = useRef<T>();
-    useEffect(() => {
-      ref.current = value;
-    }, [value]);
-    return ref.current;
-  }
 
   const signinMutation = useMutation({
     mutationFn: signinWithoutRefresh,
@@ -212,24 +223,28 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       console.error("Sign up error", error);
     }
   };
-    useEffect(() => {
-      const fetchInitialSettings = async () => {
-        //  console.log("SCREEN READER CONTEXT");
-        try {
-          const isActive = await AccessibilityInfo.isScreenReaderEnabled();
-          setUserAppSettings((prevSettings) => ({
-            ...prevSettings,
-            screen_reader: isActive,
-          }));
-        } catch (error) {
-          console.error("Error fetching initial screen reader status:", error);
-        }
-      };
-  
-      if (authenticated && userAppSettings) {
-        fetchInitialSettings();
+  useEffect(() => {
+    if (!authenticated || !userAppSettings) return;
+
+    const fetchInitialSettings = async () => {
+      console.log("SCREEN READER CONTEXT");
+      try {
+        const isActive = await AccessibilityInfo.isScreenReaderEnabled();
+
+        setUserAppSettings((prevSettings) => {
+          // only update if value has changed
+          if (prevSettings.screen_reader !== isActive) {
+            return { ...prevSettings, screen_reader: isActive };
+          }
+          return prevSettings;
+        });
+      } catch (error) {
+        console.error("Error fetching initial screen reader status:", error);
       }
-    }, [authenticated]);
+    };
+
+    fetchInitialSettings();
+  }, [authenticated, userAppSettings]);
 
   const onSignOut = async () => {
     await signout();
@@ -291,18 +306,18 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       updateUserAccessibilitySettings(data.userId, data.setting),
     onSuccess: (data) => {
       setUserAppSettings(data); // Assuming the API returns updated settings
+      console.log("APP SETTNGS RESET");
 
-      queryClient.setQueryData(["fetchUser"], (oldData) => ({
-        ...oldData,
-        settings: data.settings,
-      }));
+      // queryClient.setQueryData(["fetchUser"], (oldData) => ({
+      //   ...oldData,
+      //   settings: data.settings,
+      // }));
     },
     onError: (error) => {
       console.error("Update app settings error:", error);
     },
   });
 
-  
   useEffect(() => {
     if (userNotificationSettings?.receive_notifications) {
       // register
@@ -344,6 +359,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           receive_notifications: true,
           expo_push_token: pushTokenString,
         });
+        console.log("UPDATED USER SETTINGS WITH NOTIFICATION SETTINGS");
       }
     }
   };

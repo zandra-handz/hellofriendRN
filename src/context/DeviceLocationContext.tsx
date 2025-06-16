@@ -46,6 +46,9 @@ export const DeviceLocationProvider: React.FC = ({ children }) => {
     DeviceLocation | undefined
   >(undefined);
 
+
+  console.log('DEVICE LOCATION RERENDERED');
+
   const [newPermissionRequest, setNewPermissionRequest] = useState<number>(0);
 
   const generateTemporaryId = () => `temp_${Date.now()}`;

@@ -13,7 +13,7 @@ import {
   deleteLocation,
 } from "../calls/api"; // Import the API methods
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useUser } from "./UserContext"; // Import the AuthUser context
+import { useUser } from "./UserContext";  
 
  
 

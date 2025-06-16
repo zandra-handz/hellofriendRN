@@ -176,7 +176,7 @@ export default Sentry.wrap(function App() {
     return () => notificationSubscription.remove();
   }, []);
 
-  const colorScheme = useColorScheme();
+  //const colorScheme = useColorScheme();
 
   // If fonts or other resources are not ready, show a loading placeholder
 
@@ -197,13 +197,15 @@ export default Sentry.wrap(function App() {
           <UserProvider>
             <GlobalStyleProvider>
               <DeviceLocationProvider>
-                <LocationsProvider>
+             
                   <UpcomingHelloesProvider>
                     <FriendListProvider>
                       <SelectedFriendProvider>
                         {/* <PhoneStatusBar /> */}
                         <CapsuleListProvider>
+                             <LocationsProvider>
                           <HelloesProvider>
+
                             <FriendLocationsProvider>
                               <MessageContextProvider>
                                 <SafeAreaProvider>
@@ -219,11 +221,12 @@ export default Sentry.wrap(function App() {
                               </MessageContextProvider>
                             </FriendLocationsProvider>
                           </HelloesProvider>
+                             </LocationsProvider>
                         </CapsuleListProvider>
                       </SelectedFriendProvider>
                     </FriendListProvider>
                   </UpcomingHelloesProvider>
-                </LocationsProvider>
+             
               </DeviceLocationProvider>
             </GlobalStyleProvider>
           </UserProvider>

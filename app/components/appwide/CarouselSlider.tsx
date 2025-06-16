@@ -97,7 +97,7 @@ useEffect(() => {
   const renderHelloPage = useCallback(
     ({ item, index }) => (
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
-      <View style={{flex: 1, height: '91%'}}>
+      <View style={{flex: 1, height: '89%'}}>
         <Children item={item} index={index} width={width} height={height} currentIndex={currentIndex} />
       </View>
 

@@ -11,8 +11,10 @@ export const useGlobalStyle = () => useContext(GlobalStyleContext);
 export const GlobalStyleProvider = ({ children }) => {
   const { user, isAuthenticated, userAppSettings, updateAppSettingsMutation } =
     useUser();
-  const colorScheme = useColorScheme();
 
+    
+  const colorScheme = useColorScheme();
+console.log('GLOBAL STYLES RERENDERED');
   // Default state
   const [styles, setStyles] = useState({
     fontSize: 16,

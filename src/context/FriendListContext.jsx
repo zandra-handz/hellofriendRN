@@ -15,8 +15,8 @@ const FriendListContext = createContext({
 export const useFriendList = () => useContext(FriendListContext);
 
 export const FriendListProvider = ({ children }) => {
-  const {  user, isAuthenticated } = useUser();   
-  const [friendList, setFriendList] = useState([]);
+  const {  user, isAuthenticated, isInitializing } = useUser();   
+  const [friendList, setFriendList] = useState(() => []); // lazy loading?
   const [ useGradientInSafeView, setUseGradientInSafeView] = useState(false);
    
   const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
@@ -70,14 +70,9 @@ const {
       fontColorSecondary: friend.theme_color_font_secondary || "#000000",
     }));
   },
-  enabled: !!(isAuthenticated),
+  enabled: !!(isAuthenticated && !isInitializing),
   staleTime: 1000 * 60 * 60 * 10, // 10 hours
-  // onSuccess: (data) => {
-  //   setFriendList(data); // updates your local state
-  // },
-  // onError: (error) => {
-  //   console.error("Error fetching friend list:", error);
-  // },
+ 
 });
 
 useEffect(() => {
@@ -87,35 +82,7 @@ useEffect(() => {
 
 }, [friendListIsSuccess] );
 
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       if (user.authenticated) { 
-  //         const friendData = await fetchFriendList(); 
-  //         const friendList = friendData.map(friend => ({ 
-  //           id: friend.id, 
-  //           name: friend.name, 
-  //           savedDarkColor: friend.saved_color_dark || '#4caf50',
-  //           savedLightColor: friend.saved_color_light || '#a0f143',
-  //           darkColor: friend.theme_color_dark || '#4caf50', 
-  //           lightColor: friend.theme_color_light || '#a0f143',
-  //           fontColor: friend.theme_color_font || '#000000',
-  //           fontColorSecondary: friend.theme_color_font_secondary || '#000000',
-  //         }));
-          
-  //         setFriendList(friendList);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching friend list:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [user.authenticated]);  
-
-
-
+ 
 
   const addToFriendList = (newFriend) => { 
     setFriendList(prevFriendList => { 
@@ -165,7 +132,7 @@ useEffect(() => {
         setThemeAheadOfLoading({lightColor: lightColor, darkColor: darkColor, fontColor: fontColor, fontColorSecondary: fontColorSecondary});
   
       }
-      return [...prevFriendList];  // Create a new array to trigger re-render
+      return [...prevFriendList];  // new array to trigger rerender
     });
   };
 
@@ -183,7 +150,7 @@ useEffect(() => {
         setThemeAheadOfLoading({lightColor: lightColor, darkColor: darkColor, fontColor: fontColor, fontColorSecondary: fontColorSecondary});
   
       }
-      return [...prevFriendList];  // Create a new array to trigger re-render
+      return [...prevFriendList];  // new array for rerender
     });
   };
 

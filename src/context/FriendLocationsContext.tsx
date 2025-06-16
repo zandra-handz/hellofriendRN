@@ -1,8 +1,7 @@
 import React, {
   createContext,
   useContext,
-  useState,
-  useEffect,
+  useState, 
   useRef,
   useMemo,
 } from "react";
@@ -12,19 +11,14 @@ import { useUser } from "./UserContext";
 import { useSelectedFriend } from "./SelectedFriendContext";
 import { useLocations } from "./LocationsContext";
 import { useHelloes } from "./HelloesContext";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {   useMutation, useQueryClient } from "@tanstack/react-query";
 import useLocationHelloFunctions from "../hooks/useLocationHelloFunctions";
 
 import {
   addToFriendFavesLocations,
   removeFromFriendFavesLocations,
-  fetchAllLocations,
-  fetchLocationDetails,
-  createLocation,
-  updateLocation,
-  deleteLocation,
-} from "../calls/api"; 
-import { set } from "date-fns";
+ 
+} from "../calls/api";  
 
 const FriendLocationsContext = createContext([]);
 
@@ -35,11 +29,11 @@ export const FriendLocationsProvider = ({ children }) => {
 
   const { user } = useUser();
  
-  const { selectedFriend, friendDashboardData, friendFavesData, setFriendFavesData } = useSelectedFriend();
+ 
+  const { selectedFriend,  friendFavesData, setFriendFavesData } = useSelectedFriend();
   const { locationList  } = useLocations();
   const { helloesList } = useHelloes();
-  const [stickToLocation, setStickToLocation ] = useState(null);
-  const [ locationFaveAction, setLocationFaveAction ] = useState(null);
+  const [stickToLocation, setStickToLocation ] = useState(null); 
     const queryClient = useQueryClient();
 
   const timeoutRef = useRef(null);
@@ -225,7 +219,7 @@ console.log('FRIEND LOCATIONS RERENDERED');
 
   // added together with spread operator, these are the complete list of locations
   const [faveLocations, nonFaveLocations] = useMemo(() => {
-    console.log(`friend location list`, friendFavesData);
+   // console.log(`friend location list`, friendFavesData);
     
     if (
       locationList &&
