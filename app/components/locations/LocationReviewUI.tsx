@@ -1,18 +1,25 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
- 
 
-import StylingRating from "./StylingRating";
+import StarsRatingUI from "./StarsRatingUI";
 
 import { useLocations } from "@/src/context/LocationsContext";
- 
+
 const formatDate = (timestamp) => {
-  const date = new Date(timestamp * 1000);  
-  return date.toLocaleDateString();  
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleDateString();
+
 };
 
-const LocationCustomerReviewCard = ({
+
+interface Props {
+  review: object[];
+  backgroundColor: string;
+  textColor: string;
+}
+
+const LocationReviewUI: React.RC<Props> = ({
   review,
   backgroundColor = "white",
   textColor = "black",
@@ -25,7 +32,7 @@ const LocationCustomerReviewCard = ({
         <LoadingPage loading={loadingAdditionalDetails} spinnerType="wander" />
       )}
       {!loadingAdditionalDetails && (
-        <ScrollView nestedScrollEnabled>
+        <>
           <View
             style={[
               styles.reviewAuthorRatingContainer,
@@ -35,22 +42,16 @@ const LocationCustomerReviewCard = ({
             <Text style={[styles.reviewAuthor, { color: textColor }]}>
               {review.author_name}
             </Text>
-                      <Text style={[styles.reviewDate, { color: textColor }]}>
-            {formatDate(review.time)}
-          </Text>
-
+            <Text style={[styles.reviewDate, { color: textColor }]}>
+              {formatDate(review.time)}
+            </Text>
           </View>
 
-                      <StylingRating
-              rating={review.rating}
-              starSize={11}
-              fontSize={13}
-              starColor="orange"
-            />
+          <StarsRatingUI rating={review.rating} />
           <Text style={[styles.reviewText, { color: textColor }]}>
             {review.text}
           </Text>
-        </ScrollView>
+        </>
       )}
     </View>
   );
@@ -58,15 +59,17 @@ const LocationCustomerReviewCard = ({
 
 const styles = StyleSheet.create({
   review: {
-    padding: 10,
+    padding: 0,
     borderRadius: 10,
-    width: 240,
-    height: "100%",
-    borderWidth: StyleSheet.hairlineWidth, 
+    // width: 240,
+    width: "100%",
+    height: "auto",
+    borderWidth: StyleSheet.hairlineWidth,
   },
   reviewAuthorRatingContainer: {
     flexDirection: "row",
     marginBottom: 0,
+    width: '100%',
     justifyContent: "space-between",
   },
   reviewAuthor: {
@@ -87,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LocationCustomerReviewCard;
+export default LocationReviewUI;

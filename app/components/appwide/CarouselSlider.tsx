@@ -7,6 +7,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ItemFooter from "../headers/ItemFooter";
 import { useLocations } from "@/src/context/LocationsContext";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
+import CarouselItemModal from "./carouselItemModal";
+import { setItem } from "expo-secure-store";
 
 const CarouselSlider = ({
   initialIndex,
@@ -30,6 +32,8 @@ console.log(stickToLocation);
   const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2; 
   const flatListRef = useAnimatedRef(null);
 
+
+  const [ itemModalVisible, setItemModalVisible ] = useState(false);
 
     const [currentIndex, setCurrentIndex] = useState(initialIndex + 1);
   const [currentCategory, setCurrentCategory] = useState(
@@ -77,6 +81,14 @@ useEffect(() => {
     flatListRef.current?.scrollToEnd({ animated: true });
   };
 
+  const [ modalData, setModalData ] = useState({title: '', data: {}});
+   
+
+  const handleSetModalData = (data) => {
+    setModalData(data);
+    setItemModalVisible(true);
+
+  };
 
 
   const handleScroll = useCallback(
@@ -98,7 +110,7 @@ useEffect(() => {
     ({ item, index }) => (
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
       <View style={{flex: 1, height: '89%'}}>
-        <Children item={item} index={index} width={width} height={height} currentIndex={currentIndex} />
+        <Children item={item} index={index} width={width} height={height} currentIndex={currentIndex} openModal={handleSetModalData} closeModal={() => setItemModalVisible(false)} />
       </View>
 
       //   <View
@@ -128,6 +140,7 @@ useEffect(() => {
   );
 
   return (
+    <>
     <>
       <View
         style={{ 
@@ -250,6 +263,21 @@ useEffect(() => {
         
       <ItemFooter location={data[currentIndex - 1]} extraData={footerData}/>
       
+      )}
+    </>
+
+          {itemModalVisible && (
+        <View>
+          <CarouselItemModal
+          // item={data[currentIndex]} not syncing right item, removed it from modal; data solely from the user-facing component
+          icon={modalData?.icon}
+          title={modalData?.title}
+          display={modalData?.contentData}
+            isVisible={itemModalVisible}
+            closeModal={() => setItemModalVisible(false)}
+            onPress={modalData?.onPress}
+          />
+        </View>
       )}
     </>
   );

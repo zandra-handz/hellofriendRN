@@ -11,6 +11,8 @@ interface LocationUtilityTrayProps {
 
 const LocationUtilityTray: React.FC<LocationUtilityTrayProps> = ({
   location,
+  openEditModal,
+  closeEditModal,
 }) => {
   const iconSize = 26;
   const fadeOpacity = 0.8; 
@@ -26,17 +28,22 @@ const LocationUtilityTray: React.FC<LocationUtilityTrayProps> = ({
     >
       <LocationSavingActions
         location={location}
+      
         iconSize={iconSize}
         fadeOpacity={fadeOpacity}
       />
 
       <LocationParking
         location={location}
+          openEditModal={openEditModal}
+          closeEditModal={closeEditModal}
         iconSize={iconSize}
         fadeOpacity={fadeOpacity}
       />
       <LocationNotes
         location={location}
+                  openEditModal={openEditModal}
+          closeEditModal={closeEditModal}
         iconSize={iconSize}
         fadeOpacity={fadeOpacity}
       />

@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { View, Keyboard, ViewToken, TouchableOpacity } from "react-native";
+import { View, Keyboard, ViewToken, TouchableOpacity, Pressable } from "react-native";
 
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
@@ -263,16 +263,20 @@ const MomentsList = () => {
 
   const renderMomentItem = useCallback(
     ({ item, index }) => (
-      <TouchableOpacity
+      <Pressable
         onPress={() =>
           navigation.navigate("MomentView", { moment: item, index: index })
         }
-        style={{
+
+        style={({ pressed }) => ({
+        // style={{
           flex: 1,
           height: ITEM_HEIGHT,
           marginBottom: ITEM_BOTTOM_MARGIN,
           paddingHorizontal: 2,
-        }}
+          opacity: pressed ? 0.6 : 1,
+        })}
+        
       >
         <MomentItem
           momentData={item}
@@ -286,7 +290,7 @@ const MomentsList = () => {
           pulseValue={pulseValue}
           onSend={saveToHello}
         />
-      </TouchableOpacity>
+      </Pressable>
     ),
     [
       // viewableItemsArray,

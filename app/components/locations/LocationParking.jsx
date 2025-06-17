@@ -1,49 +1,56 @@
-// old version, updateFriendDashboard is an empty function now. preserving this in case i need to revert something
-// if (friendDashboardData && friendDashboardData.length > 0) {
-//    friendDashboardData[0].friend_faves = updatedFaves;
-//    console.log(friendDashboardData);
-//    updateFriendDashboardData(friendDashboardData);
-//   console.log('Location added to friend\'s favorites.');
-//  }
-
-import React, { useLayoutEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import AlertList from "../alerts/AlertList";
-import { useFriendList } from "@/src/context/FriendListContext";
+import React, { useLayoutEffect, useState, useMemo } from "react";
+import {
+  View,
+  Text, 
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import NotesOutlineSvg from "@/app/assets/svgs/notes-outline.svg";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import useDynamicUIFunctions from "@/src/hooks/useDynamicUIFunctions";
-// import ParkingCircleOutlineSvg from "@/app/assets/svgs/parking-circle-outline.svg";
-// import ParkingCircleSolidSvg from "@/app/assets/svgs/parking-circle-solid.svg";
 import { useNavigation } from "@react-navigation/native";
-import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-const LocationParking = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
-  const { themeAheadOfLoading } = useFriendList();
-  const [isModalVisible, setModalVisible] = useState(false);
+
+const LocationParking = ({
+  location,
+  iconSize = 26,
+  fadeOpacity = 0.8,
+  openEditModal,
+  closeEditModal,
+}) => {
   const { themeStyles } = useGlobalStyle();
-    const { getNumericParkingScore } = useLocationDetailFunctions();
+  const { getNumericParkingScore } = useLocationDetailFunctions();
 
-    const { getScoreColor } = useDynamicUIFunctions();
+  const { getScoreColor } = useDynamicUIFunctions();
   const [hasNotes, setHasNotes] = useState(location.parking_score);
-  const { label,score } = getNumericParkingScore(location.parking_score);
- 
-  const [scoreColor, setScoreColor ] = useState(getScoreColor([1, 6], score));
-  const [scoreLabel, setScoreLabel ] = useState(label);
- 
-  const [hasParkingScore, setHasParkingScore] = useState(false);
+  const { label, score } = getNumericParkingScore(location.parking_score);
 
-
+  const [scoreColor, setScoreColor] = useState(getScoreColor([1, 6], score));
+  const [scoreLabel, setScoreLabel] = useState(label);
 
   const navigation = useNavigation();
 
   const closeModalAfterDelay = () => {
     let timeout;
     timeout = setTimeout(() => {
-      setModalVisible(false);
+      closeEditModal();
     }, 1000);
   };
+
+  // since it's going inside of a TouchableOpacity which, I think, turns out, uses Animated View to control opacity of children
+  // and is a mildly ugly color in DevTools when I profile
+  const memoizedIcon = useMemo(
+    () => (
+      <MaterialCommunityIcons
+        name={hasNotes ? "car" : "car-cog"}
+        size={iconSize}
+        color={hasNotes ? scoreColor : themeStyles.genericText.color}
+        opacity={fadeOpacity}
+        style={{ marginRight: 4 }}
+      />
+    ),
+    [hasNotes, iconSize, scoreColor, themeStyles, fadeOpacity]
+  );
 
   const handleGoToLocationEditScreenFocusParking = () => {
     navigation.navigate("LocationEdit", {
@@ -53,29 +60,28 @@ const LocationParking = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
       parking: location.parking_score || "",
       focusOn: "focusParking",
     });
-    //doesn't help
+    // not sure if working the way I want it
     closeModalAfterDelay();
   };
 
   const handlePress = () => {
-    setModalVisible(true);
+    const modalData = {
+      title: "Parking score",
+      icon: memoizedIcon,
+      contentData: scoreLabel,
+      onPress: () => handleGoToLocationEditScreenFocusParking(),
+    };
+    openEditModal(modalData);
+    //setModalVisible(true);
   };
-
-  const toggleModal = () => {
-    setModalVisible((prev) => !prev);
-  };
-
- 
 
   useLayoutEffect(() => {
     if (location && location.parking_score) {
+      let { label, score } = getNumericParkingScore(location.parking_score);
 
-       let { label,score } = getNumericParkingScore(location.parking_score);
- 
-   setScoreColor(getScoreColor([1, 6], score));
-   setScoreLabel(label);
+      setScoreColor(getScoreColor([1, 6], score));
+      setScoreLabel(label);
       setHasNotes(true);
-
     } else {
       setHasNotes(false);
     }
@@ -85,93 +91,19 @@ const LocationParking = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
     <View>
       {location && !String(location.id).startsWith("temp") && (
         <View style={styles.container}>
-          {!hasNotes && (
-            <TouchableOpacity
-              onPress={handlePress}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <MaterialCommunityIcons
-                name={"car-cog"}
-                size={iconSize} 
-                color={themeStyles.genericText.color}
-                opacity={fadeOpacity}
-                style={{ marginRight: 4 }}
-              />
-              <Text style={[themeStyles.primaryText, {}]}>Parking info</Text>
-            </TouchableOpacity>
-          )}
-          {hasNotes && (
-            <TouchableOpacity
-              onPress={handlePress}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <MaterialCommunityIcons
-                name={"car"}
-                size={iconSize}
-                //color={themeAheadOfLoading.lightColor}
-                color={scoreColor}
-                style={{ marginRight: 4 }}
-              />
-              <Text style={[themeStyles.primaryText, {}]}>{scoreLabel}</Text>
-            </TouchableOpacity>
-          )}
+          <Pressable
+            onPress={handlePress}
+            style={({ pressed }) => ({
+              flexDirection: "row",
+              alignItems: "center",
+              opacity: pressed ? 0.6 : 1,
+            })}
+          >
+            {memoizedIcon}
+            <Text style={[themeStyles.primaryText, {}]}>{scoreLabel}</Text>
+          </Pressable>
         </View>
       )}
-
-      <AlertList
-        includeBottomButtons={false}
-        isModalVisible={isModalVisible}
-        useSpinner={false}
-        questionText={`${location.title}` || ``}
-        toggleModal={toggleModal}
-        includeSearch={false}
-        headerContent={
-          <NotesOutlineSvg
-            width={42}
-            height={42}
-            color={themeStyles.modalIconColor.color}
-          />
-        }
-        content={
-          <View style={styles.contentContainer}>
-            <View
-              style={[
-                styles.parkingScoreContainer,
-                {
-                  backgroundColor:
-                    themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-                },
-              ]}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  height: "auto",
-                }}
-              >
-                <Text style={themeStyles.subHeaderText}>PARKING</Text>
-                <EditPencilOutlineSvg
-                  height={30}
-                  width={30}
-                  onPress={handleGoToLocationEditScreenFocusParking}
-                  color={themeStyles.genericText.color}
-                />
-              </View>
-
-              {location.parking_score && (
-                <View style={{ flex: 1, width: "100%", padding: "6%" }}>
-                  <Text style={[styles.notesText, themeStyles.genericText]}>
-                    {location.parking_score}
-                  </Text>
-                </View>
-              )}
-            </View>
-          </View>
-        }
-        onCancel={toggleModal}
-      />
     </View>
   );
 };

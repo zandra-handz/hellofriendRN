@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, ActivityIndicator, Button } from 'react-native'
 import CallNumberLink from './CallNumberLink';
 import DirectionsLink from './DirectionsLink';
 import ButtonMakeTempLocation from '../buttons/locations/ButtonMakeTempLocation';
-import StylingRating from './StylingRating';
+import StarsRatingUI from './StarsRatingUI';
 
 const CardMidpointLocation = ({ fullLocationData, id, unSaved=true, name, address, mydistance, frienddistance, mytraveltime, friendtraveltime, timeDifference, distanceDifference }) => {
 
@@ -42,7 +42,7 @@ const CardMidpointLocation = ({ fullLocationData, id, unSaved=true, name, addres
           <ActivityIndicator size="large" color="#0000ff" />
         ) : details ? (
           <>
-            <StylingRating rating={details.rating} starSize={10} /> 
+            <StarsRatingUI rating={details.rating} starSize={10} /> 
             <DirectionsLink address={details.address} />
             <CallNumberLink phoneNumber={details.phone} />
           </>

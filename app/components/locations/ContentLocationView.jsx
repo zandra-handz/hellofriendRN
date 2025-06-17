@@ -16,8 +16,8 @@ import { useFriendList } from '@/src/context/FriendListContext';
 import DisplayParkingScore from '@/app/components/locations/DisplayParkingScore';
 import DisplayLocationNotes from '@/app/components/locations/DisplayLocationNotes';
 import { useLocations } from '@/src/context/LocationsContext';
-
-import StylingRating from '@/app/components/locations/StylingRating';
+ 
+import StarsRatingUI from './StarsRatingUI';
 
 
 const ContentLocationView = ({ location, favorite }) => {
@@ -127,7 +127,7 @@ const ContentLocationView = ({ location, favorite }) => {
                 </View>
               </View>
               <View style={styles.detailRow}>
-                <StylingRating rating={additionalDetails.rating} />
+                <StarsRatingUI rating={additionalDetails.rating} />
               </View>
             </View>
             {additionalDetails.hours && <CardHours hours={additionalDetails.hours.weekday_text} />}

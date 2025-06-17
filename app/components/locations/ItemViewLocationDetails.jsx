@@ -9,7 +9,7 @@ import SectionCustomerReviews from './SectionCustomerReviews';
 import CallNumberLink from './CallNumberLink';
 import DirectionsLink from './DirectionsLink';
 import LocationSavingActions from './LocationSavingActions';
-import StylingRating from './StylingRating';
+import StarsRatingUI from './StarsRatingUI';
 
 const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
   const { loadingAdditionalDetails, useFetchAdditionalDetails } = useLocations();
@@ -70,7 +70,7 @@ const ItemViewLocationDetails = ({ location = {}, unSaved }) => {
                 </View>
               </View>
               <View style={styles.detailRow}>
-                <StylingRating rating={additionalDetails.rating} />
+                <StarsRatingUI rating={additionalDetails.rating} />
               </View>
             </View>
             {additionalDetails.hours && <CardHours hours={additionalDetails.hours.weekday_text} />}

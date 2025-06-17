@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
 import LoadingPage from '../appwide/spinner/LoadingPage';
  
-import StylingRating from './StylingRating';
+import StarsRatingUI from './StarsRatingUI';
 import { useLocations } from '@/src/context/LocationsContext';
 
 //import useLocationFunctions from '../hooks/useLocationFunctions';
@@ -32,7 +32,7 @@ const ItemCustomerReview = ({ review }) => {
         <ScrollView>
           <View style={styles.reviewAuthorRatingContainer}>
             <Text style={styles.reviewAuthor}>{review.author_name}</Text>
-            <StylingRating rating={review.rating} starSize={11} fontSize={13} />
+            <StarsRatingUI rating={review.rating} starSize={11} fontSize={13} />
           </View>
           <Text style={styles.reviewDate}>{formatDate(review.time)}</Text>
           <Text style={styles.reviewText}>{review.text}</Text>

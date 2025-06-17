@@ -31,6 +31,7 @@ interface LocationPageViewProps {
   width: DimensionValue;
   height: DimensionValue;
   currentIndex: number;
+  openModal: () => void;
 }
 
 const LocationViewPage: React.FC<LocationPageViewProps> = ({
@@ -39,6 +40,8 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   width,
   height,
   currentIndex,
+  openModal,
+  closeModal,
 }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
@@ -70,9 +73,9 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   // );
 
   const { data: additionalDetails } = useFetchAdditionalDetails(
-  item,
-  Math.abs(index - currentIndex) <= 1
-);
+    item,
+    Math.abs(index - currentIndex) <= 1
+  );
   //  useEffect(() => {
   //   if (additionalDetails) {
   //     console.log(`OH YAY ADDITIONAL DETAILS FETCHED: `, additionalDetails?.hours);
@@ -178,13 +181,31 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
             {item.address}
           </Text>
         </View>
-        <LocationUtilityTray location={item} />
+        <LocationUtilityTray location={item} openEditModal={openModal} closeEditModal={closeModal}/>
         {additionalDetails && (
           <>
-           {/* <LocationImages photos={additionalDetails.photos} /> */}
-               <LocationCustomerReviews reviews={additionalDetails.reviews} />
+                    <Text
+            numberOfLines={2}
+            style={[
+              themeStyles.primaryText,
+              appFontStyles.welcomeText,
+              { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+            ]}
+          >
+            Reviews
+          </Text>
+            {/* <LocationImages photos={additionalDetails.photos} /> */}
+            <View style={{marginVertical: 10}}>
+            <LocationCustomerReviews reviews={additionalDetails.reviews} />
+            
+              
+            </View>
             <View style={{ flexDirection: "row", width: "100%" }}>
-              <MaterialCommunityIcons name="phone" size={26} color={themeStyles.primaryText.color} />
+              <MaterialCommunityIcons
+                name="phone"
+                size={26}
+                color={themeStyles.primaryText.color}
+              />
               <Text
                 numberOfLines={1}
                 onPress={handleCallLocation}
@@ -198,8 +219,8 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
                 {additionalDetails?.phone}
               </Text>
             </View>
-  
 
+            {/* 
             {additionalDetails && additionalDetails?.hours && (
               <View style={{marginTop: 70}}>
               <LocationHoursOfOperation
@@ -210,7 +231,7 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
               
                 
               </View>
-            )}
+            )} */}
           </>
         )}
         {/* <EditPencilOutlineSvg
@@ -219,13 +240,13 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
           onPress={handleEditLocation}
           color={themeStyles.genericText.color}
         /> */}
-        <SlideToDeleteHeader
+        {/* <SlideToDeleteHeader
           itemToDelete={item}
           onPress={handleDelete}
           sliderWidth={"100%"}
           targetIcon={TrashOutlineSvg}
           sliderTextColor={themeStyles.primaryText.color}
-        />
+        /> */}
       </View>
     </View>
   );

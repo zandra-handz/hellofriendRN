@@ -1,4 +1,4 @@
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, Text, Pressable } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated from "react-native-reanimated";
@@ -31,6 +31,10 @@ const CategoryButton = ({
   const { themeAheadOfLoading } = useFriendList();
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
+
+    // not sure how to add animations to Pressable
+    //   const AnimatedPressable =
+    // Animated.createAnimatedComponent(Pressable);
  
   const progress = useSharedValue(0);
   const translateYx2 = useSharedValue(0);
@@ -91,16 +95,16 @@ const CategoryButton = ({
         onPress(label);
       }}
     >
-      <Animated.Text
+      <Text
         numberOfLines={1}
         style={[
           appFontStyles.categoryButtonText,
           themeStyles.genericText,
-          animatedCardsStyle,
+         // animatedCardsStyle,
         ]}
       >
         # {label}
-      </Animated.Text>
+      </Text>
     </AnimatedTouchableOpacity>
   );
 };

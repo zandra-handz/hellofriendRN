@@ -6,24 +6,13 @@
 //   console.log('Location added to friend\'s favorites.');
 //  }
 
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Touchable,
-} from "react-native";
+import React, { useEffect, useState, useMemo, memo } from "react";
+import { View, Text, StyleSheet, Alert, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import PushPinSolidSvg from "@/app/assets/svgs/push-pin-solid.svg";
-
-import AlertConfirm from "../alerts/AlertConfirm";
-import ModalAddNewLocation from "./ModalAddNewLocation";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useLocations } from "@/src/context/LocationsContext";
+
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -39,11 +28,10 @@ const LocationSavingActions = ({
   style,
 }) => {
   const { themeAheadOfLoading } = useFriendList();
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { handleAddToFaves, handleRemoveFromFaves } = useFriendLocationsContext();
+  const { selectedFriend } = useSelectedFriend();
+  const { handleAddToFaves, handleRemoveFromFaves } =
+    useFriendLocationsContext();
 
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [isModal2Visible, setModal2Visible] = useState(false);
   const { themeStyles } = useGlobalStyle();
 
   const navigation = useNavigation();
@@ -104,22 +92,9 @@ const LocationSavingActions = ({
     }
   };
 
-  const closeModal = () => {
-    setModalVisible(false);
-  };
-
-  const closeModal2 = () => {
-    setModal2Visible(false);
-  };
-
-  const onClose = () => {
-    setModal2Visible(false);
-  };
-
   const removeFromFaves = async () => {
     if (selectedFriend && location && isFave) {
       handleRemoveFromFaves(selectedFriend.id, location.id);
-      onClose();
     }
   };
 
@@ -135,35 +110,57 @@ const LocationSavingActions = ({
         if (selectedFriend && location) {
           handleAddToFaves(selectedFriend.id, location.id);
         }
-        onClose();
       }
     } catch (error) {
       console.error("Error saving new location in handleSave:", error);
     }
   };
 
-  const onConfirmAction = () => {
-    if (isFave) {
-      removeFromFaves(location.id);
-      setIsFave(false);
-    } else {
-      addToFaves(location);
-      setIsFave(true);
-    }
-  };
+  const memoizedAddIcon = useMemo(
+    () => (
+      <MaterialCommunityIcons
+        name="plus-circle-outline"
+        size={iconSize}
+        opacity={fadeOpacity}
+        color={themeStyles.genericText.color}
+      />
+    ),
+    [iconSize, fadeOpacity, themeStyles.genericText.color]
+  );
+
+  const MemoizedFaveIcon = React.useMemo(
+    () => (
+      <MaterialCommunityIcons
+        name={isFave ? "bookmark-remove" : "bookmark-plus-outline"}
+        size={iconSize}
+        color={
+          isFave
+            ? themeAheadOfLoading.lightColor
+            : themeStyles.genericText.color
+        }
+        style={{ marginRight: 4 }}
+      />
+    ),
+    [
+      isFave,
+      iconSize,
+      themeAheadOfLoading.lightColor,
+      themeStyles.genericText.color,
+    ]
+  );
 
   return (
     <View>
       {location && String(location.id).startsWith("temp") && (
-        <TouchableOpacity style={[styles.container, style]}>
-          <MaterialCommunityIcons
-            name={"plus-circle-outline"}
-            size={iconSize}
-            opacity={fadeOpacity}
-            color={themeStyles.genericText.color}
-            onPress={handleGoToLocationSaveScreen}
-          />
-
+        <Pressable
+          onPress={handleGoToLocationSaveScreen}
+          style={({ pressed }) => [
+            styles.container,
+            style,
+            { opacity: pressed ? 0.6 : 1 },
+          ]}
+        >
+          {memoizedAddIcon}
           <Text
             style={[
               styles.saveText,
@@ -176,69 +173,28 @@ const LocationSavingActions = ({
           >
             Add
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       )}
 
       {location && !String(location.id).startsWith("temp") && (
         <View style={styles.container}>
-          {!isFave && (
-            <TouchableOpacity
-              onPress={handlePressAdd}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <MaterialCommunityIcons
-                //name="heart-plus-outline"
-                name="bookmark-plus-outline"
-                size={iconSize}
-                opacity={fadeOpacity}
-                color={themeStyles.genericText.color}
-                style={{ marginRight: 4 }}
-              />
-              <Text style={[themeStyles.primaryText, {}]}>Bookmark</Text>
-            </TouchableOpacity>
-            // <HeartAddOutlineSvg width={34} height={34} color={themeStyles.genericText.color} onPress={handlePress} />
-          )}
-          {isFave && (
-            <TouchableOpacity
-              onPress={handlePressRemove}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <MaterialCommunityIcons
-                // name="heart-minus"
-                name="bookmark-remove"
-                size={iconSize}
-                color={themeAheadOfLoading.lightColor}
-                style={{ marginRight: 4 }}
-              />
-              <Text style={[themeStyles.primaryText, {}]}>Remove</Text>
-            </TouchableOpacity>
-          )}
+          <Pressable
+            onPress={isFave ? handlePressRemove : handlePressAdd}
+            style={({ pressed }) => ({
+              flexDirection: "row",
+              alignItems: "center",
+              opacity: pressed ? 0.6 : 1,
+            })}
+          >
+            {MemoizedFaveIcon}
+            {isFave ? (
+              <Text style={[themeStyles.primaryText]}>Remove</Text>
+            ) : (
+              <Text style={[themeStyles.primaryText]}>Bookmark</Text>
+            )}
+          </Pressable>
         </View>
       )}
-
-      {location && (
-        <ModalAddNewLocation
-          isVisible={isModal2Visible}
-          close={closeModal2}
-          title={location.title}
-          address={location.address}
-        />
-      )}
-
-      <AlertConfirm
-        isModalVisible={isModalVisible}
-        toggleModal={closeModal}
-        headerContent={<PushPinSolidSvg width={18} height={18} color="black" />}
-        questionText={
-          isFave
-            ? "Remove this location from friend's dashboard?"
-            : "Pin this location to friend dashboard?"
-        }
-        onConfirm={onConfirmAction}
-        onCancel={closeModal}
-        confirmText="Yes"
-        cancelText="No"
-      />
     </View>
   );
 };

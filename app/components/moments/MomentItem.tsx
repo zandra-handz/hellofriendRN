@@ -254,6 +254,12 @@ const MomentItem: React.FC<MomentItemsProps> = ({
           size={24}
           style={animatedStyle}
         />
+                {/* <MaterialCommunityIcons
+          name="comment-check-outline"
+          size={24}
+          color={themeStyles.genericText.color}
+         
+        /> */}
       </AnimatedPressable>
       {/* <TouchableHighlight
         //testOnly_pressed={true}

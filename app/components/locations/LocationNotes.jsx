@@ -6,25 +6,26 @@
 //   console.log('Location added to friend\'s favorites.');
 //  }
 
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import {
   View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
+  Text, 
+  Pressable,
   StyleSheet,
 } from "react-native";
-import AlertList from "../alerts/AlertList";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import NotesOutlineSvg from "@/app/assets/svgs/notes-outline.svg";
 import { useNavigation } from "@react-navigation/native";
-import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const LocationNotes = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
-  const { themeAheadOfLoading } = useFriendList();
-  const [isModalVisible, setModalVisible] = useState(false);
+const LocationNotes = ({
+  location,
+  iconSize = 26, 
+  openEditModal,
+  closeEditModal,
+}) => {
+  const { themeAheadOfLoading } = useFriendList(); 
   const { themeStyles } = useGlobalStyle();
   const [hasNotes, setHasNotes] = useState(false);
 
@@ -33,7 +34,7 @@ const LocationNotes = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
   const closeModalAfterDelay = () => {
     let timeout;
     timeout = setTimeout(() => {
-      setModalVisible(false);
+      closeEditModal();
     }, 1000);
   };
 
@@ -49,12 +50,36 @@ const LocationNotes = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
     closeModalAfterDelay();
   };
 
-  const handlePress = () => {
-    setModalVisible(true);
-  };
+  const memoizedIcon = useMemo(
+    () => (
+      <MaterialCommunityIcons
+        name={hasNotes ? "note-check" : "note-plus-outline"}
+        size={iconSize}
+        color={
+          hasNotes
+            ? themeAheadOfLoading.lightColor
+            : themeStyles.genericText.color
+        }
+        style={{ marginRight: 4 }}
+      />
+    ),
+    [
+      hasNotes,
+      iconSize,
+      themeAheadOfLoading.lightColor,
+      themeStyles.genericText.color,
+    ]
+  );
 
-  const toggleModal = () => {
-    setModalVisible((prev) => !prev);
+  const handlePress = () => {
+    const modalData = {
+      title: "Notes",
+      icon: memoizedIcon,
+      contentData: location.personal_experience_info,
+      onPress: () => handleGoToLocationEditScreenFocusNotes(),
+    };
+    openEditModal(modalData);
+    //setModalVisible(true);
   };
 
   useLayoutEffect(() => {
@@ -69,130 +94,20 @@ const LocationNotes = ({ location, iconSize = 26, fadeOpacity = 0.8 }) => {
     <View>
       {location && !String(location.id).startsWith("temp") && (
         <View style={styles.container}>
-          {!hasNotes && (
-            <TouchableOpacity
-              onPress={handlePress}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <MaterialCommunityIcons
-                name={"note-plus-outline"}
-                size={iconSize}
-                color={themeStyles.genericText.color}
-                opacity={fadeOpacity} 
-                 style={{ marginRight: 4 }}
-              />
-                <Text style={[themeStyles.primaryText, {}]}>Add notes</Text>
-            </TouchableOpacity>
-          )}
-          {hasNotes && (
-            <TouchableOpacity
-              onPress={handlePress}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <MaterialCommunityIcons
-                name={"note-check"}
-                size={iconSize}
-                color={themeAheadOfLoading.lightColor}
-                 style={{ marginRight: 4 }}
-           
-              />
-                <Text style={[themeStyles.primaryText, {}]}>Notes</Text>
-            </TouchableOpacity>
-          )}
+ 
+          <Pressable
+            onPress={handlePress}
+            style={({ pressed }) => ({
+              flexDirection: "row",
+              alignItems: "center",
+              opacity: pressed ? 0.6 : 1,
+            })}
+          >
+            {memoizedIcon}
+            <Text style={[themeStyles.primaryText, {}]}>Notes</Text>
+          </Pressable> 
         </View>
       )}
-
-      <AlertList
-        includeBottomButtons={false}
-        isModalVisible={isModalVisible}
-        useSpinner={false}
-        questionText={`${location.title}` || ``}
-        toggleModal={toggleModal}
-        includeSearch={false}
-        headerContent={
-          <NotesOutlineSvg
-            width={42}
-            height={42}
-            color={themeStyles.modalIconColor.color}
-          />
-        }
-        content={
-          <View style={styles.contentContainer}>
-            <View
-              style={[
-                styles.notesContainer,
-                {
-                  backgroundColor:
-                    themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-                },
-              ]}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  height: "auto",
-                }}
-              >
-                <Text style={themeStyles.subHeaderText}>NOTES</Text>
-                <EditPencilOutlineSvg
-                  height={30}
-                  width={30}
-                  onPress={handleGoToLocationEditScreenFocusNotes}
-                  color={themeStyles.genericText.color}
-                />
-              </View>
-              {location.personal_experience_info && (
-                <ScrollView
-                  style={{ flex: 1, width: "100%", padding: "6%" }}
-                  contentContainerStyle={{ paddingVertical: 0 }}
-                  showsVerticalScrollIndicator={false}
-                >
-                  <Text style={[styles.notesText, themeStyles.genericText]}>
-                    {location.personal_experience_info}
-                  </Text>
-                </ScrollView>
-              )}
-            </View>
-            {/* <View
-              style={[
-                styles.parkingScoreContainer,
-                {
-                  backgroundColor:
-                    themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-                },
-              ]}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: "100%",
-                  height: "auto",
-                }}
-              >
-                <Text style={themeStyles.subHeaderText}>PARKING</Text>
-                <EditPencilOutlineSvg
-                  height={30}
-                  width={30}
-                  onPress={handleGoToLocationEditScreen}
-                  color={themeStyles.genericText.color}
-                />
-              </View>
-
-              {location.parking_score && (
-                <View style={{ flex: 1, width: "100%", padding: "6%" }}>
-                  <Text style={[styles.notesText, themeStyles.genericText]}>
-                    {location.parking_score}
-                  </Text>
-                </View>
-              )}
-            </View> */}
-          </View>
-        }
-        onCancel={toggleModal}
-      />
     </View>
   );
 };
