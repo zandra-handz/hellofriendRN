@@ -1,28 +1,24 @@
-import { View, Text, DimensionValue, Linking } from "react-native";
-import React, { useEffect } from "react";
+import { View, Text, DimensionValue,  Linking } from "react-native";
+import React, { useCallback, useState, useEffect } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
+
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import SlideToAdd from "../foranimations/SlideToAdd";
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 
-import LocationSavingActions from "./LocationSavingActions";
-import LocationNotes from "./LocationNotes";
-import LocationParking from "./LocationParking";
+
+import ItemFooter from "../headers/ItemFooter";
+ 
 import { useLocations } from "@/src/context/LocationsContext";
 import LocationUtilityTray from "./LocationUtilityTray";
-
-import LocationTravelTimes from "./LocationTravelTimes";
-
-import CallNumberLink from "./CallNumberLink";
-
-import LocationImages from "./LocationImages";
-import LocationCustomerReviews from "./LocationCustomerReviews";
-import LocationHoursOfOperation from "./LocationHoursOfOperation";
+import SafeViewAndGradientBackground from "../appwide/format/SafeViewAndGradBackground";
+ import Animated, { useSharedValue, SharedValue, useAnimatedStyle, useAnimatedReaction, runOnJS } from 'react-native-reanimated';
+import LocationCustomerReviews from "./LocationCustomerReviews"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface LocationPageViewProps {
@@ -30,42 +26,103 @@ interface LocationPageViewProps {
   index: number;
   width: DimensionValue;
   height: DimensionValue;
-  currentIndex: number;
+  currentIndexValue: SharedValue;
+  cardScaleValue: SharedValue;
   openModal: () => void;
+  closeModal: () => void;
 }
+
+
 
 const LocationViewPage: React.FC<LocationPageViewProps> = ({
   item,
+  test,
   index,
   width,
   height,
-  currentIndex,
+  currentIndexValue,
+  cardScaleValue,
   openModal,
   closeModal,
 }) => {
+
+
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   const { useFetchAdditionalDetails } = useLocations();
 
+
   const { faveLocations, nonFaveLocations } = useFriendLocationsContext();
   const navigation = useNavigation();
+const [ currentIndex, setCurrentIndex ] = useState();
 
-  const handleGetDirections = () => {
-    if (item && item?.address) {
-      Linking.openURL(
-        `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`
-      );
+useAnimatedReaction(
+  () => currentIndexValue.value,
+  (newIndex, prevIndex) => {
+    if (newIndex !== prevIndex) {
+      runOnJS(setCurrentIndex)(newIndex);
     }
-  };
+  },
+  []
+);
 
-  const handleCallLocation = () => {
-    if (additionalDetails && additionalDetails?.phone) {
-      Linking.openURL(`tel:${additionalDetails.phone}`);
-    }
-  };
 
-  const now = new Date(); // Get the current date and time
-  const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
+const cardScaleAnimation = useAnimatedStyle(() => ({
+  transform: [{ scale: cardScaleValue.value }]
+})); 
+
+  
+  // if (!item) {
+  //   return (
+  //       <View
+  //     style={{
+  //       gap: 20,
+  //       justifyContent: "center",
+  //       alignItems: "center",
+  //       backgroundColor: "transparent",
+  //       padding: 4,
+  //       borderWidth: 0,
+  //       //   height: ITEM_HEIGHT,
+  //       width: width,
+  //     }}
+  //   >
+  //     <View
+  //       style={{
+  //         backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+  //         padding: 10, 
+  //         paddingVertical: 30,
+  //         justifyContent: 'center',
+  //         borderRadius: 10,
+  //         alignItems: 'center',
+  //         marginTop: '10%',
+  //         width: "100%", 
+  //         zIndex: 1,
+  //         overflow: "hidden",
+  //       }}
+  //     >
+      
+  //       <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}>Oops! Nothing here</Text>
+  //     </View>
+  //     </View>
+  //   )
+  // }
+const formatDate = (timestamp: number) => {
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleDateString();
+};
+const handleGetDirections = useCallback(() => {
+  if (item && item?.address) {
+    Linking.openURL(
+      `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`
+    );
+  }
+}, [item]);
+
+const handleCallLocation = useCallback(() => {
+  if (additionalDetails && additionalDetails?.phone) {
+    Linking.openURL(`tel:${additionalDetails.phone}`);
+  }
+}, [additionalDetails]);
 
   // const { data: additionalDetails } = useFetchAdditionalDetails(
   //   item,
@@ -110,44 +167,37 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   };
 
   return (
-    <View
-      style={{
+    <SafeViewAndGradientBackground style={{ flex: 1, borderRadius: 40 }}>
+      
+    <Animated.View
+ 
+      style={
+        
+        [cardScaleAnimation, {
         gap: 20,
+        
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "transparent",
         padding: 4,
+        paddingBottom: 0,
         borderWidth: 0,
         //   height: ITEM_HEIGHT,
         width: width,
-      }}
+      }]}
     >
       <View
         style={{
           backgroundColor: themeStyles.primaryBackground.backgroundColor,
           padding: 10,
           borderRadius: 10,
+          borderRadius: 40,
           width: "100%",
           height: "100%",
           zIndex: 1,
           overflow: "hidden",
         }}
-      >
-        {/* <BelowHeaderContainer
-          height={30}
-          alignItems="center"
-          marginBottom={0} //default is currently set to 2
-          justifyContent="center"
-          // children={
-          //   <SlideToAdd
-          //     onPress={saveToHello}
-          //     sliderText={"Add to hello"}
-          //     sliderTextSize={15}
-          //     sliderTextColor={themeStyles.primaryText.color}
-          //     // sliderTextColor={themeAheadOfLoading.fontColor}
-          //   />
-          // }
-        /> */}
+      > 
         <View
           style={{
             flexDirection: "column",
@@ -193,10 +243,9 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
             ]}
           >
             Reviews
-          </Text>
-            {/* <LocationImages photos={additionalDetails.photos} /> */}
+          </Text> 
             <View style={{marginVertical: 10}}>
-            <LocationCustomerReviews reviews={additionalDetails.reviews} />
+            <LocationCustomerReviews formatDate={formatDate} reviews={additionalDetails.reviews} />
             
               
             </View>
@@ -248,7 +297,10 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
           sliderTextColor={themeStyles.primaryText.color}
         /> */}
       </View>
-    </View>
+         {/* <ItemFooter location={item} /> */}
+   </Animated.View>
+
+    </SafeViewAndGradientBackground>
   );
 };
 

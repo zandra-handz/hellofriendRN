@@ -22,11 +22,11 @@ const LocationParking = ({
   const { getNumericParkingScore } = useLocationDetailFunctions();
 
   const { getScoreColor } = useDynamicUIFunctions();
-  const [hasNotes, setHasNotes] = useState(location.parking_score);
+  // const [hasNotes, setHasNotes] = useState(location.parking_score);
   const { label, score } = getNumericParkingScore(location.parking_score);
 
-  const [scoreColor, setScoreColor] = useState(getScoreColor([1, 6], score));
-  const [scoreLabel, setScoreLabel] = useState(label);
+  // const [scoreColor, setScoreColor] = useState(getScoreColor([1, 6], score));
+  // const [scoreLabel, setScoreLabel] = useState(label);
 
   const navigation = useNavigation();
 
@@ -37,20 +37,6 @@ const LocationParking = ({
     }, 1000);
   };
 
-  // since it's going inside of a TouchableOpacity which, I think, turns out, uses Animated View to control opacity of children
-  // and is a mildly ugly color in DevTools when I profile
-  const memoizedIcon = useMemo(
-    () => (
-      <MaterialCommunityIcons
-        name={hasNotes ? "car" : "car-cog"}
-        size={iconSize}
-        color={hasNotes ? scoreColor : themeStyles.genericText.color}
-        opacity={fadeOpacity}
-        style={{ marginRight: 4 }}
-      />
-    ),
-    [hasNotes, iconSize, scoreColor, themeStyles, fadeOpacity]
-  );
 
   const handleGoToLocationEditScreenFocusParking = () => {
     navigation.navigate("LocationEdit", {
@@ -75,17 +61,47 @@ const LocationParking = ({
     //setModalVisible(true);
   };
 
-  useLayoutEffect(() => {
-    if (location && location.parking_score) {
-      let { label, score } = getNumericParkingScore(location.parking_score);
+  // useLayoutEffect(() => {
+  //   if (location && location.parking_score) {
+  //     let { label, score } = getNumericParkingScore(location.parking_score);
 
-      setScoreColor(getScoreColor([1, 6], score));
-      setScoreLabel(label);
-      setHasNotes(true);
-    } else {
-      setHasNotes(false);
-    }
-  }, [location]);
+  //     setScoreColor(getScoreColor([1, 6], score));
+  //     setScoreLabel(label);
+  //     setHasNotes(true);
+  //   } else {
+  //     setHasNotes(false);
+  //   }
+  // }, [location]);
+
+
+  const { scoreLabel, scoreColor, hasNotes } = useMemo(() => {
+  if (location && location.parking_score) {
+    const { label, score } = getNumericParkingScore(location.parking_score);
+    return {
+      scoreLabel: label,
+      scoreColor: getScoreColor([1, 6], score),
+      hasNotes: true,
+    };
+  }
+  return {
+    scoreLabel: "No data",
+    scoreColor: themeStyles.genericText.color,
+    hasNotes: false,
+  };
+}, [location, themeStyles]);
+
+  // since it's going inside of a TouchableOpacity which, I think, turns out, uses Animated View to control opacity of children
+  // and is a mildly ugly color in DevTools when I profile
+const memoizedIcon = useMemo(() => (
+  <MaterialCommunityIcons
+    name={hasNotes ? "car" : "car-cog"}
+    size={iconSize}
+    color={hasNotes ? scoreColor : themeStyles.genericText.color}
+    opacity={hasNotes ? 1 : fadeOpacity}
+    style={{ marginRight: 4 }}
+  />
+), [hasNotes, iconSize, scoreColor, themeStyles, fadeOpacity]);
+
 
   return (
     <View>

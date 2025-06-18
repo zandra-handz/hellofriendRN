@@ -92,14 +92,11 @@ export const LocationsProvider = ({ children }) => {
   //MIGHT NEED TO REFETCH THIS DATA IF NO LONGER IN CACHE
   useEffect(() => {
     if (locationList) {
-      queryClient.setQueryData(["locationCategories", user?.id], (oldData) => {
-        // Assuming `location` is an array of objects with a `category` field
+      queryClient.setQueryData(["locationCategories", user?.id], (oldData) => { 
         const locationCategories = locationList.map((loc) => loc.category);
-
-        // Create a unique set of categories
+ 
         const uniqueCategories = Array.from(new Set(locationCategories));
-        //console.log(uniqueCategories);
-        // Return the unique categories to set as the new data
+ 
         return uniqueCategories;
       });
     }
@@ -272,46 +269,27 @@ export const LocationsProvider = ({ children }) => {
     }
     setIsDeletingLocation(false);
   };
+ 
 
-  //faveLocationList
+  // const sortLocationList = () => {
+  //   if (locationList && locationList !== undefined) {
+  //     const { validated, saved } = locationList.reduce(
+  //       (acc, location) => {
+  //         if (location.validatedAddress) {
+  //           acc.validated.push(location); // Add to validated list
+  //         }
+  //         if (!String(location.id).startsWith("temp")) {
+  //           acc.saved.push(location); // Add to saved list
+  //         }
+  //         return acc;
+  //       },
+  //       { validated: [], saved: [] }
+  //     );
 
-  //this sorts it faster
-  //   useEffect(() => {
-  //    if (locationList) {
-  //       const { validated, saved } = locationList.reduce((acc, location) => {
-  //            if (location.validatedAddress) {
-  //                 acc.validated.push(location);  // Add to validated list
-  //             }
-  //            if (!String(location.id).startsWith('temp')) {
-  //                 acc.saved.push(location);
-  //             }
-  //             return acc;
-  //         }, { validated: [], saved: [] });
-
-  //         setValidatedLocationList(validated);
-  //        setSavedLocationList(saved);
-  //    }
-  // }, [locationList]);
-
-  const sortLocationList = () => {
-    if (locationList && locationList !== undefined) {
-      const { validated, saved } = locationList.reduce(
-        (acc, location) => {
-          if (location.validatedAddress) {
-            acc.validated.push(location); // Add to validated list
-          }
-          if (!String(location.id).startsWith("temp")) {
-            acc.saved.push(location); // Add to saved list
-          }
-          return acc;
-        },
-        { validated: [], saved: [] }
-      );
-
-      setValidatedLocationList(validated);
-      setSavedLocationList(saved);
-    }
-  };
+  //     setValidatedLocationList(validated);
+  //     setSavedLocationList(saved);
+  //   }
+  // };
 
   const useFetchAdditionalDetails = (location, enabled) => {
     return useQuery({
@@ -354,7 +332,7 @@ export const LocationsProvider = ({ children }) => {
         locationsIsFetching,
         isFetching,
         locationListIsSuccess,
-        sortLocationList,
+        //sortLocationList,
         handleCreateLocation,
         createLocationMutation,
         handleUpdateLocation,
@@ -363,7 +341,7 @@ export const LocationsProvider = ({ children }) => {
         deleteLocationMutation,
         isDeletingLocation,
         isLoading,
-        validatedLocationList,
+        //validatedLocationList,
         savedLocationList,
         selectedLocation,
         additionalDetails,

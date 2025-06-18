@@ -6,9 +6,11 @@ import { FlashList } from "@shopify/flash-list";
 
 interface Props {
   reviews: object[];
+    formatDate?: (timestamp: number) => string;
+ 
 }
 
-const LocationCustomerReviews: React.FC<Props> = ({ reviews }) => {
+const LocationCustomerReviews: React.FC<Props> = ({ reviews, formatDate }) => {
   const { themeStyles } = useGlobalStyle();
 
   if (!reviews || reviews.length === 0) {
@@ -27,10 +29,14 @@ const LocationCustomerReviews: React.FC<Props> = ({ reviews }) => {
   // };
 
   const renderListItem = useCallback(
-    ({ item }) => (
+    ({ item, index }) => (
       <View style={{ width: '100%', height: 'auto', marginBottom: 20, }}>
         <LocationReviewUI
+          // locationReviewId={`${locationId}-${index}`}
+          formatDate={formatDate}
           review={item}
+          reviewIndex={index}
+
           backgroundColor={themeStyles.genericTextBackground.backgroundColor}
           textColor={themeStyles.genericText.color}
         />
@@ -43,15 +49,15 @@ const LocationCustomerReviews: React.FC<Props> = ({ reviews }) => {
   return (
     
     <View style={[styles.container]}>
-      <FlatList
+      <FlashList
         data={reviews}
         renderItem={renderListItem}
         fadingEdgeLength={20}
-    
+    estimatedItemSize={150}
         nestedScrollEnabled
         // pagingEnabled
         snapToAlignment="start"
-        contentContainerStyle={[styles.listContent]}
+        //contentContainerStyle={}
         initialNumToRender={5}
         maxToRenderPerBatch={5}
         windowSize={5}

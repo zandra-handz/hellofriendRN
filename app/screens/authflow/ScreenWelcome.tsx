@@ -13,7 +13,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-na
 import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
 import { runOnJS, runOnUI } from 'react-native-reanimated';
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
- 
+import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 
 const ScreenWelcome = () => {
   const { showMessage } = useMessage();
@@ -88,7 +88,7 @@ const ScreenWelcome = () => {
  
 
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1 }}> 
+    <PreAuthSafeViewAndGradientBackground style={{ flex: 1 }}> 
       <GradientBackground
         useFriendColors={false}
         startColor={manualGradientColors.darkColor}
@@ -159,7 +159,7 @@ const ScreenWelcome = () => {
           </>
         </View>
       </GradientBackground>
-    </SafeViewAndGradientBackground>
+    </PreAuthSafeViewAndGradientBackground>
   );
 };
  

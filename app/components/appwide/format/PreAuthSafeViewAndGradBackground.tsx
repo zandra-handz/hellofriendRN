@@ -1,14 +1,12 @@
 import React from "react";
-import { View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View } from "react-native"; 
 import CustomStatusBar from "../statusbar/CustomStatusBar";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground";
 
-export const SafeViewAndGradientBackground = ({
+export const PreAuthSafeViewAndGradientBackground = ({
   children,
   style,
   includeCustomStatusBar = true,
@@ -17,16 +15,11 @@ export const SafeViewAndGradientBackground = ({
   backgroundOverlayHeight = '100%', 
   backgroundOverlayBottomRadius = 0,
   header: Header,
-}) => {  
-  const insets = useSafeAreaInsets();
+}) => {   
   const { selectedFriend } = useSelectedFriend();
 
   const route = useRoute(); 
-
-  const top = typeof insets.top === "number" ? insets.top : 0;
-  const bottom = typeof insets.bottom === "number" ? insets.bottom : 0;
-  const left = typeof insets.left === "number" ? insets.left : 0;
-  const right = typeof insets.right === "number" ? insets.right : 0;
+ 
 
 
   const standardizedHeaderHeight = 44;
@@ -45,10 +38,10 @@ export const SafeViewAndGradientBackground = ({
  
       additionalStyles={[
         { 
-          paddingTop: top,
-          paddingBottom: bottom,
-          paddingLeft: left,
-          paddingRight: right,
+          paddingTop: 0,
+          paddingBottom: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
           backgroundColor: primaryBackground
             ? themeStyles.primaryBackground.backgroundColor
             : "transparent",
@@ -87,4 +80,4 @@ export const SafeViewAndGradientBackground = ({
   );
 };
 
-export default SafeViewAndGradientBackground;
+export default PreAuthSafeViewAndGradientBackground;

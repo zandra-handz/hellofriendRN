@@ -11,7 +11,7 @@ import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
+import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
 
 const ScreenLocationView = () => {
@@ -49,7 +49,7 @@ const dayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
   
 
   return (
-    <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
+    <PreAuthSafeViewAndGradientBackground includeBackgroundOverlay={true}  style={{ flex: 1 }}>
       <CarouselSlider
         initialIndex={currentIndex}
         scrollToEdit={stickToLocation}
@@ -62,7 +62,7 @@ const dayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
  
       
       />
-    </SafeViewAndGradientBackground>
+    </PreAuthSafeViewAndGradientBackground>
   );
 };
 

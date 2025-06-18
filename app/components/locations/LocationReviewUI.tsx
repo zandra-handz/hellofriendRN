@@ -1,58 +1,68 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 
 import StarsRatingUI from "./StarsRatingUI";
 
-import { useLocations } from "@/src/context/LocationsContext";
+// import { useLocations } from "@/src/context/LocationsContext";
 
-const formatDate = (timestamp) => {
-  const date = new Date(timestamp * 1000);
-  return date.toLocaleDateString();
-
-};
-
+interface Review {
+  author_name: string;
+  time: number; // Unix timestamp seconds
+  rating: number;
+  text: string;
+}
 
 interface Props {
-  review: object[];
+  review: Review;
   backgroundColor: string;
   textColor: string;
+  formatDate?: (timestamp: number) => string;
 }
 
 const LocationReviewUI: React.RC<Props> = ({
   review,
   backgroundColor = "white",
   textColor = "black",
+  formatDate,
 }) => {
-  const { loadingAdditionalDetails } = useLocations();
+  // const { loadingAdditionalDetails } = useLocations();
+
+  //   const formatDate = (timestamp) => {
+  //   const date = new Date(timestamp * 1000);
+  //   return date.toLocaleDateString();
+
+  // };
+
+ 
+const formattedDate = formatDate(review.time);
+
+  // if (loadingAdditionalDetails) {
+  //   return (
+  //     <LoadingPage loading={loadingAdditionalDetails} spinnerType="wander" />
+  //   );
+  // }
 
   return (
     <View style={[styles.review, { backgroundColor: backgroundColor }]}>
-      {loadingAdditionalDetails && (
-        <LoadingPage loading={loadingAdditionalDetails} spinnerType="wander" />
-      )}
-      {!loadingAdditionalDetails && (
-        <>
-          <View
-            style={[
-              styles.reviewAuthorRatingContainer,
-              { backgroundColor: backgroundColor },
-            ]}
-          >
-            <Text style={[styles.reviewAuthor, { color: textColor }]}>
-              {review.author_name}
-            </Text>
-            <Text style={[styles.reviewDate, { color: textColor }]}>
-              {formatDate(review.time)}
-            </Text>
-          </View>
+      <View
+        style={[
+          styles.reviewAuthorRatingContainer,
+          { backgroundColor: backgroundColor },
+        ]}
+      >
+        <Text style={[styles.reviewAuthor, { color: textColor }]}>
+          {review.author_name}
+        </Text>
+        <Text style={[styles.reviewDate, { color: textColor }]}>
+          {formattedDate}
+        </Text>
+      </View>
 
-          <StarsRatingUI rating={review.rating} />
-          <Text style={[styles.reviewText, { color: textColor }]}>
-            {review.text}
-          </Text>
-        </>
-      )}
+      <StarsRatingUI rating={review.rating} />
+      <Text style={[styles.reviewText, { color: textColor }]}>
+        {review.text}
+      </Text>
     </View>
   );
 };
@@ -69,7 +79,7 @@ const styles = StyleSheet.create({
   reviewAuthorRatingContainer: {
     flexDirection: "row",
     marginBottom: 0,
-    width: '100%',
+    width: "100%",
     justifyContent: "space-between",
   },
   reviewAuthor: {
@@ -90,4 +100,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LocationReviewUI;
+//export default LocationReviewUI;
+export default React.memo(LocationReviewUI);

@@ -123,7 +123,7 @@ const ScreenMomentView = () => {
   // }, [currentIndex, capsuleList]);
 
   return (
-    <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground  style={{ flex: 1 }}>
       <CarouselSlider
         initialIndex={currentIndex}
         data={capsuleList}

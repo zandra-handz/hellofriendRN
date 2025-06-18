@@ -27,7 +27,7 @@ const LocationNotes = ({
 }) => {
   const { themeAheadOfLoading } = useFriendList(); 
   const { themeStyles } = useGlobalStyle();
-  const [hasNotes, setHasNotes] = useState(false);
+  // const [hasNotes, setHasNotes] = useState(false);
 
   const navigation = useNavigation();
 
@@ -50,7 +50,33 @@ const LocationNotes = ({
     closeModalAfterDelay();
   };
 
-  const memoizedIcon = useMemo(
+
+
+  const handlePress = () => {
+    const modalData = {
+      title: "Notes",
+      icon: memoizedIcon,
+      contentData: location.personal_experience_info,
+      onPress: () => handleGoToLocationEditScreenFocusNotes(),
+    };
+    openEditModal(modalData);
+    //setModalVisible(true);
+  };
+
+  // useLayoutEffect(() => {
+  //   if (location && location.personal_experience_info) {
+  //     setHasNotes(true);
+  //   } else {
+  //     setHasNotes(false);
+  //   }
+  // }, [location]);
+  const hasNotes = useMemo(() => {
+  return location && location.personal_experience_info ? true : false;
+}, [location]);
+
+
+
+    const memoizedIcon = useMemo(
     () => (
       <MaterialCommunityIcons
         name={hasNotes ? "note-check" : "note-plus-outline"}
@@ -70,25 +96,6 @@ const LocationNotes = ({
       themeStyles.genericText.color,
     ]
   );
-
-  const handlePress = () => {
-    const modalData = {
-      title: "Notes",
-      icon: memoizedIcon,
-      contentData: location.personal_experience_info,
-      onPress: () => handleGoToLocationEditScreenFocusNotes(),
-    };
-    openEditModal(modalData);
-    //setModalVisible(true);
-  };
-
-  useLayoutEffect(() => {
-    if (location && location.personal_experience_info) {
-      setHasNotes(true);
-    } else {
-      setHasNotes(false);
-    }
-  }, [location]);
 
   return (
     <View>

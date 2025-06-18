@@ -2,15 +2,17 @@ import { View, Text, Dimensions, TouchableOpacity } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
 import { useWindowDimensions } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import Animated, { useAnimatedRef } from "react-native-reanimated";
+import Animated, { useAnimatedRef, runOnJS, useAnimatedScrollHandler, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ItemFooter from "../headers/ItemFooter";
 import { useLocations } from "@/src/context/LocationsContext";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import CarouselItemModal from "./carouselItemModal";
 import { setItem } from "expo-secure-store";
+import SafeViewAndGradientBackground from "./format/SafeViewAndGradBackground";
 
 const CarouselSlider = ({
+  
   initialIndex,
   scrollToEdit,
   scrollToEditCompleted,
@@ -26,8 +28,7 @@ const CarouselSlider = ({
   //const { width } = Dimensions.get('screen');
   const ITEM_HEIGHT = "100%";
   const ITEM_WIDTH = width - 40;
-  const ITEM_MARGIN = 20;
-console.log('CAROUSEL RERENDERED');
+  const ITEM_MARGIN = 20; 
 console.log(stickToLocation);
   const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2; 
   const flatListRef = useAnimatedRef(null);
@@ -35,10 +36,16 @@ console.log(stickToLocation);
 
   const [ itemModalVisible, setItemModalVisible ] = useState(false);
 
-    const [currentIndex, setCurrentIndex] = useState(initialIndex + 1);
+    // const [currentIndex, setCurrentIndex] = useState(initialIndex + 1);
   const [currentCategory, setCurrentCategory] = useState(
     data[initialIndex + 1]?.typedCategory || data[initialIndex + 1]?.image_category
   );
+
+  const scrollX = useSharedValue(0);
+const scrollY = useSharedValue(0);
+const currentIndex = useSharedValue(0);
+    const floaterItemsVisibility = useSharedValue(1);
+    const cardScale = useSharedValue(1);
 
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `hello-${index}`;
@@ -91,26 +98,60 @@ useEffect(() => {
   };
 
 
-  const handleScroll = useCallback(
-    (event) => {
-      const offsetX = event.nativeEvent.contentOffset.x;
-      const currentIndex = Math.round(offsetX / COMBINED);
-      onIndexChange?.(currentIndex);
-      setCurrentIndex(currentIndex + 1);
-      setCurrentCategory(
-        data[currentIndex]?.typedCategory ||
-          data[currentIndex]?.category ||
-          data[currentIndex]?.date
-      );
-    },
-    [COMBINED, onIndexChange]
-  );
+  // const handleScroll = useCallback(
+  //   (event) => {
+  //     const offsetX = event.nativeEvent.contentOffset.x;
+  //     const currentIndex = Math.round(offsetX / COMBINED);
+  //     onIndexChange?.(currentIndex);
+  //     setCurrentIndex(currentIndex + 1);
+  //     setCurrentCategory(
+  //       data[currentIndex]?.typedCategory ||
+  //         data[currentIndex]?.category ||
+  //         data[currentIndex]?.date
+  //     );
+  //   },
+  //   [COMBINED, onIndexChange]
+  // );
+
+
+const scrollHandler = useAnimatedScrollHandler({
+  onScroll: (event) => {
+    const y = event.contentOffset.y;
+    const x = event.contentOffset.x;
+
+    scrollY.value = y;
+    scrollX.value = x;
+
+    // if (y < 10) {
+    //   floaterItemsVisibility.value = withTiming(1);
+    // } else {
+    //   floaterItemsVisibility.value = withTiming(1, { duration: 1000 });
+    // }
+//floaterItemsVisibility.value = withTiming(0, { duration: 1000 });
+    // Update sharedValue for horizontal index
+    currentIndex.value = Math.round(x / COMBINED);
+  },
+
+  onBeginDrag: (event) => {
+    floaterItemsVisibility.value = withTiming(0, { duration: 10 });
+    cardScale.value = withTiming(.94, { duration: 10 });
+
+  },
+  onEndDrag: (event) => {
+    if (event.contentOffset.y <= 0) {
+      // Optional
+    }
+    floaterItemsVisibility.value = withTiming(1, { duration: 400 });
+     cardScale.value = withTiming(1, { duration: 400 });
+  },
+});
 
   const renderHelloPage = useCallback(
     ({ item, index }) => (
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
-      <View style={{flex: 1, height: '89%'}}>
-        <Children item={item} index={index} width={width} height={height} currentIndex={currentIndex} openModal={handleSetModalData} closeModal={() => setItemModalVisible(false)} />
+      
+      <View style={{flex: 1, height: '100%'}}>
+        <Children item={item} index={index} width={width} height={height} currentIndexValue={currentIndex} cardScaleValue={cardScale} openModal={handleSetModalData} closeModal={() => setItemModalVisible(false)} />
       </View>
 
       //   <View
@@ -142,7 +183,7 @@ useEffect(() => {
   return (
     <>
     <>
-      <View
+      {/* <View
         style={{ 
           //position: "absolute",
           zIndex: 1000,
@@ -156,6 +197,8 @@ useEffect(() => {
           paddingHorizontal: 10,
         }}
       >
+
+
         <View
           style={{
             flexDirection: "row",
@@ -179,7 +222,7 @@ useEffect(() => {
             >
               Start
             </Text> */}
-          </TouchableOpacity>
+          {/* </TouchableOpacity>
           <TouchableOpacity onPress={scrollToEnd}>
                         <MaterialCommunityIcons
               name="step-forward"
@@ -194,8 +237,8 @@ useEffect(() => {
             >
               End
             </Text> */}
-          </TouchableOpacity>
-        </View>
+          {/* </TouchableOpacity>   */}
+        {/* </View> */}
         {/* <View
           style={{
             flex: 1,
@@ -205,7 +248,7 @@ useEffect(() => {
             width: "100%",
           }}
         > */}
-        <Text
+        {/* <Text
           numberOfLines={1}
           style={[
             themeStyles.primaryText,
@@ -218,7 +261,7 @@ useEffect(() => {
             : currentCategory}
         </Text>
         {/* </View> */}
-        <Text
+        {/* <Text
           style={[
             themeStyles.primaryText,
             {
@@ -231,7 +274,11 @@ useEffect(() => {
         >
           {currentIndex} / {data.length}
         </Text>
-      </View>
+      </View>    */}
+
+
+
+
       <Animated.FlatList
         data={data}
         ref={flatListRef}
@@ -244,8 +291,8 @@ useEffect(() => {
         // }
         scrollEventThrottle={16}
         showsHorizontalScrollIndicator={false}
-        // onScroll={scrollHandler}
-        onScroll={handleScroll}
+         onScroll={scrollHandler}
+      //  onScroll={handleScroll}
         keyExtractor={extractItemKey}
         getItemLayout={getItemLayout}
         initialNumToRender={5}
@@ -259,11 +306,13 @@ useEffect(() => {
         //   snapToOffsets={true}
         ListFooterComponent={() => <View style={{ width: 100 }} />}
       />
-      {type === 'location' && (
+      {/* {type === 'location' && ( */}
         
-      <ItemFooter location={data[currentIndex - 1]} extraData={footerData}/>
+      <ItemFooter data={data}  visibilityValue={floaterItemsVisibility} currentIndexValue={currentIndex} extraData={footerData}/>
       
-      )}
+
+      
+      {/* )} */}
     </>
 
           {itemModalVisible && (

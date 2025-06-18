@@ -7,6 +7,7 @@ import LocationsMapView from "@/app/components/locations/LocationsMapView";
 import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+ 
 // import {
 //   useGeolocationWatcher,
 // } from "@/src/hooks/useCurrentLocationAndWatcher";
@@ -31,21 +32,7 @@ const ScreenLocationSearch = () => {
   const { bermudaCoords } = useLocationHelloFunctions();
   4;
 
-  useEffect(() => {
-    if (userAddress) {
-      console.log(userAddress);
-    }
 
-  }, [userAddress]);
-
-
-  
-  useEffect(() => {
-    if (friendAddress) {
-      console.log(friendAddress);
-    }
-
-  }, [friendAddress]);
 
   return (
     // <GestureHandlerRootView style={{flex: 1}}>

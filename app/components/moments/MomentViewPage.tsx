@@ -1,5 +1,5 @@
 import { View, Text, DimensionValue, ScrollView } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -11,12 +11,17 @@ import SlideToAdd from "../foranimations/SlideToAdd";
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 
+import Animated, { SharedValue, useAnimatedStyle, runOnJS, useAnimatedReaction } from 'react-native-reanimated';
+
 interface MomentViewPageProps {
   item: object;
   index: number;
   width: DimensionValue;
-  height: DimensionValue;
-  currentIndex: number;
+  height: DimensionValue; 
+    currentIndexValue: SharedValue;
+    cardScaleValue: SharedValue;
+    openModal: () => void;
+    closeModal: () => void;
 }
 
 const MomentViewPage: React.FC<MomentViewPageProps> = ({
@@ -24,14 +29,34 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
   index,
   width,
   height,
-  currentIndex,
+  currentIndexValue,
+  cardScaleValue,
 }) => {
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
   const { updateCapsule, deleteMomentRQuery, deleteMomentMutation } =
     useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const navigation = useNavigation();
+
+  const [ currentIndex, setCurrentIndex ] = useState();
+
+  
+  useAnimatedReaction(
+    () => currentIndexValue.value,
+    (newIndex, prevIndex) => {
+      if (newIndex !== prevIndex) {
+        runOnJS(setCurrentIndex)(newIndex);
+      }
+    },
+    []
+  );
+
+  
+  const cardScaleAnimation = useAnimatedStyle(() => ({
+    transform: [{ scale: cardScaleValue.value }]
+  })); 
+  
 
   const handleEditMoment = () => {
     navigation.navigate("MomentFocus", {
@@ -64,8 +89,10 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
   };
 
   return (
-    <View
-      style={{
+    <Animated.View
+      style={[
+        cardScaleAnimation,
+        {
         gap: 20,
         justifyContent: "center",
         alignItems: "center",
@@ -74,13 +101,13 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
         borderWidth: 0,
         //   height: ITEM_HEIGHT,
         width: width,
-      }}
+      }]}
     >
       <View
         style={{
           backgroundColor: themeStyles.primaryBackground.backgroundColor,
-          padding: 10,
-          borderRadius: 10,
+          padding: 20,
+          borderRadius: 40,
           width: "100%",
           height: "100%",
           zIndex: 1,
@@ -113,8 +140,8 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
         />
         <View style={{ height: "90%", width: "100%" }}>
           <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
-            <Text style={themeStyles.primaryText}> {item.typedCategory}</Text>
-            <Text style={themeStyles.primaryText}> {item.capsule}</Text>
+            <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}> # {item.typedCategory}</Text>
+            <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>  {item.capsule}</Text>
                     <SlideToDeleteHeader
           itemToDelete={item}
           onPress={handleDelete}
@@ -133,7 +160,7 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
           sliderTextColor={themeStyles.primaryText.color}
         /> */}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
