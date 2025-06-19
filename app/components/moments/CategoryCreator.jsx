@@ -67,8 +67,6 @@ const CategoryCreator = ({
     }
   }, [capsuleList, friendDashboardData, loadingNewFriend]);
 
- 
-
   const updateNewCategoryText = (text) => {
     if (newCategoryRef && newCategoryRef.current) {
       newCategoryRef.current.setText(text);
@@ -143,17 +141,53 @@ const CategoryCreator = ({
     }
   }, [newCategoryEntered]);
 
+  const renderCategoryButtonItem = useCallback(
+    ({ item, index }) => {
+      return (
+        <View
+          key={item}
+          style={{
+            width: 140,
+            height: "100%",
+           overflow: 'hidden',
+            marginRight: 3,
+          }}
+        >
+          <ButtonBottomActionBaseSmallLongPress
+            height={"80%"}
+            buttonPrefix={
+              updateExistingMoment && existingCategory ? "Save to" : "Add to"
+            }
+            onPress={() => handlePressOut(item)} // Correct way to pass the function
+            onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
+            label={item}
+            selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
+            width={140}
+            fontFamily={"Poppins-Regular"}
+            shapeWidth={44}
+            shapeHeight={44}
+            shapePosition="right"
+            shapePositionValue={0}
+            shapePositionValueVertical={4}
+          />
+        </View>
+      );
+    },
+    [handlePressOut, handleCategoryPress, selectedCategory]
+  );
+
   return (
     <View
       style={{
         position: "absolute",
-     //   backgroundColor: "red",
+        //   backgroundColor: "red",
         height: 38,
         width: "100%",
         zIndex: 1000,
         top: "92%",
+        flex: 1,
         transform: [{ translateY: -50 }],
-        alignItems: "center",
+       // alignItems: "center",
       }}
     >
       {friendDashboardData && categoryNames && !loadingNewFriend && (
@@ -169,6 +203,7 @@ const CategoryCreator = ({
                 flexDirection: "row",
                 height: "100%",
                 width: "100%",
+
                 paddingLeft: "4%",
               }}
             >
@@ -179,43 +214,11 @@ const CategoryCreator = ({
                   keyboardShouldPersistTaps="handled"
                   nestedScrollEnabled
                   keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
-                  renderItem={({ item }) => (
-                    <View
-                      key={item}
-                      style={{
-                        width: 140,
-                        height: "100%",
-                        justifyContent: "center",
-                        flex: 1,
-                        marginRight: "2%",
-                      }}
-                    >
-                      <ButtonBottomActionBaseSmallLongPress
-                        height={"80%"}
-                        buttonPrefix={
-                          updateExistingMoment && existingCategory
-                            ? "Save to"
-                            : "Add to"
-                        }
-                        onPress={() => handlePressOut(item)} // Correct way to pass the function
-                        onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
-                        label={item}
-                        selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
-                        width={140}
-                        fontFamily={"Poppins-Regular"}
-                        shapeWidth={44}
-                        shapeHeight={44}
-                        shapePosition="right"
-                        shapePositionValue={0}
-                        shapePositionValueVertical={4}
-                        
-                      />
-                    </View>
-                  )}
+                  renderItem={renderCategoryButtonItem}
                   contentContainerStyle={{
-                    
                     justifyContent: "space-around",
                     maxHeight: containerHeight,
+                    flexGrow: 0,
                   }}
                   ListFooterComponent={<View style={styles.flatListEndSpace} />}
                 />

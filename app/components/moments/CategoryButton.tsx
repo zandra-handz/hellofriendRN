@@ -64,8 +64,8 @@ const CategoryButton = ({
         } else {
           progress.value = withTiming(0, { duration: 200 });
           translateYx2.value = withTiming(0, { duration: 200 });
-          startColor.value = "transparent";
-          endColor.value = "transparent";
+          startColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
+          endColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
           textColor.value = themeStyles.genericText.color;
         }
       }
@@ -90,21 +90,21 @@ const CategoryButton = ({
 
   return (
     <AnimatedTouchableOpacity
-      style={[animatedCardsStyle, appContainerStyles.categoryButton, { height: height}]}
+      style={[animatedCardsStyle, appContainerStyles.categoryButton, {  width: 'auto', padding: 10,  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor, height: height}]}
       onPress={() => {
         onPress(label);
       }}
     >
-      <Text
+      <Animated.Text
         numberOfLines={1}
         style={[
           appFontStyles.categoryButtonText,
           themeStyles.genericText,
-         // animatedCardsStyle,
+          animatedCardsStyle,
         ]}
       >
         # {label}
-      </Text>
+      </Animated.Text>
     </AnimatedTouchableOpacity>
   );
 };

@@ -3,6 +3,7 @@ import React, {
   useContext,
   useState,
   useRef,
+  useMemo,
   useEffect,
 } from "react";
 import { AccessibilityInfo, Platform } from "react-native";
@@ -81,6 +82,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  console.log('user context rerendered');
+
   let isReinitializing = false;
 
   const reInitialize = async () => {
@@ -104,37 +107,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
 
         if (userData) {
-          console.log('userData returned from backend');
+          //console.log('userData returned from backend');
           startTransition(() => {
             setUser(userData);
             console.log('userdata set');
             setAuthenticated(true);
             console.log('authenticated set');
-            setUserAppSettings(userData.settings || {});
-            console.log('app settings set');
-            setUserNotificationSettings({
-              receive_notifications:
-                userData.settings?.receive_notifications || false,
-            });
-            console.log('notifications set');
-          });
-          // setUser(userData);
-          // console.log('USERDATA SET');
-          // if (authenticated !== true) {
-
-          // setAuthenticated(true);
-          // console.log('AUTHENICATED SET TO TRUE');
-          // }
-
-          // // FIX
-          // setUserAppSettings(userData.settings || {});
-          // console.log('APP SETTINGS SET');
-          // setUserNotificationSettings({
-          //   receive_notifications:
-          //     userData.settings?.receive_notifications || false,
-          // });
-          // console.log('NOTIFS SET');
-          /////////////////////////////////////////////////////////
+           
+          }); 
         } else {
           console.log("not authenticated");
           setUser(null);
@@ -223,34 +203,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       console.error("Sign up error", error);
     }
   };
-  useEffect(() => {
-    if (!authenticated || !userAppSettings) return;
 
-    const fetchInitialSettings = async () => {
-      console.log("SCREEN READER CONTEXT");
-      try {
-        const isActive = await AccessibilityInfo.isScreenReaderEnabled();
-
-        setUserAppSettings((prevSettings) => {
-          // only update if value has changed
-          if (prevSettings.screen_reader !== isActive) {
-            return { ...prevSettings, screen_reader: isActive };
-          }
-          return prevSettings;
-        });
-      } catch (error) {
-        console.error("Error fetching initial screen reader status:", error);
-      }
-    };
-
-    fetchInitialSettings();
-  }, [authenticated, userAppSettings]);
 
   const onSignOut = async () => {
     await signout();
     setUser(null);
-    setUserAppSettings(null);
-    setUserNotificationSettings(null);
+    // setUserAppSettings(null);
+    // setUserNotificationSettings(null);
     setAuthenticated(false);
 
     queryClient.clear();
@@ -289,112 +248,35 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   //       console.error("Delete user error", error);
   //     }
   //   };
+ 
+ 
+   const contextValue = useMemo(
+    () => ({
+      user,
+      isAuthenticated: authenticated,
+      onSignin,
+      onSignUp,
+      onSignOut,
+      reInitialize,
+      signinMutation,
+      signupMutation,
+    }),
+    [
+      user,
+      authenticated,
+      onSignin,
+      onSignUp,
+      onSignOut,
+      reInitialize,
+      signinMutation,
+      signupMutation,
+    ]
+  );
 
-  const updateAppSettings = async (newSettings) => {
-    try {
-      await updateAppSettingsMutation.mutateAsync({
-        userId: user.user.id, // User ID
-        fieldUpdates: newSettings, // Pass newSettings directly as fieldUpdates
-      });
-    } catch (error) {
-      console.error("Error updating app settings:", error);
-    }
-  };
-
-  const updateAppSettingsMutation = useMutation({
-    mutationFn: (data) =>
-      updateUserAccessibilitySettings(data.userId, data.setting),
-    onSuccess: (data) => {
-      setUserAppSettings(data); // Assuming the API returns updated settings
-      console.log("APP SETTNGS RESET");
-
-      // queryClient.setQueryData(["fetchUser"], (oldData) => ({
-      //   ...oldData,
-      //   settings: data.settings,
-      // }));
-    },
-    onError: (error) => {
-      console.error("Update app settings error:", error);
-    },
-  });
-
-  useEffect(() => {
-    if (userNotificationSettings?.receive_notifications) {
-      // register
-      registerForNotifications();
-    } else {
-      // remove
-      removeNotificationPermissions();
-    }
-  }, [userNotificationSettings]);
-
-  const registerForNotifications = async () => {
-    if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
-      });
-    }
-
-    if (Device.isDevice) {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-
-      if (finalStatus === "granted") {
-        const projectId =
-          Constants?.expoConfig?.extra?.eas?.projectId ??
-          Constants?.easConfig?.projectId;
-        const pushTokenString = (
-          await Notifications.getExpoPushTokenAsync({ projectId })
-        ).data;
-        await SecureStore.setItemAsync("pushToken", pushTokenString);
-        await updateUserAccessibilitySettings(user.id, {
-          receive_notifications: true,
-          expo_push_token: pushTokenString,
-        });
-        console.log("UPDATED USER SETTINGS WITH NOTIFICATION SETTINGS");
-      }
-    }
-  };
-
-  const removeNotificationPermissions = async () => {
-    await SecureStore.deleteItemAsync("pushToken");
-    if (user) {
-      await updateUserAccessibilitySettings(user.id, {
-        receive_notifications: false,
-        expo_push_token: null,
-      });
-    }
-  };
-
+ 
   return (
     <UserContext.Provider
-      value={{
-        user,
-        isAuthenticated: authenticated,
-        userAppSettings,
-        userNotificationSettings,
-        onSignin,
-        onSignUp,
-        onSignOut,
-        reInitialize,
-        // handleDeleteUserAccount,
-        // deleteUserAccountMutation,
-        updateAppSettingsMutation,
-        updateAppSettings,
-
-        updateUserSettings: setUserAppSettings, // .... ?????
-        updateUserNotificationSettings: setUserNotificationSettings,
-        signinMutation,
-        signupMutation,
-      }}
+      value={contextValue}
     >
       {children}
     </UserContext.Provider>

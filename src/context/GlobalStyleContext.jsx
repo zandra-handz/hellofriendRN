@@ -1,20 +1,22 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { StyleSheet, AccessibilityInfo } from "react-native";
-import { useUser } from "./UserContext";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { StyleSheet  } from "react-native";
+ 
 //import { updateUserAccessibilitySettings } from "../calls/api";
 import { useColorScheme } from "react-native";
+import { useUserSettings } from "./UserSettingsContext";
 
 const GlobalStyleContext = createContext();
 
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
-  const { user, isAuthenticated, userAppSettings, updateAppSettingsMutation } =
-    useUser();
+ 
 
-    
+    const { settings  } = useUserSettings();
+
+    console.log('GLOBAL STYLES RERENDERED');
   const colorScheme = useColorScheme();
-console.log('GLOBAL STYLES RERENDERED');
+
   // Default state
   const [styles, setStyles] = useState({
     fontSize: 16,
@@ -42,95 +44,151 @@ console.log('GLOBAL STYLES RERENDERED');
     gradientDirection: { x: 1, y: 0 },
   });
 
-  useEffect(() => {
-    if (isAuthenticated && userAppSettings) {
-      const determineTheme = () => {
-        if (userAppSettings.manual_dark_mode !== null) {
-          return userAppSettings.manual_dark_mode ? "dark" : "light";
+
+        const determineTheme = () => {
+        if (settings.manual_dark_mode !== null) {
+          return settings.manual_dark_mode ? "dark" : "light";
         }
         return colorScheme || "light";
       };
 
-      setStyles((prevStyles) => ({
+      useEffect(() => {
+  if (settings) {
+    console.log("settings triggered globalstyles");
+
+    const newFontSize = settings.large_text ? 20 : 16;
+    const newHighContrast = settings.high_contrast_mode;
+    const newScreenReader = settings.screen_reader;
+    const newReceiveNotifications = settings.receive_notifications;
+    const newTheme = determineTheme();
+
+    setStyles((prevStyles) => {
+      if (
+        prevStyles.fontSize === newFontSize &&
+        prevStyles.highContrast === newHighContrast &&
+        prevStyles.screenReader === newScreenReader &&
+        prevStyles.receiveNotifications === newReceiveNotifications &&
+        prevStyles.theme === newTheme
+      ) {
+        return prevStyles; // No changes, skip re-render
+      }
+
+      return {
         ...prevStyles,
-        fontSize: userAppSettings.large_text ? 20 : 16,
-        highContrast: userAppSettings.high_contrast_mode,
-        screenReader: userAppSettings.screen_reader,
-        receiveNotifications: userAppSettings.receive_notifications,
-        theme: determineTheme(),
-      }));
-    } else {
-      setStyles((prevStyles) => ({
+        fontSize: newFontSize,
+        highContrast: newHighContrast,
+        screenReader: newScreenReader,
+        receiveNotifications: newReceiveNotifications,
+        theme: newTheme,
+      };
+    });
+  } else {
+    const fallbackTheme = colorScheme || "light";
+
+    setStyles((prevStyles) => {
+      if (prevStyles.theme === fallbackTheme) return prevStyles;
+
+      return {
         ...prevStyles,
-        theme: colorScheme || "light",
-      }));
-    }
-  }, [isAuthenticated, userAppSettings, colorScheme]);
+        theme: fallbackTheme,
+      };
+    });
+  }
+}, [settings, colorScheme]);
+
+
+  //   useEffect(() => {
+  //   if (settings) {
+  //       console.log('settings triggered globalstyles');
+  //     setStyles((prevStyles) => ({
+  //       ...prevStyles,
+  //       fontSize: settings.large_text ? 20 : 16,
+  //       highContrast: settings.high_contrast_mode,
+  //       screenReader: settings.screen_reader,
+  //       receiveNotifications: settings.receive_notifications,
+  //       theme: determineTheme(),
+  //     }));
+  //   } else {
+  //     setStyles((prevStyles) => ({
+  //       ...prevStyles,
+  //       theme: colorScheme || "light",
+  //     }));
+  //   }
+  // }, [settings, colorScheme]);
+
+
 
   useEffect(() => {
-    if (styles.theme === "light") {
-      setStyles((prevStyles) => ({
-        ...prevStyles,
-        gradientColors: {
+  const isLight = styles.theme === "light";
+
+  setStyles((prev) => {
+    const newGradient = isLight
+      ? {
           darkColor: "#ffffff",
           lightColor: "#ffffff",
-        },
-        gradientColorsHome: {
-          darkColor: "#ffffff",
-          lightColor: "#ffffff",
-        },
-      }));
-    } else {
-      setStyles((prevStyles) => ({
-        ...prevStyles,
-        gradientColors: {
+        }
+      : {
           darkColor: "#4caf50",
           lightColor: "#a0f143",
-        },
-        gradientColorsHome: {
+        };
+
+    const newHome = isLight
+      ? {
+          darkColor: "#ffffff",
+          lightColor: "#ffffff",
+        }
+      : {
           darkColor: "#000002",
           lightColor: "#163805",
-        },
-      }));
-    }
-  }, [styles.theme]);
+        };
 
-  //working on removing and replacing with RQ mutation directly
-  //this is mainly used in SectionSettingsAccessibility
-  const updateUserAccessibility = async (updates) => {
-    try {
-      //await updateUserAccessibilitySettings(authUserState.user.id, updates);
-      updateAppSettingsMutation.mutate({
-        ...userAppSettings,
-        ...updates,
-      });
-    } catch (error) {
-      console.error("Error updating user settings:", error);
-    }
-  };
+    const gradientsUnchanged =
+      JSON.stringify(prev.gradientColors) === JSON.stringify(newGradient) &&
+      JSON.stringify(prev.gradientColorsHome) === JSON.stringify(newHome);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      return;
-    }
+    if (gradientsUnchanged) return prev;
 
-    const screenReaderListener = AccessibilityInfo.addEventListener(
-      "screenReaderChanged",
-
-      async (isActive) => {
-        console.log("SCREEN READER GLOBAL STYLE");
-        if (user) {
-          updateAppSettingsMutation.mutate({
-            userId: user.id,
-            setting: { screen_reader: isActive },
-          });
-        }
-      }
-    );
-    return () => {
-      screenReaderListener.remove();
+    return {
+      ...prev,
+      gradientColors: newGradient,
+      gradientColorsHome: newHome,
     };
-  }, [isAuthenticated]);
+  });
+}, [styles.theme]);
+
+ 
+// // light/dark switcher
+//   useEffect(() => {
+//     console.log('use effect triggered bt styles.theme');
+//     if (styles.theme === "light") {
+//       setStyles((prevStyles) => ({
+//         ...prevStyles,
+//         gradientColors: {
+//           darkColor: "#ffffff",
+//           lightColor: "#ffffff",
+//         },
+//         gradientColorsHome: {
+//           darkColor: "#ffffff",
+//           lightColor: "#ffffff",
+//         },
+//       }));
+//     } else {
+//       setStyles((prevStyles) => ({
+//         ...prevStyles,
+//         gradientColors: {
+//           darkColor: "#4caf50",
+//           lightColor: "#a0f143",
+//         },
+//         gradientColorsHome: {
+//           darkColor: "#000002",
+//           lightColor: "#163805",
+//         },
+//       }));
+//     }
+//   }, [styles.theme]);
+
+
+ 
 
   const themeStyles =
     styles.theme === "dark" ? darkThemeStyles : lightThemeStyles;
@@ -163,6 +221,7 @@ console.log('GLOBAL STYLES RERENDERED');
 };
 
 const containerStyles = StyleSheet.create({
+  //removed from signinbutton
   signInButtonContainer: {
     borderRadius: 30,
     paddingVertical: "3%",
@@ -267,17 +326,7 @@ const containerStyles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
     alignSelf: "center",
-  },
-  categoryNavigatorContainer: {
-    position: "absolute",
-    bottom: 18, //20
-    left: 4,
-    zIndex: 5,
-    height: "auto",
-    maxHeight: "20%",
-    width: "74%",
- 
-  },
+  }, 
   categoryButton: {
     // borderBottomWidth: 0.8,
     borderWidth: StyleSheet.hairlineWidth,
@@ -310,13 +359,7 @@ const containerStyles = StyleSheet.create({
     height: 'auto',
     width: 'auto',
   },
-  categoryCreatorContainer: {
-    width: "100%",
-    borderRadius: 20,
-    flexWrap: "wrap", // Change this to flex-start
-    flexDirection: "column",
-    flex: 1,
-  },
+
   searchBarContainer: {
     zIndex: 2,
   },
@@ -333,11 +376,11 @@ const containerStyles = StyleSheet.create({
   searchBarDropDownContainer: {
     position: "absolute",
     padding: 10,
-    top: 30,
+ 
     right: -10,
-    width: 300,
+ 
     //height: 100,
-    maxHeight: 300,
+    height: 100,
     borderRadius: 20,
     shadowColor: "#000",
     shadowOpacity: 0.2,
@@ -512,6 +555,7 @@ const spacingStyles = StyleSheet.create({
 });
 
 const fontStyles = StyleSheet.create({
+  //removed from signin button
   signInButtonLabel: {
     fontFamily: "Poppins-Bold",
     fontSize: 14,
@@ -620,6 +664,7 @@ const fontStyles = StyleSheet.create({
   },
 });
 
+//removed from signinbutton
 const crossThemeStyles = StyleSheet.create({
   primaryDarkText: {
     color: "#121212",

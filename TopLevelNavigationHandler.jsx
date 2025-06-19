@@ -1,4 +1,4 @@
-// NavigationHandler.js
+ 
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from './src/context/UserContext';
@@ -7,6 +7,9 @@ const TopLevelNavigationHandler = ({ children }) => {
     const navigation = useNavigation();
     const { isAuthenticated, isInitializing, onSignOut } = useUser();
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+
+    console.log('TOP NAVIGATION HANDLER RUNNING');
 
     useEffect(() => { 
         const checkAuthentication = async () => {
@@ -29,6 +32,24 @@ const TopLevelNavigationHandler = ({ children }) => {
 
         checkAuthentication();
     }, [  navigation, onSignOut, isCheckingAuth, isAuthenticated]);
+
+//     useEffect(() => {
+//   if (isInitializing || isCheckingAuth) return;
+
+
+//    console.log('checking auth!');
+//   const checkAuthentication = async () => {
+   
+//     if (!isAuthenticated) {
+//       setIsCheckingAuth(true);
+//       await onSignOut();
+//       navigation.navigate('Signin');
+//       setIsCheckingAuth(false);
+//     }
+//   };
+
+//   checkAuthentication();
+// }, [isAuthenticated, isInitializing]);
 
     return <>{children}</>;
 };

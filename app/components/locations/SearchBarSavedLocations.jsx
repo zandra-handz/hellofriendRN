@@ -103,6 +103,8 @@ const INPUT_CONTAINER_BORDER_RADIUS = 10;
     <>
       <TouchableWithoutFeedback  onPress={handleOutsidePress}>
         <View style={[styles.inputContainer, themeStyles.genericTextBackground, { borderRadius: INPUT_CONTAINER_BORDER_RADIUS, borderColor: themeStyles.primaryText.color}]}>
+         
+         
           <TextInput
             ref={textInputRef}
             autoFocus={mountingText.length > 0 ? true : false}

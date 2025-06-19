@@ -76,7 +76,7 @@ export const SafeViewAndGradientBackground = ({
         ></View>
       )}
 
-      {includeCustomStatusBar && <CustomStatusBar />}
+      {/* {includeCustomStatusBar && <CustomStatusBar />} */}
       {Header && (
         <View style={{  height: standardizedHeaderHeight }}>
           <Header />

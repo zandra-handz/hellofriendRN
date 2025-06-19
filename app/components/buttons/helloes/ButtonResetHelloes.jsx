@@ -1,110 +1,92 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useEffect } from "react";
+import { Alert, StyleSheet, Pressable } from 'react-native';
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import { useUser } from "@/src/context/UserContext";
-import ButtonToggleSize from "../scaffolding/ButtonToggleSize"; // Adjust the path as needed
-import AlertConfirm from "../../alerts/AlertConfirm";
-import AlertSuccessFail from "../../alerts/AlertSuccessFail"; 
-import ByeSvg from "@/app/assets/svgs/bye.svg";
+ import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
  
-const ButtonResetHelloes = ({ title, onPress, confirmationAlert = true }) => {
+const ButtonResetHelloes = ({ iconSize=15 }) => {
   const {  handleRemixAllNextHelloes, remixAllNextHelloesMutation } = useUpcomingHelloes(); // MOVE TO CONTEXT
-  const [isModalVisible, setModalVisible] = useState(false);
  
-  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
-  const [isFailModalVisible, setFailModalVisible] = useState(false);
+ const { themeStyles, manualGradientColors } = useGlobalStyle();
  
+ 
+    const handleOnPress = () => {
+   
+      Alert.alert('Warning!', 'Reset all suggested hello dates? (You can run this reset three times a day.)', [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+              {text: 'Reset', onPress: () => handleRemixAllNextHelloes()},
+ 
+      ]); 
+  };
+  const confirmResetHelloes = async () => {
+ 
+    
 
-  const { user } = useUser();
+    await handleRemixAllNextHelloes();
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
   };
 
-  const confirmResetHelloes = async (userId) => {
-    console.log('resetting helloes');
-    if (!userId) {
+  
+
+  // useEffect(() => {
+  //   if (remixAllNextHelloesMutation.isSuccess) {
+ 
+  //     // showMessage(true, null, `All friend dates reset!`);
+  //   } else if (remixAllNextHelloesMutation.isError) {
+  //     console.log('error'); 
+  //   }
+
+  // }, [remixAllNextHelloesMutation]);
+  return ( 
+
+<Pressable onPress={handleOnPress}
+  style={({ pressed }) => [
+    styles.container,
+    {backgroundColor: manualGradientColors.lightColor},
+    pressed && styles.pressedStyle, 
+  ]}>
+<MaterialCommunityIcons 
+name={'refresh'}
+size={iconSize}
+color={manualGradientColors.homeDarkColor}
+
+/>
+
+  </Pressable>
+ 
+    
       
-      return;
-    }
-
-    await handleRemixAllNextHelloes(userId);
-
-  };
-
- 
-
-  const successOk = () => {  
-    setSuccessModalVisible(false);
-    toggleModal();
-  };
-
-  const failOk = () => {
-    setFailModalVisible(false);
-  };
-
-
-  useEffect(() => {
-    if (remixAllNextHelloesMutation.isSuccess) {
-      console.log('success!');
-     // toggleModal();
-      
-      setSuccessModalVisible(true);
-     // toggleModal();
-      // showMessage(true, null, `All friend dates reset!`);
-    } else if (remixAllNextHelloesMutation.isError) {
-      console.log('error');
-      setFailModalVisible(true);
-    }
-
-  }, [remixAllNextHelloesMutation]);
-  return (
-    <>
-      <ButtonToggleSize
-        title={title}
-        onPress={toggleModal}
-        iconName="refresh"
-        style={{
-          backgroundColor: "#e63946",
-          width: 70,
-          height: 35,
-          borderRadius: 20,
-        }}
-      />
-      {confirmationAlert && (
-        <AlertConfirm
-          fixedHeight={true}
-          height={330}
-          isModalVisible={isModalVisible}
-          isFetching={remixAllNextHelloesMutation.isPending}
-          useSpinner={true}
-          toggleModal={toggleModal}
-          headerContent={<ByeSvg width={36} height={36} />}
-          questionText="Reset all hello dates? (This can't be reversed!)"
-          onConfirm={() => confirmResetHelloes(user.id)}
-          onCancel={toggleModal}
-          confirmText="Reset All"
-          cancelText="Nevermind"
-        />
-      )}
-      <AlertSuccessFail
-        isVisible={isSuccessModalVisible}
-        message="Helloes reset!"
-        onClose={successOk}
-        type="success"
-      />
-
-      <AlertSuccessFail
-        isVisible={isFailModalVisible}
-        message="Could not reset :("
-        onClose={failOk}
-        tryAgain={false}
-        onRetry={confirmResetHelloes}
-        isFetching={remixAllNextHelloesMutation.isPending}
-        type="failure"
-      />
-    </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: 38,
+    height: 'auto',
+    borderRadius: 15,
+    justifyContent: 'center',
+    paddingHorizontal: '.5%', 
+    paddingVertical: '.5%',
+    alignItems: 'center',
+  },
+  pressedStyle: {
+
+  },
+  on: {
+    backgroundColor: '#4cd137',
+  },
+  off: {
+    backgroundColor: '#dcdde1',
+  },
+  circle: {
+    width: 15,
+    height: 15,
+    borderRadius: 15 / 2, 
+  },
+});
 
 export default ButtonResetHelloes;

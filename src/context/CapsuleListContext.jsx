@@ -44,6 +44,9 @@ export const CapsuleListProvider = ({ children }) => {
   const { user, isInitializing, isAuthenticated } = useUser();
   const queryClient = useQueryClient();
 
+
+ // console.log('CAPSULE LIST RERENDERED');
+
   const [sortedByCategory, setSortedByCategory] = useState([]);
   const [newestFirst, setNewestFirst] = useState([]);
 

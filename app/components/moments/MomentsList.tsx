@@ -76,6 +76,9 @@ const MomentsList = () => {
     viewableItemsArray.value = viewableItems;
   }, []);
 
+
+ // console.log('MOMENTS LIST RERENDERED');
+
   const viewabilityConfig = useRef({
     minimumViewTime: 40,
     itemVisiblePercentThreshold: 5,
@@ -153,7 +156,7 @@ const MomentsList = () => {
   const scrollToMoment = (moment) => {
     if (moment.uniqueIndex !== undefined) {
       flatListRef.current?.scrollToOffset({
-        offset: ITEM_HEIGHT * moment.uniqueIndex,
+        offset: COMBINED_HEIGHT * moment.uniqueIndex,
         animated: false, // disables the "intermediate" rendering problem
       });
     }
@@ -447,14 +450,14 @@ const MomentsList = () => {
             // }}
             snapToInterval={COMBINED_HEIGHT}
             //snapToAlignment="start"
-            // decelerationRate="fast" // Optional: makes the scroll feel snappier
+            // decelerationRate="fast" //   makes the scroll feel snappier
             decelerationRate="normal"
             keyboardDismissMode="on-drag"
           />
         </>
       </View>
 
-      {!isKeyboardVisible && (
+      {/* {!isKeyboardVisible && ( */}
         <>
           <CategoryNavigator
             visibilityValue={listVisibility}
@@ -464,7 +467,7 @@ const MomentsList = () => {
             onSearchPress={scrollToMoment}
           />
         </>
-      )}
+      {/* )} */}
     </View>
   );
 };

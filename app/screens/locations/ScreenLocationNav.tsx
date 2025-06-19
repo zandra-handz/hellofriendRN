@@ -3,19 +3,15 @@ import { View, Text, TouchableOpacity, Alert } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import OverlayLargeButton from "@/app/components/appwide/button/OverlayLargeButton";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useNavigation } from "@react-navigation/native";
-import SpeedDialDelux from "@/app/components/buttons/speeddial/SpeedDialDelux";
-import AddMomentButton from "@/app/components/buttons/moments/AddMomentButton";
+import { useNavigation } from "@react-navigation/native"; 
 import { useFriendList } from "@/src/context/FriendListContext";
 import GlobalAppHeaderIconVersion from "@/app/components/headers/GlobalAppHeaderIconVersion";
 import { MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
-import Loading from "@/app/components/appwide/display/Loading";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import Loading from "@/app/components/appwide/display/Loading"; 
 
 import ActiveAddresses from "@/app/components/locations/ActiveAddresses";
 const ScreenLocationNav = () => {
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend(); 
   const { themeAheadOfLoading } = useFriendList();
 
   const [userAddress, setUserAddress] = useState({

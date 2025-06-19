@@ -1,30 +1,62 @@
-import React, { useEffect, useState  } from 'react';
+import React, { useEffect, useState, useMemo  } from 'react';
 // import { StatusBar } from 'react-native'; 
 import { StatusBar } from 'expo-status-bar';
 import { useUser } from '@/src/context/UserContext'; 
 import { useColorScheme } from "react-native";  
+import { useUserSettings } from '@/src/context/UserSettingsContext';
 
 const CustomStatusBar = () => { 
-    const { userAppSettings } = useUser();  
+   // const { userAppSettings } = useUser();  
+    const { settings } = useUserSettings();
     const colorScheme = useColorScheme();
-    const [color, setColor] = useState(); 
+    // const [color, setColor] = useState(); 
 
-    useEffect(() => {
-        if (userAppSettings) {
-            if (userAppSettings.manual_dark_mode === true) {
-                setColor('light');
-            } else if (userAppSettings.manual_dark_mode === false) {
-                setColor('dark');
-            } else {
-                let phoneTheme;
-                phoneTheme = colorScheme === "dark" ? "light" : "dark";
-                setColor(phoneTheme);
-            } 
-        }
+
+const manualDarkMode = settings?.manual_dark_mode;
+
+const color = useMemo(() => {
+    console.log('custom status bar use memo triggered by settings');
+  if (manualDarkMode === true) return 'light';
+  if (manualDarkMode === false) return 'dark';
+  return colorScheme === 'dark' ? 'light' : 'dark';
+}, [manualDarkMode, colorScheme]);
+
+
+    // const color = useMemo(() => {
+
+    //      if (!settings) return undefined;
+
+    //     let colorCheck;
+
+    //     if (settings.manual_dark_mode === true) {
+    //     colorCheck = 'light';
+    //     } else if (settings.manual_dark_mode === false) {
+    //         colorCheck = 'dark';
+    //     } else {
+    //         colorCheck = colorScheme === 'dark' ? 'light' : 'dark';
+    //     }
         
-        // Log the screen and color change
-      //  console.log(`Current screen: ${pathname}, ${segments} setColor in CustomStatusBar: ${color}`);
-    }, [userAppSettings]); //, pathname]); // Make sure to add router.pathname to dependencies
+    //     return colorCheck;
+
+
+    // }, [settings, colorScheme]);
+
+    // useEffect(() => {
+    //     if (settings) {
+    //         if (settings.manual_dark_mode === true) {
+    //             setColor('light');
+    //         } else if (settings.manual_dark_mode === false) {
+    //             setColor('dark');
+    //         } else {
+    //             let phoneTheme;
+    //             phoneTheme = colorScheme === "dark" ? "light" : "dark";
+    //             setColor(phoneTheme);
+    //         } 
+    //     }
+        
+    //     // Log the screen and color change
+    //   //  console.log(`Current screen: ${pathname}, ${segments} setColor in CustomStatusBar: ${color}`);
+    // }, [settings]); //, pathname]); // Make sure to add router.pathname to dependencies
  
 
     return (

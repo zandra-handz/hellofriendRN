@@ -4,7 +4,7 @@
 //   <HelloFriendFooter />
 
 //put this into a ScrollView in case I need to add to this in case I need to add stuff in the future
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  Alert,
 } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -48,6 +49,14 @@ const ScreenFriendSettings = () => {
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { darkColor, lightColor } = gradientColorsHome;
 
+
+    const renderHeader = useCallback(() => (
+        <SettingsStyleHeader
+          isLoadingComplete={!loadingNewFriend}
+          displayText={selectedFriend && selectedFriend?.name}
+        />
+), [selectedFriend, loadingNewFriend]);
+
   const [isEffortPriorityModalVisible, setIsEffortPriorityModalVisible] =
     useState(false);
   const [isColorThemeModalVisible, setIsColorThemeModalVisible] =
@@ -78,25 +87,26 @@ const ScreenFriendSettings = () => {
     setIsDoubleCheckerVisible((prev) => !prev);
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setIsAnimationPaused(false);
-    }, [])
-  );
+  const handleConfirmDelete = () => {
+          Alert.alert('Warning!', `Delete ${selectedFriend.name}? This cannot be undone.`, [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+                  {text: 'Delete', onPress: () => handleDelete()},
+     
+          ]); 
 
-  useEffect(() => {
-    if (friendDashboardData) {
-      console.log(friendDashboardData[0].suggestion_settings);
-    }
-  }, [friendDashboardData]);
+  };
+ 
+ 
 
   const navigation = useNavigation();
 
   const friendName = selectedFriend?.name || "friend";
-
-  const windowHeight = Dimensions.get("window").height;
-
-  const [isAnimationPaused, setIsAnimationPaused] = useState(true);
+ 
+ 
 
   const handleDelete = async () => {
     try {
@@ -120,35 +130,16 @@ const ScreenFriendSettings = () => {
     }
   }, [deleteFriendMutation.isSuccess]);
 
+
+  if (!selectedFriend || loadingNewFriend) {
+    return;
+  }
+
   return (
-    <SafeViewAndGradientBackground styles={{ flex: 1 }}>
-      <LinearGradient
-        colors={[darkColor, lightColor]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[styles.container, themeStyles.container]}
-      >
-        <SettingsStyleHeader
-          isLoadingComplete={!loadingNewFriend}
-          displayText={selectedFriend && selectedFriend?.name}
-        />
-        {loadingNewFriend && themeAheadOfLoading && (
-          <View
-            style={[
-              styles.loadingWrapper,
-              { backgroundColor: themeAheadOfLoading.lightColor },
-            ]}
-          >
-            <LoadingPage
-              loading={loadingNewFriend}
-              spinnerType="wander"
-              color={themeAheadOfLoading.darkColor}
-              includeLabel={true}
-              label="Loading"
-            />
-          </View>
-        )}
-        {!loadingNewFriend && selectedFriend && (
+    <SafeViewAndGradientBackground   header={renderHeader} includeBackgroundOverlay={true} styles={{ flex: 1 }}>
+  
+
+ 
           <>
             <ScrollView
               contentContainerStyle={[
@@ -236,14 +227,14 @@ const ScreenFriendSettings = () => {
                 ]}
               ></View>
 
-              <View style={styles.section}>
+              {/* <View style={styles.section}>
                 <View style={styles.subTitleRow}>
                   <Text style={[styles.modalSubTitle, themeStyles.modalText]}>
                     ADDRESSES
                   </Text>
                 </View>
                 <Text style={themeStyles.genericText}></Text>
-              </View>
+              </View> */}
 
               <View
                 style={[
@@ -261,7 +252,7 @@ const ScreenFriendSettings = () => {
                   </Text>
                 </View>
 
-                <TouchableOpacity onPress={openDoubleChecker}>
+                <TouchableOpacity onPress={handleConfirmDelete}>
                   <DetailRow
                     iconSize={20}
                     label={`Delete`}
@@ -272,17 +263,15 @@ const ScreenFriendSettings = () => {
               </View>
             </ScrollView>
 
-            {isDoubleCheckerVisible && (
+            {/* {isDoubleCheckerVisible && (
               <DoubleChecker
                 isVisible={isDoubleCheckerVisible}
                 toggleVisible={toggleDoubleChecker}
                 singleQuestionText={`Delete ${friendName}?`}
                 onPress={() => handleDelete()}
               />
-            )}
-          </>
-        )}
-      </LinearGradient>
+            )} */}
+          </>  
     </SafeViewAndGradientBackground>
   );
 };

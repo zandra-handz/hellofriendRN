@@ -1,11 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import {
-  View,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, Keyboard, TouchableWithoutFeedback } from "react-native";
 import BodyStyling from "../scaffolding/BodyStyling";
-import { useUser } from "@/src/context/UserContext"; 
+import { useUser } from "@/src/context/UserContext";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import TextMomentBox from "./TextMomentBox";
 import { useNavigation } from "@react-navigation/native";
@@ -15,7 +11,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import FriendModalIntegrator from "@/app/components/friends/FriendModalIntegrator";
 import CategoryCreator from "./CategoryCreator";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
- import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { useMessage } from "@/src/context/MessageContext";
 
@@ -41,23 +37,22 @@ const MomentWriteEditView = ({
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const [showCategoriesSlider, setShowCategoriesSlider] = useState(!!momentText);
-
+  const [showCategoriesSlider, setShowCategoriesSlider] =
+    useState(!!momentText);
 
   useFocusEffect(
     useCallback(() => {
       if (momentText) {
-         momentTextRef.current.setText(momentText);
-         setShowCategoriesSlider(true);
+        momentTextRef.current.setText(momentText);
+        setShowCategoriesSlider(true);
       } else {
         setShowCategoriesSlider(false);
       }
       return () => {
         setShowCategoriesSlider(false);
       };
-
-     }, [momentText])
-    );
+    }, [momentText])
+  );
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -167,22 +162,29 @@ const MomentWriteEditView = ({
     <TouchableWithoutFeedback onPress={() => {}}>
       <View style={appContainerStyles.screenContainer}>
         {!updateExistingMoment && (
-          
-        <BelowHeaderContainer
-          height={30}
-          alignItems="center"
-          marginBottom={4}
-          justifyContent="flex-end"
-          children={ 
-          <View style={{flexDirection: 'row', width: 120, justifyContent: 'flex-end'}}>
-
-            <FriendModalIntegrator includeLabel={true} width={120} navigationDisabled={true} iconSize={22} width="100%" />
-       
-       
-       </View>
-       }
-        />
-        
+          <BelowHeaderContainer
+            height={30}
+            alignItems="center"
+            marginBottom={4}
+            justifyContent="flex-end"
+            children={
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: 120,
+                  justifyContent: "flex-end",
+                }}
+              >
+                <FriendModalIntegrator
+                  includeLabel={true}
+                  width={120}
+                  navigationDisabled={true}
+                  iconSize={22}
+                  width="100%"
+                />
+              </View>
+            }
+          />
         )}
         <View
           style={{
@@ -207,12 +209,11 @@ const MomentWriteEditView = ({
                 }}
               >
                 <TextMomentBox
-                  ref={momentTextRef} 
+                  ref={momentTextRef}
                   title={
                     updateExistingMoment ? "Edit moment" : "Write new moment"
                   }
                   onTextChange={updateMomentText}
-                
                 />
               </View>
             }
@@ -220,14 +221,13 @@ const MomentWriteEditView = ({
         </View>
 
         {selectedFriend && friendDashboardData && (
- 
           <CategoryCreator
-          show={showCategoriesSlider}
+            show={showCategoriesSlider}
             updateCategoryInParent={handleCategorySelect}
             updateExistingMoment={updateExistingMoment}
             existingCategory={existingMomentObject?.typedCategory || null}
             momentTextForDisplay={momentTextRef?.current?.getText() || null}
-            onParentSave={handleSave} 
+            onParentSave={handleSave}
             isKeyboardVisible={isKeyboardVisible}
           />
         )}

@@ -9,12 +9,14 @@ import {
   resetFriendFavesColorThemeToDefault, 
 } from '@/src/calls/api'; 
  
-
+import Toggle from '../user/Toggle';
 import FriendSettingsSection from './FriendSettingsSection';
 import ModalFormColorTheme from './ModalFormColorTheme';
+
+import { MaterialCommunityIcons } from '@expo/vector-icons';
  
 import LoadingPage from '../appwide/spinner/LoadingPage';
-import BaseRowModalFooter from '@/app/components/scaffolding/BaseRowModalFooter';
+import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; 
 
 import tinycolor from 'tinycolor2';
 
@@ -22,7 +24,7 @@ const ModalColorTheme = ({isModalVisible, closeModal}) => {
   const {  user } = useUser(); 
   const { friendList, updateFriendListColorsExcludeSaved } = useFriendList();
   const { selectedFriend, friendColorTheme, setFriendColorTheme } = useSelectedFriend();
-  
+  const { themeStyles } = useGlobalStyle();
   const [isMakingCall, setIsMakingCall] = useState(false);
   const formRef = useRef(null);
   const [useFriendColorTheme, setUseFriendColorTheme] = useState(false);
@@ -139,29 +141,21 @@ const ModalColorTheme = ({isModalVisible, closeModal}) => {
       LoadingComponent={LoadingPage} 
     >
 
-      {/* {isColorThemeOn && (
-        <>
 
-          <BaseRowModalFooter 
-            iconName='palette' 
-            iconSize={20}
-            label='Color Theme' 
-            useToggle={false}
-            useCustom={true}
-            customLabel={'Change'}
-            onCustomPress={toggleColorThemeModal} 
-          />  
-
-        </>
-      )} */}
-          <BaseRowModalFooter 
-            iconName='palette' 
-            iconSize={20}
-            label={isColorThemeOn ? 'Turn off' : 'Turn on'}
-            useToggle={true}
+      <Toggle
+         label={isColorThemeOn ? 'Turn off' : 'Turn on'}
+        icon={
+          <MaterialCommunityIcons
+            name={"palette"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />
+        }
             value={useFriendColorTheme}
             onTogglePress={toggleUseFriendColorTheme} 
-          /> 
+      />
+     
+          
 
 
       <ModalFormColorTheme

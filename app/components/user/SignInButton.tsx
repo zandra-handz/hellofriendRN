@@ -1,12 +1,12 @@
 import React from "react";
 import {
-  TouchableOpacity,
+  StyleSheet,
+  Pressable, 
   Text,
   Image,
   GestureResponderEvent,
   ImageSourcePropType,
-} from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+} from "react-native"; 
 
 type SignInButtonProps = {
   onPress: (event: GestureResponderEvent) => void;
@@ -19,22 +19,21 @@ const SignInButton: React.FC<SignInButtonProps> = ({
   onPress,
   title = "Sign in",
 }) => {
-  const { themeStyles, appContainerStyles, appFontStyles, appCrossThemeStyles } = useGlobalStyle();
-  const coffeeCupHeartPng: ImageSourcePropType = require("@/app/assets/shapes/coffeecupdarkheart.png");
+   const coffeeCupHeartPng: ImageSourcePropType = require("@/app/assets/shapes/coffeecupdarkheart.png");
    
+ 
   // const shapeSize: number = 190;
   // const shapeHorPosition: number = -48;
   // const shapeVerPosition: number = -23;
 
+
+  // need to make sure that pressable also works with accessibility stuff
   return (
-    <TouchableOpacity
+    <Pressable
       accessible={true}
       accessibilityLabel="Sign in button"
       accessibilityHint="Press to sign in or create an account"
-      style={[
-        appContainerStyles.signInButtonContainer,
-        themeStyles.signInButton,
-      ]}
+      style={style.button}
       onPress={onPress}
       activeOpacity={0.8}
     >
@@ -53,11 +52,34 @@ const SignInButton: React.FC<SignInButtonProps> = ({
         }}
         resizeMode="contain"
       />
-      <Text style={[appFontStyles.signInButtonLabel, appCrossThemeStyles.primaryDarkText]}>
+      <Text style={style.label}>
         {title}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
+
+
+const style = StyleSheet.create({
+  button: {
+      backgroundColor: "#ebebeb",
+          borderRadius: 30,
+    paddingVertical: "3%",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    overflow: "hidden",
+
+  },
+  label: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 14,
+    color: "#121212",
+  }
+
+
+
+});
 
 export default SignInButton;

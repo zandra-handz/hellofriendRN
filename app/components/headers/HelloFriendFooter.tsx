@@ -9,8 +9,8 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
 // app components
 import AboutAppModal from "./AboutAppModal";
-import ReportIssueModal from "./ReportIssueModal";
-import SettingsModal from "./SettingsModal";
+import ReportIssueModal from "./ReportIssueModal"; 
+import UserSettingsModal from "./UserSettingsModal.";
 
 
 // app display/templates
@@ -31,7 +31,7 @@ const HelloFriendFooter = () => {
   const isOnActionPage = currentRouteName === "hellofriend";
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
-
+ 
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
@@ -63,7 +63,7 @@ const HelloFriendFooter = () => {
         onPress={() => onSignOut()}
       />
     ),
-    []
+    [themeStyles]
   );
 
   const RenderDeselectButton = useCallback(
@@ -85,7 +85,7 @@ const HelloFriendFooter = () => {
         onPress={() => deselectFriend()}
       />
     ),
-    []
+    [themeStyles]
   );
 
   const RenderSettingsButton = useCallback(
@@ -103,7 +103,7 @@ const HelloFriendFooter = () => {
         onPress={() => setSettingsModalVisible(true)}
       />
     ),
-    []
+    [themeStyles]
   );
 
   const RenderReportIssueButton = useCallback(
@@ -120,7 +120,7 @@ const HelloFriendFooter = () => {
         onPress={() => setReportModalVisible(true)}
       />
     ),
-    []
+    [themeStyles]
   );
 
   const RenderAboutAppButton = useCallback(
@@ -137,7 +137,7 @@ const HelloFriendFooter = () => {
         onPress={() => setAboutModalVisible(true)}
       />
     ),
-    []
+    [themeStyles]
   );
 
   return (
@@ -196,7 +196,7 @@ const HelloFriendFooter = () => {
 
       {settingsModalVisible && (
         <View>
-          <SettingsModal
+          <UserSettingsModal
             isVisible={settingsModalVisible}
             closeModal={() => setSettingsModalVisible(false)}
           />

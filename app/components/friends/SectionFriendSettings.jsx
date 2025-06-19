@@ -1,31 +1,33 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import ButtonResetHelloes from "@/app/components/buttons/helloes/ButtonResetHelloes";
-  
+import { View, Text, StyleSheet } from "react-native"; 
+  import Reset from "../appwide/button/Reset";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const SectionFriendSettings = () => {
   const { themeStyles } = useGlobalStyle(); 
 
   return (
-    <View style={[styles.container, themeStyles.modalContainer]}>
- 
-      <View style={styles.friendSettingsRow}>
-        <View style={{ flexDirection: "row" }}>
-          <FontAwesome5
-            name="recycle"
-            size={22}
-            style={[styles.icon, themeStyles.modalIconColor]}
+        <View
+          style={{
+            borderTopLeftRadius: 0,
+            borderTopRightRadius: 0,
+            padding: 0,
+            width: "100%",
+            alignSelf: "flex-start",
+          }}
+        >
+                <Reset
+        label="Reset all hello dates"
+        icon={
+          <MaterialCommunityIcons
+            name={"timer"}
+            size={20}
+            color={themeStyles.primaryText.color}
           />
-
-          <Text style={[styles.sectionTitle, themeStyles.modalText]}>
-            Reset all dates
-          </Text>
-        </View>
-        <ButtonResetHelloes />
-      </View>
-    </View>
+        }  
+      />
+          </View>
   );
 };
 

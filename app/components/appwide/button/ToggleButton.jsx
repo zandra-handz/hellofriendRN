@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { TouchableOpacity, Animated, StyleSheet, Easing } from 'react-native';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
-import { useFriendList } from '@/src/context/FriendListContext';
+import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; 
 
 const ToggleButton = ({ value, onToggle }) => {
 
   const [bounceAnim] = useState(new Animated.Value(value ? 20 : 0));
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
  
 
   useEffect(() => {
@@ -42,14 +40,14 @@ const ToggleButton = ({ value, onToggle }) => {
         onToggle();
       }}
     >
-      <Animated.View style={[styles.circle, animatedStyle, {backgroundColor: manualGradientColors.homeDarkColor}]} />
+      <Animated.View style={[styles.circle, animatedStyle, {backgroundColor: themeStyles.primaryBackground.backgroundColor}]} />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 44,
+    width: 38,
     height: 'auto',
     borderRadius: 15,
     justifyContent: 'center',
@@ -65,7 +63,7 @@ const styles = StyleSheet.create({
   circle: {
     width: 15,
     height: 15,
-    borderRadius: 10, 
+    borderRadius: 15 / 2, 
   },
 });
 

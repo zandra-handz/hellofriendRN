@@ -116,11 +116,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
     }
   }, [userAddress, currentLocationDetails]);
 
-  useEffect(() => {
-    if (friendAddress) {
-      console.log(friendAddress);
-    }
-  }, [friendAddress]);
+ 
 
   const closeModal = () => {};
 
@@ -133,14 +129,13 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
             onPress={() => setUserAddressModalVisible(true)}
             addTopRowElement={true}
             topRowElement={
-              <>
-                {" "}
+              <> 
                 {isUserAddressCurrent && ( 
                     <IsCurrentLocation
                       onPress={() => console.log("hiiii")}
                       isCurrent={true}
                     /> 
-                )}{" "}
+                )} 
               </>
             }
             buttonOnBottom={true}

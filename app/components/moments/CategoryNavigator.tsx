@@ -106,6 +106,13 @@ const CategoryNavigator = ({
         style={({ pressed }) => ({
           flexDirection: "row",
           alignItems: "center",
+          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          justifyContent: 'center',
+          borderRadius: 20,
+          paddingHorizontal: 20,
+          paddingVertical: 5,
+          
+          textAlign: 'center', 
           opacity: pressed ? 0.6 : 1,
         })}
       >
@@ -119,61 +126,77 @@ const CategoryNavigator = ({
           style={[
             themeStyles.genericText,
             styles.categoryLabel,
-            { marginLeft: 6 },
+          
           ]}
         >
-          SEARCH
+      Search
         </Text>
       </Pressable>
     ),
     [iconSize, themeStyles]
   );
 
-  const renderedButtons = useMemo(
-    () =>
-      categoryNames.map((categoryName) => (
-        <View
-          key={categoryName || "Uncategorized"}
-          style={styles.buttonWrapper}
-        >
-          <CategoryButton
-            height="auto"
-            viewableItemsArray={viewableItemsArray}
-            label={categoryName}
-            onPress={() => onPress(categoryName)}
-          />
-        </View>
-      )),
-    [categoryNames, onPress, viewableItemsArray]
-  );
+const renderedButtons = useMemo(() => (
+   <View style={styles.buttonRow}>
+    {memoizedSearchIcon}
+    {categoryNames.map((categoryName) => (
+      <View
+        key={categoryName || "Uncategorized"}
+        style={styles.buttonWrapper}
+      >
+        <CategoryButton
+          height="auto"
+          viewableItemsArray={viewableItemsArray}
+          label={categoryName}
+          onPress={() => onPress(categoryName)}
+        />
+      </View>
+    ))}
+  </View>
+), [categoryNames, onPress, viewableItemsArray]);
 
   return (
     <>
       <Animated.View
         style={[
-          appContainerStyles.categoryNavigatorContainer,
-          appSpacingStyles.momentsScreenPrimarySpacing,
-          { backgroundColor: gradientColorsHome.darkColor },
+          styles.categoryNavigatorContainer,
+          styles.momentsScreenPrimarySpacing,
+          { backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor },
           visibilityStyle,
         ]}
       >
-        <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+        {/* <View style={[ { top: -40, flexDirection: "row",   borderRadius: 10, width: '100%', justifyContent: "flex-start" }]}>
+          <View 
+          style={{          
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          justifyContent: 'center',
+          borderRadius: 20,
+          paddingHorizontal: 20,
+          paddingVertical: 5,
+        }}
+      > 
+            
           <Text
             style={[
               themeStyles.genericText,
+              
               styles.categoryLabel,
               { marginRight: 20 },
             ]}
           >
-            CATEGORIES
+            Categories
           </Text>
+          
+          </View>
         
             {memoizedSearchIcon}
          
         
-        </View>
-        <ScrollView style={styles.scrollContainer}>
-          <View style={styles.buttonRow}>{renderedButtons}</View>
+        </View> */}
+        <ScrollView showsVerticalScrollIndicator={false}  style={[styles.scrollContainer ]}>
+         {renderedButtons} 
         </ScrollView>
       </Animated.View>
 
@@ -192,19 +215,48 @@ const CategoryNavigator = ({
 
 const styles = StyleSheet.create({
   categoryLabel: {
-    paddingVertical: 4,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    paddingVertical: 0,
     paddingHorizontal: 4,
+  },
+//brought down from global context
+    momentsScreenPrimarySpacing: {
+    borderRadius: 20,
+    padding: 0,
+  },
+    categoryNavigatorContainer: {
+     position: "absolute",
+    bottom: -24, //20
+paddingTop: 10,
+    zIndex: 5,
+    height: "auto",
+    height: 140,
+    // width: "74%",
+    width: '100%',
+    selfAlign: 'center',
+    paddingRight: 90, //space for the speeddial
+ 
   },
   scrollContainer: {
     maxHeight: 100,
+    marginTop: 0,
+    borderRadius: 10,
+    padding: 10,
+    paddingVertical: 0,
   },
   buttonRow: {
     flexWrap: "wrap",
     flexDirection: "row",
+
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   buttonWrapper: {
+    flexDirection: 'row',
+     
     marginHorizontal: 6,
-    marginBottom: 6,
+    marginBottom: 10,
   },
 });
 

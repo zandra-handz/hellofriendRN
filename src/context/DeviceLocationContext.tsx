@@ -3,8 +3,7 @@ import { Alert } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import * as Location from "expo-location";
 import Geocoder from "react-native-geocoding";
-import Constants from "expo-constants";
-import { useUser } from "./UserContext";
+import Constants from "expo-constants"; 
 
 // const API_KEY = Constants.expoConfig?.extra?.GOOGLE_API_KEY;
 
@@ -38,8 +37,7 @@ export const useDeviceLocationContext = () => {
   return context;
 };
 
-export const DeviceLocationProvider: React.FC = ({ children }) => {
-  const { user, isAuthenticated, isInitializing } = useUser();
+export const DeviceLocationProvider: React.FC = ({ children }) => { 
   const queryClient = useQueryClient(); //for saving location to cache
   const [deviceRegion, setDeviceRegion] = useState(null);
   const [deviceLocation, setDeviceLocation] = useState<
@@ -100,7 +98,7 @@ export const DeviceLocationProvider: React.FC = ({ children }) => {
               setDeviceRegion(regionData);
 
               queryClient.setQueryData(
-                ["deviceLocation", user?.id],
+                ["deviceLocation"],
                 formattedData
               );
             } catch (geocoderError) {

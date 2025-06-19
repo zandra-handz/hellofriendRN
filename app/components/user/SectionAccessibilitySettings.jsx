@@ -1,174 +1,190 @@
-import React, { useState, useEffect } from 'react';
-import {Text} from 'react-native'; 
-import { useUser } from '@/src/context/UserContext';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; 
-import BaseModalFooterSection from '../scaffolding/BaseModalFooterSection';
-import BaseRowModalFooter from '../scaffolding/BaseRowModalFooter';
-import AlertMicro from '../alerts/AlertMicro'; 
+import React, {  useMemo } from "react";
+import {  View, Alert } from "react-native";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
  
-import LoadingPage from '../appwide/spinner/LoadingPage';
+import Toggle from "./Toggle"; 
 
-//fix loading spinner
-//moved creation/removal of notification tokens completely out of this into auth context
+import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+ 
 const SectionAccessibilitySettings = () => {
-  const {  user, isAuthenticated, updateAppSettingsMutation, userAppSettings, updateUserNotificationSettings  } = useUser();
-  const { themeStyles } = useGlobalStyle();   
-  const [manualTheme, setManualTheme] = useState(false);  
-  const [showAlert, setShowAlert] = useState(false); 
+  const {
+    settings,
+    updateSettingsMutation,
+    updateNotificationSettings,
+  } = useUserSettings();
+  const { themeStyles } = useGlobalStyle(); 
 
-  useEffect(() => {
-    if (userAppSettings) {  
-     
-        
+  const manualTheme = useMemo(() => {
+    if (!settings) return false;
+    return settings.manual_dark_mode !== null;
+  }, [settings]); 
 
-      if (userAppSettings.manual_dark_mode === null) {
-        setManualTheme(false);
-      } else {
-        setManualTheme(true); 
-      }
-    }
-      }, [isAuthenticated]);
-  // }, [user.authenticated]);
-
-  const updateSetting = async (setting) => { 
+  const updateSetting = async (setting) => {
     try {
-        const newSettings = { ...userAppSettings, ...setting };  
-        await updateAppSettingsMutation.mutateAsync({
-            userId: user.id,  
-            setting: newSettings  
-        }); 
-        console.log('User settings updated successfully');
+      const newSettings = { ...settings, ...setting };
+      await updateSettingsMutation.mutateAsync({
+        setting: newSettings,
+      }); 
     } catch (error) {
-        console.error('Error updating user settings:', error);
-    }  
-};
-
+      console.error("Error updating user settings:", error);
+    }
+  };
  
-  //Managed by auth context RQ
   const updateHighContrastMode = () => {
-    updateSetting({ high_contrast_mode: !userAppSettings.high_contrast_mode});
+    updateSetting({ high_contrast_mode: !settings.high_contrast_mode });
   };
-
-  //Managed by auth context RQ
+ 
   const updateLargeText = () => {
-    updateSetting({ large_text: !userAppSettings.large_text });
+    updateSetting({ large_text: !settings.large_text });
   };
-
- //Managed by auth context RQ
+ 
   const updateSimplifyAppForFocus = () => {
-    updateSetting({ simplify_app_for_focus: !userAppSettings.simplify_app_for_focus });
-  
+    updateSetting({ simplify_app_for_focus: !settings.simplify_app_for_focus });
   };
 
-  const updateReceiveNotifications = () => { 
-    updateSetting({receive_notifications: !userAppSettings.receive_notifications}); 
-    updateUserNotificationSettings({receive_notifications : !userAppSettings.receive_notifications});
+  const updateReceiveNotifications = () => {
+    updateSetting({ receive_notifications: !settings.receive_notifications });
+    updateNotificationSettings({
+      receive_notifications: !settings.receive_notifications,
+    });
   };
 
   const toggleManualTheme = () => {
     const newValue = !manualTheme;
     if (newValue === true) {
-      updateSetting({ manual_dark_mode: false }); 
-    };
+      updateSetting({ manual_dark_mode: false });
+    }
     if (newValue === false) {
-      updateSetting({ manual_dark_mode: null }); 
-    };
-    setManualTheme(newValue); 
+      updateSetting({ manual_dark_mode: null });
+    }
+    //  setManualTheme(newValue);
   };
 
-
   const updateLightDark = () => {
-    updateSetting({ manual_dark_mode: !userAppSettings.manual_dark_mode });
+    updateSetting({ manual_dark_mode: !settings.manual_dark_mode });
   };
 
   //Screen reader declares loudly that this button is enabled
-  const toggleScreenReader = async () => { 
-      setShowAlert(true);
-      return;
-    };
- 
+  const toggleScreenReader = () => {
+Alert.alert(
+  'Screen Reader Required',
+  'Please enable the screen reader in your device settings to use this feature.',
+  [
+    {
+      text: 'OK',
+      style: 'default',
+    },
+  ],
+  { cancelable: true }
+);
+  };
 
   return (
-    <BaseModalFooterSection isMakingCall={updateAppSettingsMutation.isLoading} LoadingComponent={LoadingPage} themeStyles={themeStyles}>
-          
-      <BaseRowModalFooter 
-        iconName='adjust' 
-        iconSize={16}
-        useToggle={true}
-        label='Manual Light/Dark Mode' 
-        value={manualTheme}
-        useAltButton={false}
-        onTogglePress={toggleManualTheme}  
-      />   
-
-      {manualTheme && ( 
-
-        <BaseRowModalFooter 
-          iconName='adjust' 
-          iconSize={16}
-          useToggle={true}
-          label='Light/Dark' 
-          value={userAppSettings.manual_dark_mode === true}
-          onTogglePress={updateLightDark}  
-          />  
-      )} 
-
-      <BaseRowModalFooter 
-        iconName='adjust' 
-        iconSize={16}
-        useToggle={true}
-        label='High Contrast Mode' 
-        value={userAppSettings.high_contrast_mode}
-        onTogglePress={updateHighContrastMode}  
-      />  
-
-      <BaseRowModalFooter 
-        iconName='text-height' 
-        iconSize={16}
-        useToggle={true}
-        label='Large Text' 
-        value={userAppSettings.large_text}
-        onTogglePress={updateLargeText}  
-      />  
-
-      <BaseRowModalFooter 
-        iconName='bell' 
-        iconSize={16}
-        useToggle={true}
-        label='Simplify App For Focus' 
-        value={userAppSettings.simplify_app_for_focus}
-        onTogglePress={updateSimplifyAppForFocus}
-      />  
-
-      <BaseRowModalFooter 
-        iconName='bell' 
-        iconSize={16}
-        useToggle={true}
-        label='Receive Notifications' 
-        value={userAppSettings.receive_notifications}
-        onTogglePress={updateReceiveNotifications} 
-      />   
-
-      <BaseRowModalFooter 
-        iconName='volume-up' 
-        iconSize={16}
-        useToggle={true}
-        label='Screen Reader' 
-        value={userAppSettings.screen_reader}
-        onTogglePress={toggleScreenReader}
-      />        
-
-      <AlertMicro
-        isModalVisible={showAlert}
-        toggleModal={() => setShowAlert(false)}
-        modalContent={
-          <Text>
-            Please enable the screen reader in your device settings to use this feature.
-          </Text>
+    <View
+      style={{
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        padding: 0,
+        width: "100%",
+        alignSelf: "flex-start",
+      }}
+    >
+      <Toggle
+        label="Manual theme"
+        icon={
+          <MaterialCommunityIcons
+            name={"theme-light-dark"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />
         }
-        modalTitle="Using Screen Reader"
+        value={manualTheme}
+        onPress={toggleManualTheme}
       />
-    </BaseModalFooterSection>
+      {manualTheme && (
+        <Toggle
+          label="Light/Dark"
+          icon={
+            <MaterialIcons
+              name={"settings-display"}
+              size={20}
+              color={themeStyles.primaryText.color}
+            />
+          }
+          value={settings.manual_dark_mode === true}
+          onPress={updateLightDark}
+        />
+      )}
+
+      <Toggle
+        label="High Contrast Mode"
+        icon={
+          <MaterialCommunityIcons
+            name={"text-shadow"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />
+        }
+        value={settings.high_contrast_mode}
+        onPress={updateHighContrastMode}
+      />
+
+      <Toggle
+        label="Large Text"
+        icon={
+          <MaterialIcons
+            name={"text-fields"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />
+        }
+        value={settings.large_text}
+        onPress={updateLargeText}
+      />
+
+      <Toggle
+        label="Simplify App For Focus"
+        icon={
+          <MaterialCommunityIcons
+            name={"image-filter-center-focus"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />
+        }
+        value={settings.simplify_app_for_focus}
+        onPress={updateSimplifyAppForFocus}
+      />
+
+      <Toggle
+       label="Receive Notifications"
+        icon={
+          <MaterialCommunityIcons
+            name={"bell"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />
+        }
+        value={settings.receive_notifications}
+        onPress={updateReceiveNotifications}
+      />
+
+            <Toggle
+        label="Screen Reader"
+        icon={
+          <MaterialIcons
+            name={"volume-up"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />}
+        value={settings.screen_reader}
+        onPress={toggleScreenReader}
+      />
+ 
+
+ 
+ 
+    </View>
   );
 };
 

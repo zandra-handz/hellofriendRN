@@ -25,11 +25,13 @@ const SearchModal: React.FC<Props> = ({
   const searchInputIconSize = 14;
   const autoFocus = true;
 
-  const handleSearchPress = () => {
-    onSearchPress();
+  const handleSearchPress = (moment) => {
+    onSearchPress(moment);
     closeModal();
   };
 
+
+  
   // React.useEffect(() => {
   //   if (isModalVisible) {
   //     AccessibilityInfo.announceForAccessibility("Information opened");
@@ -48,23 +50,23 @@ const SearchModal: React.FC<Props> = ({
       }
       questionText="Search talking points"
       children={
-        <ScrollView contentContainerStyle={styles.bodyContainer}>
+        < View contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
             <MomentsSearchBar
               data={capsuleList}
-              autoFocus={autoFocus}
-              height={25}
-              width={"47%"}
+              autoFocus={isVisible}
+              height={40}
+              width={"100%"}
               borderColor={themeStyles.primaryText.color}
               placeholderText={"Search"}
               textAndIconColor={themeStyles.primaryText.color}
               backgroundColor={"transparent"}
               onPress={handleSearchPress}
               searchKeys={["capsule", "typedCategory"]}
-              iconSize={searchInputIconSize}
+              iconSize={0}
             />
           </View>
-        </ScrollView>
+        </ View>
       }
       onClose={closeModal}
     />
@@ -82,7 +84,9 @@ const styles = StyleSheet.create({
     margin: "2%",
   },
   sectionContainer: {
-    margin: "2%",
+   
+    height: 100,
+    width: '100%',
   },
   headerText: {
     fontWeight: "bold",

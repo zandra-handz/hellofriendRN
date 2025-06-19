@@ -32,13 +32,17 @@ import * as FileSystem from "expo-file-system";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import FriendHeaderMessageUI from "@/app/components/home/FriendHeaderMessageUI";
 
+import { useUserSettings } from "@/src/context/UserSettingsContext";
+
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
   const navigation = useNavigation();
   // using DeviceLocationContext now
   // useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
-  const { user, isAuthenticated, isInitializing, userAppSettings } = useUser();
+  const { user, isAuthenticated, isInitializing } = useUser();
+
+  const { settings } = useUserSettings();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { friendList, friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
@@ -213,7 +217,7 @@ const ScreenHome = () => {
         style={[{ flex: 1 }]}
       > 
         {isAuthenticated &&
-        userAppSettings &&
+        settings &&
         friendList &&
         friendList.length > 0 ? (
           <View

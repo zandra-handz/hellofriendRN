@@ -26,6 +26,7 @@ import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { MessageContextProvider } from "./src/context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserProvider, useUser } from "./src/context/UserContext";
+import { UserSettingsProvider } from "./src/context/UserSettingsContext";
 import { GlobalStyleProvider } from "./src/context/GlobalStyleContext";
 import { FriendListProvider } from "./src/context/FriendListContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
@@ -195,40 +196,39 @@ export default Sentry.wrap(function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <QueryClientProvider client={queryClient}>
           <UserProvider>
-            <GlobalStyleProvider>
-              <DeviceLocationProvider>
-             
+            <UserSettingsProvider>
+              <GlobalStyleProvider>
+                <DeviceLocationProvider>
                   <UpcomingHelloesProvider>
                     <FriendListProvider>
                       <SelectedFriendProvider>
                         {/* <PhoneStatusBar /> */}
                         <CapsuleListProvider>
-                             <LocationsProvider>
-                          <HelloesProvider>
-
-                            <FriendLocationsProvider>
-                              <MessageContextProvider>
-                                <SafeAreaProvider>
-                                  {/* <SafeView  // in screen components instead
+                          <LocationsProvider>
+                            <HelloesProvider>
+                              <FriendLocationsProvider>
+                                <MessageContextProvider>
+                                  <SafeAreaProvider>
+                                    {/* <SafeView  // in screen components instead
                                 style={{
                                   flex: 1,
                                   backgroundColor: "transparent",
                                 }}
                               > */}
-                                  <Layout />
-                                  {/* </SafeView> */}
-                                </SafeAreaProvider>
-                              </MessageContextProvider>
-                            </FriendLocationsProvider>
-                          </HelloesProvider>
-                             </LocationsProvider>
+                                    <Layout />
+                                    {/* </SafeView> */}
+                                  </SafeAreaProvider>
+                                </MessageContextProvider>
+                              </FriendLocationsProvider>
+                            </HelloesProvider>
+                          </LocationsProvider>
                         </CapsuleListProvider>
                       </SelectedFriendProvider>
                     </FriendListProvider>
                   </UpcomingHelloesProvider>
-             
-              </DeviceLocationProvider>
-            </GlobalStyleProvider>
+                </DeviceLocationProvider>
+              </GlobalStyleProvider>
+            </UserSettingsProvider>
           </UserProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>

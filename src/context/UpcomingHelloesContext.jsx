@@ -76,9 +76,9 @@ export const UpcomingHelloesProvider = ({ children }) => {
     },
   });
 
-  const handleRemixAllNextHelloes = (userId) => {
+  const handleRemixAllNextHelloes = () => {
     try {
-      remixAllNextHelloesMutation.mutate(userId);
+      remixAllNextHelloesMutation.mutate(user?.id);
     } catch (error) {
       console.log(`Error remixing helloes: `, error);
     }
