@@ -22,47 +22,48 @@ import usePrefetches from "@/src/hooks/usePrefetches";
 const ScreenMoments = () => {
   const { capsuleList } = useCapsuleList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+ 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
-console.log('MOMENTS RERENDERED');
+ 
   const navigation = useNavigation();
 
-  const renderHeader = useCallback(
-    () => ( 
-      <GlobalAppHeaderIconVersion
-        title={""}
-        navigateTo={"Moments"}
-        icon={
-          <MaterialIcons
-            // name="tips-and-updates"
-            name="person-pin"
-            size={30}
-            color={themeAheadOfLoading.fontColorSecondary}
-          />
-        }
-        altView={false}
-        altViewIcon={
-          <MaterialIcons
-            // name="tips-and-updates"
-            name="person-pin"
-            size={30}
-            color={themeAheadOfLoading.fontColorSecondary}
-          />
-        }
-      />
-    ),
-    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
-  );
+  // const renderHeader = useCallback(
+  //   () => ( 
+  //     <GlobalAppHeaderIconVersion
+  //       title={""}
+  //       navigateTo={"Moments"}
+  //       icon={
+  //         <MaterialIcons
+  //           // name="tips-and-updates"
+  //           name="person-pin"
+  //           size={30}
+  //           color={themeAheadOfLoading.fontColorSecondary}
+  //         />
+  //       }
+  //       altView={false}
+  //       altViewIcon={
+  //         <MaterialIcons
+  //           // name="tips-and-updates"
+  //           name="person-pin"
+  //           size={30}
+  //           color={themeAheadOfLoading.fontColorSecondary}
+  //         />
+  //       }
+  //     />
+  //   ),
+  //   [selectedFriend, loadingNewFriend, themeAheadOfLoading]
+  // );
 
   const handleRootPressPrefetch = () => {
-    console.log('prefetch here!')
+ 
     prefetchUserAddresses();
     prefetchFriendAddresses();
 
   };
 
   return (
-    <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
+    // <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
+       <SafeViewAndGradientBackground  style={{ flex: 1 }}>
       <Loading isLoading={loadingNewFriend} />
 
       {selectedFriend && !loadingNewFriend && (

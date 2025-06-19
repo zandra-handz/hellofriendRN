@@ -1,31 +1,29 @@
 // import {
 //   View,
-//   Text, 
+//   Text,
 //   ScrollView,
 // } from "react-native";
 // import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 // import React from "react";
 // import Animated, { useAnimatedStyle } from 'react-native-reanimated';
-// import CategoryButton from "./CategoryButton"; 
+// import CategoryButton from "./CategoryButton";
 // const CategoryNavigator = ({
 //   visibilityValue,
 //   viewableItemsArray,
 //   categoryNames,
-//   onPress, 
-// }) => { 
+//   onPress,
+// }) => {
 //   const {
-//     themeStyles, 
+//     themeStyles,
 //     gradientColorsHome,
 //     appContainerStyles,
 //     appSpacingStyles,
 //   } = useGlobalStyle();
 
- 
 //   const visibilityStyle = useAnimatedStyle(() => ({
 //     opacity: visibilityValue.value,
 
 //   }))
-  
 
 //   return (
 //     <Animated.View
@@ -52,43 +50,39 @@
 
 //           <CategoryButton
 //          height={'auto'}
-//           viewableItemsArray={viewableItemsArray} 
+//           viewableItemsArray={viewableItemsArray}
 //             key={categoryName || "Uncategorized"}
 //             label={categoryName}
-//             onPress={() => onPress(categoryName)} 
+//             onPress={() => onPress(categoryName)}
 //           />
 //           </View>
 //         ))}
 //       </View>
-      
-        
-//       </ScrollView> 
+
+//       </ScrollView>
 //     </Animated.View>
 //   );
 // };
 
 // export default CategoryNavigator;
 
-
-
 // MEMOIZED VERSION
 // performs better than non-memoized, per DevTools profiling
-import React, { useMemo } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import React, { useMemo, useState } from "react";
+import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import CategoryButton from "./CategoryButton";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AboutAppModal from "../headers/AboutAppModal";
+import SearchModal from "../headers/SearchModal";
 
 const CategoryNavigator = ({
   visibilityValue,
   viewableItemsArray,
   categoryNames,
   onPress,
+  onSearchPress,
 }) => {
   const {
     themeStyles,
@@ -97,44 +91,102 @@ const CategoryNavigator = ({
     appSpacingStyles,
   } = useGlobalStyle();
 
+  const [searchModalVisible, setSearchModalVisible] = useState(false);
+
   const visibilityStyle = useAnimatedStyle(() => ({
     opacity: visibilityValue.value,
   }));
 
-  const renderedButtons = useMemo(() => (
-    categoryNames.map((categoryName) => (
-      <View
-        key={categoryName || "Uncategorized"}
-        style={styles.buttonWrapper}
+  const iconSize = 26;
+
+  const memoizedSearchIcon = useMemo(
+    () => (
+      <Pressable
+        onPress={() => setSearchModalVisible(true)}
+        style={({ pressed }) => ({
+          flexDirection: "row",
+          alignItems: "center",
+          opacity: pressed ? 0.6 : 1,
+        })}
       >
-        <CategoryButton
-          height="auto"
-          viewableItemsArray={viewableItemsArray}
-          label={categoryName}
-          onPress={() => onPress(categoryName)}
+        <MaterialCommunityIcons
+          name={"comment-search-outline"}
+          size={iconSize}
+          color={themeStyles.genericText.color}
+          style={{}}
         />
-      </View>
-    ))
-  ), [categoryNames, onPress, viewableItemsArray]);
+        <Text
+          style={[
+            themeStyles.genericText,
+            styles.categoryLabel,
+            { marginLeft: 6 },
+          ]}
+        >
+          SEARCH
+        </Text>
+      </Pressable>
+    ),
+    [iconSize, themeStyles]
+  );
+
+  const renderedButtons = useMemo(
+    () =>
+      categoryNames.map((categoryName) => (
+        <View
+          key={categoryName || "Uncategorized"}
+          style={styles.buttonWrapper}
+        >
+          <CategoryButton
+            height="auto"
+            viewableItemsArray={viewableItemsArray}
+            label={categoryName}
+            onPress={() => onPress(categoryName)}
+          />
+        </View>
+      )),
+    [categoryNames, onPress, viewableItemsArray]
+  );
 
   return (
-    <Animated.View
-      style={[
-        appContainerStyles.categoryNavigatorContainer,
-        appSpacingStyles.momentsScreenPrimarySpacing,
-        { backgroundColor: gradientColorsHome.darkColor },
-        visibilityStyle,
-      ]}
-    >
-      <Text style={[themeStyles.genericText, styles.categoryLabel]}>
-        CATEGORIES
-      </Text>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.buttonRow}>
-          {renderedButtons}
+    <>
+      <Animated.View
+        style={[
+          appContainerStyles.categoryNavigatorContainer,
+          appSpacingStyles.momentsScreenPrimarySpacing,
+          { backgroundColor: gradientColorsHome.darkColor },
+          visibilityStyle,
+        ]}
+      >
+        <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+          <Text
+            style={[
+              themeStyles.genericText,
+              styles.categoryLabel,
+              { marginRight: 20 },
+            ]}
+          >
+            CATEGORIES
+          </Text>
+        
+            {memoizedSearchIcon}
+         
+        
         </View>
-      </ScrollView>
-    </Animated.View>
+        <ScrollView style={styles.scrollContainer}>
+          <View style={styles.buttonRow}>{renderedButtons}</View>
+        </ScrollView>
+      </Animated.View>
+
+      {searchModalVisible && (
+        <View>
+          <SearchModal
+            isVisible={searchModalVisible}
+            closeModal={() => setSearchModalVisible(false)}
+            onSearchPress={onSearchPress}
+          />
+        </View>
+      )}
+    </>
   );
 };
 

@@ -25,11 +25,9 @@ const CarouselSlider = ({
   const { height, width } = useWindowDimensions();
   const { themeStyles } = useGlobalStyle();
   const { stickToLocation, setStickToLocation } = useFriendLocationsContext();
-  //const { width } = Dimensions.get('screen');
-  const ITEM_HEIGHT = "100%";
+ 
   const ITEM_WIDTH = width - 40;
-  const ITEM_MARGIN = 20; 
-console.log(stickToLocation);
+  const ITEM_MARGIN = 20;  
   const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2; 
   const flatListRef = useAnimatedRef(null);
 

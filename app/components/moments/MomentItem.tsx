@@ -62,10 +62,14 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   const { height } = useWindowDimensions();
   const containerHeight = height - 410;
   const { themeAheadOfLoading } = useFriendList();
-  const textContainerWidth = "88%";
+  const textContainerWidth = "100%";
+  const talkingPointNumberOfLines = 2;
+  const cardBorderRadius = 30;
 
-  const sendButtonWidth = `${100 - Number(textContainerWidth.slice(0, -1))}%`;
+  // const sendButtonWidth = `${100 - Number(textContainerWidth.slice(0, -1))}%`;
+    const sendButtonWidth = 50; // use as right padding for card content too because this button is absolute positioned
 
+    const textContainerRightPadding = sendButtonWidth + 10;
   if (!momentData) {
     return;
   }
@@ -178,7 +182,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
           paddingHorizontal: 0, // adjust this/remove from View directly below to give padding to send button
           paddingVertical: 0, // adjust this/remove from View directly below to give padding to send button
 
-          borderRadius: 10,
+          borderRadius: cardBorderRadius,
           overflow: "hidden", // needed here to hide corners of send button when send button has no padding
         },
         visibilityStyle,
@@ -187,34 +191,41 @@ const MomentItem: React.FC<MomentItemsProps> = ({
       <View
         style={{
           flexDirection: "column",
-          paddingHorizontal: 20,
-          paddingVertical: 20,
+          paddingLeft: 24,
+          flex: 1,
+          paddingVertical: 24,  
+          paddingRight: textContainerRightPadding,
         }}
       >
         <View
           style={{
             flexWrap: "wrap",
             width: textContainerWidth,
+           
+           
             overflow: "hidden",
           }}
         >
           <Text
             numberOfLines={1}
-            style={[themeStyles.genericText, appFontStyles.momentHeaderText]}
+            // style={[themeStyles.genericText, appFontStyles.momentHeaderText]}
+             style={[themeStyles.primaryText, appFontStyles.welcomeText, { fontSize: 18}]}
           >
             {header && header}
           </Text>
         </View>
         <View
           style={{
-            flexWrap: "wrap",
+            flexWrap: "flex",
             width: textContainerWidth,
             overflow: "hidden",
+            height: '100%', 
           }}
         >
           <Text
-            numberOfLines={1}
-            style={[themeStyles.genericText, appFontStyles.momentText]}
+            numberOfLines={talkingPointNumberOfLines}
+            // style={[themeStyles.genericText, appFontStyles.momentText]}
+             style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}
           >
             {momentData && momentData?.capsule}
           </Text>
@@ -225,6 +236,8 @@ const MomentItem: React.FC<MomentItemsProps> = ({
         style={[
           animatedStyle,
           {
+            position: 'absolute',
+            right: 0,
             borderRadius: 10,
             overflow: "hidden",
             backgroundColor: manualGradientColors.homeDarkColor,

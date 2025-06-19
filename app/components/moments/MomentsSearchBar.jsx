@@ -21,6 +21,7 @@ const MomentsSearchBar = ({
   placeholderText = "Search",
   borderColor = "#ccc",
   onPress,
+  autoFocus,
   searchKeys,
   iconSize = 26,
 }) => {
@@ -65,8 +66,9 @@ const MomentsSearchBar = ({
   };
 
   return (
-    <TouchableWithoutFeedback onPress={handleOutsidePress}>
+
       <View style={[appContainerStyles.searchBarContainer, { width: width }]}>
+            <TouchableWithoutFeedback onPress={handleOutsidePress}>
         <View
           style={[
             appContainerStyles.searchBarInputContainer,
@@ -79,6 +81,7 @@ const MomentsSearchBar = ({
         >
           <TextInput
             style={appFontStyles.searchBarInputText}
+            autoFocus={autoFocus}
             placeholder={placeholderText}
             placeholderTextColor={textAndIconColor}
             color={textAndIconColor}
@@ -87,6 +90,7 @@ const MomentsSearchBar = ({
             onBlur={handleBlur} // Clear when the user moves away from the input
           />
           <View>
+        
             <SearchBigMagSvg
               height={iconSize}
               width={iconSize}
@@ -95,7 +99,7 @@ const MomentsSearchBar = ({
             />
           </View>
         </View>
-
+    </TouchableWithoutFeedback>
         {filteredData && filteredData.length > 0 && searchQuery.length > 0 && (
           <View
             style={[
@@ -136,8 +140,7 @@ const MomentsSearchBar = ({
             />
           </View>
         )}
-      </View>
-    </TouchableWithoutFeedback>
+      </View> 
   );
 };
 

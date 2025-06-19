@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { View, Keyboard, ViewToken, TouchableOpacity, Pressable } from "react-native";
+import { View, Keyboard, ViewToken,   Pressable } from "react-native";
 
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
@@ -51,7 +51,7 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 // enableFreeze(true);
 
 //const ITEM_HEIGHT = 290;
-const ITEM_HEIGHT = 80;
+const ITEM_HEIGHT = 140;
 const ITEM_BOTTOM_MARGIN = 4;
 const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
@@ -88,17 +88,16 @@ const MomentsList = () => {
       viewabilityConfig,
       onViewableItemsChanged,
     },
-  ]);
+  ]); 
 
-  const [isMomentNavVisible, setMomentNavVisible] = useState(false);
   const flatListRef = useAnimatedRef(null);
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const momentListBottomSpacer = 600;
 
-  const translateX = useSharedValue(0);
-  const heightAnim = useSharedValue(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
+  // const translateX = useSharedValue(0);
+  // const heightAnim = useSharedValue(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
 
   const pressedIndex = useSharedValue(null);
   const pulseValue = useSharedValue(0);
@@ -316,18 +315,14 @@ const MomentsList = () => {
     <View style={appContainerStyles.screenContainer}>
       <LargeCornerLizard />
 
-      <BelowHeaderContainer
+      {/* <BelowHeaderContainer
         height={30}
         alignItems="center"
         marginBottom={4}
         justifyContent="flex-end"
         children={
           <>
-            {/* <DiceRollScroll
-              size={belowHeaderIconSize}
-              color={themeAheadOfLoading.fontColorSecondary}
-              onPress={scrollToRandomItem}
-            /> */}
+ 
             <View
               style={{
                 flexDirection: "row",
@@ -398,21 +393,23 @@ const MomentsList = () => {
             />
           </>
         }
-      />
+      /> */}
       <MomentsAdded visibilityValue={listVisibility} />
       <View
         style={{
           // flex: 1,
           alignContent: "center",
           alignSelf: "center",
-          width: "100%",
+          width: "100%", 
           flexDirection: "column",
           justifyContent: "space-between",
-          height: "87%",
+         height: "87%",  
+ 
         }}
       >
         <>
           <Animated.FlatList
+          fadingEdgeLength={10}
             itemLayoutAnimation={JumpingTransition}
             // itemLayoutAnimation={CurvedTransition}
             // itemLayoutAnimation={EntryExitTransition}
@@ -464,6 +461,7 @@ const MomentsList = () => {
             viewableItemsArray={viewableItemsArray}
             categoryNames={categoryNames}
             onPress={scrollToCategoryStart}
+            onSearchPress={scrollToMoment}
           />
         </>
       )}

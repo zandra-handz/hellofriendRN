@@ -1,5 +1,5 @@
-import { View, Text } from "react-native";
-import React, { useCallback, useState } from "react";
+ 
+import React, { useCallback  } from "react";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
@@ -12,15 +12,12 @@ import ImageViewPage from "@/app/components/images/ImageViewPage";
 import ImageGalleryOutlineSvg from "@/app/assets/svgs/image-gallery-outline.svg";
 
 const ScreenImageView = () => {
-  const route = useRoute();
-  const image = route.params?.image ?? null;
+  const route = useRoute(); 
   const startingIndex = route.params?.index ?? null;
   const { imageList, deleteImage, deleteImageMutation } = useImageFunctions();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
-
-  // for header, communicated from child flatlist on scrolling
-  const [currentItemNumber, setCurrentItemNumber] = useState(startingIndex + 1);
+ 
   const totalCount = imageList.length;
 
   const renderHeader = useCallback(
@@ -29,23 +26,19 @@ const ScreenImageView = () => {
         title="Image"
         navigateTo="Images"
         icon={ImageGalleryOutlineSvg}
-        altView={false}
-        counter={currentItemNumber}
-        totalCount={totalCount}
+        altView={false}  
       />
     ),
-    [selectedFriend, loadingNewFriend, themeAheadOfLoading, currentItemNumber]
+    [selectedFriend, loadingNewFriend, themeAheadOfLoading ]
   );
 
   return (
-    <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground style={{ flex: 1 }}>
       <CarouselSlider
         initialIndex={startingIndex}
         data={imageList}
         children={ImageViewPage}
-        onIndexChange={(index) => { 
-          setCurrentItemNumber(index + 1); // or any other logic
-        }}
+ 
       />
     </SafeViewAndGradientBackground>
   );
