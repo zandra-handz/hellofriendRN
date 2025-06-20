@@ -5,9 +5,19 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from "react";
-import { View, Text, TextInput, StyleSheet,  KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
+import CategoryCreator from "./CategoryCreator";
+
+import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 
 // Forwarding ref to the parent to expose the TextInput value
 const TextMomentBox = forwardRef(
@@ -15,17 +25,22 @@ const TextMomentBox = forwardRef(
   (
     {
       title = "title",
+      editScreen,
       mountingText = "",
       onTextChange,
-      helperText,   
+      helperText,
+      showCategoriesSlider,
+      handleCategorySelect,
+      existingCategory, 
+      onSave,
+      isKeyboardVisible,
     },
     ref
   ) => {
-    const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+    const { themeStyles, appFontStyles, manualGradientColors } =
+      useGlobalStyle();
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
     const textInputRef = useRef();
-
-    
 
     useEffect(() => {
       if (textInputRef.current) {
@@ -48,7 +63,7 @@ const TextMomentBox = forwardRef(
           setEditedMessage("");
         }
       },
-      getText: () => editedMessage, 
+      getText: () => editedMessage,
     }));
 
     useEffect(() => {
@@ -56,7 +71,7 @@ const TextMomentBox = forwardRef(
     }, [mountingText]);
 
     const handleTextInputChange = (text) => {
-     // console.log(text);
+      // console.log(text);
       setEditedMessage(text);
       onTextChange(text);
     };
@@ -66,7 +81,7 @@ const TextMomentBox = forwardRef(
         style={[
           styles.container,
           // themeStyles.genericTextBackground,
-          { width: '100%', height: '100%' },
+          { width: "100%", height: "100%" },
         ]}
       >
         <View
@@ -74,42 +89,81 @@ const TextMomentBox = forwardRef(
             flexDirection: "row",
             justifyContent: "space-between",
             width: "100%",
-            height: "auto",
-            alignItems: 'center',
+            alignItems: "center",
           }}
         >
-          <View style={{flexDirection: 'row', opacity: .8, height: '100%', alignItems: 'center'}}>
-          <Text style={[styles.title, themeStyles.genericText]}>
-            {title}
-          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              opacity: 0.8,
+              height: "100%",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={[
+                themeStyles.genericText,
+                appFontStyles.welcomeText,
+                { fontSize: 30 },
+              ]}
+            >
+              {" "}
+              {title}
+            </Text>
           </View>
-
-          <EditPencilOutlineSvg height={24} width={24} color={manualGradientColors.lightColor} />
+{editScreen && (
+  
+          <EditPencilOutlineSvg
+            height={24}
+            width={24}
+            color={manualGradientColors.lightColor}
+          />
+          
+)}
         </View>
         <View style={{ flex: 1 }}>
-
-        {helperText && (
+          {helperText && (
             <Text style={[styles.helperText, themeStyles.genericText]}>
               {helperText}
             </Text>
           )}
-              <KeyboardAvoidingView
-      style={styles.textInputKeyboardAvoidContainer}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Adjust behavior based on the platform
-    >
-          <TextInput
-            ref={textInputRef}
-            autoFocus={true}
-            style={[
-              // styles.textInput,
-              appFontStyles.momentViewText,
-              themeStyles.genericText,
-              {paddingBottom: 80} // this leaves space for category button component overlaying it
-            ]}
-            value={editedMessage}
-            onChangeText={handleTextInputChange} // Update local state
-            multiline={true}
-          /> 
+          <KeyboardAvoidingView
+            style={styles.textInputKeyboardAvoidContainer}
+            behavior={Platform.OS === "ios" ? "padding" : "height"} // Adjust behavior based on the platform
+          >
+            <TextInput
+              ref={textInputRef}
+              autoFocus={true}
+              style={[
+                // styles.textInput,
+                themeStyles.genericText,
+                appFontStyles.welcomeText,
+                { backgroundColor: 'orange', flexShrink: 1, fontSize: 26, paddingBottom: 30 }, // this leaves space for category button component overlaying it
+              ]}
+              value={editedMessage}
+              onChangeText={handleTextInputChange} // Update local state
+              multiline={true}
+            />
+            <View style={{width: '100%',  height: 100, backgroundColor: 'red'}}>
+                                  <FriendModalIntegrator
+                    includeLabel={true}
+                    color={themeStyles.primaryText.color}
+                    width={120}
+                    navigationDisabled={true}
+                    iconSize={22}
+                    useGenericTextColor={true}
+                  />
+                 <CategoryCreator
+            show={showCategoriesSlider}
+            updateCategoryInParent={handleCategorySelect}
+            updateExistingMoment={editScreen}
+            existingCategory={existingCategory}
+            momentTextForDisplay={ref?.current?.getText() || null}
+            onParentSave={onSave}
+            isKeyboardVisible={isKeyboardVisible}
+          />
+
+            </View>
           </KeyboardAvoidingView>
         </View>
       </View>
@@ -118,34 +172,23 @@ const TextMomentBox = forwardRef(
 );
 
 const styles = StyleSheet.create({
-  outerContainer: {
-    flex: 1,
-    padding: "4%",
-  },
   container: {
     borderRadius: 30,
-    alignSelf: "center",
-    padding: 20,
-  },
-  title: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 15,
-    fontWeight: 'bold',
-
-    lineHeight: 23,
-    textTransform: "uppercase",
   },
   helperText: {
     fontSize: 14,
     lineHeight: 20,
-    opacity: .5,
+    opacity: 0.5,
     //marginLeft: '6%'
     //textTransform: "uppercase",
   },
   textInputKeyboardAvoidContainer: {
     flex: 1,
-    width: '100%', 
-    height: 200,
+    width: "100%",
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    paddingBottom: 60,
+    // height: 200,
   },
   textInput: {
     // fontFamily: 'Poppins-Regular',

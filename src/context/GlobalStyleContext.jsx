@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
-import { StyleSheet  } from "react-native";
- 
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+} from "react";
+import { StyleSheet } from "react-native";
+
 //import { updateUserAccessibilitySettings } from "../calls/api";
 import { useColorScheme } from "react-native";
 import { useUserSettings } from "./UserSettingsContext";
@@ -10,11 +16,9 @@ const GlobalStyleContext = createContext();
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
- 
+  const { settings } = useUserSettings();
 
-    const { settings  } = useUserSettings();
-
-    console.log('GLOBAL STYLES RERENDERED');
+  console.log("GLOBAL STYLES RERENDERED");
   const colorScheme = useColorScheme();
 
   // Default state
@@ -44,58 +48,56 @@ export const GlobalStyleProvider = ({ children }) => {
     gradientDirection: { x: 1, y: 0 },
   });
 
+  const determineTheme = () => {
+    if (settings.manual_dark_mode !== null) {
+      return settings.manual_dark_mode ? "dark" : "light";
+    }
+    return colorScheme || "light";
+  };
 
-        const determineTheme = () => {
-        if (settings.manual_dark_mode !== null) {
-          return settings.manual_dark_mode ? "dark" : "light";
+  useEffect(() => {
+    if (settings) {
+      console.log("settings triggered globalstyles");
+
+      const newFontSize = settings.large_text ? 20 : 16;
+      const newHighContrast = settings.high_contrast_mode;
+      const newScreenReader = settings.screen_reader;
+      const newReceiveNotifications = settings.receive_notifications;
+      const newTheme = determineTheme();
+
+      setStyles((prevStyles) => {
+        if (
+          prevStyles.fontSize === newFontSize &&
+          prevStyles.highContrast === newHighContrast &&
+          prevStyles.screenReader === newScreenReader &&
+          prevStyles.receiveNotifications === newReceiveNotifications &&
+          prevStyles.theme === newTheme
+        ) {
+          return prevStyles; // No changes, skip re-render
         }
-        return colorScheme || "light";
-      };
 
-      useEffect(() => {
-  if (settings) {
-    console.log("settings triggered globalstyles");
+        return {
+          ...prevStyles,
+          fontSize: newFontSize,
+          highContrast: newHighContrast,
+          screenReader: newScreenReader,
+          receiveNotifications: newReceiveNotifications,
+          theme: newTheme,
+        };
+      });
+    } else {
+      const fallbackTheme = colorScheme || "light";
 
-    const newFontSize = settings.large_text ? 20 : 16;
-    const newHighContrast = settings.high_contrast_mode;
-    const newScreenReader = settings.screen_reader;
-    const newReceiveNotifications = settings.receive_notifications;
-    const newTheme = determineTheme();
+      setStyles((prevStyles) => {
+        if (prevStyles.theme === fallbackTheme) return prevStyles;
 
-    setStyles((prevStyles) => {
-      if (
-        prevStyles.fontSize === newFontSize &&
-        prevStyles.highContrast === newHighContrast &&
-        prevStyles.screenReader === newScreenReader &&
-        prevStyles.receiveNotifications === newReceiveNotifications &&
-        prevStyles.theme === newTheme
-      ) {
-        return prevStyles; // No changes, skip re-render
-      }
-
-      return {
-        ...prevStyles,
-        fontSize: newFontSize,
-        highContrast: newHighContrast,
-        screenReader: newScreenReader,
-        receiveNotifications: newReceiveNotifications,
-        theme: newTheme,
-      };
-    });
-  } else {
-    const fallbackTheme = colorScheme || "light";
-
-    setStyles((prevStyles) => {
-      if (prevStyles.theme === fallbackTheme) return prevStyles;
-
-      return {
-        ...prevStyles,
-        theme: fallbackTheme,
-      };
-    });
-  }
-}, [settings, colorScheme]);
-
+        return {
+          ...prevStyles,
+          theme: fallbackTheme,
+        };
+      });
+    }
+  }, [settings, colorScheme]);
 
   //   useEffect(() => {
   //   if (settings) {
@@ -116,79 +118,73 @@ export const GlobalStyleProvider = ({ children }) => {
   //   }
   // }, [settings, colorScheme]);
 
-
-
   useEffect(() => {
-  const isLight = styles.theme === "light";
+    const isLight = styles.theme === "light";
 
-  setStyles((prev) => {
-    const newGradient = isLight
-      ? {
-          darkColor: "#ffffff",
-          lightColor: "#ffffff",
-        }
-      : {
-          darkColor: "#4caf50",
-          lightColor: "#a0f143",
-        };
+    setStyles((prev) => {
+      const newGradient = isLight
+        ? {
+            darkColor: "#ffffff",
+            lightColor: "#ffffff",
+          }
+        : {
+            darkColor: "#4caf50",
+            lightColor: "#a0f143",
+          };
 
-    const newHome = isLight
-      ? {
-          darkColor: "#ffffff",
-          lightColor: "#ffffff",
-        }
-      : {
-          darkColor: "#000002",
-          lightColor: "#163805",
-        };
+      const newHome = isLight
+        ? {
+            darkColor: "#ffffff",
+            lightColor: "#ffffff",
+          }
+        : {
+            darkColor: "#000002",
+            lightColor: "#163805",
+          };
 
-    const gradientsUnchanged =
-      JSON.stringify(prev.gradientColors) === JSON.stringify(newGradient) &&
-      JSON.stringify(prev.gradientColorsHome) === JSON.stringify(newHome);
+      const gradientsUnchanged =
+        JSON.stringify(prev.gradientColors) === JSON.stringify(newGradient) &&
+        JSON.stringify(prev.gradientColorsHome) === JSON.stringify(newHome);
 
-    if (gradientsUnchanged) return prev;
+      if (gradientsUnchanged) return prev;
 
-    return {
-      ...prev,
-      gradientColors: newGradient,
-      gradientColorsHome: newHome,
-    };
-  });
-}, [styles.theme]);
+      return {
+        ...prev,
+        gradientColors: newGradient,
+        gradientColorsHome: newHome,
+      };
+    });
+  }, [styles.theme]);
 
- 
-// // light/dark switcher
-//   useEffect(() => {
-//     console.log('use effect triggered bt styles.theme');
-//     if (styles.theme === "light") {
-//       setStyles((prevStyles) => ({
-//         ...prevStyles,
-//         gradientColors: {
-//           darkColor: "#ffffff",
-//           lightColor: "#ffffff",
-//         },
-//         gradientColorsHome: {
-//           darkColor: "#ffffff",
-//           lightColor: "#ffffff",
-//         },
-//       }));
-//     } else {
-//       setStyles((prevStyles) => ({
-//         ...prevStyles,
-//         gradientColors: {
-//           darkColor: "#4caf50",
-//           lightColor: "#a0f143",
-//         },
-//         gradientColorsHome: {
-//           darkColor: "#000002",
-//           lightColor: "#163805",
-//         },
-//       }));
-//     }
-//   }, [styles.theme]);
-
-
- 
+  // // light/dark switcher
+  //   useEffect(() => {
+  //     console.log('use effect triggered bt styles.theme');
+  //     if (styles.theme === "light") {
+  //       setStyles((prevStyles) => ({
+  //         ...prevStyles,
+  //         gradientColors: {
+  //           darkColor: "#ffffff",
+  //           lightColor: "#ffffff",
+  //         },
+  //         gradientColorsHome: {
+  //           darkColor: "#ffffff",
+  //           lightColor: "#ffffff",
+  //         },
+  //       }));
+  //     } else {
+  //       setStyles((prevStyles) => ({
+  //         ...prevStyles,
+  //         gradientColors: {
+  //           darkColor: "#4caf50",
+  //           lightColor: "#a0f143",
+  //         },
+  //         gradientColorsHome: {
+  //           darkColor: "#000002",
+  //           lightColor: "#163805",
+  //         },
+  //       }));
+  //     }
+  //   }, [styles.theme]);
 
   const themeStyles =
     styles.theme === "dark" ? darkThemeStyles : lightThemeStyles;
@@ -246,7 +242,7 @@ const containerStyles = StyleSheet.create({
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     // borderRadius: 30,
-    flexDirection: "column", 
+    flexDirection: "column",
     zIndex: 1,
     elevation: 1,
   },
@@ -257,8 +253,7 @@ const containerStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     height: 38,
-    width: '100%',
-    
+    width: "100%",
   },
 
   homeScreenButton: {
@@ -326,38 +321,38 @@ const containerStyles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
     alignSelf: "center",
-  }, 
+  },
   categoryButton: {
     // borderBottomWidth: 0.8,
     borderWidth: StyleSheet.hairlineWidth,
     alignText: "left",
     alignContent: "center",
-    justifyContent: "center", 
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
     paddingVertical: 2,
     paddingHorizontal: 10,
     marginHorizontal: 6,
-    borderRadius: 16, 
-   // marginBottom: "3%",
+    borderRadius: 16,
+    // marginBottom: "3%",
     height: "auto",
   },
 
-    actionUnlockedButton: {
+  actionUnlockedButton: {
     // borderBottomWidth: 0.8,
     borderWidth: StyleSheet.hairlineWidth,
     alignText: "right",
-    flexDirection: 'row',
+    flexDirection: "row",
     alignContent: "center",
     justifyContent: "center",
-    flexDirection : 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 2,
     paddingHorizontal: 10,
     //marginHorizontal: 6,
-    borderRadius: 16, 
-    height: 'auto',
-    width: 'auto',
+    borderRadius: 16,
+    height: "auto",
+    width: "auto",
   },
 
   searchBarContainer: {
@@ -376,9 +371,9 @@ const containerStyles = StyleSheet.create({
   searchBarDropDownContainer: {
     position: "absolute",
     padding: 10,
- 
+
     right: -10,
- 
+
     //height: 100,
     height: 100,
     borderRadius: 20,
@@ -446,6 +441,15 @@ const containerStyles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     justifyContent: "center",
     alignItems: "center",
+  },
+  talkingPointCard: {
+    // used with: backgroundColor: themeStyles.primaryBackground.backgroundColor,
+    padding: 20,
+    borderRadius: 40,
+    width: "100%",
+    height: "100%",
+    zIndex: 1,
+    overflow: "hidden",
   },
 
   appMessageContainer: {
@@ -551,7 +555,6 @@ const spacingStyles = StyleSheet.create({
     padding: 20,
   },
   modalHeaderIconSize: 30,
- 
 });
 
 const fontStyles = StyleSheet.create({
@@ -571,20 +574,20 @@ const fontStyles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 32,
-     lineHeight: 34,
+    lineHeight: 34,
     //fontWeight: 'bold',
     fontFamily: "Poppins-Regular",
   },
-    subWelcomeText: {
+  subWelcomeText: {
     fontSize: 14,
-     lineHeight: 20,
+    lineHeight: 20,
     //fontWeight: 'bold',
     fontFamily: "Poppins-Regular",
   },
   homeScreenNewMomentContainer: {
     borderRadius: 30,
-    alignSelf: "center", 
-    padding: 4, 
+    alignSelf: "center",
+    padding: 4,
   },
   homeScreenButtonText: {
     fontSize: 16,
@@ -613,15 +616,15 @@ const fontStyles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 11,
     textTransform: "uppercase",
-    height: '100%',
-    alignSelf: 'center',
+    height: "100%",
+    alignSelf: "center",
   },
-    actionUnlockedButtonText: {
+  actionUnlockedButtonText: {
     fontWeight: "bold",
     fontSize: 13,
-   // textTransform: "uppercase",
-    height: '100%',
-    alignSelf: 'center',  
+    // textTransform: "uppercase",
+    height: "100%",
+    alignSelf: "center",
   },
   searchBarInputText: {
     flex: 1,
@@ -675,9 +678,8 @@ const lightThemeStyles = StyleSheet.create({
   overlayBackgroundColor: {
     backgroundColor: "rgba(0, 0, 0, 0.6)",
   },
-    lighterOverlayBackgroundColor: {
-      backgroundColor: "rgba(255, 255, 255, 0.3)",
-
+  lighterOverlayBackgroundColor: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   primaryText: {
     color: "#121212",
@@ -828,8 +830,7 @@ const darkThemeStyles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.6)",
   },
   lighterOverlayBackgroundColor: {
-      backgroundColor: "rgba(255, 255, 255, 0.3)",
-
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   primaryText: {
     color: "#d3d3d3",

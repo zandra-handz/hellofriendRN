@@ -39,8 +39,15 @@ const CategoryCreator = ({
 
   const [viewExistingCategories, setViewExistingCategories] = useState(true);
 
-  const { getLargestCategory, getCategoryCap, getCreationsRemaining } =
-    useTalkingPFunctions(capsuleList, friendDashboardData, categoryCount);
+const {
+  getLargestCategory,
+  getCategoryCap,
+  getCreationsRemaining,
+} = useTalkingPFunctions({
+  listData: capsuleList,
+  friendData: friendDashboardData,
+  categoryCount,
+});
 
   const [remainingCategories, setRemainingCategories] = useState(
     getCreationsRemaining
@@ -50,7 +57,7 @@ const CategoryCreator = ({
 
   // for data updates after initial render
   useEffect(() => {
-    if (capsuleList && friendDashboardData && !loadingNewFriend) {
+    if (capsuleList && selectedFriend && friendDashboardData && !loadingNewFriend) {
       //Needed because user can change the friend in the middle of writing the moment
       setSelectedCategory(null);
       resetNewCategoryText();
@@ -65,7 +72,7 @@ const CategoryCreator = ({
       }
       setViewExistingCategories(capsuleList.length > 0);
     }
-  }, [capsuleList, friendDashboardData, loadingNewFriend]);
+  }, [capsuleList, friendDashboardData, selectedFriend, loadingNewFriend]);
 
   const updateNewCategoryText = (text) => {
     if (newCategoryRef && newCategoryRef.current) {
@@ -190,7 +197,7 @@ const CategoryCreator = ({
        // alignItems: "center",
       }}
     >
-      {friendDashboardData && categoryNames && !loadingNewFriend && (
+      {selectedFriend && friendDashboardData && categoryNames && capsuleList && !loadingNewFriend && (
         <>
           <View
             style={[

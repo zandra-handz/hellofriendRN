@@ -81,7 +81,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
         style={{ 
           flexDirection: "row",
           height: height,  
-          alignItems: "center", 
+          alignItems: "center",  
  
           width: width,
         }}

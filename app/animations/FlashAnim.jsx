@@ -1,57 +1,61 @@
 
 import React, { useEffect, useRef } from 'react';
-import { Animated } from 'react-native';
+ 
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  useAnimatedReaction,
+  withRepeat,
+  interpolateColor,
+  withTiming,
+} from "react-native-reanimated";
+
 
 const FlashAnim = ({
     children,
     circleTextSize = 11,
-    circleColor = 'red',
+    circleColor = 'orange',
     countColor = 'white',
     flashToColor = 'yellow',  
     textFlashToColor = 'black', 
     active = true,
+    pulseDuration = 2000,
 }) => {
-    const { appAnimationStyles } = useGlobalStyle();
-    const flashAnim = useRef(new Animated.Value(0)).current;
+    const { themeStyles, appAnimationStyles } = useGlobalStyle(); 
 
-    useEffect(() => {
-        const animateFlash = () => {
-            Animated.loop(
-                Animated.sequence([
-                    Animated.timing(flashAnim, {
-                        toValue: 1,
-                        duration: 3000,
-                        useNativeDriver: false,
-                    }),
-                    Animated.timing(flashAnim, {
-                        toValue: 0,
-                        duration: 3000,
-                        useNativeDriver: false,
-                    }),
-                ])
-            ).start();
+      const pulse = useSharedValue(0);
+
+  const startColor = useSharedValue(circleColor);
+  const endColor = useSharedValue(flashToColor);
+  const textColor = useSharedValue(countColor);
+
+      useEffect(() => {
+      pulse.value = withRepeat(withTiming(1, { duration: pulseDuration }), -1, true);
+    }, []);
+
+ 
+
+
+      const colorPulseStyle = useAnimatedStyle(() => {
+        const backgroundColor = interpolateColor(
+          pulse.value,
+          [0, .5],
+          [startColor.value, endColor.value]
+        );
+    
+        return {
+          backgroundColor,
+          color: textColor.value,
         };
-
-        animateFlash();
-    }, [flashAnim]);
-
-    const animatedCircleColor = flashAnim.interpolate({
-        inputRange: [0, 0.5],
-        outputRange: [circleColor, flashToColor],
-    });
-
-    const animatedCountColor = flashAnim.interpolate({
-        inputRange: [0, 0.5],
-        outputRange: [countColor, textFlashToColor],
-    });
+      });
 
     return (
         <>
         {active && (
             
-        <Animated.View style={[appAnimationStyles.flashAnimContainer, { borderRadius: circleTextSize, height: circleTextSize * 2, width: circleTextSize * 2, backgroundColor: animatedCircleColor }]}>
-            <Animated.Text style={[appAnimationStyles.flashAnimText, { color: animatedCountColor, fontSize: circleTextSize }]}>
+        <Animated.View style={[colorPulseStyle, appAnimationStyles.flashAnimContainer, { borderRadius: circleTextSize, height: circleTextSize * 2, width: circleTextSize * 2 }]}>
+            <Animated.Text style={[colorPulseStyle, appAnimationStyles.flashAnimText, themeStyles.primaryText, { fontSize: circleTextSize }]}>
                 {children}
             </Animated.Text>
         </Animated.View>

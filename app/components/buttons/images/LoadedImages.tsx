@@ -9,7 +9,11 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 
-interface LoadedMomentsProps {
+
+import useImageFunctions from "@/src/hooks/useImageFunctions";
+
+
+interface Props {
   height: number;
   iconSize: number;
   itemLabelFontSize: number;
@@ -20,7 +24,7 @@ interface LoadedMomentsProps {
   onPress: () => void;
 }
 
-const LoadedImages: React.FC<LoadedMomentsProps> = ({
+const LoadedImages: React.FC<Props> = ({
   height = 50,
   iconSize = 36,
   itemLabelFontSize = 11,
@@ -31,6 +35,7 @@ const LoadedImages: React.FC<LoadedMomentsProps> = ({
   onPress = () => {},
 }) => {
   const { capsuleCount } = useCapsuleList();
+  const { imageList } = useImageFunctions();
 
   return (
     <TouchableOpacity
@@ -60,7 +65,7 @@ const LoadedImages: React.FC<LoadedMomentsProps> = ({
                 circleTextSize={countTextSize}
                 countColor={countColor}
               >
-                {capsuleCount}
+                {imageList?.length}
               </FlashAnim>
             </View>
             <View style={{ position: "absolute", bottom: 0, left: -40 }}>

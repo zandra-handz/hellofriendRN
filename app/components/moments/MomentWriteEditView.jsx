@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { View, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { View, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from "react-native";
 import BodyStyling from "../scaffolding/BodyStyling";
 import { useUser } from "@/src/context/UserContext";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
@@ -12,8 +12,11 @@ import FriendModalIntegrator from "@/app/components/friends/FriendModalIntegrato
 import CategoryCreator from "./CategoryCreator";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import { useFocusEffect } from "@react-navigation/native";
-
 import { useMessage } from "@/src/context/MessageContext";
+import LoadedMoments from "../buttons/moments/LoadedMoments";
+import BobblngFlashingIcon from "../buttons/moments/BobblngFlashingIcon";
+import BobbingAnim from "@/app/animations/BobbingAnim";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const MomentWriteEditView = ({
   momentText,
@@ -22,6 +25,7 @@ const MomentWriteEditView = ({
 }) => {
   const { selectedFriend, friendDashboardData, loadingNewFriend } =
     useSelectedFriend();
+  const { themeStyles, appContainerStyles } = useGlobalStyle();
   const {
     handleCreateMoment,
     createMomentMutation,
@@ -31,7 +35,6 @@ const MomentWriteEditView = ({
   const { showMessage } = useMessage();
   const { user } = useUser();
   const navigation = useNavigation();
-  const { appContainerStyles } = useGlobalStyle();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const momentTextRef = useRef(null);
@@ -158,69 +161,91 @@ const MomentWriteEditView = ({
     }
   }, [editMomentMutation.isSuccess, editMomentMutation.data]);
 
+  // keep this consistent with MomentViewPage
   return (
-    <TouchableWithoutFeedback onPress={() => {}}>
-      <View style={appContainerStyles.screenContainer}>
-        {!updateExistingMoment && (
+    <TouchableWithoutFeedback
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "transparent",
+        padding: 4,
+        borderWidth: 0,
+        width: "100%",
+      }}
+      onPress={() => {}}
+    >
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "transparent",
+          padding: 4,
+          borderWidth: 0,
+          width: "100%",
+        }}
+      >
+        <View
+          style={[
+            appContainerStyles.talkingPointCard,
+            {
+              backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            },
+          ]}
+        >
           <BelowHeaderContainer
-            height={30}
-            alignItems="center"
-            marginBottom={4}
+            height={0}
+            alignItems="flex-end"
+            marginBottom={0} //default is currently set to 2
             justifyContent="flex-end"
             children={
-              <View
-                style={{
-                  flexDirection: "row",
-                  width: 120,
-                  justifyContent: "flex-end",
-                }}
-              >
-                <FriendModalIntegrator
-                  includeLabel={true}
-                  width={120}
-                  navigationDisabled={true}
-                  iconSize={22}
-                  width="100%"
-                />
-              </View>
-            }
-          />
-        )}
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
-        >
-          <BodyStyling
-            height={"100%"}
-            width={"100%"}
-            paddingTop={"6%"}
-            paddingHorizontal={0}
-            paddingBottom={"0%"}
-            children={
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "column",
-                  top: -18,
-                  justifyContent: "flex-start",
-                }}
-              >
-                <TextMomentBox
-                  ref={momentTextRef}
-                  title={
-                    updateExistingMoment ? "Edit moment" : "Write new moment"
-                  }
-                  onTextChange={updateMomentText}
-                />
-              </View>
-            }
-          />
-        </View>
+              <>
+                {!updateExistingMoment && (
+                  <View style={{ width: 36, height: "auto" }}>
+                    <BobblngFlashingIcon
+                      size={36}
+                      icon={
+                        <MaterialIcons
+                          name="tips-and-updates"
+                          size={26}
+                          color={themeStyles.primaryBackground.backgroundColor}
+                        />
+                      }
+                    />
+                  </View>
 
-        {selectedFriend && friendDashboardData && (
+                  // <FriendModalIntegrator
+                  //   includeLabel={true}
+                  //   color={themeStyles.primaryText.color}
+                  //   width={120}
+                  //   navigationDisabled={true}
+                  //   iconSize={22}
+                  //   useGenericTextColor={true}
+                  // />
+                )}
+              </>
+            }
+          />
+          {/* <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              top: -18,
+              justifyContent: "flex-start",
+            }}
+          > */}
+          <TextMomentBox
+            ref={momentTextRef}
+            editScreen={updateExistingMoment}
+            title={updateExistingMoment ? "Edit:" : "Add talking point"}
+            onTextChange={updateMomentText}
+              showCategoriesSlider={showCategoriesSlider}
+              handleCategorySelect={handleCategorySelect} 
+            existingCategory={existingMomentObject?.typedCategory || null}
+            momentTextForDisplay={momentTextRef?.current?.getText() || null}
+            onSave={handleSave}
+            isKeyboardVisible={isKeyboardVisible}
+
+            CategoryCreatorComponent={
           <CategoryCreator
             show={showCategoriesSlider}
             updateCategoryInParent={handleCategorySelect}
@@ -230,7 +255,26 @@ const MomentWriteEditView = ({
             onParentSave={handleSave}
             isKeyboardVisible={isKeyboardVisible}
           />
-        )}
+
+
+            }
+
+
+          />
+          {/* </View> */}
+        </View> 
+
+        {/* {selectedFriend && friendDashboardData && (
+          <CategoryCreator
+            show={showCategoriesSlider}
+            updateCategoryInParent={handleCategorySelect}
+            updateExistingMoment={updateExistingMoment}
+            existingCategory={existingMomentObject?.typedCategory || null}
+            momentTextForDisplay={momentTextRef?.current?.getText() || null}
+            onParentSave={handleSave}
+            isKeyboardVisible={isKeyboardVisible}
+          />
+        )} */}
         {/* {!isKeyboardVisible && (
           <View style={{ position: "absolute", bottom: -10 }}>
             <ButtonBaseSpecialSave

@@ -1,8 +1,21 @@
 import React from "react";
 import { View } from "react-native";
 
-const useTalkingPFunctions = (listData, friendData, categoryCount) => {
-  const firstFriendData = friendData[0];
+interface Props {
+  listData: object[];
+  friendData: object[];
+  categoryCount: number;
+}
+
+const useTalkingPFunctions = ({
+  listData = [],
+  friendData = [],
+  categoryCount = 0,
+}: Props) => {
+
+
+  // console.log('useTalkingFunctions rerendered!');
+  // const firstFriendData = friendData[0];
 
   const getLargestCategory = () => { 
     if (listData.length === 0) return null;
@@ -27,8 +40,10 @@ const useTalkingPFunctions = (listData, friendData, categoryCount) => {
   };
 
   const getCategoryCap = () => { 
+      if (friendData.length === 0) return null;
+      if (friendData[0].length === 0) return null;
  
-    return parseInt(firstFriendData.suggestion_settings.category_limit_formula);
+    return parseInt(friendData[0].suggestion_settings.category_limit_formula);
   };
 
   const getCreationsRemaining = () => { 

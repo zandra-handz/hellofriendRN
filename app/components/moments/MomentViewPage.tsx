@@ -37,7 +37,7 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
   currentIndexValue,
   cardScaleValue,
 }) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles, appContainerStyles } = useGlobalStyle();
   const { updateCapsule, deleteMomentRQuery, deleteMomentMutation } =
     useCapsuleList();
   const { selectedFriend } = useSelectedFriend();
@@ -106,15 +106,10 @@ const MomentViewPage: React.FC<MomentViewPageProps> = ({
       ]}
     >
       <View
-        style={{
+        style={[appContainerStyles.talkingPointCard, {
           backgroundColor: themeStyles.primaryBackground.backgroundColor,
-          padding: 20,
-          borderRadius: 40,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-          overflow: "hidden",
-        }}
+      
+        }]}
       >
         <BelowHeaderContainer
           height={30}
