@@ -200,25 +200,18 @@ const item = useMemo(() => {
 
         <View style={[styles.divider, themeStyles.divider]} />
         <>
-          <View style={styles.section}>
-            <RenderSettingsButton />
-          </View>
+                  {!extraData && (
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
+              
+             /{data.length} </Text></Text>
+         
+              
+            </View>
+          )}
+
         </>
-
-        {/* <View style={[styles.divider, themeStyles.divider]} />
-        <>
-          <View style={styles.section}>
-            <FriendProfileButton />
-          </View>
-        </> */}
-
-        {/* <View style={[styles.divider, themeStyles.divider]} />
-        <>
-          <View style={styles.section}>
-            <RenderReportIssueButton />
-          </View>
-        </> */}
-
+ 
         <View style={[styles.divider, themeStyles.divider]} />
         <View style={{ flex: 1 }}>
           <>
@@ -227,12 +220,17 @@ const item = useMemo(() => {
           )}
           {!extraData && (
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
+              <MaterialCommunityIcons
+              name='send'
+              size={50}
+              color={themeStyles.primaryText.color}/>
+            {/* <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
               
-             /{data.length} </Text></Text>
+             /{data.length} </Text></Text> */}
          
               
             </View>
+
           )}
           
           </>

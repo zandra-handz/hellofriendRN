@@ -1,5 +1,5 @@
- 
-import React, { useCallback  } from "react";
+import React, { useCallback } from "react";
+import { View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
@@ -8,16 +8,17 @@ import useImageFunctions from "@/src/hooks/useImageFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import ImageViewPage from "@/app/components/images/ImageViewPage";
+import ImageMenuButton from "@/app/components/images/ImageMenuButton";
 
 import ImageGalleryOutlineSvg from "@/app/assets/svgs/image-gallery-outline.svg";
 
 const ScreenImageView = () => {
-  const route = useRoute(); 
+  const route = useRoute();
   const startingIndex = route.params?.index ?? null;
   const { imageList, deleteImage, deleteImageMutation } = useImageFunctions();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
- 
+
   const totalCount = imageList.length;
 
   const renderHeader = useCallback(
@@ -26,10 +27,10 @@ const ScreenImageView = () => {
         title="Image"
         navigateTo="Images"
         icon={ImageGalleryOutlineSvg}
-        altView={false}  
+        altView={false}
       />
     ),
-    [selectedFriend, loadingNewFriend, themeAheadOfLoading ]
+    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
   );
 
   return (
@@ -38,8 +39,10 @@ const ScreenImageView = () => {
         initialIndex={startingIndex}
         data={imageList}
         children={ImageViewPage}
- 
       />
+      {/* <View style={{ bottom: 62 }}>
+        <ImageMenuButton />
+      </View> */}
     </SafeViewAndGradientBackground>
   );
 };

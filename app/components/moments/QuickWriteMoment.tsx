@@ -23,6 +23,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { AntDesign } from "@expo/vector-icons";
 import { useUser } from "@/src/context/UserContext";
+import { useUserSettings } from "@/src/context/UserSettingsContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
@@ -57,7 +58,8 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
       manualGradientColors,
       appContainerStyles,
     } = useGlobalStyle();
-    const { userAppSettings } = useUser();
+  
+    const { settings } = useUserSettings();
     // const { friendListLength } = useFriendList(); checking higher up
     const { selectedFriend } = useSelectedFriend();
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
@@ -72,7 +74,7 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
         const timeout = setTimeout(() => {
           if (
             textInputRef.current &&
-            userAppSettings.simplify_app_for_focus === true
+            settings.simplify_app_for_focus === true
           ) {
             textInputRef.current.focus();
           } else {
@@ -80,31 +82,11 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
           }
         }, 50); // Small delay for rendering
         return () => clearTimeout(timeout); // Cleanup timeout
-      }, [userAppSettings])
+      }, [settings])
     );
 
     const addIconSize = 22;
-
-    //  (CHATGIPITY EXPLANATION ON WHY I NEEDED TO PASS IN USERAPPSETTINGS IN THE DEPEND ARRAY ABOVE:
-    //
-    // If you leave the dependency array empty:
-
-    // The useCallback function is only created once, on the initial render.
-    // It captures the initial value of userAppSettings and does not respond to changes in that variable.
-    // Subsequent updates to userAppSettings won’t trigger the useFocusEffect callback because the dependencies for the useCallback don’t change.
-    // Why Including userAppSettings Solves the Problem
-    // By including userAppSettings in the dependency array, you tell React:
-
-    // Recreate the useCallback whenever userAppSettings changes.
-    // This ensures that the useFocusEffect re-executes with the latest value of userAppSettings.)
-
-    // useEffect(() => {
-    //   if (userAppSettings) {
-    //     // console.log('userappsettings focus: ', userAppSettings.simplify_app_for_focus);
-    //     setAutoFocusSelected(userAppSettings.simplify_app_for_focus);
-    //   }
-    // }, [userAppSettings]);
-
+ 
     useEffect(() => {
       if (textInputRef.current) {
         textInputRef.current.setNativeProps({ text: mountingText });
@@ -317,10 +299,10 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
                     width: "auto",
                   }}
                 ></View> */}
-                  {userAppSettings && (
+                  {settings && (
                     <TextInput
                       ref={textInputRef}
-                      autoFocus={userAppSettings.simplify_app_for_focus}
+                      autoFocus={settings.simplify_app_for_focus}
                       style={[styles.textInput, themeStyles.genericText]}
                       value={editedMessage}
                       placeholder={""}

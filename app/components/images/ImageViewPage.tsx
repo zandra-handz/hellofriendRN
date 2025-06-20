@@ -35,7 +35,7 @@ const ImageViewPage: React.FC<ImageViewPageProps> = ({
   currentIndexValue,
   cardScaleValue,
 }) => {
-  const { themeStyles } = useGlobalStyle(); 
+  const { themeStyles, appFontStyles } = useGlobalStyle(); 
   const navigation = useNavigation();
 
   const blurhash =
@@ -86,30 +86,32 @@ const ImageViewPage: React.FC<ImageViewPageProps> = ({
     >
       <View
         style={{
-          backgroundColor: themeStyles.primaryBackground.backgroundColor,
-          padding: 10,
+         // backgroundColor: themeStyles.primaryBackground.backgroundColor,
+          backgroundColor: 'transparent',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          padding: 0,
           borderRadius: 10,
           width: "100%",
           height: "100%",
           zIndex: 1,
           overflow: "hidden",
+        
         }}
-      >
-        {/* <BelowHeaderContainer
-          height={30}
-          alignItems="center"
-          marginBottom={0} //default is currently set to 2
-          justifyContent="center"
-          children={<View></View>}
-        /> */}
-        <Text style={themeStyles.primaryText}> {item.title}</Text>
+      > 
+
+        <View style={[  ]}>
+                <View style={{ width: '100%', position: 'absolute'}}>
+        <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}> {item.title}</Text>
         <Text style={themeStyles.primaryText}> {item.category}</Text>
-        <View style={styles.imageContainer}>
+        
+        
+      </View>
           <Image
             placeholder={{ blurhash }}
             source={{ uri: item.image }}
             style={styles.modalImage}
-            contentFit="cover" //switch to cover to see full image
+            contentFit="contain" //switch to cover to see full image
             cachePolicy={"memory-disk"}
           />
         </View>
@@ -121,11 +123,13 @@ const ImageViewPage: React.FC<ImageViewPageProps> = ({
 const styles = StyleSheet.create({
  
   imageContainer: {
-    paddingTop: "3%",
-    width: "100%",
-    height: "90%",
+    paddingTop: 0,
+    width: "100%", 
+    flex: 1,
     overflow: "hidden",
     flexDirection: "column",
+    borderRadius: 30,
+    overflow: 'hidden',
   },    
   modalImage: {
     width: "100%",
@@ -133,7 +137,236 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginBottom: 0,
     borderRadius: 30,
+    overflow: 'hidden',
   }, 
 });
 
 export default ImageViewPage;
+
+
+// OLD CODE TO RE-ADD SHARE FILE FUNCTION INTO ABOVE CODE:
+
+// import React, { useState, useEffect } from 'react';
+// import { View, Image, StyleSheet, Text } from 'react-native';
+// import { useSelectedFriend } from '../context/SelectedFriendContext';
+// import { useImageList } from '../context/ImageListContext';
+
+// import * as FileSystem from 'expo-file-system';
+// import * as Sharing from 'expo-sharing';
+
+// import ItemViewFooter from './ItemViewFooter'; 
+// import AlertImage from '../components/AlertImage';
+// import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
+// import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
+// import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
+
+// import FooterActionButtons from '../components/FooterActionButtons';
+
+
+
+// import { updateFriendImage, deleteFriendImage } from '../api';
+
+// import AlertConfirm from '../components/AlertConfirm'; 
+// import AlertSuccessFail from '../components/AlertSuccessFail';
+
+// import NavigationArrows from '../components/NavigationArrows';
+
+// const ItemViewImage = ({ image, onClose }) => {
+//   const { selectedFriend } = useSelectedFriend();
+//   const { imageList, deleteImage, setUpdateImagesTrigger } = useImageList();
+//   const [currentIndex, setCurrentIndex] = useState(0);
+//   const [isEditing, setIsEditing] = useState(false);
+//   const [title, setTitle] = useState(null);
+//   const [isModalVisible, setIsModalVisible] = useState(true);
+//   const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
+
+//   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+//   const [isFailModalVisible, setFailModalVisible] = useState(false);
+  
+//   const [isDeleting, setIsDeleting] = useState(false);
+
+//   useEffect(() => {
+//     if (image) {
+//       setTitle(image.title);
+//       const index = imageList.findIndex(img => img.id === image.id);
+//       setCurrentIndex(index);
+//     }
+//   }, [image]);
+
+//   const handleEdit = () => {
+//     setIsEditing(true);
+//   };
+
+//   const closeModal = () => {
+//     setIsModalVisible(false);
+//     setIsEditing(false);
+//     onClose();
+//   };
+
+//   const handleUpdate = async () => {
+//     try {
+//       await updateFriendImage(image.friendId, image.id, { title });
+//       setIsEditing(false); 
+//       onClose();
+//     } catch (error) {
+//       console.error('Error updating image:', error);
+//     }
+//   };
+
+//   const toggleModal = () => {
+//     setConfirmDeleteModalVisible(!isConfirmDeleteModalVisible);
+//   };
+
+
+//   const handleShare = async () => {
+//     if (!imageList[currentIndex].image) {
+//       console.error('Error: Image URL is null or undefined');
+//       return;
+//     }
+
+//     const fileUri = FileSystem.documentDirectory + (imageList[currentIndex].title  || 'shared_image') + '.jpg';
+//     const message = "Check out this image!"; 
+
+//     try {
+//       const { uri } = await FileSystem.downloadAsync(imageList[currentIndex].image, fileUri);
+//       await Sharing.shareAsync(uri);
+  
+//       setTimeout(async () => {
+//         try { 
+//           setConfirmDeleteModalVisible(true); 
+//         } catch (error) {
+//           console.error('Error deleting shared image:', error);
+//         }
+//       }, 500);  
+
+//     } catch (error) {
+//       console.error('Error sharing image:', error);
+//     }
+//   };
+
+//   const handleDelete = async () => {
+//     try {
+//       setIsDeleting(true);
+//       const imageToDelete = imageList[currentIndex];  // Get the correct image to delete based on currentIndex
+//       await deleteFriendImage(selectedFriend.id, imageList[currentIndex].id);
+
+//       setSuccessModalVisible(true);  
+//     } catch (error) {
+//       setFailModalVisible(true);
+//       console.error('Error deleting image:', error);
+//     } finally {
+//       setConfirmDeleteModalVisible(false);
+//       setIsDeleting(false);
+//     }
+//   };
+
+//   const successOk = () => {
+//     deleteImage(imageList[currentIndex].image);
+//     setUpdateImagesTrigger(prev => !prev);
+//     setSuccessModalVisible(false);
+//     closeModal();
+//   };
+
+//   const failOk = () => { 
+//     setFailModalVisible(false);
+//   };
+
+//   const goToPreviousImage = () => {
+//     if (currentIndex > 0) {
+//       setCurrentIndex(prevIndex => prevIndex - 1);
+//     }
+//   };
+
+//   const goToNextImage = () => {
+//     if (currentIndex < imageList.length - 1) {
+//       setCurrentIndex(prevIndex => prevIndex + 1);
+//     }
+//   };
+
+//   useEffect(() => {
+//     setTitle(imageList[currentIndex]?.title || '');
+//   }, [currentIndex]);
+
+//   return (
+//     <>
+//       <AlertImage
+//         isModalVisible={isModalVisible}
+//         toggleModal={closeModal}
+//         modalContent={
+//           imageList[currentIndex] ? (
+//             <View style={styles.modalContainer}>
+//               <View style={styles.container}>
+//                 <View style={styles.headerContainer}>
+//                   <View style={styles.infoContainer}>
+//                     <View style={styles.detailsColumn}>
+//                       <Text style={styles.name}>{imageList[currentIndex].title}</Text>
+//                       <View style={styles.modalImageContainer}>
+//                         <Image
+//                           source={{ uri: imageList[currentIndex].image }}
+//                           style={styles.modalImage}
+//                         />
+//                       </View>
+//                     </View>
+//                   </View>
+//                 </View>
+//                 <NavigationArrows 
+//                   currentIndex={currentIndex}
+//                   imageListLength={imageList.length}
+//                   onPrevPress={goToPreviousImage}
+//                   onNextPress={goToNextImage}
+//                 />
+//                 <View style={styles.buttonContainer}>
+//                   <ItemViewFooter
+//                     buttons={[
+//                       { label: 'Edit', icon: <EditOutlineSvg width={34} height={34} color='black' />, onPress: handleEdit },
+//                       { label: 'Delete', icon: <TrashOutlineSvg width={34} height={34} color='black' />, onPress: toggleModal },
+//                     ]}
+//                     maxButtons={2} 
+//                     showLabels={false}
+//                   />
+//                 </View>
+//               </View>
+//               <FooterActionButtons
+//                     height='5%'
+//                     bottom={30}
+//                     backgroundColor='white'
+//                     buttons={[
+//                       <ButtonSendImageToFriend onPress={handleShare} friendName={selectedFriend.name} />
+//                     ]}
+//                   />
+//             </View>
+//           ) : null
+//         }
+//         modalTitle="View Image"
+//       />
+
+//       <AlertConfirm
+//         fixedHeight={true}
+//         height={330}
+//         isModalVisible={isConfirmDeleteModalVisible}
+//         questionText="Delete image?"
+//         isFetching={isDeleting}
+//         useSpinner={true}
+//         toggleModal={toggleModal}
+//         headerContent={<Text style={{fontFamily: 'Poppins-Bold', fontSize: 18}}>{imageList[currentIndex].title}</Text>}
+//         onConfirm={() => handleDelete()} 
+//         onCancel={toggleModal}
+//         confirmText="Delete"
+//         cancelText="Cancel"
+//       />
+
+//       <AlertSuccessFail
+//         isVisible={isSuccessModalVisible}
+//         message='Image has been deleted.'
+//         onClose={successOk}
+//         type='success'
+//       />
+
+//       <AlertSuccessFail
+//         isVisible={isFailModalVisible}
+//         message='Error deleting image.'
+//         onClose={failOk}
+//         tryAgain={false} 
+//         isFetching={isDeleting}
+//         type='failure'
+//       />

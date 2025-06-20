@@ -56,7 +56,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   }; 
 
   const navigateToImages = () => {
-    navigation.navigate("Images");
+    navigation.navigate("ImageView", {startingIndex: 0});
   };
 
   const navigateToAddMoment = () => {
