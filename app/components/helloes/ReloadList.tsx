@@ -37,8 +37,16 @@ const { user } = useUser();
   //  const { helloesList } = useHelloes();
   //  const hello = helloesList.find((hello) => hello.id === helloId);
 
-  const { getLargestCategory, getCategoryCap, getCreationsRemaining } =
-    useTalkingPFunctions(capsuleList, friendDashboardData, categoryCount);
+ 
+    const {
+  getLargestCategory,
+  getCategoryCap,
+  getCreationsRemaining,
+} = useTalkingPFunctions({
+  listData: capsuleList,
+  friendData: friendDashboardData,
+  categoryCount,
+});
 
   const [remainingCategories, setRemainingCategories] = useState(
     getCreationsRemaining

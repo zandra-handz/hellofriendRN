@@ -1,25 +1,20 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import AlertFormSubmit from "../alerts/AlertFormSubmit";
-import { useFocusEffect } from "@react-navigation/native";
-import ThoughtBubbleOutlineSvg from "@/app/assets/svgs/thought-bubble-outline.svg";
 import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
 import SingleLineEnterBox from "@/app/components/appwide/input/SingleLineEnterBox";
 import ButtonBottomActionBaseSmallLongPress from "../buttons/scaffolding/ButtonBottomActionBaseSmallLongPress";
-import ArrowLeftCircleOutline from "@/app/assets/svgs/arrow-left-circle-outline.svg";
-import { FlashList } from "@shopify/flash-list";
+
+import CategoryItemsModal from "../headers/CategoryItemsModal";
+
 const CategoryCreator = ({
   updateCategoryInParent,
   updateExistingMoment,
   existingCategory,
-  momentTextForDisplay,
   onParentSave,
-  isKeyboardVisible = true,
-  show = true,
 }) => {
   const { themeStyles, appContainerStyles } = useGlobalStyle();
   const { selectedFriend, loadingNewFriend, friendDashboardData } =
@@ -29,25 +24,24 @@ const CategoryCreator = ({
     useState(null);
   const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
 
+  const [modalVisible, setModalVisible] = useState(false);
+
   const containerHeight = `100%`;
 
   const [newCategoryEntered, setNewCategoryEntered] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+
   const [pressedOnce, setPressedOnce] = useState(false);
 
   const newCategoryRef = useRef(null);
 
   const [viewExistingCategories, setViewExistingCategories] = useState(true);
 
-const {
-  getLargestCategory,
-  getCategoryCap,
-  getCreationsRemaining,
-} = useTalkingPFunctions({
-  listData: capsuleList,
-  friendData: friendDashboardData,
-  categoryCount,
-});
+  const { getLargestCategory, getCategoryCap, getCreationsRemaining } =
+    useTalkingPFunctions({
+      listData: capsuleList,
+      friendData: friendDashboardData,
+      categoryCount,
+    });
 
   const [remainingCategories, setRemainingCategories] = useState(
     getCreationsRemaining
@@ -57,7 +51,12 @@ const {
 
   // for data updates after initial render
   useEffect(() => {
-    if (capsuleList && selectedFriend && friendDashboardData && !loadingNewFriend) {
+    if (
+      capsuleList &&
+      selectedFriend &&
+      friendDashboardData &&
+      !loadingNewFriend
+    ) {
       //Needed because user can change the friend in the middle of writing the moment
       setSelectedCategory(null);
       resetNewCategoryText();
@@ -156,7 +155,7 @@ const {
           style={{
             width: 140,
             height: "100%",
-           overflow: 'hidden',
+            overflow: "hidden",
             marginRight: 3,
           }}
         >
@@ -183,209 +182,146 @@ const {
     [handlePressOut, handleCategoryPress, selectedCategory]
   );
 
+  const extractItemKey = (item, index) =>
+    item?.id ? item.id.toString() : `category-${index}`;
+
   return (
     <View
       style={{
         position: "absolute",
-        //   backgroundColor: "red",
+        backgroundColor: "limegreen",
         height: 38,
         width: "100%",
         zIndex: 1000,
         top: "92%",
         flex: 1,
         transform: [{ translateY: -50 }],
-       // alignItems: "center",
+        // alignItems: "center",
       }}
     >
-      {selectedFriend && friendDashboardData && categoryNames && capsuleList && !loadingNewFriend && (
-        <>
-          <View
-            style={[
-              appContainerStyles.categoryCreatorContainer,
-              themeStyles.genericTextBackgroundShadeTwo,
-            ]}
-          >
+      {selectedFriend &&
+        friendDashboardData &&
+        categoryNames &&
+        capsuleList &&
+        !loadingNewFriend && (
+          <>
             <View
-              style={{
-                flexDirection: "row",
-                height: "100%",
-                width: "100%",
-
-                paddingLeft: "4%",
-              }}
+              style={[
+                appContainerStyles.categoryCreatorContainer,
+                themeStyles.genericTextBackgroundShadeTwo,
+              ]}
             >
-              {categoryCount > 0 && viewExistingCategories && (
-                <FlatList
-                  data={categoryNames}
-                  horizontal={true}
-                  keyboardShouldPersistTaps="handled"
-                  nestedScrollEnabled
-                  keyExtractor={(item, index) => index.toString()} // index as key extractor (though using a unique identifier is better if possible)
-                  renderItem={renderCategoryButtonItem}
-                  contentContainerStyle={{
-                    justifyContent: "space-around",
-                    maxHeight: containerHeight,
-                    flexGrow: 0,
-                  }}
-                  ListFooterComponent={<View style={styles.flatListEndSpace} />}
-                />
-              )}
-
-              {(!viewExistingCategories || categoryCount === 0) && (
-                <View
-                  style={{
-                    flex: 1,
-                    width: "100%",
-                    alignContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <SingleLineEnterBox
-                    ref={newCategoryRef}
-                    autoFocus={false}
-                    onEnterPress={updateCategoryInParent}
-                    onSave={handleNewCategory}
-                    title={"New category: "}
-                    onTextChange={updateNewCategoryText}
-                  />
-                </View>
-              )}
               <View
                 style={{
                   flexDirection: "row",
-                  alignContent: "center",
-                  alignItems: "center",
-                  textAlign: "left",
-                  justifyContent: "center",
-                  width: "10%",
+                  height: "100%",
+                  width: "100%",
+alignItems: 'center',
+                  paddingLeft: "4%",
                 }}
               >
-                {remainingCategories !== null && remainingCategories > 0 && (
+                {categoryCount > 0 && viewExistingCategories && (
+                  <FlatList
+                    data={categoryNames}
+                    horizontal={true}
+                    keyboardShouldPersistTaps="handled"
+                    showsHorizontalScrollIndicator={false}
+                    nestedScrollEnabled
+                    keyExtractor={extractItemKey}
+                    renderItem={renderCategoryButtonItem}
+                    initialNumToRender={15}
+                    maxToRenderPerBatch={10}
+                    windowSize={10}
+                    removeClippedSubviews={true}
+                    contentContainerStyle={{
+                      justifyContent: "space-around",
+                      maxHeight: containerHeight,
+                      flexGrow: 0,
+                    }}
+                    ListFooterComponent={
+                      <View style={styles.flatListEndSpace} />
+                    }
+                  />
+                )}
+
+                {(!viewExistingCategories || categoryCount === 0) && (
                   <View
                     style={{
-                      zIndex: 7000,
-                      elevation: 7000,
-                      paddingHorizontal: "2%",
-                      justifyContent: "center",
+                      flex: 1,
                       width: "100%",
-                      height: "100%",
                       alignContent: "center",
                       alignItems: "center",
-
-                      alignContent: "center",
                     }}
                   >
-                    {!viewExistingCategories && (
-                      <AddOutlineSvg
-                        width={32}
-                        height={32}
-                        color={themeStyles.modalIconColor.color}
-                        onPress={() => setViewExistingCategories(true)}
-                      />
-                    )}
-                    {viewExistingCategories && (
-                      <AddOutlineSvg
-                        width={32}
-                        height={32}
-                        color={themeStyles.modalIconColor.color}
-                        onPress={() => setViewExistingCategories(false)}
-                      />
-                    )}
+                    <SingleLineEnterBox
+                      ref={newCategoryRef}
+                      autoFocus={false}
+                      onEnterPress={updateCategoryInParent}
+                      onSave={handleNewCategory}
+                      title={"New category: "}
+                      onTextChange={updateNewCategoryText}
+                    />
                   </View>
                 )}
-              </View>
-            </View>
-          </View>
-
-          <AlertFormSubmit
-            isModalVisible={modalVisible}
-            headerContent={
-              <ThoughtBubbleOutlineSvg
-                width={38}
-                height={38}
-                color={"transparent"}
-              />
-            }
-            questionIsSubTitle={false}
-            questionText={`${momentTextForDisplay}`}
-            saveMoment={true}
-            onCancel={() => setModalVisible(false)}
-            onConfirm={onParentSave}
-            confirmText={"Add to category"}
-            cancelText={"Cancel"}
-            useSvgForCancelInstead={
-              <ArrowLeftCircleOutline
-                height={34}
-                width={34}
-                color={themeStyles.genericText.color}
-              />
-            }
-            formHeight={300}
-            formBody={
-              <View style={styles.selectMomentListContainer}>
                 <View
                   style={{
-                    height: 40,
-                    paddingBottom: 30,
                     flexDirection: "row",
-                    alignItems: "center",
                     alignContent: "center",
+                    alignItems: "center",
+                    textAlign: "left",
                     justifyContent: "center",
+                    width: "10%",
                   }}
                 >
-                  <AddOutlineSvg
-                    width={42}
-                    height={42}
-                    color={themeStyles.modalIconColor.color}
-                  />
-                </View>
+                  {remainingCategories !== null && remainingCategories > 0 && (
+                    <View
+                      style={{
+                        zIndex: 7000,
+                        elevation: 7000,
+                        paddingHorizontal: "2%",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        alignContent: "center",
+                        alignItems: "center",
 
-                <View
-                  style={[
-                    styles.momentModalContainer,
-                    themeStyles.genericTextBackgroundShadeTwo,
-                  ]}
-                >
-                  <Text
-                    style={[styles.momentModalTitle, themeStyles.subHeaderText]}
-                  >
-                    {selectedCategory}
-                  </Text>
-                  <FlatList
-                    data={selectedCategoryCapsules}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                      <View style={styles.momentCheckboxContainer}>
-                        <View style={styles.momentItemTextContainer}>
-                          <View style={{ height: "100%" }}>
-                            <View style={styles.checkboxContainer}>
-                              <ThoughtBubbleOutlineSvg
-                                height={24}
-                                width={24}
-                                color={themeStyles.modalIconColor.color}
-                              />
-                            </View>
-                          </View>
-                          <View style={{ width: "86%" }}>
-                            <Text
-                              style={[
-                                styles.momentItemText,
-                                themeStyles.genericText,
-                              ]}
-                            >
-                              {item.capsule}
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-                    )}
-                  />
+                        alignContent: "center",
+                      }}
+                    >
+                      {!viewExistingCategories && (
+                        <AddOutlineSvg
+                          width={32}
+                          height={32}
+                          color={themeStyles.modalIconColor.color}
+                          onPress={() => setViewExistingCategories(true)}
+                        />
+                      )}
+                      {viewExistingCategories && (
+                        <AddOutlineSvg
+                          width={32}
+                          height={32}
+                          color={themeStyles.modalIconColor.color}
+                          onPress={() => setViewExistingCategories(false)}
+                        />
+                      )}
+                    </View>
+                  )}
                 </View>
               </View>
-            }
-          />
-        </>
-      )}
+            </View>
+
+            {modalVisible && (
+              <View>
+                <CategoryItemsModal
+                  isVisible={modalVisible}
+                  title={selectedCategory}
+                  data={selectedCategoryCapsules}
+                  closeModal={() => setModalVisible(false)}
+                />
+              </View>
+            )}
+          </>
+        )}
     </View>
   );
 };
@@ -495,14 +431,13 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
   },
   momentItemTextContainer: {
-    flexDirection: "row", // Allows text to wrap
-    // Ensures text wraps to the next line
-    alignItems: "flex-start", // Aligns text to the top
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 20,
     paddingBottom: 20,
-    width: "100%", // Takes full width of the container
-    borderBottomWidth: 0.4, // Add bottom border
-    borderBottomColor: "#fff", // White color for the border
+    width: "100%",
+    borderBottomWidth: 0.4,
+    borderBottomColor: "#fff",
   },
   newMomentItemTextContainer: {
     flexDirection: "row", // Allows text to wrap

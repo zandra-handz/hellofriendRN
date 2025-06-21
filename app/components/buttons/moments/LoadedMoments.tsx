@@ -90,4 +90,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoadedMoments;
+//export default LoadedMoments;
+export default React.memo(LoadedMoments);

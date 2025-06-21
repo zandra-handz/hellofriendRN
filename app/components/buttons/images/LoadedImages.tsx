@@ -98,4 +98,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoadedImages;
+//export default LoadedImages;
+export default React.memo(LoadedImages);

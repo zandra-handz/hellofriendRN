@@ -28,26 +28,19 @@ const ScreenMomentView = () => {
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
 
-  const renderHeader = useCallback(
-    () => (
-      <GlobalAppHeader
-        title={"MOMENTS: "}
-        navigateTo={"Moments"}
-        icon={LeavesTwoFallingOutlineThickerSvg}
-        altView={false}
-      />
-    ),
-    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
-  );
+  // const renderHeader = useCallback(
+  //   () => (
+  //     <GlobalAppHeader
+  //       title={"MOMENTS: "}
+  //       navigateTo={"Moments"}
+  //       icon={LeavesTwoFallingOutlineThickerSvg}
+  //       altView={false}
+  //     />
+  //   ),
+  //   [selectedFriend, loadingNewFriend, themeAheadOfLoading]
+  // );
 
-  // useEffect(() => {
-  //   if (moment) {
-  //     // const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
-  //     const index = capsuleList.findIndex((mom) => mom.id === moment.id);
-  //     setCurrentIndex(index);
-  //     // setMomentInView(matchingMoment);
-  //   }
-  // }, [moment]);
+ 
 
   //Updates if one is edited
 

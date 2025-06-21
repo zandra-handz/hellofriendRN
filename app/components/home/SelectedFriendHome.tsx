@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { TouchableOpacity, Text, StyleSheet, View, DimensionValue } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -50,6 +50,32 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     const SELECTED_FRIEND_CARD_HEIGHT = 130;
     const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
     const SELECTED_FRIEND_CARD_PADDING = 10; 
+
+
+
+    const renderSuggestedHello = useMemo(() => {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <>
+        <Text
+          style={{
+            fontFamily: "Poppins-Regular",
+            fontSize: appFontStyles.welcomeText.fontSize - 4,
+            color: manualGradientColors.homeDarkColor, // ✅ fixed: `color` not `fontColor`
+          }}
+        >
+          {selectedFriend && friendDashboardData
+            ? "Next suggested hello"
+            : "None"}
+        </Text>
+        <Text style={styles.subtitleText}>
+          {friendDashboardData?.[0]?.future_date_in_words || "No date available"}
+        </Text>
+      </>
+    </TouchableOpacity>
+  );
+}, [onPress, selectedFriend, friendDashboardData, appFontStyles, manualGradientColors, styles]);
+
 
   const navigateToMoments = () => {
     navigation.navigate("Moments");
@@ -189,7 +215,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               }}
             > 
               <View style={styles.textContainer}>
-                <TouchableOpacity onPress={onPress}>
+                {renderSuggestedHello}
+                {/* <TouchableOpacity onPress={onPress}>
                   <>
                     <>
                       <Text
@@ -218,7 +245,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                       </Text>
                     </>
                   </>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
 
               <View

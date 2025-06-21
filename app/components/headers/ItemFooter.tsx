@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 
 // app state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -20,18 +20,29 @@ import { useNavigationState } from "@react-navigation/native";
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import Animated, { SharedValue, useAnimatedReaction, useAnimatedStyle, runOnJS } from 'react-native-reanimated';
+import Animated, {
+  SharedValue,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  runOnJS,
+} from "react-native-reanimated";
 import LocationTravelTimes from "../locations/LocationTravelTimes";
 
 interface Props {
-  location: object,
-  visibilityValue: SharedValue,
-  currentIndexValue: SharedValue,
-  extraData: object,
-
+  location: object;
+  visibilityValue: SharedValue;
+  currentIndexValue: SharedValue;
+  extraData: object;
 }
 
-const ItemFooter = ({ data,  currentIndexValue, visibilityValue, extraData }) => {
+const ItemFooter = ({
+  data,
+  currentIndexValue,
+  visibilityValue,
+  extraData,
+  onRightPress = () => {},
+    onRightPressSecondAction = () => {},
+}) => {
   const navigationState = useNavigationState((state) => state);
   const { onSignOut } = useUser();
   const currentRouteName = navigationState.routes[navigationState.index]?.name;
@@ -44,12 +55,12 @@ const ItemFooter = ({ data,  currentIndexValue, visibilityValue, extraData }) =>
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-const [ currentIndex, setCurrentIndex ] = useState(false);
-//   useEffect(() => {
-//     if (location) {
-//       console.log(`location in footer`, location.title);
-//     }
-//   }, [location]);
+  const [currentIndex, setCurrentIndex] = useState(false);
+  //   useEffect(() => {
+  //     if (location) {
+  //       console.log(`location in footer`, location.title);
+  //     }
+  //   }, [location]);
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -78,27 +89,44 @@ const [ currentIndex, setCurrentIndex ] = useState(false);
     ),
     []
   );
-useAnimatedReaction(
-  () => currentIndexValue.value,
-  (newIndex, prevIndex) => {
-    if (newIndex !== prevIndex) {
-      runOnJS(setCurrentIndex)(newIndex);
-    }
-  },
-  []
-);
+  useAnimatedReaction(
+    () => currentIndexValue.value,
+    (newIndex, prevIndex) => {
+      if (newIndex !== prevIndex) {
+        runOnJS(setCurrentIndex)(newIndex);
+      }
+    },
+    []
+  );
 
+  const handleRightPress =  () => {
+    onRightPress();
 
+          setTimeout(async () => {
+            try { 
+                  Alert.alert('!', 'Did you send this image?', [
+            {
+              text: "No, please keep",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel",
+            },
+                  {text: 'Yes, delete', onPress: () =>  onRightPressSecondAction()},
+     
+          ]); 
+            } catch (error) {
+              console.error('Error deleting shared image:', error);
+            }
+          }, 2000);  
 
+  };
 
   const visibilityStyle = useAnimatedStyle(() => {
-    return { opacity: visibilityValue.value}
-
+    return { opacity: visibilityValue.value };
   });
 
-const item = useMemo(() => {
-  return data[currentIndex];
-}, [currentIndex, data]);
+  const item = useMemo(() => {
+    return data[currentIndex];
+  }, [currentIndex, data]);
 
   const RenderDeselectButton = useCallback(
     () => (
@@ -178,16 +206,15 @@ const item = useMemo(() => {
     <>
       <Animated.View
         style={[
-      
           styles.container,
           {
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
             backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-            
-          },     visibilityStyle,
+          },
+          visibilityStyle,
         ]}
-       >
+      >
         {/* <View style={styles.section}>
             {
               !selectedFriend ? (
@@ -200,39 +227,69 @@ const item = useMemo(() => {
 
         <View style={[styles.divider, themeStyles.divider]} />
         <>
-                  {!extraData && (
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
-              
-             /{data.length} </Text></Text>
-         
-              
+          {!extraData && (
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={[
+                  themeStyles.primaryText,
+                  appFontStyles.welcomeText,
+                  { fontSize: 44 },
+                ]}
+              >
+                {currentIndex + 1}
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    appFontStyles.welcomeText,
+                    { fontSize: 22 },
+                  ]}
+                >
+                  /{data.length}{" "}
+                </Text>
+              </Text>
             </View>
           )}
-
         </>
- 
+
         <View style={[styles.divider, themeStyles.divider]} />
         <View style={{ flex: 1 }}>
           <>
-          {extraData && extraData?.userAddress && extraData?.friendAddress && (
-            <LocationTravelTimes location={item} userAddress={extraData.userAddress} friendAddress={extraData.friendAddress}/>
-          )}
-          {!extraData && (
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-              <MaterialCommunityIcons
-              name='send'
-              size={50}
-              color={themeStyles.primaryText.color}/>
-            {/* <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
+            {extraData &&
+              extraData?.userAddress &&
+              extraData?.friendAddress && (
+                <LocationTravelTimes
+                  location={item}
+                  userAddress={extraData.userAddress}
+                  friendAddress={extraData.friendAddress}
+                />
+              )}
+            {!extraData && (
+              <Pressable
+                onPress={handleRightPress}
+                style={({ pressed }) => ({
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: pressed ? 0.6 : 1, // optional visual feedback
+                })}
+              >
+                {" "}
+                <MaterialCommunityIcons
+                  name="send"
+                  size={50}
+                  color={themeStyles.primaryText.color}
+                />
+                {/* <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
               
              /{data.length} </Text></Text> */}
-         
-              
-            </View>
-
-          )}
-          
+              </Pressable>
+            )}
           </>
         </View>
       </Animated.View>
@@ -261,8 +318,7 @@ const item = useMemo(() => {
             isVisible={reportModalVisible}
             closeModal={() => setReportModalVisible(false)}
           />
-          </View>
-       
+        </View>
       )}
     </>
   );

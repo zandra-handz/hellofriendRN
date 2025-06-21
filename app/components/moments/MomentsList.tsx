@@ -6,13 +6,11 @@ import React, {
   useMemo,
 } from "react";
 import { View, Keyboard, ViewToken,   Pressable } from "react-native";
-
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import { useFocusEffect } from "@react-navigation/native";
 
 import MomentsAdded from "./MomentsAdded";
-import CategoryNavigator from "./CategoryNavigator";
-import MomentsSearchBar from "./MomentsSearchBar";
+import CategoryNavigator from "./CategoryNavigator"; 
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard"; 
 
@@ -56,8 +54,7 @@ const ITEM_BOTTOM_MARGIN = 4;
 const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
 const MomentsList = () => {
-  const { appContainerStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { appContainerStyles } = useGlobalStyle(); 
   const {
     capsuleList,
     setMomentIdToAnimate,
@@ -71,6 +68,8 @@ const MomentsList = () => {
 
   const navigation = useNavigation();
 
+
+  console.log('MOMENTS LIST RERENDERED');
   // Move this inside your component:
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
     viewableItemsArray.value = viewableItems;
@@ -126,32 +125,8 @@ const MomentsList = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
-
-  // useEffect(() => {
-  //   if (momentIdToAnimate) {
-  //     translateX.value = withTiming(500, { duration: 0 }, () => {
-  //       heightAnim.value = withTiming(0, { duration: 200 }, () => {
-  //         runOnJS(updateCacheWithNewPreAdded)(true);
-  //         runOnJS(setMomentIdToAnimate)(null);
-
-  //         fadeAnim.value = 1;
-  //         heightAnim.value = withTiming(COMBINED_HEIGHT, {
-  //           duration: 0,
-  //         });
-  //         translateX.value = withTiming(0, { duration: 0 });
-  //       });
-  //     });
-  //   }
-  // }, [momentIdToAnimate]);
-
-  // const scrollToMoment = (moment) => {
-  //   if (moment.uniqueIndex !== undefined) {
-  //     flatListRef.current?.scrollToIndex({
-  //       index: moment.uniqueIndex,
-  //       animated: true,
-  //     });
-  //   }
-  // };
+ 
+ 
 
   const scrollToMoment = (moment) => {
     if (moment.uniqueIndex !== undefined) {
@@ -181,15 +156,12 @@ const MomentsList = () => {
       console.error("Error during pre-save:", error);
     }
   }, []);
-
-  // changed to a callback to help list animation performance
+ 
   const handleNavigateToMomentView = useCallback((moment) => {
     navigation.navigate("MomentView", { moment: moment });
   }, []);
 
-  // const closeMomentNav = () => {
-  //   setMomentNavVisible(false);
-  // };
+ 
 
   const scrollToCategoryStart = (category) => {
     const categoryIndex = categoryStartIndices[category];
@@ -223,11 +195,11 @@ const MomentsList = () => {
   }, [capsuleList]);
 
   const categoryNavVisibility = useSharedValue(1);
-  const listVisibility = useSharedValue(0);
+  const listVisibility = useSharedValue(1);
 
   useFocusEffect(
     useCallback(() => {
-      listVisibility.value = withSpring(1, { duration: 800 });
+      listVisibility.value = withSpring(1, { duration: 100 }); //800
 
       return () => {
         listVisibility.value = 0;
@@ -246,7 +218,8 @@ const MomentsList = () => {
         // if less than ten pixels (on the top of the screen)
         // listVisibility.value = withTiming(1);
         categoryNavVisibility.value = withTiming(1);
-      } else {
+      } 
+      else {
         categoryNavVisibility.value = withTiming(1, { duration: 1000 });
       }
     },

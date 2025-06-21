@@ -146,44 +146,13 @@ export default ImageViewPage;
 
 // OLD CODE TO RE-ADD SHARE FILE FUNCTION INTO ABOVE CODE:
 
-// import React, { useState, useEffect } from 'react';
-// import { View, Image, StyleSheet, Text } from 'react-native';
-// import { useSelectedFriend } from '../context/SelectedFriendContext';
-// import { useImageList } from '../context/ImageListContext';
+ 
 
 // import * as FileSystem from 'expo-file-system';
 // import * as Sharing from 'expo-sharing';
+ 
 
-// import ItemViewFooter from './ItemViewFooter'; 
-// import AlertImage from '../components/AlertImage';
-// import ButtonSendImageToFriend from '../components/ButtonSendImageToFriend';
-// import TrashOutlineSvg from '../assets/svgs/trash-outline.svg';
-// import EditOutlineSvg from '../assets/svgs/edit-outline.svg';
-
-// import FooterActionButtons from '../components/FooterActionButtons';
-
-
-
-// import { updateFriendImage, deleteFriendImage } from '../api';
-
-// import AlertConfirm from '../components/AlertConfirm'; 
-// import AlertSuccessFail from '../components/AlertSuccessFail';
-
-// import NavigationArrows from '../components/NavigationArrows';
-
-// const ItemViewImage = ({ image, onClose }) => {
-//   const { selectedFriend } = useSelectedFriend();
-//   const { imageList, deleteImage, setUpdateImagesTrigger } = useImageList();
-//   const [currentIndex, setCurrentIndex] = useState(0);
-//   const [isEditing, setIsEditing] = useState(false);
-//   const [title, setTitle] = useState(null);
-//   const [isModalVisible, setIsModalVisible] = useState(true);
-//   const [isConfirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
-
-//   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
-//   const [isFailModalVisible, setFailModalVisible] = useState(false);
-  
-//   const [isDeleting, setIsDeleting] = useState(false);
+ 
 
 //   useEffect(() => {
 //     if (image) {
@@ -267,26 +236,7 @@ export default ImageViewPage;
 //     closeModal();
 //   };
 
-//   const failOk = () => { 
-//     setFailModalVisible(false);
-//   };
-
-//   const goToPreviousImage = () => {
-//     if (currentIndex > 0) {
-//       setCurrentIndex(prevIndex => prevIndex - 1);
-//     }
-//   };
-
-//   const goToNextImage = () => {
-//     if (currentIndex < imageList.length - 1) {
-//       setCurrentIndex(prevIndex => prevIndex + 1);
-//     }
-//   };
-
-//   useEffect(() => {
-//     setTitle(imageList[currentIndex]?.title || '');
-//   }, [currentIndex]);
-
+  
 //   return (
 //     <>
 //       <AlertImage

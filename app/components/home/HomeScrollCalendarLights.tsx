@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View  } from "react-native";
-
+import React from 'react';
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
  
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -104,8 +104,6 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flexDirection: "column", 
-    //flexGrow: 1,
-   // height: 'auto',
     flex: 1,
     overflow: "hidden",
     borderWidth: 0,
@@ -119,8 +117,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     zIndex: 1,
 
-    paddingLeft: "2%",
-    // paddingRight: '16%',
+    paddingLeft: "2%", 
     width: "100%",
   },
   loadingWrapper: {
@@ -133,8 +130,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     flex: 1,
-    borderRadius: 30,
-   // paddingHorizontal: "3%",
+    borderRadius: 30, 
   },
   button: {
     justifyContent: "center",
@@ -155,4 +151,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScrollCalendarLights;
+//export default HomeScrollCalendarLights;
+export default React.memo(HomeScrollCalendarLights);

@@ -31,7 +31,7 @@ const TextMomentBox = forwardRef(
       helperText,
       showCategoriesSlider,
       handleCategorySelect,
-      existingCategory, 
+      existingCategory,
       onSave,
       isKeyboardVisible,
     },
@@ -111,15 +111,13 @@ const TextMomentBox = forwardRef(
               {title}
             </Text>
           </View>
-{editScreen && (
-  
-          <EditPencilOutlineSvg
-            height={24}
-            width={24}
-            color={manualGradientColors.lightColor}
-          />
-          
-)}
+          {editScreen && (
+            <EditPencilOutlineSvg
+              height={24}
+              width={24}
+              color={manualGradientColors.lightColor}
+            />
+          )}
         </View>
         <View style={{ flex: 1 }}>
           {helperText && (
@@ -128,7 +126,7 @@ const TextMomentBox = forwardRef(
             </Text>
           )}
           <KeyboardAvoidingView
-            style={styles.textInputKeyboardAvoidContainer}
+            style={[styles.textInputKeyboardAvoidContainer, {paddingBottom: isKeyboardVisible ? 100 : 0}]}
             behavior={Platform.OS === "ios" ? "padding" : "height"} // Adjust behavior based on the platform
           >
             <TextInput
@@ -138,31 +136,41 @@ const TextMomentBox = forwardRef(
                 // styles.textInput,
                 themeStyles.genericText,
                 appFontStyles.welcomeText,
-                { backgroundColor: 'orange', flexShrink: 1, fontSize: 26, paddingBottom: 30 }, // this leaves space for category button component overlaying it
+                {
+                  //backgroundColor: "orange",
+                  flexShrink: 1,
+                  fontSize: 26,
+                  paddingBottom: 30,
+                }, // this leaves space for category button component overlaying it
               ]}
               value={editedMessage}
               onChangeText={handleTextInputChange} // Update local state
               multiline={true}
             />
-            <View style={{width: '100%',  height: 100, backgroundColor: 'red'}}>
-                                  <FriendModalIntegrator
-                    includeLabel={true}
-                    color={themeStyles.primaryText.color}
-                    width={120}
-                    navigationDisabled={true}
-                    iconSize={22}
-                    useGenericTextColor={true}
-                  />
-                 <CategoryCreator
-            show={showCategoriesSlider}
-            updateCategoryInParent={handleCategorySelect}
-            updateExistingMoment={editScreen}
-            existingCategory={existingCategory}
-            momentTextForDisplay={ref?.current?.getText() || null}
-            onParentSave={onSave}
-            isKeyboardVisible={isKeyboardVisible}
-          />
-
+            <View
+              style={{ width: "100%", height: 80 }} //backgroundColor: "red"
+            >
+              <View style={{position: 'absolute'}}>
+                
+              <FriendModalIntegrator
+                includeLabel={true}
+                color={themeStyles.primaryText.color}
+                width={120}
+                navigationDisabled={true}
+                iconSize={22}
+                useGenericTextColor={true}
+              />
+              
+              </View>
+              <CategoryCreator
+                show={showCategoriesSlider}
+                updateCategoryInParent={handleCategorySelect}
+                updateExistingMoment={editScreen}
+                existingCategory={existingCategory}
+                momentTextForDisplay={ref?.current?.getText() || null}
+                onParentSave={onSave}
+                isKeyboardVisible={isKeyboardVisible}
+              />
             </View>
           </KeyboardAvoidingView>
         </View>
@@ -185,9 +193,9 @@ const styles = StyleSheet.create({
   textInputKeyboardAvoidContainer: {
     flex: 1,
     width: "100%",
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    paddingBottom: 60,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    
     // height: 200,
   },
   textInput: {

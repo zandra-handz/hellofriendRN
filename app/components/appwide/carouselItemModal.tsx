@@ -34,15 +34,10 @@ const CarouselItemModal = ({ isVisible, closeModal,   display, icon, title, type
     <ModalWithoutSubmit
       isVisible={isVisible}
       headerIcon={icon}
-      questionText={`${title}`}
+      questionText={title}
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
-       
-          {/* <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, themeStyles.subHeaderText]}>
-              Found a bug?
-            </Text>
-          </View> */}
+        
           <View style={styles.sectionContainer}>
             <Text style={[styles.text, themeStyles.genericText]}>
               {display}

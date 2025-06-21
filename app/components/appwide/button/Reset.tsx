@@ -1,6 +1,5 @@
-import { View, Text, StyleSheet, DimensionValue } from "react-native";
-import React from "react";
-import ToggleButton from "../appwide/button/ToggleButton";
+import { View, Text, StyleSheet  } from "react-native";
+import React from "react"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ButtonResetHelloes from "../../buttons/helloes/ButtonResetHelloes";
 interface Props {
