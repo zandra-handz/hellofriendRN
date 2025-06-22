@@ -1,14 +1,18 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, DimensionValue } from "react-native";
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text, 
+  Pressable,
+  DimensionValue,
+} from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
-import ProfileTwoUsersSvg from "@/app/assets/svgs/profile-two-users.svg";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import FriendModal from "../alerts/FriendModal";
 
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons  } from "@expo/vector-icons";
 
 interface FriendModalIntegratorProps {
   addToPress: () => void;
@@ -42,8 +46,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
     useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] =
-    useState(false);
-  //const [forceUpdate, setForceUpdate] = useState(false);
+    useState(false); 
 
   const firstSelectLabel = customLabel ? customLabel : `Pick friend: `;
 
@@ -71,30 +74,77 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
     setIsFriendMenuModalVisible(true);
   };
 
+  const RenderText = useCallback(
+    () => (
+    <Text
+      style={[
+        customFontStyle ? customFontStyle : defaultLabelStyle,
+        {
+          color:
+            selectedFriend && !useGenericTextColor
+              ? themeAheadOfLoading.fontColorSecondary
+              : themeStyles.primaryText.color,
+
+          zIndex: 2,
+        },
+      ]}
+      numberOfLines={1}
+      ellipsizeMode="tail"
+    >
+      {(friendLoaded &&
+        !useGenericTextColor &&
+        `For:  ${selectedFriend?.name}`) ||
+      friendLoaded
+        ? "switch friend"
+        : firstSelectLabel}
+    </Text>
+    ), [
+    customFontStyle,
+    friendLoaded,
+    defaultLabelStyle,
+    selectedFriend,
+    themeAheadOfLoading,
+    themeStyles,
+  ]);
+
+  const RenderIcon = useCallback(
+    () => (
+      <MaterialCommunityIcons
+        name="account-switch-outline"
+        size={iconSize} 
+        color={
+          loadingNewFriend
+            ? "transparent"
+            : selectedFriend && !useGenericTextColor
+              ? color || themeAheadOfLoading.fontColorSecondary
+              : themeStyles.primaryText.color
+        }
+      />
+    ),
+    [loadingNewFriend, selectedFriend, themeAheadOfLoading, themeStyles]
+  );
+
   return (
     <>
-      <TouchableOpacity
+      <Pressable
         onPress={openModal}
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel="Friend selector button"
-        style={{ 
+        style={{
           flexDirection: "row",
-          height: height,  
-          alignItems: "center",  
- 
+          height: height,
+          alignItems: "center",
+
           width: width,
         }}
       >
         <View
-          style={{ 
+          style={{
             width: "auto",
-                        height: "100%",
-            flexDirection: 'row',
-            alignItems: 'flex-end',  
-          
-            
-           // flex: 1,
+            height: "100%",
+            flexDirection: "row",
+            alignItems: "flex-end", 
           }}
         >
           {loadingNewFriend && (
@@ -108,51 +158,16 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
               />
             </View>
           )}
+
           {!loadingNewFriend && includeLabel && (
-            <Text
-              style={[
-                customFontStyle ? customFontStyle : defaultLabelStyle,
-                {
-                  color:
-                    selectedFriend && !useGenericTextColor
-                      ? themeAheadOfLoading.fontColorSecondary
-                      : themeStyles.primaryText.color,
+            <RenderText/>
+          )}
 
-                  zIndex: 2,
-                },
-              ]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {(friendLoaded &&
-                !useGenericTextColor &&
-                `For:  ${selectedFriend?.name}`) ||
-              friendLoaded
-                ? "switch friend"
-                : firstSelectLabel}
-            </Text>
-          )} 
-
-          <View style={{ paddingLeft: 0, marginLeft: 6}}>
-            <MaterialCommunityIcons
-            name="account-switch-outline"
-            size={iconSize}
-              // height={iconSize}
-              // width={iconSize}
-              color={
-                loadingNewFriend
-                  ? "transparent"
-                  : selectedFriend && !useGenericTextColor
-                    ? color || themeAheadOfLoading.fontColorSecondary
-                    : themeStyles.primaryText.color
-              }
-            />
-          </View> 
-
-
-        </View> 
-
-      </TouchableOpacity>
+          <View style={{ paddingLeft: 0, marginLeft: 6 }}>
+            <RenderIcon />
+          </View>
+        </View>
+      </Pressable>
 
       <FriendModal
         isVisible={isFriendMenuModalVisible}

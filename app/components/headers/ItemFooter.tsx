@@ -39,9 +39,9 @@ const ItemFooter = ({
   data,
   currentIndexValue,
   visibilityValue,
-  extraData,
+  extraData, // JUST LOCATION ITEMS / currently distinguishing between other item types bc passed in functions are different
   onRightPress = () => {},
-    onRightPressSecondAction = () => {},
+  onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
 }) => {
   const navigationState = useNavigationState((state) => state);
   const { onSignOut } = useUser();
@@ -99,25 +99,23 @@ const ItemFooter = ({
     []
   );
 
-  const handleRightPress =  () => {
+  const handleRightPress = () => {
     onRightPress();
 
-          setTimeout(async () => {
-            try { 
-                  Alert.alert('!', 'Did you send this image?', [
-            {
-              text: "No, please keep",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel",
-            },
-                  {text: 'Yes, delete', onPress: () =>  onRightPressSecondAction()},
-     
-          ]); 
-            } catch (error) {
-              console.error('Error deleting shared image:', error);
-            }
-          }, 2000);  
-
+    setTimeout(async () => {
+      try {
+        Alert.alert("!", "Did you send this image?", [
+          {
+            text: "No, please keep",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "Yes, delete", onPress: () => onRightPressSecondAction() },
+        ]);
+      } catch (error) {
+        console.error("Error deleting shared image:", error);
+      }
+    }, 2000);
   };
 
   const visibilityStyle = useAnimatedStyle(() => {
@@ -227,6 +225,34 @@ const ItemFooter = ({
 
         <View style={[styles.divider, themeStyles.divider]} />
         <>
+          {extraData && extraData?.userAddress && extraData?.friendAddress && (
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={[
+                  themeStyles.primaryText,
+                  appFontStyles.welcomeText,
+                  { fontSize: 44 },
+                ]}
+              >
+                {currentIndex + 1}
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    appFontStyles.welcomeText,
+                    { fontSize: 22 },
+                  ]}
+                >
+                  /{data.length}{" "}
+                </Text>
+              </Text>
+            </View>
+          )}
           {!extraData && (
             <View
               style={{
@@ -279,7 +305,6 @@ const ItemFooter = ({
                   opacity: pressed ? 0.6 : 1, // optional visual feedback
                 })}
               >
-                {" "}
                 <MaterialCommunityIcons
                   name="send"
                   size={50}
@@ -292,6 +317,32 @@ const ItemFooter = ({
             )}
           </>
         </View>
+        {extraData && (
+          <>
+            <View style={[styles.divider, themeStyles.divider]} />
+            <View style={{ flex: 1 }}>
+             
+              <Pressable
+                onPress={onRightPressSecondAction}
+                style={({ pressed }) => ({
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: pressed ? 0.6 : 1, // optional visual feedback
+                })}
+              >
+                <MaterialCommunityIcons
+                  name="send"
+                  size={50}
+                  color={themeStyles.primaryText.color}
+                />
+                {/* <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
+              
+             /{data.length} </Text></Text> */}
+              </Pressable>
+            </View>
+          </>
+        )}
       </Animated.View>
 
       {settingsModalVisible && (

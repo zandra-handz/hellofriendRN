@@ -155,6 +155,7 @@ const ContentAddImage = ({ imageUri }) => {
         >
           <View style={[styles.selectFriendContainer, { marginBottom: "2%" }]}>
             <FriendModalIntegrator
+            navigationDisabled={true}
               includeLabel={true}
               width="100%"
             />

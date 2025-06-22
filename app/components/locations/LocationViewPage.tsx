@@ -110,6 +110,13 @@ const formatDate = (timestamp: number) => {
   const date = new Date(timestamp * 1000);
   return date.toLocaleDateString();
 };
+
+// console.log('LOCATION VIEW SCREEN RERENDERED', item.id);
+  const { data: additionalDetails } = useFetchAdditionalDetails(
+    item,
+    Math.abs(index - currentIndex) <= 1
+  );
+
 const handleGetDirections = useCallback(() => {
   if (item && item?.address) {
     Linking.openURL(
@@ -124,21 +131,9 @@ const handleCallLocation = useCallback(() => {
   }
 }, [additionalDetails]);
 
-  // const { data: additionalDetails } = useFetchAdditionalDetails(
-  //   item,
-  //   !!(index === currentIndex - 1)
-  // );
+ 
 
-  const { data: additionalDetails } = useFetchAdditionalDetails(
-    item,
-    Math.abs(index - currentIndex) <= 1
-  );
-  //  useEffect(() => {
-  //   if (additionalDetails) {
-  //     console.log(`OH YAY ADDITIONAL DETAILS FETCHED: `, additionalDetails?.hours);
-  //   }
-
-  //  }, [additionalDetails]);
+ 
 
   const handleEditLocation = () => {
     console.log(
@@ -167,7 +162,7 @@ const handleCallLocation = useCallback(() => {
   };
 
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1, borderRadius: 40 }}>
+    <SafeViewAndGradientBackground  style={{ flex: 1, borderRadius: 40 }}>
       
     <Animated.View
  

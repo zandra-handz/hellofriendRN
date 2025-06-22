@@ -1,18 +1,17 @@
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TouchableOpacity  } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { FlashList } from "@shopify/flash-list";
 import { CheckBox } from "react-native-elements";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 
 const PreAddedList = () => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
-  const navigation = useNavigation();
-  const { updateCapsule, capsuleList, preAdded, allCapsulesList, updateCapsuleMutation } =
+ 
+  const { updateCapsule,   preAdded, allCapsulesList  } =
     useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 
@@ -94,13 +93,7 @@ const handleRestore = () => {
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `preAdded-${index}`;
 
-  //   const getItemLayout = (item, index) => {
-  //     return {
-  //       length: COMBINED_HEIGHT,
-  //       offset: COMBINED_HEIGHT * index,
-  //       index,
-  //     };
-  //   };
+ 
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Alert } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
@@ -9,7 +9,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import ImageViewPage from "@/app/components/images/ImageViewPage";
 import ImageMenuButton from "@/app/components/images/ImageMenuButton";
-
+import GradientBackground from "../display/GradientBackground";
 
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -64,10 +64,11 @@ const ScreenImageView = () => {
   };
 
 
-    const handleDelete =  (currentIndex) => {
+    const handleDelete = (currentItem) => {
     try { 
-      const imageToDelete = imageList[currentIndex];  // Get the correct image to delete based on currentIndex
-        deleteImage(imageList[currentIndex].id);
+
+      // Get the correct image to delete based on currentIndex
+        deleteImage(currentItem.id);
  
     } catch (error) { 
       console.error('Error deleting image:', error);
@@ -94,7 +95,7 @@ const ScreenImageView = () => {
         data={imageList}
         children={ImageViewPage}
         onRightPress={handleShare}
-        onRightPressSecondAction={deleteImage}
+        onRightPressSecondAction={handleDelete}
       />
       {/* <View style={{ bottom: 62 }}>
         <ImageMenuButton />

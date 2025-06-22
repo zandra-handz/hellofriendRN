@@ -468,15 +468,28 @@ export const validateAddress = async (userId, address) => {
 };
   
 
-export const GetTravelComparisons = async (locationData) => {
-      try {
- 
-        const response = await helloFriendApiClient.post(`/friends/places/`, locationData);
-        //console.log('Consider the Drive Response', response.data);
-        return response.data;
-      } catch (error) {
-        console.error('Error submitting addresses:', error); 
-        }
+// export const GetTravelComparisons = async (locationData) => {
+export const GetTravelComparisons = async (userAddress, friendAddress, location) => {
+  try {
+    const locationData = {
+      address_a_address: userAddress.address,
+      address_a_lat: parseFloat(userAddress.lat),
+      address_a_long: parseFloat(userAddress.lng),
+      address_b_address: friendAddress.address,
+      address_b_lat: parseFloat(friendAddress.lat),
+      address_b_long: parseFloat(friendAddress.lng),
+      destination_address: location.address,
+      destination_lat: parseFloat(location.latitude),
+      destination_long: parseFloat(location.longitude),
+      perform_search: false,
+    };
+
+    const response = await helloFriendApiClient.post(`/friends/places/`, locationData);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting addresses:', error);
+    throw error;  // <== re-throw to notify react-query about the error
+  }
 };
 
 export const SearchForMidpointLocations = async (locationData) => {

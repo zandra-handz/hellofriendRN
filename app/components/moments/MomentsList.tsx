@@ -56,11 +56,7 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 const MomentsList = () => {
   const { appContainerStyles } = useGlobalStyle(); 
   const {
-    capsuleList,
-    setMomentIdToAnimate,
-
-    momentIdToAnimate,
-    updateCacheWithNewPreAdded,
+    capsuleList, 
     categoryNames,
     categoryStartIndices,
     updateCapsule,

@@ -307,6 +307,14 @@ export const LocationsProvider = ({ children }) => {
       },
     });
   };
+
+
+  const getCachedAdditionalDetails = (locationId) => {
+    return queryClient.getQueryData([
+    "additionalDetails",
+    locationId,
+  ])};
+
   const clearAdditionalDetails = () => {
     setAdditionalDetails(null);
   };
@@ -356,6 +364,7 @@ export const LocationsProvider = ({ children }) => {
         accessLocationListCacheData,
         stickToLocation,
         setStickToLocation,
+        getCachedAdditionalDetails,
       }}
     >
       {children}

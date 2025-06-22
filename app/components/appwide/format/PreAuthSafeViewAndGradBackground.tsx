@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View } from "react-native"; 
 import CustomStatusBar from "../statusbar/CustomStatusBar";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
@@ -27,17 +27,16 @@ export const PreAuthSafeViewAndGradientBackground = ({
   const { themeStyles } =
     useGlobalStyle();
 
-  const isSettingsScreen =
-    route.name === "UserDetails" || route.name === "FriendFocus";
-  const isHomeScreen = route.name === "hellofriend";
- 
+const isSettingsScreen = useMemo(() => 
+  route.name === "UserDetails" || route.name === "FriendFocus", 
+[route.name]);
+const isHomeScreen = useMemo(() => route.name === "hellofriend", [route.name]);
 
-  return (
-    <GradientBackground
-      useFriendColors={selectedFriend && !isSettingsScreen && !isHomeScreen}
- 
-      additionalStyles={[
-        { 
+const useFriendColors = useMemo(() => 
+  selectedFriend && !isSettingsScreen && !isHomeScreen, 
+[selectedFriend, isSettingsScreen, isHomeScreen]);
+
+  const paddingStyle = useMemo(() => ({
           paddingTop: 0,
           paddingBottom: 0,
           paddingLeft: 0,
@@ -45,9 +44,14 @@ export const PreAuthSafeViewAndGradientBackground = ({
           backgroundColor: primaryBackground
             ? themeStyles.primaryBackground.backgroundColor
             : "transparent",
-        },
-        style,
-      ]}
+}), [ primaryBackground, themeStyles]);
+ 
+
+  return (
+    <GradientBackground
+       useFriendColors={useFriendColors}
+ 
+     additionalStyles={[paddingStyle, style]}
     >
       {includeBackgroundOverlay && (
         <View

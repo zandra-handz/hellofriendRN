@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomStatusBar from "../statusbar/CustomStatusBar";
@@ -29,32 +29,39 @@ export const SafeViewAndGradientBackground = ({
   const right = typeof insets.right === "number" ? insets.right : 0;
 
 
+    const { themeStyles } =
+    useGlobalStyle();
+    
+  const paddingStyle = useMemo(() => ({
+  paddingTop: top,
+  paddingBottom: bottom,
+  paddingLeft: left,
+  paddingRight: right,
+  backgroundColor: primaryBackground
+    ? themeStyles.primaryBackground.backgroundColor
+    : "transparent",
+}), [top, bottom, left, right, primaryBackground, themeStyles]);
+
+
   const standardizedHeaderHeight = 44;
 
-  const { themeStyles } =
-    useGlobalStyle();
 
-  const isSettingsScreen =
-    route.name === "UserDetails" || route.name === "FriendFocus";
-  const isHomeScreen = route.name === "hellofriend";
- 
+
+const isSettingsScreen = useMemo(() => 
+  route.name === "UserDetails" || route.name === "FriendFocus", 
+[route.name]);
+
+const isHomeScreen = useMemo(() => route.name === "hellofriend", [route.name]);
+
+const useFriendColors = useMemo(() => 
+  selectedFriend && !isSettingsScreen && !isHomeScreen, 
+[selectedFriend, isSettingsScreen, isHomeScreen]);
 
   return (
     <GradientBackground
-      useFriendColors={selectedFriend && !isSettingsScreen && !isHomeScreen}
+      useFriendColors={useFriendColors}
  
-      additionalStyles={[
-        { 
-          paddingTop: top,
-          paddingBottom: bottom,
-          paddingLeft: left,
-          paddingRight: right,
-          backgroundColor: primaryBackground
-            ? themeStyles.primaryBackground.backgroundColor
-            : "transparent",
-        },
-        style,
-      ]}
+      additionalStyles={[paddingStyle, style]}
     >
       {includeBackgroundOverlay && (
         <View
@@ -62,7 +69,7 @@ export const SafeViewAndGradientBackground = ({
             position: "absolute",
             zIndex: 0,
             height: backgroundOverlayHeight,
-            with: "100%",
+            width: "100%",
             top: 0,
             bottom: 0,
             right: 0,

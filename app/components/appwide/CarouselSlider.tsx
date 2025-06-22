@@ -307,7 +307,7 @@ const CarouselSlider = ({
           currentIndexValue={currentIndex}
           extraData={footerData}
           onRightPress={() => onRightPress(currentIndex.value)}
-             onRightPressSecondAction={() => onRightPressSecondAction(data[currentIndex.value].id)}
+             onRightPressSecondAction={() => onRightPressSecondAction(data[currentIndex.value])}
         />
 
         {/* )} */}
