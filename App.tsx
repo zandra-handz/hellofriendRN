@@ -522,28 +522,14 @@ export const Layout = () => {
                   name="LocationSend"
                   component={ScreenLocationSend}
                   options={({ route }) => ({
-                    headerShown: true,
-                    header: () => (
-                      <HeaderBase
-                        headerTitle="Send Directions & Hrs"
-                        icon="clock"
-                        navigateTo="LocationSearch"
-                      />
-                    ),
+                    headerShown: false,
                   })}
                 />
                 <Stack.Screen
                   name="LocationEdit"
                   component={ScreenLocationEdit}
                   options={() => ({
-                    headerShown: true,
-                    header: () => (
-                      <HeaderBase
-                        headerTitle="Edit Location details"
-                        icon="edit"
-                        navigateTo="LocationSearch"
-                      />
-                    ),
+                    headerShown: false,
                   })}
                 />
                 <Stack.Screen

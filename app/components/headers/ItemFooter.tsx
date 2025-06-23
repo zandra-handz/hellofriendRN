@@ -1,25 +1,13 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {   useState,  useMemo } from "react";
 import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
-
-// app state
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
-// app components
+ 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+ 
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import SettingsModal from "./SettingsModal";
-
-// app display/templates
-import FooterButtonIconVersion from "./FooterButtonIconVersion";
-
-import ButtonData from "../buttons/scaffolding/ButtonData";
-import { useNavigationState } from "@react-navigation/native";
-
-import FriendProfileButton from "../buttons/friends/FriendProfileButton";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+  
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import Animated, {
   SharedValue,
   useAnimatedReaction,
@@ -29,13 +17,15 @@ import Animated, {
 import LocationTravelTimes from "../locations/LocationTravelTimes";
 
 interface Props {
-  location: object;
+  data: object;
   visibilityValue: SharedValue;
   currentIndexValue: SharedValue;
   extraData: object;
+  onRightPress: () => void;
+  onRightPressSecondAction: () => void;
 }
 
-const ItemFooter = ({
+const ItemFooter: React.FC<Props> = ({
   data,
   currentIndexValue,
   visibilityValue,
@@ -43,15 +33,11 @@ const ItemFooter = ({
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
 }) => {
-  const navigationState = useNavigationState((state) => state);
-  const { onSignOut } = useUser();
-  const currentRouteName = navigationState.routes[navigationState.index]?.name;
-  const isOnActionPage = currentRouteName === "hellofriend";
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { selectedFriend, deselectFriend } = useSelectedFriend();
-
-  // const userAddress = extraData.userAddress;
-  // const friendAddress = extraData.friendAddress;
+ 
+ 
+ 
+  const { themeStyles, appFontStyles } = useGlobalStyle(); 
+ 
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
@@ -66,29 +52,7 @@ const ItemFooter = ({
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
-
-  // buttons rendered in callbacks, all using the same template except for the friend profile button
-  const RenderSignOutButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        confirmationRequired={true}
-        confirmationTitle={"Just to be sure"}
-        confirmationMessage={"Sign out?"}
-        // label="Deselect"
-        label="Sign out"
-        icon={
-          <MaterialCommunityIcons
-            // name={"keyboard-backspace"}
-            name={"logout"}
-            size={footerIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        onPress={() => onSignOut()}
-      />
-    ),
-    []
-  );
+ 
   useAnimatedReaction(
     () => currentIndexValue.value,
     (newIndex, prevIndex) => {
@@ -126,79 +90,7 @@ const ItemFooter = ({
     return data[currentIndex];
   }, [currentIndex, data]);
 
-  const RenderDeselectButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        confirmationRequired={true}
-        confirmationTitle={"Just to be sure"}
-        confirmationMessage={"Deselect friend?"}
-        // label="Deselect"
-        label="Home"
-        icon={
-          <MaterialCommunityIcons
-            // name={"keyboard-backspace"}
-            name={"home-outline"}
-            size={footerIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        onPress={() => deselectFriend()}
-      />
-    ),
-    []
-  );
-
-  const RenderSettingsButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        label="Settings"
-        icon={
-          <MaterialIcons
-            name={"settings-suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
-            //  name={"app-settings-alt"}
-            size={footerIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        onPress={() => setSettingsModalVisible(true)}
-      />
-    ),
-    []
-  );
-
-  const RenderReportIssueButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        label="Report"
-        icon={
-          <MaterialCommunityIcons
-            name={"bug-outline"}
-            size={footerIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        onPress={() => setReportModalVisible(true)}
-      />
-    ),
-    []
-  );
-
-  const RenderAboutAppButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        label="About"
-        icon={
-          <MaterialCommunityIcons
-            name={"information-outline"}
-            size={footerIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        onPress={() => setAboutModalVisible(true)}
-      />
-    ),
-    []
-  );
+ 
 
   return (
     <>
@@ -212,16 +104,7 @@ const ItemFooter = ({
           },
           visibilityStyle,
         ]}
-      >
-        {/* <View style={styles.section}>
-            {
-              !selectedFriend ? (
-                <RenderSignOutButton />
-              ) : (
-                <RenderDeselectButton />
-              ) 
-            }
-          </View>  */}
+      > 
 
         <View style={[styles.divider, themeStyles.divider]} />
         <>
@@ -382,13 +265,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     zIndex: 1,
-  },
-  section: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  }, 
   divider: {
     marginVertical: 10,
   },

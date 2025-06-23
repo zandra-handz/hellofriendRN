@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -15,105 +15,89 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 
 // import useLocationFunctions from "../hooks/useLocationFunctions";
-import { useLocations } from '@/src/context/LocationsContext';
+import { useLocations } from "@/src/context/LocationsContext";
 
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
-import { LinearGradient } from "expo-linear-gradient";
+ 
 
-import { useQueryClient } from "@tanstack/react-query"; 
-
-import LocationTitleCard from './LocationTitleCard';
+import { useQueryClient } from "@tanstack/react-query";
+ 
 import { useUser } from "@/src/context/UserContext";
 import LocationDayAndHrsSelector from "./LocationDayAndHrsSelector";
 
 // weekday data passed from LocationHoursOfOperation to ScreenLocationSend to here
 const LocationInviteBody = ({
+  additionalDetails, 
   location,
+  handleGetDirections,
+  handleSendText,
   weekdayTextData,
   initiallySelectedDay,
 }) => {
-  const {  user } = useUser();
+  const { user } = useUser();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const [editedMessage, setEditedMessage] = useState("");
   const [selectedDay, setSelectedDay] = useState("");
   const [hoursForDay, setHoursForDay] = useState("");
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
 
-   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const {
-    locationList,
-    loadingAdditionalDetails,
-    useFetchAdditionalDetails,
-    clearAdditionalDetails,
-    deleteLocationMutation,
-  } = useLocations();
-
+ 
   const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
-  const [locationDetails, setLocationDetails] = useState(null);
-  const [isFetching, setIsFetching] = useState(false);
+ 
 
-  const handleRefresh = () => {
-    setIsFetching(true);
-  };
+ 
 
-  const {
-    data: additionalDetails,
-    isLoading,
-    isError,
-    error,
-  } = useFetchAdditionalDetails(location || locationDetails, isFetching);
-
-
-    useEffect(() => {
-      const keyboardDidShowListener = Keyboard.addListener(
-        "keyboardDidShow",
-        () => setIsKeyboardVisible(true)
-      );
-      const keyboardDidHideListener = Keyboard.addListener(
-        "keyboardDidHide",
-        () => setIsKeyboardVisible(false)
-      );
-  
-      return () => {
-        keyboardDidShowListener.remove();
-        keyboardDidHideListener.remove();
-      };
-    }, []);
-
+ 
   useEffect(() => {
-    const updateFromCache = () => {
-      //console.log('checking cache for location data');
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setIsKeyboardVisible(false)
+    );
 
-      if (locationList && location) {
-        //console.log('location object', locationObject);
-        const matchedLocation = locationList.find(
-          (loc) => loc.id === location.id
-        );
-        if (matchedLocation) {
-          setLocationDetails(matchedLocation);
-
-          //      console.log('cached data for location found: ', matchedLocation);
-        } else {
-          setLocationDetails(location); //back up if nothing in cache
-          //      console.log('no data found in cache for this location');
-        }
-      }
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
     };
+  }, []);
 
-    updateFromCache();
-  }, [location, locationList, queryClient]);
+  // useEffect(() => {
+  //   const updateFromCache = () => {
+  //     //console.log('checking cache for location data');
 
-  useEffect(() => {
-    setIsFetching(false);
-    //console.log(currentDayDrilledTwice);
-    if (location == true) {
-      clearAdditionalDetails();
-    }
-  }, [location]);
+  //     if (locationList && location) {
+  //       //console.log('location object', locationObject);
+  //       const matchedLocation = locationList.find(
+  //         (loc) => loc.id === location.id
+  //       );
+  //       if (matchedLocation) {
+  //         setLocationDetails(matchedLocation);
+
+  //         //      console.log('cached data for location found: ', matchedLocation);
+  //       } else {
+  //         setLocationDetails(location); //back up if nothing in cache
+  //         //      console.log('no data found in cache for this location');
+  //       }
+  //     }
+  //   };
+
+  //   updateFromCache();
+  // }, [location, locationList, queryClient]);
+
+  // useEffect(() => {
+  //   setIsFetching(false);
+  //   //console.log(currentDayDrilledTwice);
+  //   if (location == true) {
+  //     clearAdditionalDetails();
+  //   }
+  // }, [location]);
 
   const renderOpenStatus = (data) => {
     let isOpenNow;
@@ -173,112 +157,87 @@ const LocationInviteBody = ({
     setHoursForDay(hours);
   };
 
-  const handleSend = () => {
-    const finalMessage = `${editedMessage} On ${selectedDay}, ${location?.title} is open ${hoursForDay}. Here are directions: ${message}`;
-
+  const handleSend = useCallback((editedMessage, selectedDay, hoursForDay) => {
+    handleSendText(editedMessage, selectedDay, hoursForDay);
     Linking.openURL(`sms:?body=${encodeURIComponent(finalMessage)}`);
-  };
+  }, [handleSendText, editedMessage, selectedDay, hoursForDay ]);
 
   return (
-    <LinearGradient
-      colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={[styles.container, themeStyles.signinContainer]}
+    <View
+      style={[
+        appContainerStyles.talkingPointCard,
+        {
+          backgroundColor: themeStyles.primaryBackground.backgroundColor,
+        },
+      ]}
     >
-          <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1 }}
-        >
-      <>
       <View
-          style={{
-            width: "100%",
-
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
+        style={{
+          flex: 1,
+          height: '100%',
+          flexDirection: "column",
+          flexWrap: "wrap",
+          width: "100%",
+          paddingHorizontal: 0,
+          paddingTop: 20,
+        }}
+      >
+        <Text
+          numberOfLines={2}
+          style={[
+            themeStyles.primaryText,
+            appFontStyles.welcomeText,
+            { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+          ]}
         >
-          <View style={[styles.selectFriendContainer, { marginBottom: "2%" }]}>
-            {/* <FriendSelectModalVersionButtonOnly
-              includeLabel={true}
-              width="100%"
-            /> */}
-          </View>
+          {location.title}
+        </Text>
+        <Text
+          numberOfLines={1}
+          onPress={handleGetDirections}
+          style={[
+            themeStyles.primaryText,
+            appFontStyles.subWelcomeText,
+            { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+          ]}
+        >
+          {" "}
+          {location.address}
+        </Text>
 
-
-          <View
-            style={[
-              styles.backColorContainer,
-              themeStyles.genericTextBackground,
-              { borderColor: themeAheadOfLoading.lightColor },
-            ]}
-          >
-          {/* <View style={{flex: 1, width: '100%', flexDirection: 'column', justifyContent: 'space-between'}}>
-           */}
-
-       
-          <View style={styles.locationDetailsContainer}>
-          {!isKeyboardVisible && (
-              <>
-          <LocationTitleCard location={location} height={110} />
-        {!additionalDetails && (
-          
-            <TouchableOpacity
-              onPress={handleRefresh}
-              style={themeStyles.genericText}
-            >
-              <Text style={[themeStyles.genericText, { fontWeight: "bold", paddingVertical: '4%' }]}>
-                GET MORE INFO
-              </Text>
-            </TouchableOpacity>
-            
-        )}
-            
+        {additionalDetails && additionalDetails.hours && (
+          <>
+            <LocationDayAndHrsSelector
+              height={"50%"}
+              onDaySelect={handleDaySelect}
+              daysHrsData={additionalDetails?.hours?.weekday_text}
+              initiallySelectedDay={initiallySelectedDay}
+            />
           </>
-          )}
-
-            {additionalDetails && additionalDetails.hours && (
-              <> 
-                <LocationDayAndHrsSelector
-                height={'50%'}
-                  onDaySelect={handleDaySelect}
-                  daysHrsData={additionalDetails?.hours?.weekday_text}
-                  initiallySelectedDay={initiallySelectedDay}
-                />
-              </>
-            )}
-            <KeyboardAvoidingView>
-              <View style={styles.previewContainer}>
-                <Text style={[styles.previewTitle, themeStyles.genericText]}>
-                  
-                </Text>
-                <TextInput
-                  style={[
-                    styles.textInput,
-                    themeStyles.genericText,
-                    themeStyles.genericTextBackgroundShadeTwo,
-                  ]}
-                  value={editedMessage}
-                  onChangeText={setEditedMessage}
-                  multiline
-                />
-              </View>
-            </KeyboardAvoidingView>
-          </View>
-          <ButtonBaseSpecialSave
-            label="SEND "
-            maxHeight={80}
-            onPress={handleSend}
-            isDisabled={false}
-            fontFamily={"Poppins-Bold"}
-            image={require("@/app/assets/shapes/redheadcoffee.png")}
+        )}
+        <View style={styles.previewContainer}>
+          <Text style={[styles.previewTitle, themeStyles.genericText]}></Text>
+          <TextInput
+            style={[
+              styles.textInput,
+              themeStyles.genericText,
+              themeStyles.genericTextBackgroundShadeTwo,
+            ]}
+            value={editedMessage}
+            onChangeText={setEditedMessage}
+            multiline
           />
         </View>
-        </View>
-      </>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+        {/* <ButtonBaseSpecialSave
+          label="SEND "
+          maxHeight={80}
+          onPress={handleSend}
+          isDisabled={false}
+          fontFamily={"Poppins-Bold"}
+          image={require("@/app/assets/shapes/redheadcoffee.png")}
+        /> */}
+      </View>
+    </View>
   );
 };
 

@@ -295,6 +295,7 @@ export const LocationsProvider = ({ children }) => {
     return useQuery({
       queryKey: ["additionalDetails", location?.id],
       enabled: !!(location && location.id && enabled),
+       staleTime: 1000 * 60 * 20, // 20 minutes
       queryFn: async () =>
         fetchLocationDetails({
           address: encodeURIComponent(`${location.title} ${location.address}`),
