@@ -27,6 +27,8 @@ import LocationDayAndHrsSelector from "./LocationDayAndHrsSelector";
 
 // weekday data passed from LocationHoursOfOperation to ScreenLocationSend to here
 const LocationInviteBody = ({
+  messageData,
+  setMessageData,
   additionalDetails, 
   location,
   handleGetDirections,
@@ -37,9 +39,14 @@ const LocationInviteBody = ({
   const { user } = useUser();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
+
+
   const [editedMessage, setEditedMessage] = useState("");
   const [selectedDay, setSelectedDay] = useState("");
   const [hoursForDay, setHoursForDay] = useState("");
+
+
+
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
 
@@ -139,22 +146,27 @@ const LocationInviteBody = ({
     );
   };
 
-  useEffect(() => {
-    if (location && location.address) {
-      const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}`;
-      setMessage(directionsLink);
-      setEditedMessage(
-        `${user.username} has sent you a meet up site from the hellofriend app!`
-      ); // Default message for editing
-    } else {
-      setMessage("Directions not available.");
-      setEditedMessage("Plan details are not available.");
-    }
-  }, [location]);
+
+  const handleSetUserMessage = (text) => {
+    setMessageData({userMessage: text});
+  }
+  // useEffect(() => {
+  //   if (location && location.address) {
+  //     const directionsLink = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}`;
+  //     setMessage(directionsLink);
+  //     setEditedMessage(
+  //       `${user.username} has sent you a meet up site from the hellofriend app!`
+  //     ); // Default message for editing
+  //   } else {
+  //     setMessage("Directions not available.");
+  //     setEditedMessage("Plan details are not available.");
+  //   }
+  // }, [location]);
 
   const handleDaySelect = (day, hours) => {
-    setSelectedDay(day);
-    setHoursForDay(hours);
+    setMessageData({daySelected: day, hours: hours})
+    // setSelectedDay(day);
+    // setHoursForDay(hours);
   };
 
   const handleSend = useCallback((editedMessage, selectedDay, hoursForDay) => {
@@ -223,8 +235,8 @@ const LocationInviteBody = ({
               themeStyles.genericText,
               themeStyles.genericTextBackgroundShadeTwo,
             ]}
-            value={editedMessage}
-            onChangeText={setEditedMessage}
+            value={messageData.userMessage}
+            onChangeText={handleSetUserMessage}
             multiline
           />
         </View>

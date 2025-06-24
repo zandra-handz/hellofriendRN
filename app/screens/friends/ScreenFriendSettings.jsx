@@ -12,15 +12,17 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  TextInput,
   Alert,
+  Pressable,
 } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { LinearGradient } from "expo-linear-gradient";
+ 
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import SettingsStyleHeader from "@/app/components/appwide/SettingsStyleHeader";
 import { useMessage } from "@/src/context/MessageContext";
-
+import { useUser } from "@/src/context/UserContext";
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
 
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -29,7 +31,7 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import ModalColorTheme from "@/app/components/friends/ModalColorTheme";
 import EffortPrioritySetter from "@/app/components/friends/EffortPrioritySetter";
 import ModalFriendDetails from "@/app/components/friends/ModalFriendDetails";
-
+ 
 import DoubleChecker from "@/app/components/alerts/DoubleChecker"; 
 
 import WrenchOutlineSvg from "@/app/assets/svgs/wrench-outline.svg";
@@ -40,15 +42,16 @@ import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import DetailRow from "@/app/components/appwide/display/DetailRow";
 
 const ScreenFriendSettings = () => {
+  const { user } = useUser();
   const { selectedFriend, setFriend, loadingNewFriend, friendDashboardData } =
     useSelectedFriend();
-  const { handleDeleteFriend, deleteFriendMutation } = useFriendFunctions();
+  const { handleDeleteFriend, deleteFriendMutation, handleUpdateFriendSettings } = useFriendFunctions();
   const { themeAheadOfLoading } = useFriendList();
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
   const { showMessage } = useMessage();
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
   const { darkColor, lightColor } = gradientColorsHome;
-
+const [ phoneNumber, setPhoneNumber] = useState(friendDashboardData[0]?.suggestion_settings?.phone_number || null);
 
     const renderHeader = useCallback(() => (
         <SettingsStyleHeader
@@ -100,13 +103,29 @@ const ScreenFriendSettings = () => {
 
   };
  
+  const handleUpdatePhoneNumber = () => {
+    if (phoneNumber) {
+      handleUpdateFriendSettings(
+        user.id,
+        selectedFriend.id,
+        friendDashboardData[0].suggestion_settings.effort_required,
+        friendDashboardData[0].suggestion_settings.priority_level,
+        phoneNumber,
+
+      )
+    }
+
+  };
  
 
   const navigation = useNavigation();
 
   const friendName = selectedFriend?.name || "friend";
  
- 
+ const handleNewPhoneNumber = (number) => {
+  setPhoneNumber(number);
+
+ };
 
   const handleDelete = async () => {
     try {
@@ -180,6 +199,25 @@ const ScreenFriendSettings = () => {
                     />
                   </View>
                 </View>
+                <View style={{flexDirection: 'row', backgroundColor: 'red', justifyContent: 'space-between', padding: 10, width: '100%'}}>
+                  <Text style={themeStyles.primaryText}>{`Phone number: ${phoneNumber}`}</Text>
+                <Pressable style={{backgroundColor: 'limegreen', width: 50, borderRadius: 10}} onPress={handleUpdatePhoneNumber}>
+
+                </Pressable>
+                </View>
+
+                          <TextInput
+                            style={[
+                              themeStyles.primaryText,
+                              // styles.textInput,
+                              // themeStyles.genericText,
+                              // themeStyles.genericTextBackgroundShadeTwo,
+                            ]}
+                            value={phoneNumber}
+                            onChangeText={handleNewPhoneNumber}
+                            multiline
+                          />
+
 
                 <EffortPrioritySetter
                   mountingSettings={friendDashboardData[0].suggestion_settings}

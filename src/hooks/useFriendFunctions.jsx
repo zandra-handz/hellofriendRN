@@ -77,12 +77,13 @@ const useFriendFunctions = () => {
     });
 
 
-    const handleUpdateFriendSettings = async (userId, friendId, effort, priority) => {
+    const handleUpdateFriendSettings = async (userId, friendId, effort, priority, phoneNumber) => {
         const update = {
             user: userId,
             friend: friendId,
             effort_required: effort,
             priority_level: priority,
+            phone_number: phoneNumber,
         };
     
         //console.log("Payload in RQ function before sending:", update);

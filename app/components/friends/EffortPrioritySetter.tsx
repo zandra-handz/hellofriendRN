@@ -79,9 +79,7 @@ const EffortPrioritySetter: React.FC<EffortPrioritySetterProps> = ({
   }, [updateFriendSettingsMutation]);
 
   const handleSave = () => {
-    try {
-      console.log(priorityRef.current.getValue());
-      console.log(`user id`, user.id);
+    try {  
       handleUpdateFriendSettings(
         user.id,
         selectedFriend.id,

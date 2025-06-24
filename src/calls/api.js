@@ -538,7 +538,7 @@ export const updateUserProfile = async (userId, firstName, lastName, dateOfBirth
 export const fetchFriendDashboard = async (friendId) => {
     try {
         const response = await helloFriendApiClient.get(`/friends/${friendId}/dashboard/`);
-        console.log('API GET CALL fetchFriendDashboard'); //, response.data );
+        console.log('API GET CALL fetchFriendDashboard', response.data); //, response.data );
       
         return response.data;
     } catch (error) {
