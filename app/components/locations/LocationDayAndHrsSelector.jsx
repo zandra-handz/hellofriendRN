@@ -1,96 +1,142 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useCallback, useMemo } from "react";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
+import useLocationHours from "@/src/hooks/useLocationHours";
+import { useFocusEffect } from "@react-navigation/native";
+import { FlatList } from "react-native-gesture-handler";
 const LocationDayAndHrsSelector = ({
   onDaySelect,
+  currentDay,
   daysHrsData,
   initiallySelectedDay,
   width = "90%",
   height = "60%",
   borderRadius = 20,
 }) => {
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { fullDays, daysOfWeek, hoursForAllDays, hoursForAllDaysNiceString } =
+    useLocationHours(daysHrsData);
   const [selectedDay, setSelectedDay] = useState(initiallySelectedDay); // Change to null to handle "All Days"
-  const [daysOfWeek, setDaysOfWeek] = useState([]);
-  const [fullDaysOfWeek, setFullDaysOfWeek] = useState([]); // New state for full day names
-  const [hours, setHours] = useState([]);
 
-  useLayoutEffect(() => {
-    if (daysHrsData) {
-      console.log(daysHrsData);
-      const abbreviatedDays = daysHrsData.map((entry) => entry.slice(0, 3));
-      const fullDays = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ]; // Full day names
-      const pluralFullDays = fullDays.map((day) => day + "s"); // Convert to plural
+  const currentDayIndex = daysOfWeek.findIndex((day) => day === currentDay);
 
-      setDaysOfWeek(abbreviatedDays);
-      setFullDaysOfWeek(pluralFullDays);
-      setHours(daysHrsData);
-    } else {
-      setDaysOfWeek([]);
-      setFullDaysOfWeek([]);
-      setHours([]);
-    }
-  }, []);
+  const pluralFullDayCurrent =
+    currentDayIndex === 0 ? "" : `${fullDays[currentDayIndex]}s`;
+  const hoursForDayCurrent =
+    currentDayIndex === 0
+      ? hoursForAllDaysNiceString
+      : hoursForAllDays[daysOfWeek[currentDayIndex]];
 
-  useEffect(() => {
-    if (onDaySelect) {
-      const fullDay =
-        selectedDay === null ? "All Days" : fullDaysOfWeek[selectedDay];
+  useFocusEffect(
+    useCallback(() => {
+      if (
+        currentDayIndex &&
+        pluralFullDayCurrent &&
+        hoursForDayCurrent &&
+        !initiallySelectedDay
+      ) {
+        // const index = daysOfWeek.findIndex((day) => day === currentDay);
+        // handleDayPress(currentDayIndex);
+        setSelectedDay(currentDayIndex);
+        onDaySelect(pluralFullDayCurrent, hoursForDayCurrent);
+      }
+    }, [
+      currentDayIndex,
+      pluralFullDayCurrent,
+      hoursForDayCurrent,
+      initiallySelectedDay,
+      daysOfWeek,
+      handleDayPress,
+    ])
+  );
+
+  const handleDayPress = useCallback(
+    (dayIndex) => {
+      if (dayIndex === 0) {
+        setSelectedDay(null);
+      } else {
+        setSelectedDay(dayIndex);
+      }
+      const selectedDay = dayIndex;
+      const pluralFullDay = dayIndex === 0 ? "" : `${fullDays[selectedDay]}s`;
+
       const hoursForDay =
-        selectedDay === null
-          ? getHoursForAllDays()
-          : getHoursForDay(selectedDay);
-      onDaySelect(fullDay, hoursForDay);
+        dayIndex === 0
+          ? hoursForAllDaysNiceString
+          : hoursForAllDays[daysOfWeek[dayIndex]];
+      onDaySelect(pluralFullDay, hoursForDay);
+    },
+    [hoursForAllDays, daysOfWeek, hoursForAllDaysNiceString]
+  );
+
+  useMemo(() => {
+    if (currentDay && !initiallySelectedDay) {
+      // console.log(`CURRENT DAY`, currentDay);
+      const index = daysOfWeek.findIndex((day) => day === currentDay);
+      handleDayPress(index);
+      return;
     }
-  }, [selectedDay]);
+  }, [currentDay, initiallySelectedDay]);
 
-  const removeZeroMinutes = (time) => {
-    return time.replace(":00", "");
-  };
-
-  const getHoursForDay = (dayIndex) => {
-    if (dayIndex >= 0 && dayIndex < hours.length) {
-      const hoursString = hours[dayIndex];
-      const timeStartIndex = hoursString.indexOf(":") + 1;
-      return timeStartIndex > 0
-        ? hoursString.slice(timeStartIndex).trim()
-        : "Closed"; // Slice from the colon to end and trim
+  const renderHours = () => {
+    if (selectedDay === null) {
+      return (
+        <View style={styles.hoursContainer}>
+          {Object.entries(hoursForAllDays).map(([day, time], index) => (
+            <Text
+              key={index}
+              style={[styles.hoursText, themeStyles.genericText]}
+            >
+              {day}: {time}
+            </Text>
+          ))}
+        </View>
+      );
+    } else {
+      const selectedDayName = daysOfWeek[selectedDay];
+      return (
+        <View style={styles.hoursContainer}>
+          <Text style={[styles.hoursText, themeStyles.genericText]}>
+            {hoursForAllDays[selectedDayName]}
+          </Text>
+        </View>
+      );
     }
-    return "Closed";
   };
 
-  const getHoursForAllDays = () => {
-    return hours.map(
-      (entry, index) =>
-        `${daysOfWeek[index]}: ${removeZeroMinutes(entry.slice(entry.indexOf(":") + 1))}`
-    );
-  };
-
-  const handleDayPress = (dayIndex) => {
-    setSelectedDay(dayIndex);
-  };
-
-  const handleAllDaysPress = () => {
-    setSelectedDay(null);
-  };
+  const renderDayButton = useCallback(
+    ({ item, index }) => (
+      <Pressable
+        key={index}
+        style={[
+          styles.dayButton,
+          selectedDay === index && styles.selectedDayButton,
+          selectedDay === index && themeStyles.genericTextBackground,
+        ]}
+        onPress={() => handleDayPress(index)}
+      >
+        <Text
+          style={[
+            styles.dayText,
+            themeStyles.genericText,
+            selectedDay === index && styles.selectedDayText,
+          ]}
+        >
+          {item}
+        </Text>
+      </Pressable>
+    ),
+    [styles, handleDayPress, themeStyles, selectedDay]
+  );
 
   return (
-      <View
-        style={[
-          styles.container,
-          themeStyles.genericTextBackgroundShadeTwo,
-          { width: width, height: height },
-        ]}
-      >
+    <View
+      style={[
+        styles.container,
+        themeStyles.genericTextBackgroundShadeTwo,
+        { flexShrink: 1 },
+      ]}
+    >
       <View
         style={{
           flexDirection: "row",
@@ -101,35 +147,43 @@ const LocationDayAndHrsSelector = ({
         }}
       >
         <View
-          style={{ flexDirection: "row", height: "100%", alignItems: "center" }}
-        >
-          <Text style={[styles.title, themeStyles.genericText]}>
-            SELECT DAY
-          </Text>
-        </View>
-
-        {/* <EditPencilOutlineSvg height={30} width={30} color={iconColor} /> */}
-      </View>
-      <View style={styles.daysContainer}>
-        <TouchableOpacity
-          style={[
-            styles.dayButton,
-            selectedDay === null && styles.selectedDayButton,
-          ]}
-          onPress={handleAllDaysPress}
+          style={{
+            flexDirection: "row",
+            height: "100%",
+            alignItems: "center",
+            marginVertical: 10,
+          }}
         >
           <Text
             style={[
-              styles.dayText,
-              themeStyles.genericText,
-              selectedDay === null && styles.selectedDayText,
+              styles.title,
+              themeStyles.primaryText,
+              appFontStyles.welcomeText,
             ]}
           >
-            All Days
+            Hours
           </Text>
-        </TouchableOpacity>
+          <View
+            style={{
+              marginHorizontal: 20,
+              height: "100%",
+              width: "100%",
+              alignItems: "center",
+            }}
+          >
+            <FlatList
+              horizontal={true}
+              data={daysOfWeek}
+              renderItem={renderDayButton}
+              ListFooterComponent={<View style={{ width: 300 }}></View>}
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* <View style={styles.daysContainer}>
         {daysOfWeek.map((day, index) => (
-          <TouchableOpacity
+          <Pressable
             key={index}
             style={[
               styles.dayButton,
@@ -147,34 +201,20 @@ const LocationDayAndHrsSelector = ({
             >
               {day}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         ))}
-      </View>
-      <View style={styles.hoursContainer}>
-        {selectedDay === null ? (
-          getHoursForAllDays().map((entry, index) => (
-            <Text
-              key={index}
-              style={[styles.hoursText, themeStyles.genericText]}
-            >
-              {entry}
-            </Text>
-          ))
-        ) : (
-          <Text style={[styles.hoursText, themeStyles.genericText]}>
-            {removeZeroMinutes(getHoursForDay(selectedDay))}
-          </Text>
-        )}
-      </View>
+      </View> */}
+      {renderHours()}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 30,
+    borderRadius: 10,
     alignSelf: "center",
-    padding: 20,
+    paddingVertical: 10,
+    width: "100%",
   },
   daysContainer: {
     paddingVertical: "2%",
@@ -182,26 +222,28 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   dayButton: {
-    padding: 2,
-    paddingHorizontal: "1%",
-    borderRadius: 10,
-  },
-  selectedDayButton: {
     borderWidth: 0.8,
-    borderRadius: 30,
-    paddingHorizontal: "3%",
-    paddingVertical: "1%",
+    padding: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    width: 60,
+    height: 40,
   },
+  selectedDayButton: {},
   dayText: {
-    fontSize: 15,
+    fontSize: 12,
+    fontWeight: "bold",
   },
   selectedDayText: {
+    fontSize: 12,
     fontWeight: "bold",
-    fontSize: 15,
   },
   hoursContainer: {
-    paddingVertical: "4%",
-    alignItems: "center",
+    height: "auto",
+    width: "100%",
+    //  alignItems: "center",
   },
   hoursText: {
     fontSize: 14,

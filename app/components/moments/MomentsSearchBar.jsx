@@ -88,34 +88,34 @@ const MomentsSearchBar = ({
   };
 
   const renderSearchResultItem = useCallback(
-    ({item, index}) => {
+    ({ item, index }) => {
       return (
-                    <TouchableOpacity
-                onPress={() => handleItemPress(item)}
-                style={[
-                  appContainerStyles.searchBarResultListItem,
-                  {
-                    borderBottomColor:
-                      filteredData?.length > 1
-                        ? themeStyles.genericText.color
-                        : "transparent",
-                  },
-                ]}
-              >
-                <Text
-                  numberOfLines={1}
-                  style={[
-                    appFontStyles.searchBarResultListItemText,
-                    themeStyles.genericText,
-                  ]}
-                >
-                  {searchKeys.map((key) => item[key]).join(" - ")}{" "}
-                </Text>
-              </TouchableOpacity>
-      )
-
-    }, [handleItemPress, filteredData]
-  )
+        <TouchableOpacity
+          onPress={() => handleItemPress(item)}
+          style={[
+            appContainerStyles.searchBarResultListItem,
+            {
+              borderBottomColor:
+                filteredData?.length > 1
+                  ? themeStyles.genericText.color
+                  : "transparent",
+            },
+          ]}
+        >
+          <Text
+            numberOfLines={1}
+            style={[
+              appFontStyles.searchBarResultListItemText,
+              themeStyles.genericText,
+            ]}
+          >
+            {searchKeys.map((key) => item[key]).join(" - ")}{" "}
+          </Text>
+        </TouchableOpacity>
+      );
+    },
+    [handleItemPress, filteredData]
+  );
 
   return (
     <View style={[appContainerStyles.searchBarContainer, { width: width }]}>
@@ -130,12 +130,20 @@ const MomentsSearchBar = ({
             },
           ]}
         > */}
-         <View style={[styles.inputContainer, themeStyles.genericTextBackground, { borderRadius: INPUT_CONTAINER_BORDER_RADIUS, borderColor: themeStyles.primaryText.color}]}>
-                 
+        <View
+          style={[
+            styles.inputContainer,
+            themeStyles.genericTextBackground,
+            {
+              borderRadius: INPUT_CONTAINER_BORDER_RADIUS,
+              borderColor: themeStyles.primaryText.color,
+            },
+          ]}
+        >
           <TextInput
             ref={textInputRef}
             // style={appFontStyles.searchBarInputText}
-             style={[styles.searchInput, themeStyles.genericText]}
+            style={[styles.searchInput, themeStyles.genericText]}
             autoFocus={triggerAutoFocus}
             placeholder={placeholderText}
             placeholderTextColor={textAndIconColor}
@@ -162,8 +170,9 @@ const MomentsSearchBar = ({
         //     { width: width, top: height },
         //   ]}
         // >
-           <View style={[styles.dropdownContainer, themeStyles.genericTextBackground]}>
-                  
+        <View
+          style={[styles.dropdownContainer, themeStyles.genericTextBackground]}
+        >
           <FlatList
             data={filteredData}
             keyExtractor={(item, index) => index.toString()}
@@ -187,7 +196,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 48,
     backgroundColor: "transparent",
-   // paddingLeft: "4%",
+    // paddingLeft: "4%",
     paddingVertical: "3%",
     borderWidth: StyleSheet.hairlineWidth,
   },
