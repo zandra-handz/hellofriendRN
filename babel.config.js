@@ -6,12 +6,12 @@ module.exports = function (api) {
       production: {
         plugins: ["transform-remove-console"],
       },
-      // development: {
-      //   plugins: ["transform-remove-console"],
-      // },
-      // preview: {
-      //   plugins: ["transform-remove-console"],
-      // },
+      development: {
+        plugins: ["transform-remove-console"],
+      },
+      preview: {
+        plugins: ["transform-remove-console"],
+      },
     },
     plugins: [
       "react-native-reanimated/plugin",
