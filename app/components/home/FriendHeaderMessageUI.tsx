@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Pressable } from "react-native";
 import React from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -14,20 +14,28 @@ import Animated, {
 
 interface FriendHeaderMessageUIProps {
   isKeyboardVisible: boolean; // indirect condition to change message to friend picker
+onPress: () => void; // see WelcomeMessageUI for explanation; this component is the same
 }
 
 const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   isKeyboardVisible = false,
+  onPress,
 }) => {
   const { themeStyles,   appFontStyles } = useGlobalStyle();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+
+      const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+  
 
   const friendModalButtonHeight = 16;
   const message = `Selected: ${selectedFriend.name}`;
   const compositionMessage = `Talking point for ${selectedFriend.name}`;
 
   return (
-    <Animated.View
+    <AnimatedPressable
+    onPress={onPress}
+      hitSlop={10}
+  pressRetentionOffset={10}
       entering={FadeIn}
       exiting={FadeOut}
       style={[
@@ -37,15 +45,16 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           flexWrap: "flex",
           width: "100%",
           padding: 10,
-          paddingTop: 35,
-          paddingBottom: 35,
+          minHeight: 168,
+          paddingTop: 15,
+          paddingBottom: 15,
         },
       ]}
     >
       <Animated.Text
         style={[
           appFontStyles.welcomeText,
-          { color: themeStyles.primaryText.color },
+            { color: themeStyles.primaryText.color, fontSize: 46, lineHeight: 48, },
         ]}
       >
         {selectedFriend && !loadingNewFriend && !isKeyboardVisible
@@ -71,7 +80,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
         </View>
      
       </Animated.Text>
-    </Animated.View>
+    </AnimatedPressable>
   );
 };
 

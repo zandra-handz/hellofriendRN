@@ -48,7 +48,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const pressTimeout = useRef(null);
 
     const SELECTED_FRIEND_CARD_HEIGHT = 130;
-    const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
+    // const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
+     const SELECTED_FRIEND_CARD_MARGIN_TOP = 214;
     const SELECTED_FRIEND_CARD_PADDING = 10; 
 
 

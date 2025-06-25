@@ -7,6 +7,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
 } from "react-native";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI"; 
@@ -56,6 +57,8 @@ const ScreenHome = () => {
   const newMomentTextRef = useRef(null);
   const isNewUser =
     new Date(user?.created_on).toDateString() === new Date().toDateString();
+
+
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
@@ -182,6 +185,7 @@ const ScreenHome = () => {
     }
   };
 
+
   const navigateToAddMomentScreen = () => {
     navigation.navigate("MomentFocus", {
       momentText: newMomentTextRef.current.getText(),
@@ -203,14 +207,28 @@ const ScreenHome = () => {
     }
   }, [imageUri]);
 
+  
+  const handleFocusPress = () => {
+    console.log('handlefocuspress!');
+     newMomentTextRef.current.focus();
+    console.log(newMomentTextRef.current.getText());
+    if (newMomentTextRef & newMomentTextRef.current) {
+      console.log('focusing');
+      newMomentTextRef.current.focus();
+    }
+  };
+
   return (
     <SafeViewAndGradientBackground
       includeBackgroundOverlay={true}
-      backgroundOverlayHeight={ isKeyboardVisible ? '100%' : 254}
-       backgroundOverlayBottomRadius={10}
+      backgroundOverlayHeight={ isKeyboardVisible ? '100%' : 300}
+       backgroundOverlayBottomRadius={20}
       style={{ flex: 1 }}
      // header={HellofriendHeader}
     >
+      {/* <Pressable onPress={handleFocusPress} style={{  position: 'absolute', width: '100%', top: 55, zIndex: 1000, height: 190 }}></Pressable>
+      */}
+     
       <KeyboardAvoidingView
     
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -237,7 +255,7 @@ const ScreenHome = () => {
                 paddingHorizontal: 0, 
                 
                 
-                height: isKeyboardVisible ? "89%" : "18%", // doesn't control height of quickwritemoment now -- prop 'multiline' does 
+                height: isKeyboardVisible ? "89%" : "28%", // doesn't control height of quickwritemoment now -- prop 'multiline' does 
               }}
             >
               {/* <Button
@@ -254,12 +272,14 @@ const ScreenHome = () => {
                   username={user.username}
                   isNewUser={isNewUser}
                   isKeyboardVisible={isKeyboardVisible}
+                  onPress={handleFocusPress} 
                 />
                 
                   )}
                   {selectedFriend && (
                     <FriendHeaderMessageUI
                     isKeyboardVisible={isKeyboardVisible}
+                    onPress={handleFocusPress}
 
                     />
                   )}

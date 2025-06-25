@@ -38,7 +38,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
             flexDirection: "column",
             justifyContent: "space-between",
             flex: 1,
-            paddingTop: 10, 
+            paddingTop: 40, 
           },
         ]}
     >

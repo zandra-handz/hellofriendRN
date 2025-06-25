@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
 import React from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -15,20 +15,24 @@ interface WelcomeMessageUIProps {
   username: string;
   isNewUser: boolean; // in parent: {new Date(user?.user?.created_on).toDateString() === new Date().toDateString()
   isKeyboardVisible: boolean; // indirect condition to change message to friend picker
+  onPress: () => void; // because i have turned this component into a focus moment text button
+                        // in order to let it fill as much space as possible while still being under the friend picker
 }
 
 const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   username = "",
   isNewUser = false,
   isKeyboardVisible = false,
+  onPress = () => {},
 }) => {
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { selectedFriend  } = useSelectedFriend();
+
+    const AnimatedPressable = Animated.createAnimatedComponent(TouchableOpacity);
 
   const message = isNewUser
     ? `Hi ${username}! Welcome to hellofriend!`
-    : `Hi ${username}! What would you like to do?`;
-  const friendSelectedMessage = `${selectedFriend?.name}`;
+    : `Hi ${username}! What would you like to do?`; 
 
   const compositionMessage = selectedFriend
     ? `Talking point for ${selectedFriend.name}`
@@ -37,7 +41,8 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   const friendModalButtonHeight = 20;
 
   return (
-    <Animated.View
+    <AnimatedPressable
+    onPress={onPress}
       entering={ZoomInEasyUp}
       exiting={FadeOut}
       style={[
@@ -46,10 +51,11 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           flexWrap: "flex",
           width: "100%",
           padding: 10,
-          paddingTop: 35,
-          paddingBottom: 35,
+          paddingTop: 15,
+          paddingBottom: 15,
           flexDirection: "row",
           justifyContent: "flex-start",
+      
         },
       ]}
     >
@@ -57,7 +63,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
         <Animated.Text
           style={[
             appFontStyles.welcomeText,
-            { color: themeStyles.primaryText.color },
+            { color: themeStyles.primaryText.color, fontSize: 46, lineHeight: 48, },
           ]}
         >
           {!selectedFriend && isKeyboardVisible
@@ -72,7 +78,8 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
              
               
             }}
-          >
+          > 
+              
             <FriendModalIntegrator
               includeLabel={true}
               height={'100%'}
@@ -82,10 +89,11 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
               navigationDisabled={true}
                useGenericTextColor={true}
             />
+             
           </View>
         </Animated.Text>
       </>
-    </Animated.View>
+    </AnimatedPressable>
   );
 };
 

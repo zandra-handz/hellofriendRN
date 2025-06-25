@@ -58,7 +58,7 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
       manualGradientColors,
       appContainerStyles,
     } = useGlobalStyle();
-  
+
     const { settings } = useUserSettings();
     // const { friendListLength } = useFriendList(); checking higher up
     const { selectedFriend } = useSelectedFriend();
@@ -85,8 +85,17 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
       }, [settings])
     );
 
+const handleManualFocus = useCallback(() => {
+  const timeout = setTimeout(() => {
+    if (textInputRef.current) {
+      textInputRef.current.focus();
+    }
+  }, 50);
+  return () => clearTimeout(timeout);
+}, []);
+
     const addIconSize = 22;
- 
+
     useEffect(() => {
       if (textInputRef.current) {
         textInputRef.current.setNativeProps({ text: mountingText });
@@ -109,6 +118,12 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
         }
       },
       getText: () => editedMessage,
+      focus: () => {
+        
+        console.log('focus!');
+        textInputRef.current.blur(); // YA THIS WORKS. Gotta blur manually for some reason to get it to work more than one time in a row
+        handleManualFocus();
+      },
     }));
 
     useEffect(() => {
@@ -129,14 +144,14 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
               width: "100%",
               height: multiline ? "100%" : 30,
               paddingLeft: 18,
-           marginTop: 8,
+              marginTop: 8,
               paddingTop: multiline ? 0 : 0,
               borderRadius: 10,
               backgroundColor: multiline
-                   ? themeStyles.primaryBackground.backgroundColor
-                // ? manualGradientColors.homeDarkColor
-                : "transparent",
-                  //  backgroundColor: 'red',
+                ? "themeStyles.primaryBackground.backgroundColor"
+                : // ? manualGradientColors.homeDarkColor
+                  "transparent",
+              //  backgroundColor: 'red',
             },
           ]}
         >
@@ -175,7 +190,13 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
                         size={20}
                       />
                     </View>
-                    <Text style={[styles.helperText, themeStyles.primaryText, { fontFamily: 'Poppins-Regular'}]}>
+                    <Text
+                      style={[
+                        styles.helperText,
+                        themeStyles.primaryText,
+                        { fontFamily: "Poppins-Regular" },
+                      ]}
+                    >
                       {"  "}Add talking point
                       {/* {selectedFriend ? ( 
                         <Text style={{ fontWeight: "bold" }}>
@@ -201,9 +222,9 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
                           // top: 0,
                           // left: 180,
                           height: 30,
-                          width: 'auto',
+                          width: "auto",
                           alignItems: "center",
-                          opacity: multiline ? 0 : .9,
+                          opacity: multiline ? 0 : 0.9,
                         }}
                       >
                         <View
@@ -224,7 +245,11 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
                           />
                         </View>
                         <Text
-                          style={[styles.helperText, themeStyles.primaryText, {  fontFamily: 'Poppins-Regular'}]}
+                          style={[
+                            styles.helperText,
+                            themeStyles.primaryText,
+                            { fontFamily: "Poppins-Regular" },
+                          ]}
                         >
                           {"  "}Pic
                         </Text>
@@ -235,13 +260,13 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
                         onPress={handleSelectImage}
                         style={{
                           //  position: "absolute",
-                   flexDirection: 'row',
+                          flexDirection: "row",
                           marginLeft: 30,
                           zIndex: 5000,
                           zIndex: 5000,
                           elevation: 5000,
-                         // width: 60,
-                          width: 'auto',
+                          // width: 60,
+                          width: "auto",
                           // backgroundColor: 'red',
                           // top: 0,
                           // left: 266,
@@ -249,7 +274,7 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
                           height: 30,
                           //backgroundColor: 'orange',
                           alignItems: "center",
-                          opacity: multiline ? 0 : .9,
+                          opacity: multiline ? 0 : 0.9,
                         }}
                       >
                         <View
@@ -270,8 +295,12 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
                           />
                         </View>
                         <Text
-                        // numberOfLines={1}
-                          style={[styles.helperText, themeStyles.primaryText, { fontFamily: 'Poppins-Regular'}]}
+                          // numberOfLines={1}
+                          style={[
+                            styles.helperText,
+                            themeStyles.primaryText,
+                            { fontFamily: "Poppins-Regular" },
+                          ]}
                         >
                           {"  "}Upload
                         </Text>
@@ -306,6 +335,7 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
                       style={[styles.textInput, themeStyles.genericText]}
                       value={editedMessage}
                       placeholder={""}
+                      onBlur={() => console.log('lost focus')}
                       placeholderTextColor={"white"}
                       onChangeText={handleTextInputChange} // Update local state
                       multiline={multiline}
