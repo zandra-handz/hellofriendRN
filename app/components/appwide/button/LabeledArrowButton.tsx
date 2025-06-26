@@ -10,6 +10,7 @@ interface LabeledArrowButtonProps {
   spacer?: number;
   opacity?: number;
   onPress: () => void;
+  color: string;
 }
 
 // some freedom to customize, rather than it dynamically calculating the same proportions with one given size value
@@ -20,6 +21,7 @@ const LabeledArrowButton: React.FC<LabeledArrowButtonProps> = ({
   spacer = 6,
   opacity = 1,
   onPress,
+  color='white',
 }) => {
   const { manualGradientColors } = useGlobalStyle();
 
@@ -37,9 +39,9 @@ const LabeledArrowButton: React.FC<LabeledArrowButtonProps> = ({
       onPress={onPress}
     >
       <Text
-        style={[
-          manualGradientColors.homeDarkColor,
+        style={[ 
           {
+            color: color,
             fontSize: labelFontSize,
             marginRight: spacer,
             // marginBottom: 2,
@@ -61,7 +63,7 @@ const LabeledArrowButton: React.FC<LabeledArrowButtonProps> = ({
         <BackArrowLongerStemSvg
           height={arrowSize}
           width={arrowSize}
-          color={manualGradientColors.homeDarkColor}
+          color={color}
         />
       </View>
     </TouchableOpacity>

@@ -12,15 +12,16 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 const CalendarLights = ({
     
-  combinedData,
+  combinedData, 
+  daySquareBorderColor='white',
   daySquareBorderRadius=0, 
   // opacityMinusAnimation=1,
   animationColor='orange',
 }) => {  
   // const [combinedData, setCombinedData] = useState([]);
  
-  const { themeStyles } = useGlobalStyle();
-const daySquareBorderColor = themeStyles.primaryBackground.backgroundColor;
+  const { themeStyles } = useGlobalStyle(); 
+  const backgroundColor = 'transparent'; // use this to give just the calendar tray a background color. borderRadius already set
 const opacityMinusAnimation = 1;
   const flatListRef = useRef(null);  
 
@@ -206,7 +207,7 @@ const opacityMinusAnimation = 1;
  
 
   return (
-    <View style={[styles.container, {backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor}]}>
+    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
       {combinedData && (
         <FlatList
           ref={flatListRef}

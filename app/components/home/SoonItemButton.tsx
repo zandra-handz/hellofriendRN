@@ -17,6 +17,8 @@ interface SoonItemButtonProps {
   onPress: () => void;
   onDoublePress: () => void;
   disabled: boolean;
+  textColor: string;
+  backgroundColor: string;
 }
 
 const SoonItemButton: React.FC<SoonItemButtonProps> = ({
@@ -26,6 +28,8 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
   onPress = () => console.log("Soon Item button single press"),
   onDoublePress = () => console.log("Soon Item button dounle press"),
   disabled = false,
+  textColor='white',
+  backgroundColor='red',
 }) => {
   const { themeStyles } = useGlobalStyle();
   const lastPress = useRef(0);
@@ -67,22 +71,22 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
 
   
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={handlePress}
       style={[
         styles.container,
         {
+        
           width: width,
           backgroundColor:
-            themeStyles.lighterOverlayBackgroundColor.backgroundColor,
+            backgroundColor,
         },
       ]}
       disabled={disabled}
-    >
-      <View style={styles.blurOverlay} />
+    > 
 
       <View style={[styles.calendarContainer]}>
-        <Text style={{ fontSize: 11, fontWeight: "bold" }}>
+        <Text style={{ fontSize: 11, fontWeight: "bold", color: textColor }}>
           {formatMonth(date)}
         </Text>
 
@@ -92,7 +96,7 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
           showMonth={false} // Hide the month inside the SVG if showMonth is true
           width={20}
           height={20}
-          color={"#000002"}
+          color={textColor}
         />
       </View>
       <View
@@ -106,17 +110,18 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
           alignItems: "start",
         }}
       >
-        <Text style={styles.text}>{friendName}</Text>
+        <Text style={[styles.text, {color: textColor}]}>{friendName}</Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    flexDirection: "column",
+    // flex: 1, 
     justifyContent: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
 
     width: "100%",
     padding: 10,
@@ -131,20 +136,14 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    fontWeight: "bold",
-    paddingHorizontal: "4%",
+    fontWeight: "bold", 
   },
-  calendarContainer: {
-    //   position: 'absolute',
-    bottom: 0,
-
-    right: 10,
+  calendarContainer: { 
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    width: 40,
-    // height: '50%',
-    backgroundColor: "transparent",
+    width: 40, 
+    
   },
 });
 

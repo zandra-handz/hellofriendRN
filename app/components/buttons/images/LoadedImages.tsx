@@ -69,7 +69,7 @@ const LoadedImages: React.FC<Props> = ({
               </FlashAnim>
             </View>
             <View style={{ position: "absolute", bottom: 0, left: -40 }}>
-              <Text style={{ fontSize: itemLabelFontSize, fontWeight: "bold" }}>
+              <Text style={{ color: iconColor, opacity: .9, fontSize: itemLabelFontSize, fontWeight: "bold" }}>
                 Pics
               </Text>
             </View>

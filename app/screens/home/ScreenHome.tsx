@@ -223,6 +223,7 @@ const ScreenHome = () => {
       includeBackgroundOverlay={true}
       backgroundOverlayHeight={ isKeyboardVisible ? '100%' : 300}
        backgroundOverlayBottomRadius={20}
+       useFriendColors={selectedFriend ? true: false}
       style={{ flex: 1 }}
      // header={HellofriendHeader}
     >

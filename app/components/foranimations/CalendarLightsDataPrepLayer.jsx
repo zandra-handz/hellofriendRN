@@ -50,7 +50,7 @@ const CalendarLightsDataPrepLayer = ({
   return (
     <>
       {helloesList && friendDashboardData && sortedData && selectedFriend && monthsInRange && (
-        <CalendarLights
+        <CalendarLights 
           daySquareBorderRadius={daySquareBorderRadius}
           daySquareBorderColor={daySquareBorderColor}
           opacityMinusAnimation={opacityMinusAnimation}

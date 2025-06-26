@@ -12,10 +12,10 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import MultilineInputModal from "../headers/MultilineInputModal";
 // import useLocationFunctions from "../hooks/useLocationFunctions"; 
-
+import Animated from "react-native-reanimated";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
  
-import LocationDayAndHrsSelector from "./LocationDayAndHrsSelector";
+import HoursSelector from "./HoursSelector";
 
 // weekday data passed from LocationHoursOfOperation to ScreenLocationSend to here
 const LocationInviteBody = ({
@@ -103,7 +103,21 @@ const LocationInviteBody = ({
 
  
   return (
-    <>
+      <Animated.View // taken from the ViewPages to match the spacing/style. could add an animation here I suppose
+          style={[
+            // cardScaleAnimation,
+            {
+              gap: 20,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "transparent",
+              padding: 4,
+              borderWidth: 0, 
+              width: '100%',
+            },
+          ]}
+        > 
+        
       <View
         style={[
           appContainerStyles.talkingPointCard,
@@ -148,8 +162,8 @@ const LocationInviteBody = ({
 
           {additionalDetails && additionalDetails.hours && messageData && (
             <>
-              <LocationDayAndHrsSelector
-                height={"34%"}
+              <HoursSelector
+                buttonHightlightColor={themeAheadOfLoading.lightColor}
                 currentDay={currentDay}
                 onDaySelect={handleDaySelect}
                 daysHrsData={additionalDetails?.hours?.weekday_text}
@@ -166,7 +180,12 @@ const LocationInviteBody = ({
               borderColor: themeAheadOfLoading.lightColor,
               width: "100%",
             }}
-          ></Pressable>
+          >
+
+
+
+            
+          </Pressable>
           {/* <View
             style={[styles.previewContainer]}
           > 
@@ -183,7 +202,8 @@ const LocationInviteBody = ({
           onChangeText={handleSetUserMessage}
         />
       )}
-    </>
+   
+        </Animated.View>
   );
 };
 

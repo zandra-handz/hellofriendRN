@@ -1,29 +1,27 @@
-import React, {  useState, useCallback } from "react";
-import { View, StyleSheet  } from "react-native"; 
+import React, { useState, useCallback } from "react";
+import { View, StyleSheet } from "react-native";
 
 // app state
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";  
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUser } from "@/src/context/UserContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
- 
 // app components
 import AboutAppModal from "./AboutAppModal";
-import ReportIssueModal from "./ReportIssueModal"; 
+import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
-
 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 
- 
-import ButtonData from "../buttons/scaffolding/ButtonData"; 
-import { useNavigationState } from "@react-navigation/native";  
+import ButtonData from "../buttons/scaffolding/ButtonData";
+import { useNavigationState } from "@react-navigation/native";
 
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
- 
+import GradientBackground from "../appwide/display/GradientBackground";
+
 const HelloFriendFooter = () => {
   const navigationState = useNavigationState((state) => state);
   const { onSignOut } = useUser();
@@ -31,17 +29,15 @@ const HelloFriendFooter = () => {
   const isOnActionPage = currentRouteName === "hellofriend";
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
- 
+
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 
- 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
-
 
   // buttons rendered in callbacks, all using the same template except for the friend profile button
   const RenderSignOutButton = useCallback(
@@ -94,8 +90,8 @@ const HelloFriendFooter = () => {
         label="Settings"
         icon={
           <MaterialIcons
-           name={"settings-suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
-           //  name={"app-settings-alt"}
+            name={"settings-suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
+            //  name={"app-settings-alt"}
             size={footerIconSize}
             color={themeStyles.footerIcon.color}
           />
@@ -141,26 +137,29 @@ const HelloFriendFooter = () => {
   );
 
   return (
-    <>
+    <GradientBackground useFriendColors={!!selectedFriend} additionalStyles={[
+          styles.container,
+          {
+            height: footerHeight,
+            paddingBottom: footerPaddingBottom,
+            opacity: .94,
+          
+          },
+        ]}>
       <View
         style={[
           styles.container,
-          { height: footerHeight,
+          {
+            height: footerHeight,
             paddingBottom: footerPaddingBottom,
             backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
           },
         ]}
-      > 
-          <View style={styles.section}>
-            {
-              !selectedFriend ? (
-                <RenderSignOutButton />
-              ) : (
-                <RenderDeselectButton />
-              ) 
-            }
-          </View> 
-          {/* <View style={styles.section}>
+      >
+        <View style={styles.section}>
+          {!selectedFriend ? <RenderSignOutButton /> : <RenderDeselectButton />}
+        </View>
+        {/* <View style={styles.section}>
             <ButtonData />
           </View>
        */}
@@ -189,7 +188,7 @@ const HelloFriendFooter = () => {
         <View style={[styles.divider, themeStyles.divider]} />
         <>
           <View style={styles.section}>
-            <RenderAboutAppButton /> 
+            <RenderAboutAppButton />
           </View>
         </>
       </View>
@@ -220,26 +219,27 @@ const HelloFriendFooter = () => {
           />
         </View>
       )}
-    </>
+    </GradientBackground>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
+    
     flexDirection: "row",
     width: "100%",
     position: "absolute",
     bottom: 0,
-    zIndex: 1,  
+    zIndex: 1,
   },
   section: {
     flex: 1,
     flexDirection: "column",
-    alignItems: "center", 
+    alignItems: "center",
     justifyContent: "center",
   },
   divider: {
-    marginVertical: 10, 
+    marginVertical: 10,
   },
 });
 

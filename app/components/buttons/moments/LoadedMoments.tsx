@@ -62,7 +62,7 @@ const LoadedMoments: React.FC<LoadedMomentsProps> = ({
               </FlashAnim>
             </View>
             <View style={{ position: "absolute", bottom: 0, left: -40 }}>
-              <Text style={{ fontSize: itemLabelFontSize, fontWeight: "bold" }}>
+              <Text style={{ color: iconColor, opacity: .9, fontSize: itemLabelFontSize, fontWeight: "bold" }}>
                 Talking points
               </Text>
             </View>

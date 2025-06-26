@@ -1,5 +1,12 @@
 import { useMemo, useRef } from "react";
-import { TouchableOpacity, Text, StyleSheet, View, DimensionValue } from "react-native";
+import {
+  TouchableOpacity,
+  Pressable,
+  Text,
+  StyleSheet,
+  View,
+  DimensionValue,
+} from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -7,27 +14,29 @@ import { useNavigation } from "@react-navigation/native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import LoadedMoments from "../buttons/moments/LoadedMoments";
 import LoadedImages from "../buttons/images/LoadedImages";
- 
-import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
+
 import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
- 
+
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeScrollSoon from "./HomeScrollSoon";
 
 interface SelectedFriendHomeProps {
-  borderRadius: DimensionValue,
+  borderRadius: DimensionValue;
   borderColor: string;
 }
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
- 
   borderRadius = 20,
   borderColor = "transparent",
 }) => {
   const navigation = useNavigation();
-  const { themeStyleSpinners, manualGradientColors, themeStyles, appFontStyles } =
-    useGlobalStyle(); 
+  const {
+    themeStyleSpinners,
+    manualGradientColors,
+    themeStyles,
+    appFontStyles,
+  } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
 
   const spacerAroundCalendar = 10;
@@ -37,53 +46,66 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     friendLoaded,
     friendDashboardData,
     isPending,
-    isLoading, 
+    isLoading,
     loadingNewFriend,
   } = useSelectedFriend();
-
 
   const DOUBLE_PRESS_DELAY = 300;
 
   const lastPress = useRef(0);
   const pressTimeout = useRef(null);
 
-    const SELECTED_FRIEND_CARD_HEIGHT = 130;
-    // const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
-     const SELECTED_FRIEND_CARD_MARGIN_TOP = 214;
-    const SELECTED_FRIEND_CARD_PADDING = 10; 
+  const SELECTED_FRIEND_CARD_HEIGHT = 130;
+  // const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
+  const SELECTED_FRIEND_CARD_MARGIN_TOP = 202;
+  const SELECTED_FRIEND_CARD_PADDING = 10;
 
-
-
-    const renderSuggestedHello = useMemo(() => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <>
-        <Text
-          style={{
-            fontFamily: "Poppins-Regular",
-            fontSize: appFontStyles.welcomeText.fontSize - 4,
-            color: manualGradientColors.homeDarkColor, // ✅ fixed: `color` not `fontColor`
-          }}
-        >
-          {selectedFriend && friendDashboardData
-            ? "Next suggested hello"
-            : "None"}
-        </Text>
-        <Text style={styles.subtitleText}>
-          {friendDashboardData?.[0]?.future_date_in_words || "No date available"}
-        </Text>
-      </>
-    </TouchableOpacity>
-  );
-}, [onPress, selectedFriend, friendDashboardData, appFontStyles, manualGradientColors, styles]);
-
+  const renderSuggestedHello = useMemo(() => {
+    return (
+      <Pressable onPress={onPress}>
+        <>
+          <Text
+            style={{
+              fontFamily: "Poppins-Regular",
+              fontSize: appFontStyles.welcomeText.fontSize - 4,
+              color: themeStyles.primaryText.color,
+              opacity: 0.9,
+              // color: manualGradientColors.homeDarkColor, // ✅ fixed: `color` not `fontColor`
+            }}
+          >
+            {selectedFriend && friendDashboardData
+              ? "Next suggested hello"
+              : "None"}
+          </Text>
+          <Text
+            style={[
+              styles.subtitleText,
+              themeStyles.primaryText,
+              { opacity: 0.9 },
+            ]}
+          >
+            {friendDashboardData?.[0]?.future_date_in_words ||
+              "No date available"}
+          </Text>
+        </>
+      </Pressable>
+    );
+  }, [
+    onPress,
+    selectedFriend,
+    friendDashboardData,
+    appFontStyles,
+    themeStyles,
+    manualGradientColors,
+    styles,
+  ]);
 
   const navigateToMoments = () => {
     navigation.navigate("Moments");
-  }; 
+  };
 
   const navigateToImages = () => {
-    navigation.navigate("ImageView", {startingIndex: 0});
+    navigation.navigate("ImageView", { startingIndex: 0 });
   };
 
   const navigateToAddMoment = () => {
@@ -94,7 +116,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     navigateToMoments();
   };
 
-  const handleDoublePress = () => { 
+  const handleDoublePress = () => {
     navigateToAddMoment();
   };
 
@@ -116,82 +138,77 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
       <View
         style={[
           styles.container,
-          { 
+          {
             marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
             borderRadius: borderRadius,
             borderColor: borderColor,
             justifyContent: "flex-start",
-            flexDirection: "column", 
+            flexDirection: "column",
+            paddingHorizontal: 4,
           },
         ]}
       >
-        <View style={[{ paddingHorizontal: 10, borderRadius: 20 }]}>
+        <View
+          style={[
+            {
+              overflow: "hidden",
+              padding: 10,
+              backgroundColor:
+                themeStyles.overlayBackgroundColor.backgroundColor,
+              borderRadius: 20,
+            },
+          ]}
+        >
           <View
             style={{
+              borderRadius: 20,
               flexDirection: "row",
               width: "100%",
               alignItems: "center",
               justifyContent: "space-between",
+
               // backgroundColor: 'orange',
-               marginBottom: spacerAroundCalendar,
-              
+              marginBottom: spacerAroundCalendar,
             }}
           >
-            <View style={{flexDirection: 'row'}}> 
-            <MaterialCommunityIcons
-              name="hand-wave-outline"
-              size={20}
-              color={themeStyles.primaryBackground.backgroundColor}
-              style={{ marginBottom: 0 }}
-            />
-            <Text
-              style={[
-                manualGradientColors.homeDarkColor,
-                {
-                
-                  marginLeft: 6,
-                 marginRight: 12,
-                  fontWeight: "bold",
-                },
-              ]}
-            >
-              Past Helloes
-            </Text>
+            <View style={{ flexDirection: "row" }}>
+              <MaterialCommunityIcons
+                name="hand-wave-outline"
+                size={20}
+                color={themeStyles.primaryText.color}
+                style={{ marginBottom: 0 }}
+              />
+              <Text
+                style={[
+                  themeStyles.primaryText,
+                  {
+                    marginLeft: 6,
+                    marginRight: 12,
+                    fontWeight: "bold",
+                  },
+                ]}
+              >
+                Past Helloes
+              </Text>
             </View>
-                      <LabeledArrowButton
-            label="View"
-            opacity={.7}
-            onPress={() => navigation.navigate("Helloes")}
+            <LabeledArrowButton
+              color={themeStyles.primaryText.color}
+              label="View"
+              opacity={0.7}
+              onPress={() => navigation.navigate("Helloes")}
             />
-            
           </View>
           {selectedFriend && (
             <HomeScrollCalendarLights
+              itemColor={themeStyles.primaryText.color}
+              backgroundColor={themeStyles.overlayBackgroundColor.backgroundColor}
               height={70}
               borderRadius={20}
-              borderColor="black"
             />
           )}
-          <View style={{width: '100%', height: 10}}></View>
-          {/* <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              backgroundColor: 'pink',
-              marginTop: spacerAroundCalendar,
-              marginBottom: 10, // place this spacing elsewhere
-            }}
-          >
-            <LabeledArrowButton
-            label="View"
-            onPress={() => navigation.navigate("Helloes")}/>
-
-         
-          </View> */}
+          <View style={{ width: "100%", height: 10 }}></View>
         </View>
-        <View style={{ width: "100%",   height: SELECTED_FRIEND_CARD_HEIGHT }}>
+        <View style={{ width: "100%", height: SELECTED_FRIEND_CARD_HEIGHT }}>
           {isLoading && !friendLoaded && (
             <>
               <View style={styles.loadingWrapper}>
@@ -206,96 +223,63 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           {!loadingNewFriend && friendLoaded && (
             <View
               style={{
+                marginVertical: 6,
                 height: "100%",
+                height: 200,
+                alignItems: 'center',
                 flexDirection: "row",
+              
                 justifyContent: "space-between",
-                borderRadius: borderRadius, 
-               // backgroundColor: 'orange',
+                borderRadius: borderRadius,
+                // backgroundColor: 'orange',
                 padding: SELECTED_FRIEND_CARD_PADDING,
                 width: "100%",
+                backgroundColor:
+                  themeStyles.overlayBackgroundColor.backgroundColor,
+                borderRadius: 20,
               }}
-            > 
-              <View style={styles.textContainer}>
-                {renderSuggestedHello}
-                {/* <TouchableOpacity onPress={onPress}>
-                  <>
-                    <>
-                      <Text
-                        style={[
-                          {
-                            fontFamily: "Poppins-Regular", 
-                            fontSize: appFontStyles.welcomeText.fontSize - 4,
-                            fontColor: manualGradientColors.homeDarkColor,
-                         
-                          },
-                        ]}
-                      >
-                        {selectedFriend && friendDashboardData
-                          ?  
-                            `Next suggested hello`
-                          : "None"}
-                      </Text>
-                    </>
-                    <>
-                      <Text style={styles.subtitleText}>
-                        {friendDashboardData &&
-                        friendDashboardData[0] &&
-                        friendDashboardData[0].future_date_in_words
-                          ? `${friendDashboardData[0].future_date_in_words}`
-                          : "No date available"}
-                      </Text>
-                    </>
-                  </>
-                </TouchableOpacity> */}
-              </View>
+            >
+              <View style={styles.textContainer}>{renderSuggestedHello}</View>
 
               <View
                 style={{
                   borderRadius: 20,
                   height: "100%",
-                  width: '13%',
-                  alignItems: "center",
-                  alignContent: "center",
-                  flexDirection: "column",
-                  justifyContent: "space-between",  
-            
+                  width: "13%", 
+                  flexDirection: "column",  
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
-              >
+              > 
+
                 <LoadedMoments
-                  height={"40%"}  
+                  height={"40%"}
                   iconSize={46}
+                  iconColor={themeStyles.primaryText.color}
                   onPress={onPress}
                   circleColor={"orange"}
                   countTextSize={11}
-                  countColor={
-                    themeAheadOfLoading
-                      ? themeAheadOfLoading.fontColorSecondary
-                      : "orange"
-                  }
+                  countColor={manualGradientColors.homeDarkColor}
                 />
                 <LoadedImages
                   height={"40%"} //ADJUST POSITION HERE
                   iconSize={46}
+                  iconColor={themeStyles.primaryText.color}
                   onPress={navigateToImages}
                   circleColor={"orange"}
                   countTextSize={11}
-                  countColor={
-                    themeAheadOfLoading
-                      ? themeAheadOfLoading.fontColorSecondary
-                      : "orange"
-                  }
-                />
+                  countColor={manualGradientColors.homeDarkColor}
+                /> 
               </View>
             </View>
           )}
         </View>
-        <View
+        {/* <View
           style={{
             zIndex: 30000,
             height: "100%",
             width: "100%",
             marginTop: 10,
-            paddingHorizontal: 10,
           }}
         >
           <HomeScrollSoon
@@ -305,7 +289,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             borderRadius={10}
             borderColor="black"
           />
-        </View> 
+        </View> */}
       </View>
     </View>
   );
@@ -315,20 +299,20 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    flex: 1, 
-    alignContent: "center", 
+    flex: 1,
+    alignContent: "center",
     height: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
     overflow: "hidden",
   },
   textContainer: {
-    zIndex: 5,  
+    zIndex: 5,
     flexDirection: "column",
     width: "70%",
-    flexWrap: 'wrap', 
+    flexWrap: "wrap",
     height: "100%",
-    justifyContent: "flex-start",  
+    justifyContent: "center",
   },
   subtitleText: {
     fontFamily: "Poppins-Regular",

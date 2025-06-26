@@ -46,8 +46,12 @@ const ButtonItemFooterStyle = ({ item, onPress, previewData }) => {
         styles.container,
         {
           height: 'auto',
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: themeStyles.primaryText.color,
+          borderRadius: 30,
           paddingBottom: footerPaddingBottom,
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+         // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          backgroundColor: themeStyles.primaryBackground.backgroundColor,
         },
       ]}
     >

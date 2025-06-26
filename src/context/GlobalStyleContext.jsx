@@ -675,11 +675,14 @@ const crossThemeStyles = StyleSheet.create({
 });
 
 const lightThemeStyles = StyleSheet.create({
-  overlayBackgroundColor: {
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+  // overlayBackgroundColor: {
+  //   backgroundColor: "rgba(0, 0, 0, 0.6)",
+  // },
+    overlayBackgroundColor: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   lighterOverlayBackgroundColor: {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
   },
   primaryText: {
     color: "#121212",

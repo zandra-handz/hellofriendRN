@@ -1,14 +1,8 @@
-import {
-  StyleSheet,
-  Text,
-  View, 
-  Animated,
-  DimensionValue,
-} from "react-native";
+import { StyleSheet, Text, View, Animated, DimensionValue } from "react-native";
 import React, { useCallback } from "react";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext"; 
+import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
-import SoonItemButton from "./SoonItemButton"; 
+import SoonItemButton from "./SoonItemButton";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -38,28 +32,36 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
     useFriendList();
 
 
-    
-const handleDoublePress = useCallback((hello) => {
-  const { id, name } = hello.friend;
-  const selectedFriend = id === null ? null : { id: id, name: name };
 
-  const friend = friendList.find((friend) => friend.id === hello.friend.id);
-  getThemeAheadOfLoading(friend);
-  setFriend(selectedFriend);
-  navigation.navigate("Moments");
-}, [friendList, getThemeAheadOfLoading, setFriend, navigation]);
+    const itemColor = themeStyles.primaryText.color;
+    const elementBackgroundColor = themeStyles.overlayBackgroundColor.backgroundColor;
 
-const handlePress = useCallback((hello) => {
-  const { id, name } = hello.friend;
-  const selectedFriend = id === null ? null : { id: id, name: name };
+  const handleDoublePress = useCallback(
+    (hello) => {
+      const { id, name } = hello.friend;
+      const selectedFriend = id === null ? null : { id: id, name: name };
 
-  const friend = friendList.find((friend) => friend.id === hello.friend.id);
-  getThemeAheadOfLoading(friend);
-  setFriend(selectedFriend); 
-}, [friendList, getThemeAheadOfLoading, setFriend, navigation]);
+      const friend = friendList.find((friend) => friend.id === hello.friend.id);
+      getThemeAheadOfLoading(friend);
+      setFriend(selectedFriend);
+      navigation.navigate("Moments");
+    },
+    [friendList, getThemeAheadOfLoading, setFriend, navigation]
+  );
 
+  const handlePress = useCallback(
+    (hello) => {
+      const { id, name } = hello.friend;
+      const selectedFriend = id === null ? null : { id: id, name: name };
 
-    const renderListItem = useCallback(
+      const friend = friendList.find((friend) => friend.id === hello.friend.id);
+      getThemeAheadOfLoading(friend);
+      setFriend(selectedFriend);
+    },
+    [friendList, getThemeAheadOfLoading, setFriend, navigation]
+  );
+
+  const renderListItem = useCallback(
     ({ item, index }) => (
       <View
         style={{
@@ -70,26 +72,28 @@ const handlePress = useCallback((hello) => {
         }}
       >
         <SoonItemButton
+        textColor={itemColor}
+        backgroundColor={elementBackgroundColor}
           height={"100%"}
           friendName={item.friend_name}
           date={item.future_date_in_words}
           width={"100%"}
           onPress={() => handlePress(item)}
-           onDoublePress={() => handleDoublePress(item)}
+          onDoublePress={() => handleDoublePress(item)}
         />
       </View>
     ),
-    [handlePress]
+    [handlePress, itemColor, elementBackgroundColor]
   );
 
-    const extractItemKey = (item, index) =>
+  const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `upcoming-${index}`;
 
   const renderUpcomingHelloes = () => {
     return (
       <Animated.FlatList
         data={upcomingHelloes.slice(0).slice(startAtIndex)} // skip first
-        //horizontal={true} 
+        //horizontal={true}
         // getItemLayout={(data, index) => ({
         //   length: soonButtonWidth,
         //   offset: soonButtonWidth * index,
@@ -97,10 +101,10 @@ const handlePress = useCallback((hello) => {
         // })}
         renderItem={renderListItem}
         keyExtractor={extractItemKey}
-                    initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={10}
-            removeClippedSubviews={true}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={10}
+        removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
         ListFooterComponent={() => <View style={{ height: 300 }} />}
         //  snapToAlignment="start" // Align items to the top of the list when snapped
@@ -120,8 +124,7 @@ const handlePress = useCallback((hello) => {
           maxHeight: maxHeight,
         },
       ]}
-    > 
-
+    >
       {isLoading && !upcomingHelloes && (
         <View style={styles.loadingWrapper}>
           <LoadingPage

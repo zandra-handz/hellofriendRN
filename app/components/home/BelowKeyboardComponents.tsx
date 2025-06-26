@@ -1,8 +1,8 @@
 import React from "react";
-import { View } from 'react-native'; 
+import { View } from "react-native";
 import HomeButtonUpNext from "./HomeButtonUpNext";
-import HomeScrollCalendarLights from './HomeScrollCalendarLights';
- 
+import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
+
 import HomeFriendItems from "./HomeFriendItems";
 import SelectedFriendHome from "./SelectedFriendHome";
 import Animated, {
@@ -32,18 +32,16 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
       // exiting={SlideOutRight}
       entering={FadeInUp}
       exiting={FadeOutDown}
-              style={[
-          {
-            alignItems: "center",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            flex: 1,
-            paddingTop: 40, 
-          },
-        ]}
+      style={[
+        {
+          alignItems: "center",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          flex: 1,
+          paddingTop: 40,
+        },
+      ]}
     >
-     
-
       <Animated.View
         style={[
           {
@@ -65,7 +63,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           <HomeButtonUpNext
             onPress={onPress}
             borderRadius={10}
-            height={'100%'}
+            height={"100%"}
             borderColor="black"
           />
         )}
@@ -78,28 +76,16 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
               height={"100%"}
             />
             <HomeFriendItems borderRadius={10} height={100} />
-                    {isFriendSelected && (
-                  <HomeScrollCalendarLights
-                    height={"5%"}
-                    borderRadius={40}
-                    borderColor="black"
-                  />
-                )}
+            {isFriendSelected && (
+              <HomeScrollCalendarLights
+                height={"5%"}
+                borderRadius={40}
+                borderColor="black"
+              />
+            )}
           </>
         )}
-        {/* {isFriendSelected && (
-          <HomeScrollSoon
-            height={"100%"}
-            maxHeight={600}
-            borderRadius={10}
-            borderColor="black"
-          />
-        )} */}
-        <View>
-            
-
-                
-        </View>
+        <View></View>
       </Animated.View>
     </Animated.View>
   );

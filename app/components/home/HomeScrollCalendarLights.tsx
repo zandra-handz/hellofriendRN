@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View  } from "react-native";
-import React from 'react';
+import { StyleSheet, Text, View } from "react-native";
+import React, {useCallback } from 'react';
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
  
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -13,7 +13,12 @@ import CalendarLightsDataPrepLayer from "../foranimations/CalendarLightsDataPrep
 
 import LoadingPage from "../appwide/spinner/LoadingPage";
 
+
+
+
 const HomeScrollCalendarLights = ({
+  itemColor, 
+  backgroundColor,
   height,
   borderRadius = 20,
   borderColor = "transparent",
@@ -25,11 +30,21 @@ const HomeScrollCalendarLights = ({
   const { 
     friendListLength,
     themeAheadOfLoading, 
-  } = useFriendList();
-  const { helloesList } = useHelloes(); //useHelloesData();
+  } = useFriendList(); 
 
   const calendarButtonHeight = height / 0.6;
  
+  const RenderCalendarLights = useCallback(
+    () => (
+                    <CalendarLightsDataPrepLayer
+                      daySquareBorderRadius={20}
+                      daySquareBorderColor={itemColor}
+                      opacityMinusAnimation={0.2}
+                      animationColor={themeAheadOfLoading.lightColor}
+                    />
+    ),
+    [friendDashboardData, themeAheadOfLoading, themeStyles, itemColor ]
+  );
 
   return (
     <View
@@ -40,6 +55,7 @@ const HomeScrollCalendarLights = ({
           borderColor: borderColor,
           height: height,
           maxHeight: 100, // not sure why I need to set this to control the height?
+          backgroundColor: 'transparent',
         },
       ]}
     > 
@@ -65,7 +81,7 @@ const HomeScrollCalendarLights = ({
               <Text
                 style={[
                   {
-                    color: themeStyles.genericTextBackground.backgroundColor,
+                    color: itemColor,
                     fontSize: 18,
                   },
                 ]}
@@ -79,19 +95,14 @@ const HomeScrollCalendarLights = ({
             <View
               style={[styles.buttonContainer, { height: calendarButtonHeight }]}
             >
-              {selectedFriend &&
+              {/* {selectedFriend &&
                 friendListLength > 0 &&
                 helloesList &&
-                friendDashboardData && (
-                  <>
-                    <CalendarLightsDataPrepLayer
-                      daySquareBorderRadius={20}
-                      daySquareBorderColor={themeStyles.genericText.color}
-                      opacityMinusAnimation={0.2}
-                      animationColor={themeAheadOfLoading.lightColor}
-                    />
-                  </>
-                )}
+                friendDashboardData && ( */}
+                  {/* <>  */}
+                    <RenderCalendarLights />
+                  {/* </>
+                )} */}
             </View>
           )}
         </>
@@ -139,9 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginLeft: ".6%",
     borderRightWidth: 0.8,
-    paddingTop: 0,
-    backgroundColor: "transparent",
-    backgroundColor: "rgba(41, 41, 41, 0.1)",
+    paddingTop: 0, 
   },
   satelliteText: {
     fontSize: 16,

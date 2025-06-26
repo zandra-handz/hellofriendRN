@@ -1,17 +1,15 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import useLocationHours from "@/src/hooks/useLocationHours";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native-gesture-handler";
-const LocationDayAndHrsSelector = ({
+const HoursSelector = ({
+  buttonHightlightColor,
   onDaySelect,
   currentDay,
   daysHrsData,
-  initiallySelectedDay,
-  width = "90%",
-  height = "60%",
-  borderRadius = 20,
+  initiallySelectedDay, 
 }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { fullDays, daysOfWeek, hoursForAllDays, hoursForAllDaysNiceString } =
@@ -69,19 +67,28 @@ const LocationDayAndHrsSelector = ({
     [hoursForAllDays, daysOfWeek, hoursForAllDaysNiceString]
   );
 
-  useMemo(() => {
-    if (currentDay && !initiallySelectedDay) {
-      // console.log(`CURRENT DAY`, currentDay);
-      const index = daysOfWeek.findIndex((day) => day === currentDay);
-      handleDayPress(index);
-      return;
-    }
-  }, [currentDay, initiallySelectedDay]);
+
+  useEffect(() => {
+  if (currentDay && !initiallySelectedDay) {
+    const index = daysOfWeek.findIndex((day) => day === currentDay);
+    handleDayPress(index);
+  }
+}, [currentDay, initiallySelectedDay]);
+
+//this was causing a state set during render/the error message about parent screen location send not being able to render via this trigger because it was happening during render
+  // useMemo(() => {
+  //   if (currentDay && !initiallySelectedDay) {
+  //     // console.log(`CURRENT DAY`, currentDay);
+  //     const index = daysOfWeek.findIndex((day) => day === currentDay);
+  //     handleDayPress(index);
+  //     return;
+  //   }
+  // }, [currentDay, initiallySelectedDay]);
 
   const renderHours = () => {
     if (selectedDay === null) {
       return (
-        <View style={styles.hoursContainer}>
+        <View style={[styles.hoursContainer, {alignItems: 'start'}]}>
           {Object.entries(hoursForAllDays).map(([day, time], index) => (
             <Text
               key={index}
@@ -96,9 +103,20 @@ const LocationDayAndHrsSelector = ({
       const selectedDayName = daysOfWeek[selectedDay];
       return (
         <View style={styles.hoursContainer}>
-          <Text style={[styles.hoursText, themeStyles.genericText]}>
+          <View style={{flexDirection: 'row', paddingVertical: 10, justifyContent: 'start', width: '100%'}}>
+            
+                    <Text style={[appFontStyles.welcomeText, themeStyles.primaryText]}>
+            {fullDays[selectedDay]}
+          </Text>
+          
+          </View>
+            <View style={{flexDirection: 'row', paddingVertical: 10, justifyContent: 'center', width: '100%'}}>
+          <Text style={[appFontStyles.welcomeText, themeStyles.primaryText]}>
             {hoursForAllDays[selectedDayName]}
           </Text>
+          
+              
+            </View>
         </View>
       );
     }
@@ -111,7 +129,9 @@ const LocationDayAndHrsSelector = ({
         style={[
           styles.dayButton,
           selectedDay === index && styles.selectedDayButton,
-          selectedDay === index && themeStyles.genericTextBackground,
+          {backgroundColor: selectedDay === index ? buttonHightlightColor : 'transparent'
+
+          } 
         ]}
         onPress={() => handleDayPress(index)}
       >
@@ -133,7 +153,7 @@ const LocationDayAndHrsSelector = ({
     <View
       style={[
         styles.container,
-        themeStyles.genericTextBackgroundShadeTwo,
+        themeStyles.genericTextBackground,
         { flexShrink: 1 },
       ]}
     >
@@ -148,31 +168,40 @@ const LocationDayAndHrsSelector = ({
       >
         <View
           style={{
+                paddingVertical: 10, 
             flexDirection: "row",
             height: "100%",
-            alignItems: "center",
-            marginVertical: 10,
+            alignItems: "center", 
+            justifyContent: 'space-between', 
+            height: 'auto',
+        
+          
           }}
         >
           <Text
             style={[
               styles.title,
               themeStyles.primaryText,
-              appFontStyles.welcomeText,
+              // appFontStyles.welcomeText,
             ]}
           >
-            Hours
+            {/* Hours */}
+            Switch
+            {/* {fullDays[selectedDay]} */}
           </Text>
           <View
             style={{
-              marginHorizontal: 20,
+              
+              marginHorizontal: 10,
               height: "100%",
               width: "100%",
-              alignItems: "center",
+              alignItems: "center",  
             }}
           >
             <FlatList
+            contentContainerStyle={{height: '100%', alignItems: 'center' }} // need alignItems here to put this in the center and align with 'Hours' text that shares the flex row with it
               horizontal={true}
+              showsHorizontalScrollIndicator={false}
               data={daysOfWeek}
               renderItem={renderDayButton}
               ListFooterComponent={<View style={{ width: 300 }}></View>}
@@ -180,30 +209,7 @@ const LocationDayAndHrsSelector = ({
           </View>
         </View>
       </View>
-
-      {/* <View style={styles.daysContainer}>
-        {daysOfWeek.map((day, index) => (
-          <Pressable
-            key={index}
-            style={[
-              styles.dayButton,
-              selectedDay === index && styles.selectedDayButton,
-              selectedDay === index && themeStyles.genericTextBackground,
-            ]}
-            onPress={() => handleDayPress(index)}
-          >
-            <Text
-              style={[
-                styles.dayText,
-                themeStyles.genericText,
-                selectedDay === index && styles.selectedDayText,
-              ]}
-            >
-              {day}
-            </Text>
-          </Pressable>
-        ))}
-      </View> */}
+ 
       {renderHours()}
     </View>
   );
@@ -243,11 +249,12 @@ const styles = StyleSheet.create({
   hoursContainer: {
     height: "auto",
     width: "100%",
+    alignItems: 'center',
     //  alignItems: "center",
   },
   hoursText: {
-    fontSize: 14,
+    fontSize: 15,
   },
 });
 
-export default LocationDayAndHrsSelector;
+export default HoursSelector;

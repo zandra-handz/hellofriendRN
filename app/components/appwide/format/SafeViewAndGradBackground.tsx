@@ -54,7 +54,7 @@ const isSettingsScreen = useMemo(() =>
 const isHomeScreen = useMemo(() => route.name === "hellofriend", [route.name]);
 
 const useFriendColors = useMemo(() => 
-  selectedFriend && !isSettingsScreen && !isHomeScreen, 
+  selectedFriend && !isSettingsScreen, // && !isHomeScreen, 
 [selectedFriend, isSettingsScreen, isHomeScreen]);
 
   return (
