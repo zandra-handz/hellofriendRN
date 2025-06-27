@@ -1,8 +1,9 @@
 import React, {
   createContext,
   useContext,
-  useState,
-  useEffect,
+  useState, 
+  useCallback,
+  useMemo,
   useRef,
 } from "react";
 import { 
@@ -15,8 +16,6 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "./UserContext";  
 
- 
-
 const LocationsContext = createContext([]);
 
 export const useLocations = () => {
@@ -24,17 +23,10 @@ export const useLocations = () => {
 };
 
 export const LocationsProvider = ({ children }) => {
-  const [faveLocationList, setFaveLocationList] = useState([]);
-  const [savedLocationList, setSavedLocationList] = useState([]);
-  const [validatedLocationList, setValidatedLocationList] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [loadingSelectedLocation, setLoadingSelectedLocation] = useState(false);
-  const [additionalDetails, setAdditionalDetails] = useState(null);
-  const [loadingAdditionalDetails, setLoadingAdditionalDetails] =
-    useState(false);
+  const [faveLocationList, setFaveLocationList] = useState([]); 
+ 
   const { user, isAuthenticated, isInitializing } = useUser();
-  const queryClient = useQueryClient();
-  const [isDeletingLocation, setIsDeletingLocation] = useState(false);
+  const queryClient = useQueryClient(); 
   const [stickToLocation, setStickToLocation] = useState(null); 
 
   const timeoutRef = useRef(null);
@@ -45,62 +37,28 @@ export const LocationsProvider = ({ children }) => {
     data: locationList,
     isLoading,
     isFetching,
-    isSuccess,
-    isError,
+    isSuccess, 
   } = useQuery({
     queryKey: ["locationList", user?.id],
     queryFn: () => fetchAllLocations(),
     enabled: !!(isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 20, // 20 minutes
-    onSuccess: (data) => {
-      //console.log('Raw data in RQ onSuccess:', data);
-      if (!data) {
-        console.log("No data received");
-        return;
-      }
-
-      const { validated, saved } = data.reduce(
-        (acc, location) => {
-          if (location.validatedAddress) {
-            acc.validated.push(location); // Add to validated list
-          }
-          if (!String(location.id).startsWith("temp")) {
-            acc.saved.push(location); // Add to saved list
-          }
-          return acc;
-        },
-        { validated: [], saved: [] }
-      );
-
-      setValidatedLocationList(validated);
-      setSavedLocationList(saved);
-
-      queryClient.setQueryData(["locationCategories", user?.id], () => {
-        const uniqueCategories = Array.from(
-          new Set(
-            data
-              .map((loc) => loc.category)
-              .filter((category) => category !== null && category !== " ")
-          )
-        );
-
-        return ["All", ...uniqueCategories];
-      });
-    },
+    
+ 
   });
  
   //MIGHT NEED TO REFETCH THIS DATA IF NO LONGER IN CACHE
-  useEffect(() => {
-    if (locationList) {
-      queryClient.setQueryData(["locationCategories", user?.id], (oldData) => { 
-        const locationCategories = locationList.map((loc) => loc.category);
+  // useEffect(() => {
+  //   if (locationList) {
+  //     queryClient.setQueryData(["locationCategories", user?.id], (oldData) => { 
+  //       const locationCategories = locationList.map((loc) => loc.category);
  
-        const uniqueCategories = Array.from(new Set(locationCategories));
+  //       const uniqueCategories = Array.from(new Set(locationCategories));
  
-        return uniqueCategories;
-      });
-    }
-  }, [locationList]);
+  //       return uniqueCategories;
+  //     });
+  //   }
+  // }, [locationList]);
 
   const locationsIsFetching = isFetching;
 
@@ -254,11 +212,8 @@ export const LocationsProvider = ({ children }) => {
   });
 
   const handleDeleteLocation = async (locationId) => {
-    setIsDeletingLocation(true);
-    const locationData = {
-      id: locationId,
-      user: user.id,
-    };
+    // setIsDeletingLocation(true);
+ 
 
     //console.log('Payload before sending:', locationData);
 
@@ -267,29 +222,8 @@ export const LocationsProvider = ({ children }) => {
     } catch (error) {
       console.error("Error saving location:", error);
     }
-    setIsDeletingLocation(false);
-  };
- 
-
-  // const sortLocationList = () => {
-  //   if (locationList && locationList !== undefined) {
-  //     const { validated, saved } = locationList.reduce(
-  //       (acc, location) => {
-  //         if (location.validatedAddress) {
-  //           acc.validated.push(location); // Add to validated list
-  //         }
-  //         if (!String(location.id).startsWith("temp")) {
-  //           acc.saved.push(location); // Add to saved list
-  //         }
-  //         return acc;
-  //       },
-  //       { validated: [], saved: [] }
-  //     );
-
-  //     setValidatedLocationList(validated);
-  //     setSavedLocationList(saved);
-  //   }
-  // };
+    // setIsDeletingLocation(false);
+  }; 
 
   const useFetchAdditionalDetails = (location, enabled) => {
     return useQuery({
@@ -301,74 +235,83 @@ export const LocationsProvider = ({ children }) => {
           address: encodeURIComponent(`${location.title} ${location.address}`),
           lat: parseFloat(location.latitude),
           lon: parseFloat(location.longitude),
-        }),
-
-      onError: (err) => {
-        console.error("Error fetching location details:", err);
-      },
+        }), 
     });
   };
 
+ 
 
-  const getCachedAdditionalDetails = (locationId) => {
-    return queryClient.getQueryData([
-    "additionalDetails",
-    locationId,
-  ])};
 
-  const clearAdditionalDetails = () => {
-    setAdditionalDetails(null);
-  };
+const getCachedAdditionalDetails = useCallback(
+  (locationId) => {
+    return queryClient.getQueryData(["additionalDetails", locationId]);
+  },
+  [queryClient]
+);
 
-  const addLocationToFaves = (locationId) => {
+const addLocationToFaves = useCallback(
+  (locationId) => {
     const location = locationList.find((loc) => loc.id === locationId);
     if (location && !faveLocationList.some((loc) => loc.id === locationId)) {
       setFaveLocationList([...faveLocationList, location]);
     }
-  };
+  },
+  [locationList, faveLocationList, setFaveLocationList]
+);
 
-  const removeLocationFromFaves = (locationId) => {
-    const updatedFaves = faveLocationList.filter(
-      (loc) => loc.id !== locationId
-    );
+const removeLocationFromFaves = useCallback(
+  (locationId) => {
+    const updatedFaves = faveLocationList.filter((loc) => loc.id !== locationId);
     setFaveLocationList(updatedFaves);
-  };
+  },
+  [faveLocationList, setFaveLocationList]
+);
+
+
+  const contextValue = useMemo(() => ({
+  locationList,
+  locationsIsFetching,
+  isFetching,
+  locationListIsSuccess,
+  handleCreateLocation,
+  createLocationMutation,
+  handleUpdateLocation,
+  updateLocationMutation,
+  handleDeleteLocation,
+  deleteLocationMutation, 
+  isLoading, 
+  addLocationToFaves,
+  removeLocationFromFaves,  
+  useFetchAdditionalDetails, 
+  accessLocationListCacheData,
+  stickToLocation,
+  setStickToLocation,
+  getCachedAdditionalDetails,
+}), [
+  locationList,
+  //locationsIsFetching,
+  isFetching,
+  locationListIsSuccess,
+  handleCreateLocation,
+  createLocationMutation,
+  handleUpdateLocation,
+  updateLocationMutation,
+  handleDeleteLocation,
+  deleteLocationMutation, 
+  isLoading, 
+  addLocationToFaves,
+  removeLocationFromFaves,  
+  useFetchAdditionalDetails, 
+  accessLocationListCacheData,
+  stickToLocation,
+  setStickToLocation,
+  getCachedAdditionalDetails,
+]);
+
 
   return (
-    <LocationsContext.Provider
-      value={{
-        locationList, 
-        locationsIsFetching,
-        isFetching,
-        locationListIsSuccess,
-        //sortLocationList,
-        handleCreateLocation,
-        createLocationMutation,
-        handleUpdateLocation,
-        updateLocationMutation, 
-        handleDeleteLocation,
-        deleteLocationMutation,
-        isDeletingLocation,
-        isLoading,
-        //validatedLocationList,
-        savedLocationList,
-        selectedLocation,
-        additionalDetails,
-        setSelectedLocation,
-        addLocationToFaves, 
-        removeLocationFromFaves, 
-        loadingSelectedLocation,
-        loadingAdditionalDetails,
-        useFetchAdditionalDetails,
-        clearAdditionalDetails,
-
-        accessLocationListCacheData,
-        stickToLocation,
-        setStickToLocation,
-        getCachedAdditionalDetails,
-      }}
-    >
-      {children}
-    </LocationsContext.Provider>
+     <LocationsContext.Provider value={contextValue}>
+    {children}
+  </LocationsContext.Provider>
   );
 };

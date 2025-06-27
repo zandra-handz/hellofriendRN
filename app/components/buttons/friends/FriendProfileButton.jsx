@@ -8,8 +8,9 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../../appwide/spinner/LoadingPage";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-const FriendProfileButton = () => {
+const FriendProfileButton = ({onPress}) => {
   const {
+   
     selectedFriend,
     friendLoaded,
     friendDashboardData,
@@ -121,7 +122,8 @@ const FriendProfileButton = () => {
 
       {!loadingNewFriend && (
         <TouchableOpacity
-          onPress={() => navigation.navigate("FriendFocus")}
+         onPress={onPress}
+         // onPress={onPress? onPress : () => navigation.navigate("FriendFocus")}
           style={{ flex: 1 }}
         >
           <View>

@@ -143,10 +143,12 @@ const navigation = useNavigation();
             onPress: () => console.log("Cancel Pressed"),
             style: "cancel",
           },
-           {
-            text: "Settings",
-            onPress: () => navigation.navigate('FriendFocus'),
-          },
+
+          // screen doesn't exist anymore, settings are now in a modal on home screen, should program to open after navigating or provide a new input field here
+          //  {
+          //   text: "Settings",
+          //   onPress: () => navigation.navigate('FriendFocus'),
+          // },
           {
             text: "Send",
             onPress: () =>

@@ -592,47 +592,56 @@ export const removeFromFriendFavesLocations = async (data) => {
     }
 };
 
-export const updateFriendFavesColorThemeSetting = async (userId, friendId, savedDarkColor, savedLightColor) => { 
-     
-    try {
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/faves/`, {
-            
-            friend: friendId,
-            user: userId, 
-            dark_color: savedDarkColor,
-            light_color: savedLightColor,
-            use_friend_color_theme: true,
-        });
-        console.log('API PATCH CALL updateFriendFavesColorThemeSetting');
-        return response.data;
-    } catch (error) {
-        console.error('Error updating color theme setting for friend:', error);
-        throw error;
-    }
+export const updateFriendFavesColorThemeSetting = async ({
+  userId,
+  friendId,
+  darkColor,
+  lightColor,
+  manualTheme,
+}) => {
+  try {
+    console.log(`dark color`, darkColor);
+    console.log(lightColor);
+    const response = await helloFriendApiClient.patch(`/friends/${friendId}/faves/`, {
+      friend: friendId,
+      user: userId,
+      dark_color: darkColor,
+      light_color: lightColor,
+      use_friend_color_theme: manualTheme,
+    });
+
+    console.log("API PATCH CALL updateFriendFavesColorThemeSetting");
+    return response.data;
+  } catch (error) {
+    console.error("Error updating color theme setting for friend:", error);
+    throw error;
+  }
 };
 
-export const resetFriendFavesColorThemeToDefault = async (userId, friendId, setting) => {
+
+//redundant
+// export const resetFriendFavesColorThemeToDefault = async (userId, friendId, setting) => {
 
     
-    try {
-        const response = await helloFriendApiClient.patch(`/friends/${friendId}/faves/`, {
+//     try {
+//         const response = await helloFriendApiClient.patch(`/friends/${friendId}/faves/`, {
             
-            friend: friendId,
-            user: userId, 
-            dark_color: '#4caf50',
-            light_color: '#a0f143',
-            font_color: '#000000',
-            font_color_secondary: '#000000',
-            use_friend_color_theme: false,
-        });
+//             friend: friendId,
+//             user: userId, 
+//             dark_color: '#4caf50',
+//             light_color: '#a0f143',
+//             font_color: '#000000',
+//             font_color_secondary: '#000000',
+//             use_friend_color_theme: false,
+//         });
         
-        console.log(`API PATCH CALL resetFriendFavesColorThemeToDefault`);
-        return response.data;
-    } catch (error) {
-        console.error('Error updating color theme setting for friend:', error);
-        throw error;
-    }
-};
+//         console.log(`API PATCH CALL resetFriendFavesColorThemeToDefault`);
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error updating color theme setting for friend:', error);
+//         throw error;
+//     }
+// };
 
 //Don't think this is in use anymore, it was a dumb option
 export const updateFriendFavesColorThemeGradientDirection = async (userId, friendId, setting) => {

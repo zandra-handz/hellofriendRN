@@ -17,6 +17,7 @@ export const useHelloes = () => {
   return useContext(HelloesContext);
 };
 
+ 
 export const HelloesProvider = ({ children }) => {
   const { refetchUpcomingHelleos } = useUpcomingHelloes();
   const queryClient = useQueryClient();
@@ -321,28 +322,43 @@ export const HelloesProvider = ({ children }) => {
     }
   }, [helloesList]);
 
-  return (
-    <HelloesContext.Provider
-      value={{
-        helloesList,
-        isFetching,
-        flattenHelloes,
-        //inPersonHelloes,
-        helloesIsFetching,
-        helloesIsLoading,
-        helloesIsSuccess,
-        helloesIsError,
-        createHelloMutation,
-        handleCreateHello,
-        helloesListMonthYear,
-        latestHelloDate,
-        earliestHelloDate,
-        monthsInRange,
-        handleDeleteHelloRQuery,
-        deleteHelloMutation,
-      }}
-    >
-      {children}
-    </HelloesContext.Provider>
-  );
+const memoizedValue = useMemo(() => ({
+  helloesList,
+  isFetching,
+  flattenHelloes,
+  helloesIsFetching,
+  helloesIsLoading,
+  helloesIsSuccess,
+  helloesIsError,
+  createHelloMutation,
+  handleCreateHello,
+  helloesListMonthYear,
+  latestHelloDate,
+  earliestHelloDate,
+  monthsInRange,
+  handleDeleteHelloRQuery,
+  deleteHelloMutation,
+}), [
+  helloesList,
+  isFetching,
+  flattenHelloes,
+  helloesIsFetching,
+  helloesIsLoading,
+  helloesIsSuccess,
+  helloesIsError,
+  createHelloMutation,
+  handleCreateHello,
+  helloesListMonthYear,
+  latestHelloDate,
+  earliestHelloDate,
+  monthsInRange,
+  handleDeleteHelloRQuery,
+  deleteHelloMutation,
+]);
+
+return (
+  <HelloesContext.Provider value={memoizedValue}>
+    {children}
+  </HelloesContext.Provider>
+);
 };

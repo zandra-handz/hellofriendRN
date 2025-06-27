@@ -10,6 +10,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
+import FriendSettingsModal from "./FriendSettingsModal";
 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
@@ -33,6 +34,8 @@ const HelloFriendFooter = () => {
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
+    useState(false);
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -119,6 +122,17 @@ const HelloFriendFooter = () => {
     [themeStyles]
   );
 
+
+  
+  const RenderFriendProfileButton = useCallback(
+    () => (
+<FriendProfileButton onPress={() => setFriendSettingsModalVisible(true)}
+      
+      />
+    ),
+    [themeStyles, selectedFriend]
+  );
+
   const RenderAboutAppButton = useCallback(
     () => (
       <FooterButtonIconVersion
@@ -137,15 +151,17 @@ const HelloFriendFooter = () => {
   );
 
   return (
-    <GradientBackground useFriendColors={!!selectedFriend} additionalStyles={[
-          styles.container,
-          {
-            height: footerHeight,
-            paddingBottom: footerPaddingBottom,
-            opacity: .94,
-          
-          },
-        ]}>
+    <GradientBackground
+      useFriendColors={!!selectedFriend}
+      additionalStyles={[
+        styles.container,
+        {
+          height: footerHeight,
+          paddingBottom: footerPaddingBottom,
+          opacity: 0.94,
+        },
+      ]}
+    >
       <View
         style={[
           styles.container,
@@ -174,7 +190,7 @@ const HelloFriendFooter = () => {
         <View style={[styles.divider, themeStyles.divider]} />
         <>
           <View style={styles.section}>
-            <FriendProfileButton />
+            <RenderFriendProfileButton />
           </View>
         </>
 
@@ -202,6 +218,15 @@ const HelloFriendFooter = () => {
         </View>
       )}
 
+      {friendSettingsModalVisible && !!(selectedFriend) && (
+        <View>
+          <FriendSettingsModal
+            isVisible={friendSettingsModalVisible}
+            closeModal={() => setFriendSettingsModalVisible(false)}
+          />
+        </View>
+      )}
+
       {aboutModalVisible && (
         <View>
           <AboutAppModal
@@ -225,7 +250,6 @@ const HelloFriendFooter = () => {
 
 const styles = StyleSheet.create({
   container: {
-    
     flexDirection: "row",
     width: "100%",
     position: "absolute",

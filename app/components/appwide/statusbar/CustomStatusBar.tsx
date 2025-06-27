@@ -15,7 +15,7 @@ const CustomStatusBar = () => {
 const manualDarkMode = settings?.manual_dark_mode;
 
 const color = useMemo(() => {
-    console.log('custom status bar use memo triggered by settings');
+    // console.log('custom status bar use memo triggered by settings');
   if (manualDarkMode === true) return 'light';
   if (manualDarkMode === false) return 'dark';
   return colorScheme === 'dark' ? 'light' : 'dark';

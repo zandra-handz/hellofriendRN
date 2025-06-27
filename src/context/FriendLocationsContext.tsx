@@ -4,6 +4,7 @@ import React, {
   useState,
   useRef,
   useMemo,
+  useCallback,
 } from "react";
 
 import { useUser } from "./UserContext";
@@ -25,7 +26,7 @@ export const useFriendLocationsContext = () =>
   useContext(FriendLocationsContext);
 
 export const FriendLocationsProvider = ({ children }) => {
-  const { user } = useUser();
+  const { user, isAuthenticated } = useUser();
 
   const { selectedFriend, friendFavesData, setFriendFavesData } =
     useSelectedFriend();
@@ -94,20 +95,23 @@ export const FriendLocationsProvider = ({ children }) => {
     },
   });
 
-  const handleAddToFaves = async (friendId, locationId) => {
-    const favoriteLocationData = {
-      friendId: friendId,
-      userId: user.id,
-      locationId: locationId,
-    };
+const handleAddToFaves = useCallback(async (friendId, locationId) => {
 
-    try {
-      await addToFavesMutation.mutateAsync(favoriteLocationData);
-      setStickToLocation(locationId);
-    } catch (error) {
-      console.error("Error adding location to friend faves: ", error);
-    }
-  };
+    if (!user?.id) {
+    console.warn("No user logged in - cannot add to favorites");
+    return;
+  }
+
+  const favoriteLocationData = { friendId, userId: user?.id, locationId };
+  try {
+    await addToFavesMutation.mutateAsync(favoriteLocationData);
+    setStickToLocation(locationId);
+  } catch (error) {
+    console.error("Error adding location to friend faves: ", error);
+  }
+}, [addToFavesMutation, user?.id]);
+
+
 
   const removeFromFavesMutation = useMutation({
     mutationFn: (data) => {
@@ -167,20 +171,20 @@ export const FriendLocationsProvider = ({ children }) => {
     },
   });
 
-  const handleRemoveFromFaves = async (friendId, locationId) => {
-    const favoriteLocationData = {
-      friendId: friendId,
-      userId: user.id,
-      locationId: locationId,
-    };
+const handleRemoveFromFaves = useCallback(async (friendId, locationId) => {
+    if (!user?.id) {
+    console.warn("No user logged in - cannot add to favorites");
+    return;
+  }
+  const favoriteLocationData = { friendId, userId: user?.id, locationId };
+  try {
+    await removeFromFavesMutation.mutateAsync(favoriteLocationData);
+    setStickToLocation(locationId);
+  } catch (error) {
+    console.error("Error removing location from friend faves: ", error);
+  }
+}, [removeFromFavesMutation, user?.id]);
 
-    try {
-      await removeFromFavesMutation.mutateAsync(favoriteLocationData);
-      setStickToLocation(locationId);
-    } catch (error) {
-      console.error("Error removing location from friend faves: ", error);
-    }
-  };
   console.log("FRIEND LOCATIONS RERENDERED");
   const makeSplitLists = (list, isFaveCondition, helloCheck) => {
     return list.reduce(

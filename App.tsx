@@ -48,8 +48,7 @@ import ResultMessage from "./app/components/alerts/ResultMessage";
 import FullScreenSpinner from "./app/components/appwide/spinner/FullScreenSpinner";
 
 import ScreenOnboardingFlow from "./app/onboarding/ScreenOnboardingFlow";
-import ScreenHome from "./app/screens/home/ScreenHome";
-import ScreenFriendSettings from "./app/screens/friends/ScreenFriendSettings";
+import ScreenHome from "./app/screens/home/ScreenHome"; 
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
 import ScreenReload from "./app/screens/helloes/ScreenReload";
@@ -392,13 +391,7 @@ export const Layout = () => {
                     headerShown: false,
                   }}
                 />
-                <Stack.Screen
-                  name="FriendFocus"
-                  component={ScreenFriendSettings}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
+   
                 <Stack.Screen
                   name="MomentFocus"
                   component={ScreenMomentFocus}

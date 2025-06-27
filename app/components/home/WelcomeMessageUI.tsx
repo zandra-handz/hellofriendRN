@@ -30,6 +30,8 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
 
     const AnimatedPressable = Animated.createAnimatedComponent(TouchableOpacity);
 
+
+    console.log('WELCOME UI RERENDERED');
   const message = isNewUser
     ? `Hi ${username}! Welcome to hellofriend!`
     : `Hi ${username}! What would you like to do?`; 
@@ -97,4 +99,6 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   );
 };
 
-export default WelcomeMessageUI;
+//export default WelcomeMessageUI;
+
+export default React.memo(WelcomeMessageUI);
