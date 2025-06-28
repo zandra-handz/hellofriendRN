@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useState } from "react";
  
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
@@ -45,13 +45,17 @@ const dayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
   
     // }, [stickToLocation]);
 
+    const [selectedDay, setSelectedDay ] = useState(null);
+
+    
+
 
     const handleNavToSendText = (locationItem) => {
 
           navigation.navigate("LocationSend", {
       location: locationItem,
       weekdayTextData: null,
-      selectedDay: null,
+      selectedDay: selectedDay,
     });
     };
   
@@ -68,7 +72,8 @@ const dayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
         scrollToEdit={stickToLocation}
         scrollToEditCompleted={() => setStickToLocation(null)}
         data={[...faveLocations, ...nonFaveLocations]}
-        children={LocationViewPage}
+        // children={LocationViewPage}
+         children={(props) => <LocationViewPage {...props} selectedDay={selectedDay} setSelectedDay={setSelectedDay} />}
         type={'location'}
         footerData={{ userAddress, friendAddress }}
         onRightPressSecondAction={handleNavToSendText}

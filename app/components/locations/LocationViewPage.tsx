@@ -1,25 +1,35 @@
-import { View, Text, DimensionValue,  Linking } from "react-native";
-import React, { useCallback, useState, useEffect } from "react";
+import { View, Text, DimensionValue } from "react-native";
+import React, { useState } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
-
+import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
-import SlideToAdd from "../foranimations/SlideToAdd";
+
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 
+import LocationNumber from "./LocationNumber";
+import LocationAddress from "./LocationAddress";
 
-import ItemFooter from "../headers/ItemFooter";
- 
 import { useLocations } from "@/src/context/LocationsContext";
 import LocationUtilityTray from "./LocationUtilityTray";
 import SafeViewAndGradientBackground from "../appwide/format/SafeViewAndGradBackground";
- import Animated, { useSharedValue, SharedValue, useAnimatedStyle, useAnimatedReaction, runOnJS } from 'react-native-reanimated';
-import LocationCustomerReviews from "./LocationCustomerReviews"; 
+import Animated, {
+  useSharedValue,
+  SharedValue,
+  useAnimatedStyle,
+  useAnimatedReaction,
+  runOnJS,
+} from "react-native-reanimated";
+import LocationCustomerReviews from "./LocationCustomerReviews";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+
+import Hours from "./Hours";
+
+
 
 interface LocationPageViewProps {
   item: object;
@@ -32,8 +42,6 @@ interface LocationPageViewProps {
   closeModal: () => void;
 }
 
-
-
 const LocationViewPage: React.FC<LocationPageViewProps> = ({
   item,
   test,
@@ -42,98 +50,97 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   height,
   currentIndexValue,
   cardScaleValue,
+  selectedDay,
+  setSelectedDay,
   openModal,
   closeModal,
 }) => {
-
-
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   const { useFetchAdditionalDetails } = useLocations();
 
-
-  const { faveLocations, nonFaveLocations } = useFriendLocationsContext();
+  const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
+    const currentDay = getCurrentDay();
   const navigation = useNavigation();
-const [ currentIndex, setCurrentIndex ] = useState();
-
-useAnimatedReaction(
-  () => currentIndexValue.value,
-  (newIndex, prevIndex) => {
-    if (newIndex !== prevIndex) {
-      runOnJS(setCurrentIndex)(newIndex);
-    }
-  },
-  []
-);
+  const [currentIndex, setCurrentIndex] = useState();
 
 
-const cardScaleAnimation = useAnimatedStyle(() => ({
-  transform: [{ scale: cardScaleValue.value }]
-})); 
+    
 
-  
-  // if (!item) {
-  //   return (
-  //       <View
-  //     style={{
-  //       gap: 20,
-  //       justifyContent: "center",
-  //       alignItems: "center",
-  //       backgroundColor: "transparent",
-  //       padding: 4,
-  //       borderWidth: 0,
-  //       //   height: ITEM_HEIGHT,
-  //       width: width,
-  //     }}
-  //   >
-  //     <View
-  //       style={{
-  //         backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-  //         padding: 10, 
-  //         paddingVertical: 30,
-  //         justifyContent: 'center',
-  //         borderRadius: 10,
-  //         alignItems: 'center',
-  //         marginTop: '10%',
-  //         width: "100%", 
-  //         zIndex: 1,
-  //         overflow: "hidden",
-  //       }}
-  //     >
-      
-  //       <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}>Oops! Nothing here</Text>
-  //     </View>
-  //     </View>
-  //   )
-  // }
-const formatDate = (timestamp: number) => {
-  const date = new Date(timestamp * 1000);
-  return date.toLocaleDateString();
-};
 
-// console.log('LOCATION VIEW SCREEN RERENDERED', item.id);
+  useAnimatedReaction(
+    () => currentIndexValue.value,
+    (newIndex, prevIndex) => {
+      if (newIndex !== prevIndex) {
+        runOnJS(setCurrentIndex)(newIndex);
+      }
+    },
+    []
+  );
+
+  const cardScaleAnimation = useAnimatedStyle(() => ({
+    transform: [{ scale: cardScaleValue.value }],
+  }));
+
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleDateString();
+  };
+
+  // console.log('LOCATION VIEW SCREEN RERENDERED', item.id);
   const { data: additionalDetails } = useFetchAdditionalDetails(
     item,
     Math.abs(index - currentIndex) <= 1
   );
 
-const handleGetDirections = useCallback(() => {
-  if (item && item?.address) {
-    Linking.openURL(
-      `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.address)}`
+
+
+  const RenderOpenStatus = () => { 
+    let isOpenNow;
+    isOpenNow = checkIfOpen(additionalDetails?.hours);
+
+    let color = isOpenNow === true ? manualGradientColors.lightColor : isOpenNow === false ? 'red' : themeStyles.primaryText.color;
+
+    return (
+      <> 
+      {additionalDetails && additionalDetails?.hours && (
+        
+      <View
+        style={[
+          { 
+            borderWidth: 1.4,
+            borderColor: color,
+        alignItems: 'center',
+            backgroundColor:
+            'transparent',
+              //  themeStyles.primaryText.color,
+
+            width: "auto",
+            width: 80,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            flexShrink: 1,
+            padding: 10,
+            paddingVertical: 6,
+            borderRadius: 10,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            themeStyles.genericText,
+            appFontStyles.subWelcomeText, {  color: color}
+            
+          ]}
+        >
+          {isOpenNow ? `Open` : isOpenNow === false ? `Closed` : ""}
+        </Text>
+      </View>
+      )}
+      </>
     );
-  }
-}, [item]);
+  };
 
-const handleCallLocation = useCallback(() => {
-  if (additionalDetails && additionalDetails?.phone) {
-    Linking.openURL(`tel:${additionalDetails.phone}`);
-  }
-}, [additionalDetails]);
-
- 
-
- 
 
   const handleEditLocation = () => {
     console.log(
@@ -144,6 +151,15 @@ const handleCallLocation = useCallback(() => {
     //   updateExistingMoment: true,
     //   existingMomentObject: item || null,
     // });
+  };
+
+  // const [ selectedDay, setSelectedDay ] = useState(null);
+
+
+  const handleViewDayHrs = (sD, day, hours) => {
+    setSelectedDay(sD); 
+    // console.log('index: ', sD,'day: ', day, "hours: ", hours);
+
   };
 
   const handleDelete = (item) => {
@@ -162,109 +178,123 @@ const handleCallLocation = useCallback(() => {
   };
 
   return (
-    <SafeViewAndGradientBackground  style={{ flex: 1, borderRadius: 40 }}>
-      
-    <Animated.View
- 
-      style={
-        
-        [cardScaleAnimation, {
-        gap: 20,
-        
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "transparent",
-        padding: 4,
-        paddingBottom: 0,
-        borderWidth: 0,
-        //   height: ITEM_HEIGHT,
-        width: width,
-      }]}
-    >
-      <View
-        style={{
-          backgroundColor: themeStyles.primaryBackground.backgroundColor,
-          padding: 10,
-          borderRadius: 10,
-          borderRadius: 40,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-          overflow: "hidden",
-        }}
-      > 
+    <SafeViewAndGradientBackground style={{ flex: 1, borderRadius: 40 }}>
+      <Animated.View
+        style={[
+          cardScaleAnimation,
+          {
+            gap: 20,
+
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "transparent",
+            padding: 4,
+            paddingBottom: 0,
+            borderWidth: 0,
+            //   height: ITEM_HEIGHT,
+            width: width,
+          },
+        ]}
+      >
         <View
           style={{
-            flexDirection: "column",
-            flexWrap: "wrap",
+            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            padding: 10,
+            borderRadius: 10,
+            borderRadius: 40,
             width: "100%",
-            paddingHorizontal: 0,
-            paddingTop: 20,
+            height: "100%",
+            zIndex: 1,
+            overflow: "hidden",
           }}
         >
-          <Text
-            numberOfLines={2}
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.welcomeText,
-              { flexDirection: "row", width: "90%", flexWrap: "wrap" },
-            ]}
+          <View
+            style={{
+              flexDirection: "column",
+              flexWrap: "wrap",
+              width: "100%",
+              paddingHorizontal: 0,
+              paddingTop: 20,
+            }}
           >
-            {item.title}
-          </Text>
+            <Text
+              numberOfLines={2}
+              style={[
+                themeStyles.primaryText,
+                appFontStyles.welcomeText,
+                { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+              ]}
+            >
+              {item.title}
+            </Text>
 
-          <Text
-            numberOfLines={1}
-            onPress={handleGetDirections}
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.subWelcomeText,
-              { flexDirection: "row", width: "90%", flexWrap: "wrap" },
-            ]}
-          >
-            {" "}
-            {item.address}
-          </Text>
-        </View>
-        <LocationUtilityTray location={item} openEditModal={openModal} closeEditModal={closeModal}/>
-        {additionalDetails && (
-          <>
-                    <Text
-            numberOfLines={2}
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.welcomeText,
-              { flexDirection: "row", width: "90%", flexWrap: "wrap" },
-            ]}
-          >
-            Reviews
-          </Text> 
-            <View style={{marginVertical: 10}}>
-            <LocationCustomerReviews formatDate={formatDate} reviews={additionalDetails.reviews} />
-            
-              
-            </View>
-            <View style={{ flexDirection: "row", width: "100%" }}>
-              <MaterialCommunityIcons
-                name="phone"
-                size={26}
-                color={themeStyles.primaryText.color}
-              />
+            <LocationAddress address={item?.address} />
+          </View>
+          <LocationNumber phoneNumber={additionalDetails?.phone} />
+
+
+          <View style={{ }}>
+            <RenderOpenStatus />
+          </View>
+          <LocationUtilityTray
+            location={item}
+            openEditModal={openModal}
+            closeEditModal={closeModal}
+          />
+          {additionalDetails && (
+            <>
               <Text
-                numberOfLines={1}
-                onPress={handleCallLocation}
+                numberOfLines={2}
                 style={[
                   themeStyles.primaryText,
-                  appFontStyles.subWelcomeText,
+                  appFontStyles.welcomeText,
                   { flexDirection: "row", width: "90%", flexWrap: "wrap" },
                 ]}
               >
-                {" "}
-                {additionalDetails?.phone}
+                Reviews
               </Text>
-            </View>
+              <View style={{ marginVertical: 10 }}>
+                <LocationCustomerReviews
+                  formatDate={formatDate}
+                  reviews={additionalDetails.reviews}
+                />
+              </View>
 
-            {/* 
+              <Text
+                numberOfLines={2}
+                style={[
+                  themeStyles.primaryText,
+                  appFontStyles.welcomeText,
+                  { flexDirection: "row", width: "90%", flexWrap: "wrap" },
+                ]}
+              >
+                Hours
+              </Text>
+               <View style={{ marginVertical: 10 }}>
+                {additionalDetails?.hours?.weekday_text && (
+                  
+              <Hours
+                buttonHightlightColor={manualGradientColors.lightColor}
+                currentDay={currentDay}
+                onDaySelect={handleViewDayHrs}
+                daysHrsData={additionalDetails?.hours?.weekday_text || null}
+                initiallySelectedDay={null}
+              />
+              
+                   )}
+
+                                   {!additionalDetails?.hours?.weekday_text && (
+                  
+              <Text style={[appFontStyles.subWelcomeText, themeStyles.primaryText]}>
+                No hours available
+              </Text>
+              
+                   )}
+               </View>
+
+
+
+              {/* 
             {additionalDetails && additionalDetails?.hours && (
               <View style={{marginTop: 70}}>
               <LocationHoursOfOperation
@@ -276,25 +306,23 @@ const handleCallLocation = useCallback(() => {
                 
               </View>
             )} */}
-          </>
-        )}
-        {/* <EditPencilOutlineSvg
+            </>
+          )}
+          {/* <EditPencilOutlineSvg
           height={20}
           width={20}
           onPress={handleEditLocation}
           color={themeStyles.genericText.color}
         /> */}
-        {/* <SlideToDeleteHeader
+          {/* <SlideToDeleteHeader
           itemToDelete={item}
           onPress={handleDelete}
           sliderWidth={"100%"}
           targetIcon={TrashOutlineSvg}
           sliderTextColor={themeStyles.primaryText.color}
         /> */}
-      </View>
-         {/* <ItemFooter location={item} /> */}
-   </Animated.View>
-
+        </View>
+      </Animated.View>
     </SafeViewAndGradientBackground>
   );
 };

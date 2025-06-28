@@ -187,7 +187,7 @@ const navigation = useNavigation();
         additionalDetails={additionalDetails}
         handleGetDirections={handleGetDirections}
         handleSendText={handleSendText}
-        initiallySelectedDay={null}
+        initiallySelectedDay={selectedDay}
       />
 
       <ButtonItemFooterStyle

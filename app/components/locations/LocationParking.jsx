@@ -84,7 +84,7 @@ const LocationParking = ({
     };
   }
   return {
-    scoreLabel: "No data",
+    scoreLabel: "Set parking score",
     scoreColor: themeStyles.genericText.color,
     hasNotes: false,
   };

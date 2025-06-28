@@ -4,6 +4,10 @@ import React, { useMemo, useState } from "react";
 const useLocationHours = (daysHrsData) => {
 
 
+  if (!daysHrsData) {
+    return;
+  }
+
   const removeZeroMinutes = (time) => {
     return time.replace(":00", "");
   };
