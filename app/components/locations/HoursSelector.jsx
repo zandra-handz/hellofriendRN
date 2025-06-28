@@ -14,9 +14,10 @@ const HoursSelector = ({
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { fullDays, daysOfWeek, hoursForAllDays, hoursForAllDaysNiceString } =
     useLocationHours(daysHrsData);
-  const [selectedDay, setSelectedDay] = useState(initiallySelectedDay); // Change to null to handle "All Days"
+    // console.log('init day in hours selector: ', initiallySelectedDay);
+  const [selectedDay, setSelectedDay] = useState(initiallySelectedDay?.index); // Change to null to handle "All Days"
 
-  const currentDayIndex = daysOfWeek.findIndex((day) => day === currentDay);
+  const currentDayIndex = currentDay.index;
 
   const pluralFullDayCurrent =
     currentDayIndex === 0 ? "" : `${fullDays[currentDayIndex]}s`;
@@ -69,11 +70,18 @@ const HoursSelector = ({
 
 
   useEffect(() => {
-  if (currentDay && !initiallySelectedDay) {
-    const index = daysOfWeek.findIndex((day) => day === currentDay);
-    handleDayPress(index);
+  if (currentDay && !initiallySelectedDay) { 
+    handleDayPress(currentDay?.index || null);
   }
 }, [currentDay, initiallySelectedDay]);
+
+
+  useEffect(() => {
+  if (initiallySelectedDay) { 
+    // console.log(`in use effect`, initiallySelectedDay);
+    handleDayPress(initiallySelectedDay || null);
+  }
+}, [initiallySelectedDay]);
 
 //this was causing a state set during render/the error message about parent screen location send not being able to render via this trigger because it was happening during render
   // useMemo(() => {

@@ -9,13 +9,16 @@ import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyl
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
-
+import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 const ScreenLocationSend = () => {
   const route = useRoute();
   const { user } = useUser();
   const location = route.params?.location ?? null;
   const username = route.params?.username ?? "A Hellofriend user";
   const selectedDay = route.params?.selectedDay ?? null;
+const { getCurrentDay } = useLocationDetailFunctions();
+const currentDay = getCurrentDay();
+  console.log(`screen location send`, selectedDay);
   const { getCachedAdditionalDetails } = useLocations();
   const { friendDashboardData, selectedFriend } = useSelectedFriend();
   //weekdayTextData is coming from LocationHoursOfOperation component
@@ -162,6 +165,7 @@ const navigation = useNavigation();
   };
 
   const handleDaySelect = (day, hours) => {
+    console.log('send screen day select');
     setMessageData((prev) => ({
       ...prev,
       daySelected: day,
@@ -179,6 +183,7 @@ const navigation = useNavigation();
   return (
     <SafeViewAndGradientBackground style={{ flex: 1 }}>
       <LocationInviteBody
+      currentDay={currentDay}
         messageData={messageData}
         finalMessage={FinalMessage}
         handleDaySelect={handleDaySelect}

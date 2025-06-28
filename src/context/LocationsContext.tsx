@@ -47,6 +47,9 @@ export const LocationsProvider = ({ children }) => {
  
   });
  
+
+
+  
   //MIGHT NEED TO REFETCH THIS DATA IF NO LONGER IN CACHE
   // useEffect(() => {
   //   if (locationList) {

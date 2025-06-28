@@ -1,5 +1,5 @@
 import { View, Text, DimensionValue } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
@@ -26,10 +26,7 @@ import Animated, {
 import LocationCustomerReviews from "./LocationCustomerReviews";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-
 import Hours from "./Hours";
-
-
 
 interface LocationPageViewProps {
   item: object;
@@ -50,23 +47,21 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   height,
   currentIndexValue,
   cardScaleValue,
-  selectedDay,
-  setSelectedDay,
+  currentDay, // object with .index and .day
+  selectedDay, 
+  handleSelectedDay,
   openModal,
   closeModal,
 }) => {
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   const { useFetchAdditionalDetails } = useLocations();
+ 
 
-  const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
-    const currentDay = getCurrentDay();
+  const { checkIfOpen } = useLocationDetailFunctions();
+
   const navigation = useNavigation();
   const [currentIndex, setCurrentIndex] = useState();
-
-
-    
-
 
   useAnimatedReaction(
     () => currentIndexValue.value,
@@ -93,54 +88,54 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
     Math.abs(index - currentIndex) <= 1
   );
 
-
-
-  const RenderOpenStatus = () => { 
+  const RenderOpenStatus = () => {
     let isOpenNow;
     isOpenNow = checkIfOpen(additionalDetails?.hours);
 
-    let color = isOpenNow === true ? manualGradientColors.lightColor : isOpenNow === false ? 'red' : themeStyles.primaryText.color;
+    let color =
+      isOpenNow === true
+        ? manualGradientColors.lightColor
+        : isOpenNow === false
+          ? "red"
+          : themeStyles.primaryText.color;
 
     return (
-      <> 
-      {additionalDetails && additionalDetails?.hours && (
-        
-      <View
-        style={[
-          { 
-            borderWidth: 1.4,
-            borderColor: color,
-        alignItems: 'center',
-            backgroundColor:
-            'transparent',
-              //  themeStyles.primaryText.color,
+      <>
+        {additionalDetails && additionalDetails?.hours && (
+          <View
+            style={[
+              {
+                borderWidth: 1.4,
+                borderColor: color,
+                alignItems: "center",
+                backgroundColor: "transparent",
+                //  themeStyles.primaryText.color,
 
-            width: "auto",
-            width: 80,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            flexShrink: 1,
-            padding: 10,
-            paddingVertical: 6,
-            borderRadius: 10,
-          },
-        ]}
-      >
-        <Text
-          style={[
-            themeStyles.genericText,
-            appFontStyles.subWelcomeText, {  color: color}
-            
-          ]}
-        >
-          {isOpenNow ? `Open` : isOpenNow === false ? `Closed` : ""}
-        </Text>
-      </View>
-      )}
+                width: "auto",
+                width: 80,
+                flexDirection: "row",
+                justifyContent: "center",
+                flexShrink: 1,
+                padding: 10,
+                paddingVertical: 6,
+                borderRadius: 10,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                themeStyles.genericText,
+                appFontStyles.subWelcomeText,
+                { color: color },
+              ]}
+            >
+              {isOpenNow ? `Open` : isOpenNow === false ? `Closed` : ""}
+            </Text>
+          </View>
+        )}
       </>
     );
   };
-
 
   const handleEditLocation = () => {
     console.log(
@@ -155,11 +150,16 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
 
   // const [ selectedDay, setSelectedDay ] = useState(null);
 
+  const [rerenderCards, setRerenderCards ] = useState(null);
 
-  const handleViewDayHrs = (sD, day, hours) => {
-    setSelectedDay(sD); 
-    // console.log('index: ', sD,'day: ', day, "hours: ", hours);
+  const handleViewDayHrs = (sD) => {
 
+    // console.log('function passed in to onDaySelect,', sD);
+    
+    handleSelectedDay(sD);
+    setRerenderCards(sD);
+
+    // console.log('index: ', sD.index,'day: ', sD.day);
   };
 
   const handleDelete = (item) => {
@@ -177,6 +177,27 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
     // }
   };
 
+ 
+const renderHoursComponent = useCallback(() => {
+  if (!additionalDetails?.hours?.weekday_text) return null;
+// console.log('rerendering cards!', rerenderCards);
+  return (
+    <Hours
+      buttonHightlightColor={manualGradientColors.lightColor}
+      currentDay={currentDay}
+      onDaySelect={handleViewDayHrs}
+      daysHrsData={additionalDetails.hours.weekday_text}
+      initiallySelectedDay={ selectedDay?.current || null}
+    />
+  );
+}, [
+  additionalDetails?.hours?.weekday_text,
+  manualGradientColors.lightColor,
+  currentDay,
+  handleViewDayHrs,
+  selectedDay?.current,
+ 
+]);
   return (
     <SafeViewAndGradientBackground style={{ flex: 1, borderRadius: 40 }}>
       <Animated.View
@@ -204,7 +225,7 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
             borderRadius: 40,
             width: "100%",
             height: "100%",
-            zIndex: 1,
+            zandleviewday: 1,
             overflow: "hidden",
           }}
         >
@@ -232,8 +253,7 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
           </View>
           <LocationNumber phoneNumber={additionalDetails?.phone} />
 
-
-          <View style={{ }}>
+          <View style={{}}>
             <RenderOpenStatus />
           </View>
           <LocationUtilityTray
@@ -270,29 +290,20 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
               >
                 Hours
               </Text>
-               <View style={{ marginVertical: 10 }}>
-                {additionalDetails?.hours?.weekday_text && (
-                  
-              <Hours
-                buttonHightlightColor={manualGradientColors.lightColor}
-                currentDay={currentDay}
-                onDaySelect={handleViewDayHrs}
-                daysHrsData={additionalDetails?.hours?.weekday_text || null}
-                initiallySelectedDay={null}
-              />
-              
-                   )}
+              <View style={{ marginVertical: 10 }}>
+                {renderHoursComponent()}
 
-                                   {!additionalDetails?.hours?.weekday_text && (
-                  
-              <Text style={[appFontStyles.subWelcomeText, themeStyles.primaryText]}>
-                No hours available
-              </Text>
-              
-                   )}
-               </View>
-
-
+                {!additionalDetails?.hours?.weekday_text && (
+                  <Text
+                    style={[
+                      appFontStyles.subWelcomeText,
+                      themeStyles.primaryText,
+                    ]}
+                  >
+                    No hours available
+                  </Text>
+                )}
+              </View>
 
               {/* 
             {additionalDetails && additionalDetails?.hours && (

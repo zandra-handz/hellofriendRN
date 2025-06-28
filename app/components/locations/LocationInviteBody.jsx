@@ -20,6 +20,7 @@ import HoursSelector from "./HoursSelector";
 // weekday data passed from LocationHoursOfOperation to ScreenLocationSend to here
 const LocationInviteBody = ({
   messageData, 
+  currentDay,
   finalMessage,
   handleSetUserMessage,
   handleDaySelect,
@@ -39,7 +40,7 @@ const LocationInviteBody = ({
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  const { checkIfOpen, getCurrentDay } = useLocationDetailFunctions();
+  const { checkIfOpen } = useLocationDetailFunctions();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -97,9 +98,7 @@ const LocationInviteBody = ({
     );
   };
 
-
-
-  const currentDay = getCurrentDay();
+ 
 
  
   return (
@@ -167,7 +166,7 @@ const LocationInviteBody = ({
                 currentDay={currentDay}
                 onDaySelect={handleDaySelect}
                 daysHrsData={additionalDetails?.hours?.weekday_text}
-                initiallySelectedDay={initiallySelectedDay}
+                initiallySelectedDay={initiallySelectedDay.index}
               />
             </>
           )}

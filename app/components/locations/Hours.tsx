@@ -4,84 +4,84 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import useLocationHours from "@/src/hooks/useLocationHours";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native-gesture-handler";
+import { init } from "@sentry/react-native";
 
 
 // need to wrap this component in {additionalDetails?.hours?.weekday_text && (
 const Hours = ({
   buttonHightlightColor,
-  onDaySelect,
-  currentDay,
+  onDaySelect, // this sets selectedDay
+  currentDay, 
+  //selectedDay,
+  
   daysHrsData,
   initiallySelectedDay, 
 }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { fullDays, daysOfWeek, hoursForAllDays, hoursForAllDaysNiceString } =
-    useLocationHours(daysHrsData);
-  const [selectedDay, setSelectedDay] = useState(initiallySelectedDay); // Change to null to handle "All Days"
+    useLocationHours(daysHrsData); 
+  const [selectedDay, setSelectedDay] = useState(initiallySelectedDay || currentDay || null);  // Change to null to handle "All Days"
+  
+  // const pluralFullDayCurrent =
+  //   currentDayIndex === 0 ? "" : `${fullDays[currentDayIndex]}s`;
+  // const hoursForDayCurrent =
+  //   currentDayIndex === 0
+  //     ? hoursForAllDaysNiceString
+  //     : hoursForAllDays[daysOfWeek[currentDayIndex]];
 
-  const currentDayIndex = daysOfWeek.findIndex((day) => day === currentDay);
- 
-
-  const pluralFullDayCurrent =
-    currentDayIndex === 0 ? "" : `${fullDays[currentDayIndex]}s`;
-  const hoursForDayCurrent =
-    currentDayIndex === 0
-      ? hoursForAllDaysNiceString
-      : hoursForAllDays[daysOfWeek[currentDayIndex]];
-
-  useFocusEffect(
-    useCallback(() => {
-      if (
-        currentDayIndex &&
-        pluralFullDayCurrent &&
-        hoursForDayCurrent &&
-        !initiallySelectedDay
-      ) {
-        // const index = daysOfWeek.findIndex((day) => day === currentDay);
-        // handleDayPress(currentDayIndex);
-        setSelectedDay(currentDayIndex);
-        onDaySelect(currentDayIndex, pluralFullDayCurrent, hoursForDayCurrent);
-      }
-    }, [
-      currentDayIndex,
-      pluralFullDayCurrent,
-      hoursForDayCurrent,
-      initiallySelectedDay,
-      daysOfWeek,
-      handleDayPress,
-    ])
-  );
 
   const handleDayPress = useCallback(
 
 
     (dayIndex) => {
 
-       console.log(dayIndex);
+      // console.log(dayIndex);
       if (dayIndex === 0) {
         setSelectedDay(null);
       } else {
         setSelectedDay(dayIndex);
       }
-      const selectedDay = dayIndex;
-      const pluralFullDay = dayIndex === 0 ? "" : `${fullDays[selectedDay]}s`;
+      // const selectedDay = dayIndex;
+      // const pluralFullDay = dayIndex === 0 ? "" : `${fullDays[selectedDay]}s`;
 
-      const hoursForDay =
-        dayIndex === 0
-          ? hoursForAllDaysNiceString
-          : hoursForAllDays[daysOfWeek[dayIndex]];
-      onDaySelect(dayIndex, pluralFullDay, hoursForDay);
+      // const hoursForDay =
+      //   dayIndex === 0
+      //     ? hoursForAllDaysNiceString
+      //     : hoursForAllDays[daysOfWeek[dayIndex]];
+
+
+
+
+        let dayObject = {};
+        dayObject = {'day': daysOfWeek[dayIndex], 'index': dayIndex === 0 ? null : dayIndex};
+
+ 
+ 
+      onDaySelect(dayObject); //, pluralFullDay, hoursForDay);
     },
     [hoursForAllDays, fullDays, daysOfWeek, hoursForAllDaysNiceString]
   );
 
 
+  useFocusEffect(
+    useCallback(() => {
+      // console.log('FOCUS EFFECT'); 
+
+      setSelectedDay(initiallySelectedDay.index);
+        onDaySelect(initiallySelectedDay); 
+    }, [  
+      initiallySelectedDay, 
+      handleDayPress,
+    ])
+  );
+
+
   useEffect(() => {
-  if (currentDay && !initiallySelectedDay) {
-    const index = daysOfWeek.findIndex((day) => day === currentDay);
-    handleDayPress(index);
+  if (currentDay && selectedDay === undefined) { 
+    console.log('SETTING CARD WITH CURENT');
+    handleDayPress(currentDay.index);
   }
-}, [currentDay, initiallySelectedDay]);
+}, [currentDay, selectedDay]);
 
 //this was causing a state set during render/the error message about parent screen location send not being able to render via this trigger because it was happening during render
   // useMemo(() => {
@@ -194,7 +194,7 @@ const Hours = ({
             ]}
           >
             {/* Hours */}
-            Switch
+            Switch:
             {/* {fullDays[selectedDay]} */}
           </Text>
           <View
