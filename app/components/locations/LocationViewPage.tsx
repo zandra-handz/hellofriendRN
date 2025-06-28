@@ -199,7 +199,7 @@ const renderHoursComponent = useCallback(() => {
  
 ]);
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1, borderRadius: 40 }}>
+    // <SafeViewAndGradientBackground style={{ flex: 1, borderRadius: 40 }}>
       <Animated.View
         style={[
           cardScaleAnimation,
@@ -334,7 +334,7 @@ const renderHoursComponent = useCallback(() => {
         /> */}
         </View>
       </Animated.View>
-    </SafeViewAndGradientBackground>
+    // </SafeViewAndGradientBackground>
   );
 };
 

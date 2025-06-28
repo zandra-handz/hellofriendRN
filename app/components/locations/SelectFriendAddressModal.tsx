@@ -19,8 +19,8 @@ const SelectFriendAddressModal: React.FC<Props> = ({ isVisible, closeModal, addr
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
   
 
-  const {
-    addressMenu,
+  const { 
+    friendAddresses,
     defaultAddress,
     updateFriendDefaultAddress,
     createFriendAddress,
@@ -32,7 +32,7 @@ const SelectFriendAddressModal: React.FC<Props> = ({ isVisible, closeModal, addr
 
       const handleCheckIfExistingAndSelect = (address) => {
     setIsExistingAddress(false); //to clear
-    const isExisting = addressMenu.find(
+    const isExisting = friendAddresses.find(
       (menuAddress) =>
         menuAddress.address === address.address || menuAddress.id === address.id
     );
@@ -72,7 +72,7 @@ const SelectFriendAddressModal: React.FC<Props> = ({ isVisible, closeModal, addr
 
           <DualLocationSearcher
           onPress={handleAddressSelect}
-          locationListDrilledOnce={addressMenu}/>
+          locationListDrilledOnce={friendAddresses}/>
  
           </View>
         } 

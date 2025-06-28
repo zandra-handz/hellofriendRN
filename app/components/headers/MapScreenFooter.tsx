@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 // app state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -7,23 +8,19 @@ import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 // app components
-import AboutAppModal from "./AboutAppModal";
-import ReportIssueModal from "./ReportIssueModal";
-import UserSettingsModal from "./UserSettingsModal.";
-import FriendSettingsModal from "./FriendSettingsModal";
+import AboutAppModal from "./AboutAppModal"; 
+import UserSettingsModal from "./UserSettingsModal."; 
 
 // app display/templates
-import FooterButtonIconVersion from "./FooterButtonIconVersion";
-
+import FooterButtonIconVersion from "./FooterButtonIconVersion"; 
 import ButtonData from "../buttons/scaffolding/ButtonData";
 import { useNavigationState } from "@react-navigation/native";
-
-import FriendProfileButton from "../buttons/friends/FriendProfileButton";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+import SetAddressesModal from "./SetAddressesModal";  
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
+import FilterLocationsModal from "./FilterLocationsModal";
 
-const HelloFriendFooter = () => {
+const MapScreenFooter = ({userAddress, setUserAddress, friendAddress, setFriendAddress}) => {
   const navigationState = useNavigationState((state) => state);
   const { onSignOut } = useUser();
   const currentRouteName = navigationState.routes[navigationState.index]?.name;
@@ -34,14 +31,48 @@ const HelloFriendFooter = () => {
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-  const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
-    useState(false);
+  const [addressesModalVisible, setAddressesModalVisible] = useState(false);
+    const [filterModalVisible, setFilterModalVisible] = useState(false);
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
+ 
+    useFocusEffect(
+    useCallback(() => {
 
+        console.log(userAddress?.address);
+        console.log(friendAddress?.address);
+      if (userAddress?.address === "No address selected" || friendAddress?.address === "No address selected") {
+
+Alert.alert(
+        "Warning!",
+        `Some features will not be available to you unless both addresses are set.`,
+        [
+          {
+            text: "Got it",
+            onPress: () => {},
+            style: "cancel",
+          },
+          {
+            text: "Open address settings",
+            onPress: () => setAddressesModalVisible(true),
+          },
+        ]
+      );
+
+
+
+      }
+
+    }, [userAddress.address, friendAddress.address]));
+
+
+  const handleTestAlert = () => {
+   console.log('removed');
+
+  };
   // buttons rendered in callbacks, all using the same template except for the friend profile button
   const RenderSignOutButton = useCallback(
     () => (
@@ -65,27 +96,27 @@ const HelloFriendFooter = () => {
     [themeStyles]
   );
 
-  const RenderDeselectButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        confirmationRequired={true}
-        confirmationTitle={"Just to be sure"}
-        confirmationMessage={"Deselect friend?"}
-        // label="Deselect"
-        label="Home"
-        icon={
-          <MaterialCommunityIcons
-            // name={"keyboard-backspace"}
-            name={"home-outline"}
-            size={footerIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        onPress={() => deselectFriend()}
-      />
-    ),
-    [themeStyles]
-  );
+//   const RenderDeselectButton = useCallback(
+//     () => (
+//       <FooterButtonIconVersion
+//         confirmationRequired={true}
+//         confirmationTitle={"Just to be sure"}
+//         confirmationMessage={"Deselect friend?"}
+//         // label="Deselect"
+//         label="Home"
+//         icon={
+//           <MaterialCommunityIcons
+//             // name={"keyboard-backspace"}
+//             name={"home-outline"}
+//             size={footerIconSize}
+//             color={themeStyles.footerIcon.color}
+//           />
+//         }
+//         onPress={() => deselectFriend()}
+//       />
+//     ),
+//     [themeStyles]
+//   );
 
   const RenderSettingsButton = useCallback(
     () => (
@@ -105,32 +136,40 @@ const HelloFriendFooter = () => {
     [themeStyles]
   );
 
-  const RenderReportIssueButton = useCallback(
+  const RenderAddressesButton = useCallback(
     () => (
       <FooterButtonIconVersion
-        label="Report"
+        label="Addresses"
         icon={
-          <MaterialCommunityIcons
-            name={"bug-outline"}
+          <MaterialIcons
+            name={"location-pin"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
+            //  name={"app-settings-alt"}
             size={footerIconSize}
             color={themeStyles.footerIcon.color}
           />
         }
-        onPress={() => setReportModalVisible(true)}
+        onPress={() => setAddressesModalVisible(true)}
       />
     ),
     [themeStyles]
   );
 
-
-  
-  const RenderFriendProfileButton = useCallback(
+  const RenderFilterButton = useCallback(
     () => (
-<FriendProfileButton onPress={() => setFriendSettingsModalVisible(true)}
-      
+      <FooterButtonIconVersion
+        label="Filter"
+        icon={
+          <MaterialCommunityIcons
+            name={"filter"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
+            //  name={"app-settings-alt"}
+            size={footerIconSize}
+            color={themeStyles.footerIcon.color}
+          />
+        }
+        onPress={handleTestAlert}
       />
     ),
-    [themeStyles, selectedFriend]
+    [themeStyles]
   );
 
   const RenderAboutAppButton = useCallback(
@@ -172,41 +211,37 @@ const HelloFriendFooter = () => {
           },
         ]}
       >
-        <View style={styles.section}>
-          {!selectedFriend ? <RenderSignOutButton /> : <RenderDeselectButton />}
-        </View>
         {/* <View style={styles.section}>
-            <ButtonData />
-          </View>
-       */}
+          {!selectedFriend ? <RenderSignOutButton /> : <RenderDeselectButton />}
+        </View> 
 
-        <View style={[styles.divider, themeStyles.divider]} />
-        <>
+        <View style={[styles.divider, themeStyles.divider]} /> */}
+        {/* <>
           <View style={styles.section}>
             <RenderSettingsButton />
           </View>
-        </>
+        </> */}
 
         <View style={[styles.divider, themeStyles.divider]} />
         <>
           <View style={styles.section}>
-            <RenderFriendProfileButton />
+            <RenderAddressesButton />
           </View>
         </>
 
         <View style={[styles.divider, themeStyles.divider]} />
         <>
           <View style={styles.section}>
-            <RenderReportIssueButton />
+            <RenderFilterButton />
           </View>
         </>
 
-        <View style={[styles.divider, themeStyles.divider]} />
+        {/* <View style={[styles.divider, themeStyles.divider]} />
         <>
           <View style={styles.section}>
             <RenderAboutAppButton />
           </View>
-        </>
+        </> */}
       </View>
 
       {settingsModalVisible && (
@@ -218,11 +253,15 @@ const HelloFriendFooter = () => {
         </View>
       )}
 
-      {friendSettingsModalVisible && !!(selectedFriend) && (
+      {addressesModalVisible && (
         <View>
-          <FriendSettingsModal
-            isVisible={friendSettingsModalVisible}
-            closeModal={() => setFriendSettingsModalVisible(false)}
+          <SetAddressesModal
+                   userAddress={userAddress}
+                  setUserAddress={setUserAddress}
+                  friendAddress={friendAddress}
+                  setFriendAddress={setFriendAddress}
+            isVisible={addressesModalVisible}
+            closeModal={() => setAddressesModalVisible(false)}
           />
         </View>
       )}
@@ -236,11 +275,11 @@ const HelloFriendFooter = () => {
         </View>
       )}
 
-      {reportModalVisible && (
+      {filterModalVisible && (
         <View>
-          <ReportIssueModal
-            isVisible={reportModalVisible}
-            closeModal={() => setReportModalVisible(false)}
+          <FilterLocationsModal
+            isVisible={filterModalVisible}
+            closeModal={() => setFilterModalVisible(false)}
           />
         </View>
       )}
@@ -267,4 +306,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HelloFriendFooter;
+export default MapScreenFooter;

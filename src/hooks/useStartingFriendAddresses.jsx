@@ -15,8 +15,7 @@ const useStartingFriendAddresses = () => {
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
   const queryClient = useQueryClient();
-  const { showMessage } = useMessage();
-  const [addressMenu, setAddressMenu] = useState([]);
+  const { showMessage } = useMessage(); 
   const [defaultAddress, setDefaultAddress] = useState(null);
 
   const {
@@ -30,38 +29,35 @@ const useStartingFriendAddresses = () => {
     queryFn: () => fetchFriendAddresses(selectedFriend.id),
     enabled: !!selectedFriend,
     staleTime: 1000 * 60 * 20, // 20 minutes
-    onSuccess: (data) => {
-      console.log(friendAddresses);
-    },
+ 
   });
 
   useEffect(() => {
     if (friendAddresses && friendAddresses.length > 0) {
-      const menuItems = friendAddresses.map((address) => {
-        const uniqueKey = `${address.title}-${address.coordinates ? address.coordinates.join(",") : `${address.latitude},${address.longitude}`}`;
+      // const menuItems = friendAddresses.map((address) => {
+      //   const uniqueKey = `${address.title}-${address.coordinates ? address.coordinates.join(",") : `${address.latitude},${address.longitude}`}`;
 
-        return {
-          key: uniqueKey,
-          id: address.id,
-          address: address.address,
-          title: address.title,
-          label: address.title,
-          isDefault: address.is_default,
-          latitude: address.coordinates
-            ? address.coordinates[0]
-            : address.latitude,
-          longitude: address.coordinates
-            ? address.coordinates[1]
-            : address.longitude,
-        };
-      });
+      //   return {
+      //     key: uniqueKey,
+      //     id: address.id,
+      //     address: address.address,
+      //     title: address.title,
+      //     label: address.title,
+      //     isDefault: address.is_default,
+      //     latitude: address.coordinates
+      //       ? address.coordinates[0]
+      //       : address.latitude,
+      //     longitude: address.coordinates
+      //       ? address.coordinates[1]
+      //       : address.longitude,
+      //   };
+      // });
 
       setDefaultAddress(
-        menuItems.find((address) => address.isDefault === true) ||
-          (menuItems.length > 0 ? menuItems[0] : null)
+        friendAddresses.find((address) => address.is_default === true) ||
+          (friendAddresses.length > 0 ? friendAddresses[0] : null)
       );
-
-      setAddressMenu(menuItems);
+ 
     }
   }, [friendAddresses]);
 
@@ -243,7 +239,7 @@ const useStartingFriendAddresses = () => {
 
   return {
     friendAddresses,
-    addressMenu,
+  //  addressMenu,
     defaultAddress,
     createFriendAddress,
     updateFriendDefaultAddress,

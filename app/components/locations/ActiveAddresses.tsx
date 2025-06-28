@@ -37,7 +37,8 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
 
   const {
     defaultUserAddress,
-    userAddressMenu,
+   
+    userAddresses,
     updateUserDefaultAddress,
     createUserAddress,
     removeUserAddress,
@@ -61,12 +62,12 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
   // });
 
   const handleFriendAddressDefault = () => {
-    if (!friendAddress.isDefault) {
+    if (!friendAddress.is_default) {
       updateFriendDefaultAddress(friendAddress.id);
     }
   };
   const handleUserAddressDefault = () => {
-    if (!userAddress.isDefault) {
+    if (!userAddress.is_default) {
       updateUserDefaultAddress(userAddress.id);
     }
   };
@@ -80,7 +81,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
   };
 
   const handleBookmarkUserAddress = () => {
-    const existingAddress = userAddressMenu.find(
+    const existingAddress = userAddresses.find(
       (address) => address.address === userAddress.address
     );
     if (!existingAddress) {
@@ -144,12 +145,12 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
                 {userAddress?.id?.slice?.(0, 4) !== "temp" && (
                   <MakeAddressDefault
                     onPress={() => handleUserAddressDefault(userAddress.id)}
-                    isDefault={userAddress?.isDefault}
+                    isDefault={userAddress?.is_default}
                   />
                 )}
                 <BookmarkAddress
                   onPress={() => handleBookmarkUserAddress(userAddress)}
-                  isSaved={userAddressMenu.find(
+                  isSaved={userAddresses.find(
                     (address) => address.address === userAddress.address
                   )}
                 />
@@ -169,8 +170,8 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
                         onPress={() =>
                           handleFriendAddressDefault(friendAddress.id)
                         }
-                        isDefault={friendAddress?.isDefault}
-                        disabled={friendAddress?.isDefault}
+                        isDefault={friendAddress?.is_default}
+                        disabled={friendAddress?.is_default}
                       />
                     )}
 

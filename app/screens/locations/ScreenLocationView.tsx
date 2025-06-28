@@ -13,7 +13,7 @@ import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/forma
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import PreAuthSafeViewBackground from "@/app/components/appwide/format/PreAuthSafeViewBackground";
-
+import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 const ScreenLocationView = () => {
   const route = useRoute();
   const startingLocation = route.params?.startingLocation ?? null;
@@ -92,9 +92,14 @@ useEffect(() => {
 
   return (
     // <PreAuthSafeViewAndGradientBackground includeBackgroundOverlay={true}  style={{ flex: 1 }}>
+ 
+    // <PreAuthSafeViewBackground>
 
-    //includeBackgroundOverlay={true}
-    <PreAuthSafeViewBackground>
+
+    <SafeViewAndGradientBackground  style={{ flex: 1 }}>
+
+      
+
       <CarouselSlider
         initialIndex={currentIndex}
         scrollToEdit={stickToLocation}
@@ -114,8 +119,15 @@ useEffect(() => {
         onRightPressSecondAction={handleNavToSendText}
       />
       {/* </PreAuthSafeViewAndGradientBackground> */}
+
+{/* 
     </PreAuthSafeViewBackground>
-    // </SafeViewAndGradientBackground>
+    // </SafeViewAndGradientBackground> */}
+
+
+    
+    </SafeViewAndGradientBackground>
+
   );
 };
 

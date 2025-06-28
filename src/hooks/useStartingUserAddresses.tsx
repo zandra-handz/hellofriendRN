@@ -10,7 +10,7 @@ import {
 } from "@/src/calls/api";
 import { useMessage } from "../context/MessageContext";
 
-import useCurrentLocation from "../hooks/useCurrentLocation";
+import useCurrentLocation from "./useCurrentLocation";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -43,49 +43,47 @@ const useStartingUserAddresses = () => {
     queryFn: () => fetchUserAddresses(),
     enabled: !!(isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 20, // 20 minutes
-    onSuccess: (data) => { 
-    },
+ 
   });
 
   useEffect(() => {
     if (userAddresses && userAddresses.length > 0) {
-      const menuItems = userAddresses.map((address) => {
-        const uniqueKey = `${address.title}-${address.coordinates ? address.coordinates.join(",") : `${address.latitude},${address.longitude}`}`;
+    //  console.log('ogic running after prefetch', userAddresses);
+      // const menuItems = userAddresses.map((address) => {
+      //   const uniqueKey = `${address.title}-${address.coordinates ? address.coordinates.join(",") : `${address.latitude},${address.longitude}`}`;
 
-        return {
-          key: uniqueKey,
-          id: address.id,
-          address: address.address,
-          title: address.title,
-          label: address.title,
-          isDefault: address.is_default,
-          latitude: address.coordinates
-            ? address.coordinates[0]
-            : address.latitude,
-          longitude: address.coordinates
-            ? address.coordinates[1]
-            : address.longitude,
-        };
-      });
+      //   return {
+      //     key: uniqueKey,
+      //     id: address.id,
+      //     address: address.address,
+      //     title: address.title,
+      //     label: address.title,
+      //     isDefault: address.is_default,
+      //     latitude: address.coordinates
+      //       ? address.coordinates[0]
+      //       : address.latitude,
+      //     longitude: address.coordinates
+      //       ? address.coordinates[1]
+      //       : address.longitude,
+      //   };
+      // });
 
-      setUserAddressMenu(menuItems);
+      // setUserAddressMenu(menuItems);
 
       if (currentLocationDetails) {
         setDefaultUserAddress(currentLocationDetails);
         setUsingCurrent(true);
       } else {
-        const defaultAddress = menuItems.find(
-          (address) => address.isDefault === true
+        const defaultAddress = userAddresses.find(
+          (address) => address.is_default === true
         );
 
         if (defaultAddress) {
           setDefaultUserAddress(defaultAddress);
-        } else if (menuItems.length > 0) {
-          // If no default address but there are menu items, set the first one
-          setDefaultUserAddress(menuItems[0]);
-        } else {
-          // If no addresses exist, set to "no address"
-          setDefaultUserAddress(null); // or "no address" if you prefer a string
+        } else if (userAddresses.length > 0) { 
+          setDefaultUserAddress(userAddresses[0]);
+        } else { 
+          setDefaultUserAddress(null); 
         }
       }
     }
@@ -213,8 +211,7 @@ const useStartingUserAddresses = () => {
   };
 
   return {
-    userAddresses,
-    userAddressMenu,
+    userAddresses, 
     defaultUserAddress,
     createUserAddress,
     updateUserDefaultAddress,

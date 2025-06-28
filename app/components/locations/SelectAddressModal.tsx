@@ -25,7 +25,7 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
 
   const {
     usingCurrent,
-    userAddressMenu,
+    userAddresses, 
     defaultUserAddress,
     updateUserDefaultAddress,
     createUserAddress,
@@ -37,7 +37,7 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
 
   const handleCheckIfExistingAndSelect = (address) => {
     setIsExistingAddress(false); //to clear
-    const isExisting = userAddressMenu.find(
+    const isExisting = userAddresses.find(
       (menuAddress) =>
         menuAddress.address === address.address || menuAddress.id === address.id
     );
@@ -78,7 +78,7 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
         <View style={styles.bodyContainer}>
           <DualLocationSearcher
             onPress={handleAddressSelect}
-            locationListDrilledOnce={userAddressMenu}
+            locationListDrilledOnce={userAddresses}
           />
         </View>
       }

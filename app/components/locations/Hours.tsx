@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback  } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import useLocationHours from "@/src/hooks/useLocationHours";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native-gesture-handler";
-import { init } from "@sentry/react-native";
-
-
+ 
 // need to wrap this component in {additionalDetails?.hours?.weekday_text && (
 const Hours = ({
   buttonHightlightColor,
-  onDaySelect, // this sets selectedDay
-  currentDay, 
-  //selectedDay,
+  onDaySelect,  
+  currentDay,  
   
   daysHrsData,
   initiallySelectedDay, 
@@ -22,42 +19,21 @@ const Hours = ({
     useLocationHours(daysHrsData); 
   const [selectedDay, setSelectedDay] = useState(initiallySelectedDay || currentDay || null);  // Change to null to handle "All Days"
   
-  // const pluralFullDayCurrent =
-  //   currentDayIndex === 0 ? "" : `${fullDays[currentDayIndex]}s`;
-  // const hoursForDayCurrent =
-  //   currentDayIndex === 0
-  //     ? hoursForAllDaysNiceString
-  //     : hoursForAllDays[daysOfWeek[currentDayIndex]];
-
+ 
 
   const handleDayPress = useCallback(
 
 
-    (dayIndex) => {
-
-      // console.log(dayIndex);
+    (dayIndex) => { 
       if (dayIndex === 0) {
         setSelectedDay(null);
       } else {
         setSelectedDay(dayIndex);
-      }
-      // const selectedDay = dayIndex;
-      // const pluralFullDay = dayIndex === 0 ? "" : `${fullDays[selectedDay]}s`;
-
-      // const hoursForDay =
-      //   dayIndex === 0
-      //     ? hoursForAllDaysNiceString
-      //     : hoursForAllDays[daysOfWeek[dayIndex]];
-
-
-
-
+      }  
         let dayObject = {};
         dayObject = {'day': daysOfWeek[dayIndex], 'index': dayIndex === 0 ? null : dayIndex};
-
  
- 
-      onDaySelect(dayObject); //, pluralFullDay, hoursForDay);
+      onDaySelect(dayObject);  
     },
     [hoursForAllDays, fullDays, daysOfWeek, hoursForAllDaysNiceString]
   );
@@ -82,53 +58,55 @@ const Hours = ({
     handleDayPress(currentDay.index);
   }
 }, [currentDay, selectedDay]);
+ 
 
-//this was causing a state set during render/the error message about parent screen location send not being able to render via this trigger because it was happening during render
-  // useMemo(() => {
-  //   if (currentDay && !initiallySelectedDay) {
-  //     // console.log(`CURRENT DAY`, currentDay);
-  //     const index = daysOfWeek.findIndex((day) => day === currentDay);
-  //     handleDayPress(index);
-  //     return;
-  //   }
-  // }, [currentDay, initiallySelectedDay]);
 
-  const renderHours = () => {
-    if (selectedDay === null) {
-      return (
-        <View style={[styles.hoursContainer, {alignItems: 'start'}]}>
-          {Object.entries(hoursForAllDays).map(([day, time], index) => (
-            <Text
-              key={index}
-              style={[styles.hoursText, themeStyles.genericText]}
-            >
-              {day}: {time}
-            </Text>
-          ))}
-        </View>
-      );
-    } else {
-      const selectedDayName = daysOfWeek[selectedDay];
-      return (
-        <View style={styles.hoursContainer}>
-          <View style={{flexDirection: 'row', paddingVertical: 10, justifyContent: 'start', width: '100%'}}>
-            
-                    <Text style={[appFontStyles.welcomeText, themeStyles.primaryText]}>
+const renderHours = useCallback(() => {
+  if (selectedDay === null) {
+    return (
+      <View style={[styles.hoursContainer, { alignItems: 'start' }]}>
+        {Object.entries(hoursForAllDays).map(([day, time], index) => (
+          <Text
+            key={index}
+            style={[styles.hoursText, themeStyles.genericText]}
+          >
+            {day}: {time}
+          </Text>
+        ))}
+      </View>
+    );
+  } else {
+    const selectedDayName = daysOfWeek[selectedDay];
+    return (
+      <View style={styles.hoursContainer}>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            justifyContent: 'start',
+            width: '100%',
+          }}
+        >
+          <Text style={[appFontStyles.welcomeText, themeStyles.primaryText]}>
             {fullDays && fullDays[selectedDay]}
           </Text>
-          
-          </View>
-            <View style={{flexDirection: 'row', paddingVertical: 10, justifyContent: 'center', width: '100%'}}>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            justifyContent: 'center',
+            width: '100%',
+          }}
+        >
           <Text style={[appFontStyles.welcomeText, themeStyles.primaryText]}>
             {hoursForAllDays[selectedDayName]}
           </Text>
-          
-              
-            </View>
         </View>
-      );
-    }
-  };
+      </View>
+    );
+  }
+}, [selectedDay, hoursForAllDays, daysOfWeek, fullDays, styles, themeStyles, appFontStyles]);
 
   const renderDayButton = useCallback(
     ({ item, index }) => (

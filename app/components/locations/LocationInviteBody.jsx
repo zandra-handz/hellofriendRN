@@ -1,25 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Linking,
-  Keyboard,
-  Pressable,
-} from "react-native";
+import { View, Text, StyleSheet, Keyboard, Pressable } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import MultilineInputModal from "../headers/MultilineInputModal";
-// import useLocationFunctions from "../hooks/useLocationFunctions"; 
+// import useLocationFunctions from "../hooks/useLocationFunctions";
 import Animated from "react-native-reanimated";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
- 
+
 import HoursSelector from "./HoursSelector";
 
 // weekday data passed from LocationHoursOfOperation to ScreenLocationSend to here
 const LocationInviteBody = ({
-  messageData, 
+  messageData,
   currentDay,
   finalMessage,
   handleSetUserMessage,
@@ -28,14 +21,13 @@ const LocationInviteBody = ({
   additionalDetails,
   location,
   handleGetDirections,
- 
+
   initiallySelectedDay,
-}) => { 
-
+}) => {
   const [multilineInputVisible, setMultilineInputVisible] = useState(false);
- 
 
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles, appContainerStyles, appSpacingStyles, appFontStyles } =
+    useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -56,7 +48,7 @@ const LocationInviteBody = ({
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
-  }, []); 
+  }, []);
 
   const renderOpenStatus = (data) => {
     let isOpenNow;
@@ -98,25 +90,21 @@ const LocationInviteBody = ({
     );
   };
 
- 
-
- 
   return (
-      <Animated.View // taken from the ViewPages to match the spacing/style. could add an animation here I suppose
-          style={[
-            // cardScaleAnimation,
-            {
-              gap: 20,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "transparent",
-              padding: 4,
-              borderWidth: 0, 
-              width: '100%',
-            },
-          ]}
-        > 
-        
+    <Animated.View // taken from the ViewPages to match the spacing/style. could add an animation here I suppose
+      style={[
+        // cardScaleAnimation,
+        {
+          gap: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "transparent",
+          padding: 4,
+          borderWidth: 0,
+          width: "100%",
+        },
+      ]}
+    >
       <View
         style={[
           appContainerStyles.talkingPointCard,
@@ -174,23 +162,28 @@ const LocationInviteBody = ({
             onPress={() => setMultilineInputVisible(true)}
             style={{
               flexDirection: "row",
-              height: 40,
+              height: 'auto',
               borderWidth: StyleSheet.hairlineWidth,
+              padding: 10,
+              borderRadius: 10,
               borderColor: themeAheadOfLoading.lightColor,
               width: "100%",
+              
             }}
           >
+            <MaterialCommunityIcons
+              name={"pencil"}
+              size={appSpacingStyles.modalHeaderIconSize}
+              color={themeStyles.footerIcon.color}
+              style={{marginRight: 10}}
+            />
 
-
-
-            
+            <Text
+              style={[themeStyles.primaryText, appFontStyles.welcomeText, { fontSize: 20}]}
+            >
+              Edit message
+            </Text>
           </Pressable>
-          {/* <View
-            style={[styles.previewContainer]}
-          > 
-          {finalMessage}
-  
-          </View> */}
         </View>
       </View>
       {multilineInputVisible && (
@@ -201,8 +194,7 @@ const LocationInviteBody = ({
           onChangeText={handleSetUserMessage}
         />
       )}
-   
-        </Animated.View>
+    </Animated.View>
   );
 };
 
@@ -211,7 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "space-between",
-  }, 
+  },
   selectFriendContainer: {
     width: "100%",
     justifyContent: "center",
@@ -231,10 +223,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   previewContainer: {
-     padding: 20, 
-     borderRadius: 10,
-    width: '100%',
-    height: 'auto',
+    padding: 20,
+    borderRadius: 10,
+    width: "100%",
+    height: "auto",
     flex: 1,
     flexShrink: 1,
     marginBottom: 44, // temp to keep above button

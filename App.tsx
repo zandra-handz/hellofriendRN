@@ -55,7 +55,7 @@ import ScreenReload from "./app/screens/helloes/ScreenReload";
 import ScreenMoments from "./app/screens/moments/ScreenMoments";
 import ScreenImages from "./app/screens/images/ScreenImages";
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
-import ScreenLocationNav from "./app/screens/locations/ScreenLocationNav";
+// import ScreenLocationNav from "./app/screens/locations/ScreenLocationNav";
 import ScreenLocations from "./app/screens/locations/ScreenLocations";
 import ScreenLocationSearch from "./app/screens/locations/ScreenLocationSearch";
 import ScreenMidpointLocationSearch from "./app/screens/locations/ScreenMidpointLocationSearch";
@@ -490,14 +490,14 @@ export const Layout = () => {
                     headerShown: false,
                   }}
                 />
-                <Stack.Screen
+                {/* <Stack.Screen
                   name="LocationNav"
                   component={ScreenLocationNav}
                   options={{
                     headerMode: "screen",
                     headerShown: false,
                   }}
-                />
+                /> */}
                 <Stack.Screen
                   name="Location"
                   component={ScreenLocation}
