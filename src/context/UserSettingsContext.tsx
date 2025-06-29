@@ -17,8 +17,13 @@ import {
   signinWithoutRefresh,
   signout,
   getCurrentUser,
+  getUserCategories,
   updateUserAccessibilitySettings,
+  createUserCategory,
+  updateUserCategory,
+  deleteUserCategory,
   updateSubscription,
+  getUserSettings,
 } from "../calls/api";
 
 import * as Notifications from "expo-notifications";
@@ -26,6 +31,7 @@ import * as SecureStore from "expo-secure-store";
 import { useGlobalStyle } from "./GlobalStyleContext";
 
 import isEqual from "lodash.isequal";
+import { setUser } from "@sentry/react-native";
 
 interface UserSettings {
   id: number | null;
@@ -56,8 +62,6 @@ export const useUserSettings = (): UserSettingsContextType => {
   return context;
 };
 
-
-
 interface UserSettingsProviderProps {
   children: ReactNode;
 }
@@ -65,7 +69,7 @@ interface UserSettingsProviderProps {
 export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
   children,
 }) => {
-  const { user, isInitializing } = useUser();
+  const { user, isInitializing, isAuthenticated } = useUser();
   console.log("USER SETTINGS CONTEXT");
 
   const [notificationSettings, setNotificationSettings] = useState<
@@ -73,30 +77,57 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
   >({});
   const queryClient = useQueryClient();
 
+  const {
+    data: userSettings,
+    isLoading,
+    isFetching,
+    isSuccess,
+    isError,
+  } = useQuery({
+    queryKey: ["userSettings", user?.id],
+    queryFn: () => getUserSettings(user?.id),
+    enabled: !!(user && user.id && isAuthenticated && !isInitializing),
+    staleTime: 1000 * 60 * 60 * 10, // 10 hours
+    select: (data) => {
+      console.log("Query settled.");
+      if (data) {
+        setSettings(data || {});
+        setUserCategories(data.user_categories || {});
+
+        setNotificationSettings({
+          receive_notifications: user?.receive_notifications || false,
+        });
+      }
+      if (error) {
+        console.error("Settings error:", error);
+      }
+    },
+  });
   const [settings, setSettings] = useState<Record<string, any> | null>(null);
-
-
- 
+  const [userCategories, setUserCategories] = useState<Record<
+    string,
+    any
+  > | null>(null);
 
   // set
-  useEffect(() => {
-    if (isInitializing) {
-      console.log("not setting (is still initializing");
-      return;
-    }
-    if (user?.id) {
-      console.log("setting settings");
+  // useEffect(() => {
+  //   if (isInitializing) {
+  //     console.log("not setting (is still initializing");
+  //     return;
+  //   }
+  //   if (user?.id) {
+  //     console.log("setting settings");
 
-      // POTENTIAL UNNECESSARY RERENDER
-      // should get batched together in React 18+
-      setSettings(user.settings || {});
-      setNotificationSettings({
-        receive_notifications: user.settings?.receive_notifications || false,
-      });
+  //     // POTENTIAL UNNECESSARY RERENDER
+  //     // should get batched together in React 18+
+  //     setSettings(user.settings || {});
+  //     setUserCategories(user.user_categories || {});
 
-    }  
-  }, [user?.id, isInitializing]);
-
+  //     setNotificationSettings({
+  //       receive_notifications: user.settings?.receive_notifications || false,
+  //     });
+  //   }
+  // }, [user?.id, isInitializing]);
 
   // reset
   useEffect(() => {
@@ -109,6 +140,7 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
     } else {
       console.log("user not authenticated");
       setSettings(null); // so as not to trigger consumers
+      setUserCategories(null);
       setNotificationSettings(null); // so as not to trigger consumers
     }
   }, [user?.authenticated, isInitializing]);
@@ -138,6 +170,29 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
   //   receive_notifications: user.settings?.receive_notifications || false,
   // })
 
+  const createNewCategoryMutation = useMutation({
+    mutationFn: (data) => createUserCategory(user?.id, data),
+    onSuccess: (data) => {
+      console.log("New category added:", data);
+
+      // Update local state
+      setUserCategories((prev) => [...prev, data]);
+
+      // Update cached userSettings with logs
+      queryClient.setQueryData(["userSettings", user?.id], (oldData) => {
+        // console.log('Cache before update:', oldData);
+        if (!oldData) return oldData;
+
+        const updatedData = {
+          ...oldData,
+          user_categories: [...(oldData.user_categories || []), data],
+        };
+
+        // console.log('Cache after update:', updatedData);
+        return updatedData;
+      });
+    },
+  });
   const updateSettingsMutation = useMutation({
     mutationFn: (data) =>
       updateUserAccessibilitySettings(user?.id, data.setting),
@@ -155,12 +210,98 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
     },
   });
 
+  const updateCategoryMutation = useMutation({
+    mutationFn: (data) => updateUserCategory(user?.id, data.id, data.updates),
+    onSuccess: (data) => {
+      setUserCategories((prev) => {
+        const updated = prev.map((cat) => (cat.id === data.id ? data : cat));
+
+        return updated;
+      });
+
+      queryClient.setQueryData(["userSettings", user?.id], (oldData) => {
+        console.log("Before updating cached userSettings:", oldData);
+
+        if (!oldData) return oldData;
+
+        const updatedUserSettings = {
+          ...oldData,
+          user_categories: oldData.user_categories.map((cat) =>
+            cat.id === data.id ? data : cat
+          ),
+        };
+
+        console.log("After updating cached userSettings:", updatedUserSettings);
+        return updatedUserSettings;
+      });
+    },
+
+    onError: (error) => {
+      console.error("Update app settings error:", error);
+    },
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: (data) => deleteUserCategory(user?.id, data.id),
+onSuccess: (data) => {
+  // console.log("Deleted category data:", data);
+
+  setUserCategories((prev) =>
+    prev.filter((category) => category.id !== data.id)
+  );
+
+  queryClient.setQueryData(["userSettings", user?.id], (oldData) => {
+    if (!oldData) return oldData;
+
+    const updatedData = {
+      ...oldData,
+      user_categories: oldData.user_categories.filter(
+        (category) => category.id !== data.id
+      ),
+    };
+
+    // Log after updating
+    // console.log("Cache after delete update:", updatedData);
+
+    return updatedData;
+  });
+},
+
+
+    onError: (error) => {
+      console.error("Update app settings error:", error);
+    },
+  });
   const updateSettings = async (newSettings) => {
     try {
       await updateSettingsMutation.mutateAsync({
         // userId: user.user.id, // User ID
         fieldUpdates: newSettings, // Pass newSettings directly as fieldUpdates
       });
+    } catch (error) {
+      console.error("Error updating app settings:", error);
+    }
+  };
+
+  const createNewCategory = async (newCategoryData) => {
+    try {
+      await createNewCategoryMutation.mutateAsync(newCategoryData);
+    } catch (error) {
+      console.error("Error creating new category: ", error);
+    }
+  };
+
+  const updateCategory = async (categoryData) => {
+    try {
+      await updateCategoryMutation.mutateAsync(categoryData);
+    } catch (error) {
+      console.error("Error updating app settings:", error);
+    }
+  };
+
+  const deleteCategory = async (categoryData) => {
+    try {
+      await deleteCategoryMutation.mutateAsync(categoryData);
     } catch (error) {
       console.error("Error updating app settings:", error);
     }
@@ -276,10 +417,19 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
     <UserSettingsContext.Provider
       value={{
         settings,
+        userCategories,
+        createNewCategory,
+        createNewCategoryMutation,
+        updateCategory,
+        updateCategoryMutation,
+
+        deleteCategory,
+        deleteCategoryMutation,
         notificationSettings,
         memoizedSettings,
         updateSettings,
         updateSettingsMutation,
+
         updateNotificationSettings: setNotificationSettings,
       }}
     >

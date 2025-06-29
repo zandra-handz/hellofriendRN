@@ -64,8 +64,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   const { themeAheadOfLoading } = useFriendList();
   const textContainerWidth = "100%";
   const talkingPointNumberOfLines = 2;
-  const cardBorderRadius = 30;
-
+  const cardBorderRadius = 30; 
   // const sendButtonWidth = `${100 - Number(textContainerWidth.slice(0, -1))}%`;
     const sendButtonWidth = 50; // use as right padding for card content too because this button is absolute positioned
 
@@ -227,7 +226,9 @@ const MomentItem: React.FC<MomentItemsProps> = ({
             // style={[themeStyles.genericText, appFontStyles.momentText]}
              style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}
           >
+           ( {momentData && momentData?.user_category_name} )
             {momentData && momentData?.capsule}
+            
           </Text>
         </View>
       </View>

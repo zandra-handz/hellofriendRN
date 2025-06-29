@@ -1,23 +1,26 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native"; 
-  import Reset from "../appwide/button/Reset";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { View, Text, StyleSheet } from "react-native";
+import Reset from "../appwide/button/Reset";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+
 const SectionFriendManagerSettings = () => {
-  const { themeStyles } = useGlobalStyle(); 
+  const { themeStyles } = useGlobalStyle();
 
   return (
-        <View
-          style={{
-            borderTopLeftRadius: 0,
-            borderTopRightRadius: 0,
-            padding: 0,
-            width: "100%",
-            alignSelf: "flex-start",
-          }}
-        >
-                <Reset
+    <View
+      style={{
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+        padding: 0,
+        width: "100%",
+        alignSelf: "flex-start",
+      }}
+    >
+
+      
+      <Reset
         label="Reset all hello dates"
         icon={
           <MaterialCommunityIcons
@@ -25,9 +28,10 @@ const SectionFriendManagerSettings = () => {
             size={20}
             color={themeStyles.primaryText.color}
           />
-        }  
-      />
-          </View>
+        }
+      /> 
+
+    </View>
   );
 };
 

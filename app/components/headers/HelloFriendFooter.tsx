@@ -11,6 +11,7 @@ import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import UserSettingsModal from "./UserSettingsModal.";
 import FriendSettingsModal from "./FriendSettingsModal";
+import CategoriesModal from "./CategoriesModal";
 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
@@ -32,6 +33,7 @@ const HelloFriendFooter = () => {
   const { selectedFriend, deselectFriend } = useSelectedFriend();
 
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
+  const [categoriesModalVisible, setCategoriesModalVisible ] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
@@ -122,11 +124,18 @@ const HelloFriendFooter = () => {
     [themeStyles]
   );
 
-
+const handleCenterButtonToggle = () => {
+  if (selectedFriend) {
+    setFriendSettingsModalVisible(true)
+  } else {
+    setCategoriesModalVisible(true);
+  }
+}
   
   const RenderFriendProfileButton = useCallback(
     () => (
-<FriendProfileButton onPress={() => setFriendSettingsModalVisible(true)}
+
+<FriendProfileButton onPress={() => handleCenterButtonToggle()}
       
       />
     ),
@@ -227,6 +236,15 @@ const HelloFriendFooter = () => {
         </View>
       )}
 
+
+      {categoriesModalVisible && (
+        <View>
+          <CategoriesModal
+            isVisible={categoriesModalVisible}
+            closeModal={() => setCategoriesModalVisible(false)}
+          />
+        </View>
+      )}
       {aboutModalVisible && (
         <View>
           <AboutAppModal

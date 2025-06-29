@@ -18,6 +18,8 @@ import BobblngFlashingIcon from "../buttons/moments/BobblngFlashingIcon";
 import BobbingAnim from "@/app/animations/BobbingAnim";
 import { MaterialIcons } from "@expo/vector-icons";
 
+import UserCategorySelector from "../headers/UserCategorySelector";
+
 const MomentWriteEditView = ({
   momentText,
   updateExistingMoment,
@@ -36,9 +38,10 @@ const MomentWriteEditView = ({
   const { user } = useUser();
   const navigation = useNavigation();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
+const [selectedUserCategoryId, setSelectedUserCategoryId ] = useState(null);
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedUserCategory, setSelectedUserCategory] = useState("");
 
   const [showCategoriesSlider, setShowCategoriesSlider] =
     useState(!!momentText);
@@ -120,6 +123,13 @@ const MomentWriteEditView = ({
     setSelectedCategory(category);
   };
 
+
+    const handleUserCategorySelect = (category) => {
+      console.log('selecting category: ', category);
+      
+    setSelectedUserCategory(category);
+  };
+
   const handleSave = async () => {
     try {
       if (selectedFriend) {
@@ -128,6 +138,7 @@ const MomentWriteEditView = ({
             user: user.id,
             friend: selectedFriend.id,
             selectedCategory: selectedCategory,
+            selectedUserCategory: selectedUserCategory || null,
             moment: momentTextRef.current.getText(),
           };
 
@@ -135,6 +146,7 @@ const MomentWriteEditView = ({
         } else {
           const editData = {
             typed_category: selectedCategory,
+            user_category: selectedUserCategory,
             capsule: momentTextRef.current.getText(),
           };
 
@@ -262,8 +274,9 @@ const MomentWriteEditView = ({
 
           />
           {/* </View> */}
+      
         </View> 
-
+    <UserCategorySelector onPress={handleUserCategorySelect} selectedId={selectedUserCategory} />
         {/* {selectedFriend && friendDashboardData && (
           <CategoryCreator
             show={showCategoriesSlider}

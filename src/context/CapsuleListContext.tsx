@@ -51,6 +51,7 @@ export const CapsuleListProvider = ({ children }) => {
       staleTime: 1000 * 60 * 20, // 20 minutes
 
       select: (data) => {
+     
         if (!data)
           return {
             capsules: [],
@@ -276,12 +277,14 @@ export const CapsuleListProvider = ({ children }) => {
       }, 500);
     },
     onSuccess: (data) => {
+     // console.log(`successfully connected category!`, data.user_category);
       const formattedMoment = {
         id: data.id,
         typedCategory: data.typed_category || "Uncategorized",
         capsule: data.capsule,
         created: data.created_on,
         preAdded: data.pre_added_to_hello,
+        user_category: data.user_category || null,
       };
 
       queryClient.setQueryData(
@@ -308,6 +311,7 @@ export const CapsuleListProvider = ({ children }) => {
 
       typed_category: momentData.selectedCategory,
       capsule: momentData.moment,
+      user_category: momentData.user_category,
     };
 
     try {

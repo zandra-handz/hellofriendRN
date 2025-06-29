@@ -69,50 +69,68 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   console.log('user context rerendered');
 
 
+ 
 
-  // const reInitialize = async () => {
-  //   console.log("REINT TRIGGERED");
-  //   if (isReinitializing) {
-  //     return;
-  //   }
+   let isReinitializing = false;
 
-  //   isReinitializing = true;
-  //   try {
-  //     const token = await SecureStore.getItemAsync(TOKEN_KEY);
+  const reInitialize = useCallback(async () => {
+  console.log("REINT TRIGGERED");
+  if (isReinitializing) return;
+  isReinitializing = true;
 
-  //     if (token) {
-  //       let userData = null;
+  try {
+    const token = await SecureStore.getItemAsync(TOKEN_KEY);
 
-  //       try {
-  //         userData = await getCurrentUser();
-  //       } catch (error) {
-  //         await onSignOut();
-  //         return;
-  //       }
+    if (token) {
+      let userData = null;
 
-  //       if (userData) { 
-  //         startTransition(() => {
-  //           setUser(userData);
-  //           console.log('userdata set');
-  //           setAuthenticated(true);
-  //           console.log('authenticated set');
-           
-  //         }); 
-  //       } else {
-  //         console.log("not authenticated");
-  //         setUser(null);
-  //         setAuthenticated(false);
-  //         queryClient.clear();
-  //       }
-  //     } else {
-  //       setUser(null);
-  //       setAuthenticated(false);
-  //       queryClient.clear();
-  //     }
-  //   } finally {
-  //     isReinitializing = false;
-  //   }
-  // };
+      try {
+        userData = await getCurrentUser();
+      } catch (error) {
+        await onSignOut();
+        return;
+      }
+
+      if (userData) {
+ 
+        // Only update if values are actually different
+        setUser((prev) => {
+          const isEqual = JSON.stringify(prev) === JSON.stringify(userData);
+          if (!isEqual) {
+            console.log("Setting new user data");
+            return userData;
+          }
+          return prev;
+        });
+
+        setAuthenticated((prev) => {
+          if (!prev) {
+            console.log("Setting authenticated: true");
+            return true;
+          }
+          return prev;
+        });
+      } else {
+        setUser((prev) => (prev !== null ? null : prev));
+        setAuthenticated((prev) => (prev !== false ? false : prev));
+        queryClient.clear();
+      }
+    } else {
+      setUser((prev) => (prev !== null ? null : prev));
+      setAuthenticated((prev) => (prev !== false ? false : prev));
+      queryClient.clear();
+    }
+  } finally {
+    isReinitializing = false;
+  }
+}, [onSignOut, queryClient]);
+
+
+
+ 
+
+
+ 
 
   const signinMutation = useMutation({
     mutationFn: signinWithoutRefresh,
@@ -139,15 +157,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       }, 2000);
     },
   });
-
-  // const onSignin = async (username: string, password: string) => {
-  //   try {
-  //     await signinMutation.mutateAsync({ username, password });
-  //   } catch (error) {
-  //     console.error("Sign in error", error);
-  //   }
-  // };
-
+ 
 
   const onSignin = useCallback(async (username: string, password: string) => {
   try {
@@ -239,65 +249,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   //     }
   //   };
  
-    let isReinitializing = false;
-
-  const reInitialize = useCallback(async () => {
-  console.log("REINT TRIGGERED");
-  if (isReinitializing) return;
-  isReinitializing = true;
-
-  try {
-    const token = await SecureStore.getItemAsync(TOKEN_KEY);
-
-    if (token) {
-      let userData = null;
-
-      try {
-        userData = await getCurrentUser();
-      } catch (error) {
-        await onSignOut();
-        return;
-      }
-
-      if (userData) {
-        // Only update if values are actually different
-        setUser((prev) => {
-          const isEqual = JSON.stringify(prev) === JSON.stringify(userData);
-          if (!isEqual) {
-            console.log("Setting new user data");
-            return userData;
-          }
-          return prev;
-        });
-
-        setAuthenticated((prev) => {
-          if (!prev) {
-            console.log("Setting authenticated: true");
-            return true;
-          }
-          return prev;
-        });
-      } else {
-        setUser((prev) => (prev !== null ? null : prev));
-        setAuthenticated((prev) => (prev !== false ? false : prev));
-        queryClient.clear();
-      }
-    } else {
-      setUser((prev) => (prev !== null ? null : prev));
-      setAuthenticated((prev) => (prev !== false ? false : prev));
-      queryClient.clear();
-    }
-  } finally {
-    isReinitializing = false;
-  }
-}, [onSignOut, queryClient]);
+ 
 
 
-
-useEffect(() => {
-  console.log(user);
-
-}, [user]);
+ 
 
  
    const contextValue = useMemo(
