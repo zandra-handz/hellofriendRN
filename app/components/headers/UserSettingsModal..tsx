@@ -8,6 +8,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
 import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
 import SectionFriendSettings from "../friends/SectionFriendSettings";
+import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
 import SectionAccountSettings from "../user/SectionAccountSettings";
 
 interface Props {
@@ -44,7 +45,7 @@ const UserSettingsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
               <SectionAccessibilitySettings />
             </View>
             <View style={styles.sectionContainer}>
-             <SectionFriendSettings/>
+             <SectionFriendManagerSettings/>
             </View>
 
             <View style={styles.headerContainer}>
