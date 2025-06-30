@@ -10,7 +10,7 @@ import { useNavigationState } from "@react-navigation/native";
  
 import GradientBackground from "../appwide/display/GradientBackground";
 
-const UserCategorySelector = ({onPress }) => {
+const UserCategorySelector = ({onPress, onSave }) => {
   const navigationState = useNavigationState((state) => state);
   const { onSignOut } = useUser();
   const currentRouteName = navigationState.routes[navigationState.index]?.name;
@@ -23,8 +23,23 @@ const { userCategories } = useUserSettings();
   const footerPaddingBottom = 20;
   const footerIconSize = 28; 
 
+    const [pressedOnce, setPressedOnce] = useState(false);
+
 
   const [selectedId, setSelectedId ] = useState(null);
+
+
+    const handlePressOut = (itemId) => {
+    if (pressedOnce) {
+      onSave();
+      setPressedOnce(false);
+    } else {
+      handleOnPress(itemId);
+      setPressedOnce(true);
+    }
+  };
+
+ 
 
   const handleOnPress = (itemId) => {
     setSelectedId(itemId);
@@ -37,7 +52,7 @@ console.log(itemId)
 
   const renderCategoryButton = ({ item }) => (
   <Pressable
-    onPress={() => handleOnPress(item.id)}
+    onPress={() => handlePressOut(item.id)}
     style={{
       flexDirection: "row",
       justifyContent: "space-between",

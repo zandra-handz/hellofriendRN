@@ -276,7 +276,7 @@ const [selectedUserCategoryId, setSelectedUserCategoryId ] = useState(null);
           {/* </View> */}
       
         </View> 
-    <UserCategorySelector onPress={handleUserCategorySelect} selectedId={selectedUserCategory} />
+    <UserCategorySelector onPress={handleUserCategorySelect} onSave={handleSave} selectedId={selectedUserCategory} />
         {/* {selectedFriend && friendDashboardData && (
           <CategoryCreator
             show={showCategoriesSlider}
