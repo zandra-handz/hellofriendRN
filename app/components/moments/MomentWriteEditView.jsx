@@ -171,7 +171,7 @@ const [selectedUserCategoryId, setSelectedUserCategoryId ] = useState(null);
       showMessage(true, null, "Edited moment saved!");
       navigation.navigate("Moments");
     }
-  }, [editMomentMutation.isSuccess, editMomentMutation.data]);
+  }, [editMomentMutation.isSuccess]);
 
   // keep this consistent with MomentViewPage
   return (

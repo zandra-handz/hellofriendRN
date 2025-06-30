@@ -40,8 +40,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-
-import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
+ 
 
 // import { enableLayoutAnimations } from "react-native-reanimated";
 // enableLayoutAnimations(true);

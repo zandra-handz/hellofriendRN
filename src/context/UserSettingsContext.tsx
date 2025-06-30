@@ -88,62 +88,50 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
     queryFn: () => getUserSettings(user?.id),
     enabled: !!(user && user.id && isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
-    select: (data) => {
-      console.log("Query settled.");
-      if (data) {
-        setSettings(data || {});
-        setUserCategories(data.user_categories || {});
+    // select: (data) => {
+    //   console.log("Query settled.");
+    //   if (data) {
+    //     setSettings(data || {});
+    //     setUserCategories(data.user_categories || {});
 
-        setNotificationSettings({
-          receive_notifications: user?.receive_notifications || false,
-        });
-      }
-      if (error) {
-        console.error("Settings error:", error);
-      }
-    },
+    //     setNotificationSettings({
+    //       receive_notifications: user?.receive_notifications || false,
+    //     });
+    //   }
+    //   if (error) {
+    //     console.error("Settings error:", error);
+    //   }
+    // },
   });
+
+useEffect(() => {
+  if (isSuccess && userSettings) {
+    console.log('resetting user settings');
+    setSettings(userSettings || {});
+    setUserCategories(userSettings.user_categories || []);
+    setNotificationSettings({
+      receive_notifications: userSettings.receive_notifications ?? false,
+    });
+  }
+}, [isSuccess, userSettings]);
+
   const [settings, setSettings] = useState<Record<string, any> | null>(null);
   const [userCategories, setUserCategories] = useState<Record<
     string,
     any
   > | null>(null);
 
-  // set
-  // useEffect(() => {
-  //   if (isInitializing) {
-  //     console.log("not setting (is still initializing");
-  //     return;
-  //   }
-  //   if (user?.id) {
-  //     console.log("setting settings");
-
-  //     // POTENTIAL UNNECESSARY RERENDER
-  //     // should get batched together in React 18+
-  //     setSettings(user.settings || {});
-  //     setUserCategories(user.user_categories || {});
-
-  //     setNotificationSettings({
-  //       receive_notifications: user.settings?.receive_notifications || false,
-  //     });
-  //   }
-  // }, [user?.id, isInitializing]);
+ 
 
   // reset
   useEffect(() => {
-    if (isInitializing) {
-      return;
-    }
-
-    if (user?.authenticated) {
-      return;
-    } else {
-      console.log("user not authenticated");
+    if (isInitializing && !isAuthenticated) {
+      console.log("user not authenticated, resetting user settings");
       setSettings(null); // so as not to trigger consumers
       setUserCategories(null);
       setNotificationSettings(null); // so as not to trigger consumers
     }
-  }, [user?.authenticated, isInitializing]);
+  }, [isAuthenticated, isInitializing]);
 
   useEffect(() => {
     if (notificationSettings?.receive_notifications) {
@@ -413,27 +401,35 @@ onSuccess: (data) => {
   //   }
   // };
 
+
+  const contextValue = useMemo(() => ({
+  settings,
+  userCategories,
+  createNewCategory,
+  createNewCategoryMutation,
+  updateCategory,
+  updateCategoryMutation,
+  deleteCategory,
+  deleteCategoryMutation,
+  notificationSettings,
+  updateSettings,
+  updateSettingsMutation,
+  updateNotificationSettings: setNotificationSettings,
+}), [
+  settings,
+  userCategories,
+  createNewCategoryMutation,
+  updateCategoryMutation,
+  deleteCategoryMutation,
+  notificationSettings,
+  updateSettingsMutation,
+]);
+
+
   return (
-    <UserSettingsContext.Provider
-      value={{
-        settings,
-        userCategories,
-        createNewCategory,
-        createNewCategoryMutation,
-        updateCategory,
-        updateCategoryMutation,
+<UserSettingsContext.Provider value={contextValue}>
+  {children}
+</UserSettingsContext.Provider>
 
-        deleteCategory,
-        deleteCategoryMutation,
-        notificationSettings,
-        memoizedSettings,
-        updateSettings,
-        updateSettingsMutation,
-
-        updateNotificationSettings: setNotificationSettings,
-      }}
-    >
-      {children}
-    </UserSettingsContext.Provider>
   );
 };

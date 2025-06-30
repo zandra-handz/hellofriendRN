@@ -44,7 +44,7 @@ const FriendModal: React.FC<FriendModalProps> = ({
   const { setFriend, loadingNewFriend } = useSelectedFriend();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const modalHeight = Dimensions.get("window").height * 0.66;
-
+console.log('FRIEND MODALRERENDERED');
   const includeSearch: boolean = true;
 
   const searchKeys: string[] = [`name`];
@@ -65,6 +65,7 @@ const FriendModal: React.FC<FriendModalProps> = ({
     const selectedOption = friendList.find((friend) => friend.id === itemId);
 
     const selectedFriend = selectedOption || null;
+    console.log('ESTTING SELECTED FRIEND');
     setFriend(selectedFriend);
     getThemeAheadOfLoading(selectedFriend);
     toggle();

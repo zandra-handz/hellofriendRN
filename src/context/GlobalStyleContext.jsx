@@ -16,8 +16,7 @@ const GlobalStyleContext = createContext();
 export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
-  const { settings } = useUserSettings();
-
+  const { settings } = useUserSettings(); 
   console.log("GLOBAL STYLES RERENDERED");
   const colorScheme = useColorScheme();
 
@@ -99,26 +98,10 @@ export const GlobalStyleProvider = ({ children }) => {
     }
   }, [settings, colorScheme]);
 
-  //   useEffect(() => {
-  //   if (settings) {
-  //       console.log('settings triggered globalstyles');
-  //     setStyles((prevStyles) => ({
-  //       ...prevStyles,
-  //       fontSize: settings.large_text ? 20 : 16,
-  //       highContrast: settings.high_contrast_mode,
-  //       screenReader: settings.screen_reader,
-  //       receiveNotifications: settings.receive_notifications,
-  //       theme: determineTheme(),
-  //     }));
-  //   } else {
-  //     setStyles((prevStyles) => ({
-  //       ...prevStyles,
-  //       theme: colorScheme || "light",
-  //     }));
-  //   }
-  // }, [settings, colorScheme]);
 
   useEffect(() => {
+
+    console.log('useeffect in global styles triggered by styles.theme');
     const isLight = styles.theme === "light";
 
     setStyles((prev) => {
@@ -156,35 +139,6 @@ export const GlobalStyleProvider = ({ children }) => {
     });
   }, [styles.theme]);
 
-  // // light/dark switcher
-  //   useEffect(() => {
-  //     console.log('use effect triggered bt styles.theme');
-  //     if (styles.theme === "light") {
-  //       setStyles((prevStyles) => ({
-  //         ...prevStyles,
-  //         gradientColors: {
-  //           darkColor: "#ffffff",
-  //           lightColor: "#ffffff",
-  //         },
-  //         gradientColorsHome: {
-  //           darkColor: "#ffffff",
-  //           lightColor: "#ffffff",
-  //         },
-  //       }));
-  //     } else {
-  //       setStyles((prevStyles) => ({
-  //         ...prevStyles,
-  //         gradientColors: {
-  //           darkColor: "#4caf50",
-  //           lightColor: "#a0f143",
-  //         },
-  //         gradientColorsHome: {
-  //           darkColor: "#000002",
-  //           lightColor: "#163805",
-  //         },
-  //       }));
-  //     }
-  //   }, [styles.theme]);
 
   const themeStyles =
     styles.theme === "dark" ? darkThemeStyles : lightThemeStyles;
@@ -198,21 +152,33 @@ export const GlobalStyleProvider = ({ children }) => {
     homeScreen: "flow",
   };
 
+
+
+  const contextValue = useMemo(() => ({
+  ...styles,
+  themeStyles,
+  appContainerStyles,
+  appFontStyles,
+  appSpacingStyles,
+  appAnimationStyles,
+  appCrossThemeStyles,
+  themeStyleSpinners,
+}), [
+  styles,
+  themeStyles,
+  appContainerStyles,
+  appFontStyles,
+  appSpacingStyles,
+  appAnimationStyles,
+  appCrossThemeStyles,
+  themeStyleSpinners,
+]);
+
+
   return (
-    <GlobalStyleContext.Provider
-      value={{
-        ...styles,
-        themeStyles,
-        appContainerStyles,
-        appFontStyles,
-        appSpacingStyles,
-        appAnimationStyles,
-        appCrossThemeStyles,
-        themeStyleSpinners,
-      }}
-    >
-      {children}
-    </GlobalStyleContext.Provider>
+<GlobalStyleContext.Provider value={contextValue}>
+  {children}
+</GlobalStyleContext.Provider>
   );
 };
 

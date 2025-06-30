@@ -10,10 +10,9 @@ const usePrefetches = () => {
   const queryClient = useQueryClient();
   const { selectedFriend } = useSelectedFriend();
   const { user, isAuthenticated, isInitializing } = useUser();
-
-  // used in ScreenMoments.tsx passed down to the speed dial
+ 
   const prefetchUserAddresses = async () => {
-    // The results of this query will be cached like a normal query
+   
     await queryClient.prefetchQuery({
       queryKey: ["userAddresses", user?.id],
       queryFn: () => fetchUserAddresses(),
@@ -21,11 +20,9 @@ const usePrefetches = () => {
       staleTime: 1000 * 60 * 20, // 20 minutes
     });
   };
-
-  // used in ScreenMoments.tsx passed down to the speed dial
+ 
   const prefetchFriendAddresses = async () => {
-    console.log("prefetching friend addresses");
-    // The results of this query will be cached like a normal query
+    console.log("prefetching friend addresses"); 
     await queryClient.prefetchQuery({
       queryKey: ["friendAddresses", user?.id, selectedFriend?.id],
       queryFn: () => fetchFriendAddresses(selectedFriend.id),

@@ -38,7 +38,7 @@ export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
   const { user, isInitializing, isAuthenticated } = useUser();
   const queryClient = useQueryClient();
-
+  console.log("CAPSULE LIST RERENDERED");
   const [sortedByCategory, setSortedByCategory] = useState([]);
   // const [newestFirst, setNewestFirst] = useState([]);
 
@@ -51,7 +51,6 @@ export const CapsuleListProvider = ({ children }) => {
       staleTime: 1000 * 60 * 20, // 20 minutes
 
       select: (data) => {
-     
         if (!data)
           return {
             capsules: [],
@@ -124,7 +123,7 @@ export const CapsuleListProvider = ({ children }) => {
     momentsSavedToHello = [],
   } = sortedCapsuleList;
 
-  const capsuleCount = capsules.length; 
+  const capsuleCount = capsules.length;
   const timeoutRef = useRef(null);
   const updateCapsuleMutation = useMutation({
     mutationFn: ({ capsuleId, isPreAdded }) =>
@@ -156,20 +155,35 @@ export const CapsuleListProvider = ({ children }) => {
       updateMomentAPI(selectedFriend?.id, capsuleId, capsuleEditData),
 
     onSuccess: (data) => {
-      queryClient.invalidateQueries(["Moments", user?.id, selectedFriend?.id]);
-      // queryClient.refetchQueries(["Moments", selectedFriend?.id]);
-
-      queryClient.setQueryData(
+      
+            queryClient.setQueryData(
         ["Moments", user?.id, selectedFriend?.id],
         (oldMoments) => {
-          //REMOVING TO CHANGE CAPSULE LIST LENGTH IN MOMENTS SCREEN OTHERWISE WON'T UPDATE
-          const updatedMoments = oldMoments
-            ? oldMoments.filter((moment) => moment.id !== data.id)
-            : [];
+          if (!oldMoments) return [];
 
-          return updatedMoments;
+          return oldMoments.map((moment) =>
+            moment.id === data.id ? { ...moment, ...data } : moment
+          );
         }
       );
+
+      //THIS WILL CAUSE FRIEND DASHBOARD DATA TO RERENDER, FUCK IF I KNOW WHY. THE ABOVE CODE IS SUFFICIENT ANYWAY ! :)
+      //queryClient.invalidateQueries(["Moments", user?.id, selectedFriend?.id]);
+
+      //(THIS IS ALSO NOT NEEDED)
+      // queryClient.setQueryData(
+      //   ["Moments", user?.id, selectedFriend?.id],
+      //   (oldMoments) => {
+      //     //REMOVING TO CHANGE CAPSULE LIST LENGTH IN MOMENTS SCREEN OTHERWISE WON'T UPDATE
+      //     const updatedMoments = oldMoments
+      //       ? oldMoments.filter((moment) => moment.id !== data.id)
+      //       : [];
+
+      //     return updatedMoments;
+      //   }
+      // );
+
+
     },
     onError: (error) => {
       if (timeoutRef.current) {
@@ -242,7 +256,7 @@ export const CapsuleListProvider = ({ children }) => {
   //           };
   //         } else {
   //           updatedMoments.unshift(momentData); // Add new moment if it doesn't exist
-  //         } 
+  //         }
   //         updateCapsuleMutation.reset();
 
   //         return updatedMoments;
@@ -258,6 +272,9 @@ export const CapsuleListProvider = ({ children }) => {
     mutationFn: (updatedCapsules) =>
       updateMultMomentsAPI(selectedFriend?.id, updatedCapsules),
     onSuccess: () =>
+
+      //REMOVE/REPLACE MAYBE IF THIS ALSO CAUSES FDD TO RERENDER? 
+      //IS THIS MUTATION STILL BEING USED??
       queryClient.invalidateQueries(["Moments", user?.id, selectedFriend?.id]),
 
     onError: (error) => console.error("Error updating capsule:", error),
@@ -277,7 +294,7 @@ export const CapsuleListProvider = ({ children }) => {
       }, 500);
     },
     onSuccess: (data) => {
-     // console.log(`successfully connected category!`, data.user_category);
+      // console.log(`successfully connected category!`, data.user_category);
       const formattedMoment = {
         id: data.id,
         typedCategory: data.typed_category || "Uncategorized",
@@ -409,9 +426,9 @@ export const CapsuleListProvider = ({ children }) => {
         updateCapsuleMutation,
         handleEditMoment,
         editMomentMutation,
-       // updateCacheWithEditedMoment,
+        // updateCacheWithEditedMoment,
         sortByCategory,
-      //  sortNewestFirst,
+        //  sortNewestFirst,
       }}
     >
       {children}

@@ -12,6 +12,7 @@ const SectionAccessibilitySettings = () => {
     settings,
     updateSettingsMutation,
     updateNotificationSettings,
+ 
   } = useUserSettings();
   const { themeStyles } = useGlobalStyle(); 
 
@@ -21,6 +22,7 @@ const SectionAccessibilitySettings = () => {
   }, [settings]); 
 
   const updateSetting = async (setting) => {
+ 
     try {
       const newSettings = { ...settings, ...setting };
       await updateSettingsMutation.mutateAsync({

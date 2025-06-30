@@ -21,6 +21,8 @@ import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 
 // Forwarding ref to the parent to expose the TextInput value
 const TextMomentBox = forwardRef(
+
+
   //width and height are original settings being used in location notes
   (
     {
@@ -37,6 +39,7 @@ const TextMomentBox = forwardRef(
     },
     ref
   ) => {
+      console.log('TEXT MOMENT EDIT BOX RERENDERED');
     const { themeStyles, appFontStyles, manualGradientColors } =
       useGlobalStyle();
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
@@ -45,6 +48,7 @@ const TextMomentBox = forwardRef(
     useEffect(() => {
       if (textInputRef.current) {
         textInputRef.current.setNativeProps({ text: mountingText });
+        console.log('setting edited message in text box');
         setEditedMessage(mountingText);
       }
     }, []);

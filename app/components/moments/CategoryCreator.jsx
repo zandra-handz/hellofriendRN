@@ -23,7 +23,7 @@ const CategoryCreator = ({
   const [selectedCategoryCapsules, setSelectedCategoryCapsules] =
     useState(null);
   const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
-
+console.log('CATEGORY CREATOR RERENDERED');
   const [modalVisible, setModalVisible] = useState(false);
 
   const containerHeight = `100%`;

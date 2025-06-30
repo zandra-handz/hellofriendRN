@@ -21,6 +21,7 @@ const ButtonSelectFriend = ({ friend }) => {
  
 
   useEffect(() => {
+   
     if (selectedFriend && themeAheadOfLoading) {
       if (friend.id === selectedFriend.id) {
         setRowColor(themeAheadOfLoading.darkColor);

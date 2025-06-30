@@ -41,6 +41,8 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   iconSize = 22,
   width = "auto",
 }) => {
+
+  console.log('FRIEND SELECTOR RERENDERED');
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, friendLoaded, loadingNewFriend } =
     useSelectedFriend();

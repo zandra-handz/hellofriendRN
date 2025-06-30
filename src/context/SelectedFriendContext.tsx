@@ -35,12 +35,12 @@ export const SelectedFriendProvider = ({ children }) => {
   const { friendList, resetTheme } = useFriendList();
   const [friendFavesData, setFriendFavesData] = useState(null);
 
-  const [friendColorTheme, setFriendColorTheme] = useState({
-    useFriendColorTheme: null,
-    invertGradient: null,
-    lightColor: null,
-    darkColor: null,
-  });
+ console.log("SelectedFriendProvider RENDERED", {
+  userId: user?.id,
+  friendId: selectedFriend?.id,
+  enabled: !!(isAuthenticated && selectedFriend && selectedFriend?.id),
+});
+
 
   const queryClient = useQueryClient();
 
@@ -55,7 +55,13 @@ export const SelectedFriendProvider = ({ children }) => {
     queryFn: () => fetchFriendDashboard(selectedFriend.id),
     enabled: !!(isAuthenticated && selectedFriend && selectedFriend?.id),
     staleTime: 1000 * 60 * 20, // 20 minutes
+ 
   });
+
+  //DEBUGGING
+  useEffect(() => {
+  console.log("Query key changed:", user?.id, selectedFriend?.id);
+}, [user?.id, selectedFriend?.id]);
 
   const favesData = useMemo(() => {
     if (!friendDashboardData) return null;
@@ -68,11 +74,11 @@ export const SelectedFriendProvider = ({ children }) => {
     }
   }, [favesData]);
 
-  useEffect(() => {
-    if (isError) {
-      deselectFriend();
-    }
-  }, [isError]);
+  // useEffect(() => {
+  //   if (isError) {
+  //     deselectFriend();
+  //   }
+  // }, [isError]);
 
   const updateFavesThemeMutation = useMutation({
     mutationFn: (data) => updateFriendFavesColorThemeSetting(data),
@@ -159,18 +165,18 @@ export const SelectedFriendProvider = ({ children }) => {
     resetTheme();
   };
 
-  useEffect(() => {
-    if (!selectedFriend) {
-      deselectFriend();
-    }
-  }, [selectedFriend]);
+  // useEffect(() => {
+  //   if (!selectedFriend) {
+  //     deselectFriend();
+  //   }
+  // }, [selectedFriend]);
 
   return (
     <SelectedFriendContext.Provider
       value={{
         selectedFriend,
         setFriend: setSelectedFriend,
-        deselectFriend,
+         deselectFriend,
         friendLoaded,
         errorLoadingFriend,
         friendList,

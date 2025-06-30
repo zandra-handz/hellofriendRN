@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import { useUser } from './UserContext'; // Import useAuthUser hook
 import { fetchFriendList } from '../calls/api'; 
  import { useQuery } from "@tanstack/react-query";
@@ -18,7 +18,7 @@ export const FriendListProvider = ({ children }) => {
   const {  user, isAuthenticated, isInitializing } = useUser();   
   const [friendList, setFriendList] = useState(() => []); // lazy loading?
   const [ useGradientInSafeView, setUseGradientInSafeView] = useState(false);
-   
+   console.log('FRIEND LIST RERENDERED');
   const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
     darkColor: '#4caf50',
     lightColor: '#a0f143',
@@ -39,7 +39,7 @@ export const FriendListProvider = ({ children }) => {
   };
 
   const resetTheme = () => {
-   
+ 
     setThemeAheadOfLoading({
       lightColor: '#a0f143', 
       darkColor: '#4caf50', 
@@ -154,28 +154,37 @@ useEffect(() => {
     });
   };
 
+
+
+  const contextValue = useMemo(() => ({
+  friendList,
+  friendListLength,
+  setFriendList,
+  themeAheadOfLoading,
+  setThemeAheadOfLoading,
+  getThemeAheadOfLoading,
+  resetTheme,
+  addToFriendList,
+  removeFromFriendList,
+  updateFriend,
+  updateFriendListColors,
+  updateFriendListColorsExcludeSaved,
+  useGradientInSafeView,
+  setUseGradientInSafeView,
+  updateSafeViewGradient,
+}), [
+  friendList,
+  friendListLength,
+  themeAheadOfLoading,
+  useGradientInSafeView
+]);
+
   
 
   return (
-    <FriendListContext.Provider value={{
-      friendList,
-      friendListLength,
-      setFriendList,
-      themeAheadOfLoading,
-      setThemeAheadOfLoading,
-      getThemeAheadOfLoading,
-      resetTheme,
-      addToFriendList,
-      removeFromFriendList,
-      updateFriend,
-      updateFriendListColors,
-      updateFriendListColorsExcludeSaved,
+<FriendListContext.Provider value={contextValue}>
+  {children}
+</FriendListContext.Provider>
 
-      useGradientInSafeView,
-      setUseGradientInSafeView,
-      updateSafeViewGradient,
-    }}>
-      {children}
-    </FriendListContext.Provider>
   );
 };

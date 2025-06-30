@@ -34,25 +34,7 @@ const useStartingFriendAddresses = () => {
 
   useEffect(() => {
     if (friendAddresses && friendAddresses.length > 0) {
-      // const menuItems = friendAddresses.map((address) => {
-      //   const uniqueKey = `${address.title}-${address.coordinates ? address.coordinates.join(",") : `${address.latitude},${address.longitude}`}`;
-
-      //   return {
-      //     key: uniqueKey,
-      //     id: address.id,
-      //     address: address.address,
-      //     title: address.title,
-      //     label: address.title,
-      //     isDefault: address.is_default,
-      //     latitude: address.coordinates
-      //       ? address.coordinates[0]
-      //       : address.latitude,
-      //     longitude: address.coordinates
-      //       ? address.coordinates[1]
-      //       : address.longitude,
-      //   };
-      // });
-
+ 
       setDefaultAddress(
         friendAddresses.find((address) => address.is_default === true) ||
           (friendAddresses.length > 0 ? friendAddresses[0] : null)
@@ -70,14 +52,11 @@ const useStartingFriendAddresses = () => {
 
       queryClient.setQueryData(
         ["friendAddresses", user?.id, selectedFriend?.id],
-        (oldData) => {
-          // If no existing data, just return the new address in an array
+        (oldData) => { 
           if (!oldData || !Array.isArray(oldData)) return [newAddress];
-
-          // Combine old data with the new address
+ 
           const combinedData = [...oldData, newAddress];
-
-          // Process the combined data to update the default address logic
+ 
           return combinedData.map((address) => {
             if (address.is_default && address.id !== newAddress.id) {
               console.log("Turning off default for", address.title);
