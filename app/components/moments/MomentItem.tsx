@@ -161,7 +161,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
     }
   });
 
-  const original = momentData?.typedCategory;
+  const original = momentData?.user_category_name || 'No category';
 
   const truncated =
     original.length > 26 ? original.slice(0, 26) + "..." : original;
@@ -225,8 +225,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
             numberOfLines={talkingPointNumberOfLines}
             // style={[themeStyles.genericText, appFontStyles.momentText]}
              style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}
-          >
-           ( {momentData && momentData?.user_category_name} )
+          > 
             {momentData && momentData?.capsule}
             
           </Text>

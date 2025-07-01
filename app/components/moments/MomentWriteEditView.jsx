@@ -1,5 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { View, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from "react-native";
+import {
+  View,
+  Keyboard,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+} from "react-native";
 import BodyStyling from "../scaffolding/BodyStyling";
 import { useUser } from "@/src/context/UserContext";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
@@ -38,10 +43,10 @@ const MomentWriteEditView = ({
   const { user } = useUser();
   const navigation = useNavigation();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-const [selectedUserCategoryId, setSelectedUserCategoryId ] = useState(null);
+  const [selectedUserCategoryId, setSelectedUserCategoryId] = useState(null);
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
-    const [selectedUserCategory, setSelectedUserCategory] = useState("");
+  const [selectedUserCategory, setSelectedUserCategory] = useState("");
 
   const [showCategoriesSlider, setShowCategoriesSlider] =
     useState(!!momentText);
@@ -123,10 +128,9 @@ const [selectedUserCategoryId, setSelectedUserCategoryId ] = useState(null);
     setSelectedCategory(category);
   };
 
+  const handleUserCategorySelect = (category) => {
+    console.log("selecting category: ", category);
 
-    const handleUserCategorySelect = (category) => {
-      console.log('selecting category: ', category);
-      
     setSelectedUserCategory(category);
   };
 
@@ -196,11 +200,18 @@ const [selectedUserCategoryId, setSelectedUserCategoryId ] = useState(null);
           width: "100%",
         }}
       >
+        <UserCategorySelector
+          onPress={handleUserCategorySelect}
+          onSave={handleSave}
+          selectedId={selectedUserCategory}
+        />
+
         <View
           style={[
             appContainerStyles.talkingPointCard,
             {
               backgroundColor: themeStyles.primaryBackground.backgroundColor,
+              paddingTop: 90,
             },
           ]}
         >
@@ -250,33 +261,28 @@ const [selectedUserCategoryId, setSelectedUserCategoryId ] = useState(null);
             editScreen={updateExistingMoment}
             title={updateExistingMoment ? "Edit:" : "Add talking point"}
             onTextChange={updateMomentText}
-              showCategoriesSlider={showCategoriesSlider}
-              handleCategorySelect={handleCategorySelect} 
+            showCategoriesSlider={showCategoriesSlider}
+            handleCategorySelect={handleCategorySelect}
             existingCategory={existingMomentObject?.typedCategory || null}
             momentTextForDisplay={momentTextRef?.current?.getText() || null}
             onSave={handleSave}
             isKeyboardVisible={isKeyboardVisible}
-
+            selectedUserCategory={selectedUserCategory}
             CategoryCreatorComponent={
-          <CategoryCreator
-            show={showCategoriesSlider}
-            updateCategoryInParent={handleCategorySelect}
-            updateExistingMoment={updateExistingMoment}
-            existingCategory={existingMomentObject?.typedCategory || null}
-            momentTextForDisplay={momentTextRef?.current?.getText() || null}
-            onParentSave={handleSave}
-            isKeyboardVisible={isKeyboardVisible}
-          />
-
-
+              <CategoryCreator
+                show={showCategoriesSlider}
+                updateCategoryInParent={handleCategorySelect}
+                updateExistingMoment={updateExistingMoment}
+                existingCategory={existingMomentObject?.typedCategory || null}
+                momentTextForDisplay={momentTextRef?.current?.getText() || null}
+                onParentSave={handleSave}
+                isKeyboardVisible={isKeyboardVisible}
+              />
             }
-
-
           />
           {/* </View> */}
-      
-        </View> 
-    <UserCategorySelector onPress={handleUserCategorySelect} onSave={handleSave} selectedId={selectedUserCategory} />
+        </View>
+
         {/* {selectedFriend && friendDashboardData && (
           <CategoryCreator
             show={showCategoriesSlider}

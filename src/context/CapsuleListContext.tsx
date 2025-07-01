@@ -10,6 +10,8 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "./UserContext";
 
+import useMomentFunctions from "../hooks/useMomentFunctions";
+
 const CapsuleListContext = createContext({
   capsuleList: [],
   capsuleCount: 0,
@@ -40,6 +42,8 @@ export const CapsuleListProvider = ({ children }) => {
   const queryClient = useQueryClient();
   console.log("CAPSULE LIST RERENDERED");
   const [sortedByCategory, setSortedByCategory] = useState([]);
+
+  const { sortByMomentCategory, getPreAdded } = useMomentFunctions();
   // const [newestFirst, setNewestFirst] = useState([]);
 
   const { data: sortedCapsuleList = [], isLoading: isCapsuleContextLoading } =
@@ -61,16 +65,22 @@ export const CapsuleListProvider = ({ children }) => {
             momentsSavedToHello: [],
           };
 
-        const sorted = [...data].sort((a, b) => {
-          if (a.typedCategory < b.typedCategory) return -1;
-          if (a.typedCategory > b.typedCategory) return 1;
-          return new Date(b.created) - new Date(a.created);
-        });
 
-        const preAdded = sorted.reduce((ids, capsule) => {
-          if (capsule.preAdded) ids.push(capsule.id);
-          return ids;
-        }, []);
+        const sorted = sortByMomentCategory(data);
+
+        // const sorted = [...data].sort((a, b) => {
+        //   if (a.named_category < b.named_ategory) return -1;
+        //   if (a.named_category > b.named_category) return 1;
+        //   return new Date(b.created) - new Date(a.created);
+        // });
+
+
+        const preAdded = getPreAdded(sorted);
+
+        // const preAdded = sorted.reduce((ids, capsule) => {
+        //   if (capsule.preAdded) ids.push(capsule.id);
+        //   return ids;
+        // }, []);
 
         const filterPreAdded = sorted.filter(
           (capsule) => !preAdded.includes(capsule.id)
@@ -82,7 +92,7 @@ export const CapsuleListProvider = ({ children }) => {
         }));
 
         const uniqueCategories = [
-          ...new Set(sortedWithIndices.map((item) => item.typedCategory)),
+          ...new Set(sortedWithIndices.map((item) => item.user_category_name)),
         ];
         const categoryCount = uniqueCategories.length;
         const categoryNames = uniqueCategories;
@@ -93,7 +103,7 @@ export const CapsuleListProvider = ({ children }) => {
         for (const category of uniqueCategories) {
           categoryStartIndices[category] = index;
           index += sortedWithIndices.filter(
-            (item) => item.typedCategory === category
+            (item) => item.user_category_name === category
           ).length;
         }
 
@@ -302,7 +312,10 @@ export const CapsuleListProvider = ({ children }) => {
         created: data.created_on,
         preAdded: data.pre_added_to_hello,
         user_category: data.user_category || null,
+        user_category_name: data.user_category_name || null,
       };
+
+      console.log('formatted moments data', formattedMoment);
 
       queryClient.setQueryData(
         ["Moments", user?.id, selectedFriend?.id],
@@ -322,6 +335,7 @@ export const CapsuleListProvider = ({ children }) => {
   };
 
   const handleCreateMoment = async (momentData) => {
+    console.log(momentData);
     const moment = {
       user: momentData.user,
       friend: momentData.friend,
@@ -427,7 +441,7 @@ export const CapsuleListProvider = ({ children }) => {
         handleEditMoment,
         editMomentMutation,
         // updateCacheWithEditedMoment,
-        sortByCategory,
+       // sortByCategory,
         //  sortNewestFirst,
       }}
     >

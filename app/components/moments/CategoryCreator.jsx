@@ -7,7 +7,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
 import SingleLineEnterBox from "@/app/components/appwide/input/SingleLineEnterBox";
 import ButtonBottomActionBaseSmallLongPress from "../buttons/scaffolding/ButtonBottomActionBaseSmallLongPress";
-
+import GradientBackground from "../appwide/display/GradientBackground";
 import CategoryItemsModal from "../headers/CategoryItemsModal";
 
 const CategoryCreator = ({
@@ -23,7 +23,7 @@ const CategoryCreator = ({
   const [selectedCategoryCapsules, setSelectedCategoryCapsules] =
     useState(null);
   const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
-console.log('CATEGORY CREATOR RERENDERED');
+  console.log("CATEGORY CREATOR RERENDERED");
   const [modalVisible, setModalVisible] = useState(false);
 
   const containerHeight = `100%`;
@@ -216,7 +216,7 @@ console.log('CATEGORY CREATOR RERENDERED');
                   flexDirection: "row",
                   height: "100%",
                   width: "100%",
-alignItems: 'center',
+                  alignItems: "center",
                   paddingLeft: "4%",
                 }}
               >

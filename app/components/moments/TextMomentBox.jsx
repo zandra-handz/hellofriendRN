@@ -16,6 +16,7 @@ import {
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 import CategoryCreator from "./CategoryCreator";
+import UserCategorySelector from "../headers/UserCategorySelector";
 
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 
@@ -36,6 +37,7 @@ const TextMomentBox = forwardRef(
       existingCategory,
       onSave,
       isKeyboardVisible,
+      selectedUserCategory,
     },
     ref
   ) => {
@@ -166,7 +168,15 @@ const TextMomentBox = forwardRef(
               />
               
               </View>
-              <CategoryCreator
+              
+        {/* <UserCategorySelector
+          onPress={handleCategorySelect}
+          onSave={onSave}
+          existingCategory={existingCategory}
+          selectedId={selectedUserCategory}
+        /> */}
+
+              {/* <CategoryCreator
                 show={showCategoriesSlider}
                 updateCategoryInParent={handleCategorySelect}
                 updateExistingMoment={editScreen}
@@ -174,7 +184,7 @@ const TextMomentBox = forwardRef(
                 momentTextForDisplay={ref?.current?.getText() || null}
                 onParentSave={onSave}
                 isKeyboardVisible={isKeyboardVisible}
-              />
+              /> */}
             </View>
           </KeyboardAvoidingView>
         </View>

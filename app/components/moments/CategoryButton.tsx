@@ -46,7 +46,7 @@ const CategoryButton = ({
   useAnimatedReaction(
     () => {
       return Boolean(
-        viewableItemsArray?.value[0]?.item?.typedCategory === label
+        viewableItemsArray?.value[0]?.item?.user_category_name === label
       );
     },
     (isVisible, prevIsVisible) => {

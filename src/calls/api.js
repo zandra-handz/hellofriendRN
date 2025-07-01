@@ -905,7 +905,7 @@ export const fetchMomentsAPI = async (friendId) => {
         created: capsule.created_on,
         preAdded: capsule.pre_added_to_hello,
         user_category: capsule.user_category,
-        user_category_name: capsule.user_category_name,
+        user_category_name: capsule.user_category_name || 'No category',
       }));
       return capsules;
     } else {
@@ -996,6 +996,7 @@ export const saveMomentAPI = async (requestData) => {
       `/friends/${requestData.friend}/thoughtcapsules/add/`,
       requestData
     );
+    console.log(`saved moment: `, response.data);
     return response.data;
   } catch (error) {
     console.error("Error saving thought capsule:", error);
@@ -1025,7 +1026,15 @@ export const deleteMomentAPI = async (data) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error deleting thought capsule:", error);
+    if (error.response) {
+      console.error("Error updating thought capsule:", {
+        message: error.message,
+        status: error.response.status,
+        data: error.response.data,
+      });
+    } else {
+      console.error("Error updating thought capsule:", error.message);
+    }
     throw error;
   }
 };
