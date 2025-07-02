@@ -136,6 +136,21 @@ const MomentWriteEditView = ({
   };
 
   const handleSave = async () => {
+
+    if (!selectedUserCategory) {
+              Alert.alert(
+          `DEV MODE`,
+          `Oops! SelectedUserCategory is null`,
+          [
+            {
+              text: "Back",
+              onPress: () => {},
+              style: "cancel",
+            },
+          ]
+        );
+      return;
+    } 
     if (momentTextRef && momentTextRef.current) {
       const textLength = momentTextRef.current.getText().length;
 
@@ -161,10 +176,9 @@ const MomentWriteEditView = ({
               user: user.id,
               friend: selectedFriend.id,
               selectedCategory: selectedCategory,
-              selectedUserCategory: selectedUserCategory || null,
+              selectedUserCategory: selectedUserCategory,
               moment: momentTextRef.current.getText(),
             };
-
             await handleCreateMoment(requestData);
           } else {
             const editData = {

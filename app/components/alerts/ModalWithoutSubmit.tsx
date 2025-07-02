@@ -19,6 +19,7 @@ import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave"
 
 interface Props {
   isVisible: boolean;
+  isFullscreen: boolean;
   headerContent: React.ReactElement;
   headerIcon: React.ReactElement;
   questionText: string;
@@ -28,6 +29,7 @@ interface Props {
 
 const ModalWithoutSubmit: React.FC<Props> = ({
   isVisible,
+  isFullscreen=false,
   headerContent,
   headerIcon,
   questionText,
@@ -97,7 +99,7 @@ const ModalWithoutSubmit: React.FC<Props> = ({
     // {isVisible && (
 
     <Modal
-      transparent={true}
+      transparent={!isFullscreen}
       visible={isVisible}
       style={modalAnimationStyle}
       animationType="slide"

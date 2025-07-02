@@ -327,6 +327,7 @@ export const createUserCategory = async (userId, newCategoryData) => {
 };
 
 export const updateUserCategory = async (userId, categoryId, updates) => {
+  console.log(`updates for user category: `, updates);
   
   try {
     const response = await helloFriendApiClient.patch(

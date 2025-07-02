@@ -32,7 +32,7 @@ import Animated, {
   useAnimatedRef,
 } from "react-native-reanimated";
 import GradientBackground from "../appwide/display/GradientBackground";
-import SingleLineEnterBox from "../appwide/input/SingleLineEnterBox";
+import CategoryDetailsModal from "./CategoryDetailsModal";
 
 const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
   const navigationState = useNavigationState((state) => state);
@@ -101,10 +101,15 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
     }
   };
 
-  const CategoryButton = React.memo(({ item, index, selectedId, onPress }) => {
+  const [ detailsModalVisible, setDetailsModalVisible ] = useState(false);
+
+ 
+
+  const CategoryButton = React.memo(({ item, index, selectedId, onPress, onLongPress }) => {
     return (
       <Pressable
         onPress={() => onPress(item.id, index)}
+        onLongPress={() => onLongPress(item.id, index)}
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
@@ -207,6 +212,25 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
     }
   };
 
+  const handleLongPress = (itemId, index) => {
+
+    if (!itemId) {
+      return;
+    }
+
+    if (itemId !== selectedId) {
+      setSelectedId(itemId);
+    }
+
+    if (!pressedOnce) {
+      setPressedOnce(true);
+    }
+
+      scrollToCategory(index);
+
+    setDetailsModalVisible(true);
+  };
+
   // useEffect(() => {
   //   console.log("new category id: ", newCategoryId);
   // }, [newCategoryId]);
@@ -250,7 +274,7 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
         name: newCategoryRef.current.value,
       });
 
-      console.log(`updated data from create new category`, updatedData);
+      // console.log(`updated data from create new category`, updatedData);
       if (updatedData && updatedData?.id) {
         setNewCategoryId(updatedData.id);
         handlePressOut(updatedData.id); // if for some reason item is not in categories yet to match again, this won't error, just won't select anything
@@ -307,6 +331,7 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
     return (
       <Pressable
         onPress={toggleInput}
+        
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -403,6 +428,7 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
           index={index}
           selectedId={selectedId}
           onPress={handlePressOut}
+          onLongPress={handleLongPress}
         />
       );
     },
@@ -461,6 +487,17 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
           </Animated.View>
         )}
       </Animated.View>
+
+        {detailsModalVisible && (
+          <View>
+            <CategoryDetailsModal
+              isVisible={detailsModalVisible}
+              closeModal={() => setDetailsModalVisible(false)}
+              categoryId={selectedId}
+              />
+          </View>
+        )}
+
     </GradientBackground>
   );
 };
