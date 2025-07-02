@@ -50,9 +50,9 @@ const UserSettingsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
           <View style={styles.sectionContainer}>
             <SectionFriendManagerSettings />
           </View>
-          <View style={styles.sectionContainer}>
+          {/* <View style={styles.sectionContainer}>
             <SectionUserCategories />
-          </View>
+          </View> */}
 
           <View style={styles.headerContainer}>
             <SectionAccountSettings />

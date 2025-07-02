@@ -66,14 +66,13 @@ export const CapsuleListProvider = ({ children }) => {
           };
 
 
-        const sorted = sortByMomentCategory(data);
+        // const sorted = sortByMomentCategory(data);
 
-        // const sorted = [...data].sort((a, b) => {
-        //   if (a.named_category < b.named_ategory) return -1;
-        //   if (a.named_category > b.named_category) return 1;
-        //   return new Date(b.created) - new Date(a.created);
-        // });
-
+    const sorted = [...data].sort((a, b) => {
+      if (a.user_category_name < b.user_category_name) return -1;
+      if (a.user_category_name > b.user_category_name) return 1;
+      return new Date(b.created) - new Date(a.created);
+    });
 
         const preAdded = getPreAdded(sorted);
 
@@ -335,14 +334,14 @@ export const CapsuleListProvider = ({ children }) => {
   };
 
   const handleCreateMoment = async (momentData) => {
-    console.log(momentData);
+    console.log(`moment data in handleCreateMoment`, momentData);
     const moment = {
       user: momentData.user,
       friend: momentData.friend,
 
       typed_category: momentData.selectedCategory,
       capsule: momentData.moment,
-      user_category: momentData.user_category,
+      user_category: momentData.selectedUserCategory,
     };
 
     try {

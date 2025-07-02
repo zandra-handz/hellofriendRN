@@ -1,5 +1,12 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+} from "react";
 import {
+  Alert,
   View,
   StyleSheet,
   Text,
@@ -12,23 +19,29 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendList } from "@/src/context/FriendListContext";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
 import { useNavigationState } from "@react-navigation/native";
 import Animated, {
   useAnimatedStyle,
   withTiming,
   SlideInLeft,
+  SlideInRight,
   SlideOutRight,
+  useSharedValue,
+  useAnimatedRef,
 } from "react-native-reanimated";
 import GradientBackground from "../appwide/display/GradientBackground";
+import SingleLineEnterBox from "../appwide/input/SingleLineEnterBox";
 
 const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
   const navigationState = useNavigationState((state) => state);
   const { user, onSignOut } = useUser();
   const currentRouteName = navigationState.routes[navigationState.index]?.name;
   const isOnActionPage = currentRouteName === "hellofriend";
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendList();
   const {
     userCategories,
     createNewCategory,
@@ -43,12 +56,14 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
   const topperHeight = 70;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
-
+  const flatListRef = useAnimatedRef(null);
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
   const [pressedOnce, setPressedOnce] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(existingCategory);
+
+  const [newCategoryId, setNewCategoryId] = useState(null);
 
   const [selectedId, setSelectedId] = useState(null);
 
@@ -58,81 +73,196 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
       setNewCategory(text);
     }
   };
-console.log('categories rerendering');
-  const CategoryButton = React.memo(({ item, selectedId, onPress }) => {
+
+  const remaining = useMemo(() => {
+    if (userCategories && userCategories.length > 0) {
+      return userCategories[0].max_active - userCategories.length;
+    }
+  }, [userCategories]);
+
+  const ITEM_WIDTH = 140;
+  const ITEM_RIGHT_MARGIN = 4;
+  const COMBINED_WIDTH = ITEM_WIDTH + ITEM_RIGHT_MARGIN;
+
+  const getItemLayout = (item, index) => {
+    return {
+      length: COMBINED_WIDTH,
+      offset: COMBINED_WIDTH * index,
+      index,
+    };
+  };
+
+  const scrollToCategory = (index) => {
+    if (index !== undefined) {
+      flatListRef.current?.scrollToOffset({
+        offset: COMBINED_WIDTH * index,
+        animated: true, // disables the "intermediate" rendering problem
+      });
+    }
+  };
+
+  const CategoryButton = React.memo(({ item, index, selectedId, onPress }) => {
     return (
       <Pressable
-        onPress={() => onPress(item.id)}
+        onPress={() => onPress(item.id, index)}
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          height: 40,
+          flexWrap: "wrap",
+          height: topperHeight - 20,
 
-          backgroundColor: selectedId === item.id ? "limegreen" : "transparent",
-          padding: 10,
+          width: ITEM_WIDTH,
+          marginRight: ITEM_RIGHT_MARGIN,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: themeAheadOfLoading.darkColor,
+
+          backgroundColor:
+            selectedId === item.id
+              ? themeAheadOfLoading.darkColor
+              : "transparent",
+          // : themeStyles.lighterOverlayBackgroundColor.backgroundColor,
+          paddingHorizontal: 10,
+
           borderRadius: 10,
-          marginHorizontal: 10,
-          width: "auto",
-          marginVertical: 6,
+          // width: "auto",
+          // marginVertical: 6,
           alignItems: "center",
         }}
       >
         <View
           style={{
-            width: 40,
+            width: "auto",
+            height: "100%",
+            flexShrink: 1,
+            paddingRight: 6,
             alignItems: "center",
             justifyContent: "flex-start",
             flexDirection: "row",
           }}
         >
-          <MaterialCommunityIcons
-            name={"shape"}
-            size={20}
-            color={themeStyles.primaryText.color}
-          />
+          {selectedId !== item.id && (
+            <MaterialCommunityIcons
+              name={"shape"}
+              size={20}
+              color={
+                selectedId === item.id
+                  ? themeAheadOfLoading.fontColor
+                  : themeStyles.primaryText.color
+              }
+            />
+          )}
         </View>
 
         <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-          <Text style={[themeStyles.primaryText]}>{item.name}</Text>
+          <Text
+            numberOfLines={2}
+            style={[
+              themeStyles.primaryText,
+              {
+                fontFamily:
+                  selectedId === item.id ? "Poppins-Bold" : "Poppins-Regular",
+                color:
+                  selectedId === item.id
+                    ? themeAheadOfLoading.fontColor
+                    : themeStyles.primaryText.color,
+                // fontWeight: selectedId === item.id ? "bold" : null,
+              },
+            ]}
+          >
+            {selectedId === item.id && (
+              <Text
+                style={[
+                  themeStyles.primaryText,
+                  {
+                    color:
+                      selectedId === item.id
+                        ? themeAheadOfLoading.fontColor
+                        : themeStyles.primaryText.color,
+                    fontFamily:
+                      selectedId === item.id
+                        ? "Poppins-Bold"
+                        : "Poppins-Regular",
+                    // fontWeight: selectedId === item.id ? "bold" : null,
+                  },
+                ]}
+              >
+                Save to:{" "}
+              </Text>
+            )}
+            {item.name}
+          </Text>
         </View>
       </Pressable>
     );
   });
 
-  const handlePressOut = (itemId) => {
-    if (itemId === selectedId && pressedOnce) {
+  const handlePressOut = (itemId, index) => {
+    if (itemId && itemId === selectedId && pressedOnce) {
       onSave();
       setPressedOnce(false);
     } else {
       handleOnPress(itemId);
+      scrollToCategory(index);
       setPressedOnce(true);
     }
   };
 
-  const handleCreateCategory = () => {
-    console.log(newCategoryRef.current.value);
-    createNewCategory({
-      user: user?.id,
-      name: newCategoryRef.current.value,
-    });
+  // useEffect(() => {
+  //   console.log("new category id: ", newCategoryId);
+  // }, [newCategoryId]);
+
+  const clearInput = () => {
+    if (newCategoryRef && newCategoryRef.current) {
+      newCategoryRef.current.clear();
+    }
+
+    setNewCategory("");
   };
 
   useEffect(() => {
-    if (createNewCategoryMutation.isSuccess) {
+    if (
+      createNewCategoryMutation.isSuccess &&
+      newCategoryId &&
+      userCategories.find((category) => category.id === newCategoryId)
+    ) {
       if (newCategoryRef && newCategoryRef.current) {
         newCategoryRef.current.clear();
-        setInputActive(false);
       }
+
+      setInputActive(false);
+      setNewCategory("");
+      // console.log(userCategories);
+      const find = userCategories.findIndex(
+        (category) => category.id === newCategoryId
+      );
+      // console.log(find);
+      setTimeout(() => {
+        scrollToCategory(find);
+      }, 100);
+      setNewCategoryId(null);
     }
-  }, [createNewCategoryMutation.isSuccess]);
+  }, [createNewCategoryMutation.isSuccess, newCategoryId, userCategories]);
+
+  const handleCreateCategory = async () => {
+    try {
+      const updatedData = await createNewCategory({
+        user: user?.id,
+        name: newCategoryRef.current.value,
+      });
+
+      console.log(`updated data from create new category`, updatedData);
+      if (updatedData && updatedData?.id) {
+        setNewCategoryId(updatedData.id);
+        handlePressOut(updatedData.id); // if for some reason item is not in categories yet to match again, this won't error, just won't select anything
+      }
+    } catch (error) {
+      console.log("error saving new category: ", error);
+    }
+  };
 
   const handleSave = () => {
     handleCreateCategory();
   };
-
-  useEffect(() => {
-    console.log("selectedId: ", selectedId);
-  }, [selectedId]);
 
   const handleOnPress = (itemId) => {
     setSelectedId(itemId);
@@ -142,7 +272,32 @@ console.log('categories rerendering');
 
   const [inputActive, setInputActive] = useState(false);
 
+
+
   const toggleInput = () => {
+    if (remaining === 0) {
+      console.log("none remaining");
+
+      Alert.alert(
+        `Oops!`,
+        `Max amount of categories added already. Please go to the category settings if you would like to delete an existing one.`,
+        [
+          {
+            text: "Okay",
+            onPress: () => {},
+            style: "cancel",
+          },
+          // {
+          //   text: "Delete",
+          //   onPress: () => handleDeleteCategory(),
+          // },
+        ]
+      );
+      return;
+    }
+    if (inputActive) {
+      clearInput();
+    }
     setInputActive((prev) => !prev);
   };
   const extractItemKey = (item, index) =>
@@ -153,39 +308,88 @@ console.log('categories rerendering');
       <Pressable
         onPress={toggleInput}
         style={{
-          width: inputActive ? 400 : 40,
-          height: 60,
-          backgroundColor: "red",
+          flexDirection: "row",
+          alignItems: "center",
+          width: inputActive ? "100%" : 60,
+          height: topperHeight - 20,
+          backgroundColor: inputActive
+            ? manualGradientColors.lightColor
+            : "transparent",
         }}
       >
+        <View
+          style={{
+            backgroundColor: manualGradientColors.homeDarkColor,
+            borderRadius: 40 / 2,
+            marginLeft: 10,
+            alignItems: "center",
+            justifyContent: "center",
+            height: 40,
+            width: 40,
+          }}
+        >
+          <MaterialCommunityIcons
+            name={!inputActive ? "plus" : "keyboard-backspace"}
+            size={20}
+            color={manualGradientColors.lightColor}
+          />
+        </View>
         {inputActive && (
-    //         <Animated.View
-    // key="inputBox"
-    // entering={SlideInLeft}
-    <View
-    style={{ marginLeft: 40 }}
-  >
+          <Animated.View
+            key="inputBox"
+            entering={SlideInLeft}
+            style={{
+              width: "90%",
+              flexGrow: 1,
+              paddingLeft: 11,
+              paddingRight: 20,
+            }}
+          >
             <TextInput
               ref={newCategoryRef}
               style={[
                 themeStyles.primaryText,
                 {
+                  fontFamily: 'Poppins-Regular',
+                  fontSize: 14,
                   borderWidth: StyleSheet.hairlineWidth,
                   borderColor: themeStyles.primaryText.color,
                   borderRadius: 10,
-                  width: 300,
+                  width: "100%",
+                  flex: 1,
+                  flexGrow: 1,
+                  paddingHorizontal: 12,
+                  backgroundColor:
+                    themeStyles.primaryBackground.backgroundColor,
                 },
-                // Uncomment or add additional styling as needed
-                // styles.textInput,
-                // themeStyles.genericText,
-                // themeStyles.genericTextBackgroundShadeTwo,
               ]}
               autoFocus
               value={newCategory}
               onSubmitEditing={handleSave}
               onChangeText={handleUpdateNewCategoryText}
             />
-          </View>
+
+            {newCategory && newCategory.length > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  height: 20,
+                  width: "auto",
+                  bottom: 3,
+                  right: 30,
+                }}
+              >
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    { opacity: 0.6, fontSize: 12 },
+                  ]}
+                >
+                  Enter to save new category
+                </Text>
+              </View>
+            )}
+          </Animated.View>
         )}
       </Pressable>
     );
@@ -196,6 +400,7 @@ console.log('categories rerendering');
       return (
         <CategoryButton
           item={item}
+          index={index}
           selectedId={selectedId}
           onPress={handlePressOut}
         />
@@ -218,41 +423,51 @@ console.log('categories rerendering');
         },
       ]}
     >
-      <View
+      <Animated.View
+        entering={SlideInRight}
         style={[
           styles.container,
           {
-            height: footerHeight,
-            paddingBottom: footerPaddingBottom,
+            height: topperHeight,
+
             backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
           },
         ]}
       >
-        {userCategories && userCategories.length > 0 && (
-          <FlatList
-            ListHeaderComponent={renderHeader}
-            // ListHeaderComponent={renderHeaderItem}
-            data={userCategories}
-            extraData={selectedId}
-            renderItem={renderCategoryButton}
-            keyboardShouldPersistTaps="handled"
-            horizontal
-            keyExtractor={extractItemKey}
-            // initialNumToRender={10}
-            // maxToRenderPerBatch={10}
-            // windowSize={10}
-            // removeClippedSubviews={true}
-            showsVerticalScrollIndicator={false}
-            ListFooterComponent={() => <View style={{ height: 50 }} />}
-          />
+        {renderHeader()}
+        {userCategories && userCategories.length > 0 && !inputActive && (
+          <Animated.View entering={SlideInRight} exiting={SlideOutRight}>
+            <Animated.FlatList
+              // ListHeaderComponent={renderHeader}
+              // ListHeaderComponent={renderHeaderItem}
+              data={userCategories}
+              // extraData={selectedId}
+              renderItem={renderCategoryButton}
+              contentContainerStyle={{ height: "100%", alignItems: "center" }}
+              keyboardShouldPersistTaps="handled"
+              ref={flatListRef}
+              scrollEventThrottle={16}
+              horizontal
+              keyExtractor={extractItemKey}
+              snapToInterval={COMBINED_WIDTH}
+              getItemLayout={getItemLayout}
+              // initialNumToRender={10}
+              // maxToRenderPerBatch={10}
+              // windowSize={10}
+              // removeClippedSubviews={true}
+              showsHorizontalScrollIndicator={false}
+              ListFooterComponent={() => <View style={{ width: 300 }} />}
+            />
+          </Animated.View>
         )}
-      </View>
+      </Animated.View>
     </GradientBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    overflow: "hidden",
     flexDirection: "row",
     alignItems: "center",
     width: "100%",

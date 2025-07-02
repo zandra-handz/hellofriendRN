@@ -161,7 +161,7 @@ useEffect(() => {
   const createNewCategoryMutation = useMutation({
     mutationFn: (data) => createUserCategory(user?.id, data),
     onSuccess: (data) => {
-      console.log("New category added:", data);
+     
 
       // Update local state
       setUserCategories((prev) => [...prev, data]);
@@ -261,6 +261,7 @@ onSuccess: (data) => {
     },
   });
   const updateSettings = async (newSettings) => {
+    console.log('updating settings!');
     try {
       await updateSettingsMutation.mutateAsync({
         // userId: user.user.id, // User ID
@@ -273,7 +274,13 @@ onSuccess: (data) => {
 
   const createNewCategory = async (newCategoryData) => {
     try {
-      await createNewCategoryMutation.mutateAsync(newCategoryData);
+      const updatedData = await createNewCategoryMutation.mutateAsync(newCategoryData);
+      
+      if (updatedData) {
+        console.log(`in createNewCategory`, updatedData);
+        return updatedData;
+      } 
+
     } catch (error) {
       console.error("Error creating new category: ", error);
     }

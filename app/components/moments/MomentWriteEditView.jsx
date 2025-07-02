@@ -4,6 +4,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import BodyStyling from "../scaffolding/BodyStyling";
 import { useUser } from "@/src/context/UserContext";
@@ -135,30 +136,49 @@ const MomentWriteEditView = ({
   };
 
   const handleSave = async () => {
-    try {
-      if (selectedFriend) {
-        if (!updateExistingMoment) {
-          const requestData = {
-            user: user.id,
-            friend: selectedFriend.id,
-            selectedCategory: selectedCategory,
-            selectedUserCategory: selectedUserCategory || null,
-            moment: momentTextRef.current.getText(),
-          };
+    if (momentTextRef && momentTextRef.current) {
+      const textLength = momentTextRef.current.getText().length;
 
-          await handleCreateMoment(requestData);
-        } else {
-          const editData = {
-            typed_category: selectedCategory,
-            user_category: selectedUserCategory,
-            capsule: momentTextRef.current.getText(),
-          };
-
-          await handleEditMoment(existingMomentObject?.id, editData);
-        }
+      if (!textLength) {
+        Alert.alert(
+          `Oops!`,
+          `Please enter your talking point first before saving it.`,
+          [
+            {
+              text: "Back",
+              onPress: () => {},
+              style: "cancel",
+            },
+          ]
+        );
+        return;
       }
-    } catch (error) {
-      console.log("catching errors elsewhere, not sure i need this", error);
+
+      try {
+        if (selectedFriend) {
+          if (!updateExistingMoment) {
+            const requestData = {
+              user: user.id,
+              friend: selectedFriend.id,
+              selectedCategory: selectedCategory,
+              selectedUserCategory: selectedUserCategory || null,
+              moment: momentTextRef.current.getText(),
+            };
+
+            await handleCreateMoment(requestData);
+          } else {
+            const editData = {
+              typed_category: selectedCategory,
+              user_category: selectedUserCategory,
+              capsule: momentTextRef.current.getText(),
+            };
+
+            await handleEditMoment(existingMomentObject?.id, editData);
+          }
+        }
+      } catch (error) {
+        console.log("catching errors elsewhere, not sure i need this", error);
+      }
     }
   };
 
