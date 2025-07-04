@@ -120,7 +120,7 @@ const MomentWriteEditView = ({
 
   useEffect(() => {
     if (updateExistingMoment && existingMomentObject) {
-      console.log(existingMomentObject);
+      // console.log(existingMomentObject);
       setSelectedCategory(existingMomentObject.typedCategory);
     }
   }, [updateExistingMoment, existingMomentObject]);
@@ -130,7 +130,7 @@ const MomentWriteEditView = ({
   };
 
   const handleUserCategorySelect = (category) => {
-    console.log("selecting category: ", category);
+    // console.log("selecting category: ", category);
 
     setSelectedUserCategory(category);
   };
@@ -237,6 +237,8 @@ const MomentWriteEditView = ({
         <UserCategorySelector
           onPress={handleUserCategorySelect}
           onSave={handleSave}
+          updatingExisting={updateExistingMoment}
+          existingId={Number(existingMomentObject?.user_category) || null}
           selectedId={selectedUserCategory}
         />
 

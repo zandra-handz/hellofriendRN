@@ -22,6 +22,11 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
 import { useNavigationState } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+import PieDonut from "./PieDonut";
+import Pie from "./Pie";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -33,15 +38,24 @@ import Animated, {
 } from "react-native-reanimated";
 import GradientBackground from "../appwide/display/GradientBackground";
 import CategoryDetailsModal from "./CategoryDetailsModal";
+import PieChartModal from "./PieChartModal";
 
-const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
+const UserCategorySelector = ({
+  onPress,
+  onSave,
+  existingCategory,
+  updatingExisting,
+  existingId,
+}) => {
   const navigationState = useNavigationState((state) => state);
   const { user, onSignOut } = useUser();
   const currentRouteName = navigationState.routes[navigationState.index]?.name;
   const isOnActionPage = currentRouteName === "hellofriend";
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { selectedFriend, deselectFriend } = useSelectedFriend();
+  const { selectedFriend, deselectFriend, friendDashboardData } =
+    useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
+  const { capsuleList } = useCapsuleList();
   const {
     userCategories,
     createNewCategory,
@@ -80,6 +94,17 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
     }
   }, [userCategories]);
 
+  const { categorySizes, addCategoryItem, moveCategoryCount } =
+    useMomentSortingFunctions({
+      listData: capsuleList,
+    });
+
+  //   const biggestCategoryId = useMemo(() => {
+  //   if (capsuleList && capsuleList.length > 0) {
+  //     return userCategories[0].max_active - userCategories.length;
+  //   }
+  // }, [capsuleList]);
+
   const ITEM_WIDTH = 140;
   const ITEM_RIGHT_MARGIN = 4;
   const COMBINED_WIDTH = ITEM_WIDTH + ITEM_RIGHT_MARGIN;
@@ -101,122 +126,206 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
     }
   };
 
-  const [ detailsModalVisible, setDetailsModalVisible ] = useState(false);
+  const [categoriesSummary, setCategoriesSummary] = useState({});
+  const [categoriesMap, setCategoriesMap] = useState({});
+  const [categoriesSortedList, setCategoriesSortedList] = useState([]);
+  const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
+    const [tempCategoriesMap, setTempCategoriesMap] = useState({});
+  useFocusEffect(
+    useCallback(() => {
+      if (!capsuleList || capsuleList?.length < 1) {
+        return;
+      }
 
- 
+      let categories = categorySizes();
+    //  console.log(categories);
+      setCategoriesMap(categories.lookupMap);
+      setCategoriesSortedList(categories.sortedList);
+      setTempCategoriesSortedList(categories.sortedList);
+      setTempCategoriesMap(categories.lookupMap)
+    }, [capsuleList])
+  );
 
-  const CategoryButton = React.memo(({ item, index, selectedId, onPress, onLongPress }) => {
-    return (
-      <Pressable
-        onPress={() => onPress(item.id, index)}
-        onLongPress={() => onLongPress(item.id, index)}
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          height: topperHeight - 20,
+  useEffect(() => {
+    if (!categoriesSortedList) {
+      return;
+    }
 
-          width: ITEM_WIDTH,
-          marginRight: ITEM_RIGHT_MARGIN,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: themeAheadOfLoading.darkColor,
+    if (updatingExisting && existingId) {
 
-          backgroundColor:
-            selectedId === item.id
-              ? themeAheadOfLoading.darkColor
-              : "transparent",
-          // : themeStyles.lighterOverlayBackgroundColor.backgroundColor,
-          paddingHorizontal: 10,
+            const find = userCategories.findIndex(
+        (category) => category.id === existingId
+      );
+      // console.log(find);
+      setTimeout(() => {
+        scrollToCategory(find);
+      }, 100);
+      setSelectedId(existingId);
 
-          borderRadius: 10,
-          // width: "auto",
-          // marginVertical: 6,
-          alignItems: "center",
-        }}
-      >
-        <View
+      return;
+
+    };
+
+    let largest = categoriesSortedList[0]?.user_category;
+    // console.log(`largest: `, typeof largest);
+
+    if (largest) {
+      setSelectedId(largest);
+    }
+  }, [categoriesSortedList]);
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+    const [pieChartModalVisible, setPieChartModalVisible] = useState(false);
+
+
+  const CategoryButton = React.memo(
+    ({ item, index, selectedId, onPress, onLongPress }) => {
+      return (
+        <Pressable
+          onPress={() => onPress(item, index)}
+          onLongPress={() => onLongPress(item, index)}
           style={{
-            width: "auto",
-            height: "100%",
-            flexShrink: 1,
-            paddingRight: 6,
-            alignItems: "center",
-            justifyContent: "flex-start",
             flexDirection: "row",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            height: topperHeight - 20,
+
+            width: ITEM_WIDTH,
+            marginRight: ITEM_RIGHT_MARGIN,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: themeAheadOfLoading.darkColor,
+
+            backgroundColor:
+              selectedId === item.id
+                ? themeAheadOfLoading.darkColor
+                : "transparent",
+            // : themeStyles.lighterOverlayBackgroundColor.backgroundColor,
+            paddingHorizontal: 10,
+
+            borderRadius: 10,
+            // width: "auto",
+            // marginVertical: 6,
+            alignItems: "center",
           }}
         >
-          {selectedId !== item.id && (
-            <MaterialCommunityIcons
-              name={"shape"}
-              size={20}
-              color={
-                selectedId === item.id
-                  ? themeAheadOfLoading.fontColor
-                  : themeStyles.primaryText.color
-              }
-            />
-          )}
-        </View>
-
-        <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-          <Text
-            numberOfLines={2}
-            style={[
-              themeStyles.primaryText,
-              {
-                fontFamily:
-                  selectedId === item.id ? "Poppins-Bold" : "Poppins-Regular",
-                color:
+          <View
+            style={{
+              width: "auto",
+              height: "100%",
+              flexShrink: 1,
+              paddingRight: 6,
+              alignItems: "center",
+              justifyContent: "flex-start",
+              flexDirection: "row",
+            }}
+          >
+            {selectedId !== item.id && (
+              <MaterialCommunityIcons
+                name={"shape"}
+                size={20}
+                color={
                   selectedId === item.id
                     ? themeAheadOfLoading.fontColor
-                    : themeStyles.primaryText.color,
-                // fontWeight: selectedId === item.id ? "bold" : null,
-              },
-            ]}
-          >
-            {selectedId === item.id && (
-              <Text
-                style={[
-                  themeStyles.primaryText,
-                  {
-                    color:
-                      selectedId === item.id
-                        ? themeAheadOfLoading.fontColor
-                        : themeStyles.primaryText.color,
-                    fontFamily:
-                      selectedId === item.id
-                        ? "Poppins-Bold"
-                        : "Poppins-Regular",
-                    // fontWeight: selectedId === item.id ? "bold" : null,
-                  },
-                ]}
-              >
-                Save to:{" "}
-              </Text>
+                    : themeStyles.primaryText.color
+                }
+              />
             )}
-            {item.name}
-          </Text>
-        </View>
-      </Pressable>
-    );
-  });
+          </View>
 
-  const handlePressOut = (itemId, index) => {
+          <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+            <Text
+              numberOfLines={2}
+              style={[
+                themeStyles.primaryText,
+                {
+                  fontFamily:
+                    selectedId === item.id ? "Poppins-Bold" : "Poppins-Regular",
+                  color:
+                    selectedId === item.id
+                      ? themeAheadOfLoading.fontColor
+                      : themeStyles.primaryText.color,
+                  // fontWeight: selectedId === item.id ? "bold" : null,
+                },
+              ]}
+            >
+              {selectedId === item.id && (
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    {
+                      color:
+                        selectedId === item.id
+                          ? themeAheadOfLoading.fontColor
+                          : themeStyles.primaryText.color,
+                      fontFamily:
+                        selectedId === item.id
+                          ? "Poppins-Bold"
+                          : "Poppins-Regular",
+                      // fontWeight: selectedId === item.id ? "bold" : null,
+                    },
+                  ]}
+                >
+                  Save to:{" "}
+                </Text>
+              )}
+              {item.name}
+            </Text>
+          </View>
+        </Pressable>
+      );
+    }
+  );
+
+  const handlePressOut = (item, index) => {
+    if (!item) {
+      return;
+    }
+    const itemId = item?.id;
     if (itemId && itemId === selectedId && pressedOnce) {
       onSave();
       setPressedOnce(false);
     } else {
+
+      
+      let newData = {};
+
+      if (!updatingExisting) {
+
+        console.log('NOT updating existing');
+        newData = addCategoryItem(categoriesMap, {
+          user_category: item.id,
+          name: item.name,
+          sizeToAdd: 1,
+        });
+      }
+
+      if (updatingExisting) {
+        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~updating existing!', selectedId, item.id, item.name);
+        newData = moveCategoryCount(tempCategoriesMap, selectedId, item.id, item.name);
+      
+      }
+
       handleOnPress(itemId);
       scrollToCategory(index);
+
+
+      setTempCategoriesSortedList(newData.sortedList);
+      setTempCategoriesMap(newData.lookupMap);
       setPressedOnce(true);
     }
   };
 
-  const handleLongPress = (itemId, index) => {
+  // useEffect(() => {
+  //   if (selectedId) {
+  //     console.log("selectedId change: ", typeof selectedId, selectedId);
+  //   }
+  // }, [selectedId]);
 
-    if (!itemId) {
+  const handleLongPress = (item, index) => {
+    if (!item) {
       return;
     }
+
+    const itemId = item?.id;
 
     if (itemId !== selectedId) {
       setSelectedId(itemId);
@@ -226,7 +335,7 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
       setPressedOnce(true);
     }
 
-      scrollToCategory(index);
+    scrollToCategory(index);
 
     setDetailsModalVisible(true);
   };
@@ -277,7 +386,7 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
       // console.log(`updated data from create new category`, updatedData);
       if (updatedData && updatedData?.id) {
         setNewCategoryId(updatedData.id);
-        handlePressOut(updatedData.id); // if for some reason item is not in categories yet to match again, this won't error, just won't select anything
+        handlePressOut(updatedData); // if for some reason item is not in categories yet to match again, this won't error, just won't select anything
       }
     } catch (error) {
       console.log("error saving new category: ", error);
@@ -290,13 +399,11 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
 
   const handleOnPress = (itemId) => {
     setSelectedId(itemId);
-    console.log(itemId);
+    // console.log(itemId);
     onPress(itemId);
   };
 
   const [inputActive, setInputActive] = useState(false);
-
-
 
   const toggleInput = () => {
     if (remaining === 0) {
@@ -331,7 +438,6 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
     return (
       <Pressable
         onPress={toggleInput}
-        
         style={{
           flexDirection: "row",
           alignItems: "center",
@@ -375,7 +481,7 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
               style={[
                 themeStyles.primaryText,
                 {
-                  fontFamily: 'Poppins-Regular',
+                  fontFamily: "Poppins-Regular",
                   fontSize: 14,
                   borderWidth: StyleSheet.hairlineWidth,
                   borderColor: themeStyles.primaryText.color,
@@ -467,7 +573,7 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
               // ListHeaderComponent={renderHeader}
               // ListHeaderComponent={renderHeaderItem}
               data={userCategories}
-              // extraData={selectedId}
+              extraData={selectedId}
               renderItem={renderCategoryButton}
               contentContainerStyle={{ height: "100%", alignItems: "center" }}
               keyboardShouldPersistTaps="handled"
@@ -488,23 +594,52 @@ const UserCategorySelector = ({ onPress, onSave, existingCategory }) => {
         )}
       </Animated.View>
 
-        {detailsModalVisible && (
-          <View>
-            <CategoryDetailsModal
-              isVisible={detailsModalVisible}
-              closeModal={() => setDetailsModalVisible(false)}
-              categoryId={selectedId}
-              />
-          </View>
-        )}
+      {detailsModalVisible && (
+        <View>
+          <CategoryDetailsModal
+            isVisible={detailsModalVisible}
+            closeModal={() => setDetailsModalVisible(false)}
+            categoryId={selectedId}
+          />
+        </View>
+      )}
+            {pieChartModalVisible && (
+        <View>
+          <PieChartModal
+            isVisible={pieChartModalVisible}
+            closeModal={() => setPieChartModalVisible(false)}
+            data={tempCategoriesSortedList}
+            // categoryId={selectedId}
+          />
+        </View>
+      )}
 
+      {categoriesSortedList && categoriesSortedList.length > 0 && !pieChartModalVisible && (
+        <Pressable
+        onLongPress={() => setPieChartModalVisible(true)}
+          style={{
+            position: "absolute",
+           // backgroundColor: "red",
+            alignItems: "center",
+            zIndex: 10000,
+            elevation: 10000,
+            bottom: -60,
+            
+            right: 30,
+            width: 50,
+            height: '100%',
+          }}
+        >
+          <PieDonut data={tempCategoriesSortedList} />
+        </Pressable>
+      )}
     </GradientBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    overflow: "hidden",
+    //overflow: "hidden",
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
@@ -516,6 +651,7 @@ const styles = StyleSheet.create({
     elevation: 6000,
   },
   section: {
+  overflow: 'hidden',
     flex: 1,
     flexDirection: "column",
     alignItems: "center",

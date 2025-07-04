@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const useMomentFunctions = () => {
+const useMomentContextFunctions = () => {
 
 
     // must have a default string for null names or else this will not sort properly
@@ -34,4 +34,4 @@ const useMomentFunctions = () => {
   };
 };
 
-export default useMomentFunctions;
+export default useMomentContextFunctions;

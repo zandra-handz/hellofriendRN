@@ -50,8 +50,7 @@ const { user } = useUser();
 
   const [remainingCategories, setRemainingCategories] = useState(
     getCreationsRemaining
-  );
-  const [categoryLimit, setCategoryLimit] = useState(getCategoryCap);
+  ); 
 
   const renderListItem = useCallback(
     ({ item, index }) => {

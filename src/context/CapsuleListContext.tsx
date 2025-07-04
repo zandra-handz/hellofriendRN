@@ -10,7 +10,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "./UserContext";
 
-import useMomentFunctions from "../hooks/useMomentFunctions";
+import useMomentContextFunctions from "../hooks/useMomentContextFunctions";
 
 const CapsuleListContext = createContext({
   capsuleList: [],
@@ -43,7 +43,7 @@ export const CapsuleListProvider = ({ children }) => {
   console.log("CAPSULE LIST RERENDERED");
   const [sortedByCategory, setSortedByCategory] = useState([]);
 
-  const { sortByMomentCategory, getPreAdded } = useMomentFunctions();
+  const { sortByMomentCategory, getPreAdded } = useMomentContextFunctions();
   // const [newestFirst, setNewestFirst] = useState([]);
 
   const { data: sortedCapsuleList = [], isLoading: isCapsuleContextLoading } =
