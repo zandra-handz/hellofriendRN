@@ -1,10 +1,11 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import {
   TouchableOpacity,
   Pressable,
   Text,
   StyleSheet,
   View,
+  ScrollView,
   DimensionValue,
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -14,6 +15,9 @@ import { useNavigation } from "@react-navigation/native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import LoadedMoments from "../buttons/moments/LoadedMoments";
 import LoadedImages from "../buttons/images/LoadedImages";
+import CalendarChart from "./CalendarChart";
+import AllFriendCharts from "./AllFriendCharts";
+import { fetchCompletedMomentsAPI } from "@/src/calls/api";
 
 import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
 
@@ -55,7 +59,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const lastPress = useRef(0);
   const pressTimeout = useRef(null);
 
-  const SELECTED_FRIEND_CARD_HEIGHT = 130;
+  const SELECTED_FRIEND_CARD_HEIGHT = 150;
   // const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
   const SELECTED_FRIEND_CARD_MARGIN_TOP = 202;
   const SELECTED_FRIEND_CARD_PADDING = 10;
@@ -100,6 +104,15 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     styles,
   ]);
 
+
+  useEffect(() => {
+    if (selectedFriend) {
+      fetchCompletedMomentsAPI(selectedFriend.id);
+      
+    }
+
+  }, [selectedFriend]);
+
   const navigateToMoments = () => {
     navigation.navigate("Moments");
   };
@@ -133,81 +146,25 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     lastPress.current = now;
   };
 
-  return (
-    <View style={{ borderRadius: borderRadius }}>
+  return (  
+        
       <View
         style={[
           styles.container,
           {
             marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
             borderRadius: borderRadius,
-            borderColor: borderColor,
-            justifyContent: "flex-start",
-            flexDirection: "column",
+            borderColor: borderColor, 
             paddingHorizontal: 4,
           },
         ]}
       >
-        <View
-          style={[
-            {
-              overflow: "hidden",
-              padding: 10,
-              backgroundColor:
-                themeStyles.overlayBackgroundColor.backgroundColor,
-              borderRadius: 20,
-            },
-          ]}
-        >
-          <View
-            style={{
-              borderRadius: 20,
-              flexDirection: "row",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "space-between",
-
-              // backgroundColor: 'orange',
-              marginBottom: spacerAroundCalendar,
-            }}
-          >
-            <View style={{ flexDirection: "row" }}>
-              <MaterialCommunityIcons
-                name="hand-wave-outline"
-                size={20}
-                color={themeStyles.primaryText.color}
-                style={{ marginBottom: 0 }}
-              />
-              <Text
-                style={[
-                  themeStyles.primaryText,
-                  {
-                    marginLeft: 6,
-                    marginRight: 12,
-                    fontWeight: "bold",
-                  },
-                ]}
-              >
-                Past Helloes
-              </Text>
-            </View>
-            <LabeledArrowButton
-              color={themeStyles.primaryText.color}
-              label="View"
-              opacity={0.7}
-              onPress={() => navigation.navigate("Helloes")}
-            />
-          </View>
-          {selectedFriend && (
-            <HomeScrollCalendarLights
-              itemColor={themeStyles.primaryText.color}
-              backgroundColor={themeStyles.overlayBackgroundColor.backgroundColor}
-              height={70}
-              borderRadius={20}
-            />
-          )}
-          <View style={{ width: "100%", height: 10 }}></View>
-        </View>
+<ScrollView
+  contentContainerStyle={{ paddingBottom: 100 }}
+  showsVerticalScrollIndicator={false}
+  style={{ flexGrow: 1, width: '100%' }}
+>
+  
         <View style={{ width: "100%", height: SELECTED_FRIEND_CARD_HEIGHT }}>
           {isLoading && !friendLoaded && (
             <>
@@ -224,11 +181,11 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             <View
               style={{
                 marginVertical: 6,
-                height: "100%",
-                height: 200,
-                alignItems: 'center',
+             
+                height: SELECTED_FRIEND_CARD_HEIGHT,
+                alignItems: "center",
                 flexDirection: "row",
-              
+
                 justifyContent: "space-between",
                 borderRadius: borderRadius,
                 // backgroundColor: 'orange',
@@ -244,14 +201,13 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               <View
                 style={{
                   borderRadius: 20,
-                  height: "100%",
-                  width: "13%", 
-                  flexDirection: "column",  
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  // height: "100%",
+                  width: "13%",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-              > 
-
+              >
                 <LoadedMoments
                   height={"40%"}
                   iconSize={46}
@@ -269,11 +225,29 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   circleColor={"orange"}
                   countTextSize={11}
                   countColor={manualGradientColors.homeDarkColor}
-                /> 
+                />
               </View>
             </View>
+            
           )}
+            <View style={{marginVertical: 5}}>
+               
+                  <CalendarChart
+          selectedFriend={!!selectedFriend}
+          outerPadding={spacerAroundCalendar}
+        />
         </View>
+        <View style={{marginVertical: 10}}>
+          
+                          <AllFriendCharts
+          selectedFriend={!!selectedFriend}
+          outerPadding={spacerAroundCalendar}
+        />
+        
+        
+        </View>
+        </View>
+        
         {/* <View
           style={{
             zIndex: 30000,
@@ -290,22 +264,20 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             borderColor="black"
           />
         </View> */}
+        
+</ScrollView>
       </View>
-    </View>
+       
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    width: "100%",
-    flex: 1,
-    alignContent: "center",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    overflow: "hidden",
-  },
+container: {
+  width: "100%",
+  flex: 1,
+  alignContent: "center",
+  alignItems: "center",
+},
   textContainer: {
     zIndex: 5,
     flexDirection: "column",
@@ -320,7 +292,7 @@ const styles = StyleSheet.create({
   },
   loadingWrapper: {
     flex: 1,
-    height: "100%",
+    // height: "100%",
     justifyContent: "center",
     alignItems: "center",
   },

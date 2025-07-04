@@ -21,6 +21,7 @@ import { useMessage } from "@/src/context/MessageContext";
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
 import TitleContainerUI from "./TitleContainerUI";
+import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
@@ -42,7 +43,7 @@ import { useFocusEffect } from "@react-navigation/native";
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = () => {
   const navigation = useNavigation();
-
+const {refetchUpcomingHelloes } = useUpcomingHelloes();
   const { showMessage } = useMessage();
   const { preAdded, allCapsulesList } = useCapsuleList();
 
@@ -135,8 +136,8 @@ const ContentAddHello = () => {
 
   useEffect(() => {
     if (createHelloMutation.isSuccess) {
-      showMessage(true, null, "Hello saved!");
-      // setUpdateTrigger((prev) => !prev);
+      refetchUpcomingHelloes();
+      showMessage(true, null, "Hello saved!"); 
       setFriend(null);
       navigateToMainScreen();
     }
@@ -218,6 +219,7 @@ const ContentAddHello = () => {
         const momentsDictionary = {};
         momentsAdded.forEach((moment) => {
           momentsDictionary[moment.id] = {
+            user_category: moment.user_category || null,
             typed_category: moment.typedCategory,
             capsule: moment.capsule,
           };
@@ -240,11 +242,11 @@ const ContentAddHello = () => {
     }
   };
 
-  useEffect(() => {
-    if (createHelloMutation.isError) {
-      showMessage(true, null, "Error saving Hello. Please try again!");
-    }
-  }, [createHelloMutation.isError]);
+  // useEffect(() => {
+  //   if (createHelloMutation.isError) {
+  //     showMessage(true, null, "Error saving Hello. Please try again!");
+  //   }
+  // }, [createHelloMutation.isError]);
 
   return (
     <View style={[styles.container]}>

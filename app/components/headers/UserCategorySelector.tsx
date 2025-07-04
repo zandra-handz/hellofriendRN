@@ -25,7 +25,8 @@ import { useNavigationState } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import PieDonut from "./PieDonut";
+import UserCategorySelectorButton from "./UserCategorySelectorButton";
+import Donut from "./Donut";
 import Pie from "./Pie";
 import Animated, {
   useAnimatedStyle,
@@ -94,10 +95,15 @@ const UserCategorySelector = ({
     }
   }, [userCategories]);
 
-  const { categorySizes, addCategoryItem, moveCategoryCount } =
-    useMomentSortingFunctions({
-      listData: capsuleList,
-    });
+  const {
+    categorySizes,
+    addCategoryItem,
+    moveCategoryCount,
+    generateGradientColors,
+    generateRandomColors,
+  } = useMomentSortingFunctions({
+    listData: capsuleList,
+  });
 
   //   const biggestCategoryId = useMemo(() => {
   //   if (capsuleList && capsuleList.length > 0) {
@@ -130,7 +136,7 @@ const UserCategorySelector = ({
   const [categoriesMap, setCategoriesMap] = useState({});
   const [categoriesSortedList, setCategoriesSortedList] = useState([]);
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
-    const [tempCategoriesMap, setTempCategoriesMap] = useState({});
+  const [tempCategoriesMap, setTempCategoriesMap] = useState({});
   useFocusEffect(
     useCallback(() => {
       if (!capsuleList || capsuleList?.length < 1) {
@@ -138,13 +144,51 @@ const UserCategorySelector = ({
       }
 
       let categories = categorySizes();
-    //  console.log(categories);
+      //  console.log(categories);
       setCategoriesMap(categories.lookupMap);
       setCategoriesSortedList(categories.sortedList);
       setTempCategoriesSortedList(categories.sortedList);
-      setTempCategoriesMap(categories.lookupMap)
+      setTempCategoriesMap(categories.lookupMap);
     }, [capsuleList])
   );
+
+  const [categoryColors, setCategoryColors] = useState<string[]>([]);
+  const [colors, setColors] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (userCategories && userCategories.length > 0) {
+    
+      // setCategoryColors(
+      //   generateGradientColors(
+      //     userCategories, 
+      //     manualGradientColors.lightColor,
+      //       manualGradientColors.homeDarkColor,
+      //     // themeAheadOfLoading.darkColor
+      //   )
+      // );
+            setCategoryColors(
+        generateRandomColors(
+          userCategories 
+        )
+      );
+    }
+  }, [userCategories]);
+
+
+
+
+useEffect(() => {
+  if (categoryColors && tempCategoriesSortedList) {
+    const userCategorySet = new Set(
+      tempCategoriesSortedList.map(item => item.user_category)
+    );
+
+    const filteredColors = categoryColors
+      .filter(item => userCategorySet.has(item.user_category))
+      .map(item => item.color);  
+    setColors(filteredColors);  
+  }
+}, [categoryColors, tempCategoriesSortedList]);
 
   useEffect(() => {
     if (!categoriesSortedList) {
@@ -152,8 +196,7 @@ const UserCategorySelector = ({
     }
 
     if (updatingExisting && existingId) {
-
-            const find = userCategories.findIndex(
+      const find = userCategories.findIndex(
         (category) => category.id === existingId
       );
       // console.log(find);
@@ -163,8 +206,7 @@ const UserCategorySelector = ({
       setSelectedId(existingId);
 
       return;
-
-    };
+    }
 
     let largest = categoriesSortedList[0]?.user_category;
     // console.log(`largest: `, typeof largest);
@@ -174,103 +216,22 @@ const UserCategorySelector = ({
     }
   }, [categoriesSortedList]);
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
-    const [pieChartModalVisible, setPieChartModalVisible] = useState(false);
-
+  const [pieChartModalVisible, setPieChartModalVisible] = useState(false);
 
   const CategoryButton = React.memo(
-    ({ item, index, selectedId, onPress, onLongPress }) => {
+    ({ item, index, colors, selectedId, onPress, onLongPress }) => {
       return (
-        <Pressable
-          onPress={() => onPress(item, index)}
-          onLongPress={() => onLongPress(item, index)}
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            height: topperHeight - 20,
-
-            width: ITEM_WIDTH,
-            marginRight: ITEM_RIGHT_MARGIN,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: themeAheadOfLoading.darkColor,
-
-            backgroundColor:
-              selectedId === item.id
-                ? themeAheadOfLoading.darkColor
-                : "transparent",
-            // : themeStyles.lighterOverlayBackgroundColor.backgroundColor,
-            paddingHorizontal: 10,
-
-            borderRadius: 10,
-            // width: "auto",
-            // marginVertical: 6,
-            alignItems: "center",
-          }}
-        >
-          <View
-            style={{
-              width: "auto",
-              height: "100%",
-              flexShrink: 1,
-              paddingRight: 6,
-              alignItems: "center",
-              justifyContent: "flex-start",
-              flexDirection: "row",
-            }}
-          >
-            {selectedId !== item.id && (
-              <MaterialCommunityIcons
-                name={"shape"}
-                size={20}
-                color={
-                  selectedId === item.id
-                    ? themeAheadOfLoading.fontColor
-                    : themeStyles.primaryText.color
-                }
-              />
-            )}
-          </View>
-
-          <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-            <Text
-              numberOfLines={2}
-              style={[
-                themeStyles.primaryText,
-                {
-                  fontFamily:
-                    selectedId === item.id ? "Poppins-Bold" : "Poppins-Regular",
-                  color:
-                    selectedId === item.id
-                      ? themeAheadOfLoading.fontColor
-                      : themeStyles.primaryText.color,
-                  // fontWeight: selectedId === item.id ? "bold" : null,
-                },
-              ]}
-            >
-              {selectedId === item.id && (
-                <Text
-                  style={[
-                    themeStyles.primaryText,
-                    {
-                      color:
-                        selectedId === item.id
-                          ? themeAheadOfLoading.fontColor
-                          : themeStyles.primaryText.color,
-                      fontFamily:
-                        selectedId === item.id
-                          ? "Poppins-Bold"
-                          : "Poppins-Regular",
-                      // fontWeight: selectedId === item.id ? "bold" : null,
-                    },
-                  ]}
-                >
-                  Save to:{" "}
-                </Text>
-              )}
-              {item.name}
-            </Text>
-          </View>
-        </Pressable>
+        <UserCategorySelectorButton
+          item={item}
+          index={index}
+          colors={colors}
+          selectedId={selectedId}
+          onPress={onPress}
+          onLongPress={onLongPress}
+          height={topperHeight - 20}
+          width={ITEM_WIDTH}
+          marginRight={ITEM_RIGHT_MARGIN}
+        />
       );
     }
   );
@@ -284,13 +245,10 @@ const UserCategorySelector = ({
       onSave();
       setPressedOnce(false);
     } else {
-
-      
       let newData = {};
 
       if (!updatingExisting) {
-
-        console.log('NOT updating existing');
+        console.log("NOT updating existing");
         newData = addCategoryItem(categoriesMap, {
           user_category: item.id,
           name: item.name,
@@ -299,14 +257,22 @@ const UserCategorySelector = ({
       }
 
       if (updatingExisting) {
-        console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~updating existing!', selectedId, item.id, item.name);
-        newData = moveCategoryCount(tempCategoriesMap, selectedId, item.id, item.name);
-      
+        console.log(
+          "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~updating existing!",
+          selectedId,
+          item.id,
+          item.name
+        );
+        newData = moveCategoryCount(
+          tempCategoriesMap,
+          selectedId,
+          item.id,
+          item.name
+        );
       }
 
       handleOnPress(itemId);
       scrollToCategory(index);
-
 
       setTempCategoriesSortedList(newData.sortedList);
       setTempCategoriesMap(newData.lookupMap);
@@ -532,13 +498,14 @@ const UserCategorySelector = ({
         <CategoryButton
           item={item}
           index={index}
+          colors={categoryColors}
           selectedId={selectedId}
           onPress={handlePressOut}
           onLongPress={handleLongPress}
         />
       );
     },
-    [handlePressOut, onPress, selectedId]
+    [handlePressOut, onPress, selectedId, categoryColors]
   );
 
   return (
@@ -603,7 +570,7 @@ const UserCategorySelector = ({
           />
         </View>
       )}
-            {pieChartModalVisible && (
+      {pieChartModalVisible && (
         <View>
           <PieChartModal
             isVisible={pieChartModalVisible}
@@ -614,25 +581,27 @@ const UserCategorySelector = ({
         </View>
       )}
 
-      {categoriesSortedList && categoriesSortedList.length > 0 && !pieChartModalVisible && (
-        <Pressable
-        onLongPress={() => setPieChartModalVisible(true)}
-          style={{
-            position: "absolute",
-           // backgroundColor: "red",
-            alignItems: "center",
-            zIndex: 10000,
-            elevation: 10000,
-            bottom: -60,
-            
-            right: 30,
-            width: 50,
-            height: '100%',
-          }}
-        >
-          <PieDonut data={tempCategoriesSortedList} />
-        </Pressable>
-      )}
+      {categoriesSortedList && colors &&
+        categoriesSortedList.length > 0 &&
+        !pieChartModalVisible && (
+          <Pressable
+            onLongPress={() => setPieChartModalVisible(true)}
+            style={{
+              position: "absolute",
+              // backgroundColor: "red",
+              alignItems: "center",
+              zIndex: 10000,
+              elevation: 10000,
+              bottom: -60,
+
+              right: 30,
+              width: 50,
+              height: "100%",
+            }}
+          >
+            <Donut data={tempCategoriesSortedList} colors={colors} />
+          </Pressable>
+        )}
     </GradientBackground>
   );
 };
@@ -651,7 +620,7 @@ const styles = StyleSheet.create({
     elevation: 6000,
   },
   section: {
-  overflow: 'hidden',
+    overflow: "hidden",
     flex: 1,
     flexDirection: "column",
     alignItems: "center",

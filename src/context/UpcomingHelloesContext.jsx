@@ -48,6 +48,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
   const upcomingHelloesIsSuccess = isSuccess;
 
   const refetchUpcomingHelloes = () => {
+    console.log('refetched upcoming!');
     queryClient.invalidateQueries({ queryKey: ["upcomingHelloes", user?.id] });
     queryClient.refetchQueries({ queryKey: ["upcomingHelloes", user?.id] });
   };

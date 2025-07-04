@@ -1,8 +1,8 @@
-import React from "react";
-import { View } from "react-native";
+import React, { useEffect } from "react";
+import { View, ScrollView } from "react-native";
 import HomeButtonUpNext from "./HomeButtonUpNext";
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
-
+import { fetchCompletedMomentsAPI } from "@/src/calls/api";
 import HomeFriendItems from "./HomeFriendItems";
 import SelectedFriendHome from "./SelectedFriendHome";
 import Animated, {
@@ -26,10 +26,10 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   isFriendSelected,
   onPress,
 }) => {
+
+ 
   return (
-    <Animated.View
-      // entering={SlideInLeft}
-      // exiting={SlideOutRight}
+    <Animated.View 
       entering={FadeInUp}
       exiting={FadeOutDown}
       style={[
@@ -39,17 +39,16 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           justifyContent: "space-between",
           flex: 1,
           paddingTop: 40,
+          width: '100%', 
         },
       ]}
     >
       <Animated.View
         style={[
-          {
-            // alignItems: "center",
-            // flexDirection: "column",
-            // justifyContent: "space-between",
-            // flex: 1,
-            // paddingTop: 10,
+        
+          { 
+              width:'100%', //added
+              flex: 1, // added
             transform: [{ translateX: slideAnim }],
           },
         ]}
@@ -68,24 +67,17 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           />
         )}
         {isFriendSelected && (
-          <>
+          <>  
             <SelectedFriendHome
               onPress={onPress}
               borderRadius={10}
               borderColor="black"
               height={"100%"}
             />
-            <HomeFriendItems borderRadius={10} height={100} />
-            {isFriendSelected && (
-              <HomeScrollCalendarLights
-                height={"5%"}
-                borderRadius={40}
-                borderColor="black"
-              />
-            )}
+              
+            {/* <HomeFriendItems borderRadius={10} height={100} /> */}
           </>
-        )}
-        <View></View>
+        )} 
       </Animated.View>
     </Animated.View>
   );

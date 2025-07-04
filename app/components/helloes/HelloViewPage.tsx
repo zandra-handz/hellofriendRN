@@ -27,7 +27,7 @@ const HelloViewPage = ({ item, index, width, height, currentIndex }) => {
   const iconTextSpacer = 10;
   const categoryButtonSpacer = 14;
 
-  const pointsCount = item.pastCapsules.length;
+  const pointsCount = item?.pastCapsules?.length || null;
   const dePluralizer = pointsCount === 1 ? "" : "s";
 
   const extractItemKey = (item, index) =>
@@ -100,7 +100,7 @@ const HelloViewPage = ({ item, index, width, height, currentIndex }) => {
                 style={{ marginRight: iconTextSpacer }}
               />
               <Text style={themeStyles.primaryText}>
-                {item.pastCapsules.length} point{dePluralizer} talked
+                {item?.pastCapsules?.length} point{dePluralizer} talked
               </Text>
               <TouchableOpacity
                 onPress={() => handleNavToReload()}

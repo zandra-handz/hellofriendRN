@@ -18,6 +18,7 @@ const CategoryButton = ({
   viewableItemsArray,
   label,
   onPress,
+  
   height = 30,
   pulseDuration = 2000,
 }) => {

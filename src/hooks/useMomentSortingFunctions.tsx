@@ -5,8 +5,10 @@ const useMomentSortingFunctions = ({ listData = [] }) => {
 
 
 const categorySizes = () => {
+
+ 
   // console.log("categorySizes called");
-  if (listData.length === 0) return { sortedList: [], lookupMap: new Map() };
+  if (!listData || (listData.length === 0)) return { sortedList: [], lookupMap: new Map() };
 
   const categorySizeMap = new Map();
  
@@ -32,23 +34,22 @@ const categorySizes = () => {
 
 const addCategoryItem = (categorySizeMap, { user_category, name }) => {
   const categoryId = Number(user_category);
- 
-  const newMap = new Map(categorySizeMap);
+
+  // Ensure it's always a Map
+  const newMap = new Map(categorySizeMap instanceof Map ? categorySizeMap : []);
 
   const current = newMap.get(categoryId);
-  if (current) { 
+  if (current) {
     newMap.set(categoryId, {
       name: current.name,
       size: current.size + 1,
     });
   } else {
-    // New category: set size to 1
     newMap.set(categoryId, {
       name,
       size: 1,
     });
-  }
- 
+  } 
   const sortedList = Array.from(newMap.entries())
     .map(([user_category, { name, size }]) => ({
       user_category,
@@ -124,6 +125,82 @@ const calculatePercentage = (
 };
 
 
+//   const generateGradientColors = (data, count, startColor, endColor) => {
+//   const hexToRgb = (hex) => hex.match(/\w\w/g).map((c) => parseInt(c, 16));
+//   const rgbToHex = (rgb) =>
+//     '#' + rgb.map((c) => c.toString(16).padStart(2, '0')).join('');
+
+//   const start = hexToRgb(startColor);
+//   const end = hexToRgb(endColor);
+
+//   return Array.from({ length: count }, (_, i) => {
+//     const t = i / Math.max(count - 1, 1);
+//     const interpolated = start.map((s, j) =>
+//       Math.round(s + (end[j] - s) * t)
+//     );
+//     return rgbToHex(interpolated);
+//   });
+// };
+
+
+// in components:
+//to get colors for all categories: data[index].color
+//to match colors for cats for friend with the ids here, use something like:
+// useEffect(() => {
+//   if (categoryColors && tempCategoriesSortedList) {
+//     const userCategorySet = new Set(
+//       tempCategoriesSortedList.map(item => item.user_category)
+//     );
+
+//     const filteredColors = categoryColors
+//       .filter(item => userCategorySet.has(item.user_category))
+//       .map(item => item.color);  
+//     setColors(filteredColors);  
+//   }
+// }, [categoryColors, tempCategoriesSortedList]);
+
+// to get an array of just colors to work with animations
+
+//this approach allows colors to be consistent between all category lists and existing moments category lists
+
+const generateGradientColors = (data, startColor, endColor) => {
+  const hexToRgb = (hex) => hex.match(/\w\w/g).map((c) => parseInt(c, 16));
+  const rgbToHex = (rgb) =>
+    '#' + rgb.map((c) => c.toString(16).padStart(2, '0')).join('');
+
+  const start = hexToRgb(startColor);
+  const end = hexToRgb(endColor);
+
+  const generateColorForIndex = (index, total) => {
+    const t = index / Math.max(total - 1, 1);
+    const interpolated = start.map((s, j) =>
+      Math.round(s + (end[j] - s) * t)
+    );
+    return rgbToHex(interpolated);
+  };
+ 
+
+  return data.map((item, index) => ({
+    user_category: item.id,
+    color: generateColorForIndex(index, data.length),
+  }));
+};
+
+const generateRandomColors = (data) => {
+  const getRandomColor = () => {
+    const getRandomChannel = () => Math.floor(Math.random() * 256);
+    const rgb = [getRandomChannel(), getRandomChannel(), getRandomChannel()];
+    return (
+      '#' +
+      rgb.map((c) => c.toString(16).padStart(2, '0')).join('')
+    );
+  };
+
+  return data.map((item) => ({
+    user_category: item.id,
+    color: getRandomColor(),
+  }));
+};
 
 
   return {
@@ -131,6 +208,8 @@ const calculatePercentage = (
     addCategoryItem,
     moveCategoryCount,
     calculatePercentage, // used for category sizes
+    generateGradientColors,
+    generateRandomColors,
   };
 };
 

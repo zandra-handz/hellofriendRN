@@ -363,7 +363,7 @@ export const deleteUserCategory = async (userId, categoryId) => {
 export const getCurrentUser = async () => {
   try {
     const response = await helloFriendApiClient.get("/users/get-current/");
-    console.log("API GET Call getCurrentUser", response.data);
+    console.log("API GET Call getCurrentUser");//, response.data);
     // console.log("API getCurrentUser: ", response);
     return response.data;
   } catch (error) {
@@ -870,7 +870,7 @@ export const resetFriendFavesColorThemeToDefaultOld = async (
 export const fetchUpcomingHelloes = async () => {
   try {
     const response = await helloFriendApiClient.get("/friends/upcoming/");
-    // console.log("API GET CALL fetchUpcomingHelloes", response.data);
+    //  console.log("API GET CALL fetchUpcomingHelloes", response.data);
     return response.data;
   } catch (error) {
     console.error("ERROR API GET CALL fetchUpcomingHelloes:", error);
@@ -919,6 +919,32 @@ export const fetchMomentsAPI = async (friendId) => {
   }
 };
 
+export const fetchCompletedMomentsAPI = async (friendId) => {
+  // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+  try {
+    const response = await helloFriendApiClient.get(
+      `/friends/${friendId}/thoughtcapsules/completed/`
+    );
+     console.log(`COMPLETED MOMENTS!!!!!~~~~~~~~~~~~~~~~~`, response.data);
+    if (response && response.data) {
+      const capsules = response.data.map((capsule) => ({
+        id: capsule.id, 
+        created: capsule.created_on,
+        preAdded: capsule.pre_added_to_hello,
+        user_category: capsule.user_category,
+        user_category_name: capsule.user_category_name || 'No category',
+      }));
+      return capsules;
+    } else {
+      // console.log("fetchThoughtCapsules: no capsules added yet");
+      return []; // Return an empty array if no capsules
+    }
+  } catch (error) {
+    console.error("Error fetching completed thought capsules: ", error);
+    throw error;
+  }
+};
+
 export const deleteHelloAPI = async (data) => {
   try {
     const response = await helloFriendApiClient.delete(
@@ -957,7 +983,7 @@ export const fetchPastHelloes = async (friendId) => {
     );
     if (response && response.data) {
       const helloesData = response.data;
-      console.log("API GET CALL fetchPastHelloes");
+      console.log("API GET CALL fetchPastHelloes", response.data);
 
       const formattedHelloesList = helloesData.map((hello) => ({
         id: hello.id,
@@ -1006,16 +1032,17 @@ export const saveMomentAPI = async (requestData) => {
 };
 
 export const saveHello = async (requestData) => {
+  console.log('saveHellodata: ', requestData);
   try {
     const response = await helloFriendApiClient.post(
       `/friends/${requestData.friend}/helloes/add/`,
       requestData
     );
-    console.log("response from saveHello endpoint: ", response);
-    return response;
+    // console.log("response from saveHello endpoint: ", response);
+    return response.data;
   } catch (error) {
     console.error("Error saving hello:", error);
-    console.log(response.data);
+    // console.log(response.data);
     throw error;
   }
 };
@@ -1025,6 +1052,7 @@ export const deleteMomentAPI = async (data) => {
     const response = await helloFriendApiClient.delete(
       `/friends/${data.friend}/thoughtcapsule/${data.id}/`
     );
+    // console.log(`deleted moment: `, response.status);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -1042,7 +1070,7 @@ export const deleteMomentAPI = async (data) => {
 
 export const updateMomentAPI = async (friendId, capsuleId, capsuleData) => {
 
-    console.log(`updating moment with data: `, capsuleData);
+    // console.log(`updating moment with data: `, capsuleData);
 //   console.log(
 //     `data in updateMomentApi ${capsuleId}, ${capsuleData?.pre_added_to_hello}`
 //   );

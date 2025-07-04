@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     zIndex: 3000,
   },
   sectionContainer: {
-    paddingTop: 24,
+    paddingTop: 74,
     width: "100%",
     flex: 1,
   },

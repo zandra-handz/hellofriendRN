@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useMemo, useRef } from "react";
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useRef,
+  useEffect,
+} from "react";
 import { useUser } from "./UserContext";
 import { useSelectedFriend } from "../context/SelectedFriendContext";
 import { useUpcomingHelloes } from "./UpcomingHelloesContext";
@@ -17,7 +23,6 @@ export const useHelloes = () => {
   return useContext(HelloesContext);
 };
 
- 
 export const HelloesProvider = ({ children }) => {
   const { refetchUpcomingHelleos } = useUpcomingHelloes();
   const queryClient = useQueryClient();
@@ -37,7 +42,7 @@ export const HelloesProvider = ({ children }) => {
     queryFn: () => {
       //console.log('Fetching past helloes for:', selectedFriend?.id);
       return fetchPastHelloes(selectedFriend.id);
-    }, 
+    },
     enabled: !!(user && isAuthenticated && !isInitializing && selectedFriend),
     staleTime: 1000 * 60 * 20, // 20 minutes, same as selected friend data
     onSuccess: () => {
@@ -104,15 +109,21 @@ export const HelloesProvider = ({ children }) => {
         createHelloMutation.reset();
       }, 2000);
     },
-    onSuccess: (data) => {
+    onSuccess: (data) => { 
+      const normalized = {
+        ...data,
+        dateLong: data.date, // or format if needed
+        date: data.past_date_in_words || formatDate(data.date), // optional
+      };
+
       queryClient.setQueryData(
         ["pastHelloes", user?.id, selectedFriend?.id],
         (old) => {
-          const updatedHelloes = old ? [data, ...old] : [data];
+          const updatedHelloes = old ? [normalized, ...old] : [normalized];
           return updatedHelloes;
         }
       );
-      //refetchUpcomingHelleos();
+   
 
       // const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
       //console.log("Actual HelloesList after mutation:", actualHelloesList);
@@ -150,6 +161,10 @@ export const HelloesProvider = ({ children }) => {
       console.error("Error saving hello:", error);
     }
   };
+
+  useEffect(() => {
+    console.log("helloeslistupdated: ", helloesList);
+  }, [helloesList]);
 
   const handleDeleteHelloRQuery = async (data) => {
     try {
@@ -322,43 +337,46 @@ export const HelloesProvider = ({ children }) => {
     }
   }, [helloesList]);
 
-const memoizedValue = useMemo(() => ({
-  helloesList,
-  isFetching,
-  flattenHelloes,
-  helloesIsFetching,
-  helloesIsLoading,
-  helloesIsSuccess,
-  helloesIsError,
-  createHelloMutation,
-  handleCreateHello,
-  helloesListMonthYear,
-  latestHelloDate,
-  earliestHelloDate,
-  monthsInRange,
-  handleDeleteHelloRQuery,
-  deleteHelloMutation,
-}), [
-  helloesList,
-  isFetching,
-  flattenHelloes,
-  helloesIsFetching,
-  helloesIsLoading,
-  helloesIsSuccess,
-  helloesIsError,
-  createHelloMutation,
-  handleCreateHello,
-  helloesListMonthYear,
-  latestHelloDate,
-  earliestHelloDate,
-  monthsInRange,
-  handleDeleteHelloRQuery,
-  deleteHelloMutation,
-]);
+  const memoizedValue = useMemo(
+    () => ({
+      helloesList,
+      isFetching,
+      flattenHelloes,
+      helloesIsFetching,
+      helloesIsLoading,
+      helloesIsSuccess,
+      helloesIsError,
+      createHelloMutation,
+      handleCreateHello,
+      helloesListMonthYear,
+      latestHelloDate,
+      earliestHelloDate,
+      monthsInRange,
+      handleDeleteHelloRQuery,
+      deleteHelloMutation,
+    }),
+    [
+      helloesList,
+      isFetching,
+      flattenHelloes,
+      helloesIsFetching,
+      helloesIsLoading,
+      helloesIsSuccess,
+      helloesIsError,
+      createHelloMutation,
+      handleCreateHello,
+      helloesListMonthYear,
+      latestHelloDate,
+      earliestHelloDate,
+      monthsInRange,
+      handleDeleteHelloRQuery,
+      deleteHelloMutation,
+    ]
+  );
 
-return (
-  <HelloesContext.Provider value={memoizedValue}>
-    {children}
-  </HelloesContext.Provider>
-);
+  return (
+    <HelloesContext.Provider value={memoizedValue}>
+      {children}
+    </HelloesContext.Provider>
+  );
 };
