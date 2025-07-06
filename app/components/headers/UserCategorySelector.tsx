@@ -162,8 +162,8 @@ const UserCategorySelector = ({
       //   generateGradientColors(
       //     userCategories, 
       //     manualGradientColors.lightColor,
-      //       manualGradientColors.homeDarkColor,
-      //     // themeAheadOfLoading.darkColor
+      //     //  manualGradientColors.homeDarkColor,
+      //      themeAheadOfLoading.lightColor
       //   )
       // );
             setCategoryColors(
@@ -179,9 +179,12 @@ const UserCategorySelector = ({
 
 useEffect(() => {
   if (categoryColors && tempCategoriesSortedList) {
+    // console.log('tempcategorysortedlist');
     const userCategorySet = new Set(
       tempCategoriesSortedList.map(item => item.user_category)
     );
+    // console.log(tempCategoriesSortedList);
+    // console.log(userCategorySet);
 
     const filteredColors = categoryColors
       .filter(item => userCategorySet.has(item.user_category))
@@ -305,10 +308,31 @@ useEffect(() => {
 
     setDetailsModalVisible(true);
   };
+ 
 
-  // useEffect(() => {
-  //   console.log("new category id: ", newCategoryId);
-  // }, [newCategoryId]);
+  
+  const handleDonutPress = (itemId) => {
+    console.log(`index from donut press`, itemId );
+    if (!itemId) {
+      return;
+    }
+ 
+
+    if (itemId !== selectedId) {
+      setSelectedId(itemId);
+    }
+
+    if (!pressedOnce) {
+      setPressedOnce(true);
+    }
+      const find = userCategories.findIndex(
+        (category) => category.id === itemId
+      );
+    scrollToCategory(find);
+
+    setDetailsModalVisible(true);
+  };
+ 
 
   const clearInput = () => {
     if (newCategoryRef && newCategoryRef.current) {
@@ -599,7 +623,7 @@ useEffect(() => {
               height: "100%",
             }}
           >
-            <Donut data={tempCategoriesSortedList} colors={colors} />
+            <Donut data={tempCategoriesSortedList} colors={colors} onCategoryPress={handleDonutPress} />
           </Pressable>
         )}
     </GradientBackground>

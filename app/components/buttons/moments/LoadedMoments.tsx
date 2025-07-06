@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import BobbingAnim from "../../../animations/BobbingAnim";
 import FlashAnim from "../../../animations/FlashAnim";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 
 interface LoadedMomentsProps {
@@ -46,8 +46,11 @@ const LoadedMoments: React.FC<LoadedMomentsProps> = ({
             }}
           > 
 
-            <MaterialIcons
-              name="tips-and-updates"
+            {/* <MaterialIcons */}
+              {/* name="tips-and-updates" */}
+            <MaterialCommunityIcons
+            
+                name="comment-flash-outline"
               size={iconSize}
               color={iconColor}
             />

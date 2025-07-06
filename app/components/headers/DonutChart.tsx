@@ -1,11 +1,16 @@
-import { View, StyleSheet } from "react-native";
-import React from "react";
-import { SharedValue, useDerivedValue } from "react-native-reanimated";
-import { Canvas, Path, SkFont, Skia, Text } from "@shopify/react-native-skia";
+import { View, StyleSheet, Pressable } from "react-native";
+import React, { useState } from "react";
+import { SharedValue, useDerivedValue, runOnJS } from "react-native-reanimated";
+import { BlurMaskFilterProps, Canvas, Path, SkFont, Skia, Text } from "@shopify/react-native-skia";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import DonutPath from "./DonutPath";
+import { Text as RNText } from "react-native";
+ 
+
+
 
 type Props = {
+  onCategoryPress: () => void;
   radius: number;
   strokeWidth: number;
   outerStrokeWidth: number;
@@ -16,11 +21,17 @@ type Props = {
   totalValue: SharedValue<number>;
   n: number;
   gap: number;
+  labelsValue: SharedValue<object[]>;
+  labelsJS: object[];
   decimalsValue: SharedValue<number[]>;
   colors: string[];
+  labelsSize: number;
+  labelsDistanceFromCenter: number;
+  labelsSliceEnd: number;
 };
 
 const DonutChart = ({
+  onCategoryPress,
   radius,
   strokeWidth,
   outerStrokeWidth,
@@ -32,10 +43,29 @@ const DonutChart = ({
   n,
   gap,
   decimalsValue,
+  labelsValue,
   colors,
+  labelsSize,
+  labelsDistanceFromCenter,
+  labelsSliceEnd,
 }: Props) => {
-  const array = Array.from({ length: n }); 
+  const array = Array.from({ length: n });
   const innerRadius = radius - outerStrokeWidth / 2;
+
+
+    const [labelsJS, setLabelsJS] = useState([]);
+  const [decimalsJS, setDecimalsJS] = useState([]);
+
+    useDerivedValue(() => {
+    const labelsSnapshot = labelsValue.value;
+    runOnJS(setLabelsJS)(labelsSnapshot);
+  }, [labelsValue]);
+
+  useDerivedValue(() => {
+    const decimalsSnapshot = decimalsValue.value;
+    runOnJS(setDecimalsJS)(decimalsSnapshot);
+  }, [decimalsValue]);
+
 
   const path = Skia.Path.Make();
   path.addCircle(radius, radius, innerRadius);
@@ -44,8 +74,9 @@ const DonutChart = ({
     () => `${Math.round(totalValue.value)}`,
     []
   );
-
+  // console.log(`n in donut chart: `, n);
  
+
   const fontSize = font.measureText("$0");
   const smallFontSize = smallFont.measureText("Total");
 
@@ -54,13 +85,57 @@ const DonutChart = ({
     return radius - _fontSize.width / 1.8;
   });
 
+
+  const LabelOverlays = array.map((_, index) => {
+  // const label = labelsValue.value[index]?.name || "";
+  // const decimal = decimalsValue.value[index];
+
+      const categoryLabel = labelsJS[index]?.name || "";
+      const categoryId = labelsJS[index]?.user_category || "";
+      const categoryIndex = index + 1;
+    const decimal = decimalsJS[index];
+  if (!decimal) return null;
+
+  const centerX = radius;
+  const centerY = radius;
+
+  // const start = decimalsValue.value
+   const start = decimalsJS
+    .slice(0, index)
+    .reduce((acc, v) => acc + v, 0);
+  const end = start + decimal;
+
+  const midAngle = ((start + end) / 2) * 2 * Math.PI;
+  const labelRadius = radius + labelsDistanceFromCenter;
+
+  const x = centerX + labelRadius * Math.cos(midAngle);
+  const y = centerY + labelRadius * Math.sin(midAngle);
+
+  return (
+    <Pressable
+    onPress={() => onCategoryPress(categoryId)}
+      key={index}
+      style={{
+      //  backgroundColor: color,
+        padding: 4,
+        borderRadius: 4,
+        position: "absolute",
+        left: x,
+        top: y,
+        transform: [{ translateX: -10 }, { translateY: -10 }],
+      }}
+    >
+      <RNText style={{ color: color , fontSize: labelsSize, fontFamily: 'Poppins-Regular' }}>{categoryLabel.slice(0,labelsSliceEnd)}</RNText>
+    </Pressable>
+  );
+});
+
   return (
     <View style={styles.container}>
       <Canvas style={styles.container}>
         <Path
           path={path}
           color={backgroundColor}
-
           style={"stroke"}
           strokeWidth={outerStrokeWidth}
           strokeCap="round"
@@ -68,7 +143,7 @@ const DonutChart = ({
           start={0}
           end={1}
         />
-        {array.map((_, index) => {
+        {/* {array.map((_, index) => {
           return <DonutPath key={index}
           radius={radius}
           strokeWidth={strokeWidth}
@@ -80,7 +155,35 @@ const DonutChart = ({
           
           
           />;
+        })} */}
+
+        {array.map((_, index) => {
+       
+
+          return (
+            <React.Fragment key={index}>
+              <DonutPath
+                radius={radius}
+                strokeWidth={strokeWidth}
+                outerStrokeWidth={outerStrokeWidth}
+                color={colors[index]}
+                decimalsValue={decimalsValue}
+                index={index}
+                gap={gap}
+              />
+              {/* {label && (
+                <Text
+                  x={x}
+                  y={y}
+                  text={label}
+                  font={smallFont}
+                  color={colors[index]}
+                />
+              )} */}
+            </React.Fragment>
+          );
         })}
+
         {/* <Text
           x={radius - smallFontSize.width / 3}
           y={radius + smallFontSize.height / 3 - fontSize.height / 2.2}
@@ -97,13 +200,16 @@ const DonutChart = ({
           color={color}
         />
       </Canvas>
+          <View style={StyleSheet.absoluteFill}>
+      {LabelOverlays}
+    </View>
+      
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
- 
     flex: 1,
   },
 });

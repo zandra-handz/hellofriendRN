@@ -46,11 +46,15 @@ const DonutPath = ({
     });
   });
 
+  // const start = useDerivedValue(() => {
+  //   const slice = decimalsValue.value.slice(0, index);
+  //   const sum = slice.reduce((acc, v) => acc + v, 0);
+  //   return withTiming(sum + index * gap, { duration: 1000 });
+  // });
 
-    const end = useDerivedValue(() => {
+  const end = useDerivedValue(() => {
     if (index === decimalsValue.value.length - 1) {
-        return withTiming(1, { duration: 1000});
-   
+      return withTiming(1, { duration: 1000 });
     }
     const decimal = decimalsValue.value.slice(0, index + 1);
 
@@ -61,6 +65,12 @@ const DonutPath = ({
     });
   });
 
+
+//   const end = useDerivedValue(() => {
+//   const slice = decimalsValue.value.slice(0, index + 1);
+//   const sum = slice.reduce((acc, v) => acc + v, 0);
+//   return withTiming(sum + (index + 1) * gap, { duration: 1000 });
+// });
 
   return (
     <Path

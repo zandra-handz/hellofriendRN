@@ -6,17 +6,17 @@ import {
   DimensionValue,
 } from "react-native";
 import React, { useState, useMemo, useCallback, useEffect } from "react";
-import PieChart from "react-native-pie-chart";
+
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useSharedValue, withTiming } from "react-native-reanimated";
-import AnimatedPieChart from "./AnimatedPieChart";
+
 import DonutChart from "./DonutChart";
-import DonutPath from "./DonutPath";
 import { useFont } from "@shopify/react-native-skia";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 
 type Props = {
+  onCategoryPress: () => void;
   data: string[];
   radius: number;
   strokeWidth: number;
@@ -24,33 +24,45 @@ type Props = {
   colors: string[];
   widthAndHeight: DimensionValue;
   labelSize: number;
+  gap: number;
   onSectionPress: () => void;
+   labelsSize: number;
+    labelsDistanceFromCenter: number;
+    labelsSliceEnd: number;
 };
 
 const Donut = ({
+  onCategoryPress,
   data,
-  radius = 30,
-  strokeWidth = 6,
-  outerStrokeWidth = 8,
+  radius = 40,  
+  strokeWidth = 6, 
+  outerStrokeWidth = 9,
   colors,
-  widthAndHeight = 50,
-  labelSize = 9,
+  gap = 0.03,
+  labelsSize = 8,
+  labelsDistanceFromCenter = -17, 
+  labelsSliceEnd = 1,
+ 
+ 
   onSectionPress = null,
 }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
-  console.log(`colors in donut: `, colors);
+  // console.log(`colors in donut: `, colors);
 
   const { calculatePercentage } = useMomentSortingFunctions(data);
   const totalValue = useSharedValue(0);
   const decimalsValue = useSharedValue<number[]>([]);
+  const labelsValue = useSharedValue<string[]>([]);
+  // const [ labelsJS, setLabelsJS ] = useState([]);
 
-      const RADIUS = radius;
+  const RADIUS = radius;
   const DIAMETER = RADIUS * 2;
   const STROKE_WIDTH = strokeWidth;
   const OUTER_STROKE_WIDTH = outerStrokeWidth;
-  const GAP = 0.05;
-
+  const GAP = gap;
+  const n = colors.length;
+  // console.log(`n in donut`, n);
   // const total = data.reduce(
   //   (acc, currentValue) => acc + currentValue.size,
   //   0
@@ -73,14 +85,19 @@ const Donut = ({
   // const OUTER_STROKE_WIDTH = 10;
   // const GAP = 0.05;
 
-
   const getPieChartDataMetrics = (data) => {
     const total = data.reduce(
       (acc, currentValue) => acc + currentValue.size,
       0
     );
 
-    const percentages = data.map((item) => (item.size / total) * 100);
+    const labels = data.map((item) => ({
+      name: item.name,
+      user_category: item.user_category,
+    }));
+
+    // const percentages = data.map((item) => (item.size / total) * 100);
+    const percentages = calculatePercentage(data, total);
 
     const decimals = percentages.map(
       (number) => Number(number.toFixed(0)) / 100
@@ -88,62 +105,49 @@ const Donut = ({
 
     return {
       total,
+      labels,
       percentages,
       decimals,
     };
   };
+  // console.log("donut rerendered!");
 
-  const generateGradientColors = (count) => {
-    const hexToRgb = (hex) => hex.match(/\w\w/g).map((c) => parseInt(c, 16));
-    const rgbToHex = (rgb) =>
-      "#" + rgb.map((c) => c.toString(16).padStart(2, "0")).join("");
+  // DONT DELETE
+  const seriesData = useMemo(() => {
+    if (!data) return;
 
-    const start = hexToRgb(manualGradientColors.darkColor);
-    const end = hexToRgb(themeAheadOfLoading.darkColor);
+    const dataCountList = data.filter((item) => Number(item.size) > 0);
+    const { total, labels, percentages, decimals } =
+      getPieChartDataMetrics(dataCountList);
 
-    return Array.from({ length: count }, (_, i) => {
-      const t = i / Math.max(count - 1, 1);
-      const interpolated = start.map((s, j) =>
-        Math.round(s + (end[j] - s) * t)
-      );
-      return rgbToHex(interpolated);
-    });
-  };
- 
-// DONT DELETE 
- const seriesData = useMemo(() => {
-  if (!data) return;
+    // const series = dataCountList.map((item, index) => ({
+    //   ...item,
+    //   label: {
+    //     text: item.name,
+    //     fontFamily: "Poppins-Regular",
+    //     fontSize: labelSize,
+    //     color: "transparent",
+    //   },
+    //   color: colors[index],
+    //   percentage: percentages[index],
+    // }));
 
-  const dataCountList = data.filter((item) => Number(item.size) > 0);
-  const { total, percentages, decimals } =
-    getPieChartDataMetrics(dataCountList);
+    return {
+      // series,
+      labels,
+      total,
+      decimals,
+    };
+  }, [data, colors]); //, labelSize]);
 
-  const series = dataCountList.map((item, index) => ({
-    ...item,
-    label: {
-      text: item.name,
-      fontFamily: "Poppins-Regular",
-      fontSize: labelSize,
-      color: "transparent",
-    },
-    color: colors[index],
-    percentage: percentages[index],
-  }));
-
-  return {
-    series,
-    total,
-    decimals,
-  };
-}, [data, colors, labelSize]);
-
-// ⬇ useEffect to set shared values
-useEffect(() => {
-  if (!seriesData) return;
-  totalValue.value = withTiming(seriesData.total, { duration: 1000 });
-  decimalsValue.value = [...seriesData.decimals];
-}, [seriesData]);
- 
+  // ⬇ useEffect to set shared values
+  useEffect(() => {
+    if (!seriesData) return;
+    totalValue.value = withTiming(seriesData.total, { duration: 1000 });
+    decimalsValue.value = [...seriesData.decimals];
+    labelsValue.value = [...seriesData.labels];
+    // setLabelsJS(seriesData.labels);
+  }, [seriesData]);
 
   const font = useFont(require("@/app/assets/fonts/Poppins-Regular.ttf"), 30);
 
@@ -157,16 +161,24 @@ useEffect(() => {
   }
 
   const fontColor = themeStyles.primaryText.color;
-    const backgroundColor = themeStyles.primaryBackground.backgroundColor;
-
-  const n = colors.length;
+  const backgroundColor = themeStyles.primaryBackground.backgroundColor;
 
   return (
     // <ScrollView style={{ flex: 1 }}>
     <View style={styles.container}>
       {/* <PieChart widthAndHeight={widthAndHeight} series={seriesData} /> */}
-      <View style={[{height: DIAMETER, width: DIAMETER, borderRadius: RADIUS, backgroundColor: themeStyles.primaryBackground.backgroundColor}]}>
+      <View
+        style={[
+          {
+            height: DIAMETER,
+            width: DIAMETER,
+            borderRadius: RADIUS,
+            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+          },
+        ]}
+      >
         <DonutChart
+          onCategoryPress={onCategoryPress}
           radius={RADIUS}
           strokeWidth={STROKE_WIDTH}
           outerStrokeWidth={OUTER_STROKE_WIDTH}
@@ -178,7 +190,12 @@ useEffect(() => {
           n={n}
           gap={GAP}
           decimalsValue={decimalsValue}
+          labelsValue={labelsValue}
+          // labelsJS={labelsJS} // using derived value internally
           colors={colors}
+          labelsSize={labelsSize}
+          labelsDistanceFromCenter={labelsDistanceFromCenter}
+          labelsSliceEnd={labelsSliceEnd}
         />
       </View>
       {/* <AnimatedPieChart data={seriesData} size={widthAndHeight} radius={widthAndHeight / 2} onSectionPress={onSectionPress} /> */}
@@ -189,8 +206,7 @@ useEffect(() => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: "center" },
-  chartContainer: { 
-  },
+  chartContainer: {},
   title: { fontSize: 24, margin: 10 },
 });
 

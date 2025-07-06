@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import {
   TouchableOpacity,
   Pressable,
@@ -34,7 +34,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   borderRadius = 20,
   borderColor = "transparent",
 }) => {
-  const navigation = useNavigation();
+
+
+    const navigation = useNavigation();
   const {
     themeStyleSpinners,
     manualGradientColors,
@@ -104,14 +106,13 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     styles,
   ]);
 
+  // useEffect(() => {
+  //   if (selectedFriend) {
+  //     fetchCompletedMomentsAPI(selectedFriend.id);
 
-  useEffect(() => {
-    if (selectedFriend) {
-      fetchCompletedMomentsAPI(selectedFriend.id);
-      
-    }
+  //   }
 
-  }, [selectedFriend]);
+  // }, [selectedFriend]);
 
   const navigateToMoments = () => {
     navigation.navigate("Moments");
@@ -146,25 +147,23 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     lastPress.current = now;
   };
 
-  return (  
-        
-      <View
-        style={[
-          styles.container,
-          {
-            marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
-            borderRadius: borderRadius,
-            borderColor: borderColor, 
-            paddingHorizontal: 4,
-          },
-        ]}
+  return (
+    <View
+      style={[
+        styles.container,
+        {
+          marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
+          borderRadius: borderRadius,
+          borderColor: borderColor,
+          paddingHorizontal: 4,
+        },
+      ]}
+    >
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+        style={{ flexGrow: 1, width: "100%" }}
       >
-<ScrollView
-  contentContainerStyle={{ paddingBottom: 100 }}
-  showsVerticalScrollIndicator={false}
-  style={{ flexGrow: 1, width: '100%' }}
->
-  
         <View style={{ width: "100%", height: SELECTED_FRIEND_CARD_HEIGHT }}>
           {isLoading && !friendLoaded && (
             <>
@@ -181,7 +180,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             <View
               style={{
                 marginVertical: 6,
-             
+
                 height: SELECTED_FRIEND_CARD_HEIGHT,
                 alignItems: "center",
                 flexDirection: "row",
@@ -228,26 +227,21 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 />
               </View>
             </View>
-            
           )}
-            <View style={{marginVertical: 5}}>
-               
-                  <CalendarChart
-          selectedFriend={!!selectedFriend}
-          outerPadding={spacerAroundCalendar}
-        />
+          <View style={{ marginVertical: 5 }}>
+            <AllFriendCharts
+              selectedFriend={!!selectedFriend}
+              outerPadding={spacerAroundCalendar}
+            />
+          </View>
+          <View style={{ marginVertical: 5 }}>
+            <CalendarChart
+              selectedFriend={!!selectedFriend}
+              outerPadding={spacerAroundCalendar}
+            />
+          </View>
         </View>
-        <View style={{marginVertical: 10}}>
-          
-                          <AllFriendCharts
-          selectedFriend={!!selectedFriend}
-          outerPadding={spacerAroundCalendar}
-        />
-        
-        
-        </View>
-        </View>
-        
+
         {/* <View
           style={{
             zIndex: 30000,
@@ -264,20 +258,18 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             borderColor="black"
           />
         </View> */}
-        
-</ScrollView>
-      </View>
-       
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-container: {
-  width: "100%",
-  flex: 1,
-  alignContent: "center",
-  alignItems: "center",
-},
+  container: {
+    width: "100%",
+    flex: 1,
+    alignContent: "center",
+    alignItems: "center",
+  },
   textContainer: {
     zIndex: 5,
     flexDirection: "column",

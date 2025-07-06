@@ -10,8 +10,9 @@ import { useUserSettings } from "@/src/context/UserSettingsContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { ScrollView } from "react-native-gesture-handler";
+import { useFriendList } from "@/src/context/FriendListContext";
 import Pie from "../headers/Pie";
-
+import CategoryDetailsModal from "../headers/CategoryDetailsModal";
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
@@ -21,7 +22,8 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
   const { capsuleList } = useCapsuleList();
-
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+const { themeAheadOfLoading } = useFriendList();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
   const {
@@ -43,12 +45,32 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
   } = useMomentSortingFunctions({
     listData: capsuleList,
   });
-  const HEIGHT = 170;
+  const HEIGHT = 220;
+
+  const CHART_RADIUS = 80;
+  const CHART_STROKE_WIDTH = 9;
+  const CHART_OUTER_STROKE_WIDTH = 10;
+  const GAP = 0.03;
+
+  const LABELS_SIZE = 11;
+  const LABELS_DISTANCE_FROM_CENTER = -34;
+  const LABELS_SLICE_END = 4;
 
   const [categoriesMap, setCategoriesMap] = useState({});
   const [categoriesSortedList, setCategoriesSortedList] = useState([]);
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
   const [tempCategoriesMap, setTempCategoriesMap] = useState({});
+
+  const [viewCategoryId, setViewCategoryId] = useState(null);
+
+  const handleSetCategoryDetailsModal = (categoryId) => {
+    if (!categoryId) {
+      return;
+    }
+    setViewCategoryId(categoryId);
+    setDetailsModalVisible(true);
+  };
+
   useFocusEffect(
     useCallback(() => {
       if (!capsuleList || capsuleList?.length < 1) {
@@ -69,9 +91,10 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
       setCategoryColors(
         generateGradientColors(
           userCategories,
-          manualGradientColors.lightColor,
-          manualGradientColors.homeDarkColor
-          // themeAheadOfLoading.darkColor
+        manualGradientColors.lightColor,
+         // themeAheadOfLoading.darkColor,
+        //  manualGradientColors.homeDarkColor
+         themeAheadOfLoading.darkColor
         )
       );
       //         setCategoryColors(
@@ -121,7 +144,8 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
       >
         <View style={{ flexDirection: "row" }}>
           <MaterialCommunityIcons
-            name="graph"
+            name="comment-edit-outline"
+            // name="graph"
             size={20}
             color={themeStyles.primaryText.color}
             style={{ marginBottom: 0 }}
@@ -136,41 +160,59 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
               },
             ]}
           >
-            Health stats
+            Talking points
           </Text>
         </View>
-        <LabeledArrowButton
+        {/* <LabeledArrowButton
           color={themeStyles.primaryText.color}
           label="View"
           opacity={0.7}
           onPress={() => navigation.navigate("Helloes")}
-        />
+        /> */}
       </View>
       <ScrollView horizontal>
-        <View style={{marginHorizontal: 6}}>
-            
-        <Donut
-          radius={50}
-          strokeWidth={10}
-          outerStrokeWidth={14}
-          data={tempCategoriesSortedList}
-          colors={colors}
-        />
-        
+        <View style={{ marginHorizontal: 6 }}>
+          <Donut
+            onCategoryPress={handleSetCategoryDetailsModal}
+            radius={CHART_RADIUS}
+            strokeWidth={CHART_STROKE_WIDTH}
+            outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
+            gap={GAP}
+            labelsSize={LABELS_SIZE}
+            labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
+            labelsSliceEnd={LABELS_SLICE_END}
+            data={tempCategoriesSortedList}
+            colors={colors}
+          />
         </View>
-       <View style={{marginHorizontal: 6}}>
-            
-        <Pie
-          data={tempCategoriesSortedList}
-          widthAndHeight={100}
-          labelSize={5}
-          onSectionPress={() => console.log("hi!")}
-        />
-        
+        <View style={{ marginHorizontal: 6 }}>
+          <Pie
+            data={tempCategoriesSortedList}
+            widthAndHeight={CHART_RADIUS * 2}
+            labelSize={5}
+            onSectionPress={() => console.log("hi!")}
+          />
+        </View>
+        <View style={{ marginHorizontal: 6 }}>
+          <Pie
+            data={tempCategoriesSortedList}
+            widthAndHeight={CHART_RADIUS * 2}
+            labelSize={5}
+            onSectionPress={() => console.log("hi!")}
+          />
         </View>
       </ScrollView>
 
       <View style={{ width: "100%", height: 10 }}></View>
+            {detailsModalVisible && (
+              <View>
+                <CategoryDetailsModal
+                  isVisible={detailsModalVisible}
+                  closeModal={() => setDetailsModalVisible(false)}
+                  categoryId={viewCategoryId}
+                />
+              </View>
+            )}
     </View>
   );
 };
