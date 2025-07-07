@@ -5,8 +5,8 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 import AnimatedPieChart from "./AnimatedPieChart";
-const Pie = ({ data, widthAndHeight=50, labelSize=9, onSectionPress=null }) => {
-    const { manualGradientColors } = useGlobalStyle();
+const Pie = ({ data, widthAndHeight=50, labelsSize=9, onSectionPress=null }) => {
+    const { manualGradientColors, themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
  
 console.log('pie component rerendered, size: ', widthAndHeight);
@@ -50,7 +50,7 @@ console.log('pie component rerendered, size: ', widthAndHeight);
     let series = [];
     series = dataCountList.map((item, index) => ({
       ...item,
-      label: { text: item.name, fontFamily: 'Poppins-Regular', fontSize: labelSize, color: 'transparent'  },
+      label: { text: item.name.slice(0,4), fontFamily: 'Poppins-Regular', color: themeStyles.primaryText.color, fontSize: labelsSize },
       color: colors[index],
     }));
 

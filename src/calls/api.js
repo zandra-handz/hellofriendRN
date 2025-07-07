@@ -209,7 +209,7 @@ export const resetPassword = async ({ email, resetCode, newPassword }) => {
       reset_code: resetCode,
       new_password: newPassword,
     });
-    console.log(response);
+    // console.log(response);
     return response;
   } catch (e) {
     console.log("error resetting password:", e);
@@ -311,6 +311,32 @@ export const getUserCategories = async () => {
   }
 };
 
+
+export const fetchCategoriesHistoryAPI = async ( returnNonZeroesOnly) => {
+  // console.log(`non zeros: `, returnNonZeroesOnly);
+  // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+  try {
+    const response = await helloFriendApiClient.get(
+      `/users/categories/history/?only_with_capsules=${returnNonZeroesOnly}` 
+    );
+    //  console.log(response.data);
+ if (response && response.data) {
+  // console.log(`API CALL fetchCategoriesistory:`, response.data);
+
+ 
+  return response.data;
+ 
+    } else {
+      // console.log("fetchThoughtCapsules: no capsules added yet");
+      return []; // Return an empty array if no capsules
+    }
+  } catch (error) {
+    console.error("Error fetching thought capsules: ", error);
+    throw error;
+  }
+};
+
+
 export const createUserCategory = async (userId, newCategoryData) => { 
     console.log(`newCategoryData: `); //, newCategoryData);
   try {
@@ -364,7 +390,7 @@ export const getCurrentUser = async () => {
   try {
     const response = await helloFriendApiClient.get("/users/get-current/");
     console.log("API GET Call getCurrentUser");//, response.data);
-    // console.log("API getCurrentUser: ", response);
+ 
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -666,7 +692,7 @@ export const fetchFriendDashboard = async (friendId) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/dashboard/`
     );
-    console.log("API GET CALL fetchFriendDashboard", response.data); //, response.data );
+    console.log("API GET CALL fetchFriendDashboard"); //, response.data); //, response.data );
 
     return response.data;
   } catch (error) {
@@ -681,7 +707,7 @@ export const remixAllNextHelloes = async (userId) => {
       `/friends/remix/all/`,
       userId
     );
-    console.log(response.data);
+    // console.log(response.data);
     return response.status;
   } catch (error) {
     console.error("Error remixing next helloes:", error);
@@ -732,9 +758,7 @@ export const updateFriendFavesColorThemeSetting = async ({
   lightColor,
   manualTheme,
 }) => {
-  try {
-    console.log(`dark color`, darkColor);
-    console.log(lightColor);
+  try { 
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/faves/`,
       {
@@ -925,7 +949,7 @@ export const fetchCompletedMomentsAPI = async (friendId) => {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/thoughtcapsules/completed/`
     );
-     console.log(`COMPLETED MOMENTS!!!!!~~~~~~~~~~~~~~~~~`, response.data);
+    //  console.log(`COMPLETED MOMENTS!!!!!~~~~~~~~~~~~~~~~~`, response.data);
     if (response && response.data) {
       const capsules = response.data.map((capsule) => ({
         id: capsule.id, 
@@ -944,6 +968,38 @@ export const fetchCompletedMomentsAPI = async (friendId) => {
     throw error;
   }
 };
+
+
+export const fetchCategoriesFriendHistoryAPI = async (friendId, returnNonZeroesOnly) => {
+  // console.log(`non zeros: `, returnNonZeroesOnly);
+  // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+  try {
+    const response = await helloFriendApiClient.get(
+      `/friends/${friendId}/categories/history/?only_with_capsules=${returnNonZeroesOnly}`
+    );
+    //  console.log(response.data);
+ if (response && response.data) {
+  // console.log(`API CALL fetchCategoriesFriendHistory:`, response.data);
+
+  // response.data.forEach((category) => {
+  //   console.log(`Category: ${category.name}`);
+  //   category.completed_capsules_for_friend.forEach((capsule, index) => {
+  //     console.log(`  Capsule ${index + 1}:`, capsule);
+  //   });
+  // });
+
+  return response.data;
+ 
+    } else {
+      // console.log("fetchThoughtCapsules: no capsules added yet");
+      return []; // Return an empty array if no capsules
+    }
+  } catch (error) {
+    console.error("Error fetching thought capsules: ", error);
+    throw error;
+  }
+};
+
 
 export const deleteHelloAPI = async (data) => {
   try {
@@ -983,7 +1039,7 @@ export const fetchPastHelloes = async (friendId) => {
     );
     if (response && response.data) {
       const helloesData = response.data;
-      console.log("API GET CALL fetchPastHelloes", response.data);
+      console.log("API GET CALL fetchPastHelloes"); //, response.data);
 
       const formattedHelloesList = helloesData.map((hello) => ({
         id: hello.id,

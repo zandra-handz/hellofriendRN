@@ -4,6 +4,7 @@ import {
   Text, 
   Pressable,
   DimensionValue,
+  Keyboard,
 } from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -71,7 +72,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   const openModal = () => {
     if (addToOpenModal) {
       addToOpenModal();
-    }
+    } 
 
     setIsFriendMenuModalVisible(true);
   };

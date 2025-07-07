@@ -1,6 +1,12 @@
 // AnimatedPieChart.js
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import Svg, { G, Path } from "react-native-svg";
 import Animated, {
   useSharedValue,
@@ -18,6 +24,30 @@ const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 // Worklet-safe arc generator
+// const getArcPath = (cx, cy, r, startAngle, endAngle) => {
+//   "worklet";
+
+//   const toRad = (angle) => (angle - 90) * (Math.PI / 180);
+//   const polarToCartesian = (cx, cy, r, angle) => {
+//     const a = toRad(angle);
+//     return {
+//       x: cx + r * Math.cos(a),
+//       y: cy + r * Math.sin(a),
+//     };
+//   };
+
+//   const start = polarToCartesian(cx, cy, r, endAngle);
+//   const end = polarToCartesian(cx, cy, r, startAngle);
+//   const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+//   return [
+//     `M ${start.x} ${start.y}`,
+//     `A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
+//     `L ${cx} ${cy}`,
+//     `Z`,
+//   ].join(" ");
+// };
+
 const getArcPath = (cx, cy, r, startAngle, endAngle) => {
   "worklet";
 
@@ -30,9 +60,12 @@ const getArcPath = (cx, cy, r, startAngle, endAngle) => {
     };
   };
 
-  const start = polarToCartesian(cx, cy, r, endAngle);
+  // 🔧 Cap endAngle at 359.99 to avoid full-circle issue
+  const safeEndAngle = Math.min(endAngle, startAngle + 359.99);
+
+  const start = polarToCartesian(cx, cy, r, safeEndAngle);
   const end = polarToCartesian(cx, cy, r, startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+  const largeArcFlag = safeEndAngle - startAngle <= 180 ? "0" : "1";
 
   return [
     `M ${start.x} ${start.y}`,
@@ -41,7 +74,6 @@ const getArcPath = (cx, cy, r, startAngle, endAngle) => {
     `Z`,
   ].join(" ");
 };
- 
 
 const AnimatedPieSlice = ({
   startAngle,
@@ -65,13 +97,14 @@ const AnimatedPieSlice = ({
     <AnimatedPath animatedProps={animatedProps} fill={fill} onPress={onPress} />
   );
 };
- 
+
 export default function AnimatedPieChart({
   data = [],
   size = 200,
   radius = 100,
   duration = 1200,
   onSectionPress = null,
+  labelsSize = 9,
 }) {
   const progress = useSharedValue(0);
   const { themeStyles, appFontStyles } = useGlobalStyle();
@@ -88,66 +121,84 @@ export default function AnimatedPieChart({
 
   return (
     <View style={[styles.container, { height: size, width: size }]}>
-<View
-  style={{
-    position: "absolute",
-    top: 0,
-    left: 0,
-    height: size,
-    width: size,
-    backgroundColor: "transparent",
-    zIndex: 10,
-  }}
->
-  {data.map((slice, index) => {
-    // Calculate start angle by summing previous slices
-    const startAngle = data
-      .slice(0, index)
-      .reduce((sum, s) => sum + (s.value / total) * 360, 0);
-    const angle = (slice.value / total) * 360;
-    const midAngle = startAngle + angle / 2;
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          height: size,
+          width: size,
+          backgroundColor: "transparent",
+          zIndex: 10,
+        }}
+      >
+        {data.map((slice, index) => {
+          // Calculate start angle by summing previous slices
+          const startAngle = data
+            .slice(0, index)
+            .reduce((sum, s) => sum + (s.value / total) * 360, 0);
+          const angle = (slice.value / total) * 360;
+          const midAngle = startAngle + angle / 2;
 
-    const toRad = (angle) => (angle - 90) * (Math.PI / 180);
-    const x = radius + radius * 0.6 * Math.cos(toRad(midAngle));
-    const y = radius + radius * 0.6 * Math.sin(toRad(midAngle));
+          const toRad = (angle) => (angle - 90) * (Math.PI / 180);
 
-    return (
-    <>
-    {onSectionPress && (
-        
-<Pressable
-  key={`pressable-${index}`}
-  onPress={() => onSectionPress?.(index, slice)}
-  style={({ pressed }) => [
-    {
-      position: "absolute",
-      top: y - 15,
-      left: x - 15,
-      padding: 0,
-      height: 'auto',
-      borderRadius: 15,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: pressed ? '#ddd' : 'transparent', // example pressed bg
-      transform: pressed ? [{ scale: 0.95 }] : [{ scale: 1 }],
-    },
-  ]}
->
-        {/* <Text style={[ appFontStyles.subWelcomeText, {fontSize: 20}]}>{slice.label.text.slice(0,1)}</Text> */}
+          const labelDistanceFactor = 0.8; // adjust to move farther away from center
 
-<Text style={[appFontStyles.subWelcomeText, {fontSize: 20}]}>
-  {Math.round((slice.value / total) * 100)}%
-</Text>
-      </Pressable>
-      
-    )}
-      
-    </>
-    );
-  })}
-</View>
+          // const x = radius + radius * 0.6 * Math.cos(toRad(midAngle));
+          // const y = radius + radius * 0.6 * Math.sin(toRad(midAngle));
 
-    
+          const x =
+            radius + radius * labelDistanceFactor * Math.cos(toRad(midAngle));
+          const y =
+            radius + radius * labelDistanceFactor * Math.sin(toRad(midAngle));
+
+          return (
+            <>
+              {onSectionPress && (
+                <Pressable
+                  key={`pressable-${index}`}
+                  onPress={() => onSectionPress?.(index, slice)}
+                  style={({ pressed }) => [
+                    {
+                      position: "absolute",
+                      top: y - 15,
+                      left: x - 15,
+                      padding: 0,
+                      height: "auto",
+                      borderRadius: 15,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: pressed ? "#ddd" : "transparent", // example pressed bg
+                      transform: pressed ? [{ scale: 0.95 }] : [{ scale: 1 }],
+                    },
+                  ]}
+                >
+                  {/* <Text style={[ appFontStyles.subWelcomeText, {fontSize: 20}]}>{slice.label.text.slice(0,1)}</Text> */}
+
+                  <Text
+                    style={[
+                      appFontStyles.subWelcomeText,
+                      {
+                        backgroundColor:
+                          themeStyles.overlayBackgroundColor.backgroundColor,
+                        padding: 2,
+                        paddingHorizontal: 6,
+                        borderRadius: 6,
+                        fontSize: labelsSize,
+                        color: themeStyles.primaryText.color,
+                      },
+                    ]}
+                  >
+                    {/* {Math.round((slice.value / total) * 100)}% */}
+                    {slice.label.text}
+                  </Text>
+                </Pressable>
+              )}
+            </>
+          );
+        })}
+      </View>
+
       <Svg width={size} height={size}>
         <G>
           {data.map((slice, index) => {
@@ -158,7 +209,7 @@ export default function AnimatedPieChart({
 
             return (
               <>
-              {/* <AnimatedPressable onPress={onSectionPress} style={{position: 'absolute', top: 50, left: 100, height: 40, width: 100, backgroundColor: 'orange'}}>
+                {/* <AnimatedPressable onPress={onSectionPress} style={{position: 'absolute', top: 50, left: 100, height: 40, width: 100, backgroundColor: 'orange'}}>
 
               </AnimatedPressable> */}
                 <AnimatedPieSlice
@@ -183,7 +234,5 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-
-
   },
 });

@@ -17,8 +17,7 @@ import LoadedMoments from "../buttons/moments/LoadedMoments";
 import LoadedImages from "../buttons/images/LoadedImages";
 import CalendarChart from "./CalendarChart";
 import AllFriendCharts from "./AllFriendCharts";
-import { fetchCompletedMomentsAPI } from "@/src/calls/api";
-
+ 
 import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
 
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
@@ -61,23 +60,27 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const lastPress = useRef(0);
   const pressTimeout = useRef(null);
 
-  const SELECTED_FRIEND_CARD_HEIGHT = 150;
+  const SELECTED_FRIEND_CARD_HEIGHT = 140;
   // const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
-  const SELECTED_FRIEND_CARD_MARGIN_TOP = 202;
-  const SELECTED_FRIEND_CARD_PADDING = 10;
+  const SELECTED_FRIEND_CARD_MARGIN_TOP = 196;
+  const SELECTED_FRIEND_CARD_PADDING = 20;
+
+
+ 
 
   const renderSuggestedHello = useMemo(() => {
     return (
       <Pressable onPress={onPress}>
         <>
           <Text
-            style={{
+            style={[ {
               fontFamily: "Poppins-Regular",
-              fontSize: appFontStyles.welcomeText.fontSize - 4,
+                 fontSize: appFontStyles.subWelcomeText.fontSize + 5,
+           
               color: themeStyles.primaryText.color,
               opacity: 0.9,
               // color: manualGradientColors.homeDarkColor, // ✅ fixed: `color` not `fontColor`
-            }}
+            }]}
           >
             {selectedFriend && friendDashboardData
               ? "Next suggested hello"
@@ -86,8 +89,10 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           <Text
             style={[
               styles.subtitleText,
+
+              
               themeStyles.primaryText,
-              { opacity: 0.9 },
+              { lineHeight: 46,   fontSize: appFontStyles.welcomeText.fontSize + 8, opacity: 0.9 },
             ]}
           >
             {friendDashboardData?.[0]?.future_date_in_words ||
@@ -179,7 +184,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           {!loadingNewFriend && friendLoaded && (
             <View
               style={{
-                marginVertical: 6,
+                marginVertical: 4,
 
                 height: SELECTED_FRIEND_CARD_HEIGHT,
                 alignItems: "center",
@@ -209,7 +214,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               >
                 <LoadedMoments
                   height={"40%"}
-                  iconSize={46}
+                  iconSize={36}
                   iconColor={themeStyles.primaryText.color}
                   onPress={onPress}
                   circleColor={"orange"}
@@ -218,7 +223,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 />
                 <LoadedImages
                   height={"40%"} //ADJUST POSITION HERE
-                  iconSize={46}
+                  iconSize={36}
                   iconColor={themeStyles.primaryText.color}
                   onPress={navigateToImages}
                   circleColor={"orange"}
@@ -228,13 +233,13 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               </View>
             </View>
           )}
-          <View style={{ marginVertical: 5 }}>
+          <View style={{ marginVertical: 3 }}>
             <AllFriendCharts
               selectedFriend={!!selectedFriend}
               outerPadding={spacerAroundCalendar}
             />
           </View>
-          <View style={{ marginVertical: 5 }}>
+          <View style={{ marginVertical: 3 }}>
             <CalendarChart
               selectedFriend={!!selectedFriend}
               outerPadding={spacerAroundCalendar}
@@ -277,11 +282,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     height: "100%",
     justifyContent: "center",
-  },
-  subtitleText: {
-    fontFamily: "Poppins-Regular",
-    fontSize: 15,
-  },
+  }, 
   loadingWrapper: {
     flex: 1,
     // height: "100%",

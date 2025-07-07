@@ -13,6 +13,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useFriendList } from "@/src/context/FriendListContext";
 import Pie from "../headers/Pie";
 import CategoryDetailsModal from "../headers/CategoryDetailsModal";
+import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+import { useUserStats } from "@/src/context/UserStatsContext";
+import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
+import UserCategoryHistoryChart from "./UserCategoryHistoryChart";
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
@@ -21,9 +25,10 @@ type Props = {
 const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
+  const { stats } = useUserStats();
   const { capsuleList } = useCapsuleList();
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
-const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendList();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
   const {
@@ -36,23 +41,25 @@ const { themeAheadOfLoading } = useFriendList();
     deleteCategoryMutation,
   } = useUserSettings();
 
-  const {
-    categorySizes,
-    addCategoryItem,
-    moveCategoryCount,
-    generateGradientColors,
-    generateRandomColors,
-  } = useMomentSortingFunctions({
-    listData: capsuleList,
+  const { selectedFriendStats } = useSelectedFriendStats();
+
+  const { categorySizes, generateGradientColors, generateRandomColors } =
+    useMomentSortingFunctions({
+      listData: capsuleList,
+    });
+
+  const { categoryHistorySizes } = useStatsSortingFunctions({
+    listData: selectedFriendStats,
   });
-  const HEIGHT = 220;
 
-  const CHART_RADIUS = 80;
-  const CHART_STROKE_WIDTH = 9;
+  const HEIGHT = 270;
+
+  const CHART_RADIUS = 90;
+  const CHART_STROKE_WIDTH = 8;
   const CHART_OUTER_STROKE_WIDTH = 10;
-  const GAP = 0.03;
+  const GAP = 0.02;
 
-  const LABELS_SIZE = 11;
+  const LABELS_SIZE = 9;
   const LABELS_DISTANCE_FROM_CENTER = -34;
   const LABELS_SLICE_END = 4;
 
@@ -70,6 +77,30 @@ const { themeAheadOfLoading } = useFriendList();
     setViewCategoryId(categoryId);
     setDetailsModalVisible(true);
   };
+
+  // useEffect(() => {
+  //   if (selectedFriendStats){
+  //     console.log('~~~~~~~~~SELECTED FRIEND STATS!', selectedFriendStats);
+  //   }
+
+  // }, [selectedFriendStats]);
+
+  const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
+  const [friendHistoryHasAnyCapsules, setFriendHistoryHasAnyCapsules] =
+    useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!selectedFriendStats || selectedFriendStats?.length < 1) {
+        return;
+      }
+
+      let categories = categoryHistorySizes();
+      //  console.log(categories);
+      setFriendHistorySortedList(categories.sortedList);
+      setFriendHistoryHasAnyCapsules(categories.hasAnyCapsules);
+    }, [selectedFriendStats])
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -91,10 +122,10 @@ const { themeAheadOfLoading } = useFriendList();
       setCategoryColors(
         generateGradientColors(
           userCategories,
-        manualGradientColors.lightColor,
-         // themeAheadOfLoading.darkColor,
-        //  manualGradientColors.homeDarkColor
-         themeAheadOfLoading.darkColor
+          manualGradientColors.lightColor,
+          // themeAheadOfLoading.darkColor,
+          //  manualGradientColors.homeDarkColor
+          themeAheadOfLoading.darkColor
         )
       );
       //         setCategoryColors(
@@ -125,6 +156,7 @@ const { themeAheadOfLoading } = useFriendList();
           overflow: "hidden",
           height: HEIGHT,
           padding: 10,
+          paddingBottom: 10,
           backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
           borderRadius: 20,
         },
@@ -170,8 +202,14 @@ const { themeAheadOfLoading } = useFriendList();
           onPress={() => navigation.navigate("Helloes")}
         /> */}
       </View>
-      <ScrollView horizontal>
-        <View style={{ marginHorizontal: 6 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View
+          style={{
+            marginHorizontal: 10,
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
           <Donut
             onCategoryPress={handleSetCategoryDetailsModal}
             radius={CHART_RADIUS}
@@ -184,35 +222,59 @@ const { themeAheadOfLoading } = useFriendList();
             data={tempCategoriesSortedList}
             colors={colors}
           />
+          <View style={{  }}>
+            <Text
+            onPress={() => navigation.navigate('MomentFocus')}
+              style={[
+                themeStyles.primaryText,
+                { fontWeight: 'bold', fontSize: 13 },
+              ]}
+            >
+              Loaded
+            </Text>
+          </View>
         </View>
-        <View style={{ marginHorizontal: 6 }}>
-          <Pie
-            data={tempCategoriesSortedList}
-            widthAndHeight={CHART_RADIUS * 2}
-            labelSize={5}
-            onSectionPress={() => console.log("hi!")}
-          />
-        </View>
-        <View style={{ marginHorizontal: 6 }}>
-          <Pie
-            data={tempCategoriesSortedList}
-            widthAndHeight={CHART_RADIUS * 2}
-            labelSize={5}
-            onSectionPress={() => console.log("hi!")}
-          />
-        </View>
+        {friendHistorySortedList && friendHistoryHasAnyCapsules && (
+          <View
+            style={{
+              marginHorizontal: 10,
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Pie
+              data={friendHistorySortedList}
+              widthAndHeight={CHART_RADIUS * 2}
+              labelsSize={LABELS_SIZE}
+              onSectionPress={() => console.log("hi!")}
+            />
+                      <View style={{ }}>
+            <Text
+              style={[
+                themeStyles.primaryText,
+                { fontWeight: 'bold', fontSize: 13 },
+              ]}
+            >
+              History
+            </Text>
+          </View>
+          </View>
+        )}
+
+        {/* this runs the same conditional check internally as the pie component above for friend history */}
+        <UserCategoryHistoryChart listData={stats} radius={CHART_RADIUS} />
       </ScrollView>
 
       <View style={{ width: "100%", height: 10 }}></View>
-            {detailsModalVisible && (
-              <View>
-                <CategoryDetailsModal
-                  isVisible={detailsModalVisible}
-                  closeModal={() => setDetailsModalVisible(false)}
-                  categoryId={viewCategoryId}
-                />
-              </View>
-            )}
+      {detailsModalVisible && (
+        <View>
+          <CategoryDetailsModal
+            isVisible={detailsModalVisible}
+            closeModal={() => setDetailsModalVisible(false)}
+            categoryId={viewCategoryId}
+          />
+        </View>
+      )}
     </View>
   );
 };

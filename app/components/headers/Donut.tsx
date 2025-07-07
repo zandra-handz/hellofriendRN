@@ -43,8 +43,7 @@ const Donut = ({
   labelsDistanceFromCenter = -17, 
   labelsSliceEnd = 1,
  
- 
-  onSectionPress = null,
+  
 }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();

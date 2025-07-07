@@ -37,6 +37,7 @@ interface QuickWriteMomentProps {
   width?: string | number;
   height?: string | number;
   multiline?: boolean;
+  friendModalOpened: boolean;
 }
 
 // Forwarding ref to the parent to expose the TextInput value
@@ -49,6 +50,7 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
       width = "90%",
       height = "60%",
       multiline = true,
+      friendModalOpened =true,
     },
     ref
   ) => {
@@ -121,7 +123,7 @@ const handleManualFocus = useCallback(() => {
       focus: () => {
         
         console.log('focus!');
-        textInputRef.current.blur(); // YA THIS WORKS. Gotta blur manually for some reason to get it to work more than one time in a row
+       textInputRef.current.blur(); // YA THIS WORKS. Gotta blur manually for some reason to get it to work more than one time in a row
         handleManualFocus();
       },
     }));

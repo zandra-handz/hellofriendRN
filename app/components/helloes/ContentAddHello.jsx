@@ -23,6 +23,8 @@ import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
 import TitleContainerUI from "./TitleContainerUI";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+import { useUserStats } from "@/src/context/UserStatsContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useHelloes } from "@/src/context/HelloesContext";
@@ -46,7 +48,8 @@ const ContentAddHello = () => {
 const {refetchUpcomingHelloes } = useUpcomingHelloes();
   const { showMessage } = useMessage();
   const { preAdded, allCapsulesList } = useCapsuleList();
-
+  const { invalidateFriendStats} = useSelectedFriendStats();
+const { refetchUserStats } = useUserStats();
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)
   );
@@ -137,7 +140,9 @@ const {refetchUpcomingHelloes } = useUpcomingHelloes();
   useEffect(() => {
     if (createHelloMutation.isSuccess) {
       refetchUpcomingHelloes();
-      showMessage(true, null, "Hello saved!"); 
+     invalidateFriendStats(); // since friend is about to get deselected, just use invalidate instead of refetch
+    refetchUserStats();
+     showMessage(true, null, "Hello saved!"); 
       setFriend(null);
       navigateToMainScreen();
     }

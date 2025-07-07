@@ -28,6 +28,8 @@ import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 
+
+import { fetchCategoriesHistoryAPI } from "@/src/calls/api";
 import * as FileSystem from "expo-file-system";
 
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
@@ -58,7 +60,9 @@ const ScreenHome = () => {
   const isNewUser =
     new Date(user?.created_on).toDateString() === new Date().toDateString();
 
-console.log('HOME SCREEN RERENDERED');
+ 
+
+ 
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;

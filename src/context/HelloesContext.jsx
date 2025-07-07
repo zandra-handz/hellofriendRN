@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { useUser } from "./UserContext";
-import { useSelectedFriend } from "../context/SelectedFriendContext";
+import { useSelectedFriend } from "../context/SelectedFriendContext"; 
 import { useUpcomingHelloes } from "./UpcomingHelloesContext";
 import { fetchPastHelloes, saveHello, deleteHelloAPI } from "../calls/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -28,6 +28,7 @@ export const HelloesProvider = ({ children }) => {
   const queryClient = useQueryClient();
   const { selectedFriend } = useSelectedFriend();
   const { user, isAuthenticated, isInitializing } = useUser();
+ 
 
   const timeoutRef = useRef(null);
 
@@ -162,9 +163,9 @@ export const HelloesProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("helloeslistupdated: ", helloesList);
-  }, [helloesList]);
+  // useEffect(() => {
+  //   console.log("helloeslistupdated: ", helloesList);
+  // }, [helloesList]);
 
   const handleDeleteHelloRQuery = async (data) => {
     try {

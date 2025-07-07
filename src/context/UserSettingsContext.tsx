@@ -24,6 +24,7 @@ import {
   deleteUserCategory,
   updateSubscription,
   getUserSettings,
+  fetchCategoriesHistoryAPI,
 } from "../calls/api";
 
 import * as Notifications from "expo-notifications";
@@ -88,20 +89,7 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
     queryFn: () => getUserSettings(user?.id),
     enabled: !!(user && user.id && isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
-    // select: (data) => {
-    //   console.log("Query settled.");
-    //   if (data) {
-    //     setSettings(data || {});
-    //     setUserCategories(data.user_categories || {});
-
-    //     setNotificationSettings({
-    //       receive_notifications: user?.receive_notifications || false,
-    //     });
-    //   }
-    //   if (error) {
-    //     console.error("Settings error:", error);
-    //   }
-    // },
+  
   });
 
 useEffect(() => {

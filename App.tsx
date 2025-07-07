@@ -28,6 +28,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserProvider, useUser } from "./src/context/UserContext";
 import { UserSettingsProvider } from "./src/context/UserSettingsContext";
 import { GlobalStyleProvider } from "./src/context/GlobalStyleContext";
+
+import { UserStatsProvider } from "./src/context/UserStatsContext";
+
 import { FriendListProvider } from "./src/context/FriendListContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
@@ -35,6 +38,7 @@ import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
 import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
+import { SelectedFriendStatsProvider } from "./src/context/SelectedFriendStatsContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 // import * as Font from "expo-font";
 import * as Notifications from "expo-notifications";
@@ -48,7 +52,7 @@ import ResultMessage from "./app/components/alerts/ResultMessage";
 import FullScreenSpinner from "./app/components/appwide/spinner/FullScreenSpinner";
 
 import ScreenOnboardingFlow from "./app/onboarding/ScreenOnboardingFlow";
-import ScreenHome from "./app/screens/home/ScreenHome"; 
+import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
 import ScreenReload from "./app/screens/helloes/ScreenReload";
@@ -197,35 +201,39 @@ export default Sentry.wrap(function App() {
           <UserProvider>
             <UserSettingsProvider>
               <GlobalStyleProvider>
-                <DeviceLocationProvider>
-                  <UpcomingHelloesProvider>
-                    <FriendListProvider>
-                      <SelectedFriendProvider>
-                        {/* <PhoneStatusBar /> */}
-                        <CapsuleListProvider>
-                          <LocationsProvider>
-                            <HelloesProvider>
-                              <FriendLocationsProvider>
-                                <MessageContextProvider>
-                                  <SafeAreaProvider>
-                                    {/* <SafeView  // in screen components instead
+                <UserStatsProvider>
+                  <DeviceLocationProvider>
+                    <UpcomingHelloesProvider>
+                      <FriendListProvider>
+                        <SelectedFriendProvider>
+                          {/* <PhoneStatusBar /> */}
+                          <CapsuleListProvider>
+                            <LocationsProvider>
+                              <HelloesProvider>
+                                <FriendLocationsProvider>
+                                  <SelectedFriendStatsProvider>
+                                    <MessageContextProvider>
+                                      <SafeAreaProvider>
+                                        {/* <SafeView  // in screen components instead
                                 style={{
                                   flex: 1,
                                   backgroundColor: "transparent",
                                 }}
                               > */}
-                                    <Layout />
-                                    {/* </SafeView> */}
-                                  </SafeAreaProvider>
-                                </MessageContextProvider>
-                              </FriendLocationsProvider>
-                            </HelloesProvider>
-                          </LocationsProvider>
-                        </CapsuleListProvider>
-                      </SelectedFriendProvider>
-                    </FriendListProvider>
-                  </UpcomingHelloesProvider>
-                </DeviceLocationProvider>
+                                        <Layout />
+                                        {/* </SafeView> */}
+                                      </SafeAreaProvider>
+                                    </MessageContextProvider>
+                                  </SelectedFriendStatsProvider>
+                                </FriendLocationsProvider>
+                              </HelloesProvider>
+                            </LocationsProvider>
+                          </CapsuleListProvider>
+                        </SelectedFriendProvider>
+                      </FriendListProvider>
+                    </UpcomingHelloesProvider>
+                  </DeviceLocationProvider>
+                </UserStatsProvider>
               </GlobalStyleProvider>
             </UserSettingsProvider>
           </UserProvider>
@@ -391,7 +399,7 @@ export const Layout = () => {
                     headerShown: false,
                   }}
                 />
-   
+
                 <Stack.Screen
                   name="MomentFocus"
                   component={ScreenMomentFocus}
