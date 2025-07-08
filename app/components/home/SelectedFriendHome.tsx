@@ -236,7 +236,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                         justifyContent: "center",
                         borderRadius: 10,
                         padding: 4,
-                        width: "auto",
+                        width: 'auto',
+                        minWidth: 50,
                         height: "100%",
                       }}
                     >
@@ -333,7 +334,7 @@ const styles = StyleSheet.create({
     minHeight: 190,
     height: "100%",
     alignContent: "center",
-    borderWidth: 0,
+ 
     alignItems: "center",
     justifyContent: "space-between",
     overflow: "hidden",

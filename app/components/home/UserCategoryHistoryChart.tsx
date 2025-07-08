@@ -11,7 +11,7 @@ type Props = {
 
 const UserCategoryHistoryChart = ({ listData, radius=80 }: Props) => {
   
-console.log(`listdata in usercategoryhistory chart`, listData);
+// console.log(`listdata in usercategoryhistory chart`, listData);
   const [userHistorySortedList, setUserHistorySortedList] = useState([]);
   const { themeStyles } = useGlobalStyle();
 const [userHistoryHasAnyCapsules, setUserHistoryHasAnyCapsules ] = useState(false);

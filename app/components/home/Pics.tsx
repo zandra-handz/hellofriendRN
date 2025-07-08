@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import LoadedImages from "../buttons/images/LoadedImages";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
+
 type Props = {
   selectedFriend: boolean;
   outerPadding: number;

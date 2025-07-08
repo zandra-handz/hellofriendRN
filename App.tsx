@@ -90,6 +90,8 @@ import ScreenImageView from "./app/screens/images/ScreenImageView";
 import ScreenLocationView from "./app/screens/locations/ScreenLocationView";
 import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLocationView";
 
+import ScreenSelectFriend from "./app/screens/friends/ScreenSelectFriend";
+
 import HeaderLocation from "./app/components/headers/HeaderLocation";
 import HeaderBase from "./app/components/headers/HeaderBase";
 import HeaderLocationSingle from "./app/components/headers/HeaderLocationSingle";
@@ -596,6 +598,13 @@ export const Layout = () => {
                 <Stack.Screen
                   name="AddHello"
                   component={ScreenAddHello}
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                             <Stack.Screen
+                  name="SelectFriend"
+                  component={ScreenSelectFriend}
                   options={{
                     headerShown: false,
                   }}

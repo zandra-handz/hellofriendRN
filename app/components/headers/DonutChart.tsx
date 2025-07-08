@@ -12,7 +12,7 @@ import {
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, EvilIcons, FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 
 type Props = {
   onCategoryPress: () => void;
@@ -209,20 +209,43 @@ const DonutChart = ({
       </Canvas>
       <View style={StyleSheet.absoluteFill}>{LabelOverlays}</View>
       {onCenterPress && (
-        
-      <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
-        <Pressable
-          onPress={onCenterPress}
-          style={[styles.centerButton, {}]}
-          hitSlop={10}
-        >
-          <MaterialCommunityIcons name={"plus"} size={40} color={color} />
-          {/* <RNText style={{ color, fontFamily: "Poppins-Bold", fontSize: 16 }}>
+        <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
+          {/* <MaterialCommunityIcons name={"heart-plus-outline"} size={140} color={color} />
+       
+        */}
+
+          {/* <EvilIcons
+            style={{ paddingBottom: 32, opacity: 0.2 }}
+            name={"heart"}
+            size={240}
+            color={color}
+          /> */}
+
+                    {/* <FontAwesome
+            style={{ paddingTop: 10, opacity: 0.2 }}
+            name={"heart"}
+            size={100}
+            color={color}
+          /> */}
+
+                              <FontAwesome6
+            style={{ paddingTop: 10, opacity: 0.2 }}
+            name={"heart-circle-plus"}
+            size={120}
+            color={color}
+          />
+
+          <Pressable
+            onPress={onCenterPress}
+            style={[styles.centerButton, {}]}
+            hitSlop={10}
+          >
+            <MaterialCommunityIcons name={"plus"} size={56} color={color} />
+            {/* <RNText style={{ color, fontFamily: "Poppins-Bold", fontSize: 16 }}>
           Add
         </RNText> */}
-        </Pressable>
-      </View>
-      
+          </Pressable>
+        </View>
       )}
     </View>
   );
@@ -237,16 +260,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   centerButton: {
+    position: "absolute",
     padding: 12,
     borderRadius: 999,
     // backgroundColor: "white",
     elevation: 4,
     shadowColor: "black",
     shadowOpacity: 0.1,
+    opacity: .9,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
-    top: 26,
-    right: -26,
+    top: 140,
+    right: 76,
   },
 });
 

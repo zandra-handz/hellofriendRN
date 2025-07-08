@@ -178,7 +178,8 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
         <View style={{ flexDirection: "row" }}>
           <MaterialCommunityIcons
             // name="comment-check"
-             name="message-text-clock"
+            //  name="message-text-clock"
+              name="heart-pulse"
             // name="graph"
             size={20}
             color={themeStyles.primaryText.color}

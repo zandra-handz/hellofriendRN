@@ -18,7 +18,7 @@ import Animated, {
   useAnimatedReaction,
 } from "react-native-reanimated";
 
-interface MomentViewPageProps {
+interface  Props {
   item: object;
   index: number;
   width: DimensionValue;
@@ -29,7 +29,7 @@ interface MomentViewPageProps {
   closeModal: () => void;
 }
 
-const MomentViewPage: React.FC<MomentViewPageProps> = ({
+const MomentViewPage: React.FC<Props> = ({
   item,
   index,
   width,

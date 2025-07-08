@@ -6,7 +6,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 //may need to configure friendlist theme color before using as a button
-const ButtonSelectFriend = ({ friend }) => {
+const ButtonSelectFriend = ({ friend, backgroundColor, color, height=70 }) => {
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
@@ -40,15 +40,21 @@ const ButtonSelectFriend = ({ friend }) => {
   //to restore gradient: [1] - [0]
   const renderProfileIcon = () => {
     return ( 
-        <View style={{overflow: 'hidden', opacity: .9, position: 'absolute', top: -100, left: -20, transform: [ {rotate: '200deg'}]}}>
+       <View style={{overflow: 'hidden', height: 40, width: 40, position: 'absolute', borderRadius: 20, padding: 10, right: 0, backgroundColor: backgroundColor}}>
+            
+        
+        <View style={{  position: 'absolute', opacity: .9, position: 'absolute', top: -20, right: -10, transform: [ {rotate: '200deg'}]}}>
             
       <GeckoSolidSvg
-        width={100}
-        height={100} 
-        color={darkColor}
+        width={50}
+        height={50} 
+        color={color}
+        style={{opacity: 1}}
       />
       
         </View>
+        
+      </View>
     );
   };
  
@@ -57,12 +63,12 @@ const ButtonSelectFriend = ({ friend }) => {
     <View
       style={[
         styles.row,
-        { overflow: 'hidden', backgroundColor: rowColor, borderColor: textColor },
+        { height: height, overflow: 'hidden', backgroundColor: backgroundColor, borderColor: textColor },
       ]}
     >
-      <View style={styles.iconContainer}>{renderProfileIcon()}</View>
+      {renderProfileIcon()}
 
-      <Text numberOfLines={1} style={[styles.name, { color: textColor }]}>
+      <Text numberOfLines={1} style={[styles.name, { color: color, fontSize: friend.name.length < 14 ? 15 : 12 }]}>
         {friend.name}
       </Text>
 
@@ -74,11 +80,11 @@ const ButtonSelectFriend = ({ friend }) => {
 const styles = StyleSheet.create({
   row: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    padding: 10,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    padding: 20,
     width: "100%",
-    height: 90,
+
     textAlign: "center",
 
     borderWidth: 0,
@@ -86,8 +92,9 @@ const styles = StyleSheet.create({
   },
   name: {
     alignSelf: "center",
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: "Poppins-Regular",
+    fontWeight: 'bold',
   },
   iconContainer: {
     paddingBottom: 6,

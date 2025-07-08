@@ -177,7 +177,10 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
       >
         <View style={{ flexDirection: "row" }}>
           <MaterialCommunityIcons
-            name="comment-edit-outline"
+            // name="comment-edit-outline"
+              //  name="heart-multiple-outline"
+                  name="head-heart"
+                  // name="heart-flash"
             // name="graph"
             size={20}
             color={themeStyles.primaryText.color}
@@ -193,7 +196,7 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
               },
             ]}
           >
-            Talking Points
+            Talking Points Ready
           </Text>
         </View>
         {/* <LabeledArrowButton

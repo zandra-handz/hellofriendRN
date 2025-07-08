@@ -11,12 +11,14 @@ interface Props {
   isVisible: boolean;
   closeModal: () => void;
   onSearchPress: () => void;
+  flattenHelloes: object[];
 }
 
-const SearchModal: React.FC<Props> = ({
+const SearchHelloesModal: React.FC<Props> = ({
   isVisible,
   closeModal,
   onSearchPress,
+  flattenHelloes,
 }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
   const { capsuleList } = useCapsuleList();
@@ -25,8 +27,8 @@ const SearchModal: React.FC<Props> = ({
   const searchInputIconSize = 14;
   const autoFocus = true;
 
-  const handleSearchPress = (moment) => {
-    onSearchPress(moment);
+  const handleSearchPress = (hello) => {
+    onSearchPress(hello.id);
     closeModal();
   };
 
@@ -53,7 +55,7 @@ const SearchModal: React.FC<Props> = ({
         < View contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
             <MomentsSearchBar
-              data={capsuleList}
+              data={flattenHelloes}
               autoFocus={isVisible}
               height={40}
               width={"100%"}
@@ -62,7 +64,7 @@ const SearchModal: React.FC<Props> = ({
               textAndIconColor={themeStyles.primaryText.color}
               backgroundColor={"transparent"}
               onPress={handleSearchPress}
-              searchKeys={["capsule", "user_category_name"]}
+               searchKeys={["capsule", "additionalNotes", "date", "location"]}
               iconSize={0}
             />
           </View>
@@ -99,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchModal;
+export default SearchHelloesModal;

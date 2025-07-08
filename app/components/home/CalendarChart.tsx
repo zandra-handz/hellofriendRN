@@ -43,7 +43,8 @@ const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
       >
         <View style={{ flexDirection: "row" }}>
           <MaterialCommunityIcons
-            name="hand-wave-outline"
+            // name="hand-wave-outline"
+              name="calendar-heart"
             size={20}
             color={themeStyles.primaryText.color}
             style={{ marginBottom: 0 }}

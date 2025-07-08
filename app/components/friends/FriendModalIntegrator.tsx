@@ -13,6 +13,8 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import FriendModal from "../alerts/FriendModal";
 
+import { useNavigation } from "@react-navigation/native";
+
 import { MaterialCommunityIcons  } from "@expo/vector-icons";
 
 interface FriendModalIntegratorProps {
@@ -45,6 +47,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
 
   console.log('FRIEND SELECTOR RERENDERED');
   const { themeStyles } = useGlobalStyle();
+  const navigation = useNavigation();
   const { selectedFriend, friendLoaded, loadingNewFriend } =
     useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
@@ -130,7 +133,8 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   return (
     <>
       <Pressable
-        onPress={openModal}
+        // onPress={openModal}
+          onPress={() => navigation.navigate("SelectFriend")}
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel="Friend selector button"

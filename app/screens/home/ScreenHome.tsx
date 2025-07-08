@@ -234,6 +234,8 @@ const ScreenHome = () => {
       {/* <Pressable onPress={handleFocusPress} style={{  position: 'absolute', width: '100%', top: 55, zIndex: 1000, height: 190 }}></Pressable>
       */}
      
+
+      
       <KeyboardAvoidingView
     
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -324,6 +326,7 @@ const ScreenHome = () => {
           />
         )}
       </KeyboardAvoidingView>
+       
       <HelloFriendFooter />
     </SafeViewAndGradientBackground>
   );

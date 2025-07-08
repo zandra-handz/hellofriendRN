@@ -19,7 +19,7 @@ export const SafeViewAndGradientBackground = ({
   header: Header,
 }) => {  
   const insets = useSafeAreaInsets();
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
 
   const route = useRoute(); 
 
@@ -48,7 +48,7 @@ export const SafeViewAndGradientBackground = ({
 
 
 const isSettingsScreen = useMemo(() => 
-  route.name === "UserDetails" || route.name === "FriendFocus", 
+  route.name === "UserDetails" || route.name === "FriendFocus" || route.name === "SelectFriend", 
 [route.name]);
 
 const isHomeScreen = useMemo(() => route.name === "hellofriend", [route.name]);
@@ -89,6 +89,7 @@ const useFriendColors = useMemo(() =>
           <Header />
         </View>
       )}
+      
       {children}
     </GradientBackground>
   );
