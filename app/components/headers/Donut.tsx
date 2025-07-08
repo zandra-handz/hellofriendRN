@@ -17,6 +17,7 @@ import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 
 type Props = {
   onCategoryPress: () => void;
+  onCenterPress: () => void;
   data: string[];
   radius: number;
   strokeWidth: number;
@@ -26,24 +27,25 @@ type Props = {
   labelSize: number;
   gap: number;
   onSectionPress: () => void;
-   labelsSize: number;
-    labelsDistanceFromCenter: number;
-    labelsSliceEnd: number;
+  labelsSize: number;
+  labelsDistanceFromCenter: number;
+  labelsSliceEnd: number;
+  centerTextSize: number;
 };
 
 const Donut = ({
   onCategoryPress,
+  onCenterPress,
   data,
-  radius = 40,  
-  strokeWidth = 6, 
+  radius = 40,
+  strokeWidth = 6,
   outerStrokeWidth = 9,
   colors,
   gap = 0.03,
   labelsSize = 8,
-  labelsDistanceFromCenter = -17, 
+  labelsDistanceFromCenter = -17,
   labelsSliceEnd = 1,
- 
-  
+  centerTextSize = 26,
 }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
@@ -148,7 +150,10 @@ const Donut = ({
     // setLabelsJS(seriesData.labels);
   }, [seriesData]);
 
-  const font = useFont(require("@/app/assets/fonts/Poppins-Regular.ttf"), 30);
+  const font = useFont(
+    require("@/app/assets/fonts/Poppins-Regular.ttf"),
+    centerTextSize
+  );
 
   const smallFont = useFont(
     require("@/app/assets/fonts/Poppins-Regular.ttf"),
@@ -178,6 +183,7 @@ const Donut = ({
       >
         <DonutChart
           onCategoryPress={onCategoryPress}
+          onCenterPress={onCenterPress}
           radius={RADIUS}
           strokeWidth={STROKE_WIDTH}
           outerStrokeWidth={OUTER_STROKE_WIDTH}

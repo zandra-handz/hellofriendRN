@@ -11,6 +11,7 @@ import LizardSvg from "@/app/assets/svgs/lizard";
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
 
+
 // Press function is internal
 const HomeButtonUpNext = ({
   header = "Up next",
@@ -42,8 +43,7 @@ const HomeButtonUpNext = ({
         {
           borderRadius: borderRadius,
           borderColor: borderColor,
-          height: height,
-          overflow: 'hidden',
+          height: height, 
           // maxHeight: maxHeight,
         },
       ]}

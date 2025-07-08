@@ -15,7 +15,7 @@ const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
 
-  const HEIGHT = 170;
+  const HEIGHT = 160;
 
   return (
     <View

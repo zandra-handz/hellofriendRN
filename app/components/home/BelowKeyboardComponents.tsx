@@ -35,15 +35,15 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
       style={[
         {
           alignItems: "center",
-          flexDirection: "column",
-          justifyContent: "space-between",
+          //flexDirection: "column",
+          //justifyContent: "space-between",
           flex: 1,
-          paddingTop: 40,
-          width: '100%', 
+          paddingTop: 30,
+          width: '100%',   
         },
       ]}
     >
-      <Animated.View
+      {/* <Animated.View
         style={[
         
           { 
@@ -52,12 +52,16 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
             transform: [{ translateX: slideAnim }],
           },
         ]}
-      >
+      > */}
+    
+       
         {/* <View style={{position: 'absolute', zIndex: 40000, elevation: 40000, left: 0, top: -16}}>
          {friendListLength > 0 && <AddOptionsList />}
          
           
         </View> */}
+
+
         {!isFriendSelected && friendListLength > 0 && (
           <HomeButtonUpNext
             onPress={onPress}
@@ -67,7 +71,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           />
         )}
         {isFriendSelected && (
-          <>  
+          <View style={{height: '100%' }}>  
             <SelectedFriendHome
               onPress={onPress}
               borderRadius={10}
@@ -76,9 +80,10 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
             />
               
             {/* <HomeFriendItems borderRadius={10} height={100} /> */}
-          </>
-        )} 
-      </Animated.View>
+          </View>
+        )}  
+         
+      {/* </Animated.View> */}
     </Animated.View>
   );
 };

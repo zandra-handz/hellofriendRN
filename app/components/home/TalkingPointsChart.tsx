@@ -22,7 +22,7 @@ type Props = {
   outerPadding: DimensionValue;
 };
 
-const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
+const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
   const { stats } = useUserStats();
@@ -52,16 +52,17 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
     listData: selectedFriendStats,
   });
 
-  const HEIGHT = 270;
+  const HEIGHT = 370;
 
-  const CHART_RADIUS = 90;
-  const CHART_STROKE_WIDTH = 8;
-  const CHART_OUTER_STROKE_WIDTH = 10;
-  const GAP = 0.02;
+  const CHART_RADIUS = 150;
+  const CHART_STROKE_WIDTH = 20;
+  const CHART_OUTER_STROKE_WIDTH = 26;
+  const GAP = 0.03;
 
-  const LABELS_SIZE = 9;
-  const LABELS_DISTANCE_FROM_CENTER = -34;
+  const LABELS_SIZE = 14;
+  const LABELS_DISTANCE_FROM_CENTER = -56;
   const LABELS_SLICE_END = 4;
+  const CENTER_TEXT_SIZE = 50;
 
   const [categoriesMap, setCategoriesMap] = useState({});
   const [categoriesSortedList, setCategoriesSortedList] = useState([]);
@@ -155,7 +156,6 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
         {
           overflow: "hidden",
           height: HEIGHT,
-          width: '100%',
           padding: 10,
           paddingBottom: 10,
           backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
@@ -177,8 +177,7 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
       >
         <View style={{ flexDirection: "row" }}>
           <MaterialCommunityIcons
-            // name="comment-check"
-             name="message-text-clock"
+            name="comment-edit-outline"
             // name="graph"
             size={20}
             color={themeStyles.primaryText.color}
@@ -194,7 +193,7 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
               },
             ]}
           >
-            Talking Points History
+            Talking Points
           </Text>
         </View>
         {/* <LabeledArrowButton
@@ -204,8 +203,8 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
           onPress={() => navigation.navigate("Helloes")}
         /> */}
       </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {/* <View
+      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}> */}
+        <View
           style={{
             marginHorizontal: 10,
             alignItems: "center",
@@ -214,6 +213,7 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
         >
           <Donut
             onCategoryPress={handleSetCategoryDetailsModal}
+            onCenterPress={() => navigation.navigate('MomentFocus')}
             radius={CHART_RADIUS}
             strokeWidth={CHART_STROKE_WIDTH}
             outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
@@ -223,8 +223,9 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
             labelsSliceEnd={LABELS_SLICE_END}
             data={tempCategoriesSortedList}
             colors={colors}
+            centerTextSize={CENTER_TEXT_SIZE}
           />
-          <View style={{  }}>
+          {/* <View style={{  }}>
             <Text
             onPress={() => navigation.navigate('MomentFocus')}
               style={[
@@ -234,38 +235,10 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
             >
               Loaded
             </Text>
-          </View>
-        </View> */}
-        {friendHistorySortedList && friendHistoryHasAnyCapsules && (
-          <View
-            style={{
-              marginHorizontal: 10,
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-          >
-            <Pie
-              data={friendHistorySortedList}
-              widthAndHeight={CHART_RADIUS * 2}
-              labelsSize={LABELS_SIZE}
-              onSectionPress={() => console.log("hi!")}
-            />
-                      <View style={{ }}>
-            <Text
-              style={[
-                themeStyles.primaryText,
-                { fontWeight: 'bold', fontSize: 13 },
-              ]}
-            >
-              {selectedFriend.name}
-            </Text>
-          </View>
-          </View>
-        )}
-
-        {/* this runs the same conditional check internally as the pie component above for friend history */}
-        <UserCategoryHistoryChart listData={stats} radius={CHART_RADIUS} />
-      </ScrollView>
+          </View> */}
+        </View>
+      
+      {/* </ScrollView> */}
 
       <View style={{ width: "100%", height: 10 }}></View>
       {detailsModalVisible && (
@@ -281,4 +254,4 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
   );
 };
 
-export default AllFriendCharts;
+export default TalkingPointsChart;

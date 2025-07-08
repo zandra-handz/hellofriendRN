@@ -206,7 +206,7 @@ const MomentWriteEditView = ({
 
   useEffect(() => {
     if (editMomentMutation.isSuccess) {
-      showMessage(true, null, "Edited moment saved!");
+      // showMessage(true, null, "Edited moment saved!");
       navigation.navigate("Moments");
     }
   }, [editMomentMutation.isSuccess]);
