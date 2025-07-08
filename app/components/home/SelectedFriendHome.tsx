@@ -181,7 +181,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               width: "100%",
               // backgroundColor: 'pink',
               alignItems: "center",
-              paddingBottom: 253, // change this to change were the bottom fadingEdge of scrollview starts
+              paddingBottom: 213, // change this to change were the bottom fadingEdge of scrollview starts
             }}
           >
             <ScrollView
