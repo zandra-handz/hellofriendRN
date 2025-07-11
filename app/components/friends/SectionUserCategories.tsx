@@ -311,7 +311,7 @@ const SectionUserCategories = () => {
             />
           </View>
           <Text style={[themeStyles.modalText, { fontWeight: "bold" }]}>
-            Catgories
+            Categories
           </Text>
         </View>
 

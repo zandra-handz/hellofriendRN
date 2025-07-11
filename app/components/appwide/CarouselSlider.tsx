@@ -13,15 +13,25 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ItemFooter from "../headers/ItemFooter"; 
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import CarouselItemModal from "./carouselItemModal"; 
+
+
+type Props = {
+  initialIndex: number;
+  data: object[];
+  noButtons: boolean;
+
+};
+
 const CarouselSlider = ({
   initialIndex, 
   data,
+  noButtons,
   children: Children,
   onRightPress,
   onRightPressSecondAction, 
  
   footerData,
-}) => {
+}: Props) => {
   const { height, width } = useWindowDimensions(); 
   const { stickToLocation, setStickToLocation } = useFriendLocationsContext();
 
@@ -133,7 +143,7 @@ const CarouselSlider = ({
     },
   });
 
-  const renderHelloPage = useCallback(
+  const renderPage = useCallback(
     ({ item, index }) => (
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
 
@@ -276,7 +286,7 @@ const CarouselSlider = ({
           data={data}
           ref={flatListRef}
           horizontal={true}
-          renderItem={renderHelloPage}
+          renderItem={renderPage}
           initialScrollIndex={initialIndex}
           nestedScrollEnabled
           //           viewabilityConfigCallbackPairs={

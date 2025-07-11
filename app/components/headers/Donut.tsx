@@ -17,6 +17,7 @@ import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 
 type Props = {
   onCategoryPress: () => void;
+  onCategoryLongPress: () => void;
   onCenterPress: () => void;
   data: string[];
   radius: number;
@@ -35,6 +36,7 @@ type Props = {
 
 const Donut = ({
   onCategoryPress,
+  onCategoryLongPress,
   onCenterPress,
   data,
   radius = 40,
@@ -183,6 +185,7 @@ const Donut = ({
       >
         <DonutChart
           onCategoryPress={onCategoryPress}
+          onCategoryLongPress={onCategoryLongPress}
           onCenterPress={onCenterPress}
           radius={RADIUS}
           strokeWidth={STROKE_WIDTH}

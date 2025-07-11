@@ -16,6 +16,7 @@ import { MaterialCommunityIcons, EvilIcons, FontAwesome, FontAwesome6 } from "@e
 
 type Props = {
   onCategoryPress: () => void;
+  onCategoryLongPress: () => void;
   onCenterPress: () => void;
   radius: number;
   strokeWidth: number;
@@ -38,6 +39,7 @@ type Props = {
 
 const DonutChart = ({
   onCategoryPress,
+  onCategoryLongPress,
   onCenterPress,
   radius,
   strokeWidth,
@@ -114,17 +116,26 @@ const DonutChart = ({
 
     return (
       <Pressable
-        onPress={() => onCategoryPress(categoryId)}
+        onPress={() => onCategoryPress(categoryLabel)}
+        onLongPress={() => onCategoryLongPress(categoryId)}
         key={index}
-        style={{
-          //  backgroundColor: color,
-          padding: 4,
-          borderRadius: 4,
-          position: "absolute",
-          left: x,
-          top: y,
-          transform: [{ translateX: -10 }, { translateY: -10 }],
-        }}
+  style={({ pressed }) => [
+    {
+      zIndex: 66666,
+      elevation: 66666,
+      padding: 4,
+      borderRadius: 10,
+      position: "absolute",
+      left: x,
+      top: y,
+      transform: [{ translateX: -10 }, { translateY: -10 }],
+      backgroundColor: pressed ? "#ddd" : "transparent", // Light gray when pressed
+      shadowOpacity: pressed ? 0.3 : 0, // Optional effect: subtle shadow when pressed
+      transform: pressed
+        ? [{ translateX: -10 }, { translateY: -10 }, { scale: 0.97 }]
+        : [{ translateX: -10 }, { translateY: -10 }],
+    }
+  ]}
       >
         <RNText
           style={{

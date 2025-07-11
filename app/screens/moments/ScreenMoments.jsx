@@ -10,10 +10,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SpeedDialDelux from "@/app/components/buttons/speeddial/SpeedDialDelux";
 import AddMomentButton from "@/app/components/buttons/moments/AddMomentButton"; 
 import Loading from "@/app/components/appwide/display/Loading";
-
+import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
 
 const ScreenMoments = () => {
+  const route = useRoute();
+  const scrollTo = route.params.scrollTo ?? null;
   const { capsuleList } = useCapsuleList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
  
@@ -37,7 +39,7 @@ const ScreenMoments = () => {
 
       {selectedFriend && !loadingNewFriend && (
         <>
-          <View style={{ flex: 1 }}>{capsuleList && <MomentsList />}</View>
+          <View style={{ flex: 1 }}>{capsuleList && <MomentsList scrollTo={scrollTo} />}</View>
         </>
       )}
       {selectedFriend && (

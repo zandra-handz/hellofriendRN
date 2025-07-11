@@ -14,6 +14,7 @@ import CategoryNavigator from "./CategoryNavigator";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard"; 
 
+
 import MomentsStaticButton from "../buttons/moments/MomentsStaticButton";
 import HelloesStaticButton from "../buttons/helloes/HelloesStaticButton";
 import ImagesStaticButton from "../buttons/images/ImagesStaticButton";
@@ -48,11 +49,32 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 // enableFreeze(true);
 
 //const ITEM_HEIGHT = 290;
-const ITEM_HEIGHT = 140;
-const ITEM_BOTTOM_MARGIN = 4;
-const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
-const MomentsList = () => {
+ 
+
+
+
+const MomentsList = ({scrollTo}) => {
+
+
+  useEffect(() => {
+    if (scrollTo) {
+      scrollToCategoryStart(scrollTo);
+    }
+
+  }, [scrollTo]);
+
+
+  //   useFocusEffect(
+  //   useCallback(() => {
+  //   if (scrollTo) {
+  //     console.log(`scrollTo: `, scrollTo);
+  //     scrollToCategoryStart(scrollTo);
+  //   }
+  //   }, [scrollTo])
+  // );
+
+
   const { appContainerStyles } = useGlobalStyle(); 
   const {
     capsuleList, 
@@ -62,9 +84,11 @@ const MomentsList = () => {
   } = useCapsuleList();
 
   const navigation = useNavigation();
+const ITEM_HEIGHT = 140;
+const ITEM_BOTTOM_MARGIN = 4;
+const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
-
-  console.log('MOMENTS LIST RERENDERED');
+  // console.log('MOMENTS LIST RERENDERED');
   // Move this inside your component:
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
     viewableItemsArray.value = viewableItems;
@@ -159,6 +183,7 @@ const MomentsList = () => {
  
 
   const scrollToCategoryStart = (category) => {
+    console.log(category);
     const categoryIndex = categoryStartIndices[category];
 
     if (categoryIndex !== undefined) {

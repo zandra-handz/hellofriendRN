@@ -10,14 +10,17 @@ import {
   Pressable,
 } from "react-native";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
-import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI"; 
+import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
+
+import ConditionalMessageUI from "@/app/components/home/ConditionalMessageUI";
 // import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext"; //to check if any friends, don't render Up Next component or upcoming scroll if so
 
+import { useCategories } from "@/src/context/CategoriesContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useMessage } from "@/src/context/MessageContext"; 
+import { useMessage } from "@/src/context/MessageContext";
 import { useNavigation } from "@react-navigation/native";
 import BelowKeyboardComponents from "@/app/components/home/BelowKeyboardComponents";
 import { useFocusEffect } from "@react-navigation/native";
@@ -27,7 +30,6 @@ import { useSharedValue } from "react-native-reanimated";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
-
 
 import { fetchCategoriesHistoryAPI } from "@/src/calls/api";
 import * as FileSystem from "expo-file-system";
@@ -60,9 +62,7 @@ const ScreenHome = () => {
   const isNewUser =
     new Date(user?.created_on).toDateString() === new Date().toDateString();
 
- 
-
- 
+  console.log("HOME SCREEN RERENDEREEEEEEEEEEEEERded");
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
@@ -189,7 +189,6 @@ const ScreenHome = () => {
     }
   };
 
-
   const navigateToAddMomentScreen = () => {
     navigation.navigate("MomentFocus", {
       momentText: newMomentTextRef.current.getText(),
@@ -211,13 +210,12 @@ const ScreenHome = () => {
     }
   }, [imageUri]);
 
-  
   const handleFocusPress = () => {
-    console.log('handlefocuspress!');
-     newMomentTextRef.current.focus();
+    console.log("handlefocuspress!");
+    newMomentTextRef.current.focus();
     console.log(newMomentTextRef.current.getText());
     if (newMomentTextRef & newMomentTextRef.current) {
-      console.log('focusing');
+      console.log("focusing");
       newMomentTextRef.current.focus();
     }
   };
@@ -225,29 +223,23 @@ const ScreenHome = () => {
   return (
     <SafeViewAndGradientBackground
       includeBackgroundOverlay={true}
-      backgroundOverlayHeight={ isKeyboardVisible ? '100%' : 300}
-       backgroundOverlayBottomRadius={20}
-       useFriendColors={selectedFriend ? true: false}
+      backgroundOverlayHeight={isKeyboardVisible ? "100%" : 300}
+      backgroundOverlayBottomRadius={20}
+      useFriendColors={selectedFriend ? true : false}
       style={{ flex: 1 }}
-     // header={HellofriendHeader}
+      // header={HellofriendHeader}
     >
       {/* <Pressable onPress={handleFocusPress} style={{  position: 'absolute', width: '100%', top: 55, zIndex: 1000, height: 190 }}></Pressable>
-      */}
-     
+       */}
 
-      
       <KeyboardAvoidingView
-    
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={[{ flex: 1 }]}
-      > 
-        {isAuthenticated &&
-        settings &&
-        friendList &&
-        friendList.length > 0 ? (
+      >
+        {isAuthenticated && settings && friendList && friendList.length > 0 ? (
           <View
             style={{
-              flex: 1, 
+              flex: 1,
               justifyContent: "space-between",
               flexDirection: "column",
               paddingHorizontal: 0,
@@ -255,14 +247,14 @@ const ScreenHome = () => {
           >
             <View
               style={{
-                position: 'absolute', zIndex: 3000,
-                width: '100%',
-              //  backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor,
+                position: "absolute",
+                zIndex: 3000,
+                width: "100%",
+                //  backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor,
                 borderRadius: 10,
-                paddingHorizontal: 0, 
-                
-                
-                height: isKeyboardVisible ? "89%" : "28%", // doesn't control height of quickwritemoment now -- prop 'multiline' does 
+                paddingHorizontal: 0,
+
+                height: isKeyboardVisible ? "89%" : "28%", // doesn't control height of quickwritemoment now -- prop 'multiline' does
               }}
             >
               {/* <Button
@@ -272,22 +264,28 @@ const ScreenHome = () => {
                 }}
               /> */}
               {isAuthenticated && !isInitializing && (
-                <View style={{width: '100%', paddingHorizontal: 10, marginTop: 0}}>
+                <View
+                  style={{ width: "100%", paddingHorizontal: 10, marginTop: 0 }}
+                >
+                  {isKeyboardVisible && (
+                    <View style={{position: 'absolute', top: 0, right: 0, left: 0, width: '100%'}}>
+                      <ConditionalMessageUI />
+                    </View>
+                  )}
+
+                  
                   {!selectedFriend && (
-                    
-                <WelcomeMessageUI
-                  username={user.username}
-                  isNewUser={isNewUser}
-                  isKeyboardVisible={isKeyboardVisible}
-                  onPress={handleFocusPress} 
-                />
-                
+                    <WelcomeMessageUI
+                      username={user.username}
+                      isNewUser={isNewUser}
+                      // isKeyboardVisible={isKeyboardVisible}
+                      onPress={handleFocusPress}
+                    />
                   )}
                   {selectedFriend && (
                     <FriendHeaderMessageUI
-                    isKeyboardVisible={isKeyboardVisible}
-                    onPress={handleFocusPress}
-
+                     // isKeyboardVisible={isKeyboardVisible}
+                      onPress={handleFocusPress}
                     />
                   )}
                 </View>
@@ -326,7 +324,7 @@ const ScreenHome = () => {
           />
         )}
       </KeyboardAvoidingView>
-       
+
       <HelloFriendFooter />
     </SafeViewAndGradientBackground>
   );

@@ -19,32 +19,31 @@ interface WelcomeMessageUIProps {
   // in order to let it fill as much space as possible while still being under the friend picker
 }
 
-const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
+const ConditionalMessageUI: React.FC<WelcomeMessageUIProps> = ({
   username = "",
   isNewUser = false,
-  //isKeyboardVisible = false,
+  isKeyboardVisible = false,
   onPress = () => {},
 }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
 
   const AnimatedPressable = Animated.createAnimatedComponent(TouchableOpacity);
-
-  const message = isNewUser
-    ? `Hi ${username}! Welcome to hellofriend!`
-    : `Hi ${username}! What would you like to do?`;
+  useEffect(() => {
+    console.log(`kyboard: `, isKeyboardVisible);
+  }, [isKeyboardVisible]);
+ 
+ 
 
   const compositionMessage = selectedFriend
     ? `Talking point for ${selectedFriend.name}`
     : `Who is this talking point for?`;
-
-  const friendModalButtonHeight = 20;
+ 
 
   return (
-    <AnimatedPressable
-      onPress={onPress}
-      entering={ZoomInEasyUp}
-      exiting={FadeOut}
+    <View
+      // entering={ZoomInEasyUp}
+      // exiting={FadeOut}
       style={[
         {
           alignText: "center",
@@ -55,6 +54,10 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           paddingBottom: 15,
           flexDirection: "row",
           justifyContent: "flex-start",
+          zIndex: 66666,
+          elevation: 66666,
+          height: 300,
+          backgroundColor: themeStyles.primaryBackground.backgroundColor,
         },
       ]}
     >
@@ -69,7 +72,8 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
             },
           ]}
         >
-          {message}
+          {compositionMessage}
+
           <View
             style={{
               height: appFontStyles.welcomeText.fontSize - 2,
@@ -88,10 +92,10 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           </View>
         </Animated.Text>
       </>
-    </AnimatedPressable>
+    </View>
   );
 };
 
 //export default WelcomeMessageUI;
 
-export default React.memo(WelcomeMessageUI);
+export default React.memo(ConditionalMessageUI);

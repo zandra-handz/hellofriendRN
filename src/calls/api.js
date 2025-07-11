@@ -290,7 +290,7 @@ export const getUserSettings = async (userId) => {
   }
 };
 
-export const getUserCategories = async () => {
+export const getUserCategories = async (userId) => {
   try {
     const response = await helloFriendApiClient.get(`/users/${userId}/categories/`);
     // console.log("API GET Call getUserCategories", response.data);
@@ -314,12 +314,12 @@ export const getUserCategories = async () => {
 
 export const fetchCategoriesHistoryAPI = async ( returnNonZeroesOnly) => {
   // console.log(`non zeros: `, returnNonZeroesOnly);
-  // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
+   console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryAPI  called');
   try {
     const response = await helloFriendApiClient.get(
       `/users/categories/history/?only_with_capsules=${returnNonZeroesOnly}` 
     );
-    //  console.log(response.data);
+    // console.log(response.data);
  if (response && response.data) {
   // console.log(`API CALL fetchCategoriesistory:`, response.data);
 
@@ -327,11 +327,11 @@ export const fetchCategoriesHistoryAPI = async ( returnNonZeroesOnly) => {
   return response.data;
  
     } else {
-      // console.log("fetchThoughtCapsules: no capsules added yet");
+       console.log("fetchThoughtCapsules: no capsules added yet");
       return []; // Return an empty array if no capsules
     }
   } catch (error) {
-    console.error("Error fetching thought capsules: ", error);
+    console.error("Error fetching thought capsules: ", error.response);
     throw error;
   }
 };
@@ -974,9 +974,13 @@ export const fetchCategoriesFriendHistoryAPI = async (friendId, returnNonZeroesO
   // console.log(`non zeros: `, returnNonZeroesOnly);
   // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
   try {
+    // const response = await helloFriendApiClient.get(
+    //   `/friends/${friendId}/categories/history/?only_with_capsules=${returnNonZeroesOnly}`
+    // );
+
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/categories/history/?only_with_capsules=${returnNonZeroesOnly}`
-    );
+    `/users/categories/history/?only_with_capsules=${returnNonZeroesOnly}&friend_id=${friendId}`
+  );
     //  console.log(response.data);
  if (response && response.data) {
   // console.log(`API CALL fetchCategoriesFriendHistory:`, response.data);

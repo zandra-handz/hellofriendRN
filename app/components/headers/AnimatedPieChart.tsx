@@ -213,7 +213,7 @@ export default function AnimatedPieChart({
 
               </AnimatedPressable> */}
                 <AnimatedPieSlice
-                  key={index}
+                    key={slice.id || slice.name}
                   startAngle={startAngle}
                   endAngle={endAngle}
                   radius={radius}

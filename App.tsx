@@ -36,6 +36,7 @@ import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
 import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
 import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
+import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
 import { SelectedFriendStatsProvider } from "./src/context/SelectedFriendStatsContext";
@@ -203,6 +204,9 @@ export default Sentry.wrap(function App() {
           <UserProvider>
             <UserSettingsProvider>
               <GlobalStyleProvider>
+
+                {/* <CategoriesProvider> */}
+                  
                 <UserStatsProvider>
                   <DeviceLocationProvider>
                     <UpcomingHelloesProvider>
@@ -236,6 +240,8 @@ export default Sentry.wrap(function App() {
                     </UpcomingHelloesProvider>
                   </DeviceLocationProvider>
                 </UserStatsProvider>
+                
+                {/* </CategoriesProvider> */}
               </GlobalStyleProvider>
             </UserSettingsProvider>
           </UserProvider>

@@ -26,7 +26,7 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
   const { stats } = useUserStats();
-  const { capsuleList } = useCapsuleList();
+  const { capsuleList,categoryStartIndices } = useCapsuleList();
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const { themeAheadOfLoading } = useFriendList();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
@@ -78,6 +78,15 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
     setViewCategoryId(categoryId);
     setDetailsModalVisible(true);
   };
+
+
+    const handleMomentScreenScrollTo = (categoryId) => {
+    if (!categoryId) {
+      return;
+    }
+    navigation.navigate('Moments', {scrollTo: categoryId})
+  };
+
 
   // useEffect(() => {
   //   if (selectedFriendStats){
@@ -178,9 +187,9 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
         <View style={{ flexDirection: "row" }}>
           <MaterialCommunityIcons
             // name="comment-edit-outline"
-              //  name="heart-multiple-outline"
-                  name="head-heart"
-                  // name="heart-flash"
+            //  name="heart-multiple-outline"
+            name="head-heart"
+            // name="heart-flash"
             // name="graph"
             size={20}
             color={themeStyles.primaryText.color}
@@ -207,28 +216,29 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
         /> */}
       </View>
       {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}> */}
-        <View
-          style={{
-            marginHorizontal: 10,
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          <Donut
-            onCategoryPress={handleSetCategoryDetailsModal}
-            onCenterPress={() => navigation.navigate('MomentFocus')}
-            radius={CHART_RADIUS}
-            strokeWidth={CHART_STROKE_WIDTH}
-            outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
-            gap={GAP}
-            labelsSize={LABELS_SIZE}
-            labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
-            labelsSliceEnd={LABELS_SLICE_END}
-            data={tempCategoriesSortedList}
-            colors={colors}
-            centerTextSize={CENTER_TEXT_SIZE}
-          />
-          {/* <View style={{  }}>
+      <View
+        style={{
+          marginHorizontal: 10,
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Donut
+          onCategoryPress={handleMomentScreenScrollTo}
+          onCategoryLongPress={handleSetCategoryDetailsModal}
+          onCenterPress={() => navigation.navigate("MomentFocus")}
+          radius={CHART_RADIUS}
+          strokeWidth={CHART_STROKE_WIDTH}
+          outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
+          gap={GAP}
+          labelsSize={LABELS_SIZE}
+          labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
+          labelsSliceEnd={LABELS_SLICE_END}
+          data={tempCategoriesSortedList}
+          colors={colors}
+          centerTextSize={CENTER_TEXT_SIZE}
+        />
+        {/* <View style={{  }}>
             <Text
             onPress={() => navigation.navigate('MomentFocus')}
               style={[
@@ -239,8 +249,8 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
               Loaded
             </Text>
           </View> */}
-        </View>
-      
+      </View>
+
       {/* </ScrollView> */}
 
       <View style={{ width: "100%", height: 10 }}></View>

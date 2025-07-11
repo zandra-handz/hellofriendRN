@@ -141,7 +141,7 @@ const MomentViewPage: React.FC<Props> = ({
               style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}
             >
               {" "}
-              # {item.typedCategory}
+              # {item.user_category_name}
             </Text>
             <Text
               style={[

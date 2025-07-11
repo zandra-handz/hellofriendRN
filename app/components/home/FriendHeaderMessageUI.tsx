@@ -13,12 +13,12 @@ import Animated, {
 } from "react-native-reanimated";
 
 interface FriendHeaderMessageUIProps {
-  isKeyboardVisible: boolean; // indirect condition to change message to friend picker
+ // isKeyboardVisible: boolean; // indirect condition to change message to friend picker
 onPress: () => void; // see WelcomeMessageUI for explanation; this component is the same
 }
 
 const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
-  isKeyboardVisible = false,
+//  isKeyboardVisible = false,
   onPress,
 }) => {
   const { themeStyles,   appFontStyles } = useGlobalStyle();
@@ -57,9 +57,9 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
             { color: themeStyles.primaryText.color, fontSize: 46, lineHeight: 48, },
         ]}
       >
-        {selectedFriend && !loadingNewFriend && !isKeyboardVisible
+        {selectedFriend && !loadingNewFriend // && !isKeyboardVisible
           ? message
-          : selectedFriend && !loadingNewFriend && isKeyboardVisible
+          : selectedFriend && !loadingNewFriend  // && isKeyboardVisible
             ? compositionMessage
             : ""}{" "} 
         <View
