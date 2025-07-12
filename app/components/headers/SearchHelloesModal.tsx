@@ -50,7 +50,7 @@ const SearchHelloesModal: React.FC<Props> = ({
           color={themeStyles.footerIcon.color}
         />
       }
-      questionText="Search talking points"
+      questionText="Search helloes"
       children={
         < View contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>

@@ -21,6 +21,7 @@ import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { useCategories } from "@/src/context/CategoriesContext";
 import { useNavigationState } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
@@ -59,13 +60,9 @@ const UserCategorySelector = ({
   const { capsuleList } = useCapsuleList();
   const {
     userCategories,
-    createNewCategory,
-    updateCategory,
-    deleteCategory,
-    createNewCategoryMutation,
-    updateCategoryMutation,
-    deleteCategoryMutation,
-  } = useUserSettings();
+    createNewCategory, 
+    createNewCategoryMutation, 
+  } = useCategories();
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
   const topperHeight = 70;

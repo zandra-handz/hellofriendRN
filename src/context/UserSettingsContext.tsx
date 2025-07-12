@@ -11,28 +11,16 @@ import Constants from "expo-constants";
 import { Platform, AccessibilityInfo } from "react-native";
 import { useUser } from "./UserContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  signup,
-  signin,
-  signinWithoutRefresh,
-  signout,
-  getCurrentUser,
-  getUserCategories,
+import { 
   updateUserAccessibilitySettings,
-  createUserCategory,
-  updateUserCategory,
-  deleteUserCategory,
+ 
   updateSubscription,
-  getUserSettings,
-  fetchCategoriesHistoryAPI,
+  getUserSettings, 
 } from "../calls/api";
 
 import * as Notifications from "expo-notifications";
 import * as SecureStore from "expo-secure-store";
-import { useGlobalStyle } from "./GlobalStyleContext";
-
-import isEqual from "lodash.isequal";
-import { setUser } from "@sentry/react-native";
+  
 
 interface UserSettings {
   id: number | null;
@@ -86,7 +74,7 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
     isError,
   } = useQuery({
     queryKey: ["userSettings", user?.id],
-    queryFn: () => getUserSettings(user?.id),
+    queryFn: () => getUserSettings(),
     enabled: !!(user && user.id && isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   
@@ -116,8 +104,7 @@ useEffect(() => {
   useEffect(() => {
     if (isInitializing && !isAuthenticated) {
       console.log("user not authenticated, resetting user settings");
-      setSettings(null); // so as not to trigger consumers
-      setUserCategories(null);
+      setSettings(null); 
       setNotificationSettings(null); // so as not to trigger consumers
     }
   }, [isAuthenticated, isInitializing]);
@@ -147,32 +134,10 @@ useEffect(() => {
   //   receive_notifications: user.settings?.receive_notifications || false,
   // })
 
-  const createNewCategoryMutation = useMutation({
-    mutationFn: (data) => createUserCategory(user?.id, data),
-    onSuccess: (data) => {
-     
-
-      // Update local state
-      setUserCategories((prev) => [...prev, data]);
-
-      // Update cached userSettings with logs
-      queryClient.setQueryData(["userSettings", user?.id], (oldData) => {
-        // console.log('Cache before update:', oldData);
-        if (!oldData) return oldData;
-
-        const updatedData = {
-          ...oldData,
-          user_categories: [...(oldData.user_categories || []), data],
-        };
-
-        // console.log('Cache after update:', updatedData);
-        return updatedData;
-      });
-    },
-  });
+ 
   const updateSettingsMutation = useMutation({
     mutationFn: (data) =>
-      updateUserAccessibilitySettings(user?.id, data.setting),
+      updateUserAccessibilitySettings(data.setting),
     onSuccess: (data) => {
       setSettings(data); // Assuming the API returns updated settings
       console.log("APP SETTNGS RESET");
@@ -187,68 +152,16 @@ useEffect(() => {
     },
   });
 
-  const updateCategoryMutation = useMutation({
-    mutationFn: (data) => updateUserCategory(user?.id, data.id, data.updates),
-    onSuccess: (data) => {
-      setUserCategories((prev) => {
-        const updated = prev.map((cat) => (cat.id === data.id ? data : cat));
+   
 
-        return updated;
-      });
-
-      queryClient.setQueryData(["userSettings", user?.id], (oldData) => {
-        console.log("Before updating cached userSettings:", oldData);
-
-        if (!oldData) return oldData;
-
-        const updatedUserSettings = {
-          ...oldData,
-          user_categories: oldData.user_categories.map((cat) =>
-            cat.id === data.id ? data : cat
-          ),
-        };
-
-        console.log("After updating cached userSettings:", updatedUserSettings);
-        return updatedUserSettings;
-      });
-    },
-
-    onError: (error) => {
-      console.error("Update app settings error:", error);
-    },
-  });
-
-  const deleteCategoryMutation = useMutation({
-    mutationFn: (data) => deleteUserCategory(user?.id, data.id),
-onSuccess: (data) => {
-  // console.log("Deleted category data:", data);
-
-  setUserCategories((prev) =>
-    prev.filter((category) => category.id !== data.id)
-  );
-
-  queryClient.setQueryData(["userSettings", user?.id], (oldData) => {
-    if (!oldData) return oldData;
-
-    const updatedData = {
-      ...oldData,
-      user_categories: oldData.user_categories.filter(
-        (category) => category.id !== data.id
-      ),
-    };
-
-    // Log after updating
-    // console.log("Cache after delete update:", updatedData);
-
-    return updatedData;
-  });
-},
+ 
 
 
-    onError: (error) => {
-      console.error("Update app settings error:", error);
-    },
-  });
+
+
+
+
+
   const updateSettings = async (newSettings) => {
     console.log('updating settings!');
     try {
@@ -261,36 +174,8 @@ onSuccess: (data) => {
     }
   };
 
-  const createNewCategory = async (newCategoryData) => {
-    try {
-      const updatedData = await createNewCategoryMutation.mutateAsync(newCategoryData);
-      
-      if (updatedData) {
-        console.log(`in createNewCategory`, updatedData);
-        return updatedData;
-      } 
-
-    } catch (error) {
-      console.error("Error creating new category: ", error);
-    }
-  };
-
-  const updateCategory = async (categoryData) => {
-    try {
-      await updateCategoryMutation.mutateAsync(categoryData);
-    } catch (error) {
-      console.error("Error updating app settings:", error);
-    }
-  };
-
-  const deleteCategory = async (categoryData) => {
-    try {
-      await deleteCategoryMutation.mutateAsync(categoryData);
-    } catch (error) {
-      console.error("Error updating app settings:", error);
-    }
-  };
-
+ 
+ 
   const registerForNotifications = async () => {
     if (Platform.OS === "android") {
       await Notifications.setNotificationChannelAsync("default", {
@@ -400,23 +285,14 @@ onSuccess: (data) => {
 
   const contextValue = useMemo(() => ({
   settings,
-  userCategories,
-  createNewCategory,
-  createNewCategoryMutation,
-  updateCategory,
-  updateCategoryMutation,
-  deleteCategory,
-  deleteCategoryMutation,
+  userCategories, 
   notificationSettings,
   updateSettings,
   updateSettingsMutation,
   updateNotificationSettings: setNotificationSettings,
 }), [
   settings,
-  userCategories,
-  createNewCategoryMutation,
-  updateCategoryMutation,
-  deleteCategoryMutation,
+  userCategories, 
   notificationSettings,
   updateSettingsMutation,
 ]);

@@ -32,6 +32,7 @@ interface Props {
   index: number;
   width: DimensionValue;
   height: DimensionValue;
+  listLength: number;
   currentIndexValue: SharedValue;
   cardScaleValue: SharedValue;
   openModal: () => void;
@@ -43,6 +44,7 @@ const HelloViewPage: React.FC<Props> = ({
   index,
   width,
   height,
+  listLength,
   currentIndexValue,
   cardScaleValue,
 }) => {
@@ -123,7 +125,8 @@ const HelloViewPage: React.FC<Props> = ({
             <Text
               style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}
             >
-              Hello # {currentIndex}
+              {/* Hello # {currentIndex + 1} */}
+                  Hello # {listLength - currentIndex}
             </Text> 
 
             <View style={{padding: 10}}>

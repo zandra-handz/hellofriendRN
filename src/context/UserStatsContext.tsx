@@ -7,10 +7,12 @@ import React, {
   useState,
 } from "react"; 
 import { useUser } from "./UserContext";
+import { useCategories } from "./CategoriesContext";
 import { useUserSettings } from "./UserSettingsContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   fetchCategoriesHistoryAPI,
+  fetchCategoriesHistoryCountAPI,
 } from "../calls/api";
  
   
@@ -38,7 +40,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
   children,
 }) => {
   const { user, isInitializing, isAuthenticated } = useUser();
-  const { userCategories } = useUserSettings();
+  const { userCategories } = useCategories();
   console.log("USER STATS CONTEXT");
 
   const [stats, setStats] = useState<
@@ -54,7 +56,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
     isError,
   } = useQuery({
     queryKey: ["userStats", user?.id],
-    queryFn: () => fetchCategoriesHistoryAPI(true), //return non-empty categories only
+    queryFn: () => fetchCategoriesHistoryCountAPI(true), //return non-empty categories only
     enabled: !!(user && user.id && isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   
@@ -92,16 +94,42 @@ const invalidateUserStats = () => {
 
 };
 
+const handleGetCategoryCapsules = (categoryId) => {
+  console.log(categoryId);
+  try {
+    categoryCapsulesMutation.mutate(categoryId);
+
+  } catch (error) {
+    console.error("Error getting category capsules");
+  }
+
+};
+
+const categoryCapsulesMutation = useMutation({
+  mutationFn: (categoryId) => 
+    fetchCategoriesHistoryAPI(categoryId, true),
+  onSuccess: (data) => {
+    console.log(data);
+    
+    //add to cache here
+  },
+  onError: (error) => {
+    console.error("Error getting category capsule history");
+  }
+})
+
 
 
   const contextValue = useMemo(() => ({
   stats,
   refetchUserStats,
   invalidateUserStats,
+  handleGetCategoryCapsules,
 }), [
   stats,
   refetchUserStats,
   invalidateUserStats,
+  handleGetCategoryCapsules,
 ]);
 
 

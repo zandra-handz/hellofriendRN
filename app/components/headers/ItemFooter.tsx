@@ -21,6 +21,7 @@ interface Props {
   visibilityValue: SharedValue;
   currentIndexValue: SharedValue;
   extraData: object;
+  useButtons: boolean;
   onRightPress: () => void;
   onRightPressSecondAction: () => void;
 }
@@ -29,7 +30,9 @@ const ItemFooter: React.FC<Props> = ({
   data,
   currentIndexValue,
   visibilityValue,
+
   extraData, // JUST LOCATION ITEMS / currently distinguishing between other item types bc passed in functions are different
+  useButtons=true,
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
 }) => {
@@ -105,8 +108,11 @@ const ItemFooter: React.FC<Props> = ({
           visibilityStyle,
         ]}
       > 
-
+{useButtons && (
+  
         <View style={[styles.divider, themeStyles.divider]} />
+        
+)}
         <>
           {extraData && extraData?.userAddress && extraData?.friendAddress && (
             <View
@@ -166,6 +172,11 @@ const ItemFooter: React.FC<Props> = ({
           )}
         </>
 
+
+
+
+{useButtons && (
+  <>
         <View style={[styles.divider, themeStyles.divider]} />
         <View style={{ flex: 1 }}>
           <>
@@ -178,7 +189,7 @@ const ItemFooter: React.FC<Props> = ({
                   friendAddress={extraData.friendAddress}
                 />
               )}
-            {!extraData && (
+            {!extraData && useButtons && (
               <Pressable
                 onPress={handleRightPress}
                 style={({ pressed }) => ({
@@ -200,6 +211,9 @@ const ItemFooter: React.FC<Props> = ({
             )}
           </>
         </View>
+        </>
+        
+)}
         {extraData && (
           <>
             <View style={[styles.divider, themeStyles.divider]} />
@@ -224,6 +238,7 @@ const ItemFooter: React.FC<Props> = ({
              /{data.length} </Text></Text> */}
               </Pressable>
             </View>
+            
           </>
         )}
       </Animated.View>

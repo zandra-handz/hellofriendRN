@@ -114,6 +114,12 @@ export default function AnimatedPieChart({
   console.log(`onSectionPress: `, onSectionPress);
 
   useEffect(() => {
+    if (data) {
+      console.log(`SERIES DATA IN PIE CHART: `, data);
+    }
+
+  }, [data]);
+  useEffect(() => {
     progress.value = withTiming(1, { duration });
   }, [data]);
 
@@ -157,7 +163,7 @@ export default function AnimatedPieChart({
               {onSectionPress && (
                 <Pressable
                   key={`pressable-${index}`}
-                  onPress={() => onSectionPress?.(index, slice)}
+                  onPress={() => onSectionPress?.(slice.user_category, slice.name)}
                   style={({ pressed }) => [
                     {
                       position: "absolute",

@@ -70,6 +70,7 @@ console.log(startingIndex);
         initialIndex={currentIndex}
         data={helloesListData}
         children={HelloViewPage}
+        useButtons={false}
       />
     </SafeViewAndGradientBackground>
   );

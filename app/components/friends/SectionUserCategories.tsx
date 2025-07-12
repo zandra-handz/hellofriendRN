@@ -12,6 +12,7 @@ import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { useCategories } from "@/src/context/CategoriesContext";
 
 const SectionUserCategories = () => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
@@ -23,7 +24,9 @@ const SectionUserCategories = () => {
     createNewCategoryMutation,
     updateCategoryMutation,
     deleteCategoryMutation,
-  } = useUserSettings();
+  } = useCategories();
+
+ 
   const { user } = useUser();
   const [showEdit, setShowEdit] = useState(false);
 

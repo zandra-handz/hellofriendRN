@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useUser } from "./UserContext";
-import { useUserSettings } from "./UserSettingsContext";
+import { useCategories } from "./CategoriesContext"; 
 import { useSelectedFriend } from "./SelectedFriendContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
@@ -38,7 +38,7 @@ export const SelectedFriendStatsProvider: React.FC<
   SelectedFriendStatsProviderProps
 > = ({ children }) => {
   const { user, isInitializing, isAuthenticated } = useUser();
-  const { userCategories } = useUserSettings();
+  const { userCategories } = useCategories();
   const { selectedFriend } = useSelectedFriend();
   console.log("SELECTED FRIEND STATS CONTEXT");
 

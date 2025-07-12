@@ -49,8 +49,8 @@ console.log('pie component rerendered, size: ', widthAndHeight);
     }
     let series = [];
     series = dataCountList.map((item, index) => ({
-      ...item,
-      label: { text: item.name.slice(0,4), fontFamily: 'Poppins-Regular', color: themeStyles.primaryText.color, fontSize: labelsSize },
+      ...item, 
+      label: { text: item.name.slice(0,4),  fontFamily: 'Poppins-Regular', color: themeStyles.primaryText.color, fontSize: labelsSize },
       color: colors[index],
     }));
 

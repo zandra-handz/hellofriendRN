@@ -18,14 +18,14 @@ import CarouselItemModal from "./carouselItemModal";
 type Props = {
   initialIndex: number;
   data: object[];
-  noButtons: boolean;
+  useButtons: boolean;
 
 };
 
 const CarouselSlider = ({
   initialIndex, 
   data,
-  noButtons,
+  useButtons=true,
   children: Children,
   onRightPress,
   onRightPressSecondAction, 
@@ -150,6 +150,7 @@ const CarouselSlider = ({
       <View style={{ flex: 1, height: "100%" }}>
         <Children
           item={item}
+          listLength={data?.length || 0}
           index={index}
           width={width}
           height={height}
@@ -316,6 +317,7 @@ const CarouselSlider = ({
           visibilityValue={floaterItemsVisibility}
           currentIndexValue={currentIndex}
           extraData={footerData}
+          useButtons={useButtons}
           onRightPress={() => onRightPress(currentIndex.value)}
              onRightPressSecondAction={() => onRightPressSecondAction(data[currentIndex.value])}
         />

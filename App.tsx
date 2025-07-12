@@ -205,7 +205,7 @@ export default Sentry.wrap(function App() {
             <UserSettingsProvider>
               <GlobalStyleProvider>
 
-                {/* <CategoriesProvider> */}
+                <CategoriesProvider>
                   
                 <UserStatsProvider>
                   <DeviceLocationProvider>
@@ -241,7 +241,7 @@ export default Sentry.wrap(function App() {
                   </DeviceLocationProvider>
                 </UserStatsProvider>
                 
-                {/* </CategoriesProvider> */}
+                </CategoriesProvider>
               </GlobalStyleProvider>
             </UserSettingsProvider>
           </UserProvider>

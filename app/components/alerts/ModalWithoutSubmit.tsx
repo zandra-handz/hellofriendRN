@@ -145,8 +145,8 @@ const ModalWithoutSubmit: React.FC<Props> = ({
             }}
           >
             <ButtonBaseSpecialSave
-              label="BACK TO APP"
-              image={require("@/app/assets/shapes/redheadcoffee.png")}
+              label="BACK"
+               image={require("@/app/assets/shapes/redheadcoffee.png")}
               imageSize={80}
               labelSize={19}
               isDisabled={false}

@@ -4,9 +4,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Donut from "../headers/Donut";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { useCategories } from "@/src/context/CategoriesContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { ScrollView } from "react-native-gesture-handler";
@@ -32,14 +31,8 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
   const {
-    userCategories,
-    createNewCategory,
-    updateCategory,
-    deleteCategory,
-    createNewCategoryMutation,
-    updateCategoryMutation,
-    deleteCategoryMutation,
-  } = useUserSettings();
+    userCategories, 
+  } = useCategories();
 
   const { selectedFriendStats } = useSelectedFriendStats();
 

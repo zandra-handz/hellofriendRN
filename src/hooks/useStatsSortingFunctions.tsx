@@ -18,7 +18,8 @@ const categoryHistorySizes = () => {
   listData.forEach((category) => {
     const categoryId = Number(category.id);
     const categoryName = String(category.name);
-    const categorySize = category.completed_capsules?.length || 0;
+    // data will have completed_capsules if full capsules are included; otherwise it will have capsule_ids list only
+    const categorySize = category.completed_capsules?.length || category.capsule_ids?.length || 0;
 
     totalCapsuleCount += categorySize;
 

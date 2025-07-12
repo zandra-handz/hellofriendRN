@@ -1,16 +1,10 @@
-import React, { useState, useRef, useCallback } from "react";
+import React from "react";
 import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  FlatList,
-} from "react-native";
-import { useUser } from "@/src/context/UserContext";
+  View, 
+  StyleSheet, 
+} from "react-native"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import SectionUserCategories from "../friends/SectionUserCategories";
 import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
 interface Props {

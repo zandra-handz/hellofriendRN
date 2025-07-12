@@ -6,10 +6,8 @@ import { CheckBox } from "react-native-elements";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useHelloes } from "@/src/context/HelloesContext";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
-import { useUser } from "@/src/context/UserContext"; 
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { useUser } from "@/src/context/UserContext";  
 
 const ReloadList = ({ helloId, items }) => {
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
@@ -18,19 +16,14 @@ const { user } = useUser();
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
-  const navigation = useNavigation();
-  const { userCategories } = useUserSettings();
+  const navigation = useNavigation(); 
 
   const {
     updateCapsule,
     capsuleList,
     categoryCount,
     categoryNames,
-    handleCreateMoment,
-    createMomentMutation,
-    preAdded,
-    allCapsulesList,
-    updateCapsuleMutation,
+    handleCreateMoment, 
   } = useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 

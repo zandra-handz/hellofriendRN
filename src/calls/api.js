@@ -269,9 +269,9 @@ export const signin = async ({ username, password }) => {
 };
 
 // this call's serializer currently adds categories
-export const getUserSettings = async (userId) => {
+export const getUserSettings = async () => {
   try {
-    const response = await helloFriendApiClient.get(`/users/${userId}/settings/`);
+    const response = await helloFriendApiClient.get(`/users/settings/`);
     // console.log("API GET Call getUserSettings", response.data);
 
     return response.data;
@@ -312,14 +312,39 @@ export const getUserCategories = async (userId) => {
 };
 
 
-export const fetchCategoriesHistoryAPI = async ( returnNonZeroesOnly) => {
+export const fetchCategoriesHistoryAPI = async (categoryId, returnNonZeroesOnly) => {
+  // console.log(`non zeros: `, returnNonZeroesOnly);
+  console.log(`data passed to capsule lookup`, categoryId);
+   console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryAPI  called');
+  try {
+    const response = await helloFriendApiClient.get(
+      `/users/categories/history/?user_category_id=${categoryId}&only_with_capsules=${returnNonZeroesOnly}` 
+    );
+    // console.log(response.data);
+ if (response && response.data) {
+    console.log(`API CALL fetchCategoriesistory:`, response.data);
+
+ 
+  return response.data;
+ 
+    } else {
+       console.log("fetchThoughtCapsules: no capsules added yet");
+      return []; // Return an empty array if no capsules
+    }
+  } catch (error) {
+    console.error("Error fetching thought capsules: ", error.response);
+    throw error;
+  }
+};
+
+export const fetchCategoriesHistoryCountAPI = async ( returnNonZeroesOnly) => {
   // console.log(`non zeros: `, returnNonZeroesOnly);
    console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryAPI  called');
   try {
     const response = await helloFriendApiClient.get(
-      `/users/categories/history/?only_with_capsules=${returnNonZeroesOnly}` 
+      `/users/categories/history/summary/?only_with_capsules=${returnNonZeroesOnly}` 
     );
-    // console.log(response.data);
+     console.log(`COUNT ONLY`, response.data);
  if (response && response.data) {
   // console.log(`API CALL fetchCategoriesistory:`, response.data);
 
@@ -649,10 +674,10 @@ export const SearchForMidpointLocations = async (locationData) => {
   }
 };
 
-export const updateUserAccessibilitySettings = async (userId, fieldUpdates) => {
+export const updateUserAccessibilitySettings = async (fieldUpdates) => {
   try {
     const response = await helloFriendApiClient.patch(
-      `/users/${userId}/settings/update/`,
+      `/users/settings/update/`,
       fieldUpdates
     );
     console.log("API PATCH CALL updateUserAccessibilitySettings");

@@ -6,15 +6,11 @@ import {
   StyleSheet,
   TextInput,
   FlatList,
-} from "react-native";
-import { useUser } from "@/src/context/UserContext";
+} from "react-native"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
-import SectionUserCategories from "../friends/SectionUserCategories";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
-import Pie from "./Pie";
-import AnimatedPieChart from "./AnimatedPieChart";
+import Pie from "./Pie"; 
 interface Props {
   isVisible: boolean;
   closeModal: () => void;

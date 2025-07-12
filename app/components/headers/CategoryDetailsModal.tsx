@@ -16,8 +16,12 @@ import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
+ import { useCategories } from "@/src/context/CategoriesContext";
 import SectionUserCategories from "../friends/SectionUserCategories";
 import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+ 
+
+
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
@@ -32,10 +36,10 @@ const CategoryDetailsModal: React.FC<Props> = ({
   onSearchPress,
 }) => {
   const { userCategories, updateCategory, updateCategoryMutation } =
-    useUserSettings();
+    useCategories();
   const category =
     userCategories.find((category) => category.id === categoryId) || null;
-  console.log(`category in modal: `, category);
+  // console.log(`category in modal: `, category);
 
   const { user } = useUser();
   const { themeStyles, appFontStyles, appSpacingStyles } = useGlobalStyle();
