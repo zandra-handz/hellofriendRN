@@ -120,7 +120,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   // }, [selectedFriend]);
 
   const navigateToMoments = () => {
-    navigation.navigate("Moments");
+    navigation.navigate("Moments", {scrollTo: null});
   };
 
   const navigateToImages = () => {
