@@ -7,15 +7,48 @@ import React from "react";
 
 const useStatsSortingFunctions = ({ listData = [] }) => {
 
-
-const categoryHistorySizes = () => {
-  if (!listData || listData.length === 0)
+const categoryHistorySizes = (listData: any[] = []) => {
+  if (!Array.isArray(listData) || listData.length === 0) {
     return { sortedList: [], lookupMap: new Map(), hasAnyCapsules: false };
+  }
 
   const categorySizeMap = new Map();
   let totalCapsuleCount = 0;
 
   listData.forEach((category) => {
+    const categoryId = Number(category.id);
+    const categoryName = String(category.name);
+    const categorySize =
+      category.completed_capsules?.length || category.capsule_ids?.length || 0;
+
+    totalCapsuleCount += categorySize;
+
+    categorySizeMap.set(categoryId, { name: categoryName, size: categorySize });
+  });
+
+  const sortedList = Array.from(categorySizeMap.entries())
+    .map(([user_category, sizeAndName]) => ({
+      user_category,
+      name: sizeAndName.name,
+      size: sizeAndName.size,
+      value: sizeAndName.size,
+    }))
+    .sort((a, b) => b.size - a.size);
+
+  const hasAnyCapsules = totalCapsuleCount > 0;
+
+  return { sortedList, lookupMap: categorySizeMap, hasAnyCapsules };
+};
+
+
+const categoryFriendHistorySizes = () => {
+  if (!listData || listData.length === 0)
+    return { sortedList: [], lookupMap: new Map(), hasAnyCapsules: false };
+console.log(listData);
+  const categorySizeMap = new Map();
+  let totalCapsuleCount = 0;
+
+  listData?.results?.forEach((category) => {
     const categoryId = Number(category.id);
     const categoryName = String(category.name);
     // data will have completed_capsules if full capsules are included; otherwise it will have capsule_ids list only
@@ -178,7 +211,7 @@ const generateRandomColors = (data) => {
 
   return {
     categoryHistorySizes,
-
+categoryFriendHistorySizes,
     calculatePercentage, // used for category sizes
     generateGradientColors,
     generateRandomColors,

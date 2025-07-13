@@ -33,30 +33,25 @@ useEffect(() => {
 }, [categoryId]);
 
 
-
 const {
-  categoryHistory: capsules,
+  categoryHistory ,
   isLoading,
   isFetching,
+  isFetchingNextPage,
   isError,
-} = useCategoryHistoryLookup({ categoryId });
+  fetchNextPage,
+  hasNextPage,
+} = useCategoryHistoryLookup({categoryId: 46});
   const headerIconSize = 26;
  
 const [ completedCapsules, setCompletedCapsules ] = useState([]);
 
-//   useEffect(() => {
-//     if (capsules && capsules[0] && capsules[0].length > 0) {
-// setCompletedCapsules(capsules[0].completed_capsules);
-//     }
+useEffect(() => {
+    if (categoryHistory) {
+        console.log(categoryHistory);
+    }
 
-//   }, [capsules]);
-//   console.log(capsules[0].completed_capsules);
-
-  // React.useEffect(() => {
-  //   if (isModalVisible) {
-  //     AccessibilityInfo.announceForAccessibility("Information opened");
-  //   }
-  // }, [isModalVisible]);
+}, [categoryHistory]);
 
   return (
     <ModalWithoutSubmit
@@ -72,33 +67,47 @@ const [ completedCapsules, setCompletedCapsules ] = useState([]);
       questionText={title}
       children={
      <>
-     {capsules && (
+     {categoryHistory && categoryHistory.length > 0 && (
         
+
+
+        // FlatList render — handle infinite scroll & pagination
         <FlatList
-          data={capsules[0]?.completed_capsules}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
+        data={categoryHistory[0]?.completed_capsules} // Already flattened in the hook
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
             <View style={styles.momentCheckboxContainer}>
-              <View style={styles.momentItemTextContainer}>
+            <View style={styles.momentItemTextContainer}>
                 <View style={{ height: "100%" }}>
-                  <View style={styles.checkboxContainer}>
+                <View style={styles.checkboxContainer}>
                     <MaterialCommunityIcons
-                      name={"message"}
-                      size={24}
-                      color={themeStyles.modalIconColor.color}
+                    name={"message"}
+                    size={24}
+                    color={themeStyles.modalIconColor.color}
                     />
-                  </View>
+                </View>
                 </View>
                 <View style={{ width: "86%" }}>
-                  <Text
-                    style={[styles.momentItemText, themeStyles.genericText]}
-                  >
+                <Text style={[styles.momentItemText, themeStyles.genericText]}>
                     {item.capsule}
-                  </Text>
+                </Text>
                 </View>
-              </View>
             </View>
-          )}
+            </View>
+        )}
+        onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+            }
+        }}
+        onEndReachedThreshold={0.5} // adjust as needed
+        ListFooterComponent={
+            isFetchingNextPage ? (
+            <Text style={[styles.momentItemText, themeStyles.genericText]}>
+                Loading more...
+            </Text>
+            ) : null
+        }
         />
      )}
      </>

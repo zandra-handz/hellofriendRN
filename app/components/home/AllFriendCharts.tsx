@@ -41,7 +41,15 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
       listData: capsuleList,
     });
 
-  const { categoryHistorySizes } = useStatsSortingFunctions({
+
+    useEffect(() => {
+      if (stats) {
+        console.log(`user stats: `, stats);
+      }
+
+    }, [stats]);
+
+  const { categoryFriendHistorySizes } = useStatsSortingFunctions({
     listData: selectedFriendStats,
   });
 
@@ -88,7 +96,7 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
         return;
       }
 
-      let categories = categoryHistorySizes();
+      let categories = categoryFriendHistorySizes();
       //  console.log(categories);
       setFriendHistorySortedList(categories.sortedList);
       setFriendHistoryHasAnyCapsules(categories.hasAnyCapsules);
@@ -258,7 +266,10 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
         )}
 
         {/* this runs the same conditional check internally as the pie component above for friend history */}
+       {stats && stats.length > 0 && ( 
+      
         <UserCategoryHistoryChart listData={stats} radius={CHART_RADIUS} />
+       )}
       </ScrollView>
 
       <View style={{ width: "100%", height: 10 }}></View>

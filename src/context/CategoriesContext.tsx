@@ -22,8 +22,7 @@ import {
   createUserCategory,
   updateUserCategory,
   deleteUserCategory, 
-  getUserCategories,
-  fetchCategoriesHistoryAPI,
+  getUserCategories, 
 } from "../calls/api";
 
 import * as Notifications from "expo-notifications";

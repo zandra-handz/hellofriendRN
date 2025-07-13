@@ -312,27 +312,24 @@ export const getUserCategories = async (userId) => {
 };
 
 
-export const fetchCategoriesHistoryAPI = async (categoryId, returnNonZeroesOnly) => {
-  // console.log(`non zeros: `, returnNonZeroesOnly);
-  console.log(`data passed to capsule lookup`, categoryId);
-   console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryAPI  called');
+export const fetchCategoriesHistoryAPI = async (categoryId, returnNonZeroesOnly, page = 1) => {
   try {
-    const response = await helloFriendApiClient.get(
-      `/users/categories/history/?user_category_id=${categoryId}&only_with_capsules=${returnNonZeroesOnly}` 
-    );
-    // console.log(response.data);
- if (response && response.data) {
-    console.log(`API CALL fetchCategoriesistory:`, response.data);
+    const params = new URLSearchParams();
 
- 
-  return response.data;
- 
+    if (categoryId) params.append("user_category_id", categoryId);
+    if (returnNonZeroesOnly) params.append("only_with_capsules", "true");
+    params.append("page", page);
+
+    const response = await helloFriendApiClient.get(`/users/categories/history/?${params.toString()}`);
+    console.log(`response from cat history`, response.data);
+    if (response?.data) {
+      return response.data; // DRF-style: { count, next, previous, results }
     } else {
-       console.log("fetchThoughtCapsules: no capsules added yet");
-      return []; // Return an empty array if no capsules
+      console.log("No data returned from fetchCategoriesHistoryAPI.");
+      return { results: [], next: null, previous: null };
     }
   } catch (error) {
-    console.error("Error fetching thought capsules: ", error.response);
+    console.error("Error fetching category history: ", error?.response || error);
     throw error;
   }
 };
