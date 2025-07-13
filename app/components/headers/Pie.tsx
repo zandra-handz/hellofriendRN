@@ -5,7 +5,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 import AnimatedPieChart from "./AnimatedPieChart";
-const Pie = ({ data, widthAndHeight=50, labelsSize=9, onSectionPress=null }) => {
+const Pie = ({ data, widthAndHeight=50, labelsSize=9, onSectionPress=null, onLongSectionPress=null }) => {
     const { manualGradientColors, themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
  
@@ -78,7 +78,7 @@ console.log('pie component rerendered, size: ', widthAndHeight);
     // <ScrollView style={{ flex: 1 }}>
       <View style={styles.container}>
         {/* <PieChart widthAndHeight={widthAndHeight} series={seriesData} /> */}
-        <AnimatedPieChart data={seriesData} size={widthAndHeight} radius={widthAndHeight / 2} onSectionPress={onSectionPress} />
+        <AnimatedPieChart data={seriesData} size={widthAndHeight} radius={widthAndHeight / 2} onSectionPress={onSectionPress} onLongSectionPress={onLongSectionPress} />
 
        
       </View>

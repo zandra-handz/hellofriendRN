@@ -4,7 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
@@ -15,12 +15,14 @@ import CategoryDetailsModal from "../headers/CategoryDetailsModal";
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
 import { useUserStats } from "@/src/context/UserStatsContext";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
+import FriendCategoryHistoryChart from "./FriendCategoryHistoryChart";
 import UserCategoryHistoryChart from "./UserCategoryHistoryChart";
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
 };
 
+//selectedFriend is the full friend object so can access the fields (.name, etc)
 const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
@@ -30,9 +32,7 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
   const { themeAheadOfLoading } = useFriendList();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
-  const {
-    userCategories, 
-  } = useCategories();
+  const { userCategories } = useCategories();
 
   const { selectedFriendStats } = useSelectedFriendStats();
 
@@ -40,14 +40,6 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
     useMomentSortingFunctions({
       listData: capsuleList,
     });
-
-
-    useEffect(() => {
-      if (stats) {
-        console.log(`user stats: `, stats);
-      }
-
-    }, [stats]);
 
   const { categoryFriendHistorySizes } = useStatsSortingFunctions({
     listData: selectedFriendStats,
@@ -63,12 +55,6 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
   const LABELS_SIZE = 9;
   const LABELS_DISTANCE_FROM_CENTER = -34;
   const LABELS_SLICE_END = 4;
-
-  const [categoriesMap, setCategoriesMap] = useState({});
-  const [categoriesSortedList, setCategoriesSortedList] = useState([]);
-  const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
-  const [tempCategoriesMap, setTempCategoriesMap] = useState({});
-
   const [viewCategoryId, setViewCategoryId] = useState(null);
 
   const handleSetCategoryDetailsModal = (categoryId) => {
@@ -86,69 +72,12 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
 
   // }, [selectedFriendStats]);
 
-  const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
-  const [friendHistoryHasAnyCapsules, setFriendHistoryHasAnyCapsules] =
-    useState(false);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!selectedFriendStats || selectedFriendStats?.length < 1) {
-        return;
-      }
-
-      let categories = categoryFriendHistorySizes();
-      //  console.log(categories);
-      setFriendHistorySortedList(categories.sortedList);
-      setFriendHistoryHasAnyCapsules(categories.hasAnyCapsules);
-    }, [selectedFriendStats])
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!capsuleList || capsuleList?.length < 1) {
-        return;
-      }
-
-      let categories = categorySizes();
-      //  console.log(categories);
-      setCategoriesMap(categories.lookupMap);
-      setCategoriesSortedList(categories.sortedList);
-      setTempCategoriesSortedList(categories.sortedList);
-      setTempCategoriesMap(categories.lookupMap);
-    }, [capsuleList])
-  );
-
-  useEffect(() => {
-    if (userCategories && userCategories.length > 0) {
-      setCategoryColors(
-        generateGradientColors(
-          userCategories,
-          manualGradientColors.lightColor,
-          // themeAheadOfLoading.darkColor,
-          //  manualGradientColors.homeDarkColor
-          themeAheadOfLoading.darkColor
-        )
-      );
-      //         setCategoryColors(
-      //     generateRandomColors(
-      //       userCategories
-      //     )
-      //   );
-    }
-  }, [userCategories]);
-
-  useEffect(() => {
-    if (categoryColors && tempCategoriesSortedList) {
-      const userCategorySet = new Set(
-        tempCategoriesSortedList.map((item) => item.user_category)
-      );
-
-      const filteredColors = categoryColors
-        .filter((item) => userCategorySet.has(item.user_category))
-        .map((item) => item.color);
-      setColors(filteredColors);
-    }
-  }, [categoryColors, tempCategoriesSortedList]);
+  // useEffect(() => {
+  //   if (stats && selectedFriendStats) {
+  //     console.log(`user stats: `, stats);
+  //     console.log(`aaaand friend stats: `, selectedFriendStats);
+  //   }
+  // }, [stats, selectedFriendStats]);
 
   return (
     <View
@@ -156,7 +85,7 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
         {
           overflow: "hidden",
           height: HEIGHT,
-          width: '100%',
+          width: "100%",
           padding: 10,
           paddingBottom: 10,
           backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
@@ -180,7 +109,7 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
           <MaterialCommunityIcons
             // name="comment-check"
             //  name="message-text-clock"
-              name="heart-pulse"
+            name="heart-pulse"
             // name="graph"
             size={20}
             color={themeStyles.primaryText.color}
@@ -207,69 +136,25 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
         /> */}
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {/* <View
-          style={{
-            marginHorizontal: 10,
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          <Donut
-            onCategoryPress={handleSetCategoryDetailsModal}
+        {selectedFriendStats && (
+          <FriendCategoryHistoryChart
+            friendData={selectedFriend}
+            
+            listData={selectedFriendStats}
             radius={CHART_RADIUS}
-            strokeWidth={CHART_STROKE_WIDTH}
-            outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
-            gap={GAP}
             labelsSize={LABELS_SIZE}
-            labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
-            labelsSliceEnd={LABELS_SLICE_END}
-            data={tempCategoriesSortedList}
-            colors={colors}
+            onLongPress={handleSetCategoryDetailsModal}
           />
-          <View style={{  }}>
-            <Text
-            onPress={() => navigation.navigate('MomentFocus')}
-              style={[
-                themeStyles.primaryText,
-                { fontWeight: 'bold', fontSize: 13 },
-              ]}
-            >
-              Loaded
-            </Text>
-          </View>
-        </View> */}
-        {friendHistorySortedList && friendHistoryHasAnyCapsules && (
-          <View
-            style={{
-              marginHorizontal: 10,
-              alignItems: "center",
-              flexDirection: "column",
-            }}
-          >
-            <Pie
-              data={friendHistorySortedList}
-              widthAndHeight={CHART_RADIUS * 2}
-              labelsSize={LABELS_SIZE}
-              onSectionPress={() => console.log("hi!")}
-            />
-                      <View style={{ }}>
-            <Text
-              style={[
-                themeStyles.primaryText,
-                { fontWeight: 'bold', fontSize: 13 },
-              ]}
-            >
-              {selectedFriend.name}
-            </Text>
-          </View>
-          </View>
         )}
 
-        {/* this runs the same conditional check internally as the pie component above for friend history */}
-       {stats && stats.length > 0 && ( 
-      
-        <UserCategoryHistoryChart listData={stats} radius={CHART_RADIUS} />
-       )}
+        {stats && stats.length > 0 && (
+          <UserCategoryHistoryChart
+            listData={stats}
+            radius={CHART_RADIUS}
+            onLongPress={handleSetCategoryDetailsModal}
+            labelsSize={5}
+          />
+        )}
       </ScrollView>
 
       <View style={{ width: "100%", height: 10 }}></View>

@@ -5,9 +5,11 @@ import React from "react";
 
 
 
-const useStatsSortingFunctions = ({ listData = [] }) => {
+const useStatsSortingFunctions = ({ listData = [], friendId = null }) => {
 
-const categoryHistorySizes = (listData: any[] = []) => {
+const categoryHistorySizes = () => {
+
+  
   if (!Array.isArray(listData) || listData.length === 0) {
     return { sortedList: [], lookupMap: new Map(), hasAnyCapsules: false };
   }

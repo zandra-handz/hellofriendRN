@@ -80,7 +80,7 @@ const HelloViewPage: React.FC<Props> = ({
 
   const handleCategoryFilterPress = (category) => {
     setMomentsViewing(
-      item.pastCapsules.filter((capsule) => capsule.typed_category === category)
+      item.pastCapsules.filter((capsule) => capsule.user_category_name === category)
     );
     setSelectedCategory(category);
   };
@@ -218,7 +218,7 @@ const HelloViewPage: React.FC<Props> = ({
                       data={[
                         ...new Set(
                           item.pastCapsules.map(
-                            (capsule) => capsule.typed_category
+                            (capsule) => capsule.user_category_name
                           )
                         ),
                       ]}
@@ -281,7 +281,7 @@ const HelloViewPage: React.FC<Props> = ({
                           }}
                         >
                           <Text style={[themeStyles.primaryText]}>
-                            {item.typed_category} {item.capsule}
+                            {item.user_category_original_name} {item.capsule}
                           </Text>
                         </View>
                       );

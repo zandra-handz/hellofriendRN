@@ -225,6 +225,7 @@ const { refetchUserStats } = useUserStats();
         momentsAdded.forEach((moment) => {
           momentsDictionary[moment.id] = {
             user_category: moment.user_category || null,
+            user_category_name: moment.user_category_name || null,
             typed_category: moment.typedCategory,
             capsule: moment.capsule,
           };

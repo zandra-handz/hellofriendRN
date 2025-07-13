@@ -104,6 +104,7 @@ export default function AnimatedPieChart({
   radius = 100,
   duration = 1200,
   onSectionPress = null,
+  onLongSectionPress = () => console.log('placeholder'),
   labelsSize = 9,
 }) {
   const progress = useSharedValue(0);
@@ -111,14 +112,15 @@ export default function AnimatedPieChart({
   console.log("data in pie chart changed");
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
-  console.log(`onSectionPress: `, onSectionPress);
+  
 
-  useEffect(() => {
-    if (data) {
-      console.log(`SERIES DATA IN PIE CHART: `, data);
-    }
+  // useEffect(() => {
+  //   if (data) {
+  //     console.log(`SERIES DATA IN PIE CHART: `, data);
+  //   }
 
-  }, [data]);
+  // }, [data]);
+
   useEffect(() => {
     progress.value = withTiming(1, { duration });
   }, [data]);
@@ -164,6 +166,7 @@ export default function AnimatedPieChart({
                 <Pressable
                   key={`pressable-${index}`}
                   onPress={() => onSectionPress?.(slice.user_category, slice.name)}
+                  onLongPress={() => onLongSectionPress?.(slice.user_category)}
                   style={({ pressed }) => [
                     {
                       position: "absolute",

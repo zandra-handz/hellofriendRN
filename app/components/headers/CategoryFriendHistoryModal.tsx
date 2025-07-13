@@ -5,45 +5,60 @@ import { TouchableOpacity, AccessibilityInfo } from "react-native";
 import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useUserStats } from "@/src/context/UserStatsContext";
 
+import { useUserStats } from "@/src/context/UserStatsContext";
+import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+import { useFriendList } from "@/src/context/FriendListContext";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
+  friendId: number;
   categoryId: number;
 }
 
-const CategoryHistoryModal: React.FC<Props> = ({
+// method of getting capsule count is TEMPORARY, likely need to change the backend/ backend call being 
+// made in SelectedFriendStatsContext to just return the count of capsules, and only fetch
+// the capsules when needed, using the same hook as the user categories (already doing this)
+// and get the count here from the backend as a capsule_ids list like we're doing for the overall user history
+const CategoryFriendHistoryModal: React.FC<Props> = ({
   isVisible,
   closeModal,
   title,
   data,
+  friendId = null,
   categoryId = 3,
 }) => {
   const { themeStyles, appSpacingStyles, appFontStyles } = useGlobalStyle();
   const { friendList } = useFriendList();
   const { stats } = useUserStats();
+  const { selectedFriendStats } = useSelectedFriendStats();
   const [categoryID, setCategoryID] = useState(null);
-  const [completedCapsuleCount, setCompletedCapsuleCount] = useState(0);
+  const [friendID, setFriendID] = useState(null);
+  const [completedCapsuleCount, setCompletedCapsuleCount] = useState(null);
+
+  if (!friendId) {
+    return;
+  }
+
   useEffect(() => {
-    if (categoryId && stats) {
+    if (categoryId && friendId && selectedFriendStats) {
       setCategoryID(categoryId);
+      setFriendID(friendId);
+      console.log(`SELECTEDED FRIENDS `, selectedFriendStats);
+      // const matchedCategoryStats = selectedFriendStats.find(
+      //   (category) => category.id === categoryId
+      // );
 
-      const matchedCategoryStats = stats.find(
-        (category) => category.id === categoryId
-      );
+      // if (matchedCategoryStats && matchedCategoryStats?.completed_capsules) {
+      //   const count = matchedCategoryStats?.completed_capsules?.length;
 
-      if (matchedCategoryStats && matchedCategoryStats?.capsule_ids) {
-        const count = matchedCategoryStats?.capsule_ids?.length;
-
-        console.log(`COUNT! `, count);
-        setCompletedCapsuleCount(count);
-      }
+      //   console.log(`COUNT! `, count);
+      //   setCompletedCapsuleCount(count);
+      // }
     }
-  }, [categoryId, stats]);
+  }, [categoryId, friendId, selectedFriendStats]);
 
   const {
     categoryHistory,
@@ -53,20 +68,32 @@ const CategoryHistoryModal: React.FC<Props> = ({
     isError,
     fetchNextPage,
     hasNextPage,
-  } = useCategoryHistoryLookup({ categoryId: categoryID });
-  const headerIconSize = 26; 
+  } = useCategoryHistoryLookup({ categoryId: categoryID, friendId: friendID });
+  const headerIconSize = 26;
 
-  // useEffect(() => {
-  //     if (categoryHistory) {
-  //         console.log(`CATEGORY HISTORY ~!~~~~~~~~~~~~~~~~~~~~~: `, categoryHistory);
-  //     }
+ 
 
-  // }, [categoryHistory]);
+  useEffect(() => {
+      if (categoryHistory) {
+         setCompletedCapsuleCount(categoryHistory.length);
+      }
+
+  }, [categoryHistory]);
 
   const getFriendNameFromList = (friendId) => {
     const friend = friendList.find((friend) => friend.id === friendId);
 
     return friend?.name || "";
+  };
+
+  const getCapsuleCount = (count) => {
+    if (!count) {
+      return;
+    }
+
+    return `(` + count + `)`;
+    
+
   };
 
   return (
@@ -88,7 +115,7 @@ const CategoryHistoryModal: React.FC<Props> = ({
         //   color={themeStyles.modalIconColor.color}
         // />
       }
-      questionText={`${title} (${completedCapsuleCount})`}
+questionText={title + " " + getCapsuleCount(completedCapsuleCount)}
       children={
         <>
           {categoryHistory && categoryHistory.length > 0 && (
@@ -222,4 +249,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CategoryHistoryModal;
+export default CategoryFriendHistoryModal;

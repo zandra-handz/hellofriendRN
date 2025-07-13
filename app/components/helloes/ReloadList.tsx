@@ -80,7 +80,7 @@ const { user } = useUser();
             <CheckBox
               checked={selectedMoments?.includes(item)}
               onPress={() => handleCheckboxChange(item)}
-              title={`#${item.typed_category} - ${item.capsule}`}
+              title={`#${item.user_category_name} - ${item.capsule}`}
               containerStyle={{
                 borderWidth: 0,
                 backgroundColor: isSelected
@@ -131,16 +131,17 @@ const { user } = useUser();
         friend: selectedFriend.id,
 
         selectedCategory: moment.typed_category,
+         selectedUserCategory: moment.user_category,
         moment: moment.capsule,
       };
 
       handleCreateMoment(momentData);
     });
-    navigation.navigate('Moments');
+    navigation.navigate('Moments', {scrollTo: null});
   };
 
   const handleCheckboxChange = (item) => {
-    const isNewCategory = !combinedCategoryTotal.includes(item.typed_category);
+    const isNewCategory = !combinedCategoryTotal.includes(item.user_category_name);
 
     if (isNewCategory) {
       const categoryLimit = getCategoryCap();

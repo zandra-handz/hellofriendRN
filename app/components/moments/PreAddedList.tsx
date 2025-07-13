@@ -45,7 +45,7 @@ const PreAddedList = () => {
           <CheckBox
             checked={selectedMoments?.includes(item)}
             onPress={() => handleCheckboxChange(item)}
-            title={`#${item.typedCategory} - ${item.capsule}`}
+            title={`#${item.user_category_name} - ${item.capsule}`}
             containerStyle={{  borderWidth: 0, backgroundColor: isSelected ? manualGradientColors.homeDarkColor : 'transparent',  padding: 0, flex: 1, width: '100%' }}
            wrapperStyle={{  height: '100%', lexDirection: 'row', justifyContent: 'space-between'}}
            textStyle={{width: '82%', color: isSelected? manualGradientColors.lightColor : themeStyles.primaryText.color, fontSize: 13}}

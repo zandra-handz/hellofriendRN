@@ -334,6 +334,32 @@ export const fetchCategoriesHistoryAPI = async (categoryId, returnNonZeroesOnly,
   }
 };
 
+
+
+export const fetchCapsulesHistoryAPI = async ({ categoryId, friendId, returnNonZeroesOnly = true, page = 1 }) => {
+
+  try {
+    const params = new URLSearchParams();
+
+    if (categoryId) params.append("user_category_id", categoryId);
+       if (friendId) params.append("friend_id", friendId);
+    if (returnNonZeroesOnly) params.append("only_with_capsules", "true");
+    params.append("page", page);
+
+    const response = await helloFriendApiClient.get(`/friends/categories/history/capsules/?${params.toString()}`);
+    console.log(`response from capsules history`, response.data);
+    if (response?.data) {
+      return response.data; // DRF-style: { count, next, previous, results }
+    } else {
+      console.log("No data returned from fetchCapsulesHistoryAPI.");
+      return { results: [], next: null, previous: null };
+    }
+  } catch (error) {
+    console.error("Error fetching category history: ", error?.response || error);
+    throw error;
+  }
+};
+
 export const fetchCategoriesHistoryCountAPI = async ( returnNonZeroesOnly) => {
   // console.log(`non zeros: `, returnNonZeroesOnly);
    console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryAPI  called');
@@ -341,7 +367,7 @@ export const fetchCategoriesHistoryCountAPI = async ( returnNonZeroesOnly) => {
     const response = await helloFriendApiClient.get(
       `/users/categories/history/summary/?only_with_capsules=${returnNonZeroesOnly}` 
     );
-     console.log(`COUNT ONLY`, response.data);
+    //  console.log(`COUNT ONLY`, response.data);
  if (response && response.data) {
   // console.log(`API CALL fetchCategoriesistory:`, response.data);
 
@@ -1065,28 +1091,38 @@ export const fetchPastHelloes = async (friendId) => {
     );
     if (response && response.data) {
       const helloesData = response.data;
-      console.log("API GET CALL fetchPastHelloes"); //, response.data);
+      console.log("API GET CALL fetchPastHelloes", response.data); //, response.data);
 
-      const formattedHelloesList = helloesData.map((hello) => ({
-        id: hello.id,
-        created: hello.created_on,
-        updated: hello.updated_on,
-        dateLong: hello.date,
-        date: hello.past_date_in_words,
-        type: hello.type,
-        typedLocation: hello.typed_location,
-        locationName: hello.location_name,
-        location: hello.location,
-        additionalNotes: hello.additional_notes,
-        pastCapsules: hello.thought_capsules_shared
-          ? Object.keys(hello.thought_capsules_shared).map((key) => ({
-              id: key,
-              capsule: hello.thought_capsules_shared[key].capsule,
-              typed_category: hello.thought_capsules_shared[key].typed_category,
-            }))
-          : [],
-      }));
+     const formattedHelloesList = helloesData.map((hello) => {
+        const pastCapsules = hello.thought_capsules_shared
+          ? Object.keys(hello.thought_capsules_shared).map((key) => {
+              const capsule = hello.thought_capsules_shared[key];
+              // console.log(`Capsule ID ${key}:`, capsule); // ✅ log all fields for this capsule
 
+              return {
+                id: key,
+                capsule: capsule.capsule,
+                typed_category: capsule.typed_category,
+                user_category: capsule.user_category,
+                user_category_name: capsule.user_category_name,
+              };
+            })
+          : [];
+
+        return {
+          id: hello.id,
+          created: hello.created_on,
+          updated: hello.updated_on,
+          dateLong: hello.date,
+          date: hello.past_date_in_words,
+          type: hello.type,
+          typedLocation: hello.typed_location,
+          locationName: hello.location_name,
+          location: hello.location,
+          additionalNotes: hello.additional_notes,
+          pastCapsules: pastCapsules,
+        };
+      });
       return formattedHelloesList;
     } else {
       console.log("fetchPastHelloes: no helloes added yet");
