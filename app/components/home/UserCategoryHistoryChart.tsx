@@ -26,7 +26,7 @@ const UserCategoryHistoryChart = ({ listData, radius = 80, labelsSize=9, onLongP
 
   useEffect(() => {
     if (listData) {
-      // console.log(`LIST DATA`, listData);
+      //  console.log(`LIST DATA`, listData);
       let categories = categoryHistorySizes();
 
       setUserHistorySortedList(categories.sortedList);

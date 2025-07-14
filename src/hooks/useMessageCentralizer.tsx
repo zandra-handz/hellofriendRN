@@ -13,7 +13,7 @@ const useMessageCentralizer = () => {
 
   // ScreenAuth wrapped in signinMutation.isPending
   const showVerifyingCredentialsMessage = () => {
-    showMessage(true, null, "Signing you in...");
+    showMessage(true, null, "Signing you in..");
   };
 
   // ScreenAuth wrapped in signinMutation.isError

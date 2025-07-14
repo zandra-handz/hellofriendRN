@@ -72,12 +72,11 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
 
   // }, [selectedFriendStats]);
 
-  // useEffect(() => {
-  //   if (stats && selectedFriendStats) {
-  //     console.log(`user stats: `, stats);
-  //     console.log(`aaaand friend stats: `, selectedFriendStats);
-  //   }
-  // }, [stats, selectedFriendStats]);
+  useEffect(() => {
+    if (selectedFriendStats) { 
+      console.log(`aaaand friend stats: `, selectedFriendStats);
+    }
+  }, [ selectedFriendStats]);
 
   return (
     <View

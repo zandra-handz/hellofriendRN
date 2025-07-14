@@ -31,7 +31,7 @@ export const LocationsProvider = ({ children }) => {
 
   const timeoutRef = useRef(null);
 
-  console.log("LOCATION CONTEXT RERENDERED");
+  // console.log("LOCATION CONTEXT RERENDERED");
 
   const {
     data: locationList,

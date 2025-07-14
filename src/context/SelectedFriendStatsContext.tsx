@@ -12,6 +12,7 @@ import { useSelectedFriend } from "./SelectedFriendContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   fetchCategoriesFriendHistoryAPI,
+  fetchCategoriesHistoryCountAPI,
 } from "../calls/api";
 
 interface SelectedFriendStatsContextType {}
@@ -40,7 +41,7 @@ export const SelectedFriendStatsProvider: React.FC<
   const { user, isInitializing, isAuthenticated } = useUser();
   const { userCategories } = useCategories();
   const { selectedFriend } = useSelectedFriend();
-  console.log("SELECTED FRIEND STATS CONTEXT");
+  // console.log("SELECTED FRIEND STATS CONTEXT");
 
   const [selectedFriendStats, setSelectedFriendStats] = useState<
     Record<string, any>
@@ -55,7 +56,8 @@ export const SelectedFriendStatsProvider: React.FC<
     isError,
   } = useQuery({
     queryKey: ["selectedFriendStats", user?.id, selectedFriend?.id],
-    queryFn: () => fetchCategoriesFriendHistoryAPI(selectedFriend.id, false), //return non-empty categories only
+      queryFn: () => fetchCategoriesHistoryCountAPI({friendId: selectedFriend.id, returnNonZeroesOnly: true}),
+    // queryFn: () => fetchCategoriesFriendHistoryAPI(selectedFriend.id, false), //return non-empty categories only
     enabled: !!(
       user &&
       user.id &&

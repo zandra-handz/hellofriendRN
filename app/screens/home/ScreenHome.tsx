@@ -62,7 +62,7 @@ const ScreenHome = () => {
   const isNewUser =
     new Date(user?.created_on).toDateString() === new Date().toDateString();
 
-  console.log("HOME SCREEN RERENDEREEEEEEEEEEEEERded");
+  // console.log("HOME SCREEN RERENDEREEEEEEEEEEEEERded");
 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;

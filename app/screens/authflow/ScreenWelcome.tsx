@@ -7,11 +7,11 @@ import SignInButton from "@/app/components/user/SignInButton";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller"; 
-import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+ 
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated'; 
 import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
-import { runOnJS, runOnUI } from 'react-native-reanimated';
+ 
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 
@@ -53,7 +53,7 @@ const ScreenWelcome = () => {
     try {
       const token = await SecureStore.getItemAsync("accessToken");
       if (token) {  
-        updateTriggerMessage('validating');
+        // updateTriggerMessage('validating');
  
    
         reInitialize();
@@ -61,7 +61,7 @@ const ScreenWelcome = () => {
       } else {
         setConfirmedUserNotSignedIn(true);
 
-       updateTriggerMessage('signedout');
+      //  updateTriggerMessage('signedout');
       }
     } catch (error) {
       console.error("Error checking sign-in status", error);
@@ -70,20 +70,20 @@ const ScreenWelcome = () => {
 
 
 
-  const [ triggerMessage, updateTriggerMessage ] = useState('none');
+  // const [ triggerMessage, updateTriggerMessage ] = useState('none');
 
-    useEffect(() => {
-      if (triggerMessage === 'validating') {
-       // showMessage(true, null, "Validating...");
-        updateTriggerMessage('none');
+  //   useEffect(() => {
+  //     if (triggerMessage === 'validating') {
+  //      // showMessage(true, null, "Validating...");
+  //       updateTriggerMessage('none');
 
-      } else if (triggerMessage === 'signedout') {
-        showMessage(true, null, "Signed out");
-        updateTriggerMessage('none');
+  //     } else if (triggerMessage === 'signedout') {
+  //       showMessage(true, null, "Signed out");
+  //       updateTriggerMessage('none');
 
-      }
+  //     }
 
-  },[triggerMessage] );
+  // },[triggerMessage] );
 
  
 

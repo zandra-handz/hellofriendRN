@@ -3,12 +3,11 @@ import {
   View,
   TextInput,
   StyleSheet,
-  Text, 
+  Text,
   Keyboard,
   TouchableOpacity,
 } from "react-native";
 
- 
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useMessage } from "@/src/context/MessageContext";
@@ -23,16 +22,15 @@ import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButt
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 
 import useMessageCentralizer from "@/src/hooks/useMessageCentralizer";
- 
 
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const createNewAccount = route.params?.createNewAccount ?? false;
   const { showMessage } = useMessage();
 
-   const { showVerifyingCredentialsMessage, showSigninErrorMessage } = useMessageCentralizer();
-  const { themeStyles, manualGradientColors } =
-    useGlobalStyle();
+  const { showVerifyingCredentialsMessage, showSigninErrorMessage } =
+    useMessageCentralizer();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const [showSignIn, setShowSignIn] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -41,7 +39,8 @@ const ScreenAuth = () => {
   const [loading, setLoading] = useState(false);
   const [isSignInScreen, setSignInScreen] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const { onSignin, signinMutation, onSignUp  } = useUser();
+  const { onSignin, signinMutation, onSignUp, isAuthenticated } = useUser();
+  const [success, setSuccess ] = useState(false);
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const verifyPasswordInputRef = useRef(null);
@@ -54,8 +53,15 @@ const ScreenAuth = () => {
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
+  useEffect(() => {
+    if (signinMutation.isSuccess) {
+      setSuccess(true);
+    }
+
+  }, [signinMutation]);
+
   useLayoutEffect(() => {
-    if (createNewAccount === true) { 
+    if (createNewAccount === true) {
       toggleMode();
     }
   }, [createNewAccount]);
@@ -104,26 +110,25 @@ const ScreenAuth = () => {
       showSigninErrorMessage();
       setPassword(null);
     }
-    if (signinMutation.isPending) {
-       showVerifyingCredentialsMessage();
-    }
+    // if (signinMutation.isPending) {
+    //    showVerifyingCredentialsMessage();
+    // }
   }, [signinMutation]);
 
   const handleAuthentication = async () => {
     let result;
     if (isSignInScreen) {
-      try { 
-
+      try {
         onSignin(username, password);
       } catch (error) {
-        console.error(error); 
+        console.error(error);
       }
     } else {
       if (password !== verifyPassword) {
         //alert("Passwords do not match!");
         // showMessage(true, null, "Oops! Passwords do not match");
         return;
-      } 
+      }
       result = await onSignUp(username, email, password);
       if (result && result.status === 201) {
         alert("Sign up was successful!");
@@ -187,7 +192,7 @@ const ScreenAuth = () => {
             flexDirection: "row",
             justifyContent: "space-between",
           }}
-        >
+        >  
           <TouchableOpacity
             onPress={handleNavigateBackToWelcomeScreen}
             style={{
@@ -195,17 +200,24 @@ const ScreenAuth = () => {
               width: 40,
               alignItems: "center",
               justifyContent: "center",
-              alignContent: 'center',
+              alignContent: "center",
               marginLeft: 10,
-              textAlign: 'center',
-              flexDirection: 'row',
+              textAlign: "center",
+              flexDirection: "row",
 
               backgroundColor: manualGradientColors.homeDarkColor,
               borderRadius: 20, // Half of the height/width to create a circle
             }}
           >
-            <Text style={{ fontSize: 18, paddingBottom: 4, color: "white", textAlign: "center" }}>
-            x
+            <Text
+              style={{
+                fontSize: 18,
+                paddingBottom: 4,
+                color: "white",
+                textAlign: "center",
+              }}
+            >
+              x
             </Text>
           </TouchableOpacity>
 
@@ -304,7 +316,7 @@ const ScreenAuth = () => {
         </SafeAreaView>
       </GradientBackground>
 
-      {showSignIn && (
+      {showSignIn && !success && (
         <View
           style={[
             {
@@ -453,13 +465,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: "Poppins-Bold",
     textAlign: "center",
-  }, 
+  },
   toggleButton: {
     color: "black",
     fontFamily: "Poppins-Bold",
     fontSize: 14,
     selfAlign: "center",
-  }, 
+  },
   spinnerContainer: {
     ...StyleSheet.absoluteFillObject, // Cover the entire screen
     backgroundColor: "transparent", // Semi-transparent background

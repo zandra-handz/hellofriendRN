@@ -18,7 +18,7 @@ export const FriendListProvider = ({ children }) => {
   const {  user, isAuthenticated, isInitializing } = useUser();   
   const [friendList, setFriendList] = useState(() => []); // lazy loading?
   const [ useGradientInSafeView, setUseGradientInSafeView] = useState(false);
-   console.log('FRIEND LIST RERENDERED');
+  //  console.log('FRIEND LIST RERENDERED');
   const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
     darkColor: '#4caf50',
     lightColor: '#a0f143',
@@ -80,7 +80,7 @@ useEffect(() => {
     setFriendList(friendListData);
   }
 
-}, [friendListIsSuccess] );
+}, [friendListIsSuccess, friendListData] );
 
  
 

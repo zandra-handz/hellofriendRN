@@ -23,6 +23,7 @@ import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
+import { useFriendList } from "@/src/context/FriendListContext";
 
 const HelloFriendFooter = () => {
   const navigationState = useNavigationState((state) => state);
@@ -31,7 +32,7 @@ const HelloFriendFooter = () => {
   const isOnActionPage = currentRouteName === "hellofriend";
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
-
+const { resetTheme } = useFriendList();
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible ] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
@@ -43,6 +44,12 @@ const HelloFriendFooter = () => {
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
+
+
+  const handleDeselectFriend = () => {
+    deselectFriend();
+    resetTheme();
+  }
 
   // buttons rendered in callbacks, all using the same template except for the friend profile button
   const RenderSignOutButton = useCallback(
@@ -83,7 +90,7 @@ const HelloFriendFooter = () => {
             color={themeStyles.footerIcon.color}
           />
         }
-        onPress={() => deselectFriend()}
+        onPress={() => handleDeselectFriend()}
       />
     ),
     [themeStyles]

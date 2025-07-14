@@ -118,11 +118,11 @@ const useCategoryHistoryLookup = ({
 
   // }, [flatResults]);
 
-  useEffect(() => {
-    if (data) {
-      console.log(`DATA RESULTS`, data);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     console.log(`DATA RESULTS`, data);
+  //   }
+  // }, [data]);
 
   return {
     categoryHistory: flatResults,

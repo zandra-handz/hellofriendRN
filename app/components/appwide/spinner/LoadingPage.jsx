@@ -78,8 +78,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   textContainer: {
-    position: "absolute",
-    top: "36%",
+    // position: "absolute",
+    // top: "36%",
+    marginBottom: 30,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -88,10 +89,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingTextBold: {
-    fontSize: 22,
+    fontSize: 20,
     fontFamily: "Poppins-Regular",
-    textAlign: "center",
-    paddingBottom: 20,
+    textAlign: "center", 
   },
 });
 

@@ -7,40 +7,41 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import FriendListUI from "@/app/components/alerts/FriendListUI";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
- 
+
 type Props = {
-     navigationDisabled: boolean;
+  navigationDisabled: boolean;
 };
 
-const ScreenSelectFriend = ({navigationDisabled=false}: Props) => {
+const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { friendList, getThemeAheadOfLoading, themeAheadOfLoading } = useFriendList();
+  const { friendList, getThemeAheadOfLoading, themeAheadOfLoading } =
+    useFriendList();
   const navigation = useNavigation();
-  const { selectedFriend, setFriend } = useSelectedFriend();
-  const [ filteredFriendList, setFilteredFriendList ] = useState(friendList || [])
+  const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend();
+  const [filteredFriendList, setFilteredFriendList] = useState(
+    friendList || []
+  );
 
   useEffect(() => {
     if (selectedFriend && friendList && friendList.length > 0) {
-        setFilteredFriendList(friendList.filter((friend) => friend.id !== selectedFriend.id));
-   
-   
+      setFilteredFriendList(
+        friendList.filter((friend) => friend.id !== selectedFriend.id)
+      );
     }
-
   }, [selectedFriend, friendList]);
 
-    const handleSelectFriend = (itemId) => {
+  const handleSelectFriend = (itemId) => {
     const selectedOption = friendList.find((friend) => friend.id === itemId);
 
     const selectedFriend = selectedOption || null;
-    console.log('ESTTING SELECTED FRIEND');
+    
     setFriend(selectedFriend);
     getThemeAheadOfLoading(selectedFriend);
-  
+
     if (!navigationDisabled) {
       navigation.goBack();
     }
   };
-
 
   return (
     <SafeViewAndGradientBackground style={{ flex: 1 }}>
@@ -49,11 +50,10 @@ const ScreenSelectFriend = ({navigationDisabled=false}: Props) => {
           <View
             style={{
               width: "100%",
-              backgroundColor:
-                themeStyles.primaryBackground.backgroundColor,
-              height: 'auto',
+              backgroundColor: themeStyles.primaryBackground.backgroundColor,
+              height: "auto",
               flexShrink: 1,
-              
+
               borderRadius: 10,
               justifyContent: "center",
               padding: 20,
@@ -67,28 +67,37 @@ const ScreenSelectFriend = ({navigationDisabled=false}: Props) => {
             </Text>
           </View>
         )}
-        <View style={[themeStyles.primaryBackground, {paddingHorizontal: 20, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 10, marginVertical: 10}]}>
-              
-              <MaterialCommunityIcons
-               name="account-switch-outline"
-               size={26}
-               color={themeStyles.primaryText.color}
-              />
-                {/* <Text
+        <View
+          style={[
+            themeStyles.primaryBackground,
+            {
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 10,
+              marginVertical: 10,
+            },
+          ]}
+        >
+          <MaterialCommunityIcons
+            name="account-switch-outline"
+            size={26}
+            color={themeStyles.primaryText.color}
+          />
+          {/* <Text
               style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: appFontStyles.welcomeText.fontSize - 10}]}
             >
               friends
             </Text> */}
         </View>
-        <View style={{ width: '100%',   flex: 1}}>
-                          {filteredFriendList && filteredFriendList.length > 0 && (
-                    <FriendListUI
-                      data={filteredFriendList}
-                      onPress={handleSelectFriend}
-                    />
-                  )}
-                  
-            
+        <View style={{ width: "100%", flex: 1 }}>
+          {filteredFriendList && filteredFriendList.length > 0 && (
+            <FriendListUI
+              data={filteredFriendList}
+              onPress={handleSelectFriend}
+            />
+          )}
         </View>
       </View>
     </SafeViewAndGradientBackground>

@@ -24,6 +24,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
     queryKey: ["upcomingHelloes", user?.id],
     queryFn: () => fetchUpcomingHelloes(),
     enabled: isAuthenticated && !isInitializing,
+    staleTime: 1000 * 60 * 20, // 20 minutes
     onSuccess: (data) => {
       if (!data) {
         return;
@@ -49,7 +50,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
 
   const refetchUpcomingHelloes = () => {
     console.log('refetched upcoming!');
-    queryClient.invalidateQueries({ queryKey: ["upcomingHelloes", user?.id] });
+    // queryClient.invalidateQueries({ queryKey: ["upcomingHelloes", user?.id] });
     queryClient.refetchQueries({ queryKey: ["upcomingHelloes", user?.id] });
   };
 

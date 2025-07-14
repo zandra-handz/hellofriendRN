@@ -1,21 +1,14 @@
-import React, { useState, useCallback } from "react";
-import {
-  View,
-  Text, 
-  Pressable,
-  DimensionValue,
-  Keyboard,
-} from "react-native";
+import React, { useCallback } from "react";
+import { View, Text, Pressable, DimensionValue } from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import FriendModal from "../alerts/FriendModal";
 
 import { useNavigation } from "@react-navigation/native";
 
-import { MaterialCommunityIcons  } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface FriendModalIntegratorProps {
   addToPress: () => void;
@@ -40,19 +33,15 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   addToOpenModal,
   useGenericTextColor = false,
   includeLabel = false,
-  navigationDisabled = false,
   iconSize = 22,
   width = "auto",
 }) => {
-
-  console.log('FRIEND SELECTOR RERENDERED');
+  // console.log("FRIEND SELECTOR RERENDERED");
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
   const { selectedFriend, friendLoaded, loadingNewFriend } =
     useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
-  const [isFriendMenuModalVisible, setIsFriendMenuModalVisible] =
-    useState(false); 
 
   const firstSelectLabel = customLabel ? customLabel : `Pick friend: `;
 
@@ -61,63 +50,46 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
     fontSize: 15,
   };
 
-  //kind of aggressive that it tries to refocus every time it toggles whether open or closed
-  // but android is being a butt about opening the keyboard
-  const toggleModal = () => {
-    // console.log("toggle modal triggered");
-    if (addToPress) {
-      addToPress();
-    }
-
-    setIsFriendMenuModalVisible(false);
-  };
-
-  const openModal = () => {
-    if (addToOpenModal) {
-      addToOpenModal();
-    } 
-
-    setIsFriendMenuModalVisible(true);
-  };
-
   const RenderText = useCallback(
     () => (
-    <Text
-      style={[
-        customFontStyle ? customFontStyle : defaultLabelStyle,
-        {
-          color:
-            selectedFriend && !useGenericTextColor
-              ? themeAheadOfLoading.fontColorSecondary
-              : themeStyles.primaryText.color,
+      <Text
+        style={[
+          customFontStyle ? customFontStyle : defaultLabelStyle,
+          {
+            color:
+              selectedFriend && !useGenericTextColor
+                ? themeAheadOfLoading.fontColorSecondary
+                : themeStyles.primaryText.color,
 
-          zIndex: 2,
-        },
-      ]}
-      numberOfLines={1}
-      ellipsizeMode="tail"
-    >
-      {(friendLoaded &&
-        !useGenericTextColor &&
-        `For:  ${selectedFriend?.name}`) ||
-      friendLoaded
-        ? "switch friend"
-        : firstSelectLabel}
-    </Text>
-    ), [
-    customFontStyle,
-    friendLoaded,
-    defaultLabelStyle,
-    selectedFriend,
-    themeAheadOfLoading,
-    themeStyles,
-  ]);
+            zIndex: 2,
+          },
+        ]}
+        numberOfLines={1}
+        ellipsizeMode="tail"
+      >
+        {(friendLoaded &&
+          !useGenericTextColor &&
+          `For:  ${selectedFriend?.name}`) ||
+        friendLoaded
+          ? "switch friend"
+          : firstSelectLabel}
+      </Text>
+    ),
+    [
+      customFontStyle,
+      friendLoaded,
+      defaultLabelStyle,
+      selectedFriend,
+      themeAheadOfLoading,
+      themeStyles,
+    ]
+  );
 
   const RenderIcon = useCallback(
     () => (
       <MaterialCommunityIcons
         name="account-switch-outline"
-        size={iconSize} 
+        size={iconSize}
         color={
           loadingNewFriend
             ? "transparent"
@@ -134,7 +106,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
     <>
       <Pressable
         // onPress={openModal}
-          onPress={() => navigation.navigate("SelectFriend")}
+        onPress={() => navigation.navigate("SelectFriend")}
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel="Friend selector button"
@@ -151,7 +123,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
             width: "auto",
             height: "100%",
             flexDirection: "row",
-            alignItems: "flex-end", 
+            alignItems: "flex-end",
           }}
         >
           {loadingNewFriend && (
@@ -166,24 +138,13 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
             </View>
           )}
 
-          {!loadingNewFriend && includeLabel && (
-            <RenderText/>
-          )}
+          {!loadingNewFriend && includeLabel && <RenderText />}
 
           <View style={{ paddingLeft: 0, marginLeft: 6 }}>
             <RenderIcon />
           </View>
         </View>
       </Pressable>
-
-      <FriendModal
-        isVisible={isFriendMenuModalVisible}
-        toggle={toggleModal}
-        onCancel={toggleModal}
-        navigationDisabled={navigationDisabled}
-        confirmText="Reset All"
-        cancelText="Back"
-      />
     </>
   );
 };

@@ -9,7 +9,7 @@ const TopLevelNavigationHandler = ({ children }) => {
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
 
-    console.log('TOP NAVIGATION HANDLER RUNNING');
+    // console.log('TOP NAVIGATION HANDLER RUNNING');
 
     useEffect(() => { 
         const checkAuthentication = async () => {

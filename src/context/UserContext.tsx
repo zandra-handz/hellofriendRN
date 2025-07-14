@@ -4,13 +4,13 @@ import React, {
   useState,
   useRef,
   useMemo,
-  useCallback, 
+  useCallback,
   useEffect,
-} from "react"; 
+} from "react";
 import * as SecureStore from "expo-secure-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
- 
-import { startTransition } from "react"; 
+
+import { startTransition } from "react";
 import {
   signup,
   signin,
@@ -61,76 +61,65 @@ interface UserProviderProps {
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [authenticated, setAuthenticated] = useState(false);
- 
+
   const queryClient = useQueryClient();
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  console.log('user context rerendered');
+  // console.log("user context rerendered");
 
-
- 
-
-   let isReinitializing = false;
+  let isReinitializing = false;
 
   const reInitialize = useCallback(async () => {
-  console.log("REINT TRIGGERED");
-  if (isReinitializing) return;
-  isReinitializing = true;
+    // console.log("REINT TRIGGERED");
+    if (isReinitializing) return;
+    isReinitializing = true;
 
-  try {
-    const token = await SecureStore.getItemAsync(TOKEN_KEY);
+    try {
+      const token = await SecureStore.getItemAsync(TOKEN_KEY);
 
-    if (token) {
-      let userData = null;
+      if (token) {
+        let userData = null;
 
-      try {
-        userData = await getCurrentUser();
-      } catch (error) {
-        await onSignOut();
-        return;
-      }
+        try {
+          userData = await getCurrentUser();
+        } catch (error) {
+          await onSignOut();
+          return;
+        }
 
-      if (userData) {
- 
-        // Only update if values are actually different
-        setUser((prev) => {
-          const isEqual = JSON.stringify(prev) === JSON.stringify(userData);
-          if (!isEqual) {
-            console.log("Setting new user data");
-            return userData;
-          }
-          return prev;
-        });
+        if (userData) {
+          // Only update if values are actually different
+          setUser((prev) => {
+            const isEqual = JSON.stringify(prev) === JSON.stringify(userData);
+            if (!isEqual) {
+              console.log("Setting new user data");
+              return userData;
+            }
+            return prev;
+          });
 
-        setAuthenticated((prev) => {
-          if (!prev) {
-            console.log("Setting authenticated: true");
-            return true;
-          }
-          return prev;
-        });
+          setAuthenticated((prev) => {
+            if (!prev) {
+              console.log("Setting authenticated: true");
+              return true;
+            }
+            return prev;
+          });
+        } else {
+          setUser((prev) => (prev !== null ? null : prev));
+          setAuthenticated((prev) => (prev !== false ? false : prev));
+          queryClient.clear();
+        }
       } else {
         setUser((prev) => (prev !== null ? null : prev));
         setAuthenticated((prev) => (prev !== false ? false : prev));
         queryClient.clear();
       }
-    } else {
-      setUser((prev) => (prev !== null ? null : prev));
-      setAuthenticated((prev) => (prev !== false ? false : prev));
-      queryClient.clear();
+    } finally {
+      isReinitializing = false;
     }
-  } finally {
-    isReinitializing = false;
-  }
-}, [onSignOut, queryClient]);
-
-
-
- 
-
-
- 
+  }, [onSignOut, queryClient]);
 
   const signinMutation = useMutation({
     mutationFn: signinWithoutRefresh,
@@ -157,15 +146,17 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       }, 2000);
     },
   });
- 
 
-  const onSignin = useCallback(async (username: string, password: string) => {
-  try {
-    await signinMutation.mutateAsync({ username, password });
-  } catch (error) {
-    console.error("Sign in error", error);
-  }
-}, [signinMutation]);
+  const onSignin = useCallback(
+    async (username: string, password: string) => {
+      try {
+        await signinMutation.mutateAsync({ username, password });
+      } catch (error) {
+        console.error("Sign in error", error);
+      }
+    },
+    [signinMutation]
+  );
 
   const signupMutation = useMutation({
     mutationFn: signup,
@@ -206,10 +197,9 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
-
   const onSignOut = async () => {
     await signout();
-    setUser(null); 
+    setUser(null);
     setAuthenticated(false);
 
     queryClient.clear();
@@ -248,14 +238,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   //       console.error("Delete user error", error);
   //     }
   //   };
- 
- 
 
-
- 
-
- 
-   const contextValue = useMemo(
+  const contextValue = useMemo(
     () => ({
       user,
       isAuthenticated: authenticated,
@@ -278,12 +262,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     ]
   );
 
- 
   return (
-    <UserContext.Provider
-      value={contextValue}
-    >
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
 };

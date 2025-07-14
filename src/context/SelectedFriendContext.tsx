@@ -1,12 +1,8 @@
 import React, {
   createContext,
   useState,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
-import { useFriendList } from "./FriendListContext";
+  useContext, 
+} from "react"; 
 import { useUser } from "./UserContext";
 import { fetchFriendDashboard } from "../calls/api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -29,56 +25,71 @@ export const useSelectedFriend = () => {
   return context;
 };
 
+console.warn('selected friend context rerendered');
+
 export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const { user, isAuthenticated } = useUser();
-  const { friendList, resetTheme } = useFriendList();
-  const [friendFavesData, setFriendFavesData] = useState(null);
+ 
+  // const [friendFavesData, setFriendFavesData] = useState(null);
 
- console.log("SelectedFriendProvider RENDERED", {
-  userId: user?.id,
-  friendId: selectedFriend?.id,
-  enabled: !!(isAuthenticated && selectedFriend && selectedFriend?.id),
-});
+//  console.log("SelectedFriendProvider RENDERED", {
+//   userId: user?.id,
+//   friendId: selectedFriend?.id,
+//   enabled: !!(isAuthenticated && selectedFriend && selectedFriend?.id),
+// }); 
 
-
+ 
   const queryClient = useQueryClient();
 
-  const {
-    data: friendDashboardData,
-    isLoading,
-    isPending,
-    isError,
-    isSuccess,
-  } = useQuery({
-    queryKey: ["friendDashboardData", user?.id, selectedFriend?.id],
-    queryFn: () => fetchFriendDashboard(selectedFriend.id),
-    enabled: !!(isAuthenticated && selectedFriend && selectedFriend?.id),
-    staleTime: 1000 * 60 * 20, // 20 minutes
- 
-  });
 
-  //DEBUGGING
-  useEffect(() => {
-  console.log("Query key changed:", user?.id, selectedFriend?.id);
-}, [user?.id, selectedFriend?.id]);
+  const previousFriendIdRef = React.useRef(null);
 
-  const favesData = useMemo(() => {
-    if (!friendDashboardData) return null;
-    return friendDashboardData[0]?.friend_faves?.locations || null;
-  }, [friendDashboardData]);
-
-  useEffect(() => {
-    if (favesData) {
-      setFriendFavesData(favesData);
+const {
+  data: friendDashboardData,
+  isLoading,
+  isPending,
+  isError,
+  isSuccess,
+} = useQuery({
+  queryKey: ["friendDashboardData", user?.id, selectedFriend?.id],
+  queryFn: () => {
+    // Prevent refetching if friend is unchanged
+    if (selectedFriend?.id === previousFriendIdRef.current) {
+      return Promise.resolve(friendDashboardData); // don't re-call API
     }
-  }, [favesData]);
+
+    previousFriendIdRef.current = selectedFriend?.id;
+    return fetchFriendDashboard(selectedFriend.id);
+  },
+  enabled: !!(isAuthenticated && selectedFriend),
+  staleTime: 1000 * 60 * 20,
+});
+
+  // const {
+  //   data: friendDashboardData,
+  //   isLoading,
+  //   isPending,
+  //   isError,
+  //   isSuccess,
+  // } = useQuery({
+  //   queryKey: ["friendDashboardData", user?.id, selectedFriend?.id],
+  //   queryFn: () => fetchFriendDashboard(selectedFriend.id),
+  //   enabled: !!(isAuthenticated && selectedFriend),
+  //   staleTime: 1000 * 60 * 20, // 20 minutes
+ 
+  // }); 
+  // const favesData = useMemo(() => {
+  //   if (!friendDashboardData) return null;
+  //   return friendDashboardData[0]?.friend_faves?.locations || null;
+  // }, [friendDashboardData]);
 
   // useEffect(() => {
-  //   if (isError) {
-  //     deselectFriend();
+  //   if (favesData) {
+  //     setFriendFavesData(favesData);
   //   }
-  // }, [isError]);
+  // }, [favesData]);
+ 
 
   const updateFavesThemeMutation = useMutation({
     mutationFn: (data) => updateFriendFavesColorThemeSetting(data),
@@ -110,28 +121,12 @@ export const SelectedFriendProvider = ({ children }) => {
             },
           };
         }
-      );
-      //   (old) => {
-      //     const updatedHelloes = old ? [data, ...old] : [data];
-      //     return updatedHelloes;
-      //   }
-      // );
-      //refetchUpcomingHelleos();
-
-      // const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
-      //console.log("Actual HelloesList after mutation:", actualHelloesList);
-
-      // if (timeoutRef.current) {
-      //   clearTimeout(timeoutRef.current);
-      // }
-
-      // timeoutRef.current = setTimeout(() => {
-      //   createHelloMutation.reset();
-      // }, 2000);
+      ); 
     },
   });
 
   const handleUpdateFavesTheme = ({savedDarkColor, savedLightColor, manualThemeOn}) => {
+    console.warn('handle update faves theme');
  
     const theme = {
       userId: user?.id,
@@ -156,20 +151,13 @@ export const SelectedFriendProvider = ({ children }) => {
   const errorLoadingFriend = isError;
 
   const deselectFriend = () => {
-    queryClient.resetQueries([
-      "friendDashboardData",
-      user?.id,
-      selectedFriend?.id,
-    ]);
-    setSelectedFriend(null);
-    resetTheme();
-  };
+    console.warn('DESELECT FRIEND FUNCTUON CALLED');
 
-  // useEffect(() => {
-  //   if (!selectedFriend) {
-  //     deselectFriend();
-  //   }
-  // }, [selectedFriend]);
+    setSelectedFriend(null);
+    // resetTheme();  REMOVED IN ORDER TO REMOVE FRIEND LIST FROM THIS PROVIDER SO THAT THAT DOESN'T WATERFALL. MUST RESET THEME IN COMPONENTS
+    // (example: HelloFriendFooter)
+  };
+ 
 
   return (
     <SelectedFriendContext.Provider
@@ -179,13 +167,13 @@ export const SelectedFriendProvider = ({ children }) => {
          deselectFriend,
         friendLoaded,
         errorLoadingFriend,
-        friendList,
+     
         isPending,
         isLoading,
         isSuccess,
         friendDashboardData,
-        friendFavesData,
-        setFriendFavesData,
+        // friendFavesData,
+        // setFriendFavesData,
         loadingNewFriend,
         handleUpdateFavesTheme,
       }}

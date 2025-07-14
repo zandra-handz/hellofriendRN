@@ -17,7 +17,7 @@ export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
   const { settings } = useUserSettings(); 
-  console.log("GLOBAL STYLES RERENDERED");
+  // console.log("GLOBAL STYLES RERENDERED");
   const colorScheme = useColorScheme();
 
   // Default state
@@ -56,7 +56,7 @@ export const GlobalStyleProvider = ({ children }) => {
 
   useEffect(() => {
     if (settings) {
-      console.log("settings triggered globalstyles");
+      // console.log("settings triggered globalstyles");
 
       const newFontSize = settings.large_text ? 20 : 16;
       const newHighContrast = settings.high_contrast_mode;
@@ -101,7 +101,7 @@ export const GlobalStyleProvider = ({ children }) => {
 
   useEffect(() => {
 
-    console.log('useeffect in global styles triggered by styles.theme');
+    // console.log('useeffect in global styles triggered by styles.theme');
     const isLight = styles.theme === "light";
 
     setStyles((prev) => {

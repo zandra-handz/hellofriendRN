@@ -110,33 +110,59 @@ export const HelloesProvider = ({ children }) => {
         createHelloMutation.reset();
       }, 2000);
     },
-    onSuccess: (data) => { 
-      const normalized = {
-        ...data,
-        dateLong: data.date, // or format if needed
-        date: data.past_date_in_words || formatDate(data.date), // optional
-      };
+     onSuccess: (data, variables) => {
+    const friendId = variables.friend;
 
-      queryClient.setQueryData(
-        ["pastHelloes", user?.id, selectedFriend?.id],
-        (old) => {
-          const updatedHelloes = old ? [normalized, ...old] : [normalized];
-          return updatedHelloes;
-        }
-      );
+    const normalized = {
+      ...data,
+      dateLong: data.date,
+      date: data.past_date_in_words || formatDate(data.date),
+    };
+
+    queryClient.setQueryData(
+      ["pastHelloes", user?.id, friendId],  
+      (old) => {
+        const updatedHelloes = old ? [normalized, ...old] : [normalized];
+        return updatedHelloes;
+      }
+    );
+
+        // refetchUpcomingHelleos();
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      createHelloMutation.reset();
+    }, 2000);
+  },
+    // onSuccess: (data) => { 
+    //   const normalized = {
+    //     ...data,
+    //     dateLong: data.date, // or format if needed
+    //     date: data.past_date_in_words || formatDate(data.date), // optional
+    //   };
+
+    //   queryClient.setQueryData(
+    //     ["pastHelloes", user?.id, selectedFriend?.id],
+    //     (old) => {
+    //       const updatedHelloes = old ? [normalized, ...old] : [normalized];
+    //       return updatedHelloes;
+    //     }
+    //   );
    
 
-      // const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
-      //console.log("Actual HelloesList after mutation:", actualHelloesList);
+    //   // const actualHelloesList = queryClient.getQueryData(["pastHelloes"]);
+    //   //console.log("Actual HelloesList after mutation:", actualHelloesList);
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+    //   if (timeoutRef.current) {
+    //     clearTimeout(timeoutRef.current);
+    //   }
 
-      timeoutRef.current = setTimeout(() => {
-        createHelloMutation.reset();
-      }, 2000);
-    },
+    //   timeoutRef.current = setTimeout(() => {
+    //     createHelloMutation.reset();
+    //   }, 2000);
+    // },
   });
 
   // const handleCreateHello = async (helloData) => {

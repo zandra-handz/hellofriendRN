@@ -41,7 +41,7 @@ export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
   const { user, isInitializing, isAuthenticated } = useUser();
   const queryClient = useQueryClient();
-  console.log("CAPSULE LIST RERENDERED");
+  // console.log("CAPSULE LIST RERENDERED");
   const [sortedByCategory, setSortedByCategory] = useState([]);
 
   const { sortByMomentCategory, getPreAdded } = useMomentContextFunctions();

@@ -13,7 +13,7 @@ import {
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import * as SplashScreen from "expo-splash-screen";
-
+import useNotificationsRegistration from "./src/hooks/useNotificationsRegistration";
 import Constants from "expo-constants";
 import {
   LinkingOptions,
@@ -26,7 +26,10 @@ import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { MessageContextProvider } from "./src/context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserProvider, useUser } from "./src/context/UserContext";
-import { UserSettingsProvider } from "./src/context/UserSettingsContext";
+import {
+  UserSettingsProvider,
+  useUserSettings,
+} from "./src/context/UserSettingsContext";
 import { GlobalStyleProvider } from "./src/context/GlobalStyleContext";
 
 import { UserStatsProvider } from "./src/context/UserStatsContext";
@@ -51,7 +54,7 @@ import * as MediaLibrary from "expo-media-library";
 import { useGlobalStyle } from "./src/context/GlobalStyleContext";
 import ResultMessage from "./app/components/alerts/ResultMessage";
 import FullScreenSpinner from "./app/components/appwide/spinner/FullScreenSpinner";
-
+import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner";
 import ScreenOnboardingFlow from "./app/onboarding/ScreenOnboardingFlow";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
@@ -204,43 +207,40 @@ export default Sentry.wrap(function App() {
           <UserProvider>
             <UserSettingsProvider>
               <GlobalStyleProvider>
-
                 <CategoriesProvider>
-                  
-                <UserStatsProvider>
-                  <DeviceLocationProvider>
-                    <UpcomingHelloesProvider>
-                      <FriendListProvider>
-                        <SelectedFriendProvider>
-                          {/* <PhoneStatusBar /> */}
-                          <CapsuleListProvider>
-                            <LocationsProvider>
-                              <HelloesProvider>
-                                <FriendLocationsProvider>
-                                  <SelectedFriendStatsProvider>
-                                    <MessageContextProvider>
-                                      <SafeAreaProvider>
-                                        {/* <SafeView  // in screen components instead
+                  <UserStatsProvider>
+                    <DeviceLocationProvider>
+                      <UpcomingHelloesProvider>
+                        <FriendListProvider>
+                          <SelectedFriendProvider>
+                            {/* <PhoneStatusBar /> */}
+                            <CapsuleListProvider>
+                              <LocationsProvider>
+                                <HelloesProvider>
+                                  <FriendLocationsProvider>
+                                    <SelectedFriendStatsProvider>
+                                      <MessageContextProvider>
+                                        <SafeAreaProvider>
+                                          {/* <SafeView  // in screen components instead
                                 style={{
                                   flex: 1,
                                   backgroundColor: "transparent",
                                 }}
                               > */}
-                                        <Layout />
-                                        {/* </SafeView> */}
-                                      </SafeAreaProvider>
-                                    </MessageContextProvider>
-                                  </SelectedFriendStatsProvider>
-                                </FriendLocationsProvider>
-                              </HelloesProvider>
-                            </LocationsProvider>
-                          </CapsuleListProvider>
-                        </SelectedFriendProvider>
-                      </FriendListProvider>
-                    </UpcomingHelloesProvider>
-                  </DeviceLocationProvider>
-                </UserStatsProvider>
-                
+                                          <Layout />
+                                          {/* </SafeView> */}
+                                        </SafeAreaProvider>
+                                      </MessageContextProvider>
+                                    </SelectedFriendStatsProvider>
+                                  </FriendLocationsProvider>
+                                </HelloesProvider>
+                              </LocationsProvider>
+                            </CapsuleListProvider>
+                          </SelectedFriendProvider>
+                        </FriendListProvider>
+                      </UpcomingHelloesProvider>
+                    </DeviceLocationProvider>
+                  </UserStatsProvider>
                 </CategoriesProvider>
               </GlobalStyleProvider>
             </UserSettingsProvider>
@@ -373,9 +373,15 @@ const linking = {
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle();
   const { isAuthenticated, user } = useUser();
+  const { settings } = useUserSettings();
 
+   
+  useNotificationsRegistration({ receiveNotifications: settings?.receive_notifications || undefined});
+ 
+ 
   return (
     <NavigationContainer ref={navigationRef} linking={linking}>
+      <FSMainSpinner />
       <ResultMessage />
       <CustomStatusBar />
 
@@ -608,7 +614,7 @@ export const Layout = () => {
                     headerShown: false,
                   }}
                 />
-                             <Stack.Screen
+                <Stack.Screen
                   name="SelectFriend"
                   component={ScreenSelectFriend}
                   options={{

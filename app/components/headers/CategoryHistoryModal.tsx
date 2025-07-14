@@ -39,7 +39,7 @@ const CategoryHistoryModal: React.FC<Props> = ({
       if (matchedCategoryStats && matchedCategoryStats?.capsule_ids) {
         const count = matchedCategoryStats?.capsule_ids?.length;
 
-        console.log(`COUNT! `, count);
+        // console.log(`COUNT! `, count);
         setCompletedCapsuleCount(count);
       }
     }

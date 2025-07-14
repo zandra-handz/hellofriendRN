@@ -7,8 +7,7 @@ import React, {
   useState,
 } from "react"; 
 import { useUser } from "./UserContext";
-import { useCategories } from "./CategoriesContext";
-import { useUserSettings } from "./UserSettingsContext";
+import { useCategories } from "./CategoriesContext"; 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   fetchCategoriesHistoryAPI,
@@ -41,7 +40,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
 }) => {
   const { user, isInitializing, isAuthenticated } = useUser();
   const { userCategories } = useCategories();
-  console.log("USER STATS CONTEXT");
+  // console.log("USER STATS CONTEXT");
 
   const [stats, setStats] = useState<
     Record<string, any>
@@ -56,7 +55,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
     isError,
   } = useQuery({
     queryKey: ["userStats", user?.id],
-    queryFn: () => fetchCategoriesHistoryCountAPI(true), //return non-empty categories only
+    queryFn: () => fetchCategoriesHistoryCountAPI({returnNonZeroesOnly: true}), //return non-empty categories only
     enabled: !!(user && user.id && isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   
@@ -64,7 +63,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
 
 useEffect(() => {
   if (isSuccess && userStats) {
-    console.log('resetting user stats');
+    console.log('!~!~!~!~!~!~!~!~!~!~!~!resetting user stats');
     setStats(userStats|| []); 
    
   }
@@ -95,7 +94,7 @@ const invalidateUserStats = () => {
 };
 
 const handleGetCategoryCapsules = (categoryId) => {
-  console.log(categoryId);
+  // console.log(categoryId);
   try {
     categoryCapsulesMutation.mutate(categoryId);
 
@@ -109,7 +108,7 @@ const categoryCapsulesMutation = useMutation({
   mutationFn: (categoryId) => 
     fetchCategoriesHistoryAPI(categoryId, true),
   onSuccess: (data) => {
-    console.log(data);
+    // console.log(data);
     
     //add to cache here
   },

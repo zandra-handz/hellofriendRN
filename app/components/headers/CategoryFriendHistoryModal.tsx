@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, FlatList } from "react-native";
-import { TouchableOpacity, AccessibilityInfo } from "react-native";
-
-import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
 
 import { useUserStats } from "@/src/context/UserStatsContext";
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useHelloes } from "@/src/context/HelloesContext";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 interface Props {
@@ -32,6 +31,7 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
 }) => {
   const { themeStyles, appSpacingStyles, appFontStyles } = useGlobalStyle();
   const { friendList } = useFriendList();
+  const { helloesList } = useHelloes();
   const { stats } = useUserStats();
   const { selectedFriendStats } = useSelectedFriendStats();
   const [categoryID, setCategoryID] = useState(null);
@@ -46,7 +46,7 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
     if (categoryId && friendId && selectedFriendStats) {
       setCategoryID(categoryId);
       setFriendID(friendId);
-      console.log(`SELECTEDED FRIENDS `, selectedFriendStats);
+      // console.log(`SELECTEDED FRIENDS `, selectedFriendStats);
       // const matchedCategoryStats = selectedFriendStats.find(
       //   (category) => category.id === categoryId
       // );
@@ -84,6 +84,12 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
     const friend = friendList.find((friend) => friend.id === friendId);
 
     return friend?.name || "";
+  };
+
+    const getHelloDateFromList = (helloId) => {
+    const hello = helloesList.find((hello) => hello.id === helloId);
+
+    return hello.date || "";
   };
 
   const getCapsuleCount = (count) => {
@@ -145,8 +151,9 @@ questionText={title + " " + getCapsuleCount(completedCapsuleCount)}
                       <Text
                         style={[styles.momentItemText, themeStyles.genericText]}
                       >
-                        @ {getFriendNameFromList(item.friend)}
+                        @ {getFriendNameFromList(item.friend)} on {getHelloDateFromList(item.hello)}
                       </Text>
+                                          
                     </View>
                   </View>
                 </View>

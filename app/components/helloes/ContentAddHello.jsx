@@ -60,7 +60,7 @@ const { refetchUserStats } = useUserStats();
 
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
 
-  const { selectedFriend, setFriend, loadingNewFriend, friendDashboardData } =
+  const { selectedFriend,   deselectFriend, loadingNewFriend, friendDashboardData } =
     useSelectedFriend();
   const { themeStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
@@ -137,16 +137,28 @@ const { refetchUserStats } = useUserStats();
 
   const timeoutRef = useRef(null);
 
-  useEffect(() => {
-    if (createHelloMutation.isSuccess) {
-      refetchUpcomingHelloes();
-     invalidateFriendStats(); // since friend is about to get deselected, just use invalidate instead of refetch
+const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
+
+useEffect(() => {
+  if (createHelloMutation.isSuccess) {
+    deselectFriend(); // this sets selectedFriend to null
+    setJustDeselectedFriend(true);
+  }
+}, [createHelloMutation.isSuccess]);
+
+useEffect(() => {
+  if (justDeselectedFriend && selectedFriend === null) {
+    console.log("Friend is now deselected, proceeding…");
+
+    refetchUpcomingHelloes();
     refetchUserStats();
-     showMessage(true, null, "Hello saved!"); 
-      setFriend(null);
-      navigateToMainScreen();
-    }
-  }, [createHelloMutation.isSuccess]);
+    showMessage(true, null, "Hello saved!");
+    navigateToMainScreen();
+
+    setJustDeselectedFriend(false); // reset the flag
+  }
+}, [justDeselectedFriend, selectedFriend]);
+
 
   // useLayoutEffect(() => {
   //   showMessage(

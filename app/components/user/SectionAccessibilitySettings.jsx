@@ -11,7 +11,7 @@ const SectionAccessibilitySettings = () => {
   const {
     settings,
     updateSettingsMutation,
-    updateNotificationSettings,
+    // updateNotificationSettings, no longer a separate state from settings
  
   } = useUserSettings();
   const { themeStyles } = useGlobalStyle(); 
@@ -22,6 +22,7 @@ const SectionAccessibilitySettings = () => {
   }, [settings]); 
 
   const updateSetting = async (setting) => {
+    console.error('update settings in section');
  
     try {
       const newSettings = { ...settings, ...setting };
@@ -47,9 +48,9 @@ const SectionAccessibilitySettings = () => {
 
   const updateReceiveNotifications = () => {
     updateSetting({ receive_notifications: !settings.receive_notifications });
-    updateNotificationSettings({
-      receive_notifications: !settings.receive_notifications,
-    });
+    // updateNotificationSettings({
+    //   receive_notifications: !settings.receive_notifications,
+    // });
   };
 
   const toggleManualTheme = () => {

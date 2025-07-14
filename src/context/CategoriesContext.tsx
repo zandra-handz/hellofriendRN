@@ -66,7 +66,7 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
   children,
 }) => {
   const { user, isInitializing, isAuthenticated } = useUser();
-  console.log("CATEGORIES CONTEXT");
+  // console.log("CATEGORIES CONTEXT");
 
  
   const queryClient = useQueryClient();

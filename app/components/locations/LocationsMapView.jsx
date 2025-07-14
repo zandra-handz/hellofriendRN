@@ -37,8 +37,7 @@ import { useLocations } from "@/src/context/LocationsContext";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 
 import DualLocationSearcher from "./DualLocationSearcher";
-
-import MapViewWithHelloes from "./MapViewWithHelloes";
+ 
 
 const LocationsMapView = ({
   userAddress,

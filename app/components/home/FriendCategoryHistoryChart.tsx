@@ -14,7 +14,7 @@ type Props = {
 };
 
 const FriendCategoryHistoryChart = ({ friendData, listData, radius = 80, labelsSize = 9 }: Props) => {
-   console.log(`listdata in friendhistorychart chart`, listData);
+  //  console.log(`listdata in friendhistorychart chart`, listData);
   const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
     const [historyModalVisible, setHistoryModalVisible] = useState(false);
   const { themeStyles } = useGlobalStyle(); 
@@ -22,14 +22,14 @@ const FriendCategoryHistoryChart = ({ friendData, listData, radius = 80, labelsS
     const [ viewCategoryName, setViewCategoryName ] = useState(null);
   const [friendHistoryHasAnyCapsules, setFriendHistoryHasAnyCapsules] =
     useState(false);
-  const { categoryFriendHistorySizes } = useStatsSortingFunctions({
+  const { categoryHistorySizes } = useStatsSortingFunctions({
     listData: listData,
   });
 
   useEffect(() => {
     if (listData) {
       // console.log(`LIST DATA`, listData);
-      let categories = categoryFriendHistorySizes();
+      let categories = categoryHistorySizes();
 
       setFriendHistorySortedList(categories.sortedList);
       setFriendHistoryHasAnyCapsules(categories.hasAnyCapsules);

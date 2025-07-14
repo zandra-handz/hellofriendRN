@@ -270,22 +270,25 @@ export const signin = async ({ username, password }) => {
 
 // this call's serializer currently adds categories
 export const getUserSettings = async () => {
+  console.log("Default common headers:", helloFriendApiClient.defaults.headers);
+
   try {
     const response = await helloFriendApiClient.get(`/users/settings/`);
-    // console.log("API GET Call getUserSettings", response.data);
+     console.log("API GET Call getUserSettings", response.data);
 
     return response.data;
     } catch (error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      console.error("Error response:", error.response.data);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error("Error request:", error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error("Error message:", error.message);
-    }
+      console.error(`USER SETTINGS ERRORED`);
+    // if (error.response) {
+    //   // The request was made and the server responded with a status code
+    //   console.error("Error response:", error.response.data);
+    // } else if (error.request) {
+    //   // The request was made but no response was received
+    //   console.error("Error request:", error.request);
+    // } else {
+    //   // Something happened in setting up the request that triggered an Error
+    //   console.error("Error message:", error.message);
+    // }
     throw error;
   }
 };
@@ -347,7 +350,7 @@ export const fetchCapsulesHistoryAPI = async ({ categoryId, friendId, returnNonZ
     params.append("page", page);
 
     const response = await helloFriendApiClient.get(`/friends/categories/history/capsules/?${params.toString()}`);
-    console.log(`response from capsules history`, response.data);
+    // console.log(`response from capsules history`, response.data);
     if (response?.data) {
       return response.data; // DRF-style: { count, next, previous, results }
     } else {
@@ -360,13 +363,21 @@ export const fetchCapsulesHistoryAPI = async ({ categoryId, friendId, returnNonZ
   }
 };
 
-export const fetchCategoriesHistoryCountAPI = async ( returnNonZeroesOnly) => {
+export const fetchCategoriesHistoryCountAPI = async ( {friendId, returnNonZeroesOnly}) => {
   // console.log(`non zeros: `, returnNonZeroesOnly);
-   console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryAPI  called');
+   console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryCountAPI  called');
   try {
+
+
+    const params = new URLSearchParams();
+params.append("only_with_capsules", returnNonZeroesOnly.toString());
+if (friendId != null) {
+  params.append("friend_id", friendId.toString());
+}
+const url = `/users/categories/history/summary/?${params.toString()}`;
+    
     const response = await helloFriendApiClient.get(
-      `/users/categories/history/summary/?only_with_capsules=${returnNonZeroesOnly}` 
-    );
+      `/users/categories/history/summary/?${params.toString()}`);
     //  console.log(`COUNT ONLY`, response.data);
  if (response && response.data) {
   // console.log(`API CALL fetchCategoriesistory:`, response.data);
@@ -736,6 +747,7 @@ export const updateUserProfile = async (
 };
 
 export const fetchFriendDashboard = async (friendId) => {
+  console.warn('fetching frienddashboard for friend: ', friendId);
   try {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/dashboard/`
@@ -1091,7 +1103,7 @@ export const fetchPastHelloes = async (friendId) => {
     );
     if (response && response.data) {
       const helloesData = response.data;
-      console.log("API GET CALL fetchPastHelloes", response.data); //, response.data);
+      console.log("API GET CALL fetchPastHelloes"); //, response.data);
 
      const formattedHelloesList = helloesData.map((hello) => {
         const pastCapsules = hello.thought_capsules_shared
@@ -1150,7 +1162,7 @@ export const saveMomentAPI = async (requestData) => {
 };
 
 export const saveHello = async (requestData) => {
-  console.log('saveHellodata: ', requestData);
+  // console.log('saveHellodata: ', requestData);
   try {
     const response = await helloFriendApiClient.post(
       `/friends/${requestData.friend}/helloes/add/`,

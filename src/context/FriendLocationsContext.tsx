@@ -1,4 +1,4 @@
-import React, {
+import React, { useEffect,
   createContext,
   useContext,
   useState,
@@ -26,14 +26,29 @@ export const useFriendLocationsContext = () =>
   useContext(FriendLocationsContext);
 
 export const FriendLocationsProvider = ({ children }) => {
-  const { user, isAuthenticated } = useUser();
+  const { user  } = useUser();
 
-  const { selectedFriend, friendFavesData, setFriendFavesData } =
+  const { selectedFriend, friendDashboardData  } =
     useSelectedFriend();
   const { locationList } = useLocations();
   const { helloesList } = useHelloes();
   const [stickToLocation, setStickToLocation] = useState(null);
   const queryClient = useQueryClient();
+
+    const [friendFavesData, setFriendFavesData] = useState(null);
+
+
+      const favesData = useMemo(() => {
+        if (!friendDashboardData) return null;
+        return friendDashboardData[0]?.friend_faves?.locations || null;
+      }, [friendDashboardData]);
+    
+      useEffect(() => {
+        if (favesData) {
+          setFriendFavesData(favesData);
+        }
+      }, [favesData]);
+     
 
   const timeoutRef = useRef(null);
 
@@ -46,11 +61,11 @@ export const FriendLocationsProvider = ({ children }) => {
     },
     onSuccess: (data, variables) => {
       setFriendFavesData(data.locations);
-      const friendData = queryClient.getQueryData([
-        "friendDashboardData",
-        user?.id,
-        selectedFriend?.id,
-      ]);
+      // const friendData = queryClient.getQueryData([
+      //   "friendDashboardData",
+      //   user?.id,
+      //   selectedFriend?.id,
+      // ]);
       queryClient.setQueryData(
         ["friendDashboardData", user?.id, selectedFriend?.id],
         (old) => {
@@ -95,23 +110,23 @@ export const FriendLocationsProvider = ({ children }) => {
     },
   });
 
-const handleAddToFaves = useCallback(async (friendId, locationId) => {
+  const handleAddToFaves = useCallback(
+    async (friendId, locationId) => {
+      if (!user?.id) {
+        console.warn("No user logged in - cannot add to favorites");
+        return;
+      }
 
-    if (!user?.id) {
-    console.warn("No user logged in - cannot add to favorites");
-    return;
-  }
-
-  const favoriteLocationData = { friendId, userId: user?.id, locationId };
-  try {
-    await addToFavesMutation.mutateAsync(favoriteLocationData);
-    setStickToLocation(locationId);
-  } catch (error) {
-    console.error("Error adding location to friend faves: ", error);
-  }
-}, [addToFavesMutation, user?.id]);
-
-
+      const favoriteLocationData = { friendId, userId: user?.id, locationId };
+      try {
+        await addToFavesMutation.mutateAsync(favoriteLocationData);
+        setStickToLocation(locationId);
+      } catch (error) {
+        console.error("Error adding location to friend faves: ", error);
+      }
+    },
+    [addToFavesMutation, user?.id]
+  );
 
   const removeFromFavesMutation = useMutation({
     mutationFn: (data) => {
@@ -121,11 +136,11 @@ const handleAddToFaves = useCallback(async (friendId, locationId) => {
     },
     onSuccess: (data) => {
       setFriendFavesData(data.locations);
-      const friendData = queryClient.getQueryData([
-        "friendDashboardData",
-        user?.id,
-        selectedFriend?.id,
-      ]);
+      // const friendData = queryClient.getQueryData([
+      //   "friendDashboardData",
+      //   user?.id,
+      //   selectedFriend?.id,
+      // ]);
 
       queryClient.setQueryData(
         ["friendDashboardData", user?.id, selectedFriend?.id],
@@ -171,21 +186,24 @@ const handleAddToFaves = useCallback(async (friendId, locationId) => {
     },
   });
 
-const handleRemoveFromFaves = useCallback(async (friendId, locationId) => {
-    if (!user?.id) {
-    console.warn("No user logged in - cannot add to favorites");
-    return;
-  }
-  const favoriteLocationData = { friendId, userId: user?.id, locationId };
-  try {
-    await removeFromFavesMutation.mutateAsync(favoriteLocationData);
-    setStickToLocation(locationId);
-  } catch (error) {
-    console.error("Error removing location from friend faves: ", error);
-  }
-}, [removeFromFavesMutation, user?.id]);
+  const handleRemoveFromFaves = useCallback(
+    async (friendId, locationId) => {
+      if (!user?.id) {
+        console.warn("No user logged in - cannot add to favorites");
+        return;
+      }
+      const favoriteLocationData = { friendId, userId: user?.id, locationId };
+      try {
+        await removeFromFavesMutation.mutateAsync(favoriteLocationData);
+        setStickToLocation(locationId);
+      } catch (error) {
+        console.error("Error removing location from friend faves: ", error);
+      }
+    },
+    [removeFromFavesMutation, user?.id]
+  );
 
-  console.log("FRIEND LOCATIONS RERENDERED");
+  // console.log("FRIEND LOCATIONS RERENDERED");
   const makeSplitLists = (list, isFaveCondition, helloCheck) => {
     return list.reduce(
       ([fave, notFave], item) => {
@@ -218,20 +236,20 @@ const handleRemoveFromFaves = useCallback(async (friendId, locationId) => {
 
   // added together with spread operator, these are the complete list of locations
   const [faveLocations, nonFaveLocations] = useMemo(() => {
-      console.log(`friend location list`, friendFavesData);
+    // console.log(`friend location list`, friendFavesData);
 
     if (
       locationList &&
-      inPersonHelloes 
-     // friendFavesData?.length > 0
+      inPersonHelloes
+      // friendFavesData?.length > 0
       //friendDashboardData?.[0]?.friend_faves?.locations
     ) {
       return makeSplitLists(
         locationList,
         // (location) => friendFavesData.includes(location.id),
-          friendFavesData?.length
-    ? (location) => friendFavesData.includes(location.id)
-    : () => false,
+        friendFavesData?.length
+          ? (location) => friendFavesData.includes(location.id)
+          : () => false,
         //  friendDashboardData[0].friend_faves.locations.includes(location.id),
 
         // if want full hello objects instead:
