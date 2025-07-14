@@ -21,10 +21,8 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { AntDesign } from "@expo/vector-icons";
-import { useUser } from "@/src/context/UserContext";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
+import { useUserSettings } from "@/src/context/UserSettingsContext"; 
 // import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -61,9 +59,7 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
       appContainerStyles,
     } = useGlobalStyle();
 
-    const { settings } = useUserSettings();
-    // const { friendListLength } = useFriendList(); checking higher up
-    const { selectedFriend } = useSelectedFriend();
+    const { settings } = useUserSettings(); 
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
 
     const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();

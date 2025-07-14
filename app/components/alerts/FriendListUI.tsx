@@ -77,7 +77,7 @@ const navigation = useNavigation();
         width: "100%",
       }}
     >
-      {data && data.length > 0 && (
+      {data && ( // this will work with an empty [] so you can add a friend for the first time too
         <FlatList
           data={[...data, {message: 'add friend'}]}
             keyExtractor={extractItemKey}

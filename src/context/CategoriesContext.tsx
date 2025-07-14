@@ -16,7 +16,7 @@ import React, {
   ReactNode,
   useState,
 } from "react"; 
-import { useUser } from "./UserContext";
+import { useUser } from "./UserContext"; 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {  
   createUserCategory,
@@ -24,9 +24,7 @@ import {
   deleteUserCategory, 
   getUserCategories, 
 } from "../calls/api";
-
-import * as Notifications from "expo-notifications";
-import * as SecureStore from "expo-secure-store";
+ 
  
 
 interface Categories {
@@ -103,13 +101,13 @@ useEffect(() => {
  
 
   // reset
-  useEffect(() => {
-    if (isInitializing && !isAuthenticated) {
-      console.log("user not authenticated, resetting user categories");
+  // useEffect(() => {
+  //   if (!isInitializing && !isAuthenticated) {
+  //     console.log("user not authenticated, resetting user categories");
    
-      setUserCategories(null); 
-    }
-  }, [isAuthenticated, isInitializing]);
+  //     setUserCategories(null); 
+  //   }
+  // }, [isAuthenticated, isInitializing]);
  
 
  
@@ -121,10 +119,9 @@ useEffect(() => {
 
       // Update local state
       setUserCategories((prev) => [...prev, data]);
-
-      // Update cached userSettings with logs
+ 
       queryClient.setQueryData(["categories", user?.id], (oldData) => {
-        // console.log('Cache before update:', oldData);
+     
         if (!oldData) return oldData;
 
         const updatedData = {
@@ -133,6 +130,7 @@ useEffect(() => {
         };
 
         // console.log('Cache after update:', updatedData);
+         handleSyncStats(); 
         return updatedData;
       });
     },
@@ -160,13 +158,14 @@ useEffect(() => {
           ),
         };
 
-        console.log("After updating cached userSettings:", updatedCategories);
+        console.log("After updating cached categories:", updatedCategories);
+         handleSyncStats();
         return updatedCategories;
       });
     },
 
     onError: (error) => {
-      console.error("Update app settings error:", error);
+      console.error("Update app categories error:", error);
     },
   });
 
@@ -189,6 +188,8 @@ onSuccess: (data) => {
       ),
     };
 
+    handleSyncStats();
+
     // Log after updating
     // console.log("Cache after delete update:", updatedData);
 
@@ -198,7 +199,7 @@ onSuccess: (data) => {
 
 
     onError: (error) => {
-      console.error("Update app settings error:", error);
+      console.error("Update app categories error:", error);
     },
   }); 
 
@@ -220,7 +221,7 @@ onSuccess: (data) => {
     try {
       await updateCategoryMutation.mutateAsync(categoryData);
     } catch (error) {
-      console.error("Error updating app settings:", error);
+      console.error("Error updating app categories:", error);
     }
   };
 
@@ -228,12 +229,22 @@ onSuccess: (data) => {
     try {
       await deleteCategoryMutation.mutateAsync(categoryData);
     } catch (error) {
-      console.error("Error updating app settings:", error);
+      console.error("Error updating app categories:", error);
     }
   };
  
 
- 
+  const handleSyncStats = () => {
+     queryClient.refetchQueries(["userStats", user.id]);
+      queryClient.refetchQueries(["selectedFriendStats", user.id]); // just refresh all of em
+     
+
+  };
+//  const handleSyncStats = async () => {
+//   const result = await queryClient.refetchQueries(["userStats", user.id]);
+//   console.log('Stats updated, now doing next step...');
+//   // do something here that needs the *fresh* stats
+// };
 
   const contextValue = useMemo(() => ({
   

@@ -92,12 +92,12 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
             </Text> */}
         </View>
         <View style={{ width: "100%", flex: 1 }}>
-          {filteredFriendList && filteredFriendList.length > 0 && (
+          {/* {filteredFriendList &&  ( */}
             <FriendListUI
               data={filteredFriendList}
               onPress={handleSelectFriend}
             />
-          )}
+          {/* )} */}
         </View>
       </View>
     </SafeViewAndGradientBackground>

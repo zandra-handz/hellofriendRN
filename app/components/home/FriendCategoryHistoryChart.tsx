@@ -1,8 +1,6 @@
 import { View, Text } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
-import { useUserStats } from "@/src/context/UserStatsContext";
-import { useFocusEffect } from "@react-navigation/native";
+import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions"; 
 import Pie from "../headers/Pie"; 
 import CategoryHistoryModal from "../headers/CategoryHistoryModal";
 import CategoryFriendHistoryModal from "../headers/CategoryFriendHistoryModal";

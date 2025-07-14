@@ -19,16 +19,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { useFriendList } from "@/src/context/FriendListContext"; 
 import { useCategories } from "@/src/context/CategoriesContext";
 import { useNavigationState } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import UserCategorySelectorButton from "./UserCategorySelectorButton";
-import Donut from "./Donut";
-import Pie from "./Pie";
+import Donut from "./Donut"; 
 import Animated, {
   useAnimatedStyle,
   withTiming,

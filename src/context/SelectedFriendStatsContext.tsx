@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useUser } from "./UserContext";
-import { useCategories } from "./CategoriesContext"; 
+// import { useCategories } from "./CategoriesContext"; 
 import { useSelectedFriend } from "./SelectedFriendContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
@@ -39,17 +39,17 @@ export const SelectedFriendStatsProvider: React.FC<
   SelectedFriendStatsProviderProps
 > = ({ children }) => {
   const { user, isInitializing, isAuthenticated } = useUser();
-  const { userCategories } = useCategories();
+  // const { userCategories } = useCategories();
   const { selectedFriend } = useSelectedFriend();
   // console.log("SELECTED FRIEND STATS CONTEXT");
 
-  const [selectedFriendStats, setSelectedFriendStats] = useState<
-    Record<string, any>
-  >([]);
+  // const [selectedFriendStats, setSelectedFriendStats] = useState<
+  //   Record<string, any>
+  // >([]);
   const queryClient = useQueryClient();
 
   const {
-    data: friendStats,
+    data: selectedFriendStats,
     isLoading,
     isFetching,
     isSuccess,
@@ -68,19 +68,19 @@ export const SelectedFriendStatsProvider: React.FC<
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 
-  useEffect(() => {
-    if (isSuccess && friendStats) {
-    //   console.log("resetting selected friend stats", friendStats);
-      setSelectedFriendStats(friendStats || []);
-    }
-  }, [isSuccess, friendStats]);
+  // useEffect(() => {
+  //   if (isSuccess && friendStats) {
+  //   //   console.log("resetting selected friend stats", friendStats);
+  //     setSelectedFriendStats(friendStats || []);
+  //   }
+  // }, [isSuccess, friendStats]);
 
 
-useEffect(() => {
-  if (user && user.id && isAuthenticated && !isInitializing && selectedFriend) {
-    queryClient.refetchQueries(["selectedFriendStats", user.id, selectedFriend.id]);
-  }
-}, [userCategories]);
+// useEffect(() => {
+//   if (user && user.id && isAuthenticated && !isInitializing && selectedFriend) {
+//     queryClient.refetchQueries(["selectedFriendStats", user.id, selectedFriend.id]);
+//   }
+// }, [userCategories]);
 
 
 const refetchFriendStats = () => {

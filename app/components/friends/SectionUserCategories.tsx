@@ -10,8 +10,7 @@ import {
 } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import { useCategories } from "@/src/context/CategoriesContext";
 
 const SectionUserCategories = () => {

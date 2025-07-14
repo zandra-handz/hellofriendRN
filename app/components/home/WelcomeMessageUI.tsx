@@ -43,8 +43,9 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   return (
     <AnimatedPressable
       onPress={onPress}
-      entering={ZoomInEasyUp}
-      exiting={FadeOut}
+      layout={SlideInLeft}
+      // entering={ZoomInEasyUp}
+      // exiting={FadeOut}
       style={[
         {
           alignText: "center",

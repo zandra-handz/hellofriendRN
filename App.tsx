@@ -208,13 +208,14 @@ export default Sentry.wrap(function App() {
             <UserSettingsProvider>
               <GlobalStyleProvider>
                 <CategoriesProvider>
-                  <UserStatsProvider>
-                    <DeviceLocationProvider>
+                  <UserStatsProvider> 
                       <UpcomingHelloesProvider>
                         <FriendListProvider>
                           <SelectedFriendProvider>
                             {/* <PhoneStatusBar /> */}
                             <CapsuleListProvider>
+                              <DeviceLocationProvider>
+                                
                               <LocationsProvider>
                                 <HelloesProvider>
                                   <FriendLocationsProvider>
@@ -235,11 +236,13 @@ export default Sentry.wrap(function App() {
                                   </FriendLocationsProvider>
                                 </HelloesProvider>
                               </LocationsProvider>
+                              
+                              </DeviceLocationProvider>
                             </CapsuleListProvider>
                           </SelectedFriendProvider>
                         </FriendListProvider>
                       </UpcomingHelloesProvider>
-                    </DeviceLocationProvider>
+                 
                   </UserStatsProvider>
                 </CategoriesProvider>
               </GlobalStyleProvider>
@@ -372,13 +375,26 @@ const linking = {
 
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle();
-  const { isAuthenticated, user } = useUser();
+  const { isAuthenticated, user, isInitializing } = useUser();
   const { settings } = useUserSettings();
-
+ 
    
-  useNotificationsRegistration({ receiveNotifications: settings?.receive_notifications || undefined});
- 
- 
+
+  const receiveNotifications =
+    settings?.receive_notifications === true
+      ? true
+      : settings?.receive_notifications === false
+      ? false
+      : 'not ready';
+
+        const expoPushToken =
+    settings?.expo_push_token === null 
+    ? null
+    : settings?.expo_push_token === undefined
+    ? 'not ready'
+    : settings.expo_push_token;
+
+  useNotificationsRegistration({ receiveNotifications, expoPushToken });
   return (
     <NavigationContainer ref={navigationRef} linking={linking}>
       <FSMainSpinner />
@@ -396,8 +412,8 @@ export const Layout = () => {
             cardStyle: { backgroundColor: "#000002" },
           }}
         >
-          {isAuthenticated ? (
-            user.app_setup_complete || !user.app_setup_complete ? (
+          {isAuthenticated && user && !isInitializing ? (
+            // user.app_setup_complete || !user.app_setup_complete ? (
               <>
                 <Stack.Screen
                   name="hellofriend"
@@ -629,15 +645,15 @@ export const Layout = () => {
                   }}
                 />
               </>
-            ) : (
-              <Stack.Screen
-                name="Setup"
-                component={ScreenOnboardingFlow}
-                options={{
-                  headerShown: false,
-                }}
-              />
-            )
+            // ) : (
+            //   <Stack.Screen
+            //     name="Setup"
+            //     component={ScreenOnboardingFlow}
+            //     options={{
+            //       headerShown: false,
+            //     }}
+            //   />
+            // )
           ) : (
             <>
               <Stack.Screen

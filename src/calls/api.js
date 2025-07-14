@@ -270,7 +270,7 @@ export const signin = async ({ username, password }) => {
 
 // this call's serializer currently adds categories
 export const getUserSettings = async () => {
-  console.log("Default common headers:", helloFriendApiClient.defaults.headers);
+  // console.log("Default common headers:", helloFriendApiClient.defaults.headers);
 
   try {
     const response = await helloFriendApiClient.get(`/users/settings/`);
@@ -365,7 +365,7 @@ export const fetchCapsulesHistoryAPI = async ({ categoryId, friendId, returnNonZ
 
 export const fetchCategoriesHistoryCountAPI = async ( {friendId, returnNonZeroesOnly}) => {
   // console.log(`non zeros: `, returnNonZeroesOnly);
-   console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryCountAPI  called');
+   console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchCategoriesHistoryCountAPI  called, friendid: ', friendId);
   try {
 
 

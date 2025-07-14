@@ -14,7 +14,7 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import CategoryDetailsModal from "../headers/CategoryDetailsModal";
 
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
-import { useUserStats } from "@/src/context/UserStatsContext";
+ 
 import { useCategories } from "@/src/context/CategoriesContext";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
  
@@ -25,8 +25,7 @@ type Props = {
 
 const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const navigation = useNavigation();
-  const { stats } = useUserStats();
+  const navigation = useNavigation(); 
   const { capsuleList,categoryStartIndices } = useCapsuleList();
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const { themeAheadOfLoading } = useFriendList();

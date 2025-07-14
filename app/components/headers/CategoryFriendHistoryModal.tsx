@@ -3,8 +3,7 @@ import { View, Text, ScrollView, StyleSheet, FlatList } from "react-native";
  
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
-
-import { useUserStats } from "@/src/context/UserStatsContext";
+ 
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
@@ -32,7 +31,7 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
   const { themeStyles, appSpacingStyles, appFontStyles } = useGlobalStyle();
   const { friendList } = useFriendList();
   const { helloesList } = useHelloes();
-  const { stats } = useUserStats();
+ 
   const { selectedFriendStats } = useSelectedFriendStats();
   const [categoryID, setCategoryID] = useState(null);
   const [friendID, setFriendID] = useState(null);

@@ -18,6 +18,7 @@ import {
 } from "../calls/api";
 
 import { useUser } from "./UserContext";
+import isEqual from 'lodash.isequal';
 // import * as Notifications from "expo-notifications";
 // import * as SecureStore from "expo-secure-store";
 
@@ -74,6 +75,7 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
 
  
   const { user } = useUser();
+  
  
 
   const {
@@ -83,13 +85,18 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
     isSuccess,
     isError,
   } = useQuery({
-      queryKey: ["userSettings"], // removed user id since entire cache should clear if user not logged in
+      queryKey: ["userSettings", user?.id], // removed user id since entire cache should clear if user not logged in
     // queryKey: user?.id ? ["userSettings", user.id] : undefined,
     queryFn: () => getUserSettings(),
     enabled: !!(user),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 
+
+  useEffect(() => {
+    console.error('user triggering settings!!!', user);
+
+  }, [user]);
 
   const [settings, setSettings] = useState<Record<string, any> | null>(null);
 
@@ -102,7 +109,9 @@ useEffect(() => {
     return;
   }
 
-  setSettings(userSettings);
+// setSettings((prev) => userSettings);
+ setSettings(prev => (isEqual(prev, userSettings) ? prev : userSettings));
+ 
   // const applySettings = async () => {
   //   if (isSuccess && userSettings) {
   //     console.error("Resetting user settings");
@@ -188,7 +197,7 @@ useEffect(() => {
       // userSettings,
       settings,  
       updateSettings,
-      updateSettingsMutation, 
+     updateSettingsMutation, 
       // registerForNotifications,
       // removeNotificationPermissions,
     }),
@@ -196,7 +205,7 @@ useEffect(() => {
     
       settings,  
       updateSettings,
-      updateSettingsMutation,
+     updateSettingsMutation,
       // registerForNotifications,
       // removeNotificationPermissions,
     ]

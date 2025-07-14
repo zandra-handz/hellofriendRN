@@ -6,8 +6,7 @@ import React, {
   ReactNode,
   useState,
 } from "react"; 
-import { useUser } from "./UserContext";
-import { useCategories } from "./CategoriesContext"; 
+import { useUser } from "./UserContext"; 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   fetchCategoriesHistoryAPI,
@@ -39,16 +38,16 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
   children,
 }) => {
   const { user, isInitializing, isAuthenticated } = useUser();
-  const { userCategories } = useCategories();
+ 
   // console.log("USER STATS CONTEXT");
 
-  const [stats, setStats] = useState<
-    Record<string, any>
-  >([]);
+  // const [stats, setStats] = useState<
+  //   Record<string, any>
+  // >([]);
   const queryClient = useQueryClient();
 
   const {
-    data: userStats,
+    data: stats,
     isLoading,
     isFetching,
     isSuccess,
@@ -56,31 +55,32 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
   } = useQuery({
     queryKey: ["userStats", user?.id],
     queryFn: () => fetchCategoriesHistoryCountAPI({returnNonZeroesOnly: true}), //return non-empty categories only
-    enabled: !!(user && user.id && isAuthenticated && !isInitializing),
+    enabled: !!(user?.id),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   
   });
 
-useEffect(() => {
-  if (isSuccess && userStats) {
-    console.log('!~!~!~!~!~!~!~!~!~!~!~!resetting user stats');
-    setStats(userStats|| []); 
+// useEffect(() => {
+//   if (isSuccess && userStats) {
+//     console.log('!~!~!~!~!~!~!~!~!~!~!~!resetting user stats');
+//     setStats(userStats|| []); 
    
-  }
-}, [isSuccess, userStats]);
+//   }
+// }, [isSuccess, userStats]);
 
 
-useEffect(() => {
-  if (user && user.id && isAuthenticated && !isInitializing) {
-    queryClient.refetchQueries(["userStats", user.id]);
-  }
-}, [userCategories]);
+// useEffect(() => {
+//   if (user && isAuthenticated && !isInitializing) {
+//     console.log('~~~~J~J~J~JK~KJ~KJ~');
+//     queryClient.refetchQueries(["userStats", user.id]);
+//   }
+// }, [userCategories]);
   
- 
+
  
  const refetchUserStats = () => {
-     if (user && user.id && isAuthenticated && !isInitializing) {
-    queryClient.refetchQueries(["userStats", user.id]);
+     if (user && isAuthenticated && !isInitializing) {
+    queryClient.refetchQueries(["userStats", user.id]);  //also manually added this to categories context
   }
 
 };
@@ -93,42 +93,18 @@ const invalidateUserStats = () => {
 
 };
 
-const handleGetCategoryCapsules = (categoryId) => {
-  // console.log(categoryId);
-  try {
-    categoryCapsulesMutation.mutate(categoryId);
-
-  } catch (error) {
-    console.error("Error getting category capsules");
-  }
-
-};
-
-const categoryCapsulesMutation = useMutation({
-  mutationFn: (categoryId) => 
-    fetchCategoriesHistoryAPI(categoryId, true),
-  onSuccess: (data) => {
-    // console.log(data);
-    
-    //add to cache here
-  },
-  onError: (error) => {
-    console.error("Error getting category capsule history");
-  }
-})
+ 
 
 
 
   const contextValue = useMemo(() => ({
   stats,
   refetchUserStats,
-  invalidateUserStats,
-  handleGetCategoryCapsules,
+  invalidateUserStats, 
 }), [
   stats,
   refetchUserStats,
-  invalidateUserStats,
-  handleGetCategoryCapsules,
+  invalidateUserStats, 
 ]);
 
 

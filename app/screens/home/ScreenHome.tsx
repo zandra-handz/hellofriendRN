@@ -30,24 +30,21 @@ import { useSharedValue } from "react-native-reanimated";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
-
-import { fetchCategoriesHistoryAPI } from "@/src/calls/api";
+ 
 import * as FileSystem from "expo-file-system";
 
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import FriendHeaderMessageUI from "@/app/components/home/FriendHeaderMessageUI";
-
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+ 
 
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
   const navigation = useNavigation();
   // using DeviceLocationContext now
   // useGeolocationWatcher(); // Starts watching for location changes
-  const { themeStyles, gradientColorsHome } = useGlobalStyle();
-  const { user, isAuthenticated, isInitializing } = useUser();
-
-  const { settings } = useUserSettings();
+  const { themeStyles  } = useGlobalStyle();
+  const { user  } = useUser();
+ 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { friendList, friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
@@ -59,6 +56,7 @@ const ScreenHome = () => {
   const { showMessage } = useMessage();
 
   const newMomentTextRef = useRef(null);
+  const username = user?.username;
   const isNewUser =
     new Date(user?.created_on).toDateString() === new Date().toDateString();
 
@@ -236,7 +234,7 @@ const ScreenHome = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={[{ flex: 1 }]}
       >
-        {isAuthenticated && settings && friendList && friendList.length > 0 ? (
+        {friendList  ? (
           <View
             style={{
               flex: 1,
@@ -263,7 +261,7 @@ const ScreenHome = () => {
                   Sentry.captureException(new Error("First error"));
                 }}
               /> */}
-              {isAuthenticated && !isInitializing && (
+              {/* {!isInitializing && ( */}
                 <View
                   style={{ width: "100%", paddingHorizontal: 10, marginTop: 0 }}
                 >
@@ -276,7 +274,7 @@ const ScreenHome = () => {
                   
                   {!selectedFriend && (
                     <WelcomeMessageUI
-                      username={user.username}
+                      username={username}
                       isNewUser={isNewUser}
                       // isKeyboardVisible={isKeyboardVisible}
                       onPress={handleFocusPress}
@@ -289,7 +287,7 @@ const ScreenHome = () => {
                     />
                   )}
                 </View>
-              )}
+              {/* // )} */}
               <QuickWriteMoment
                 width={"100%"}
                 height={"100%"}
