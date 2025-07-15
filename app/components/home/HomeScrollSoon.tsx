@@ -51,10 +51,11 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
 
   const handlePress = useCallback(
     (hello) => {
-      const { id, name } = hello.friend;
+      const id = hello.friend.id;
+      const name = hello.friend.name;
       const selectedFriend = id === null ? null : { id: id, name: name };
 
-      const friend = friendList.find((friend) => friend.id === hello.friend.id);
+      const friend = friendList.find((friend) => friend.id === id);
       getThemeAheadOfLoading(friend);
       setFriend(selectedFriend);
     },
@@ -75,7 +76,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         textColor={itemColor}
         backgroundColor={elementBackgroundColor}
           height={"100%"}
-          friendName={item.friend_name}
+          friendName={item.friend.name}
           date={item.future_date_in_words}
           width={"100%"}
           onPress={() => handlePress(item)}
@@ -106,7 +107,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         windowSize={10}
         removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={() => <View style={{ height: 300 }} />}
+        ListFooterComponent={() => <View style={{ height: 500 }} />}
         //  snapToAlignment="start" // Align items to the top of the list when snapped
         // decelerationRate="fast"
       />

@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
-import { useFocusEffect } from "@react-navigation/native";
-import GlobalAppHeaderIconVersion from "@/app/components/headers/GlobalAppHeaderIconVersion";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
 import { useFriendList } from "@/src/context/FriendListContext";
 
 import { useHelloes } from "@/src/context/HelloesContext";

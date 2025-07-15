@@ -9,7 +9,7 @@ import {
 } from "react-native"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import Pie from "./Pie"; 
 interface Props {
   isVisible: boolean;
@@ -31,7 +31,7 @@ const PieChartModal: React.FC<Props> = ({
    
 
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons

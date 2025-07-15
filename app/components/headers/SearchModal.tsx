@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import MomentsSearchBar from "../moments/MomentsSearchBar";
@@ -39,7 +39,7 @@ const SearchModal: React.FC<Props> = ({
   // }, [isModalVisible]);
 
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons

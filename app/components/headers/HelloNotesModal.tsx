@@ -1,42 +1,53 @@
-import React, { useState } from "react";
-import { View, TextInput, ScrollView, StyleSheet } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import MomentsSearchBar from "../moments/MomentsSearchBar";
-import MultiInputBox from "../appwide/input/MultiInputBox";
+import TextEditBox from "../appwide/input/TextEditBox";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
-  value: string;
-  onChangeText: () => void;
-  ref: string;
+  onEnter: () => void;
+  textRef: string;
+  mountingText: string;
+  onTextChange: () => void;
 }
 
-// Autofocus approach is from SearchModal
-const MultilineInputModal: React.FC<Props> = ({
+const HelloNotesModal: React.FC<Props> = ({
   isVisible,
   closeModal,
-  value,
-  onChangeText,
-  ref=null,
+  onEnter,
+  onTextChange,
+  textRef,
+  mountingText,
 }) => {
+
+      const editedTextRef = useRef(null);
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
   const { capsuleList } = useCapsuleList();
+  const [triggerAutoFocus, setTriggerAutoFocus ] = useState();
+useEffect(() => {
+  setTriggerAutoFocus(true);
+
+  return () => {
+    setTriggerAutoFocus(false); // cleanup runs before next effect or on unmount
+  };
+}, [mountingText]);
+
+
 
   const headerIconSize = 26;
   const searchInputIconSize = 14;
   const autoFocus = true;
 
   const handleSearchPress = (moment) => {
-    onSearchPress(moment);
+    onEnter(moment);
     closeModal();
   };
 
-
-  
   // React.useEffect(() => {
   //   if (isModalVisible) {
   //     AccessibilityInfo.announceForAccessibility("Information opened");
@@ -48,31 +59,29 @@ const MultilineInputModal: React.FC<Props> = ({
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons
-          name={"pencil"}
+          name={"comment-search-outline"}
           size={appSpacingStyles.modalHeaderIconSize}
           color={themeStyles.footerIcon.color}
         />
       }
-      questionText="Edit message"
+      questionText="Search talking points"
       children={
-        < View contentContainerStyle={styles.bodyContainer}>
+        <ScrollView contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
-            <MultiInputBox  
-            value={value}
-            onChangeText={onChangeText}
-              autoFocus={isVisible}
-              // height={40}
-              // width={"100%"}
-              // borderColor={themeStyles.primaryText.color}
-              // placeholderText={"Search"}
-              // textAndIconColor={themeStyles.primaryText.color}
-              // backgroundColor={"transparent"}
-              // onPress={handleSearchPress}
-              // searchKeys={["capsule", "typedCategory"]}
-              // iconSize={0}
+            <TextEditBox
+              width={"100%"}
+              height={'100%'}
+              ref={textRef}
+              autoFocus={triggerAutoFocus}
+              title={""}
+              helperText={"add additional notes here"}
+              iconColor={  themeStyles.primaryText.color}
+              mountingText={mountingText}
+              onTextChange={onTextChange}
+              multiline={true}
             />
           </View>
-        </ View>
+        </ScrollView>
       }
       onClose={closeModal}
     />
@@ -90,9 +99,8 @@ const styles = StyleSheet.create({
     margin: "2%",
   },
   sectionContainer: {
-   
     height: 100,
-    width: '100%',
+    width: "100%",
   },
   headerText: {
     fontWeight: "bold",
@@ -105,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MultilineInputModal;
+export default HelloNotesModal;

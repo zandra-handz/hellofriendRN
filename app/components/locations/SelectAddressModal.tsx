@@ -4,7 +4,7 @@ import { TouchableOpacity, AccessibilityInfo } from "react-native";
 
 import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
 import DualLocationSearcher from "./DualLocationSearcher";
@@ -64,7 +64,7 @@ const SelectAddressModal: React.FC<SelectAddressModalProps> = ({
   };
 
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
         <MaterialIcons

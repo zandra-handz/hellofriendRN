@@ -4,7 +4,7 @@ import { TouchableOpacity, AccessibilityInfo } from "react-native";
 
 import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -31,7 +31,7 @@ const CategoryItemsModal: React.FC<Props> = ({
   // }, [isModalVisible]);
 
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
         <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 26}]}>#</Text>

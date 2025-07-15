@@ -4,7 +4,7 @@ import { TouchableOpacity, AccessibilityInfo } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
 import ActiveAddresses from "../locations/ActiveAddresses";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -57,7 +57,7 @@ const SetAddressesModal: React.FC<Props> = ({ isVisible, closeModal, userAddress
 }, [userAddress, friendAddress, setUserAddress, setFriendAddress]);
 
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
         <MaterialIcons

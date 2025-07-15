@@ -8,6 +8,7 @@ interface LabeledArrowButtonProps {
   labelFontSize?: number;
   arrowSize?: number;
   spacer?: number;
+  itemId?: number;
   opacity?: number;
   onPress: () => void;
   color: string;
@@ -19,11 +20,21 @@ const LabeledArrowButton: React.FC<LabeledArrowButtonProps> = ({
   labelFontSize = 13,
   arrowSize = 20,
   spacer = 6,
+  itemId = null,
   opacity = 1,
   onPress,
   color='white',
 }) => {
   const { manualGradientColors } = useGlobalStyle();
+
+  const handleOnPress = () => {
+
+    if (itemId) {
+      onPress(itemId);
+    } else {
+      onPress();
+    }
+  };
 
   return (
     // <View style={{ flexDirection: "row", width: 'auto',   alignItems: 'center'}}>
@@ -36,7 +47,7 @@ const LabeledArrowButton: React.FC<LabeledArrowButtonProps> = ({
         alignItems: "center", 
         opacity: opacity,
       }}
-      onPress={onPress}
+      onPress={handleOnPress}
     >
       <Text
         style={[ 

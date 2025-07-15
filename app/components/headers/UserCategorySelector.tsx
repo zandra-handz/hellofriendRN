@@ -18,8 +18,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 // app state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUser } from "@/src/context/UserContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext"; 
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useCategories } from "@/src/context/CategoriesContext";
 import { useNavigationState } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -48,13 +47,13 @@ const UserCategorySelector = ({
   existingId,
 }) => {
   const navigationState = useNavigationState((state) => state);
-  const { user, onSignOut } = useUser();
+  const { user  } = useUser();
   const currentRouteName = navigationState.routes[navigationState.index]?.name;
-  const isOnActionPage = currentRouteName === "hellofriend";
+  // const isOnActionPage = currentRouteName === "hellofriend";
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { selectedFriend, deselectFriend, friendDashboardData } =
+  const { selectedFriend } =
     useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+ 
   const { capsuleList } = useCapsuleList();
   const {
     userCategories,
@@ -313,19 +312,30 @@ useEffect(() => {
     }
  
 
-    if (itemId !== selectedId) {
-      setSelectedId(itemId);
+ 
+      // const find = userCategories.findIndex(
+      //   (category) => category.name === itemId
+      // );
+
+      let foundCategoryId = null;
+const findIndex = userCategories.findIndex((category, index) => {
+  if (category.name === itemId) {
+    foundCategoryId = category.id;
+    return true;
+  }
+  return false;
+});
+
+    if (foundCategoryId !== selectedId) {
+      setSelectedId(foundCategoryId);
     }
 
     if (!pressedOnce) {
       setPressedOnce(true);
-    }
-      const find = userCategories.findIndex(
-        (category) => category.id === itemId
-      );
-    scrollToCategory(find);
+    } 
+    scrollToCategory(findIndex);
 
-    setDetailsModalVisible(true);
+  //  setDetailsModalVisible(true);
   };
  
 

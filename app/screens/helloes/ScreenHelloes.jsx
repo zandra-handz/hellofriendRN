@@ -5,12 +5,10 @@ import { useHelloes } from "@/src/context/HelloesContext";
 import { useNavigation } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
-import HelloesTabs from "@/app/components/helloes/HelloesTabs";
+// import HelloesTabs from "@/app/components/helloes/HelloesTabs";
 import Loading from "@/app/components/appwide/display/Loading";
 import HelloesList from "@/app/components/helloes/HelloesList";
-import HelloesListNew from "@/app/components/helloes/HelloesListNew";
-import GlobalAppHeaderIconVersion from "@/app/components/headers/GlobalAppHeaderIconVersion";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import HelloesListNew from "@/app/components/helloes/HelloesListNew"; 
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
 
 const ScreenHelloes = () => {

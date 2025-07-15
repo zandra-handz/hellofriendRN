@@ -8,7 +8,7 @@ import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-t
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
+ 
 import PreAddedList from "@/app/components/moments/PreAddedList";
 import { useFriendList } from "@/src/context/FriendListContext";
 
@@ -16,30 +16,29 @@ const ScreenPreAdded = () => {
   const { capsuleList, preAdded } = useCapsuleList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
-  const { themeStyles } = useGlobalStyle();
-  const navigation = useNavigation();
+  const { themeStyles } = useGlobalStyle(); 
 
   const useDimAppBackground = true;
 
-  const renderHeader = useCallback(
-    () => (
-      <GlobalAppHeader
-        //title={"MOMENTS: "}
-        title={""}
-        navigateTo={"Moments"}
-        icon={LeavesTwoFallingOutlineThickerSvg}
-        altView={false}
-        altViewIcon={LeafSingleOutlineThickerSvg}
-        // transparentBackground={useDimAppBackground}
-        transparentBackground={false}
-      />
-    ),
-    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
-  );
+  // const renderHeader = useCallback(
+  //   () => (
+  //     <GlobalAppHeader
+  //       //title={"MOMENTS: "}
+  //       title={""}
+  //       navigateTo={"Moments"}
+  //       icon={LeavesTwoFallingOutlineThickerSvg}
+  //       altView={false}
+  //       altViewIcon={LeafSingleOutlineThickerSvg}
+  //       // transparentBackground={useDimAppBackground}
+  //       transparentBackground={false}
+  //     />
+  //   ),
+  //   [selectedFriend, loadingNewFriend, themeAheadOfLoading]
+  // );
 
   return (
     <SafeViewAndGradientBackground
-      header={renderHeader}
+      // header={renderHeader}
       includeBackgroundOverlay={useDimAppBackground}
       style={{ flex: 1 }}
     >

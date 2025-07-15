@@ -4,7 +4,7 @@ import { TouchableOpacity, AccessibilityInfo } from "react-native";
  
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit"; 
+import ModalWithGoBack from "../alerts/ModalWithGoBack"; 
 import SectionFriendSettings from "../friends/SectionFriendSettings"; 
 
 
@@ -30,7 +30,7 @@ const FriendSettingsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
   // }, [isModalVisible]);
 
   return ( 
-      <ModalWithoutSubmit
+      <ModalWithGoBack
         isVisible={isVisible}
         headerIcon={
           <MaterialCommunityIcons

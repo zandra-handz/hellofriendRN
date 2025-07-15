@@ -16,7 +16,7 @@ import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
  import { useCategories } from "@/src/context/CategoriesContext"; 
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
  
 
 
@@ -132,7 +132,7 @@ const CategoryDetailsModal: React.FC<Props> = ({
   ), [momentsInCategory, themeStyles]);
 
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       isFullscreen={false}
       headerIcon={

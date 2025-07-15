@@ -12,7 +12,7 @@ import {
 import BugSvg from "@/app/assets/svgs/bug.svg";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { Linking } from "react-native";
 import { useUser } from "@/src/context/UserContext";
@@ -36,7 +36,7 @@ const ReportIssueModal = ({ isVisible, closeModal }) => {
   //   }, [isModalVisible]);
 
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons

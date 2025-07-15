@@ -2,16 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 import ButtonSignOut from '../buttons/users/ButtonSignOut';
   
-import AlertConfirm from '../alerts/AlertConfirm'; 
-import { useNavigationState } from '@react-navigation/native';
+import AlertConfirm from '../alerts/AlertConfirm';  
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; // Import the context hook
 import { useFriendList } from '@/src/context/FriendListContext';
 import ButtonSpecialAlert from '../buttons/scaffolding/ButtonSpecialAlert';
 import { Dimensions } from 'react-native';
 
 export default function HelloFriendFooterOneButton( { onPress, onPressRightSide, buttonText}) {
-    const navigationState = useNavigationState(state => state);
-    const currentRouteName = navigationState.routes[navigationState.index]?.name;
  
     const { themeStyles } = useGlobalStyle();  
     const { friendList } = useFriendList();

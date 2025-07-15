@@ -1,23 +1,31 @@
 import { View, Text } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions"; 
-import Pie from "../headers/Pie"; 
-import CategoryHistoryModal from "../headers/CategoryHistoryModal";
+import React, { useEffect, useState } from "react";
+import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
+import Pie from "../headers/Pie";
 import CategoryFriendHistoryModal from "../headers/CategoryFriendHistoryModal";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 type Props = {
-    friendName: string;
+  friendData,
+  listData: object[];
+  friendName: string;
   radius: number;
   labelsSize: number;
+  onLongPress: () => void;
 };
 
-const FriendCategoryHistoryChart = ({ friendData, listData, radius = 80, labelsSize = 9 }: Props) => {
+const FriendCategoryHistoryChart = ({
+  friendData,
+  listData,
+  radius = 80,
+  labelsSize = 9,
+  o
+}: Props) => {
   //  console.log(`listdata in friendhistorychart chart`, listData);
   const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
-    const [historyModalVisible, setHistoryModalVisible] = useState(false);
-  const { themeStyles } = useGlobalStyle(); 
-  const [ viewCategoryId, setViewCategoryId ] = useState(null);
-    const [ viewCategoryName, setViewCategoryName ] = useState(null);
+  const [historyModalVisible, setHistoryModalVisible] = useState(false);
+  const { themeStyles } = useGlobalStyle();
+  const [viewCategoryId, setViewCategoryId] = useState(null);
+  const [viewCategoryName, setViewCategoryName] = useState(null);
   const [friendHistoryHasAnyCapsules, setFriendHistoryHasAnyCapsules] =
     useState(false);
   const { categoryHistorySizes } = useStatsSortingFunctions({
@@ -68,7 +76,7 @@ const FriendCategoryHistoryChart = ({ friendData, listData, radius = 80, labelsS
             widthAndHeight={radius * 2}
             labelSize={labelsSize}
             // onSectionPress={() => console.log("hi!")}
-             onSectionPress={handleCategoryPress}
+            onSectionPress={handleCategoryPress}
           />
           <View style={{}}>
             <Text
@@ -82,17 +90,20 @@ const FriendCategoryHistoryChart = ({ friendData, listData, radius = 80, labelsS
           </View>
         </View>
       )}
-            {historyModalVisible && viewCategoryId && viewCategoryName && friendData && (
-        <View>
-          <CategoryFriendHistoryModal
-            isVisible={historyModalVisible}
-            closeModal={() => setHistoryModalVisible(false)}
-            categoryId={viewCategoryId}
-            friendId={friendData.id}
-            title={viewCategoryName}
-          />
-        </View>
-      )}
+      {historyModalVisible &&
+        viewCategoryId &&
+        viewCategoryName &&
+        friendData && (
+          <View>
+            <CategoryFriendHistoryModal
+              isVisible={historyModalVisible}
+              closeModal={() => setHistoryModalVisible(false)}
+              categoryId={viewCategoryId}
+              friendId={friendData.id}
+              title={viewCategoryName}
+            />
+          </View>
+        )}
     </>
   );
 };

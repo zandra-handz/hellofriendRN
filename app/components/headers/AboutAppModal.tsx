@@ -5,7 +5,7 @@ import { TouchableOpacity, AccessibilityInfo } from "react-native";
 import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 
 interface AboutAppModalProps {
   isVisible: boolean;
@@ -25,7 +25,7 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({ isVisible, closeModal }) 
   // }, [isModalVisible]);
 
   return ( 
-      <ModalWithoutSubmit
+      <ModalWithGoBack
         isVisible={isVisible}
         headerIcon={
           <MaterialCommunityIcons

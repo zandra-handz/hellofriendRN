@@ -4,11 +4,8 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
-import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
-import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
-
-import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
-import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
+ 
+ 
 
 import LocationNumber from "./LocationNumber";
 import LocationAddress from "./LocationAddress";

@@ -6,7 +6,7 @@ import {
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import SectionUserCategories from "../friends/SectionUserCategories";
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
@@ -24,7 +24,7 @@ const CategoriesModal: React.FC<Props> = ({
    
 
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons

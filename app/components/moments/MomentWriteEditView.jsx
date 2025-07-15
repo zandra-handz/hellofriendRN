@@ -3,25 +3,21 @@ import {
   View,
   Keyboard,
   TouchableWithoutFeedback,
-  KeyboardAvoidingView,
+ 
   Alert,
-} from "react-native";
-import BodyStyling from "../scaffolding/BodyStyling";
-import { useUser } from "@/src/context/UserContext";
-import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
+} from "react-native"; 
+import { useUser } from "@/src/context/UserContext"; 
 import TextMomentBox from "./TextMomentBox";
 import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import FriendModalIntegrator from "@/app/components/friends/FriendModalIntegrator";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import CategoryCreator from "./CategoryCreator";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import { useFocusEffect } from "@react-navigation/native";
-import { useMessage } from "@/src/context/MessageContext";
-import LoadedMoments from "../buttons/moments/LoadedMoments";
+ 
 import BobblngFlashingIcon from "../buttons/moments/BobblngFlashingIcon";
-import BobbingAnim from "@/app/animations/BobbingAnim";
+ 
 import { MaterialIcons } from "@expo/vector-icons";
 
 import UserCategorySelector from "../headers/UserCategorySelector";
@@ -31,7 +27,7 @@ const MomentWriteEditView = ({
   updateExistingMoment,
   existingMomentObject,
 }) => {
-  const { selectedFriend, friendDashboardData, loadingNewFriend } =
+  const { selectedFriend  } =
     useSelectedFriend();
   const { themeStyles, appContainerStyles } = useGlobalStyle();
   const {
@@ -40,11 +36,10 @@ const MomentWriteEditView = ({
     handleEditMoment,
     editMomentMutation,
   } = useCapsuleList(); // NEED THIS TO ADD NEW
-  const { showMessage } = useMessage();
+ 
   const { user } = useUser();
   const navigation = useNavigation();
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const [selectedUserCategoryId, setSelectedUserCategoryId] = useState(null);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false); 
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedUserCategory, setSelectedUserCategory] = useState("");
@@ -207,7 +202,8 @@ const MomentWriteEditView = ({
   useEffect(() => {
     if (editMomentMutation.isSuccess) {
       // showMessage(true, null, "Edited moment saved!");
-      navigation.navigate("Moments");
+      navigation.goBack();
+      // navigation.navigate("Moments");
     }
   }, [editMomentMutation.isSuccess]);
 
@@ -251,7 +247,7 @@ const MomentWriteEditView = ({
             },
           ]}
         >
-          <BelowHeaderContainer
+          {/* <BelowHeaderContainer
             height={0}
             alignItems="flex-end"
             marginBottom={0} //default is currently set to 2
@@ -271,27 +267,11 @@ const MomentWriteEditView = ({
                       }
                     />
                   </View>
-
-                  // <FriendModalIntegrator
-                  //   includeLabel={true}
-                  //   color={themeStyles.primaryText.color}
-                  //   width={120}
-                  //   navigationDisabled={true}
-                  //   iconSize={22}
-                  //   useGenericTextColor={true}
-                  // />
+ 
                 )}
               </>
             }
-          />
-          {/* <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              top: -18,
-              justifyContent: "flex-start",
-            }}
-          > */}
+          />  */}
           <TextMomentBox
             ref={momentTextRef}
             editScreen={updateExistingMoment}
@@ -315,33 +295,9 @@ const MomentWriteEditView = ({
                 isKeyboardVisible={isKeyboardVisible}
               />
             }
-          />
-          {/* </View> */}
+          /> 
         </View>
-
-        {/* {selectedFriend && friendDashboardData && (
-          <CategoryCreator
-            show={showCategoriesSlider}
-            updateCategoryInParent={handleCategorySelect}
-            updateExistingMoment={updateExistingMoment}
-            existingCategory={existingMomentObject?.typedCategory || null}
-            momentTextForDisplay={momentTextRef?.current?.getText() || null}
-            onParentSave={handleSave}
-            isKeyboardVisible={isKeyboardVisible}
-          />
-        )} */}
-        {/* {!isKeyboardVisible && (
-          <View style={{ position: "absolute", bottom: -10 }}>
-            <ButtonBaseSpecialSave
-              label="SAVE MOMENT "
-              maxHeight={70}
-              onPress={handleSave}
-              isDisabled={!selectedCategory}
-              fontFamily={"Poppins-Bold"}
-              image={require("@/app/assets/shapes/redheadcoffee.png")}
-            />
-          </View>
-        )} */}
+ 
       </View>
     </TouchableWithoutFeedback>
   );

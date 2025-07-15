@@ -1,23 +1,23 @@
 import React, { useCallback, useState } from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
-import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
-import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
+
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import FinalizeList from "@/app/components/moments/FinalizeList";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
+import { useCategories } from "@/src/context/CategoriesContext";
 
 const ScreenFinalize = () => {
-  const { allCapsulesList, preAdded } = useCapsuleList();
+  const { allCapsulesList, preAdded, categoryNames } = useCapsuleList();
 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
+  const { userCategories } = useCategories();
 
   useFocusEffect(
     useCallback(() => {
@@ -33,43 +33,29 @@ const ScreenFinalize = () => {
     }, [allCapsulesList])
   );
 
-  const renderHeader = useCallback(
-    () => (
-      <GlobalAppHeader
-        //title={"MOMENTS: "}
-        title={"Add to hello for "}
-        navigateTo={"Helloes"}
-        icon={LeavesTwoFallingOutlineThickerSvg}
-        altView={false}
-        altViewIcon={LeafSingleOutlineThickerSvg}
-      />
-    ),
-    [selectedFriend, loadingNewFriend]
-  );
-
   return (
-    <SafeViewAndGradientBackground
-      header={renderHeader}
-    //  includeBackgroundOverlay={true}
-      style={{ flex: 1 }}
-    >
-      {loadingNewFriend && (
-        <View style={{ flex: 1, width: "100%" }}>
-          <LoadingPage
-            loading={true}
-            spinnerSize={30}
-            spinnerType={"flow"}
-            color={themeStyles.primaryBackground.backgroundColor}
-          />
-        </View>
-      )}
-      {selectedFriend && !loadingNewFriend && (
-        <View style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+      {selectedFriend && (
+        <View
+          style={[
+            appContainerStyles.talkingPointCard,
+            {
+              backgroundColor:
+                themeStyles.overlayBackgroundColor.backgroundColor,
+              //  paddingTop: 90,
+            },
+          ]}
+        >
+                    <Text
+                        style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}
+                      > 
+                        Finalize talking points shared
+                      </Text>
           {preAdded && uniqueCategories?.length > 0 && (
             <FinalizeList
               data={allCapsulesList}
               preSelected={preAdded}
-              categories={uniqueCategories}
+              categories={categoryNames}
             />
           )}
         </View>

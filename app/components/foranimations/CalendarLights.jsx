@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from "react-native"; 
 import HelloDayWrapper from "@/app/components/helloes/HelloDayWrapper";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
  
 
 const CalendarLights = ({
@@ -20,7 +20,7 @@ const CalendarLights = ({
 }) => {  
   // const [combinedData, setCombinedData] = useState([]);
  
-  const { themeStyles } = useGlobalStyle(); 
+ 
   const backgroundColor = 'transparent'; // use this to give just the calendar tray a background color. borderRadius already set
 const opacityMinusAnimation = 1;
   const flatListRef = useRef(null);  

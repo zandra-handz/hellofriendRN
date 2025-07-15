@@ -8,8 +8,7 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
-} from "react-native-reanimated";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+} from "react-native-reanimated"; 
 import ItemFooter from "../headers/ItemFooter"; 
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import CarouselItemModal from "./carouselItemModal"; 

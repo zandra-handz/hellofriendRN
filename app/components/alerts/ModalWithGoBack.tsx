@@ -24,16 +24,21 @@ interface Props {
   headerIcon: React.ReactElement;
   questionText: string;
   children: React.ReactElement;
+  borderRadius: number;
+  contentPadding: number;
   onClose: () => void;
 }
 
-const ModalWithoutSubmit: React.FC<Props> = ({
+const ModalWithGoBack: React.FC<Props> = ({
   isVisible,
   isFullscreen=false,
   headerContent,
   headerIcon,
   questionText,
   children,
+  borderRadius = 40,
+  contentPadding = 10,
+
   onClose,
 }) => {
   const { themeStyles } = useGlobalStyle();
@@ -44,6 +49,10 @@ const ModalWithoutSubmit: React.FC<Props> = ({
   const opacityAnim = useSharedValue(0);
 
   const timeoutRef = useRef(null);
+
+
+  const MODAL_CONTENT_PADDING = 10;
+  const MODAL_BORDER_RADIUS = 40;
 
   const [internalIsVisible, setInternalIsVisible] = useState(isVisible);
 
@@ -112,6 +121,7 @@ const ModalWithoutSubmit: React.FC<Props> = ({
             {
               borderColor:
                 themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+                 borderRadius: borderRadius,
             },
           ]}
         >
@@ -120,6 +130,8 @@ const ModalWithoutSubmit: React.FC<Props> = ({
               flexDirection: "row",
               width: "100%",
               height: headerHeight,
+              paddingTop: contentPadding,
+              paddingHorizontal: contentPadding,
               maxHeight: 50,
               marginVertical: headerSpacing,
               alignItems: "center", 
@@ -133,30 +145,33 @@ const ModalWithoutSubmit: React.FC<Props> = ({
               </Text>
             )}
           </View>
-          <Animated.View style={[contentAnimationStyle, { width: "100%", flex: 1 }]}>{children}</Animated.View>
-
-          <View
-            style={{
-              justifyContent: "center",
-              width: "100%",
-              height: "8%",
-              alignItems: "center",
-              height: buttonHeight,
-            }}
-          >
+          <Animated.View style={[contentAnimationStyle, { width: "100%", flex: 1, padding: contentPadding, paddingBottom: contentPadding * 1.7 }]}>
+            {children}
+            
+            </Animated.View>
             <ButtonBaseSpecialSave
-              label="BACK"
+              label="Back" 
                image={require("@/app/assets/shapes/redheadcoffee.png")}
               imageSize={80}
-              labelSize={19}
+              labelSize={17}
+                    labelPlacement={'start'}
+             labelPaddingHorizontal={20}
               isDisabled={false}
+              height={56}
               imagePositionHorizontal={0}
-              imagePositionVertical={12}
-              borderRadius={10}
+              imagePositionVertical={0}
+               borderRadius={0}
+               dynamicPadding={4}
+              borderBottomLeftRadius={borderRadius}
+              borderBottomRightRadius={borderRadius}
+                  borderTopLeftRadius={borderRadius / 2}
+              borderTopRightRadius={borderRadius / 2}
+       
               onPress={handleCustomClose} // adds a delay to let inside component animation run before modal closes
-            />
-          </View>
+            /> 
         </Animated.View>
+       
+
       </Animated.View>
     </Modal>
 
@@ -176,13 +191,13 @@ const styles = StyleSheet.create({
     width: "94%", // Fixed width of 80% of the screen
     minHeight: 200, // Minimum height to prevent collapse
     height: '100%',
-    padding: 10,
-    borderWidth: 2,
-    borderRadius: 10,
+
+    borderWidth: 2, 
     alignItems: "center",
     backgroundColor: "white", // Ensure it's visible
     flexDirection: "column",
     justifyContent: "space-between",
+   // overflow: 'hidden',
   },
   questionText: {
     fontSize: 20,
@@ -198,4 +213,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalWithoutSubmit;
+export default ModalWithGoBack;

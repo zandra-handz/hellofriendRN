@@ -13,6 +13,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Pressable,
   Keyboard,
   Dimensions,
 } from "react-native";
@@ -37,19 +38,19 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
 import DoubleChecker from "@/app/components/alerts/DoubleChecker";
-import BodyStyling from "../scaffolding/BodyStyling";
+import HelloNotesModal from "../headers/HelloNotesModal";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import { useFocusEffect } from "@react-navigation/native";
- 
+
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
 const ContentAddHello = () => {
   const navigation = useNavigation();
-const {refetchUpcomingHelloes } = useUpcomingHelloes();
+  const { refetchUpcomingHelloes } = useUpcomingHelloes();
   const { showMessage } = useMessage();
   const { preAdded, allCapsulesList } = useCapsuleList();
-  const { invalidateFriendStats} = useSelectedFriendStats();
-const { refetchUserStats } = useUserStats();
+  const { invalidateFriendStats } = useSelectedFriendStats();
+  const { refetchUserStats } = useUserStats();
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)
   );
@@ -57,12 +58,16 @@ const { refetchUserStats } = useUserStats();
   const [momentsAdded, setMomentsAdded] = useState([]);
   const { createHelloMutation, handleCreateHello } = useHelloes();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
+  const [notesModalVisible, setNotesModalVisible] = useState(false);
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
 
-  const { selectedFriend,   deselectFriend, loadingNewFriend, friendDashboardData } =
-    useSelectedFriend();
-  const { themeStyles } = useGlobalStyle();
+  const {
+    selectedFriend,
+    deselectFriend,
+    loadingNewFriend,
+    friendDashboardData,
+  } = useSelectedFriend();
+  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const typeChoices = [
@@ -81,6 +86,8 @@ const { refetchUserStats } = useUserStats();
   const [customLocation, setCustomLocation] = useState("");
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [deleteMoments, setDeleteMoments] = useState(false);
+
+  const [ notePreviewText, setNotePreviewText ] = useState("No notes")
 
   const editedTextRef = useRef(null);
 
@@ -137,28 +144,27 @@ const { refetchUserStats } = useUserStats();
 
   const timeoutRef = useRef(null);
 
-const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
+  const [justDeselectedFriend, setJustDeselectedFriend] = useState(false);
 
-useEffect(() => {
-  if (createHelloMutation.isSuccess) {
-    deselectFriend(); // this sets selectedFriend to null
-    setJustDeselectedFriend(true);
-  }
-}, [createHelloMutation.isSuccess]);
+  useEffect(() => {
+    if (createHelloMutation.isSuccess) {
+      deselectFriend(); // this sets selectedFriend to null
+      setJustDeselectedFriend(true);
+    }
+  }, [createHelloMutation.isSuccess]);
 
-useEffect(() => {
-  if (justDeselectedFriend && selectedFriend === null) {
-    console.log("Friend is now deselected, proceeding…");
+  useEffect(() => {
+    if (justDeselectedFriend && selectedFriend === null) {
+      console.log("Friend is now deselected, proceeding…");
 
-    refetchUpcomingHelloes();
-    refetchUserStats();
-    showMessage(true, null, "Hello saved!");
-    navigateToMainScreen();
+      refetchUpcomingHelloes();
+      refetchUserStats();
+      showMessage(true, null, "Hello saved!");
+      navigateToMainScreen();
 
-    setJustDeselectedFriend(false); // reset the flag
-  }
-}, [justDeselectedFriend, selectedFriend]);
-
+      setJustDeselectedFriend(false); // reset the flag
+    }
+  }, [justDeselectedFriend, selectedFriend]);
 
   // useLayoutEffect(() => {
   //   showMessage(
@@ -180,6 +186,19 @@ useEffect(() => {
     if (editedTextRef && editedTextRef.current) {
       editedTextRef.current.setText(text);
     }
+  };
+
+    const setPreviewText = () => {
+    if (editedTextRef && editedTextRef.current) {
+    
+      setNotePreviewText(editedTextRef.current.getText())
+    }
+  };
+  
+  const handleCloseModal = () => {
+    setPreviewText();
+    setNotesModalVisible(false);
+
   };
 
   const onChangeDate = (event, selectedDate) => {
@@ -246,7 +265,8 @@ useEffect(() => {
           friend: selectedFriend.id,
           type: selectedTypeChoiceText,
           manualLocation: customLocation,
-          notes: editedTextRef.current.getText(),
+          // notes: editedTextRef.current.getText(),
+          notes: notePreviewText,
           locationId: existingLocationId,
           date: formattedDate,
           momentsShared: momentsDictionary,
@@ -267,191 +287,194 @@ useEffect(() => {
   // }, [createHelloMutation.isError]);
 
   return (
-    <View style={[styles.container]}>
+    <View
+      style={[
+        appContainerStyles.talkingPointCard,
+        {
+          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          //  paddingTop: 90,
+        },
+      ]}
+    >
+      <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}>
+        New hello details
+      </Text>
       <>
-        <View
-          style={{
-            width: "100%",
+        <BelowHeaderContainer
+          height={10}
+          minHeight={10}
+          maxHeight={10}
+          alignItems="center"
+          marginBottom="2%"
+          justifyContent="center"
+        />
 
-            flexDirection: "column",
-          }}
-        >
-          <BelowHeaderContainer
-            height={10}
-            minHeight={10}
-            maxHeight={10}
-            alignItems="center"
-            marginBottom="2%"
-            justifyContent="center"
-          />
+        <>
+          <View style={styles.paddingForElements}>
+            <>
+              {!isKeyboardVisible && (
+                <View
+                  style={{
+                    width: "100%",
+                    padding: 10,
+                    backgroundColor:
+                      themeStyles.overlayBackgroundColor.backgroundColor,
+                    borderRadius: 30,
+                    marginBottom: 10,
+                  }}
+                >
+                  <PickerHelloType
+                    selectedTypeChoice={selectedTypeChoice}
+                    onTypeChoiceChange={handleTypeChoiceChange}
+                  />
+                </View>
+              )}
 
-          <BodyStyling
-            height={"100%"}
-            width={"100%"}
-            minHeight={"96%"}
-            paddingTop={0}
-            paddingHorizontal={0} //too much padding will cause the Type picker to flow to next line
-            children={
-              <>
-                <View style={styles.paddingForElements}>
+              {selectedTypeChoiceText && (
+                <>
                   <>
                     {!isKeyboardVisible && (
+                      <>
+                        {locationListIsSuccess && (
+                          <View
+                            style={{
+                              width: "100%",
+                              padding: 10,
+                              backgroundColor:
+                                themeStyles.overlayBackgroundColor
+                                  .backgroundColor,
+                              borderRadius: 20,
+                              marginBottom: 10,
+                            }}
+                          >
+                            <PickerHelloLocation
+                              faveLocations={faveLocations}
+                              savedLocations={locationList}
+                              onLocationChange={handleLocationChange}
+                              modalVisible={locationModalVisible}
+                              setModalVisible={setLocationModalVisible}
+                              selectedLocation={selectedHelloLocation}
+                            />
+                          </View>
+                        )}
+                      </>
+                    )}
+
+                    {!isKeyboardVisible && (
+                      <View
+                        style={{
+                          width: "100%",
+                          padding: 10,
+                          backgroundColor:
+                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          borderRadius: 20,
+                          marginBottom: 10,
+                        }}
+                      >
+                        <PickerDate
+                          buttonHeight={36}
+                          value={helloDate}
+                          mode="date"
+                          display="default"
+                          onChange={onChangeDate}
+                          showDatePicker={showDatePicker}
+                          setShowDatePicker={setShowDatePicker}
+                        />
+                      </View>
+                    )}
+
+                    <View
+                      style={{
+                        width: "100%",
+                        padding: 10,
+                        backgroundColor:
+                          themeStyles.overlayBackgroundColor.backgroundColor,
+                        borderRadius: 20,
+                        marginBottom: 10,
+                        height: !isKeyboardVisible
+                          ? oneSeventhHeight
+                          : oneHalfHeight,
+                      }}
+                    >
+                      <Pressable
+                       onPress={() => setNotesModalVisible(true)}
+                        style={{
+                          width: "100%",
+                          height: 30,
+                          backgroundColor: "red",
+                        }}
+                      />
+                      <View>
+                        {notePreviewText && (
+                          
+                        <Text style={themeStyles.primaryText}>
+                          {notePreviewText}
+                        </Text>
+                        
+                        )}
+                      </View>
+
+                      {/* <TextEditBox
+                        width={"100%"}
+                        height={
+                          !isKeyboardVisible ? oneSeventhHeight : oneHalfHeight
+                        }
+                        ref={editedTextRef}
+                        autoFocus={false}
+                        title={""}
+                        helperText={
+                          !isKeyboardVisible ? null : "Press enter to exit"
+                        }
+                        iconColor={
+                          !isKeyboardVisible
+                            ? themeStyles.genericText.color
+                            : "red"
+                        }
+                        mountingText={""}
+                        onTextChange={updateNoteEditString}
+                        multiline={false}
+                      /> */}
+                    </View>
+                    {momentsAdded && momentsAdded.length > 0 && (
                       <TitleContainerUI
-                        height={140}
-                        title={"Type"}
+                        height={180}
+                        title={`Talked: ${momentsAdded.length}`}
                         children={
-                          <PickerHelloType
-                            selectedTypeChoice={selectedTypeChoice}
-                            onTypeChoiceChange={handleTypeChoiceChange}
-                          />
+                          <TotalMomentsAddedUI momentsAdded={momentsAdded} />
                         }
                       />
                     )}
 
-                    {selectedTypeChoiceText && (
-                      <>
-                        <>
-                          {!isKeyboardVisible && (
-                            <>
-                              {locationListIsSuccess && (
-                                <TitleContainerUI
-                                  height={60}
-                                  title={"Location"}
-                                  children={
-                                    <PickerHelloLocation
-                                      faveLocations={faveLocations}
-                                      savedLocations={locationList}
-                                      onLocationChange={handleLocationChange}
-                                      modalVisible={locationModalVisible}
-                                      setModalVisible={setLocationModalVisible}
-                                      selectedLocation={selectedHelloLocation}
-                                    />
-                                  }
-                                />
-                              )}
-                            </>
-                          )}
-
-                          {!isKeyboardVisible && (
-                            <TitleContainerUI
-                              height={60}
-                              title={"Date"}
-                              children={
-                                <PickerDate
-                                  buttonHeight={36}
-                                  value={helloDate}
-                                  mode="date"
-                                  display="default"
-                                  onChange={onChangeDate}
-                                  showDatePicker={showDatePicker}
-                                  setShowDatePicker={setShowDatePicker}
-                                />
-                              }
-                            />
-                          )}
-                          <TitleContainerUI
-                            height={
-                              !isKeyboardVisible
-                                ? oneSeventhHeight
-                                : oneHalfHeight
-                            }
-                            title={"Notes"}
-                            children={
-                              <TextEditBox
-                                width={"100%"}
-                                height={
-                                  !isKeyboardVisible
-                                    ? oneSeventhHeight
-                                    : oneHalfHeight
-                                }
-                                ref={editedTextRef}
-                                autoFocus={false}
-                                title={""}
-                                helperText={
-                                  !isKeyboardVisible
-                                    ? null
-                                    : "Press enter to exit"
-                                }
-                                iconColor={
-                                  !isKeyboardVisible
-                                    ? themeStyles.genericText.color
-                                    : "red"
-                                }
-                                mountingText={""}
-                                onTextChange={updateNoteEditString}
-                                multiline={false}
-                              />
-                            }
-                          />
-
-                          <TitleContainerUI
-                            height={180}
-                            title={`Talked: ${momentsAdded.length}`}
-                            children={
-                              <TotalMomentsAddedUI
-                                momentsAdded={momentsAdded}
-                              />
-                            }
-                          />
-
-                          <TitleContainerUI
-                            height={40}
-                            title={""}
-                            children={
-                              <TouchableOpacity
-                                onPress={toggleDeleteMoments}
-                                style={[
-                                  styles.controlButton,
-                                  themeStyles.footerIcon,
-                                ]}
-                              >
-                                <Text
-                                  style={[
-                                    styles.controlButtonText,
-                                    { color: themeStyles.footerText.color },
-                                  ]}
-                                >
-                                  {"Delete unused?"}
-                                </Text>
-                                <Icon
-                                  name={
-                                    deleteMoments
-                                      ? "check-square-o"
-                                      : "square-o"
-                                  }
-                                  size={20}
-                                  style={[
-                                    styles.checkbox,
-                                    themeStyles.footerIcon,
-                                  ]}
-                                />
-                              </TouchableOpacity>
-                            }
-                          />
-                        </>
-                      </>
-                    )}
+                    <TouchableOpacity
+                      onPress={toggleDeleteMoments}
+                      style={[
+                        styles.controlButton,
+                        themeStyles.footerIcon,
+                        { height: 40 },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.controlButtonText,
+                          { color: themeStyles.footerText.color },
+                        ]}
+                      >
+                        {"Delete unused?"}
+                      </Text>
+                      <Icon
+                        name={deleteMoments ? "check-square-o" : "square-o"}
+                        size={20}
+                        style={[styles.checkbox, themeStyles.footerIcon]}
+                      />
+                    </TouchableOpacity>
                   </>
-                </View>
+                </>
+              )}
+            </>
+          </View>
 
-                {helloDate &&
-                  //selectedFriend &&
-                  //!loadingNewFriend &&
-                  selectedTypeChoice !== null && (
-                    <>
-                      {!isKeyboardVisible && (
-                        <ButtonBaseSpecialSave
-                          label="SAVE HELLO! "
-                          maxHeight={80}
-                          onPress={openDoubleChecker}
-                          isDisabled={
-                            selectedFriend && !loadingNewFriend ? false : true
-                          }
-                          image={require("@/app/assets/shapes/redheadcoffee.png")}
-                        />
-                      )}
-
-                      {isKeyboardVisible && (
+          <>
+            {/* {isKeyboardVisible && (  would need to also check for same things as button above
                         <View
                           style={{
                             position: "absolute",
@@ -471,13 +494,25 @@ useEffect(() => {
                             image={false}
                           />
                         </View>
-                      )}
-                    </>
-                  )}
-              </>
-            }
-          />
-        </View>
+                      )} */}
+          </>
+          {!isKeyboardVisible && (
+            <ButtonBaseSpecialSave
+              label="SAVE HELLO! "
+              maxHeight={80}
+              onPress={openDoubleChecker}
+              isDisabled={
+                selectedFriend &&
+                !loadingNewFriend &&
+                selectedTypeChoice !== null &&
+                helloDate
+                  ? false
+                  : true
+              }
+              image={require("@/app/assets/shapes/redheadcoffee.png")}
+            />
+          )}
+        </>
 
         {isDoubleCheckerVisible && (
           <DoubleChecker
@@ -485,6 +520,16 @@ useEffect(() => {
             toggleVisible={toggleDoubleChecker}
             singleQuestionText="Ready to save hello?"
             onPress={() => handleSave()}
+          />
+        )}
+
+        {notesModalVisible && (
+          <HelloNotesModal
+            isVisible={notesModalVisible}
+            closeModal={handleCloseModal}
+            textRef={editedTextRef}
+            mountingText={notePreviewText}
+            onTextChange={updateNoteEditString}
           />
         )}
       </>
@@ -536,7 +581,6 @@ const styles = StyleSheet.create({
   paddingForElements: {
     paddingHorizontal: 0,
     flex: 1,
-
     //backgroundColor: 'pink',
     paddingBottom: 0,
     flexDirection: "column",

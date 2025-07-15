@@ -954,7 +954,7 @@ export const resetFriendFavesColorThemeToDefaultOld = async (
 export const fetchUpcomingHelloes = async () => {
   try {
     const response = await helloFriendApiClient.get("/friends/upcoming/");
-    //  console.log("API GET CALL fetchUpcomingHelloes", response.data);
+      console.log("API GET CALL fetchUpcomingHelloes", response.data);
     return response.data;
   } catch (error) {
     console.error("ERROR API GET CALL fetchUpcomingHelloes:", error);

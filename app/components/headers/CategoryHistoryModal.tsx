@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { View, Text, ScrollView, StyleSheet, FlatList } from "react-native";
-import { TouchableOpacity, AccessibilityInfo } from "react-native";
-
-import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useUserStats } from "@/src/context/UserStatsContext";
-
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import LoadingPage from "../appwide/spinner/LoadingPage";
+import { MaterialIcons, MaterialCommunityIcons, Foundation } from "@expo/vector-icons";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 interface Props {
   isVisible: boolean;
@@ -54,14 +52,31 @@ const CategoryHistoryModal: React.FC<Props> = ({
     fetchNextPage,
     hasNextPage,
   } = useCategoryHistoryLookup({ categoryId: categoryID });
-  const headerIconSize = 26; 
+ 
 
-  // useEffect(() => {
-  //     if (categoryHistory) {
-  //         console.log(`CATEGORY HISTORY ~!~~~~~~~~~~~~~~~~~~~~~: `, categoryHistory);
-  //     }
+  const formatCapsuleCreationDate = (createdOn) => {
+  if (!createdOn) return "";
 
-  // }, [categoryHistory]);
+  const date = new Date(createdOn);
+  const now = new Date();
+
+  const isCurrentYear = date.getFullYear() === now.getFullYear();
+
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    ...(isCurrentYear ? {} : { year: "numeric" }),
+  });
+};
+
+ const categoryHistoryFormatted = useMemo(() => {
+  return categoryHistory?.map((item) => ({
+    ...item,
+    formattedDate: formatCapsuleCreationDate(item.created_on),
+  }));
+}, [categoryHistory]);
+
 
   const getFriendNameFromList = (friendId) => {
     const friend = friendList.find((friend) => friend.id === friendId);
@@ -69,8 +84,104 @@ const CategoryHistoryModal: React.FC<Props> = ({
     return friend?.name || "";
   };
 
+
+
+
+
+  
+    const renderMiniMomentItem = useCallback(
+      ({ item, index }) => (
+        <View
+          style={[
+            styles.momentCheckboxContainer,
+            {
+              paddingBottom: 10,
+              paddingTop: 10,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderBottomColor: themeStyles.primaryText.color,
+            },
+          ]}
+        >
+          <View style={styles.momentItemTextContainer}>
+            <View style={styles.checkboxContainer}>
+              <Foundation
+                name={"comment-quotes"}
+                size={24}
+                color={themeStyles.primaryText.color}
+              />
+            </View>
+  
+            <View style={{ width: "100%", flexShrink: 1 }}>
+              <View
+                style={{
+                  flexDirection: "row", 
+                  alignItems: "center",
+                  justifyContent: 'space-between',
+             
+                  width: "100%",
+                }}
+              >
+                <Text
+                  style={[
+                    styles.momentItemText,
+                    themeStyles.primaryText,
+                    {  fontFamily: "Poppins-Bold" },
+                  ]}
+                >
+                  @ {getFriendNameFromList(item.friend)} 
+                  {" "}on{" "}{item.formattedDate}
+                </Text>
+                {/* <MaterialCommunityIcons
+                  onPress={handleGoToHelloView}
+                  // name="hand-wave-outline"
+                  name="calendar-heart"
+                  size={16}
+                  color={themeStyles.primaryText.color}
+                  style={{ marginHorizontal: 4 }}
+                /> */}
+              </View>
+              <Text style={[styles.momentItemText, themeStyles.primaryText]}>
+                {item.capsule}
+              </Text>
+  
+              {/* <View
+                style={{
+                  height: 20,
+                  width: "100%",
+                  justifyContent: "flex-end",
+                  flexDirection: "row",
+                  alignItems: "center", 
+                }}
+              > 
+                    <MaterialCommunityIcons
+                      onPress={handleGoToHelloView}
+                          // name="hand-wave-outline"
+                            name="calendar-heart"
+                          size={20}
+                          color={themeStyles.primaryText.color}
+                          style={{ marginBottom: 0 }}
+                        />
+  
+              </View> */}
+            </View>
+          </View>
+        </View>
+      ),
+      [
+        getFriendNameFromList,
+         formatCapsuleCreationDate,
+        // getHelloDateFromList,
+  
+        themeStyles,
+        styles,
+      ]
+    );
+
+
+
+
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={
         <Text
@@ -80,7 +191,11 @@ const CategoryHistoryModal: React.FC<Props> = ({
             { fontSize: 26 },
           ]}
         >
-          #
+                    <MaterialCommunityIcons
+                      name={"comment-check-outline"}
+                      size={24}
+                      color={themeStyles.modalIconColor.color}
+                    />
         </Text>
         // <MaterialIcons
         //   name={"category"}
@@ -91,53 +206,61 @@ const CategoryHistoryModal: React.FC<Props> = ({
       questionText={`${title} (${completedCapsuleCount})`}
       children={
         <>
-          {categoryHistory && categoryHistory.length > 0 && (
+          {categoryHistoryFormatted && categoryHistoryFormatted.length > 0 && (
             // this flatlist handles infinite scroll & pagination
             // this is so cool
             <FlatList
-              data={categoryHistory} // Already flattened in the hook
+              data={categoryHistoryFormatted} // Already flattened in the hook
               keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.momentCheckboxContainer}>
-                  <View style={styles.momentItemTextContainer}>
-                    <View style={{ height: "100%" }}>
-                      <View style={styles.checkboxContainer}>
-                        <MaterialCommunityIcons
-                          name={"message"}
-                          size={24}
-                          color={themeStyles.modalIconColor.color}
-                        />
-                      </View>
-                    </View>
-                    <View style={{ width: "86%" }}>
-                      <Text
-                        style={[styles.momentItemText, themeStyles.genericText]}
-                      >
-                        {item.capsule}
-                      </Text>
-                      <Text
-                        style={[styles.momentItemText, themeStyles.genericText]}
-                      >
-                        @ {getFriendNameFromList(item.friend)}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              )}
+              renderItem={renderMiniMomentItem}
+              // renderItem={({ item }) => (
+              //   <View style={styles.momentCheckboxContainer}>
+              //     <View style={styles.momentItemTextContainer}>
+              //       <View style={{ height: "100%" }}>
+              //         <View style={styles.checkboxContainer}>
+              //           <MaterialCommunityIcons
+              //             name={"message"}
+              //             size={24}
+              //             color={themeStyles.modalIconColor.color}
+              //           />
+              //         </View>
+              //       </View>
+              //       <View style={{ width: "86%" }}>
+              //         <Text
+              //           style={[styles.momentItemText, themeStyles.genericText]}
+              //         >
+              //           {item.capsule}
+              //         </Text>
+              //         <Text
+              //           style={[styles.momentItemText, themeStyles.genericText]}
+              //         >
+              //           @ {getFriendNameFromList(item.friend)}
+              //         </Text>
+              //       </View>
+              //     </View>
+              //   </View>
+              // )}
               onEndReached={() => {
                 if (hasNextPage && !isFetchingNextPage) {
                   fetchNextPage();
                 }
               }}
-              onEndReachedThreshold={0.5} // adjust as needed
+              onEndReachedThreshold={0.5} 
               ListFooterComponent={
-                isFetchingNextPage ? (
-                  <Text
-                    style={[styles.momentItemText, themeStyles.genericText]}
-                  >
-                    Loading more...
-                  </Text>
-                ) : null
+                <View style={{  height: 'auto', minHeight: 20}}>
+                  
+                {isFetchingNextPage && (
+                   <View style={{height: 50}}>
+                  <LoadingPage 
+                  loading={true}
+                  spinnerSize={20}
+                  spinnerType={'flow'}
+                  color={themeStyles.primaryText.color}
+
+                  /> 
+                  </View>
+                )}
+                </View>
               }
             />
           )}
@@ -148,64 +271,19 @@ const CategoryHistoryModal: React.FC<Props> = ({
   );
 };
 
+// Just for list item (copy pasta'd this from CategoryFriendHistoryModal)
 const styles = StyleSheet.create({
-  bodyContainer: {
-    width: "100%",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    textAlign: "left",
-  },
-  headerContainer: {
-    margin: "2%",
-  },
-  sectionContainer: {
-    margin: "2%",
-  },
-  headerText: {
-    fontWeight: "bold",
-    fontSize: 18,
-    lineHeight: 30,
-  },
-  text: {
-    fontSize: 14,
-    lineHeight: 21,
-  },
   momentItemTextContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 20,
-    paddingBottom: 20,
-    width: "100%",
-    borderBottomWidth: 0.4,
-    borderBottomColor: "#fff",
-  },
-  newMomentItemTextContainer: {
-    flexDirection: "row", // Allows text to wrap
-    // Ensures text wraps to the next line
-    alignItems: "flex-start", // Aligns text to the top
-    marginBottom: 10,
-    paddingBottom: 20,
-    maxHeight: 200,
+
     width: "100%",
   },
   momentItemText: {
-    fontSize: 13,
+    fontSize: 11,
+    // lineHeight: 15,
     fontFamily: "Poppins-Regular",
-    width: "100%",
-  },
-  newMomentItemText: {
-    fontSize: 20,
-    fontFamily: "Poppins-Regular",
-    width: "100%",
-  },
-  momentModalContainer: {
-    width: "100%",
-    borderRadius: 10,
-    padding: 0,
-
-    height: 480,
-    maxHeight: "80&",
-    alignItems: "center",
+    // width: "100%",
   },
   momentCheckboxContainer: {
     flexDirection: "row",
@@ -216,9 +294,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 0,
-    paddingTop: 4,
+    paddingTop: 0,
     paddingRight: 10,
-    paddingLeft: 6,
   },
 });
 

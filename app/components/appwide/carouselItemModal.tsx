@@ -8,11 +8,9 @@ import {
   Text,
   AccessibilityInfo,
 } from "react-native";
+ 
 
-import BugSvg from "@/app/assets/svgs/bug.svg";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-import ModalWithoutSubmit from "../alerts/ModalWithoutSubmit";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { Linking } from "react-native";
 import { useUser } from "@/src/context/UserContext";
@@ -31,7 +29,7 @@ const CarouselItemModal = ({ isVisible, closeModal,   display, icon, title, type
   //   }, [isModalVisible]);
 
   return (
-    <ModalWithoutSubmit
+    <ModalWithGoBack
       isVisible={isVisible}
       headerIcon={icon}
       questionText={title}

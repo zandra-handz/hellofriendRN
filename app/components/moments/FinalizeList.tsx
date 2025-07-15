@@ -1,14 +1,11 @@
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
-import React, {
-  useCallback, 
-  useState,
-} from "react";
+import React, { useCallback, useState } from "react";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { FlashList } from "@shopify/flash-list";
 import { CheckBox } from "react-native-elements";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
-import { useFocusEffect } from "@react-navigation/native"; 
+import { useFocusEffect } from "@react-navigation/native";
 
 interface FinalizeListProps {
   data: [];
@@ -28,15 +25,15 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   const [selectedMoments, setSelectedMoments] = useState([]);
   const [changedMoments, setChangedMoments] = useState([]);
   const [visibleCategories, setVisibleCategories] = useState(data); //so that we can use the same value for All and for individual ones
- 
+
   const navigation = useNavigation();
-  const {
-    updateCapsule, 
-  } = useCapsuleList(); // also need to update cache
+  const { updateCapsule } = useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 
   const handleCategoryFilterPress = (category) => {
-    const filtered = data.filter((moment) => moment.typedCategory === category);
+    const filtered = data.filter(
+      (moment) => moment.user_category_name === category
+    );
     setVisibleCategories(filtered);
   };
 
@@ -64,9 +61,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
 
   const renderListItem = useCallback(
     ({ item }) => {
- 
       const isSelected = selectedMoments?.some((m) => m.id === item.id);
- 
 
       return (
         <View
@@ -79,6 +74,8 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
               width: "100%",
               paddingRight: 0,
               paddingVertical: 10,
+              marginBottom: 5,
+              borderRadius: 30,
               overflow: "hidden",
               backgroundColor: isSelected
                 ? manualGradientColors.homeDarkColor
@@ -89,7 +86,9 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
           <View
             style={{
               height: "100%",
-              width: 400,
+              // width: 300,
+              flexShrink: 1,
+              paddingHorizontal: 10,
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -97,9 +96,12 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
             <CheckBox
               checked={selectedMoments?.some((m) => m.id === item.id)}
               onPress={() => handleCheckboxChange(item)}
-              title={`#${item.typedCategory} - ${item.capsule}`}
+              title={`#${item.user_category_name} - ${item.capsule}`}
+              titleProps={{ numberOfLines: isSelected ? undefined : 1 }}
               containerStyle={{
                 borderWidth: 0,
+                borderRadius: 30,
+                overflow: "hidden",
                 backgroundColor: isSelected
                   ? manualGradientColors.homeDarkColor
                   : "transparent",
@@ -113,7 +115,8 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
                 justifyContent: "space-between",
               }}
               textStyle={{
-                width: "82%",
+                width: "100%",
+                flexShrink: 1,
                 color: isSelected
                   ? manualGradientColors.lightColor
                   : themeStyles.primaryText.color,
@@ -140,15 +143,13 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   // };
 
   const handleUpdateMoments = () => {
-    changedMoments.forEach((moment) => { 
+    changedMoments.forEach((moment) => {
       updateCapsule(moment.id, !moment.preAdded);
     });
     navigation.navigate("AddHello");
   };
- 
 
-  const handleCheckboxChange = (item) => { 
-
+  const handleCheckboxChange = (item) => {
     setSelectedMoments((prevSelectedMoments) => {
       const isItemSelected = prevSelectedMoments?.some((m) => m.id === item.id);
       const updatedSelection = isItemSelected
@@ -185,8 +186,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
     return (
       <View style={{ marginHorizontal: CATEGORY_MARGIN }}>
         <TouchableOpacity
-
-        onPress={() => handleCategoryFilterPress(item)}
+          onPress={() => handleCategoryFilterPress(item)}
           style={{
             width: "auto",
             height: "100%",
@@ -202,18 +202,31 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
 
   return (
     <>
-
-      <View
-        style={[themeStyles.overlayBackgroundColor, { flex: 1, width: 500 }]}
-      >
-                    <View style={{ width: "100%", height: 40 }}>
+      <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
+        <View style={{ width: "100%", height: 40 }}>
           <FlatList
             horizontal
             data={categories}
             renderItem={renderCategoryButton}
             ListHeaderComponent={
-              <TouchableOpacity onPress={() => handleShowAllCategoriesPress()} style={{ width: 'auto', paddingLeft: 10, marginHorizontal: CATEGORY_MARGIN, height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={[themeStyles.primaryText, {fontSize: 13, fontWeight: 'bold'}]}>All categories</Text>
+              <TouchableOpacity
+                onPress={() => handleShowAllCategoriesPress()}
+                style={{
+                  width: "auto",
+                  paddingLeft: 10,
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    { fontSize: 13, fontWeight: "bold" },
+                  ]}
+                >
+                  All categories
+                </Text>
               </TouchableOpacity>
             }
           />
@@ -240,7 +253,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
           {
             width: "100%",
             height: "auto",
-            position: "absolute",
+            // position: "absolute",
             bottom: 0,
             alignItems: "center",
             padding: 10,

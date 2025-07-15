@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, Image } from "react-native";
+import { Pressable, Text, StyleSheet, Image, View } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -8,30 +8,41 @@ const ButtonBaseSpecialSave = ({
   onPress,
   label = "ADD NEW IMAGE",
   labelSize = 20,
-  height = "100%",
+  height = 60,
   fontFamily = "Poppins-Regular",
   maxHeight = 90,
   imageSize = 90,
   image = require("@/app/assets/shapes/redheadcoffee.png"),
   imagePositionHorizontal = 0,
   imagePositionVertical = 8,
+  dynamicPadding = 5,
+  labelPlacement = "center",
+   labelPaddingHorizontal= 10,
   borderColor = "transparent",
-  borderRadius = 10, 
+  borderRadius = 10,
+  borderBottomLeftRadius = 10,
+  borderBottomRightRadius = 10,
+  borderTopRightRadius = 0,
+  borderTopLeftRadius = 0,
   isDisabled = true,
-}) => { 
+}) => {
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
 
-  const { manualGradientColors } = useGlobalStyle();
- 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={isDisabled ? null : onPress}
       style={[
         styles.container,
         {
           borderColor: borderColor,
           borderRadius: borderRadius,
+          borderBottomLeftRadius: borderBottomLeftRadius,
+          borderBottomRightRadius: borderBottomRightRadius,
+          borderTopRightRadius: borderTopRightRadius,
+          borderTopLeftRadius: borderTopLeftRadius,
           height: height,
           maxHeight: maxHeight,
+         padding: dynamicPadding,
         },
       ]}
     >
@@ -46,48 +57,62 @@ const ButtonBaseSpecialSave = ({
           ...StyleSheet.absoluteFillObject,
         }}
       />
-
-      {image && (
-        <Image
-          source={image}
-          style={{
-            width: imageSize,
-            height: imageSize,
-            top: imagePositionVertical,
-            right: imagePositionHorizontal,
-          }}
-          resizeMode="contain"
-        />
-      )}
-
-      <Text
-        style={[ 
-          {
-            fontFamily: fontFamily,
-            textTransform: "uppercase",
-            paddingRight: 20,
-            fontSize: labelSize,
-          },
-        ]}
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: labelPlacement,
+          textAlign: "center",
+          alignItems: "center", 
+          height: "100%",
+          borderRadius: borderRadius - dynamicPadding,
+          borderBottomLeftRadius: borderBottomLeftRadius - dynamicPadding,
+          borderBottomRightRadius: borderBottomRightRadius - dynamicPadding,
+          borderTopRightRadius: borderTopRightRadius - dynamicPadding,
+          borderTopLeftRadius: borderTopLeftRadius - dynamicPadding,
+          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+        }}
       >
-        {label}
-      </Text>
-    </TouchableOpacity>
+        {image && (
+          <Image
+            source={image}
+            style={{
+              position: "absolute",
+              width: imageSize,
+              height: imageSize,
+              top: imagePositionVertical,
+              right: imagePositionHorizontal,
+            }}
+            resizeMode="contain"
+          />
+        )}
+
+        <Text
+          style={[
+            {
+              fontFamily: fontFamily,
+              paddingHorizontal: labelPaddingHorizontal,
+           
+              fontSize: labelSize,
+              color: themeStyles.primaryText.color,
+            },
+          ]}
+        >
+          {label}
+        </Text>
+      </View>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    flex: 1,
-    width: "100%",
-    padding: "1%",
-    paddingRight: "0%",
+    //  flex: 1,
+    width: "100%", 
     alignContent: "center",
-    marginVertical: "1%",
-    borderWidth: 1,
+    borderWidth: StyleSheet.hairlineWidth,
     alignItems: "center",
-    justifyContent: "space-between",
     overflow: "hidden",
     zIndex: 5000,
     elevation: 5000,
