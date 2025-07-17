@@ -1,72 +1,70 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
- 
-import { useFriendList } from "@/src/context/FriendListContext";
-
-import { useHelloes } from "@/src/context/HelloesContext";
-import CarouselSlider from "@/app/components/appwide/CarouselSlider";
-
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useHelloes } from "@/src/context/HelloesContext"; 
+import CarouselSliderInfinite from "@/app/components/appwide/CarouselSliderInfinite";
+import useFullHelloes from "@/src/hooks/useFullHelloes";
 import HelloViewPage from "@/app/components/helloes/HelloViewPage";
 
 const ScreenHelloView = () => {
   const route = useRoute();
- // const hello = route.params?.hello ?? null;
   const startingIndex = route.params?.startingIndex ?? 0;
   const inPersonFilter = route.params?.inPersonFilter ?? false;
-console.log(`in person filter`, inPersonFilter);
-console.log(startingIndex);
-  const { themeAheadOfLoading } = useFriendList();
+  const { selectedFriend } = useSelectedFriend();
   const { helloesList } = useHelloes();
 
-  const [helloesListData, setHelloesListData] = useState(helloesList || []);
+  const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
+    useFullHelloes({ friendId: selectedFriend?.id, indexNeeded: startingIndex });
+
+
+
+  const [helloesListData, setHelloesListData] = useState(helloesListFull || []);
 
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
 
   // useEffect(() => {
+  //   console.log(helloesListData.length);
+  // }, [helloesListData]);
 
-  // });
-
-  // const setIndex = (hello) => {
-  //   if (hello) {
-  //     const index = helloesList.findIndex((item) => item.id === hello.id);
-  //     setCurrentIndex(index);
+  // useEffect(() => {
+  //   // console.log("helloes list filter", inPersonFilter);
+  //   if (inPersonFilter && helloesListFull.length > 0) {
+  //     setHelloesListData(
+  //       helloesListFull.filter((hello) => hello.type === "in person")
+  //     );
+  //   } else {
+  //     setHelloesListData(helloesListFull);
   //   }
-  // };
+  // }, [inPersonFilter]);
+    // const [ totalHelloesCount, setTotalHelloesCount ] = helloesList?.length || 0;
 
-  useEffect(() => {
-    console.log(helloesListData.length);
-  }, [ helloesListData]);
+    const helloesDataFiltered = useMemo(() => {
+    return inPersonFilter
+      ? helloesListFull.filter((hello) => hello.type === "in person")
+      : helloesListFull;
+  }, [helloesListFull, inPersonFilter]);
 
-  useEffect(() => {
-    console.log("helloes list filter", inPersonFilter);
-    if (inPersonFilter && helloesList.length > 0) {
-      setHelloesListData(
-        helloesList.filter((hello) => hello.type === "in person")
-      );
-    } else {
-      setHelloesListData(helloesList);
-    }
-  }, [inPersonFilter]);
+ const totalHelloesCount = useMemo(() => {
+  return inPersonFilter && helloesDataFiltered && helloesDataFiltered.length > 0
+  ? helloesDataFiltered.length
+  : helloesList && helloesList.length > 0 ?
+  helloesList.length : 0;
+
+ }, [inPersonFilter, helloesDataFiltered, helloesList]);
 
   return (
     <SafeViewAndGradientBackground style={{ flex: 1 }}>
-      {/* <GlobalAppHeaderIconVersion
-        title={"Helloes with"}
-        navigateTo="Helloes"
-        icon={
-          <MaterialCommunityIcons
-            name="hand-wave-outline"
-            size={30}
-            color={themeAheadOfLoading.fontColorSecondary}
-          />
-        }
-      /> */}
-
-      <CarouselSlider
-        initialIndex={currentIndex}
-        data={helloesListData}
+      <CarouselSliderInfinite
+      totalItemCount={totalHelloesCount}
+      isFiltered={inPersonFilter}
+        initialIndex={currentIndex} // should this be startingIndex?
+       // data={helloesListData}
+        data={helloesDataFiltered}
         children={HelloViewPage}
+        isFetchingNextPage={isFetchingNextPage}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
         useButtons={false}
       />
     </SafeViewAndGradientBackground>

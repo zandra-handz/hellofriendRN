@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -22,7 +22,12 @@ const SearchHelloesModal: React.FC<Props> = ({
 }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
   const { capsuleList } = useCapsuleList();
+useEffect(() => {
+  if (flattenHelloes) {
+    console.log('flattenhelloesin seach modal!', flattenHelloes);
+  }
 
+}, [flattenHelloes]);
   const headerIconSize = 26;
   const searchInputIconSize = 14;
   const autoFocus = true;

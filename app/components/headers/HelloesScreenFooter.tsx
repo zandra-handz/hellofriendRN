@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -11,6 +11,7 @@ import SearchHelloesModal from "./SearchHelloesModal";
 // app components
 import AboutAppModal from "./AboutAppModal";
 import UserSettingsModal from "./UserSettingsModal.";
+import useFullHelloes from "@/src/hooks/useFullHelloes";
 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
@@ -20,11 +21,13 @@ import SetAddressesModal from "./SetAddressesModal";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
 import FilterLocationsModal from "./FilterLocationsModal";
+import { add } from "date-fns";
 
 const HelloesScreenFooter = ({
   helloesList,
   flattenHelloes,
   onFilterPress,
+  addToModalOpenPress,
   onSearchPress,
 }) => {
   const navigationState = useNavigationState((state) => state);
@@ -41,9 +44,21 @@ const HelloesScreenFooter = ({
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
+
+  useEffect(() => {
+    if (flattenHelloes) {
+      console.log('flatten helloes in footer!', flattenHelloes);
+    }
+
+  }, [flattenHelloes]);
  
  const [ filterOn, setFilterOn ] = useState(false);
 
+const handleOpenSearchModal = () => {
+  addToModalOpenPress();
+  setSearchModalVisible(true);
+
+}
 
  const handleToggleFilterOn = () => {
     if (!filterOn) {
@@ -93,7 +108,8 @@ const HelloesScreenFooter = ({
             color={themeStyles.footerIcon.color}
           />
         }
-        onPress={() => setSearchModalVisible(true)}
+        // onPress={() => setSearchModalVisible(true)}
+        onPress={handleOpenSearchModal}
       />
     ),
     [themeStyles]
@@ -150,7 +166,7 @@ const HelloesScreenFooter = ({
           </View>
         </> */}
 
-        <View style={[styles.divider, themeStyles.divider]} />
+        {/* <View style={[styles.divider, themeStyles.divider]} /> */}
         <>
           <View style={styles.section}>
             <RenderSearchButton />

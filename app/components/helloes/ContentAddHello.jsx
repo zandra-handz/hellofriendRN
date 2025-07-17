@@ -18,8 +18,7 @@ import {
   Dimensions,
 } from "react-native";
 import { useMessage } from "@/src/context/MessageContext";
-
-import TextEditBox from "@/app/components/appwide/input/TextEditBox";
+ 
 import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
 import TitleContainerUI from "./TitleContainerUI";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
@@ -233,15 +232,12 @@ const ContentAddHello = () => {
   const handleTypeChoiceChange = (index) => {
     setSelectedTypeChoice(index);
     setSelectedTypeChoiceText(`${typeChoices[index]}`);
-
     if (index === 1 || index === 2) {
-      // console.log("open location modal");
 
       toggleLocationModal();
     } else {
       setSelectedHelloLocation("None");
-    }
-    // console.log(index);
+    } 
   };
 
   const toggleLocationModal = () => {
@@ -412,28 +408,7 @@ const ContentAddHello = () => {
                         </Text>
                         
                         )}
-                      </View>
-
-                      {/* <TextEditBox
-                        width={"100%"}
-                        height={
-                          !isKeyboardVisible ? oneSeventhHeight : oneHalfHeight
-                        }
-                        ref={editedTextRef}
-                        autoFocus={false}
-                        title={""}
-                        helperText={
-                          !isKeyboardVisible ? null : "Press enter to exit"
-                        }
-                        iconColor={
-                          !isKeyboardVisible
-                            ? themeStyles.genericText.color
-                            : "red"
-                        }
-                        mountingText={""}
-                        onTextChange={updateNoteEditString}
-                        multiline={false}
-                      /> */}
+                      </View> 
                     </View>
                     {momentsAdded && momentsAdded.length > 0 && (
                       <TitleContainerUI
@@ -580,8 +555,7 @@ const styles = StyleSheet.create({
   },
   paddingForElements: {
     paddingHorizontal: 0,
-    flex: 1,
-    //backgroundColor: 'pink',
+    flex: 1, 
     paddingBottom: 0,
     flexDirection: "column",
     justifyContent: "flex-start",

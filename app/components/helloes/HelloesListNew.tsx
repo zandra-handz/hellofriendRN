@@ -1,23 +1,36 @@
-import { View, Text, FlatList, Pressable } from "react-native";
+import { View,  Pressable } from "react-native";
 import React, { useEffect, useCallback, useRef } from "react";
 import { FlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import HelloItem from "./HelloItem";
+import HelloItem from "./HelloItem"; 
+import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
+
 import { useNavigation } from "@react-navigation/native";
 type Props = {
-  data: object[];
+  helloesListFull: object[];
+  isFetchingNextPage: boolean;
+  applyInPersonFilter: boolean;
+  fetchNextPage: () => void;
+  hasNextPage: boolean;
   onPress: () => void;
   triggerScroll: number;
 };
 
-const HelloesListNew = ({ data, triggerScroll, onPress }: Props) => {
+const HelloesListNew = ({
+  helloesListFull,
+  isFetchingNextPage,
+  fetchNextPage,
+  hasNextPage,
+  triggerScroll,
+  onPress,
+}: Props) => {
   const ITEM_HEIGHT = 140;
   const ITEM_BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
   const navigation = useNavigation();
   const flatListRef = useRef(null);
 
-
+  const { themeStyles } = useGlobalStyle();
 
   useEffect(() => {
     if (triggerScroll) {
@@ -34,9 +47,8 @@ const HelloesListNew = ({ data, triggerScroll, onPress }: Props) => {
     }
   };
 
-  const handleNavigateToSingleView = (index) => { 
-     onPress(index);
-
+  const handleNavigateToSingleView = (index) => {
+    onPress(index);
   };
 
   const extractItemKey = (item, index) =>
@@ -53,13 +65,11 @@ const HelloesListNew = ({ data, triggerScroll, onPress }: Props) => {
   const renderHelloItem = useCallback(
     ({ item, index }) => (
       <Pressable
-      onPress={() => handleNavigateToSingleView(index)}
+        onPress={() => handleNavigateToSingleView(index)}
         style={{
-         
           height: 40,
           width: "100%",
           height: COMBINED_HEIGHT,
-    
         }}
       >
         <HelloItem
@@ -78,17 +88,30 @@ const HelloesListNew = ({ data, triggerScroll, onPress }: Props) => {
     <View style={{ paddingTop: 30, flex: 1 }}>
       <FlashList
         ref={flatListRef}
-        data={data}
-       estimatedItemSize={144}
-        renderItem={renderHelloItem} 
+        data={helloesListFull}
+        // data={filteredData}
+        estimatedItemSize={144}
+        renderItem={renderHelloItem}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }}
+        onEndReachedThreshold={0.5}
         keyExtractor={extractItemKey}
-       // getItemLayout={getItemLayout}
+        // getItemLayout={getItemLayout}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={10}
         removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={<View style={{ height: 700 }}> </View>}
+        ListFooterComponent={
+          <InfiniteScrollSpinner 
+          isFetchingNextPage={isFetchingNextPage}
+          color={themeStyles.primaryText.color}
+          height={200}
+          />
+        }
       />
     </View>
   );

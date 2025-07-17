@@ -6,15 +6,14 @@
 //MUST be 'monthYear' because this matches with the dates range that CalenderLights uses
 
 import React from "react";
-import { 
-  StyleSheet,
-} from "react-native";
-
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
 
 // import useHelloesData from "../hooks/useHelloesData";
 import { useHelloes } from "@/src/context/HelloesContext";
+
+import useHelloesManips from "@/src/hooks/useHelloesManips";
 
 import CalendarLights from "./CalendarLights";
 
@@ -25,8 +24,11 @@ const CalendarLightsDataPrepLayer = ({
   animationColor = "orange",
 }) => {
   //these are in parent too but they are not rerendering in the child (CalendarLights)
-  const { helloesList, helloesListMonthYear,  monthsInRange } = useHelloes();
-  const sortedData = helloesListMonthYear;
+  const { helloesList } = useHelloes();
+
+  const { helloesListMonthYear, monthsInRange } = useHelloesManips({helloesData: helloesList});
+
+ 
 
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
 
@@ -49,19 +51,18 @@ const CalendarLightsDataPrepLayer = ({
  
   return (
     <>
-      {helloesList && friendDashboardData && sortedData && selectedFriend && monthsInRange && (
+      {helloesList && friendDashboardData && helloesListMonthYear && selectedFriend && monthsInRange && (
         <CalendarLights 
           daySquareBorderRadius={daySquareBorderRadius}
           daySquareBorderColor={daySquareBorderColor}
           opacityMinusAnimation={opacityMinusAnimation}
           animationColor={animationColor} 
-          combinedData={combineMonthRangeAndHelloesDates(monthsInRange, sortedData)}
+          combinedData={combineMonthRangeAndHelloesDates(monthsInRange, helloesListMonthYear)}
         />
       )}
     </>
   );
 };
-
-const styles = StyleSheet.create({});
+ 
 
 export default CalendarLightsDataPrepLayer;

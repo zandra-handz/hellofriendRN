@@ -1,8 +1,4 @@
-import React, {
-  createContext,
-  useState,
-  useContext, 
-} from "react"; 
+import React, { createContext, useState, useContext, useMemo } from "react";
 import { useUser } from "./UserContext";
 import { fetchFriendDashboard } from "../calls/api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -25,46 +21,44 @@ export const useSelectedFriend = () => {
   return context;
 };
 
-console.warn('selected friend context rerendered');
+console.warn("selected friend context rerendered");
 
 export const SelectedFriendProvider = ({ children }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const { user, isAuthenticated } = useUser();
- 
+  const { user } = useUser();
+
   // const [friendFavesData, setFriendFavesData] = useState(null);
 
-//  console.log("SelectedFriendProvider RENDERED", {
-//   userId: user?.id,
-//   friendId: selectedFriend?.id,
-//   enabled: !!(isAuthenticated && selectedFriend && selectedFriend?.id),
-// }); 
+  //  console.log("SelectedFriendProvider RENDERED", {
+  //   userId: user?.id,
+  //   friendId: selectedFriend?.id,
+  //   enabled: !!(isAuthenticated && selectedFriend && selectedFriend?.id),
+  // });
 
- 
   const queryClient = useQueryClient();
-
 
   const previousFriendIdRef = React.useRef(null);
 
-const {
-  data: friendDashboardData,
-  isLoading,
-  isPending,
-  isError,
-  isSuccess,
-} = useQuery({
-  queryKey: ["friendDashboardData", user?.id, selectedFriend?.id],
-  queryFn: () => {
-    // Prevent refetching if friend is unchanged
-    if (selectedFriend?.id === previousFriendIdRef.current) {
-      return Promise.resolve(friendDashboardData); // don't re-call API
-    }
+  const {
+    data: friendDashboardData,
+    isLoading,
+    isPending,
+    isError,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["friendDashboardData", user?.id, selectedFriend?.id],
+    queryFn: () => {
+      // Prevent refetching if friend is unchanged
+      if (selectedFriend?.id === previousFriendIdRef.current) {
+        return Promise.resolve(friendDashboardData); // don't re-call API
+      }
 
-    previousFriendIdRef.current = selectedFriend?.id;
-    return fetchFriendDashboard(selectedFriend.id);
-  },
-  enabled: !!(isAuthenticated && selectedFriend),
-  staleTime: 1000 * 60 * 20,
-});
+      previousFriendIdRef.current = selectedFriend?.id;
+      return fetchFriendDashboard(selectedFriend.id);
+    },
+    enabled: !!(user && selectedFriend),
+    staleTime: 1000 * 60 * 20,
+  });
 
   // const {
   //   data: friendDashboardData,
@@ -77,8 +71,8 @@ const {
   //   queryFn: () => fetchFriendDashboard(selectedFriend.id),
   //   enabled: !!(isAuthenticated && selectedFriend),
   //   staleTime: 1000 * 60 * 20, // 20 minutes
- 
-  // }); 
+
+  // });
   // const favesData = useMemo(() => {
   //   if (!friendDashboardData) return null;
   //   return friendDashboardData[0]?.friend_faves?.locations || null;
@@ -89,7 +83,6 @@ const {
   //     setFriendFavesData(favesData);
   //   }
   // }, [favesData]);
- 
 
   const updateFavesThemeMutation = useMutation({
     mutationFn: (data) => updateFriendFavesColorThemeSetting(data),
@@ -121,13 +114,17 @@ const {
             },
           };
         }
-      ); 
+      );
     },
   });
 
-  const handleUpdateFavesTheme = ({savedDarkColor, savedLightColor, manualThemeOn}) => {
-    console.warn('handle update faves theme');
- 
+  const handleUpdateFavesTheme = ({
+    savedDarkColor,
+    savedLightColor,
+    manualThemeOn,
+  }) => {
+    console.warn("handle update faves theme");
+
     const theme = {
       userId: user?.id,
       friendId: selectedFriend?.id,
@@ -146,37 +143,58 @@ const {
     }
   };
 
-  const loadingNewFriend = isLoading;
-  const friendLoaded = isSuccess;
-  const errorLoadingFriend = isError;
-
   const deselectFriend = () => {
-    console.warn('DESELECT FRIEND FUNCTUON CALLED');
-
     setSelectedFriend(null);
     // resetTheme();  REMOVED IN ORDER TO REMOVE FRIEND LIST FROM THIS PROVIDER SO THAT THAT DOESN'T WATERFALL. MUST RESET THEME IN COMPONENTS
     // (example: HelloFriendFooter)
   };
- 
+
+  const contextValue = useMemo(
+    () => ({
+      selectedFriend,
+      setFriend: setSelectedFriend,
+      deselectFriend,
+      friendLoaded: isSuccess,
+      errorLoadingFriend: isError,
+      loadingNewFriend: isLoading,
+      isPending,
+      isLoading,
+      isSuccess,
+      friendDashboardData,
+      handleUpdateFavesTheme,
+    }),
+    [
+      selectedFriend,
+      setSelectedFriend,
+      deselectFriend,
+      isSuccess,
+      isError,
+      isLoading,
+      isPending,
+      isLoading,
+      isSuccess,
+      friendDashboardData,
+      handleUpdateFavesTheme,
+    ]
+  );
 
   return (
     <SelectedFriendContext.Provider
-      value={{
-        selectedFriend,
-        setFriend: setSelectedFriend,
-         deselectFriend,
-        friendLoaded,
-        errorLoadingFriend,
-     
-        isPending,
-        isLoading,
-        isSuccess,
-        friendDashboardData,
-        // friendFavesData,
-        // setFriendFavesData,
-        loadingNewFriend,
-        handleUpdateFavesTheme,
-      }}
+      value={contextValue
+      //   {
+      //   selectedFriend,
+      //   setFriend: setSelectedFriend,
+      //   deselectFriend,
+      //   friendLoaded: isSuccess,
+      //   errorLoadingFriend: isError,
+      //   loadingNewFriend: isLoading,
+      //   isPending,
+      //   isLoading,
+      //   isSuccess,
+      //   friendDashboardData,
+      //   handleUpdateFavesTheme,
+      // }
+    }
     >
       {children}
     </SelectedFriendContext.Provider>

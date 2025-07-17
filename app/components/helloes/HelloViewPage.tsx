@@ -7,10 +7,9 @@ import {
   ScrollView,
   DimensionValue,
 } from "react-native";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { FlashList } from "@shopify/flash-list";
-import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
+import { FlashList } from "@shopify/flash-list"; 
 import Animated, {
   useSharedValue,
   SharedValue,
@@ -49,14 +48,36 @@ const HelloViewPage: React.FC<Props> = ({
   cardScaleValue,
 }) => {
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
-  const [momentsViewing, setMomentsViewing] = useState(item.pastCapsules);
+
+
+
+  //  console.log(item.thought_capsules_shared);
+  const listifiedCapsules = item.thought_capsules_shared
+  ? Object.keys(item.thought_capsules_shared).map((key) => {
+    const capsule = item.thought_capsules_shared[key];
+
+    return {
+      id: key,
+      capsule: capsule.capsule,
+      typed_category: capsule.typed_capsule,
+      user_category: capsule.user_category,
+      user_category_name: capsule.user_category_name,
+
+    };
+  
+  }) : [];
+  // console.log(`listifiedCapsules`, listifiedCapsules);
+
+  const [momentsViewing, setMomentsViewing] = useState(listifiedCapsules);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const navigation = useNavigation();
   const iconSize = 18;
   const iconTextSpacer = 10;
   const categoryButtonSpacer = 14;
 
-  const pointsCount = item?.pastCapsules?.length || null;
+  const pointsCount = listifiedCapsules?.length || null;
+
+  
   const dePluralizer = pointsCount === 1 ? "" : "s";
 
   const [currentIndex, setCurrentIndex] = useState();
@@ -80,20 +101,20 @@ const HelloViewPage: React.FC<Props> = ({
 
   const handleCategoryFilterPress = (category) => {
     setMomentsViewing(
-      item.pastCapsules.filter((capsule) => capsule.user_category_name === category)
+      listifiedCapsules.filter((capsule) => capsule.user_category_name === category)
     );
     setSelectedCategory(category);
   };
 
   const handleRemoveCategoryFilter = () => {
-    setMomentsViewing(item.pastCapsules);
+    setMomentsViewing(listifiedCapsules);
     setSelectedCategory(null);
   };
 
   const handleNavToReload = () => {
     navigation.navigate("Reload", {
       helloId: item.id,
-      items: item.pastCapsules,
+      items: listifiedCapsules,
     });
   };
 
@@ -126,7 +147,8 @@ const HelloViewPage: React.FC<Props> = ({
               style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}
             >
               {/* Hello # {currentIndex + 1} */}
-                  Hello # {listLength - currentIndex}
+                  Hello details
+                  {/* # {listLength - currentIndex} */}
             </Text> 
 
             <View style={{padding: 10}}>
@@ -148,7 +170,7 @@ const HelloViewPage: React.FC<Props> = ({
                 color={themeStyles.primaryText.color}
                 style={{ marginRight: iconTextSpacer }}
               />
-              <Text style={themeStyles.primaryText}>{item.locationName}</Text>
+              <Text style={themeStyles.primaryText}>{item.location_name}</Text>
             </View>
             <View style={{ flexDirection: "row" }}>
               <MaterialCommunityIcons
@@ -169,7 +191,7 @@ const HelloViewPage: React.FC<Props> = ({
                     style={{ marginRight: iconTextSpacer }}
                   />
                   <Text style={themeStyles.primaryText}>
-                    {item?.pastCapsules?.length} point{dePluralizer} talked
+                    {item?.thought_capsules_shared?.length} point{dePluralizer} talked
                   </Text>
                   <TouchableOpacity
                     onPress={() => handleNavToReload()}
@@ -217,7 +239,7 @@ const HelloViewPage: React.FC<Props> = ({
                       nestedScrollEnabled
                       data={[
                         ...new Set(
-                          item.pastCapsules.map(
+                          listifiedCapsules.map(
                             (capsule) => capsule.user_category_name
                           )
                         ),
@@ -290,7 +312,7 @@ const HelloViewPage: React.FC<Props> = ({
                 </View>
               </>
             )}
-            {item?.additionalNotes && (
+            {item?.additional_notes && (
               <>
                 <View style={[styles.row, { marginVertical: 10 }]}>
                   <MaterialIcons
@@ -328,7 +350,7 @@ const HelloViewPage: React.FC<Props> = ({
                     }}
                   >
                     <Text style={themeStyles.primaryText}>
-                      {item.additionalNotes}
+                      {item.additional_notes}
                     </Text>
                   </View>
                 </View>

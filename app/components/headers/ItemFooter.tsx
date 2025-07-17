@@ -1,13 +1,13 @@
-import React, {   useState,  useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
- 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
- 
+
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+
 import AboutAppModal from "./AboutAppModal";
 import ReportIssueModal from "./ReportIssueModal";
 import SettingsModal from "./SettingsModal";
-  
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
   SharedValue,
   useAnimatedReaction,
@@ -18,9 +18,12 @@ import LocationTravelTimes from "../locations/LocationTravelTimes";
 
 interface Props {
   data: object;
+   isPartialData?: boolean;
   visibilityValue: SharedValue;
   currentIndexValue: SharedValue;
+ 
   extraData: object;
+  totalItemCount?: number;
   useButtons: boolean;
   onRightPress: () => void;
   onRightPressSecondAction: () => void;
@@ -28,19 +31,18 @@ interface Props {
 
 const ItemFooter: React.FC<Props> = ({
   data,
+  isPartialData, // if is partial then will add 'loaded' to total item count
   currentIndexValue,
   visibilityValue,
-
+  
+  totalItemCount,
   extraData, // JUST LOCATION ITEMS / currently distinguishing between other item types bc passed in functions are different
-  useButtons=true,
+  useButtons = true,
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
 }) => {
- 
- 
- 
-  const { themeStyles, appFontStyles } = useGlobalStyle(); 
- 
+  const { themeStyles, appFontStyles } = useGlobalStyle();
+
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
@@ -56,6 +58,12 @@ const ItemFooter: React.FC<Props> = ({
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
  
+  const totalCount = totalItemCount
+    ? totalItemCount
+    : data?.length
+      ? data.length
+      : 0;
+
   useAnimatedReaction(
     () => currentIndexValue.value,
     (newIndex, prevIndex) => {
@@ -93,8 +101,6 @@ const ItemFooter: React.FC<Props> = ({
     return data[currentIndex];
   }, [currentIndex, data]);
 
- 
-
   return (
     <>
       <Animated.View
@@ -107,12 +113,9 @@ const ItemFooter: React.FC<Props> = ({
           },
           visibilityStyle,
         ]}
-      > 
-{useButtons && (
-  
-        <View style={[styles.divider, themeStyles.divider]} />
-        
-)}
+      >
+        {/* {useButtons && 
+        <View style={[styles.divider, themeStyles.divider]} />} */}
         <>
           {extraData && extraData?.userAddress && extraData?.friendAddress && (
             <View
@@ -138,6 +141,7 @@ const ItemFooter: React.FC<Props> = ({
                   ]}
                 >
                   /{data.length}{" "}
+                  {/* /{totalCount}{" "}{isPartialData && "loaded"} */}
                 </Text>
               </Text>
             </View>
@@ -165,60 +169,55 @@ const ItemFooter: React.FC<Props> = ({
                     { fontSize: 22 },
                   ]}
                 >
-                  /{data.length}{" "}
+                  {/* /{data.length}{" "} */}/{totalCount}{" "}{isPartialData ? "loaded" : "total"}
                 </Text>
               </Text>
             </View>
           )}
         </>
 
-
-
-
-{useButtons && (
-  <>
-        <View style={[styles.divider, themeStyles.divider]} />
-        <View style={{ flex: 1 }}>
+        {useButtons && (
           <>
-            {extraData &&
-              extraData?.userAddress &&
-              extraData?.friendAddress && (
-                <LocationTravelTimes
-                  location={item}
-                  userAddress={extraData.userAddress}
-                  friendAddress={extraData.friendAddress}
-                />
-              )}
-            {!extraData && useButtons && (
-              <Pressable
-                onPress={handleRightPress}
-                style={({ pressed }) => ({
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  opacity: pressed ? 0.6 : 1, // optional visual feedback
-                })}
-              >
-                <MaterialCommunityIcons
-                  name="send"
-                  size={50}
-                  color={themeStyles.primaryText.color}
-                />
-                {/* <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
+            <View style={[styles.divider, themeStyles.divider]} />
+            <View style={{ flex: 1 }}>
+              <>
+                {extraData &&
+                  extraData?.userAddress &&
+                  extraData?.friendAddress && (
+                    <LocationTravelTimes
+                      location={item}
+                      userAddress={extraData.userAddress}
+                      friendAddress={extraData.friendAddress}
+                    />
+                  )}
+                {!extraData && useButtons && (
+                  <Pressable
+                    onPress={handleRightPress}
+                    style={({ pressed }) => ({
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      opacity: pressed ? 0.6 : 1, // optional visual feedback
+                    })}
+                  >
+                    <MaterialCommunityIcons
+                      name="send"
+                      size={50}
+                      color={themeStyles.primaryText.color}
+                    />
+                    {/* <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 44}]}>{currentIndex + 1}<Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}>
               
              /{data.length} </Text></Text> */}
-              </Pressable>
-            )}
+                  </Pressable>
+                )}
+              </>
+            </View>
           </>
-        </View>
-        </>
-        
-)}
+        )}
         {extraData && (
           <>
             <View style={[styles.divider, themeStyles.divider]} />
             <View style={{ flex: 1 }}>
-             
               <Pressable
                 onPress={onRightPressSecondAction}
                 style={({ pressed }) => ({
@@ -238,7 +237,6 @@ const ItemFooter: React.FC<Props> = ({
              /{data.length} </Text></Text> */}
               </Pressable>
             </View>
-            
           </>
         )}
       </Animated.View>
@@ -280,7 +278,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     zIndex: 1,
-  }, 
+  },
   divider: {
     marginVertical: 10,
   },

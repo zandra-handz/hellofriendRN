@@ -18,7 +18,7 @@ const FriendCategoryHistoryChart = ({
   listData,
   radius = 80,
   labelsSize = 9,
-  o
+   
 }: Props) => {
   //  console.log(`listdata in friendhistorychart chart`, listData);
   const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);

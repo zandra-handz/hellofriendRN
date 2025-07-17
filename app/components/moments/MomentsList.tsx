@@ -14,10 +14,7 @@ import CategoryNavigator from "./CategoryNavigator";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard"; 
 
-
-import MomentsStaticButton from "../buttons/moments/MomentsStaticButton";
-import HelloesStaticButton from "../buttons/helloes/HelloesStaticButton";
-import ImagesStaticButton from "../buttons/images/ImagesStaticButton";
+ 
 
 import Animated, {
   LinearTransition,

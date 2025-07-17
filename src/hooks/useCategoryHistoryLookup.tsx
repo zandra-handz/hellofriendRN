@@ -1,17 +1,11 @@
-import { View, Text } from "react-native";
-import React, { useEffect } from "react";
+ 
 import { useUser } from "../context/UserContext";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
+import { 
   useInfiniteQuery,
 } from "@tanstack/react-query";
 
-import {
-  fetchCategoriesHistoryAPI,
-  fetchCapsulesHistoryAPI,
-  fetchCategoriesHistoryCountAPI,
+import { 
+  fetchCapsulesHistoryAPI, 
 } from "../calls/api";
 
 type Capsule = {
@@ -31,33 +25,7 @@ type Props = {
   categoryId: number;
 };
 
-// const useCategoryHistoryLookup = ({ categoryId }: Props) => {
-//   const { user, isAuthenticated, isInitializing } = useUser();
-
-//   const {
-//     data: categoryHistory,
-//     isLoading,
-//     isFetching,
-//     isSuccess,
-//     isError,
-//   } = useQuery({
-//     queryKey: ["userStats", user?.id, categoryId],
-//     queryFn: () => fetchCategoriesHistoryAPI(categoryId, true),
-//     enabled: !!(categoryId && user?.id && isAuthenticated && !isInitializing),
-//     staleTime: 1000 * 60 * 60 * 10,
-//   });
-
-//   return {
-//     categoryHistory,
-//     isLoading,
-//     isFetching,
-//     isSuccess,
-//     isError,
-//   };
-// };
-
-// export default useCategoryHistoryLookup
-//
+ 
 
 const useCategoryHistoryLookup = ({
   categoryId,
@@ -83,14 +51,12 @@ const useCategoryHistoryLookup = ({
     CategoryHistoryResponse,
     (string | number | undefined)[],
     number
-  >({
-    // queryKey: ["userStats", user?.id, categoryId],
+  >({ 
 
     queryKey: friendId
   ? ["friendStats", user?.id, categoryId, "friend", friendId]
   : ["userStats", user?.id, categoryId],
-    queryFn: async ({ pageParam = 1 }) => {
-      // console.log("Calling fetchCategoriesHistoryAPI with page:", pageParam);
+    queryFn: async ({ pageParam = 1 }) => { 
       return await fetchCapsulesHistoryAPI({
         categoryId: categoryId,
      friendId: friendId,
@@ -111,18 +77,7 @@ const useCategoryHistoryLookup = ({
 
   const flatResults = data?.pages.flatMap((page) => page.results) ?? [];
 
-  // useEffect(() => {
-  //   if (flatResults) {
-  //       console.log(`FLAT RESULTS`, flatResults);
-  //   }
-
-  // }, [flatResults]);
-
-  // useEffect(() => {
-  //   if (data) {
-  //     console.log(`DATA RESULTS`, data);
-  //   }
-  // }, [data]);
+ 
 
   return {
     categoryHistory: flatResults,
@@ -136,59 +91,5 @@ const useCategoryHistoryLookup = ({
   };
 };
 
-//   const {
-//     data,
-//     isLoading,
-//     isFetching,
-//     isFetchingNextPage,
-//     isSuccess,
-//     isError,
-//     fetchNextPage,
-//     hasNextPage,
-//   } =
-
-//  useInfiniteQuery<
-//   CategoryHistoryResponse,
-//   Error,
-//   CategoryHistoryResponse,
-//   (string | number | undefined)[],
-//   number
-// >
-//   ({
-
-//     queryKey: ["userStats", user?.id, categoryId],
-//     queryFn: async ({ pageParam = 1 }) => {
-//       return await fetchCategoriesHistoryAPI(categoryId, true, pageParam);
-//     },
-//     getNextPageParam: (lastPage) => {
-//       if (!lastPage?.next) return undefined;
-//       const nextUrl = new URL(lastPage.next);
-//       return Number(nextUrl.searchParams.get("page"));
-//     },
-//     initialPageParam: 1,
-//     enabled: !!(categoryId && user?.id && isAuthenticated && !isInitializing),
-//     staleTime: 1000 * 60 * 60 * 10,
-//   });
-
-//   useEffect(() => {
-//     if (data) {
-//         console.log(data);
-//     }
-
-//   }, [data]);
-
-//   const flatResults = data?.pages.flatMap((page) => page.results) ?? [];
-
-//   return {
-//     categoryHistory: flatResults,
-//     isLoading,
-//     isFetching,
-//     isFetchingNextPage,
-//     isSuccess,
-//     isError,
-//     fetchNextPage,
-//     hasNextPage,
-//   };
-// };
 
 export default useCategoryHistoryLookup;

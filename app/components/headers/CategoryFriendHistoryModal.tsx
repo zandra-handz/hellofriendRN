@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
@@ -14,13 +7,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
-import {
-  MaterialIcons,
-  MaterialCommunityIcons,
-  Foundation,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons, Foundation } from "@expo/vector-icons";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
+import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
+import { updateMomentAPI } from "@/src/calls/api";
 interface Props {
   title: string;
   isVisible: boolean;
@@ -81,7 +72,7 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
     fetchNextPage,
     hasNextPage,
   } = useCategoryHistoryLookup({ categoryId: categoryID, friendId: friendID });
- 
+
   useEffect(() => {
     if (categoryHistory) {
       setCompletedCapsuleCount(categoryHistory.length);
@@ -103,7 +94,7 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
   const handleGoToHelloView = (helloId) => {
     // console.log("handleGoToHelloView pressed");
     const helloIndex = helloesList.findIndex((hello) => hello.id === helloId);
-    // console.log("helloIndex", helloIndex);
+     console.log("helloIndex", helloId);
 
     if (helloIndex) {
       navigation.navigate("HelloView", {
@@ -138,10 +129,10 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
           <View style={{ width: "100%", flexShrink: 1 }}>
             <View
               style={{
-                flexDirection: "row", 
+                flexDirection: "row",
                 alignItems: "center",
-                justifyContent: 'space-between',
-           
+                justifyContent: "space-between",
+
                 width: "100%",
               }}
             >
@@ -149,14 +140,14 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
                 style={[
                   styles.momentItemText,
                   themeStyles.primaryText,
-                  {  fontFamily: "Poppins-Bold" },
+                  { fontFamily: "Poppins-Bold" },
                 ]}
               >
                 @ {getFriendNameFromList(item.friend)} on{" "}
                 {getHelloDateFromList(item.hello)}
               </Text>
               <MaterialCommunityIcons
-                onPress={handleGoToHelloView}
+                onPress={() => handleGoToHelloView(item.hello)}
                 // name="hand-wave-outline"
                 name="calendar-heart"
                 size={16}
@@ -205,7 +196,7 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
       return ``;
     }
 
-    return `(` + count + `)`;
+    return `(` + count + ` loaded)`;
   };
 
   return (
@@ -246,15 +237,13 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
                   fetchNextPage();
                 }
               }}
-              onEndReachedThreshold={0.5}  
+              onEndReachedThreshold={0.5}
               ListFooterComponent={
-                isFetchingNextPage ? (
-                  <Text
-                    style={[styles.momentItemText, themeStyles.genericText]}
-                  >
-                    Loading more...
-                  </Text>
-                ) : null
+                <InfiniteScrollSpinner
+                  isFetchingNextPage={isFetchingNextPage}
+                  color={themeStyles.primaryText.color}
+                  height={50}
+                />
               }
             />
           )}

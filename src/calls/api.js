@@ -1099,43 +1099,43 @@ export const deleteHelloAPI = async (data) => {
 export const fetchPastHelloes = async (friendId) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/helloes/`
+      `/friends/${friendId}/helloes/summary/`
     );
     if (response && response.data) {
       const helloesData = response.data;
       console.log("API GET CALL fetchPastHelloes"); //, response.data);
+return response.data;
+    //  const formattedHelloesList = helloesData.map((hello) => {
+    //     const pastCapsules = hello.thought_capsules_shared
+    //       ? Object.keys(hello.thought_capsules_shared).map((key) => {
+    //           const capsule = hello.thought_capsules_shared[key];
+    //           // console.log(`Capsule ID ${key}:`, capsule); // ✅ log all fields for this capsule
 
-     const formattedHelloesList = helloesData.map((hello) => {
-        const pastCapsules = hello.thought_capsules_shared
-          ? Object.keys(hello.thought_capsules_shared).map((key) => {
-              const capsule = hello.thought_capsules_shared[key];
-              // console.log(`Capsule ID ${key}:`, capsule); // ✅ log all fields for this capsule
+    //           return {
+    //             id: key,
+    //             capsule: capsule.capsule,
+    //             typed_category: capsule.typed_category,
+    //             user_category: capsule.user_category,
+    //             user_category_name: capsule.user_category_name,
+    //           };
+    //         })
+    //       : [];
 
-              return {
-                id: key,
-                capsule: capsule.capsule,
-                typed_category: capsule.typed_category,
-                user_category: capsule.user_category,
-                user_category_name: capsule.user_category_name,
-              };
-            })
-          : [];
-
-        return {
-          id: hello.id,
-          created: hello.created_on,
-          updated: hello.updated_on,
-          dateLong: hello.date,
-          date: hello.past_date_in_words,
-          type: hello.type,
-          typedLocation: hello.typed_location,
-          locationName: hello.location_name,
-          location: hello.location,
-          additionalNotes: hello.additional_notes,
-          pastCapsules: pastCapsules,
-        };
-      });
-      return formattedHelloesList;
+    //     return {
+    //       id: hello.id,
+    //       created: hello.created_on,
+    //       updated: hello.updated_on,
+    //       dateLong: hello.date,
+    //       date: hello.past_date_in_words,
+    //       type: hello.type,
+    //       typedLocation: hello.typed_location,
+    //       locationName: hello.location_name,
+    //       location: hello.location,
+    //       additionalNotes: hello.additional_notes,
+    //       pastCapsules: pastCapsules,
+    //     };
+    //   });
+    //   return formattedHelloesList;
     } else {
       console.log("fetchPastHelloes: no helloes added yet");
       return [];
@@ -1160,6 +1160,60 @@ export const saveMomentAPI = async (requestData) => {
     throw error;
   }
 };
+
+
+export const fetchPastHelloesFull = async ({friendId, page = 1}) => {
+  try {
+
+    const params = new URLSearchParams();
+
+    params.append("page", page);
+
+    console.log(params);
+    console.log(`hello full friend id: `, friendId);
+
+    const response = await helloFriendApiClient.get(
+      `/friends/${friendId}/helloes/?${params.toString()}`);
+   console.log(response.data.results);
+    if (response?.data && response?.data?.results) {
+
+
+    //  const formattedHelloesList = response.data.results.map((hello) => {
+    //     const pastCapsules = hello.thought_capsules_shared
+    //       ? Object.keys(hello.thought_capsules_shared).map((key) => {
+    //           const capsule = hello.thought_capsules_shared[key];
+    //           // console.log(`Capsule ID ${key}:`, capsule); // ✅ log all fields for this capsule
+
+    //           return {
+    //             id: key,
+    //             capsule: capsule.capsule,
+    //             typed_category: capsule.typed_category,
+    //             user_category: capsule.user_category,
+    //             user_category_name: capsule.user_category_name,
+    //           };
+    //         })
+    //       : [];
+
+    //     return {
+    //      
+    //       thought_capsules_shared: pastCapsules,
+    //     };
+    //   });
+    //   return formattedHelloesList;
+
+      return response.data; // DRF-style: { count, next, previous, results }
+    } else {
+      console.log("No data returned from fetchCategoriesHistoryAPI.");
+      return { results: [], next: null, previous: null };
+    }
+
+ 
+  } catch (error) {
+    console.error("Error fetching helloes: ", error);
+    throw error;
+  }
+};
+
 
 export const saveHello = async (requestData) => {
   // console.log('saveHellodata: ', requestData);

@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { View, Text, ScrollView, StyleSheet, FlatList } from "react-native";
- 
+
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useUserStats } from "@/src/context/UserStatsContext";
-import LoadingPage from "../appwide/spinner/LoadingPage";
-import { MaterialIcons, MaterialCommunityIcons, Foundation } from "@expo/vector-icons";
+ 
+import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
+import {
+  MaterialIcons,
+  MaterialCommunityIcons,
+  Foundation,
+} from "@expo/vector-icons";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 interface Props {
   isVisible: boolean;
@@ -52,31 +57,29 @@ const CategoryHistoryModal: React.FC<Props> = ({
     fetchNextPage,
     hasNextPage,
   } = useCategoryHistoryLookup({ categoryId: categoryID });
- 
 
   const formatCapsuleCreationDate = (createdOn) => {
-  if (!createdOn) return "";
+    if (!createdOn) return "";
 
-  const date = new Date(createdOn);
-  const now = new Date();
+    const date = new Date(createdOn);
+    const now = new Date();
 
-  const isCurrentYear = date.getFullYear() === now.getFullYear();
+    const isCurrentYear = date.getFullYear() === now.getFullYear();
 
-  return date.toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    ...(isCurrentYear ? {} : { year: "numeric" }),
-  });
-};
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      ...(isCurrentYear ? {} : { year: "numeric" }),
+    });
+  };
 
- const categoryHistoryFormatted = useMemo(() => {
-  return categoryHistory?.map((item) => ({
-    ...item,
-    formattedDate: formatCapsuleCreationDate(item.created_on),
-  }));
-}, [categoryHistory]);
-
+  const categoryHistoryFormatted = useMemo(() => {
+    return categoryHistory?.map((item) => ({
+      ...item,
+      formattedDate: formatCapsuleCreationDate(item.created_on),
+    }));
+  }, [categoryHistory]);
 
   const getFriendNameFromList = (friendId) => {
     const friend = friendList.find((friend) => friend.id === friendId);
@@ -84,54 +87,48 @@ const CategoryHistoryModal: React.FC<Props> = ({
     return friend?.name || "";
   };
 
+  const renderMiniMomentItem = useCallback(
+    ({ item, index }) => (
+      <View
+        style={[
+          styles.momentCheckboxContainer,
+          {
+            paddingBottom: 10,
+            paddingTop: 10,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: themeStyles.primaryText.color,
+          },
+        ]}
+      >
+        <View style={styles.momentItemTextContainer}>
+          <View style={styles.checkboxContainer}>
+            <Foundation
+              name={"comment-quotes"}
+              size={24}
+              color={themeStyles.primaryText.color}
+            />
+          </View>
 
+          <View style={{ width: "100%", flexShrink: 1 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
 
-
-
-  
-    const renderMiniMomentItem = useCallback(
-      ({ item, index }) => (
-        <View
-          style={[
-            styles.momentCheckboxContainer,
-            {
-              paddingBottom: 10,
-              paddingTop: 10,
-              borderBottomWidth: StyleSheet.hairlineWidth,
-              borderBottomColor: themeStyles.primaryText.color,
-            },
-          ]}
-        >
-          <View style={styles.momentItemTextContainer}>
-            <View style={styles.checkboxContainer}>
-              <Foundation
-                name={"comment-quotes"}
-                size={24}
-                color={themeStyles.primaryText.color}
-              />
-            </View>
-  
-            <View style={{ width: "100%", flexShrink: 1 }}>
-              <View
-                style={{
-                  flexDirection: "row", 
-                  alignItems: "center",
-                  justifyContent: 'space-between',
-             
-                  width: "100%",
-                }}
+                width: "100%",
+              }}
+            >
+              <Text
+                style={[
+                  styles.momentItemText,
+                  themeStyles.primaryText,
+                  { fontFamily: "Poppins-Bold" },
+                ]}
               >
-                <Text
-                  style={[
-                    styles.momentItemText,
-                    themeStyles.primaryText,
-                    {  fontFamily: "Poppins-Bold" },
-                  ]}
-                >
-                  @ {getFriendNameFromList(item.friend)} 
-                  {" "}on{" "}{item.formattedDate}
-                </Text>
-                {/* <MaterialCommunityIcons
+                @ {getFriendNameFromList(item.friend)} on {item.formattedDate}
+              </Text>
+              {/* <MaterialCommunityIcons
                   onPress={handleGoToHelloView}
                   // name="hand-wave-outline"
                   name="calendar-heart"
@@ -139,12 +136,12 @@ const CategoryHistoryModal: React.FC<Props> = ({
                   color={themeStyles.primaryText.color}
                   style={{ marginHorizontal: 4 }}
                 /> */}
-              </View>
-              <Text style={[styles.momentItemText, themeStyles.primaryText]}>
-                {item.capsule}
-              </Text>
-  
-              {/* <View
+            </View>
+            <Text style={[styles.momentItemText, themeStyles.primaryText]}>
+              {item.capsule}
+            </Text>
+
+            {/* <View
                 style={{
                   height: 20,
                   width: "100%",
@@ -163,22 +160,19 @@ const CategoryHistoryModal: React.FC<Props> = ({
                         />
   
               </View> */}
-            </View>
           </View>
         </View>
-      ),
-      [
-        getFriendNameFromList,
-         formatCapsuleCreationDate,
-        // getHelloDateFromList,
-  
-        themeStyles,
-        styles,
-      ]
-    );
+      </View>
+    ),
+    [
+      getFriendNameFromList,
+      formatCapsuleCreationDate,
+      // getHelloDateFromList,
 
-
-
+      themeStyles,
+      styles,
+    ]
+  );
 
   return (
     <ModalWithGoBack
@@ -191,11 +185,11 @@ const CategoryHistoryModal: React.FC<Props> = ({
             { fontSize: 26 },
           ]}
         >
-                    <MaterialCommunityIcons
-                      name={"comment-check-outline"}
-                      size={24}
-                      color={themeStyles.modalIconColor.color}
-                    />
+          <MaterialCommunityIcons
+            name={"comment-check-outline"}
+            size={24}
+            color={themeStyles.modalIconColor.color}
+          />
         </Text>
         // <MaterialIcons
         //   name={"category"}
@@ -245,22 +239,13 @@ const CategoryHistoryModal: React.FC<Props> = ({
                   fetchNextPage();
                 }
               }}
-              onEndReachedThreshold={0.5} 
+              onEndReachedThreshold={0.5}
               ListFooterComponent={
-                <View style={{  height: 'auto', minHeight: 20}}>
-                  
-                {isFetchingNextPage && (
-                   <View style={{height: 50}}>
-                  <LoadingPage 
-                  loading={true}
-                  spinnerSize={20}
-                  spinnerType={'flow'}
+                <InfiniteScrollSpinner
+                  isFetchingNextPage={isFetchingNextPage}
                   color={themeStyles.primaryText.color}
-
-                  /> 
-                  </View>
-                )}
-                </View>
+                  height={50}
+                />
               }
             />
           )}
