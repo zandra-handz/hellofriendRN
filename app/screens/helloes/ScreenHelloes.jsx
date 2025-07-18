@@ -124,8 +124,9 @@ const ScreenHelloes = () => {
 
           <View style={{ flex: 1 }}>
             {/* {helloesData && <HelloesListNew triggerScroll={triggerScroll} data={helloesData} onPress={navigateToSingleView} />} */}
-            {helloesDataFiltered && helloesDataFiltered.length > 0 && (
+            {selectedFriend && helloesDataFiltered && helloesDataFiltered.length > 0 && (
               <HelloesListNew
+              friendName={selectedFriend.name}
                 triggerScroll={triggerScroll}
                 helloesListFull={helloesDataFiltered}
                 isFetchingNextPage={isFetchingNextPage}

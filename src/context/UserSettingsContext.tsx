@@ -59,7 +59,7 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
   children,
 }) => {
   // const { user, isInitializing  } = useUser();
-  console.error("USER SETTINGS CONTEXT");
+ 
 
 //  useEffect(() => {
  
@@ -93,10 +93,10 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
   });
 
 
-  useEffect(() => {
-    console.error('user triggering settings!!!', user);
+  // useEffect(() => {
+  //   console.error('user triggering settings!!!', user);
 
-  }, [user]);
+  // }, [user]);
 
   const [settings, setSettings] = useState<Record<string, any> | null>(null);
 

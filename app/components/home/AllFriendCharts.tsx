@@ -1,20 +1,12 @@
 import { View, Text } from "react-native";
-import React, { useCallback, useState, useEffect } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-import { useNavigation } from "@react-navigation/native";
+import React, {   useState, useEffect } from "react";  
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useCategories } from "@/src/context/CategoriesContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import { ScrollView } from "react-native-gesture-handler";
-import { useFriendList } from "@/src/context/FriendListContext";
-import Pie from "../headers/Pie";
+import { MaterialCommunityIcons } from "@expo/vector-icons";  
+import { ScrollView } from "react-native-gesture-handler"; 
+ 
 import CategoryDetailsModal from "../headers/CategoryDetailsModal";
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
-import { useUserStats } from "@/src/context/UserStatsContext";
-import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
+import { useUserStats } from "@/src/context/UserStatsContext"; 
 import FriendCategoryHistoryChart from "./FriendCategoryHistoryChart";
 import UserCategoryHistoryChart from "./UserCategoryHistoryChart";
 type Props = {
@@ -24,27 +16,15 @@ type Props = {
 
 //selectedFriend is the full friend object so can access the fields (.name, etc)
 const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const navigation = useNavigation();
-  const { stats } = useUserStats();
-  const { capsuleList } = useCapsuleList();
+  const { themeStyles  } = useGlobalStyle();
+ 
+  const { stats } = useUserStats(); 
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
-  const { themeAheadOfLoading } = useFriendList();
-  const [categoryColors, setCategoryColors] = useState<string[]>([]);
-  const [colors, setColors] = useState<string[]>([]);
-  const { userCategories } = useCategories();
+ 
 
   const { selectedFriendStats } = useSelectedFriendStats();
 
-  const { categorySizes, generateGradientColors, generateRandomColors } =
-    useMomentSortingFunctions({
-      listData: capsuleList,
-    });
-
-  const { categoryFriendHistorySizes } = useStatsSortingFunctions({
-    listData: selectedFriendStats,
-  });
-
+ 
   const HEIGHT = 270;
 
   const CHART_RADIUS = 90;

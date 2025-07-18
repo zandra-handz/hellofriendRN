@@ -1,12 +1,20 @@
-import { View,  Pressable } from "react-native";
+import { View, Pressable, Text, FlatList } from "react-native";
 import React, { useEffect, useCallback, useRef } from "react";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, AnimatedFlashList } from "@shopify/flash-list";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import HelloItem from "./HelloItem"; 
+import HelloItem from "./HelloItem";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
-
+import Animated, {
+  LinearTransition,
+  JumpingTransition,
+  CurvedTransition,
+  EntryExitTransition,
+  SequencedTransition,
+  FadingTransition,
+} from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 type Props = {
+  friendName: string;
   helloesListFull: object[];
   isFetchingNextPage: boolean;
   applyInPersonFilter: boolean;
@@ -17,6 +25,7 @@ type Props = {
 };
 
 const HelloesListNew = ({
+  friendName,
   helloesListFull,
   isFetchingNextPage,
   fetchNextPage,
@@ -24,13 +33,13 @@ const HelloesListNew = ({
   triggerScroll,
   onPress,
 }: Props) => {
-  const ITEM_HEIGHT = 140;
+  const ITEM_HEIGHT = 90;
   const ITEM_BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
   const navigation = useNavigation();
   const flatListRef = useRef(null);
 
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
 
   useEffect(() => {
     if (triggerScroll) {
@@ -85,12 +94,19 @@ const HelloesListNew = ({
   );
 
   return (
-    <View style={{ paddingTop: 30, flex: 1 }}>
-      <FlashList
+    <View style={{ paddingTop: 0, flex: 1, paddingHorizontal: 4 }}>
+      <View style={{padding: 20, alignItems: 'center', backgroundColor: themeStyles.primaryBackground.backgroundColor, borderRadius: 30, height: 'auto', marginVertical: 10 }}>
+<Text numberOfLines={2} style={[themeStyles.primaryText, appFontStyles.welcomeText]}>
+Hello history for {friendName}
+</Text>
+      </View>
+      <Animated.FlatList
+      fadingEdgeLength={20}
         ref={flatListRef}
         data={helloesListFull}
         // data={filteredData}
-        estimatedItemSize={144}
+        itemLayoutAnimation={LinearTransition}
+        // estimatedItemSize={144}
         renderItem={renderHelloItem}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
@@ -99,6 +115,7 @@ const HelloesListNew = ({
         }}
         onEndReachedThreshold={0.5}
         keyExtractor={extractItemKey}
+        //getItemLayout={getItemLayout}
         // getItemLayout={getItemLayout}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
@@ -106,10 +123,10 @@ const HelloesListNew = ({
         removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
         ListFooterComponent={
-          <InfiniteScrollSpinner 
-          isFetchingNextPage={isFetchingNextPage}
-          color={themeStyles.primaryText.color}
-          height={200}
+          <InfiniteScrollSpinner
+            isFetchingNextPage={isFetchingNextPage}
+            color={themeStyles.primaryText.color}
+            height={200}
           />
         }
       />

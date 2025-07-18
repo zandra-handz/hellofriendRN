@@ -9,7 +9,7 @@ const Pie = ({ data, widthAndHeight=50, labelsSize=9, onSectionPress=null, onLon
     const { manualGradientColors, themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
  
-console.log('pie component rerendered, size: ', widthAndHeight);
+// console.log('pie component rerendered, size: ', widthAndHeight);
 
 //   console.log(`sortedListLength: `, data.length);
 //   console.log(data);

@@ -1,32 +1,33 @@
 import { View, Text } from "react-native";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
+// import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Donut from "../headers/Donut"; 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
- 
+ import { AppState, AppStateStatus } from 'react-native';
+
 import { useFriendList } from "@/src/context/FriendListContext"; 
  
 import CategoryDetailsModal from "../headers/CategoryDetailsModal";
 
-import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+// import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
  
 import { useCategories } from "@/src/context/CategoriesContext";
-import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
+// import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
  
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
 };
 
-const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
+const TalkingPointsChart = ({ outerPadding }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation(); 
-  const { capsuleList,categoryStartIndices } = useCapsuleList();
+  const { capsuleList } = useCapsuleList();
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const { themeAheadOfLoading } = useFriendList();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
@@ -35,16 +36,40 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
     userCategories
   } = useCategories();
 
-  const { selectedFriendStats } = useSelectedFriendStats();
+   const appState = useRef(AppState.currentState);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
+      console.log("App state changed:", nextState);
+
+      
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextState === "active"
+      ) {
+
+
+        console.log("App has come to the foreground!"); 
+        if (!capsuleList || capsuleList?.length < 1) {
+        return;
+      }
+
+      let categories = categorySizes(); 
+      setTempCategoriesSortedList(categories.sortedList); 
+      }
+
+      appState.current = nextState;
+    });
+
+    return () => subscription.remove(); // cleanup
+  }, [capsuleList]);
+ 
 
   const { categorySizes, generateGradientColors, generateRandomColors } =
     useMomentSortingFunctions({
       listData: capsuleList,
     });
-
-  const { categoryHistorySizes } = useStatsSortingFunctions({
-    listData: selectedFriendStats,
-  });
+ 
 
   const HEIGHT = 370;
 
@@ -57,11 +82,9 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
   const LABELS_DISTANCE_FROM_CENTER = -56;
   const LABELS_SLICE_END = 4;
   const CENTER_TEXT_SIZE = 50;
-
-  const [categoriesMap, setCategoriesMap] = useState({});
-  const [categoriesSortedList, setCategoriesSortedList] = useState([]);
+ 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
-  const [tempCategoriesMap, setTempCategoriesMap] = useState({});
+ 
 
   const [viewCategoryId, setViewCategoryId] = useState(null);
 
@@ -80,44 +103,15 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
     }
     navigation.navigate('Moments', {scrollTo: categoryId})
   };
-
-
-  // useEffect(() => {
-  //   if (selectedFriendStats){
-  //     console.log('~~~~~~~~~SELECTED FRIEND STATS!', selectedFriendStats);
-  //   }
-
-  // }, [selectedFriendStats]);
-
-  const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
-  const [friendHistoryHasAnyCapsules, setFriendHistoryHasAnyCapsules] =
-    useState(false);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!selectedFriendStats || selectedFriendStats?.length < 1) {
-        return;
-      }
-
-      let categories = categoryHistorySizes();
-      //  console.log(categories);
-      setFriendHistorySortedList(categories.sortedList);
-      setFriendHistoryHasAnyCapsules(categories.hasAnyCapsules);
-    }, [selectedFriendStats])
-  );
-
+ 
   useFocusEffect(
     useCallback(() => {
       if (!capsuleList || capsuleList?.length < 1) {
         return;
       }
 
-      let categories = categorySizes();
-      //  console.log(categories);
-      setCategoriesMap(categories.lookupMap);
-      setCategoriesSortedList(categories.sortedList);
-      setTempCategoriesSortedList(categories.sortedList);
-      setTempCategoriesMap(categories.lookupMap);
+      let categories = categorySizes(); 
+      setTempCategoriesSortedList(categories.sortedList); 
     }, [capsuleList])
   );
 

@@ -16,8 +16,7 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 
 // Animated version of SVG Path
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -60,7 +59,7 @@ const getArcPath = (cx, cy, r, startAngle, endAngle) => {
     };
   };
 
-  // 🔧 Cap endAngle at 359.99 to avoid full-circle issue
+  // Cap endAngle at 359.99 to avoid full-circle issue
   const safeEndAngle = Math.min(endAngle, startAngle + 359.99);
 
   const start = polarToCartesian(cx, cy, r, safeEndAngle);
@@ -161,7 +160,9 @@ export default function AnimatedPieChart({
             radius + radius * labelDistanceFactor * Math.sin(toRad(midAngle));
 
           return (
-            <>
+
+            // after adding this still got error, so problem one might be one below, unless both were giving error 
+            <View key={`pieChartSlice-${index}`}>
               {onSectionPress && (
                 <Pressable
                   key={`pressable-${index}`}
@@ -203,7 +204,7 @@ export default function AnimatedPieChart({
                   </Text>
                 </Pressable>
               )}
-            </>
+            </View>
           );
         })}
       </View>
@@ -217,7 +218,7 @@ export default function AnimatedPieChart({
             cumulativeAngle = endAngle;
 
             return (
-              <>
+              <View key={`${slice.id}-${slice.name}`}>
                 {/* <AnimatedPressable onPress={onSectionPress} style={{position: 'absolute', top: 50, left: 100, height: 40, width: 100, backgroundColor: 'orange'}}>
 
               </AnimatedPressable> */}
@@ -230,7 +231,7 @@ export default function AnimatedPieChart({
                   progress={progress}
                   onPress={onSectionPress}
                 />
-              </>
+              </View>
             );
           })}
         </G>
