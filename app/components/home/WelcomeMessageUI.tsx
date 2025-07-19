@@ -17,11 +17,17 @@ interface WelcomeMessageUIProps {
   isKeyboardVisible: boolean; // indirect condition to change message to friend picker
   onPress: () => void; // because i have turned this component into a focus moment text button
   // in order to let it fill as much space as possible while still being under the friend picker
+    borderBottomRightRadius: number;
+  borderBottomLeftRadius: number;
+  backgroundColor: string;
 }
 
 const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   username = "",
   isNewUser = false,
+    borderBottomRightRadius=10,
+  borderBottomLeftRadius=10,
+  backgroundColor='red',
   //isKeyboardVisible = false,
   onPress = () => {},
 }) => {
@@ -48,12 +54,15 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
       // exiting={FadeOut}
       style={[
         {
+                    backgroundColor: backgroundColor,
+          borderBottomLeftRadius: borderBottomLeftRadius,
+          borderBottomRightRadius: borderBottomRightRadius,
           alignText: "center",
           flexWrap: "flex",
           width: "100%",
           padding: 10,
-          paddingTop: 15,
-          paddingBottom: 15,
+          paddingTop: 10, // same as friend message
+          paddingBottom: 10, // same as friend message
           flexDirection: "row",
           justifyContent: "flex-start",
         },

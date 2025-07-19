@@ -142,20 +142,22 @@ const handleManualFocus = useCallback(() => {
               width: "100%",
               height: multiline ? "100%" : 30,
               paddingLeft: 18,
-              marginTop: 8,
+              marginTop: 0,
               paddingTop: multiline ? 0 : 0,
-              borderRadius: 10,
+              borderRadius: 0,
               backgroundColor: multiline
-                ? "themeStyles.primaryBackground.backgroundColor"
+                ? themeStyles.primaryBackground.backgroundColor
                 : // ? manualGradientColors.homeDarkColor
-                  "transparent",
+                  themeStyles.overlayBackgroundColor.backgroundColor
               //  backgroundColor: 'red',
+                // backgroundColor: 'teal',
             },
+          
           ]}
         >
           <>
             <View style={{ flex: 1 }}>
-              <></>
+       
               {!editedMessage && (
                 <>
                   <View
@@ -355,7 +357,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     minHeight: 30,
     maxHeight: 30,
-    height: 30,
+    height: 30, 
   },
 
   title: {

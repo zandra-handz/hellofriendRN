@@ -6,12 +6,16 @@ import Pie from "../headers/Pie";
 import CategoryHistoryModal from "../headers/CategoryHistoryModal";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 type Props = {
+  listData: object[];
+  showPercentages: boolean;
   radius: number;
   labelsSize: number;
   onLongPress: () => void;
+  showFooterLabel: boolean;
+  
 };
 
-const UserCategoryHistoryChart = ({ listData, radius = 80, labelsSize=9, onLongPress }: Props) => {
+const UserCategoryHistoryChart = ({ listData, showPercentages=false, radius = 80, labelsSize=9, onLongPress, showFooterLabel=true }: Props) => {
   // console.log(`listdata in usercategoryhistory chart`, listData);
   const [userHistorySortedList, setUserHistorySortedList] = useState([]);
     const [historyModalVisible, setHistoryModalVisible] = useState(false);
@@ -58,18 +62,22 @@ const UserCategoryHistoryChart = ({ listData, radius = 80, labelsSize=9, onLongP
       {userHistorySortedList && userHistoryHasAnyCapsules && (
         <View
           style={{
+            height: '100%', 
             marginHorizontal: 10,
             alignItems: "center",
             flexDirection: "column",
           }}
         >
           <Pie
+          showPercentages={showPercentages}
             data={userHistorySortedList}
             widthAndHeight={radius * 2}
-            labelSize={5}
+            labelsSize={labelsSize}
             onSectionPress={handleCategoryPress}
             onLongSectionPress={onLongPress}
           />
+          {showFooterLabel && ( 
+            
           <View style={{}}>
             <Text
               style={[
@@ -80,6 +88,8 @@ const UserCategoryHistoryChart = ({ listData, radius = 80, labelsSize=9, onLongP
               All friends
             </Text>
           </View>
+          
+          )}
         </View>
       )}
             {historyModalVisible && viewCategoryId && viewCategoryName && (

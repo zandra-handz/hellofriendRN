@@ -16,7 +16,7 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 // Animated version of SVG Path
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -102,16 +102,15 @@ export default function AnimatedPieChart({
   size = 200,
   radius = 100,
   duration = 1200,
+  showPercentages = false,
   onSectionPress = null,
-  onLongSectionPress = () => console.log('placeholder'),
+  onLongSectionPress = () => console.log("placeholder"),
   labelsSize = 9,
 }) {
   const progress = useSharedValue(0);
   const { themeStyles, appFontStyles } = useGlobalStyle();
   console.log("data in pie chart changed");
   const total = data.reduce((sum, d) => sum + d.value, 0);
-
-  
 
   // useEffect(() => {
   //   if (data) {
@@ -160,13 +159,14 @@ export default function AnimatedPieChart({
             radius + radius * labelDistanceFactor * Math.sin(toRad(midAngle));
 
           return (
-
-            // after adding this still got error, so problem one might be one below, unless both were giving error 
+            // after adding this still got error, so problem one might be one below, unless both were giving error
             <View key={`pieChartSlice-${index}`}>
               {onSectionPress && (
                 <Pressable
                   key={`pressable-${index}`}
-                  onPress={() => onSectionPress?.(slice.user_category, slice.name)}
+                  onPress={() =>
+                    onSectionPress?.(slice.user_category, slice.name)
+                  }
                   onLongPress={() => onLongSectionPress?.(slice.user_category)}
                   style={({ pressed }) => [
                     {
@@ -175,6 +175,7 @@ export default function AnimatedPieChart({
                       left: x - 15,
                       padding: 0,
                       height: "auto",
+                      flex: 1,
                       borderRadius: 15,
                       justifyContent: "center",
                       alignItems: "center",
@@ -184,6 +185,29 @@ export default function AnimatedPieChart({
                   ]}
                 >
                   {/* <Text style={[ appFontStyles.subWelcomeText, {fontSize: 20}]}>{slice.label.text.slice(0,1)}</Text> */}
+{showPercentages && (
+  <Text
+    style={[
+      appFontStyles.welcomeText,
+      {
+        backgroundColor:
+          themeStyles.overlayBackgroundColor.backgroundColor,
+        padding: 2,
+        paddingHorizontal: 6,
+        borderRadius: 6,
+        fontSize:
+          labelsSize *
+          (1.2 + (slice.value / total) * 5.3), // scale from 1.2x upward
+        color: themeStyles.primaryText.color,
+      },
+    ]}
+  >
+    {(slice.value / total) * 100 <= 5
+      ? "•"
+      : `${Math.round((slice.value / total) * 100)}%`}
+  </Text>
+)}
+
 
                   <Text
                     style={[
@@ -199,8 +223,10 @@ export default function AnimatedPieChart({
                       },
                     ]}
                   >
-                    {/* {Math.round((slice.value / total) * 100)}% */}
-                    {slice.label.text}
+                        {(slice.value / total) * 100 <= 5
+      ? ""
+      : `${slice.label.text}`}
+                    
                   </Text>
                 </Pressable>
               )}
@@ -223,7 +249,7 @@ export default function AnimatedPieChart({
 
               </AnimatedPressable> */}
                 <AnimatedPieSlice
-                    key={slice.id || slice.name}
+                  key={slice.id || slice.name}
                   startAngle={startAngle}
                   endAngle={endAngle}
                   radius={radius}

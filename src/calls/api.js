@@ -954,7 +954,7 @@ export const resetFriendFavesColorThemeToDefaultOld = async (
 export const fetchUpcomingHelloes = async () => {
   try {
     const response = await helloFriendApiClient.get("/friends/upcoming/");
-      console.log("API GET CALL fetchUpcomingHelloes", response.data);
+    //  console.log("API GET CALL fetchUpcomingHelloes", response.data);
     return response.data;
   } catch (error) {
     console.error("ERROR API GET CALL fetchUpcomingHelloes:", error);
@@ -1102,7 +1102,7 @@ export const fetchPastHelloes = async (friendId) => {
       `/friends/${friendId}/helloes/summary/`
     );
     if (response && response.data) {
-      const helloesData = response.data;
+      // const helloesData = response.data;
       console.log("API GET CALL fetchPastHelloes"); //, response.data);
 return response.data;
     //  const formattedHelloesList = helloesData.map((hello) => {

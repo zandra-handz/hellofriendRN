@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { Alert } from 'react-native';
 
 const helloFriendApiClient = axios.create({
   baseURL: 'https://badrainbowz.com/',

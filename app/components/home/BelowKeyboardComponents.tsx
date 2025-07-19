@@ -1,9 +1,6 @@
 import React, { useEffect } from "react";
 import { View, ScrollView } from "react-native";
-import HomeButtonUpNext from "./HomeButtonUpNext";
-import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
-import { fetchCompletedMomentsAPI } from "@/src/calls/api";
-import HomeFriendItems from "./HomeFriendItems";
+import HomeButtonUpNext from "./HomeButtonUpNext"; 
 import SelectedFriendHome from "./SelectedFriendHome";
 import Animated, {
   SharedValue,
@@ -37,8 +34,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           alignItems: "center",
           //flexDirection: "column",
           //justifyContent: "space-between",
-          flex: 1,
-          paddingTop: 30,
+          flex: 1, 
           width: '100%',   
         },
       ]}
@@ -71,7 +67,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           />
         )}
         {isFriendSelected && (
-          <View style={{height: '100%' }}>  
+          <View style={{height: '100%'  }}>  
             <SelectedFriendHome
               onPress={onPress}
               borderRadius={10}

@@ -5,7 +5,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 import AnimatedPieChart from "./AnimatedPieChart";
-const Pie = ({ data, widthAndHeight=50, labelsSize=9, onSectionPress=null, onLongSectionPress=null }) => {
+const Pie = ({ data, showPercentages = false, widthAndHeight=50, labelsSize=9, onSectionPress=null, onLongSectionPress=null }) => {
     const { manualGradientColors, themeStyles } = useGlobalStyle();
     const { themeAheadOfLoading } = useFriendList();
  
@@ -50,7 +50,8 @@ const Pie = ({ data, widthAndHeight=50, labelsSize=9, onSectionPress=null, onLon
     let series = [];
     series = dataCountList.map((item, index) => ({
       ...item, 
-      label: { text: item.name.slice(0,4),  fontFamily: 'Poppins-Regular', color: themeStyles.primaryText.color, fontSize: labelsSize },
+      label: { text: item.name.slice(0,4), fontFamily: 'Poppins-Regular', color: themeStyles.primaryText.color, fontSize: labelsSize },
+       
       color: colors[index],
     }));
 
@@ -78,7 +79,7 @@ const Pie = ({ data, widthAndHeight=50, labelsSize=9, onSectionPress=null, onLon
     // <ScrollView style={{ flex: 1 }}>
       <View style={styles.container}>
         {/* <PieChart widthAndHeight={widthAndHeight} series={seriesData} /> */}
-        <AnimatedPieChart data={seriesData} size={widthAndHeight} radius={widthAndHeight / 2} onSectionPress={onSectionPress} onLongSectionPress={onLongSectionPress} />
+        <AnimatedPieChart data={seriesData} showPercentages={showPercentages} labelsSize={labelsSize} size={widthAndHeight} radius={widthAndHeight / 2} onSectionPress={onSectionPress} onLongSectionPress={onLongSectionPress} />
 
        
       </View>

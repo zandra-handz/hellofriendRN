@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from "react";
+import React, { createContext, useContext, useRef, useEffect } from "react";
 import { useUser } from "./UserContext";
 import { fetchUpcomingHelloes, remixAllNextHelloes } from "../calls/api";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -11,7 +11,7 @@ export const useUpcomingHelloes = () => {
 
 export const UpcomingHelloesProvider = ({ children }) => {
   const queryClient = useQueryClient();
-  const { user, isAuthenticated, isInitializing } = useUser();
+  const { user, isAuthenticated, isInitializing, onSignOut } = useUser();
   const timeoutRef = useRef(null);
 
   const {
@@ -24,19 +24,10 @@ export const UpcomingHelloesProvider = ({ children }) => {
     queryKey: ["upcomingHelloes", user?.id],
     queryFn: () => fetchUpcomingHelloes(),
     enabled: isAuthenticated && !isInitializing,
+    retry: 3,
     staleTime: 1000 * 60 * 20, // 20 minutes
-    onSuccess: (data) => {
-      if (!data) {
-        return;
-      }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      timeoutRef.current = setTimeout(() => {}, 2000);
-    },
-    onError: (error) => {
-      console.log("Error occurred:", error);
-    },
+ 
+ 
     select: (data) => {
       if (isError) {
         return [];
@@ -44,6 +35,14 @@ export const UpcomingHelloesProvider = ({ children }) => {
       return data || [];
     },
   });
+
+
+  useEffect(() => {
+    if (isError) {
+      onSignOut();
+    }
+
+  }, [isError]);
 
   const upcomingHelloesIsFetching = isPending;
   const upcomingHelloesIsSuccess = isSuccess;

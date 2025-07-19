@@ -18,7 +18,6 @@ import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext"; //to check if any friends, don't render Up Next component or upcoming scroll if so
 
-import { useCategories } from "@/src/context/CategoriesContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useMessage } from "@/src/context/MessageContext";
 import { useNavigation } from "@react-navigation/native";
@@ -30,21 +29,20 @@ import { useSharedValue } from "react-native-reanimated";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
- 
+
 import * as FileSystem from "expo-file-system";
 
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import FriendHeaderMessageUI from "@/app/components/home/FriendHeaderMessageUI";
- 
 
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
   const navigation = useNavigation();
   // using DeviceLocationContext now
   // useGeolocationWatcher(); // Starts watching for location changes
-  const { themeStyles  } = useGlobalStyle();
-  const { user  } = useUser();
- 
+  const { themeStyles } = useGlobalStyle();
+  const { user } = useUser();
+
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { friendList, friendListLength } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
@@ -221,8 +219,8 @@ const ScreenHome = () => {
   return (
     <SafeViewAndGradientBackground
       includeBackgroundOverlay={true}
-      backgroundOverlayHeight={isKeyboardVisible ? "100%" : 300}
-      backgroundOverlayBottomRadius={20}
+      backgroundOverlayHeight={isKeyboardVisible ? "100%" : 180}
+      backgroundOverlayBottomRadius={10}
       useFriendColors={selectedFriend ? true : false}
       style={{ flex: 1 }}
       // header={HellofriendHeader}
@@ -234,7 +232,7 @@ const ScreenHome = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={[{ flex: 1 }]}
       >
-        {friendList  ? (
+        {friendList ? (
           <View
             style={{
               flex: 1,
@@ -243,9 +241,9 @@ const ScreenHome = () => {
               paddingHorizontal: 0,
             }}
           >
-            <View
+            {/* <View
               style={{
-                position: "absolute",
+               // position: "absolute",
                 zIndex: 3000,
                 width: "100%",
                 //  backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor,
@@ -254,58 +252,68 @@ const ScreenHome = () => {
 
                 height: isKeyboardVisible ? "89%" : "28%", // doesn't control height of quickwritemoment now -- prop 'multiline' does
               }}
-            >
-              {/* <Button
+            > */}
+            {/* <Button
                 title="Try!"
                 onPress={() => {
                   Sentry.captureException(new Error("First error"));
                 }}
               /> */}
-              {/* {!isInitializing && ( */}
-                <View
-                  style={{ width: "100%", paddingHorizontal: 10, marginTop: 0 }}
-                >
-                  {isKeyboardVisible && (
-                    <View style={{position: 'absolute', top: 0, right: 0, left: 0, width: '100%'}}>
-                      <ConditionalMessageUI />
-                    </View>
-                  )}
-
-                  
-                  {!selectedFriend && (
-                    <WelcomeMessageUI
-                      username={username}
-                      isNewUser={isNewUser}
-                      // isKeyboardVisible={isKeyboardVisible}
-                      onPress={handleFocusPress}
-                    />
-                  )}
-                  {selectedFriend && (
-                    <FriendHeaderMessageUI
-                     // isKeyboardVisible={isKeyboardVisible}
-                      onPress={handleFocusPress}
-                    />
-                  )}
-                </View>
-              {/* // )} */}
-              <QuickWriteMoment
-                width={"100%"}
-                height={"100%"}
-                ref={newMomentTextRef}
-                title={"Add a new moment?"}
-                iconColor={themeStyles.genericText.color}
-                mountingText={""}
-                onTextChange={updateNewMomentTextString}
-                multiline={isKeyboardVisible}
-              />
-
-              <KeyboardCoasters
-                isKeyboardVisible={isKeyboardVisible}
-                isFriendSelected={!!selectedFriend}
-                showMomentScreenButton={showMomentScreenButton}
-                onPress={navigateToAddMomentScreen}
-              />
+            {/* {!isInitializing && ( */}
+            <View style={{ width: "100%", paddingHorizontal: 0, marginTop: 0 }}>
+              {/* {!selectedFriend && (
+                  <WelcomeMessageUI
+                    username={username}
+                    isNewUser={isNewUser}
+                    // isKeyboardVisible={isKeyboardVisible}
+                    onPress={handleFocusPress}
+                  />
+                )} */}
+              {selectedFriend && (
+                <FriendHeaderMessageUI
+                  backgroundColor={
+                    themeStyles.primaryBackground.backgroundColor
+                  }
+                  borderBottomLeftRadius={0}
+                  borderBottomRightRadius={0}
+                  // isKeyboardVisible={isKeyboardVisible}
+                  onPress={handleFocusPress}
+                />
+              )}
             </View>
+            
+            {/* // )} */}
+            {!selectedFriend && (
+              <>
+                <WelcomeMessageUI
+                  username={username}
+                  isNewUser={isNewUser}
+                                    backgroundColor={
+                    themeStyles.primaryBackground.backgroundColor
+                  }
+                  borderBottomLeftRadius={0}
+                  borderBottomRightRadius={0}
+                  // isKeyboardVisible={isKeyboardVisible}
+                  onPress={handleFocusPress}
+                />
+                <QuickWriteMoment
+                  width={"100%"}
+                  height={"100%"}
+                  ref={newMomentTextRef}
+                  title={"Add a new moment?"}
+                  iconColor={themeStyles.genericText.color}
+                  mountingText={""}
+                  onTextChange={updateNewMomentTextString}
+                  multiline={isKeyboardVisible}
+                />
+                <KeyboardCoasters
+                  isKeyboardVisible={isKeyboardVisible}
+                  isFriendSelected={!!selectedFriend}
+                  showMomentScreenButton={showMomentScreenButton}
+                  onPress={navigateToAddMomentScreen}
+                />
+              </>
+            )}
             {!isKeyboardVisible && !loadingNewFriend && (
               <BelowKeyboardComponents
                 slideAnim={slideAnim}

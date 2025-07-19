@@ -13,19 +13,25 @@ import Animated, {
 } from "react-native-reanimated";
 
 interface FriendHeaderMessageUIProps {
- // isKeyboardVisible: boolean; // indirect condition to change message to friend picker
-onPress: () => void; // see WelcomeMessageUI for explanation; this component is the same
+  borderBottomRightRadius: number;
+  borderBottomLeftRadius: number;
+  backgroundColor: string;
+  // isKeyboardVisible: boolean; // indirect condition to change message to friend picker
+  onPress: () => void; // see WelcomeMessageUI for explanation; this component is the same
 }
 
 const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
-//  isKeyboardVisible = false,
+  //  isKeyboardVisible = false,
+  borderBottomRightRadius=10,
+  borderBottomLeftRadius=10,
+  backgroundColor='red',
+  
   onPress,
 }) => {
-  const { themeStyles,   appFontStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
 
-      const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-  
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
   const friendModalButtonHeight = 16;
   const message = `Selected: ${selectedFriend.name}`;
@@ -33,39 +39,46 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
 
   return (
     <AnimatedPressable
-    onPress={onPress}
+      onPress={onPress}
       hitSlop={10}
-  pressRetentionOffset={10}
+      pressRetentionOffset={10}
       entering={FadeIn}
       exiting={FadeOut}
       style={[
         {
+          backgroundColor: backgroundColor,
+          borderBottomLeftRadius: borderBottomLeftRadius,
+          borderBottomRightRadius: borderBottomRightRadius,
           //alignItems: "center",
           alignText: "center",
           flexWrap: "flex",
           width: "100%",
-          padding: 10,
-          minHeight: 168,
-          paddingTop: 15,
-          paddingBottom: 15,
+          height: 'auto', 
+          padding: 10, 
+          paddingTop: 10,
+          paddingBottom: 10,
         },
       ]}
     >
       <Animated.Text
         style={[
           appFontStyles.welcomeText,
-            { color: themeStyles.primaryText.color, fontSize: 46, lineHeight: 48, },
+          {
+            color: themeStyles.primaryText.color,
+            fontSize: 46,
+            lineHeight: 48,
+          },
         ]}
       >
         {selectedFriend && !loadingNewFriend // && !isKeyboardVisible
           ? message
-          : selectedFriend && !loadingNewFriend  // && isKeyboardVisible
+          : selectedFriend && !loadingNewFriend // && isKeyboardVisible
             ? compositionMessage
-            : ""}{" "} 
+            : ""}{" "}
         <View
           style={{
             height: appFontStyles.welcomeText.fontSize,
-            width: "auto", 
+            width: "auto",
           }}
         >
           <FriendModalIntegrator
@@ -78,7 +91,6 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
             useGenericTextColor={true}
           />
         </View>
-     
       </Animated.Text>
     </AnimatedPressable>
   );

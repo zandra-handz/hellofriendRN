@@ -58,23 +58,9 @@ interface UserSettingsProviderProps {
 export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
   children,
 }) => {
-  // const { user, isInitializing  } = useUser();
  
-
-//  useEffect(() => {
  
-//     console.error('user in usersettings');
- 
-
-//  }, [user]);
-
-//   useEffect(() => { 
-//     console.error('initializing in usersettings');
- 
-//  }, [isInitializing]);
-
- 
-  const { user } = useUser();
+  const { user, isAuthenticated, isInitializing } = useUser();
   
  
 
@@ -88,7 +74,8 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
       queryKey: ["userSettings", user?.id], // removed user id since entire cache should clear if user not logged in
     // queryKey: user?.id ? ["userSettings", user.id] : undefined,
     queryFn: () => getUserSettings(),
-    enabled: !!(user),
+    enabled: !!(user && isAuthenticated && !isInitializing),
+    retry: 3,
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 

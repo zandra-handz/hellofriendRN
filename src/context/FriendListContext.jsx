@@ -20,7 +20,7 @@ const FriendListContext = createContext({
 export const useFriendList = () => useContext(FriendListContext);
 
 export const FriendListProvider = ({ children }) => {
-  const { user, isAuthenticated, isInitializing } = useUser();
+  const { user, isAuthenticated, isInitializing, onSignOut } = useUser();
   const [friendList, setFriendList] = useState(() => []); // lazy loading?
   const [useGradientInSafeView, setUseGradientInSafeView] = useState(false);
   console.log("FRIEND LIST RERENDERED");
@@ -74,9 +74,17 @@ export const FriendListProvider = ({ children }) => {
         fontColorSecondary: friend.theme_color_font_secondary || "#000000",
       }));
     },
-    enabled: !!(isAuthenticated && !isInitializing),
+    retry: 3,
+    enabled: !!(user && isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
+
+  useEffect(() => {
+    if (isError) {
+      onSignOut();
+    }
+
+  }, [isError]);
 
   useEffect(() => {
     if (friendListIsSuccess && friendListData) {

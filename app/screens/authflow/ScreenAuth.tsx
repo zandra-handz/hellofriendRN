@@ -10,9 +10,7 @@ import {
 
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useMessage } from "@/src/context/MessageContext";
-
-import { useNavigation } from "@react-navigation/native";
+ import { useNavigation } from "@react-navigation/native";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -26,9 +24,9 @@ import useMessageCentralizer from "@/src/hooks/useMessageCentralizer";
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const createNewAccount = route.params?.createNewAccount ?? false;
-  const { showMessage } = useMessage();
+ 
 
-  const { showVerifyingCredentialsMessage, showSigninErrorMessage } =
+  const { showSigninErrorMessage } =
     useMessageCentralizer();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const [showSignIn, setShowSignIn] = useState(true);
@@ -109,10 +107,7 @@ const ScreenAuth = () => {
     if (signinMutation.isError) {
       showSigninErrorMessage();
       setPassword(null);
-    }
-    // if (signinMutation.isPending) {
-    //    showVerifyingCredentialsMessage();
-    // }
+    } 
   }, [signinMutation]);
 
   const handleAuthentication = async () => {

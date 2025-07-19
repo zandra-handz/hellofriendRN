@@ -92,6 +92,9 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
 
   const renderUpcomingHelloes = () => {
     return (
+      <>
+      {upcomingHelloes && upcomingHelloes.length > 0 && (
+        
       <Animated.FlatList
         data={upcomingHelloes.slice(0).slice(startAtIndex)} // skip first
         //horizontal={true}
@@ -111,10 +114,15 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         //  snapToAlignment="start" // Align items to the top of the list when snapped
         // decelerationRate="fast"
       />
+      
+      )}
+      
+      </>
     );
   };
 
   return (
+  
     <View
       style={[
         styles.container,
@@ -139,11 +147,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         </View>
       )}
       {!isLoading && (
-        <>
-          {/* <View style={styles.headerContainer}>
-             <Text style={styles.headerText}>SOON</Text>
- 
-          </View> */}
+        <> 
 
           {friendListLength === 0 && (
             <View style={styles.noFriendsTextContainer}>

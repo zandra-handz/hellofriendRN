@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, Pressable, Alert } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
@@ -62,6 +62,28 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
       // }
     }
   }, [categoryId, friendId, selectedFriendStats]);
+
+
+  const handleOnPressActions = (helloId) => {
+  
+    handleGoToHelloView(helloId);
+    closeModal();
+
+  };
+
+    const handleOnPress = (helloId) => {
+ 
+        Alert.alert('Warning', 'Leave this screen?', [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+                {text: 'Go to hello', onPress: () => handleOnPressActions(helloId)},
+   
+        ]);
+    
+    };
 
   const {
     categoryHistory,
@@ -146,14 +168,18 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
                 @ {getFriendNameFromList(item.friend)} on{" "}
                 {getHelloDateFromList(item.hello)}
               </Text>
+              <Pressable style={{backgroundColor: 'red'}} onPress={() => handleOnPress(item.hello)}>
+                
               <MaterialCommunityIcons
-                onPress={() => handleGoToHelloView(item.hello)}
+               
                 // name="hand-wave-outline"
                 name="calendar-heart"
                 size={16}
                 color={themeStyles.primaryText.color}
                 style={{ marginHorizontal: 4 }}
               />
+              
+              </Pressable>
             </View>
             <Text style={[styles.momentItemText, themeStyles.primaryText]}>
               {item.capsule}

@@ -5,8 +5,9 @@ import Pie from "../headers/Pie";
 import CategoryFriendHistoryModal from "../headers/CategoryFriendHistoryModal";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 type Props = {
-  friendData,
+  friendData: object;
   listData: object[];
+  showPercentages: boolean;
   friendName: string;
   radius: number;
   labelsSize: number;
@@ -16,8 +17,10 @@ type Props = {
 const FriendCategoryHistoryChart = ({
   friendData,
   listData,
+    showPercentages = false,
   radius = 80,
   labelsSize = 9,
+
    
 }: Props) => {
   //  console.log(`listdata in friendhistorychart chart`, listData);
@@ -66,15 +69,17 @@ const FriendCategoryHistoryChart = ({
       {friendHistorySortedList && friendHistoryHasAnyCapsules && (
         <View
           style={{
+            height: '100%',
             marginHorizontal: 10,
             alignItems: "center",
             flexDirection: "column",
           }}
         >
           <Pie
+          showPercentages={showPercentages}
             data={friendHistorySortedList}
             widthAndHeight={radius * 2}
-            labelSize={labelsSize}
+            labelsSize={labelsSize}
             // onSectionPress={() => console.log("hi!")}
             onSectionPress={handleCategoryPress}
           />

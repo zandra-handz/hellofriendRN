@@ -15,8 +15,7 @@ import HomeScrollSoon from "./HomeScrollSoon";
 // Press function is internal
 const HomeButtonUpNext = ({
   header = "Up next",
-  height = "100%",
-  maxHeight = 100,
+  height = "100%", 
   borderRadius = 20,
   borderColor = "transparent",
 }) => {
@@ -44,6 +43,7 @@ const HomeButtonUpNext = ({
           borderRadius: borderRadius,
           borderColor: borderColor,
           height: height, 
+         // backgroundColor: 'teal',
           // maxHeight: maxHeight,
         },
       ]}
@@ -77,10 +77,11 @@ const HomeButtonUpNext = ({
             flexDirection: "column",
             justifyContent: "space-between",
             overflow: 'hidden',
+            padding: 10,
           }}
         >
-          <View style={{width: '100%', height: 200}}></View>
-          <TouchableOpacity onPress={onPress} style={[styles.textContainer]}>
+          <View style={{width: '100%', height: 200}}>
+          <TouchableOpacity onPress={onPress} style={[styles.textContainer ]}>
             <Text style={[styles.headerText, appFontStyles.welcomeText]}>{header}</Text>
 
             <Text
@@ -108,12 +109,14 @@ const HomeButtonUpNext = ({
               !
             </Text>
           </TouchableOpacity>
+
+          </View>
+
           <View
             style={{
               zIndex: 30000,
               height: '100%', 
-              width: "100%",
-              marginTop: 140,
+              width: "100%", 
             }}
           >
             <HomeScrollSoon
@@ -127,7 +130,7 @@ const HomeButtonUpNext = ({
             style={{
               position: "absolute",
               right: -56,
-              top: 120,
+              top: 0,
               transform: [{ rotate: "180deg" }],
           
             }}
@@ -144,7 +147,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    padding: 10,
+    padding: 0,
     minHeight: 190,
     alignContent: "center", 
     borderWidth: 0,
@@ -159,11 +162,10 @@ const styles = StyleSheet.create({
   textContainer: {
     zIndex: 5,
     position: "absolute",
-    paddingLeft: "2%",
-    paddingRight: "16%",
-    top: 200,
+    width: '82%',
+   
     flexDirection: "column",
-    width: "100%",
+ 
     justifyContent: "space-around",
   },
   headerText: {

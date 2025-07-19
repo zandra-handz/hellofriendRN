@@ -15,9 +15,8 @@ import CategoriesModal from "./CategoriesModal";
 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
-
-import ButtonData from "../buttons/scaffolding/ButtonData";
-import { useNavigationState } from "@react-navigation/native";
+ 
+// import { useNavigationState } from "@react-navigation/native";
 
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -26,10 +25,10 @@ import GradientBackground from "../appwide/display/GradientBackground";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 const HelloFriendFooter = () => {
-  const navigationState = useNavigationState((state) => state);
+  // const navigationState = useNavigationState((state) => state);
   const { onSignOut } = useUser();
-  const currentRouteName = navigationState.routes[navigationState.index]?.name;
-  const isOnActionPage = currentRouteName === "hellofriend";
+  // const currentRouteName = navigationState.routes[navigationState.index]?.name;
+  // const isOnActionPage = currentRouteName === "hellofriend";
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
 const { resetTheme } = useFriendList();

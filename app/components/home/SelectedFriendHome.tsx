@@ -60,7 +60,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
   const SELECTED_FRIEND_CARD_HEIGHT = 120;
   // const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
-  const SELECTED_FRIEND_CARD_MARGIN_TOP = 196;
+  const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
   const SELECTED_FRIEND_CARD_PADDING = 20;
 
   const renderSuggestedHello = useMemo(() => {
@@ -169,8 +169,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           zIndex: 30000,
 
           height: "100%",
-          width: "100%",
-          marginTop: 0,
+          width: "100%", 
         }}
       >
         <View style={styles.containerOverScrollView}>
@@ -181,10 +180,11 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               width: "100%",
               // backgroundColor: 'pink',
               alignItems: "center",
-              paddingBottom: 213, // change this to change were the bottom fadingEdge of scrollview starts
+              paddingBottom: 0, // change this to change were the bottom fadingEdge of scrollview starts
             }}
           >
             <ScrollView
+            
             showsHorizontalScrollIndicator={false}
               style={{ width: "100%" }}
               fadingEdgeLength={30}
@@ -311,6 +311,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   outerPadding={spacerAroundCalendar}
                 />
               </View>
+              <View style={{width: '100%', height: 60}}></View>
             </ScrollView>
           </View>
         </View>
