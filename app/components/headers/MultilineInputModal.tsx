@@ -4,8 +4,7 @@ import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import MomentsSearchBar from "../moments/MomentsSearchBar";
-import MultiInputBox from "../appwide/input/MultiInputBox";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import MultiInputBox from "../appwide/input/MultiInputBox"; 
 
 interface Props {
   isVisible: boolean;
@@ -24,7 +23,7 @@ const MultilineInputModal: React.FC<Props> = ({
   ref=null,
 }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
-  const { capsuleList } = useCapsuleList();
+ 
 
   const headerIconSize = 26;
   const searchInputIconSize = 14;

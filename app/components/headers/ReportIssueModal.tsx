@@ -2,14 +2,11 @@ import { v4 as uuidv4 } from "uuid";
 import React from "react";
 import {
   ScrollView,
-  StyleSheet,
-  TouchableOpacity,
+  StyleSheet, 
   View,
-  Text,
-  AccessibilityInfo,
+  Text, 
 } from "react-native";
-
-import BugSvg from "@/app/assets/svgs/bug.svg";
+ 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import ModalWithGoBack from "../alerts/ModalWithGoBack";

@@ -36,6 +36,7 @@ import PickerHelloLocation from "../selectors/PickerHelloLocation";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
+
 import DoubleChecker from "@/app/components/alerts/DoubleChecker";
 import HelloNotesModal from "../headers/HelloNotesModal";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
@@ -47,8 +48,7 @@ const ContentAddHello = () => {
   const navigation = useNavigation();
   const { refetchUpcomingHelloes } = useUpcomingHelloes();
   const { showMessage } = useMessage();
-  const { preAdded, allCapsulesList } = useCapsuleList();
-  const { invalidateFriendStats } = useSelectedFriendStats();
+  const { preAdded, allCapsulesList } = useCapsuleList(); 
   const { refetchUserStats } = useUserStats();
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)

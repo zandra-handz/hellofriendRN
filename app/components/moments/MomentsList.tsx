@@ -14,6 +14,8 @@ import CategoryNavigator from "./CategoryNavigator";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard"; 
 
+import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
+
  
 
 import Animated, {
@@ -75,11 +77,15 @@ const MomentsList = ({scrollTo}) => {
   const { appContainerStyles } = useGlobalStyle(); 
   const {
     capsuleList, 
-    categoryNames,
-    categoryStartIndices,
+    // categoryNames,
+    // categoryStartIndices,
     updateCapsule,
   } = useCapsuleList();
 
+
+  const {  categoryNames, categoryStartIndices } = useTalkingPCategorySorting({listData: capsuleList})
+
+ 
   const navigation = useNavigation();
 const ITEM_HEIGHT = 140;
 const ITEM_BOTTOM_MARGIN = 4;

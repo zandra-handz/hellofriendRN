@@ -1,4 +1,4 @@
-import { View, FlatList, Text, Pressable } from "react-native";
+import { View,  Text  } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
@@ -17,7 +17,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   const { friendList, getThemeAheadOfLoading, themeAheadOfLoading } =
     useFriendList();
   const navigation = useNavigation();
-  const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, setFriend  } = useSelectedFriend();
   const [filteredFriendList, setFilteredFriendList] = useState(
     friendList || []
   );

@@ -1,13 +1,12 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+import {  Pressable, Text, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 
-import LoadingPage from "../appwide/spinner/LoadingPage";
-import LizardSvg from "@/app/assets/svgs/lizard";
+import LoadingPage from "../appwide/spinner/LoadingPage"; 
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
 
@@ -23,8 +22,7 @@ const HomeButtonUpNext = ({
   const { friendList, friendListLength, getThemeAheadOfLoading } =
     useFriendList();
   const { themeStyles, appFontStyles, themeStyleSpinners, manualGradientColors } =
-    useGlobalStyle();
-  const { darkColor, lightColor } = manualGradientColors;
+    useGlobalStyle(); 
   const { setFriend, loadingNewFriend } = useSelectedFriend();
 
   const onPress = () => {
@@ -81,7 +79,7 @@ const HomeButtonUpNext = ({
           }}
         >
           <View style={{width: '100%', height: 200}}>
-          <TouchableOpacity onPress={onPress} style={[styles.textContainer ]}>
+          <Pressable onPress={onPress} style={[styles.textContainer ]}>
             <Text style={[styles.headerText, appFontStyles.welcomeText]}>{header}</Text>
 
             <Text
@@ -108,7 +106,7 @@ const HomeButtonUpNext = ({
                 : ""}
               !
             </Text>
-          </TouchableOpacity>
+          </Pressable>
 
           </View>
 

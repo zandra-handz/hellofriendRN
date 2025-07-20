@@ -12,13 +12,9 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import CategoryCreator from "./CategoryCreator";
-import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
+import CategoryCreator from "./CategoryCreator"; 
 import { useFocusEffect } from "@react-navigation/native";
- 
-import BobblngFlashingIcon from "../buttons/moments/BobblngFlashingIcon";
- 
-import { MaterialIcons } from "@expo/vector-icons";
+  
 
 import UserCategorySelector from "../headers/UserCategorySelector";
 

@@ -1,21 +1,18 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { View } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
-import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
-import LeafSingleOutlineThickerSvg from "@/app/assets/svgs/leaf-single-outline-thicker.svg";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
  
-import PreAddedList from "@/app/components/moments/PreAddedList";
-import { useFriendList } from "@/src/context/FriendListContext";
+import PreAddedList from "@/app/components/moments/PreAddedList"; 
 
 const ScreenPreAdded = () => {
-  const { capsuleList, preAdded } = useCapsuleList();
+  const {   preAdded } = useCapsuleList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+ 
   const { themeStyles } = useGlobalStyle(); 
 
   const useDimAppBackground = true;

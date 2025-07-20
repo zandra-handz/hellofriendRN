@@ -7,8 +7,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { StyleSheet } from "react-native";
-
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+ 
 
 const SlideAwayOnSuccess = ({
   localItem,

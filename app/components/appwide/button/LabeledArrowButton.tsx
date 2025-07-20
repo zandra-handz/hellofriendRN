@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable  } from "react-native";
 import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface LabeledArrowButtonProps {
   label: string;
@@ -39,7 +39,7 @@ const LabeledArrowButton: React.FC<LabeledArrowButtonProps> = ({
   return (
     // <View style={{ flexDirection: "row", width: 'auto',   alignItems: 'center'}}>
       
-    <TouchableOpacity
+    <Pressable
       style={{
         flexDirection: "row",
         height: "100%",
@@ -63,21 +63,19 @@ const LabeledArrowButton: React.FC<LabeledArrowButtonProps> = ({
         {label}
       </Text>
       <View
-        style={{
-          transform: [{ rotate: "180deg" }],
-          paddingRight: 20,
+        style={{  
 
           width: 20,
           height: "100%",
         }}
       >
-        <BackArrowLongerStemSvg
-          height={arrowSize}
-          width={arrowSize}
+        <MaterialCommunityIcons
+          size={arrowSize}
+          name={"arrow-right"}
           color={color}
         />
       </View>
-    </TouchableOpacity>
+    </Pressable>
     
     // </View>
     

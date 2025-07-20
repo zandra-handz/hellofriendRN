@@ -1,25 +1,21 @@
 import React, { useCallback } from "react";
 import { View, Text } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
-import { useFocusEffect } from "@react-navigation/native";
+ 
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import { useFriendList } from "@/src/context/FriendListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
 
 const ScreenUnsavedLocationView = () => {
   const route = useRoute();
-  const unsavedLocation = route.params?.unsavedLocation ?? null;
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-
-  const { capsuleList, deleteMomentRQuery } = useCapsuleList();
+  const unsavedLocation = route.params?.unsavedLocation ?? null; 
   // const [currentIndex, setCurrentIndex] = useState(0);
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();

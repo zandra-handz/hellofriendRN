@@ -13,7 +13,7 @@ const ReloadList = ({data}) => {
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
   const navigation = useNavigation();
-  const { updateCapsule, capsuleList, preAdded, allCapsulesList, updateCapsuleMutation } =
+  const { updateCapsule,   preAdded, allCapsulesList  } =
     useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
+import TopBar from "@/app/components/home/TopBar";
 
 import ConditionalMessageUI from "@/app/components/home/ConditionalMessageUI";
 // import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
@@ -207,9 +208,6 @@ const ScreenHome = () => {
   }, [imageUri]);
 
   const handleFocusPress = () => {
-    console.log("handlefocuspress!");
-    newMomentTextRef.current.focus();
-    console.log(newMomentTextRef.current.getText());
     if (newMomentTextRef & newMomentTextRef.current) {
       console.log("focusing");
       newMomentTextRef.current.focus();
@@ -219,8 +217,8 @@ const ScreenHome = () => {
   return (
     <SafeViewAndGradientBackground
       includeBackgroundOverlay={true}
-      backgroundOverlayHeight={isKeyboardVisible ? "100%" : 180}
-      backgroundOverlayBottomRadius={10}
+      backgroundOverlayHeight={isKeyboardVisible ? "100%" : 90}
+      backgroundOverlayBottomRadius={0}
       useFriendColors={selectedFriend ? true : false}
       style={{ flex: 1 }}
       // header={HellofriendHeader}
@@ -270,25 +268,28 @@ const ScreenHome = () => {
                   />
                 )} */}
               {selectedFriend && (
-                <FriendHeaderMessageUI
-                  backgroundColor={
-                    themeStyles.primaryBackground.backgroundColor
-                  }
-                  borderBottomLeftRadius={0}
-                  borderBottomRightRadius={0}
-                  // isKeyboardVisible={isKeyboardVisible}
-                  onPress={handleFocusPress}
-                />
+
+                <TopBar/>
+
+                // <FriendHeaderMessageUI
+                //   backgroundColor={
+                //     themeStyles.primaryBackground.backgroundColor
+                //   }
+                //   borderBottomLeftRadius={0}
+                //   borderBottomRightRadius={0}
+                //   // isKeyboardVisible={isKeyboardVisible}
+                //   onPress={handleFocusPress}
+                // />
               )}
             </View>
-            
+
             {/* // )} */}
             {!selectedFriend && (
               <>
                 <WelcomeMessageUI
                   username={username}
                   isNewUser={isNewUser}
-                                    backgroundColor={
+                  backgroundColor={
                     themeStyles.primaryBackground.backgroundColor
                   }
                   borderBottomLeftRadius={0}

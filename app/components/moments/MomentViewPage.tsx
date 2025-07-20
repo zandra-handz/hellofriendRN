@@ -1,8 +1,7 @@
 import { View, Text, DimensionValue, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
@@ -40,8 +39,7 @@ const MomentViewPage: React.FC<Props> = ({
   const { themeStyles, appFontStyles, appContainerStyles } = useGlobalStyle();
   const { updateCapsule, deleteMomentRQuery, deleteMomentMutation } =
     useCapsuleList();
-  const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { selectedFriend } = useSelectedFriend(); 
   const navigation = useNavigation();
 
   const [currentIndex, setCurrentIndex] = useState();

@@ -7,6 +7,7 @@ import MomentsSearchBar from "../moments/MomentsSearchBar";
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
+
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
@@ -21,9 +22,7 @@ const SearchModal: React.FC<Props> = ({
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
   const { capsuleList } = useCapsuleList();
 
-  const headerIconSize = 26;
-  const searchInputIconSize = 14;
-  const autoFocus = true;
+ 
 
   const handleSearchPress = (moment) => {
     onSearchPress(moment);

@@ -1,21 +1,12 @@
-import React, { useState, useRef, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import React from "react";
+ 
 
 import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  FlatList,
-} from "react-native";
-import { useUser } from "@/src/context/UserContext";
+  View, 
+  StyleSheet, 
+} from "react-native"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useCategories } from "@/src/context/CategoriesContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import FriendCategoryHistoryChart from "../home/FriendCategoryHistoryChart";
 import UserCategoryHistoryChart from "../home/UserCategoryHistoryChart";

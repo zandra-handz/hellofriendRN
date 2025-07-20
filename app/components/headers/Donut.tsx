@@ -168,6 +168,7 @@ const Donut = ({
 
   const fontColor = themeStyles.primaryText.color;
   const backgroundColor = themeStyles.primaryBackground.backgroundColor;
+  //const backgroundColor = 'transparent';
 
   return (
     // <ScrollView style={{ flex: 1 }}>
@@ -179,7 +180,7 @@ const Donut = ({
             height: DIAMETER,
             width: DIAMETER,
             borderRadius: RADIUS,
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            backgroundColor: backgroundColor,
           },
         ]}
       >

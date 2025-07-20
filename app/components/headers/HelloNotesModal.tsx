@@ -4,8 +4,7 @@ import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import MomentsSearchBar from "../moments/MomentsSearchBar";
-import TextEditBox from "../appwide/input/TextEditBox";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import TextEditBox from "../appwide/input/TextEditBox"; 
 
 interface Props {
   isVisible: boolean;
@@ -27,7 +26,7 @@ const HelloNotesModal: React.FC<Props> = ({
 
       const editedTextRef = useRef(null);
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
-  const { capsuleList } = useCapsuleList();
+ 
   const [triggerAutoFocus, setTriggerAutoFocus ] = useState();
 useEffect(() => {
   setTriggerAutoFocus(true);

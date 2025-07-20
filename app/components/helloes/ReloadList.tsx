@@ -9,6 +9,8 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
 import { useUser } from "@/src/context/UserContext";  
 
+import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
+
 const ReloadList = ({ helloId, items }) => {
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
 const { user } = useUser();
@@ -18,13 +20,12 @@ const { user } = useUser();
   const [selectedMoments, setSelectedMoments] = useState([]);
   const navigation = useNavigation(); 
 
-  const {
-    updateCapsule,
-    capsuleList,
-    categoryCount,
-    categoryNames,
+  const { 
+    capsuleList, 
     handleCreateMoment, 
   } = useCapsuleList(); // also need to update cache
+
+    const {  categoryNames, categoryCount } = useTalkingPCategorySorting({listData: capsuleList})
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 
   const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(categoryNames);
@@ -34,17 +35,14 @@ const { user } = useUser();
  
     const {
   getLargestCategory,
-  getCategoryCap,
-  getCreationsRemaining,
+  getCategoryCap, 
 } = useTalkingPFunctions({
   listData: capsuleList,
   friendData: friendDashboardData,
   categoryCount,
 });
 
-  const [remainingCategories, setRemainingCategories] = useState(
-    getCreationsRemaining
-  ); 
+
 
   const renderListItem = useCallback(
     ({ item, index }) => {

@@ -9,6 +9,7 @@ import SingleLineEnterBox from "@/app/components/appwide/input/SingleLineEnterBo
 import ButtonBottomActionBaseSmallLongPress from "../buttons/scaffolding/ButtonBottomActionBaseSmallLongPress";
 import GradientBackground from "../appwide/display/GradientBackground";
 import CategoryItemsModal from "../headers/CategoryItemsModal";
+import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
 const CategoryCreator = ({
   updateCategoryInParent,
@@ -22,8 +23,10 @@ const CategoryCreator = ({
   const [selectedCategory, setSelectedCategory] = useState(existingCategory); //can start out as null
   const [selectedCategoryCapsules, setSelectedCategoryCapsules] =
     useState(null);
-  const { capsuleList, categoryCount, categoryNames } = useCapsuleList();
-  console.log("CATEGORY CREATOR RERENDERED");
+  const { capsuleList  } = useCapsuleList();
+
+    const {  categoryNames, categoryCount } = useTalkingPCategorySorting({listData: capsuleList})
+  // console.log("CATEGORY CREATOR RERENDERED");
   const [modalVisible, setModalVisible] = useState(false);
 
   const containerHeight = `100%`;

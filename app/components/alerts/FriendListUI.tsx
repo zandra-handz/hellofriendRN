@@ -1,8 +1,7 @@
 import {
   View,
   Text,
-  StyleSheet,
-  TouchableOpacity,
+  StyleSheet, 
   Pressable,
   Dimensions,
   FlatList,
@@ -38,16 +37,16 @@ const navigation = useNavigation();
         {item && item?.id && (
       
   
-        <TouchableOpacity
+        <Pressable
           onPress={() => onPress(item.id)}
           style={styles.friendContainer}
         >
           <ButtonSelectFriend backgroundColor={elementBackgroundColor} color={itemColor} friend={item} height={ITEM_HEIGHT} />
-        </TouchableOpacity>
+        </Pressable>
             
         )}
         {!item?.id && friendList.length < 20 && (
-              <TouchableOpacity
+              <Pressable
            onPress={() => navigation.navigate("AddFriend")}
           style={[styles.friendContainer, {backgroundColor: themeStyles.primaryBackground.backgroundColor, borderRadius: 10, overflow:'hidden', height: ITEM_HEIGHT}]}
         >
@@ -56,7 +55,7 @@ const navigation = useNavigation();
          size={30}
          color={themeStyles.primaryText.color}
          />
-        </TouchableOpacity>
+        </Pressable>
 
         )}
       </Animated.View>

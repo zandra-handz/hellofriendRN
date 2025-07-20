@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import React  from "react";
+import { View,  StyleSheet } from "react-native";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import MomentsSearchBar from "../moments/MomentsSearchBar";
-
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+ 
 
 interface Props {
   isVisible: boolean;
@@ -21,16 +20,13 @@ const SearchHelloesModal: React.FC<Props> = ({
   flattenHelloes,
 }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
-  const { capsuleList } = useCapsuleList();
-useEffect(() => {
-  if (flattenHelloes) {
-    console.log('flattenhelloesin seach modal!', flattenHelloes);
-  }
+ 
+// useEffect(() => {
+//   if (flattenHelloes) {
+//     console.log('flattenhelloesin seach modal!', flattenHelloes);
+//   }
 
-}, [flattenHelloes]);
-  const headerIconSize = 26;
-  const searchInputIconSize = 14;
-  const autoFocus = true;
+// }, [flattenHelloes]); 
 
   const handleSearchPress = (hello) => {
     onSearchPress(hello.id);

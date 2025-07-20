@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { View, Text, Pressable } from "react-native";
+
 
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../../appwide/spinner/LoadingPage";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons  } from "@expo/vector-icons";
 
 const FriendProfileButton = ({onPress}) => {
   const {
@@ -19,55 +19,19 @@ const FriendProfileButton = ({onPress}) => {
   const {
     themeStyles,
     appFontStyles,
-    appContainerStyles,
-    manualGradientColors,
+    appContainerStyles, 
   } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
-  const [profileIconColor, setProfileIconColor] = useState();
-  const navigation = useNavigation();
+  const { themeAheadOfLoading } = useFriendList(); 
+ 
 
   const circleSize = 27;
   const iconSize = 28;
 
-  useEffect(() => {
-    if (
-      themeAheadOfLoading.lightColor !==
-      themeStyles.genericTextBackground.backgroundColor
-    ) {
-      setProfileIconColor([
-        themeAheadOfLoading.darkColor || manualGradientColors.darkColor,
-        themeAheadOfLoading.lightColor || manualGradientColors.lightColor,
-      ]);
-    } else {
-      setProfileIconColor([
-        themeStyles.genericText.color,
-        themeStyles.genericText.color,
-      ]);
-    }
-    renderProfileIcon();
-  }, [selectedFriend, themeStyles]);
+ 
 
-  const navigateToFriendFocus = () => {
-    if (selectedFriend) {
-      navigation.navigate("FriendFocus");
-    }
-  };
-
-  // const handleLongPress = () => {
-  //   // Show an alert asking if they want to deselect the friend
-  //   Alert.alert(
-  //     'Deselect Friend',
-  //     'Do you want to deselect your friend?',
-  //     [
-  //       { text: 'Cancel', style: 'cancel' },
-  //       { text: 'Yes', onPress: handleDeselect()}, // Deselect friend function
-  //     ],
-  //     { cancelable: true }
-  //   );
-  // };
-  //to restore gradient: [1] - [0]
+ 
   const renderProfileIcon = () => {
-    if (Array.isArray(profileIconColor) && profileIconColor.length === 2) {
+    // if (Array.isArray(profileIconColor) && profileIconColor.length === 2) {
       return (
         <View
           style={{
@@ -95,7 +59,7 @@ const FriendProfileButton = ({onPress}) => {
           </Text>
         </View>
       );
-    }
+    // }
   };
 
   return (
@@ -121,7 +85,7 @@ const FriendProfileButton = ({onPress}) => {
       )}
 
       {!loadingNewFriend && (
-        <TouchableOpacity
+        <Pressable
          onPress={onPress}
          // onPress={onPress? onPress : () => navigation.navigate("FriendFocus")}
           style={{ flex: 1 }}
@@ -140,11 +104,11 @@ const FriendProfileButton = ({onPress}) => {
                 name="display-settings"
                 size={iconSize - 2}
                 color={themeStyles.footerIcon.color}
-                fill="black"
+               
               /> 
             </View>
           </View>
-        </TouchableOpacity>
+        </Pressable>
       )}
     </View>
   );

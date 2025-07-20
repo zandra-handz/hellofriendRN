@@ -1,4 +1,10 @@
-import React, { useRef, createContext, useContext, useState } from "react";
+import React, {
+  useRef,
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+} from "react";
 import { useSelectedFriend } from "./SelectedFriendContext";
 import {
   fetchMomentsAPI,
@@ -6,7 +12,6 @@ import {
   updateMomentAPI,
   updateMultMomentsAPI,
   deleteMomentAPI,
-
 } from "../calls/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "./UserContext";
@@ -63,62 +68,41 @@ export const CapsuleListProvider = ({ children }) => {
             categoryNames: [],
             categoryStartIndices: {},
             preAdded: [],
-            momentsSavedToHello: [],
+            // momentsSavedToHello: [],
           };
-
 
         // const sorted = sortByMomentCategory(data);
 
-    const sorted = [...data].sort((a, b) => {
-      if (a.user_category_name < b.user_category_name) return -1;
-      if (a.user_category_name > b.user_category_name) return 1;
-      return new Date(b.created) - new Date(a.created);
-    });
+        const sorted = [...data].sort((a, b) => {
+          if (a.user_category_name < b.user_category_name) return -1;
+          if (a.user_category_name > b.user_category_name) return 1;
+          return new Date(b.created) - new Date(a.created);
+        });
 
         const preAdded = getPreAdded(sorted);
+        const preAddedSet = new Set(preAdded); // O(1) lookup
 
-        // const preAdded = sorted.reduce((ids, capsule) => {
-        //   if (capsule.preAdded) ids.push(capsule.id);
-        //   return ids;
-        // }, []);
+        const sortedWithIndices = [];
+        let uniqueIndex = 0;
 
-        const filterPreAdded = sorted.filter(
-          (capsule) => !preAdded.includes(capsule.id)
-        );
-
-        const sortedWithIndices = filterPreAdded.map((capsule, index) => ({
-          ...capsule,
-          uniqueIndex: index,
-        }));
-
-        const uniqueCategories = [
-          ...new Set(sortedWithIndices.map((item) => item.user_category_name)),
-        ];
-        const categoryCount = uniqueCategories.length;
-        const categoryNames = uniqueCategories;
-
-        const categoryStartIndices = {};
-
-        let index = 0;
-        for (const category of uniqueCategories) {
-          categoryStartIndices[category] = index;
-          index += sortedWithIndices.filter(
-            (item) => item.user_category_name === category
-          ).length;
+        for (const capsule of sorted) {
+          if (!preAddedSet.has(capsule.id)) {
+            sortedWithIndices.push({
+              ...capsule,
+              uniqueIndex: uniqueIndex++,
+            });
+          }
         }
-
-        const momentsSavedToHello = sortedWithIndices.filter((capsule) =>
-          preAdded.includes(capsule.id)
-        );
 
         return {
           capsules: sortedWithIndices,
+          // capsules: filterPreAdded,
           allCapsules: sorted,
           categoryCount,
           categoryNames,
           categoryStartIndices,
           preAdded,
-          momentsSavedToHello,
+          // momentsSavedToHello,
         };
       },
     });
@@ -130,7 +114,7 @@ export const CapsuleListProvider = ({ children }) => {
     categoryNames = [],
     categoryStartIndices = {},
     preAdded = [],
-    momentsSavedToHello = [],
+    // momentsSavedToHello = [],
   } = sortedCapsuleList;
 
   const capsuleCount = capsules.length;
@@ -165,8 +149,7 @@ export const CapsuleListProvider = ({ children }) => {
       updateMomentAPI(selectedFriend?.id, capsuleId, capsuleEditData),
 
     onSuccess: (data) => {
-      
-            queryClient.setQueryData(
+      queryClient.setQueryData(
         ["Moments", user?.id, selectedFriend?.id],
         (oldMoments) => {
           if (!oldMoments) return [];
@@ -192,8 +175,6 @@ export const CapsuleListProvider = ({ children }) => {
       //     return updatedMoments;
       //   }
       // );
-
-
     },
     onError: (error) => {
       if (timeoutRef.current) {
@@ -282,8 +263,7 @@ export const CapsuleListProvider = ({ children }) => {
     mutationFn: (updatedCapsules) =>
       updateMultMomentsAPI(selectedFriend?.id, updatedCapsules),
     onSuccess: () =>
-
-      //REMOVE/REPLACE MAYBE IF THIS ALSO CAUSES FDD TO RERENDER? 
+      //REMOVE/REPLACE MAYBE IF THIS ALSO CAUSES FDD TO RERENDER?
       //IS THIS MUTATION STILL BEING USED??
       queryClient.invalidateQueries(["Moments", user?.id, selectedFriend?.id]),
 
@@ -315,7 +295,7 @@ export const CapsuleListProvider = ({ children }) => {
         user_category_name: data.user_category_name || null,
       };
 
-      console.log('formatted moments data', formattedMoment);
+      console.log("formatted moments data", formattedMoment);
 
       queryClient.setQueryData(
         ["Moments", user?.id, selectedFriend?.id],
@@ -414,37 +394,47 @@ export const CapsuleListProvider = ({ children }) => {
   //     [...capsules].sort((a, b) => new Date(b.created) - new Date(a.created))
   //   );
 
-  return (
-    <CapsuleListContext.Provider
-      value={{
-        updateCacheWithNewPreAdded,
+  const contextValue = useMemo(
+    () => ({
+      updateCacheWithNewPreAdded,
+      capsuleList: capsules,
+      allCapsulesList: allCapsules,
+      capsuleCount,
+      preAdded,
+      updateCapsules,
+      deleteMomentRQuery,
+      deleteMomentMutation,
+      removeCapsules,
+      handleCreateMoment,
+      createMomentMutation,
+      resetCreateMomentInputs,
+      updateCapsule,
+      updateCapsuleMutation,
+      handleEditMoment,
+      editMomentMutation,
+    }),
+    [
+      updateCacheWithNewPreAdded,
+      capsules,
+      allCapsules,
+      capsuleCount,
+      preAdded,
+      updateCapsules,
+      deleteMomentRQuery,
+      deleteMomentMutation,
+      removeCapsules,
+      handleCreateMoment,
+      createMomentMutation,
+      resetCreateMomentInputs,
+      updateCapsule,
+      updateCapsuleMutation,
+      handleEditMoment,
+      editMomentMutation,
+    ]
+  );
 
-        capsuleList: capsules,
-        allCapsulesList: allCapsules,
-        capsuleCount,
-        categoryCount,
-        categoryNames,
-        categoryStartIndices,
-        sortedByCategory,
-        // newestFirst,
-        preAdded,
-        momentsSavedToHello,
-        updateCapsules,
-        deleteMomentRQuery,
-        deleteMomentMutation,
-        removeCapsules,
-        handleCreateMoment,
-        createMomentMutation,
-        resetCreateMomentInputs,
-        updateCapsule,
-        updateCapsuleMutation,
-        handleEditMoment,
-        editMomentMutation,
-        // updateCacheWithEditedMoment,
-       // sortByCategory,
-        //  sortNewestFirst,
-      }}
-    >
+  return (
+    <CapsuleListContext.Provider value={contextValue}>
       {children}
     </CapsuleListContext.Provider>
   );

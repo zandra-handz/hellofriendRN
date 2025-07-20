@@ -9,10 +9,12 @@ import {
   DimensionValue,
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useNavigation } from "@react-navigation/native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
+import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 import LoadedMoments from "../buttons/moments/LoadedMoments";
 import LoadedImages from "../buttons/images/LoadedImages";
 import CalendarChart from "./CalendarChart";
@@ -41,6 +43,27 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     appFontStyles,
   } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
+
+  const headerRef = useRef(null);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const handleScroll = (event) => {
+    if (headerRef.current) {
+      headerRef.current.measure((x, y, width, height, pageX, pageY) => {
+        const scrollY = event.nativeEvent.contentOffset.y;
+        // Adjust threshold based on when you consider it "out of view"
+        const isVisible = pageY - scrollY >= 0;
+        setIsHeaderVisible(isVisible);
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!isHeaderVisible) {
+      console.log("Header scrolled out of view");
+      // trigger animation, collapse UI, etc.
+    }
+  }, [isHeaderVisible]);
+  const PADDING_HORIZONTAL = 4;
 
   const spacerAroundCalendar = 10;
   //friendLoaded = dashboard data retrieved successfully
@@ -88,8 +111,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               themeStyles.primaryText,
               {
                 // alignSelf: 'center',
-                lineHeight: 46,
-                fontSize: appFontStyles.welcomeText.fontSize + 6,
+                lineHeight: 28,
+                fontSize: appFontStyles.welcomeText.fontSize - 5,
                 opacity: 0.9,
                 paddingRight: 50,
               },
@@ -120,7 +143,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   // }, [selectedFriend]);
 
   const navigateToMoments = () => {
-    navigation.navigate("Moments", {scrollTo: null});
+    navigation.navigate("Moments", { scrollTo: null });
   };
 
   const navigateToImages = () => {
@@ -158,9 +181,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
         styles.container,
         {
           marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
-          borderRadius: borderRadius,
+          // borderRadius: borderRadius,
           borderColor: borderColor,
-          paddingHorizontal: 4,
+          paddingHorizontal: 0,
         },
       ]}
     >
@@ -169,7 +192,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           zIndex: 30000,
 
           height: "100%",
-          width: "100%", 
+          width: "100%",
         }}
       >
         <View style={styles.containerOverScrollView}>
@@ -183,135 +206,167 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               paddingBottom: 0, // change this to change were the bottom fadingEdge of scrollview starts
             }}
           >
+            {!isHeaderVisible && (
+              <Animated.View
+                entering={FadeIn.duration(200)}
+                exiting={FadeOut.duration(200)}
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  top: 0,
+                  height: "auto",
+                  padding: 6,
+                  backgroundColor:
+                    themeStyles.primaryBackground.backgroundColor,
+                  zIndex: 5000,
+                  elevation: 5000,
+                }}
+              >
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    appFontStyles.subWelcomeText,
+                  ]}
+                >
+                  {selectedFriend.name}
+                </Text>
+              </Animated.View>
+            )}
             <ScrollView
-            
-            showsHorizontalScrollIndicator={false}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+              showsHorizontalScrollIndicator={false}
               style={{ width: "100%" }}
-              fadingEdgeLength={30}
-              contentContainerStyle={{ 
+              // fadingEdgeLength={30}
+              contentContainerStyle={{
                 paddingHorizontal: 0,
                 alignItems: "center", // optional
               }}
             >
-              {isLoading && !friendLoaded && (
-                <>
-                  <View style={styles.loadingWrapper}>
-                    <LoadingPage
-                      loading={isPending}
-                      spinnerType={themeStyleSpinners.homeScreen}
-                    />
-                  </View>
-                </>
-              )}
+              <View style={{ flex: 1, width: "100%" }} ref={headerRef}>
+                <FriendHeaderMessageUI
+                  backgroundColor={
+                    themeStyles.primaryBackground.backgroundColor
+                  }
+                  borderBottomLeftRadius={0}
+                  borderBottomRightRadius={0}
+                  // isKeyboardVisible={isKeyboardVisible}
+                  onPress={() => console.log("nada!")}
+                />
+              </View>
 
-              {!loadingNewFriend && friendLoaded && (
-                <View
-                  style={{
-                    marginVertical: 4,
+              <View
+                style={{
+                  paddingHorizontal: PADDING_HORIZONTAL,
+                  flexDirection: "column",
+                  flex: 1,
+                  width: "100%",
+                }}
+              >
+                {isLoading && !friendLoaded && (
+                  <>
+                    <View style={styles.loadingWrapper}>
+                      <LoadingPage
+                        loading={isPending}
+                        spinnerType={themeStyleSpinners.homeScreen}
+                      />
+                    </View>
+                  </>
+                )}
+           
 
-                    maxHeight: SELECTED_FRIEND_CARD_HEIGHT + 40,
-                    flexShrink: 1,
-                    alignItems: "center",
-                    flexDirection: "row",
+                {!loadingNewFriend && friendLoaded && (
+                  <View
+                    style={{
+                      marginVertical: 4,
 
-                    justifyContent: "space-between",
-                    borderRadius: borderRadius,
-                    // backgroundColor: 'orange',
-                    padding: SELECTED_FRIEND_CARD_PADDING,
-                    paddingRight: 10,
-                    width: "100%",
-                    backgroundColor:
-                      themeStyles.overlayBackgroundColor.backgroundColor,
-                    borderRadius: 20,
-                  }}
-                >
-                  <View style={styles.textContainer}>
-                    {renderSuggestedHello}
-                    <Pressable
-                      onPress={navigateToMoments}
-                      style={{
-                        position: "absolute",
-                        right: 0,
-                        top: 0,
-                        backgroundColor: manualGradientColors.lightColor,
-                        justifyContent: "center",
-                        borderRadius: 10,
-                        padding: 4,
-                        width: 'auto',
-                        minWidth: 50,
-                        height: "100%",
-                      }}
-                    >
-                      {/* <MaterialCommunityIcons
+                      maxHeight: SELECTED_FRIEND_CARD_HEIGHT + 40,
+                      flexShrink: 1,
+                      alignItems: "center",
+                      flexDirection: "row",
+
+                      justifyContent: "space-between",
+                      borderRadius: borderRadius,
+                      // backgroundColor: 'orange',
+                      padding: SELECTED_FRIEND_CARD_PADDING,
+                      paddingRight: 10,
+                      width: "100%",
+                      backgroundColor:
+                        themeStyles.overlayBackgroundColor.backgroundColor,
+                      borderRadius: 20,
+                    }}
+                  >
+                    <View style={styles.textContainer}>
+                      {renderSuggestedHello}
+                      <Pressable
+                        onPress={navigateToMoments}
+                        style={{
+                          position: "absolute",
+                          right: 0,
+                          top: 0,
+                          backgroundColor: manualGradientColors.lightColor,
+                          justifyContent: "center",
+                          borderRadius: 10,
+                          padding: 4,
+                          width: "auto",
+                          minWidth: 50,
+                          height: "100%",
+                        }}
+                      >
+                        {/* <MaterialCommunityIcons
                         name={"run-fast"}
                         size={40}
                         color={themeStyles.primaryText.color}
                       /> */}
-                      <FontAwesome6
-                        name={"person-walking-arrow-right"}
-                        size={30}
-                        color={manualGradientColors.homeDarkColor}
-                      />
-                    </Pressable>
-                  </View>
+                        <FontAwesome6
+                          name={"person-walking-arrow-right"}
+                          size={30}
+                          color={manualGradientColors.homeDarkColor}
+                        />
+                      </Pressable>
+                    </View>
 
-                  <View
-                    style={{
-                      borderRadius: 20,
-                      // height: "100%",
-                      width: "100%",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {/* <LoadedMoments
-                          height={"40%"}
-                          iconSize={36}
-                          iconColor={themeStyles.primaryText.color}
-                          onPress={onPress}
-                          circleColor={"orange"}
-                          countTextSize={11}
-                          countColor={manualGradientColors.homeDarkColor}
-                        /> */}
-                    {/* <LoadedImages
-                      height={"40%"} //ADJUST POSITION HERE
-                      iconSize={36}
-                      iconColor={themeStyles.primaryText.color}
-                      onPress={navigateToImages}
-                      circleColor={"orange"}
-                      countTextSize={11}
-                      countColor={manualGradientColors.homeDarkColor}
-                    /> */}
+                    <View
+                      style={{
+                        borderRadius: 20,
+                        // height: "100%",
+                        width: "100%",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    > 
+                    </View>
                   </View>
+                )}
+                     <View style={{ width: "100%", marginVertical: 3 }}>
+                  <TalkingPointsChart
+                    selectedFriend={!!selectedFriend}
+                    outerPadding={spacerAroundCalendar}
+                  />
                 </View>
-              )}
-              <View style={{ width: "100%", marginVertical: 3 }}>
-                <TalkingPointsChart
-                  selectedFriend={!!selectedFriend}
-                  outerPadding={spacerAroundCalendar}
-                />
-              </View>
-              <View style={{ width: "100%", marginVertical: 3 }}>
-                <Pics
-                  selectedFriend={!!selectedFriend}
-                  outerPadding={spacerAroundCalendar}
-                />
-              </View>
-              <View style={{ width: "100%", marginVertical: 3 }}>
-                <AllFriendCharts
-                  selectedFriend={selectedFriend} //removed the boolean casting to be able to pass in name
-                  outerPadding={spacerAroundCalendar}
-                />
-              </View>
 
-              <View style={{ marginVertical: 3 }}>
-                <CalendarChart
-                  selectedFriend={!!selectedFriend}
-                  outerPadding={spacerAroundCalendar}
-                />
+                <View style={{ width: "100%", marginVertical: 3 }}>
+                  <Pics
+                    selectedFriend={!!selectedFriend}
+                    outerPadding={spacerAroundCalendar}
+                  />
+                </View>
+                <View style={{ width: "100%", marginVertical: 3 }}>
+                  <AllFriendCharts
+                    selectedFriend={selectedFriend} //removed the boolean casting to be able to pass in name
+                    outerPadding={spacerAroundCalendar}
+                  />
+                </View>
+
+                <View style={{ marginVertical: 3 }}>
+                  <CalendarChart
+                    selectedFriend={!!selectedFriend}
+                    outerPadding={spacerAroundCalendar}
+                  />
+                </View>
+                <View style={{ width: "100%", height: 60 }}></View>
               </View>
-              <View style={{width: '100%', height: 60}}></View>
             </ScrollView>
           </View>
         </View>
@@ -332,11 +387,11 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     width: "100%",
-    padding: 10,
+    padding: 0,
     minHeight: 190,
     height: "100%",
     alignContent: "center",
- 
+
     alignItems: "center",
     justifyContent: "space-between",
     overflow: "hidden",

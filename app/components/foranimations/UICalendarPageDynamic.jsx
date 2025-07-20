@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import CalendarBlankSvg from '@/app/assets/svgs/calendar-blank.svg'; // Import the SVG
-
+// import CalendarBlankSvg from '@/app/assets/svgs/calendar-blank.svg'; // Import the SVG
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 const UICalendarPageDynamic = ({ numberDate = '30', month = 'JUN', showMonth = true, monthIsHeader = false, width = 40, height = 40, color = '#000000' }) => {
   const calculateFontSize = (width) => {
     return width * 0.4; 
@@ -22,7 +22,13 @@ const UICalendarPageDynamic = ({ numberDate = '30', month = 'JUN', showMonth = t
 
   return (
      <View style={[styles.relativeContainer, { width, height }]}>
-        <CalendarBlankSvg width={width} height={height} style={[styles.svgImage, { color: color }]} />
+        {/* <CalendarBlankSvg width={width} height={height} style={[ { color: color }]} />
+        */}
+       <MaterialCommunityIcons 
+       name={"calendar-blank"}
+       size={height}
+       color={color}/>
+       
         <View style={[styles.dateContainer, dateContainerDimensions, { paddingLeft: calculateLeftPadding(dateContainerDimensions.width) }]}>
           <Text style={[styles.numberDateText, { color: color, fontFamily: 'Poppins-Bold', fontSize: calculateFontSize(width), top: dateContainerDimensions.height * 0.5 }]}>{numberDate}</Text>
         </View>
@@ -37,6 +43,7 @@ const styles = StyleSheet.create({
   },
   relativeContainer: {
     flex: 1,
+    
   },
   dateContainer: {
     position: 'absolute',

@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { useNavigation } from "@react-navigation/native";
 import {
   SharedValue,
@@ -17,7 +16,7 @@ interface MomentsAddedProps {
 
 const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  
   const [hide, setHide] = useState(false);
   const { capsuleList, preAdded } = useCapsuleList();
   const navigation = useNavigation();

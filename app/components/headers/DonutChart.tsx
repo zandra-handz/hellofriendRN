@@ -60,7 +60,7 @@ const DonutChart = ({
 }: Props) => {
   const array = Array.from({ length: n });
   const innerRadius = radius - outerStrokeWidth / 2;
-
+const { manualGradientColors } = useGlobalStyle();
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
 
@@ -232,26 +232,27 @@ const DonutChart = ({
             color={color}
           /> */}
 
-                    {/* <FontAwesome
+                    <MaterialCommunityIcons
             style={{ paddingTop: 10, opacity: 0.2 }}
-            name={"heart"}
-            size={100}
-            color={color}
-          /> */}
-
-                              <FontAwesome6
-            style={{ paddingTop: 10, opacity: 0.2 }}
-            name={"heart-circle-plus"}
+            name={"comment"}
             size={120}
             color={color}
           />
 
+                              {/* <FontAwesome6
+            style={{ paddingTop: 10, opacity: 0.2 }}
+            // name={"heart-circle-plus"}
+              name={"comment"}
+            size={120}
+            color={color}
+          /> */}
+
           <Pressable
             onPress={onCenterPress}
-            style={[styles.centerButton, {}]}
+            style={[styles.centerButton, {backgroundColor: manualGradientColors.lightColor}]}
             hitSlop={10}
           >
-            <MaterialCommunityIcons name={"plus"} size={56} color={color} />
+            <MaterialCommunityIcons name={"plus"} size={36} color={manualGradientColors.homeDarkColor} />
             {/* <RNText style={{ color, fontFamily: "Poppins-Bold", fontSize: 16 }}>
           Add
         </RNText> */}
@@ -272,17 +273,18 @@ const styles = StyleSheet.create({
   },
   centerButton: {
     position: "absolute",
-    padding: 12,
+    padding: 6,
     borderRadius: 999,
+    backgroundColor: 'green',
     // backgroundColor: "white",
-    elevation: 4,
-    shadowColor: "black",
-    shadowOpacity: 0.1,
-    opacity: .9,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    top: 140,
-    right: 76,
+    // elevation: 4,
+    // shadowColor: "black",
+    // shadowOpacity: 0.1,
+    // opacity: .9,
+    // shadowRadius: 8,
+    // shadowOffset: { width: 0, height: 2 },
+    top: 150,
+    right: 86,
   },
 });
 

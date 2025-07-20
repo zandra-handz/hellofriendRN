@@ -34,7 +34,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
   const friendModalButtonHeight = 16;
-  const message = `Selected: ${selectedFriend.name}`;
+  const message = `${selectedFriend.name}`;
   const compositionMessage = `Talking point for ${selectedFriend.name}`;
 
   return (
@@ -47,16 +47,17 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
       style={[
         {
           backgroundColor: backgroundColor,
-          borderBottomLeftRadius: borderBottomLeftRadius,
-          borderBottomRightRadius: borderBottomRightRadius,
+          // borderBottomLeftRadius: borderBottomLeftRadius,
+          // borderBottomRightRadius: borderBottomRightRadius,
+          borderRadius: 0,
           //alignItems: "center",
           alignText: "center",
           flexWrap: "flex",
           width: "100%",
           height: 'auto', 
           padding: 10, 
-          paddingTop: 10,
-          paddingBottom: 10,
+          paddingTop: 0,
+          paddingBottom: 20,
         },
       ]}
     >
@@ -65,8 +66,8 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           appFontStyles.welcomeText,
           {
             color: themeStyles.primaryText.color,
-            fontSize: 46,
-            lineHeight: 48,
+            fontSize: 28,
+            lineHeight: 38,
           },
         ]}
       >
@@ -75,7 +76,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
           : selectedFriend && !loadingNewFriend // && isKeyboardVisible
             ? compositionMessage
             : ""}{" "}
-        <View
+        {/* <View
           style={{
             height: appFontStyles.welcomeText.fontSize,
             width: "auto",
@@ -90,7 +91,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
             navigationDisabled={true}
             useGenericTextColor={true}
           />
-        </View>
+        </View> */}
       </Animated.Text>
     </AnimatedPressable>
   );

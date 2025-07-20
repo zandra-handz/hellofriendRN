@@ -1,6 +1,5 @@
 import React from "react";
-import { View } from "react-native";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import { View } from "react-native"; 
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";

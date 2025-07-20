@@ -2,26 +2,17 @@ import React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
-
-import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
-import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-
-import { useNavigation } from "@react-navigation/native";
+ 
 import { useFriendList } from "@/src/context/FriendListContext";
 
-import FormatMonthDay from "@/app/components/appwide/format/FormatMonthDay";
-import SlideToAdd from "../foranimations/SlideToAdd";
+ import SlideToAdd from "../foranimations/SlideToAdd";
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 
-import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
-
+ 
 const NewHelloView = ({ data, onSliderPull }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
-  const navigation = useNavigation();
-  const { updateCapsule } = useCapsuleList();
+ 
   const { themeAheadOfLoading } = useFriendList();
 
  

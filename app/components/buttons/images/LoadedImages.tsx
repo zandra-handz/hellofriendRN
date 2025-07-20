@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+ 
 import BobbingAnim from "../../../animations/BobbingAnim";
 import FlashAnim from "../../../animations/FlashAnim";
 import {
@@ -33,8 +33,7 @@ const LoadedImages: React.FC<Props> = ({
   circleColor = "red",
   countTextSize = 12,
   onPress = () => {},
-}) => {
-  const { capsuleCount } = useCapsuleList();
+}) => { 
   const { imageList } = useImageFunctions();
 
   return (

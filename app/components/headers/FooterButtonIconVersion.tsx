@@ -1,8 +1,7 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import {  Text,  Pressable, Alert } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
 
 interface ButtonDeselectProps {
   label: string;
@@ -48,7 +47,7 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
   };
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => handleOnPress()}
       style={{
         flexDirection: "column",
@@ -75,7 +74,7 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
       >
         {label}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

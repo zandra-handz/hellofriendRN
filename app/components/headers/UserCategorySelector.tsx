@@ -20,7 +20,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useCategories } from "@/src/context/CategoriesContext";
-import { useNavigationState } from "@react-navigation/native";
+ 
 import { useFocusEffect } from "@react-navigation/native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
@@ -45,11 +45,9 @@ const UserCategorySelector = ({
   existingCategory,
   updatingExisting,
   existingId,
-}) => {
-  const navigationState = useNavigationState((state) => state);
+}) => { 
   const { user  } = useUser();
-  const currentRouteName = navigationState.routes[navigationState.index]?.name;
-  // const isOnActionPage = currentRouteName === "hellofriend";
+ 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { selectedFriend } =
     useSelectedFriend();
@@ -61,16 +59,12 @@ const UserCategorySelector = ({
     createNewCategoryMutation, 
   } = useCategories();
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
-  const footerHeight = 90;
-  const topperHeight = 70;
-  const footerPaddingBottom = 20;
-  const footerIconSize = 28;
-  const flatListRef = useAnimatedRef(null);
-  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+ 
+  const topperHeight = 70; 
+  const flatListRef = useAnimatedRef(null); 
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
-  const [pressedOnce, setPressedOnce] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(existingCategory);
+  const [pressedOnce, setPressedOnce] = useState(false); 
 
   const [newCategoryId, setNewCategoryId] = useState(null);
 

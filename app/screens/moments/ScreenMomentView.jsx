@@ -9,7 +9,7 @@ import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-fall
 import { useFocusEffect } from "@react-navigation/native";
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 
 const ScreenMomentView = () => {
   const route = useRoute();
@@ -17,16 +17,14 @@ const ScreenMomentView = () => {
   const currentIndex = route.params?.index ?? null;
 
   const {
-    capsuleList,
-    capsuleCount,
-    deleteMomentRQuery,
-    deleteMomentMutation,
+    capsuleList, 
+    deleteMomentRQuery, 
     updateCapsuleMutation,
     updateCacheWithNewPreAdded,
   } = useCapsuleList();
   // const [currentIndex, setCurrentIndex] = useState(0);
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+ 
 
   // const renderHeader = useCallback(
   //   () => (

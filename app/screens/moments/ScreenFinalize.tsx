@@ -4,20 +4,21 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import FinalizeList from "@/app/components/moments/FinalizeList";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
-import { useCategories } from "@/src/context/CategoriesContext";
+import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
 const ScreenFinalize = () => {
-  const { allCapsulesList, preAdded, categoryNames } = useCapsuleList();
+  const { allCapsulesList, capsuleList, preAdded  } = useCapsuleList();
+    const {  categoryNames } = useTalkingPCategorySorting({listData: capsuleList})
 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
-  const { userCategories } = useCategories();
+ 
 
   useFocusEffect(
     useCallback(() => {

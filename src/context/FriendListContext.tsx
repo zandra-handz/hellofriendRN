@@ -125,67 +125,128 @@ export const FriendListProvider = ({ children }) => {
 
   const friendListLength = friendList.length;
 
-  const updateFriend = (updatedFriend) => {
-    setFriendList((prevFriendList) => {
-      return prevFriendList.map((friend) =>
-        friend.id === updatedFriend.id ? updatedFriend : friend
-      );
-    });
-  };
+  // const updateFriend = (updatedFriend) => {
+  //   setFriendList((prevFriendList) => {
+  //     return prevFriendList.map((friend) =>
+  //       friend.id === updatedFriend.id ? updatedFriend : friend
+  //     );
+  //   });
+  // };
+const updateFriend = (updatedFriend) => {
+  setFriendList((prev) =>
+    prev.map((friend) => (friend.id === updatedFriend.id ? updatedFriend : friend))
+  );
+};
 
-  const updateFriendListColors = (
-    friendId,
-    darkColor,
+  const updateFriendListColors = (friendId, darkColor, lightColor, fontColor, fontColorSecondary) => {
+  setFriendList((prevFriendList) =>
+    prevFriendList.map((friend) =>
+      friend.id === friendId
+        ? {
+            ...friend,
+            darkColor,
+            savedDarkColor: darkColor,
+            lightColor,
+            savedLightColor: lightColor,
+            fontColor,
+            fontColorSecondary,
+          }
+        : friend
+    )
+  );
+  setThemeAheadOfLoading({
     lightColor,
+    darkColor,
     fontColor,
-    fontColorSecondary
-  ) => {
-    setFriendList((prevFriendList) => {
-      const friend = prevFriendList.find((friend) => friend.id === friendId);
-      if (friend) {
-        friend.darkColor = darkColor;
-        friend.savedDarkColor = darkColor;
-        friend.lightColor = lightColor;
-        friend.savedLightColor = lightColor;
-        friend.fontColor = fontColor;
-        friend.fontColorSecondary = fontColorSecondary;
-        setThemeAheadOfLoading({
-          lightColor: lightColor,
-          darkColor: darkColor,
-          fontColor: fontColor,
-          fontColorSecondary: fontColorSecondary,
-        });
-      }
-      return [...prevFriendList]; // new array to trigger rerender
-    });
-  };
+    fontColorSecondary,
+  });
+};
+
+
+  // const updateFriendListColors = (
+  //   friendId,
+  //   darkColor,
+  //   lightColor,
+  //   fontColor,
+  //   fontColorSecondary
+  // ) => {
+  //   setFriendList((prevFriendList) => {
+  //     const friend = prevFriendList.find((friend) => friend.id === friendId);
+  //     if (friend) {
+  //       friend.darkColor = darkColor;
+  //       friend.savedDarkColor = darkColor;
+  //       friend.lightColor = lightColor;
+  //       friend.savedLightColor = lightColor;
+  //       friend.fontColor = fontColor;
+  //       friend.fontColorSecondary = fontColorSecondary;
+  //       setThemeAheadOfLoading({
+  //         lightColor: lightColor,
+  //         darkColor: darkColor,
+  //         fontColor: fontColor,
+  //         fontColorSecondary: fontColorSecondary,
+  //       });
+  //     }
+  //     return [...prevFriendList]; // new array to trigger rerender
+  //   });
+  // };
 
   const updateFriendListColorsExcludeSaved = (
-    friendId,
-    darkColor,
+  friendId,
+  darkColor,
+  lightColor,
+  fontColor,
+  fontColorSecondary
+) => {
+  setFriendList((prevFriendList) =>
+    prevFriendList.map((friend) =>
+      friend.id === friendId
+        ? {
+            ...friend,
+            darkColor,
+            lightColor,
+            fontColor,
+            fontColorSecondary,
+            // saved colors NOT updated here
+          }
+        : friend
+    )
+  );
+
+  setThemeAheadOfLoading({
     lightColor,
+    darkColor,
     fontColor,
-    fontColorSecondary
-  ) => {
-    setFriendList((prevFriendList) => {
-      const friend = prevFriendList.find((friend) => friend.id === friendId);
-      if (friend) {
-        friend.darkColor = darkColor;
-        //friend.savedDarkColor = darkColor;
-        friend.lightColor = lightColor;
-        //friend.savedLightColor = lightColor;
-        friend.fontColor = fontColor;
-        friend.fontColorSecondary = fontColorSecondary;
-        setThemeAheadOfLoading({
-          lightColor: lightColor,
-          darkColor: darkColor,
-          fontColor: fontColor,
-          fontColorSecondary: fontColorSecondary,
-        });
-      }
-      return [...prevFriendList]; // new array for rerender
-    });
-  };
+    fontColorSecondary,
+  });
+};
+
+
+  // const updateFriendListColorsExcludeSaved = (
+  //   friendId,
+  //   darkColor,
+  //   lightColor,
+  //   fontColor,
+  //   fontColorSecondary
+  // ) => {
+  //   setFriendList((prevFriendList) => {
+  //     const friend = prevFriendList.find((friend) => friend.id === friendId);
+  //     if (friend) {
+  //       friend.darkColor = darkColor;
+  //       //friend.savedDarkColor = darkColor;
+  //       friend.lightColor = lightColor;
+  //       //friend.savedLightColor = lightColor;
+  //       friend.fontColor = fontColor;
+  //       friend.fontColorSecondary = fontColorSecondary;
+  //       setThemeAheadOfLoading({
+  //         lightColor: lightColor,
+  //         darkColor: darkColor,
+  //         fontColor: fontColor,
+  //         fontColorSecondary: fontColorSecondary,
+  //       });
+  //     }
+  //     return [...prevFriendList]; // new array for rerender
+  //   });
+  // };
 
   const contextValue = useMemo(
     () => ({
