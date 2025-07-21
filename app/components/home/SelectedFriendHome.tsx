@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState, useEffect } from "react";
-import {
-  TouchableOpacity,
+import { 
   Pressable,
   Text,
   StyleSheet,
@@ -10,21 +9,16 @@ import {
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useNavigation } from "@react-navigation/native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
-import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
-import LoadedMoments from "../buttons/moments/LoadedMoments";
-import LoadedImages from "../buttons/images/LoadedImages";
+import FriendHeaderMessageUI from "./FriendHeaderMessageUI"; 
 import CalendarChart from "./CalendarChart";
 import AllFriendCharts from "./AllFriendCharts";
-import TalkingPointsChart from "./TalkingPointsChart";
-import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-import Pics from "./Pics";
-import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
-import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
-import HomeScrollSoon from "./HomeScrollSoon";
+import TalkingPointsChart from "./TalkingPointsChart"; 
+import Pics from "./Pics"; 
+import {  FontAwesome6 } from "@expo/vector-icons";
+ 
 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
@@ -41,8 +35,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     manualGradientColors,
     themeStyles,
     appFontStyles,
-  } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  } = useGlobalStyle(); 
 
   const headerRef = useRef(null);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);

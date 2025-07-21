@@ -26,7 +26,7 @@ const CategoryHistoryModal: React.FC<Props> = ({
   data,
   categoryId = 3,
 }) => {
-  const { themeStyles, appSpacingStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles,  appFontStyles } = useGlobalStyle();
   const { friendList } = useFriendList();
   const { stats } = useUserStats();
   const [categoryID, setCategoryID] = useState(null);

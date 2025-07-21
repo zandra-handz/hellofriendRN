@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, {  useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -33,13 +33,11 @@ const ScreenLocations = ({}) => {
   const [viewingAllLocations, setViewingAllLocations] = useState(false);
   const { themeAheadOfLoading  } = useFriendList();
  
-  const { selectedFriend, friendDashboardData, friendFavesData } = useSelectedFriend();
+  const { selectedFriend  } = useSelectedFriend();
   const queryClient = useQueryClient();
   const [locationIdToScrollTo, setLocationIdToScrollTo] = useState(null);
   const [faveLocationIdToScrollTo, setFaveLocationIdToScrollTo] =
-    useState(null);
-  const [savedLocationIdToScrollTo, setSavedLocationIdToScrollTo] =
-    useState(null);
+    useState(null); 
   const [locationCategories, setLocationCategories] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("Coffee");
 

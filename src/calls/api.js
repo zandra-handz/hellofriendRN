@@ -498,7 +498,7 @@ export const refreshAccessToken = async (refToken) => {
 export const fetchFriendList = async () => {
   try {
     const response = await helloFriendApiClient.get("/friends/all/");
-
+ 
     return response.data;
   } catch (error) {
     console.error("Error fetching friend list:", error);

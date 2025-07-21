@@ -13,8 +13,7 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import AlertList from "../alerts/AlertList";
-import { useFriendList } from "@/src/context/FriendListContext";
+import AlertList from "../alerts/AlertList"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import NotesOutlineSvg from "@/app/assets/svgs/notes-outline.svg"; 
 import { useNavigation } from "@react-navigation/native";
@@ -33,11 +32,9 @@ const LocationSendText = ({
   family = "Poppins-Bold",
   color = "black",
   style,
-}) => {
-  const { themeAheadOfLoading } = useFriendList();
+}) => { 
   const [isModalVisible, setModalVisible] = useState(false);
-  const { themeStyles } = useGlobalStyle();
-  const [hasNotes, setHasNotes] = useState(false);
+  const { themeStyles } = useGlobalStyle(); 
 
   const navigation = useNavigation();
 
@@ -74,14 +71,7 @@ const LocationSendText = ({
   const toggleModal = () => {
     setModalVisible((prev) => !prev);
   };
-
-  useLayoutEffect(() => {
-    if (location && location.personal_experience_info) {
-      setHasNotes(true);
-    } else {
-      setHasNotes(false);
-    }
-  }, [location]);
+ 
 
   return (
     <View>

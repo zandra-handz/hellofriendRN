@@ -1,13 +1,12 @@
-import React, { useState,  useEffect, useRef } from "react";
+import React, {   useEffect, useRef } from "react";
 
 import { useRoute } from "@react-navigation/native";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
-import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
+ 
+
 import { useNavigation } from "@react-navigation/native";
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
@@ -26,8 +25,7 @@ const ScreenLocationView = () => {
   const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
   const navigation = useNavigation();
   // const [currentIndex, setCurrentIndex] = useState(0);
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+ 
   const {
     faveLocations,
     nonFaveLocations,

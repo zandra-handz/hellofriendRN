@@ -67,17 +67,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // console.log("user context rerendered");
-
-  let isReinitializing = false;
+  const isReinitializingRef = useRef(false);
 
   const reInitialize = useCallback(async () => {
-    // console.log("REINT TRIGGERED");
-    if (isReinitializing) return;
-    isReinitializing = true;
+    if (isReinitializingRef.current) return;
+    isReinitializingRef.current = true;
 
     try {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
-
       if (token) {
         let userData = null;
 
@@ -89,37 +86,22 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
 
         if (userData) {
-          // Only update if values are actually different
           setUser((prev) => {
             const isEqual = JSON.stringify(prev) === JSON.stringify(userData);
-            if (!isEqual) {
-              console.log("Setting new user data");
-              return userData;
-            }
-            return prev;
+            return !isEqual ? userData : prev;
           });
 
-          setAuthenticated((prev) => {
-            if (!prev) {
-              console.log("Setting authenticated: true");
-              return true;
-            }
-            return prev;
-          });
+          setAuthenticated((prev) => (!prev ? true : prev));
         } else {
-          setUser((prev) => (prev !== null ? null : prev));
-          setAuthenticated((prev) => (prev !== false ? false : prev));
-          queryClient.clear();
+          await onSignOut();
         }
       } else {
-        setUser((prev) => (prev !== null ? null : prev));
-        setAuthenticated((prev) => (prev !== false ? false : prev));
-        queryClient.clear();
+        await onSignOut();
       }
     } finally {
-      isReinitializing = false;
+      isReinitializingRef.current = false;
     }
-  }, [onSignOut, queryClient]);
+  }, [onSignOut]);
 
   const signinMutation = useMutation({
     mutationFn: signinWithoutRefresh,
@@ -199,9 +181,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const onSignOut = async () => {
     await signout();
-    setUser(null);
-    setAuthenticated(false);
-
+    setUser((prev) => (prev !== null ? null : prev));
+    setAuthenticated((prev) => (prev !== false ? false : prev));
+    // setUser(null);
+    // setAuthenticated(false);
     queryClient.clear();
   };
 
@@ -243,6 +226,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     () => ({
       user,
       isAuthenticated: authenticated,
+      isInitializing: isReinitializingRef.current,
       onSignin,
       onSignUp,
       onSignOut,
@@ -259,6 +243,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       reInitialize,
       signinMutation,
       signupMutation,
+      isReinitializingRef,
     ]
   );
 

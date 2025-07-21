@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Button, StyleSheet } from "react-native";
 import ResultsMidpointFinds from "./ResultsMidpointFinds";
-
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 
 import PickerSimpleButtonsBase from "../selectors/PickerSimpleButtonsBase";
 import InputMidpointKeyword from "./InputMidpointKeyword";
@@ -14,7 +13,7 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import BodyStyling from "../scaffolding/BodyStyling";
 
 const ContentFindMidpoint = ({ userAddress, friendAddress }) => {
-  const { selectedFriend } = useSelectedFriend();
+  
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
   const [showResults, setShowResults] = useState(false);

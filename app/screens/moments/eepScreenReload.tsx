@@ -6,8 +6,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
-import ReloadList from "@/app/components/helloes/ReloadList";
-import { useFriendList } from "@/src/context/FriendListContext";
+import ReloadList from "@/app/components/helloes/ReloadList"; 
 import { useRoute } from "@react-navigation/native";
 
 const eeScreenReload = () => {

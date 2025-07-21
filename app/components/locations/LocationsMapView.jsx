@@ -28,10 +28,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
-import FocusedLocationCardUI from "./FocusedLocationCardUI";
-
-import { useMessage } from "@/src/context/MessageContext";
-
+import FocusedLocationCardUI from "./FocusedLocationCardUI"; 
 import { useLocations } from "@/src/context/LocationsContext";
 
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
@@ -56,14 +53,13 @@ const LocationsMapView = ({
   //useGeolocationWatcher();
   const mapRef = useRef(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const { showMessage } = useMessage();
+ 
   const { locationList } = useLocations();
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const navigation = useNavigation();
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
-  const [focusedLocation, setFocusedLocation] = useState(null);
-  const [appOnlyLocationData, setAppOnlyLocationData] = useState(null);
+  const [focusedLocation, setFocusedLocation] = useState(null); 
 
   const listItemIconSize = 15;
   const listItemIconPadding = 6;

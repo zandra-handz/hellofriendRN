@@ -4,12 +4,43 @@ import React, {
   useState,
   useMemo,
   useEffect,
+  ReactNode,
 } from "react";
 import { useUser } from "./UserContext"; // Import useAuthUser hook
 import { fetchFriendList } from "../calls/api";
 import { useQuery } from "@tanstack/react-query";
 
-const FriendListContext = createContext({
+interface Friend {
+  id: number;
+  name: string;
+  first_name: string;
+  last_name: string;
+  first_meet_entered: string;
+  next_meet: number;
+  user: number;
+
+  created_on: string;
+  updated_on: string;
+
+  saved_color_dark: string;
+  saved_color_light: string;
+  theme_color_dark: string;
+  theme_color_light: string;
+  theme_color_font: string;
+  theme_color_font_secondary: string;
+
+  suggestion_settings: number;
+}
+
+interface FriendListContextType {
+  friendList: Friend[];
+  setFriendList: (friends: Friend[]) => void;
+  addToFriendList: (friend: Friend) => void;
+  removeFromFriendList: (friendId: number) => void;
+  updateFriend: (updatedFriend: Friend) => void;
+}
+
+const FriendListContext = createContext<FriendListContextType>({
   friendList: [],
   setFriendList: () => {},
   addToFriendList: () => {},
@@ -17,11 +48,19 @@ const FriendListContext = createContext({
   updateFriend: () => {},
 });
 
-export const useFriendList = () => useContext(FriendListContext);
+export const useFriendList = (): FriendListContextType =>
+  useContext(FriendListContext);
 
-export const FriendListProvider = ({ children }) => {
-  const { user, isAuthenticated, isInitializing, onSignOut } = useUser();
-  const [friendList, setFriendList] = useState(() => []); // lazy loading?
+interface FriendListProviderProps {
+  children: ReactNode;
+}
+
+export const FriendListProvider: React.FC<FriendListProviderProps> = ({
+  children,
+}) => {
+  const { user, isAuthenticated, isInitializing, onSignOut } = useUser(); 
+  const [friendList, setFriendList] = useState<Friend[]>([]);
+
   const [useGradientInSafeView, setUseGradientInSafeView] = useState(false);
   console.log("FRIEND LIST RERENDERED");
   const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
@@ -31,16 +70,20 @@ export const FriendListProvider = ({ children }) => {
     fontColorSecondary: "#000000",
   });
 
-  const updateSafeViewGradient = (boolean) => {
+  const updateSafeViewGradient = (boolean: boolean) => {
     setUseGradientInSafeView((prev) => boolean);
   };
 
-  const getThemeAheadOfLoading = (loadingFriend) => {
+  const getThemeAheadOfLoading = (loadingFriend: Friend) => {
     setThemeAheadOfLoading({
-      lightColor: loadingFriend.lightColor || "#a0f143",
-      darkColor: loadingFriend.darkColor || "#4caf50",
-      fontColor: loadingFriend.fontColor || "#000000",
-      fontColorSecondary: loadingFriend.fontColorSecondary || "#000000",
+      // lightColor: loadingFriend.lightColor || "#a0f143",
+      // darkColor: loadingFriend.darkColor || "#4caf50",
+      // fontColor: loadingFriend.fontColor || "#000000",
+      // fontColorSecondary: loadingFriend.fontColorSecondary || "#000000",
+      lightColor: loadingFriend.theme_color_light || "#a0f143",
+      darkColor: loadingFriend.theme_color_dark || "#4caf50",
+      fontColor: loadingFriend.theme_color_font || "#000000",
+      fontColorSecondary: loadingFriend.theme_color_font_secondary || "#000000",
     });
   };
 
@@ -63,16 +106,17 @@ export const FriendListProvider = ({ children }) => {
     queryKey: ["friendList", user?.id],
     queryFn: async () => {
       const friendData = await fetchFriendList();
-      return friendData.map((friend) => ({
-        id: friend.id,
-        name: friend.name,
-        savedDarkColor: friend.saved_color_dark || "#4caf50",
-        savedLightColor: friend.saved_color_light || "#a0f143",
-        darkColor: friend.theme_color_dark || "#4caf50",
-        lightColor: friend.theme_color_light || "#a0f143",
-        fontColor: friend.theme_color_font || "#000000",
-        fontColorSecondary: friend.theme_color_font_secondary || "#000000",
-      }));
+      return friendData;
+      // return friendData.map((friend) => ({
+      //   id: friend.id,
+      //   name: friend.name,
+      //   savedDarkColor: friend.saved_color_dark || "#4caf50",
+      //   savedLightColor: friend.saved_color_light || "#a0f143",
+      //   darkColor: friend.theme_color_dark || "#4caf50",
+      //   lightColor: friend.theme_color_light || "#a0f143",
+      //   fontColor: friend.theme_color_font || "#000000",
+      //   fontColorSecondary: friend.theme_color_font_secondary || "#000000",
+      // }));
     },
     retry: 3,
     enabled: !!(user && isAuthenticated && !isInitializing),
@@ -83,19 +127,16 @@ export const FriendListProvider = ({ children }) => {
     if (isError) {
       onSignOut();
     }
-
   }, [isError]);
 
   useEffect(() => {
     if (friendListIsSuccess && friendListData) {
       setFriendList(friendListData);
-
-      // for testing
-      // setFriendList([]);
+ 
     }
   }, [friendListIsSuccess, friendListData]);
 
-  const addToFriendList = (newFriend) => {
+  const addToFriendList = (newFriend: Friend) => {
     setFriendList((prevFriendList) => {
       const isAlreadyFriend = prevFriendList.some(
         (friend) => friend.id === newFriend.id
@@ -107,147 +148,96 @@ export const FriendListProvider = ({ children }) => {
     });
   };
 
-  const removeFromFriendList = (friendIdToRemove) => {
-    setFriendList((prevFriendList) => {
-      try {
-        const idsToRemove = Array.isArray(friendIdToRemove)
-          ? friendIdToRemove
-          : [friendIdToRemove];
-        console.log("friend removed from friend list!");
-        return prevFriendList.filter(
-          (friend) => !idsToRemove.includes(friend.id)
-        );
-      } catch (error) {
-        console.log("error removing friend from list: ", error);
-      }
+const removeFromFriendList = (friendIdToRemove: number | number[]) => {
+  setFriendList((prevFriendList) => {
+    try {
+      const idsToRemove = Array.isArray(friendIdToRemove)
+        ? friendIdToRemove
+        : [friendIdToRemove];
+      // console.log("friend removed from friend list!");
+      return prevFriendList.filter(
+        (friend) => !idsToRemove.includes(friend.id)
+      );
+    } catch (error) {
+      console.log("error removing friend from list: ", error);
+      return prevFriendList; 
+    }
+  });
+};
+
+  const friendListLength = friendList.length;
+ 
+  const updateFriend = (updatedFriend: Friend) => {
+    setFriendList((prev) =>
+      prev.map((friend) =>
+        friend.id === updatedFriend.id ? updatedFriend : friend
+      )
+    );
+  };
+
+  const updateFriendListColors = (
+    friendId: number,
+    darkColor: string,
+    lightColor: string,
+    fontColor: string,
+    fontColorSecondary: string
+  ) => {
+    setFriendList((prevFriendList) =>
+      prevFriendList.map((friend) =>
+        friend.id === friendId
+        ? {
+            ...friend,
+            theme_color_dark: darkColor,
+            saved_color_dark: darkColor,
+            theme_color_light: lightColor,
+            saved_color_light: lightColor,
+            theme_color_font: fontColor,
+            theme_color_font_secondary: fontColorSecondary,
+          }
+          : friend
+      )
+    );
+    setThemeAheadOfLoading({
+      lightColor,
+      darkColor,
+      fontColor,
+      fontColorSecondary,
     });
   };
 
-  const friendListLength = friendList.length;
-
-  // const updateFriend = (updatedFriend) => {
-  //   setFriendList((prevFriendList) => {
-  //     return prevFriendList.map((friend) =>
-  //       friend.id === updatedFriend.id ? updatedFriend : friend
-  //     );
-  //   });
-  // };
-const updateFriend = (updatedFriend) => {
-  setFriendList((prev) =>
-    prev.map((friend) => (friend.id === updatedFriend.id ? updatedFriend : friend))
-  );
-};
-
-  const updateFriendListColors = (friendId, darkColor, lightColor, fontColor, fontColorSecondary) => {
-  setFriendList((prevFriendList) =>
-    prevFriendList.map((friend) =>
-      friend.id === friendId
-        ? {
-            ...friend,
-            darkColor,
-            savedDarkColor: darkColor,
-            lightColor,
-            savedLightColor: lightColor,
-            fontColor,
-            fontColorSecondary,
-          }
-        : friend
-    )
-  );
-  setThemeAheadOfLoading({
-    lightColor,
-    darkColor,
-    fontColor,
-    fontColorSecondary,
-  });
-};
-
-
-  // const updateFriendListColors = (
-  //   friendId,
-  //   darkColor,
-  //   lightColor,
-  //   fontColor,
-  //   fontColorSecondary
-  // ) => {
-  //   setFriendList((prevFriendList) => {
-  //     const friend = prevFriendList.find((friend) => friend.id === friendId);
-  //     if (friend) {
-  //       friend.darkColor = darkColor;
-  //       friend.savedDarkColor = darkColor;
-  //       friend.lightColor = lightColor;
-  //       friend.savedLightColor = lightColor;
-  //       friend.fontColor = fontColor;
-  //       friend.fontColorSecondary = fontColorSecondary;
-  //       setThemeAheadOfLoading({
-  //         lightColor: lightColor,
-  //         darkColor: darkColor,
-  //         fontColor: fontColor,
-  //         fontColorSecondary: fontColorSecondary,
-  //       });
-  //     }
-  //     return [...prevFriendList]; // new array to trigger rerender
-  //   });
-  // };
+ 
 
   const updateFriendListColorsExcludeSaved = (
-  friendId,
-  darkColor,
-  lightColor,
-  fontColor,
-  fontColorSecondary
-) => {
-  setFriendList((prevFriendList) =>
-    prevFriendList.map((friend) =>
-      friend.id === friendId
-        ? {
-            ...friend,
-            darkColor,
-            lightColor,
-            fontColor,
-            fontColorSecondary,
-            // saved colors NOT updated here
-          }
-        : friend
-    )
-  );
+    friendId: number,
+    darkColor: string,
+    lightColor: string,
+    fontColor: string,
+    fontColorSecondary: string,
+  ) => {
+setFriendList((prevFriendList) =>
+  prevFriendList.map((friend) =>
+    friend.id === friendId
+      ? {
+          ...friend,
+          theme_color_dark: darkColor,
+          theme_color_light: lightColor,
+          theme_color_font: fontColor,
+          theme_color_font_secondary: fontColorSecondary,
+          // saved colors NOT updated here
+        }
+      : friend
+  ) 
 
-  setThemeAheadOfLoading({
-    lightColor,
-    darkColor,
-    fontColor,
-    fontColorSecondary,
-  });
-};
+    );
 
-
-  // const updateFriendListColorsExcludeSaved = (
-  //   friendId,
-  //   darkColor,
-  //   lightColor,
-  //   fontColor,
-  //   fontColorSecondary
-  // ) => {
-  //   setFriendList((prevFriendList) => {
-  //     const friend = prevFriendList.find((friend) => friend.id === friendId);
-  //     if (friend) {
-  //       friend.darkColor = darkColor;
-  //       //friend.savedDarkColor = darkColor;
-  //       friend.lightColor = lightColor;
-  //       //friend.savedLightColor = lightColor;
-  //       friend.fontColor = fontColor;
-  //       friend.fontColorSecondary = fontColorSecondary;
-  //       setThemeAheadOfLoading({
-  //         lightColor: lightColor,
-  //         darkColor: darkColor,
-  //         fontColor: fontColor,
-  //         fontColorSecondary: fontColorSecondary,
-  //       });
-  //     }
-  //     return [...prevFriendList]; // new array for rerender
-  //   });
-  // };
-
+    setThemeAheadOfLoading({
+      lightColor,
+      darkColor,
+      fontColor,
+      fontColorSecondary,
+    });
+  };
+ 
   const contextValue = useMemo(
     () => ({
       friendList,

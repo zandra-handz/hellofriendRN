@@ -6,8 +6,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
  
-import CarouselSlider from "@/app/components/appwide/CarouselSlider";
-import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
+import CarouselSlider from "@/app/components/appwide/CarouselSlider"; 
 import { useFriendList } from "@/src/context/FriendListContext";
  
 
@@ -18,8 +17,7 @@ const ScreenUnsavedLocationView = () => {
   const unsavedLocation = route.params?.unsavedLocation ?? null; 
   // const [currentIndex, setCurrentIndex] = useState(0);
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
-  const { faveLocations, nonFaveLocations } = useFriendLocationsContext();
+  const { themeAheadOfLoading } = useFriendList(); 
 
   const renderHeader = useCallback(
     () => (

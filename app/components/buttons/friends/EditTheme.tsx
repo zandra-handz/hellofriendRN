@@ -104,7 +104,7 @@ const EditTheme = ({ iconSize = 15, value = "None" }) => {
     }
   };
 
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { themeStyles  } = useGlobalStyle();
 
   const [showEdit, setShowEdit] = useState(false);
 

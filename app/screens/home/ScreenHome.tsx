@@ -12,7 +12,7 @@ import {
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 import TopBar from "@/app/components/home/TopBar";
-
+import { AppState, AppStateStatus } from "react-native";
 import ConditionalMessageUI from "@/app/components/home/ConditionalMessageUI";
 // import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 import { useUser } from "@/src/context/UserContext";
@@ -32,7 +32,7 @@ import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 
 import * as FileSystem from "expo-file-system";
-
+import * as SecureStore from "expo-secure-store";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import FriendHeaderMessageUI from "@/app/components/home/FriendHeaderMessageUI";
 
@@ -42,7 +42,7 @@ const ScreenHome = () => {
   // using DeviceLocationContext now
   // useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles } = useGlobalStyle();
-  const { user } = useUser();
+  const { user, reInitialize, onSignOut } = useUser();
 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { friendList, friendListLength } = useFriendList();
@@ -61,6 +61,37 @@ const ScreenHome = () => {
 
   // console.log("HOME SCREEN RERENDEREEEEEEEEEEEEERded");
 
+   const appState = useRef(AppState.currentState);
+    useEffect(() => {
+      const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
+        console.log("Welcome screen: App state changed:", nextState);
+  
+        
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextState === "active"
+        ) {
+  
+  
+          console.log("Weclome screen: App has come to the foreground!"); 
+          checkIfSignedIn();
+          if (!reInitialize) {
+          return;
+        }
+    
+        }
+  
+        appState.current = nextState;
+      });
+  
+      return () => subscription.remove(); // cleanup
+    }, [reInitialize]);
+
+
+    useEffect(() => {
+      console.log('user changed!!!!!!!');
+
+    }, [user]);
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
 
@@ -117,6 +148,23 @@ const ScreenHome = () => {
           "An error occurred while processing the shared file."
         );
       }
+    }
+  };
+
+  //just checks if token, if no token stored, signs out which will cause redirect to welcome screen
+  //NO REINIT/API CALL HERE, OTHER PARTS OF THE CODE WILL HANDLE THAT IF 401 ERROR OCCURS
+  const checkIfSignedIn = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("accessToken");
+      if (token) {
+        // reInitialize();
+        console.log('good to go!');
+      } else {
+        onSignOut();
+      }
+    } catch (error) {
+      console.error("Error checking sign-in status", error);
+      onSignOut();
     }
   };
 
@@ -268,8 +316,7 @@ const ScreenHome = () => {
                   />
                 )} */}
               {selectedFriend && (
-
-                <TopBar/>
+                <TopBar />
 
                 // <FriendHeaderMessageUI
                 //   backgroundColor={

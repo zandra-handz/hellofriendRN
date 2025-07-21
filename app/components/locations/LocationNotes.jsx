@@ -6,7 +6,7 @@
 //   console.log('Location added to friend\'s favorites.');
 //  }
 
-import React, { useLayoutEffect, useMemo, useState } from "react";
+import React, {   useMemo } from "react";
 import {
   View,
   Text, 

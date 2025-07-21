@@ -7,8 +7,7 @@ import {
 } from "react-native";
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { useSharedValue, withTiming } from "react-native-reanimated";
 
 import DonutChart from "./DonutChart";
@@ -50,7 +49,7 @@ const Donut = ({
   centerTextSize = 26,
 }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+ 
   // console.log(`colors in donut: `, colors);
 
   const { calculatePercentage } = useMomentSortingFunctions(data);

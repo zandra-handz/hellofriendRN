@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import ContentFindMidpoint from "@/app/components/locations/ContentFindMidpoint";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 const ScreenMidpointLocationSearch = () => {
   const route = useRoute();
   const userAddress = route?.params?.userAddress ?? null;

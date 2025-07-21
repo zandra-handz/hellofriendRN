@@ -1,24 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useFocusEffect } from "@react-navigation/native";
 import { useMessage } from "@/src/context/MessageContext";
 import SignInButton from "@/app/components/user/SignInButton";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
-import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller"; 
- 
+import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller";
+import { AppState, AppStateStatus } from "react-native"; 
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated'; 
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
 import { AuthScreenNavigationProp } from "@/src/types/ScreenPropTypes";
- 
+import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 //a frienddate assistant for overwhelmed adults, and for people who just have a lot to talk about
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 
 const ScreenWelcome = () => {
-  const { showMessage } = useMessage();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { reInitialize } = useUser();
+  const { reInitialize, isAuthenticated } = useUser();
   const navigation = useNavigation<AuthScreenNavigationProp>();
 
   const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
@@ -27,48 +31,64 @@ const ScreenWelcome = () => {
   const handleNavigateToAuthScreen = (userHitCreateAccount: boolean) => {
     navigation.navigate("Auth", { createNewAccount: !!userHitCreateAccount });
   };
- 
+
+  //  const appState = useRef(AppState.currentState);
+
+  //     useEffect(() => {
+  //       const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
+  //         console.log("Welcome screen: App state changed:", nextState);
+
+  //         if (
+  //           appState.current.match(/inactive|background/) &&
+  //           nextState === "active"
+  //         ) {
+
+  //           console.log("Weclome screen: App has come to the foreground!");
+  //           checkIfSignedIn();
+  //           if (!reInitialize) {
+  //           return;
+  //         }
+
+  //         }
+
+  //         appState.current = nextState;
+  //       });
+
+  //       return () => subscription.remove(); // cleanup
+  //     }, [reInitialize]);
+
+  useFocusEffect(
+    useCallback(() => {
+      checkIfSignedIn();
+    }, [])
+  );
+
+  // experimenting with this, not super great right now
+
+  const translateY = useSharedValue(500);
 
   useEffect(() => {
-    checkIfSignedIn();
+    translateY.value = withSpring(0, { duration: 3000 });
   }, []);
-
-// experimenting with this, not super great right now 
-
-  const translateY = useSharedValue(500); 
-
-  useEffect(() => {
-  translateY.value = withSpring(0, { duration: 3000})
-  }, []);
-
 
   const logoRiseStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        {translateY: translateY.value}
-      ] 
-  }})
+      transform: [{ translateY: translateY.value }],
+    };
+  });
 
   const checkIfSignedIn = async () => {
     try {
       const token = await SecureStore.getItemAsync("accessToken");
-      if (token) {  
-        // updateTriggerMessage('validating');
- 
-   
+      if (token) {
         reInitialize();
-        //handleNavigateToAuthScreen(); //don't need, conditional check in App.tsx will send it straight to the home page once has credentials
       } else {
         setConfirmedUserNotSignedIn(true);
-
-      //  updateTriggerMessage('signedout');
       }
     } catch (error) {
       console.error("Error checking sign-in status", error);
     }
   };
-
-
 
   // const [ triggerMessage, updateTriggerMessage ] = useState('none');
 
@@ -85,10 +105,8 @@ const ScreenWelcome = () => {
 
   // },[triggerMessage] );
 
- 
-
   return (
-    <PreAuthSafeViewAndGradientBackground style={{ flex: 1 }}> 
+    <PreAuthSafeViewAndGradientBackground style={{ flex: 1 }}>
       <GradientBackground
         useFriendColors={false}
         startColor={manualGradientColors.darkColor}
@@ -109,14 +127,28 @@ const ScreenWelcome = () => {
           }}
         >
           <>
-            {confirmedUserNotSignedIn && (
+            {(!confirmedUserNotSignedIn || isAuthenticated) && (
+              <LoadingPage
+                loading={true}
+                includeLabel={true}
+                label="loading user..."
+                spinnerType="circle"
+                spinnerSize={40}
+                color={manualGradientColors.homeDarkColor}
+                labelColor={manualGradientColors.homeDarkColor}
+              />
+            )}
+            {confirmedUserNotSignedIn && !isAuthenticated && (
               <>
                 <Animated.View
-                  style={[logoRiseStyle, {
-                    width: "100%",
-                    paddingBottom: "20%",
-                    paddingHorizontal: "3%",
-                  }]}
+                  style={[
+                    logoRiseStyle,
+                    {
+                      width: "100%",
+                      paddingBottom: "20%",
+                      paddingHorizontal: "3%",
+                    },
+                  ]}
                 >
                   <LogoSmaller />
                 </Animated.View>
@@ -131,8 +163,6 @@ const ScreenWelcome = () => {
                 >
                   <SignInButton
                     onPress={() => handleNavigateToAuthScreen(false)}
-            
-              
                   />
 
                   <View style={{ paddingTop: "3%" }}>
@@ -162,6 +192,5 @@ const ScreenWelcome = () => {
     </PreAuthSafeViewAndGradientBackground>
   );
 };
- 
 
 export default ScreenWelcome;

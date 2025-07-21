@@ -3,14 +3,43 @@ import React, { useMemo, useState } from "react";
 
 import tinycolor from "tinycolor2";
 
-const useReadableColors = (friendList, selectedFriend) => {
+
+//friendList object
+export interface Friend {
+  id: number;
+  name: string;
+  first_name: string;
+  last_name: string;
+  first_meet_entered: string;
+  next_meet: number;
+  user: number;
+
+  created_on: string;
+  updated_on: string;
+
+  saved_color_dark: string;
+  saved_color_light: string;
+  theme_color_dark: string;
+  theme_color_light: string;
+  theme_color_font: string;
+  theme_color_font_secondary: string;
+
+  suggestion_settings: number;
+}
+
+
+const useReadableColors = (friendList: Friend[], selectedFriend) => {
   const getSavedColorTheme = () => {
     const currentFriend = friendList.find(
       (friend) => friend.id === selectedFriend.id
     );
+
+    if (!currentFriend) {
+      return;
+    }
     return {
-      savedDarkColor: currentFriend.savedDarkColor,
-      savedLightColor: currentFriend.savedLightColor,
+      savedDarkColor: currentFriend.saved_color_dark,
+      savedLightColor: currentFriend.saved_color_light,
     };
   };
 

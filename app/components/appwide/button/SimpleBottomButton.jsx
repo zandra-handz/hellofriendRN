@@ -1,32 +1,32 @@
-import { TouchableOpacity, Text, StyleSheet, Image } from "react-native";
+import {   Pressable, Text, StyleSheet, Image } from "react-native";
  
-const SimpleBottomButton = ({ onPress, title }) => {
+const SimpleBottomButton = ({ onPress, title, borderRadius=10, backgroundColor='black', labelColor='white' }) => {
  
 
   return (
-    <TouchableOpacity
+    <Pressable
       style={{
         ...styles.buttonContainer,
-        backgroundColor: "black",
+        
+        borderRadius: borderRadius,
+        backgroundColor: backgroundColor,
         overflow: "hidden", 
       }}
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <Text style={[styles.buttonText, { color: "white" }]}>{title}</Text>
-    </TouchableOpacity>
+      <Text style={[styles.buttonText, { color: labelColor }]}>{title}</Text>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  buttonContainer: {
-    borderRadius: 30,
-    paddingVertical: "3%",
+  buttonContainer: { 
+    paddingVertical: 10,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "row", // Ensure alignment with image if present
-    backgroundColor: "orange",
+    flexDirection: "row", 
   },
   buttonText: {
     fontFamily: "Poppins-Bold",

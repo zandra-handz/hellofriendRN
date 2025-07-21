@@ -6,9 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
-import ActiveAddresses from "../locations/ActiveAddresses";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import ActiveAddresses from "../locations/ActiveAddresses"; 
 
 interface Props {
     userAddress: object;
@@ -23,9 +21,7 @@ const SetAddressesModal: React.FC<Props> = ({ isVisible, closeModal, userAddress
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
 
   const headerIconSize = 26;
-
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+ 
 
 //   const [userAddress, setUserAddress] = useState({
 //     address: `No address selected`,

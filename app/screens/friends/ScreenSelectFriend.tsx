@@ -14,7 +14,7 @@ type Props = {
 
 const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { friendList, getThemeAheadOfLoading, themeAheadOfLoading } =
+  const { friendList, getThemeAheadOfLoading } =
     useFriendList();
   const navigation = useNavigation();
   const { selectedFriend, setFriend  } = useSelectedFriend();
@@ -46,27 +46,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   return (
     <SafeViewAndGradientBackground style={{ flex: 1 }}>
       <View style={{ paddingHorizontal: 10, flex: 1 }}>
-        {selectedFriend && (
-          <View
-            style={{
-              width: "100%",
-              backgroundColor: themeStyles.primaryBackground.backgroundColor,
-              height: "auto",
-              flexShrink: 1,
 
-              borderRadius: 10,
-              justifyContent: "center",
-              padding: 20,
-              paddingVertical: 40,
-            }}
-          >
-            <Text
-              style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}
-            >
-              Selected: {selectedFriend.name}
-            </Text>
-          </View>
-        )}
         <View
           style={[
             themeStyles.primaryBackground,
@@ -91,13 +71,34 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
               friends
             </Text> */}
         </View>
+                {selectedFriend && (
+          <View
+            style={{
+              width: "100%",
+              backgroundColor: themeStyles.primaryBackground.backgroundColor,
+              height: "auto",
+              flexShrink: 1,
+
+              borderRadius: 10,
+              justifyContent: "center",
+              padding: 20,
+              paddingVertical: 20,
+            }}
+          >
+            <Text
+              style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 26}]}
+            >
+              Selected: {selectedFriend.name}
+            </Text>
+          </View>
+        )}
         <View style={{ width: "100%", flex: 1 }}>
-          {/* {filteredFriendList &&  ( */}
+          {filteredFriendList &&  (
             <FriendListUI
               data={filteredFriendList}
               onPress={handleSelectFriend}
             />
-          {/* )} */}
+          )}
         </View>
       </View>
     </SafeViewAndGradientBackground>

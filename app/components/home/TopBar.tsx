@@ -15,7 +15,7 @@ const TopBar = (props: Props) => {
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const navigation = useNavigation();
-  const friendModalButtonHeight = 16;
+  // const friendModalButtonHeight = 16;
 
 const handleNavigateToFriendSelect = () => {
     navigation.navigate("SelectFriend");

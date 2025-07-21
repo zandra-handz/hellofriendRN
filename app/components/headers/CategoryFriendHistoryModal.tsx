@@ -8,10 +8,8 @@ import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import { MaterialCommunityIcons, Foundation } from "@expo/vector-icons";
-import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
-import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
-import { updateMomentAPI } from "@/src/calls/api";
+import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup"; 
+import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner"; 
 interface Props {
   title: string;
   isVisible: boolean;

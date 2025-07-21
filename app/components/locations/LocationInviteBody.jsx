@@ -30,25 +30,9 @@ const LocationInviteBody = ({
     useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
 
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
+ 
   const { checkIfOpen } = useLocationDetailFunctions();
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => setIsKeyboardVisible(true)
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => setIsKeyboardVisible(false)
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+ 
 
   const renderOpenStatus = (data) => {
     let isOpenNow;

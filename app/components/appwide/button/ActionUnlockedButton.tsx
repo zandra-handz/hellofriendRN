@@ -3,8 +3,7 @@ import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated from "react-native-reanimated";
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
-
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -27,8 +26,7 @@ const ActionUnlockedButton = ({
     appFontStyles,
     manualGradientColors,
   } = useGlobalStyle();
-
-  const { themeAheadOfLoading } = useFriendList();
+ 
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
  

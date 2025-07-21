@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import React, { useState, useMemo, useCallback } from "react";
+import { View,   StyleSheet  } from "react-native";
+import React, {   useMemo } from "react";
  
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
