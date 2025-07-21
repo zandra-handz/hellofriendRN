@@ -96,7 +96,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       {upcomingHelloes && upcomingHelloes.length > 0 && (
         
       <Animated.FlatList
-        data={upcomingHelloes.slice(0).slice(startAtIndex)} // skip first
+        data={upcomingHelloes.slice(0).slice(startAtIndex, 8)} // skip first
         //horizontal={true}
         // getItemLayout={(data, index) => ({
         //   length: soonButtonWidth,

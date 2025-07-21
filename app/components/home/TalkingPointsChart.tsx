@@ -5,20 +5,20 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Donut from "../headers/Donut"; 
+import Donut from "../headers/Donut";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
- import { AppState, AppStateStatus } from 'react-native';
+import { AppState, AppStateStatus } from "react-native";
 
-import { useFriendList } from "@/src/context/FriendListContext"; 
- 
+import { useFriendList } from "@/src/context/FriendListContext";
+
 import CategoryDetailsModal from "../headers/CategoryDetailsModal";
 
 // import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
- 
+
 import { useCategories } from "@/src/context/CategoriesContext";
 // import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
- 
+
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
@@ -26,50 +26,46 @@ type Props = {
 
 const TalkingPointsChart = ({ outerPadding }: Props) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
   const { capsuleList } = useCapsuleList();
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const { themeAheadOfLoading } = useFriendList();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
-  const {
-    userCategories
-  } = useCategories();
+  const { userCategories } = useCategories();
 
-   const appState = useRef(AppState.currentState);
+  const appState = useRef(AppState.currentState);
 
   useEffect(() => {
-    const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
-      console.log("App state changed:", nextState);
+    const subscription = AppState.addEventListener(
+      "change",
+      (nextState: AppStateStatus) => {
+        console.log("App state changed:", nextState);
 
-      
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextState === "active"
-      ) {
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextState === "active"
+        ) {
+          console.log("App has come to the foreground!");
+          if (!capsuleList || capsuleList?.length < 1) {
+            return;
+          }
 
+          let categories = categorySizes();
+          setTempCategoriesSortedList(categories.sortedList);
+        }
 
-        console.log("App has come to the foreground!"); 
-        if (!capsuleList || capsuleList?.length < 1) {
-        return;
+        appState.current = nextState;
       }
-
-      let categories = categorySizes(); 
-      setTempCategoriesSortedList(categories.sortedList); 
-      }
-
-      appState.current = nextState;
-    });
+    );
 
     return () => subscription.remove(); // cleanup
   }, [capsuleList]);
- 
 
   const { categorySizes, generateGradientColors, generateRandomColors } =
     useMomentSortingFunctions({
       listData: capsuleList,
     });
- 
 
   const HEIGHT = 370;
 
@@ -82,9 +78,8 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
   const LABELS_DISTANCE_FROM_CENTER = -56;
   const LABELS_SLICE_END = 4;
   const CENTER_TEXT_SIZE = 50;
- 
+
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
- 
 
   const [viewCategoryId, setViewCategoryId] = useState(null);
 
@@ -96,22 +91,21 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
     setDetailsModalVisible(true);
   };
 
-
-    const handleMomentScreenScrollTo = (categoryId) => {
+  const handleMomentScreenScrollTo = (categoryId) => {
     if (!categoryId) {
       return;
     }
-    navigation.navigate('Moments', {scrollTo: categoryId})
+    navigation.navigate("Moments", { scrollTo: categoryId });
   };
- 
+
   useFocusEffect(
     useCallback(() => {
       if (!capsuleList || capsuleList?.length < 1) {
         return;
       }
 
-      let categories = categorySizes(); 
-      setTempCategoriesSortedList(categories.sortedList); 
+      let categories = categorySizes();
+      setTempCategoriesSortedList(categories.sortedList);
     }, [capsuleList])
   );
 
@@ -209,6 +203,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
           marginHorizontal: 10,
           alignItems: "center",
           flexDirection: "column",
+          height: "84%",
         }}
       >
         <Donut
@@ -226,21 +221,35 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
           colors={colors}
           centerTextSize={CENTER_TEXT_SIZE}
         />
-        {/* <View style={{  }}>
-            <Text
-            onPress={() => navigation.navigate('MomentFocus')}
-              style={[
-                themeStyles.primaryText,
-                { fontWeight: 'bold', fontSize: 13 },
-              ]}
-            >
-              Loaded
-            </Text>
-          </View> */}
       </View>
-
-      {/* </ScrollView> */}
-
+      {/* <View
+        style={{
+          flexDirection: "row",
+          paddingHorizontal: 20,
+          justifyContent: "space-between",
+          width: "100%",
+          height: 40,
+        }}
+      >
+        <Text
+          onPress={() => navigation.navigate("MomentFocus")}
+          style={[
+            themeStyles.primaryText,
+            { fontWeight: "bold", fontSize: 13 },
+          ]}
+        >
+          friend history
+        </Text>
+        <Text
+          onPress={() => navigation.navigate("MomentFocus")}
+          style={[
+            themeStyles.primaryText,
+            { fontWeight: "bold", fontSize: 13 },
+          ]}
+        >
+          All history
+        </Text>
+      </View> */}
       <View style={{ width: "100%", height: 10 }}></View>
       {detailsModalVisible && (
         <View>
