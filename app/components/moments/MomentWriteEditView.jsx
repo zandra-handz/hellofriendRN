@@ -117,6 +117,9 @@ const MomentWriteEditView = ({
   }, [updateExistingMoment, existingMomentObject]);
 
   const handleCategorySelect = (category) => {
+    if (!category) {
+      return;
+    }
     setSelectedCategory(category);
   };
 
@@ -239,35 +242,10 @@ const MomentWriteEditView = ({
             appContainerStyles.talkingPointCard,
             {
               backgroundColor: themeStyles.primaryBackground.backgroundColor,
-              paddingTop: 90,
+              paddingTop: 80,
             },
           ]}
-        >
-          {/* <BelowHeaderContainer
-            height={0}
-            alignItems="flex-end"
-            marginBottom={0} //default is currently set to 2
-            justifyContent="flex-end"
-            children={
-              <>
-                {!updateExistingMoment && (
-                  <View style={{ width: 36, height: "auto" }}>
-                    <BobblngFlashingIcon
-                      size={36}
-                      icon={
-                        <MaterialIcons
-                          name="tips-and-updates"
-                          size={26}
-                          color={themeStyles.primaryBackground.backgroundColor}
-                        />
-                      }
-                    />
-                  </View>
- 
-                )}
-              </>
-            }
-          />  */}
+        > 
           <TextMomentBox
             ref={momentTextRef}
             editScreen={updateExistingMoment}

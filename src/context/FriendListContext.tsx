@@ -32,20 +32,38 @@ interface Friend {
   suggestion_settings: number;
 }
 
+
+interface ThemeAheadOfLoading {
+  darkColor: string;
+  lightColor: string;
+  fontColor: string;
+  fontColorSecondary: string;
+}
+
 interface FriendListContextType {
   friendList: Friend[];
   setFriendList: (friends: Friend[]) => void;
   addToFriendList: (friend: Friend) => void;
   removeFromFriendList: (friendId: number) => void;
   updateFriend: (updatedFriend: Friend) => void;
+  themeAheadOfLoading: ThemeAheadOfLoading,
+
 }
+
+
 
 const FriendListContext = createContext<FriendListContextType>({
   friendList: [],
   setFriendList: () => {},
   addToFriendList: () => {},
   removeFromFriendList: () => {},
-  updateFriend: () => {},
+  updateFriend: () => {}, 
+    themeAheadOfLoading: {
+    darkColor: "#4caf50",
+    lightColor: "#a0f143",
+    fontColor: "#000000",
+    fontColorSecondary: "#000000",
+  },
 });
 
 export const useFriendList = (): FriendListContextType =>

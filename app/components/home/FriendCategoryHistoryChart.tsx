@@ -17,11 +17,10 @@ type Props = {
 const FriendCategoryHistoryChart = ({
   friendData,
   listData,
-    showPercentages = false,
+  showPercentages = false,
   radius = 80,
   labelsSize = 9,
-
-   
+  showLabels = true,
 }: Props) => {
   //  console.log(`listdata in friendhistorychart chart`, listData);
   const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
@@ -69,14 +68,15 @@ const FriendCategoryHistoryChart = ({
       {friendHistorySortedList && friendHistoryHasAnyCapsules && (
         <View
           style={{
-            height: '100%',
+            height: "100%",
             marginHorizontal: 10,
             alignItems: "center",
             flexDirection: "column",
           }}
         >
           <Pie
-          showPercentages={showPercentages}
+            showPercentages={showPercentages}
+            showLabels={showLabels}
             data={friendHistorySortedList}
             widthAndHeight={radius * 2}
             labelsSize={labelsSize}

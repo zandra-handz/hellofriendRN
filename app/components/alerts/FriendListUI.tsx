@@ -11,12 +11,14 @@ import Animated, {
   FadeInRight,
   SlideOutLeft,
 } from "react-native-reanimated";
-import React, { useCallback } from "react"; 
+import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import GlobalPressable from "../appwide/button/GlobalPressable";
+import FriendTintPressable from "../appwide/button/FriendTintPressable";
 
 const FriendListUI = ({ data, selectedFriendId, onPress }) => {
   const { friendList } = useFriendList();
@@ -26,7 +28,7 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
   const elementBackgroundColor =
     themeStyles.overlayBackgroundColor.backgroundColor;
 
-  const ITEM_HEIGHT = 70;
+  const ITEM_HEIGHT = 50;
 
   const ITEM_BORDER_RADIUS = 10;
 
@@ -38,23 +40,39 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
         style={styles.friendContainer}
         //   exiting={SlideOutLeft} not working yet
         // entering={SlideInRight.duration((index + 1) * (70 - (index + 1) * 1.9))}
-       entering={SlideInRight.duration(260).springify(2000)}
-    
-    
-    >
+        entering={SlideInRight.duration(260).springify(2000)}
+      >
         {item && item?.id && item?.id !== selectedId && (
-          <Pressable
-            onPress={() => onPress(item.id)}
+          // <Pressable
+          //   style={({ pressed }) => [
+          //     styles.friendContainer,
+          //     pressed && styles.pressedStyle, // apply extra style when pressed
+          //   ]}
+          //   onPress={() => onPress(item.id)}
+          // >
+          //   <ButtonSelectFriend
+          //     borderRadius={ITEM_BORDER_RADIUS}
+          //     backgroundColor={elementBackgroundColor}
+          //     color={itemColor}
+          //     friend={item}
+          //     height={ITEM_HEIGHT}
+          //   />
+          // </Pressable>
+          <FriendTintPressable
+            startingColor={themeStyles.overlayBackgroundColor.backgroundColor}
             style={styles.friendContainer}
+            friendId={item.id}
+            onPress={() => onPress(item.id)}
           >
             <ButtonSelectFriend
               borderRadius={ITEM_BORDER_RADIUS}
-              backgroundColor={elementBackgroundColor}
+              // backgroundColor={elementBackgroundColor}
+              backgroundColor={"transparent"}
               color={itemColor}
               friend={item}
               height={ITEM_HEIGHT}
             />
-          </Pressable>
+          </FriendTintPressable>
         )}
         {item && item?.id && item?.id === selectedId && (
           <View
@@ -68,6 +86,7 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
             ]}
           >
             <ButtonSelectFriend
+              disabled={true}
               borderRadius={ITEM_BORDER_RADIUS}
               backgroundColor={elementBackgroundColor}
               color={itemColor}
@@ -84,6 +103,8 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
               {
                 backgroundColor: themeStyles.primaryBackground.backgroundColor,
                 borderRadius: 10,
+                alignItems: "center",
+                justifyContent: "center",
                 overflow: "hidden",
                 height: ITEM_HEIGHT,
               },
@@ -91,7 +112,7 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
           >
             <MaterialCommunityIcons
               name={"account-plus"}
-              size={30}
+              size={26}
               color={themeStyles.primaryText.color}
             />
           </Pressable>
@@ -119,7 +140,8 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
           data={[...data, { message: "add friend" }]}
           keyExtractor={extractItemKey}
           renderItem={renderFriendSelectItem}
-          numColumns={3}
+          // numColumns={3}
+          numColumns={1}
           //  estimatedItemSize={100}
           showsVerticalScrollIndicator={false}
         />
@@ -130,13 +152,18 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
 
 const styles = StyleSheet.create({
   friendContainer: {
-    flex: 1, 
-    margin: 4, 
+    flex: 1,
+    margin: 2,
+    overflow: "hidden",
+    borderRadius: 10,
     justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    maxWidth: Dimensions.get("window").width / 3 - 14,
-     
+    // alignItems: "center",
+    flexGrow: 1,
+    // width: Dimensions.get("window").width / 3 - 14,
+    // maxWidth: Dimensions.get("window").width / 3 - 14,
+  },
+  pressedStyle: {
+    opacity: 0.2,
   },
 });
 

@@ -15,13 +15,13 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
+  TouchableWithoutFeedback, 
+  Pressable,
   Keyboard,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- 
+import SwitchFriend from "../home/switchFriend";
 import { useUserSettings } from "@/src/context/UserSettingsContext"; 
 // import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
@@ -209,7 +209,7 @@ const handleManualFocus = useCallback(() => {
                     </Text>
 
                     {!multiline && (
-                      <TouchableOpacity
+                      <Pressable
                         onPress={handleCaptureImage}
                         style={{
                           flexDirection: "row",
@@ -253,10 +253,10 @@ const handleManualFocus = useCallback(() => {
                         >
                           {"  "}Pic
                         </Text>
-                      </TouchableOpacity>
+                      </Pressable>
                     )}
                     {!multiline && (
-                      <TouchableOpacity
+                      <Pressable
                         onPress={handleSelectImage}
                         style={{
                           //  position: "absolute",
@@ -304,7 +304,7 @@ const handleManualFocus = useCallback(() => {
                         >
                           {"  "}Upload
                         </Text>
-                      </TouchableOpacity>
+                      </Pressable>
                     )}
                   </View>
                 </>

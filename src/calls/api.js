@@ -746,20 +746,44 @@ export const updateUserProfile = async (
   }
 };
 
+// export const fetchFriendDashboard = async (friendId) => {
+//   console.warn('fetching frienddashboard for friend: ', friendId);
+//   try {
+//     const response = await helloFriendApiClient.get(
+//       `/friends/${friendId}/dashboard/`
+//     );
+//     console.log("API GET CALL fetchFriendDashboard"); //, response.data); //, response.data );
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching friend dashboard data:", error);
+//     throw error;
+//   }
+// };
+
 export const fetchFriendDashboard = async (friendId) => {
   console.warn('fetching frienddashboard for friend: ', friendId);
+
+  const startTime = Date.now(); // TIMER START
+
   try {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/dashboard/`
     );
-    console.log("API GET CALL fetchFriendDashboard"); //, response.data); //, response.data );
 
+    const endTime = Date.now(); // TIMER END
+    const duration = endTime - startTime;
+
+    console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching friend dashboard data:", error);
+    const endTime = Date.now(); // TIMER END FOR ERROR CASE TOO
+    const duration = endTime - startTime;
+    console.error(`Error fetching friend dashboard (after ${duration}ms):`, error);
     throw error;
   }
 };
+
 
 export const remixAllNextHelloes = async (userId) => {
   try {

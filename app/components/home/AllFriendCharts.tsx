@@ -29,14 +29,9 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
 
   const HEIGHT = 270;
 
-  const CHART_RADIUS = 90;
-  const CHART_STROKE_WIDTH = 8;
-  const CHART_OUTER_STROKE_WIDTH = 10;
-  const GAP = 0.02;
+  const CHART_RADIUS = 90; 
 
-  const LABELS_SIZE = 9;
-  const LABELS_DISTANCE_FROM_CENTER = -34;
-  const LABELS_SLICE_END = 4;
+  const LABELS_SIZE = 9; 
   const [viewCategoryId, setViewCategoryId] = useState(null);
 
   const handleSetCategoryDetailsModal = (categoryId) => {
@@ -46,19 +41,13 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
     setViewCategoryId(categoryId);
     setDetailsModalVisible(true);
   };
+ 
 
   // useEffect(() => {
-  //   if (selectedFriendStats){
-  //     console.log('~~~~~~~~~SELECTED FRIEND STATS!', selectedFriendStats);
+  //   if (selectedFriendStats) {
+  //     console.log(`aaaand friend stats: `, selectedFriendStats);
   //   }
-
   // }, [selectedFriendStats]);
-
-  useEffect(() => {
-    if (selectedFriendStats) {
-      console.log(`aaaand friend stats: `, selectedFriendStats);
-    }
-  }, [selectedFriendStats]);
 
   return (
     <View

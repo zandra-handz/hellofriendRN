@@ -286,47 +286,11 @@ const ScreenHome = () => {
               flexDirection: "column",
               paddingHorizontal: 0,
             }}
-          >
-            {/* <View
-              style={{
-               // position: "absolute",
-                zIndex: 3000,
-                width: "100%",
-                //  backgroundColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor,
-                borderRadius: 10,
-                paddingHorizontal: 0,
-
-                height: isKeyboardVisible ? "89%" : "28%", // doesn't control height of quickwritemoment now -- prop 'multiline' does
-              }}
-            > */}
-            {/* <Button
-                title="Try!"
-                onPress={() => {
-                  Sentry.captureException(new Error("First error"));
-                }}
-              /> */}
-            {/* {!isInitializing && ( */}
+          > 
             <View style={{ width: "100%", paddingHorizontal: 0, marginTop: 0 }}>
-              {/* {!selectedFriend && (
-                  <WelcomeMessageUI
-                    username={username}
-                    isNewUser={isNewUser}
-                    // isKeyboardVisible={isKeyboardVisible}
-                    onPress={handleFocusPress}
-                  />
-                )} */}
+           
               {selectedFriend && (
-                <TopBar />
-
-                // <FriendHeaderMessageUI
-                //   backgroundColor={
-                //     themeStyles.primaryBackground.backgroundColor
-                //   }
-                //   borderBottomLeftRadius={0}
-                //   borderBottomRightRadius={0}
-                //   // isKeyboardVisible={isKeyboardVisible}
-                //   onPress={handleFocusPress}
-                // />
+                <TopBar /> 
               )}
             </View>
 

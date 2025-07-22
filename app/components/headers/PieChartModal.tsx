@@ -28,11 +28,11 @@ const PieChartModal: React.FC<Props> = ({
   closeModal, 
   friendData,
   listData,
-  radius,
+  radius=180, //default instead of multiplying the radius of the preview
   labelsSize,
   onLongPress,
 }) => {
-  const { themeStyles, appFontStyles, appSpacingStyles } = useGlobalStyle();
+  const { themeStyles, appSpacingStyles } = useGlobalStyle();
 
   // const momentsInCategory = capsuleList.filter(
   //   (capsule) => capsule?.user_category === categoryId

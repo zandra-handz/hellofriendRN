@@ -6,26 +6,35 @@ import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
 import SingleLineEnterBox from "@/app/components/appwide/input/SingleLineEnterBox";
-import ButtonBottomActionBaseSmallLongPress from "../buttons/scaffolding/ButtonBottomActionBaseSmallLongPress";
-import GradientBackground from "../appwide/display/GradientBackground";
+import CategoryButtonDualPress from "../buttons/scaffolding/CategoryButtonDualPress";
 import CategoryItemsModal from "../headers/CategoryItemsModal";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
+ 
+
+type Props = {
+  updateCategoryInParent: (category: string | null) => void;
+  updateExistingMoment: () => void;
+  existingCategory: string | null;
+  onParentSave: () => void;
+};
 
 const CategoryCreator = ({
   updateCategoryInParent,
   updateExistingMoment,
   existingCategory,
   onParentSave,
-}) => {
+}: Props) => {
   const { themeStyles, appContainerStyles } = useGlobalStyle();
   const { selectedFriend, loadingNewFriend, friendDashboardData } =
     useSelectedFriend();
   const [selectedCategory, setSelectedCategory] = useState(existingCategory); //can start out as null
   const [selectedCategoryCapsules, setSelectedCategoryCapsules] =
     useState(null);
-  const { capsuleList  } = useCapsuleList();
+  const { capsuleList } = useCapsuleList();
 
-    const {  categoryNames, categoryCount } = useTalkingPCategorySorting({listData: capsuleList})
+  const { categoryNames, categoryCount } = useTalkingPCategorySorting({
+    listData: capsuleList,
+  });
   // console.log("CATEGORY CREATOR RERENDERED");
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -67,7 +76,8 @@ const CategoryCreator = ({
       setRemainingCategories(getCreationsRemaining());
       // setCategoryLimit(getCategoryCap());
 
-      if (updateExistingMoment && existingCategory) {
+      // if (updateExistingMoment && existingCategory) { //updateExistingMoment will always be defined
+      if (existingCategory) {
         setSelectedCategory(existingCategory);
       } else {
         setSelectedCategory(getLargestCategory());
@@ -91,13 +101,13 @@ const CategoryCreator = ({
   useEffect(() => {
     if (updateCategoryInParent) {
       if (selectedCategory === null) {
-        updateCategoryInParent(null, []);
+        updateCategoryInParent(null);
       } else {
         const category = selectedCategory;
-        const capsulesForCategory = capsuleList.filter(
-          (capsule) => capsule.typedCategory === category
-        );
-        updateCategoryInParent(category, capsulesForCategory);
+        // const capsulesForCategory = capsuleList.filter(
+        //   (capsule) => capsule.typedCategory === category
+        // );
+        updateCategoryInParent(category);
       }
     }
   }, [selectedCategory]);
@@ -162,10 +172,11 @@ const CategoryCreator = ({
             marginRight: 3,
           }}
         >
-          <ButtonBottomActionBaseSmallLongPress
+          <CategoryButtonDualPress
             height={"80%"}
             buttonPrefix={
-              updateExistingMoment && existingCategory ? "Save to" : "Add to"
+              // updateExistingMoment && existingCategory ? "Save to" : "Add to"
+              existingCategory ? "Save to" : "Add to"
             }
             onPress={() => handlePressOut(item)} // Correct way to pass the function
             onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function

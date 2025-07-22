@@ -1,9 +1,9 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import SafeViewAndGradientBackground from "../format/SafeViewAndGradBackground";
+// import SafeViewAndGradientBackground from "../format/SafeViewAndGradBackground";
 import GradientBackground from "../display/GradientBackground";
 
 
@@ -35,6 +35,7 @@ const FSMainSpinner = (props: Props) => {
   return (
     <> 
     {/* //   {isLoading && ( */}
+     {/* //   {loadingNewFriend && ( */}
          {((signinMutation && (signinMutation.isPending || signinMutation.isSuccess)) || isInitializing) && (
         <View
           style={{

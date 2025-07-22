@@ -1,7 +1,7 @@
 import { TouchableOpacity, Text, Pressable } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import Animated from "react-native-reanimated";
+import Animated, { SharedValue } from "react-native-reanimated";
 
 import { useFriendList } from "@/src/context/FriendListContext";
 import {
@@ -13,6 +13,20 @@ import {
   withTiming,
 } from "react-native-reanimated";
 
+
+interface Label {
+  label: string;
+}
+
+
+type Props = {
+  viewableItemsArray: SharedValue[],
+  label: Label;
+  onPress: (label: Label) => void;
+  height: number;
+  pulseDuration: number;
+}
+
 const CategoryButton = ({
   
   viewableItemsArray,
@@ -21,7 +35,7 @@ const CategoryButton = ({
   
   height = 30,
   pulseDuration = 2000,
-}) => {
+}: Props) => {
   const {
     themeStyles, 
     appContainerStyles,

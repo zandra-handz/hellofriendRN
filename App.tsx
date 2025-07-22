@@ -403,6 +403,9 @@ export const Layout = () => {
 
       <TopLevelNavigationHandler>
         <Stack.Navigator
+        // detachInactiveScreens={true}  doesn't apply to the native navigator
+        //options={{ unmountOnBlur: true }} won't work either
+
           screenOptions={{
             headerShown: true,
             headerMode: "screen",
@@ -419,6 +422,7 @@ export const Layout = () => {
                   name="hellofriend"
                   component={ScreenHome}
                   options={{
+                    
                     headerShown: false,
                   }}
                 />
@@ -442,7 +446,7 @@ export const Layout = () => {
                 <Stack.Screen
                   name="Moments"
                   component={ScreenMoments}
-                  options={{
+                  options={{ 
                     headerShown: false,
                   }}
                 />

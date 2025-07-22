@@ -13,13 +13,11 @@ type Props = {
 };
 
 const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles } = useGlobalStyle();
   const { friendList, getThemeAheadOfLoading } = useFriendList();
   const navigation = useNavigation();
   const { selectedFriend, setFriend } = useSelectedFriend();
-  const [filteredFriendList, setFilteredFriendList] = useState(
-    friendList || []
-  );
+
 
 
 
@@ -89,7 +87,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
           </View>
         )} */}
         <View style={{ width: "100%", flex: 1 }}>
-          {filteredFriendList && (
+          {friendList && (
             <FriendListUI
               data={friendList}
               selectedFriendId={selectedFriend ? selectedFriend?.id : null}

@@ -28,7 +28,7 @@ const KeyboardCoasters: React.FC<KeyboardCoastersProps> = ({
       <KeyboardCoasterMomentOrFriend  // can't put this inside of isKeyboardVisible too unstable to open modal correctly
         onPress={onPress}
         borderRadius={40}
-        isFriendSelected={isFriendSelected}
+        isFriendSelected={true} // allow 'go to moment write screen' button to always be available
         showMomentScreenButton={showMomentScreenButton}
         isKeyboardVisible={isKeyboardVisible}
       />

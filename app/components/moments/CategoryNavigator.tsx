@@ -73,8 +73,7 @@ import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import CategoryButton from "./CategoryButton";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import AboutAppModal from "../headers/AboutAppModal";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import SearchModal from "../headers/SearchModal";
 
 const CategoryNavigator = ({

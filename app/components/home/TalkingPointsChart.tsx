@@ -9,7 +9,7 @@ import Donut from "../headers/Donut";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { AppState, AppStateStatus } from "react-native";
-
+import FriendHistorySmallChart from "./FriendHistorySmallChart";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 import CategoryDetailsModal from "../headers/CategoryDetailsModal";
@@ -35,6 +35,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
   const { userCategories } = useCategories();
 
   const appState = useRef(AppState.currentState);
+  const SMALL_CHART_RADIUS = 20;
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
@@ -67,7 +68,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
       listData: capsuleList,
     });
 
-  const HEIGHT = 370;
+  const HEIGHT = 390;
 
   const CHART_RADIUS = 150;
   const CHART_STROKE_WIDTH = 20;
@@ -222,16 +223,22 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
           centerTextSize={CENTER_TEXT_SIZE}
         />
       </View>
-      {/* <View
+      <View
         style={{
           flexDirection: "row",
           paddingHorizontal: 20,
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
           width: "100%",
-          height: 40,
+          height: 100,
         }}
       >
-        <Text
+        <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+
+        <FriendHistorySmallChart showLabels={false} chartRadius={SMALL_CHART_RADIUS} />
+        
+          
+        </View>
+        {/* <Text
           onPress={() => navigation.navigate("MomentFocus")}
           style={[
             themeStyles.primaryText,
@@ -239,7 +246,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
           ]}
         >
           friend history
-        </Text>
+        </Text> */}
         <Text
           onPress={() => navigation.navigate("MomentFocus")}
           style={[
@@ -249,7 +256,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
         >
           All history
         </Text>
-      </View> */}
+      </View>
       <View style={{ width: "100%", height: 10 }}></View>
       {detailsModalVisible && (
         <View>

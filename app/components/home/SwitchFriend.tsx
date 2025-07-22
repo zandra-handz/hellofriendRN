@@ -9,10 +9,12 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 
 type Props = {};
 
-const TopBar = (props: Props) => {
+
+//similar to topbar but has its own spinner instead of centering based on parent component
+const SwitchFriend = (props: Props) => {
   const { appFontStyles, themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend,  loadingNewFriend } = useSelectedFriend();
   const navigation = useNavigation();
   // const friendModalButtonHeight = 16;
 
@@ -27,7 +29,7 @@ const TopBar = (props: Props) => {
         style={{ flexDirection: "row" }}
       >
         <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
-          Switch
+          {selectedFriend?.id ? `Switch` : `Pick friend`}
         </Text>
         <MaterialCommunityIcons
           name="account-switch-outline"
@@ -37,21 +39,19 @@ const TopBar = (props: Props) => {
         />
       </Pressable>
     ),
-    [appFontStyles, handleNavigateToFriendSelect, themeStyles]
+    [appFontStyles, handleNavigateToFriendSelect, selectedFriend, themeStyles]
   );
   return (
     <View
       style={{
-        height: "auto",
-        paddingBottom: 10,
-        width: "100%",
-        backgroundColor: themeStyles.primaryBackground.backgroundColor,
+        height: "auto", 
+        width: 'auto',
         paddingHorizontal: 10,
         flexDirection: "row",
         alignItems: "center",
       }}
     >
-      {loadingNewFriend && (
+      {/* {loadingNewFriend && (
         <View style={{ width: "100%" }}>
           <LoadingPage
             loading={loadingNewFriend}
@@ -61,10 +61,10 @@ const TopBar = (props: Props) => {
             includeLabel={false}
           />
         </View>
-      )}
+      )} */}
       {!loadingNewFriend && <RenderIcon />}
     </View>
   );
 };
 
-export default TopBar;
+export default SwitchFriend;

@@ -14,12 +14,9 @@ import {
   Platform,
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
-import CategoryCreator from "./CategoryCreator";
-import UserCategorySelector from "../headers/UserCategorySelector";
-
-import FriendModalIntegrator from "../friends/FriendModalIntegrator";
-
+import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg"; 
+import SwitchFriend from "../home/switchFriend";
+ 
 // Forwarding ref to the parent to expose the TextInput value
 const TextMomentBox = forwardRef(
 
@@ -91,6 +88,7 @@ const TextMomentBox = forwardRef(
           { width: "100%", height: "100%" },
         ]}
       >
+        <SwitchFriend />
         <View
           style={{
             flexDirection: "row",
@@ -111,7 +109,7 @@ const TextMomentBox = forwardRef(
               style={[
                 themeStyles.genericText,
                 appFontStyles.welcomeText,
-                { fontSize: 30 },
+                { fontSize: 20 },
               ]}
             >
               {" "}
@@ -156,36 +154,9 @@ const TextMomentBox = forwardRef(
             />
             <View
               style={{ width: "100%", height: 80 }} //backgroundColor: "red"
-            >
-              <View style={{position: 'absolute'}}>
-                
-              <FriendModalIntegrator
-                includeLabel={true}
-                color={themeStyles.primaryText.color}
-                width={120}
-                navigationDisabled={true}
-                iconSize={22}
-                useGenericTextColor={true}
-              />
-              
-              </View>
-              
-        {/* <UserCategorySelector
-          onPress={handleCategorySelect}
-          onSave={onSave}
-          existingCategory={existingCategory}
-          selectedId={selectedUserCategory}
-        /> */}
-
-              {/* <CategoryCreator
-                show={showCategoriesSlider}
-                updateCategoryInParent={handleCategorySelect}
-                updateExistingMoment={editScreen}
-                existingCategory={existingCategory}
-                momentTextForDisplay={ref?.current?.getText() || null}
-                onParentSave={onSave}
-                isKeyboardVisible={isKeyboardVisible}
-              /> */}
+            > 
+    
+ 
             </View>
           </KeyboardAvoidingView>
         </View>

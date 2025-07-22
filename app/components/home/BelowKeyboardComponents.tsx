@@ -38,24 +38,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           width: '100%',   
         },
       ]}
-    >
-      {/* <Animated.View
-        style={[
-        
-          { 
-              width:'100%', //added
-              flex: 1, // added
-            transform: [{ translateX: slideAnim }],
-          },
-        ]}
-      > */}
-    
-       
-        {/* <View style={{position: 'absolute', zIndex: 40000, elevation: 40000, left: 0, top: -16}}>
-         {friendListLength > 0 && <AddOptionsList />}
-         
-          
-        </View> */}
+    > 
 
 
         {!isFriendSelected && friendListLength > 0 && (

@@ -103,6 +103,7 @@ export default function AnimatedPieChart({
   radius = 100,
   duration = 1200,
   showPercentages = false,
+  showLabels = true,
   onSectionPress = null,
   onLongSectionPress = () => console.log("placeholder"),
   labelsSize = 9,
@@ -161,7 +162,7 @@ export default function AnimatedPieChart({
           return (
             // after adding this still got error, so problem one might be one below, unless both were giving error
             <View key={`pieChartSlice-${index}`}>
-              {onSectionPress && (
+              {onSectionPress && showLabels && (
                 <Pressable
                   key={`pressable-${index}`}
                   onPress={() =>

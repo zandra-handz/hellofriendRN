@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, useEffect } from "react";
-import { 
+import {
   Pressable,
   Text,
   StyleSheet,
@@ -9,16 +9,17 @@ import {
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
-import FriendHeaderMessageUI from "./FriendHeaderMessageUI"; 
+import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 import CalendarChart from "./CalendarChart";
 import AllFriendCharts from "./AllFriendCharts";
-import TalkingPointsChart from "./TalkingPointsChart"; 
-import Pics from "./Pics"; 
-import {  FontAwesome6 } from "@expo/vector-icons";
- 
+import TalkingPointsChart from "./TalkingPointsChart";
+import Pics from "./Pics";
+import { FontAwesome6 } from "@expo/vector-icons";
+import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
+import SuggestedHello from "./SuggestedHello";
 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
@@ -35,7 +36,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     manualGradientColors,
     themeStyles,
     appFontStyles,
-  } = useGlobalStyle(); 
+  } = useGlobalStyle();
 
   const headerRef = useRef(null);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
@@ -99,8 +100,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           </Text>
           <Text
             style={[
-              styles.subtitleText,
-
               themeStyles.primaryText,
               {
                 // alignSelf: 'center',
@@ -266,73 +265,71 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     </View>
                   </>
                 )}
-           
 
                 {!loadingNewFriend && friendLoaded && (
-                  <View
-                    style={{
-                      marginVertical: 4,
+                  <SuggestedHello
+                    padding={SELECTED_FRIEND_CARD_PADDING}
+                    height={SELECTED_FRIEND_CARD_HEIGHT}
+                    borderRadius={borderRadius}
+                  />
+                  // <View
+                  //   style={{
+                  //     marginVertical: 4,
 
-                      maxHeight: SELECTED_FRIEND_CARD_HEIGHT + 40,
-                      flexShrink: 1,
-                      alignItems: "center",
-                      flexDirection: "row",
+                  //     maxHeight: SELECTED_FRIEND_CARD_HEIGHT + 40,
+                  //     flexShrink: 1,
+                  //     alignItems: "center",
+                  //     flexDirection: "row",
 
-                      justifyContent: "space-between",
-                      borderRadius: borderRadius,
-                      // backgroundColor: 'orange',
-                      padding: SELECTED_FRIEND_CARD_PADDING,
-                      paddingRight: 10,
-                      width: "100%",
-                      backgroundColor:
-                        themeStyles.overlayBackgroundColor.backgroundColor,
-                      borderRadius: 20,
-                    }}
-                  >
-                    <View style={styles.textContainer}>
-                      {renderSuggestedHello}
-                      <Pressable
-                        onPress={navigateToMoments}
-                        style={{
-                          position: "absolute",
-                          right: 0,
-                          top: 0,
-                          backgroundColor: manualGradientColors.lightColor,
-                          justifyContent: "center",
-                          borderRadius: 10,
-                          padding: 4,
-                          width: "auto",
-                          minWidth: 50,
-                          height: "100%",
-                        }}
-                      >
-                        {/* <MaterialCommunityIcons
-                        name={"run-fast"}
-                        size={40}
-                        color={themeStyles.primaryText.color}
-                      /> */}
-                        <FontAwesome6
-                          name={"person-walking-arrow-right"}
-                          size={30}
-                          color={manualGradientColors.homeDarkColor}
-                        />
-                      </Pressable>
-                    </View>
+                  //     justifyContent: "space-between",
+                  //     borderRadius: borderRadius,
+                  //     // backgroundColor: 'orange',
+                  //     padding: SELECTED_FRIEND_CARD_PADDING,
+                  //     paddingRight: 10,
+                  //     width: "100%",
+                  //     backgroundColor:
+                  //       themeStyles.overlayBackgroundColor.backgroundColor,
+                  //     borderRadius: 20,
+                  //   }}
+                  // >
+                  //   <View style={styles.textContainer}>
+                  //     {renderSuggestedHello}
+                  //     <Pressable
+                  //       onPress={navigateToMoments}
+                  //       style={{
+                  //         position: "absolute",
+                  //         right: 0,
+                  //         top: 0,
+                  //         backgroundColor: manualGradientColors.lightColor,
+                  //         justifyContent: "center",
+                  //         borderRadius: 10,
+                  //         padding: 4,
+                  //         width: "auto",
+                  //         minWidth: 50,
+                  //         height: "100%",
+                  //       }}
+                  //     >
+                  //       <FontAwesome6
+                  //         name={"person-walking-arrow-right"}
+                  //         size={30}
+                  //         color={manualGradientColors.homeDarkColor}
+                  //       />
+                  //     </Pressable>
+                  //   </View>
 
-                    <View
-                      style={{
-                        borderRadius: 20,
-                        // height: "100%",
-                        width: "100%",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    > 
-                    </View>
-                  </View>
+                  //   <View
+                  //     style={{
+                  //       borderRadius: 20,
+                  //       // height: "100%",
+                  //       width: "100%",
+                  //       flexDirection: "column",
+                  //       alignItems: "center",
+                  //       justifyContent: "center",
+                  //     }}
+                  //   ></View>
+                  // </View>
                 )}
-                     <View style={{ width: "100%", marginVertical: 3 }}>
+                <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
                     selectedFriend={!!selectedFriend}
                     outerPadding={spacerAroundCalendar}
@@ -345,19 +342,22 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     outerPadding={spacerAroundCalendar}
                   />
                 </View>
-                <View style={{ width: "100%", marginVertical: 3 }}>
-                  <AllFriendCharts
-                    selectedFriend={selectedFriend} //removed the boolean casting to be able to pass in name
-                    outerPadding={spacerAroundCalendar}
-                  />
-                </View>
-
-                <View style={{ marginVertical: 3 }}>
-                  <CalendarChart
-                    selectedFriend={!!selectedFriend}
-                    outerPadding={spacerAroundCalendar}
-                  />
-                </View>
+                {!loadingNewFriend && (
+                  <View style={{ width: "100%", marginVertical: 3 }}>
+                    <AllFriendCharts
+                      selectedFriend={selectedFriend} //removed the boolean casting to be able to pass in name
+                      outerPadding={spacerAroundCalendar}
+                    />
+                  </View>
+                )}
+                {!loadingNewFriend && (
+                  <View style={{ marginVertical: 3 }}>
+                    <CalendarChart
+                      selectedFriend={!!selectedFriend}
+                      outerPadding={spacerAroundCalendar}
+                    />
+                  </View>
+                )}
                 <View style={{ width: "100%", height: 60 }}></View>
               </View>
             </ScrollView>
