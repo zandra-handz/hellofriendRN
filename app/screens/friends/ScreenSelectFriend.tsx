@@ -1,4 +1,4 @@
-import { View,  Text  } from "react-native";
+import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
@@ -14,27 +14,20 @@ type Props = {
 
 const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { friendList, getThemeAheadOfLoading } =
-    useFriendList();
+  const { friendList, getThemeAheadOfLoading } = useFriendList();
   const navigation = useNavigation();
-  const { selectedFriend, setFriend  } = useSelectedFriend();
+  const { selectedFriend, setFriend } = useSelectedFriend();
   const [filteredFriendList, setFilteredFriendList] = useState(
     friendList || []
   );
 
-  useEffect(() => {
-    if (selectedFriend && friendList && friendList.length > 0) {
-      setFilteredFriendList(
-        friendList.filter((friend) => friend.id !== selectedFriend.id)
-      );
-    }
-  }, [selectedFriend, friendList]);
+
 
   const handleSelectFriend = (itemId) => {
     const selectedOption = friendList.find((friend) => friend.id === itemId);
 
     const selectedFriend = selectedOption || null;
-    
+
     setFriend(selectedFriend);
     getThemeAheadOfLoading(selectedFriend);
 
@@ -46,7 +39,6 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   return (
     <SafeViewAndGradientBackground style={{ flex: 1 }}>
       <View style={{ paddingHorizontal: 10, flex: 1 }}>
-
         <View
           style={[
             themeStyles.primaryBackground,
@@ -71,7 +63,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
               friends
             </Text> */}
         </View>
-                {selectedFriend && (
+        {/* {selectedFriend && (
           <View
             style={{
               width: "100%",
@@ -86,16 +78,21 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
             }}
           >
             <Text
-              style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 26}]}
+              style={[
+                themeStyles.primaryText,
+                appFontStyles.welcomeText,
+                { fontSize: 26 },
+              ]}
             >
               Selected: {selectedFriend.name}
             </Text>
           </View>
-        )}
+        )} */}
         <View style={{ width: "100%", flex: 1 }}>
-          {filteredFriendList &&  (
+          {filteredFriendList && (
             <FriendListUI
-              data={filteredFriendList}
+              data={friendList}
+              selectedFriendId={selectedFriend ? selectedFriend?.id : null}
               onPress={handleSelectFriend}
             />
           )}

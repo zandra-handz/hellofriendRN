@@ -35,7 +35,7 @@ const FSMainSpinner = (props: Props) => {
   return (
     <> 
     {/* //   {isLoading && ( */}
-         {((signinMutation && (signinMutation.isPending || signinMutation.isSuccess)) || isInitializing || loadingNewFriend) && (
+         {((signinMutation && (signinMutation.isPending || signinMutation.isSuccess)) || isInitializing) && (
         <View
           style={{
             zIndex: 100000,

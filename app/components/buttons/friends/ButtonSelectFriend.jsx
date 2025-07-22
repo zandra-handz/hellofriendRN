@@ -6,7 +6,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 //may need to configure friendlist theme color before using as a button
-const ButtonSelectFriend = ({ friend, backgroundColor, color, height=70 }) => {
+const ButtonSelectFriend = ({ friend, backgroundColor, borderRadius, color, height=70 }) => {
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendList();
   const { themeStyles } = useGlobalStyle();
@@ -63,7 +63,7 @@ const ButtonSelectFriend = ({ friend, backgroundColor, color, height=70 }) => {
     <View
       style={[
         styles.row,
-        { height: height, overflow: 'hidden', backgroundColor: backgroundColor, borderColor: textColor },
+        { borderRadius: borderRadius, height: height, overflow: 'hidden', backgroundColor: backgroundColor, borderColor: textColor },
       ]}
     >
       {renderProfileIcon()}
@@ -87,8 +87,7 @@ const styles = StyleSheet.create({
 
     textAlign: "center",
 
-    borderWidth: 0,
-    borderRadius: 10,
+    borderWidth: 0, 
   },
   name: {
     alignSelf: "center",
