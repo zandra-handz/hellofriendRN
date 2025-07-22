@@ -40,7 +40,7 @@ export const FriendLocationsProvider = ({ children }) => {
 
       const favesData = useMemo(() => {
         if (!friendDashboardData) return null;
-        return friendDashboardData[0]?.friend_faves?.locations || null;
+        return friendDashboardData?.friend_faves?.locations || null;
       }, [friendDashboardData]);
     
       useEffect(() => {
@@ -69,13 +69,13 @@ export const FriendLocationsProvider = ({ children }) => {
       queryClient.setQueryData(
         ["friendDashboardData", user?.id, selectedFriend?.id],
         (old) => {
-          if (!old || !old[0]) {
+          if (!old || !old) {
             return {
               0: {
                 friend_faves: {
                   locations: data.locations,
                 },
-                ...old?.[0],
+                ...old,
               },
             };
           }
@@ -83,9 +83,9 @@ export const FriendLocationsProvider = ({ children }) => {
           const updatedDashboardData = {
             ...old,
             0: {
-              ...old[0],
+              ...old,
               friend_faves: {
-                ...old[0].friend_faves,
+                ...old.friend_faves,
                 locations: data.locations,
               },
             },
@@ -145,7 +145,7 @@ export const FriendLocationsProvider = ({ children }) => {
       queryClient.setQueryData(
         ["friendDashboardData", user?.id, selectedFriend?.id],
         (old) => {
-          if (!old || !old[0]) {
+          if (!old || !old) {
             return {
               0: {
                 friend_faves: {
@@ -159,9 +159,9 @@ export const FriendLocationsProvider = ({ children }) => {
           const updatedDashboardData = {
             ...old,
             0: {
-              ...old[0],
+              ...old,
               friend_faves: {
-                ...old[0].friend_faves,
+                ...old.friend_faves,
                 locations: data.locations,
               },
             },

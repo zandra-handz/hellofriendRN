@@ -10,6 +10,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { AppState, AppStateStatus } from "react-native";
 import FriendHistorySmallChart from "./FriendHistorySmallChart";
+import UserHistorySmallChart from "./UserHistorySmallChart";
 import { useFriendList } from "@/src/context/FriendListContext";
 
 import CategoryDetailsModal from "../headers/CategoryDetailsModal";
@@ -24,8 +25,8 @@ type Props = {
   outerPadding: DimensionValue;
 };
 
-const TalkingPointsChart = ({ outerPadding }: Props) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
+  const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
   const navigation = useNavigation();
   const { capsuleList } = useCapsuleList();
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
@@ -35,7 +36,8 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
   const { userCategories } = useCategories();
 
   const appState = useRef(AppState.currentState);
-  const SMALL_CHART_RADIUS = 20;
+  const SMALL_CHART_RADIUS = 30;
+  const SMALL_CHART_BORDER = 3;
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
@@ -68,7 +70,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
       listData: capsuleList,
     });
 
-  const HEIGHT = 390;
+  const HEIGHT = 430;
 
   const CHART_RADIUS = 150;
   const CHART_STROKE_WIDTH = 20;
@@ -149,7 +151,8 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
           overflow: "hidden",
           height: HEIGHT,
           padding: 10,
-          paddingBottom: 10,
+          paddingTop: 20,
+          paddingBottom: 0,
           backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
           borderRadius: 20,
         },
@@ -204,7 +207,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
           marginHorizontal: 10,
           alignItems: "center",
           flexDirection: "column",
-          height: "84%",
+          height: "74%",
         }}
       >
         <Donut
@@ -225,39 +228,46 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
       </View>
       <View
         style={{
-          flexDirection: "row",
-          paddingHorizontal: 20,
-          justifyContent: "flex-start",
+          flexDirection: "row", 
+          justifyContent: "space-between",
+          // backgroundColor: themeStyles.primaryBackground.backgroundColor,
           width: "100%",
-          height: 100,
+          // backgroundColor: 'teal',
+          height: (SMALL_CHART_RADIUS * 2) + (SMALL_CHART_BORDER * 2),
+          
         }}
       >
-        <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-
-        <FriendHistorySmallChart showLabels={false} chartRadius={SMALL_CHART_RADIUS} />
-        
-          
+        <View
+          style={{
+            flexDirection: "row", 
+            flex: 1, 
+            
+            justifyContent: "flex-start",
+          }}
+        >
+          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText, {alignSelf: 'center'}]}>
+            History{'  '}
+          </Text>
+          <FriendHistorySmallChart
+          chartBorder={SMALL_CHART_BORDER}
+            chartBorderColor={themeStyles.primaryBackground.backgroundColor}
+            showLabels={false}
+            chartRadius={SMALL_CHART_RADIUS}
+          />
         </View>
-        {/* <Text
-          onPress={() => navigation.navigate("MomentFocus")}
-          style={[
-            themeStyles.primaryText,
-            { fontWeight: "bold", fontSize: 13 },
-          ]}
-        >
-          friend history
-        </Text> */}
-        <Text
-          onPress={() => navigation.navigate("MomentFocus")}
-          style={[
-            themeStyles.primaryText,
-            { fontWeight: "bold", fontSize: 13 },
-          ]}
-        >
-          All history
-        </Text>
+     <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText, {alignSelf: 'center'}]}>
+            All time{'  '}
+          </Text>
+        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+          <UserHistorySmallChart
+           chartBorder={SMALL_CHART_BORDER}
+           chartBorderColor={themeStyles.primaryBackground.backgroundColor}
+            showLabels={false}
+            chartRadius={SMALL_CHART_RADIUS}
+          />
+        </View>
       </View>
-      <View style={{ width: "100%", height: 10 }}></View>
+      {/* <View style={{ width: "100%", height: 10 }}></View> */}
       {detailsModalVisible && (
         <View>
           <CategoryDetailsModal

@@ -1,7 +1,6 @@
-import { useSelectedFriend } from '../context/SelectedFriendContext';
+ 
 
-const useLocationHelloFunctions = () => {
-    const { friendDashboardData } = useSelectedFriend(); 
+const useLocationHelloFunctions = () => { 
     const bermudaCoords = { latitude: 27.0000, longitude: -71.0000 };
   
  

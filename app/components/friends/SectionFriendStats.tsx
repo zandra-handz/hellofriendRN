@@ -13,12 +13,12 @@ const SectionFriendStats = () => {
 const { friendDashboardData } = useSelectedFriend();
 
 const daysSince = useMemo(() => {
-   return friendDashboardData[0].days_since_words || '';
+   return friendDashboardData.days_since_words || '';
 
 }, [friendDashboardData]);
 
 const timeScore = useMemo(() => {
-  return friendDashboardData[0].time_score || '';
+  return friendDashboardData.time_score || '';
 
 }, [friendDashboardData]);
 

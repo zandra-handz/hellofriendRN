@@ -1,9 +1,8 @@
-import React, {  useState } from "react";
+import React from "react";
 import { View, Text,  StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+ 
 import LocationSavingActionsForCard from "./LocationSavingActionsForCard";
 
 import DirectionsLink from "./DirectionsLink";
@@ -26,25 +25,21 @@ const LocationCard = ({
   iconSize = 30,
 }) => {
   const navigation = useNavigation();
-  const { themeStyles } = useGlobalStyle();
-    const { selectedFriend, friendDashboardData } = useSelectedFriend();
-     const [isFave, setIsFave] = useState(false);
+  const { themeStyles } = useGlobalStyle(); 
 
   const MARGIN_LEFT_LOCATION_BUTTONS = "3%";
-  const LOCATION_BUTTONS_ICON_SIZE = 20;
-  const FAVORITE_LOCATION_ICON_SIZE = 24;
+  const LOCATION_BUTTONS_ICON_SIZE = 20; 
   const SMALL_CLOCK_ICON_SIZE = 16;
 
-const copyLocation = location;
-
+ 
 
   const handleGoToLocationViewScreen = () => {
     navigation.navigate("Location", { location: location, favorite: favorite });
   };
 
-  const handlePress = async () => {
-    handleGoToLocationViewScreen();
-  };
+  // const handlePress = async () => {
+  //   handleGoToLocationViewScreen();
+  // };
 
   return (
     <View

@@ -1,27 +1,22 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-
+import { View, StyleSheet } from "react-native";
+ 
 // app state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import SearchModal from "./SearchModal";
+ 
 import SearchHelloesModal from "./SearchHelloesModal";
 // app components
-import AboutAppModal from "./AboutAppModal";
-import UserSettingsModal from "./UserSettingsModal.";
-import useFullHelloes from "@/src/hooks/useFullHelloes";
-
+ 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import ButtonData from "../buttons/scaffolding/ButtonData";
-import { useNavigationState } from "@react-navigation/native";
-import SetAddressesModal from "./SetAddressesModal";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+ 
+import {  MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
 import FilterLocationsModal from "./FilterLocationsModal";
-import { add } from "date-fns";
+ 
 
 const HelloesScreenFooter = ({
   helloesList,
@@ -30,10 +25,8 @@ const HelloesScreenFooter = ({
   addToModalOpenPress,
   onSearchPress,
 }) => {
-  const navigationState = useNavigationState((state) => state);
-  const { onSignOut } = useUser();
-  const currentRouteName = navigationState.routes[navigationState.index]?.name;
-  const isOnActionPage = currentRouteName === "hellofriend";
+ 
+ 
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
 

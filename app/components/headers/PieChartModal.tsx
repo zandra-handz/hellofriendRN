@@ -13,14 +13,13 @@ import UserCategoryHistoryChart from "../home/UserCategoryHistoryChart";
 
 interface Props {
   isVisible: boolean;
-  closeModal: () => void;
- 
+  closeModal: () => void; 
   onSearchPress: () => void;
   friendData?: object;
   listData: object[];
   radius: number;
   labelsSize: number;
-  onLongPress: () => void;
+  onLongPress: (categoryId: number | null) => void;
 }
 
 const PieChartModal: React.FC<Props> = ({
@@ -34,9 +33,7 @@ const PieChartModal: React.FC<Props> = ({
 }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
 
-  // const momentsInCategory = capsuleList.filter(
-  //   (capsule) => capsule?.user_category === categoryId
-  // );
+ 
 
   return (
     <ModalWithGoBack
@@ -51,38 +48,18 @@ const PieChartModal: React.FC<Props> = ({
       }
       questionText={friendData ? `${friendData?.name}` : 'All category history'}
       children={
-        <View contentContainerStyle={styles.bodyContainer}>
+        <View style={styles.bodyContainer}>
           
-            {/* <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                height: "auto",
-                alignItems: "center",
-                marginTop: 10,
-                marginBottom: 20,
-              }}
-            >
-              <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.subWelcomeText,
-                  { fontSize: 16 },
-                ]}
-              >
-                Description
-              </Text>
-            </View> */}
             <View>
               {friendData && (
                 <FriendCategoryHistoryChart
                 showPercentages={true}
                   friendData={friendData}
                   listData={listData}
+                  showLabels={true}
                   radius={radius}
                   labelsSize={labelsSize}
-                  onLongPress={onLongPress}
+                  onLongPress={onLongPress} //not hoooked up yet
                   showFooterLabel={false}
                 />
               )}

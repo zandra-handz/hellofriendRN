@@ -14,7 +14,7 @@ const EditPriority = ({ iconSize = 15, value = "None" }) => {
   const { themeAheadOfLoading } = useFriendList();
 
   const [priority, setPriority] = useState(
-    friendDashboardData[0]?.suggestion_settings?.priority_level || null
+    friendDashboardData?.suggestion_settings?.priority_level || null
   );
 
   const priorityRef = useRef();

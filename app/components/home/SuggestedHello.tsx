@@ -50,7 +50,7 @@ const SuggestedHello = ({ padding, height, borderRadius = 10 }: Props) => {
               },
             ]}
           >
-            {friendDashboardData?.[0]?.future_date_in_words ||
+            {friendDashboardData?.future_date_in_words ||
               "No date available"}
           </Text>
         </>

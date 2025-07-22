@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useState, useEffect } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useState, useEffect } from "react"; 
 import OverlayLargeButton from "../appwide/button/OverlayLargeButton";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -29,8 +28,7 @@ const ActiveAddresses: React.FC<ActiveAddressesProps> = ({
   setUserAddress,
   friendAddress,
   setFriendAddress,
-}) => {
-  const { themeStyles } = useGlobalStyle();
+}) => { 
   const { selectedFriend } = useSelectedFriend();
 
   const [isUserAddressCurrent, setIsUserAddressCurrent] = useState(false);

@@ -1,7 +1,7 @@
 import { View, Text, DimensionValue } from "react-native";
 import React, { useCallback, useState } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 import { useNavigation } from "@react-navigation/native";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
  
@@ -51,7 +51,7 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   closeModal,
 }) => {
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
+ 
   const { useFetchAdditionalDetails } = useLocations();
  
 

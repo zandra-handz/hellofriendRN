@@ -136,6 +136,7 @@ const AllFriendCharts = ({ selectedFriend, outerPadding }: Props) => {
               />
             </Pressable>
             <UserCategoryHistoryChart
+          
               listData={stats}
               radius={CHART_RADIUS}
               onLongPress={handleSetCategoryDetailsModal}

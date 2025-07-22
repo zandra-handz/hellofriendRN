@@ -124,12 +124,12 @@ const ContentAddHello = () => {
   }, []);
 
   const faveLocations = useMemo(() => {
-    if (!locationList || !friendDashboardData?.[0]?.friend_faves?.locations) {
+    if (!locationList || !friendDashboardData?.friend_faves?.locations) {
       return [];
     }
 
     return locationList.filter((location) =>
-      friendDashboardData[0].friend_faves.locations.includes(location.id)
+      friendDashboardData.friend_faves.locations.includes(location.id)
     );
   }, [locationList, friendDashboardData]);
 

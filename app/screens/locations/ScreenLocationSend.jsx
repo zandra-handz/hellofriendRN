@@ -8,7 +8,7 @@ import { useUser } from "@/src/context/UserContext";
 import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useNavigation } from "@react-navigation/native";
+ 
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 const ScreenLocationSend = () => {
   const route = useRoute();
@@ -24,9 +24,9 @@ const currentDay = getCurrentDay();
   //weekdayTextData is coming from LocationHoursOfOperation component
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const additionalDetails = getCachedAdditionalDetails(location?.id);
-const navigation = useNavigation();
+ 
   const phoneNumber =
-    friendDashboardData[0]?.suggestion_settings?.phone_number || null;
+    friendDashboardData?.suggestion_settings?.phone_number || null;
 
   const [messageData, setMessageData] = useState({
     userMessage: `${user.username} has sent you a meet up site from the hellofriend app!`,

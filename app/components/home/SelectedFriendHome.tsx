@@ -110,7 +110,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               },
             ]}
           >
-            {friendDashboardData?.[0]?.future_date_in_words ||
+            {friendDashboardData?.future_date_in_words ||
               "No date available"}
           </Text>
         </>
@@ -342,14 +342,14 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     outerPadding={spacerAroundCalendar}
                   />
                 </View>
-                {!loadingNewFriend && (
+                {/* {!loadingNewFriend && (
                   <View style={{ width: "100%", marginVertical: 3 }}>
                     <AllFriendCharts
                       selectedFriend={selectedFriend} //removed the boolean casting to be able to pass in name
                       outerPadding={spacerAroundCalendar}
                     />
                   </View>
-                )}
+                )} */}
                 {!loadingNewFriend && (
                   <View style={{ marginVertical: 3 }}>
                     <CalendarChart

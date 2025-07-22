@@ -28,7 +28,7 @@ const EditTheme = ({ iconSize = 15, value = "None" }) => {
     useReadableColors(friendList, selectedFriend);
 
   const [manualTheme, setManualTheme] = useState(
-    friendDashboardData[0]?.friend_faves?.use_friend_color_theme || false
+    friendDashboardData?.friend_faves?.use_friend_color_theme || false
   );
 
   const toggleUseFriendColorTheme = async () => {

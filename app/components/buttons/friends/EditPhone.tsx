@@ -14,7 +14,7 @@ const EditPhone = ({ iconSize = 15, value='None' }) => {
 const { selectedFriend, friendDashboardData } = useSelectedFriend();
 
   const [phoneNumber, setPhoneNumber] = useState(
-    friendDashboardData[0]?.suggestion_settings?.phone_number || null
+    friendDashboardData?.suggestion_settings?.phone_number || null
   );
 
 
@@ -46,8 +46,8 @@ const { selectedFriend, friendDashboardData } = useSelectedFriend();
       handleUpdateFriendSettings(
         user?.id,
         selectedFriend.id,
-        friendDashboardData[0].suggestion_settings.effort_required,
-        friendDashboardData[0].suggestion_settings.priority_level,
+        friendDashboardData.suggestion_settings.effort_required,
+        friendDashboardData.suggestion_settings.priority_level,
         phoneNumber
       );
     }

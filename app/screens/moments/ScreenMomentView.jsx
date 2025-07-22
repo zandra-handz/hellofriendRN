@@ -1,12 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect } from "react";
 
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
-import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
-import { useFocusEffect } from "@react-navigation/native";
+ 
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
  

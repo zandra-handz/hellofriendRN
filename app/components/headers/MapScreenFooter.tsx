@@ -12,9 +12,7 @@ import AboutAppModal from "./AboutAppModal";
 import UserSettingsModal from "./UserSettingsModal.";
 
 // app display/templates
-import FooterButtonIconVersion from "./FooterButtonIconVersion";
-import ButtonData from "../buttons/scaffolding/ButtonData";
-import { useNavigationState } from "@react-navigation/native";
+import FooterButtonIconVersion from "./FooterButtonIconVersion"; 
 import SetAddressesModal from "./SetAddressesModal";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
@@ -25,16 +23,13 @@ const MapScreenFooter = ({
   setUserAddress,
   friendAddress,
   setFriendAddress,
-}) => {
-  const navigationState = useNavigationState((state) => state);
+}) => { 
   const { onSignOut } = useUser();
-  const currentRouteName = navigationState.routes[navigationState.index]?.name;
-  const isOnActionPage = currentRouteName === "hellofriend";
+ 
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
 
-  const [aboutModalVisible, setAboutModalVisible] = useState(false);
-  const [reportModalVisible, setReportModalVisible] = useState(false);
+  const [aboutModalVisible, setAboutModalVisible] = useState(false); 
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [addressesModalVisible, setAddressesModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);

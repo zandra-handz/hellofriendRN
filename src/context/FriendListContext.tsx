@@ -9,29 +9,8 @@ import React, {
 import { useUser } from "./UserContext"; // Import useAuthUser hook
 import { fetchFriendList } from "../calls/api";
 import { useQuery } from "@tanstack/react-query";
-
-interface Friend {
-  id: number;
-  name: string;
-  first_name: string;
-  last_name: string;
-  first_meet_entered: string;
-  next_meet: number;
-  user: number;
-
-  created_on: string;
-  updated_on: string;
-
-  saved_color_dark: string;
-  saved_color_light: string;
-  theme_color_dark: string;
-  theme_color_light: string;
-  theme_color_font: string;
-  theme_color_font_secondary: string;
-
-  suggestion_settings: number;
-}
-
+import { Friend } from "../types/FriendTypes";
+ 
 
 interface ThemeAheadOfLoading {
   darkColor: string;

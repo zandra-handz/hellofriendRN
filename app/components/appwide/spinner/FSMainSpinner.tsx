@@ -13,8 +13,7 @@ type Props = {};
 const FSMainSpinner = (props: Props) => {
   const { user, isAuthenticated, isInitializing, signinMutation } = useUser();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { manualGradientColors } = useGlobalStyle();
-  const [isLoading, setIsLoading ] = useState(false);
+  const { manualGradientColors } = useGlobalStyle(); 
 
 
 

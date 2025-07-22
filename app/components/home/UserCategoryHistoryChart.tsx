@@ -1,27 +1,35 @@
 import { View, Text } from "react-native";
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
- 
-import Pie from "../headers/Pie"; 
+
+import Pie from "../headers/Pie";
 import CategoryHistoryModal from "../headers/CategoryHistoryModal";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 type Props = {
   listData: object[];
+  showLabels: boolean;
   showPercentages: boolean;
   radius: number;
   labelsSize: number;
   onLongPress: () => void;
   showFooterLabel: boolean;
-  
 };
 
-const UserCategoryHistoryChart = ({ listData, showPercentages=false, radius = 80, labelsSize=9, onLongPress, showFooterLabel=true }: Props) => {
+const UserCategoryHistoryChart = ({
+  listData,
+  showLabels = true,
+  showPercentages = false,
+  radius = 80,
+  labelsSize = 9,
+  onLongPress,
+  showFooterLabel = true,
+}: Props) => {
   // console.log(`listdata in usercategoryhistory chart`, listData);
   const [userHistorySortedList, setUserHistorySortedList] = useState([]);
-    const [historyModalVisible, setHistoryModalVisible] = useState(false);
-  const { themeStyles } = useGlobalStyle(); 
-  const [ viewCategoryId, setViewCategoryId ] = useState(null);
-    const [ viewCategoryName, setViewCategoryName ] = useState(null);
+  const [historyModalVisible, setHistoryModalVisible] = useState(false);
+  const { themeStyles } = useGlobalStyle();
+  const [viewCategoryId, setViewCategoryId] = useState(null);
+  const [viewCategoryName, setViewCategoryName] = useState(null);
   const [userHistoryHasAnyCapsules, setUserHistoryHasAnyCapsules] =
     useState(false);
   const { categoryHistorySizes } = useStatsSortingFunctions({
@@ -62,37 +70,36 @@ const UserCategoryHistoryChart = ({ listData, showPercentages=false, radius = 80
       {userHistorySortedList && userHistoryHasAnyCapsules && (
         <View
           style={{
-            height: '100%', 
+            height: "100%",
             marginHorizontal: 10,
             alignItems: "center",
             flexDirection: "column",
           }}
         >
           <Pie
-          showPercentages={showPercentages}
+            showPercentages={showPercentages}
+            showLabels={showLabels}
             data={userHistorySortedList}
             widthAndHeight={radius * 2}
             labelsSize={labelsSize}
             onSectionPress={handleCategoryPress}
             onLongSectionPress={onLongPress}
           />
-          {showFooterLabel && ( 
-            
-          <View style={{}}>
-            <Text
-              style={[
-                themeStyles.primaryText,
-                { fontWeight: "bold", fontSize: 13 },
-              ]}
-            >
-              All friends
-            </Text>
-          </View>
-          
+          {showFooterLabel && (
+            <View style={{}}>
+              <Text
+                style={[
+                  themeStyles.primaryText,
+                  { fontWeight: "bold", fontSize: 13 },
+                ]}
+              >
+                All friends
+              </Text>
+            </View>
           )}
         </View>
       )}
-            {historyModalVisible && viewCategoryId && viewCategoryName && (
+      {historyModalVisible && viewCategoryId && viewCategoryName && (
         <View>
           <CategoryHistoryModal
             isVisible={historyModalVisible}

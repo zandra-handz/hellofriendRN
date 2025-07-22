@@ -27,7 +27,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   const { themeStyles, themeStyleSpinners } = useGlobalStyle();
   const navigation = useNavigation();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { setFriend } = useSelectedFriend();
+  const { setFriend, selectFriend } = useSelectedFriend();
   const { friendList, friendListLength, getThemeAheadOfLoading } =
     useFriendList();
 
@@ -43,7 +43,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
 
       const friend = friendList.find((friend) => friend.id === hello.friend.id);
       getThemeAheadOfLoading(friend);
-      setFriend(selectedFriend);
+      selectFriend(selectedFriend);
       navigation.navigate("Moments");
     },
     [friendList, getThemeAheadOfLoading, setFriend, navigation]

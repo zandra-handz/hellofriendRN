@@ -40,10 +40,9 @@ const useTalkingPFunctions = ({
   };
 
   const getCategoryCap = () => { 
-      if (friendData.length === 0) return null;
-      if (friendData[0].length === 0) return null;
+      if (friendData.length === 0) return null; 
  
-    return parseInt(friendData[0].suggestion_settings.category_limit_formula);
+    return parseInt(friendData.suggestion_settings.category_limit_formula);
   };
 
   const getCreationsRemaining = () => { 

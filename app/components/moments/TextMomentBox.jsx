@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg"; 
-import SwitchFriend from "../home/switchFriend";
+import SwitchFriend from "../home/SwitchFriend";
  
 // Forwarding ref to the parent to expose the TextInput value
 const TextMomentBox = forwardRef(

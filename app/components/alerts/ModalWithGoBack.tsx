@@ -19,20 +19,19 @@ import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave"
 
 interface Props {
   isVisible: boolean;
-  isFullscreen: boolean;
-  headerContent: React.ReactElement;
+  isFullscreen: boolean; 
   headerIcon: React.ReactElement;
   questionText: string;
   children: React.ReactElement;
-  borderRadius: number;
-  contentPadding: number;
+  borderRadius?: number;
+  contentPadding?: number;
   onClose: () => void;
 }
 
 const ModalWithGoBack: React.FC<Props> = ({
   isVisible,
   isFullscreen=false,
-  headerContent,
+ 
   headerIcon,
   questionText,
   children,

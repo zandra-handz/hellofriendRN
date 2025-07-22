@@ -29,8 +29,8 @@ const CalculateTravelTimesBody = ({location }) => {
     const [triggerFetch, setTriggerFetch] = useState(false);
 
  
-    const [ friendAddressIsSelected, setFriendAddressIsSelected ] = useState(false);
-    const [ userAddressIsSelected, setUserAddressIsSelected ] = useState(false);
+    // const [ friendAddressIsSelected, setFriendAddressIsSelected ] = useState(false);
+    // const [ userAddressIsSelected, setUserAddressIsSelected ] = useState(false);
   
   
 

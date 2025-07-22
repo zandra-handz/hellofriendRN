@@ -16,7 +16,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   const { themeStyles } = useGlobalStyle();
   const { friendList, getThemeAheadOfLoading } = useFriendList();
   const navigation = useNavigation();
-  const { selectedFriend, setFriend } = useSelectedFriend();
+  const { selectedFriend, selectFriend } = useSelectedFriend();
 
 
 
@@ -25,8 +25,8 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
     const selectedOption = friendList.find((friend) => friend.id === itemId);
 
     const selectedFriend = selectedOption || null;
-
-    setFriend(selectedFriend);
+    
+    selectFriend(selectedFriend);
     getThemeAheadOfLoading(selectedFriend);
 
     if (!navigationDisabled) {

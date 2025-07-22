@@ -7,11 +7,13 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 type Props = {
   friendData: object;
   listData: object[];
+  showLabels: boolean;
   showPercentages: boolean;
-  friendName: string;
+
   radius: number;
   labelsSize: number;
-  onLongPress: () => void;
+  onLongPress: (categoryId: number | null) => void;
+  showFooterLabel: boolean;
 };
 
 const FriendCategoryHistoryChart = ({
@@ -21,6 +23,8 @@ const FriendCategoryHistoryChart = ({
   radius = 80,
   labelsSize = 9,
   showLabels = true,
+  onLongPress,
+  showFooterLabel,
 }: Props) => {
   //  console.log(`listdata in friendhistorychart chart`, listData);
   const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
@@ -83,16 +87,18 @@ const FriendCategoryHistoryChart = ({
             // onSectionPress={() => console.log("hi!")}
             onSectionPress={handleCategoryPress}
           />
-          <View style={{}}>
-            <Text
-              style={[
-                themeStyles.primaryText,
-                { fontWeight: "bold", fontSize: 13 },
-              ]}
-            >
-              {friendData?.name}
-            </Text>
-          </View>
+          {showFooterLabel && (
+            <View style={{}}>
+              <Text
+                style={[
+                  themeStyles.primaryText,
+                  { fontWeight: "bold", fontSize: 13 },
+                ]}
+              >
+                {friendData?.name}
+              </Text>
+            </View>
+          )}
         </View>
       )}
       {historyModalVisible &&

@@ -14,7 +14,7 @@ const EditEffort = ({ iconSize = 15, value = "None" }) => {
   const { themeAheadOfLoading } = useFriendList();
 
   const [effort, setEffort] = useState(
-    friendDashboardData[0]?.suggestion_settings?.effort_required || null
+    friendDashboardData?.suggestion_settings?.effort_required || null
   );
 
   const effortRef = useRef();
