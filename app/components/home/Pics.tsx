@@ -1,11 +1,13 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import LoadedImages from "../buttons/images/LoadedImages";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
+import useImageFunctions from "@/src/hooks/useImageFunctions";
 
+import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 type Props = {
   selectedFriend: boolean;
   outerPadding: number;
@@ -14,7 +16,10 @@ type Props = {
 const Pics = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
+  const { imageList } = useImageFunctions();
+  const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 
+  const PADDING = 20;
   const navigateToImages = () => {
     navigation.navigate("ImageView", { startingIndex: 0 });
   };
@@ -29,7 +34,7 @@ const Pics = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
               height: 60,
               flexShrink: 1,
               width: "100%",
-              padding: 10,
+              padding: PADDING,
               flexDirection: "row",
               alignItems: "center",
               //   paddingBottom: 10,
@@ -45,44 +50,90 @@ const Pics = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
               flexDirection: "row",
               height: "100%",
               width: "100%",
-              alignItems: "center", 
+              alignItems: "center",
 
               // marginBottom: outerPadding, // turn back on to add body content to this component
             }}
           >
             <View
-              style={{ flexDirection: "row", width: '100%', justifyContent: "space-between" }}
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-between",
+              }}
             >
-                <View style={{flexDirection: 'row'}}>
-              <MaterialCommunityIcons
-                //  name="image-edit-outline"
-                name="image-multiple-outline"
-                // name="graph"
-                size={20}
-                color={themeStyles.primaryText.color}
-                style={{ marginBottom: 0 }}
-              />
-              <Text
-                style={[
-                  themeStyles.primaryText,
-                  {
-                    marginLeft: 6,
-                    marginRight: 12,
-                    fontWeight: "bold",
-                  },
-                ]}
+              <Pressable
+                hitSlop={10}
+                onPress={
+                  imageList && imageList.length > 0
+                    ? navigateToImages
+                    : () => {}
+                }
+                style={{ flexDirection: "row" }}
               >
-                Pics
-              </Text>
-              
-                </View>
-              <LabeledArrowButton
-                color={themeStyles.primaryText.color}
-                label="View"
-                opacity={0.7}
-                onPress={navigateToImages}
-                //   onPress={() => navigation.navigate("Images")}
-              />
+                <MaterialCommunityIcons
+                  //  name="image-edit-outline"
+                  name="image-multiple-outline"
+                  // name="graph"
+                  size={20}
+                  color={themeStyles.primaryText.color}
+                  style={{ marginBottom: 0 }}
+                />
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    {
+                      marginLeft: 6,
+                      marginRight: 12,
+                      fontWeight: "bold",
+                    },
+                  ]}
+                >
+                  Pics ({imageList && imageList.length})
+                </Text>
+              </Pressable>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Pressable hitSlop={10} onPress={handleCaptureImage}>
+                  <Text
+                    style={[
+                      themeStyles.primaryText,
+                      { fontWeight: "bold", fontSize: 13 },
+                    ]}
+                  >
+                    Camera
+                  </Text>
+                </Pressable>
+                <View
+                  style={{
+                    width: 1,
+                    height: "100%",
+                    opacity: 0.7,
+                    marginHorizontal: 10,
+                    backgroundColor: themeStyles.primaryText.color,
+                  }}
+                ></View>
+                <Pressable
+                hitSlop={10}
+                onPress={handleSelectImage}>
+                  <Text
+                    style={[
+                      themeStyles.primaryText,
+                      { fontWeight: "bold", fontSize: 13 },
+                    ]}
+                  >
+                    Upload
+                  </Text>
+                </Pressable>
+              </View>
+              {/* {imageList && imageList.length > 0 && (
+                <LabeledArrowButton
+                  color={themeStyles.primaryText.color}
+                  label="View"
+                  opacity={0.7}
+                  onPress={navigateToImages}
+                  //   onPress={() => navigation.navigate("Images")}
+                />
+              )} */}
             </View>
           </View>
 

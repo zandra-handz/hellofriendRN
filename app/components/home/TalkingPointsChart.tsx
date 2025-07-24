@@ -1,10 +1,10 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import Donut from "../headers/Donut";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
@@ -34,6 +34,8 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
   const { userCategories } = useCategories();
+
+  const [showHistory, setShowHistory] = useState(false);
 
   const appState = useRef(AppState.currentState);
   const SMALL_CHART_RADIUS = 30;
@@ -70,17 +72,18 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
       listData: capsuleList,
     });
 
-  const HEIGHT = 430;
+  const HEIGHT = 420;
+  const PADDING = 20;
 
   const CHART_RADIUS = 150;
   const CHART_STROKE_WIDTH = 20;
   const CHART_OUTER_STROKE_WIDTH = 26;
   const GAP = 0.03;
 
-  const LABELS_SIZE = 14;
-  const LABELS_DISTANCE_FROM_CENTER = -56;
-  const LABELS_SLICE_END = 4;
-  const CENTER_TEXT_SIZE = 50;
+  const LABELS_SIZE = 11;
+  const LABELS_DISTANCE_FROM_CENTER = -50;
+  const LABELS_SLICE_END = 5;
+  const CENTER_TEXT_SIZE = 40;
 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
 
@@ -101,6 +104,12 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
     navigation.navigate("Moments", { scrollTo: categoryId });
   };
 
+  const handleMomentScreenNoScroll = () => {
+    console.log("handlemomentscreen pressed");
+
+    navigation.navigate("Moments", { scrollTo: null });
+  };
+
   useFocusEffect(
     useCallback(() => {
       if (!capsuleList || capsuleList?.length < 1) {
@@ -117,8 +126,8 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
       setCategoryColors(
         generateGradientColors(
           userCategories,
-          manualGradientColors.lightColor,
-          // themeAheadOfLoading.darkColor,
+          // manualGradientColors.lightColor,
+          themeAheadOfLoading.lightColor,
           //  manualGradientColors.homeDarkColor
           themeAheadOfLoading.darkColor
         )
@@ -129,7 +138,7 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
       //     )
       //   );
     }
-  }, [userCategories]);
+  }, [userCategories, themeAheadOfLoading]);
 
   useEffect(() => {
     if (categoryColors && tempCategoriesSortedList) {
@@ -145,33 +154,63 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
   }, [categoryColors, tempCategoriesSortedList]);
 
   return (
-    <View
-      style={[
-        {
-          overflow: "hidden",
-          height: HEIGHT,
-          padding: 10,
-          paddingTop: 20,
-          paddingBottom: 0,
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-          borderRadius: 20,
-        },
-      ]}
-    >
-      <View
+    <>
+      <Pressable
+        onPress={() => setShowHistory((prev) => !prev)}
         style={{
-          borderRadius: 20,
-          flexDirection: "row",
+          height: 30,
+          paddingHorizontal: PADDING,
+          position: "absolute",
+          zIndex: 20000,
+          elevation: 20000,
+          top: 370,
+          right: 0,
+          alignItems: 'center',
           width: "100%",
-          alignItems: "center",
-          justifyContent: "space-between",
-
-          // backgroundColor: 'orange',
-          marginBottom: outerPadding,
+          flexDirection: 'row',
         }}
       >
-        <View style={{ flexDirection: "row" }}>
-          <MaterialCommunityIcons
+        <Ionicons
+          name={!showHistory ? "pie-chart" : 'close'}
+          size={30}
+          color={themeStyles.primaryText.color}
+        />
+        {!showHistory && (
+          
+        <Text style={[themeStyles.primaryText, {fontFamily: 'Poppins-Regular', fontSize: 13}]}>
+          {"   "}category history
+        </Text>
+        
+        )}
+      </Pressable>
+      <View
+        style={[
+          {
+            overflow: "hidden",
+            height: !showHistory ? HEIGHT : HEIGHT + (SMALL_CHART_RADIUS * 2 + SMALL_CHART_BORDER * 2),
+            flexGrow: 1,
+            flex: 1,
+            padding: PADDING,
+            paddingBottom: !showHistory ? PADDING : 0,
+            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            borderRadius: 20,
+          },
+        ]}
+      >
+        <View
+          style={{
+            borderRadius: 20,
+            flexDirection: "row",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "space-between",
+
+            // backgroundColor: 'orange',
+           // marginBottom: outerPadding,
+          }}
+        >
+          <View style={{ flexDirection: "row" }}>
+            {/* <MaterialCommunityIcons
             // name="comment-edit-outline"
             //  name="heart-multiple-outline"
             name="head-heart"
@@ -180,8 +219,8 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
             size={20}
             color={themeStyles.primaryText.color}
             style={{ marginBottom: 0 }}
-          />
-          <Text
+          /> */}
+            {/* <Text
             style={[
               themeStyles.primaryText,
               {
@@ -190,94 +229,117 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
                 fontWeight: "bold",
               },
             ]}
-          >
-            Talking Points Ready
-          </Text>
+          > */}
+            <Text
+              style={[
+                {
+                  fontFamily: "Poppins-Bold",
+                  fontSize: appFontStyles.subWelcomeText.fontSize + 3,
+
+                  color: themeStyles.primaryText.color,
+                  opacity: 0.9,
+                  // color: manualGradientColors.homeDarkColor,
+                },
+              ]}
+            >
+              Ideas
+            </Text>
+          </View>
         </View>
-        {/* <LabeledArrowButton
-          color={themeStyles.primaryText.color}
-          label="View"
-          opacity={0.7}
-          onPress={() => navigation.navigate("Helloes")}
-        /> */}
-      </View>
-      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}> */}
-      <View
-        style={{
-          marginHorizontal: 10,
-          alignItems: "center",
-          flexDirection: "column",
-          height: "74%",
-        }}
-      >
-        <Donut
-          onCategoryPress={handleMomentScreenScrollTo}
-          onCategoryLongPress={handleSetCategoryDetailsModal}
-          onCenterPress={() => navigation.navigate("MomentFocus")}
-          radius={CHART_RADIUS}
-          strokeWidth={CHART_STROKE_WIDTH}
-          outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
-          gap={GAP}
-          labelsSize={LABELS_SIZE}
-          labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
-          labelsSliceEnd={LABELS_SLICE_END}
-          data={tempCategoriesSortedList}
-          colors={colors}
-          centerTextSize={CENTER_TEXT_SIZE}
-        />
-      </View>
-      <View
-        style={{
-          flexDirection: "row", 
-          justifyContent: "space-between",
-          // backgroundColor: themeStyles.primaryBackground.backgroundColor,
-          width: "100%",
-          // backgroundColor: 'teal',
-          height: (SMALL_CHART_RADIUS * 2) + (SMALL_CHART_BORDER * 2),
-          
-        }}
-      >
         <View
           style={{
-            flexDirection: "row", 
-            flex: 1, 
-            
-            justifyContent: "flex-start",
+            marginHorizontal: 10,
+            alignItems: "center",
+            flexDirection: "column",
+            height: "74%",
           }}
         >
-          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText, {alignSelf: 'center'}]}>
-            History{'  '}
-          </Text>
-          <FriendHistorySmallChart
-          chartBorder={SMALL_CHART_BORDER}
-            chartBorderColor={themeStyles.primaryBackground.backgroundColor}
-            showLabels={false}
-            chartRadius={SMALL_CHART_RADIUS}
+          <Donut
+            onCategoryPress={handleMomentScreenScrollTo}
+            onCategoryLongPress={handleSetCategoryDetailsModal}
+            onCenterPress={handleMomentScreenNoScroll}
+            onPlusPress={() => navigation.navigate("MomentFocus")}
+            radius={CHART_RADIUS}
+            strokeWidth={CHART_STROKE_WIDTH}
+            outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
+            gap={GAP}
+            labelsSize={LABELS_SIZE}
+            labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
+            labelsSliceEnd={LABELS_SLICE_END}
+            data={tempCategoriesSortedList}
+            colors={colors}
+            centerTextSize={CENTER_TEXT_SIZE}
           />
         </View>
-     <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText, {alignSelf: 'center'}]}>
-            All time{'  '}
-          </Text>
-        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-          <UserHistorySmallChart
-           chartBorder={SMALL_CHART_BORDER}
-           chartBorderColor={themeStyles.primaryBackground.backgroundColor}
-            showLabels={false}
-            chartRadius={SMALL_CHART_RADIUS}
-          />
-        </View>
+
+        {showHistory && (
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+             // backgroundColor: themeStyles.primaryBackground.backgroundColor,
+              width: "100%",
+              bottom:0,
+              // backgroundColor: 'teal',
+              height: SMALL_CHART_RADIUS * 2 + SMALL_CHART_BORDER * 2,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                flex: 1,
+
+                justifyContent: "flex-start",
+              }}
+            >
+              <Text
+                style={[
+                  themeStyles.primaryText,
+                  appFontStyles.subWelcomeText,
+                  { alignSelf: "center" },
+                ]}
+              >
+                History{"  "}
+              </Text>
+              <FriendHistorySmallChart
+                chartBorder={SMALL_CHART_BORDER}
+                chartBorderColor={themeStyles.primaryBackground.backgroundColor}
+                showLabels={false}
+                chartRadius={SMALL_CHART_RADIUS}
+              />
+            </View>
+            <Text
+              style={[
+                themeStyles.primaryText,
+                appFontStyles.subWelcomeText,
+                { alignSelf: "center" },
+              ]}
+            >
+              All time{"  "}
+            </Text>
+            <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+              <UserHistorySmallChart
+                chartBorder={SMALL_CHART_BORDER}
+                chartBorderColor={themeStyles.primaryBackground.backgroundColor}
+                showLabels={false}
+                chartRadius={SMALL_CHART_RADIUS}
+              />
+            </View>
+          </View>
+        )}
+
+        {/* <View style={{ width: "100%", height: 10 }}></View> */}
+        {detailsModalVisible && (
+          <View>
+            <CategoryDetailsModal
+              isVisible={detailsModalVisible}
+              closeModal={() => setDetailsModalVisible(false)}
+              categoryId={viewCategoryId}
+            />
+          </View>
+        )}
       </View>
-      {/* <View style={{ width: "100%", height: 10 }}></View> */}
-      {detailsModalVisible && (
-        <View>
-          <CategoryDetailsModal
-            isVisible={detailsModalVisible}
-            closeModal={() => setDetailsModalVisible(false)}
-            categoryId={viewCategoryId}
-          />
-        </View>
-      )}
-    </View>
+    </>
   );
 };
 

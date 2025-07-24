@@ -16,9 +16,7 @@ import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 import CalendarChart from "./CalendarChart";
 import AllFriendCharts from "./AllFriendCharts";
 import TalkingPointsChart from "./TalkingPointsChart";
-import Pics from "./Pics";
-import { FontAwesome6 } from "@expo/vector-icons";
-import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
+import Pics from "./Pics"; 
 import SuggestedHello from "./SuggestedHello";
 
 interface SelectedFriendHomeProps {
@@ -79,53 +77,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   // const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
   const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
   const SELECTED_FRIEND_CARD_PADDING = 20;
-
-  const renderSuggestedHello = useMemo(() => {
-    return (
-      <Pressable style={{}} onPress={onPress}>
-        <>
-          <Text
-            style={[
-              {
-                fontFamily: "Poppins-Regular",
-                fontSize: appFontStyles.subWelcomeText.fontSize + 3,
-
-                color: themeStyles.primaryText.color,
-                opacity: 0.9,
-                // color: manualGradientColors.homeDarkColor,
-              },
-            ]}
-          >
-            {selectedFriend && friendDashboardData ? "Suggested hello" : "None"}
-          </Text>
-          <Text
-            style={[
-              themeStyles.primaryText,
-              {
-                // alignSelf: 'center',
-                lineHeight: 28,
-                fontSize: appFontStyles.welcomeText.fontSize - 5,
-                opacity: 0.9,
-                paddingRight: 50,
-              },
-            ]}
-          >
-            {friendDashboardData?.future_date_in_words ||
-              "No date available"}
-          </Text>
-        </>
-      </Pressable>
-    );
-  }, [
-    onPress,
-    selectedFriend,
-    friendDashboardData,
-    appFontStyles,
-    themeStyles,
-    manualGradientColors,
-    styles,
-  ]);
-
+ 
   // useEffect(() => {
   //   if (selectedFriend) {
   //     fetchCompletedMomentsAPI(selectedFriend.id);
@@ -138,10 +90,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     navigation.navigate("Moments", { scrollTo: null });
   };
 
-  const navigateToImages = () => {
-    navigation.navigate("ImageView", { startingIndex: 0 });
-  };
-
+ 
   const navigateToAddMoment = () => {
     navigation.navigate("MomentFocus");
   };
@@ -272,62 +221,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     height={SELECTED_FRIEND_CARD_HEIGHT}
                     borderRadius={borderRadius}
                   />
-                  // <View
-                  //   style={{
-                  //     marginVertical: 4,
-
-                  //     maxHeight: SELECTED_FRIEND_CARD_HEIGHT + 40,
-                  //     flexShrink: 1,
-                  //     alignItems: "center",
-                  //     flexDirection: "row",
-
-                  //     justifyContent: "space-between",
-                  //     borderRadius: borderRadius,
-                  //     // backgroundColor: 'orange',
-                  //     padding: SELECTED_FRIEND_CARD_PADDING,
-                  //     paddingRight: 10,
-                  //     width: "100%",
-                  //     backgroundColor:
-                  //       themeStyles.overlayBackgroundColor.backgroundColor,
-                  //     borderRadius: 20,
-                  //   }}
-                  // >
-                  //   <View style={styles.textContainer}>
-                  //     {renderSuggestedHello}
-                  //     <Pressable
-                  //       onPress={navigateToMoments}
-                  //       style={{
-                  //         position: "absolute",
-                  //         right: 0,
-                  //         top: 0,
-                  //         backgroundColor: manualGradientColors.lightColor,
-                  //         justifyContent: "center",
-                  //         borderRadius: 10,
-                  //         padding: 4,
-                  //         width: "auto",
-                  //         minWidth: 50,
-                  //         height: "100%",
-                  //       }}
-                  //     >
-                  //       <FontAwesome6
-                  //         name={"person-walking-arrow-right"}
-                  //         size={30}
-                  //         color={manualGradientColors.homeDarkColor}
-                  //       />
-                  //     </Pressable>
-                  //   </View>
-
-                  //   <View
-                  //     style={{
-                  //       borderRadius: 20,
-                  //       // height: "100%",
-                  //       width: "100%",
-                  //       flexDirection: "column",
-                  //       alignItems: "center",
-                  //       justifyContent: "center",
-                  //     }}
-                  //   ></View>
-                  // </View>
+                   
                 )}
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
@@ -342,14 +236,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     outerPadding={spacerAroundCalendar}
                   />
                 </View>
-                {/* {!loadingNewFriend && (
-                  <View style={{ width: "100%", marginVertical: 3 }}>
-                    <AllFriendCharts
-                      selectedFriend={selectedFriend} //removed the boolean casting to be able to pass in name
-                      outerPadding={spacerAroundCalendar}
-                    />
-                  </View>
-                )} */}
+                
                 {!loadingNewFriend && (
                   <View style={{ marginVertical: 3 }}>
                     <CalendarChart

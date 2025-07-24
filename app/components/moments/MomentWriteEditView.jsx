@@ -227,6 +227,7 @@ const MomentWriteEditView = ({
           padding: 4,
           borderWidth: 0,
           width: "100%",
+        
         }}
       >
         <UserCategorySelector
@@ -242,7 +243,7 @@ const MomentWriteEditView = ({
             appContainerStyles.talkingPointCard,
             {
               backgroundColor: themeStyles.primaryBackground.backgroundColor,
-              paddingTop: 80,
+              paddingTop: 60,
             },
           ]}
         > 
@@ -258,17 +259,17 @@ const MomentWriteEditView = ({
             onSave={handleSave}
             isKeyboardVisible={isKeyboardVisible}
             selectedUserCategory={selectedUserCategory}
-            CategoryCreatorComponent={
-              <CategoryCreator
-                show={showCategoriesSlider}
-                updateCategoryInParent={handleCategorySelect}
-                updateExistingMoment={updateExistingMoment}
-                existingCategory={existingMomentObject?.typedCategory || null}
-                momentTextForDisplay={momentTextRef?.current?.getText() || null}
-                onParentSave={handleSave}
-                isKeyboardVisible={isKeyboardVisible}
-              />
-            }
+            // CategoryCreatorComponent={
+            //   <CategoryCreator
+            //     show={showCategoriesSlider}
+            //     updateCategoryInParent={handleCategorySelect}
+            //     updateExistingMoment={updateExistingMoment}
+            //     existingCategory={existingMomentObject?.typedCategory || null}
+            //     momentTextForDisplay={momentTextRef?.current?.getText() || null}
+            //     onParentSave={handleSave}
+            //     isKeyboardVisible={isKeyboardVisible}
+            //   />
+            // }
           /> 
         </View>
  

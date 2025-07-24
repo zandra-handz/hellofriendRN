@@ -182,13 +182,8 @@ const CategoryCreator = ({
             onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
             label={item}
             selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
-            width={140}
-            fontFamily={"Poppins-Regular"}
-            shapeWidth={44}
-            shapeHeight={44}
-            shapePosition="right"
-            shapePositionValue={0}
-            shapePositionValueVertical={4}
+            width={140} 
+        
           />
         </View>
       );

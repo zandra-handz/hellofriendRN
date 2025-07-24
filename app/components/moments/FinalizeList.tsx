@@ -71,6 +71,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
               height: isSelected ? "auto" : ITEM_HEIGHT,
               minHeight: ITEM_HEIGHT,
               flexDirection: "row",
+              
               width: "100%",
               paddingRight: 0,
               paddingVertical: 10,

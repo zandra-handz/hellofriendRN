@@ -183,7 +183,9 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
     navigation.navigate("MomentView", { moment: moment });
   }, []);
 
- 
+ const scrollToEnd = () => {
+  flatListRef.current?.scrollToEnd({ animated: true });
+};
 
   const scrollToCategoryStart = (category) => {
     console.log(category);

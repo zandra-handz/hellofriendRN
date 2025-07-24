@@ -120,8 +120,8 @@ const SuggestedHello = ({ padding, height, borderRadius = 10 }: Props) => {
               style={{ opacity: 1 }}
             />
           </View>
-          <View style={{bottom: 0, position: 'absolute', width: '100%', right: -20}}>
-            
+          <View style={{bottom: -1, position: 'absolute', alignItems: 'center', flexDirection: 'row', width: '100%', left: 2}}>
+            <Text style={{color: manualGradientColors.homeDarkColor, fontSize: 18, fontWeight: 'bold'}}>GO{' '}</Text>
           <FontAwesome6
             name={"arrow-right"}
             size={20}

@@ -33,7 +33,7 @@ const CategoryButtonDualPress = ({
         alignItems: "center",
         alignContent: "center",
         textAlign: "center",
-        paddingHorizontal: "2%",
+        paddingHorizontal: 4,
         justifyContent: "center",
         overflow: "hidden",
         borderRadius: 20,

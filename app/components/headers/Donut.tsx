@@ -18,6 +18,7 @@ type Props = {
   onCategoryPress: () => void;
   onCategoryLongPress: () => void;
   onCenterPress: () => void;
+   onPlusPress: () => void;
   data: string[];
   radius: number;
   strokeWidth: number;
@@ -36,6 +37,7 @@ type Props = {
 const Donut = ({
   onCategoryPress,
   onCategoryLongPress,
+  onPlusPress,
   onCenterPress,
   data,
   radius = 40,
@@ -186,6 +188,7 @@ const Donut = ({
         <DonutChart
           onCategoryPress={onCategoryPress}
           onCategoryLongPress={onCategoryLongPress}
+          onPlusPress={onPlusPress}
           onCenterPress={onCenterPress}
           radius={RADIUS}
           strokeWidth={STROKE_WIDTH}

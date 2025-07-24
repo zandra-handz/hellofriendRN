@@ -60,7 +60,7 @@ const UserCategorySelector = ({
   } = useCategories();
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
  
-  const topperHeight = 70; 
+  const topperHeight = 50; 
   const flatListRef = useAnimatedRef(null); 
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
@@ -430,6 +430,8 @@ const findIndex = userCategories.findIndex((category, index) => {
         style={{
           flexDirection: "row",
           alignItems: "center",
+          paddingLeft: 20,
+          
           width: inputActive ? "100%" : 60,
           height: topperHeight - 20,
           backgroundColor: inputActive
@@ -440,12 +442,12 @@ const findIndex = userCategories.findIndex((category, index) => {
         <View
           style={{
             backgroundColor: manualGradientColors.homeDarkColor,
-            borderRadius: 40 / 2,
-            marginLeft: 10,
+            borderRadius: 30 / 2,
+           
             alignItems: "center",
             justifyContent: "center",
-            height: 40,
-            width: 40,
+            height: 30,
+            width: 30,
           }}
         >
           <MaterialCommunityIcons
@@ -615,7 +617,7 @@ const findIndex = userCategories.findIndex((category, index) => {
               alignItems: "center",
               zIndex: 10000,
               elevation: 10000,
-              bottom: -60,
+              bottom: -40,
 
               right: 30,
               width: 50,

@@ -78,8 +78,10 @@ const DonutPath = ({
       color={color}
       style="stroke"
       strokeWidth={strokeWidth}
-      strokeJoin="round"
-      strokeCap="round"
+    strokeJoin="round"
+     // strokeJoin="miter"
+      strokeCap="square"
+      // strokeCap="round"
       start={start}
       end={end}
     />

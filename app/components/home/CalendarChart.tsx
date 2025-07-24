@@ -16,6 +16,7 @@ const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
   const navigation = useNavigation();
 
   const HEIGHT = 160;
+  const PADDING = 20;
 
   return (
     <View
@@ -23,7 +24,7 @@ const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
         {
           overflow: "hidden",
           height: HEIGHT,
-          padding: 10,
+          padding: PADDING,
           backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
           borderRadius: 20,
         },
