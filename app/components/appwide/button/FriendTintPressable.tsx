@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { Pressable, Text, StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
@@ -7,6 +7,9 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { ColorValue } from "react-native";
+
+// HARD CODED COLOR 
 import { LinearGradient } from "expo-linear-gradient";
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
@@ -14,13 +17,14 @@ import { useFriendList } from "@/src/context/FriendListContext";
 
 type Props = {
   onPress: () => void;
-  friendId: string;
+  friendId: number;
   startingColor: string;
   style: object;
   children: ReactNode;
-  useFriendColors: boolean; // just here to be the same as GradientBackground logic to avoid confusion
-  reverse: boolean; // reverses gradient, mostly just here for experimenting
+  useFriendColors?: boolean; // just here to be the same as GradientBackground logic to avoid confusion
+  reverse?: boolean; // reverses gradient, mostly just here for experimenting
 };
+ 
 
 const FriendTintPressable = ({
   onPress,
@@ -47,9 +51,11 @@ const FriendTintPressable = ({
     return [0, 1, 1, 0];
   }, [useFriendColors, reverse]);
 
-  const highlightColors = useMemo(() => {
-    if (friendColors) {
-      return [friendColors?.theme_color_dark, friendColors?.theme_color_light];
+  const highlightColors = useMemo<[ColorValue, ColorValue]>(() => {
+    if (friendColors && friendColors?.theme_color_dark && friendColors?.theme_color_light) {
+      return [friendColors.theme_color_dark, friendColors.theme_color_light];
+    } else {
+      return ["#4caf50","#a0f143" ];
     }
   }, [friendColors]);
 
@@ -89,12 +95,9 @@ const FriendTintPressable = ({
         start={{ x: direction[0], y: direction[1] }}
         end={{ x: direction[2], y: direction[3] }}
         style={[StyleSheet.absoluteFill, animatedColorStyle, style]}
-      />
-      {/* <Animated.View style={[animatedColorStyle, {backgroundColor: highlightColor}]}> */}
-
+      /> 
       <Animated.View style={[animatedStyle]}>{children}</Animated.View>
-      {/*       
-</Animated.View> */}
+ 
     </Pressable>
   );
 };

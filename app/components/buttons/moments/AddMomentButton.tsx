@@ -1,15 +1,17 @@
 import React from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native"; 
+import { View, TouchableOpacity, Pressable, Text, StyleSheet } from "react-native"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
-  import { Feather } from "@expo/vector-icons";
+  import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
  
 
 interface AddMomentButtonProps {
     disabled?: boolean;
+    iconSize: number;
+    circleSize: number;
 }
 
-const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false}) => {
+const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false, iconSize=40, circleSize=70}) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
 
@@ -21,12 +23,15 @@ const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false}) => {
 
   return (
     <View style={[styles.container]}>
-      <TouchableOpacity
+      <Pressable
         onPress={disabled ? () => {} : handleGoToMomentScreen}
         style={[
           styles.circleButton,
           themeStyles.footerIcon,
           {
+                width: circleSize, // Set width and height to the same value
+    height: circleSize,
+    borderRadius: circleSize / 2, // Half of the width/height to make it a perfect circle
             borderColor: 'transparent',
             backgroundColor: manualGradientColors.lightColor,
           },
@@ -39,25 +44,15 @@ const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false}) => {
         )}
         {viewSvg && (
           <>
-            {/* <View style={{ position: "absolute", bottom: 13, right: 4 }}>
-              <AddOutlineSvg
-                width={20}
-                height={20}
-                color={manualGradientColors.darkColor}
-              />
-            </View> */}
-            <Feather
-            name="plus"
-            size={40}
+    
+            <MaterialCommunityIcons
+            name="playlist-plus"
+            size={iconSize}
             color={manualGradientColors.homeDarkColor} />
-            {/* <LeavesSingleStemOutlineSvg
-              width={40}
-              height={40}
-              color={manualGradientColors.darkColor}
-            /> */}
+    
           </>
         )}
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };
@@ -86,9 +81,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   circleButton: {
-    width: 70, // Set width and height to the same value
-    height: 70,
-    borderRadius: 35, // Half of the width/height to make it a perfect circle
+
 
     borderWidth: StyleSheet.hairlineWidth,
     justifyContent: "center",

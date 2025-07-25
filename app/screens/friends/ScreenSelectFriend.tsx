@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -17,17 +17,54 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   const { friendList, getThemeAheadOfLoading } = useFriendList();
   const navigation = useNavigation();
   const { selectedFriend, selectFriend } = useSelectedFriend();
-
-
-
+  // const [alphabFriendList, setAlphabFriendList] = useState<object[]>([]); //back end friend model orders friends by next_meet date
   
+  const locale = "en-US";
 
+  // useEffect(() => {
+  //   if (friendList && friendList.length > 0) {
+  //     //!! IN PLACE. added slice() to make a shallow copy
+  //     // const summaryOfSorted = friendList.sort((a,b) => a.name.localeCompare(b.name, locale, {sensitivity: 'case'}))
 
-  const handleSelectFriend = (itemId) => {
+  //     //case shouldn't be necessary, set to base to ignore case
+  //     const summaryOfSorted = friendList
+  //       .slice()
+  //       .sort((a, b) =>
+  //         a.name.localeCompare(b.name, locale, { sensitivity: "case" })
+  //       );
+  //     if (summaryOfSorted) {
+  //       setAlphabFriendList(summaryOfSorted);
+  //     }
+  //     // console.log(
+  //     //   `finished friend sort: `,
+  //     //   summaryOfSorted.map((friend) => friend.name)
+  //     // );
+  //   }
+  // }, [friendList]);
+
+  const alphabFriendList: object[] = useMemo(() => {
+    if (!friendList || !(friendList?.length > 0)) {
+      return [];
+    }
+
+    const summaryOfSorted = friendList
+      .slice()
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, locale, { sensitivity: "case" })
+      );
+
+    if (!summaryOfSorted || !(summaryOfSorted.length > 0)) {
+      return [];
+    }
+
+    return summaryOfSorted;
+  }, [friendList]);
+
+  const handleSelectFriend = (itemId: number) => {
     const selectedOption = friendList.find((friend) => friend.id === itemId);
 
     const selectedFriend = selectedOption || null;
-    
+
     selectFriend(selectedFriend);
     getThemeAheadOfLoading(selectedFriend);
 
@@ -89,9 +126,9 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
           </View>
         )} */}
         <View style={{ width: "100%", flex: 1 }}>
-          {friendList && (
+          {alphabFriendList && alphabFriendList.length > 0 && (
             <FriendListUI
-              data={friendList}
+              data={alphabFriendList}
               selectedFriendId={selectedFriend ? selectedFriend?.id : null}
               onPress={handleSelectFriend}
             />

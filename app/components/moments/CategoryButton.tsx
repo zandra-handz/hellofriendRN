@@ -115,7 +115,11 @@ const CategoryButton = ({
         style={[
           appFontStyles.categoryButtonText,
           themeStyles.genericText,
-          animatedCardsStyle,
+          // animatedCardsStyle,
+          {backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            borderRadius: 999,
+            padding: 4,
+          }
         ]}
       >
         # {label}

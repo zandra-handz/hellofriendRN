@@ -52,10 +52,8 @@ import * as Linking from "expo-linking";
 import * as MediaLibrary from "expo-media-library";
 
 import { useGlobalStyle } from "./src/context/GlobalStyleContext";
-import ResultMessage from "./app/components/alerts/ResultMessage";
-import FullScreenSpinner from "./app/components/appwide/spinner/FullScreenSpinner";
-import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner";
-import ScreenOnboardingFlow from "./app/onboarding/ScreenOnboardingFlow";
+import ResultMessage from "./app/components/alerts/ResultMessage"; 
+import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner"; 
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
@@ -108,7 +106,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
-import PhoneStatusBar from "./app/components/appwide/statusbar/PhoneStatusBar";
+// import PhoneStatusBar from "./app/components/appwide/statusbar/PhoneStatusBar";
 import * as Sentry from "@sentry/react-native";
 
 Sentry.init({

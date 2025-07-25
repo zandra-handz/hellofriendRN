@@ -1,10 +1,11 @@
-import { View, Pressable, Text, StyleSheet } from "react-native";
-import React, { useMemo } from "react";
+import { View, Pressable, Text, StyleSheet, Alert } from "react-native";
+import React, { useMemo, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
+import GoOptionsModal from "../headers/GoOptionsModal";
 
 type Props = {
   padding: number;
@@ -16,6 +17,11 @@ const SuggestedHello = ({ padding, height, borderRadius = 10 }: Props) => {
   const navigation = useNavigation();
   const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
+  const [ optionsModalVisible, setOptionsModalVisible ] = useState(false);
+
+  const handleGoPress = () => {
+setOptionsModalVisible(true);
+  };
   const navigateToMoments = () => {
     navigation.navigate("Moments", { scrollTo: null });
   };
@@ -87,7 +93,8 @@ const SuggestedHello = ({ padding, height, borderRadius = 10 }: Props) => {
       <View style={styles.textContainer}>
         {renderSuggestedHello}
         <Pressable
-          onPress={navigateToMoments}
+          // onPress={navigateToMoments}
+          onPress={handleGoPress}
           style={{
             position: "absolute",
             right: 0,
@@ -142,7 +149,14 @@ const SuggestedHello = ({ padding, height, borderRadius = 10 }: Props) => {
           justifyContent: "center",
         }}
       ></View>
+      {optionsModalVisible && (
+        <GoOptionsModal
+        isVisible={optionsModalVisible}
+        closeModal={() => setOptionsModalVisible(false)}
+        />
+      ) }
     </View>
+    
   );
 };
 

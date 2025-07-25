@@ -63,12 +63,12 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   const containerHeight = height - 410;
   const { themeAheadOfLoading } = useFriendList();
   const textContainerWidth = "100%";
-  const talkingPointNumberOfLines = 2;
-  const cardBorderRadius = 30; 
+  const talkingPointNumberOfLines = 3;
+  const cardBorderRadius = 999;
   // const sendButtonWidth = `${100 - Number(textContainerWidth.slice(0, -1))}%`;
-    const sendButtonWidth = 50; // use as right padding for card content too because this button is absolute positioned
+  const sendButtonWidth = 50; // use as right padding for card content too because this button is absolute positioned
 
-    const textContainerRightPadding = sendButtonWidth + 10;
+  const textContainerRightPadding = sendButtonWidth + 10;
   if (!momentData) {
     return;
   }
@@ -161,12 +161,12 @@ const MomentItem: React.FC<MomentItemsProps> = ({
     }
   });
 
-  const original = momentData?.user_category_name || 'No category';
+  const original = momentData?.user_category_name || "No category";
 
   const truncated =
     original.length > 26 ? original.slice(0, 26) + "..." : original;
 
-  const header = `# ${truncated} • added ${momentDate}`;
+  const header = `${truncated} • added to ${momentDate}`;
   return (
     <Animated.View
       style={[
@@ -190,9 +190,9 @@ const MomentItem: React.FC<MomentItemsProps> = ({
       <View
         style={{
           flexDirection: "column",
-          paddingLeft: 24,
+          paddingLeft: 30,
           flex: 1,
-          paddingVertical: 24,  
+          paddingVertical: 0,
           paddingRight: textContainerRightPadding,
         }}
       >
@@ -200,15 +200,15 @@ const MomentItem: React.FC<MomentItemsProps> = ({
           style={{
             flexWrap: "wrap",
             width: textContainerWidth,
-           
-           
+paddingTop: 10,
+
             overflow: "hidden",
           }}
         >
           <Text
             numberOfLines={1}
             // style={[themeStyles.genericText, appFontStyles.momentHeaderText]}
-             style={[themeStyles.primaryText, appFontStyles.welcomeText, { fontSize: 18}]}
+             style={[themeStyles.primaryText, appFontStyles.welcomeText, { fontSize: 14, fontWeight: 'bold'}]}
           >
             {header && header}
           </Text>
@@ -218,16 +218,15 @@ const MomentItem: React.FC<MomentItemsProps> = ({
             flexWrap: "flex",
             width: textContainerWidth,
             overflow: "hidden",
-            height: '100%', 
+            height: "100%",
           }}
         >
           <Text
             numberOfLines={talkingPointNumberOfLines}
             // style={[themeStyles.genericText, appFontStyles.momentText]}
-             style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}
-          > 
+            style={[themeStyles.primaryText, appFontStyles.subWelcomeText, {fontSize: 11}]}
+          >
             {momentData && momentData?.capsule}
-            
           </Text>
         </View>
       </View>
@@ -236,11 +235,11 @@ const MomentItem: React.FC<MomentItemsProps> = ({
         style={[
           animatedStyle,
           {
-            position: 'absolute',
+            position: "absolute",
             right: 0,
-            borderRadius: 10,
+            borderRadius: 0,
             overflow: "hidden",
-            backgroundColor: manualGradientColors.homeDarkColor,
+            // backgroundColor: themeStyles.primaryBackground.backgroundColor,
             height: "100%",
             textAlign: "center",
             alignItems: "center",
@@ -263,11 +262,13 @@ const MomentItem: React.FC<MomentItemsProps> = ({
         }}
       >
         <AnimatedIcon
-          name="comment-check-outline"
+          // name="comment-check-outline"
+          // name="thought-bubble"
+           name="playlist-check"
           size={24}
           style={animatedStyle}
         />
-                {/* <MaterialCommunityIcons
+        {/* <MaterialCommunityIcons
           name="comment-check-outline"
           size={24}
           color={themeStyles.genericText.color}

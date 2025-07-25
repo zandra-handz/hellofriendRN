@@ -1,15 +1,12 @@
 import {
-  View,
-  Text,
+  View, 
   StyleSheet,
-  Pressable,
-  Dimensions,
+  Pressable, 
   FlatList,
+  ListRenderItemInfo,
 } from "react-native";
 import Animated, {
-  SlideInRight,
-  FadeInRight,
-  SlideOutLeft,
+  SlideInRight, 
 } from "react-native-reanimated";
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
@@ -17,13 +14,31 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
 
-const FriendListUI = ({ data, selectedFriendId, onPress }) => {
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/src/types/NavigationTypes";
+
+import { Friend } from "@/src/types/FriendTypes";
+
+type FriendListUIProps = {
+  data: Friend[];
+  selectedFriendId: number;
+  onPress: (itemId: number) => void;
+};
+
+type FriendListItem = Friend | { message: string };
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const FriendListUI = ({
+  data,
+  selectedFriendId,
+  onPress,
+}: FriendListUIProps) => {
   const { friendList } = useFriendList();
   const { themeStyles } = useGlobalStyle();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const itemColor = themeStyles.primaryText.color;
   const elementBackgroundColor =
     themeStyles.overlayBackgroundColor.backgroundColor;
@@ -35,29 +50,12 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
   const selectedId = selectedFriendId; //can be null
 
   const renderFriendSelectItem = useCallback(
-    ({ item, index }) => (
+    ({ item, index }: ListRenderItemInfo<FriendListItem>) => (
       <Animated.View
         style={styles.friendContainer}
-        //   exiting={SlideOutLeft} not working yet
-        // entering={SlideInRight.duration((index + 1) * (70 - (index + 1) * 1.9))}
         entering={SlideInRight.duration(260).springify(2000)}
       >
-        {item && item?.id && item?.id !== selectedId && (
-          // <Pressable
-          //   style={({ pressed }) => [
-          //     styles.friendContainer,
-          //     pressed && styles.pressedStyle, // apply extra style when pressed
-          //   ]}
-          //   onPress={() => onPress(item.id)}
-          // >
-          //   <ButtonSelectFriend
-          //     borderRadius={ITEM_BORDER_RADIUS}
-          //     backgroundColor={elementBackgroundColor}
-          //     color={itemColor}
-          //     friend={item}
-          //     height={ITEM_HEIGHT}
-          //   />
-          // </Pressable>
+        {item && "id" in item && item.id !== selectedId && (
           <FriendTintPressable
             startingColor={themeStyles.overlayBackgroundColor.backgroundColor}
             style={styles.friendContainer}
@@ -66,7 +64,6 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
           >
             <ButtonSelectFriend
               borderRadius={ITEM_BORDER_RADIUS}
-              // backgroundColor={elementBackgroundColor}
               backgroundColor={"transparent"}
               color={itemColor}
               friend={item}
@@ -74,7 +71,8 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
             />
           </FriendTintPressable>
         )}
-        {item && item?.id && item?.id === selectedId && (
+
+        {item && "id" in item && item.id === selectedId && (
           <View
             style={[
               styles.friendContainer,
@@ -95,7 +93,8 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
             />
           </View>
         )}
-        {!item?.id && friendList.length < 20 && (
+
+        {!("id" in item) && friendList.length < 20 && (
           <Pressable
             onPress={() => navigation.navigate("AddFriend")}
             style={[
@@ -122,8 +121,8 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
     [onPress, itemColor, elementBackgroundColor]
   );
 
-  const extractItemKey = (item, index) =>
-    item?.id ? item.id.toString() : `friendButton-${index}`;
+  const extractItemKey = (item: FriendListItem, index: number) =>
+    "id" in item ? item.id.toString() : `add-friend-${index}`;
 
   return (
     <Animated.View
@@ -140,7 +139,6 @@ const FriendListUI = ({ data, selectedFriendId, onPress }) => {
           data={[...data, { message: "add friend" }]}
           keyExtractor={extractItemKey}
           renderItem={renderFriendSelectItem}
-          // numColumns={3}
           numColumns={1}
           //  estimatedItemSize={100}
           showsVerticalScrollIndicator={false}
@@ -157,10 +155,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 10,
     justifyContent: "center",
-    // alignItems: "center",
     flexGrow: 1,
-    // width: Dimensions.get("window").width / 3 - 14,
-    // maxWidth: Dimensions.get("window").width / 3 - 14,
   },
   pressedStyle: {
     opacity: 0.2,

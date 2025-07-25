@@ -490,6 +490,17 @@ const containerStyles = StyleSheet.create({
     ],
     opacity: 1,
   },
+    bigThoughtBubble: {
+    // zIndex: 50000,
+    // elevation: 50000,
+    
+    position: "absolute",
+    zIndex: 0,
+    top: -200,
+    opacity: .2,
+    right: 0,
+ 
+  },
 });
 
 const animationStyles = StyleSheet.create({

@@ -1,5 +1,5 @@
-import { View, Text } from "react-native";
-import React, { useMemo, useEffect } from "react";
+ 
+import  { useMemo, useEffect } from "react";
 
 import {
   eachMonthOfInterval,
@@ -18,39 +18,47 @@ const useHelloesManips = ({ helloesData }: Props) => {
 
 
   const flattenHelloes = useMemo(() => {
-        if (helloesData && helloesData.length > 0) {
-      return helloesData.flatMap((hello) => {
-        const helloCapsules = hello.thought_capsules_shared || [];
-        return helloCapsules.length > 0
-          ? helloCapsules.map((capsule) => ({
+  if (helloesData && helloesData.length > 0) {
+    return helloesData.flatMap((hello) => {
+      const helloCapsulesObj = hello.thought_capsules_shared || {};
+      const helloCapsules = Object.entries(helloCapsulesObj);
+
+      return helloCapsules.length > 0
+        ? helloCapsules.map(([capsuleId, capsuleData]) => ({
+            id: hello.id,
+            date: hello.date,
+            type: hello.type,
+            typedLocation: hello.typed_location,
+            locationName: hello.location_name,
+            location: hello.location,
+            additionalNotes: hello.additional_notes || "",
+            capsuleId,
+            capsule: capsuleData.capsule,
+            typedCategory: capsuleData.typed_category,
+            userCategory: capsuleData.user_category,
+            userCategoryName: capsuleData.user_category_name,
+          }))
+        : [
+            {
               id: hello.id,
               date: hello.date,
               type: hello.type,
               typedLocation: hello.typed_location,
               locationName: hello.location_name,
               location: hello.location,
-              additionalNotes: hello.additional_notes || "", // Keep existing additional notes
-              capsuleId: capsule.id,
-              capsule: capsule.capsule,
-              typedCategory: capsule.typed_category,
-            }))
-          : [
-              {
-                id: hello.id,
-                date: hello.date,
-                type: hello.type,
-                typedLocation: hello.typed_location,
-                locationName: hello.location_name,
-                location: hello.location,
-                additionalNotes: hello.additional_notes || "", // Keep existing additional notes
-                capsuleId: null,
-                capsule: null,
-                typedCategory: null,
-              },
-            ];
-      });
-    }
-  }, [helloesData]);
+              additionalNotes: hello.additional_notes || "",
+              capsuleId: null,
+              capsule: null,
+              typedCategory: null,
+              userCategory: null,
+              userCategoryName: null,
+            },
+          ];
+    });
+  }
+  return [];
+}, [helloesData]);
+
 
 
     const lightFormatBackendDateToMonthYear = (backendDate) => {
@@ -164,13 +172,13 @@ const useHelloesManips = ({ helloesData }: Props) => {
      }
    }, [helloesData]);
 
-   useEffect(() => {
-    if (flattenHelloes) {
-        console.log('flattenhelloes !!');
-        console.log(flattenHelloes.length);
-    }
+  //  useEffect(() => {
+  //   if (flattenHelloes) {
+  //       console.log('flattenhelloes !!');
+  //       console.log(flattenHelloes.length);
+  //   }
 
-   }, [flattenHelloes]);
+  //  }, [flattenHelloes]);
 
   return {
     flattenHelloes,

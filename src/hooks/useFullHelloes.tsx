@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { fetchPastHelloesFull } from "../calls/api";
 import { useUser } from "../context/UserContext";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -20,22 +20,7 @@ const useFullHelloes = ({ friendId, fetchAll = false, indexNeeded = 0 }: Props) 
 
 const pagesFetchedRef = useRef(1); // starts at 1 because page 1 is fetched initially
 
-useEffect(() => {
-  if (!fetchAll || isFetchingNextPage) return;
 
-  const fetchUntilNeeded = async () => {
-    while (
-      pagesFetchedRef.current < pagesNeeded &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      await fetchNextPage();
-      pagesFetchedRef.current += 1;
-    }
-  };
-
-  fetchUntilNeeded();
-}, [fetchAll, pagesNeeded, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const {
     data: helloesListTemp,
@@ -64,6 +49,24 @@ useEffect(() => {
     staleTime: 1000 * 60 * 60 * 10,
   });
 
+
+useEffect(() => {
+  if (!fetchAll || isFetchingNextPage) return;
+
+  const fetchUntilNeeded = async () => {
+    while (
+      pagesFetchedRef.current < pagesNeeded &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      await fetchNextPage();
+      pagesFetchedRef.current += 1;
+    }
+  };
+
+  fetchUntilNeeded();
+}, [fetchAll, pagesNeeded, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   // When fetchAll is true, keep calling fetchNextPage until no pages left
   useEffect(() => {
     if (fetchAll && hasNextPage && !isFetchingNextPage) {
@@ -74,6 +77,10 @@ useEffect(() => {
   // flatten the paginated results for easier consumption
   const flatResults = helloesListTemp?.pages.flatMap((page) => page.results) ?? [];
 
+
+ 
+
+
   return {
     helloesListFull: flatResults,
     helloesListFullIsLoading,
@@ -82,7 +89,7 @@ useEffect(() => {
     helloesListFullIsSuccess,
     helloesListFullIsError,
     fetchNextPage,
-    hasNextPage,
+    hasNextPage, 
   };
 };
 

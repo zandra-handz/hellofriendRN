@@ -10,7 +10,6 @@ import { useUser } from "./UserContext"; // Import useAuthUser hook
 import { fetchFriendList } from "../calls/api";
 import { useQuery } from "@tanstack/react-query";
 import { Friend } from "../types/FriendTypes";
- 
 
 interface ThemeAheadOfLoading {
   darkColor: string;
@@ -25,24 +24,26 @@ interface FriendListContextType {
   addToFriendList: (friend: Friend) => void;
   removeFromFriendList: (friendId: number) => void;
   updateFriend: (updatedFriend: Friend) => void;
-  themeAheadOfLoading: ThemeAheadOfLoading,
-
+  themeAheadOfLoading: ThemeAheadOfLoading;
+  getThemeAheadOfLoading: (friend: Friend) => void;
 }
 
-
+//HARD CODE LIGHT DARK COLOR LOCATION:
+//FRIENDTINTPRESSABLE unlikely to be resorted to but does have hard code to get TS to stop yelling at me
 
 const FriendListContext = createContext<FriendListContextType>({
   friendList: [],
   setFriendList: () => {},
   addToFriendList: () => {},
   removeFromFriendList: () => {},
-  updateFriend: () => {}, 
-    themeAheadOfLoading: {
+  updateFriend: () => {},
+  themeAheadOfLoading: {
     darkColor: "#4caf50",
     lightColor: "#a0f143",
     fontColor: "#000000",
     fontColorSecondary: "#000000",
   },
+  getThemeAheadOfLoading: () => {},
 });
 
 export const useFriendList = (): FriendListContextType =>
@@ -55,7 +56,7 @@ interface FriendListProviderProps {
 export const FriendListProvider: React.FC<FriendListProviderProps> = ({
   children,
 }) => {
-  const { user, isAuthenticated, isInitializing, onSignOut } = useUser(); 
+  const { user, isAuthenticated, isInitializing, onSignOut } = useUser();
   const [friendList, setFriendList] = useState<Friend[]>([]);
 
   const [useGradientInSafeView, setUseGradientInSafeView] = useState(false);
@@ -95,8 +96,8 @@ export const FriendListProvider: React.FC<FriendListProviderProps> = ({
 
   const {
     data: friendListData = [],
-    isLoading,
-    isFetching,
+    // isLoading,
+    // isFetching,
     isSuccess: friendListIsSuccess,
     isError,
   } = useQuery({
@@ -129,7 +130,6 @@ export const FriendListProvider: React.FC<FriendListProviderProps> = ({
   useEffect(() => {
     if (friendListIsSuccess && friendListData) {
       setFriendList(friendListData);
- 
     }
   }, [friendListIsSuccess, friendListData]);
 
@@ -145,25 +145,25 @@ export const FriendListProvider: React.FC<FriendListProviderProps> = ({
     });
   };
 
-const removeFromFriendList = (friendIdToRemove: number | number[]) => {
-  setFriendList((prevFriendList) => {
-    try {
-      const idsToRemove = Array.isArray(friendIdToRemove)
-        ? friendIdToRemove
-        : [friendIdToRemove];
-      // console.log("friend removed from friend list!");
-      return prevFriendList.filter(
-        (friend) => !idsToRemove.includes(friend.id)
-      );
-    } catch (error) {
-      console.log("error removing friend from list: ", error);
-      return prevFriendList; 
-    }
-  });
-};
+  const removeFromFriendList = (friendIdToRemove: number | number[]) => {
+    setFriendList((prevFriendList) => {
+      try {
+        const idsToRemove = Array.isArray(friendIdToRemove)
+          ? friendIdToRemove
+          : [friendIdToRemove];
+        // console.log("friend removed from friend list!");
+        return prevFriendList.filter(
+          (friend) => !idsToRemove.includes(friend.id)
+        );
+      } catch (error) {
+        console.log("error removing friend from list: ", error);
+        return prevFriendList;
+      }
+    });
+  };
 
   const friendListLength = friendList.length;
- 
+
   const updateFriend = (updatedFriend: Friend) => {
     setFriendList((prev) =>
       prev.map((friend) =>
@@ -182,15 +182,15 @@ const removeFromFriendList = (friendIdToRemove: number | number[]) => {
     setFriendList((prevFriendList) =>
       prevFriendList.map((friend) =>
         friend.id === friendId
-        ? {
-            ...friend,
-            theme_color_dark: darkColor,
-            saved_color_dark: darkColor,
-            theme_color_light: lightColor,
-            saved_color_light: lightColor,
-            theme_color_font: fontColor,
-            theme_color_font_secondary: fontColorSecondary,
-          }
+          ? {
+              ...friend,
+              theme_color_dark: darkColor,
+              saved_color_dark: darkColor,
+              theme_color_light: lightColor,
+              saved_color_light: lightColor,
+              theme_color_font: fontColor,
+              theme_color_font_secondary: fontColorSecondary,
+            }
           : friend
       )
     );
@@ -202,29 +202,26 @@ const removeFromFriendList = (friendIdToRemove: number | number[]) => {
     });
   };
 
- 
-
   const updateFriendListColorsExcludeSaved = (
     friendId: number,
     darkColor: string,
     lightColor: string,
     fontColor: string,
-    fontColorSecondary: string,
+    fontColorSecondary: string
   ) => {
-setFriendList((prevFriendList) =>
-  prevFriendList.map((friend) =>
-    friend.id === friendId
-      ? {
-          ...friend,
-          theme_color_dark: darkColor,
-          theme_color_light: lightColor,
-          theme_color_font: fontColor,
-          theme_color_font_secondary: fontColorSecondary,
-          // saved colors NOT updated here
-        }
-      : friend
-  ) 
-
+    setFriendList((prevFriendList) =>
+      prevFriendList.map((friend) =>
+        friend.id === friendId
+          ? {
+              ...friend,
+              theme_color_dark: darkColor,
+              theme_color_light: lightColor,
+              theme_color_font: fontColor,
+              theme_color_font_secondary: fontColorSecondary,
+              // saved colors NOT updated here
+            }
+          : friend
+      )
     );
 
     setThemeAheadOfLoading({
@@ -234,7 +231,7 @@ setFriendList((prevFriendList) =>
       fontColorSecondary,
     });
   };
- 
+
   const contextValue = useMemo(
     () => ({
       friendList,

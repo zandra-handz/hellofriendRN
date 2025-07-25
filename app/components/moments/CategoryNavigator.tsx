@@ -73,9 +73,14 @@ import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import CategoryButton from "./CategoryButton";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SearchModal from "../headers/SearchModal";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/src/types/NavigationTypes";
+import GeckoButton from "../home/GeckoButton";
+import { useNavigation } from "@react-navigation/native";
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const CategoryNavigator = ({
   visibilityValue,
   viewableItemsArray,
@@ -89,6 +94,13 @@ const CategoryNavigator = ({
     appContainerStyles,
     appSpacingStyles,
   } = useGlobalStyle();
+
+
+    const navigation = useNavigation<NavigationProp>();
+  const navigateToFinalize = () => {
+ 
+    navigation.navigate("Finalize");
+  };
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
 
@@ -106,12 +118,12 @@ const CategoryNavigator = ({
           flexDirection: "row",
           alignItems: "center",
           backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-          justifyContent: 'center',
-          borderRadius: 20,
-          paddingHorizontal: 20,
+          justifyContent: "center",
+          borderRadius: 999,
+          // paddingHorizontal: 20,
           paddingVertical: 5,
-          
-          textAlign: 'center', 
+
+          textAlign: "center",
           opacity: pressed ? 0.6 : 1,
         })}
       >
@@ -121,38 +133,35 @@ const CategoryNavigator = ({
           color={themeStyles.genericText.color}
           style={{}}
         />
-        <Text
-          style={[
-            themeStyles.genericText,
-            styles.categoryLabel,
-          
-          ]}
-        >
-      Search
+        <Text style={[themeStyles.genericText, styles.categoryLabel]}>
+          Search
         </Text>
       </Pressable>
     ),
     [iconSize, themeStyles]
   );
 
-const renderedButtons = useMemo(() => (
-   <View style={styles.buttonRow}>
-    {memoizedSearchIcon}
-    {categoryNames.map((categoryName) => (
-      <View
-        key={categoryName || "Uncategorized"}
-        style={styles.buttonWrapper}
-      >
-        <CategoryButton
-          height="auto"
-          viewableItemsArray={viewableItemsArray}
-          label={categoryName}
-          onPress={() => onPress(categoryName)}
-        />
+  const renderedButtons = useMemo(
+    () => (
+      <View style={styles.buttonRow}>
+        {memoizedSearchIcon}
+        {categoryNames.map((categoryName) => (
+          <View
+            key={categoryName || "Uncategorized"}
+            style={styles.buttonWrapper}
+          >
+            <CategoryButton
+              height={"auto"}
+              viewableItemsArray={viewableItemsArray}
+              label={categoryName}
+              onPress={() => onPress(categoryName)}
+            />
+          </View>
+        ))}
       </View>
-    ))}
-  </View>
-), [categoryNames, onPress, viewableItemsArray]);
+    ),
+    [categoryNames, onPress, viewableItemsArray]
+  );
 
   return (
     <>
@@ -160,10 +169,13 @@ const renderedButtons = useMemo(() => (
         style={[
           styles.categoryNavigatorContainer,
           styles.momentsScreenPrimarySpacing,
-          { backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor },
+          {
+            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          },
           visibilityStyle,
         ]}
       >
+        <GeckoButton onPress={navigateToFinalize}/>
         {/* <View style={[ { top: -40, flexDirection: "row",   borderRadius: 10, width: '100%', justifyContent: "flex-start" }]}>
           <View 
           style={{          
@@ -194,8 +206,11 @@ const renderedButtons = useMemo(() => (
          
         
         </View> */}
-        <ScrollView showsVerticalScrollIndicator={false}  style={[styles.scrollContainer ]}>
-         {renderedButtons} 
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={[styles.scrollContainer]}
+        >
+          {renderedButtons}
         </ScrollView>
       </Animated.View>
 
@@ -214,28 +229,27 @@ const renderedButtons = useMemo(() => (
 
 const styles = StyleSheet.create({
   categoryLabel: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: "Poppins-Regular",
     fontSize: 14,
     paddingVertical: 0,
     paddingHorizontal: 4,
   },
-//brought down from global context
-    momentsScreenPrimarySpacing: {
+  //brought down from global context
+  momentsScreenPrimarySpacing: {
     borderRadius: 20,
     padding: 0,
   },
-    categoryNavigatorContainer: {
-     position: "absolute",
+  categoryNavigatorContainer: {
+    position: "absolute",
     bottom: -24, //20
-paddingTop: 10,
+    paddingTop: 10,
     zIndex: 5,
     height: "auto",
     height: 140,
     // width: "74%",
-    width: '100%',
-    selfAlign: 'center',
-    paddingRight: 90, //space for the speeddial
- 
+    width: "100%",
+    selfAlign: "center",
+    paddingRight: 36, //space for the speeddial
   },
   scrollContainer: {
     maxHeight: 100,
@@ -247,13 +261,12 @@ paddingTop: 10,
   buttonRow: {
     flexWrap: "wrap",
     flexDirection: "row",
-
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   buttonWrapper: {
-    flexDirection: 'row',
-     
+    flexDirection: "row",
+
     marginHorizontal: 6,
     marginBottom: 10,
   },

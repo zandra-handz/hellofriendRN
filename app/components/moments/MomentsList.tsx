@@ -5,18 +5,18 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { View, Keyboard, ViewToken,   Pressable } from "react-native";
- 
+import { View, Keyboard, ViewToken, Pressable } from "react-native";
+
 import { useFocusEffect } from "@react-navigation/native";
 
 import MomentsAdded from "./MomentsAdded";
-import CategoryNavigator from "./CategoryNavigator"; 
+import CategoryNavigator from "./CategoryNavigator";
 import MomentItem from "./MomentItem";
-import LargeCornerLizard from "./LargeCornerLizard"; 
+import LargeCornerLizard from "./LargeCornerLizard";
 
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
- 
+import LargeThoughtBubble from "./LargeThoughtBubble";
 
 import Animated, {
   LinearTransition,
@@ -34,13 +34,13 @@ import Animated, {
   scrollTo,
   Easing,
   withSpring,
+  SlideInRight,
 } from "react-native-reanimated";
 
 import { useNavigation } from "@react-navigation/native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
- 
 
 // import { enableLayoutAnimations } from "react-native-reanimated";
 // enableLayoutAnimations(true);
@@ -49,20 +49,12 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 //const ITEM_HEIGHT = 290;
 
- 
-
-
-
-const MomentsList = ({scrollTo}) => {
-
-
+const MomentsList = ({ scrollTo }) => {
   useEffect(() => {
     if (scrollTo) {
       scrollToCategoryStart(scrollTo);
     }
-
   }, [scrollTo]);
-
 
   //   useFocusEffect(
   //   useCallback(() => {
@@ -73,23 +65,22 @@ const MomentsList = ({scrollTo}) => {
   //   }, [scrollTo])
   // );
 
-
-  const { appContainerStyles } = useGlobalStyle(); 
+  const { appContainerStyles } = useGlobalStyle();
   const {
-    capsuleList, 
+    capsuleList,
     // categoryNames,
     // categoryStartIndices,
     updateCapsule,
   } = useCapsuleList();
 
+  const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
+    listData: capsuleList,
+  });
 
-  const {  categoryNames, categoryStartIndices } = useTalkingPCategorySorting({listData: capsuleList})
-
- 
   const navigation = useNavigation();
-const ITEM_HEIGHT = 140;
-const ITEM_BOTTOM_MARGIN = 4;
-const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
+  const ITEM_HEIGHT = 130;
+  const ITEM_BOTTOM_MARGIN = 10;
+  const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
   // console.log('MOMENTS LIST RERENDERED');
   // Move this inside your component:
@@ -97,8 +88,7 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
     viewableItemsArray.value = viewableItems;
   }, []);
 
-
- // console.log('MOMENTS LIST RERENDERED');
+  // console.log('MOMENTS LIST RERENDERED');
 
   const viewabilityConfig = useRef({
     minimumViewTime: 40,
@@ -112,7 +102,7 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
       viewabilityConfig,
       onViewableItemsChanged,
     },
-  ]); 
+  ]);
 
   const flatListRef = useAnimatedRef(null);
 
@@ -147,8 +137,6 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
       keyboardDidHideListener.remove();
     };
   }, []);
- 
- 
 
   const scrollToMoment = (moment) => {
     if (moment.uniqueIndex !== undefined) {
@@ -178,14 +166,14 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
       console.error("Error during pre-save:", error);
     }
   }, []);
- 
+
   const handleNavigateToMomentView = useCallback((moment) => {
     navigation.navigate("MomentView", { moment: moment });
   }, []);
 
- const scrollToEnd = () => {
-  flatListRef.current?.scrollToEnd({ animated: true });
-};
+  const scrollToEnd = () => {
+    flatListRef.current?.scrollToEnd({ animated: true });
+  };
 
   const scrollToCategoryStart = (category) => {
     console.log(category);
@@ -243,8 +231,7 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
         // if less than ten pixels (on the top of the screen)
         // listVisibility.value = withTiming(1);
         categoryNavVisibility.value = withTiming(1);
-      } 
-      else {
+      } else {
         categoryNavVisibility.value = withTiming(1, { duration: 1000 });
       }
     },
@@ -267,16 +254,14 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
         onPress={() =>
           navigation.navigate("MomentView", { moment: item, index: index })
         }
-
         style={({ pressed }) => ({
-        // style={{
+          // style={{
           flex: 1,
           height: ITEM_HEIGHT,
           marginBottom: ITEM_BOTTOM_MARGIN,
-          paddingHorizontal: 2,
+          paddingHorizontal: 10,
           opacity: pressed ? 0.6 : 1,
         })}
-        
       >
         <MomentItem
           momentData={item}
@@ -315,102 +300,26 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
   return (
     <View style={appContainerStyles.screenContainer}>
       <LargeCornerLizard />
+      <LargeThoughtBubble capsuleCount={capsuleList.length} />
 
-      {/* <BelowHeaderContainer
-        height={30}
-        alignItems="center"
-        marginBottom={4}
-        justifyContent="flex-end"
-        children={
-          <>
- 
-            <View
-              style={{
-                flexDirection: "row",
-                height: "100%",
-                alignItems: "center",
-                width: "50%",
-                justifyContent: "flex-end",
-                //  overflow: "hidden",
-                marginRight: 10,
-                height: 30,
-              }}
-            >
-              <View style={{ width: 30, marginHorizontal: 4 }}>
-                <HelloesStaticButton
-                  height={"100%"}
-                  iconSize={24}
-                  onPress={() => navigation.navigate("Helloes")}
-                  circleColor={"orange"}
-                  countTextSize={8}
-                  countColor={
-                    themeAheadOfLoading
-                      ? themeAheadOfLoading.fontColorSecondary
-                      : "orange"
-                  }
-                />
-              </View>
-              <View style={{ width: 30, marginHorizontal: 4 }}>
-                <MomentsStaticButton
-                  height={"100%"}
-                  iconSize={24}
-                  onPress={() => navigation.navigate("Moments")}
-                  circleColor={"orange"}
-                  countTextSize={8}
-                  countColor={
-                    themeAheadOfLoading
-                      ? themeAheadOfLoading.fontColorSecondary
-                      : "orange"
-                  }
-                />
-              </View>
-              <View style={{ width: 30, marginHorizontal: 4 }}>
-                <ImagesStaticButton
-                  height={"100%"}
-                  iconSize={24}
-                  onPress={() => navigation.navigate("Images")}
-                  circleColor={"orange"}
-                  countTextSize={8}
-                  countColor={
-                    themeAheadOfLoading
-                      ? themeAheadOfLoading.fontColorSecondary
-                      : "orange"
-                  }
-                />
-              </View> 
-            </View>
-
-            <MomentsSearchBar
-              data={capsuleList}
-              height={25}
-              width={"47%"}
-              borderColor={themeAheadOfLoading.fontColorSecondary}
-              placeholderText={"Search"}
-              textAndIconColor={themeAheadOfLoading.fontColorSecondary}
-              backgroundColor={"transparent"}
-              onPress={scrollToMoment}
-              searchKeys={["capsule", "typedCategory"]}
-              iconSize={belowHeaderIconSize * 0.5}
-            />
-          </>
-        }
-      /> */}
       <MomentsAdded visibilityValue={listVisibility} />
       <View
         style={{
           // flex: 1,
           alignContent: "center",
           alignSelf: "center",
-          width: "100%", 
+          width: "100%",
           flexDirection: "column",
           justifyContent: "space-between",
-         height: "87%",  
- 
+          height: "87%",
         }}
       >
-        <>
+        <Animated.View
+          style={{ flex: 1 }}
+          entering={SlideInRight.duration(260).springify(2000)}
+        >
           <Animated.FlatList
-          fadingEdgeLength={10}
+            fadingEdgeLength={10}
             itemLayoutAnimation={JumpingTransition}
             // itemLayoutAnimation={CurvedTransition}
             // itemLayoutAnimation={EntryExitTransition}
@@ -452,19 +361,19 @@ const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
             decelerationRate="normal"
             keyboardDismissMode="on-drag"
           />
-        </>
+        </Animated.View>
       </View>
 
       {/* {!isKeyboardVisible && ( */}
-        <>
-          <CategoryNavigator
-            visibilityValue={listVisibility}
-            viewableItemsArray={viewableItemsArray}
-            categoryNames={categoryNames}
-            onPress={scrollToCategoryStart}
-            onSearchPress={scrollToMoment}
-          />
-        </>
+      <>
+        <CategoryNavigator
+          visibilityValue={listVisibility}
+          viewableItemsArray={viewableItemsArray}
+          categoryNames={categoryNames}
+          onPress={scrollToCategoryStart}
+          onSearchPress={scrollToMoment}
+        />
+      </>
       {/* )} */}
     </View>
   );
