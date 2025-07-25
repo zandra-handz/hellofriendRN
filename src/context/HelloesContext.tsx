@@ -2,6 +2,8 @@ import React, { createContext, useContext, useMemo, useRef } from "react";
 import { useUser } from "./UserContext";
 import { useSelectedFriend } from "./SelectedFriendContext";
 import { useUpcomingHelloes } from "./UpcomingHelloesContext";
+
+
 import {
   fetchPastHelloes,
   saveHello,
@@ -14,6 +16,22 @@ import {
   useQueryClient,
   useInfiniteQuery,
 } from "@tanstack/react-query";
+
+import { Hello } from "../types/HelloTypes";
+interface HelloesType {
+        helloesList: Hello[],
+      helloesIsFetching: boolean,
+      helloesIsLoading: boolean,
+      helloesIsError: boolean,
+      helloesIsSuccess: boolean, 
+      flattenHelloes,
+      createHelloMutation,
+      handleCreateHello,
+
+      handleDeleteHelloRQuery,
+      deleteHelloMutation,
+
+};
 
 const HelloesContext = createContext({});
 

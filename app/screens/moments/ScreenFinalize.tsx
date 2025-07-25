@@ -53,7 +53,7 @@ const ScreenFinalize = () => {
           >
             Finalize talking points shared
           </Text>
-          {preAdded && uniqueCategories?.length > 0 && (
+          {preAdded && uniqueCategories?.length > 0 && categoryNames && (categoryNames !== undefined) && (
             <FinalizeList
               data={allCapsulesList}
               preSelected={preAdded}

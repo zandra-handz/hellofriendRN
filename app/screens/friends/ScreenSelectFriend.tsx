@@ -20,6 +20,8 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
 
 
 
+  
+
 
   const handleSelectFriend = (itemId) => {
     const selectedOption = friendList.find((friend) => friend.id === itemId);
