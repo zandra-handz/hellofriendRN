@@ -94,7 +94,7 @@ const CategoryNavigator = ({
     appContainerStyles,
     appSpacingStyles,
   } = useGlobalStyle();
-
+const isVisible = true;
 
     const navigation = useNavigation<NavigationProp>();
   const navigateToFinalize = () => {
@@ -165,6 +165,8 @@ const CategoryNavigator = ({
 
   return (
     <>
+    {isVisible && (
+      
       <Animated.View
         style={[
           styles.categoryNavigatorContainer,
@@ -175,37 +177,12 @@ const CategoryNavigator = ({
           visibilityStyle,
         ]}
       >
-        <GeckoButton onPress={navigateToFinalize}/>
-        {/* <View style={[ { top: -40, flexDirection: "row",   borderRadius: 10, width: '100%', justifyContent: "flex-start" }]}>
-          <View 
-          style={{          
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-          justifyContent: 'center',
-          borderRadius: 20,
-          paddingHorizontal: 20,
-          paddingVertical: 5,
-        }}
-      > 
-            
-          <Text
-            style={[
-              themeStyles.genericText,
-              
-              styles.categoryLabel,
-              { marginRight: 20 },
-            ]}
-          >
-            Categories
-          </Text>
+        <View style={{height: 50, width: 50, position: 'absolute', zIndex: 50000, right: 10, top: 10, margin: 10}}>
           
-          </View>
+        <GeckoButton onPress={navigateToFinalize}/>
         
-            {memoizedSearchIcon}
-         
-        
-        </View> */}
+        </View>
+     
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={[styles.scrollContainer]}
@@ -213,6 +190,7 @@ const CategoryNavigator = ({
           {renderedButtons}
         </ScrollView>
       </Animated.View>
+            )}
 
       {searchModalVisible && (
         <View>
@@ -222,8 +200,12 @@ const CategoryNavigator = ({
             onSearchPress={onSearchPress}
           />
         </View>
-      )}
+
+      
+    )}
     </>
+    
+    
   );
 };
 

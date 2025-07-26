@@ -4,7 +4,9 @@ export type RootStackParamList = {
   hellofriend: undefined;
   UserDetails: undefined;
   MomentFocus: undefined;
-  Moments: undefined;
+  Moments: {
+    scrollTo: number | null;
+  }
   PreAdded: undefined;
   Finalize: undefined;
   Reload: undefined;

@@ -197,7 +197,7 @@ const containerStyles = StyleSheet.create({
     width: "100%",
     flex: 1,
     zIndex: 1,
-    elevation: 1,
+    elevation: 1, 
   },
 
   bodyContainer: {
@@ -590,9 +590,10 @@ const fontStyles = StyleSheet.create({
     paddingLeft: 0,
   },
   categoryButtonText: {
-    fontWeight: "bold",
-    fontSize: 11,
-    textTransform: "uppercase",
+   // fontWeight: "bold",
+    fontSize: 12,
+    fontFamily: 'Poppins-Bold',
+ //   textTransform: "uppercase",
     height: "100%",
     alignSelf: "center",
   },

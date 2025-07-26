@@ -66,7 +66,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   const talkingPointNumberOfLines = 3;
   const cardBorderRadius = 999;
   // const sendButtonWidth = `${100 - Number(textContainerWidth.slice(0, -1))}%`;
-  const sendButtonWidth = 50; // use as right padding for card content too because this button is absolute positioned
+  const sendButtonWidth = 30; // use as right padding for card content too because this button is absolute positioned
 
   const textContainerRightPadding = sendButtonWidth + 10;
   if (!momentData) {
@@ -95,7 +95,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
           [0, 1],
           [manualGradientColors.lightColor, themeAheadOfLoading.darkColor]
         )
-      : manualGradientColors.homeDarkColor;
+      : "transparent"; // manualGradientColors.homeDarkColor;
 
     const iconColor = isPressed
       ? manualGradientColors.homeDarkColor
@@ -166,7 +166,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   const truncated =
     original.length > 26 ? original.slice(0, 26) + "..." : original;
 
-  const header = `${truncated} • added to ${momentDate}`;
+  const header = `${truncated} • ${momentDate}`;
   return (
     <Animated.View
       style={[
@@ -175,32 +175,54 @@ const MomentItem: React.FC<MomentItemsProps> = ({
         {
           textAlign: "left",
           flexDirection: "row",
-          justifyContent: "space-between",
+         // justifyContent: "space-between",
           height: itemHeight,
-          width: "100%",
+          //  width: "100%",
+          width: "auto",
+  
+         //  backgroundColor: 'pink',
           paddingHorizontal: 0, // adjust this/remove from View directly below to give padding to send button
-          paddingVertical: 0, // adjust this/remove from View directly below to give padding to send button
+          paddingVertical: 2, // adjust this/remove from View directly below to give padding to send button
 
-          borderRadius: cardBorderRadius,
+          paddingHorizontal: 10,
+          borderRadius: 999, //cardBorderRadius,
+
+          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          // borderTopLeftRadius: 60,
+          // borderTopRightRadius: 10,
+          // borderBottomLeftRadius: 10,
+          // borderBottomRightRadius: 60,
           overflow: "hidden", // needed here to hide corners of send button when send button has no padding
         },
         visibilityStyle,
       ]}
     >
+      <MaterialCommunityIcons
+        name={"leaf"}
+
+        
+        size={34}
+        style={{ position: "absolute", bottom: 5, right: 5 }}
+        color={themeStyles.lighterOverlayBackgroundColor.backgroundColor}
+      />
       <View
         style={{
           flexDirection: "column",
-          paddingLeft: 30,
-          flex: 1,
-          paddingVertical: 0,
+          paddingLeft: 20,
+       
+          padding: 10, 
+         // flex: 1,
+          width: 'auto',
+        //  backgroundColor: 'orange',
           paddingRight: textContainerRightPadding,
         }}
       >
         <View
           style={{
-            flexWrap: "wrap",
-            width: textContainerWidth,
-paddingTop: 10,
+          //  flexWrap: "wrap",
+            flexDirection: 'column',
+            //  width: textContainerWidth,
+            width: "auto",
 
             overflow: "hidden",
           }}
@@ -208,12 +230,31 @@ paddingTop: 10,
           <Text
             numberOfLines={1}
             // style={[themeStyles.genericText, appFontStyles.momentHeaderText]}
-             style={[themeStyles.primaryText, appFontStyles.welcomeText, { fontSize: 14, fontWeight: 'bold'}]}
+            style={[
+              themeStyles.primaryText,
+           
+              { fontSize: 13, fontWeight: 'bold', opacity: .6}, //, fontWeight: "bold" },
+            ]}
           >
             {header && header}
+
           </Text>
+                      <Text
+        //    numberOfLines={talkingPointNumberOfLines}
+            numberOfLines={1}
+            // style={[themeStyles.genericText, appFontStyles.momentText]}
+            style={[
+              themeStyles.primaryText,
+              appFontStyles.subWelcomeText,
+              { fontSize: 12, fontFamily: 'Poppins-Regular'},
+            ]}
+          >
+            {/* {momentData && momentData?.capsule} */}
+              {momentData?.capsule?.replace(/\s*\n\s*/g, ' ')}
+          </Text>
+          
         </View>
-        <View
+        {/* <View
           style={{
             flexWrap: "flex",
             width: textContainerWidth,
@@ -224,12 +265,18 @@ paddingTop: 10,
           <Text
             numberOfLines={talkingPointNumberOfLines}
             // style={[themeStyles.genericText, appFontStyles.momentText]}
-            style={[themeStyles.primaryText, appFontStyles.subWelcomeText, {fontSize: 11}]}
+            style={[
+              themeStyles.primaryText,
+              appFontStyles.subWelcomeText,
+              { fontSize: 12, fontFamily: 'Poppins-Regular', lineHeight: 20, },
+            ]}
           >
             {momentData && momentData?.capsule}
           </Text>
-        </View>
+
+        </View> */}
       </View>
+      
       <AnimatedPressable
         onPress={() => handleSave()}
         style={[
@@ -264,40 +311,14 @@ paddingTop: 10,
         <AnimatedIcon
           // name="comment-check-outline"
           // name="thought-bubble"
-           name="playlist-check"
+          name="playlist-check"
+          name={"progress-upload"}
           size={24}
           style={animatedStyle}
         />
-        {/* <MaterialCommunityIcons
-          name="comment-check-outline"
-          size={24}
-          color={themeStyles.genericText.color}
-         
-        /> */}
+  
       </AnimatedPressable>
-      {/* <TouchableHighlight
-        //testOnly_pressed={true}
-        underlayColor={manualGradientColors.lightColor}
-        onPress={() => onSend(momentData)}
-        onShowUnderlay={iconColorOnPress}
-        onHideUnderlay={iconColorOnRelease}
-        style={{
-          backgroundColor: manualGradientColors.homeDarkColor,
-          height: "100%",
-          textAlign: "center",
-          alignItems: "center",
-          justifyContent: "center",
-          width: sendButtonWidth,
-        }}
-      >
-        <MaterialCommunityIcons
-          name="comment-check-outline"
-          size={24}
-          // color={themeStyles.primaryText.color}
-          color={iconColor}
-          opacity={0.5}
-        /> 
-      </TouchableHighlight> */}
+
     </Animated.View>
   );
 };

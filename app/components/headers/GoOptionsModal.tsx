@@ -1,39 +1,49 @@
-import { v4 as uuidv4 } from "uuid";
-import React from "react";
+import React, { useMemo } from "react";
 import { ScrollView, StyleSheet, View, Pressable, Text } from "react-native";
-
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HalfScreenModal from "../alerts/HalfScreenModal";
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "@/src/types/NavigationTypes";
-import { useUser } from "@/src/context/UserContext";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+import Animated from "react-native-reanimated";
+import GlobalPressable from "../appwide/button/GlobalPressable";
+import BouncyEntrance from "./BouncyEntrance";
+type Props = {
+  isVisible: boolean;
+  closeModal: () => void;
+};
 
-import { useNavigation } from "@react-navigation/native";
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-const GoOptionsModal = ({ isVisible, closeModal }) => {
-  const { user } = useUser();
+const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
+  const { navigateToMoments, navigateToLocationSearch, navigateToFinalize } =
+    useAppNavigations();
 
-  const navigation = useNavigation<NavigationProp>();
   const { themeStyles, appSpacingStyles, appFontStyles, manualGradientColors } =
     useGlobalStyle();
 
-  const navigateToMoments = () => {
+  const handleNavToMoments = () => {
     closeModal();
-    navigation.navigate("Moments", { scrollTo: null });
+    navigateToMoments({ scrollTo: null });
   };
 
-  const navigateToLocationSearch = () => {
+  const handleNavToLocationSearch = () => {
     closeModal();
-    navigation.navigate("LocationSearch");
+    navigateToLocationSearch();
   };
 
-  const navigateToFinalize = () => {
+  const handleNavToFinalize = () => {
     closeModal();
-    navigation.navigate("Finalize");
+    navigateToFinalize();
   };
 
+  const count = 6; // or however many animated items you have
+  const speed = 100; // milliseconds between each item
+
+  const staggeredDelays = useMemo(() => {
+    const getStaggeredDelays = (count: number, speed: number): number[] => {
+      return Array.from({ length: count }, (_, i) => i * speed);
+    };
+
+    return getStaggeredDelays(count, speed);
+  }, [count, speed]);
   return (
     <HalfScreenModal
       isFullscreen={false}
@@ -47,151 +57,166 @@ const GoOptionsModal = ({ isVisible, closeModal }) => {
       }
       questionText="What would you like to do?"
       children={
-        <ScrollView contentContainerStyle={styles.bodyContainer}>
-          {/* <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, themeStyles.subHeaderText]}>
-              Found a bug?
-            </Text>
-          </View> */}
-          <View style={styles.sectionContainer}>
-            <Pressable
-              onPress={navigateToLocationSearch}
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "center",
-                height: "auto",
-                padding: 10,
-                borderRadius: 10,
-                backgroundColor: manualGradientColors.darkColor,
-              }}
-            >
-              <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.subWelcomeText,
-                  {
-                    backgroundColor:
-                      themeStyles.overlayBackgroundColor.backgroundColor,
-                    borderRadius: 6,
+        <View style={{ flex: 1 }}>
+          {staggeredDelays && staggeredDelays.length > 0 && (
+            <>
+              <View style={styles.sectionContainer}>
+                <BouncyEntrance
+                  delay={staggeredDelays[0]}
+                  style={{ width: "100%" }}
+                >
+                  <GlobalPressable
+                    onPress={handleNavToLocationSearch}
+                    style={{
+                      flexDirection: "row",
+                      width: "100%",
+                      justifyContent: "center",
+                      height: "auto",
+                      padding: 10,
+                      borderRadius: 10,
+                      backgroundColor: manualGradientColors.darkColor,
+                    }}
+                  >
+                    <Text
+                      style={[
+                        themeStyles.primaryText,
+                        appFontStyles.subWelcomeText,
+                        {
+                          backgroundColor:
+                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          borderRadius: 6,
+                          padding: 10,
+                        },
+                      ]}
+                    >
+                      Send a meetup location
+                    </Text>
+                  </GlobalPressable>
+                </BouncyEntrance>
+              </View>
+              <View style={[styles.sectionContainer]}>
+                <BouncyEntrance
+                  delay={staggeredDelays[1]}
+                  style={{ width: "100%" }}
+                >
+                  <GlobalPressable
+                    onPress={handleNavToMoments}
+                    style={{
+                      flexDirection: "row",
+
+                      width: "100%",
+                      justifyContent: "center",
+                      height: "auto",
+                      padding: 10,
+                      borderRadius: 10,
+                      backgroundColor: manualGradientColors.darkColor,
+                    }}
+                  >
+                    <Text
+                      style={[
+                        themeStyles.primaryText,
+                        appFontStyles.subWelcomeText,
+                        {
+                          backgroundColor:
+                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          borderRadius: 6,
+                          padding: 10,
+                        },
+                      ]}
+                    >
+                      Share my ideas
+                    </Text>
+                  </GlobalPressable>
+                </BouncyEntrance>
+              </View>
+              <View style={styles.sectionContainer}>
+                <BouncyEntrance
+                  delay={staggeredDelays[2]}
+                  style={{ width: "100%" }}
+                >
+                  <GlobalPressable
+                    onPress={handleNavToFinalize}
+                    style={{
+                      flexDirection: "row",
+                      width: "100%",
+                      justifyContent: "center",
+                      height: "auto",
+                      padding: 10,
+                      borderRadius: 10,
+                      backgroundColor: manualGradientColors.darkColor,
+                    }}
+                  >
+                    <Text
+                      style={[
+                        themeStyles.primaryText,
+                        appFontStyles.subWelcomeText,
+                        {
+                          backgroundColor:
+                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          borderRadius: 6,
+                          padding: 10,
+                        },
+                      ]}
+                    >
+                      Skip to save hello
+                    </Text>
+                  </GlobalPressable>
+                </BouncyEntrance>
+              </View>
+              <View style={styles.sectionContainer}>
+                             <BouncyEntrance
+                  delay={staggeredDelays[3]}
+                  style={{ width: "100%" }}
+                >
+                <GlobalPressable
+                  onPress={closeModal}
+                  style={{
+                    flexDirection: "row",
+                    width: "100%",
+                    justifyContent: "center",
+                    height: "auto",
                     padding: 10,
-                  },
-                ]}
-              >
-                Send a meetup location
-              </Text>
-            </Pressable>
-          </View>
-          <View style={styles.sectionContainer}>
-            <Pressable
-              onPress={navigateToMoments}
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "center",
-                height: "auto",
-                padding: 10,
-                borderRadius: 10,
-                backgroundColor: manualGradientColors.darkColor,
-              }}
-            >
-              <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.subWelcomeText,
-                  {
-                    backgroundColor:
-                      themeStyles.overlayBackgroundColor.backgroundColor,
-                    borderRadius: 6,
-                    padding: 10,
-                  },
-                ]}
-              >
-                Share my ideas
-              </Text>
-            </Pressable>
-          </View>
-          <View style={styles.sectionContainer}>
-            <Pressable
-              onPress={navigateToFinalize}
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "center",
-                height: "auto",
-                padding: 10,
-                borderRadius: 10,
-                backgroundColor: manualGradientColors.darkColor,
-              }}
-            >
-              <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.subWelcomeText,
-                  {
-                    backgroundColor:
-                      themeStyles.overlayBackgroundColor.backgroundColor,
-                    borderRadius: 6,
-                    padding: 10,
-                  },
-                ]}
-              >
-                Skip to save hello
-              </Text>
-            </Pressable>
-          </View>
-            <View style={styles.sectionContainer}>
-            <Pressable
-              onPress={closeModal}
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                justifyContent: "center",
-                height: "auto",
-                padding: 10,
-                borderRadius: 10,
-                backgroundColor: manualGradientColors.darkColor,
-              }}
-            >
-              <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.subWelcomeText,
-                  {
-                    backgroundColor:
-                      themeStyles.overlayBackgroundColor.backgroundColor,
-                    borderRadius: 6,
-                    padding: 10,
-                  },
-                ]}
-              >
-                Close
-              </Text>
-            </Pressable>
-          </View>
-        </ScrollView>
+                    borderRadius: 10,
+                    backgroundColor: manualGradientColors.darkColor,
+                  }}
+                >
+                  <Text
+                    style={[
+                      themeStyles.primaryText,
+                      appFontStyles.subWelcomeText,
+                      {
+                        backgroundColor:
+                          themeStyles.overlayBackgroundColor.backgroundColor,
+                        borderRadius: 6,
+                        padding: 10,
+                      },
+                    ]}
+                  >
+                    Close
+                  </Text>
+                </GlobalPressable>
+                </BouncyEntrance>
+              </View>
+            </>
+          )}
+        </View>
       }
-      formHeight={610}
       onClose={closeModal}
-      cancelText="Back"
     />
   );
 };
 
 const styles = StyleSheet.create({
-  bodyContainer: {
-    width: "100%",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    textAlign: "left",
-  },
+  bodyContainer: {},
   headerContainer: {
     margin: "2%",
   },
   sectionContainer: {
-    margin: "2%",
+    marginVertical: 6,
     flexDirection: "row",
-    fontWrap: "wrap",
+    width: "100%",
+
+    flexWrap: "wrap",
   },
   headerText: {
     fontFamily: "Poppins-Bold",

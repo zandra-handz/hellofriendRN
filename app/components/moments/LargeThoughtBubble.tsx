@@ -1,94 +1,102 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Pressable } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import AddMomentButton from "../buttons/moments/AddMomentButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+import GlobalPressable from "../appwide/button/GlobalPressable";
 type Props = {
   capsuleCount: number;
+  size: number;
 };
 
-const LargeThoughtBubble = ({ capsuleCount = 5 }: Props) => {
-  const { themeStyles, appContainerStyles } = useGlobalStyle();
+const LargeThoughtBubble = ({ capsuleCount = 5, size=70 }: Props) => {
+  const { themeStyles, appContainerStyles, manualGradientColors } =
+    useGlobalStyle();
+  const {  navigateToMomentFocus } = useAppNavigations();
 
-  const ITEM_SIZE = 70;
+ 
+ 
   return (
-    //   <LizardSvg
-    //     height={300}
-    //     width={300}
-    //     color={themeStyles.genericTextBackground.backgroundColor}
-    //     style={appContainerStyles.bigLizardRotate}
-    //   />
-    <>
-      {/* <MaterialCommunityIcons
-        name={"thought-bubble"}
-        //   size={300}
-        size={160}
-        //   color={themeStyles.genericTextBackground.backgroundColor}
-        color={themeStyles.overlayBackgroundColor.backgroundColor}
-        style={styles.containerForLarger}
-      /> */}
+    <GlobalPressable
+      style={({ pressed }) => [
+        styles.container,
+        {
+          borderColor: themeStyles.primaryText.color,
+          
+          // padding: 10,
+          // width: ITEM_SIZE + 20,
+          // height: ITEM_SIZE + 20,
+          borderRadius: 999,
+          backgroundColor: themeStyles.primaryBackground.backgroundColor,
+          // backgroundColor: pressed ? "darkred" : "red",
+
+          flex: 1,
+          opacity: pressed ? 0.8 : 1, // optional visual feedback
+        },
+      ]}
+      onPress={navigateToMomentFocus}
+    >
       <MaterialCommunityIcons
-        name={"thought-bubble"}
+       // name={"thought-bubble"}
+        name={"leaf"}
         //   size={300}
-        size={70}
-        borderRadius={999}
-        backgroundColor={themeStyles.primaryBackground.backgroundColor}
+        size={size}
+        // backgroundColor={themeStyles.primaryBackground.backgroundColor}
         //   color={themeStyles.genericTextBackground.backgroundColor}
 
         color={themeStyles.primaryText.color}
-        style={[
-          styles.container,
-          { borderColor: themeStyles.primaryText.color },
-        ]}
+        style={[{ borderColor: themeStyles.primaryText.color }]}
       />
-      <View style={[styles.textPlacement, { alignItems: 'center', width: 70 * .7}]}>
-        
-      <Text
+      <View
         style={[
-          themeStyles.primaryText,
-      
-          {  fontSize: 16, fontWeight: 'bold',  color: themeStyles.primaryBackground.backgroundColor },
+          styles.textPlacement,
+          { alignItems: "center", width: 70 * 0.7 },
         ]}
       >
-        {capsuleCount}
-      </Text>
-      
+        <Text
+          style={[
+            themeStyles.primaryText,
+
+            {
+              fontSize: 16,
+              fontWeight: "bold",
+              color: themeStyles.primaryBackground.backgroundColor,
+            },
+          ]}
+        >
+          {capsuleCount}
+        </Text>
       </View>
-        <View style={[styles.addButtonPlacement, { alignItems: 'flex-start', width: 70 * .7}]}>
-        
-        <AddMomentButton iconSize={20} circleSize={26}/>
-      </View>
-    </>
+      <View
+        style={{
+          position: "absolute",
+          bottom: 12, 
+          right: 6,
+          borderRadius: 999,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: manualGradientColors.homeDarkColor,
+          backgroundColor: manualGradientColors.lightColor,
+        }}
+      >
+        <MaterialCommunityIcons
+          name={"plus"}
+          color={manualGradientColors.homeDarkColor}
+          size={26}
+        />
+      </View> 
+    </GlobalPressable>
   );
 };
 
 const styles = StyleSheet.create({
-  // container: {
-  // position: "absolute",
-  // zIndex: -1,
-  // width: '100%',
-
-  // top: -90,
-  // opacity: .4,
-  // right: -200,
-
-  // },
-
-  //   container: {
-  //     position: "absolute",
-  //     right: -20,
-  //     top: -40,
-  //     padding: 10,
-  //     borderWidth: StyleSheet.hairlineWidth,
-  //   },
   textPlacement: {
     position: "absolute",
     zIndex: 60000,
     top: -52,
     right: 22,
   },
-    addButtonPlacement: {
+  addButtonPlacement: {
     position: "absolute",
     zIndex: 60000,
     top: -42,
@@ -99,7 +107,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: -0,
     top: -80,
-    zIndex: 30000,
+    zIndex: 800000,
     padding: 10,
     borderWidth: StyleSheet.hairlineWidth,
   },

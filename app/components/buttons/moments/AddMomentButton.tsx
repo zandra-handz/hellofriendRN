@@ -1,17 +1,27 @@
 import React from "react";
-import { View, TouchableOpacity, Pressable, Text, StyleSheet } from "react-native"; 
+import {
+  View, 
+  Pressable,
+  Text,
+  StyleSheet,
+} from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
-  import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
- 
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface AddMomentButtonProps {
-    disabled?: boolean;
-    iconSize: number;
-    circleSize: number;
+  disabled?: boolean;
+  iconSize: number;
+  circleSize: number;
+  hitSlop: number;
 }
 
-const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false, iconSize=40, circleSize=70}) => {
+const AddMomentButton: React.FC<AddMomentButtonProps> = ({
+  disabled = false,
+  iconSize = 40,
+  circleSize = 70,
+  hitSlop = 10,
+}) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation();
 
@@ -25,14 +35,15 @@ const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false, iconSi
     <View style={[styles.container]}>
       <Pressable
         onPress={disabled ? () => {} : handleGoToMomentScreen}
+        hitSlop={hitSlop}
         style={[
           styles.circleButton,
           themeStyles.footerIcon,
           {
-                width: circleSize, // Set width and height to the same value
-    height: circleSize,
-    borderRadius: circleSize / 2, // Half of the width/height to make it a perfect circle
-            borderColor: 'transparent',
+            width: circleSize, // Set width and height to the same value
+            height: circleSize,
+            borderRadius: circleSize / 2, // Half of the width/height to make it a perfect circle
+            borderColor: "transparent",
             backgroundColor: manualGradientColors.lightColor,
           },
         ]}
@@ -44,12 +55,11 @@ const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false, iconSi
         )}
         {viewSvg && (
           <>
-    
             <MaterialCommunityIcons
-            name="playlist-plus"
-            size={iconSize}
-            color={manualGradientColors.homeDarkColor} />
-    
+              name="playlist-plus"
+              size={iconSize}
+              color={manualGradientColors.homeDarkColor}
+            />
           </>
         )}
       </Pressable>
@@ -60,13 +70,13 @@ const AddMomentButton: React.FC<AddMomentButtonProps> = ({disabled=false, iconSi
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-   // position: "absolute",
+    // position: "absolute",
     flexWrap: "wrap",
     width: 73,
     alignContent: "center",
     justifyContent: "center",
-   // right: 10,
-   // bottom: 170,
+    // right: 10,
+    // bottom: 170,
     zIndex: 1,
   },
   controlButton: {
@@ -81,8 +91,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   circleButton: {
-
-
     borderWidth: StyleSheet.hairlineWidth,
     justifyContent: "center",
     alignItems: "center", // Ensure the content is centered within the circle

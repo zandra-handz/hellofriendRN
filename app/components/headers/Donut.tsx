@@ -5,6 +5,7 @@ import {
   ScrollView,
   DimensionValue,
 } from "react-native";
+import { useFriendList } from "@/src/context/FriendListContext";
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
@@ -53,7 +54,7 @@ const Donut = ({
   const { themeStyles, manualGradientColors } = useGlobalStyle();
  
   // console.log(`colors in donut: `, colors);
-
+const { themeAheadOfLoading } = useFriendList();
   const { calculatePercentage } = useMomentSortingFunctions(data);
   const totalValue = useSharedValue(0);
   const decimalsValue = useSharedValue<number[]>([]);
@@ -168,6 +169,7 @@ const Donut = ({
   }
 
   const fontColor = themeStyles.primaryText.color;
+  const iconColor = themeAheadOfLoading.lightColor;
   const backgroundColor = themeStyles.primaryBackground.backgroundColor;
   //const backgroundColor = 'transparent';
 
@@ -197,6 +199,7 @@ const Donut = ({
           font={font}
           smallFont={smallFont}
           color={fontColor}
+          iconColor={iconColor}
           backgroundColor={backgroundColor}
           n={n}
           gap={GAP}

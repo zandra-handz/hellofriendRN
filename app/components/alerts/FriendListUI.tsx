@@ -11,13 +11,11 @@ import Animated, {
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
 import { useFriendList } from "@/src/context/FriendListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
-
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "@/src/types/NavigationTypes";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+ 
 
 import { Friend } from "@/src/types/FriendTypes";
 
@@ -28,8 +26,7 @@ type FriendListUIProps = {
 };
 
 type FriendListItem = Friend | { message: string };
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+ 
 
 const FriendListUI = ({
   data,
@@ -37,11 +34,12 @@ const FriendListUI = ({
   onPress,
 }: FriendListUIProps) => {
   const { friendList } = useFriendList();
-  const { themeStyles } = useGlobalStyle();
-  const navigation = useNavigation<NavigationProp>();
+  const { themeStyles } = useGlobalStyle(); 
   const itemColor = themeStyles.primaryText.color;
   const elementBackgroundColor =
     themeStyles.overlayBackgroundColor.backgroundColor;
+
+    const {navigateToAddFriend } = useAppNavigations();
 
   const ITEM_HEIGHT = 50;
 
@@ -96,7 +94,7 @@ const FriendListUI = ({
 
         {!("id" in item) && friendList.length < 20 && (
           <Pressable
-            onPress={() => navigation.navigate("AddFriend")}
+            onPress={navigateToAddFriend}
             style={[
               styles.friendContainer,
               {

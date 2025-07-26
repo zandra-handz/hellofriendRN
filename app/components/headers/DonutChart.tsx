@@ -30,6 +30,7 @@ type Props = {
   font: SkFont;
   smallFont: SkFont;
   color: string;
+  iconColor: string;
   backgroundColor: string;
   totalValue: SharedValue<number>;
   n: number;
@@ -52,6 +53,7 @@ const DonutChart = ({
   strokeWidth,
   outerStrokeWidth,
   color,
+  iconColor,
   backgroundColor,
   font,
   smallFont,
@@ -286,6 +288,7 @@ const DonutChart = ({
           text={targetText} 
           font={font}
           color={color}
+        
         />
       </Canvas>
       <View style={StyleSheet.absoluteFill}>{LabelOverlays}</View>
@@ -324,13 +327,15 @@ const DonutChart = ({
 
           <MaterialCommunityIcons
             // style={{ paddingTop: 10, opacity: 0.2 }}
-            style={{ paddingTop: 30, opacity: 0.2 }}
+            style={{ paddingTop: 30, opacity: 0.2, zIndex: 0 }}
             //name={"comment"}
             // name={"hand-wave"}
             // name={"chat-outline"}
-            name={"thought-bubble"}
+          //  name={"thought-bubble"}
+              name={"leaf"}
             //  size={122}
             size={180}
+            // color={iconColor}
             color={color}
           />
 
@@ -346,7 +351,7 @@ const DonutChart = ({
             onPress={onPlusPress}
             style={[
               styles.centerButton,
-              { backgroundColor: manualGradientColors.lightColor },
+              { backgroundColor: manualGradientColors.lightColor},
             ]}
             hitSlop={10}
           >
@@ -370,6 +375,7 @@ const DonutChart = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    zIndex: 2,
   },
   centerWrapper: {
     justifyContent: "center",
@@ -380,6 +386,7 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: 999,
     backgroundColor: "green",
+    zIndex: 3,
     // backgroundColor: "white",
     // elevation: 4,
     // shadowColor: "black",

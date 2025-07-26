@@ -93,12 +93,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
             name="account-switch-outline"
             size={26}
             color={themeStyles.primaryText.color}
-          />
-          {/* <Text
-              style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: appFontStyles.welcomeText.fontSize - 10}]}
-            >
-              friends
-            </Text> */}
+          /> 
         </View>
         {/* {selectedFriend && (
           <View

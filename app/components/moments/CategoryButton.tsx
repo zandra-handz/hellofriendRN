@@ -13,31 +13,28 @@ import {
   withTiming,
 } from "react-native-reanimated";
 
-
 interface Label {
   label: string;
 }
 
-
 type Props = {
-  viewableItemsArray: SharedValue[],
+  viewableItemsArray: SharedValue[];
   label: Label;
   onPress: (label: Label) => void;
   height: number;
   pulseDuration: number;
-}
+};
 
 const CategoryButton = ({
-  
   viewableItemsArray,
   label,
   onPress,
-  
+
   height = 30,
   pulseDuration = 2000,
 }: Props) => {
   const {
-    themeStyles, 
+    themeStyles,
     appContainerStyles,
     appFontStyles,
     manualGradientColors,
@@ -47,10 +44,10 @@ const CategoryButton = ({
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
 
-    // not sure how to add animations to Pressable
-    //   const AnimatedPressable =
-    // Animated.createAnimatedComponent(Pressable);
- 
+  // not sure how to add animations to Pressable
+  //   const AnimatedPressable =
+  // Animated.createAnimatedComponent(Pressable);
+
   const progress = useSharedValue(0);
   const translateYx2 = useSharedValue(0);
   const startColor = useSharedValue("transparent");
@@ -75,7 +72,7 @@ const CategoryButton = ({
             withTiming(1, { duration: pulseDuration }),
             -1,
             true
-          ); 
+          );
         } else {
           progress.value = withTiming(0, { duration: 200 });
           translateYx2.value = withTiming(0, { duration: 200 });
@@ -88,8 +85,7 @@ const CategoryButton = ({
     [viewableItemsArray]
   );
 
-  const animatedCardsStyle = useAnimatedStyle(() => { 
-
+  const animatedCardsStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
       progress.value,
       [0, 1],
@@ -105,7 +101,16 @@ const CategoryButton = ({
 
   return (
     <AnimatedTouchableOpacity
-      style={[animatedCardsStyle, appContainerStyles.categoryButton, {  width: 'auto', padding: 10,  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor, height: height}]}
+      style={[
+        animatedCardsStyle,
+        appContainerStyles.categoryButton,
+        {
+          width: "auto",
+          padding: 10,
+        //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          height: height,
+        },
+      ]}
       onPress={() => {
         onPress(label);
       }}
@@ -113,16 +118,25 @@ const CategoryButton = ({
       <Animated.Text
         numberOfLines={1}
         style={[
-          appFontStyles.categoryButtonText,
+          animatedCardsStyle,
           themeStyles.genericText,
           // animatedCardsStyle,
-          {backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          {
+            // fontWeight: "bold",
+            fontSize: 14,
+            fontFamily: "Poppins-Bold",
+            fontWeight: 'bold',
+            //   textTransform: "uppercase",
+            height: "100%",
+            alignSelf: "center",
+
+            //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
             borderRadius: 999,
-            padding: 4,
-          }
+            padding: 2,
+          },
         ]}
       >
-        # {label}
+        {label}
       </Animated.Text>
     </AnimatedTouchableOpacity>
   );

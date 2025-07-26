@@ -84,12 +84,16 @@ export const CapsuleListProvider = ({ children }) => {
 
         const sortedWithIndices = [];
         let uniqueIndex = 0;
+     
 
         for (const capsule of sorted) {
           if (!preAddedSet.has(capsule.id)) {
+  
+
             sortedWithIndices.push({
               ...capsule,
               uniqueIndex: uniqueIndex++,
+              charCount: capsule.capsule.length | 0,
             });
           }
         }

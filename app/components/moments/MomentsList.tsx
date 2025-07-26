@@ -78,8 +78,8 @@ const MomentsList = ({ scrollTo }) => {
   });
 
   const navigation = useNavigation();
-  const ITEM_HEIGHT = 130;
-  const ITEM_BOTTOM_MARGIN = 10;
+  const ITEM_HEIGHT = 64;
+  const ITEM_BOTTOM_MARGIN = 18;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
   // console.log('MOMENTS LIST RERENDERED');
@@ -256,11 +256,18 @@ const MomentsList = ({ scrollTo }) => {
         }
         style={({ pressed }) => ({
           // style={{
-          flex: 1,
+    
+     //   backgroundColor: 'teal',
+   flex: 1,
+   flexDirection: 'row',
+   width: '100%',
+   justifyContent: 'center',
+      
           height: ITEM_HEIGHT,
           marginBottom: ITEM_BOTTOM_MARGIN,
-          paddingHorizontal: 10,
+          paddingHorizontal: 4,
           opacity: pressed ? 0.6 : 1,
+       
         })}
       >
         <MomentItem
@@ -298,9 +305,12 @@ const MomentsList = ({ scrollTo }) => {
   };
 
   return (
-    <View style={appContainerStyles.screenContainer}>
+    <View style={{    width: "100%",
+    flex: 1,
+    zIndex: 1,
+    elevation: 1 }}>
       <LargeCornerLizard />
-      <LargeThoughtBubble capsuleCount={capsuleList.length} />
+      {/* <LargeThoughtBubble capsuleCount={capsuleList.length} /> */}
 
       <MomentsAdded visibilityValue={listVisibility} />
       <View
@@ -309,17 +319,18 @@ const MomentsList = ({ scrollTo }) => {
           alignContent: "center",
           alignSelf: "center",
           width: "100%",
+      
           flexDirection: "column",
           justifyContent: "space-between",
           height: "87%",
         }}
       >
         <Animated.View
-          style={{ flex: 1 }}
+          style={{  flex: 1, alignItems: 'center' }}
           entering={SlideInRight.duration(260).springify(2000)}
         >
           <Animated.FlatList
-            fadingEdgeLength={10}
+            fadingEdgeLength={0}
             itemLayoutAnimation={JumpingTransition}
             // itemLayoutAnimation={CurvedTransition}
             // itemLayoutAnimation={EntryExitTransition}
