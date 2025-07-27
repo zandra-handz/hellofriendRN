@@ -16,7 +16,7 @@ const LargeCornerLizard = () => {
     <GeckoSvg
       height={300}
       width={300}
-      color={themeStyles.genericTextBackground.backgroundColor}
+      color={themeStyles.darkerOverlayBackgroundColor.backgroundColor}
       style={appContainerStyles.bigGeckoRotate}
     />
   );

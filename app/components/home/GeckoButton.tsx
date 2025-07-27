@@ -6,10 +6,12 @@ import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 
 type Props = {
   onPress: () => void;
+  showGecko: boolean;
 };
 
-const GeckoButton = ({ onPress }: Props) => {
+const GeckoButton = ({ onPress, showGecko=true }: Props) => {
   const { manualGradientColors } = useGlobalStyle();
+  
   return (
     <Pressable
       // onPress={navigateToMoments}
@@ -25,9 +27,13 @@ const GeckoButton = ({ onPress }: Props) => {
         width: "auto",
         minWidth: 50,
         height: "100%",
+        minHeight: 40,
         overflow: "hidden",
       }}
     >
+      {showGecko && (
+        
+  
       <View
         style={{
           position: "absolute",
@@ -45,6 +51,7 @@ const GeckoButton = ({ onPress }: Props) => {
           style={{ opacity: 1 }}
         />
       </View>
+          )}
       <View
         style={{
           bottom: -1,

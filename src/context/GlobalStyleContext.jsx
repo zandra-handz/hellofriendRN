@@ -482,7 +482,7 @@ const containerStyles = StyleSheet.create({
     elevation: 50000,
     position: "absolute",
     zIndex: 0,
-    bottom: -100,
+    bottom: -90,
     left: -90,
     transform: [
       { rotate: "-0deg" },
@@ -659,6 +659,9 @@ const lightThemeStyles = StyleSheet.create({
     overlayBackgroundColor: {
     backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
+      darkerOverlayBackgroundColor: {
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
+  },
   lighterOverlayBackgroundColor: {
     backgroundColor: "rgba(0, 0, 0, 0.6)",
   },
@@ -809,6 +812,9 @@ const lightThemeStyles = StyleSheet.create({
 const darkThemeStyles = StyleSheet.create({
   overlayBackgroundColor: {
     backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
+    darkerOverlayBackgroundColor: {
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
   },
   lighterOverlayBackgroundColor: {
     backgroundColor: "rgba(255, 255, 255, 0.3)",

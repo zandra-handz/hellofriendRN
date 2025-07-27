@@ -12,18 +12,17 @@ type Props = {
     children: ReactNode;
 }
 
-const GlobalPressable = ({onPress, style, children}: Props) => {
-    const scale = useSharedValue(1);
-    const animatedStyle = useAnimatedStyle(() => {
-        return {
-            transform: [{scale: scale.value}],
-        }
-    });
+const GlobalPressable = ({ onPress, style, children }: Props) => {
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
 
   return (
     <Pressable
       onPress={onPress}
-      style={style}
       onPressIn={() => {
         scale.value = withSpring(0.95);
       }}
@@ -31,13 +30,11 @@ const GlobalPressable = ({onPress, style, children}: Props) => {
         scale.value = withSpring(1);
       }}
     >
-      <Animated.View style={animatedStyle}>
+      <Animated.View style={[animatedStyle, style]}>
         {children}
       </Animated.View>
     </Pressable>
-  )
-}
+  );
+};
 
 export default GlobalPressable;
-
- 

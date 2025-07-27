@@ -23,6 +23,7 @@ type Props = {
   onPress: (label: Label) => void;
   height: number;
   pulseDuration: number;
+  highlightColor: string;
 };
 
 const CategoryButton = ({
@@ -32,6 +33,7 @@ const CategoryButton = ({
 
   height = 30,
   pulseDuration = 2000,
+  highlightColor = '#ccc',
 }: Props) => {
   const {
     themeStyles,
@@ -39,7 +41,7 @@ const CategoryButton = ({
     appFontStyles,
     manualGradientColors,
   } = useGlobalStyle();
-
+console.log(highlightColor);
   const { themeAheadOfLoading } = useFriendList();
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
@@ -64,8 +66,10 @@ const CategoryButton = ({
     (isVisible, prevIsVisible) => {
       if (isVisible !== prevIsVisible) {
         if (isVisible) {
-          startColor.value = themeAheadOfLoading.darkColor;
-          endColor.value = manualGradientColors.lighterLightColor || "red";
+          // startColor.value = themeAheadOfLoading.darkColor;
+           startColor.value = highlightColor;
+          // endColor.value = manualGradientColors.lighterLightColor || "red";
+           endColor.value = themeStyles.primaryText.color || "red";
           textColor.value = manualGradientColors.homeDarkColor;
 
           progress.value = withRepeat(
@@ -76,8 +80,10 @@ const CategoryButton = ({
         } else {
           progress.value = withTiming(0, { duration: 200 });
           translateYx2.value = withTiming(0, { duration: 200 });
-          startColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
-          endColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
+                    startColor.value = 'transparent';
+          endColor.value = 'transparent';
+          // startColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
+          // endColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
           textColor.value = themeStyles.genericText.color;
         }
       }

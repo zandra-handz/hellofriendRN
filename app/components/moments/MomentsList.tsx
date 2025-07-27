@@ -5,41 +5,42 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { View, Keyboard, ViewToken, Pressable } from "react-native";
-
+import { View, ViewToken, Pressable } from "react-native";
+import GeckoToHelloButton from "./GeckoToHelloButton";
 import { useFocusEffect } from "@react-navigation/native";
-
+import ExpandBar from "./ExpandBar";
 import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
-
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
-import LargeThoughtBubble from "./LargeThoughtBubble";
-
 import Animated, {
-  LinearTransition,
+  // LinearTransition,
   JumpingTransition,
-  CurvedTransition,
-  EntryExitTransition,
-  SequencedTransition,
-  FadingTransition,
+  // CurvedTransition,
+  // EntryExitTransition,
+  // SequencedTransition,
+  // FadingTransition,
   useSharedValue,
   useAnimatedRef,
   useAnimatedScrollHandler,
   withTiming,
-  runOnJS,
-  runOnUI,
-  scrollTo,
-  Easing,
+  // runOnJS,
+  // runOnUI,
+  // scrollTo,
+  // Easing,
+  FadeOut,
+  FadeIn,
   withSpring,
   SlideInRight,
+  SlideOutRight,
+  SlideOutLeft,
+  SlideInLeft,
 } from "react-native-reanimated";
 
 import { useNavigation } from "@react-navigation/native";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 // import { enableLayoutAnimations } from "react-native-reanimated";
@@ -49,46 +50,26 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 //const ITEM_HEIGHT = 290;
 
-const MomentsList = ({ scrollTo }) => {
+const MomentsList = ({ scrollTo, categoryColorsMap }) => {
   useEffect(() => {
     if (scrollTo) {
       scrollToCategoryStart(scrollTo);
     }
   }, [scrollTo]);
 
-  //   useFocusEffect(
-  //   useCallback(() => {
-  //   if (scrollTo) {
-  //     console.log(`scrollTo: `, scrollTo);
-  //     scrollToCategoryStart(scrollTo);
-  //   }
-  //   }, [scrollTo])
-  // );
-
-  const { appContainerStyles } = useGlobalStyle();
-  const {
-    capsuleList,
-    // categoryNames,
-    // categoryStartIndices,
-    updateCapsule,
-  } = useCapsuleList();
+  const { capsuleList, updateCapsule } = useCapsuleList();
 
   const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
   });
-
   const navigation = useNavigation();
-  const ITEM_HEIGHT = 64;
+  const ITEM_HEIGHT = 80;
   const ITEM_BOTTOM_MARGIN = 18;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
 
-  // console.log('MOMENTS LIST RERENDERED');
-  // Move this inside your component:
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
     viewableItemsArray.value = viewableItems;
   }, []);
-
-  // console.log('MOMENTS LIST RERENDERED');
 
   const viewabilityConfig = useRef({
     minimumViewTime: 40,
@@ -106,37 +87,13 @@ const MomentsList = ({ scrollTo }) => {
 
   const flatListRef = useAnimatedRef(null);
 
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
   const momentListBottomSpacer = 600;
-
-  // const translateX = useSharedValue(0);
-  // const heightAnim = useSharedValue(ITEM_HEIGHT + ITEM_BOTTOM_MARGIN);
 
   const pressedIndex = useSharedValue(null);
   const pulseValue = useSharedValue(0);
 
-  const belowHeaderIconSize = 28;
-
-  // const scrollY = useSharedValue(0);
-  const fadeAnim = useSharedValue(1);
-  // const translateY = useSharedValue(0);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => setIsKeyboardVisible(true)
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => setIsKeyboardVisible(false)
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  const [categoryNavigatorVisible, setCategoryNavigatorVisible] =
+    useState(false);
 
   const scrollToMoment = (moment) => {
     if (moment.uniqueIndex !== undefined) {
@@ -171,9 +128,9 @@ const MomentsList = ({ scrollTo }) => {
     navigation.navigate("MomentView", { moment: moment });
   }, []);
 
-  const scrollToEnd = () => {
-    flatListRef.current?.scrollToEnd({ animated: true });
-  };
+  // const scrollToEnd = () => {
+  //   flatListRef.current?.scrollToEnd({ animated: true });
+  // };
 
   const scrollToCategoryStart = (category) => {
     console.log(category);
@@ -181,9 +138,7 @@ const MomentsList = ({ scrollTo }) => {
 
     if (categoryIndex !== undefined) {
       flatListRef.current?.scrollToIndex({
-        // flatListRef.current?.scrollToOffset({
         index: categoryIndex > 0 ? categoryIndex : 0,
-        //  offset: categoryIndex > 0 ? ITEM_HEIGHT * categoryIndex : 0,
         animated: true,
       });
     }
@@ -224,7 +179,6 @@ const MomentsList = ({ scrollTo }) => {
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
-      //console.log(event.contentOffset.y);
       const y = event.contentOffset.y;
       scrollY.value = event.contentOffset.y;
       if (y < 10) {
@@ -255,19 +209,15 @@ const MomentsList = ({ scrollTo }) => {
           navigation.navigate("MomentView", { moment: item, index: index })
         }
         style={({ pressed }) => ({
-          // style={{
-    
-     //   backgroundColor: 'teal',
-   flex: 1,
-   flexDirection: 'row',
-   width: '100%',
-   justifyContent: 'center',
-      
+          flex: 1,
+          flexDirection: "row",
+          width: "100%",
+          justifyContent: "center",
+
           height: ITEM_HEIGHT,
           marginBottom: ITEM_BOTTOM_MARGIN,
           paddingHorizontal: 4,
           opacity: pressed ? 0.6 : 1,
-       
         })}
       >
         <MomentItem
@@ -281,6 +231,7 @@ const MomentsList = ({ scrollTo }) => {
           pressedIndexValue={pressedIndex}
           pulseValue={pulseValue}
           onSend={saveToHello}
+          categoryColorsMap={categoryColorsMap}
         />
       </Pressable>
     ),
@@ -289,6 +240,7 @@ const MomentsList = ({ scrollTo }) => {
       // momentIdToAnimate,
       // fadeAnim,
       handleNavigateToMomentView,
+      categoryColorsMap,
       // saveToHello,
     ]
   );
@@ -305,28 +257,30 @@ const MomentsList = ({ scrollTo }) => {
   };
 
   return (
-    <View style={{    width: "100%",
-    flex: 1,
-    zIndex: 1,
-    elevation: 1 }}>
-      <LargeCornerLizard />
-      {/* <LargeThoughtBubble capsuleCount={capsuleList.length} /> */}
+    <View style={{ width: "100%", flex: 1, zIndex: 1, elevation: 1 }}>
+      {!categoryNavigatorVisible && (
+        <Animated.View
+          exiting={FadeOut}
+          entering={FadeIn}
+          style={{ flex: 1, position: "absolute", bottom: 0 }}
+        >
+          <LargeCornerLizard />
+        </Animated.View>
+      )}
 
       <MomentsAdded visibilityValue={listVisibility} />
       <View
         style={{
-          // flex: 1,
           alignContent: "center",
           alignSelf: "center",
           width: "100%",
-      
           flexDirection: "column",
           justifyContent: "space-between",
           height: "87%",
         }}
       >
         <Animated.View
-          style={{  flex: 1, alignItems: 'center' }}
+          style={{ flex: 1, alignItems: "center" }}
           entering={SlideInRight.duration(260).springify(2000)}
         >
           <Animated.FlatList
@@ -377,13 +331,52 @@ const MomentsList = ({ scrollTo }) => {
 
       {/* {!isKeyboardVisible && ( */}
       <>
-        <CategoryNavigator
-          visibilityValue={listVisibility}
-          viewableItemsArray={viewableItemsArray}
-          categoryNames={categoryNames}
-          onPress={scrollToCategoryStart}
-          onSearchPress={scrollToMoment}
-        />
+        {categoryNavigatorVisible &&
+          categoryColorsMap &&
+          Object.keys(categoryColorsMap).length > 0 && (
+            <CategoryNavigator
+              onClose={() => setCategoryNavigatorVisible(false)}
+              visibilityValue={listVisibility}
+              viewableItemsArray={viewableItemsArray}
+              categoryNames={categoryNames}
+              onPress={scrollToCategoryStart}
+              onSearchPress={scrollToMoment}
+              categoryColorsMap={categoryColorsMap}
+            />
+          )}
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: "100%",
+            paddingHorizontal: 10,
+          }}
+        >
+          {!categoryNavigatorVisible && (
+            <Animated.View
+              exiting={SlideOutRight}
+              entering={SlideInRight}
+              style={{
+                flexDirection: "row",
+                position: "absolute",
+                bottom: 16,
+                zIndex: 50000,
+                height: 38,
+                width: 60,
+                right: 18,
+                justifyContent: "flex-end",
+              }}
+            >
+              <GeckoToHelloButton />
+            </Animated.View>
+          )}
+
+          {!categoryNavigatorVisible && (
+            <>
+              <ExpandBar onPress={() => setCategoryNavigatorVisible(true)} />
+            </>
+          )}
+        </View>
       </>
       {/* )} */}
     </View>

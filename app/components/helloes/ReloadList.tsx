@@ -27,8 +27,11 @@ const { user } = useUser();
 
     const {  categoryNames, categoryCount } = useTalkingPCategorySorting({listData: capsuleList})
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-
-  const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(categoryNames);
+//i added id to category names at a later date to get category colors for charts, simplest way to update this component is to remove extra data here
+const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(
+  categoryNames.map(c => c.category)
+);
+ 
   //  const { helloesList } = useHelloes();
   //  const hello = helloesList.find((hello) => hello.id === helloId);
 

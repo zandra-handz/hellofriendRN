@@ -1,106 +1,54 @@
-// import {
-//   View,
-//   Text,
-//   ScrollView,
-// } from "react-native";
-// import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-// import React from "react";
-// import Animated, { useAnimatedStyle } from 'react-native-reanimated';
-// import CategoryButton from "./CategoryButton";
-// const CategoryNavigator = ({
-//   visibilityValue,
-//   viewableItemsArray,
-//   categoryNames,
-//   onPress,
-// }) => {
-//   const {
-//     themeStyles,
-//     gradientColorsHome,
-//     appContainerStyles,
-//     appSpacingStyles,
-//   } = useGlobalStyle();
-
-//   const visibilityStyle = useAnimatedStyle(() => ({
-//     opacity: visibilityValue.value,
-
-//   }))
-
-//   return (
-//     <Animated.View
-//       style={[
-//         appContainerStyles.categoryNavigatorContainer,
-//         appSpacingStyles.momentsScreenPrimarySpacing,
-
-//         { backgroundColor: gradientColorsHome.darkColor },
-//         visibilityStyle,
-//       ]}
-//     >
-//       <Text
-//         style={[
-//           themeStyles.genericText,
-//           { paddingVertical: 4, paddingHorizontal: 4 },
-//         ]}
-//       >
-//         CATEGORIES
-//       </Text>
-//       <ScrollView style={{maxHeight: 100}}>
-//       <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
-//         {categoryNames.map((categoryName) => (
-//           <View style={{marginHorizontal: 6, marginBottom: 6}}>
-
-//           <CategoryButton
-//          height={'auto'}
-//           viewableItemsArray={viewableItemsArray}
-//             key={categoryName || "Uncategorized"}
-//             label={categoryName}
-//             onPress={() => onPress(categoryName)}
-//           />
-//           </View>
-//         ))}
-//       </View>
-
-//       </ScrollView>
-//     </Animated.View>
-//   );
-// };
-
-// export default CategoryNavigator;
-
 // MEMOIZED VERSION
 // performs better than non-memoized, per DevTools profiling
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  SlideInUp,
+  SlideInDown,
+  SlideOutDown,
+} from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import CategoryButton from "./CategoryButton";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import SearchModal from "../headers/SearchModal";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/src/types/NavigationTypes";
-import GeckoButton from "../home/GeckoButton";
+ 
 import { useNavigation } from "@react-navigation/native";
+import { SharedValue } from "react-native-reanimated";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+type Props = {
+  visibilityValue: SharedValue;
+  viewableItemsArray: SharedValue[];
+  categoryNames: string[];
+  categoryColorsMap: Record<string, string>;
+  onPress: () => void;
+  onSearchPress: () => void;
+  onClose: () => void;
+};
 const CategoryNavigator = ({
   visibilityValue,
   viewableItemsArray,
   categoryNames,
   onPress,
   onSearchPress,
-}) => {
+  categoryColorsMap,
+  onClose,
+}: Props) => {
   const {
     themeStyles,
+    manualGradientColors,
     gradientColorsHome,
     appContainerStyles,
     appSpacingStyles,
   } = useGlobalStyle();
-const isVisible = true;
+  const isVisible = true;
 
-    const navigation = useNavigation<NavigationProp>();
-  const navigateToFinalize = () => {
  
-    navigation.navigate("Finalize");
-  };
+  // console.log(categoryColorsMap);
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
 
@@ -117,7 +65,7 @@ const isVisible = true;
         style={({ pressed }) => ({
           flexDirection: "row",
           alignItems: "center",
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+       //   backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
           justifyContent: "center",
           borderRadius: 999,
           // paddingHorizontal: 20,
@@ -128,69 +76,121 @@ const isVisible = true;
         })}
       >
         <MaterialCommunityIcons
-          name={"comment-search-outline"}
+          name={"text-search"}
           size={iconSize}
           color={themeStyles.genericText.color}
           style={{}}
         />
-        <Text style={[themeStyles.genericText, styles.categoryLabel]}>
+        {/* <Text style={[themeStyles.genericText, styles.categoryLabel]}>
           Search
-        </Text>
+        </Text> */}
       </Pressable>
     ),
     [iconSize, themeStyles]
   );
-
   const renderedButtons = useMemo(
     () => (
       <View style={styles.buttonRow}>
         {memoizedSearchIcon}
-        {categoryNames.map((categoryName) => (
-          <View
-            key={categoryName || "Uncategorized"}
-            style={styles.buttonWrapper}
-          >
-            <CategoryButton
-              height={"auto"}
-              viewableItemsArray={viewableItemsArray}
-              label={categoryName}
-              onPress={() => onPress(categoryName)}
-            />
-          </View>
-        ))}
+        {categoryNames.map(({ category, categoryId }) => {
+          const categoryColor = categoryColorsMap[categoryId];
+
+          return (
+            <View
+              key={categoryId ?? category ?? "Uncategorized"}
+              style={styles.buttonWrapper}
+            >
+              <CategoryButton
+                height={"auto"}
+                viewableItemsArray={viewableItemsArray}
+                label={category}
+                highlightColor={categoryColor}
+                onPress={() => onPress(category)}
+              />
+            </View>
+          );
+        })}
       </View>
     ),
-    [categoryNames, onPress, viewableItemsArray]
+    [categoryNames, categoryColorsMap, onPress, viewableItemsArray]
   );
+
+  // const renderedButtons = useMemo(
+  //   () => (
+  //     <View style={styles.buttonRow}>
+  //       {memoizedSearchIcon}
+  //       {categoryNames.map((categoryName) => (
+  //         <View
+  //           key={categoryName || "Uncategorized"}
+  //           style={styles.buttonWrapper}
+  //         >
+  //           <CategoryButton
+  //             height={"auto"}
+  //             viewableItemsArray={viewableItemsArray}
+  //             label={categoryName}
+  //             onPress={() => onPress(categoryName)}
+  //           />
+  //         </View>
+  //       ))}
+  //     </View>
+  //   ),
+  //   [categoryNames, onPress, viewableItemsArray]
+  // );
 
   return (
     <>
-    {isVisible && (
-      
-      <Animated.View
-        style={[
-          styles.categoryNavigatorContainer,
-          styles.momentsScreenPrimarySpacing,
-          {
-            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-          },
-          visibilityStyle,
-        ]}
-      >
-        <View style={{height: 50, width: 50, position: 'absolute', zIndex: 50000, right: 10, top: 10, margin: 10}}>
-          
-        <GeckoButton onPress={navigateToFinalize}/>
-        
-        </View>
-     
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={[styles.scrollContainer]}
+      {categoryColorsMap && (
+        <Animated.View
+          entering={SlideInDown}
+          exiting={SlideOutDown}
+          style={[
+            styles.categoryNavigatorContainer,
+            styles.momentsScreenPrimarySpacing,
+            {
+              backgroundColor:
+                // themeStyles.overlayBackgroundColor.backgroundColor,
+                themeStyles.primaryBackground.backgroundColor,
+            },
+            visibilityStyle,
+          ]}
         >
-          {renderedButtons}
-        </ScrollView>
-      </Animated.View>
-            )}
+          <Pressable
+            onPress={onClose}
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              // position: "absolute",
+              // top: -20,
+              height: 30,
+              paddingTop: 5,
+              // backgroundColor: "red",
+              // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          
+            }}
+          >
+            <MaterialIcons
+              name={"keyboard-arrow-down"}
+              color={themeStyles.primaryText.color}
+              color={manualGradientColors.homeDarkColor}
+              size={16}
+                            style={{
+                backgroundColor: manualGradientColors.lightColor,
+                borderRadius: 999,
+              }}
+            />
+          </Pressable>
+
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={[styles.scrollContainer]}
+          >
+            {renderedButtons}
+          </ScrollView>
+        </Animated.View>
+      )}
 
       {searchModalVisible && (
         <View>
@@ -200,12 +200,8 @@ const isVisible = true;
             onSearchPress={onSearchPress}
           />
         </View>
-
-      
-    )}
+      )}
     </>
-    
-    
   );
 };
 
@@ -218,27 +214,29 @@ const styles = StyleSheet.create({
   },
   //brought down from global context
   momentsScreenPrimarySpacing: {
-    borderRadius: 20,
+   // borderRadius: 10,
+    
     padding: 0,
   },
   categoryNavigatorContainer: {
     position: "absolute",
     bottom: -24, //20
-    paddingTop: 10,
+    paddingTop: 0,
     zIndex: 5,
     height: "auto",
-    height: 140,
+    height: 200,
     // width: "74%",
     width: "100%",
     selfAlign: "center",
-    paddingRight: 36, //space for the speeddial
+  
   },
   scrollContainer: {
-    maxHeight: 100,
+    maxHeight: 130,
     marginTop: 0,
     borderRadius: 10,
     padding: 10,
-    paddingVertical: 0,
+    paddingTop: 10,
+ 
   },
   buttonRow: {
     flexWrap: "wrap",
@@ -249,7 +247,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     flexDirection: "row",
 
-    marginHorizontal: 6,
+    marginHorizontal: 0,
     marginBottom: 10,
   },
 });

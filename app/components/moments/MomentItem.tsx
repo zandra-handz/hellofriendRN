@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -42,6 +42,7 @@ interface MomentItemsProps {
   pressedIndexValue: SharedValue<number | null>;
   pulseValue: SharedValue<number>;
   onSend: (moment: Moment) => void;
+  categoryColorsMap: Record<string, string>;
 }
 
 const MomentItem: React.FC<MomentItemsProps> = ({
@@ -55,6 +56,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   pressedIndexValue,
   pulseValue,
   onSend,
+  categoryColorsMap,
 }) => {
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
 
@@ -66,12 +68,30 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   const talkingPointNumberOfLines = 3;
   const cardBorderRadius = 999;
   // const sendButtonWidth = `${100 - Number(textContainerWidth.slice(0, -1))}%`;
-  const sendButtonWidth = 30; // use as right padding for card content too because this button is absolute positioned
+  const sendButtonWidth = 50; // use as right padding for card content too because this button is absolute positioned
+  // const momentColor = categoryColorMap[momentData.user_category];
 
-  const textContainerRightPadding = sendButtonWidth + 10;
-  if (!momentData) {
-    return;
+  const textContainerRightPadding = sendButtonWidth - 10;
+  // if (!momentData) {
+  //   return;
+  // }
+
+  if (!momentData || !categoryColorsMap || !momentData.user_category) {
+    return null; // or a fallback component
   }
+  const categoryColor = momentData?.user_category
+    ? (categoryColorsMap[String(momentData.user_category)] ?? "#ccc")
+    : "#ccc";
+
+  // const categoryId = String(momentData?.user_category);
+
+  // useEffect(() => {
+  //   if (categoryId && categoryColorsMap) {
+  //     console.log(`category id: `, categoryId);
+  //     console.log(categoryColorsMap);
+  //     console.log(categoryColorsMap[categoryId]);
+  //   }
+  // }, [categoryId, categoryColorsMap]);
 
   const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -175,19 +195,20 @@ const MomentItem: React.FC<MomentItemsProps> = ({
         {
           textAlign: "left",
           flexDirection: "row",
-         // justifyContent: "space-between",
+          // justifyContent: "space-between",
           height: itemHeight,
           //  width: "100%",
           width: "auto",
-  
-         //  backgroundColor: 'pink',
-          paddingHorizontal: 0, // adjust this/remove from View directly below to give padding to send button
-          paddingVertical: 2, // adjust this/remove from View directly below to give padding to send button
 
-          paddingHorizontal: 10,
+          //  backgroundColor: 'pink',
+          paddingHorizontal: 0, // adjust this/remove from View directly below to give padding to send button
+          paddingVertical: 0, // adjust this/remove from View directly below to give padding to send button
+
+          paddingHorizontal: 16,
           borderRadius: 999, //cardBorderRadius,
 
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          backgroundColor:
+            themeStyles.darkerOverlayBackgroundColor.backgroundColor,
           // borderTopLeftRadius: 60,
           // borderTopRightRadius: 10,
           // borderBottomLeftRadius: 10,
@@ -199,60 +220,77 @@ const MomentItem: React.FC<MomentItemsProps> = ({
     >
       <MaterialCommunityIcons
         name={"leaf"}
-
-        
-        size={34}
-        style={{ position: "absolute", bottom: 5, right: 5 }}
+        size={40}
+        style={{ position: "absolute", bottom: 14, right: 8 }}
         color={themeStyles.lighterOverlayBackgroundColor.backgroundColor}
+        color={categoryColor}
       />
       <View
         style={{
           flexDirection: "column",
-          paddingLeft: 20,
-       
-          padding: 10, 
-         // flex: 1,
-          width: 'auto',
-        //  backgroundColor: 'orange',
+          paddingLeft: 13,
+
+          //  padding: 10,
+          justifyContent: "center",
+          // flex: 1,
+          width: "auto",
+          //  backgroundColor: 'orange',
           paddingRight: textContainerRightPadding,
         }}
       >
         <View
           style={{
-          //  flexWrap: "wrap",
-            flexDirection: 'column',
+            //  flexWrap: "wrap",
+            flexDirection: "column",
             //  width: textContainerWidth,
             width: "auto",
 
             overflow: "hidden",
           }}
         >
-          <Text
-            numberOfLines={1}
-            // style={[themeStyles.genericText, appFontStyles.momentHeaderText]}
-            style={[
-              themeStyles.primaryText,
-           
-              { fontSize: 13, fontWeight: 'bold', opacity: .6}, //, fontWeight: "bold" },
-            ]}
-          >
-            {header && header}
+          <View style={{ position: "relative", alignSelf: "flex-start" }}>
+            <Text
+              numberOfLines={1}
+              style={[
+                themeStyles.primaryText,
+                {
+                  color: themeStyles.primaryText.color,
+                  fontSize: 14,
+                  fontWeight: "bold",
+                  textShadowColor: categoryColor,
+                  textShadowOffset: { width: 0, height: 0 },
+                  textShadowRadius: 2,
+                },
+              ]}
+            >
+              {header}
+            </Text>
+            <View
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 1.6,
+                backgroundColor: categoryColor,
+                borderRadius: 1,
+              }}
+            />
+          </View>
 
-          </Text>
-                      <Text
-        //    numberOfLines={talkingPointNumberOfLines}
+          <Text
+            //    numberOfLines={talkingPointNumberOfLines}
             numberOfLines={1}
             // style={[themeStyles.genericText, appFontStyles.momentText]}
             style={[
               themeStyles.primaryText,
               appFontStyles.subWelcomeText,
-              { fontSize: 12, fontFamily: 'Poppins-Regular'},
+              { fontSize: 13, lineHeight: 28, fontFamily: "Poppins-Regular" },
             ]}
           >
             {/* {momentData && momentData?.capsule} */}
-              {momentData?.capsule?.replace(/\s*\n\s*/g, ' ')}
+            {momentData?.capsule?.replace(/\s*\n\s*/g, " ")}
           </Text>
-          
         </View>
         {/* <View
           style={{
@@ -276,21 +314,25 @@ const MomentItem: React.FC<MomentItemsProps> = ({
 
         </View> */}
       </View>
-      
+
       <AnimatedPressable
+      hitSlop={20}
         onPress={() => handleSave()}
         style={[
           animatedStyle,
           {
             position: "absolute",
             right: 0,
+            top: 0,
             borderRadius: 0,
+            height: '100%',
             overflow: "hidden",
             // backgroundColor: themeStyles.primaryBackground.backgroundColor,
             height: "100%",
             textAlign: "center",
-            alignItems: "center",
-            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "start",
+            justifyContent: "start",
             width: sendButtonWidth,
           },
         ]}
@@ -313,12 +355,10 @@ const MomentItem: React.FC<MomentItemsProps> = ({
           // name="thought-bubble"
           name="playlist-check"
           name={"progress-upload"}
-          size={24}
-          style={animatedStyle}
+          size={20}
+          style={[animatedStyle, { borderRadius: 999, paddingLeft: 10, paddingTop: 12 }]}
         />
-  
       </AnimatedPressable>
-
     </Animated.View>
   );
 };

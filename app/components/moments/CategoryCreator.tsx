@@ -35,6 +35,11 @@ const CategoryCreator = ({
   const { categoryNames, categoryCount } = useTalkingPCategorySorting({
     listData: capsuleList,
   });
+
+  //i added id to category names at a later date to get category colors for charts, simplest way to update this component is to remove extra data here
+  const [categoryNamesOnly, setCategoryNamesOnly] = useState(
+    categoryNames.map(c => c.category)
+  );
   // console.log("CATEGORY CREATOR RERENDERED");
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -210,7 +215,7 @@ const CategoryCreator = ({
     >
       {selectedFriend &&
         friendDashboardData &&
-        categoryNames &&
+        categoryNamesOnly &&
         capsuleList &&
         !loadingNewFriend && (
           <>
@@ -231,7 +236,7 @@ const CategoryCreator = ({
               >
                 {categoryCount > 0 && viewExistingCategories && (
                   <FlatList
-                    data={categoryNames}
+                    data={categoryNamesOnly}
                     horizontal={true}
                     keyboardShouldPersistTaps="handled"
                     showsHorizontalScrollIndicator={false}

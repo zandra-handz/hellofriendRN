@@ -17,6 +17,11 @@ const ScreenFinalize = () => {
     listData: capsuleList,
   });
 
+  //i added id to category names at a later date to get category colors for charts, simplest way to update this component is to remove extra data here
+  const [categoryNamesOnly, setCategoryNamesOnly] = useState(
+    categoryNames.map(c => c.category)
+  );
+
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
@@ -53,11 +58,11 @@ const ScreenFinalize = () => {
           >
             Finalize talking points shared
           </Text>
-          {preAdded && uniqueCategories?.length > 0 && categoryNames && (categoryNames !== undefined) && (
+          {preAdded && uniqueCategories?.length > 0 && categoryNamesOnly && (categoryNamesOnly !== undefined) && (
             <FinalizeList
               data={allCapsulesList}
               preSelected={preAdded}
-              categories={categoryNames}
+              categories={categoryNamesOnly}
             />
           )}
         </View>

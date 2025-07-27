@@ -18,7 +18,8 @@ type ReturnType = {
 
 const useTalkingPCategorySorting = ({ listData }: Props): ReturnType => {
   const categoryStartIndices: Record<string, number> = {};
-  const categoryNames: string[] = [];
+ // const categoryNames: string[] = [];
+  const categoryNames: { category: string; categoryId: number }[] = [];
   const seenCategories = new Set<string>();
 
   if (!listData || listData.length < 1) {
@@ -34,11 +35,12 @@ const useTalkingPCategorySorting = ({ listData }: Props): ReturnType => {
 
   for (const item of listData) {
     const category = item.user_category_name;
+    const categoryId = item.user_category;
 
     if (typeof category === "string" && !seenCategories.has(category)) {
       seenCategories.add(category);
       categoryStartIndices[category] = index;
-      categoryNames.push(category);
+      categoryNames.push({category, categoryId});
     }
 
     index++;
