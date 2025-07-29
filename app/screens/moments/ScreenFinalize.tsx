@@ -41,22 +41,24 @@ const ScreenFinalize = () => {
   );
 
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground backgroundOverlayHeight="" includeBackgroundOverlay={true} useOverlay={true} style={{ flex: 1 }}>
       {selectedFriend && (
         <View
           style={[
-            appContainerStyles.talkingPointCard,
+          //  appContainerStyles.talkingPointCard,
             {
-              backgroundColor:
-                themeStyles.overlayBackgroundColor.backgroundColor,
+              flex: 1,
+              // marginBottom: 10,
+              padding: 10,
+             // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
               //  paddingTop: 90,
             },
           ]}
         >
           <Text
-            style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}
+            style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}
           >
-            Finalize talking points shared
+            Finalize ideas shared
           </Text>
           {preAdded && uniqueCategories?.length > 0 && categoryNamesOnly && (categoryNamesOnly !== undefined) && (
             <FinalizeList

@@ -5,16 +5,17 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { View, ViewToken, Pressable } from "react-native";
+import { View, ViewToken, Pressable, Text } from "react-native";
 import GeckoToHelloButton from "./GeckoToHelloButton";
 import { useFocusEffect } from "@react-navigation/native";
-import ExpandBar from "./ExpandBar";
+import EscortBarMinusWidth from "./EscortBarMinusWidth";
 import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
-
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import SwipeDown from "./SwipeDown";
 import Animated, {
   // LinearTransition,
   JumpingTransition,
@@ -42,6 +43,7 @@ import Animated, {
 import { useNavigation } from "@react-navigation/native";
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import { MaterialIcons } from "@expo/vector-icons";
 
 // import { enableLayoutAnimations } from "react-native-reanimated";
 // enableLayoutAnimations(true);
@@ -58,6 +60,7 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
   }, [scrollTo]);
 
   const { capsuleList, updateCapsule } = useCapsuleList();
+  const { themeStyles } = useGlobalStyle();
 
   const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
@@ -170,7 +173,7 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
       listVisibility.value = withSpring(1, { duration: 100 }); //800
 
       return () => {
-        listVisibility.value = 0;
+        listVisibility.value = withTiming(0, { duration: 2000 }); //NEEDED OR ELSE LISTVISIBILITY BEING ZERO WILL TRIGGER PREADDED BUTTON TO APPEAR just looks bad :)
       };
     }, [])
   );
@@ -258,6 +261,18 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
 
   return (
     <View style={{ width: "100%", flex: 1, zIndex: 1, elevation: 1 }}>
+      <View
+        style={{
+          position: "absolute",
+          flexDirection: "row",
+          width: "100%",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          paddingHorizontal: 10,
+        }}
+      >
+       <SwipeDown label={`Undo`} flipLabel={`Back`} visibilityValue={listVisibility} />
+      </View>
       {!categoryNavigatorVisible && (
         <Animated.View
           exiting={FadeOut}
@@ -373,7 +388,7 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
 
           {!categoryNavigatorVisible && (
             <>
-              <ExpandBar onPress={() => setCategoryNavigatorVisible(true)} />
+              <EscortBarMinusWidth onPress={() => setCategoryNavigatorVisible(true)} />
             </>
           )}
         </View>

@@ -6,6 +6,7 @@ import { CheckBox } from "react-native-elements";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
+import EscortBar from "./EscortBar";
 
 interface FinalizeListProps {
   data: [];
@@ -248,7 +249,8 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
           ListFooterComponent={() => <View style={{ height: 100 }} />}
         />
       </View>
-      <TouchableOpacity
+      <EscortBar   onPress={handleUpdateMoments} />
+      {/* <TouchableOpacity
         onPress={handleUpdateMoments}
         style={[
           {
@@ -266,7 +268,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
         <Text style={{ color: manualGradientColors.lightColor }}>
           Save and continue
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </>
   );
 };

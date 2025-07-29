@@ -9,7 +9,7 @@ import React, {
 import { useUser } from "./UserContext"; 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
-  fetchCategoriesHistoryAPI,
+  
   fetchCategoriesHistoryCountAPI,
 } from "../calls/api";
  

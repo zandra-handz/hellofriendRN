@@ -10,9 +10,9 @@ import GradientBackground from "../display/GradientBackground";
 
 export const SafeViewAndGradientBackground = ({
   children,
-  style,
-  includeCustomStatusBar = true,
+  style, 
   includeBackgroundOverlay = false,
+  useOverlay = false,
   primaryBackground = false,
   backgroundOverlayHeight = "100%",
   backgroundOverlayBottomRadius = 0,
@@ -81,7 +81,7 @@ export const SafeViewAndGradientBackground = ({
             left: 0,
             opacity: 1,
             // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            backgroundColor: !useOverlay ? themeStyles.primaryBackground.backgroundColor : themeStyles.overlayBackgroundColor.backgroundColor,
             borderBottomLeftRadius: backgroundOverlayBottomRadius,
             borderBottomRightRadius: backgroundOverlayBottomRadius,
           }}

@@ -2,34 +2,26 @@ import { View, Text } from "react-native";
 import React from "react";
 import Animated, {
   SlideInDown,
-  SlideOutDown,
-  SlideOutUp,
-  FadeOutDown,
+  SlideOutDown, 
 } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {   MaterialIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import GeckoToHelloButton from "./GeckoToHelloButton";
+ 
 type Props = {
   onPress: () => void;
   label: string;
 };
 
-const ExpandBar = ({ onPress, label = "navigator" }: Props) => {
+const EscortBarMinusWidth = ({ onPress, label = "navigator" }: Props) => {
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   return (
     <Animated.View entering={SlideInDown} exiting={SlideOutDown}>
-      {/* <View style={{position: 'absolute', zIndex: 40000, right: 0, bottom: 50}}>
-  
-<GeckoToHelloButton/>
-
-</View> */}
+ 
 
       <GlobalPressable
         onPress={onPress}
-        style={[
-          // themeStyles.primaryBackground,
-          // themeStyles.overlayBackgroundColor,
+        style={[ 
           {
             paddingHorizontal: 20,
             flexDirection: "row",
@@ -37,16 +29,13 @@ const ExpandBar = ({ onPress, label = "navigator" }: Props) => {
             paddingVertical: 12,
             paddingTop: 17,
             alignItems: "center",
-            justifyContent: "center",
-
-            // justifyContent: 'space-between',
+            justifyContent: "center", 
             borderRadius: 10,
             marginVertical: 10,
           },
         ]}
       >
-        {/* <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText, {fontSize: 18, fontWeight: 'bold'}]}>Share mode</Text> */}
-        <View
+         <View
           style={{
             position: "absolute",
             top: 0,
@@ -110,4 +99,4 @@ const ExpandBar = ({ onPress, label = "navigator" }: Props) => {
   );
 };
 
-export default ExpandBar;
+export default EscortBarMinusWidth;

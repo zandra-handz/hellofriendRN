@@ -111,7 +111,7 @@ export const FriendLocationsProvider = ({ children }) => {
   });
 
   const handleAddToFaves = useCallback(
-    async (friendId, locationId) => {
+    async (friendId: number, locationId: number) => {
       if (!user?.id) {
         console.warn("No user logged in - cannot add to favorites");
         return;

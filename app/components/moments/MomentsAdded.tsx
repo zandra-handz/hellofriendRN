@@ -1,8 +1,9 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
-import {
+import Animated, {
+  SlideInDown,
   SharedValue,
   useAnimatedReaction,
   runOnJS,
@@ -15,8 +16,8 @@ interface MomentsAddedProps {
 }
 
 const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
-  
+  const { themeStyles, appFontStyles } = useGlobalStyle();
+
   const [hide, setHide] = useState(false);
   const { capsuleList, preAdded } = useCapsuleList();
   const navigation = useNavigation();
@@ -54,7 +55,8 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
         ]}
       >
         {!hide && (
-          <View
+          <Animated.View
+            entering={SlideInDown}
             style={[
               themeStyles.overlayBackgroundColor,
               {
@@ -65,27 +67,63 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
                 alignContent: "center",
                 height: "auto",
                 width: "100%",
-                borderRadius: 10,
+                borderRadius: 999,
                 padding: 10,
               },
             ]}
           >
-            <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}>
-              Talking points: {capsuleCount}
+            <Text
+              style={[
+                themeStyles.primaryText,
+                appFontStyles.welcomeText,
+                { fontSize: 14 },
+              ]}
+            >
+              Total ideas: {capsuleCount}
             </Text>
-            <Text style={[themeStyles.primaryText, appFontStyles.welcomeText]}>
-              Added to hello: {preAddedCount}
-            </Text>
-            <TouchableOpacity
-            style={[themeStyles.primaryBackground, {borderRadius: 10, padding: 10}]}
-            onPress={() => navigation.navigate('PreAdded')}>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <Text
-                style={[themeStyles.primaryText, appFontStyles.welcomeText]}
+                style={[
+                  themeStyles.primaryText,
+                  appFontStyles.welcomeText,
+                  { fontSize: 14 },
+                ]}
               >
-                Restore a moment?
+                Added to hello: {preAddedCount}
               </Text>
-            </TouchableOpacity>
-          </View>
+
+              {preAddedCount > 0 && (
+                <Pressable
+                  style={[{ height: "100%", alignItems: "center" }]}
+                  onPress={() => navigation.navigate("PreAdded")}
+                >
+                  <Text
+                    style={[
+                      themeStyles.primaryText,
+                      appFontStyles.welcomeText,
+                      {
+                        marginLeft: 10,
+                        fontSize: 14,
+                        paddingHorizontal: 14,
+                        borderRadius: 999,
+                        // fontFamily: "Poppins-Bold",
+                        backgroundColor: themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+                      },
+                    ]}
+                  >
+                    Restore
+                  </Text>
+                </Pressable>
+              )}
+            </View>
+          </Animated.View>
         )}
       </View>
     </>

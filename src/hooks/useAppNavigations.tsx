@@ -17,6 +17,8 @@ interface hookReturns {
   navigateToLocationSearch: () => void;
   navigateToMomentFocus: () => void;
   navigateToMoments: ({scrollTo}: NavToMomentsProp) => void;
+  
+  navigateBack: () => void;
 
 };
 
@@ -48,12 +50,21 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Finalize");
   };
 
+
+
+    const navigateBack = () => {
+    navigation.goBack();
+  };
+
+
   return {
     navigateToAddFriend,
     navigateToFinalize,
     navigateToLocationSearch,
     navigateToMomentFocus,
     navigateToMoments,
+
+    navigateBack,
   };
 };
 

@@ -7,20 +7,20 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons  } from "@expo/vector-icons";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-type Props = {};
+type Props = {
+    onPress: () => void;
+  
+};
 
-const GeckoToHelloButton = (props: Props) => {
+const ToNextButton = ({onPress }: Props) => {
   const { manualGradientColors } = useGlobalStyle();
   const navigation = useNavigation<NavigationProp>();
-  const navigateToFinalize = () => {
-    navigation.navigate("Finalize");
-  };
-
+ 
   return (
     <Pressable
       style={{
         width: "auto",
-        height: "100%",
+        height: 38,
         paddingHorizontal: 10,
         alignItems: 'center',
      justifyContent: 'center',
@@ -28,7 +28,7 @@ const GeckoToHelloButton = (props: Props) => {
 
         backgroundColor: manualGradientColors.lightColor,
       }}
-      onPress={navigateToFinalize}
+      onPress={onPress}
     >
         <MaterialCommunityIcons
         name={'arrow-right'}
@@ -39,4 +39,4 @@ const GeckoToHelloButton = (props: Props) => {
   );
 };
 
-export default GeckoToHelloButton;
+export default ToNextButton;

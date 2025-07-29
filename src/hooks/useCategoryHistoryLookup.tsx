@@ -1,12 +1,7 @@
- 
 import { useUser } from "../context/UserContext";
-import { 
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-import { 
-  fetchCapsulesHistoryAPI, 
-} from "../calls/api";
+import { fetchCapsulesHistoryAPI } from "../calls/api";
 
 type Capsule = {
   id: number;
@@ -24,8 +19,6 @@ type CategoryHistoryResponse = {
 type Props = {
   categoryId: number;
 };
-
- 
 
 const useCategoryHistoryLookup = ({
   categoryId,
@@ -51,15 +44,14 @@ const useCategoryHistoryLookup = ({
     CategoryHistoryResponse,
     (string | number | undefined)[],
     number
-  >({ 
-
+  >({
     queryKey: friendId
-  ? ["friendStats", user?.id, categoryId, "friend", friendId]
-  : ["userStats", user?.id, categoryId],
-    queryFn: async ({ pageParam = 1 }) => { 
+      ? ["friendStats", user?.id, categoryId, "friend", friendId]
+      : ["userStats", user?.id, categoryId],
+    queryFn: async ({ pageParam = 1 }) => {
       return await fetchCapsulesHistoryAPI({
         categoryId: categoryId,
-     friendId: friendId,
+        friendId: friendId,
         returnNonZeroesOnly: true,
         page: pageParam,
       });
@@ -77,8 +69,6 @@ const useCategoryHistoryLookup = ({
 
   const flatResults = data?.pages.flatMap((page) => page.results) ?? [];
 
- 
-
   return {
     categoryHistory: flatResults,
     isLoading,
@@ -90,6 +80,5 @@ const useCategoryHistoryLookup = ({
     hasNextPage,
   };
 };
-
 
 export default useCategoryHistoryLookup;

@@ -1,4 +1,4 @@
-// src/navigation/types.ts
+
 
 export type RootStackParamList = {
   hellofriend: undefined;
@@ -19,7 +19,7 @@ export type RootStackParamList = {
   LocationView: undefined;
   UnsavedLocationView: undefined;
   Location: {
-    location: any; // Adjust to your location type
+    location: any; // Adjust to your location type // YES I DID USE GPITY TO DO THIS FOR ME
     favorite: boolean;
   };
   LocationSend: undefined;
