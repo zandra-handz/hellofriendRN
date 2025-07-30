@@ -195,6 +195,8 @@ const generateGradientColorsMap = (data, startColor, endColor) => {
   const start = hexToRgb(startColor);
   const end = hexToRgb(endColor);
 
+ 
+
   const generateColorForIndex = (index, total) => {
     const t = index / Math.max(total - 1, 1);
     const interpolated = start.map((s, j) =>

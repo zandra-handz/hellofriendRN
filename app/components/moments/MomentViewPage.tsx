@@ -1,15 +1,13 @@
 import { View, Text, DimensionValue, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
-import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
-import SlideToAdd from "../foranimations/SlideToAdd";
-import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
-import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 
+import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
@@ -17,15 +15,18 @@ import Animated, {
   useAnimatedReaction,
 } from "react-native-reanimated";
 
-interface  Props {
+interface Props {
   item: object;
   index: number;
   width: DimensionValue;
   height: DimensionValue;
+  marginBottom: number;
+  categoryColorsMap: object;
   currentIndexValue: SharedValue;
   cardScaleValue: SharedValue;
   openModal: () => void;
   closeModal: () => void;
+  marginKeepAboveFooter: number;
 }
 
 const MomentViewPage: React.FC<Props> = ({
@@ -33,16 +34,27 @@ const MomentViewPage: React.FC<Props> = ({
   index,
   width,
   height,
+  marginBottom,
+  categoryColorsMap,
   currentIndexValue,
   cardScaleValue,
+  marginKeepAboveFooter,
 }) => {
   const { themeStyles, appFontStyles, appContainerStyles } = useGlobalStyle();
   const { updateCapsule, deleteMomentRQuery, deleteMomentMutation } =
     useCapsuleList();
-  const { selectedFriend } = useSelectedFriend(); 
+  const { selectedFriend } = useSelectedFriend();
   const navigation = useNavigation();
 
   const [currentIndex, setCurrentIndex] = useState();
+
+  if (!item || !categoryColorsMap || !item.user_category) {
+    return null; // or a fallback component
+  }
+
+  const categoryColor = item?.user_category
+    ? (categoryColorsMap[String(item.user_category)] ?? "#ccc")
+    : "#ccc";
 
   useAnimatedReaction(
     () => currentIndexValue.value,
@@ -67,8 +79,15 @@ const MomentViewPage: React.FC<Props> = ({
   };
 
   const saveToHello = async () => {
+    if (!selectedFriend?.id || !item?.id) {
+      return;
+    }
     try {
-      updateCapsule(item.id, true);
+      updateCapsule({
+        friendId: selectedFriend?.id,
+        capsuleId: item.id,
+        isPreAdded: true,
+      });
     } catch (error) {
       console.error("Error during pre-save:", error);
     }
@@ -98,69 +117,108 @@ const MomentViewPage: React.FC<Props> = ({
           alignItems: "center",
           backgroundColor: "transparent",
           padding: 4,
-          borderWidth: 0, 
+          borderWidth: 0,
           width: width,
         },
       ]}
     >
       <View
-        style={[appContainerStyles.talkingPointCard, {
-          backgroundColor: themeStyles.primaryBackground.backgroundColor,
-      
-        }]}
+        style={[
+          {
+            width: "100%",
+            height: "100%",
+          },
+        ]}
       >
-        <BelowHeaderContainer
-          height={30}
-          alignItems="center"
-          marginBottom={0} //default is currently set to 2
-          justifyContent="center"
-          children={
-            <>
-              <SlideToAdd
-                onPress={saveToHello}
-                sliderText={"Add to hello"}
-                sliderTextSize={15}
-                sliderTextColor={themeStyles.primaryText.color}
-                // sliderTextColor={themeAheadOfLoading.fontColor}
-              />
-              <EditPencilOutlineSvg
-                height={20}
-                width={20}
-                onPress={handleEditMoment}
-                color={themeStyles.genericText.color}
-                style={{ position: "absolute", right: 0 }}
-              />
-            </>
-          }
-        />
-        <View style={{ height: "90%", width: "100%" }}>
-          <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
-            <Text
-              style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}
-            >
-              {" "}
-              # {item.user_category_name}
-            </Text>
+        <View
+          style={[
+            {
+              padding: 20,
+              borderRadius: 40,
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              flex: 1,
+              marginBottom: marginBottom,
+              zIndex: 1,
+              overflow: "hidden",
+              backgroundColor:
+                themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+            },
+          ]}
+        >
+          <View
+            style={{
+              flexDirection: "row", 
+            //  height: 30,
+            height: 'auto',
+              flexGrow: 1,
+              flexWrap: 'wrap',
+              alignItems: "top",
+              paddingTop: 6, // WEIRD EYEBALLIN
+              justifyContent: "space-between",
+            //  flex: 1,
+              width: "100%",
+            }}
+          >
+            <MaterialCommunityIcons
+              name={"leaf"}
+              onPress={saveToHello}
+              size={60}
+              style={{ position: "absolute", top: 0, right: 0 }}
+              color={categoryColor}
+            />
+            <MaterialCommunityIcons
+              onPress={saveToHello}
+              name={"progress-upload"}
+              size={28}
+              style={{ position: "absolute", top: 16, right: 20 }}
+              color={themeStyles.primaryText.color}
+            />
+
             <Text
               style={[
                 themeStyles.primaryText,
                 appFontStyles.welcomeText,
-                { fontSize: 22 },
+                { color: themeStyles.primaryText.color, fontSize: 24, paddingRight: 80 },
               ]}
             >
               {" "}
-              {item.capsule}
+              {item.user_category_name}
             </Text>
-            <SlideToDeleteHeader
-              itemToDelete={item}
-              onPress={handleDelete}
-              sliderWidth={"100%"}
-              targetIcon={TrashOutlineSvg}
-              sliderTextColor={themeStyles.primaryText.color}
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <MaterialCommunityIcons
+              name={"pencil-outline"}
+              onPress={handleEditMoment}
+              size={20}
+              color={themeStyles.lighterOverlayBackgroundColor.backgroundColor}
+              color={categoryColor}
             />
-          </ScrollView>
+          </View>
+          <View style={{ height: "90%", width: "100%" }}>
+            <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
+              <Text
+                style={[
+                  themeStyles.primaryText,
+                  appFontStyles.welcomeText,
+                  { fontSize: 15, lineHeight: 24 },
+                ]}
+              >
+                {" "}
+                {item.capsule}
+              </Text>
+              <View style={{ flexDirection: "row", height: 40 }}>
+                <SlideToDeleteHeader
+                  itemToDelete={item}
+                  onPress={handleDelete}
+                  sliderWidth={"100%"}
+                  targetIcon={TrashOutlineSvg}
+                  sliderTextColor={themeStyles.primaryText.color}
+                />
+              </View>
+            </ScrollView>
+          </View>
         </View>
-
         {/* <SlideToDeleteHeader
           itemToDelete={item}
           onPress={handleDelete}

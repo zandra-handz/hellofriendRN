@@ -15,11 +15,29 @@ import {
 } from "../calls/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "./UserContext";
-
+import { MomentFromBackendType } from "../types/MomentContextTypes";
 import useMomentContextFunctions from "../hooks/useMomentContextFunctions";
 
-const CapsuleListContext = createContext({
-  capsuleList: [],
+type CapsuleListContextType = {
+  capsuleList: MomentFromBackendType[];
+  capsuleCount: number;
+  categoryCount: number;
+  categoryNames: string[];
+  categoryStartIndices: Record<string, number>;
+  sortedByCategory: MomentFromBackendType[];
+  preAdded: number[]; // or whatever type preAdded is
+  removeCapsules: (capsuleIdsToRemove: number[]) => void;
+  updateCapsule: (input: {
+    friendId: number;
+    capsuleId: number;
+    isPreAdded: boolean;
+  }) => void;
+  updatePreAdded: () => void;
+  updateCapsules: (updatedCapsules: any) => void;
+  sortByCategory: () => void;
+  // add other functions & fields properly typed...
+};
+const CapsuleListContext = createContext<CapsuleListContextType>({ capsuleList: [],
   capsuleCount: 0,
   categoryCount: 0,
   categoryNames: [],
@@ -42,6 +60,10 @@ export const useCapsuleList = () => {
   return context;
 };
 
+
+
+
+
 export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
   const { user, isInitializing, isAuthenticated } = useUser();
@@ -49,14 +71,24 @@ export const CapsuleListProvider = ({ children }) => {
   // console.log("CAPSULE LIST RERENDERED");
   const [sortedByCategory, setSortedByCategory] = useState([]);
 
-  const { sortByMomentCategory, getPreAdded } = useMomentContextFunctions();
+  const { getPreAdded } = useMomentContextFunctions();
   // const [newestFirst, setNewestFirst] = useState([]);
 
-  const { data: sortedCapsuleList = [], isLoading: isCapsuleContextLoading } =
-    useQuery({
+  const { data: sortedCapsuleList, isLoading: isCapsuleContextLoading } =
+    useQuery<MomentFromBackendType[]>({
       queryKey: ["Moments", user?.id, selectedFriend?.id],
-      queryFn: () => fetchMomentsAPI(selectedFriend.id),
-      enabled: !!(selectedFriend && isAuthenticated && !isInitializing),
+      queryFn: () => {
+        if (!selectedFriend?.id) {
+          throw new Error("selectedFriend.id is null");
+        }
+        return fetchMomentsAPI(selectedFriend.id);
+      },
+      enabled: !!(
+        selectedFriend &&
+        selectedFriend.id &&
+        isAuthenticated &&
+        !isInitializing
+      ),
       // staleTime: 0,
       staleTime: 1000 * 60 * 20, // 20 minutes
 
@@ -84,12 +116,9 @@ export const CapsuleListProvider = ({ children }) => {
 
         const sortedWithIndices = [];
         let uniqueIndex = 0;
-     
 
         for (const capsule of sorted) {
           if (!preAddedSet.has(capsule.id)) {
-  
-
             sortedWithIndices.push({
               ...capsule,
               uniqueIndex: uniqueIndex++,
@@ -111,38 +140,28 @@ export const CapsuleListProvider = ({ children }) => {
       },
     });
 
+  // const {
+  //   capsules = [],
+  //   allCapsules = [],
+  //   categoryCount = 0,
+  //   categoryNames = [],
+  //   categoryStartIndices = {},
+  //   preAdded = [],
+  //   // momentsSavedToHello = [],
+  // } = sortedCapsuleList;
+
   const {
-    capsules = [],
-    allCapsules = [],
-    categoryCount = 0,
-    categoryNames = [],
-    categoryStartIndices = {},
-    preAdded = [],
-    // momentsSavedToHello = [],
-  } = sortedCapsuleList;
+  capsules = [],
+  allCapsules = [],
+  categoryCount = 0,
+  categoryNames = [],
+  categoryStartIndices = {},
+  preAdded = [],
+} = sortedCapsuleList ?? {};
 
   const capsuleCount = capsules.length;
   const timeoutRef = useRef(null);
-  const updateCapsuleMutation = useMutation({
-    mutationFn: ({ capsuleId, isPreAdded }) =>
-      updateMomentAPI(selectedFriend?.id, capsuleId, {
-        pre_added_to_hello: isPreAdded,
-      }),
-
-    onSuccess: (data) => {
-      queryClient.getQueryData(["Moments", user?.id, selectedFriend?.id]);
-      updateCacheWithNewPreAdded(data, data?.pre_added_to_hello);
-    },
-    onError: (error) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        updateCapsuleMutation.reset();
-      }, 500);
-    },
-  });
+ 
 
   const handleEditMoment = (capsuleId, capsuleEditData) => {
     editMomentMutation.mutate({ capsuleId, capsuleEditData });
@@ -260,8 +279,48 @@ export const CapsuleListProvider = ({ children }) => {
   //   }
   // };
 
-  const updateCapsule = (capsuleId, isPreAdded) =>
-    updateCapsuleMutation.mutate({ capsuleId, isPreAdded });
+  const updateCapsule = ({
+    friendId,
+    capsuleId,
+    isPreAdded,
+  }: {
+    friendId: number;
+    capsuleId: number;
+    isPreAdded: boolean;
+  }) => updateCapsuleMutation.mutate({ friendId, capsuleId, isPreAdded });
+
+
+type UpdateCapsuleInput = {
+  friendId: number;
+  capsuleId: number;
+  isPreAdded: boolean;
+};
+
+const updateCapsuleMutation = useMutation({
+  mutationFn: ({ friendId, capsuleId, isPreAdded }: UpdateCapsuleInput) =>
+    updateMomentAPI(friendId, capsuleId, {
+      pre_added_to_hello: isPreAdded,
+    }),
+
+  onSuccess: (data) => {
+    queryClient.getQueryData(["Moments", user?.id, selectedFriend?.id]);
+    updateCacheWithNewPreAdded(data, data?.pre_added_to_hello);
+  },
+
+  onError: () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      updateCapsuleMutation.reset();
+    }, 500);
+  },
+});
+
+
+
+
+
+
+
 
   const updateCapsulesMutation = useMutation({
     mutationFn: (updatedCapsules) =>

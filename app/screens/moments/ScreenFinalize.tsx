@@ -22,8 +22,8 @@ const ScreenFinalize = () => {
     categoryNames.map(c => c.category)
   );
 
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
+  const { selectedFriend } = useSelectedFriend();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
 
   useFocusEffect(

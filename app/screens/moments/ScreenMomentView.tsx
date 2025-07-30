@@ -1,28 +1,53 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
- 
+import { useFriendList } from "@/src/context/FriendListContext";
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
+import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
- 
-
+import { useCategories } from "@/src/context/CategoriesContext";
+import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
+  const { userCategories } = useCategories();
   const currentIndex = route.params?.index ?? null;
+  const { themeAheadOfLoading } = useFriendList();
+  const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
 
   const {
-    capsuleList, 
-    deleteMomentRQuery, 
+    capsuleList,
+    deleteMomentRQuery,
     updateCapsuleMutation,
     updateCacheWithNewPreAdded,
   } = useCapsuleList();
+
   // const [currentIndex, setCurrentIndex] = useState(0);
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
- 
+  const { generateGradientColorsMap } = useMomentSortingFunctions({
+    listData: capsuleList,
+  });
+
+  useEffect(() => {
+    if (
+      userCategories?.length > 0 &&
+      themeAheadOfLoading?.lightColor &&
+      themeAheadOfLoading?.darkColor
+    ) {
+      setCategoryColorsMap(
+        generateGradientColorsMap(
+          userCategories,
+          themeAheadOfLoading.lightColor,
+          themeAheadOfLoading.darkColor
+        )
+      );
+    }
+  }, [userCategories, themeAheadOfLoading]);
+
+
 
   // const renderHeader = useCallback(
   //   () => (
@@ -35,8 +60,6 @@ const ScreenMomentView = () => {
   //   ),
   //   [selectedFriend, loadingNewFriend, themeAheadOfLoading]
   // );
-
- 
 
   //Updates if one is edited
 
@@ -112,13 +135,19 @@ const ScreenMomentView = () => {
   // }, [currentIndex, capsuleList]);
 
   return (
-    <SafeViewAndGradientBackground  style={{ flex: 1 }}>
-      <CarouselSlider
-        initialIndex={currentIndex}
-        data={capsuleList}
-        children={MomentViewPage}
-      />
- 
+    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+      {selectedFriend &&
+        !loadingNewFriend &&
+        capsuleList &&
+        categoryColorsMap && 
+        themeAheadOfLoading && (
+          <CarouselSliderMoments
+            initialIndex={currentIndex}
+            categoryColorsMap={categoryColorsMap}
+            data={capsuleList}
+            children={MomentViewPage}
+          />
+        )}
     </SafeViewAndGradientBackground>
   );
 };

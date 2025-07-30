@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { View } from "react-native";
+import React, { JSXElementConstructor, ReactElement, useMemo } from "react";
+import { DimensionValue, StyleProp, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomStatusBar from "../statusbar/CustomStatusBar";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -8,7 +8,21 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground";
 
-export const SafeViewAndGradientBackground = ({
+
+type Props = {
+  children: ReactElement;
+  style?: ViewStyle;
+  includeBackgroundOverlay: boolean;
+  useOverlay: boolean;
+  primaryBackground: boolean;
+  backgroundOverlayHeight: DimensionValue;
+  backgroundOverlayBottomRadius: number;
+  header?: React.ComponentType;
+
+};
+
+
+const SafeViewAndGradientBackground = ({
   children,
   style, 
   includeBackgroundOverlay = false,
@@ -17,7 +31,7 @@ export const SafeViewAndGradientBackground = ({
   backgroundOverlayHeight = "100%",
   backgroundOverlayBottomRadius = 0,
   header: Header,
-}) => {
+} : Props) => {
   const insets = useSafeAreaInsets();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
 
@@ -65,7 +79,7 @@ export const SafeViewAndGradientBackground = ({
 
   return (
     <GradientBackground
-      useFriendColors={useFriendColors}
+      useFriendColors={useFriendColors || undefined}
       additionalStyles={[paddingStyle, style]}
     >
       {includeBackgroundOverlay && (

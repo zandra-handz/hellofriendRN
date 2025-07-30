@@ -7,11 +7,12 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBar from "./EscortBar";
-
+import { Moment } from "@/src/types/MomentContextTypes";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 interface FinalizeListProps {
   data: [];
   categories: [];
-  preSelected: [];
+  preSelected: Moment[];
 }
 
 const FinalizeList: React.FC<FinalizeListProps> = ({
@@ -23,17 +24,17 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const CATEGORY_MARGIN = 10;
-  const [selectedMoments, setSelectedMoments] = useState([]);
-  const [changedMoments, setChangedMoments] = useState([]);
-  const [visibleCategories, setVisibleCategories] = useState(data); //so that we can use the same value for All and for individual ones
-
+  const [selectedMoments, setSelectedMoments] = useState<Moment[]>([]);
+  const [changedMoments, setChangedMoments] = useState<Moment[]>([]);
+  const [visibleCategories, setVisibleCategories] = useState<Moment[]>(data); //so that we can use the same value for All and for individual ones
+const { selectedFriend } = useSelectedFriend();
   const navigation = useNavigation();
   const { updateCapsule } = useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 
-  const handleCategoryFilterPress = (category) => {
+  const handleCategoryFilterPress = (category: string) => {
     const filtered = data.filter(
-      (moment) => moment.user_category_name === category
+      (moment: Moment) => moment.user_category_name === category
     );
     setVisibleCategories(filtered);
   };
@@ -61,7 +62,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   );
 
   const renderListItem = useCallback(
-    ({ item }) => {
+    ({ item }: {item: Moment}) => {
       const isSelected = selectedMoments?.some((m) => m.id === item.id);
 
       return (
@@ -145,8 +146,13 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   // };
 
   const handleUpdateMoments = () => {
+    if (!selectedFriend) {
+      return;
+    }
+
+    const friendId = selectedFriend.id;
     changedMoments.forEach((moment) => {
-      updateCapsule(moment.id, !moment.preAdded);
+      updateCapsule({friendId: friendId, capsuleId: moment.id, isPreAdded: !moment.preAdded});
     });
     navigation.navigate("AddHello");
   };

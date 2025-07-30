@@ -44,7 +44,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { MaterialIcons } from "@expo/vector-icons";
-
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { enableLayoutAnimations } from "react-native-reanimated";
 // enableLayoutAnimations(true);
 // import { enableFreeze } from "react-native-screens";
@@ -58,7 +58,7 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
       scrollToCategoryStart(scrollTo);
     }
   }, [scrollTo]);
-
+const { selectedFriend } = useSelectedFriend();
   const { capsuleList, updateCapsule } = useCapsuleList();
   const { themeStyles } = useGlobalStyle();
 
@@ -120,8 +120,12 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
   // };
 
   const saveToHello = useCallback((moment) => {
+
+    if (!selectedFriend?.id || !moment) {
+      return;
+    }
     try {
-      updateCapsule(moment.id, true);
+      updateCapsule({friendId: selectedFriend?.id, capsuleId: moment.id, isPreAdded: true});
     } catch (error) {
       console.error("Error during pre-save:", error);
     }

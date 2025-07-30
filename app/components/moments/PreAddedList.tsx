@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity  } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { FlashList } from "@shopify/flash-list";
 import { CheckBox } from "react-native-elements";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 const PreAddedList = () => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
@@ -14,7 +14,7 @@ const PreAddedList = () => {
   const { updateCapsule,   preAdded, allCapsulesList  } =
     useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-
+const { selectedFriend } = useSelectedFriend();
   const renderListItem = ({ item, index }) => {
     
 
@@ -74,8 +74,11 @@ const PreAddedList = () => {
 
 
 const handleRestore = () => {
+  if (!selectedFriend?.id) {
+    return;
+  }
   selectedMoments.forEach((moment) => {
-    updateCapsule(moment.id, false); // Replace with your actual function
+    updateCapsule({friendId: selectedFriend?.id, capsuleId: moment.id, isPreAdded: false}); // Replace with your actual function
   });
 };
 

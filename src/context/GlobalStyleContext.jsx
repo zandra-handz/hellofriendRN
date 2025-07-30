@@ -408,7 +408,7 @@ const containerStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  talkingPointCard: {
+  talkingPointCard: { // not actually using for large talking point anymore
     // used with: backgroundColor: themeStyles.primaryBackground.backgroundColor,
     padding: 20,
     borderRadius: 40,

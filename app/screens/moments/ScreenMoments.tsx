@@ -29,6 +29,10 @@ const ScreenMoments = () => {
   const { navigateToMomentFocus } = useAppNavigations();
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
+  
+  
+  
+  
   prefetchUserAddresses();
   prefetchFriendAddresses();
 

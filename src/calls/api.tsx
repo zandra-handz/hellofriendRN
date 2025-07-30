@@ -6,7 +6,7 @@ import * as SecureStore from "expo-secure-store";
 
 import { helloFriendApiClient, setAuthHeader } from "./helloFriendApiClient";
 import axios from "axios";
-
+import { MomentFromBackendType } from "../types/MomentContextTypes";
 export type addressType = {
   address: string;
   lat: string;
@@ -885,15 +885,7 @@ export const fetchUpcomingHelloes = async () => {
   }
 };
 
-export type MomentFromBackendType = {
-  id: number;
-  typed_category: string;
-  capsule: string;
-  created_on: string;
-  pre_added_to_hello: string;
-  user_category: number;
-  user_category_name: string;
-};
+
 
 export const fetchMomentsAPI = async (friendId: number) => {
   // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
@@ -1112,11 +1104,7 @@ export const updateMomentAPI = async (
   friendId: number,
   capsuleId: number,
   capsuleData: object
-) => {
-  // console.log(`updating moment with data: `, capsuleData);
-  //   console.log(
-  //     `data in updateMomentApi ${capsuleId}, ${capsuleData?.pre_added_to_hello}`
-  //   );
+) => { 
   try {
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/thoughtcapsule/${capsuleId}/`,

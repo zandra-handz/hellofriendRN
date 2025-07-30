@@ -6,80 +6,104 @@ import { CheckBox } from "react-native-elements";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 
-
-const ReloadList = ({data}) => {
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+const ReloadList = ({ data }) => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
   const navigation = useNavigation();
-  const { updateCapsule,   preAdded, allCapsulesList  } =
-    useCapsuleList(); // also need to update cache
+  const { updateCapsule, preAdded, allCapsulesList } = useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { selectedFriend } = useSelectedFriend();
+
+  const handleRestore = () => {
+    if (!selectedFriend?.id) {
+      return;
+    }
+    selectedMoments.forEach((moment) => {
+      updateCapsule({
+        friendId: selectedFriend.id,
+        capsuleId: moment.id,
+        isPreAdded: false,
+      }); // Replace with your actual function
+    });
+  };
 
   const renderListItem = ({ item, index }) => {
-    
-
-    const isSelected = !!(selectedMoments.find((moment) => moment.id === item.id));
+    const isSelected = !!selectedMoments.find(
+      (moment) => moment.id === item.id
+    );
 
     return (
       <View
         style={[
           // themeStyles.overlayBackgroundColor,
           {
-            height: isSelected? 'auto' : ITEM_HEIGHT,
+            height: isSelected ? "auto" : ITEM_HEIGHT,
             minHeight: ITEM_HEIGHT,
             flexDirection: "row",
-            width: "100%", 
+            width: "100%",
             paddingRight: 0,
             paddingVertical: 10,
             overflow: "hidden",
-            backgroundColor: isSelected ? manualGradientColors.homeDarkColor : 'transparent',
+            backgroundColor: isSelected
+              ? manualGradientColors.homeDarkColor
+              : "transparent",
           },
         ]}
       >
-        {/* <View style={{ width: "0%" }}>
-          <Text numberOfLines={2} style={[{color: isSelected? manualGradientColors.lightColor : themeStyles.primaryText.color, fontSize: 13}]}>
-            {item?.capsule}
-          </Text>
-        </View> */}
-        <View style={{ height: '100%', width:  400, alignItems: 'center', justifyContent: 'center' }}>
+        <View
+          style={{
+            height: "100%",
+            width: 400,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <CheckBox
             checked={selectedMoments?.includes(item)}
             onPress={() => handleCheckboxChange(item)}
             title={`#${item.typedCategory} - ${item.capsule}`}
-            containerStyle={{  borderWidth: 0, backgroundColor: isSelected ? manualGradientColors.homeDarkColor : 'transparent',  padding: 0, flex: 1, width: '100%' }}
-           wrapperStyle={{  height: '100%', lexDirection: 'row', justifyContent: 'space-between'}}
-           textStyle={{width: '82%', color: isSelected? manualGradientColors.lightColor : themeStyles.primaryText.color, fontSize: 13}}
-           uncheckedColor={themeStyles.primaryText.color}
+            containerStyle={{
+              borderWidth: 0,
+              backgroundColor: isSelected
+                ? manualGradientColors.homeDarkColor
+                : "transparent",
+              padding: 0,
+              flex: 1,
+              width: "100%",
+            }}
+            wrapperStyle={{
+              height: "100%",
+              lexDirection: "row",
+              justifyContent: "space-between",
+            }}
+            textStyle={{
+              width: "82%",
+              color: isSelected
+                ? manualGradientColors.lightColor
+                : themeStyles.primaryText.color,
+              fontSize: 13,
+            }}
+            uncheckedColor={themeStyles.primaryText.color}
             checkedColor={manualGradientColors.lightColor}
-           iconRight={true}
-           right={true}
+            iconRight={true}
+            right={true}
           />
         </View>
       </View>
     );
   };
 
-//   useEffect(() => {
-
-//   }, [updateCapsuleMutation]);
-
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)
   );
 
   // all at once
-// const handleRestore = async () => {
-//   await Promise.all(selectedMoments.map(moment => updateCapsule(moment.id, false)));
-// };
-
-
-const handleRestore = () => {
-  selectedMoments.forEach((moment) => {
-    updateCapsule(moment.id, false); // Replace with your actual function
-  });
-};
+  // const handleRestore = async () => {
+  //   await Promise.all(selectedMoments.map(moment => updateCapsule(moment.id, false)));
+  // };
 
   const handleCheckboxChange = (item) => {
     setSelectedMoments((prevSelectedMoments) => {
@@ -105,27 +129,40 @@ const handleRestore = () => {
 
   return (
     <>
-    <View style={[themeStyles.overlayBackgroundColor,{ flex: 1, width: 500 }]}>
-      <FlashList
-        data={filterOutNonAdded} 
-        estimatedItemSize={90}
-        renderItem={renderListItem}
-        keyExtractor={extractItemKey}
-        //  getItemLayout={getItemLayout}
-        // initialNumToRender={10}
-        // maxToRenderPerBatch={10}
-        // windowSize={10}
-        removeClippedSubviews={true}
-        showsVerticalScrollIndicator={false}
-        ListFooterComponent={() => <View style={{ height: 100 }} />}
-      />
-    </View>
-    <TouchableOpacity onPress={handleRestore} style={[{width: '100%', height: 'auto', position: 'absolute', bottom: 0, alignItems: 'center', padding: 10, borderRadius: 20, backgroundColor: manualGradientColors.homeDarkColor}]}>
-        <Text style={{color: manualGradientColors.lightColor}}>
-            Restore
-        </Text>
-
-    </TouchableOpacity>
+      <View
+        style={[themeStyles.overlayBackgroundColor, { flex: 1, width: 500 }]}
+      >
+        <FlashList
+          data={filterOutNonAdded}
+          estimatedItemSize={90}
+          renderItem={renderListItem}
+          keyExtractor={extractItemKey}
+          //  getItemLayout={getItemLayout}
+          // initialNumToRender={10}
+          // maxToRenderPerBatch={10}
+          // windowSize={10}
+          removeClippedSubviews={true}
+          showsVerticalScrollIndicator={false}
+          ListFooterComponent={() => <View style={{ height: 100 }} />}
+        />
+      </View>
+      <TouchableOpacity
+        onPress={handleRestore}
+        style={[
+          {
+            width: "100%",
+            height: "auto",
+            position: "absolute",
+            bottom: 0,
+            alignItems: "center",
+            padding: 10,
+            borderRadius: 20,
+            backgroundColor: manualGradientColors.homeDarkColor,
+          },
+        ]}
+      >
+        <Text style={{ color: manualGradientColors.lightColor }}>Restore</Text>
+      </TouchableOpacity>
     </>
   );
 };
