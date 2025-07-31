@@ -18,14 +18,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 // app state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUser } from "@/src/context/UserContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCategories } from "@/src/context/CategoriesContext";
- 
+
 import { useFocusEffect } from "@react-navigation/native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import UserCategorySelectorButton from "./UserCategorySelectorButton";
-import Donut from "./Donut"; 
+import Donut from "./Donut";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -45,26 +45,22 @@ const UserCategorySelector = ({
   existingCategory,
   updatingExisting,
   existingId,
-}) => { 
-  const { user  } = useUser();
- 
+}) => {
+  const { user } = useUser();
+
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { selectedFriend } =
-    useSelectedFriend();
- 
+  const { selectedFriend } = useSelectedFriend();
+
   const { capsuleList } = useCapsuleList();
-  const {
-    userCategories,
-    createNewCategory, 
-    createNewCategoryMutation, 
-  } = useCategories();
+  const { userCategories, createNewCategory, createNewCategoryMutation } =
+    useCategories();
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
- 
-  const topperHeight = 50; 
-  const flatListRef = useAnimatedRef(null); 
+
+  const topperHeight = 60;
+  const flatListRef = useAnimatedRef(null);
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
-  const [pressedOnce, setPressedOnce] = useState(false); 
+  const [pressedOnce, setPressedOnce] = useState(false);
 
   const [newCategoryId, setNewCategoryId] = useState(null);
 
@@ -145,41 +141,33 @@ const UserCategorySelector = ({
 
   useEffect(() => {
     if (userCategories && userCategories.length > 0) {
-    
       // setCategoryColors(
       //   generateGradientColors(
-      //     userCategories, 
+      //     userCategories,
       //     manualGradientColors.lightColor,
       //     //  manualGradientColors.homeDarkColor,
       //      themeAheadOfLoading.lightColor
       //   )
       // );
-            setCategoryColors(
-        generateRandomColors(
-          userCategories 
-        )
-      );
+      setCategoryColors(generateRandomColors(userCategories));
     }
   }, [userCategories]);
 
+  useEffect(() => {
+    if (categoryColors && tempCategoriesSortedList) {
+      // console.log('tempcategorysortedlist');
+      const userCategorySet = new Set(
+        tempCategoriesSortedList.map((item) => item.user_category)
+      );
+      // console.log(tempCategoriesSortedList);
+      // console.log(userCategorySet);
 
-
-
-useEffect(() => {
-  if (categoryColors && tempCategoriesSortedList) {
-    // console.log('tempcategorysortedlist');
-    const userCategorySet = new Set(
-      tempCategoriesSortedList.map(item => item.user_category)
-    );
-    // console.log(tempCategoriesSortedList);
-    // console.log(userCategorySet);
-
-    const filteredColors = categoryColors
-      .filter(item => userCategorySet.has(item.user_category))
-      .map(item => item.color);  
-    setColors(filteredColors);  
-  }
-}, [categoryColors, tempCategoriesSortedList]);
+      const filteredColors = categoryColors
+        .filter((item) => userCategorySet.has(item.user_category))
+        .map((item) => item.color);
+      setColors(filteredColors);
+    }
+  }, [categoryColors, tempCategoriesSortedList]);
 
   useEffect(() => {
     if (!categoriesSortedList) {
@@ -206,6 +194,9 @@ useEffect(() => {
       setSelectedId(largest);
     }
   }, [categoriesSortedList]);
+
+
+  
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [pieChartModalVisible, setPieChartModalVisible] = useState(false);
 
@@ -296,29 +287,25 @@ useEffect(() => {
 
     setDetailsModalVisible(true);
   };
- 
 
-  
   const handleDonutPress = (itemId) => {
-    console.log(`index from donut press`, itemId );
+    console.log(`index from donut press`, itemId);
     if (!itemId) {
       return;
     }
- 
 
- 
-      // const find = userCategories.findIndex(
-      //   (category) => category.name === itemId
-      // );
+    // const find = userCategories.findIndex(
+    //   (category) => category.name === itemId
+    // );
 
-      let foundCategoryId = null;
-const findIndex = userCategories.findIndex((category, index) => {
-  if (category.name === itemId) {
-    foundCategoryId = category.id;
-    return true;
-  }
-  return false;
-});
+    let foundCategoryId = null;
+    const findIndex = userCategories.findIndex((category, index) => {
+      if (category.name === itemId) {
+        foundCategoryId = category.id;
+        return true;
+      }
+      return false;
+    });
 
     if (foundCategoryId !== selectedId) {
       setSelectedId(foundCategoryId);
@@ -326,12 +313,11 @@ const findIndex = userCategories.findIndex((category, index) => {
 
     if (!pressedOnce) {
       setPressedOnce(true);
-    } 
+    }
     scrollToCategory(findIndex);
 
-  //  setDetailsModalVisible(true);
+    //  setDetailsModalVisible(true);
   };
- 
 
   const clearInput = () => {
     if (newCategoryRef && newCategoryRef.current) {
@@ -431,7 +417,7 @@ const findIndex = userCategories.findIndex((category, index) => {
           flexDirection: "row",
           alignItems: "center",
           paddingLeft: 20,
-          
+
           width: inputActive ? "100%" : 60,
           height: topperHeight - 20,
           backgroundColor: inputActive
@@ -443,7 +429,7 @@ const findIndex = userCategories.findIndex((category, index) => {
           style={{
             backgroundColor: manualGradientColors.homeDarkColor,
             borderRadius: 30 / 2,
-           
+
             alignItems: "center",
             justifyContent: "center",
             height: 30,
@@ -562,8 +548,6 @@ const findIndex = userCategories.findIndex((category, index) => {
         {userCategories && userCategories.length > 0 && !inputActive && (
           <Animated.View entering={SlideInRight} exiting={SlideOutRight}>
             <Animated.FlatList
-              // ListHeaderComponent={renderHeader}
-              // ListHeaderComponent={renderHeaderItem}
               data={userCategories}
               extraData={selectedId}
               renderItem={renderCategoryButton}
@@ -606,7 +590,8 @@ const findIndex = userCategories.findIndex((category, index) => {
         </View>
       )}
 
-      {categoriesSortedList && colors &&
+      {categoriesSortedList &&
+        colors &&
         categoriesSortedList.length > 0 &&
         !pieChartModalVisible && (
           <Pressable
@@ -624,7 +609,11 @@ const findIndex = userCategories.findIndex((category, index) => {
               height: "100%",
             }}
           >
-            <Donut data={tempCategoriesSortedList} colors={colors} onCategoryPress={handleDonutPress} />
+            <Donut
+              data={tempCategoriesSortedList}
+              colors={colors}
+              onCategoryPress={handleDonutPress}
+            />
           </Pressable>
         )}
     </GradientBackground>

@@ -4,7 +4,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+import TopBarWithAddMoment from "./TopBarWithAddMoment";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import Loading from "@/app/components/appwide/display/Loading";
@@ -14,6 +14,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCategories } from "@/src/context/CategoriesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+import GlobalPressable from "@/app/components/appwide/button/GlobalPressable";
 const ScreenMoments = () => {
   const route = useRoute();
   const scrollTo = route?.params?.scrollTo ?? null;
@@ -58,55 +59,11 @@ const ScreenMoments = () => {
   // }, [userCategories, themeAheadOfLoading.lightColor, themeAheadOfLoading.darkColor]);
 
   return (
-    <SafeViewAndGradientBackground
-      // includeBackgroundOverlay={true}
-      backgroundOverlayHeight={120}
-      // backgroundOverlayBottomRadius={20}
+    <SafeViewAndGradientBackground 
+      backgroundOverlayHeight={120} 
       style={{ flex: 1 }}
     >
-      <View style={{ paddingHorizontal: 10 }}>
-        <View
-          style={[
-            themeStyles.primaryBackground,
-            {
-              paddingHorizontal: 20,
-              flexDirection: "row",
-              paddingVertical: 10,
-              alignItems: "center",
-              justifyContent: "center",
-              // justifyContent: 'space-between',
-              borderRadius: 10,
-              marginVertical: 10,
-            },
-          ]}
-        >
-          {/* <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText, {fontSize: 18, fontWeight: 'bold'}]}>Share mode</Text> */}
-
-          <View>
-            <Pressable
-              onPress={navigateToMomentFocus}
-              hitSlop={20}
-              style={{ position: "absolute", top: 0, right: -10 }}
-            >
-              <MaterialCommunityIcons
-                name={"plus"}
-                size={16}
-                color={manualGradientColors.homeDarkColor}
-                style={{
-                  backgroundColor: manualGradientColors.lightColor,
-                  borderRadius: 999,
-                }}
-              />
-            </Pressable>
-
-            <MaterialCommunityIcons
-              name="leaf"
-              size={26}
-              color={themeStyles.primaryText.color}
-            />
-          </View>
-        </View>
-      </View>
+      <TopBarWithAddMoment />
       <View
         style={{
           width: "100%",
@@ -114,38 +71,14 @@ const ScreenMoments = () => {
           elevation: 1,
           paddingHorizontal: 20,
           alignItems: "center",
-          width: "100%",
-
-          // height: 60,
+          width: "100%", 
           height: 0,
           flexDirection: "column",
           justifyContent: "flex-end",
           marginTop: 0,
         }}
       >
-        {/* <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-            justifyContent: "flex-start",
-          //             padding: 10,
-          //     backgroundColor: themeStyles.primaryBackground.backgroundColor,
-          //  borderRadius: 10,
-       
-          }}
-        >
-          <Text
-            style={[
-              themeStyles.primaryText,
-              appFontStyles.welcomeText,
-             { fontSize: appFontStyles.welcomeText.fontSize - 10,  
-             
-              },
-            ]}
-          >
-            Share mode
-          </Text>
-          {/* <LargeThoughtBubble/>  </View> */}
+        
       </View>
       <View style={{ width: "100%", height: 4 }}></View>
       <Loading isLoading={loadingNewFriend} />

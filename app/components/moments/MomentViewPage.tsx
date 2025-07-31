@@ -37,10 +37,9 @@ const MomentViewPage: React.FC<Props> = ({
   marginBottom,
   categoryColorsMap,
   currentIndexValue,
-  cardScaleValue,
-  marginKeepAboveFooter,
+  cardScaleValue, 
 }) => {
-  const { themeStyles, appFontStyles, appContainerStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles  } = useGlobalStyle();
   const { updateCapsule, deleteMomentRQuery, deleteMomentMutation } =
     useCapsuleList();
   const { selectedFriend } = useSelectedFriend();

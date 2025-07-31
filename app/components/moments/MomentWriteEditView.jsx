@@ -1,41 +1,43 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
   View,
+  Text,
   Keyboard,
   TouchableWithoutFeedback,
- 
   Alert,
-} from "react-native"; 
-import { useUser } from "@/src/context/UserContext"; 
+} from "react-native";
+import { useUser } from "@/src/context/UserContext";
 import TextMomentBox from "./TextMomentBox";
 import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import CategoryCreator from "./CategoryCreator"; 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
-  
-
+import EscortBar from "./EscortBar";
 import UserCategorySelector from "../headers/UserCategorySelector";
+import { close } from "@sentry/react-native";
 
 const MomentWriteEditView = ({
   momentText,
+  catCreatorVisible,
+  closeCatCreator,
+  categoryColorsMap,
   updateExistingMoment,
   existingMomentObject,
 }) => {
-  const { selectedFriend  } =
-    useSelectedFriend();
-  const { themeStyles, appContainerStyles } = useGlobalStyle();
+  const { selectedFriend } = useSelectedFriend();
+  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const {
     handleCreateMoment,
     createMomentMutation,
     handleEditMoment,
     editMomentMutation,
   } = useCapsuleList(); // NEED THIS TO ADD NEW
- 
+
   const { user } = useUser();
   const navigation = useNavigation();
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false); 
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedUserCategory, setSelectedUserCategory] = useState("");
@@ -111,8 +113,10 @@ const MomentWriteEditView = ({
 
   useEffect(() => {
     if (updateExistingMoment && existingMomentObject) {
-      // console.log(existingMomentObject);
-      setSelectedCategory(existingMomentObject.typedCategory);
+      console.log(`EEYOOOOOOOOOOOO`);
+      console.log(existingMomentObject);
+      setSelectedCategory(existingMomentObject.user_category_name);
+      setSelectedUserCategory(existingMomentObject.user_category);
     }
   }, [updateExistingMoment, existingMomentObject]);
 
@@ -123,28 +127,25 @@ const MomentWriteEditView = ({
     setSelectedCategory(category);
   };
 
-  const handleUserCategorySelect = (category) => {
+  const handleUserCategorySelect = ({ name: name, id: id }) => {
     // console.log("selecting category: ", category);
 
-    setSelectedUserCategory(category);
+    setSelectedUserCategory(id);
+    setSelectedCategory(name);
+    closeCatCreator();
   };
 
   const handleSave = async () => {
-
     if (!selectedUserCategory) {
-              Alert.alert(
-          `DEV MODE`,
-          `Oops! SelectedUserCategory is null`,
-          [
-            {
-              text: "Back",
-              onPress: () => {},
-              style: "cancel",
-            },
-          ]
-        );
+      Alert.alert(`DEV MODE`, `Oops! SelectedUserCategory is null`, [
+        {
+          text: "Back",
+          onPress: () => {},
+          style: "cancel",
+        },
+      ]);
       return;
-    } 
+    }
     if (momentTextRef && momentTextRef.current) {
       const textLength = momentTextRef.current.getText().length;
 
@@ -173,6 +174,7 @@ const MomentWriteEditView = ({
               selectedUserCategory: selectedUserCategory,
               moment: momentTextRef.current.getText(),
             };
+            console.log(requestData);
             await handleCreateMoment(requestData);
           } else {
             const editData = {
@@ -200,9 +202,7 @@ const MomentWriteEditView = ({
 
   useEffect(() => {
     if (editMomentMutation.isSuccess) {
-      // showMessage(true, null, "Edited moment saved!");
       navigation.goBack();
-      // navigation.navigate("Moments");
     }
   }, [editMomentMutation.isSuccess]);
 
@@ -212,67 +212,139 @@ const MomentWriteEditView = ({
       style={{
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "transparent",
-        padding: 4,
-        borderWidth: 0,
+        flex: 1,
         width: "100%",
+        // padding: 4,
       }}
       onPress={() => {}}
     >
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "transparent",
-          padding: 4,
-          borderWidth: 0,
-          width: "100%",
-        
-        }}
-      >
-        <UserCategorySelector
-          onPress={handleUserCategorySelect}
-          onSave={handleSave}
-          updatingExisting={updateExistingMoment}
-          existingId={Number(existingMomentObject?.user_category) || null}
-          selectedId={selectedUserCategory}
-        />
-
+      <View style={{ flex: 1 }}>
         <View
           style={[
-            appContainerStyles.talkingPointCard,
             {
-              backgroundColor: themeStyles.primaryBackground.backgroundColor,
-              paddingTop: 60,
+              padding: 4, // Padding needs to be on this view for some reason
+              width: "100%",
+              flex: 1,
+              //  height: '100%',
             },
           ]}
-        > 
-          <TextMomentBox
-            ref={momentTextRef}
-            editScreen={updateExistingMoment}
-            title={updateExistingMoment ? "Edit:" : "Add talking point"}
-            onTextChange={updateMomentText}
-            showCategoriesSlider={showCategoriesSlider}
-            handleCategorySelect={handleCategorySelect}
-            existingCategory={existingMomentObject?.typedCategory || null}
-            momentTextForDisplay={momentTextRef?.current?.getText() || null}
-            onSave={handleSave}
-            isKeyboardVisible={isKeyboardVisible}
-            selectedUserCategory={selectedUserCategory}
-            // CategoryCreatorComponent={
-            //   <CategoryCreator
-            //     show={showCategoriesSlider}
-            //     updateCategoryInParent={handleCategorySelect}
-            //     updateExistingMoment={updateExistingMoment}
-            //     existingCategory={existingMomentObject?.typedCategory || null}
-            //     momentTextForDisplay={momentTextRef?.current?.getText() || null}
-            //     onParentSave={handleSave}
-            //     isKeyboardVisible={isKeyboardVisible}
-            //   />
-            // }
-          /> 
+        >
+          <View
+            style={{
+              width: "100%",
+
+              position: "absolute",
+              top: 15,
+
+              paddingHorizontal: 20,
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Text
+              style={[
+                appFontStyles.welcomeText,
+                { zIndex: 2, color: themeStyles.primaryText.color, fontSize: 24  },
+              ]}
+            >
+              {selectedCategory}
+            </Text>
+          </View>
+          <View
+            style={[
+              {
+                flexDirection: "column",
+                justifyContent: "flex-start",
+flex: 1,
+flexGrow: 1,
+                width: "100%",
+                zIndex: 1,
+                // backgroundColor: "pink",
+              },
+            ]}
+          >
+            <View
+              style={{
+                padding: 20,
+                borderRadius: 40,
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                //  flex: 1,
+                width: "100%",
+                flex: 1,
+                marginBottom: 6,
+                //marginBottom: marginBottom, in momentsviewpage but not here since keyboard is up + no footer bar
+                zIndex: 1,
+
+                overflow: "hidden",
+
+                backgroundColor:
+                  themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+              }}
+            >
+              <TextMomentBox
+                ref={momentTextRef}
+                editScreen={updateExistingMoment}
+                title={updateExistingMoment ? "Edit:" : "Add talking point"}
+                onTextChange={updateMomentText}
+                showCategoriesSlider={showCategoriesSlider}
+                handleCategorySelect={handleCategorySelect}
+                existingCategory={existingMomentObject?.typedCategory || null}
+                momentTextForDisplay={momentTextRef?.current?.getText() || null}
+                onSave={handleSave}
+                isKeyboardVisible={isKeyboardVisible}
+                selectedUserCategory={selectedUserCategory}
+              />
+            </View>
+            <View
+              style={{
+                // backgroundColor: "orange",
+                height: 50,
+               paddingHorizontal: 6, // WEIRD NUMBER because + 4 padding above I think
+               marginBottom: 6, // WEIRD NUMBER because + 4 padding above
+                flexShrink: 1,
+                flexDirection: "column",
+                justifyContent: "flex-end",
+              }}
+            >
+              <EscortBar
+                forwardFlowOn={true}
+                label={`Save`}
+                onPress={handleSave}
+              />
+            </View>
+          </View>
+
+          {/* </View> */}
         </View>
- 
+        {/* <View
+          style={{
+            position: "absolute",
+            zIndex: 50000,
+            bottom: 100,
+            width: "100%",
+          }}
+        >
+          <EscortBar forwardFlowOn={true} label={`Save`} onPress={handleSave} />
+        </View> */}
+        {catCreatorVisible && (
+          // <UserCategorySelector
+          //   onPress={handleUserCategorySelect}
+          //   onSave={handleSave}
+          //   updatingExisting={updateExistingMoment}
+          //   existingId={Number(existingMomentObject?.user_category) || null}
+          //   selectedId={selectedUserCategory}
+          // />
+          <CategoryCreator
+            onPress={handleUserCategorySelect}
+            onSave={handleSave}
+            updatingExisting={updateExistingMoment}
+            existingId={Number(existingMomentObject?.user_category) || null}
+            onClose={closeCatCreator}
+            categoryColorsMap={categoryColorsMap}
+            // selectedId={selectedUserCategory}
+          />
+        )}
       </View>
     </TouchableWithoutFeedback>
   );

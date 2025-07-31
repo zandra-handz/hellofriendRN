@@ -9,7 +9,7 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 
 type Props = {};
 
-const TopBar = (props: Props) => {
+const TopBarHome = (props: Props) => {
   const { appFontStyles, themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
@@ -67,4 +67,4 @@ const TopBar = (props: Props) => {
   );
 };
 
-export default TopBar;
+export default TopBarHome;

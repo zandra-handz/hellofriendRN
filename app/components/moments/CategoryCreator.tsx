@@ -1,495 +1,292 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+// MEMOIZED VERSION
+// performs better than non-memoized, per DevTools profiling
+import React, { useMemo, useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  SlideInUp,
+  SlideOutUp,
+  SlideInDown,
+  SlideOutDown,
+} from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import AddOutlineSvg from "@/app/assets/svgs/add-outline.svg";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
-import SingleLineEnterBox from "@/app/components/appwide/input/SingleLineEnterBox";
-import CategoryButtonDualPress from "../buttons/scaffolding/CategoryButtonDualPress";
-import CategoryItemsModal from "../headers/CategoryItemsModal";
-import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
- 
+import CategoryButton from "./CategoryButton";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import SearchModal from "../headers/SearchModal";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/src/types/NavigationTypes";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+import { useNavigation } from "@react-navigation/native";
+import { SharedValue } from "react-native-reanimated";
+import UserCategorySelectorButton from "../headers/UserCategorySelectorButton";
+import { useCategories } from "@/src/context/CategoriesContext";
+import CategoryButtonForCreator from "./CategoryButtonForCreator";
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-type Props = {
-  updateCategoryInParent: (category: string | null) => void;
-  updateExistingMoment: () => void;
-  existingCategory: string | null;
-  onParentSave: () => void;
+type Props = { 
+  categoryNames: string[];
+  categoryColorsMap: Record<string, string>;
+  onPress: () => void;
+  onSave: () => void;
+  onClose: () => void;
+  updatingExisting: boolean;
+  existingId: number;
+  selectedId: number;
 };
-
 const CategoryCreator = ({
-  updateCategoryInParent,
-  updateExistingMoment,
-  existingCategory,
-  onParentSave,
+  onPress, 
+  updatingExisting,
+  existingId,
+  categoryColorsMap,
+  onClose, 
 }: Props) => {
-  const { themeStyles, appContainerStyles } = useGlobalStyle();
-  const { selectedFriend, loadingNewFriend, friendDashboardData } =
-    useSelectedFriend();
-  const [selectedCategory, setSelectedCategory] = useState(existingCategory); //can start out as null
-  const [selectedCategoryCapsules, setSelectedCategoryCapsules] =
-    useState(null);
   const { capsuleList } = useCapsuleList();
+  const { userCategories, createNewCategory, createNewCategoryMutation } =
+    useCategories();
+  const {
+    themeStyles,
+    manualGradientColors,
+    gradientColorsHome,
+    appContainerStyles,
+    appSpacingStyles,
+  } = useGlobalStyle(); 
 
-  const { categoryNames, categoryCount } = useTalkingPCategorySorting({
-    listData: capsuleList,
-  });
-
-  //i added id to category names at a later date to get category colors for charts, simplest way to update this component is to remove extra data here
-  const [categoryNamesOnly, setCategoryNamesOnly] = useState(
-    categoryNames.map(c => c.category)
-  );
-  // console.log("CATEGORY CREATOR RERENDERED");
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const containerHeight = `100%`;
-
-  const [newCategoryEntered, setNewCategoryEntered] = useState(false);
-
-  const [pressedOnce, setPressedOnce] = useState(false);
-
-  const newCategoryRef = useRef(null);
-
-  const [viewExistingCategories, setViewExistingCategories] = useState(true);
-
-  const { getLargestCategory, getCategoryCap, getCreationsRemaining } =
-    useTalkingPFunctions({
+    const {
+      categorySizes,
+      addCategoryItem,
+      moveCategoryCount,
+      generateGradientColors,
+      generateRandomColors,
+    } = useMomentSortingFunctions({
       listData: capsuleList,
-      friendData: friendDashboardData,
-      categoryCount,
     });
+ 
+  // console.log(categoryColorsMap);
 
-  const [remainingCategories, setRemainingCategories] = useState(
-    getCreationsRemaining
-  );
+  const [searchModalVisible, setSearchModalVisible] = useState(false);
 
-  // const [categoryLimit, setCategoryLimit] = useState(getCategoryCap);
+  const [selectedId, setSelectedId] = useState(null);
+   const [categoriesMap, setCategoriesMap] = useState({});
+    const [categoriesSortedList, setCategoriesSortedList] = useState([]);
+    const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
+    const [tempCategoriesMap, setTempCategoriesMap] = useState({});
+    useFocusEffect(
+      useCallback(() => {
 
-  // for data updates after initial render
-  useEffect(() => {
-    if (
-      capsuleList &&
-      selectedFriend &&
-      friendDashboardData &&
-      !loadingNewFriend
-    ) {
-      //Needed because user can change the friend in the middle of writing the moment
-      setSelectedCategory(null);
-      resetNewCategoryText();
+        if (!capsuleList || capsuleList?.length < 1) {
+          return;
+        }
+  
+        let categories = categorySizes();
+        //  console.log(categories);
+        setCategoriesMap(categories.lookupMap);
+        setCategoriesSortedList(categories.sortedList);
+        setTempCategoriesSortedList(categories.sortedList);
+        setTempCategoriesMap(categories.lookupMap);
+      }, [capsuleList])
+    );
 
-      setRemainingCategories(getCreationsRemaining());
-      // setCategoryLimit(getCategoryCap());
 
-      // if (updateExistingMoment && existingCategory) { //updateExistingMoment will always be defined
-      if (existingCategory) {
-        setSelectedCategory(existingCategory);
-      } else {
-        setSelectedCategory(getLargestCategory());
-      }
-      setViewExistingCategories(capsuleList.length > 0);
+    
+      // useEffect(() => {
+      //   if (categoryColorsMap && tempCategoriesSortedList) {
+      //     // console.log('tempcategorysortedlist');
+      //     const userCategorySet = new Set(
+      //       tempCategoriesSortedList.map((item) => item.user_category)
+      //     );
+      //     // console.log(tempCategoriesSortedList);
+      //     // console.log(userCategorySet);
+    
+      //     const filteredColors = categoryColors
+      //       .filter((item) => userCategorySet.has(item.user_category))
+      //       .map((item) => item.color);
+      //     setColors(filteredColors);
+      //   }
+      // }, [categoryColors, tempCategoriesSortedList]);
+    
+ useEffect(() => {
+    if (!categoriesSortedList) {
+      return;
     }
-  }, [capsuleList, friendDashboardData, selectedFriend, loadingNewFriend]);
 
-  const updateNewCategoryText = (text) => {
-    if (newCategoryRef && newCategoryRef.current) {
-      newCategoryRef.current.setText(text);
-    }
-  };
+    console.log(`existing: `, existingId);
 
-  const resetNewCategoryText = () => {
-    if (newCategoryRef && newCategoryRef.current) {
-      newCategoryRef.current.setText(null);
-    }
-  };
-
-  useEffect(() => {
-    if (updateCategoryInParent) {
-      if (selectedCategory === null) {
-        updateCategoryInParent(null);
-      } else {
-        const category = selectedCategory;
-        // const capsulesForCategory = capsuleList.filter(
-        //   (capsule) => capsule.typedCategory === category
-        // );
-        updateCategoryInParent(category);
-      }
-    }
-  }, [selectedCategory]);
-
-  const handleFilterCategory = (category) => {
-    if (category) {
-      setSelectedCategory(category);
-      setSelectedCategoryCapsules(
-        capsuleList.filter(
-          (capsule) => capsule.typedCategory === selectedCategory
-        )
+    if (updatingExisting && existingId) {
+      const find = userCategories.findIndex(
+        (category) => category.id === existingId
       );
-    } else {
-      setSelectedCategoryCapsules([]);
-      setSelectedCategory(null);
+        console.log(find);
+   
+      setSelectedId(existingId);
+
+      return;
     }
-  };
 
-  const handleCategoryPress = (category) => {
-    handleFilterCategory(category);
-    setModalVisible(true);
-  };
+    let largest = categoriesSortedList[0]?.user_category;
+    // console.log(`largest: `, typeof largest);
 
-  const handlePressOut = (category) => {
-    if (category === selectedCategory && pressedOnce) {
-      handleSave();
-      setPressedOnce(false);
-    } else {
-      handleFilterCategory(category);
-      setPressedOnce(true);
+    if (largest) {
+      setSelectedId(largest);
     }
-  };
+  }, [categoriesSortedList]);
+  // const memoizedSearchIcon = useMemo(
+  //   () => (
+  //     <Pressable
+  //       onPress={() => setSearchModalVisible(true)}
+  //       style={({ pressed }) => ({
+  //         flexDirection: "row",
+  //         alignItems: "center",
+  //         //   backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+  //         justifyContent: "center",
+  //         borderRadius: 999,
+  //         // paddingHorizontal: 20,
+  //         paddingVertical: 5,
 
-  const handleSave = () => {
-    if (selectedCategory) {
-      onParentSave();
-    }
-  };
+  //         textAlign: "center",
+  //         opacity: pressed ? 0.6 : 1,
+  //       })}
+  //     >
+  //       <MaterialCommunityIcons
+  //         name={"text-search"}
+  //         size={iconSize}
+  //         color={themeStyles.genericText.color}
+  //         style={{}}
+  //       />
+  //       {/* <Text style={[themeStyles.genericText, styles.categoryLabel]}>
+  //         Search
+  //       </Text> */}
+  //     </Pressable>
+  //   ),
+  //   [iconSize, themeStyles]
+  // );
+  const renderedButtons = useMemo(
+    () => (
+      <View style={styles.buttonRow}>
+        {/* {memoizedSearchIcon} */}
+        {userCategories.map(({ name, id }) => {
+          const categoryColor = categoryColorsMap[id];
 
-  const handleNewCategory = (newCategory) => {
-    setSelectedCategory(newCategory);
-    updateCategoryInParent(newCategory, []);
-    setNewCategoryEntered(true);
-  };
-
-  useEffect(() => {
-    if (newCategoryEntered) {
-      onParentSave();
-      setNewCategoryEntered(false);
-    }
-  }, [newCategoryEntered]);
-
-  const renderCategoryButtonItem = useCallback(
-    ({ item, index }) => {
-      return (
-        <View
-          key={item}
-          style={{
-            width: 140,
-            height: "100%",
-            overflow: "hidden",
-            marginRight: 3,
-          }}
-        >
-          <CategoryButtonDualPress
-            height={"80%"}
-            buttonPrefix={
-              // updateExistingMoment && existingCategory ? "Save to" : "Add to"
-              existingCategory ? "Save to" : "Add to"
-            }
-            onPress={() => handlePressOut(item)} // Correct way to pass the function
-            onLongPress={() => handleCategoryPress(item)} // Correct way to pass the function
-            label={item}
-            selected={item === selectedCategory} // Pass 'item' as the label (since it represents each category)
-            width={140} 
-        
-          />
-        </View>
-      );
-    },
-    [handlePressOut, handleCategoryPress, selectedCategory]
+          return (
+            <View
+              key={id ?? name ?? "Uncategorized"}
+              style={styles.buttonWrapper}
+            >
+              
+              <CategoryButtonForCreator
+                height={"auto"}
+                selectedId={selectedId}
+                //  viewableItemsArray={viewableItemsArray}
+                label={name}
+                highlightColor={categoryColor}
+                onPress={() => onPress({name: name, id: id})}
+              />
+            </View>
+          );
+        })}
+      </View>
+    ),
+    [userCategories, categoryColorsMap, onPress]
   );
-
-  const extractItemKey = (item, index) =>
-    item?.id ? item.id.toString() : `category-${index}`;
 
   return (
-    <View
-      style={{
-        position: "absolute",
-        backgroundColor: "limegreen",
-        height: 38,
-        width: "100%",
-        zIndex: 1000,
-        top: "92%",
-        flex: 1,
-        transform: [{ translateY: -50 }],
-        // alignItems: "center",
-      }}
-    >
-      {selectedFriend &&
-        friendDashboardData &&
-        categoryNamesOnly &&
-        capsuleList &&
-        !loadingNewFriend && (
-          <>
-            <View
-              style={[
-                appContainerStyles.categoryCreatorContainer,
-                themeStyles.genericTextBackgroundShadeTwo,
-              ]}
+    <>
+      {categoryColorsMap && (
+        <Animated.View
+          entering={SlideInUp}
+          exiting={SlideOutUp}
+          style={[
+            styles.categoryNavigatorContainer,
+            styles.momentsScreenPrimarySpacing,
+            {
+              backgroundColor:
+                // themeStyles.overlayBackgroundColor.backgroundColor,
+                themeStyles.primaryBackground.backgroundColor,
+            },
+          ]}
+        >
+
+          {userCategories && (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={[styles.scrollContainer]}
             >
-              <View
-                style={{
-                  flexDirection: "row",
-                  height: "100%",
-                  width: "100%",
-                  alignItems: "center",
-                  paddingLeft: "4%",
-                }}
-              >
-                {categoryCount > 0 && viewExistingCategories && (
-                  <FlatList
-                    data={categoryNamesOnly}
-                    horizontal={true}
-                    keyboardShouldPersistTaps="handled"
-                    showsHorizontalScrollIndicator={false}
-                    nestedScrollEnabled
-                    keyExtractor={extractItemKey}
-                    renderItem={renderCategoryButtonItem}
-                    initialNumToRender={15}
-                    maxToRenderPerBatch={10}
-                    windowSize={10}
-                    removeClippedSubviews={true}
-                    contentContainerStyle={{
-                      justifyContent: "space-around",
-                      maxHeight: containerHeight,
-                      flexGrow: 0,
-                    }}
-                    ListFooterComponent={
-                      <View style={styles.flatListEndSpace} />
-                    }
-                  />
-                )}
+              {renderedButtons}
+            </ScrollView>
+          )}
+                    <Pressable
+            onPress={onClose}
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
 
-                {(!viewExistingCategories || categoryCount === 0) && (
-                  <View
-                    style={{
-                      flex: 1,
-                      width: "100%",
-                      alignContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <SingleLineEnterBox
-                      ref={newCategoryRef}
-                      autoFocus={false}
-                      onEnterPress={updateCategoryInParent}
-                      onSave={handleNewCategory}
-                      title={"New category: "}
-                      onTextChange={updateNewCategoryText}
-                    />
-                  </View>
-                )}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignContent: "center",
-                    alignItems: "center",
-                    textAlign: "left",
-                    justifyContent: "center",
-                    width: "10%",
-                  }}
-                >
-                  {remainingCategories !== null && remainingCategories > 0 && (
-                    <View
-                      style={{
-                        zIndex: 7000,
-                        elevation: 7000,
-                        paddingHorizontal: "2%",
-                        justifyContent: "center",
-                        width: "100%",
-                        height: "100%",
-                        alignContent: "center",
-                        alignItems: "center",
-
-                        alignContent: "center",
-                      }}
-                    >
-                      {!viewExistingCategories && (
-                        <AddOutlineSvg
-                          width={32}
-                          height={32}
-                          color={themeStyles.modalIconColor.color}
-                          onPress={() => setViewExistingCategories(true)}
-                        />
-                      )}
-                      {viewExistingCategories && (
-                        <AddOutlineSvg
-                          width={32}
-                          height={32}
-                          color={themeStyles.modalIconColor.color}
-                          onPress={() => setViewExistingCategories(false)}
-                        />
-                      )}
-                    </View>
-                  )}
-                </View>
-              </View>
-            </View>
-
-            {modalVisible && (
-              <View>
-                <CategoryItemsModal
-                  isVisible={modalVisible}
-                  title={selectedCategory}
-                  data={selectedCategoryCapsules}
-                  closeModal={() => setModalVisible(false)}
-                />
-              </View>
-            )}
-          </>
-        )}
-    </View>
+              height: 30,
+              paddingTop: 5,
+            }}
+          >
+            <MaterialIcons
+              name={"keyboard-arrow-down"}
+              color={themeStyles.primaryText.color}
+              color={manualGradientColors.homeDarkColor}
+              size={16}
+              style={{
+                backgroundColor: manualGradientColors.lightColor,
+                borderRadius: 999,
+              }}
+            />
+          </Pressable>
+        </Animated.View>
+      )}
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    zIndex: 6000,
-    elevation: 6000,
-    bottom: 200,
-    left: 0,
-    right: 0,
-    borderRadius: 2,
-    height: 66,
-    paddingHorizontal: 2,
-    flex: 1,
-    alignContent: "center",
-    flexDirection: "row",
-  },
-  loadingWrapper: {
-    flex: 1,
-    paddingRight: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  categoryButton: {
-    padding: 10,
-    paddingVertical: 8,
-    borderRadius: 20,
-    margin: 4,
-    height: 130,
-    overflow: "hidden", // Ensures text does not overflow the button
-  },
-  selectedCategoryButton: {
-    backgroundColor: "#d4edda",
-  },
-  categoryText: {
+  categoryLabel: {
     fontFamily: "Poppins-Regular",
     fontSize: 14,
-    color: "black",
-    // Ensure text does not wrap
-    textAlign: "center",
-    overflow: "hidden",
+    paddingVertical: 0,
+    paddingHorizontal: 4,
   },
-  selectedCategoryText: {
-    color: "white",
-    fontSize: 14,
-    fontFamily: "Poppins-Bold",
-  },
-  noCategoriesText: {
-    fontSize: 16,
-    color: "#999",
-    textAlign: "center",
-    width: "100%",
-  },
-  capsulesContainer: {
-    flex: 1,
-    width: "100%",
-    paddingHorizontal: 10,
-  },
-  capsulesText: {
-    fontSize: 16,
-    marginVertical: 5,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-  },
+  //brought down from global context
+  momentsScreenPrimarySpacing: {
+    // borderRadius: 10,
 
-  selectMomentListContainer: {
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    height: "100%",
-    width: "100%",
-    borderRadius: 20,
-    borderTopRightWidth: 0.6,
-    borderColor: "darkgray",
-  },
-
-  momentModalTitle: {
-    paddingTop: 10,
-    fontSize: 16,
-    fontFamily: "Poppins-Bold",
-    marginBottom: 6,
-  },
-  momentCheckboxContainer: {
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "center",
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 0,
-    paddingTop: 4,
-    paddingRight: 10,
-    paddingLeft: 6,
-  },
-  momentItemTextContainer: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 20,
-    paddingBottom: 20,
-    width: "100%",
-    borderBottomWidth: 0.4,
-    borderBottomColor: "#fff",
-  },
-  newMomentItemTextContainer: {
-    flexDirection: "row", // Allows text to wrap
-    // Ensures text wraps to the next line
-    alignItems: "flex-start", // Aligns text to the top
-    marginBottom: 10,
-    paddingBottom: 20,
-    maxHeight: 200,
-    width: "100%",
-  },
-  locationTitle: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    fontSize: 17,
-    fontFamily: "Poppins-Regular",
-  },
-  momentItemText: {
-    fontSize: 13,
-    fontFamily: "Poppins-Regular",
-    width: "100%",
-  },
-  newMomentItemText: {
-    fontSize: 20,
-    fontFamily: "Poppins-Regular",
-    width: "100%",
-  },
-  momentModalContainer: {
-    width: "100%",
-    borderRadius: 10,
     padding: 0,
-
-    height: 480,
-    maxHeight: "80&",
+  },
+  categoryNavigatorContainer: {
+    position: "absolute",
+    top: -24, //20
+    paddingTop: 0,
+    zIndex: 5,
+    height: "auto",
+    height: 200,
+    // width: "74%",
+    width: "100%",
+    selfAlign: "center",
+  },
+  scrollContainer: {
+    maxHeight: 130,
+    marginTop: 0,
+    borderRadius: 10,
+    padding: 10,
+    paddingTop: 10,
+  },
+  buttonRow: {
+    flexWrap: "wrap",
+    flexDirection: "row",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
-  flatListEndSpace: {
-    width: 200,
+  buttonWrapper: {
+    flexDirection: "row",
+
+    marginHorizontal: 0,
+    marginBottom: 10,
   },
 });
 
-export default CategoryCreator;
+export default React.memo(CategoryCreator);

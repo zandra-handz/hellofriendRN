@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
-import TopBar from "@/app/components/home/TopBar";
+import TopBarHome from "@/app/components/home/TopBarHome";
 import { AppState, AppStateStatus } from "react-native";
 import ConditionalMessageUI from "@/app/components/home/ConditionalMessageUI";
 // import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
@@ -290,7 +290,7 @@ const ScreenHome = () => {
             <View style={{ width: "100%", paddingHorizontal: 0, marginTop: 0 }}>
            
               {selectedFriend && (
-                <TopBar /> 
+                <TopBarHome /> 
               )}
             </View>
 

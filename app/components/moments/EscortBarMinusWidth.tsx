@@ -1,27 +1,26 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React from "react";
-import Animated, {
-  SlideInDown,
-  SlideOutDown, 
-} from "react-native-reanimated";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import {   MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
- 
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+
 type Props = {
   onPress: () => void;
   label: string;
 };
 
 const EscortBarMinusWidth = ({ onPress, label = "navigator" }: Props) => {
+  const { navigateBack } = useAppNavigations();
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   return (
     <Animated.View entering={SlideInDown} exiting={SlideOutDown}>
- 
-
+      
+      
       <GlobalPressable
         onPress={onPress}
-        style={[ 
+        style={[
           {
             paddingHorizontal: 20,
             flexDirection: "row",
@@ -29,13 +28,52 @@ const EscortBarMinusWidth = ({ onPress, label = "navigator" }: Props) => {
             paddingVertical: 12,
             paddingTop: 17,
             alignItems: "center",
-            justifyContent: "center", 
+            justifyContent: "center",
             borderRadius: 10,
+            // backgroundColor: "orange",
+           
             marginVertical: 10,
           },
         ]}
       >
-         <View
+        <View
+          style={{
+            width: 'auto',
+            left: 0, // should match padding on right
+            flex: 1,
+            height: "100%",
+            // backgroundColor: "red",
+            position: "absolute",
+            bottom: 0,
+            top: 0,
+            height: 50,
+            alignItems: 'center',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            zIndex: 50000,
+          }}
+        >
+          <Pressable
+            hitSlop={10}
+            style={{
+              borderRadius: 999,
+              padding: 4,
+              backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            //   onPress={navigateBack}
+            onPress={navigateBack}
+          >
+            <MaterialIcons
+              name={"keyboard-arrow-left"}
+              size={20}
+              color={themeStyles.primaryText.color}
+            />
+          </Pressable>
+        </View>
+
+        <View
           style={{
             position: "absolute",
             top: 0,
@@ -60,9 +98,7 @@ const EscortBarMinusWidth = ({ onPress, label = "navigator" }: Props) => {
             //  backgroundColor: themeStyles.primaryBackground.backgroundColor,
           }}
         >
-          <View
-            // onPress={navigateToMomentFocus}
-            // hitSlop={20}
+          <View 
             style={{ alignItems: "center", justifyContent: "center" }}
           >
             <MaterialIcons
@@ -72,9 +108,7 @@ const EscortBarMinusWidth = ({ onPress, label = "navigator" }: Props) => {
               color={themeStyles.primaryText.color}
               style={{
                 position: "absolute",
-                bottom: 17,
-                // backgroundColor: themeStyles.primaryText.color,
-                // borderRadius: 999,
+                bottom: 17, 
               }}
             />
             <Text

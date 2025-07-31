@@ -43,7 +43,7 @@ import Animated, {
 import { useNavigation } from "@react-navigation/native";
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { MaterialIcons } from "@expo/vector-icons";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { enableLayoutAnimations } from "react-native-reanimated";
 // enableLayoutAnimations(true);
@@ -60,7 +60,7 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
   }, [scrollTo]);
 const { selectedFriend } = useSelectedFriend();
   const { capsuleList, updateCapsule } = useCapsuleList();
-  const { themeStyles } = useGlobalStyle();
+ 
 
   const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,

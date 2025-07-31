@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Pressable,
+  FlatList,
+} from "react-native";
 import React, { useCallback, useState } from "react";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { FlashList } from "@shopify/flash-list";
@@ -9,6 +15,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import EscortBar from "./EscortBar";
 import { Moment } from "@/src/types/MomentContextTypes";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import CheckboxListItem from "./CheckboxListItem";
 interface FinalizeListProps {
   data: [];
   categories: [];
@@ -27,7 +34,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   const [selectedMoments, setSelectedMoments] = useState<Moment[]>([]);
   const [changedMoments, setChangedMoments] = useState<Moment[]>([]);
   const [visibleCategories, setVisibleCategories] = useState<Moment[]>(data); //so that we can use the same value for All and for individual ones
-const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
   const navigation = useNavigation();
   const { updateCapsule } = useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
@@ -62,7 +69,7 @@ const { selectedFriend } = useSelectedFriend();
   );
 
   const renderListItem = useCallback(
-    ({ item }: {item: Moment}) => {
+    ({ item }: { item: Moment }) => {
       const isSelected = selectedMoments?.some((m) => m.id === item.id);
 
       return (
@@ -73,7 +80,6 @@ const { selectedFriend } = useSelectedFriend();
               height: isSelected ? "auto" : ITEM_HEIGHT,
               minHeight: ITEM_HEIGHT,
               flexDirection: "row",
-              
               width: "100%",
               paddingRight: 0,
               paddingVertical: 10,
@@ -88,8 +94,7 @@ const { selectedFriend } = useSelectedFriend();
         >
           <View
             style={{
-              height: "100%",
-              // width: 300,
+              height: "100%", 
               flexShrink: 1,
               paddingHorizontal: 10,
               alignItems: "center",
@@ -152,7 +157,11 @@ const { selectedFriend } = useSelectedFriend();
 
     const friendId = selectedFriend.id;
     changedMoments.forEach((moment) => {
-      updateCapsule({friendId: friendId, capsuleId: moment.id, isPreAdded: !moment.preAdded});
+      updateCapsule({
+        friendId: friendId,
+        capsuleId: moment.id,
+        isPreAdded: !moment.preAdded,
+      });
     });
     navigation.navigate("AddHello");
   };
@@ -193,7 +202,7 @@ const { selectedFriend } = useSelectedFriend();
   const renderCategoryButton = ({ item, index }) => {
     return (
       <View style={{ marginHorizontal: CATEGORY_MARGIN }}>
-        <TouchableOpacity
+        <Pressable
           onPress={() => handleCategoryFilterPress(item)}
           style={{
             width: "auto",
@@ -203,7 +212,7 @@ const { selectedFriend } = useSelectedFriend();
           }}
         >
           <Text style={themeStyles.genericText}># {item}</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   };
@@ -217,7 +226,7 @@ const { selectedFriend } = useSelectedFriend();
             data={categories}
             renderItem={renderCategoryButton}
             ListHeaderComponent={
-              <TouchableOpacity
+              <Pressable
                 onPress={() => handleShowAllCategoriesPress()}
                 style={{
                   width: "auto",
@@ -235,7 +244,7 @@ const { selectedFriend } = useSelectedFriend();
                 >
                   All categories
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             }
           />
         </View>
@@ -255,26 +264,7 @@ const { selectedFriend } = useSelectedFriend();
           ListFooterComponent={() => <View style={{ height: 100 }} />}
         />
       </View>
-      <EscortBar   onPress={handleUpdateMoments} />
-      {/* <TouchableOpacity
-        onPress={handleUpdateMoments}
-        style={[
-          {
-            width: "100%",
-            height: "auto",
-            // position: "absolute",
-            bottom: 0,
-            alignItems: "center",
-            padding: 10,
-            borderRadius: 20,
-            backgroundColor: manualGradientColors.homeDarkColor,
-          },
-        ]}
-      >
-        <Text style={{ color: manualGradientColors.lightColor }}>
-          Save and continue
-        </Text>
-      </TouchableOpacity> */}
+      <EscortBar onPress={handleUpdateMoments} />
     </>
   );
 };

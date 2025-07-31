@@ -7,45 +7,39 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
-import { useUser } from "@/src/context/UserContext";  
-
+import { useUser } from "@/src/context/UserContext";
+import EscortBar from "../moments/EscortBar";
+import CheckboxListItem from "../moments/CheckboxListItem";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
 const ReloadList = ({ helloId, items }) => {
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
-const { user } = useUser();
+  const { user } = useUser();
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
-  const { 
-    capsuleList, 
-    handleCreateMoment, 
-  } = useCapsuleList(); // also need to update cache
+  const { capsuleList, handleCreateMoment } = useCapsuleList(); // also need to update cache
 
-    const {  categoryNames, categoryCount } = useTalkingPCategorySorting({listData: capsuleList})
+  const { categoryNames, categoryCount } = useTalkingPCategorySorting({
+    listData: capsuleList,
+  });
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-//i added id to category names at a later date to get category colors for charts, simplest way to update this component is to remove extra data here
-const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(
-  categoryNames.map(c => c.category)
-);
- 
+  //i added id to category names at a later date to get category colors for charts, simplest way to update this component is to remove extra data here
+  const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(
+    categoryNames.map((c) => c.category)
+  );
+
   //  const { helloesList } = useHelloes();
   //  const hello = helloesList.find((hello) => hello.id === helloId);
 
- 
-    const {
-  getLargestCategory,
-  getCategoryCap, 
-} = useTalkingPFunctions({
-  listData: capsuleList,
-  friendData: friendDashboardData,
-  categoryCount,
-});
-
-
+  const { getLargestCategory, getCategoryCap } = useTalkingPFunctions({
+    listData: capsuleList,
+    friendData: friendDashboardData,
+    categoryCount,
+  });
 
   const renderListItem = useCallback(
     ({ item, index }) => {
@@ -54,95 +48,40 @@ const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(
       );
 
       return (
-        <View
-          style={[
-            {
-              height: isSelected ? "auto" : ITEM_HEIGHT,
-              minHeight: ITEM_HEIGHT,
-              flexDirection: "row",
-              width: "100%",
-              paddingRight: 0,
-              paddingVertical: 10,
-              overflow: "hidden",
-              backgroundColor: isSelected
-                ? manualGradientColors.homeDarkColor
-                : "transparent",
-            },
-          ]}
-        >
-          <View
-            style={{
-              height: "100%",
-              width: 400,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <CheckBox
-              checked={selectedMoments?.includes(item)}
-              onPress={() => handleCheckboxChange(item)}
-              title={`#${item.user_category_name} - ${item.capsule}`}
-              containerStyle={{
-                borderWidth: 0,
-                backgroundColor: isSelected
-                  ? manualGradientColors.homeDarkColor
-                  : "transparent",
-                padding: 0,
-                flex: 1,
-                width: "100%",
-              }}
-              wrapperStyle={{
-                height: "100%",
-                flexDirection: "row", // fixed typo from 'lexDirection'
-                justifyContent: "space-between",
-              }}
-              textStyle={{
-                width: "82%",
-                color: isSelected
-                  ? manualGradientColors.lightColor
-                  : themeStyles.primaryText.color,
-                fontSize: 13,
-              }}
-              uncheckedColor={themeStyles.primaryText.color}
-              checkedColor={manualGradientColors.lightColor}
-              iconRight={true}
-              right={true}
-            />
-          </View>
-        </View>
+            <CheckboxListItem
+      item={item}
+      selectedItems={selectedMoments}
+      isSelected={isSelected}
+      height={ITEM_HEIGHT}
+      onPress={handleCheckboxChange}
+
+      /> 
+         
       );
     },
     [selectedMoments, manualGradientColors, themeStyles]
   );
 
-  //   useEffect(() => {
-
-  //   }, [updateCapsuleMutation]);
-
-  // all at once
-  // const handleRestore = async () => {
-  //   await Promise.all(selectedMoments.map(moment => updateCapsule(moment.id, false)));
-  // };
- 
-
-    const handleBulkCreateMoments = () => {
+  const handleBulkCreateMoments = () => {
     selectedMoments.map((moment) => {
       const momentData = {
         user: user.id,
         friend: selectedFriend.id,
 
         selectedCategory: moment.typed_category,
-         selectedUserCategory: moment.user_category,
+        selectedUserCategory: moment.user_category,
         moment: moment.capsule,
       };
 
       handleCreateMoment(momentData);
     });
-    navigation.navigate('Moments', {scrollTo: null});
+    navigation.navigate("Moments", { scrollTo: null });
   };
 
   const handleCheckboxChange = (item) => {
-    const isNewCategory = !combinedCategoryTotal.includes(item.user_category_name);
+    const isNewCategory = !combinedCategoryTotal.includes(
+      item.user_category_name
+    );
 
     if (isNewCategory) {
       const categoryLimit = getCategoryCap();
@@ -155,7 +94,10 @@ const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(
 
         return;
       } else {
-        setCombinedCategoryTotal([...combinedCategoryTotal, item.typed_category]);
+        setCombinedCategoryTotal([
+          ...combinedCategoryTotal,
+          item.typed_category,
+        ]);
       }
     }
     setSelectedMoments((prevSelectedMoments) => {
@@ -181,9 +123,7 @@ const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(
 
   return (
     <>
-      <View
-        style={[themeStyles.overlayBackgroundColor, { flex: 1, width: 500 }]}
-      >
+      <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
         <FlashList
           data={items}
           // data={hello.pastCapsules}
@@ -200,23 +140,11 @@ const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(
           ListFooterComponent={() => <View style={{ height: 100 }} />}
         />
       </View>
-      <TouchableOpacity
+      <EscortBar
+        forwardFlowOn={false}
+        label={"Reload Selected"}
         onPress={handleBulkCreateMoments}
-        style={[
-          {
-            width: "100%",
-            height: "auto",
-            position: "absolute",
-            bottom: 0,
-            alignItems: "center",
-            padding: 10,
-            borderRadius: 20,
-            backgroundColor: manualGradientColors.homeDarkColor,
-          },
-        ]}
-      >
-        <Text style={{ color: manualGradientColors.lightColor }}>Reload</Text>
-      </TouchableOpacity>
+      />
     </>
   );
 };
