@@ -41,7 +41,7 @@ const MomentWriteEditView = ({
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedUserCategory, setSelectedUserCategory] = useState("");
-
+const [startingId, setStartingId ] = useState();
   const [showCategoriesSlider, setShowCategoriesSlider] =
     useState(!!momentText);
 
@@ -112,9 +112,11 @@ const MomentWriteEditView = ({
   };
 
   useEffect(() => {
+
+  
     if (updateExistingMoment && existingMomentObject) {
-      console.log(`EEYOOOOOOOOOOOO`);
-      console.log(existingMomentObject);
+      // console.log(`EEYOOOOOOOOOOOO`);
+      // console.log(existingMomentObject);
       setSelectedCategory(existingMomentObject.user_category_name);
       setSelectedUserCategory(existingMomentObject.user_category);
     }
@@ -128,11 +130,9 @@ const MomentWriteEditView = ({
   };
 
   const handleUserCategorySelect = ({ name: name, id: id }) => {
-    // console.log("selecting category: ", category);
-
     setSelectedUserCategory(id);
     setSelectedCategory(name);
-    closeCatCreator();
+    //   closeCatCreator();
   };
 
   const handleSave = async () => {
@@ -191,6 +191,13 @@ const MomentWriteEditView = ({
       }
     }
   };
+useEffect(() => {
+  if (catCreatorVisible) {
+    Keyboard.dismiss();
+  }
+
+}, [catCreatorVisible]);
+
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
@@ -244,7 +251,11 @@ const MomentWriteEditView = ({
             <Text
               style={[
                 appFontStyles.welcomeText,
-                { zIndex: 2, color: themeStyles.primaryText.color, fontSize: 24  },
+                {
+                  zIndex: 2,
+                  color: themeStyles.primaryText.color,
+                  fontSize: 24,
+                },
               ]}
             >
               {selectedCategory}
@@ -255,8 +266,8 @@ const MomentWriteEditView = ({
               {
                 flexDirection: "column",
                 justifyContent: "flex-start",
-flex: 1,
-flexGrow: 1,
+                flex: 1,
+                flexGrow: 1,
                 width: "100%",
                 zIndex: 1,
                 // backgroundColor: "pink",
@@ -300,8 +311,8 @@ flexGrow: 1,
               style={{
                 // backgroundColor: "orange",
                 height: 50,
-               paddingHorizontal: 6, // WEIRD NUMBER because + 4 padding above I think
-               marginBottom: 6, // WEIRD NUMBER because + 4 padding above
+                paddingHorizontal: 6, // WEIRD NUMBER because + 4 padding above I think
+                marginBottom: 6, // WEIRD NUMBER because + 4 padding above
                 flexShrink: 1,
                 flexDirection: "column",
                 justifyContent: "flex-end",
@@ -327,24 +338,24 @@ flexGrow: 1,
         >
           <EscortBar forwardFlowOn={true} label={`Save`} onPress={handleSave} />
         </View> */}
-        {catCreatorVisible && (
-          // <UserCategorySelector
+     
+          {/* // <UserCategorySelector
           //   onPress={handleUserCategorySelect}
           //   onSave={handleSave}
           //   updatingExisting={updateExistingMoment}
           //   existingId={Number(existingMomentObject?.user_category) || null}
           //   selectedId={selectedUserCategory}
-          // />
+          // /> */}
           <CategoryCreator
+          isVisible={catCreatorVisible}
             onPress={handleUserCategorySelect}
             onSave={handleSave}
             updatingExisting={updateExistingMoment}
             existingId={Number(existingMomentObject?.user_category) || null}
             onClose={closeCatCreator}
             categoryColorsMap={categoryColorsMap}
-            // selectedId={selectedUserCategory}
           />
-        )}
+       
       </View>
     </TouchableWithoutFeedback>
   );

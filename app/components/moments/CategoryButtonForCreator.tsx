@@ -1,5 +1,6 @@
 import { TouchableOpacity, Text, Pressable } from "react-native";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, { SharedValue } from "react-native-reanimated";
 
@@ -21,6 +22,7 @@ type Props = {
   viewableItemsArray: SharedValue[];
   selectedId: number;
   label: Label;
+  itemId: number;
   onPress: (label: Label) => void;
   height: number;
   pulseDuration: number;
@@ -28,13 +30,13 @@ type Props = {
 };
 
 const CategoryButtonForCreator = ({
-  viewableItemsArray,
   label,
+  itemId,
   onPress,
-selectedId,
+  selectedId,
   height = 30,
   pulseDuration = 2000,
-  highlightColor = '#ccc',
+  highlightColor = "#ccc",
 }: Props) => {
   const {
     themeStyles,
@@ -42,7 +44,7 @@ selectedId,
     appFontStyles,
     manualGradientColors,
   } = useGlobalStyle();
-console.log(highlightColor);
+  
   const { themeAheadOfLoading } = useFriendList();
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
@@ -58,19 +60,48 @@ console.log(highlightColor);
   const textColor = useSharedValue(themeStyles.genericText.color);
 
   //  show animation based on if top item in FlatList in parent
-  useAnimatedReaction(
-    () => {
-      return Boolean(
-        selectedId === label
-      );
-    },
-    (isVisible, prevIsVisible) => {
-      if (isVisible !== prevIsVisible) {
-        if (isVisible) {
+  // useAnimatedReaction(
+  //   () => {
+  //     return Boolean(selectedId === label);
+  //   },
+  //   (isVisible, prevIsVisible) => {
+  //     if (isVisible !== prevIsVisible) {
+  //       if (isVisible) {
+  //         // startColor.value = themeAheadOfLoading.darkColor;
+  //         startColor.value = highlightColor;
+  //         // endColor.value = manualGradientColors.lighterLightColor || "red";
+  //         endColor.value = themeStyles.primaryText.color || "red";
+  //         textColor.value = manualGradientColors.homeDarkColor;
+
+  //         progress.value = withRepeat(
+  //           withTiming(1, { duration: pulseDuration }),
+  //           -1,
+  //           true
+  //         );
+  //       } else {
+  //         progress.value = withTiming(0, { duration: 200 });
+  //         translateYx2.value = withTiming(0, { duration: 200 });
+  //         startColor.value = "transparent";
+  //         endColor.value = "transparent";
+  //         // startColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
+  //         // endColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
+  //         textColor.value = themeStyles.genericText.color;
+  //       }
+  //     }
+  //   },
+  //   [selectedId]
+  // );
+
+  useEffect(() => {
+    if (!selectedId || !itemId) {
+      return;
+    } 
+    const isSelected = Number(selectedId) === Number(itemId);
+            if (isSelected) {
           // startColor.value = themeAheadOfLoading.darkColor;
-           startColor.value = highlightColor;
+          startColor.value = highlightColor;
           // endColor.value = manualGradientColors.lighterLightColor || "red";
-           endColor.value = themeStyles.primaryText.color || "red";
+          endColor.value = themeStyles.primaryText.color || "red";
           textColor.value = manualGradientColors.homeDarkColor;
 
           progress.value = withRepeat(
@@ -81,16 +112,16 @@ console.log(highlightColor);
         } else {
           progress.value = withTiming(0, { duration: 200 });
           translateYx2.value = withTiming(0, { duration: 200 });
-                    startColor.value = 'transparent';
-          endColor.value = 'transparent';
+          startColor.value = "transparent";
+          endColor.value = "transparent";
           // startColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
           // endColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
           textColor.value = themeStyles.genericText.color;
         }
-      }
-    },
-    [selectedId]
-  );
+
+
+
+  }, [selectedId, itemId]);
 
   const animatedCardsStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
@@ -114,7 +145,7 @@ console.log(highlightColor);
         {
           width: "auto",
           padding: 10,
-        //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
           height: height,
         },
       ]}
@@ -132,7 +163,7 @@ console.log(highlightColor);
             // fontWeight: "bold",
             fontSize: 14,
             fontFamily: "Poppins-Bold",
-            fontWeight: 'bold',
+            fontWeight: "bold",
             //   textTransform: "uppercase",
             height: "100%",
             alignSelf: "center",

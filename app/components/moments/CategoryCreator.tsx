@@ -25,7 +25,8 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-type Props = { 
+type Props = {
+  isVisible: boolean;
   categoryNames: string[];
   categoryColorsMap: Record<string, string>;
   onPress: () => void;
@@ -36,11 +37,12 @@ type Props = {
   selectedId: number;
 };
 const CategoryCreator = ({
-  onPress, 
+  isVisible,
+  onPress,
   updatingExisting,
   existingId,
   categoryColorsMap,
-  onClose, 
+  onClose,
 }: Props) => {
   const { capsuleList } = useCapsuleList();
   const { userCategories, createNewCategory, createNewCategoryMutation } =
@@ -51,116 +53,100 @@ const CategoryCreator = ({
     gradientColorsHome,
     appContainerStyles,
     appSpacingStyles,
-  } = useGlobalStyle(); 
+  } = useGlobalStyle();
 
-    const {
-      categorySizes,
-      addCategoryItem,
-      moveCategoryCount,
-      generateGradientColors,
-      generateRandomColors,
-    } = useMomentSortingFunctions({
-      listData: capsuleList,
-    });
- 
+  const {
+    categorySizes,
+    addCategoryItem,
+    moveCategoryCount,
+    generateGradientColors,
+    generateRandomColors,
+  } = useMomentSortingFunctions({
+    listData: capsuleList,
+  });
+
   // console.log(categoryColorsMap);
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
 
   const [selectedId, setSelectedId] = useState(null);
-   const [categoriesMap, setCategoriesMap] = useState({});
-    const [categoriesSortedList, setCategoriesSortedList] = useState([]);
-    const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
-    const [tempCategoriesMap, setTempCategoriesMap] = useState({});
-    useFocusEffect(
-      useCallback(() => {
+  const [categoriesMap, setCategoriesMap] = useState({});
+  const [categoriesSortedList, setCategoriesSortedList] = useState([]);
+  const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
+  const [tempCategoriesMap, setTempCategoriesMap] = useState({});
 
-        if (!capsuleList || capsuleList?.length < 1) {
-          return;
-        }
-  
-        let categories = categorySizes();
-        //  console.log(categories);
-        setCategoriesMap(categories.lookupMap);
-        setCategoriesSortedList(categories.sortedList);
-        setTempCategoriesSortedList(categories.sortedList);
-        setTempCategoriesMap(categories.lookupMap);
-      }, [capsuleList])
-    );
+  useEffect(() => {
+    console.log(`CategoryCreator selectedId`, selectedId);
+  }, [selectedId]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!capsuleList || capsuleList?.length < 1) {
+        return;
+      }
 
+      let categories = categorySizes();
+      //  console.log(categories);
+      setCategoriesMap(categories.lookupMap);
+      setCategoriesSortedList(categories.sortedList);
+      setTempCategoriesSortedList(categories.sortedList);
+      setTempCategoriesMap(categories.lookupMap);
+    }, [capsuleList])
+  );
 
-    
-      // useEffect(() => {
-      //   if (categoryColorsMap && tempCategoriesSortedList) {
-      //     // console.log('tempcategorysortedlist');
-      //     const userCategorySet = new Set(
-      //       tempCategoriesSortedList.map((item) => item.user_category)
-      //     );
-      //     // console.log(tempCategoriesSortedList);
-      //     // console.log(userCategorySet);
-    
-      //     const filteredColors = categoryColors
-      //       .filter((item) => userCategorySet.has(item.user_category))
-      //       .map((item) => item.color);
-      //     setColors(filteredColors);
-      //   }
-      // }, [categoryColors, tempCategoriesSortedList]);
-    
- useEffect(() => {
+  const handleOnPress = ({ name: name, id: id }) => {
+    onPress({ name: name, id: id });
+    setSelectedId(id);
+  };
+
+  // useEffect(() => {
+  //   if (categoryColorsMap && tempCategoriesSortedList) {
+  //     // console.log('tempcategorysortedlist');
+  //     const userCategorySet = new Set(
+  //       tempCategoriesSortedList.map((item) => item.user_category)
+  //     );
+  //     // console.log(tempCategoriesSortedList);
+  //     // console.log(userCategorySet);
+
+  //     const filteredColors = categoryColors
+  //       .filter((item) => userCategorySet.has(item.user_category))
+  //       .map((item) => item.color);
+  //     setColors(filteredColors);
+  //   }
+  // }, [categoryColors, tempCategoriesSortedList]);
+
+  useEffect(() => {
+    console.log('useeffect we need triggered');
     if (!categoriesSortedList) {
+      console.log(`use effect returning without doing anything`);
       return;
     }
 
-    console.log(`existing: `, existingId);
+    // console.log(`existing: `, existingId);
 
     if (updatingExisting && existingId) {
       const find = userCategories.findIndex(
         (category) => category.id === existingId
       );
-        console.log(find);
-   
+       console.log(find);
+
       setSelectedId(existingId);
 
       return;
     }
 
     let largest = categoriesSortedList[0]?.user_category;
-    // console.log(`largest: `, typeof largest);
+    let largestName = categoriesSortedList[0]?.name;
 
-    if (largest) {
+    console.log(`largest: `, typeof largest);
+     console.log(`largestName: `, typeof largestName);
+
+    if (largest && largestName) {
+      console.log('setting largest');
+
+       onPress({ name: largestName, id: largest });
       setSelectedId(largest);
     }
   }, [categoriesSortedList]);
-  // const memoizedSearchIcon = useMemo(
-  //   () => (
-  //     <Pressable
-  //       onPress={() => setSearchModalVisible(true)}
-  //       style={({ pressed }) => ({
-  //         flexDirection: "row",
-  //         alignItems: "center",
-  //         //   backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-  //         justifyContent: "center",
-  //         borderRadius: 999,
-  //         // paddingHorizontal: 20,
-  //         paddingVertical: 5,
-
-  //         textAlign: "center",
-  //         opacity: pressed ? 0.6 : 1,
-  //       })}
-  //     >
-  //       <MaterialCommunityIcons
-  //         name={"text-search"}
-  //         size={iconSize}
-  //         color={themeStyles.genericText.color}
-  //         style={{}}
-  //       />
-  //       {/* <Text style={[themeStyles.genericText, styles.categoryLabel]}>
-  //         Search
-  //       </Text> */}
-  //     </Pressable>
-  //   ),
-  //   [iconSize, themeStyles]
-  // );
   const renderedButtons = useMemo(
     () => (
       <View style={styles.buttonRow}>
@@ -173,26 +159,26 @@ const CategoryCreator = ({
               key={id ?? name ?? "Uncategorized"}
               style={styles.buttonWrapper}
             >
-              
               <CategoryButtonForCreator
                 height={"auto"}
                 selectedId={selectedId}
                 //  viewableItemsArray={viewableItemsArray}
                 label={name}
+                itemId={id}
                 highlightColor={categoryColor}
-                onPress={() => onPress({name: name, id: id})}
+                onPress={() => handleOnPress({ name: name, id: id })}
               />
             </View>
           );
         })}
       </View>
     ),
-    [userCategories, categoryColorsMap, onPress]
+    [userCategories, categoryColorsMap, onPress, selectedId]
   );
 
   return (
     <>
-      {categoryColorsMap && (
+      {categoryColorsMap && isVisible && (
         <Animated.View
           entering={SlideInUp}
           exiting={SlideOutUp}
@@ -206,7 +192,6 @@ const CategoryCreator = ({
             },
           ]}
         >
-
           {userCategories && (
             <ScrollView
               showsVerticalScrollIndicator={false}
@@ -215,7 +200,7 @@ const CategoryCreator = ({
               {renderedButtons}
             </ScrollView>
           )}
-                    <Pressable
+          <Pressable
             onPress={onClose}
             style={{
               width: "100%",
