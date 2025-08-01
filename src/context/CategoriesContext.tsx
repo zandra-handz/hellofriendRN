@@ -85,17 +85,15 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
 
 useEffect(() => {
   if (isSuccess && categories) {
-//     console.log('resetting user categories');
-//  console.log(categories);
+   //   console.log('resetting user categories', categories);
+ 
     setUserCategories(categories || []);
  
   }
 }, [isSuccess, categories]);
  
-  const [userCategories, setUserCategories] = useState<Record<
-    string,
-    any
-  > | null>(null);
+const [userCategories, setUserCategories] = useState<any[]>([]);
+
 
  
  

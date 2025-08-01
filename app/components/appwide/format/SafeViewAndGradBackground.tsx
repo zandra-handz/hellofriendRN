@@ -1,4 +1,4 @@
-import React, { JSXElementConstructor, ReactElement, useMemo } from "react";
+import React, { useEffect, useState, ReactElement, useMemo } from "react";
 import { DimensionValue, StyleProp, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomStatusBar from "../statusbar/CustomStatusBar";
@@ -25,6 +25,7 @@ type Props = {
 const SafeViewAndGradientBackground = ({
   children,
   style, 
+  addColorChangeDelay= false,
   includeBackgroundOverlay = false,
   useOverlay = false,
   primaryBackground = false,
@@ -35,6 +36,7 @@ const SafeViewAndGradientBackground = ({
   const insets = useSafeAreaInsets();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
 
+
   const route = useRoute();
 
   const top = typeof insets.top === "number" ? insets.top : 0;
@@ -43,6 +45,24 @@ const SafeViewAndGradientBackground = ({
   const right = typeof insets.right === "number" ? insets.right : 0;
 
   const { themeStyles } = useGlobalStyle();
+
+  const [showColorOverlay, setShowColorOverlay ] = useState(includeBackgroundOverlay);
+
+useEffect(() => {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  if (addColorChangeDelay && includeBackgroundOverlay) {
+    timeoutId = setTimeout(() => {
+      setShowColorOverlay(true);
+    }, 100); 
+  } else {
+    setShowColorOverlay(includeBackgroundOverlay);
+  }
+
+  return () => {
+    if (timeoutId) clearTimeout(timeoutId);
+  };
+}, [includeBackgroundOverlay, addColorChangeDelay]);
 
   const paddingStyle = useMemo(
     () => ({
@@ -82,7 +102,7 @@ const SafeViewAndGradientBackground = ({
       useFriendColors={useFriendColors || undefined}
       additionalStyles={[paddingStyle, style]}
     >
-      {includeBackgroundOverlay && (
+      {showColorOverlay && (
         <View
           style={{
             position: "absolute",

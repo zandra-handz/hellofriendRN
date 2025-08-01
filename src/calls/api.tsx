@@ -620,13 +620,14 @@ export const SearchForMidpointLocations = async (locationData: object) => {
 };
 
 export const updateUserAccessibilitySettings = async (fieldUpdates: object) => {
+  console.log(fieldUpdates);
   try {
     const response = await helloFriendApiClient.patch(
       `/users/settings/update/`,
       fieldUpdates
     );
     console.log("API PATCH CALL updateUserAccessibilitySettings");
-    //console.log('API response:', response.data); // Log the response data
+    console.log('API response:', response.data); // Log the response data
     return response.data; // Ensure this returns the expected structure
   } catch (e: unknown) {
     handleApiError(e, "Error during updateUserAccessibilitySettings");
@@ -665,6 +666,8 @@ export const fetchFriendDashboard = async (friendId: number) => {
 
     const endTime = Date.now(); // TIMER END
     const duration = endTime - startTime;
+
+    
 
     console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
 
@@ -731,6 +734,33 @@ export const removeFromFriendFavesLocations = async (
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during removeFromFriendFavesLocations");
+  }
+};
+
+
+export const updateFriendDefaultCategory = async ({
+  userId,
+  friendId,
+  categoryId,
+}: {
+  userId: number;
+  friendId: number;
+  caegoryId: number;
+}) => {
+  try {
+    const response = await helloFriendApiClient.patch(
+      `/friends/${friendId}/faves/`,
+      {
+        friend: friendId,
+        user: userId,
+        friend_default_category: categoryId,
+      }
+    );
+
+    console.log("API PATCH CALL updateFriendDefaultCategory");
+    return response.data;
+  } catch (e: unknown) {
+    handleApiError(e, "Error updateFriendDefaultCategory");
   }
 };
 

@@ -13,6 +13,7 @@ import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import SwipeDown from "./SwipeDown";
@@ -60,6 +61,7 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
   }, [scrollTo]);
 const { selectedFriend } = useSelectedFriend();
   const { capsuleList, updateCapsule } = useCapsuleList();
+  const { navigateToMomentView } = useAppNavigations();
  
 
   const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
@@ -131,9 +133,7 @@ const { selectedFriend } = useSelectedFriend();
     }
   }, []);
 
-  const handleNavigateToMomentView = useCallback((moment) => {
-    navigation.navigate("MomentView", { moment: moment });
-  }, []);
+ 
 
   // const scrollToEnd = () => {
   //   flatListRef.current?.scrollToEnd({ animated: true });
@@ -212,9 +212,10 @@ const { selectedFriend } = useSelectedFriend();
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <Pressable
-        onPress={() =>
-          navigation.navigate("MomentView", { moment: item, index: index })
-        }
+      onPress={() => navigateToMomentView({moment: item, index: index})}
+        // onPress={() =>
+        //   navigation.navigate("MomentView", { moment: item, index: index })
+        // }
         style={({ pressed }) => ({
           flex: 1,
           flexDirection: "row",
@@ -245,8 +246,7 @@ const { selectedFriend } = useSelectedFriend();
     [
       // viewableItemsArray,
       // momentIdToAnimate,
-      // fadeAnim,
-      handleNavigateToMomentView,
+      // fadeAnim, 
       categoryColorsMap,
       // saveToHello,
     ]

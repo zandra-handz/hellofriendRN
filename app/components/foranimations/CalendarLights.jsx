@@ -173,7 +173,7 @@ const opacityMinusAnimation = 1;
 
   const renderCalendarMonth = useCallback(({ item }) => {
   const indexRangeStart = indexDays[item.monthData.startsOn];
-  const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
+ // const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
 
   const highlightDays = item.helloData?.days || [];
 

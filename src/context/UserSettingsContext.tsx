@@ -142,11 +142,11 @@ useEffect(() => {
   });
 
   const updateSettings = async (newSettings) => {
-    console.log("updating settings!");
+    console.log("updating settings!", newSettings);
     try {
       await updateSettingsMutation.mutateAsync({
         // userId: user.user.id, // User ID
-        fieldUpdates: newSettings, // Pass newSettings directly as fieldUpdates
+        setting: newSettings, // Pass newSettings directly as fieldUpdates
       });
     } catch (error) {
       console.error("Error updating app settings:", error);

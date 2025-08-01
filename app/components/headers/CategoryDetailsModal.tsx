@@ -14,11 +14,10 @@ import {
 } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
- import { useCategories } from "@/src/context/CategoriesContext"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useCategories } from "@/src/context/CategoriesContext";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
- 
-
+import { useUserSettings } from "@/src/context/UserSettingsContext";
 
 interface Props {
   isVisible: boolean;
@@ -35,18 +34,26 @@ const CategoryDetailsModal: React.FC<Props> = ({
 }) => {
   const { userCategories, updateCategory, updateCategoryMutation } =
     useCategories();
-  const category =
-    userCategories.find((category) => category.id === categoryId) || null;
+
+  const { settings, updateSettings } = useUserSettings();
+  const category = Array.isArray(userCategories)
+    ? userCategories.find((category) => category.id === categoryId) || null
+    : null;
+
   // console.log(`category in modal: `, category);
 
   const { user } = useUser();
   const { themeStyles, appFontStyles, appSpacingStyles } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend, friendDashboardData, handleUpdateDefaultCategory } = useSelectedFriend();
   const { capsuleList } = useCapsuleList();
 
   const startingText = category?.description || null;
 
   const textInputRef = useRef(null);
+
+  const isUserDefault = categoryId === settings.user_default_category;
+  const isFriendDefault =
+    categoryId === friendDashboardData?.friend_faves.friend_default_category;
 
   useFocusEffect(
     useCallback(() => {
@@ -65,19 +72,36 @@ const CategoryDetailsModal: React.FC<Props> = ({
     }
   };
 
-  const [ momentsInCategory, setMomentsInCategory ] = useState(null);
+  const [momentsInCategory, setMomentsInCategory] = useState(null);
 
   // const momentsInCategory = capsuleList.filter(
   //   (capsule) => capsule?.user_category === categoryId
   // );
 
-    useFocusEffect(
+
+  const handleRemoveUserDefault = async () => {
+    await updateSettings({user_default_category: null})
+  }
+
+    const handleMakeUserDefault = async () => {
+    await updateSettings({user_default_category: categoryId})
+  }
+
+  const handleRemoveFriendDefault = () => {
+    handleUpdateDefaultCategory({categoryId: null});
+  }
+
+    const handleMakeFriendDefault = () => {
+    handleUpdateDefaultCategory({categoryId: categoryId});
+  }
+
+  useFocusEffect(
     useCallback(() => {
       if (category && capsuleList && capsuleList?.length > 0) {
-          const moments = capsuleList.filter(
-    (capsule) => capsule?.user_category === categoryId
-  );
-  setMomentsInCategory(moments);
+        const moments = capsuleList.filter(
+          (capsule) => capsule?.user_category === categoryId
+        );
+        setMomentsInCategory(moments);
       }
     }, [category, capsuleList])
   );
@@ -97,39 +121,42 @@ const CategoryDetailsModal: React.FC<Props> = ({
     setShowEdit(false);
   };
 
-  const renderMomentsInCategoryItem = useCallback(({ item, index }) => (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        height: 40,
-        borderRadius: 10,
-        backgroundColor: themeStyles.lighterOverlayBackgroundColor,
-        width: "100%",
-        marginVertical: 6,
-        alignItems: "center",
-      }}
-    >
+  const renderMomentsInCategoryItem = useCallback(
+    ({ item, index }) => (
       <View
         style={{
-          width: 40,
-          alignItems: "center",
-          justifyContent: "start",
           flexDirection: "row",
+          justifyContent: "space-between",
+          height: 40,
+          borderRadius: 10,
+          backgroundColor: themeStyles.lighterOverlayBackgroundColor,
+          width: "100%",
+          marginVertical: 6,
+          alignItems: "center",
         }}
       >
-        <MaterialCommunityIcons
-          name={"comment-outline"}
-          size={20}
-          color={themeStyles.primaryText.color}
-        />
-      </View>
+        <View
+          style={{
+            width: 40,
+            alignItems: "center",
+            justifyContent: "start",
+            flexDirection: "row",
+          }}
+        >
+          <MaterialCommunityIcons
+            name={"comment-outline"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />
+        </View>
 
-      <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-        <Text style={[themeStyles.primaryText]}>{item.capsule}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+          <Text style={[themeStyles.primaryText]}>{item.capsule}</Text>
+        </View>
       </View>
-    </View>
-  ), [momentsInCategory, themeStyles]);
+    ),
+    [momentsInCategory, themeStyles]
+  );
 
   return (
     <ModalWithGoBack
@@ -155,13 +182,37 @@ const CategoryDetailsModal: React.FC<Props> = ({
               },
             ]}
           >
+            <View style={{ height: 50, width: "100%", backgroundColor: "red" }}>
+              <Pressable onPress={isUserDefault ? handleRemoveUserDefault : handleMakeUserDefault}>
+               
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    appFontStyles.subWelcomeText,
+                    { fontSize: 14 },
+                  ]}
+                >{isUserDefault ? `Remove default` : `Make default`} </Text>
+              </Pressable>
+            </View>
+            <View
+              style={{ height: 50, width: "100%", backgroundColor: "teal" }}
+            >              <Pressable onPress={isFriendDefault ? handleRemoveFriendDefault : handleMakeFriendDefault}>
+               
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    appFontStyles.subWelcomeText,
+                    { fontSize: 14 },
+                  ]}
+                >{isFriendDefault ? `Remove default` : `Make default`} </Text>
+              </Pressable></View>
             <View
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
                 width: "100%",
                 height: "auto",
-                alignItems: 'center', 
+                alignItems: "center",
                 marginTop: 10,
                 marginBottom: 20,
               }}
@@ -215,7 +266,7 @@ const CategoryDetailsModal: React.FC<Props> = ({
           </View>
           {selectedFriend && momentsInCategory && (
             <View style={styles.sectionContainer}>
-                            <Text
+              <Text
                 style={[
                   themeStyles.primaryText,
                   appFontStyles.subWelcomeText,
@@ -224,12 +275,11 @@ const CategoryDetailsModal: React.FC<Props> = ({
               >
                 Talking points for {selectedFriend.name}
               </Text>
-              <View style={{width: '100%', height: 300}}>
-
-              <FlatList
-                data={momentsInCategory}
-                renderItem={renderMomentsInCategoryItem}
-              />
+              <View style={{ width: "100%", height: 300 }}>
+                <FlatList
+                  data={momentsInCategory}
+                  renderItem={renderMomentsInCategoryItem}
+                />
               </View>
             </View>
           )}

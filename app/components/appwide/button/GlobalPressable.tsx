@@ -7,12 +7,14 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 type Props = {
-    onPress: () => void;
+    onPress?: () => void;
+    onLongPress?: () => void;
+    zIndex: number; 
     style: object;
     children: ReactNode;
 }
 
-const GlobalPressable = ({ onPress, style, children }: Props) => {
+const GlobalPressable = ({ onPress, onLongPress, zIndex=1,  style, children }: Props) => {
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -22,7 +24,9 @@ const GlobalPressable = ({ onPress, style, children }: Props) => {
 
   return (
     <Pressable
-      onPress={onPress}
+    style={{zIndex: zIndex}}
+      onPress={onPress ? onPress : null}
+      onLongPress={onLongPress ? onLongPress : null}
       onPressIn={() => {
         scale.value = withSpring(0.95);
       }}

@@ -6,10 +6,11 @@ import Animated from 'react-native-reanimated';
 
 type Props = {
   onPress: () => void;
+  paddingVertical: number; // put up here for readability in parent since this needs to match a height in parent
   label: string;
 };
 
-const TopBar = ({ onPress, label = "categories" }: Props) => {
+const TopBar = ({ onPress, paddingVertical=10, label = "categories" }: Props) => {
   const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
   return (
     <View style={{ paddingHorizontal: 10 }}> 
@@ -20,7 +21,7 @@ const TopBar = ({ onPress, label = "categories" }: Props) => {
             height: 50,
             paddingHorizontal: 20,
             flexDirection: "row",
-            paddingVertical: 10,
+            paddingVertical: paddingVertical,
             alignItems: "center",
             justifyContent: "center",
             // justifyContent: 'space-between',

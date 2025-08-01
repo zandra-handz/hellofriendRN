@@ -3,6 +3,7 @@ import {
   View,
   Text,
   Keyboard,
+  Pressable,
   TouchableWithoutFeedback,
   Alert,
 } from "react-native";
@@ -17,31 +18,52 @@ import { useFocusEffect } from "@react-navigation/native";
 import EscortBar from "./EscortBar";
 import UserCategorySelector from "../headers/UserCategorySelector";
 import { close } from "@sentry/react-native";
+import { Moment } from "@/src/types/MomentContextTypes";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+
+import SelectedCategoryButton from "./SelectedCategoryButton";
+import GlobalPressable from "../appwide/button/GlobalPressable";
+type Props = {
+  momentText: string;
+  catCreatorVisible: boolean;
+  closeCatCreator: () => void;
+  openCatCreator: () => void;
+  categoryColorsMap: object;
+  updateExistingMoment: boolean;
+  existingMomentObject?: Moment;
+  triggerSaveFromLateral: boolean;
+};
 
 const MomentWriteEditView = ({
   momentText,
   catCreatorVisible,
+  openCatCreator,
   closeCatCreator,
   categoryColorsMap,
   updateExistingMoment,
   existingMomentObject,
-}) => {
+  triggerSaveFromLateral,
+}: Props) => {
   const { selectedFriend } = useSelectedFriend();
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const {
+    capsuleList,
     handleCreateMoment,
     createMomentMutation,
     handleEditMoment,
     editMomentMutation,
   } = useCapsuleList(); // NEED THIS TO ADD NEW
 
+  const { navigateBack, navigateToMoments, navigateToMomentView } =
+    useAppNavigations();
+
   const { user } = useUser();
   const navigation = useNavigation();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedUserCategory, setSelectedUserCategory] = useState("");
-const [startingId, setStartingId ] = useState();
+  const [selectedUserCategory, setSelectedUserCategory] = useState<number>(0);
+  const [startingId, setStartingId] = useState();
   const [showCategoriesSlider, setShowCategoriesSlider] =
     useState(!!momentText);
 
@@ -58,6 +80,15 @@ const [startingId, setStartingId ] = useState();
       };
     }, [momentText])
   );
+
+  useEffect(() => {
+    if (!triggerSaveFromLateral) {
+      // right now the trigger doesn't reset itself because this triggers a process that'll unmount it I believe
+      return;
+    }
+
+    handleSave();
+  }, [triggerSaveFromLateral]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -112,13 +143,11 @@ const [startingId, setStartingId ] = useState();
   };
 
   useEffect(() => {
-
-  
     if (updateExistingMoment && existingMomentObject) {
       // console.log(`EEYOOOOOOOOOOOO`);
       // console.log(existingMomentObject);
       setSelectedCategory(existingMomentObject.user_category_name);
-      setSelectedUserCategory(existingMomentObject.user_category);
+      setSelectedUserCategory(Number(existingMomentObject.user_category));
     }
   }, [updateExistingMoment, existingMomentObject]);
 
@@ -164,20 +193,37 @@ const [startingId, setStartingId ] = useState();
         return;
       }
 
+      if (!selectedUserCategory) {
+        Alert.alert(
+          `Oops!`,
+          `Please select a category before trying to save.`,
+          [
+            {
+              text: "Back",
+              onPress: () => {},
+              style: "cancel",
+            },
+          ]
+        );
+        return;
+      }
+
       try {
         if (selectedFriend) {
           if (!updateExistingMoment) {
             const requestData = {
+              // these are the props in the context function that get converted to backend
               user: user.id,
               friend: selectedFriend.id,
-              selectedCategory: selectedCategory,
+              // selectedCategory: selectedCategory, // just need ID below
               selectedUserCategory: selectedUserCategory,
               moment: momentTextRef.current.getText(),
             };
-            console.log(requestData);
+            // console.log(requestData);
             await handleCreateMoment(requestData);
           } else {
             const editData = {
+              //these are the actual backend fields
               typed_category: selectedCategory,
               user_category: selectedUserCategory,
               capsule: momentTextRef.current.getText(),
@@ -191,27 +237,37 @@ const [startingId, setStartingId ] = useState();
       }
     }
   };
-useEffect(() => {
-  if (catCreatorVisible) {
-    Keyboard.dismiss();
-  }
-
-}, [catCreatorVisible]);
-
+  useEffect(() => {
+    if (catCreatorVisible) {
+      Keyboard.dismiss();
+    }
+  }, [catCreatorVisible]);
 
   useEffect(() => {
     if (createMomentMutation.isSuccess) {
       // showMessage(true, null, "Momemt saved!");
-      navigation.goBack();
+      navigateBack();
       createMomentMutation.reset(); //additional immediate reset to allow user to return back to screen instantly
     }
   }, [createMomentMutation.isSuccess]);
 
+  //this needs to go to the new index instead if it has a new index
   useEffect(() => {
-    if (editMomentMutation.isSuccess) {
-      navigation.goBack();
+    if (editMomentMutation.isSuccess && capsuleList) {
+      console.log(
+        "useeffect for navving after edit triggered and code will be used"
+      );
+      const id = existingMomentObject.id;
+      const updatedCapsule = capsuleList.filter((item) => item.id === id);
+
+      // navigation.goBack(); // don't use, won't be updated index
+      // navigateToMoments({scrollTo: 0});  // use this instead if moment view nav-to ends up having issues
+      navigateToMomentView({
+        moment: updatedCapsule,
+        index: updatedCapsule.uniqueIndex,
+      });
     }
-  }, [editMomentMutation.isSuccess]);
+  }, [editMomentMutation.isSuccess, capsuleList]);
 
   // keep this consistent with MomentViewPage
   return (
@@ -248,18 +304,12 @@ useEffect(() => {
               justifyContent: "flex-end",
             }}
           >
-            <Text
-              style={[
-                appFontStyles.welcomeText,
-                {
-                  zIndex: 2,
-                  color: themeStyles.primaryText.color,
-                  fontSize: 24,
-                },
-              ]}
-            >
-              {selectedCategory}
-            </Text>
+            <SelectedCategoryButton
+              zIndex={3}
+              onPress={openCatCreator}
+              label={selectedCategory}
+              categoryId={selectedUserCategory}
+            />
           </View>
           <View
             style={[
@@ -338,24 +388,23 @@ useEffect(() => {
         >
           <EscortBar forwardFlowOn={true} label={`Save`} onPress={handleSave} />
         </View> */}
-     
-          {/* // <UserCategorySelector
+
+        {/* // <UserCategorySelector
           //   onPress={handleUserCategorySelect}
           //   onSave={handleSave}
           //   updatingExisting={updateExistingMoment}
           //   existingId={Number(existingMomentObject?.user_category) || null}
           //   selectedId={selectedUserCategory}
           // /> */}
-          <CategoryCreator
+        <CategoryCreator
           isVisible={catCreatorVisible}
-            onPress={handleUserCategorySelect}
-            onSave={handleSave}
-            updatingExisting={updateExistingMoment}
-            existingId={Number(existingMomentObject?.user_category) || null}
-            onClose={closeCatCreator}
-            categoryColorsMap={categoryColorsMap}
-          />
-       
+          onPress={handleUserCategorySelect}
+          onSave={handleSave}
+          updatingExisting={updateExistingMoment}
+          existingId={Number(existingMomentObject?.user_category) || null}
+          onClose={closeCatCreator}
+          categoryColorsMap={categoryColorsMap}
+        />
       </View>
     </TouchableWithoutFeedback>
   );

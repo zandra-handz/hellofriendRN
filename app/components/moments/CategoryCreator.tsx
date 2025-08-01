@@ -23,6 +23,7 @@ import { SharedValue } from "react-native-reanimated";
 import UserCategorySelectorButton from "../headers/UserCategorySelectorButton";
 import { useCategories } from "@/src/context/CategoriesContext";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type Props = {
@@ -45,7 +46,7 @@ const CategoryCreator = ({
   onClose,
 }: Props) => {
   const { capsuleList } = useCapsuleList();
-  const { userCategories, createNewCategory, createNewCategoryMutation } =
+  const { userCategories } =
     useCategories();
   const {
     themeStyles,
@@ -54,6 +55,8 @@ const CategoryCreator = ({
     appContainerStyles,
     appSpacingStyles,
   } = useGlobalStyle();
+
+  const { friendDashboardData } = useSelectedFriend();
 
   const {
     categorySizes,
@@ -133,6 +136,19 @@ const CategoryCreator = ({
 
       return;
     }
+console.log(`friend default:`, friendDashboardData.friend_faves.friend_default_category);
+     const friendDefault = friendDashboardData?.friend_faves?.friend_default_category;
+      const name = userCategories.find((category) => category.id === friendDefault);
+      console.log(name);
+  
+    if (name) {
+      console.log('SETTTINGGGGGGGGGG');
+  
+ 
+  onPress({name: name.name, id: name.id});
+  setSelectedId(name.id);
+      return;
+    }
 
     let largest = categoriesSortedList[0]?.user_category;
     let largestName = categoriesSortedList[0]?.name;
@@ -146,12 +162,13 @@ const CategoryCreator = ({
        onPress({ name: largestName, id: largest });
       setSelectedId(largest);
     }
-  }, [categoriesSortedList]);
-  const renderedButtons = useMemo(
-    () => (
-      <View style={styles.buttonRow}>
-        {/* {memoizedSearchIcon} */}
-        {userCategories.map(({ name, id }) => {
+  }, [categoriesSortedList, friendDashboardData]);
+
+ const renderedButtons = useMemo(
+  () => (
+    <View style={styles.buttonRow}>
+      {Array.isArray(userCategories) &&
+        userCategories.map(({ name, id }) => {
           const categoryColor = categoryColorsMap[id];
 
           return (
@@ -162,7 +179,6 @@ const CategoryCreator = ({
               <CategoryButtonForCreator
                 height={"auto"}
                 selectedId={selectedId}
-                //  viewableItemsArray={viewableItemsArray}
                 label={name}
                 itemId={id}
                 highlightColor={categoryColor}
@@ -171,10 +187,11 @@ const CategoryCreator = ({
             </View>
           );
         })}
-      </View>
-    ),
-    [userCategories, categoryColorsMap, onPress, selectedId]
-  );
+    </View>
+  ),
+  [userCategories, categoryColorsMap, onPress, selectedId]
+);
+
 
   return (
     <>
@@ -186,19 +203,19 @@ const CategoryCreator = ({
             styles.categoryNavigatorContainer,
             styles.momentsScreenPrimarySpacing,
             {
-              backgroundColor:
+              backgroundColor: 
                 // themeStyles.overlayBackgroundColor.backgroundColor,
                 themeStyles.primaryBackground.backgroundColor,
             },
           ]}
         >
           {userCategories && (
-            <ScrollView
+            <View
               showsVerticalScrollIndicator={false}
               style={[styles.scrollContainer]}
             >
               {renderedButtons}
-            </ScrollView>
+            </View>
           )}
           <Pressable
             onPress={onClose}
@@ -209,7 +226,7 @@ const CategoryCreator = ({
               alignItems: "center",
 
               height: 30,
-              paddingTop: 5,
+              paddingBottom: 10,
             }}
           >
             <MaterialIcons
@@ -244,17 +261,19 @@ const styles = StyleSheet.create({
   },
   categoryNavigatorContainer: {
     position: "absolute",
-    top: -24, //20
+    top: -70, //20
     paddingTop: 0,
-    zIndex: 5,
+    zIndex: 5000,
     height: "auto",
-    height: 200,
+    
     // width: "74%",
     width: "100%",
     selfAlign: "center",
   },
   scrollContainer: {
-    maxHeight: 130,
+    maxHeight: 400,
+    height: 'auto',
+    flexGrow: 1,
     marginTop: 0,
     borderRadius: 10,
     padding: 10,

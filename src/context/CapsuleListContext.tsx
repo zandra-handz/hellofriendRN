@@ -383,7 +383,7 @@ const updateCapsuleMutation = useMutation({
       user: momentData.user,
       friend: momentData.friend,
 
-      typed_category: momentData.selectedCategory,
+     // typed_category: momentData.selectedCategory, // OBSOLETE/ CAN BE NULL/BLANK ON BACKEND
       capsule: momentData.moment,
       user_category: momentData.selectedUserCategory,
     };

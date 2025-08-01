@@ -94,8 +94,7 @@ const EscortBarMinusWidth = ({ onPress, label = "navigator" }: Props) => {
             borderTopLeftRadius: 20,
             borderBottomLeftRadius: 20,
             padding: 0,
-            //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-            //  backgroundColor: themeStyles.primaryBackground.backgroundColor,
+   
           }}
         >
           <View 
@@ -121,12 +120,7 @@ const EscortBarMinusWidth = ({ onPress, label = "navigator" }: Props) => {
               {label}
             </Text>
           </View>
-
-          {/* <MaterialCommunityIcons
-                 name={"arrow-up"}
-                size={26}
-                color={themeStyles.primaryText.color}
-              /> */}
+ 
         </View>
       </GlobalPressable>
     </Animated.View>

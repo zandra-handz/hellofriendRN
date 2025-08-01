@@ -14,15 +14,31 @@ const formatDate = (createdOn) => {
 
   const date = new Date(createdOn);
   const now = new Date();
+//   const month = date.getUTCMonth() + 1; // Get UTC month
+//     const year = date.getUTCFullYear();
+//     console.log(date.toUTCString);
 
-  const isCurrentYear = date.getFullYear() === now.getFullYear();
+//     console.log(month);
+//     console.log(year);
 
-  return date.toLocaleDateString("en-US", {
+//   const isCurrentYear = date.getFullYear() === now.getFullYear();
+
+//   return date.toUTCString("en-US", {
+//     weekday: "long",
+//     month: "long",
+//     day: "numeric",
+//     ...(isCurrentYear ? {} : { year: "numeric" }),
+//   });
+// };
+  const isCurrentYear = date.getUTCFullYear() === now.getUTCFullYear();
+
+  return new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
     ...(isCurrentYear ? {} : { year: "numeric" }),
-  });
+    timeZone: "UTC", // <-- ensures UTC values are used
+  }).format(date);
 };
 
 const HelloItem = ({

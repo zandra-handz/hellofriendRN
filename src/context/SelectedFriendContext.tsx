@@ -6,6 +6,7 @@ import { Friend, FriendDashboardData } from "../types/FriendTypes";
 import {
   updateFriendFavesColorThemeSetting,
   resetFriendFavesColorThemeToDefault,
+  updateFriendDefaultCategory,
 } from "../calls/api";
 
 interface ColorThemeUpdateProps {
@@ -21,6 +22,18 @@ interface ColorThemeUpdateLoad {
   darkColor: string;
   lightColor: string;
   manualTheme: boolean;
+}
+
+
+interface DefaultCategoryUpdateLoad {
+  userId: number;
+  friendId: number;
+
+  categoryId: number;
+}
+
+interface DefaultCategoryUpdateProps {
+  categoryId: number;
 }
 
 interface SelectedFriendType {
@@ -133,6 +146,66 @@ onSuccess: (data) => {
     }
   };
 
+
+
+
+    const handleUpdateDefaultCategory = ({
+    categoryId,
+  }: DefaultCategoryUpdateProps ) => {
+    // console.warn("handle update faves theme");
+
+    if (!user || !selectedFriend) {
+      return;
+    }
+
+    const categoryUpdate: DefaultCategoryUpdateLoad  = {
+      userId: user.id,
+      friendId: selectedFriend.id,
+      categoryId: categoryId,
+      //  use_friend_color_theme: true,
+    };
+
+    try {
+      updateFriendDefaultCategoryMutation.mutate(categoryUpdate);
+      // await createHelloMutation.mutateAsync(hello); // Call the mutation with the location data
+    } catch (error) {
+      console.error("Error saving hello:", error);
+    }
+  };
+
+
+
+    const updateFriendDefaultCategoryMutation = useMutation({
+    mutationFn: (data: DefaultCategoryUpdateLoad) =>
+      updateFriendDefaultCategory(data),
+
+    // onError: (error) => {
+    //   if (timeoutRef.current) {
+    //     clearTimeout(timeoutRef.current);
+    //   }
+
+    //   timeoutRef.current = setTimeout(() => {
+    //     createHelloMutation.reset();
+    //   }, 2000);
+    // },
+onSuccess: (data) => {
+  queryClient.setQueryData<FriendDashboardData>(
+    ["friendDashboardData", user?.id, selectedFriend?.id],
+    (oldData) => {
+      if (!oldData) return oldData;
+
+      return {
+        ...oldData,
+        friend_faves: {
+          ...oldData.friend_faves,
+          friend_default_category: data.friend_default_category,
+        },
+      };
+    }
+  );
+},
+  });
+
   const selectFriend = (friend: Friend) => {
     setSelectedFriend(friend);
   };
@@ -157,6 +230,7 @@ onSuccess: (data) => {
       isSuccess,
       friendDashboardData,
       handleUpdateFavesTheme,
+      handleUpdateDefaultCategory,
     }),
     [
       selectedFriend,
@@ -171,6 +245,7 @@ onSuccess: (data) => {
       isSuccess,
       friendDashboardData,
       handleUpdateFavesTheme,
+      handleUpdateDefaultCategory,
     ]
   );
 

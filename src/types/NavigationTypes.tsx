@@ -7,10 +7,13 @@ export type RootStackParamList = {
   Moments: {
     scrollTo: number | null;
   }
+  MomentView: {
+    moment: object;
+    index: number;
+  }
   PreAdded: undefined;
   Finalize: undefined;
-  Reload: undefined;
-  MomentView: undefined;
+  Reload: undefined; 
   Images: undefined;
   ImageView: undefined;
   Helloes: undefined;
