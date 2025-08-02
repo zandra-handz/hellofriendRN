@@ -16,6 +16,7 @@ import LargeCornerLizard from "./LargeCornerLizard";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import SwipeDown from "./SwipeDown";
 import Animated, {
   // LinearTransition,
@@ -44,7 +45,7 @@ import Animated, {
 import { useNavigation } from "@react-navigation/native";
 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
- 
+
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import { enableLayoutAnimations } from "react-native-reanimated";
 // enableLayoutAnimations(true);
@@ -59,10 +60,9 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
       scrollToCategoryStart(scrollTo);
     }
   }, [scrollTo]);
-const { selectedFriend } = useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
   const { capsuleList, updateCapsule } = useCapsuleList();
   const { navigateToMomentView } = useAppNavigations();
- 
 
   const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
@@ -122,18 +122,21 @@ const { selectedFriend } = useSelectedFriend();
   // };
 
   const saveToHello = useCallback((moment) => {
-
     if (!selectedFriend?.id || !moment) {
       return;
     }
+
+    showFlashMessage(`Added to hello!`, false, 1000);
     try {
-      updateCapsule({friendId: selectedFriend?.id, capsuleId: moment.id, isPreAdded: true});
+      updateCapsule({
+        friendId: selectedFriend?.id,
+        capsuleId: moment.id,
+        isPreAdded: true,
+      });
     } catch (error) {
       console.error("Error during pre-save:", error);
     }
   }, []);
-
- 
 
   // const scrollToEnd = () => {
   //   flatListRef.current?.scrollToEnd({ animated: true });
@@ -169,16 +172,45 @@ const { selectedFriend } = useSelectedFriend();
     });
   }, [capsuleList]);
 
+
+  useEffect(() => {
+    if (capsuleList.length < 1) {
+      console.log('capsule list is empty');
+          listVisibility.value = withTiming(0);
+    } else if (capsuleList.length === 1)
+      {
+       listVisibility.value = withTiming(1);
+    }
+
+  }, [capsuleList]);
+
+
+    useEffect(() => {
+   
+    if (!memoizedMomentData || memoizedMomentData.length < 1) {
+       console.log('memoized data triggerd this!', memoizedMomentData);
+      listVisibility.value = withTiming(0);
+    }
+
+  }, [memoizedMomentData]);
+
+
   const categoryNavVisibility = useSharedValue(1);
   const listVisibility = useSharedValue(1);
 
+
   useFocusEffect(
     useCallback(() => {
+      console.log('running useFocusEffect');
+      if (capsuleList.length > 0) {
+        
       listVisibility.value = withSpring(1, { duration: 100 }); //800
 
       return () => {
         listVisibility.value = withTiming(0, { duration: 2000 }); //NEEDED OR ELSE LISTVISIBILITY BEING ZERO WILL TRIGGER PREADDED BUTTON TO APPEAR just looks bad :)
       };
+      
+      }
     }, [])
   );
 
@@ -212,7 +244,7 @@ const { selectedFriend } = useSelectedFriend();
   const renderMomentItem = useCallback(
     ({ item, index }) => (
       <Pressable
-      onPress={() => navigateToMomentView({moment: item, index: index})}
+        onPress={() => navigateToMomentView({ moment: item, index: index })}
         // onPress={() =>
         //   navigation.navigate("MomentView", { moment: item, index: index })
         // }
@@ -246,7 +278,7 @@ const { selectedFriend } = useSelectedFriend();
     [
       // viewableItemsArray,
       // momentIdToAnimate,
-      // fadeAnim, 
+      // fadeAnim,
       categoryColorsMap,
       // saveToHello,
     ]
@@ -275,7 +307,11 @@ const { selectedFriend } = useSelectedFriend();
           paddingHorizontal: 10,
         }}
       >
-       <SwipeDown label={`Undo`} flipLabel={`Back`} visibilityValue={listVisibility} />
+        <SwipeDown
+          label={`Undo`}
+          flipLabel={`Back`}
+          visibilityValue={listVisibility}
+        />
       </View>
       {!categoryNavigatorVisible && (
         <Animated.View
@@ -319,6 +355,7 @@ const { selectedFriend } = useSelectedFriend();
             viewabilityConfigCallbackPairs={
               viewabilityConfigCallbackPairs.current
             }
+            // contentContainerStyle={{backgroundColor: "teal"}} just for debugging
             scrollEventThrottle={16}
             onScroll={scrollHandler}
             renderItem={renderMomentItem}
@@ -330,7 +367,7 @@ const { selectedFriend } = useSelectedFriend();
             removeClippedSubviews={true}
             showsVerticalScrollIndicator={false}
             ListFooterComponent={() => (
-              <View style={{ height: momentListBottomSpacer }} />
+              <View style={{ height: momentListBottomSpacer  }} />
             )}
             // onScrollToIndexFailed={(info) => {
             //   //scroll to beginning maybe instead? not sure what this is doing
@@ -392,7 +429,9 @@ const { selectedFriend } = useSelectedFriend();
 
           {!categoryNavigatorVisible && (
             <>
-              <EscortBarMinusWidth onPress={() => setCategoryNavigatorVisible(true)} />
+              <EscortBarMinusWidth
+                onPress={() => setCategoryNavigatorVisible(true)}
+              />
             </>
           )}
         </View>

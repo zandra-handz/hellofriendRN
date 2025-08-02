@@ -35,7 +35,7 @@ const SwitchFriend = (props: Props) => {
           name="account-switch-outline"
           size={20}
           color={themeStyles.primaryText.color}
-          style={{ marginHorizontal: 10 }}
+          style={{ marginLeft: 10 }}
         />
       </Pressable>
     ),
@@ -46,22 +46,13 @@ const SwitchFriend = (props: Props) => {
       style={{
         height: "auto", 
         width: 'auto',
+      
+       // backgroundColor: 'teal',
         paddingHorizontal: 10,
         flexDirection: "row",
         alignItems: "center",
       }}
-    >
-      {/* {loadingNewFriend && (
-        <View style={{ width: "100%" }}>
-          <LoadingPage
-            loading={loadingNewFriend}
-            spinnerType="flow"
-            spinnerSize={30}
-            color={themeAheadOfLoading.darkColor}
-            includeLabel={false}
-          />
-        </View>
-      )} */}
+    > 
       {!loadingNewFriend && <RenderIcon />}
     </View>
   );

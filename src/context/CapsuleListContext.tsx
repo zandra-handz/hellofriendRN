@@ -380,7 +380,8 @@ const updateCapsuleMutation = useMutation({
   const handleCreateMoment = async (momentData) => {
     console.log(`moment data in handleCreateMoment`, momentData);
     const moment = {
-      user: momentData.user,
+       user: momentData.user,
+     // user: 'oop!',
       friend: momentData.friend,
 
      // typed_category: momentData.selectedCategory, // OBSOLETE/ CAN BE NULL/BLANK ON BACKEND

@@ -1,9 +1,10 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { FlashList } from "@shopify/flash-list";
-import { CheckBox } from "react-native-elements";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage"; // no error message for this one
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import CheckboxListItem from "./CheckboxListItem";
 import EscortBar from "./EscortBar";
@@ -14,8 +15,9 @@ const PreAddedList = () => {
   const [selectedMoments, setSelectedMoments] = useState([]);
 
   const { updateCapsule, preAdded, allCapsulesList } = useCapsuleList(); // also need to update cache
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
+  const { navigateToMoments } = useAppNavigations();
 
   const renderListItem = ({ item, index }) => {
     const isSelected = !!selectedMoments.find(
@@ -24,13 +26,12 @@ const PreAddedList = () => {
 
     return (
       <CheckboxListItem
-      item={item}
-      selectedItems={selectedMoments}
-      isSelected={isSelected}
-      height={ITEM_HEIGHT}
-      onPress={handleCheckboxChange}
-
-      /> 
+        item={item}
+        selectedItems={selectedMoments}
+        isSelected={isSelected}
+        height={ITEM_HEIGHT}
+        onPress={handleCheckboxChange}
+      />
     );
   };
 
@@ -51,6 +52,10 @@ const PreAddedList = () => {
     if (!selectedFriend?.id) {
       return;
     }
+
+    if (selectedMoments.length < 1) {
+      return;
+    }
     selectedMoments.forEach((moment) => {
       updateCapsule({
         friendId: selectedFriend?.id,
@@ -58,6 +63,18 @@ const PreAddedList = () => {
         isPreAdded: false,
       }); // Replace with your actual function
     });
+
+    showFlashMessage(`Ideas restored!`, false, 1000);
+    navigateToMoments({scrollTo: 0}); 
+  };
+
+  const handleSelectAll = () => {
+    setSelectedMoments(allCapsulesList);
+  };
+
+    const handleDeSelectAll = () => {
+      console.log('deselect pressed');
+    setSelectedMoments([]);
   };
 
   const handleCheckboxChange = (item) => {
@@ -76,6 +93,54 @@ const PreAddedList = () => {
 
   return (
     <>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 10,
+          paddingHorizontal: 10,
+        }}
+      >
+        <Text
+          style={[
+            themeStyles.primaryText,
+            appFontStyles.welcomeText,
+            { fontSize: 22 },
+          ]}
+        >
+          Undo add
+        </Text>
+        <View style={{ height: "100%", alignItems: "center" , flexDirection: 'row'}}>
+ 
+        <Pressable
+          onPress={handleSelectAll}
+          style={{ height: "100%", alignItems: "center" , flexDirection: 'row'}}
+        >
+          <Text
+            style={[
+              themeStyles.primaryText,
+              { fontSize: 12, fontWeight: "bold" },
+            ]}
+          >
+            Select all
+          </Text>
+        </Pressable>
+                <Pressable
+          onPress={handleDeSelectAll}
+          style={{ height: "100%", alignItems: "center" , marginLeft: 20, flexDirection: 'row'}}
+        >
+          <Text
+            style={[
+              themeStyles.primaryText,
+              { fontSize: 12, fontWeight: "bold" },
+            ]}
+          >
+            Reset
+          </Text>
+        </Pressable>
+        </View>
+      </View>
       <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>
         <FlashList
           data={filterOutNonAdded}

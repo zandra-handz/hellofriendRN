@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
@@ -7,6 +7,8 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
 import Animated, {
   SlideInDown,
   SlideInUp,
@@ -14,13 +16,13 @@ import Animated, {
 } from "react-native-reanimated";
 import TopBar from "./TopBar";
 import TopBarLikeMinusWidth from "./TopBarLikeMinusWidth";
+
 const ScreenMomentFocus = () => {
   const route = useRoute();
   const momentText = route.params?.momentText ?? null;
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
   const existingMomentObject = route.params?.existingMomentObject ?? null;
-  const { capsuleList } = useCapsuleList();
-
+  const { capsuleList } = useCapsuleList(); 
   const { userCategories } = useCategories();
   const { themeAheadOfLoading } = useFriendList();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
@@ -30,6 +32,19 @@ const ScreenMomentFocus = () => {
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
 
   const [catCreatorVisible, setCatCreatorVisible] = useState(false);
+  const [triggerMessage, setTriggerMessage ] = useState<number>(0);
+
+  // useEffect(() => {
+  //   if (updateFriendDefaultCategoryMutation.isSuccess) {
+  //     console.log('IS SUCCESS IN SCREEN MOMENT FOCUS');
+  //     setTriggerMessage(Date.now())
+  //   }
+
+  // }, [updateFriendDefaultCategoryMutation.isSuccess]);
+
+
+ 
+  
 
   const topBarHeight = 50;
   const topBarPaddingVertical = 10;
@@ -49,7 +64,27 @@ const ScreenMomentFocus = () => {
   const handleTriggerSaveFromLateral = () => {
     setTriggerSaveFromLateral(true);
 
+
+   
+
+  
+
   };
+
+useEffect(() => {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  if (triggerSaveFromLateral) {
+    timeout = setTimeout(() => setTriggerSaveFromLateral(false), 0);
+  }
+
+  return () => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  };
+}, [triggerSaveFromLateral]);
+
 
   useEffect(() => {
     if (userCategories && userCategories.length > 0) {
@@ -77,10 +112,12 @@ const ScreenMomentFocus = () => {
           style={{ height: topBarTotalHeight, zIndex: 60000 }}
         >
           <TopBarLikeMinusWidth
-            forwardFlowOn={true}
+            forwardFlowOn={false}
             paddingVertical={topBarPaddingVertical}
             onExpandPress={handleOpenCatCreator}
             onPress={handleTriggerSaveFromLateral}
+            label={''}
+            onPressLabel={updateExistingMoment ? 'Save changes' : 'Save'}
           />
         </Animated.View>
       )}
@@ -104,6 +141,7 @@ const ScreenMomentFocus = () => {
           />
         </Animated.View>
       )}
+      <TinyFlashMessage triggerMessage={triggerMessage} />
     </SafeViewAndGradientBackground>
   );
 };

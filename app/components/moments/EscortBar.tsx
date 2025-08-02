@@ -59,7 +59,7 @@ const EscortBar = ({
           />
         </Pressable>
 
-        <View style={{ alignItems: "center", flexDirection: "row" }}>
+        <View style={{ alignItems: "center", flexDirection: "row"  }}>
           <Text
             style={[
               themeStyles.primaryText,

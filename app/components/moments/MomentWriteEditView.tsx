@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { useUser } from "@/src/context/UserContext";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import TextMomentBox from "./TextMomentBox";
 import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -20,7 +21,7 @@ import UserCategorySelector from "../headers/UserCategorySelector";
 import { close } from "@sentry/react-native";
 import { Moment } from "@/src/types/MomentContextTypes";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-
+import SwitchFriend from "../home/SwitchFriend";
 import SelectedCategoryButton from "./SelectedCategoryButton";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 type Props = {
@@ -64,6 +65,8 @@ const MomentWriteEditView = ({
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedUserCategory, setSelectedUserCategory] = useState<number>(0);
   const [startingId, setStartingId] = useState();
+  // const [triggerReFocus, setTriggerReFocus ] = useState(false);
+  const [triggerReFocus, setTriggerReFocus] = useState<number>(0); //can set 0 to deFocus if needed
   const [showCategoriesSlider, setShowCategoriesSlider] =
     useState(!!momentText);
 
@@ -71,40 +74,34 @@ const MomentWriteEditView = ({
     useCallback(() => {
       if (momentText) {
         momentTextRef.current.setText(momentText);
-        setShowCategoriesSlider(true);
+        // setShowCategoriesSlider(true);
       } else {
-        setShowCategoriesSlider(false);
+        // setShowCategoriesSlider(false);
       }
       return () => {
-        setShowCategoriesSlider(false);
+        // setShowCategoriesSlider(false);
       };
     }, [momentText])
   );
 
   useEffect(() => {
-    if (!triggerSaveFromLateral) {
-      // right now the trigger doesn't reset itself because this triggers a process that'll unmount it I believe
-      return;
+    if (!catCreatorVisible) {
+      console.log("triggering open");
+      setTriggerReFocus(Date.now());
     }
-
-    handleSave();
-  }, [triggerSaveFromLateral]);
+    // else {
+    //   setTriggerReFocus(false);
+    // }
+  }, [catCreatorVisible]);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => setIsKeyboardVisible(true)
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => setIsKeyboardVisible(false)
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+    console.log("selected friend triggered this!");
+    if (!catCreatorVisible && selectedFriend) {
+      // setTriggerReFocus(false);
+      // setTriggerReFocus(true);
+      setTriggerReFocus(Date.now());
+    }
+  }, [selectedFriend]);
 
   useEffect(() => {
     if (momentText) {
@@ -141,6 +138,31 @@ const MomentWriteEditView = ({
       }
     }
   };
+
+  useEffect(() => {
+    if (!triggerSaveFromLateral) {
+      // right now the trigger doesn't reset itself because this triggers a process that'll unmount it I believe
+      return;
+    }
+
+    handleSave();
+  }, [triggerSaveFromLateral]);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (updateExistingMoment && existingMomentObject) {
@@ -220,7 +242,10 @@ const MomentWriteEditView = ({
               moment: momentTextRef.current.getText(),
             };
             // console.log(requestData);
+                showFlashMessage('Idea saved!', false, 2000);
             await handleCreateMoment(requestData);
+           
+         
           } else {
             const editData = {
               //these are the actual backend fields
@@ -244,12 +269,28 @@ const MomentWriteEditView = ({
   }, [catCreatorVisible]);
 
   useEffect(() => {
-    if (createMomentMutation.isSuccess) {
-      // showMessage(true, null, "Momemt saved!");
+    if (createMomentMutation.isSuccess) { 
       navigateBack();
       createMomentMutation.reset(); //additional immediate reset to allow user to return back to screen instantly
     }
   }, [createMomentMutation.isSuccess]);
+
+
+    useEffect(() => {
+    if (createMomentMutation.isError) {
+      showFlashMessage("Error!", createMomentMutation.isError, 2000);
+    
+    }
+  }, [createMomentMutation.isError]);
+
+
+      useEffect(() => {
+    if (editMomentMutation.isError) {
+      showFlashMessage("Error!", editMomentMutation.isError, 2000);
+    
+    }
+  }, [editMomentMutation.isError]);
+
 
   //this needs to go to the new index instead if it has a new index
   useEffect(() => {
@@ -300,16 +341,36 @@ const MomentWriteEditView = ({
               top: 15,
 
               paddingHorizontal: 20,
+             // backgroundColor: 'orange',
               flexDirection: "row",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
+              alignItems: 'center',
             }}
           >
+            <View
+              style={{
+              
+                zIndex: 2,
+                height: "100%", 
+                width: 90, //hard coded set width to prevent jank if child element shouldn't be rendered
+                justifyContent: 'center',
+                // backgroundColor: 'orange',
+               
+              }}
+            >
+              {!updateExistingMoment && <SwitchFriend />}
+            </View>
+            <View style={{width: 'auto', flexDirection: 'row', height: '100%',  justifyContent: 'flex-end'}}>
+              
             <SelectedCategoryButton
               zIndex={3}
               onPress={openCatCreator}
               label={selectedCategory}
               categoryId={selectedUserCategory}
+              editMode={updateExistingMoment}
             />
+            
+            </View>
           </View>
           <View
             style={[
@@ -327,13 +388,15 @@ const MomentWriteEditView = ({
             <View
               style={{
                 padding: 20,
+                paddingTop: 40, // controls space between top row and text input
                 borderRadius: 40,
                 flexDirection: "column",
                 justifyContent: "flex-start",
-                //  flex: 1,
+                //  flex: 1,4
                 width: "100%",
                 flex: 1,
-                marginBottom: 6,
+                 marginBottom: 16,
+
                 //marginBottom: marginBottom, in momentsviewpage but not here since keyboard is up + no footer bar
                 zIndex: 1,
 
@@ -345,16 +408,11 @@ const MomentWriteEditView = ({
             >
               <TextMomentBox
                 ref={momentTextRef}
-                editScreen={updateExistingMoment}
-                title={updateExistingMoment ? "Edit:" : "Add talking point"}
+ 
                 onTextChange={updateMomentText}
-                showCategoriesSlider={showCategoriesSlider}
-                handleCategorySelect={handleCategorySelect}
-                existingCategory={existingMomentObject?.typedCategory || null}
-                momentTextForDisplay={momentTextRef?.current?.getText() || null}
-                onSave={handleSave}
-                isKeyboardVisible={isKeyboardVisible}
-                selectedUserCategory={selectedUserCategory}
+                triggerReFocus={triggerReFocus} // triggered by category visibility and new friend change
+ 
+                isKeyboardVisible={isKeyboardVisible} 
               />
             </View>
             <View

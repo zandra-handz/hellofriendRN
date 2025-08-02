@@ -9,6 +9,7 @@ import ActionAndBack from "@/app/components/moments/ActionAndBack";
 
 type Props = {
   onPress: () => void;
+  onPressLabel: string;
   onExpandPress: () => void;
 
   paddingVertical: number; // put up here for readability in parent since this needs to match a height in parent
@@ -19,9 +20,11 @@ type Props = {
 const TopBarLikeMinusWidth = ({
   forwardFlowOn = true,
   onPress,
+  onPressLabel='Save',
   onExpandPress,
   paddingVertical = 10,
   label = "categories",
+  
 }: Props) => {
   const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
   const { navigateBack } = useAppNavigations();
@@ -67,7 +70,8 @@ const TopBarLikeMinusWidth = ({
               name={"keyboard-arrow-up"}
               size={16}
             //   color={manualGradientColors.homeDarkColor}
-              color={themeStyles.primaryText.color}
+              // color={themeStyles.primaryText.color}
+              color={'transparent'}
               style={{
                 position: "absolute",
                 bottom: 17,
@@ -120,7 +124,7 @@ const TopBarLikeMinusWidth = ({
                 { fontSize: 13, marginRight: 12 },
               ]}
             >
-              Save
+              {onPressLabel}
             </Text>
             {forwardFlowOn && <ToNextButton onPress={onPress} />}
             {!forwardFlowOn && <ActionAndBack onPress={onPress} />}

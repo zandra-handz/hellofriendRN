@@ -24,7 +24,7 @@ const ScreenPreAdded = () => {
     >
       {selectedFriend && !loadingNewFriend && (
         <View style={{ flex: 1, padding: 10 }}>
-          <Text
+          {/* <Text  //inside PreAdded now to put in same view with select all button
             style={[
               themeStyles.primaryText,
               appFontStyles.welcomeText,
@@ -32,7 +32,7 @@ const ScreenPreAdded = () => {
             ]}
           >
             Undo add
-          </Text>
+          </Text> */}
           {preAdded && <PreAddedList />}
         </View>
       )}

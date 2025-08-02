@@ -14,7 +14,7 @@ type Props = {
 
 const ActionAndBack = ({ onPress, iconName='check'}: Props) => {
   const { manualGradientColors } = useGlobalStyle();
-  const navigation = useNavigation<NavigationProp>();
+ 
 
   return (
     <Pressable

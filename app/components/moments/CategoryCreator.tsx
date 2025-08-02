@@ -31,6 +31,7 @@ type Props = {
   categoryNames: string[];
   categoryColorsMap: Record<string, string>;
   onPress: () => void;
+
   onSave: () => void;
   onClose: () => void;
   updatingExisting: boolean;
@@ -46,8 +47,7 @@ const CategoryCreator = ({
   onClose,
 }: Props) => {
   const { capsuleList } = useCapsuleList();
-  const { userCategories } =
-    useCategories();
+  const { userCategories } = useCategories();
   const {
     themeStyles,
     manualGradientColors,
@@ -77,7 +77,7 @@ const CategoryCreator = ({
   const [categoriesSortedList, setCategoriesSortedList] = useState([]);
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
   const [tempCategoriesMap, setTempCategoriesMap] = useState({});
-
+  const [pressedOnce, setPressedOnce] = useState(false);
   useEffect(() => {
     console.log(`CategoryCreator selectedId`, selectedId);
   }, [selectedId]);
@@ -97,8 +97,20 @@ const CategoryCreator = ({
   );
 
   const handleOnPress = ({ name: name, id: id }) => {
+    if (!name || !id) { 
+      return;
+    }
+
     onPress({ name: name, id: id });
     setSelectedId(id);
+       onClose(); // TESTING, REMOVE IF REALLY WANT DOUBLE PRESS FEATURE
+
+    if (!pressedOnce) {
+      setPressedOnce(true);
+    } else {
+      setPressedOnce(false);
+      onClose();
+    }
   };
 
   // useEffect(() => {
@@ -118,7 +130,7 @@ const CategoryCreator = ({
   // }, [categoryColors, tempCategoriesSortedList]);
 
   useEffect(() => {
-    console.log('useeffect we need triggered');
+    console.log("useeffect we need triggered");
     if (!categoriesSortedList) {
       console.log(`use effect returning without doing anything`);
       return;
@@ -130,68 +142,81 @@ const CategoryCreator = ({
       const find = userCategories.findIndex(
         (category) => category.id === existingId
       );
-       console.log(find);
+      console.log(find);
 
       setSelectedId(existingId);
 
       return;
     }
-console.log(`friend default:`, friendDashboardData.friend_faves.friend_default_category);
-     const friendDefault = friendDashboardData?.friend_faves?.friend_default_category;
-      const name = userCategories.find((category) => category.id === friendDefault);
+
+    if (friendDashboardData && friendDashboardData?.friend_faves) {
+      console.log(
+        `friend default:`,
+        friendDashboardData.friend_faves.friend_default_category
+      );
+      const friendDefault =
+        friendDashboardData?.friend_faves?.friend_default_category;
+      const name = userCategories.find(
+        (category) => category.id === friendDefault
+      );
       console.log(name);
-  
-    if (name) {
-      console.log('SETTTINGGGGGGGGGG');
-  
- 
-  onPress({name: name.name, id: name.id});
-  setSelectedId(name.id);
-      return;
+
+      if (name) {
+        console.log("SETTTINGGGGGGGGGG");
+
+        onPress({ name: name.name, id: name.id });
+        setSelectedId(name.id);
+        return;
+      }
     }
 
     let largest = categoriesSortedList[0]?.user_category;
     let largestName = categoriesSortedList[0]?.name;
 
     console.log(`largest: `, typeof largest);
-     console.log(`largestName: `, typeof largestName);
+    console.log(`largestName: `, typeof largestName);
 
     if (largest && largestName) {
-      console.log('setting largest');
+      console.log("setting largest");
 
-       onPress({ name: largestName, id: largest });
+      onPress({ name: largestName, id: largest });
       setSelectedId(largest);
     }
   }, [categoriesSortedList, friendDashboardData]);
 
- const renderedButtons = useMemo(
-  () => (
-    <View style={styles.buttonRow}>
-      {Array.isArray(userCategories) &&
-        userCategories.map(({ name, id }) => {
-          const categoryColor = categoryColorsMap[id];
+  const renderedButtons = useMemo(
+    () => (
+      <View style={styles.buttonRow}>
+        {Array.isArray(userCategories) &&
+          userCategories.map(({ name, id }) => {
+            const categoryColor = categoryColorsMap[id];
 
-          return (
-            <View
-              key={id ?? name ?? "Uncategorized"}
-              style={styles.buttonWrapper}
-            >
-              <CategoryButtonForCreator
-                height={"auto"}
-                selectedId={selectedId}
-                label={name}
-                itemId={id}
-                highlightColor={categoryColor}
-                onPress={() => handleOnPress({ name: name, id: id })}
-              />
-            </View>
-          );
-        })}
-    </View>
-  ),
-  [userCategories, categoryColorsMap, onPress, selectedId]
-);
-
+            return (
+              <View
+                key={id ?? name ?? "Uncategorized"}
+                style={styles.buttonWrapper}
+              >
+                <CategoryButtonForCreator
+                  height={"auto"}
+                  selectedId={selectedId}
+                  label={name}
+                  itemId={id}
+                  highlightColor={categoryColor}
+                  onPress={() => handleOnPress({ name: name, id: id })}
+                />
+              </View>
+            );
+          })}
+      </View>
+    ),
+    [
+      userCategories,
+      friendDashboardData,
+      categoryColorsMap,
+      onPress,
+      selectedId,
+    ]
+  );
 
   return (
     <>
@@ -203,7 +228,7 @@ console.log(`friend default:`, friendDashboardData.friend_faves.friend_default_c
             styles.categoryNavigatorContainer,
             styles.momentsScreenPrimarySpacing,
             {
-              backgroundColor: 
+              backgroundColor:
                 // themeStyles.overlayBackgroundColor.backgroundColor,
                 themeStyles.primaryBackground.backgroundColor,
             },
@@ -265,14 +290,14 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     zIndex: 5000,
     height: "auto",
-    
+
     // width: "74%",
     width: "100%",
     selfAlign: "center",
   },
   scrollContainer: {
     maxHeight: 400,
-    height: 'auto',
+    height: "auto",
     flexGrow: 1,
     marginTop: 0,
     borderRadius: 10,

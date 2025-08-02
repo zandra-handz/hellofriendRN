@@ -29,6 +29,7 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
     () => visibilityValue.value,
     (newVal, oldVal) => {
       if (newVal !== oldVal) {
+    
         runOnJS(setHide)(!!newVal);
       }
     }
@@ -56,7 +57,7 @@ const MomentsAdded: React.FC<MomentsAddedProps> = ({ visibilityValue }) => {
       >
         {!hide && (
           <Animated.View
-            entering={SlideInDown}
+            entering={SlideInDown.duration(0)}
             style={[
               themeStyles.overlayBackgroundColor,
               {

@@ -21,6 +21,8 @@ import {
   NavigationContainerRef,
   getStateFromPath,
 } from "@react-navigation/native";
+
+import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, useColorScheme, Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
 import { MessageContextProvider } from "./src/context/MessageContext";
@@ -52,8 +54,8 @@ import * as Linking from "expo-linking";
 import * as MediaLibrary from "expo-media-library";
 
 import { useGlobalStyle } from "./src/context/GlobalStyleContext";
-import ResultMessage from "./app/components/alerts/ResultMessage"; 
-import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner"; 
+import ResultMessage from "./app/components/alerts/ResultMessage";
+import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
@@ -206,27 +208,28 @@ export default Sentry.wrap(function App() {
             <UserSettingsProvider>
               <GlobalStyleProvider>
                 <CategoriesProvider>
-                  <UserStatsProvider> 
-                      <UpcomingHelloesProvider>
-                        <FriendListProvider>
-                          <SelectedFriendProvider>
-                            {/* <PhoneStatusBar /> */}
-                            <CapsuleListProvider>
-                              <DeviceLocationProvider>
-                                
+                  <UserStatsProvider>
+                    <UpcomingHelloesProvider>
+                      <FriendListProvider>
+                        <SelectedFriendProvider>
+                          {/* <PhoneStatusBar /> */}
+                          <CapsuleListProvider>
+                            <DeviceLocationProvider>
                               <LocationsProvider>
                                 <HelloesProvider>
                                   <FriendLocationsProvider>
                                     <SelectedFriendStatsProvider>
                                       <MessageContextProvider>
                                         <SafeAreaProvider>
-                                          {/* <SafeView  // in screen components instead
+                                          <RootSiblingParent>
+                                            {/* <SafeView  // in screen components instead
                                 style={{
                                   flex: 1,
                                   backgroundColor: "transparent",
                                 }}
                               > */}
-                                          <Layout />
+                                            <Layout />
+                                          </RootSiblingParent>
                                           {/* </SafeView> */}
                                         </SafeAreaProvider>
                                       </MessageContextProvider>
@@ -234,13 +237,11 @@ export default Sentry.wrap(function App() {
                                   </FriendLocationsProvider>
                                 </HelloesProvider>
                               </LocationsProvider>
-                              
-                              </DeviceLocationProvider>
-                            </CapsuleListProvider>
-                          </SelectedFriendProvider>
-                        </FriendListProvider>
-                      </UpcomingHelloesProvider>
-                 
+                            </DeviceLocationProvider>
+                          </CapsuleListProvider>
+                        </SelectedFriendProvider>
+                      </FriendListProvider>
+                    </UpcomingHelloesProvider>
                   </UserStatsProvider>
                 </CategoriesProvider>
               </GlobalStyleProvider>
@@ -375,22 +376,20 @@ export const Layout = () => {
   const { themeStyles } = useGlobalStyle();
   const { isAuthenticated, user, isInitializing } = useUser();
   const { settings } = useUserSettings();
- 
-   
 
   const receiveNotifications =
     settings?.receive_notifications === true
       ? true
       : settings?.receive_notifications === false
-      ? false
-      : 'not ready';
+        ? false
+        : "not ready";
 
-        const expoPushToken =
-    settings?.expo_push_token === null 
-    ? null
-    : settings?.expo_push_token === undefined
-    ? 'not ready'
-    : settings.expo_push_token;
+  const expoPushToken =
+    settings?.expo_push_token === null
+      ? null
+      : settings?.expo_push_token === undefined
+        ? "not ready"
+        : settings.expo_push_token;
 
   useNotificationsRegistration({ receiveNotifications, expoPushToken });
   return (
@@ -401,8 +400,8 @@ export const Layout = () => {
 
       <TopLevelNavigationHandler>
         <Stack.Navigator
-        // detachInactiveScreens={true}  doesn't apply to the native navigator
-        //options={{ unmountOnBlur: true }} won't work either
+          // detachInactiveScreens={true}  doesn't apply to the native navigator
+          //options={{ unmountOnBlur: true }} won't work either
 
           screenOptions={{
             headerShown: true,
@@ -415,122 +414,121 @@ export const Layout = () => {
         >
           {isAuthenticated && user && !isInitializing ? (
             // user.app_setup_complete || !user.app_setup_complete ? (
-              <>
-                <Stack.Screen
-                  name="hellofriend"
-                  component={ScreenHome}
-                  options={{
-                    
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="UserDetails"
-                  component={ScreenUserDetails}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
+            <>
+              <Stack.Screen
+                name="hellofriend"
+                component={ScreenHome}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="UserDetails"
+                component={ScreenUserDetails}
+                options={{
+                  headerShown: false,
+                }}
+              />
 
-                <Stack.Screen
-                  name="MomentFocus"
-                  component={ScreenMomentFocus}
-                  options={{
-                    gestureEnabled: false,
-                    animation: "none",
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="Moments"
-                  component={ScreenMoments}
-                  options={{ 
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="PreAdded"
-                  component={ScreenPreAdded}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="Finalize"
-                  component={ScreenFinalize}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="Reload"
-                  component={ScreenReload}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
+              <Stack.Screen
+                name="MomentFocus"
+                component={ScreenMomentFocus}
+                options={{
+                  gestureEnabled: false,
+                  animation: "none",
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Moments"
+                component={ScreenMoments}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="PreAdded"
+                component={ScreenPreAdded}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Finalize"
+                component={ScreenFinalize}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Reload"
+                component={ScreenReload}
+                options={{
+                  headerShown: false,
+                }}
+              />
 
-                <Stack.Screen
-                  name="MomentView"
-                  component={ScreenMomentView}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="Images"
-                  component={ScreenImages}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="ImageView"
-                  component={ScreenImageView}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="Helloes"
-                  component={ScreenHelloes}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="HelloView"
-                  component={ScreenHelloView}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="Locations"
-                  component={ScreenLocations}
-                  options={{
-                    headerMode: "screen",
-                    headerShown: true,
-                    header: () => <HeaderLocation headerTitle="Locations" />,
-                  }}
-                />
-                <Stack.Screen
-                  name="LocationView"
-                  component={ScreenLocationView}
-                  options={{
-                    headerMode: "screen",
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="UnsavedLocationView"
-                  component={ScreenUnsavedLocationView}
-                  options={{
-                    headerMode: "screen",
-                    headerShown: false,
-                  }}
-                />
-                {/* <Stack.Screen
+              <Stack.Screen
+                name="MomentView"
+                component={ScreenMomentView}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Images"
+                component={ScreenImages}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="ImageView"
+                component={ScreenImageView}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Helloes"
+                component={ScreenHelloes}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="HelloView"
+                component={ScreenHelloView}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Locations"
+                component={ScreenLocations}
+                options={{
+                  headerMode: "screen",
+                  headerShown: true,
+                  header: () => <HeaderLocation headerTitle="Locations" />,
+                }}
+              />
+              <Stack.Screen
+                name="LocationView"
+                component={ScreenLocationView}
+                options={{
+                  headerMode: "screen",
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="UnsavedLocationView"
+                component={ScreenUnsavedLocationView}
+                options={{
+                  headerMode: "screen",
+                  headerShown: false,
+                }}
+              />
+              {/* <Stack.Screen
                   name="LocationNav"
                   component={ScreenLocationNav}
                   options={{
@@ -538,41 +536,41 @@ export const Layout = () => {
                     headerShown: false,
                   }}
                 /> */}
-                <Stack.Screen
-                  name="Location"
-                  component={ScreenLocation}
-                  options={({ route }) => ({
-                    headerShown: true,
-                    header: () => (
-                      <HeaderLocationSingle
-                        location={route.params?.location}
-                        favorite={route.params?.favorite}
-                      />
-                    ),
-                  })}
-                />
-                <Stack.Screen
-                  name="LocationSend"
-                  component={ScreenLocationSend}
-                  options={({ route }) => ({
-                    headerShown: false,
-                  })}
-                />
-                <Stack.Screen
-                  name="LocationEdit"
-                  component={ScreenLocationEdit}
-                  options={() => ({
-                    headerShown: false,
-                  })}
-                />
-                <Stack.Screen
-                  name="LocationCreate"
-                  component={ScreenLocationCreate}
-                  options={() => ({
-                    headerShown: false,
-                  })}
-                />
-                {/* <Stack.Screen
+              <Stack.Screen
+                name="Location"
+                component={ScreenLocation}
+                options={({ route }) => ({
+                  headerShown: true,
+                  header: () => (
+                    <HeaderLocationSingle
+                      location={route.params?.location}
+                      favorite={route.params?.favorite}
+                    />
+                  ),
+                })}
+              />
+              <Stack.Screen
+                name="LocationSend"
+                component={ScreenLocationSend}
+                options={({ route }) => ({
+                  headerShown: false,
+                })}
+              />
+              <Stack.Screen
+                name="LocationEdit"
+                component={ScreenLocationEdit}
+                options={() => ({
+                  headerShown: false,
+                })}
+              />
+              <Stack.Screen
+                name="LocationCreate"
+                component={ScreenLocationCreate}
+                options={() => ({
+                  headerShown: false,
+                })}
+              />
+              {/* <Stack.Screen
                   name="LocationSave"
                   component={ScreenAddLocation}
                   options={() => ({
@@ -586,67 +584,68 @@ export const Layout = () => {
                     ),
                   })}
                 /> */}
-                <Stack.Screen
-                  name="LocationSearch"
-                  component={ScreenLocationSearch}
-                  options={{
-                    headerShown: false,
-                    header: () => <HeaderBase headerTitle="Search locations" />,
-                  }}
-                />
-                <Stack.Screen
-                  name="MidpointLocationSearch"
-                  component={ScreenMidpointLocationSearch}
-                  options={{
-                    headerShown: true,
-                    header: () => (
-                      <HeaderBase headerTitle="Find midpoint locations" />
-                    ),
-                  }}
-                />
-                <Stack.Screen
-                  name="CalculateTravelTimes"
-                  component={ScreenCalculateTravelTimes}
-                  options={{
-                    headerShown: true,
-                    header: () => (
-                      <HeaderBase
-                        headerTitle="Compare driving times"
-                        icon="distanceZigZag"
-                      />
-                    ),
-                  }}
-                />
+              <Stack.Screen
+                name="LocationSearch"
+                component={ScreenLocationSearch}
+                options={{
+                  headerShown: false,
+                  header: () => <HeaderBase headerTitle="Search locations" />,
+                }}
+              />
+              <Stack.Screen
+                name="MidpointLocationSearch"
+                component={ScreenMidpointLocationSearch}
+                options={{
+                  headerShown: true,
+                  header: () => (
+                    <HeaderBase headerTitle="Find midpoint locations" />
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name="CalculateTravelTimes"
+                component={ScreenCalculateTravelTimes}
+                options={{
+                  headerShown: true,
+                  header: () => (
+                    <HeaderBase
+                      headerTitle="Compare driving times"
+                      icon="distanceZigZag"
+                    />
+                  ),
+                }}
+              />
 
-                <Stack.Screen
-                  name="AddImage"
-                  component={ScreenAddImage}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="AddHello"
-                  component={ScreenAddHello}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="SelectFriend"
-                  component={ScreenSelectFriend}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-                <Stack.Screen
-                  name="AddFriend"
-                  component={ScreenAddFriend}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-              </>
+              <Stack.Screen
+                name="AddImage"
+                component={ScreenAddImage}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="AddHello"
+                component={ScreenAddHello}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="SelectFriend"
+                component={ScreenSelectFriend}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="AddFriend"
+                component={ScreenAddFriend}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </>
+          ) : (
             // ) : (
             //   <Stack.Screen
             //     name="Setup"
@@ -656,7 +655,6 @@ export const Layout = () => {
             //     }}
             //   />
             // )
-          ) : (
             <>
               <Stack.Screen
                 name="Welcome"
