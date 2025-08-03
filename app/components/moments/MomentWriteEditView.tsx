@@ -321,6 +321,7 @@ const MomentWriteEditView = ({
   }, [editMomentMutation.isError]);
 
   //this needs to go to the new index instead if it has a new index
+  //EDIT not working anymore /was always kinda broken? fix 
   useEffect(() => {
     if (editMomentMutation.isSuccess && capsuleList) {
       console.log(
