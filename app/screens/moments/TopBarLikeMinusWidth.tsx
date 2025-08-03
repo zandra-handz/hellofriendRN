@@ -11,8 +11,7 @@ type Props = {
   onPress: () => void;
   onPressLabel: string;
   onExpandPress: () => void;
-
-  paddingVertical: number; // put up here for readability in parent since this needs to match a height in parent
+  marginTop: number;
   forwardFlowOn: boolean;
   label: string;
 };
@@ -22,7 +21,7 @@ const TopBarLikeMinusWidth = ({
   onPress,
   onPressLabel='Save',
   onExpandPress,
-  paddingVertical = 10,
+ marginTop = 6,
   label = "categories",
   
 }: Props) => {
@@ -36,13 +35,17 @@ const TopBarLikeMinusWidth = ({
           {
             height: 50,
             paddingHorizontal: 10,
-            flexDirection: "row",
-            paddingVertical: paddingVertical,
+            flexDirection: "row", 
+
+            // paddingTop: paddingTop,
+            // paddingBottom: paddingBottom,
             alignItems: "center",
             justifyContent: "center",
             // justifyContent: "space-between",
             borderRadius: 10,
-            marginVertical: 10,
+            // marginVertical: 10,
+            marginTop: marginTop,
+      
           },
         ]}
       >

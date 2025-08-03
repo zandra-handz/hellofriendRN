@@ -2,7 +2,7 @@
 // performs better than non-memoized, per DevTools profiling
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import { View,  StyleSheet, Pressable } from "react-native";
 import Animated, {
   useAnimatedStyle,
   SlideInUp,
@@ -11,27 +11,24 @@ import Animated, {
   SlideOutDown,
 } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import CategoryButton from "./CategoryButton";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import SearchModal from "../headers/SearchModal";
+import {   MaterialIcons } from "@expo/vector-icons";
+ 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/src/types/NavigationTypes";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
-import { useNavigation } from "@react-navigation/native";
-import { SharedValue } from "react-native-reanimated";
-import UserCategorySelectorButton from "../headers/UserCategorySelectorButton";
+import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions"; 
 import { useCategories } from "@/src/context/CategoriesContext";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type Props = {
+  freezeCategory: boolean;      
   isVisible: boolean;
   categoryNames: string[];
   categoryColorsMap: Record<string, string>;
   onPress: () => void;
-
+addToOnPress: () => void; 
   onSave: () => void;
   onClose: () => void;
   updatingExisting: boolean;
@@ -39,8 +36,10 @@ type Props = {
   selectedId: number;
 };
 const CategoryCreator = ({
+  freezeCategory,
   isVisible,
   onPress,
+  addToOnPress,  
   updatingExisting,
   existingId,
   categoryColorsMap,
@@ -50,10 +49,7 @@ const CategoryCreator = ({
   const { userCategories } = useCategories();
   const {
     themeStyles,
-    manualGradientColors,
-    gradientColorsHome,
-    appContainerStyles,
-    appSpacingStyles,
+    manualGradientColors, 
   } = useGlobalStyle();
 
   const { friendDashboardData } = useSelectedFriend();
@@ -78,9 +74,12 @@ const CategoryCreator = ({
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
   const [tempCategoriesMap, setTempCategoriesMap] = useState({});
   const [pressedOnce, setPressedOnce] = useState(false);
-  useEffect(() => {
-    console.log(`CategoryCreator selectedId`, selectedId);
-  }, [selectedId]);
+
+  // useEffect(() => {
+  //   console.log(`CategoryCreator selectedId`, selectedId);
+  // }, [selectedId]);
+
+
   useFocusEffect(
     useCallback(() => {
       if (!capsuleList || capsuleList?.length < 1) {
@@ -97,11 +96,16 @@ const CategoryCreator = ({
   );
 
   const handleOnPress = ({ name: name, id: id }) => {
+ 
     if (!name || !id) { 
       return;
     }
 
     onPress({ name: name, id: id });
+      if (!freezeCategory) {
+    // if (!freezeCategory?.current) {
+      addToOnPress(); 
+    }
     setSelectedId(id);
        onClose(); // TESTING, REMOVE IF REALLY WANT DOUBLE PRESS FEATURE
 
@@ -130,14 +134,11 @@ const CategoryCreator = ({
   // }, [categoryColors, tempCategoriesSortedList]);
 
   useEffect(() => {
-    console.log("useeffect we need triggered");
-    if (!categoriesSortedList) {
-      console.log(`use effect returning without doing anything`);
-      return;
-    }
-
-    // console.log(`existing: `, existingId);
-
+    // console.warn(`frezeCategory: `, freezeCategory);
+     if (freezeCategory) { 
+  // if (freezeCategory?.current) { // do not change category on open if user has already selected one
+    return;
+  }
     if (updatingExisting && existingId) {
       const find = userCategories.findIndex(
         (category) => category.id === existingId
@@ -159,10 +160,10 @@ const CategoryCreator = ({
       const name = userCategories.find(
         (category) => category.id === friendDefault
       );
-      console.log(name);
+      // console.log(name);
 
       if (name) {
-        console.log("SETTTINGGGGGGGGGG");
+        console.warn("SETTTINGGGGGGGGGG");
 
         onPress({ name: name.name, id: name.id });
         setSelectedId(name.id);
@@ -215,6 +216,7 @@ const CategoryCreator = ({
       categoryColorsMap,
       onPress,
       selectedId,
+      freezeCategory,
     ]
   );
 

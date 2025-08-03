@@ -14,15 +14,15 @@ import Animated, {
   SlideInUp,
   SlideOutUp,
 } from "react-native-reanimated";
-import TopBar from "./TopBar";
 import TopBarLikeMinusWidth from "./TopBarLikeMinusWidth";
 
 const ScreenMomentFocus = () => {
   const route = useRoute();
   const momentText = route.params?.momentText ?? null;
+  const screenCameFrom = route.params?.screenCameFrom ?? 0; // 0 = nav back, 1 = do not nav after save
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
   const existingMomentObject = route.params?.existingMomentObject ?? null;
-  const { capsuleList } = useCapsuleList(); 
+  const { capsuleList } = useCapsuleList();
   const { userCategories } = useCategories();
   const { themeAheadOfLoading } = useFriendList();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
@@ -32,7 +32,7 @@ const ScreenMomentFocus = () => {
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
 
   const [catCreatorVisible, setCatCreatorVisible] = useState(false);
-  const [triggerMessage, setTriggerMessage ] = useState<number>(0);
+  const [triggerMessage, setTriggerMessage] = useState<number>(0);
 
   // useEffect(() => {
   //   if (updateFriendDefaultCategoryMutation.isSuccess) {
@@ -43,12 +43,13 @@ const ScreenMomentFocus = () => {
   // }, [updateFriendDefaultCategoryMutation.isSuccess]);
 
 
- 
-  
-
+  //using this arrangement below to keep top and bottom bar spacing the same :)
+  const CARD_PADDING = 4;
+  const SPACER_BETWEEN_BAR_AND_CARD = 2; // low bc there is already parent padding
   const topBarHeight = 50;
-  const topBarPaddingVertical = 10;
-  const topBarTotalHeight = topBarHeight + topBarPaddingVertical * 2;
+  const topBarMarginTop = 10;
+
+  const topBarTotalHeight = topBarHeight + topBarMarginTop;
 
   const handleOpenCatCreator = () => {
     console.log("cat creator now visible!");
@@ -59,32 +60,25 @@ const ScreenMomentFocus = () => {
     setCatCreatorVisible(false);
   };
 
-  const [triggerSaveFromLateral, setTriggerSaveFromLateral ] = useState(false);
+  const [triggerSaveFromLateral, setTriggerSaveFromLateral] = useState(false);
 
   const handleTriggerSaveFromLateral = () => {
     setTriggerSaveFromLateral(true);
-
-
-   
-
-  
-
   };
 
-useEffect(() => {
-  let timeout: ReturnType<typeof setTimeout>;
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
 
-  if (triggerSaveFromLateral) {
-    timeout = setTimeout(() => setTriggerSaveFromLateral(false), 0);
-  }
-
-  return () => {
-    if (timeout) {
-      clearTimeout(timeout);
+    if (triggerSaveFromLateral) {
+      timeout = setTimeout(() => setTriggerSaveFromLateral(false), 0);
     }
-  };
-}, [triggerSaveFromLateral]);
 
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [triggerSaveFromLateral]);
 
   useEffect(() => {
     if (userCategories && userCategories.length > 0) {
@@ -113,11 +107,11 @@ useEffect(() => {
         >
           <TopBarLikeMinusWidth
             forwardFlowOn={false}
-            paddingVertical={topBarPaddingVertical}
+            marginTop={topBarMarginTop}
             onExpandPress={handleOpenCatCreator}
             onPress={handleTriggerSaveFromLateral}
-            label={''}
-            onPressLabel={updateExistingMoment ? 'Save changes' : 'Save'}
+            label={""}
+            onPressLabel={updateExistingMoment ? "Save" : "Save"}
           />
         </Animated.View>
       )}
@@ -127,10 +121,15 @@ useEffect(() => {
       {categoryColorsMap && (
         <Animated.View
           entering={SlideInDown}
-          style={{ width: "100%", flex: 1 }}
+          style={{
+            width: "100%",
+            flex: 1,
+            marginTop: SPACER_BETWEEN_BAR_AND_CARD,
+          }}
         >
           <MomentWriteEditView
-          triggerSaveFromLateral={triggerSaveFromLateral}
+            screenCameFromToParent={screenCameFrom}
+            triggerSaveFromLateral={triggerSaveFromLateral}
             catCreatorVisible={catCreatorVisible}
             openCatCreator={handleOpenCatCreator}
             closeCatCreator={handleCloseCatCreator}
@@ -138,6 +137,8 @@ useEffect(() => {
             momentText={momentText || null}
             updateExistingMoment={updateExistingMoment}
             existingMomentObject={existingMomentObject}
+            escortBarSpacer={SPACER_BETWEEN_BAR_AND_CARD + CARD_PADDING}
+            cardPadding={CARD_PADDING} 
           />
         </Animated.View>
       )}

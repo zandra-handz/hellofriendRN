@@ -307,6 +307,7 @@ const ScreenHome = () => {
                   borderBottomRightRadius={0}
                   // isKeyboardVisible={isKeyboardVisible}
                   onPress={handleFocusPress}
+                  isKeyboardVisible={isKeyboardVisible}
                 />
                 <QuickWriteMoment
                   width={"100%"}

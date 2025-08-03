@@ -2,7 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-import { useNavigation } from "@react-navigation/native";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import Donut from "../headers/Donut";
@@ -12,6 +12,7 @@ import { AppState, AppStateStatus } from "react-native";
 import FriendHistorySmallChart from "./FriendHistorySmallChart";
 import UserHistorySmallChart from "./UserHistorySmallChart";
 import { useFriendList } from "@/src/context/FriendListContext";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 import CategoryDetailsModal from "../headers/CategoryDetailsModal";
 
@@ -27,7 +28,8 @@ type Props = {
 
 const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
-  const navigation = useNavigation();
+ 
+  const { navigateToMoments, navigateToMomentFocus } = useAppNavigations();
   const { capsuleList } = useCapsuleList();
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const { themeAheadOfLoading } = useFriendList();
@@ -101,13 +103,18 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
     if (!categoryId) {
       return;
     }
-    navigation.navigate("Moments", { scrollTo: categoryId });
+    navigateToMoments({scrollTo: categoryId});
+    // navigation.navigate("Moments", { scrollTo: categoryId });
   };
 
   const handleMomentScreenNoScroll = () => {
-    console.log("handlemomentscreen pressed");
+ 
+    navigateToMoments({scrollTo: null});
+    // navigation.navigate("Moments", { scrollTo: null });
+  };
 
-    navigation.navigate("Moments", { scrollTo: null });
+  const handleNavigateToCreateNew = () => {
+    navigateToMomentFocus({screenCameFrom: 1});
   };
 
   useFocusEffect(
@@ -258,7 +265,7 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
             onCategoryPress={handleMomentScreenScrollTo}
             onCategoryLongPress={handleSetCategoryDetailsModal}
             onCenterPress={handleMomentScreenNoScroll}
-            onPlusPress={() => navigation.navigate("MomentFocus")}
+            onPlusPress={handleNavigateToCreateNew}
             radius={CHART_RADIUS}
             strokeWidth={CHART_STROKE_WIDTH}
             outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}

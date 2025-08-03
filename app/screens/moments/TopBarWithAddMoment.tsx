@@ -13,6 +13,11 @@ import useAppNavigations from "@/src/hooks/useAppNavigations";
 //TopBar is based on this
 const TopBarWithAddMoment = () => {
   const { navigateToMomentFocus } = useAppNavigations();
+
+  const handleNavigateToCreateNew = () => {
+    navigateToMomentFocus({screenCameFrom: 0}); //meaning, moment save will trigger nav back
+
+  };
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   return (
     <View style={{ paddingHorizontal: 10 }}>
@@ -31,7 +36,7 @@ const TopBarWithAddMoment = () => {
           },
         ]}
       >
-        <Pressable hitSlop={20} onPress={navigateToMomentFocus}>
+        <Pressable hitSlop={20} onPress={handleNavigateToCreateNew}>
           <View style={{ position: "absolute", top: 0, right: -10 }}>
             <MaterialCommunityIcons
               name={"plus"}

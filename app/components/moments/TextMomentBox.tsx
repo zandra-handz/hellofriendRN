@@ -14,7 +14,7 @@ import {
   Platform,
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import SwitchFriend from "../home/SwitchFriend";
+ 
 
 // Forwarding ref to the parent to expose the TextInput value
 const TextMomentBox = forwardRef(
@@ -35,6 +35,8 @@ const TextMomentBox = forwardRef(
     const [editedMessage, setEditedMessage] = useState(mountingText);
     const textInputRef = useRef();
 
+    const PADDING_TEXT_ABOVE_KEYBOARD = 80;
+
     useEffect(() => {
       if (triggerReFocus) {
         console.log('triggerReFocus triggered in text moment box');
@@ -44,14 +46,7 @@ const TextMomentBox = forwardRef(
 
     }, [triggerReFocus]);
 
-    useEffect(() => {
-      if (textInputRef.current) {
-        textInputRef.current.setNativeProps({ text: mountingText });
-        console.log("setting edited message in text box");
-        setEditedMessage(mountingText);
-      }
-    }, []);
-
+ 
     useImperativeHandle(ref, () => ({
       setText: (text) => {
         if (textInputRef.current) {
@@ -68,28 +63,17 @@ const TextMomentBox = forwardRef(
       getText: () => editedMessage,
     }));
 
-    useEffect(() => {
-      setEditedMessage(mountingText); // Reset to starting text if it changes
-    }, [mountingText]);
+
 
     const handleTextInputChange = (text) => {
+      console.log('text update:', text);
       setEditedMessage(text);
       onTextChange(text);
     };
 
     return (
       <View style={[styles.container, { width: "100%", height: "100%" }]}>
-        {/* {!editScreen && <SwitchFriend />} */}
-        {/* <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            width: "100%",
-            alignItems: "center",
-          }}
-        >
-      
-        </View> */}
+ 
         <View style={{ flex: 1 }}>
           {helperText && (
             <Text style={[styles.helperText, themeStyles.genericText]}>
@@ -110,14 +94,13 @@ const TextMomentBox = forwardRef(
                 themeStyles.genericText,
                 appFontStyles.welcomeText,
                 {
-                  paddingTop: 10,
+                  // paddingTop: 0,
                   fontSize: 15,
                   lineHeight: 24, // same as moment view page
                   flex: 1,
-                  flexGrow: 1,
-                  paddingBottom: 0,
+                  flexGrow: 1, 
                   textAlignVertical: "top",
-                  minHeight: 120, // ensure some starting height
+                  minHeight: 120, // to ensure a starting height
                 },
               ]}
               value={editedMessage}
@@ -125,7 +108,7 @@ const TextMomentBox = forwardRef(
               multiline={true}
             />
 
-            <View style={{ width: "100%", height: 80 }}></View>
+            <View style={{ width: "100%", height: PADDING_TEXT_ABOVE_KEYBOARD }}></View>
           </KeyboardAvoidingView>
         </View>
       </View>

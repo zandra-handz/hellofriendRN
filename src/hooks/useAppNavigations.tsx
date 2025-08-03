@@ -16,11 +16,15 @@ type NavToMomentViewProp = {
   index: number;
 };
 
+type NavToMomentFocusProp = {
+  screenCameFrom: number; // 0 = nav back after moment save, 1 = stay after moment save
+}
+
 interface hookReturns {
   navigateToAddFriend: () => void;
   navigateToFinalize: () => void;
   navigateToLocationSearch: () => void;
-  navigateToMomentFocus: () => void;
+  navigateToMomentFocus: ({screenCameFrom }: NavToMomentFocusProp) => void;
   navigateToMoments: ({ scrollTo }: NavToMomentsProp) => void;
   navigateToMomentView: ({ moment, index }: NavToMomentViewProp) => void;
 
@@ -34,8 +38,8 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("AddFriend");
   };
 
-  const navigateToMomentFocus = () => {
-    navigation.navigate("MomentFocus");
+  const navigateToMomentFocus = ({screenCameFrom}) => {
+    navigation.navigate("MomentFocus", {screenCameFrom: screenCameFrom });
   };
 
   const navigateToMoments = ({ scrollTo }: NavToMomentsProp) => {

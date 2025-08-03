@@ -21,7 +21,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import SwitchFriend from "../home/switchFriend";
+ 
 import { useUserSettings } from "@/src/context/UserSettingsContext"; 
 // import { useFriendList } from "@/src/context/FriendListContext";
 import { useFocusEffect } from "@react-navigation/native";
@@ -41,21 +41,15 @@ interface QuickWriteMomentProps {
 // Forwarding ref to the parent to expose the TextInput value
 const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
   (
-    {
-      title = "title",
+    { 
       mountingText = "Start typing",
-      onTextChange,
-      width = "90%",
-      height = "60%",
-      multiline = true,
-      friendModalOpened =true,
+      onTextChange, 
+      multiline = true, 
     },
     ref
   ) => {
     const {
-      themeStyles,
-      appFontStyles,
-      manualGradientColors,
+      themeStyles, 
       appContainerStyles,
     } = useGlobalStyle();
 

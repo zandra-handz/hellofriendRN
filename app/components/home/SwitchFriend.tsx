@@ -1,4 +1,5 @@
 import { View, Text, Pressable } from "react-native";
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import React, { useCallback } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
@@ -7,54 +8,172 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 
-type Props = {};
-
+type Props = {
+  fontSize: number;
+  hideLabel: boolean;
+  editMode: boolean;
+  iconSize: number;
+  maxWidth: number;
+  zIndex: number;
+};
 
 //similar to topbar but has its own spinner instead of centering based on parent component
-const SwitchFriend = (props: Props) => {
+const SwitchFriend = ({
+  fontSize = 13,
+  hideLabel = false,
+  editMode = false,
+  iconSize = 20,
+  maxWidth = 100,
+  zIndex = 3,
+}: Props) => {
   const { appFontStyles, themeStyles } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
-  const { selectedFriend,  loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const navigation = useNavigation();
   // const friendModalButtonHeight = 16;
 
   const handleNavigateToFriendSelect = () => {
-    navigation.navigate("SelectFriend");
+    if (editMode) {
+      navigation.navigate("SelectFriend");
+    } else {
+      return;
+    }
   };
 
-  const RenderIcon = useCallback(
-    () => (
-      <Pressable
-        onPress={handleNavigateToFriendSelect}
-        style={{ flexDirection: "row" }}
-      >
-        <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
-          {selectedFriend?.id ? `Switch` : `Pick friend`}
-        </Text>
-        <MaterialCommunityIcons
-          name="account-switch-outline"
-          size={20}
-          color={themeStyles.primaryText.color}
-          style={{ marginLeft: 10 }}
-        />
-      </Pressable>
-    ),
-    [appFontStyles, handleNavigateToFriendSelect, selectedFriend, themeStyles]
-  );
+  // const RenderIcon = useCallback(
+  //   () => (
+  //     <GlobalPressable
+  //       zIndex={zIndex}
+  //       style={{
+  //         paddingHorizontal: 0,
+  //         maxWidth: editMode ? maxWidth : maxWidth,
+  //       }}
+  //       onPress={handleNavigateToFriendSelect}
+  //       // style={{ flexDirection: "row" }}
+  //     >
+  //       <View style={{ flexDirection: "row", alignItems: "end" }}>
+  //         {editMode && (
+  //           <View
+  //             style={{
+  //               flexDirection: "column",
+  //               marginRight: 4,
+  //               paddingBottom: 6, // EYEBALL, same as selectedcategorybutton
+  //               justifyContent: "flex-end",
+  //             }}
+  //           >
+  //             <MaterialCommunityIcons
+  //               name={"pencil-outline"}
+  //               size={iconSize}
+  //               style={{ height: iconSize }}
+  //               color={themeStyles.primaryText.color}
+  //             />
+  //           </View>
+  //         )}
+
+  //         <Text
+  //           style={[
+  //             themeStyles.primaryText,
+  //             appFontStyles.subWelcomeText,
+  //             { fontSize: fontSize },
+  //           ]}
+  //         >
+  //           {selectedFriend ? selectedFriend.name : `Pick friend`}
+  //         </Text>
+
+  //         <View
+  //           style={{
+  //             flexDirection: "row",
+  //             marginRight: 4,
+  //             paddingBottom: 6, // EYEBALL
+  //             justifyContent: "flex-end",
+  //           }}
+  //         >
+  //           <MaterialCommunityIcons
+  //             name="account-switch-outline"
+  //             size={18}
+  //             color={themeStyles.primaryText.color}
+  //             style={{ marginLeft: 8 }}
+  //           />
+  //         </View>
+  //       </View>
+  //       {editMode && (
+  //         <View
+  //           style={{ height: 2, backgroundColor: "red", width: "100%" }}
+  //         ></View>
+  //       )}
+  //     </GlobalPressable>
+  //   ),
+  //   [appFontStyles, handleNavigateToFriendSelect, selectedFriend, themeStyles]
+  // );
   return (
-    <View
-      style={{
-        height: "auto", 
-        width: 'auto',
-      
-       // backgroundColor: 'teal',
-        paddingHorizontal: 10,
-        flexDirection: "row",
-        alignItems: "center",
-      }}
-    > 
-      {!loadingNewFriend && <RenderIcon />}
-    </View>
+    <>
+      <GlobalPressable
+        zIndex={zIndex}
+        style={{
+          paddingHorizontal: 0,
+          maxWidth: editMode ? maxWidth : maxWidth,
+        }}
+        onPress={handleNavigateToFriendSelect}
+        // style={{ flexDirection: "row" }}
+      >
+        <View style={{ flexDirection: "row"  }}>
+          {editMode && (
+            <View
+              style={{
+                flexDirection: "column",
+                marginRight: 4,
+                paddingBottom: 6, // EYEBALL, same as selectedcategorybutton
+                justifyContent: "flex-end",
+              }}
+            >
+              <MaterialCommunityIcons
+                name={"pencil-outline"}
+                size={iconSize}
+                style={{ height: iconSize }}
+                color={themeStyles.primaryText.color}
+              />
+            </View>
+          )}
+
+<Text
+  numberOfLines={1}
+  ellipsizeMode="tail"
+  style={[
+    appFontStyles.welcomeText,
+    {
+      zIndex: 2,
+      color: themeStyles.primaryText.color,
+      fontSize: fontSize,
+      maxWidth: editMode ? maxWidth : maxWidth, // ensure constraint
+    },
+  ]}
+>
+            {selectedFriend ? selectedFriend.name : `Pick friend`}
+          </Text>
+
+          {/* <View
+            style={{
+              flexDirection: "row",
+              marginRight: 4,
+              paddingBottom: 6, // EYEBALL
+              justifyContent: "flex-end",
+            }}
+          >
+            <MaterialCommunityIcons
+              name="account-switch-outline"
+              size={18}
+              color={themeStyles.primaryText.color}
+              style={{ marginLeft: 8 }}
+            />
+          </View> */}
+        </View>
+        {editMode && (
+          <View
+            style={{ height: 2, backgroundColor: "red", width: "100%" }}
+          ></View>
+        )}
+      </GlobalPressable>
+    </>
   );
 };
 

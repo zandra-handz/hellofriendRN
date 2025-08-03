@@ -20,6 +20,7 @@ interface WelcomeMessageUIProps {
   borderBottomRightRadius: number;
   borderBottomLeftRadius: number;
   backgroundColor: string;
+ 
 }
 
 const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
@@ -28,7 +29,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   borderBottomRightRadius = 10,
   borderBottomLeftRadius = 10,
   backgroundColor = "red",
-  //isKeyboardVisible = false,
+  isKeyboardVisible = false,
   onPress = () => {},
 }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
@@ -79,13 +80,17 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
             },
           ]}
         >
-          {message}
+          {message}{' '}
+          
           <View
             style={{
               height: appFontStyles.welcomeText.fontSize - 2,
               opacity: 0.6,
+            
             }}
           >
+            {!isKeyboardVisible && (
+              
             <FriendModalIntegrator
               includeLabel={true}
               height={"100%"}
@@ -95,6 +100,8 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
               navigationDisabled={true}
               useGenericTextColor={true}
             />
+            
+            )}
           </View>
         </Animated.Text>
       </>

@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { View, ViewToken, Pressable, Text } from "react-native";
+import { View, ViewToken, Pressable, Alert, Text } from "react-native";
 import GeckoToHelloButton from "./GeckoToHelloButton";
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBarMinusWidth from "./EscortBarMinusWidth";
@@ -15,7 +15,7 @@ import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import SwipeDown from "./SwipeDown";
 import Animated, {
@@ -123,17 +123,20 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
 
   const saveToHello = useCallback((moment) => {
     if (!selectedFriend?.id || !moment) {
+       showFlashMessage(`Oops! Missing data required to save idea to hello`, true, 1000);
       return;
     }
 
-    showFlashMessage(`Added to hello!`, false, 1000);
+    
     try {
+      showFlashMessage(`Added to hello!`, false, 1000);
       updateCapsule({
         friendId: selectedFriend?.id,
         capsuleId: moment.id,
         isPreAdded: true,
       });
     } catch (error) {
+      showFlashMessage(`Oops! Either showFlashMessage or updateCapsule has errored`, true, 1000);
       console.error("Error during pre-save:", error);
     }
   }, []);

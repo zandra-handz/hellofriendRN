@@ -3,28 +3,25 @@ import {
   View,
   Text,
   Keyboard,
-  Pressable,
   TouchableWithoutFeedback,
   Alert,
 } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import TextMomentBox from "./TextMomentBox";
-import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBar from "./EscortBar";
-import UserCategorySelector from "../headers/UserCategorySelector";
-import { close } from "@sentry/react-native";
 import { Moment } from "@/src/types/MomentContextTypes";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
-import SwitchFriend from "../home/SwitchFriend";
-import SelectedCategoryButton from "./SelectedCategoryButton";
-import GlobalPressable from "../appwide/button/GlobalPressable";
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
+import LoadingPage from "../appwide/spinner/LoadingPage";
+ 
+import MomentFocusTray from "./MomentFocusTray";
 type Props = {
+  screenCameFromToParent: number;
   momentText: string;
   catCreatorVisible: boolean;
   closeCatCreator: () => void;
@@ -33,9 +30,12 @@ type Props = {
   updateExistingMoment: boolean;
   existingMomentObject?: Moment;
   triggerSaveFromLateral: boolean;
+  escortBarSpacer: number;
+  cardPadding: number;
 };
 
 const MomentWriteEditView = ({
+  screenCameFromToParent,
   momentText,
   catCreatorVisible,
   openCatCreator,
@@ -44,9 +44,11 @@ const MomentWriteEditView = ({
   updateExistingMoment,
   existingMomentObject,
   triggerSaveFromLateral,
+  escortBarSpacer,
+  cardPadding = 4, // controls padding around the shaded card
 }: Props) => {
   const { selectedFriend } = useSelectedFriend();
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles  } = useGlobalStyle();
   const {
     capsuleList,
     handleCreateMoment,
@@ -59,46 +61,85 @@ const MomentWriteEditView = ({
     useAppNavigations();
 
   const { user } = useUser();
-  const navigation = useNavigation();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedUserCategory, setSelectedUserCategory] = useState<number>(0);
-  const [startingId, setStartingId] = useState();
-  // const [triggerReFocus, setTriggerReFocus ] = useState(false);
   const [triggerReFocus, setTriggerReFocus] = useState<number>(0); //can set 0 to deFocus if needed
-  const [showCategoriesSlider, setShowCategoriesSlider] =
-    useState(!!momentText);
+
+  const [userChangedCategory, setUserChangedCategory] =
+    useState<boolean>(false);
+
+  const handleUserChangedCategoryState = () => {
+    if (!userChangedCategory) {
+      setUserChangedCategory(true);
+    }
+  };
+
+  const handleResetUserChangedCategoryState = () => {
+    if (userChangedCategory) {
+      setUserChangedCategory(false);
+    }
+  };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     setUserChangedCategory(false);
+
+  //     return () => {
+  //       setUserChangedCategory(false);
+  //     };
+  //   }, [])
+  // );
+
+  const userChangedCategoryRef = useRef(false);
+
+  const handleUserChangedCategory = () => {
+    if (!userChangedCategoryRef.current) {
+      userChangedCategoryRef.current = true;
+    }
+  };
+
+  const handleResetUserChangedCategory = () => {
+    if (userChangedCategoryRef.current) {
+      userChangedCategoryRef.current = false;
+    }
+  };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     userChangedCategoryRef.current = false;
+
+  //     return () => {
+  //       userChangedCategoryRef.current = false;
+  //     };
+  //   }, [])
+  // );
+
+  const TEXT_INPUT_PADDING_TOP = 42;
+  const TOPPER_PADDING_TOP = 0;
 
   useFocusEffect(
     useCallback(() => {
-      if (momentText) {
+      if (momentText && !userChangedCategory) {
+        // console.error("RESETTING", momentText, userChangedCategory);
         momentTextRef.current.setText(momentText);
-        // setShowCategoriesSlider(true);
-      } else {
-        // setShowCategoriesSlider(false);
-      }
-      return () => {
-        // setShowCategoriesSlider(false);
-      };
+      } 
+      // else {
+      //   console.error("NOT RESETTING", momentText, userChangedCategory);
+      // }
     }, [momentText])
   );
 
   useEffect(() => {
     if (!catCreatorVisible) {
-      console.log("triggering open");
+ 
       setTriggerReFocus(Date.now());
     }
-    // else {
-    //   setTriggerReFocus(false);
-    // }
   }, [catCreatorVisible]);
 
   useEffect(() => {
-    console.log("selected friend triggered this!");
     if (!catCreatorVisible && selectedFriend) {
-      // setTriggerReFocus(false);
-      // setTriggerReFocus(true);
       setTriggerReFocus(Date.now());
     }
   }, [selectedFriend]);
@@ -106,42 +147,30 @@ const MomentWriteEditView = ({
   useEffect(() => {
     if (momentText) {
       updateMomentText(momentText);
-      if (!showCategoriesSlider) {
-        setShowCategoriesSlider(true);
-      }
     }
   }, [momentText]);
 
   const updateMomentText = (text) => {
     if (momentTextRef && momentTextRef.current) {
-      const textLengthPrev = momentTextRef.current.getText().length;
-      if (textLengthPrev === 0) {
-        if (text.length - textLengthPrev > 1) {
-          //this is here to check if something is copy-pasted in or shared in
-          if (!showCategoriesSlider) {
-            setShowCategoriesSlider(true);
-          }
-        }
-      }
+      // const textLengthPrev = momentTextRef.current.getText().length;
+      // if (textLengthPrev === 0) {
+      //   if (text.length - textLengthPrev > 1) {
+      //     //this is here to check if something is copy-pasted in or shared in
+      //     //edit: cute idea but no longer making buttons appear/disappear depending on if text is ready
+      //     // catching text-less save attempts with a simple Alert instead
+      //     // if (!showCategoriesSlider) {
+      //     //   setShowCategoriesSlider(true);
+      //     // }
+      //   }
+      // }
 
       momentTextRef.current.setText(text);
-    }
-    if (text.length < 1) {
-      if (showCategoriesSlider) {
-        setShowCategoriesSlider(false);
-      }
-    }
-
-    if (text.length === 1) {
-      if (!showCategoriesSlider) {
-        setShowCategoriesSlider(true);
-      }
     }
   };
 
   useEffect(() => {
     if (!triggerSaveFromLateral) {
-      // right now the trigger doesn't reset itself because this triggers a process that'll unmount it I believe
+      // right now the parent resets the trigger via timeout
       return;
     }
 
@@ -166,23 +195,23 @@ const MomentWriteEditView = ({
 
   useEffect(() => {
     if (updateExistingMoment && existingMomentObject) {
-      // console.log(`EEYOOOOOOOOOOOO`);
-      // console.log(existingMomentObject);
       setSelectedCategory(existingMomentObject.user_category_name);
       setSelectedUserCategory(Number(existingMomentObject.user_category));
     }
   }, [updateExistingMoment, existingMomentObject]);
 
-  const handleCategorySelect = (category) => {
-    if (!category) {
-      return;
-    }
-    setSelectedCategory(category);
-  };
+  // const handleCategorySelect = (category) => {
+  //   if (!category) {
+  //     return;
+  //   }
+  //   setSelectedCategory(category);
+  // };
 
   const handleUserCategorySelect = ({ name: name, id: id }) => {
+ 
     setSelectedUserCategory(id);
     setSelectedCategory(name);
+    // handleUserChangedCategory(); moved into category creator
     //   closeCatCreator();
   };
 
@@ -242,10 +271,8 @@ const MomentWriteEditView = ({
               moment: momentTextRef.current.getText(),
             };
             // console.log(requestData);
-                showFlashMessage('Idea saved!', false, 2000);
+            showFlashMessage("Idea saved!", false, 2000);
             await handleCreateMoment(requestData);
-           
-         
           } else {
             const editData = {
               //these are the actual backend fields
@@ -269,28 +296,29 @@ const MomentWriteEditView = ({
   }, [catCreatorVisible]);
 
   useEffect(() => {
-    if (createMomentMutation.isSuccess) { 
-      navigateBack();
+    if (createMomentMutation.isSuccess) {
+      if (screenCameFromToParent === 1) {
+        updateMomentText(""); //clear saved text, ONLY after save is confirmed
+        setTriggerReFocus(Date.now());
+        return;
+      } else {
+        navigateBack();
+      }
       createMomentMutation.reset(); //additional immediate reset to allow user to return back to screen instantly
     }
   }, [createMomentMutation.isSuccess]);
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (createMomentMutation.isError) {
       showFlashMessage("Error!", createMomentMutation.isError, 2000);
-    
     }
   }, [createMomentMutation.isError]);
 
-
-      useEffect(() => {
+  useEffect(() => {
     if (editMomentMutation.isError) {
       showFlashMessage("Error!", editMomentMutation.isError, 2000);
-    
     }
   }, [editMomentMutation.isError]);
-
 
   //this needs to go to the new index instead if it has a new index
   useEffect(() => {
@@ -326,52 +354,13 @@ const MomentWriteEditView = ({
         <View
           style={[
             {
-              padding: 4, // Padding needs to be on this view for some reason
+              padding: cardPadding, // Padding needs to be on this view for some reason
               width: "100%",
               flex: 1,
-              //  height: '100%',
             },
           ]}
         >
-          <View
-            style={{
-              width: "100%",
-
-              position: "absolute",
-              top: 15,
-
-              paddingHorizontal: 20,
-             // backgroundColor: 'orange',
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: 'center',
-            }}
-          >
-            <View
-              style={{
-              
-                zIndex: 2,
-                height: "100%", 
-                width: 90, //hard coded set width to prevent jank if child element shouldn't be rendered
-                justifyContent: 'center',
-                // backgroundColor: 'orange',
-               
-              }}
-            >
-              {!updateExistingMoment && <SwitchFriend />}
-            </View>
-            <View style={{width: 'auto', flexDirection: 'row', height: '100%',  justifyContent: 'flex-end'}}>
-              
-            <SelectedCategoryButton
-              zIndex={3}
-              onPress={openCatCreator}
-              label={selectedCategory}
-              categoryId={selectedUserCategory}
-              editMode={updateExistingMoment}
-            />
-            
-            </View>
-          </View>
+ 
           <View
             style={[
               {
@@ -381,43 +370,59 @@ const MomentWriteEditView = ({
                 flexGrow: 1,
                 width: "100%",
                 zIndex: 1,
-                // backgroundColor: "pink",
               },
             ]}
           >
             <View
               style={{
-                padding: 20,
-                paddingTop: 40, // controls space between top row and text input
+                padding: 10,
+                // paddingTop: TEXT_INPUT_PADDING_TOP, // controls space between top row and text input
                 borderRadius: 40,
                 flexDirection: "column",
                 justifyContent: "flex-start",
-                //  flex: 1,4
                 width: "100%",
                 flex: 1,
-                 marginBottom: 16,
-
+                marginBottom: escortBarSpacer,
                 //marginBottom: marginBottom, in momentsviewpage but not here since keyboard is up + no footer bar
                 zIndex: 1,
-
                 overflow: "hidden",
-
                 backgroundColor:
                   themeStyles.darkerOverlayBackgroundColor.backgroundColor,
               }}
             >
-              <TextMomentBox
-                ref={momentTextRef}
- 
-                onTextChange={updateMomentText}
-                triggerReFocus={triggerReFocus} // triggered by category visibility and new friend change
- 
-                isKeyboardVisible={isKeyboardVisible} 
+              <MomentFocusTray
+              paddingTop={TOPPER_PADDING_TOP}
+                updateExistingMoment={updateExistingMoment}
+                freezeCategory={userChangedCategory}
+                onPress={openCatCreator}
+                label={selectedCategory}
+                categoryId={selectedUserCategory}
               />
+              {createMomentMutation.isPending && (
+                <View
+                  style={{
+                    width: "100%",
+                    height: "50%", //the height value repositions the spinner to be in the centerish of the screen when keyboard is up
+                  }}
+                >
+                  <LoadingPage
+                    loading={true}
+                    spinnerType="circle"
+                    spinnerSize={40} // same as FSMainSpinner
+                  />
+                </View>
+              )}
+              {!createMomentMutation.isPending && (
+                <TextMomentBox
+                  ref={momentTextRef}
+                  onTextChange={updateMomentText}
+                  triggerReFocus={triggerReFocus} // triggered by category visibility and new friend change
+                  isKeyboardVisible={isKeyboardVisible}
+                />
+              )}
             </View>
             <View
               style={{
-                // backgroundColor: "orange",
                 height: 50,
                 paddingHorizontal: 6, // WEIRD NUMBER because + 4 padding above I think
                 marginBottom: 6, // WEIRD NUMBER because + 4 padding above
@@ -433,30 +438,13 @@ const MomentWriteEditView = ({
               />
             </View>
           </View>
-
-          {/* </View> */}
         </View>
-        {/* <View
-          style={{
-            position: "absolute",
-            zIndex: 50000,
-            bottom: 100,
-            width: "100%",
-          }}
-        >
-          <EscortBar forwardFlowOn={true} label={`Save`} onPress={handleSave} />
-        </View> */}
 
-        {/* // <UserCategorySelector
-          //   onPress={handleUserCategorySelect}
-          //   onSave={handleSave}
-          //   updatingExisting={updateExistingMoment}
-          //   existingId={Number(existingMomentObject?.user_category) || null}
-          //   selectedId={selectedUserCategory}
-          // /> */}
         <CategoryCreator
+          freezeCategory={userChangedCategory}
           isVisible={catCreatorVisible}
           onPress={handleUserCategorySelect}
+          addToOnPress={handleUserChangedCategoryState}
           onSave={handleSave}
           updatingExisting={updateExistingMoment}
           existingId={Number(existingMomentObject?.user_category) || null}
