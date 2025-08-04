@@ -3,7 +3,9 @@
 export type RootStackParamList = {
   hellofriend: undefined;
   UserDetails: undefined;
-  MomentFocus: undefined;
+  MomentFocus: {
+    screenCameFrom: number;
+  }
   Moments: {
     scrollTo: number | null;
   }
@@ -17,7 +19,11 @@ export type RootStackParamList = {
   Images: undefined;
   ImageView: undefined;
   Helloes: undefined;
-  HelloView: undefined;
+  HelloView: {
+    startingIndex: number | null;
+    inPersonFilter: boolean;
+    
+  },
   Locations: undefined;
   LocationView: undefined;
   UnsavedLocationView: undefined;

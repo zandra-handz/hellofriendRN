@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, FlatList, Pressable, Alert } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
@@ -7,9 +7,9 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
-import { MaterialCommunityIcons, Foundation } from "@expo/vector-icons";
-import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup"; 
-import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner"; 
+import { MaterialCommunityIcons, Foundation } from "@expo/vector-icons"; 
+
+import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
 interface Props {
   title: string;
   isVisible: boolean;
@@ -43,186 +43,37 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
     return;
   }
 
-  useEffect(() => {
-    if (categoryId && friendId && selectedFriendStats) {
-      setCategoryID(categoryId);
-      setFriendID(friendId);
-      // console.log(`SELECTEDED FRIENDS `, selectedFriendStats);
-      // const matchedCategoryStats = selectedFriendStats.find(
-      //   (category) => category.id === categoryId
-      // );
-
-      // if (matchedCategoryStats && matchedCategoryStats?.completed_capsules) {
-      //   const count = matchedCategoryStats?.completed_capsules?.length;
-
-      //   console.log(`COUNT! `, count);
-      //   setCompletedCapsuleCount(count);
-      // }
-    }
-  }, [categoryId, friendId, selectedFriendStats]);
-
-
-  const handleOnPressActions = (helloId) => {
-  
-    handleGoToHelloView(helloId);
-    closeModal();
-
-  };
-
-    const handleOnPress = (helloId) => {
+  // useEffect(() => {
+  //   if (categoryId && friendId && selectedFriendStats) {
+  //     setCategoryID(categoryId);
+  //     setFriendID(friendId);
  
-        Alert.alert('Warning', 'Leave this screen?', [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel",
-          },
-                {text: 'Go to hello', onPress: () => handleOnPressActions(helloId)},
-   
-        ]);
-    
-    };
+  //   }
+  // }, [categoryId, friendId, selectedFriendStats]);
 
-  const {
-    categoryHistory,
-    isLoading,
-    isFetching,
-    isFetchingNextPage,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-  } = useCategoryHistoryLookup({ categoryId: categoryID, friendId: friendID });
 
-  useEffect(() => {
-    if (categoryHistory) {
-      setCompletedCapsuleCount(categoryHistory.length);
-    }
-  }, [categoryHistory]);
+ 
+ 
 
-  const getFriendNameFromList = (friendId) => {
-    const friend = friendList.find((friend) => friend.id === friendId);
+  // const {
+  //   categoryHistory,
+  //   isLoading,
+  //   isFetching,
+  //   isFetchingNextPage,
+  //   isError,
+  //   fetchNextPage,
+  //   hasNextPage,
+  // } = useCategoryHistoryLookup({ categoryId: categoryID, friendId: friendID }); // DP WE MEED?
 
-    return friend?.name || "";
-  };
+  // useEffect(() => {
+  //   if (categoryHistory) {
+  //     setCompletedCapsuleCount(categoryHistory.length);
+  //   }
+  // }, [categoryHistory]);
 
-  const getHelloDateFromList = (helloId) => {
-    const hello = helloesList.find((hello) => hello.id === helloId);
-
-    return hello.date || "";
-  };
-
-  const handleGoToHelloView = (helloId) => {
-    // console.log("handleGoToHelloView pressed");
-    const helloIndex = helloesList.findIndex((hello) => hello.id === helloId);
-     console.log("helloIndex", helloId);
-
-    if (helloIndex) {
-      navigation.navigate("HelloView", {
-        startingIndex: helloIndex + 1,
-        inPersonFilter: false,
-      });
-    }
-  };
-
-  const renderMiniMomentItem = useCallback(
-    ({ item, index }) => (
-      <View
-        style={[
-          styles.momentCheckboxContainer,
-          {
-            paddingBottom: 10,
-            paddingTop: 10,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: themeStyles.primaryText.color,
-          },
-        ]}
-      >
-        <View style={styles.momentItemTextContainer}>
-          <View style={styles.checkboxContainer}>
-            <Foundation
-              name={"comment-quotes"}
-              size={24}
-              color={themeStyles.primaryText.color}
-            />
-          </View>
-
-          <View style={{ width: "100%", flexShrink: 1 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-
-                width: "100%",
-              }}
-            >
-              <Text
-                style={[
-                  styles.momentItemText,
-                  themeStyles.primaryText,
-                  { fontFamily: "Poppins-Bold" },
-                ]}
-              >
-                @ {getFriendNameFromList(item.friend)} on{" "}
-                {getHelloDateFromList(item.hello)}
-              </Text>
-              <Pressable style={{backgroundColor: 'red'}} onPress={() => handleOnPress(item.hello)}>
-                
-              <MaterialCommunityIcons
-               
-                // name="hand-wave-outline"
-                name="calendar-heart"
-                size={16}
-                color={themeStyles.primaryText.color}
-                style={{ marginHorizontal: 4 }}
-              />
-              
-              </Pressable>
-            </View>
-            <Text style={[styles.momentItemText, themeStyles.primaryText]}>
-              {item.capsule}
-            </Text>
-
-            {/* <View
-              style={{
-                height: 20,
-                width: "100%",
-                justifyContent: "flex-end",
-                flexDirection: "row",
-                alignItems: "center", 
-              }}
-            > 
-                  <MaterialCommunityIcons
-                    onPress={handleGoToHelloView}
-                        // name="hand-wave-outline"
-                          name="calendar-heart"
-                        size={20}
-                        color={themeStyles.primaryText.color}
-                        style={{ marginBottom: 0 }}
-                      />
-
-            </View> */}
-          </View>
-        </View>
-      </View>
-    ),
-    [
-      getFriendNameFromList,
-      getHelloDateFromList,
-      handleGoToHelloView,
-      themeStyles,
-      styles,
-    ]
-  );
-
-  const getCapsuleCount = (count) => {
-    if (!count) {
-      return ``;
-    }
-
-    return `(` + count + ` loaded)`;
-  };
-
+ 
+ 
+ 
   return (
     <ModalWithGoBack
       isVisible={isVisible}
@@ -246,32 +97,9 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
         //   color={themeStyles.modalIconColor.color}
         // />
       }
-      questionText={title + " " + getCapsuleCount(completedCapsuleCount)}
+      questionText={title} // + " " + getCapsuleCount(completedCapsuleCount)}
       children={
-        <>
-          {categoryHistory && categoryHistory.length > 0 && (
-            // this flatlist handles infinite scroll & pagination
-            // this is so cool
-            <FlatList
-              data={categoryHistory} // Already flattened in the hook
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={renderMiniMomentItem}
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              onEndReachedThreshold={0.5}
-              ListFooterComponent={
-                <InfiniteScrollSpinner
-                  isFetchingNextPage={isFetchingNextPage}
-                  color={themeStyles.primaryText.color}
-                  height={50}
-                />
-              }
-            />
-          )}
-        </>
+        <CategoryFriendHistoryList categoryId={categoryId} closeModal={closeModal}/>
       }
       onClose={closeModal}
     />

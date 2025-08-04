@@ -1,8 +1,8 @@
 import { View, Text, Alert } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import CategoryDetailsModal from "../headers/CategoryDetailsModal";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import CategoryFriendDetailsModal from "../headers/CategoryFriendHistoryCombinedModal";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
@@ -176,7 +176,7 @@ const SelectedCategoryButton = ({
       </GlobalPressable>
       {detailsModalVisible && (
         <View>
-          <CategoryDetailsModal
+          <CategoryFriendDetailsModal
             isVisible={detailsModalVisible}
             closeModal={() => setDetailsModalVisible(false)}
             categoryId={categoryId}

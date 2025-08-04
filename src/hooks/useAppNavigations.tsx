@@ -7,11 +7,17 @@ import { RootStackParamList } from "../types/NavigationTypes";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+type NavToHelloViewProps = {
+
+  startingIndex: number | null; // can this be null?
+  inPersonFilter: boolean;
+};
+
 type NavToMomentsProp = {
   scrollTo: number | null;
 };
 
-type NavToMomentViewProp = {
+type NavToMomentViewProps = {
   moment: Moment; // <-- whatever your `moment` object type is
   index: number;
 };
@@ -23,10 +29,11 @@ type NavToMomentFocusProp = {
 interface hookReturns {
   navigateToAddFriend: () => void;
   navigateToFinalize: () => void;
+  navigateToHelloView: ({startingIndex, inPersonFilter}: NavToHelloViewProps) => void;
   navigateToLocationSearch: () => void;
   navigateToMomentFocus: ({screenCameFrom }: NavToMomentFocusProp) => void;
   navigateToMoments: ({ scrollTo }: NavToMomentsProp) => void;
-  navigateToMomentView: ({ moment, index }: NavToMomentViewProp) => void;
+  navigateToMomentView: ({ moment, index }: NavToMomentViewProps) => void;
 
   navigateBack: () => void;
 }
@@ -38,7 +45,13 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("AddFriend");
   };
 
-  const navigateToMomentFocus = ({screenCameFrom}) => {
+
+    const navigateToHelloView = ({ startingIndex, inPersonFilter }: NavToHelloViewProps) => {
+    navigation.navigate("HelloView", { startingIndex, inPersonFilter });
+  };
+
+
+  const navigateToMomentFocus = ({screenCameFrom}: NavToMomentFocusProp) => {
     navigation.navigate("MomentFocus", {screenCameFrom: screenCameFrom });
   };
 
@@ -46,7 +59,7 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("Moments", { scrollTo: scrollTo });
   };
 
-  const navigateToMomentView = ({ moment, index }: NavToMomentViewProp) => {
+  const navigateToMomentView = ({ moment, index }: NavToMomentViewProps) => {
     navigation.navigate("MomentView", { moment, index });
   };
 
@@ -65,6 +78,7 @@ const useAppNavigations = (): hookReturns => {
   return {
     navigateToAddFriend,
     navigateToFinalize,
+    navigateToHelloView,
     navigateToLocationSearch,
     navigateToMomentFocus,
     navigateToMoments,
