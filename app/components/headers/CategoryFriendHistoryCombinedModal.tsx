@@ -117,6 +117,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   // );
 
   const handleRemoveUserDefault = async () => {
+    
     await updateSettings({ user_default_category: null });
   };
 

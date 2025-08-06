@@ -28,7 +28,7 @@ type NavToMomentFocusProp = {
 
 interface hookReturns {
   navigateToAddFriend: () => void;
-  navigateToFinalize: () => void;
+  navigateToFinalize: () => void; 
   navigateToHelloView: ({startingIndex, inPersonFilter}: NavToHelloViewProps) => void;
   navigateToLocationSearch: () => void;
   navigateToMomentFocus: ({screenCameFrom }: NavToMomentFocusProp) => void;

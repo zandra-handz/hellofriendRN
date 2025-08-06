@@ -23,6 +23,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
 import { useFriendList } from "@/src/context/FriendListContext";
+ 
 
 const HelloFriendFooter = () => {
   // const navigationState = useNavigationState((state) => state);

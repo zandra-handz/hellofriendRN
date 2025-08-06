@@ -57,14 +57,14 @@ export const SelectedFriendStatsProvider: React.FC<
     isError,
   } = useQuery({
     queryKey: ["selectedFriendStats", user?.id, selectedFriend?.id],
-      queryFn: () => fetchCategoriesHistoryCountAPI({friendId: selectedFriend.id, returnNonZeroesOnly: true}),
+      queryFn: () => fetchCategoriesHistoryCountAPI({friendId: selectedFriend?.id, returnNonZeroesOnly: true}),
     // queryFn: () => fetchCategoriesFriendHistoryAPI(selectedFriend.id, false), //return non-empty categories only
     enabled: !!(
       user &&
       user.id &&
       isAuthenticated &&
       !isInitializing &&
-      selectedFriend
+      selectedFriend && selectedFriend?.id
     ),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });

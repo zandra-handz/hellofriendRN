@@ -1,18 +1,26 @@
 import { View, Text } from "react-native";
 import React from "react";
+import { Moment } from "../types/MomentContextTypes";
 
-const useMomentSortingFunctions = ({ listData = [] }) => {
+
+
+type Props = {
+  listData: Moment[] | [];
+
+};
+
+const useMomentSortingFunctions = ({ listData} : Props) => {
 
 
 const categorySizes = () => {
 
  
   // console.log("categorySizes called");
-  if (!listData || (listData.length === 0)) return { sortedList: [], lookupMap: new Map() };
+  if (!listData || (listData?.length === 0)) return { sortedList: [], lookupMap: new Map() };
 
   const categorySizeMap = new Map();
  
-  listData.forEach((moment) => {
+  listData.forEach((moment: Moment) => {
     const categoryId = Number(moment?.user_category);
     const categoryName = String(moment?.user_category_name);
     const currentSizeAndName = categorySizeMap.get(categoryId) || {size: 0, name: categoryName};

@@ -17,7 +17,7 @@ export const useGlobalStyle = () => useContext(GlobalStyleContext);
 
 export const GlobalStyleProvider = ({ children }) => {
   const { settings } = useUserSettings(); 
-  // console.log("GLOBAL STYLES RERENDERED");
+ console.log("GLOBAL STYLES RERENDERED");
   const colorScheme = useColorScheme();
 
   // Default state
@@ -298,7 +298,7 @@ const containerStyles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 2,
     paddingHorizontal: 10,
-    marginHorizontal: 6,
+   
     borderRadius: 16,
     // marginBottom: "3%",
     height: "auto",

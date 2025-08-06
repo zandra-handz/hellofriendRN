@@ -422,7 +422,7 @@ const MomentWriteEditView = ({
                 />
               )}
             </View>
-            <View
+            {/* <View
               style={{
                 height: 50,
                 paddingHorizontal: 6, // WEIRD NUMBER because + 4 padding above I think
@@ -437,7 +437,7 @@ const MomentWriteEditView = ({
                 label={`Save`}
                 onPress={handleSave}
               />
-            </View>
+            </View> */}
           </View>
         </View>
 

@@ -24,7 +24,7 @@ export function handleApiError(e: unknown, contextMessage = "API error") {
 
   if (axios.isAxiosError(e)) {
     if (e.response) {
-      console.log("Server responded with:", e.response.data);
+      console.log("Server responded with: REMOVED THIS it is html doc") //, e.response.data);
 
       const msg = (e.response.data as { msg?: string })?.msg;
       throw new Error(msg || "Invalid credentials");
@@ -1029,7 +1029,7 @@ export const fetchPastHelloes = async (friendId: number) => {
       `/friends/${friendId}/helloes/summary/`
     );
     if (response && response.data) {
-      console.log("API GET CALL fetchPastHelloes", response.data);
+      console.log("API GET CALL fetchPastHelloes"); //, response.data);
 
       return response.data;
     } else {

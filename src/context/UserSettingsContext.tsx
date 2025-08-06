@@ -5,11 +5,7 @@ import React, {
   useMemo,
   ReactNode,
   useState,
-} from "react";
-// import * as Device from "expo-device";
-// import Constants from "expo-constants";
-// import { Platform, AccessibilityInfo } from "react-native";
-// import { useUser } from "./UserContext";
+} from "react"; 
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   updateUserAccessibilitySettings,
@@ -18,9 +14,7 @@ import {
 } from "../calls/api";
 
 import { useUser } from "./UserContext";
-import isEqual from 'lodash.isequal';
-// import * as Notifications from "expo-notifications";
-// import * as SecureStore from "expo-secure-store";
+import isEqual from 'lodash.isequal'; 
 
 interface UserSettings {
   id: number | null;
@@ -74,16 +68,16 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
       queryKey: ["userSettings", user?.id], // removed user id since entire cache should clear if user not logged in
     // queryKey: user?.id ? ["userSettings", user.id] : undefined,
     queryFn: () => getUserSettings(),
-    enabled: !!(user && isAuthenticated && !isInitializing),
+    enabled: !!(user?.id && isAuthenticated && !isInitializing),
     retry: 3,
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 
 
-  // useEffect(() => {
-  //   console.error('user triggering settings!!!', user);
+  useEffect(() => {
+    console.error('user triggering settings!!!', user);
 
-  // }, [user]);
+  }, [user]);
 
   const [settings, setSettings] = useState<Record<string, any> | null>(null);
 
@@ -94,34 +88,10 @@ useEffect(() => {
 
   if (!isSuccess || !userSettings) {
     return;
-  }
-
-// setSettings((prev) => userSettings);
+  } 
  setSettings(prev => (isEqual(prev, userSettings) ? prev : userSettings));
  
-  // const applySettings = async () => {
-  //   if (isSuccess && userSettings) {
-  //     console.error("Resetting user settings");
-
  
-  //     let updatedSettings = { ...userSettings };
- 
-  //     // try {
-  //     //   const isActive = await AccessibilityInfo.isScreenReaderEnabled();
-  //     //   updatedSettings.screen_reader = isActive;
-  //     // } catch (error) {
-  //     //   console.error("Error fetching screen reader status:", error);
-  //     // }
- 
-  //     setSettings(updatedSettings);
-
-     
-
-   
-  //   }
-  // };
-
-  // applySettings();
 }, [isSuccess, userSettings]);
 
  
@@ -153,48 +123,20 @@ useEffect(() => {
     }
   };
 
-  // const registerForNotifications = async () => {
-  //   console.warn('REGISTERING FOR NOTIFS!');
-  //   if (Platform.OS === "android") {
-  //     await Notifications.setNotificationChannelAsync("default", {
-  //       name: "default",
-  //       importance: Notifications.AndroidImportance.MAX,
-  //       vibrationPattern: [0, 250, 250, 250],
-  //       lightColor: "#FF231F7C",
-  //     });
-  //   }
-
  
-
-  
-  // reset
-
-  // DO I NEED?
-  // useEffect(() => {
-  //   if (isInitializing && !isAuthenticated) {
-  //     console.log("user not authenticated, resetting user settings");
-  //     setSettings(null);
-  //     setNotificationSettings(null); // so as not to trigger consumers
-  //   }
-  // }, [isAuthenticated, isInitializing]);
  
 
   const contextValue = useMemo(
-    () => ({
-      // userSettings,
+    () => ({ 
       settings,  
       updateSettings,
-     updateSettingsMutation, 
-      // registerForNotifications,
-      // removeNotificationPermissions,
+     updateSettingsMutation,  
     }),
     [
     
       settings,  
       updateSettings,
-     updateSettingsMutation,
-      // registerForNotifications,
-      // removeNotificationPermissions,
+     updateSettingsMutation, 
     ]
   );
 

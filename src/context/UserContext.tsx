@@ -53,6 +53,8 @@ export const useUser = () => {
 
 const TOKEN_KEY = "accessToken";
 
+console.warn(`USER CONTEXT RERENDERED`);
+
 interface UserProviderProps {
   children: React.ReactNode;
 }

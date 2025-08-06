@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 // NOT CURRENTLY IN USE BUT AVAILABLE IF NEED TO SEPARATE CATEGORIES FRM SETTNIGS! (comment out on backend too)
 
 import React, {
@@ -15,36 +7,32 @@ import React, {
   useMemo,
   ReactNode,
   useState,
-} from "react"; 
-import { useUser } from "./UserContext"; 
+} from "react";
+import { useUser } from "./UserContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {  
+import {
   createUserCategory,
   updateUserCategory,
-  deleteUserCategory, 
-  getUserCategories, 
+  deleteUserCategory,
+  getUserCategories,
 } from "../calls/api";
- 
- 
 
 interface Categories {
-//   id: number | null;
-//   user: number | null;
-//   expo_push_token: string | null;
-//   high_contrast_mode: boolean;
-//   interests: string | null;
-//   language_preference: string | null;
-//   large_text: boolean;
-//   manual_dark_mode: boolean;
-//   receive_notifications: boolean;
-//   screen_reader: boolean;
+  //   id: number | null;
+  //   user: number | null;
+  //   expo_push_token: string | null;
+  //   high_contrast_mode: boolean;
+  //   interests: string | null;
+  //   language_preference: string | null;
+  //   large_text: boolean;
+  //   manual_dark_mode: boolean;
+  //   receive_notifications: boolean;
+  //   screen_reader: boolean;
 }
 
 interface CategoriesContextType {}
 
-const CategoriesContext = createContext<Categories | undefined>(
-  undefined
-);
+const CategoriesContext = createContext<Categories | undefined>(undefined);
 
 export const useCategories = (): CategoriesContextType => {
   const context = useContext(CategoriesContext);
@@ -66,7 +54,6 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
   const { user, isInitializing, isAuthenticated } = useUser();
   // console.log("CATEGORIES CONTEXT");
 
- 
   const queryClient = useQueryClient();
 
   const {
@@ -80,60 +67,52 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
     queryFn: () => getUserCategories(user?.id),
     enabled: !!(user && user.id && isAuthenticated && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
-  
   });
 
-useEffect(() => {
-  if (isSuccess && categories) {
-   //   console.log('resetting user categories', categories);
- 
-    setUserCategories(categories || []);
- 
-  }
-}, [isSuccess, categories]);
- 
-const [userCategories, setUserCategories] = useState<any[]>([]);
+  useEffect(() => {
+    if (isSuccess && categories) {
+      //   console.log('resetting user categories', categories);
 
+      setUserCategories(categories || []);
+    }
+  }, [isSuccess, categories]);
 
- 
- 
+  const [userCategories, setUserCategories] = useState<any[]>([]);
 
   // reset
   // useEffect(() => {
   //   if (!isInitializing && !isAuthenticated) {
   //     console.log("user not authenticated, resetting user categories");
-   
-  //     setUserCategories(null); 
+
+  //     setUserCategories(null);
   //   }
   // }, [isAuthenticated, isInitializing]);
- 
-
- 
 
   const createNewCategoryMutation = useMutation({
     mutationFn: (data) => createUserCategory(user?.id, data),
     onSuccess: (data) => {
-     
-
       // Update local state
       setUserCategories((prev) => [...prev, data]);
- 
-      queryClient.setQueryData(["categories", user?.id], (oldData) => {
-     
-        if (!oldData) return oldData;
 
-        const updatedData = {
-          ...oldData,
-          user_categories: [...(oldData || []), data],
-        };
+      // queryClient.setQueryData(["categories", user?.id], (oldData) => {
+
+      //   if (!oldData) return oldData;
+
+      //   const updatedData = {
+      //     ...oldData,
+      //     user_categories: [...(oldData || []), data],
+      //   };
+
+      queryClient.setQueryData(["categories", user?.id], (oldData: any[]) => {
+        if (!oldData) return [data]; // just the new one
 
         // console.log('Cache after update:', updatedData);
-         handleSyncStats(); 
-        return updatedData;
+        handleSyncStats();
+        // return updatedData; 
+        return [...oldData, data];  
       });
     },
   });
-   
 
   const updateCategoryMutation = useMutation({
     mutationFn: (data) => updateUserCategory(user?.id, data.id, data.updates),
@@ -144,21 +123,16 @@ const [userCategories, setUserCategories] = useState<any[]>([]);
         return updated;
       });
 
-      queryClient.setQueryData(["categories", user?.id], (oldData) => {
-        console.log("Before updating cached categories:", oldData);
+     
 
+      // console.log("After updating cached categories:", updatedCategories);
+      handleSyncStats();
+      // return updatedCategories;
+
+      queryClient.setQueryData(["categories", user?.id], (oldData: any[]) => {
         if (!oldData) return oldData;
-
-        const updatedCategories = {
-          ...oldData,
-          user_categories: oldData.map((cat) =>
-            cat.id === data.id ? data : cat
-          ),
-        };
-
-        console.log("After updating cached categories:", updatedCategories);
-         handleSyncStats();
-        return updatedCategories;
+console.log(oldData.map((cat) => (cat.id === data.id ? data : cat)));
+        return oldData.map((cat) => (cat.id === data.id ? data : cat));
       });
     },
 
@@ -169,47 +143,51 @@ const [userCategories, setUserCategories] = useState<any[]>([]);
 
   const deleteCategoryMutation = useMutation({
     mutationFn: (data) => deleteUserCategory(user?.id, data.id),
-onSuccess: (data) => {
-  // console.log("Deleted category data:", data);
+    onSuccess: (data) => {
+      // console.log("Deleted category data:", data);
 
-  setUserCategories((prev) =>
-    prev.filter((category) => category.id !== data.id)
-  );
+      setUserCategories((prev) =>
+        prev.filter((category) => category.id !== data.id)
+      );
 
-  queryClient.setQueryData(["categories", user?.id], (oldData) => {
-    if (!oldData) return oldData;
+      // queryClient.setQueryData(["categories", user?.id], (oldData) => {
+      //   if (!oldData) return oldData;
 
-    const updatedData = {
-      ...oldData,
-      user_categories: oldData.filter(
-        (category) => category.id !== data.id
-      ),
-    };
+      //   const updatedData = {
+      //     ...oldData,
+      //     user_categories: oldData.filter(
+      //       (category) => category.id !== data.id
+      //     ),
+      //   };
 
-    handleSyncStats();
+      handleSyncStats();
 
-    // Log after updating
-    // console.log("Cache after delete update:", updatedData);
+      // Log after updating
+      // console.log("Cache after delete update:", updatedData);
 
-    return updatedData;
-  });
-},
+      queryClient.setQueryData(["categories", user?.id], (oldData: any[]) => {
+        if (!oldData) return oldData;
 
+        // console.log(oldData.filter((cat) => cat.id !== data.id));
+
+        return oldData.filter((cat) => cat.id !== data.id);
+      });
+    },
 
     onError: (error) => {
       console.error("Update app categories error:", error);
     },
-  }); 
+  });
 
   const createNewCategory = async (newCategoryData) => {
     try {
-      const updatedData = await createNewCategoryMutation.mutateAsync(newCategoryData);
-      
+      const updatedData =
+        await createNewCategoryMutation.mutateAsync(newCategoryData);
+
       if (updatedData) {
         console.log(`in createNewCategory`, updatedData);
         return updatedData;
-      } 
-
+      }
     } catch (error) {
       console.error("Error creating new category: ", error);
     }
@@ -230,41 +208,40 @@ onSuccess: (data) => {
       console.error("Error updating app categories:", error);
     }
   };
- 
 
   const handleSyncStats = () => {
-     queryClient.refetchQueries(["userStats", user.id]);
-      queryClient.refetchQueries(["selectedFriendStats", user.id]); // just refresh all of em
-     
-
+    queryClient.refetchQueries({ queryKey: ["userStats"] });
+    queryClient.refetchQueries({ queryKey: ["selectedFriendStats"] });
+    //  queryClient.refetchQueries(["userStats", user.id]);
+    //   queryClient.refetchQueries(["selectedFriendStats", user.id]); // just refresh all of em
   };
-//  const handleSyncStats = async () => {
-//   const result = await queryClient.refetchQueries(["userStats", user.id]);
-//   console.log('Stats updated, now doing next step...');
-//   // do something here that needs the *fresh* stats
-// };
+  //  const handleSyncStats = async () => {
+  //   const result = await queryClient.refetchQueries(["userStats", user.id]);
+  //   console.log('Stats updated, now doing next step...');
+  //   // do something here that needs the *fresh* stats
+  // };
 
-  const contextValue = useMemo(() => ({
-  
-  userCategories,
-  createNewCategory,
-  createNewCategoryMutation,
-  updateCategory,
-  updateCategoryMutation,
-  deleteCategory,
-  deleteCategoryMutation, 
-}), [ 
-  userCategories,
-  createNewCategoryMutation,
-  updateCategoryMutation,
-  deleteCategoryMutation, 
-]);
-
+  const contextValue = useMemo(
+    () => ({
+      userCategories,
+      createNewCategory,
+      createNewCategoryMutation,
+      updateCategory,
+      updateCategoryMutation,
+      deleteCategory,
+      deleteCategoryMutation,
+    }),
+    [
+      userCategories,
+      createNewCategoryMutation,
+      updateCategoryMutation,
+      deleteCategoryMutation,
+    ]
+  );
 
   return (
-<CategoriesContext.Provider value={contextValue}>
-  {children}
-</CategoriesContext.Provider>
-
+    <CategoriesContext.Provider value={contextValue}>
+      {children}
+    </CategoriesContext.Provider>
   );
 };

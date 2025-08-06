@@ -195,8 +195,6 @@ const UserCategorySelector = ({
     }
   }, [categoriesSortedList]);
 
-
-  
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [pieChartModalVisible, setPieChartModalVisible] = useState(false);
 
@@ -401,6 +399,7 @@ const UserCategorySelector = ({
       );
       return;
     }
+    
     if (inputActive) {
       clearInput();
     }

@@ -1,64 +1,78 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
 
-
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../../appwide/spinner/LoadingPage";
-import { MaterialIcons  } from "@expo/vector-icons";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+ 
 
-const FriendProfileButton = ({onPress}) => {
+const FriendProfileButton = ({ onPress }) => {
   const {
-   
     selectedFriend,
     friendLoaded,
     friendDashboardData,
     loadingNewFriend,
   } = useSelectedFriend();
-  const {
-    themeStyles,
-    appFontStyles,
-    appContainerStyles, 
-  } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList(); 
- 
+  const { themeStyles, appFontStyles, appContainerStyles, manualGradientColors } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendList();
+
 
   const circleSize = 27;
   const iconSize = 28;
 
- 
-
- 
   const renderProfileIcon = () => {
     // if (Array.isArray(profileIconColor) && profileIconColor.length === 2) {
-      return (
-        <View
-          style={{
-            backgroundColor: themeAheadOfLoading.lightColor,
-            borderRadius: 16,
-            width: circleSize,
-            height: circleSize,
-            alignItems: "center",
-            justifyContent: "center",
-            alignSelf: "center",
-          }}
-        >
-          <Text
-            style={[
-              appFontStyles.friendProfileButtonText,
-              {
-                color:
-                  friendLoaded && friendDashboardData && selectedFriend
-                    ? themeAheadOfLoading.fontColorSecondary
-                    : "black",
-              },
-            ]}
+    return (
+      <View
+        style={{
+          backgroundColor: selectedFriend ? themeAheadOfLoading.lightColor : manualGradientColors.lightColor,
+          borderRadius: 999,
+          width: selectedFriend ? circleSize : circleSize + 20,
+          height: selectedFriend ? circleSize : circleSize + 20,
+          alignItems: "center",
+          justifyContent: "center",
+          alignSelf: "center",
+        }}
+      >
+        {!selectedFriend && !loadingNewFriend && (
+          <View
+            style={{
+              flex: 1,
+              position: "absolute",
+              right: 0,
+              left: 0,
+              alignItems: "center",
+              justifyContent: "center",
+              flexGrow: 1,
+              top: 0,
+              bottom: 0,
+              // backgroundColor: "pink",
+            }}
           >
-            {selectedFriend && friendLoaded && selectedFriend.name.charAt(0)}
-          </Text>
-        </View>
-      );
+            <MaterialCommunityIcons
+              name={"tree"}
+              size={45}
+              color={manualGradientColors.homeDarkColor}
+            />
+          </View>
+        )}
+        <Text
+          style={[
+            appFontStyles.friendProfileButtonText,
+            {
+              color:
+                friendLoaded && friendDashboardData && selectedFriend
+                  ? themeAheadOfLoading.fontColorSecondary
+                  : "black",
+            },
+          ]}
+        >
+          {selectedFriend && friendLoaded && selectedFriend.name.charAt(0)}
+        </Text>
+      </View>
+    );
     // }
   };
 
@@ -86,8 +100,8 @@ const FriendProfileButton = ({onPress}) => {
 
       {!loadingNewFriend && (
         <Pressable
-         onPress={onPress}
-         // onPress={onPress? onPress : () => navigation.navigate("FriendFocus")}
+          onPress={onPress}
+          // onPress={onPress? onPress : () => navigation.navigate("FriendFocus")}
           style={{ flex: 1 }}
         >
           <View>
@@ -96,16 +110,17 @@ const FriendProfileButton = ({onPress}) => {
               style={{
                 position: "absolute",
                 top: -13,
-               right: 13,
+                right: 13,
                 zIndex: 1000,
               }}
             >
-              <MaterialIcons
-                name="display-settings"
-                size={iconSize - 2}
-                color={themeStyles.footerIcon.color}
-               
-              /> 
+              {selectedFriend && (
+                <MaterialIcons
+                  name="display-settings"
+                  size={iconSize - 2}
+                  color={themeStyles.footerIcon.color}
+                />
+              )}
             </View>
           </View>
         </Pressable>

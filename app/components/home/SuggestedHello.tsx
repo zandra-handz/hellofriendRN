@@ -1,8 +1,9 @@
 import { View, Pressable, Text, StyleSheet, Alert } from "react-native";
-import React, { useMemo, useState } from "react";
+import React, { useRef, useMemo, useState } from "react";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import GoOptionsModal from "../headers/GoOptionsModal";
@@ -15,12 +16,41 @@ type Props = {
 
 const SuggestedHello = ({ padding, height, borderRadius = 10 }: Props) => {
   const navigation = useNavigation();
+  const { navigateToFinalize } = useAppNavigations();
   const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const [ optionsModalVisible, setOptionsModalVisible ] = useState(false);
+  const [optionsModalVisible, setOptionsModalVisible] = useState(false);
+
+  const [lastPress, setLastPress] = useState<number | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const DOUBLE_PRESS_DELAY = 300;
 
   const handleGoPress = () => {
-setOptionsModalVisible(true);
+ const now = Date.now();
+
+ if (lastPress && now - lastPress < DOUBLE_PRESS_DELAY) {
+      // Double press detected
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      console.log("double press here!");
+      navigateToFinalize();
+  
+      setLastPress(null);
+    } else {
+      // First press
+      setLastPress(now);
+
+      timeoutRef.current = setTimeout(() => {
+       
+    setOptionsModalVisible(true);
+        setLastPress(null);
+        timeoutRef.current = null;
+      }, DOUBLE_PRESS_DELAY);
+    }
+
   };
   const navigateToMoments = () => {
     navigation.navigate("Moments", { scrollTo: null });
@@ -56,8 +86,7 @@ setOptionsModalVisible(true);
               },
             ]}
           >
-            {friendDashboardData?.future_date_in_words ||
-              "No date available"}
+            {friendDashboardData?.future_date_in_words || "No date available"}
           </Text>
         </>
       </View>
@@ -106,7 +135,7 @@ setOptionsModalVisible(true);
             width: "auto",
             minWidth: 50,
             height: "100%",
-            overflow: 'hidden',
+            overflow: "hidden",
           }}
         >
           <View
@@ -114,10 +143,9 @@ setOptionsModalVisible(true);
               position: "absolute",
               opacity: 0.9,
               position: "absolute",
-              top:-60,
+              top: -60,
               right: 0,
               transform: [{ rotate: "90deg" }],
-          
             }}
           >
             <GeckoSolidSvg
@@ -127,14 +155,30 @@ setOptionsModalVisible(true);
               style={{ opacity: 1 }}
             />
           </View>
-          <View style={{bottom: -1, position: 'absolute', alignItems: 'center', flexDirection: 'row', width: '100%', left: 2}}>
-            <Text style={{color: manualGradientColors.homeDarkColor, fontSize: 18, fontWeight: 'bold'}}>GO{' '}</Text>
-          <FontAwesome6
-            name={"arrow-right"}
-            size={20}
-            color={manualGradientColors.homeDarkColor}
-          />
-          
+          <View
+            style={{
+              bottom: -1,
+              position: "absolute",
+              alignItems: "center",
+              flexDirection: "row",
+              width: "100%",
+              left: 2,
+            }}
+          >
+            <Text
+              style={{
+                color: manualGradientColors.homeDarkColor,
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
+              GO{" "}
+            </Text>
+            <FontAwesome6
+              name={"arrow-right"}
+              size={20}
+              color={manualGradientColors.homeDarkColor}
+            />
           </View>
         </Pressable>
       </View>
@@ -151,12 +195,11 @@ setOptionsModalVisible(true);
       ></View>
       {optionsModalVisible && (
         <GoOptionsModal
-        isVisible={optionsModalVisible}
-        closeModal={() => setOptionsModalVisible(false)}
+          isVisible={optionsModalVisible}
+          closeModal={() => setOptionsModalVisible(false)}
         />
-      ) }
+      )}
     </View>
-    
   );
 };
 

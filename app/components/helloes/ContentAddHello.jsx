@@ -41,6 +41,7 @@ import DoubleChecker from "@/app/components/alerts/DoubleChecker";
 import HelloNotesModal from "../headers/HelloNotesModal";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import { useFocusEffect } from "@react-navigation/native";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
@@ -48,6 +49,7 @@ const ContentAddHello = () => {
   const navigation = useNavigation();
   const { refetchUpcomingHelloes } = useUpcomingHelloes();
   const { showMessage } = useMessage();
+ 
   const { preAdded, allCapsulesList } = useCapsuleList(); 
   const { refetchUserStats } = useUserStats();
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
@@ -158,7 +160,7 @@ const ContentAddHello = () => {
 
       refetchUpcomingHelloes();
       refetchUserStats();
-      showMessage(true, null, "Hello saved!");
+      
       navigateToMainScreen();
 
       setJustDeselectedFriend(false); // reset the flag
@@ -269,7 +271,9 @@ const ContentAddHello = () => {
           deleteMoments: deleteMoments ? true : false,
         };
 
+    
         handleCreateHello(requestData);
+            showFlashMessage(`Hello added!`, false, 1000);
       }
     } catch (error) {
       console.log("catching errors elsewhere, not sure i need this", error);

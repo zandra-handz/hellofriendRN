@@ -2,7 +2,7 @@
 // performs better than non-memoized, per DevTools profiling
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { View,  StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import Animated, {
   useAnimatedStyle,
   SlideInUp,
@@ -11,24 +11,26 @@ import Animated, {
   SlideOutDown,
 } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import {   MaterialIcons } from "@expo/vector-icons";
- 
+import { MaterialIcons } from "@expo/vector-icons";
+
+import AddNewCategory from "../headers/AddNewCategory";
+
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/src/types/NavigationTypes";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions"; 
+import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useCategories } from "@/src/context/CategoriesContext";
 import CategoryButtonForCreator from "./CategoryButtonForCreator";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type Props = {
-  freezeCategory: boolean;      
+  freezeCategory: boolean;
   isVisible: boolean;
   categoryNames: string[];
   categoryColorsMap: Record<string, string>;
   onPress: () => void;
-addToOnPress: () => void; 
+  addToOnPress: () => void;
   onSave: () => void;
   onClose: () => void;
   updatingExisting: boolean;
@@ -39,7 +41,7 @@ const CategoryCreator = ({
   freezeCategory,
   isVisible,
   onPress,
-  addToOnPress,  
+  addToOnPress,
   updatingExisting,
   existingId,
   categoryColorsMap,
@@ -47,38 +49,27 @@ const CategoryCreator = ({
 }: Props) => {
   const { capsuleList } = useCapsuleList();
   const { userCategories } = useCategories();
-  const {
-    themeStyles,
-    manualGradientColors, 
-  } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
 
   const { friendDashboardData } = useSelectedFriend();
 
   const {
     categorySizes,
-    addCategoryItem,
-    moveCategoryCount,
-    generateGradientColors,
-    generateRandomColors,
+    // addCategoryItem,
+    // moveCategoryCount,
+    // generateGradientColors,
+    // generateRandomColors,
   } = useMomentSortingFunctions({
     listData: capsuleList,
   });
 
-  // console.log(categoryColorsMap);
-
-  const [searchModalVisible, setSearchModalVisible] = useState(false);
-
   const [selectedId, setSelectedId] = useState(null);
-  const [categoriesMap, setCategoriesMap] = useState({});
-  const [categoriesSortedList, setCategoriesSortedList] = useState([]);
-  const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
-  const [tempCategoriesMap, setTempCategoriesMap] = useState({});
+  const [categoriesSortedList, setCategoriesSortedList] = useState<object[]>(
+    []
+  );
   const [pressedOnce, setPressedOnce] = useState(false);
 
-  // useEffect(() => {
-  //   console.log(`CategoryCreator selectedId`, selectedId);
-  // }, [selectedId]);
-
+  const HORIZONTAL_PADDING = 10;
 
   useFocusEffect(
     useCallback(() => {
@@ -87,27 +78,29 @@ const CategoryCreator = ({
       }
 
       let categories = categorySizes();
-      //  console.log(categories);
-      setCategoriesMap(categories.lookupMap);
+
+      if (
+        !categories ||
+        !categories?.sortedList ||
+        categories?.sortedList?.length === 0
+      ) {
+        return;
+      }
       setCategoriesSortedList(categories.sortedList);
-      setTempCategoriesSortedList(categories.sortedList);
-      setTempCategoriesMap(categories.lookupMap);
     }, [capsuleList])
   );
 
   const handleOnPress = ({ name: name, id: id }) => {
- 
-    if (!name || !id) { 
+    if (!name || !id) {
       return;
     }
 
     onPress({ name: name, id: id });
-      if (!freezeCategory) {
-    // if (!freezeCategory?.current) {
-      addToOnPress(); 
+    if (!freezeCategory) {
+      addToOnPress();
     }
     setSelectedId(id);
-       onClose(); // TESTING, REMOVE IF REALLY WANT DOUBLE PRESS FEATURE
+    onClose(); // TESTING, REMOVE IF REALLY WANT DOUBLE PRESS FEATURE
 
     if (!pressedOnce) {
       setPressedOnce(true);
@@ -117,29 +110,30 @@ const CategoryCreator = ({
     }
   };
 
-  // useEffect(() => {
-  //   if (categoryColorsMap && tempCategoriesSortedList) {
-  //     // console.log('tempcategorysortedlist');
-  //     const userCategorySet = new Set(
-  //       tempCategoriesSortedList.map((item) => item.user_category)
-  //     );
-  //     // console.log(tempCategoriesSortedList);
-  //     // console.log(userCategorySet);
-
-  //     const filteredColors = categoryColors
-  //       .filter((item) => userCategorySet.has(item.user_category))
-  //       .map((item) => item.color);
-  //     setColors(filteredColors);
-  //   }
-  // }, [categoryColors, tempCategoriesSortedList]);
+  const handleSelectCreated = ({
+    categoryId,
+    categoryName,
+  }: {
+    categoryId: number;
+    categoryName: string;
+  }) => {
+    console.error("setting category:", categoryId, categoryName);
+    setSelectedId(categoryId);
+    setPressedOnce(true);
+    onClose();
+  };
 
   useEffect(() => {
-    // console.warn(`frezeCategory: `, freezeCategory);
-     if (freezeCategory) { 
-  // if (freezeCategory?.current) { // do not change category on open if user has already selected one
-    return;
-  }
-    if (updatingExisting && existingId) {
+    if (freezeCategory) {
+      return;
+    }
+
+    if (
+      updatingExisting &&
+      existingId &&
+      userCategories &&
+      userCategories.length > 0
+    ) {
       const find = userCategories.findIndex(
         (category) => category.id === existingId
       );
@@ -150,7 +144,7 @@ const CategoryCreator = ({
       return;
     }
 
-    if (friendDashboardData && friendDashboardData?.friend_faves) {
+    if (friendDashboardData && friendDashboardData?.friend_faves && userCategories && (userCategories.length > 0)) {
       console.log(
         `friend default:`,
         friendDashboardData.friend_faves.friend_default_category
@@ -171,19 +165,27 @@ const CategoryCreator = ({
       }
     }
 
+    if (!categoriesSortedList || !(categoriesSortedList.length > 0)) {
+      return;
+    }
+
     let largest = categoriesSortedList[0]?.user_category;
     let largestName = categoriesSortedList[0]?.name;
 
-    console.log(`largest: `, typeof largest);
-    console.log(`largestName: `, typeof largestName);
+    // console.log(`largest: `, typeof largest);
+    // console.log(`largestName: `, typeof largestName);
 
     if (largest && largestName) {
-      console.log("setting largest");
-
       onPress({ name: largestName, id: largest });
       setSelectedId(largest);
     }
-  }, [categoriesSortedList, friendDashboardData]);
+  }, [
+    categoriesSortedList,
+    friendDashboardData,
+    userCategories,
+    updatingExisting,
+    existingId,
+  ]);
 
   const renderedButtons = useMemo(
     () => (
@@ -195,7 +197,7 @@ const CategoryCreator = ({
             return (
               <View
                 key={id ?? name ?? "Uncategorized"}
-                style={styles.buttonWrapper}
+                style={[styles.buttonWrapper, { marginRight: 10 }]}
               >
                 <CategoryButtonForCreator
                   height={"auto"}
@@ -228,14 +230,15 @@ const CategoryCreator = ({
           exiting={SlideOutUp}
           style={[
             styles.categoryNavigatorContainer,
-            styles.momentsScreenPrimarySpacing,
             {
+              paddingHorizontal: HORIZONTAL_PADDING,
               backgroundColor:
                 // themeStyles.overlayBackgroundColor.backgroundColor,
                 themeStyles.primaryBackground.backgroundColor,
             },
           ]}
         >
+          <AddNewCategory addToOnPress={handleSelectCreated} />
           {userCategories && (
             <View
               showsVerticalScrollIndicator={false}
@@ -281,14 +284,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   //brought down from global context
-  momentsScreenPrimarySpacing: {
-    // borderRadius: 10,
 
-    padding: 0,
-  },
   categoryNavigatorContainer: {
     position: "absolute",
     top: -70, //20
+
     paddingTop: 0,
     zIndex: 5000,
     height: "auto",
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     marginTop: 0,
     borderRadius: 10,
-    padding: 10,
+    padding: 0,
     paddingTop: 10,
   },
   buttonRow: {
@@ -311,11 +311,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
+    // backgroundColor: 'red',
   },
   buttonWrapper: {
     flexDirection: "row",
-
-    marginHorizontal: 0,
+    // backgroundColor: "teal",
     marginBottom: 10,
   },
 });
