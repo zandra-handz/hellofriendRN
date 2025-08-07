@@ -9,7 +9,7 @@ import Animated, {
 type Props = {
     onPress?: () => void;
     onLongPress?: () => void;
-    zIndex: number; 
+    zIndex?: number; 
     style: object;
     children: ReactNode;
 }

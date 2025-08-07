@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, StyleSheet, Keyboard } from "react-native";
 
 // app state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -15,41 +15,53 @@ import CategoriesModal from "./CategoriesModal";
 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
- 
-// import { useNavigationState } from "@react-navigation/native";
 
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
 import { useFriendList } from "@/src/context/FriendListContext";
- 
 
 const HelloFriendFooter = () => {
-  // const navigationState = useNavigationState((state) => state);
   const { onSignOut } = useUser();
-  // const currentRouteName = navigationState.routes[navigationState.index]?.name;
-  // const isOnActionPage = currentRouteName === "hellofriend";
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
-const { resetTheme } = useFriendList();
+  const { resetTheme } = useFriendList();
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
-  const [categoriesModalVisible, setCategoriesModalVisible ] = useState(false);
+  const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
     useState(false);
+
+  const [currentlyOpen, setCurrentlyOpen] = useState<string | null>(null);
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setIsKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setIsKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const handleDeselectFriend = () => {
     deselectFriend();
     resetTheme();
-  }
+  };
 
   // buttons rendered in callbacks, all using the same template except for the friend profile button
   const RenderSignOutButton = useCallback(
@@ -131,21 +143,17 @@ const { resetTheme } = useFriendList();
     [themeStyles]
   );
 
-const handleCenterButtonToggle = () => {
-  if (selectedFriend) {
-    setFriendSettingsModalVisible(true)
-  } else {
-    setCategoriesModalVisible(true);
-  }
-}
-  
-  const RenderFriendProfileButton = useCallback(
-    () => (
+  const handleCenterButtonToggle = () => {
+    console.log("center button toggled!");
+    if (selectedFriend) {
+      setFriendSettingsModalVisible(true);
+    } else {
+      setCategoriesModalVisible((prev) => !prev);
+    }
+  };
 
-<FriendProfileButton onPress={() => handleCenterButtonToggle()}
-      
-      />
-    ),
+  const RenderFriendProfileButton = useCallback(
+    () => <FriendProfileButton onPress={() => handleCenterButtonToggle()} />,
     [themeStyles, selectedFriend]
   );
 
@@ -228,26 +236,30 @@ const handleCenterButtonToggle = () => {
       {settingsModalVisible && (
         <View>
           <UserSettingsModal
-            isVisible={settingsModalVisible}
+            isVisible={settingsModalVisible} 
+            bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
           />
         </View>
       )}
 
-      {friendSettingsModalVisible && !!(selectedFriend) && (
+      {friendSettingsModalVisible && !!selectedFriend && (
         <View>
           <FriendSettingsModal
             isVisible={friendSettingsModalVisible}
+     
+            bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setFriendSettingsModalVisible(false)}
           />
         </View>
       )}
 
-
       {categoriesModalVisible && (
         <View>
           <CategoriesModal
             isVisible={categoriesModalVisible}
+            isKeyboardVisible={isKeyboardVisible}
+            bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setCategoriesModalVisible(false)}
           />
         </View>
@@ -257,6 +269,7 @@ const handleCenterButtonToggle = () => {
           <AboutAppModal
             isVisible={aboutModalVisible}
             closeModal={() => setAboutModalVisible(false)}
+            bottomSpacer={footerHeight - 30} //for safe view
           />
         </View>
       )}
@@ -265,6 +278,7 @@ const handleCenterButtonToggle = () => {
         <View>
           <ReportIssueModal
             isVisible={reportModalVisible}
+            bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setReportModalVisible(false)}
           />
         </View>

@@ -1,26 +1,25 @@
 import {  Text,  Pressable, Alert } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import GlobalPressable from "../appwide/button/GlobalPressable";
  
 
 interface ButtonDeselectProps {
   label: string;
   icon: React.ReactElement;
-  iconSize: number;
-  labelFontSize: number;
+ 
+  labelFontSize?: number;
   onPress: () => void;
-  confirmationRequired: boolean;
-  confirmationTitle: string;
-  confirmationMessage: string;
-  confirmationActionWord: string;
-  hasModal: boolean;
-  modalVisible: boolean;
+  confirmationRequired?: boolean;
+  confirmationTitle?: string;
+  confirmationMessage?: string;
+  confirmationActionWord?: string;
+ 
 }
 
 const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
   label = "",
-  icon,
-  iconSize = 26, //random default
+  icon, 
   labelFontSize = 11,
   onPress,
   confirmationRequired = false,
@@ -28,7 +27,7 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
   confirmationMessage = "Are you sure?",
   confirmationActionWord = 'Yes', 
 }) => { 
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { themeStyles  } = useGlobalStyle();
 
   const handleOnPress = () => {
     if (confirmationRequired) {
@@ -47,15 +46,14 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
   };
 
   return (
-    <Pressable
+    <GlobalPressable
       onPress={() => handleOnPress()}
       style={{
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         height: "100%",
-        flex: 1,
-        textAlign: "center",
+        flex: 1, 
         
       }}
     >
@@ -63,8 +61,7 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
       <Text
         style={{
             marginTop: 4,
-          fontSize: labelFontSize,
-         // backgroundColor: manualGradientColors.homeLightColor,
+          fontSize: labelFontSize, 
           paddingHorizontal: 6,
           paddingVertical: 4,
           borderRadius: 10,
@@ -74,7 +71,7 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
       >
         {label}
       </Text>
-    </Pressable>
+    </GlobalPressable>
   );
 };
 

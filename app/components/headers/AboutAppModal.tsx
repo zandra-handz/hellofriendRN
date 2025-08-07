@@ -6,13 +6,15 @@ import InfoOutlineSvg from "@/app/assets/svgs/info-outline.svg";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
+import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 interface AboutAppModalProps {
   isVisible: boolean;
   closeModal: () => void;
+  bottomSpacer: number;
 }
 
-const AboutAppModal: React.FC<AboutAppModalProps> = ({ isVisible, closeModal }) => {
+const AboutAppModal: React.FC<AboutAppModalProps> = ({ isVisible, closeModal, bottomSpacer }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle(); 
 
     const headerIconSize = 26;
@@ -25,7 +27,9 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({ isVisible, closeModal }) 
   // }, [isModalVisible]);
 
   return ( 
-      <ModalWithGoBack
+      // <ModalWithGoBack
+      <ModalScaleLikeTree
+       bottomSpacer={bottomSpacer}
         isVisible={isVisible}
         headerIcon={
           <MaterialCommunityIcons

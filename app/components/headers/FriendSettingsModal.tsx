@@ -4,20 +4,22 @@ import { TouchableOpacity, AccessibilityInfo } from "react-native";
  
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import ModalWithGoBack from "../alerts/ModalWithGoBack"; 
+ 
 import SectionFriendSettings from "../friends/SectionFriendSettings"; 
 
 
 import SectionFriendStats from "../friends/SectionFriendStats";
 import SectionFriendTheme from "../friends/SectionFriendTheme";
+import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 
 interface Props {
   isVisible: boolean;
+  bottomSpacer: number;
   closeModal: () => void;
 }
 
-const FriendSettingsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
+const FriendSettingsModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModal }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle(); 
 
     const headerIconSize = 26;
@@ -30,7 +32,8 @@ const FriendSettingsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
   // }, [isModalVisible]);
 
   return ( 
-      <ModalWithGoBack
+      <ModalScaleLikeTree
+      bottomSpacer={bottomSpacer}
         isVisible={isVisible}
         headerIcon={
           <MaterialCommunityIcons

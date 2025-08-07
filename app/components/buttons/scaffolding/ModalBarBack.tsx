@@ -2,19 +2,37 @@ import React from "react";
 import { Pressable, Text, StyleSheet, Image, View } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import GlobalPressable from "../../appwide/button/GlobalPressable";
 
-const ButtonBaseSpecialSave = ({
+type Props = {
+  onPress: () => void;
+  label?: string;
+  labelSize?: number;
+  height?: number;
+  fontFamily?: string;
+  maxHeight?: number;
+  dynamicPadding?: number;
+  labelPlacement?: "start" | "center" | "end"; // is just a justifyContent
+  labelPaddingHorizontal?: number;
+  borderColor?: string;
+  borderRadius?: number;
+  borderBottomLeftRadius?: number;
+  borderBottomRightRadius?: number;
+  borderTopRightRadius?: number;
+  borderTopLeftRadius?: number;
+  isDisabled?: boolean;
+  
+};
+
+const ModalBarBack = ({
   onPress,
-  label = "ADD NEW IMAGE",
+  label = "Close", 
   labelSize = 20,
   height = 60,
   fontFamily = "Poppins-Regular",
   maxHeight = 90,
-  imageSize = 90,
-  image = require("@/app/assets/shapes/redheadcoffee.png"),
-  imagePositionHorizontal = 0,
-  imagePositionVertical = 8,
   dynamicPadding = 5,
   labelPlacement = "center",
   labelPaddingHorizontal = 10,
@@ -25,24 +43,24 @@ const ButtonBaseSpecialSave = ({
   borderTopRightRadius = 0,
   borderTopLeftRadius = 0,
   isDisabled = true,
-}) => {
-  const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
+}: Props) => {
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
 
   return (
-    <Pressable
+    <GlobalPressable
       onPress={isDisabled ? null : onPress}
       style={[
         styles.container,
         {
-          // borderColor: borderColor,
+          borderColor: borderColor,
           borderRadius: borderRadius,
-          // borderBottomLeftRadius: borderBottomLeftRadius,
-          // borderBottomRightRadius: borderBottomRightRadius,
-          // borderTopRightRadius: borderTopRightRadius,
-          // borderTopLeftRadius: borderTopLeftRadius,
-          height: height,   
-      
-        
+          borderBottomLeftRadius: borderBottomLeftRadius,
+          borderBottomRightRadius: borderBottomRightRadius,
+          borderTopRightRadius: borderTopRightRadius,
+          borderTopLeftRadius: borderTopLeftRadius,
+          height: height,
+          maxHeight: maxHeight,
+          padding: dynamicPadding,
         },
       ]}
     >
@@ -65,13 +83,6 @@ const ButtonBaseSpecialSave = ({
           textAlign: "center",
           alignItems: "center",
           height: "100%",
-          width: 100,
-          right: 0, 
-bottom: 0,
-          flex: 1,
-          position: "absolute",
-          top: imagePositionVertical,
-          right: imagePositionHorizontal,
           borderRadius: borderRadius - dynamicPadding,
           borderBottomLeftRadius: borderBottomLeftRadius - dynamicPadding,
           borderBottomRightRadius: borderBottomRightRadius - dynamicPadding,
@@ -80,58 +91,21 @@ bottom: 0,
           backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
         }}
       >
-        {image && (
-          <Image
-            source={image}
-            style={{
-              position: "absolute",
-              width: imageSize,
-              height: imageSize,
-              top: imagePositionVertical,
-              right: imagePositionHorizontal,
-            }}
-            resizeMode="contain"
-          />
-        )}
-      </View>
-      <View
-        style={{
-          Width: "100%",
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-        }}
-      >
         <Text
           style={[
-            themeStyles.primaryText,
-            appFontStyles.welcomeText,
             {
-              fontSize: 20,
-              lineHeight: 20,
-              fontFamily: "Poppins-Bold",
-              color: manualGradientColors.homeDarkColor,
+              fontFamily: fontFamily,
+              paddingHorizontal: labelPaddingHorizontal,
+
+              fontSize: labelSize,
+              color: themeStyles.primaryText.color,
             },
           ]}
         >
           {label}
         </Text>
-        <Text
-          style={[
-            themeStyles.primaryText,
-            appFontStyles.subWelcomeText,
-            {
-              fontSize: 14,
-              fontFamily: "Poppins-Bold",
-              color: manualGradientColors.homeDarkColor,
-            },
-          ]}
-        >
-          Close
-        </Text>
       </View>
-    </Pressable>
+    </GlobalPressable>
   );
 };
 
@@ -141,13 +115,12 @@ const styles = StyleSheet.create({
     //  flex: 1,
     width: "100%",
     alignContent: "center",
-  //  borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: StyleSheet.hairlineWidth,
     alignItems: "center",
     overflow: "hidden",
     zIndex: 5000,
     elevation: 5000,
-    
   },
 });
 
-export default ButtonBaseSpecialSave;
+export default ModalBarBack;

@@ -6,6 +6,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../../appwide/spinner/LoadingPage";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import GlobalPressable from "../../appwide/button/GlobalPressable";
  
 
 const FriendProfileButton = ({ onPress }) => {
@@ -99,10 +100,10 @@ const FriendProfileButton = ({ onPress }) => {
       )}
 
       {!loadingNewFriend && (
-        <Pressable
+        <GlobalPressable
           onPress={onPress}
           // onPress={onPress? onPress : () => navigation.navigate("FriendFocus")}
-          style={{ flex: 1 }}
+          style={{   }}
         >
           <View>
             {renderProfileIcon()}
@@ -123,7 +124,7 @@ const FriendProfileButton = ({ onPress }) => {
               )}
             </View>
           </View>
-        </Pressable>
+        </GlobalPressable>
       )}
     </View>
   );

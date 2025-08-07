@@ -10,13 +10,15 @@ import SectionFriendSettings from "../friends/SectionFriendSettings";
 import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
 import SectionAccountSettings from "../user/SectionAccountSettings";
 import SectionUserCategories from "../friends/SectionUserCategories";
+import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 interface Props {
   isVisible: boolean;
+  bottomSpacer: boolean;
   closeModal: () => void;
 }
 
-const UserSettingsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
+const UserSettingsModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModal }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
 
   const headerIconSize = 26;
@@ -28,7 +30,8 @@ const UserSettingsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
   // }, [isModalVisible]);
 
   return (
-    <ModalWithGoBack
+    <ModalScaleLikeTree
+    bottomSpacer={bottomSpacer}
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons

@@ -108,8 +108,8 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
 
         // console.log('Cache after update:', updatedData);
         handleSyncStats();
-        // return updatedData; 
-        return [...oldData, data];  
+        // return updatedData;
+        return [...oldData, data];
       });
     },
   });
@@ -123,15 +123,13 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
         return updated;
       });
 
-     
-
       // console.log("After updating cached categories:", updatedCategories);
       handleSyncStats();
       // return updatedCategories;
 
       queryClient.setQueryData(["categories", user?.id], (oldData: any[]) => {
         if (!oldData) return oldData;
-console.log(oldData.map((cat) => (cat.id === data.id ? data : cat)));
+        console.log(oldData.map((cat) => (cat.id === data.id ? data : cat)));
         return oldData.map((cat) => (cat.id === data.id ? data : cat));
       });
     },

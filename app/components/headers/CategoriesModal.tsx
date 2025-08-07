@@ -7,16 +7,19 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import SectionUserCategories from "../friends/SectionUserCategories";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
+import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 interface Props {
   isVisible: boolean;
-  closeModal: () => void;
-  onSearchPress: () => void;
+  closeModal: () => void; 
+  isKeyboardVisible: boolean;
+  bottomSpacer: number; // added to pass in footer height to put modal above footer, includes padding
 }
 
 const CategoriesModal: React.FC<Props> = ({
   isVisible,
-  closeModal,
-  onSearchPress,
+  isKeyboardVisible=false,
+  closeModal, 
+  bottomSpacer=60,
 }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
  
@@ -24,18 +27,22 @@ const CategoriesModal: React.FC<Props> = ({
    
 
   return (
-    <ModalWithGoBack
+    <ModalScaleLikeTree
+    bottomSpacer={bottomSpacer}
+    isKeyboardVisible={isKeyboardVisible}
+    borderRadius={60}
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons
-          name={"comment-outline"}
+          name={"tree-outline"}
           size={appSpacingStyles.modalHeaderIconSize}
           color={themeStyles.footerIcon.color}
         />
       }
+      useModalBar={true}
       questionText="Categories"
       children={
-        < View contentContainerStyle={styles.bodyContainer}>
+        < View style={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
             <SectionUserCategories/>
           </View>
