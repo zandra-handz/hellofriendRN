@@ -21,6 +21,20 @@ export interface Friend {
   suggestion_settings: number;
 }
 
+export interface ThemeAheadOfLoading {
+  darkColor: Friend["theme_color_dark"];
+  lightColor: Friend["theme_color_light"];
+  fontColor: Friend["theme_color_font"];
+  fontColorSecondary: Friend["theme_color_font_secondary"];
+}
+
+export interface FriendTheme {
+  darkColor: string;
+  lightColor: string;
+  fontColor: string;
+  fontColorSecondary: string;
+}
+
 export interface FriendAddresses {
   address: string;
   created_on: string;

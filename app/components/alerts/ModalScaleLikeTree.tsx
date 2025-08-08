@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Modal, Text } from "react-native";
+import { StyleSheet, View, Modal, Text, Image } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, {
   SharedValue,
@@ -20,6 +20,7 @@ import Animated, {
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import ModalBarBack from "../buttons/scaffolding/ModalBarBack";
 import GlobalPressable from "../appwide/button/GlobalPressable";
+import TreeModalBigButton from "./TreeModalBigButton";
 
 interface Props {
   isVisible: boolean;
@@ -33,6 +34,8 @@ interface Props {
   useModalBar: boolean;
   bottomSpacer: number;
   isKeyboardVisible: boolean;
+  buttonTitle: string; 
+  rightSideButtonItem: React.ReactElement;
 }
 
 const ModalScaleLikeTree: React.FC<Props> = ({
@@ -41,11 +44,13 @@ const ModalScaleLikeTree: React.FC<Props> = ({
   isKeyboardVisible,
   headerIcon,
   questionText,
+  buttonTitle = "",
   children,
   borderRadius = 40,
   contentPadding = 10,
   useModalBar = false,
-  bottomSpacer = 0,
+  bottomSpacer = 0, 
+  rightSideButtonItem,
 
   onClose,
 }) => {
@@ -160,24 +165,6 @@ const ModalScaleLikeTree: React.FC<Props> = ({
             >
               {children}
             </Animated.View>
-
-            {/* {useModalBar && (
-              <ModalBarBack
-                label="Back"
-                labelSize={17}
-                labelPlacement={"start"}
-                labelPaddingHorizontal={20}
-                isDisabled={false}
-                height={56}
-                borderRadius={0}
-                dynamicPadding={1}
-                borderBottomLeftRadius={borderRadius}
-                borderBottomRightRadius={borderRadius}
-                borderTopLeftRadius={borderRadius / 3}
-                borderTopRightRadius={borderRadius / 3}
-                onPress={handleCustomClose} // adds a delay to let inside component animation run before modal closes
-              />
-            )} */}
           </Animated.View>
           {!isKeyboardVisible && (
             <Animated.View
@@ -194,16 +181,15 @@ const ModalScaleLikeTree: React.FC<Props> = ({
             >
               {!useModalBar && (
                 <ButtonBaseSpecialSave
-                  label={questionText}
-                
+                  label={buttonTitle}
                   image={require("@/app/assets/shapes/redheadcoffee.png")}
                   imageSize={80}
                   labelSize={17}
                   labelPlacement={"flex-end"}
                   labelPaddingHorizontal={20}
                   isDisabled={false}
-                //   height={56}
-                    height={bottomSpacer}
+                  //   height={56}
+                  height={bottomSpacer}
                   imagePositionHorizontal={0}
                   imagePositionVertical={0}
                   borderRadius={0}
@@ -216,43 +202,48 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                 />
               )}
               {useModalBar && (
-                <GlobalPressable
-                  onPress={handleCustomClose}
-                  style={{
-                    height: "100%",
-                    width: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Text
-                    style={[
-                      themeStyles.primaryText,
-                      appFontStyles.welcomeText,
-                      {
-                        fontSize: 20,
-                        
-                        fontFamily: "Poppins-Bold",
-                        color: manualGradientColors.homeDarkColor,
-                      },
-                    ]}
-                  >
-                    {questionText}
-                  </Text>
-                                    <Text
-                    style={[
-                      themeStyles.primaryText,
-                      appFontStyles.subWelcomeText,
-                      {
-                        fontSize: 14,
-                        fontFamily: "Poppins-Bold",
-                        color: manualGradientColors.homeDarkColor,
-                      },
-                    ]}
-                  >
-                    Close
-                  </Text>
-                </GlobalPressable>
+                <TreeModalBigButton
+                  onClose={handleCustomClose}
+                  label={buttonTitle}
+                  rightSideElement={rightSideButtonItem}
+                />
+                //  <GlobalPressable
+                //   onPress={handleCustomClose}
+                //   style={{
+                //     height: "100%",
+                //     width: "100%",
+                //     alignItems: "center",
+                //     justifyContent: "center",
+                //   }}
+                // >
+                //   <Text
+                //     style={[
+                //       themeStyles.primaryText,
+                //       appFontStyles.welcomeText,
+                //       {
+                //         fontSize: 20,
+
+                //         fontFamily: "Poppins-Bold",
+                //         color: manualGradientColors.homeDarkColor,
+                //       },
+                //     ]}
+                //   >
+                //     {buttonTitle}
+                //   </Text>
+                //                     <Text
+                //     style={[
+                //       themeStyles.primaryText,
+                //       appFontStyles.subWelcomeText,
+                //       {
+                //         fontSize: 14,
+                //         fontFamily: "Poppins-Bold",
+                //         color: manualGradientColors.homeDarkColor,
+                //       },
+                //     ]}
+                //   >
+                //     Close
+                //   </Text>
+                // </GlobalPressable>
               )}
             </Animated.View>
           )}

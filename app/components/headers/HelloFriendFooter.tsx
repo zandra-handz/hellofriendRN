@@ -236,7 +236,7 @@ const HelloFriendFooter = () => {
       {settingsModalVisible && (
         <View>
           <UserSettingsModal
-            isVisible={settingsModalVisible} 
+            isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
           />
@@ -247,7 +247,7 @@ const HelloFriendFooter = () => {
         <View>
           <FriendSettingsModal
             isVisible={friendSettingsModalVisible}
-     
+            friendName={selectedFriend.name}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setFriendSettingsModalVisible(false)}
           />

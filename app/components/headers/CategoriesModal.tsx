@@ -21,7 +21,7 @@ const CategoriesModal: React.FC<Props> = ({
   closeModal, 
   bottomSpacer=60,
 }) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
+  const { themeStyles, appSpacingStyles, manualGradientColors } = useGlobalStyle();
  
  
    
@@ -39,13 +39,19 @@ const CategoriesModal: React.FC<Props> = ({
           color={themeStyles.footerIcon.color}
         />
       }
-      useModalBar={true}
+            useModalBar={true}
+            rightSideButtonItem={
+              <MaterialCommunityIcons 
+              name={`tree`}
+              size={50}
+              color={manualGradientColors.darkHomeColor}/>
+            }
       questionText="Categories"
+      buttonTitle="Categories"
       children={
-        < View style={styles.bodyContainer}>
-          <View style={styles.sectionContainer}>
+        < View style={styles.bodyContainer}> 
             <SectionUserCategories/>
-          </View>
+       
 
         </ View>
       }
@@ -57,16 +63,20 @@ const CategoriesModal: React.FC<Props> = ({
 const styles = StyleSheet.create({
   bodyContainer: {
     width: "100%",
-    flexDirection: "column",
-    justifyContent: "flex-start",
+    flex: 1,
+    paddingBottom: 200,
+   // backgroundColor: 'teal',
+    // flexDirection: "column",
+    // justifyContent: "flex-start",
     textAlign: "left",
   },
   headerContainer: {
     margin: "2%",
   },
   sectionContainer: {
-   
-    height: 100,
+   backgroundColor: 'pink',
+   flex: 1,
+   // height: 100,
     width: '100%',
   },
   headerText: {

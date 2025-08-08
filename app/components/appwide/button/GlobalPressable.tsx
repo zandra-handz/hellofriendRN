@@ -11,7 +11,7 @@ type Props = {
     onLongPress?: () => void;
     zIndex?: number; 
     style: object;
-    children: ReactNode;
+    children?: ReactNode;
 }
 
 const GlobalPressable = ({ onPress, onLongPress, zIndex=1,  style, children }: Props) => {

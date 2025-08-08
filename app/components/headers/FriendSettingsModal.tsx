@@ -1,70 +1,69 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { TouchableOpacity, AccessibilityInfo } from "react-native";
- 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
- 
-import SectionFriendSettings from "../friends/SectionFriendSettings"; 
 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+
+import SectionFriendSettings from "../friends/SectionFriendSettings";
 
 import SectionFriendStats from "../friends/SectionFriendStats";
 import SectionFriendTheme from "../friends/SectionFriendTheme";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
-
 interface Props {
   isVisible: boolean;
+  friendName: string;
   bottomSpacer: number;
   closeModal: () => void;
 }
 
-const FriendSettingsModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModal }) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle(); 
+const FriendSettingsModal: React.FC<Props> = ({
+  isVisible,
+  friendName="",
+  bottomSpacer,
+  closeModal,
+}) => {
+  const { themeStyles, appSpacingStyles } = useGlobalStyle();
 
-    const headerIconSize = 26;
+  const headerIconSize = 26;
 
- 
   // React.useEffect(() => {
   //   if (isModalVisible) {
   //     AccessibilityInfo.announceForAccessibility("Information opened");
   //   }
   // }, [isModalVisible]);
 
-  return ( 
-      <ModalScaleLikeTree
+  return (
+    <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
-        isVisible={isVisible}
-        headerIcon={
-          <MaterialCommunityIcons
-            name={"wrench"}
-            size={appSpacingStyles.modalHeaderIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        questionText="Settings"
-        children={
-          <ScrollView contentContainerStyle={styles.bodyContainer}>
-            <View style={styles.sectionContainer}>
-              <SectionFriendStats />
-            </View>
-            <View style={styles.sectionContainer}>
-             <SectionFriendSettings/>
-            </View>
+      isVisible={isVisible}
+      headerIcon={
+        <MaterialCommunityIcons
+          name={"wrench"}
+          size={appSpacingStyles.modalHeaderIconSize}
+          color={themeStyles.footerIcon.color}
+        />
+      }
+      questionText="Settings"
+      buttonTitle={`${friendName}`}
+      children={
+        <ScrollView contentContainerStyle={styles.bodyContainer}>
+          <View style={styles.sectionContainer}>
+            <SectionFriendStats />
+          </View>
+          <View style={styles.sectionContainer}>
+            <SectionFriendSettings />
+          </View>
 
-            <View style={styles.headerContainer}>
-              <SectionFriendTheme />
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={[styles.text, themeStyles.genericText]}>
-                © Badrainbowz Studio 2025
-              </Text>
-            </View>
-           
-          </ScrollView>
-        } 
-        onClose={closeModal} 
-      /> 
+          <View style={styles.headerContainer}>
+            <SectionFriendTheme />
+          </View>
+ 
+        </ScrollView>
+      }
+      onClose={closeModal}
+    />
   );
 };
 
@@ -81,12 +80,12 @@ const styles = StyleSheet.create({
   sectionContainer: {
     margin: "2%",
   },
-  headerText: { 
-    fontWeight: 'bold',
+  headerText: {
+    fontWeight: "bold",
     fontSize: 18,
     lineHeight: 30,
   },
-  text: { 
+  text: {
     fontSize: 14,
     lineHeight: 21,
   },

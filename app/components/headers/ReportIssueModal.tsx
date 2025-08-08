@@ -16,7 +16,11 @@ interface Props {
   bottomSpacer: number;
 }
 
-const ReportIssueModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModal }) => {
+const ReportIssueModal: React.FC<Props> = ({
+  isVisible,
+  bottomSpacer,
+  closeModal,
+}) => {
   const { user } = useUser();
   const { themeStyles, appSpacingStyles, manualGradientColors } =
     useGlobalStyle();
@@ -34,10 +38,10 @@ const ReportIssueModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModal
   //     }
   //   }, [isModalVisible]);
 
-  return ( 
-           <ModalScaleLikeTree
-       bottomSpacer={bottomSpacer}
-       isVisible={isVisible}
+  return (
+    <ModalScaleLikeTree
+      bottomSpacer={bottomSpacer}
+      isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons
           name={"bug-outline"}
@@ -46,9 +50,9 @@ const ReportIssueModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModal
         />
       }
       questionText="Report a bug"
+      buttonTitle={`Report a bug`}
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
-       
           <View style={styles.sectionContainer}>
             <Text style={[styles.text, themeStyles.genericText]}>
               I am so sorry for the inconvenience and potential frustration!
@@ -67,9 +71,8 @@ const ReportIssueModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModal
             </Text>
           </View>
         </ScrollView>
-      } 
+      }
       onClose={closeModal}
-    
     />
   );
 };
@@ -77,7 +80,6 @@ const ReportIssueModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModal
 const styles = StyleSheet.create({
   bodyContainer: {
     width: "100%",
-  
 
     flexDirection: "column",
     justifyContent: "flex-start",
@@ -88,7 +90,6 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     margin: "2%",
-   
   },
   headerText: {
     fontFamily: "Poppins-Bold",

@@ -9,15 +9,9 @@ import React, {
 import { useUser } from "./UserContext"; // Import useAuthUser hook
 import { fetchFriendList } from "../calls/api";
 import { useQuery } from "@tanstack/react-query";
-import { Friend } from "../types/FriendTypes";
+import { Friend, ThemeAheadOfLoading } from "../types/FriendTypes";
 
-interface ThemeAheadOfLoading {
-  darkColor: string;
-  lightColor: string;
-  fontColor: string;
-  fontColorSecondary: string;
-}
-
+ 
 interface FriendListContextType {
   friendList: Friend[];
   setFriendList: (friends: Friend[]) => void;

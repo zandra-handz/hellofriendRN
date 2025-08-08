@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
 
 const SectionUserCategories = () => {
@@ -25,11 +25,10 @@ const SectionUserCategories = () => {
     deleteCategoryMutation,
   } = useCategories();
 
- 
   const { user } = useUser();
   const [showEdit, setShowEdit] = useState(false);
 
-  const [showList, setShowList] = useState(true);
+  // const [showList, setShowList] = useState(true);
 
   const newCategoryRef = useRef(null);
 
@@ -44,34 +43,30 @@ const SectionUserCategories = () => {
   };
 
   const handleConfirmDelete = () => {
-
     if (editId && newCategory) {
-                Alert.alert(
-                  `Delete: ${newCategory}`,
-                  `Are you sure you want to delete this category? (Active talking points will be orphaned and you will need to reassign them to new categories by hand.)`,
-                  [
-                    {
-                      text: "Cancel",
-                      onPress: () => {},
-                      style: "cancel",
-                    },
-                    {
-                      text: "Delete",
-                      onPress: () => handleDeleteCategory(),
-                    },
-                  ]
-                );
-
+      Alert.alert(
+        `Delete: ${newCategory}`,
+        `Are you sure you want to delete this category? (Active talking points will be orphaned and you will need to reassign them to new categories by hand.)`,
+        [
+          {
+            text: "Cancel",
+            onPress: () => {},
+            style: "cancel",
+          },
+          {
+            text: "Delete",
+            onPress: () => handleDeleteCategory(),
+          },
+        ]
+      );
     }
-
   };
 
   const handleDeleteCategory = () => {
     deleteCategory({
-        user: user?.id,
-        id: editId,
-    })
-
+      user: user?.id,
+      id: editId,
+    });
   };
 
   const handleCreateCategory = () => {
@@ -99,8 +94,7 @@ const SectionUserCategories = () => {
     }
   };
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (deleteCategoryMutation.isSuccess) {
       if (newCategoryRef && newCategoryRef.current) {
         newCategoryRef.current.clear();
@@ -120,8 +114,7 @@ const SectionUserCategories = () => {
     }
   }, [createNewCategoryMutation.isSuccess]);
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (updateCategoryMutation.isSuccess) {
       if (newCategoryRef && newCategoryRef.current) {
         newCategoryRef.current.clear();
@@ -151,23 +144,25 @@ const SectionUserCategories = () => {
           flexDirection: "row",
         }}
       >
-        <MaterialCommunityIcons
-          name={"shape"}
-          size={20}
-          color={themeStyles.primaryText.color}
-        />
+        <Pressable onPress={toggleAddNew}>
+          <MaterialCommunityIcons
+            name={"plus"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />
+        </Pressable>
       </View>
 
       <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-        <Text style={[themeStyles.primaryText]}>Add new</Text>
+        <Text
+          style={[
+            themeStyles.primaryText,
+            { fontSize: 14, fontFamily: "Poppins-Bold" },
+          ]}
+        >
+          Add new
+        </Text>
       </View>
-      <Pressable onPress={toggleAddNew}>
-        <MaterialCommunityIcons
-          name={"plus"}
-          size={20}
-          color={themeStyles.primaryText.color}
-        />
-      </Pressable>
     </View>
   ));
 
@@ -180,7 +175,7 @@ const SectionUserCategories = () => {
         borderRadius: 10,
         backgroundColor: themeStyles.lighterOverlayBackgroundColor,
         width: "100%",
-        marginVertical: 6,
+        marginVertical: 8,
         alignItems: "center",
       }}
     >
@@ -193,19 +188,20 @@ const SectionUserCategories = () => {
         }}
       >
         <MaterialCommunityIcons
-          name={"shape"}
-          size={20}
+          name={"tree"}
+          size={26}
           color={themeStyles.primaryText.color}
         />
       </View>
 
       <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-        <Text style={[themeStyles.primaryText]}>{item.name}</Text>
+        <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>{item.name}</Text>
       </View>
       <Pressable onPress={() => handleEditExisting(item)}>
         <MaterialCommunityIcons
           name={"pencil"}
           size={20}
+          style={{opacity: .4}}
           color={themeStyles.primaryText.color}
         />
       </Pressable>
@@ -224,9 +220,9 @@ const SectionUserCategories = () => {
     }
   };
 
-  const toggleList = () => {
-    setShowList((prev) => !prev);
-  };
+  // const toggleList = () => {
+  //   setShowList((prev) => !prev);
+  // };
   const toggleEdit = () => {
     console.log("toggleedit pressed");
     setShowEdit((prev) => !prev);
@@ -265,6 +261,9 @@ const SectionUserCategories = () => {
         marginVertical: showEdit ? 10 : 0,
       }}
     >
+
+      {!showEdit && (
+        
       <View
         style={{
           width: "100%",
@@ -280,15 +279,17 @@ const SectionUserCategories = () => {
             { lineHeight: 22 },
           ]}
         >
-          <MaterialCommunityIcons
+          {/* <MaterialCommunityIcons
             name={"alert"}
             size={17}
             color={themeStyles.primaryText.color}
-          />
+          /> */}
           {"  "}You can have up to {userCategories[0].max_active} total active
           categories. Current total: {userCategories.length}
         </Text>
       </View>
+      
+      )}
       <View
         style={{
           flexDirection: "row",
@@ -297,7 +298,7 @@ const SectionUserCategories = () => {
           alignItems: "center",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+        {/* <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
           <View
             style={{
               width: 40,
@@ -315,10 +316,10 @@ const SectionUserCategories = () => {
           <Text style={[themeStyles.modalText, { fontWeight: "bold" }]}>
             Categories
           </Text>
-        </View>
+        </View> */}
 
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          {!showEdit && (
+          {/* {!showEdit && (
             <Pressable
               style={{ backgroundColor: "black" }}
               onPress={toggleList}
@@ -329,17 +330,20 @@ const SectionUserCategories = () => {
                 color={themeStyles.primaryText.color}
               />
             </Pressable>
-          )}
+          )} */}
 
-                    {showEdit && editId && (
+          {showEdit && editId && (
             <>
-              <Pressable onPress={handleConfirmDelete} style={{ marginRight: 10 }}>
+              <Pressable
+                onPress={handleConfirmDelete}
+                style={{ marginRight: 10 }}
+              >
                 <MaterialCommunityIcons
                   name={"delete"}
                   size={20}
                   color={themeStyles.primaryText.color}
                 />
-              </Pressable> 
+              </Pressable>
             </>
           )}
 
@@ -382,11 +386,7 @@ const SectionUserCategories = () => {
                 borderColor: themeStyles.primaryText.color,
                 borderRadius: 10,
                 width: "100%",
-              },
-              // Uncomment or add additional styling as needed
-              // styles.textInput,
-              // themeStyles.genericText,
-              // themeStyles.genericTextBackgroundShadeTwo,
+              }, 
             ]}
             autoFocus
             value={newCategory}
@@ -397,66 +397,28 @@ const SectionUserCategories = () => {
         </View>
       )}
 
-      {userCategories && userCategories.length > 0 && showList && (
-        <View style={{ height: 400, width: "100%" }}>
-          <FlatList
-            ListHeaderComponent={renderHeaderItem}
-            data={userCategories}
-            renderItem={renderCategoryItem}
-            keyExtractor={extractItemKey}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={10}
-            removeClippedSubviews={true}
-            showsVerticalScrollIndicator={false}
-            ListFooterComponent={() => <View style={{ height: 50 }} />}
-          />
-          <View>
-            {/* Header */}
-            {/* {renderHeaderItem()} */}
-
-            {/* Category Items */}
-            {/* {userCategories?.map((category, index) => (
-  <View key={extractItemKey(category)}>
-    {renderCategoryItem({ item: category, index })}
-  </View>
-))} */}
-
-            {/* Footer space */}
-            <View style={{ height: 50 }} />
+      {userCategories &&
+        userCategories.length > 0 && ( //showList && (
+          <View style={{ width: "100%" }}>
+            <FlatList
+              ListHeaderComponent={renderHeaderItem}
+              data={userCategories}
+              renderItem={renderCategoryItem}
+              keyExtractor={extractItemKey}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={10}
+              removeClippedSubviews={true}
+              showsVerticalScrollIndicator={false}
+              ListFooterComponent={() => <View style={{ height: 150 }} />}
+            />
+            <View>
+              <View style={{ height: 50 }} />
+            </View>
           </View>
-        </View>
-      )}
+        )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    padding: 0, // changed this from ModalColorTheme
-    width: "100%",
-    alignSelf: "flex-start",
-  },
-  friendSettingsRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    width: "100%",
-    flexWrap: "wrap",
-    marginBottom: 8,
-  },
-  icon: {
-    marginRight: 10,
-    marginLeft: 2,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontFamily: "Poppins-Regular",
-    marginLeft: 5,
-    marginRight: 10,
-  },
-});
 
 export default SectionUserCategories;

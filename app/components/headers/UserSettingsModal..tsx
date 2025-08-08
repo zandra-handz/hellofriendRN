@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { TouchableOpacity, AccessibilityInfo } from "react-native";
- 
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
@@ -14,11 +14,15 @@ import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 interface Props {
   isVisible: boolean;
-  bottomSpacer: boolean;
+  bottomSpacer: number;
   closeModal: () => void;
 }
 
-const UserSettingsModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModal }) => {
+const UserSettingsModal: React.FC<Props> = ({
+  isVisible,
+  bottomSpacer,
+  closeModal,
+}) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
 
   const headerIconSize = 26;
@@ -31,7 +35,7 @@ const UserSettingsModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModa
 
   return (
     <ModalScaleLikeTree
-    bottomSpacer={bottomSpacer}
+      bottomSpacer={bottomSpacer}
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons
@@ -41,11 +45,11 @@ const UserSettingsModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModa
         />
       }
       questionText="Settings"
+      buttonTitle="Settings"
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
-
           {/* // <View style={styles.bodyContainer}> */}
-            
+
           <View style={styles.sectionContainer}>
             <SectionAccessibilitySettings />
           </View>
@@ -65,7 +69,7 @@ const UserSettingsModal: React.FC<Props> = ({ isVisible, bottomSpacer, closeModa
             </Text>
           </View>
           {/* </View> */}
-       </ScrollView>
+        </ScrollView>
       }
       onClose={closeModal}
     />
