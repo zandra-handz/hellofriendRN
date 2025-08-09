@@ -1,5 +1,4 @@
-
-import React, { ReactNode } from 'react'
+import React, { ReactNode } from "react";
 import { Pressable, Text } from "react-native";
 import Animated, {
   useSharedValue,
@@ -7,14 +6,22 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 type Props = {
-    onPress?: () => void;
-    onLongPress?: () => void;
-    zIndex?: number; 
-    style: object;
-    children?: ReactNode;
-}
+  onPress?: () => void;
+  onLongPress?: () => void;
+  hitSlop: number;
+  zIndex?: number;
+  style: object;
+  children?: ReactNode;
+};
 
-const GlobalPressable = ({ onPress, onLongPress, zIndex=1,  style, children }: Props) => {
+const GlobalPressable = ({
+  onPress,
+  onLongPress,
+  hitSlop=10,
+  zIndex = 1,
+  style,
+  children,
+}: Props) => {
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -24,7 +31,8 @@ const GlobalPressable = ({ onPress, onLongPress, zIndex=1,  style, children }: P
 
   return (
     <Pressable
-    style={{zIndex: zIndex}}
+    hitSlop={hitSlop}
+      style={{ zIndex: zIndex }}
       onPress={onPress ? onPress : null}
       onLongPress={onLongPress ? onLongPress : null}
       onPressIn={() => {
@@ -34,9 +42,7 @@ const GlobalPressable = ({ onPress, onLongPress, zIndex=1,  style, children }: P
         scale.value = withSpring(1);
       }}
     >
-      <Animated.View style={[animatedStyle, style]}>
-        {children}
-      </Animated.View>
+      <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>
     </Pressable>
   );
 };

@@ -104,12 +104,15 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
       //   };
 
       queryClient.setQueryData(["categories", user?.id], (oldData: any[]) => {
-        if (!oldData) return [data]; // just the new one
+        if (!oldData) return [data]; // just the new one if no cache yet
 
-        // console.log('Cache after update:', updatedData);
         handleSyncStats();
-        // return updatedData;
-        return [...oldData, data];
+
+        const updatedList = [...oldData, data].sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
+        
+        return updatedList;
       });
     },
   });

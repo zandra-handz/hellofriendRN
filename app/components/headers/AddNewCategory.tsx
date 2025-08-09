@@ -6,17 +6,19 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import React, { useState,  useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Animated, { SlideInLeft } from "react-native-reanimated";
 import { useCategories } from "@/src/context/CategoriesContext";
 import { useUser } from "@/src/context/UserContext";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import FlashMessage from "../alerts/FlashMessage";
 
 type Props = {
   height: number;
-  addToOnPress: ({
+  fontStyle?: number;
+  addToOnPress?: ({
     categoryId,
     categoryName,
   }: {
@@ -25,31 +27,96 @@ type Props = {
   }) => void; //sets selected category Id after creating it
 };
 
-const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
+const AddNewCategory = ({
+  height = 60,
+  fontStyle = 1,
+  addToOnPress,
+}: Props) => {
+  //fontStyle two for modal
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
   const { user } = useUser();
- 
 
   const ENTER_MESSAGE_WIDTH = 60;
 
+  const [flashMessage, setFlashMessage] = useState<null | {
+    text: string;
+    error: boolean;
+    duration: number;
+  }>(null);
+
   const { userCategories, createNewCategory, createNewCategoryMutation } =
     useCategories();
+  const [inputActive, setInputActive] = useState(false);
 
   const clearInput = () => {
-    if (newCategoryRef && newCategoryRef.current) {
-      newCategoryRef.current.clear();
-    }
+    console.log("clearing input");
+    // setNewCategory("");
+    // if (newCategoryRef && newCategoryRef.current) {
+    //   newCategoryRef.current.clear();
 
+    // }
     setNewCategory("");
   };
 
   useEffect(() => {
-    if (createNewCategoryMutation.isError) {
-      showFlashMessage(`Oops! Not added`, true, 1000);
-    }
+    console.log(`new category changed:`, newCategory);
+  }, [newCategory]);
 
+  const handleRefocus = () => {
+    console.log("refocusing");
+    setNewCategory("");
+
+    // if (newCategoryRef && newCategoryRef.current) {
+    //   console.log('refocus input');
+    //   newCategoryRef.current.blur();
+    //   newCategoryRef.current.focus();
+    //   // setNewCategory(newCategoryRef.current.value);
+
+    // } else {
+    //   console.log('no ref');
+    // }
+  };
+
+  useEffect(() => {
+    if (inputActive && newCategoryRef.current) {
+      console.log("ready!!!!!!");
+      setNewCategory(" "); // space or something else
+      setTimeout(() => setNewCategory(""), 0);
+      setTimeout(() => {
+        newCategoryRef.current?.focus();
+      }, 50);
+    } else if (!inputActive && newCategoryRef.current) {
+      setTimeout(() => {
+        setNewCategory("");
+      }, 50);
+    }
+  }, [inputActive]);
+
+  // useEffect(() => {
+  //   console.log("resetting");
+  //   if (newCategoryRef && newCategoryRef.current) {
+  //     newCategoryRef.current.blur();
+  //     newCategoryRef.current.focus();
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    if (createNewCategoryMutation.isSuccess) {
+      setInputActive(false);
+      // showFlashMessage(`Oops! Not added`, true, 1000);
+    }
+  }, [createNewCategoryMutation.isSuccess]);
+
+  useEffect(() => {
+    if (createNewCategoryMutation.isError) {
+      setFlashMessage({
+        text: `Oops! Not added`,
+        error: true,
+        duration: 1000,
+      });
+    }
   }, [createNewCategoryMutation.isError]);
 
   const remaining = useMemo(() => {
@@ -58,12 +125,9 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
     }
   }, [userCategories]);
 
-  const [inputActive, setInputActive] = useState(false);
-
   const toggleInput = () => {
+    console.log("toggle pressed");
     if (remaining === 0) {
-      console.log("none remaining");
-
       Alert.alert(
         `Oops!`,
         `Max amount of categories added already. Please go to the category settings if you would like to delete an existing one.`,
@@ -82,9 +146,12 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
       return;
     }
 
-    if (inputActive) {
-      clearInput();
-    }
+    // if (inputActive) {
+
+    //   clearInput();
+    // } else {
+    //   handleRefocus();
+    // }
     setInputActive((prev) => !prev);
   };
 
@@ -93,21 +160,33 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
   };
 
   const handleCreateCategory = async () => {
-    showFlashMessage(`Added!`, false, 1000);
+    // if (!newCategoryRef?.current?.value) {
+    //   return;
+    // }
+
+    if (!newCategory.trim()) return;
+
+    setFlashMessage({
+      text: `Added!`,
+      error: false,
+      duration: 1000,
+    });
+    // showFlashMessage(`Added!`, false, 1000);
     try {
-      console.error(`SAVING NEW CAT HERE!!!!!!!!!!!!!!!!!!!!!!~!~!~!~!~!~!~!!~!~!~!~!~!~!~!`);
       const updatedData = await createNewCategory({
         user: user?.id,
-        name: newCategoryRef.current.value,
+        //  name: newCategoryRef.current.value,
+        name: newCategory,
       });
 
       if (updatedData && updatedData?.id) {
-        console.log("back end return of new category: ", updatedData);
+        // console.log("back end return of new category: ", updatedData);
 
-        const itemId = updatedData?.id;
-        const categoryName = updatedData?.name;
-
-        addToOnPress({ categoryId: itemId, categoryName: categoryName });
+        if (addToOnPress) {
+          const itemId = updatedData.id;
+          const categoryName = updatedData.name;
+          addToOnPress({ categoryId: itemId, categoryName });
+        }
       }
     } catch (error) {
       console.log("error saving new category: ", error);
@@ -115,14 +194,26 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
   };
 
   const handleUpdateNewCategoryText = (text: string) => {
-    if (newCategoryRef.current) {
-      newCategoryRef.current.value = text;
-      setNewCategory(text);
-    }
+    console.log("updatin tedxt");
+    // if (newCategoryRef?.current) {
+    //   // newCategoryRef.current.value = text;
+    setNewCategory(text);
+    // }
+    // else {
+    //   console.warn('ref not current');
+    // }
   };
 
   return (
     <>
+      {flashMessage && (
+        <FlashMessage
+          isInsideModal={true}
+          message={flashMessage.text}
+          error={flashMessage.error}
+          onClose={() => setFlashMessage(null)}
+        />
+      )}
       {!remaining && (
         <View
           style={{
@@ -149,8 +240,8 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            paddingLeft: 20,
-
+            paddingLeft: 0,
+            borderRadius: fontStyle === 2 ? 20 : 0,
             width: inputActive ? "100%" : 60,
             height: height - 20,
             backgroundColor: inputActive
@@ -174,7 +265,7 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                paddingHorizontal: 10,
+                paddingHorizontal: 18,
                 width: 200,
                 height: "100%",
               }}
@@ -182,10 +273,14 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
               <Text
                 style={[
                   themeStyles.primaryText,
-                  { fontSize: 13, fontWeight: "bold" },
+                  {
+                    fontSize: fontStyle === 2 ? 18 : 15,
+                    fontWeight: fontStyle === 2 ? "regular" : "bold",
+                    fontFamily: fontStyle === 2 ? "Poppins-Regular" : undefined,
+                  },
                 ]}
               >
-                new category
+                Add new
               </Text>
             </View>
           )}
@@ -211,7 +306,7 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
                     lineHeight: 14,
                     borderWidth: StyleSheet.hairlineWidth,
                     borderColor: themeStyles.primaryText.color,
-                    borderRadius: 0,
+                    borderRadius: fontStyle === 2 ? 20 : 0,
                     width: "100%",
                     flex: 1,
 
@@ -224,7 +319,7 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
                       themeStyles.primaryBackground.backgroundColor,
                   },
                 ]}
-                autoFocus
+                autoFocus={true}
                 value={newCategory}
                 onSubmitEditing={handleSave}
                 onChangeText={handleUpdateNewCategoryText}
@@ -237,8 +332,6 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
                     height: "100%",
                     alignItems: "center",
                     justifyContent: "center",
-                    // backgroundColor:
-                    //   themeStyles.lighterOverlayBackgroundColor.backgroundColor,
                     width: ENTER_MESSAGE_WIDTH,
 
                     right: 0,
@@ -255,7 +348,12 @@ const AddNewCategory = ({ height = 60, addToOnPress }: Props) => {
                     <Text
                       style={[
                         themeStyles.primaryText,
-                        { opacity: 0.6, fontSize: 13, lineHeight: 12, fontWeight: "bold" },
+                        {
+                          opacity: 0.6,
+                          fontSize: 13,
+                          lineHeight: 12,
+                          fontWeight: "bold",
+                        },
                       ]}
                     >
                       Press Enter

@@ -11,13 +11,16 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const FlashMessage = ({
+
   message,
+  isInsideModal = false,
   iconName = "playlist-add-check-circle",
   error = true,
   duration = 2000,
   onClose,
 }: {
   message: string;
+    isInsideModal?: boolean;
   error?: boolean;
   duration?: number;
   onClose: () => void;
@@ -48,7 +51,11 @@ const FlashMessage = ({
   }, [error]);
 
   return (
-    <PlainSafeView style={[StyleSheet.absoluteFillObject, styles.overlay]}>
+        <PlainSafeView
+      turnSafeOff={isInsideModal}
+      style={[StyleSheet.absoluteFillObject, styles.overlay]}
+    > 
+        
       <Animated.View
         style={[
           styles.messageContainer,

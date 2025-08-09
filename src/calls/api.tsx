@@ -283,6 +283,7 @@ export const fetchCapsulesHistoryAPI = async ({
     );
     // console.log(`response from capsules history`, response.data);
     if (response?.data) {
+      console.log(response.data);
       return response.data; // DRF-style: { count, next, previous, results }
     } else {
       console.log("No data returned from fetchCapsulesHistoryAPI.");
@@ -315,7 +316,7 @@ export const fetchCategoriesHistoryCountAPI = async ({
     const response = await helloFriendApiClient.get(
       `/users/categories/history/summary/?${params.toString()}`
     );
-    // console.log(`COUNT ONLY`, response.data);
+    console.log(`COUNT ONLY`, response.data);
     if (response && response.data) {
       return response.data;
     } else {
@@ -983,6 +984,9 @@ export const fetchCategoriesFriendHistoryAPI = async (
     const response = await helloFriendApiClient.get(
       `/users/categories/history/?only_with_capsules=${returnNonZeroesOnly}&friend_id=${friendId}`
     );
+
+       console.log(`FRIEND HISTORY`, response.data);
+ 
     if (response && response.data) {
       return response.data;
     } else {

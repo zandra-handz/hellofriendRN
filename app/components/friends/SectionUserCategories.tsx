@@ -14,6 +14,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
 import Animated, { FadeInUp } from "react-native-reanimated";
 
+import AddNewCategory from "../headers/AddNewCategory";
+
 const SectionUserCategories = () => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const {
@@ -235,7 +237,7 @@ const SectionUserCategories = () => {
   };
 
   const toggleAddNew = () => {
-    console.log("toggleedit pressed");
+  
     setShowEdit(true);
 
     setEditId(null);
@@ -243,7 +245,6 @@ const SectionUserCategories = () => {
 
     if (newCategoryRef && newCategoryRef.current) {
       newCategoryRef.current.clear();
-
       newCategoryRef.current.focus();
     }
   };
@@ -342,9 +343,10 @@ const SectionUserCategories = () => {
       {userCategories &&
         userCategories.length > 0 && !showEdit && ( //showList && (
           <View style={{ width: "100%", flexShrink: 1  }}>
+            <AddNewCategory fontStyle={2} />
             <FlatList
-              ListHeaderComponent={renderHeaderItem}
-              stickyHeaderIndices={[0]}
+              // ListHeaderComponent={renderHeaderItem}
+             // stickyHeaderIndices={[0]}
               data={userCategories}
               renderItem={renderCategoryItem}
               keyExtractor={extractItemKey}

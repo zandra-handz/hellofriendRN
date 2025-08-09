@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SectionUserCategories from "../friends/SectionUserCategories";
@@ -8,6 +8,7 @@ import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import { useCategories } from "@/src/context/CategoriesContext";
 import { showHelperMessage } from "@/src/utils/ShowHelperMessage";
 import HelperMessage from "../alerts/HelperMessage";
+import AddNewCategory from "./AddNewCategory";
 
 import ModalInfoText from "./ModalInfoText";
 interface Props {
@@ -31,19 +32,15 @@ const CategoriesModal: React.FC<Props> = ({
   const { themeStyles, appFontStyles, appSpacingStyles, manualGradientColors } =
     useGlobalStyle();
 
+    
+
   return (
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
       isKeyboardVisible={isKeyboardVisible}
       borderRadius={60}
       isVisible={isVisible}
-      headerIcon={
-        <MaterialCommunityIcons
-          name={"tree-outline"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
-        />
-      }
+      helpModeTitle="Help mode: Categories"
       useModalBar={true}
       rightSideButtonItem={
         <MaterialCommunityIcons
@@ -51,8 +48,7 @@ const CategoriesModal: React.FC<Props> = ({
           size={50}
           color={manualGradientColors.darkHomeColor}
         />
-      }
-      questionText="Categories"
+      } 
       buttonTitle="Categories"
       children={
         <>
@@ -66,59 +62,31 @@ const CategoriesModal: React.FC<Props> = ({
           )}
         </>
       }
+      helperMessageText={`Your categories are yours to decide! They can be broad or narrow in scope, silly or serious, every-day or outlandish, niche or normal. All that matters is that they are important to you and you enjoy sharing them! You can rename, delete, and create new categories whenever you like. If you delete a category, all pending ideas in that category will get permanently moved to the Grab Bag. Items already hello'ed to deleted categories will be removed from your history charts.`}
       infoItem={
         <>
-          <Pressable
+          <View
             style={{
-              width: 30,
-              height: 30,
-              borderRadius: 999,
-              backgroundColor: "blue",
+              flex: 1,
+              // padding: 20,
+              flexDirection: "row",
+              //justifyContent: "center", 
             }}
-            onPress={() =>
-              setHelperMessage({
-                text: `Your categories are yours to decide! (${userCategories[0].max_active} total) They can be broad or narrow in scope, silly or serious, every-day or outlandish, niche or normal. All that matters is that they are important to you and you enjoy sharing them! You can rename, delete, and create new categories whenever you like. If you delete a category, all ideas in that category will get permanently moved to the Grab Bag. Current total: ${userCategories.length}`,
-                error: false,
-              })
-            }
-          />
-          <ModalInfoText
-            infoText={`
-              
-              Current total: ${userCategories.length}`}
-          />
+          >
+          
+            <ModalInfoText
+              infoText={`${userCategories.length} / ${userCategories[0].max_active} added`}
+            />
+            <MaterialCommunityIcons
+            />
+                      
+        
+          </View>
         </>
       }
       onClose={closeModal}
     />
   );
 };
-
-const styles = StyleSheet.create({
-  bodyContainer: {
-    width: "100%",
-    flex: 1,
-    paddingBottom: 100,
-
-    textAlign: "left",
-  },
-  headerContainer: {
-    margin: "2%",
-  },
-  sectionContainer: {
-    flex: 1,
-    // height: 100,
-    width: "100%",
-  },
-  headerText: {
-    fontWeight: "bold",
-    fontSize: 18,
-    lineHeight: 30,
-  },
-  text: {
-    fontSize: 14,
-    lineHeight: 21,
-  },
-});
 
 export default CategoriesModal;

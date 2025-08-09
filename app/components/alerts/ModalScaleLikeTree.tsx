@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Modal, Text, Image } from "react-native";
+import { StyleSheet, View, Modal, Pressable, Text, Image } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, {
   SharedValue,
@@ -21,7 +21,9 @@ import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave"
 import ModalBarBack from "../buttons/scaffolding/ModalBarBack";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import TreeModalBigButton from "./TreeModalBigButton";
+import HelpButton from "./HelpButton";
 
+import HelperMessage from "./HelperMessage";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 
 interface Props {
@@ -39,6 +41,8 @@ interface Props {
   rightSideButtonItem: React.ReactElement;
   friendTheme?: ThemeAheadOfLoading | undefined;
   infoItem?: React.ReactElement;
+  helperMessageText?: string;
+  helpModeTitle: string;
 }
 
 const ModalScaleLikeTree: React.FC<Props> = ({
@@ -52,8 +56,9 @@ const ModalScaleLikeTree: React.FC<Props> = ({
   bottomSpacer = 0,
   rightSideButtonItem,
   friendTheme,
-  infoItem, 
-
+  infoItem,
+  helperMessageText = "helper message goes here",
+  helpModeTitle = "Help mode",
   onClose,
 }) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
@@ -61,12 +66,16 @@ const ModalScaleLikeTree: React.FC<Props> = ({
 
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
-  console.log(friendTheme);
-
+ 
   const scaleWidthAnim = useSharedValue(0);
   const opacityAnim = useSharedValue(0);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [helperMessage, setHelperMessage] = useState<null | {
+    text: string;
+    error: boolean;
+  }>(null);
 
   const MODAL_CONTENT_PADDING = 10;
   const MODAL_BORDER_RADIUS = 40;
@@ -129,6 +138,15 @@ const ModalScaleLikeTree: React.FC<Props> = ({
         //   style={modalAnimationStyle}
         animationType="slide"
       >
+        {helperMessage && (
+          <HelperMessage
+            isInsideModal={true}
+            topBarText={helpModeTitle}
+            message={helperMessage.text}
+            error={helperMessage.error}
+            onClose={() => setHelperMessage(null)}
+          />
+        )}
         <Animated.View
           style={[
             modalAnimationStyle,
@@ -142,7 +160,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
             },
           ]}
         >
-          <Animated.View
+          <Animated.View //if you put padding here it will affect the info item
             style={[
               styles.modalContent,
               themeStyles.primaryBackground,
@@ -150,6 +168,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                 borderColor:
                   themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
                 borderRadius: borderRadius,
+                // backgroundColor: 'yellow',
               },
             ]}
           >
@@ -159,38 +178,55 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                 {
                   width: "100%",
                   flex: 1,
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  padding: contentPadding,
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+
+                  // padding: contentPadding,
                   // paddingBottom: contentPadding * 1.7,
                 },
               ]}
             >
               <View style={styles.bodyContainer}>
-                {children}
-                <Animated.View
-                entering={FadeInUp.delay(500)}
-                  style={{
-                    width: "100%",
-                    flexDirection: "row",
-                    paddingVertical: 10,
-                    borderRadius: 30,
-                    borderWidth:StyleSheet.hairlineWidth,
+                <View style={{ flex: 1, padding: 20, paddingBottom: 4 }}>{children}</View>
 
-                    borderColor: manualGradientColors.lightColor,
-                    padding: 10,
-             
-                   // marginBottom: 0,
-                  //  backgroundColor: "orange",
-                    marginTop: 10, // this plus flexShrink in sectionUserCategories gets the category flatlist to play nice with this
-                 
-                    alignItems: "center",
-                    height: "auto",
-                  //  height: 100,
-                  }}
-                >
-                  {infoItem}
-                </Animated.View>
+                {infoItem != undefined && !isKeyboardVisible && (
+                  <Animated.View
+                    entering={FadeInUp.delay(500)}
+                    style={{
+                      width: "100%",
+                      flexDirection: "row", 
+                      justifyContent: "space-between",
+                      borderRadius: 30,
+                      borderTopLeftRadius: 0,
+                      borderTopRightRadius: 0,
+                      //borderWidth: StyleSheet.hairlineWidth,
+                    //  backgroundColor: "red",
+                    //  borderColor: manualGradientColors.lightColor,
+                      padding: 30,
+                      paddingTop: 18,
+                      paddingBottom: 26,
+                      borderTopWidth: StyleSheet.hairlineWidth,
+                      borderColor: themeStyles.lighterOverlayBackgroundColor.backgroundColor,
+
+                      // marginBottom: 0,
+                      //  backgroundColor: "orange",
+
+                      alignItems: "center",
+                      height: "auto",
+                      //  height: 100,
+                    }}
+                  >
+                    {infoItem}
+                    <HelpButton
+                      onPress={() =>
+                        setHelperMessage({
+                          text: `${helperMessageText}`,
+                          error: false,
+                        })
+                      }
+                    />
+                  </Animated.View>
+                )}
               </View>
             </Animated.View>
           </Animated.View>
@@ -239,7 +275,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.84)",
   },
   modalContent: {
-    padding: 10,
+    padding: 0,
     width: "100%", // Fixed width of 80% of the screen
     minHeight: 200, // Minimum height to prevent collapse
     height: "auto",
@@ -254,9 +290,9 @@ const styles = StyleSheet.create({
 
     // overflow: 'hidden',
   },
-  bodyContainer: { 
+  bodyContainer: {
     flex: 1,
-   // paddingBottom: 10,
+    // paddingBottom: 10,
 
     textAlign: "left",
   },

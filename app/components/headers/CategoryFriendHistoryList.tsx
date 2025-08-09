@@ -161,6 +161,9 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
                 />
               </Pressable>
             </View>
+                        <Text style={[styles.momentItemText, themeStyles.primaryText]}>
+              {item.time_score}
+            </Text>
             <Text style={[styles.momentItemText, themeStyles.primaryText]}>
               {item.capsule}
             </Text>

@@ -121,7 +121,7 @@ const MomentWriteEditView = ({
 
   useFocusEffect(
     useCallback(() => {
-      if (momentText && !userChangedCategory) {
+      if (momentText && !userChangedCategory && momentTextRef && momentTextRef.current) {
         // console.error("RESETTING", momentText, userChangedCategory);
         momentTextRef.current.setText(momentText);
       } 
@@ -152,17 +152,7 @@ const MomentWriteEditView = ({
 
   const updateMomentText = (text) => {
     if (momentTextRef && momentTextRef.current) {
-      // const textLengthPrev = momentTextRef.current.getText().length;
-      // if (textLengthPrev === 0) {
-      //   if (text.length - textLengthPrev > 1) {
-      //     //this is here to check if something is copy-pasted in or shared in
-      //     //edit: cute idea but no longer making buttons appear/disappear depending on if text is ready
-      //     // catching text-less save attempts with a simple Alert instead
-      //     // if (!showCategoriesSlider) {
-      //     //   setShowCategoriesSlider(true);
-      //     // }
-      //   }
-      // }
+ 
 
       momentTextRef.current.setText(text);
     }

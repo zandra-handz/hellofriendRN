@@ -10,7 +10,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import FriendCategoryHistoryChart from "../home/FriendCategoryHistoryChart";
 import UserCategoryHistoryChart from "../home/UserCategoryHistoryChart";
-
+import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
+ 
 interface Props {
   isVisible: boolean;
   closeModal: () => void; 
@@ -31,22 +32,26 @@ const PieChartModal: React.FC<Props> = ({
   labelsSize,
   onLongPress,
 }) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
+  const { themeStyles, appSpacingStyles, manualGradientColors} = useGlobalStyle();
 
- 
+ const BOTTOM_SPACER = 60;
 
   return (
-    <ModalWithGoBack
+    <ModalScaleLikeTree
       isVisible={isVisible}
+      bottomSpacer={BOTTOM_SPACER}
+        helpModeTitle="Help mode: Charts"
+        borderRadius={60}
       isFullscreen={false}
-      headerIcon={
+        useModalBar={true}
+      rightSideButtonItem={
         <MaterialCommunityIcons
-          name={"comment-outline"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          name={`chart-pie`}
+          size={50}
+          color={manualGradientColors.darkHomeColor}
         />
-      }
-      questionText={friendData ? `${friendData?.name}` : 'All category history'}
+      } 
+      buttonTitle= {friendData ? `${friendData?.name}` : 'All category history'}
       children={
         <View style={styles.bodyContainer}>
           
