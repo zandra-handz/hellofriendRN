@@ -1,9 +1,9 @@
-import { View, Text } from "react-native";
+import { View, Text, OpaqueColorValue } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-
+import { LinearGradient } from "expo-linear-gradient";
 // ((
 //   FOR REFERENCE interface ThemeAheadOfLoading {
 //   darkColor: Friend["theme_color_dark"];
@@ -23,6 +23,7 @@ type Props = {
   friendTheme?: ThemeAheadOfLoading;
   label: string;
   rightSideElement?: React.ReactElement;
+  labelColor: OpaqueColorValue;
 };
 
 const TreeModalBigButton = ({
@@ -30,6 +31,7 @@ const TreeModalBigButton = ({
   friendTheme,
   rightSideElement,
   label,
+  labelColor,
 }: Props) => {
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
 
@@ -95,7 +97,7 @@ const TreeModalBigButton = ({
               fontSize: 20,
 
               fontFamily: "Poppins-Bold",
-              color: manualGradientColors.homeDarkColor,
+              color: labelColor,
             },
           ]}
         >
@@ -105,7 +107,7 @@ const TreeModalBigButton = ({
         <MaterialIcons
           name={`keyboard-arrow-down`}
           size={17}
-          color={manualGradientColors.homeDarkColor}
+          color={labelColor}
         />
       </View>
     </GlobalPressable>

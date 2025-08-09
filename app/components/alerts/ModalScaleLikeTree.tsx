@@ -22,43 +22,46 @@ import ModalBarBack from "../buttons/scaffolding/ModalBarBack";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import TreeModalBigButton from "./TreeModalBigButton";
 
+import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
+
 interface Props {
   isVisible: boolean;
   isFullscreen?: boolean;
   headerIcon: React.ReactElement;
-  questionText: string;
   children: React.ReactElement;
   borderRadius?: number;
   contentPadding?: number;
   onClose: () => void;
   useModalBar: boolean;
   bottomSpacer: number;
-  isKeyboardVisible: boolean;
-  buttonTitle: string; 
+  isKeyboardVisible?: boolean;
+  buttonTitle: string;
   rightSideButtonItem: React.ReactElement;
+  friendTheme?: ThemeAheadOfLoading | undefined;
+  infoItem?: React.ReactElement;
 }
 
 const ModalScaleLikeTree: React.FC<Props> = ({
   isVisible,
   isFullscreen = false,
   isKeyboardVisible,
-  headerIcon,
-  questionText,
   buttonTitle = "",
   children,
   borderRadius = 40,
   contentPadding = 10,
-  useModalBar = false,
-  bottomSpacer = 0, 
+  bottomSpacer = 0,
   rightSideButtonItem,
+  friendTheme,
+  infoItem, 
 
   onClose,
 }) => {
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   // const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
+  console.log(friendTheme);
 
   const scaleWidthAnim = useSharedValue(0);
   const opacityAnim = useSharedValue(0);
@@ -93,11 +96,11 @@ const ModalScaleLikeTree: React.FC<Props> = ({
     return { opacity: opacityAnim.value };
   });
 
-  const formHeight = 610;
-  const headerHeight = "auto";
-  const buttonHeight = 50;
-  const headerSpacing = 10;
-  const headerPaddingTop = 10;
+  // const formHeight = 610;
+  // const headerHeight = "auto";
+  // const buttonHeight = 50;
+  // const headerSpacing = 10;
+  // const headerPaddingTop = 10;
 
   useEffect(() => {
     if (internalIsVisible) {
@@ -118,8 +121,6 @@ const ModalScaleLikeTree: React.FC<Props> = ({
   }, [internalIsVisible]);
 
   return (
-    // <>
-    // {isVisible && (
     <>
       <Modal
         transparent={!isFullscreen}
@@ -144,7 +145,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
           <Animated.View
             style={[
               styles.modalContent,
-              themeStyles.genericTextBackground,
+              themeStyles.primaryBackground,
               {
                 borderColor:
                   themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
@@ -158,12 +159,39 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                 {
                   width: "100%",
                   flex: 1,
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
                   padding: contentPadding,
-                  paddingBottom: contentPadding * 1.7,
+                  // paddingBottom: contentPadding * 1.7,
                 },
               ]}
             >
-              {children}
+              <View style={styles.bodyContainer}>
+                {children}
+                <Animated.View
+                entering={FadeInUp.delay(500)}
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    paddingVertical: 10,
+                    borderRadius: 30,
+                    borderWidth:StyleSheet.hairlineWidth,
+
+                    borderColor: manualGradientColors.lightColor,
+                    padding: 10,
+             
+                   // marginBottom: 0,
+                  //  backgroundColor: "orange",
+                    marginTop: 10, // this plus flexShrink in sectionUserCategories gets the category flatlist to play nice with this
+                 
+                    alignItems: "center",
+                    height: "auto",
+                  //  height: 100,
+                  }}
+                >
+                  {infoItem}
+                </Animated.View>
+              </View>
             </Animated.View>
           </Animated.View>
           {!isKeyboardVisible && (
@@ -174,77 +202,26 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                 height: bottomSpacer,
                 //   position: 'absolute',
                 bottom: 0,
+
                 width: "100%",
-                backgroundColor: manualGradientColors.lightColor,
+                backgroundColor:
+                  friendTheme === undefined
+                    ? manualGradientColors.lightColor
+                    : friendTheme.lightColor, //to match friend profile button circle color
                 borderRadius: 10,
               }}
             >
-              {!useModalBar && (
-                <ButtonBaseSpecialSave
-                  label={buttonTitle}
-                  image={require("@/app/assets/shapes/redheadcoffee.png")}
-                  imageSize={80}
-                  labelSize={17}
-                  labelPlacement={"flex-end"}
-                  labelPaddingHorizontal={20}
-                  isDisabled={false}
-                  //   height={56}
-                  height={bottomSpacer}
-                  imagePositionHorizontal={0}
-                  imagePositionVertical={0}
-                  borderRadius={0}
-                  dynamicPadding={4}
-                  borderBottomLeftRadius={borderRadius / 2}
-                  borderBottomRightRadius={borderRadius / 2}
-                  borderTopLeftRadius={borderRadius / 2}
-                  borderTopRightRadius={borderRadius / 2}
-                  onPress={handleCustomClose} // adds a delay to let inside component animation run before modal closes
-                />
-              )}
-              {useModalBar && (
-                <TreeModalBigButton
-                  onClose={handleCustomClose}
-                  label={buttonTitle}
-                  rightSideElement={rightSideButtonItem}
-                />
-                //  <GlobalPressable
-                //   onPress={handleCustomClose}
-                //   style={{
-                //     height: "100%",
-                //     width: "100%",
-                //     alignItems: "center",
-                //     justifyContent: "center",
-                //   }}
-                // >
-                //   <Text
-                //     style={[
-                //       themeStyles.primaryText,
-                //       appFontStyles.welcomeText,
-                //       {
-                //         fontSize: 20,
-
-                //         fontFamily: "Poppins-Bold",
-                //         color: manualGradientColors.homeDarkColor,
-                //       },
-                //     ]}
-                //   >
-                //     {buttonTitle}
-                //   </Text>
-                //                     <Text
-                //     style={[
-                //       themeStyles.primaryText,
-                //       appFontStyles.subWelcomeText,
-                //       {
-                //         fontSize: 14,
-                //         fontFamily: "Poppins-Bold",
-                //         color: manualGradientColors.homeDarkColor,
-                //       },
-                //     ]}
-                //   >
-                //     Close
-                //   </Text>
-                // </GlobalPressable>
-              )}
+              <TreeModalBigButton
+                onClose={handleCustomClose}
+                friendTheme={friendTheme}
+                label={buttonTitle}
+                labelColor={
+                  friendTheme === undefined
+                    ? manualGradientColors.homeDarkColor
+                    : friendTheme.fontColorSecondary
+                }
+                rightSideElement={rightSideButtonItem}
+              />
             </Animated.View>
           )}
         </Animated.View>
@@ -259,10 +236,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.84)", // Slightly transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.84)",
   },
   modalContent: {
-    padding: 20,
+    padding: 10,
     width: "100%", // Fixed width of 80% of the screen
     minHeight: 200, // Minimum height to prevent collapse
     height: "auto",
@@ -274,7 +251,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white", // Ensure it's visible
     flexDirection: "column",
     justifyContent: "space-between",
+
     // overflow: 'hidden',
+  },
+  bodyContainer: { 
+    flex: 1,
+   // paddingBottom: 10,
+
+    textAlign: "left",
   },
   questionText: {
     fontSize: 20,

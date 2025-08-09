@@ -22,7 +22,7 @@ const ReportIssueModal: React.FC<Props> = ({
   closeModal,
 }) => {
   const { user } = useUser();
-  const { themeStyles, appSpacingStyles, manualGradientColors } =
+  const { themeStyles, appSpacingStyles, appFontStyles, manualGradientColors } =
     useGlobalStyle();
 
   const generateUniqueEmailURL = () => {
@@ -49,14 +49,21 @@ const ReportIssueModal: React.FC<Props> = ({
           color={themeStyles.footerIcon.color}
         />
       }
-      questionText="Report a bug"
       buttonTitle={`Report a bug`}
+      useModalBar={true}
+      rightSideButtonItem={
+        <MaterialCommunityIcons
+          name={`bug`}
+          size={50}
+          color={manualGradientColors.darkHomeColor}
+        />
+      }
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
-              I am so sorry for the inconvenience and potential frustration!
-              Please report it
+            <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+               
+              Please report any issues 
               <Text
                 onPress={() => Linking.openURL(generateUniqueEmailURL())}
                 style={[
@@ -67,7 +74,7 @@ const ReportIssueModal: React.FC<Props> = ({
               >
                 {` here `}
               </Text>
-              so that I can speedily fix it. Thank you!
+              so that I can speedily fix them. Thank you!
             </Text>
           </View>
         </ScrollView>

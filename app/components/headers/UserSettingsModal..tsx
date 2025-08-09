@@ -23,7 +23,7 @@ const UserSettingsModal: React.FC<Props> = ({
   bottomSpacer,
   closeModal,
 }) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
+  const { themeStyles, appSpacingStyles, manualGradientColors } = useGlobalStyle();
 
   const headerIconSize = 26;
 
@@ -43,9 +43,17 @@ const UserSettingsModal: React.FC<Props> = ({
           size={appSpacingStyles.modalHeaderIconSize}
           color={themeStyles.footerIcon.color}
         />
-      }
-      questionText="Settings"
+      } 
       buttonTitle="Settings"
+      useModalBar={true}
+            rightSideButtonItem={
+              <MaterialCommunityIcons
+                name={`wrench`}
+                size={50}
+                color={manualGradientColors.darkHomeColor}
+              />
+            }
+
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
           {/* // <View style={styles.bodyContainer}> */}

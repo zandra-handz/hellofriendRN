@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { TouchableOpacity, AccessibilityInfo } from "react-native";
-
+import { useFriendList } from "@/src/context/FriendListContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
@@ -20,11 +20,12 @@ interface Props {
 
 const FriendSettingsModal: React.FC<Props> = ({
   isVisible,
-  friendName="",
+  friendName = "",
   bottomSpacer,
   closeModal,
 }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendList();
 
   const headerIconSize = 26;
 
@@ -37,6 +38,7 @@ const FriendSettingsModal: React.FC<Props> = ({
   return (
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
+      friendTheme={themeAheadOfLoading}
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons
@@ -45,7 +47,14 @@ const FriendSettingsModal: React.FC<Props> = ({
           color={themeStyles.footerIcon.color}
         />
       }
-      questionText="Settings"
+      useModalBar={true}
+      rightSideButtonItem={
+        <MaterialCommunityIcons
+          name={`wrench`}
+          size={50}
+          color={themeAheadOfLoading.fontColorSecondary}
+        />
+      }
       buttonTitle={`${friendName}`}
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
@@ -59,7 +68,6 @@ const FriendSettingsModal: React.FC<Props> = ({
           <View style={styles.headerContainer}>
             <SectionFriendTheme />
           </View>
- 
         </ScrollView>
       }
       onClose={closeModal}
