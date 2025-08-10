@@ -9,6 +9,7 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 
 const HomeScrollCalendarLights = ({
   itemColor,
+  onMonthPress,
   backgroundColor,
   height,
   borderRadius = 20,
@@ -24,6 +25,7 @@ const HomeScrollCalendarLights = ({
   const RenderCalendarLights = useCallback(
     () => (
       <CalendarLightsDataPrepLayer
+      onMonthPress={onMonthPress}
         daySquareBorderRadius={20}
         daySquareBorderColor={itemColor}
         opacityMinusAnimation={0.2}

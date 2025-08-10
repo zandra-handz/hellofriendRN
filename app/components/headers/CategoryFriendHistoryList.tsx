@@ -15,6 +15,11 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
+import GlobalPressable from "../appwide/button/GlobalPressable";
+import { daysSincedDateField } from "@/src/utils/DaysSince";
+import { ShowQuickView } from "@/src/utils/ShowQuickView";
+import HelloQuickView from "../alerts/HelloQuickView";
+import QuickView from "../alerts/QuickView";
 
 type Props = {
   categoryId: number;
@@ -28,7 +33,13 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { helloesList } = useHelloes();
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState<number>(0);
-
+  const [quickView, setQuickView] = useState<null | {
+ 
+      topBarText: String;
+        view: React.ReactElement;
+        message: string;
+        update: boolean;
+  }>(null);
   if (!categoryId || !selectedFriend?.id) {
     return;
   }
@@ -51,6 +62,33 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
       setCompletedCapsuleCount(categoryHistory.length);
     }
   }, [categoryHistory]);
+
+  const handlePress = useCallback(
+    (helloId) => () => {
+    //  handleOnPress(helloId);
+      handleViewHello(helloId);
+    },
+    // [handleOnPress]
+    [handleViewHello]
+  );
+
+  const handleViewHello = (id) => {
+    const helloIndex = helloesList.findIndex((hello) => hello.id === id);
+    const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
+
+    if (helloObject != undefined) {
+      const daysSince = daysSincedDateField(helloObject.date);
+
+      const word = Number(daysSince) != 1 ? `days` : `day`;
+      console.log("helloobject@@");
+      setQuickView({
+        topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
+        view: <HelloQuickView data={helloObject} index={helloIndex} />,
+        message: `hi hi hi`,
+        update: false,
+      });
+    }
+  };
 
   const getFriendNameFromList = (friendId) => {
     const friend = friendList.find((friend) => friend.id === friendId);
@@ -93,6 +131,7 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
   };
 
   const handleOnPress = (helloId: number) => {
+    console.log("lalalla");
     Alert.alert("Warning", "Leave this screen?", [
       {
         text: "Cancel",
@@ -148,9 +187,15 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
                 @ {getFriendNameFromList(item.friend)} on{" "}
                 {getHelloDateFromList(item.hello)}
               </Text>
-              <Pressable
-                style={{ backgroundColor: "red" }}
-                onPress={() => handleOnPress(item.hello)}
+              <GlobalPressable
+                hitSlop={20}
+                style={{
+                  backgroundColor: "red",
+                  padding: 20,
+                  zIndex: 40000,
+                  elevation: 40000,
+                }}
+                onPress={handlePress(item.hello)}
               >
                 <MaterialCommunityIcons
                   // name="hand-wave-outline"
@@ -159,9 +204,9 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
                   color={themeStyles.primaryText.color}
                   style={{ marginHorizontal: 4 }}
                 />
-              </Pressable>
+              </GlobalPressable>
             </View>
-                        <Text style={[styles.momentItemText, themeStyles.primaryText]}>
+            <Text style={[styles.momentItemText, themeStyles.primaryText]}>
               {item.time_score}
             </Text>
             <Text style={[styles.momentItemText, themeStyles.primaryText]}>
@@ -175,6 +220,7 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
       getFriendNameFromList,
       getHelloDateFromList,
       handleGoToHelloView,
+      handleOnPress,
       themeStyles,
       styles,
     ]
@@ -182,9 +228,19 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
 
   return (
     <>
+            {quickView && (
+              <QuickView
+              topBarText={quickView.topBarText}
+                isInsideModal={true} 
+                message={quickView.message} 
+                   update={quickView.update}  
+                   view={quickView.view}
+      
+                onClose={() => setQuickView(null)}
+              />
+            )}
       {categoryHistory && categoryHistory.length > 0 && (
         <FlatList
-        
           ListHeaderComponent={
             <View
               style={{
@@ -192,8 +248,8 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
                 width: "100%",
                 backgroundColor: "teal",
                 height: "auto",
-               // height: 30, 
-                aignItems: 'center',
+                // height: 30,
+                aignItems: "center",
               }}
             >
               <Text

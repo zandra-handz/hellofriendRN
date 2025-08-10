@@ -1,10 +1,12 @@
 import { View, Text, Pressable } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MonthModal from "../headers/MonthModal";
+import PlainSafeView from "../appwide/format/PlainSafeView";
 
 type Props = {
   selectedFriend: boolean;
@@ -15,10 +17,22 @@ const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
 
+  const [monthModalVisible, setMonthModalVisible ] = useState(false);
+  const [ monthData, setMonthData] = useState(null);
+
   const HEIGHT = 160;
   const PADDING = 20;
 
+  const handleMonthPress = (data) => {
+    setMonthData(data);
+    console.log(data);
+    setMonthModalVisible(true);
+
+  };
+
   return (
+    <>
+
     <View
       style={[
         {
@@ -77,6 +91,7 @@ const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
       </View>
       {selectedFriend && (
         <HomeScrollCalendarLights
+        onMonthPress={handleMonthPress}
           itemColor={themeStyles.primaryText.color}
           backgroundColor={themeStyles.overlayBackgroundColor.backgroundColor}
           height={70}
@@ -84,7 +99,17 @@ const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
         />
       )}
       <View style={{ width: "100%", height: 10 }}></View>
+      
     </View>
+
+        {monthModalVisible && (
+      <MonthModal
+      isVisible={monthModalVisible}
+      monthData={monthData}
+      closeModal={() => setMonthModalVisible(false)}/>
+    )}
+    
+    </>
   );
 };
 

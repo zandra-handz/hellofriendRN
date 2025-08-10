@@ -18,6 +18,7 @@ import useHelloesManips from "@/src/hooks/useHelloesManips";
 import CalendarLights from "./CalendarLights";
 
 const CalendarLightsDataPrepLayer = ({
+  onMonthPress,
   daySquareBorderRadius = 0,
   daySquareBorderColor = "black",
   opacityMinusAnimation = 1,
@@ -26,14 +27,25 @@ const CalendarLightsDataPrepLayer = ({
   //these are in parent too but they are not rerendering in the child (CalendarLights)
   const { helloesList } = useHelloes();
 
-  const { helloesListMonthYear, monthsInRange } = useHelloesManips({helloesData: helloesList});
+ const reversedHelloesList = Array.isArray(helloesList) ? [...helloesList].reverse() : [];
 
- 
+     
+
+  const { helloesListMonthYear, monthsInRange } = useHelloesManips({helloesData: reversedHelloesList});
+  // console.log(helloesListMonthYear);
+  // console.log(monthsInRange);
+//  helloesListMonthYear.forEach((monthObj, index) => {
+//   console.log(`MonthYear ${monthObj.monthYear} (index ${index}):`);
+//   monthObj.data.forEach((item, i) => {
+//     console.log(`  Item ${i}:`, item);
+//   });
+// });
 
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
 
   const combineMonthRangeAndHelloesDates = (months, helloes) => {
     if (months && helloes) {
+      // console.warn(helloes);
       return months.map((month) => {
         const helloData =
           helloes.find((hello) => hello.monthYear === month.monthYear) || null;
@@ -46,13 +58,14 @@ const CalendarLightsDataPrepLayer = ({
     }
     return []; // Return an empty array if months or helloes is undefined/null
   };
-  
+ 
  
  
   return (
     <>
       {helloesList && friendDashboardData && helloesListMonthYear && selectedFriend && monthsInRange && (
         <CalendarLights 
+        onMonthPress={onMonthPress}
           daySquareBorderRadius={daySquareBorderRadius}
           daySquareBorderColor={daySquareBorderColor}
           opacityMinusAnimation={opacityMinusAnimation}

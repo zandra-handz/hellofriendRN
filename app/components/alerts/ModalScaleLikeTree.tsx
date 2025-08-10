@@ -152,7 +152,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
             modalAnimationStyle,
             styles.modalContainer,
 
-            {
+            { 
               //   marginBottom: bottomSpacer,
               //   borderColor:
               //     themeStyles.genericTextBackgroundShadeTwo.backgroundColor,

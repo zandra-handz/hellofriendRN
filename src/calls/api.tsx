@@ -910,6 +910,7 @@ export const updateFriendFavesColorTheme = async (
 export const fetchUpcomingHelloes = async () => {
   try {
     const response = await helloFriendApiClient.get("/friends/upcoming/");
+    // console.error(response.data);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");
@@ -1030,11 +1031,12 @@ export const deleteHelloAPI = async (data: { friend: number; id: number }) => {
 export const fetchPastHelloes = async (friendId: number) => {
   try {
     const response = await helloFriendApiClient.get(
-      `/friends/${friendId}/helloes/summary/`
+      `/friends/${friendId}/combinedhelloes/summary/`
     );
     if (response && response.data) {
-      console.log("API GET CALL fetchPastHelloes"); //, response.data);
 
+      console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
+      
       return response.data;
     } else {
       return [];

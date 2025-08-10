@@ -4,10 +4,14 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 type Props = {
   infoText: string;
+  fontSize: number;
+  lineHeight: number;
 };
 
 const ModalInfoText = ({
   infoText = "Info about this modal goes here",
+  fontSize = 17,
+  lineHeight = 22,
 }: Props) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
   return (
@@ -15,8 +19,8 @@ const ModalInfoText = ({
       style={[
         themeStyles.primaryText,
         {
-          fontSize: 17,
-          lineHeight: 22,
+          fontSize: fontSize,
+          lineHeight: lineHeight,
           fontFamily: "Poppins-Regular",
       
         },

@@ -7,14 +7,12 @@ import { useUpcomingHelloes } from "./UpcomingHelloesContext";
 import {
   fetchPastHelloes,
   saveHello,
-  deleteHelloAPI,
-  fetchPastHelloesFull,
+  deleteHelloAPI, 
 } from "../calls/api";
 import {
   useQuery,
   useMutation,
-  useQueryClient,
-  useInfiniteQuery,
+  useQueryClient, 
 } from "@tanstack/react-query";
 
 import { Hello } from "../types/HelloTypes";

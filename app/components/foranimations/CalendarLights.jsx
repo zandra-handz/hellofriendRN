@@ -3,27 +3,34 @@ import {
   View,
   Animated,
   FlatList,
-  Text, 
+  Text,
   StyleSheet,
-} from "react-native"; 
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import HelloDayWrapper from "@/app/components/helloes/HelloDayWrapper";
- 
- 
+import MomentsSearchBar from "../moments/MomentsSearchBar";
+import { showHelperMessage } from "@/src/utils/ShowHelperMessage";
+import { ShowQuickView } from "@/src/utils/ShowQuickView";
+import { daysSincedDateField } from "@/src/utils/DaysSince";
+
+import { useHelloes } from "@/src/context/HelloesContext";
+import HelloQuickView from "../alerts/HelloQuickView";
 
 const CalendarLights = ({
-    
-  combinedData, 
-  daySquareBorderColor='white',
-  daySquareBorderRadius=0, 
+  onMonthPress,
+  combinedData,
+  daySquareBorderColor = "white",
+  daySquareBorderRadius = 0,
   // opacityMinusAnimation=1,
-  animationColor='orange',
-}) => {  
+  animationColor = "orange",
+}) => {
   // const [combinedData, setCombinedData] = useState([]);
- 
- 
-  const backgroundColor = 'transparent'; // use this to give just the calendar tray a background color. borderRadius already set
-const opacityMinusAnimation = 1;
-  const flatListRef = useRef(null);  
+  const { helloesList } = useHelloes();
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+  const backgroundColor = "transparent"; // use this to give just the calendar tray a background color. borderRadius already set
+  const opacityMinusAnimation = 1;
+  const flatListRef = useRef(null);
 
   useEffect(() => {
     // Scroll to the end without animation when the component mounts
@@ -32,6 +39,31 @@ const opacityMinusAnimation = 1;
       flatListRef.current.scrollToEnd({ animated: false });
     }
   }, []);
+
+ 
+
+  const handleViewHello = (id) => {
+
+const helloIndex = helloesList.findIndex(hello => hello.id === id);
+const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
+
+
+
+    if (helloObject != undefined) {
+
+      const daysSince = daysSincedDateField(helloObject.date);
+
+      const word = Number(daysSince) != 1 ? `days` : `day`;
+      console.log('helloobject@@');
+    ShowQuickView({
+      topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
+     view: <HelloQuickView data={helloObject} index={helloIndex}/>, 
+      message: `hi hi hi`,
+      update: false,
+    });
+    
+    }
+  };
 
   const indexDays = {
     Sunday: 0,
@@ -42,10 +74,8 @@ const opacityMinusAnimation = 1;
     Friday: 5,
     Saturday: 6,
   };
- 
- 
 
-  const renderDay = (item, lightUp, rowStart, weekData, key) => {
+  const renderDay = ({ item, lightUp, voidedDay, id, isManualReset, key }) => {
     //console.log(item);
 
     if (!item) {
@@ -54,7 +84,13 @@ const opacityMinusAnimation = 1;
           key={key}
           style={[
             styles.daySquare,
-            {opacity: opacityMinusAnimation, borderRadius: daySquareBorderRadius, borderColor: daySquareBorderColor, backgroundColor: "transparent", opacity: 0 },
+            {
+              opacity: opacityMinusAnimation,
+              borderRadius: daySquareBorderRadius,
+              borderColor: daySquareBorderColor,
+              backgroundColor: "transparent",
+              opacity: 0,
+            },
           ]}
           // key={`day-${rowStart }`}
         ></View>
@@ -65,7 +101,15 @@ const opacityMinusAnimation = 1;
       return (
         <View
           key={key}
-          style={[styles.daySquare, { opacity: opacityMinusAnimation, borderRadius: daySquareBorderRadius, borderColor: daySquareBorderColor, backgroundColor: "transparent" }]}
+          style={[
+            styles.daySquare,
+            {
+              opacity: opacityMinusAnimation,
+              borderRadius: daySquareBorderRadius,
+              borderColor: daySquareBorderColor,
+              backgroundColor: "transparent",
+            },
+          ]}
           // key={`day-${rowStart + index}`}
         ></View>
       );
@@ -73,40 +117,54 @@ const opacityMinusAnimation = 1;
     if (lightUp) {
       //console.log("yes", item);
       return (
-        <Animated.View
+        <AnimatedPressable
+          hitSlop={30}
+          onPress={() => handleViewHello(id)}
           key={key}
           style={{ height: 10, width: 10, overflow: "hidden" }}
         >
           <HelloDayWrapper isVisible={lightUp}>
             <Animated.View
-              style={[styles.daySquare, { borderRadius: daySquareBorderRadius, backgroundColor: animationColor}]}
+              style={[
+                styles.daySquare,
+                {
+                  borderRadius: daySquareBorderRadius,
+                  backgroundColor:
+                    voidedDay && !isManualReset
+                      ? "red"
+                      : voidedDay && isManualReset
+                        ? "gray"
+                        : animationColor,
+                },
+              ]}
               // key={`day-${rowStart + index}`}
             ></Animated.View>
           </HelloDayWrapper>
-        </Animated.View>
+        </AnimatedPressable>
       );
     }
   };
   const renderWeeks = (totalDays, startingIndex, highlightDays = []) => {
-    // Generate the days of the month with filler days
+    // Generate all days of the month including filler days
     const allDays = [];
 
-    // Add previous month's filler days
+    // console.error(highlightDays);
+
+    // Previous month's filler days
     for (let i = 0; i < startingIndex; i++) {
       allDays.push(null);
     }
 
-    // Add current month's days
+    // Current month's days
     for (let day = 1; day <= totalDays; day++) {
       allDays.push(day);
     }
 
-    // Add next month's filler days
+    // Next month's filler days to fill last week
     while (allDays.length % 7 !== 0) {
       allDays.push(null);
     }
 
-    // Number of rows
     const numberOfRows = allDays.length / 7;
 
     return (
@@ -116,21 +174,41 @@ const opacityMinusAnimation = 1;
           const rowEnd = rowStart + 7;
 
           const weekData = allDays.slice(rowStart, rowEnd);
-          //console.log('WEEK DATA', weekData); // Debugging output
 
           return (
             <View style={styles.weekRow} key={`week-${rowIndex}`}>
               {weekData.map((day, index) => {
-                const isHighlighted =
-                  day !== null && highlightDays.includes(day);
+                if (day === null) {
+                  // filler day - no highlight or void
+                  return renderDay({
+                    item: day,
+                    lightUp: false,
+                    voidedDay: false,
+                    isManualReset: false,
+                    id: null,
+                    key: `day-${rowStart + index}`,
+                  });
+                }
 
-                return renderDay(
-                  day,
-                  isHighlighted,
-                  rowStart,
-                  weekData,
-                  `day-${rowStart + index}`
-                );
+                // Find day object in highlightDays
+                const dayObj = highlightDays.find((d) => d.hasOwnProperty(day));
+
+                // If dayObj exists, lightUp = true, else false
+                const lightUp = !!dayObj;
+
+                // Extract voided and manual flags if dayObj exists
+                const voidedDay = dayObj ? dayObj[day].voided : false;
+                const isManualReset = dayObj ? dayObj[day].manual : false;
+                const id = dayObj ? dayObj[day].id : false;
+
+                return renderDay({
+                  item: day,
+                  lightUp,
+                  voidedDay,
+                  isManualReset,
+                  id,
+                  key: `day-${rowStart + index}`,
+                });
               })}
             </View>
           );
@@ -139,18 +217,71 @@ const opacityMinusAnimation = 1;
     );
   };
 
+  // const renderWeeks = (totalDays, startingIndex, highlightDays = []) => {
+  //   console.warn(highlightDays);
+  //   // Generate the days of the month with filler days
+  //   const allDays = [];
+
+  //   // Add previous month's filler days
+  //   for (let i = 0; i < startingIndex; i++) {
+  //     allDays.push(null);
+  //   }
+
+  //   // Add current month's days
+  //   for (let day = 1; day <= totalDays; day++) {
+  //     allDays.push(day);
+  //   }
+
+  //   // Add next month's filler days
+  //   while (allDays.length % 7 !== 0) {
+  //     allDays.push(null);
+  //   }
+
+  //   // Number of rows
+  //   const numberOfRows = allDays.length / 7;
+
+  //   return (
+  //     <View>
+  //       {Array.from({ length: numberOfRows }, (_, rowIndex) => {
+  //         const rowStart = rowIndex * 7;
+  //         const rowEnd = rowStart + 7;
+
+  //         const weekData = allDays.slice(rowStart, rowEnd);
+  //         //console.log('WEEK DATA', weekData); // Debugging output
+
+  //         return (
+  //           <View style={styles.weekRow} key={`week-${rowIndex}`}>
+  //             {weekData.map((day, index) => {
+  //               const isHighlighted =
+  //                 day !== null && highlightDays.includes(day);
+
+  //               return renderDay(
+  //                 day,
+  //                 isHighlighted,
+  //                 rowStart,
+  //                 weekData,
+  //                 `day-${rowStart + index}`
+  //               );
+  //             })}
+  //           </View>
+  //         );
+  //       })}
+  //     </View>
+  //   );
+  // };
+
   //<Text>{item}</Text>
   //break down into months, then pass lightup days into month component
   //render each month block + lightup list in the main flatlist
 
   // const renderCalendarMonth = ({ item }) => {
-   
+
   //   const indexRangeStart = indexDays[item.monthData.startsOn];
   //   const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
-  
+
   //   // Ensure helloData exists and has `days`
   //   const highlightDays = item.helloData?.days || [];
-  
+
   //   return (
   //     <View style={styles.calendarContainer}>
   //       <Text
@@ -170,44 +301,53 @@ const opacityMinusAnimation = 1;
   //   );
   // };
 
+  const renderCalendarMonth = useCallback(
+    ({ item }) => {
+      // console.log(item.helloData);
+      const indexRangeStart = indexDays[item.monthData.startsOn];
+      // const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
 
-  const renderCalendarMonth = useCallback(({ item }) => {
-  const indexRangeStart = indexDays[item.monthData.startsOn];
- // const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
+      const highlightDays = item.helloData?.days || [];
 
-  const highlightDays = item.helloData?.days || [];
+      const month = item.monthData.month.slice(0, 3);
+      const year = item.monthData.year.slice(0, 4);
 
-  return (
-    <View style={styles.calendarContainer}>
-      <Text
-        style={{
-          fontFamily: 'Poppins-Regular',
-          fontSize: 12,
-          opacity: opacityMinusAnimation,
-          color: daySquareBorderColor,
-        }}
-      >
-        {item.monthData.month.slice(0, 3)} {item.monthData.year.slice(0, 4)}
-      </Text>
-      <View style={styles.innerCalendarContainer}>
-        {renderWeeks(item.monthData.daysInMonth, indexRangeStart, highlightDays)}
-      </View>
-    </View>
+      return (
+        <View style={styles.calendarContainer}>
+          <AnimatedPressable onPress={() => onMonthPress(item)}>
+            <Text
+              style={{
+                fontFamily: "Poppins-Regular",
+                fontSize: 12,
+                opacity: opacityMinusAnimation,
+                color: daySquareBorderColor,
+              }}
+            >
+              {month} {year}
+            </Text>
+          </AnimatedPressable>
+          <View style={styles.innerCalendarContainer}>
+            {renderWeeks(
+              item.monthData.daysInMonth,
+              indexRangeStart,
+              highlightDays
+            )}
+          </View>
+        </View>
+      );
+    },
+    [
+      indexDays,
+      opacityMinusAnimation,
+      daySquareBorderColor,
+      renderWeeks,
+      styles.calendarContainer,
+      styles.innerCalendarContainer,
+    ]
   );
-}, [
-  indexDays,
-  opacityMinusAnimation,
-  daySquareBorderColor,
-  renderWeeks,
-  styles.calendarContainer,
-  styles.innerCalendarContainer,
-]);
-  
- 
- 
 
   return (
-    <View style={[styles.container, {backgroundColor: backgroundColor}]}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       {combinedData && (
         <FlatList
           ref={flatListRef}
@@ -218,8 +358,7 @@ const opacityMinusAnimation = 1;
           keyExtractor={(item, index) =>
             `${item.monthData.month}-${item.monthData.year}`
           } // Use month and year as key
-          renderItem={renderCalendarMonth} 
-          
+          renderItem={renderCalendarMonth}
         />
       )}
     </View>
@@ -231,18 +370,18 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     flexDirection: "row",
     width: "100%",
-    height: 100, 
-        borderRadius: 20,
-        padding: 10,
+    height: 100,
+    borderRadius: 20,
+    padding: 10,
   },
   calendarContainer: {
     height: 80,
     width: 80,
- 
+
     borderRadius: 10,
   },
   innerCalendarContainer: {
-    paddingHorizontal: "4%", 
+    paddingHorizontal: "4%",
     flex: 1,
   },
   weekRow: {
@@ -256,8 +395,7 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Center content inside the square
     alignItems: "center", // Center content inside the square
     overflow: "hidden",
-    borderWidth: StyleSheet.hairlineWidth, 
-     
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });
 

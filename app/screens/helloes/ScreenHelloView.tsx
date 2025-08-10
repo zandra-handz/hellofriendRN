@@ -17,9 +17,7 @@ const ScreenHelloView = () => {
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, indexNeeded: startingIndex });
 
-
-
-  const [helloesListData, setHelloesListData] = useState(helloesListFull || []);
+ 
 
   const [currentIndex, setCurrentIndex] = useState(startingIndex);
 

@@ -17,9 +17,10 @@ import PlainSafeView from "../appwide/format/PlainSafeView";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const HelperMessage = ({
+import LoadingPage from "../appwide/spinner/LoadingPage";
+const QuickView = ({
   message,
+  view,
   isInsideModal = false,
   topBarText = `Help mode`,
   update = false,
@@ -27,6 +28,7 @@ const HelperMessage = ({
   onClose,
 }: {
   message: string;
+  view?: React.ReactElement;
   isInsideModal?: boolean;
   update?: boolean;
   duration?: number;
@@ -35,7 +37,9 @@ const HelperMessage = ({
 }) => {
   const scale = useSharedValue(0);
   const translateX = useSharedValue(-600);
+console.log('QUICK VIEW');
 
+const HEIGHT = 600;
   const fade = useSharedValue(1);
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   
@@ -93,6 +97,7 @@ const HelperMessage = ({
           height: "auto",
         }]}
       >
+          
         <View
           style={{
             flex: 1,
@@ -100,7 +105,9 @@ const HelperMessage = ({
             paddingVertical: 2,
             backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
           }}
-        >
+        > 
+
+            
           <Text
             style={[
               themeStyles.primaryText,
@@ -128,10 +135,14 @@ const HelperMessage = ({
       >
  
         {!update && (
-          <ScrollView
-            contentContainerStyle={{ flexDirection: "row", alignItems: "center", padding: 10 }}
-          >
-            <Text
+        //   <ScrollView
+        //     contentContainerStyle={{ flexDirection: "row", alignItems: "center",   padding: 10 }}
+        //   >
+            <View style={{  flex: 1,  padding: 10 }}
+     >
+                
+              {view != undefined && view}
+            {/* <Text
               style={[
                 themeStyles.primaryText,
                 appFontStyles.subWelcomeText,
@@ -140,9 +151,11 @@ const HelperMessage = ({
             >
               {" "}
               {message}
-            </Text>
+            </Text> */}
+            
+      
        
-          </ScrollView>
+          </View>
         )}
         {update && (
           <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
@@ -189,7 +202,7 @@ const styles = StyleSheet.create({
   overlay: {
     flexDirection: "column",
 
-    justifyContent: "flex-end",
+    justifyContent: "flex-start",
     alignItems: "center",
     zIndex: 99999,
     elevation: 99999,
@@ -197,15 +210,14 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(128, 128, 128, 0.8)", //neutral gray
   },
   messageContainer: {
-    padding: 20,
-    minHeight: 200,
+    padding: 20, 
     width: "98%",
     textAlign: "center",
     flexDirection: "column",
     justifyContent: "center",
-    bottom: 80,
-    maxHeight: 400,
+    top: 80,
+  height: 600,
   },
 });
 
-export default HelperMessage;
+export default QuickView;
