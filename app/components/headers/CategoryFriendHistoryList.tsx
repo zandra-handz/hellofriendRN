@@ -16,29 +16,30 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import { daysSincedDateField } from "@/src/utils/DaysSince";
-import { ShowQuickView } from "@/src/utils/ShowQuickView";
-import HelloQuickView from "../alerts/HelloQuickView";
-import QuickView from "../alerts/QuickView";
+import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
+ 
 
 type Props = {
   categoryId: number;
   closeModal: () => void;
+  onViewHelloPress: () => void;
 };
 
-const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
-  const { selectedFriend } = useSelectedFriend();
-  const { navigateToHelloView } = useAppNavigations();
+const CategoryFriendHistoryList = ({
+  categoryId,
+  closeModal,
+  onViewHelloPress,
+}: Props) => {
+  const { selectedFriend } = useSelectedFriend(); 
   const { friendList } = useFriendList();
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { helloesList } = useHelloes();
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState<number>(0);
   const [quickView, setQuickView] = useState<null | {
- 
-      topBarText: String;
-        view: React.ReactElement;
-        message: string;
-        update: boolean;
+    topBarText: String;
+    view: React.ReactElement;
+    message: string;
+    update: boolean;
   }>(null);
   if (!categoryId || !selectedFriend?.id) {
     return;
@@ -64,31 +65,13 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
   }, [categoryHistory]);
 
   const handlePress = useCallback(
-    (helloId) => () => {
-    //  handleOnPress(helloId);
-      handleViewHello(helloId);
-    },
-    // [handleOnPress]
-    [handleViewHello]
+    (helloId) => () => { 
+      onViewHelloPress(helloId);
+    }, 
+    [onViewHelloPress]
   );
 
-  const handleViewHello = (id) => {
-    const helloIndex = helloesList.findIndex((hello) => hello.id === id);
-    const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
-
-    if (helloObject != undefined) {
-      const daysSince = daysSincedDateField(helloObject.date);
-
-      const word = Number(daysSince) != 1 ? `days` : `day`;
-      console.log("helloobject@@");
-      setQuickView({
-        topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
-        view: <HelloQuickView data={helloObject} index={helloIndex} />,
-        message: `hi hi hi`,
-        update: false,
-      });
-    }
-  };
+ 
 
   const getFriendNameFromList = (friendId) => {
     const friend = friendList.find((friend) => friend.id === friendId);
@@ -102,26 +85,8 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
     return hello.date || "";
   };
 
-  const handleGoToHelloView = (helloId: number) => {
-    // console.log("handleGoToHelloView pressed");
-    const helloIndex = helloesList.findIndex(
-      (hello: { id: number }) => hello.id === helloId
-    );
-    console.log("helloIndex", helloId);
-
-    if (helloIndex) {
-      navigateToHelloView({
-        startingIndex: helloIndex + 1,
-        inPersonFilter: false,
-      });
-    }
-  };
-
-  const handleOnPressActions = (helloId: number) => {
-    handleGoToHelloView(helloId);
-    closeModal();
-  };
-
+ 
+ 
   const getCapsuleCount = (count: number) => {
     if (!count) {
       return ``;
@@ -130,97 +95,26 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
     return `(` + count + ` loaded)`;
   };
 
-  const handleOnPress = (helloId: number) => {
-    console.log("lalalla");
-    Alert.alert("Warning", "Leave this screen?", [
-      {
-        text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel",
-      },
-      { text: "Go to hello", onPress: () => handleOnPressActions(helloId) },
-    ]);
-  };
+ 
 
   const extractItemKey = (item, index) =>
-    item?.id ? item.id.toString() : `capsule-${categoryId}-${index}`;
+    item?.id ? item.id.toString() : `friend-capsule-${categoryId}-${index}`;
 
   const renderMiniMomentItem = useCallback(
     ({ item, index }) => (
-      <View
-        style={[
-          styles.momentCheckboxContainer,
-          {
-            paddingBottom: 10,
-            paddingTop: 10,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: themeStyles.primaryText.color,
-          },
-        ]}
-      >
-        <View style={styles.momentItemTextContainer}>
-          <View style={styles.checkboxContainer}>
-            <Foundation
-              name={"comment-quotes"}
-              size={24}
-              color={themeStyles.primaryText.color}
-            />
-          </View>
-
-          <View style={{ width: "100%", flexShrink: 1 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-
-                width: "100%",
-              }}
-            >
-              <Text
-                style={[
-                  styles.momentItemText,
-                  themeStyles.primaryText,
-                  { fontFamily: "Poppins-Bold" },
-                ]}
-              >
-                @ {getFriendNameFromList(item.friend)} on{" "}
-                {getHelloDateFromList(item.hello)}
-              </Text>
-              <GlobalPressable
-                hitSlop={20}
-                style={{
-                  backgroundColor: "red",
-                  padding: 20,
-                  zIndex: 40000,
-                  elevation: 40000,
-                }}
-                onPress={handlePress(item.hello)}
-              >
-                <MaterialCommunityIcons
-                  // name="hand-wave-outline"
-                  name="calendar-heart"
-                  size={16}
-                  color={themeStyles.primaryText.color}
-                  style={{ marginHorizontal: 4 }}
-                />
-              </GlobalPressable>
-            </View>
-            <Text style={[styles.momentItemText, themeStyles.primaryText]}>
-              {item.time_score}
-            </Text>
-            <Text style={[styles.momentItemText, themeStyles.primaryText]}>
-              {item.capsule}
-            </Text>
-          </View>
-        </View>
-      </View>
+      <FriendHistoryMomentItem
+      item={item}
+      index={index}
+      onHelloPress={handlePress}
+      friendName={getFriendNameFromList(item.friend)}
+      helloDate={getHelloDateFromList(item.hello)}/>
+      
     ),
     [
       getFriendNameFromList,
       getHelloDateFromList,
-      handleGoToHelloView,
-      handleOnPress,
+      handlePress,
+      // handleOnPress,
       themeStyles,
       styles,
     ]
@@ -228,17 +122,7 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
 
   return (
     <>
-            {quickView && (
-              <QuickView
-              topBarText={quickView.topBarText}
-                isInsideModal={true} 
-                message={quickView.message} 
-                   update={quickView.update}  
-                   view={quickView.view}
-      
-                onClose={() => setQuickView(null)}
-              />
-            )}
+ 
       {categoryHistory && categoryHistory.length > 0 && (
         <FlatList
           ListHeaderComponent={
@@ -249,7 +133,7 @@ const CategoryFriendHistoryList = ({ categoryId, closeModal }: Props) => {
                 backgroundColor: "teal",
                 height: "auto",
                 // height: 30,
-                aignItems: "center",
+                alignItems: "center",
               }}
             >
               <Text

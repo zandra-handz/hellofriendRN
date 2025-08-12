@@ -245,7 +245,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     />
                   </View>
                 )}
-                <View style={{ width: "100%", height: 60 }}></View>
+                <View style={{ width: "100%", height: 130 }}></View>
               </View>
             </ScrollView>
           </View>

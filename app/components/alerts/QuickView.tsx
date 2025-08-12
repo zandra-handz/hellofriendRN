@@ -17,7 +17,7 @@ import PlainSafeView from "../appwide/format/PlainSafeView";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import LoadingPage from "../appwide/spinner/LoadingPage";
+ 
 const QuickView = ({
   message,
   view,
@@ -37,9 +37,7 @@ const QuickView = ({
 }) => {
   const scale = useSharedValue(0);
   const translateX = useSharedValue(-600);
-console.log('QUICK VIEW');
-
-const HEIGHT = 600;
+ 
   const fade = useSharedValue(1);
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   
@@ -189,7 +187,7 @@ const HEIGHT = 600;
           <MaterialCommunityIcons
             name={"check-circle"}
             size={24}
-            color={themeStyles.primaryText.color}
+           // color={themeStyles.primaryText.color}
             color={manualGradientColors.lightColor}
           />
         </Pressable>
@@ -206,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 99999,
     elevation: 99999,
-    backgroundColor: "rgba(0, 0, 0, 0.84)",
+   // backgroundColor: "rgba(0, 0, 0, 0.84)",
     backgroundColor: "rgba(128, 128, 128, 0.8)", //neutral gray
   },
   messageContainer: {

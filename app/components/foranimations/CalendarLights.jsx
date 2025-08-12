@@ -40,28 +40,21 @@ const CalendarLights = ({
     }
   }, []);
 
- 
-
   const handleViewHello = (id) => {
-
-const helloIndex = helloesList.findIndex(hello => hello.id === id);
-const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
-
-
+    const helloIndex = helloesList.findIndex((hello) => hello.id === id);
+    const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
 
     if (helloObject != undefined) {
-
       const daysSince = daysSincedDateField(helloObject.date);
 
       const word = Number(daysSince) != 1 ? `days` : `day`;
-      console.log('helloobject@@');
-    ShowQuickView({
-      topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
-     view: <HelloQuickView data={helloObject} index={helloIndex}/>, 
-      message: `hi hi hi`,
-      update: false,
-    });
-    
+      console.log("helloobject@@");
+      ShowQuickView({
+        topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
+        view: <HelloQuickView data={helloObject} index={helloIndex} />,
+        message: `hi hi hi`,
+        update: false,
+      });
     }
   };
 
@@ -118,7 +111,7 @@ const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
       //console.log("yes", item);
       return (
         <AnimatedPressable
-          hitSlop={30}
+          hitSlop={20}
           onPress={() => handleViewHello(id)}
           key={key}
           style={{ height: 10, width: 10, overflow: "hidden" }}
@@ -217,89 +210,7 @@ const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
     );
   };
 
-  // const renderWeeks = (totalDays, startingIndex, highlightDays = []) => {
-  //   console.warn(highlightDays);
-  //   // Generate the days of the month with filler days
-  //   const allDays = [];
-
-  //   // Add previous month's filler days
-  //   for (let i = 0; i < startingIndex; i++) {
-  //     allDays.push(null);
-  //   }
-
-  //   // Add current month's days
-  //   for (let day = 1; day <= totalDays; day++) {
-  //     allDays.push(day);
-  //   }
-
-  //   // Add next month's filler days
-  //   while (allDays.length % 7 !== 0) {
-  //     allDays.push(null);
-  //   }
-
-  //   // Number of rows
-  //   const numberOfRows = allDays.length / 7;
-
-  //   return (
-  //     <View>
-  //       {Array.from({ length: numberOfRows }, (_, rowIndex) => {
-  //         const rowStart = rowIndex * 7;
-  //         const rowEnd = rowStart + 7;
-
-  //         const weekData = allDays.slice(rowStart, rowEnd);
-  //         //console.log('WEEK DATA', weekData); // Debugging output
-
-  //         return (
-  //           <View style={styles.weekRow} key={`week-${rowIndex}`}>
-  //             {weekData.map((day, index) => {
-  //               const isHighlighted =
-  //                 day !== null && highlightDays.includes(day);
-
-  //               return renderDay(
-  //                 day,
-  //                 isHighlighted,
-  //                 rowStart,
-  //                 weekData,
-  //                 `day-${rowStart + index}`
-  //               );
-  //             })}
-  //           </View>
-  //         );
-  //       })}
-  //     </View>
-  //   );
-  // };
-
-  //<Text>{item}</Text>
-  //break down into months, then pass lightup days into month component
-  //render each month block + lightup list in the main flatlist
-
-  // const renderCalendarMonth = ({ item }) => {
-
-  //   const indexRangeStart = indexDays[item.monthData.startsOn];
-  //   const indexRangeTotal = item.monthData.daysInMonth - 1 + indexRangeStart;
-
-  //   // Ensure helloData exists and has `days`
-  //   const highlightDays = item.helloData?.days || [];
-
-  //   return (
-  //     <View style={styles.calendarContainer}>
-  //       <Text
-  //         style={{
-  //           fontFamily: 'Poppins-Regular',
-  //           fontSize: 12,
-  //           opacity: opacityMinusAnimation,
-  //           color: daySquareBorderColor,
-  //         }}
-  //       >
-  //         {item.monthData.month.slice(0, 3)} {item.monthData.year.slice(0, 4)}
-  //       </Text>
-  //       <View style={styles.innerCalendarContainer}>
-  //         {renderWeeks(item.monthData.daysInMonth, indexRangeStart, highlightDays)}
-  //       </View>
-  //     </View>
-  //   );
-  // };
+  
 
   const renderCalendarMonth = useCallback(
     ({ item }) => {

@@ -110,6 +110,7 @@ const FriendCategoryHistoryChart = ({
               isVisible={historyModalVisible}
               closeModal={() => setHistoryModalVisible(false)}
               categoryId={viewCategoryId}
+              categoryName={viewCategoryName}
               friendId={friendData.id}
               title={viewCategoryName}
             />

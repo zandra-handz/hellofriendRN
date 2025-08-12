@@ -21,15 +21,17 @@ import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave"
 import ModalBarBack from "../buttons/scaffolding/ModalBarBack";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import TreeModalBigButton from "./TreeModalBigButton";
+import ListViewModalBigButton from "./ListViewModalBigButton";
 import HelpButton from "./HelpButton";
 import QuickView from "./QuickView";
-
 import HelperMessage from "./HelperMessage";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
+
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
   isVisible: boolean;
-  isFullscreen?: boolean; 
+  isFullscreen?: boolean;
+  headerIcon: React.ReactElement;
   children: React.ReactElement;
   borderRadius?: number;
   contentPadding?: number;
@@ -43,12 +45,11 @@ interface Props {
   infoItem?: React.ReactElement;
   helperMessageText?: string;
   helpModeTitle: string;
-    quickView?: ItemViewProps | null; // set modal data in parent, render from this component to keep above footer button like helper message
-    nullQuickView?: () => void;
-  }
+  quickView?: ItemViewProps | null; // set modal data in parent, render from this component to keep above footer button like helper message
+  nullQuickView?: () => void;
+}
 
-
-const ModalScaleLikeTree: React.FC<Props> = ({
+const ModalListWithView: React.FC<Props> = ({
   isVisible,
   isFullscreen = false,
   isKeyboardVisible,
@@ -62,7 +63,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
   infoItem,
   helperMessageText = "helper message goes here",
   helpModeTitle = "Help mode",
-    quickView,
+  quickView,
   nullQuickView,
   onClose,
 }) => {
@@ -81,6 +82,8 @@ const ModalScaleLikeTree: React.FC<Props> = ({
     text: string;
     error: boolean;
   }>(null);
+
+  
 
   const [internalIsVisible, setInternalIsVisible] = useState(isVisible);
 
@@ -105,13 +108,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
 
   const contentAnimationStyle = useAnimatedStyle(() => {
     return { opacity: opacityAnim.value };
-  });
-
-  // const formHeight = 610;
-  // const headerHeight = "auto";
-  // const buttonHeight = 50;
-  // const headerSpacing = 10;
-  // const headerPaddingTop = 10;
+  }); 
 
   useEffect(() => {
     if (internalIsVisible) {
@@ -125,11 +122,9 @@ const ModalScaleLikeTree: React.FC<Props> = ({
 
     if (!internalIsVisible) {
       opacityAnim.value = withTiming(0, { duration: 80 });
-      // scaleAnim.value = withTiming(0, { duration: 300 });
-      //  scaleWidthAnim.value = withTiming(0, { duration: 200 });
-      //  xAnim.value = withTiming(500, { duration: 300 });
-      scaleAnim.value = withTiming(0, { duration: 200 });
-      xAnim.value = withTiming(500, { duration: 200 });
+      scaleAnim.value = withTiming(0, { duration: 300 });
+      scaleWidthAnim.value = withTiming(0, { duration: 200 });
+      xAnim.value = withTiming(500, { duration: 300 });
     }
   }, [internalIsVisible]);
 
@@ -152,7 +147,6 @@ const ModalScaleLikeTree: React.FC<Props> = ({
           />
         )}
 
-        
         {quickView && (
           <QuickView
             topBarText={quickView.topBarText}
@@ -245,6 +239,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                         })
                       }
                     />
+ 
                   </Animated.View>
                 )}
               </View>
@@ -256,6 +251,7 @@ const ModalScaleLikeTree: React.FC<Props> = ({
               exiting={FadeOutUp.duration(0)}
               style={{
                 height: bottomSpacer,
+                zIndex: 1,
                 //   position: 'absolute',
                 bottom: 0,
 
@@ -267,8 +263,9 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                 borderRadius: 10,
               }}
             >
-              <TreeModalBigButton
+              <ListViewModalBigButton
                 onClose={handleCustomClose}
+               // height={bottomSpacer}
                 friendTheme={friendTheme}
                 label={buttonTitle}
                 labelColor={
@@ -330,4 +327,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalScaleLikeTree;
+export default ModalListWithView;

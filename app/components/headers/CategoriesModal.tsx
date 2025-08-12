@@ -3,12 +3,10 @@ import { View } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SectionUserCategories from "../friends/SectionUserCategories";
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import { useCategories } from "@/src/context/CategoriesContext";
-import { showHelperMessage } from "@/src/utils/ShowHelperMessage";
 import HelperMessage from "../alerts/HelperMessage";
-import AddNewCategory from "./AddNewCategory";
+import InfoItem from "./InfoItem";
 
 import ModalInfoText from "./ModalInfoText";
 interface Props {
@@ -29,10 +27,7 @@ const CategoriesModal: React.FC<Props> = ({
     error: boolean;
   }>(null);
   const { userCategories } = useCategories();
-  const { themeStyles, appFontStyles, appSpacingStyles, manualGradientColors } =
-    useGlobalStyle();
-
-    
+  const { manualGradientColors } = useGlobalStyle();
 
   return (
     <ModalScaleLikeTree
@@ -48,7 +43,7 @@ const CategoriesModal: React.FC<Props> = ({
           size={50}
           color={manualGradientColors.darkHomeColor}
         />
-      } 
+      }
       buttonTitle="Categories"
       children={
         <>
@@ -64,25 +59,9 @@ const CategoriesModal: React.FC<Props> = ({
       }
       helperMessageText={`Your categories are yours to decide! They can be broad or narrow in scope, silly or serious, every-day or outlandish, niche or normal. All that matters is that they are important to you and you enjoy sharing them! You can rename, delete, and create new categories whenever you like. If you delete a category, all pending ideas in that category will get permanently moved to the Grab Bag. Items already hello'ed to deleted categories will be removed from your history charts.`}
       infoItem={
-        <>
-          <View
-            style={{
-              flex: 1,
-              // padding: 20,
-              flexDirection: "row",
-              //justifyContent: "center", 
-            }}
-          >
-          
-            <ModalInfoText
-              infoText={`${userCategories.length} / ${userCategories[0].max_active} added`}
-            />
-            <MaterialCommunityIcons
-            />
-                      
-        
-          </View>
-        </>
+        <InfoItem
+          infoText={`${userCategories.length} / ${userCategories[0].max_active} added`}
+        />
       }
       onClose={closeModal}
     />

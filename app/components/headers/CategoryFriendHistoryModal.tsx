@@ -1,21 +1,25 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import {  StyleSheet } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import { useNavigation } from "@react-navigation/native";
-import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+  
 import { useHelloes } from "@/src/context/HelloesContext";
-import { MaterialCommunityIcons, Foundation } from "@expo/vector-icons"; 
-
+import { MaterialCommunityIcons  } from "@expo/vector-icons";
+ 
+import HelloQuickView from "../alerts/HelloQuickView";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
+import { daysSincedDateField } from "@/src/utils/DaysSince"; 
+import ModalListWithView from "../alerts/ModalListWithView";
+import { ItemViewProps } from "@/src/types/MiscTypes";
+import InfoItem from "./InfoItem";
+
 interface Props {
   title: string;
   isVisible: boolean;
   closeModal: () => void;
   friendId: number;
   categoryId: number;
+  categoryName?: string;
 }
 
 // method of getting capsule count is TEMPORARY, likely need to change the backend/ backend call being
@@ -28,110 +32,79 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
   title,
   friendId = null,
   categoryId = 3,
+  categoryName = 'Category name',
 }) => {
-  const { themeStyles, appSpacingStyles, appFontStyles } = useGlobalStyle();
-  const navigation = useNavigation();
-  const { friendList } = useFriendList();
+  const { themeStyles, appSpacingStyles, appFontStyles, manualGradientColors } =
+    useGlobalStyle(); 
   const { helloesList } = useHelloes();
 
-  const { selectedFriendStats } = useSelectedFriendStats();
-  const [categoryID, setCategoryID] = useState(null);
-  const [friendID, setFriendID] = useState(null);
-  const [completedCapsuleCount, setCompletedCapsuleCount] = useState(null);
+ 
+
+  const [quickView, setQuickView] = useState<null | ItemViewProps >(null);
 
   if (!friendId) {
     return;
   }
 
-  // useEffect(() => {
-  //   if (categoryId && friendId && selectedFriendStats) {
-  //     setCategoryID(categoryId);
-  //     setFriendID(friendId);
- 
-  //   }
-  // }, [categoryId, friendId, selectedFriendStats]);
 
+  const handleNullQuickView = () => {
+    setQuickView(null);
 
- 
+  };
  
 
-  // const {
-  //   categoryHistory,
-  //   isLoading,
-  //   isFetching,
-  //   isFetchingNextPage,
-  //   isError,
-  //   fetchNextPage,
-  //   hasNextPage,
-  // } = useCategoryHistoryLookup({ categoryId: categoryID, friendId: friendID }); // DP WE MEED?
+  const handleViewHello = (id) => {
+    const helloIndex = helloesList.findIndex((hello) => hello.id === id);
+    const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
 
-  // useEffect(() => {
-  //   if (categoryHistory) {
-  //     setCompletedCapsuleCount(categoryHistory.length);
-  //   }
-  // }, [categoryHistory]);
+    if (helloObject != undefined) {
+      const daysSince = daysSincedDateField(helloObject.date);
 
+      const word = Number(daysSince) != 1 ? `days` : `day`;
+      console.log("helloobject@@");
+      setQuickView({
+        topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
+        view: <HelloQuickView data={helloObject} index={helloIndex} />,
+        message: `hi hi hi`,
+        update: false,
+      });
+    }
+  }; 
+
+  const FOOTER_BUTTON_SPACE = 40;
  
- 
- 
+
   return (
-    <ModalWithGoBack
-      isVisible={isVisible}
-      headerIcon={
-        <Text
-          style={[
-            themeStyles.primaryText,
-            appFontStyles.welcomeText,
-            { fontSize: 26 },
-          ]}
-        >
+   
+      <ModalListWithView
+        bottomSpacer={FOOTER_BUTTON_SPACE}
+        borderRadius={60}
+        isVisible={isVisible}
+        helpModeTitle="Help mode: Category History"
+        useModalBar={true}
+        quickView={quickView}
+        nullQuickView={handleNullQuickView}
+        infoItem={<InfoItem infoText={`Category: ${categoryName}`} />}
+        rightSideButtonItem={
           <MaterialCommunityIcons
-            name={"comment-check-outline"}
-            size={24}
-            color={themeStyles.modalIconColor.color}
+            name={`tree`}
+            size={30}
+            color={manualGradientColors.darkHomeColor}
           />
-        </Text>
-        // <MaterialIcons
-        //   name={"category"}
-        //   size={appSpacingStyles.modalHeaderIconSize}
-        //   color={themeStyles.modalIconColor.color}
-        // />
-      }
-      questionText={title} // + " " + getCapsuleCount(completedCapsuleCount)}
-      children={
-        <CategoryFriendHistoryList categoryId={categoryId} closeModal={closeModal}/>
-      }
-      onClose={closeModal}
-    />
+        }
+        children={
+          <> 
+            <CategoryFriendHistoryList
+              categoryId={categoryId}
+              closeModal={closeModal}
+              onViewHelloPress={handleViewHello}
+            />
+          </>
+        }
+        onClose={closeModal}
+      /> 
   );
 };
-
-// Just for list item (copy pasta'd this into CategoryHistoryModal as well)
-const styles = StyleSheet.create({
-  momentItemTextContainer: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-
-    width: "100%",
-  },
-  momentItemText: {
-    fontSize: 11,
-    // lineHeight: 15,
-    fontFamily: "Poppins-Regular",
-    // width: "100%",
-  },
-  momentCheckboxContainer: {
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "center",
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 0,
-    paddingTop: 0,
-    paddingRight: 10,
-  },
-});
+ 
 
 export default CategoryFriendHistoryModal;
