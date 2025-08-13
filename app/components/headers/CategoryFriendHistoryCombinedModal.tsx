@@ -4,8 +4,12 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-
+import InfoItem from "./InfoItem";
 import CategoryFriendCurrentList from "./CategoryFriendCurrentList";
+import { daysSincedDateField } from "@/src/utils/DaysSince";
+import HelloQuickView from "../alerts/HelloQuickView";
+import MakeDefaultCats from "./MakeDefaultCats";
+import CatDescriptEditable from "./CatDescriptEditable";
 
 import {
   View,
@@ -20,10 +24,13 @@ import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
+import { useHelloes } from "@/src/context/HelloesContext";
+import ModalListWithView from "../alerts/ModalListWithView";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
+
+import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
@@ -41,6 +48,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
     useCategories();
 
   const { settings, updateSettings } = useUserSettings();
+  const { helloesList } = useHelloes();
   const category = Array.isArray(userCategories)
     ? userCategories.find((category) => category.id === categoryId) || null
     : null;
@@ -48,7 +56,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   // console.log(`category in modal: `, category);
 
   const { user } = useUser();
-  const { themeStyles, appFontStyles, appSpacingStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   const { selectedFriend, friendDashboardData, handleUpdateDefaultCategory } =
     useSelectedFriend();
   const { capsuleList } = useCapsuleList();
@@ -56,6 +64,12 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   const startingText = category?.description || null;
 
   const { selectedFriendStats } = useSelectedFriendStats();
+
+  const [quickView, setQuickView] = useState<null | ItemViewProps>(null);
+
+  const handleNullQuickView = () => {
+    setQuickView(null);
+  };
 
   const textInputRef = useRef(null);
 
@@ -76,9 +90,42 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
     friendId: selectedFriend?.id,
   });
 
+
+    const [textInputView, setTextInputView] = useState<null | ItemViewProps>(null);
+
+  const handleNullTextInputView = () => {
+    setTextInputView(null);
+  };
+
+  
+
+  const handleViewHello = (id, momentOriginalId) => {
+    const helloIndex = helloesList.findIndex((hello) => hello.id === id);
+    const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
+
+    if (helloObject != undefined) {
+      const daysSince = daysSincedDateField(helloObject.date);
+
+      const word = Number(daysSince) != 1 ? `days` : `day`;
+      console.log("helloobject@@");
+      setQuickView({
+        topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
+        view: (
+          <HelloQuickView
+            data={helloObject}
+            momentOriginalId={momentOriginalId}
+            index={helloIndex}
+          />
+        ),
+        message: `hi hi hi`,
+        update: false,
+      });
+    }
+  };
+
   useEffect(() => {
     if (selectedFriendStats) {
-      console.warn(`SELECTED FRIEND STATS ---->>>>`, selectedFriendStats);
+      // console.warn(`SELECTED FRIEND STATS ---->>>>`, selectedFriendStats);
 
       const categoryHistoryForFriend = selectedFriendStats.find(
         (category) => category.id === categoryId
@@ -116,23 +163,6 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   //   (capsule) => capsule?.user_category === categoryId
   // );
 
-  const handleRemoveUserDefault = async () => {
-    
-    await updateSettings({ user_default_category: null });
-  };
-
-  const handleMakeUserDefault = async () => {
-    await updateSettings({ user_default_category: categoryId });
-  };
-
-  const handleRemoveFriendDefault = () => {
-    handleUpdateDefaultCategory({ categoryId: null });
-  };
-
-  const handleMakeFriendDefault = () => {
-    handleUpdateDefaultCategory({ categoryId: categoryId });
-  };
-
   useFocusEffect(
     useCallback(() => {
       if (category && capsuleList && capsuleList?.length > 0) {
@@ -144,8 +174,32 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
     }, [category, capsuleList])
   );
   const [showEdit, setShowEdit] = useState(false);
+
+const handleToggleTextInputView = (view) => {
+  setTextInputView({
+    topBarText: `Edit description`,
+    view: view, // already JSX
+    message: `hi hi hi`,
+    update: false,
+  });
+};
+
   const toggleEdit = () => {
+    console.log("toggled edit");
     setShowEdit((prev) => !prev);
+
+          setTextInputView({
+        topBarText: `Edit description`,
+        view: (<View></View>
+          // <HelloQuickView
+          //   data={helloObject}
+          //   momentOriginalId={momentOriginalId}
+          //   index={helloIndex}
+          // />
+        ),
+        message: `hi hi hi`,
+        update: false,
+      });
   };
 
   const handleUpdateCategory = () => {
@@ -159,19 +213,43 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
     setShowEdit(false);
   };
 
-  
+  const FOOTER_BUTTON_SPACE = 40;
   return (
-    <ModalWithGoBack
+    <ModalListWithView
+      bottomSpacer={FOOTER_BUTTON_SPACE}
+      borderRadius={60}
       isVisible={isVisible}
-      isFullscreen={false}
-      headerIcon={
+      textInputView={textInputView}
+      nullTextInputView={handleNullTextInputView}
+      quickView={quickView}
+      nullQuickView={handleNullQuickView}
+      helpModeTitle="Help mode: Category History"
+      useModalBar={true}
+      infoItem={<InfoItem fontSize={24} infoText={`${category.name}`} />}
+      secondInfoItem={
+        <View
+          style={{
+          
+            height: showEdit ? "100%" : "auto",
+            maxHeight: showEdit ? "100%" : 160,
+            backgroundColor: themeStyles.primaryBackground.backgroundColor,
+            width: "100%",
+          }}
+        >
+          <CatDescriptEditable
+            nullTextInputView={handleNullTextInputView}
+            onToggle={handleToggleTextInputView}
+            categoryObject={category}
+          />
+        </View>
+      }
+      rightSideButtonItem={
         <MaterialCommunityIcons
-          name={"comment-outline"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          name={`tree`}
+          size={30}
+          color={manualGradientColors.darkHomeColor}
         />
       }
-      questionText={category && category.name}
       children={
         <View style={styles.bodyContainer}>
           <View
@@ -179,146 +257,26 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
               styles.sectionContainer,
               {
                 backgroundColor: showEdit ? "red" : "transparent",
-                padding: 10,
+
                 paddingTop: 0,
                 borderRadius: 20,
               },
             ]}
           >
-            <View
-              style={{
-                height: "auto",
-                padding: 10,
-                borderRadius: 999,
-                width: "100%",
-                backgroundColor: "red",
-              }}
-            >
-              <Pressable
-                onPress={
-                  isUserDefault
-                    ? handleRemoveUserDefault
-                    : handleMakeUserDefault
-                }
-              >
-                <Text
-                  style={[
-                    themeStyles.primaryText,
-                    appFontStyles.subWelcomeText,
-                    { fontSize: 14 },
-                  ]}
-                >
-                  {isUserDefault ? `Remove default` : `Make default`}{" "}
-                </Text>
-              </Pressable>
-            </View>
-            <View
-              style={{
-                height: "auto",
-                padding: 10,
-                borderRadius: 999,
-                width: "100%",
-                backgroundColor: "teal",
-              }}
-            >
-              {" "}
-              <Pressable
-                onPress={
-                  isFriendDefault
-                    ? handleRemoveFriendDefault
-                    : handleMakeFriendDefault
-                }
-              >
-                <Text
-                  style={[
-                    themeStyles.primaryText,
-                    appFontStyles.subWelcomeText,
-                    { fontSize: 14 },
-                  ]}
-                >
-                  {isFriendDefault ? `Remove default` : `Make default`}{" "}
-                </Text>
-              </Pressable>
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                height: "auto",
-                alignItems: "center",
-                marginTop: 10,
-                marginBottom: 20,
-              }}
-            >
-              <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.subWelcomeText,
-                  { fontSize: 16 },
-                ]}
-              >
-                Description
-              </Text>
-              <Pressable onPress={toggleEdit}>
-                <MaterialCommunityIcons
-                  name={showEdit ? "cancel" : "pencil-outline"}
-                  size={20}
-                  color={themeStyles.footerIcon.color}
-                />
-              </Pressable>
-              {showEdit && (
-                <Pressable onPress={handleUpdateCategory}>
-                  <MaterialCommunityIcons
-                    name={"check"}
-                    size={20}
-                    color={themeStyles.footerIcon.color}
-                  />
-                </Pressable>
-              )}
-            </View>
-            {showEdit && (
-              <View
-                style={{ height: 100, backgroundColor: "pink", width: "100%" }}
-              >
-                <TextInput
-                  ref={textInputRef}
-                  style={[styles.searchInput, themeStyles.genericText]}
-                  autoFocus={true}
-                  value={textInput}
-                  onChangeText={handleTextChange}
-                  multiline
-                />
-              </View>
-            )}
-
-            {!showEdit && (
-              <ScrollView style={{ height: "auto", maxHeight: 200, width: "100%" }}>
-                <Text style={themeStyles.primaryText}>
-                  {category?.description}
-                </Text>
-              </ScrollView>
-            )}
+            <MakeDefaultCats categoryId={categoryId} />
           </View>
-                    {/* {selectedFriend && momentsInCategory && (
-            <View style={[styles.sectionContainer]}>
-       
+          {!showEdit && (
+            <View style={[styles.sectionContainer, { flexGrow: 1 }]}>
+              <View style={{ maxHeight: 300 }}>
                 <CategoryFriendCurrentList categoryId={categoryId} />
-          
+              </View>
+              <CategoryFriendHistoryList
+                categoryId={categoryId}
+                closeModal={closeModal}
+                onViewHelloPress={handleViewHello}
+              />
             </View>
-          )} */}
-          <View style={[styles.sectionContainer, {flexGrow: 1}]}>
-            <View style={{maxHeight: 300}}>
-              
-              <CategoryFriendCurrentList categoryId={categoryId} />
-              
-            </View>
-          <CategoryFriendHistoryList
-            categoryId={categoryId}
-            closeModal={closeModal}
-          />
-          </View>
-
+          )}
         </View>
       }
       onClose={closeModal}

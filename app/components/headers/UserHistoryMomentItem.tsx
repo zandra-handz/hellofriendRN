@@ -20,7 +20,7 @@ const UserHistoryMomentItem = ({ item, index, friendName }: Props) => {
           paddingTop: 10,
           borderBottomWidth: StyleSheet.hairlineWidth,
           borderBottomColor: themeStyles.primaryText.color,
-          backgroundColor: 'orange',
+        //  backgroundColor: 'orange',
         },
       ]}
     >

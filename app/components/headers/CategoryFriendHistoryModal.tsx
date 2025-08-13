@@ -53,7 +53,7 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
   };
  
 
-  const handleViewHello = (id) => {
+  const handleViewHello = (id, momentOriginalId) => {
     const helloIndex = helloesList.findIndex((hello) => hello.id === id);
     const helloObject = helloIndex !== -1 ? helloesList[helloIndex] : null;
 
@@ -64,7 +64,7 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
       console.log("helloobject@@");
       setQuickView({
         topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
-        view: <HelloQuickView data={helloObject} index={helloIndex} />,
+        view: <HelloQuickView data={helloObject} momentOriginalId={momentOriginalId} index={helloIndex} />,
         message: `hi hi hi`,
         update: false,
       });

@@ -22,9 +22,7 @@ const MomentFocusTray = ({
   onPress,
   label,
   categoryId,
-}: Props) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
+}: Props) => { 
 
   const ICON_SIZE = 20;
 

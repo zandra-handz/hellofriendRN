@@ -26,7 +26,7 @@ import HelpButton from "./HelpButton";
 import QuickView from "./QuickView";
 import HelperMessage from "./HelperMessage";
 import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
-
+import TextInputView from "./TextInputView";
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
   isVisible: boolean;
@@ -47,6 +47,9 @@ interface Props {
   helpModeTitle: string;
   quickView?: ItemViewProps | null; // set modal data in parent, render from this component to keep above footer button like helper message
   nullQuickView?: () => void;
+  textInputView?: ItemViewProps | null; // set modal data in parent, render from this component to keep above footer button like helper message
+  nullTextInputView?: () => void;
+  secondInfoItem?: React.ReactElement;
 }
 
 const ModalListWithView: React.FC<Props> = ({
@@ -65,7 +68,10 @@ const ModalListWithView: React.FC<Props> = ({
   helpModeTitle = "Help mode",
   quickView,
   nullQuickView,
+  textInputView,
+  nullTextInputView,
   onClose,
+  secondInfoItem,
 }) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   // const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -82,8 +88,6 @@ const ModalListWithView: React.FC<Props> = ({
     text: string;
     error: boolean;
   }>(null);
-
-  
 
   const [internalIsVisible, setInternalIsVisible] = useState(isVisible);
 
@@ -108,7 +112,7 @@ const ModalListWithView: React.FC<Props> = ({
 
   const contentAnimationStyle = useAnimatedStyle(() => {
     return { opacity: opacityAnim.value };
-  }); 
+  });
 
   useEffect(() => {
     if (internalIsVisible) {
@@ -157,6 +161,16 @@ const ModalListWithView: React.FC<Props> = ({
             onClose={nullQuickView}
           />
         )}
+                {textInputView && (
+          <TextInputView
+            topBarText={textInputView.topBarText}
+            isInsideModal={true}
+            message={textInputView.message}
+            update={textInputView.update}
+            view={textInputView.view}
+            onClose={nullTextInputView}
+          />
+        )}
         <Animated.View
           style={[
             modalAnimationStyle,
@@ -200,6 +214,39 @@ const ModalListWithView: React.FC<Props> = ({
                 <View style={{ flex: 1, padding: 20, paddingBottom: 4 }}>
                   {children}
                 </View>
+                {secondInfoItem != undefined && (
+                  <Animated.View
+                    entering={FadeInUp.delay(500)}
+                    style={{
+                      width: "100%",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      borderRadius: 30,
+                      borderTopLeftRadius: 0,
+                      borderTopRightRadius: 0,
+                      //borderWidth: StyleSheet.hairlineWidth,
+                      //  backgroundColor: "red",
+                      //  borderColor: manualGradientColors.lightColor,
+                      padding: 30,
+                      paddingTop: 18,
+                      paddingBottom: 26,
+                      borderTopWidth: StyleSheet.hairlineWidth,
+                      borderColor:
+                        themeStyles.lighterOverlayBackgroundColor
+                          .backgroundColor,
+
+                      // marginBottom: 0,
+                      backgroundColor:
+                        themeStyles.primaryBackground.backgroundColor,
+
+                      alignItems: "center",
+                      height: "auto",
+                      //  height: 100,
+                    }}
+                  >
+                    {secondInfoItem}
+                  </Animated.View>
+                )}
 
                 {infoItem != undefined && !isKeyboardVisible && (
                   <Animated.View
@@ -223,7 +270,8 @@ const ModalListWithView: React.FC<Props> = ({
                           .backgroundColor,
 
                       // marginBottom: 0,
-                      //  backgroundColor: "orange",
+                      backgroundColor:
+                        themeStyles.primaryBackground.backgroundColor,
 
                       alignItems: "center",
                       height: "auto",
@@ -239,7 +287,6 @@ const ModalListWithView: React.FC<Props> = ({
                         })
                       }
                     />
- 
                   </Animated.View>
                 )}
               </View>
@@ -265,7 +312,7 @@ const ModalListWithView: React.FC<Props> = ({
             >
               <ListViewModalBigButton
                 onClose={handleCustomClose}
-               // height={bottomSpacer}
+                // height={bottomSpacer}
                 friendTheme={friendTheme}
                 label={buttonTitle}
                 labelColor={

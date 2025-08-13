@@ -7,6 +7,7 @@ import React, {
   useMemo,
   ReactNode,
   useState,
+  useRef,
 } from "react";
 import { useUser } from "./UserContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -56,6 +57,8 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
 
   const queryClient = useQueryClient();
 
+    const timeoutRef = useRef(null);
+
   const {
     data: categories,
     isLoading,
@@ -69,6 +72,8 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 
+
+  
   useEffect(() => {
     if (isSuccess && categories) {
       //   console.log('resetting user categories', categories);
@@ -135,10 +140,27 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
         console.log(oldData.map((cat) => (cat.id === data.id ? data : cat)));
         return oldData.map((cat) => (cat.id === data.id ? data : cat));
       });
+
+            if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        updateCategoryMutation.reset();
+      }, 1000);
+
+
     },
 
     onError: (error) => {
       console.error("Update app categories error:", error);
+                  if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        updateCategoryMutation.reset();
+      }, 1000);
     },
   });
 

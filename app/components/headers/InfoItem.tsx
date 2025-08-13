@@ -4,9 +4,11 @@ import ModalInfoText from "./ModalInfoText";
 
 type Props = {
   infoText: string;
+    fontSize: number;
+  lineHeight: number;
 };
 
-const InfoItem = ({ infoText = "text here" }: Props) => {
+const InfoItem = ({ infoText = "text here", fontSize=17, lineHeight=22 }: Props) => {
   return (
     <View
       style={{
@@ -14,7 +16,7 @@ const InfoItem = ({ infoText = "text here" }: Props) => {
         flexDirection: "row",
       }}
     >
-      <ModalInfoText infoText={infoText} />
+      <ModalInfoText infoText={infoText} fontSize={fontSize} lineHeight={lineHeight} />
     </View>
   );
 };

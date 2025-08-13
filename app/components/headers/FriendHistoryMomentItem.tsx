@@ -73,7 +73,7 @@ const FriendHistoryMomentItem = ({
                   zIndex: 40000,
                   elevation: 40000,
                 }}
-                onPress={onHelloPress(item.hello)}
+                onPress={onHelloPress(item.hello, item.original_id)}
               >
                 <MaterialCommunityIcons
                   // name="hand-wave-outline"

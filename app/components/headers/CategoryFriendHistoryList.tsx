@@ -65,8 +65,12 @@ const CategoryFriendHistoryList = ({
   }, [categoryHistory]);
 
   const handlePress = useCallback(
-    (helloId) => () => { 
-      onViewHelloPress(helloId);
+    (helloId, momentOriginalId) => () => { 
+      if (onViewHelloPress) {
+        
+      onViewHelloPress(helloId, momentOriginalId);
+      
+      }
     }, 
     [onViewHelloPress]
   );
