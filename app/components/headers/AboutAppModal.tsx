@@ -60,12 +60,12 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               Thank you for downloading!
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               Hellofriend is an IRL-meet-up assistant that lets you store notes
               (moments) to share with friends ahead of meeting up with them. It
               generates suggestions for meet-up dates and helps you decide
@@ -74,18 +74,18 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
           </View>
 
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, themeStyles.subHeaderText]}>
+            <Text style={[styles.headerText]}>
               What is a 'Moment'?
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               A moment is literally any thought or idea you want to share with
               your friend the next time you see them.
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               Specifically, it refers to those moments when something reminds us
               of a person who has the audacity to not be anywhere near us at the
               time for us to tell them. These types of moments can accumulate
@@ -95,36 +95,36 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
           </View>
 
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               This app was born out of a desire to see less of these
               so-very-human moments lost.
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               That sounds all deep and stuff, but a moment can be as serious or
               as silly as you'd like!
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               Simply: a moment is a gift.
             </Text>
           </View>
 
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, themeStyles.subHeaderText]}>
+            <Text style={[styles.headerText]}>
               I can just text them my 'Moments'.
             </Text>
           </View>
 
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               Absolutely! Any form of connection is great!!
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               And, while you CAN log digital 'meet-ups' as well -- this app is
               ultimately intended for helping encourage and facilitate in-person
               interactions. For the people in our lives we especially want to
@@ -133,23 +133,23 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               It is also for those of us who WANT to meet up in person more but
               get DANG ANXIOUS about the logistics (hint: me!).
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               It is also for adults who are busy or timeblind.
             </Text>
           </View>
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, themeStyles.subHeaderText]}>
+            <Text style={[styles.headerText]}>
               How can this app help me pick locations?
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               Hellofriend can: search and save locations, pin favorite locations
               to individual friend dashboards, calculate the difference in
               travel times between you and your friend for any given location,
@@ -159,30 +159,30 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
             </Text>
           </View>
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, themeStyles.subHeaderText]}>
+            <Text style={[styles.headerText]}>
               Anything special about the images feature?
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               You can take and store pictures with the app itself, keeping them
               separate from gallery on your phone and avoiding clutter/making
               retrieval easier, if you struggle with this sort of thing.
             </Text>
           </View>
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, themeStyles.subHeaderText]}>
+            <Text style={[styles.headerText]}>
               To log a meet-up... 'add Hello'?
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               Yes! There is no in-app reward for completing the goal, but it's
               how the app knows when to generate a new suggested date.
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               (The app will also simply regenerate if you miss a date. They are
               just suggestions. Missing them means absolutely nothing to the
               app. It will not count against you in any way.)
@@ -190,23 +190,23 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
           </View>
 
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, themeStyles.subHeaderText]}>
+            <Text style={[styles.headerText]}>
               These names are kinda dumb.
             </Text>
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               Sorry! I like them.
             </Text>
           </View>
           <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, themeStyles.subHeaderText]}>
+            <Text style={[styles.headerText]}>
               One last thing. Why the lizard?
             </Text>
           </View>
 
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               During a somewhat lonely time in my life, a lil gecko would come
               visit my window every night while I was studying and hang out
               there upside down for hours, and I would say 'hello, friend!'.
@@ -214,7 +214,7 @@ const AboutAppModal: React.FC<AboutAppModalProps> = ({
           </View>
 
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, themeStyles.primaryText]}>
               Never quite got the image out of my head.
             </Text>
           </View>
@@ -240,11 +240,13 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontWeight: "bold",
+      fontFamily: 'Poppins-Bold',
     fontSize: 18,
     lineHeight: 30,
   },
   text: {
     fontSize: 14,
+    fontFamily: 'Poppins-Regular',
     lineHeight: 21,
   },
 });

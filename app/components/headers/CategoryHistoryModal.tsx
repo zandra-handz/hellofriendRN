@@ -24,9 +24,7 @@ const CategoryHistoryModal: React.FC<Props> = ({
 
   const { stats } = useUserStats();
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState(0);
-
-  const [quickView, setQuickView] = useState<null | ItemViewProps>(null);
-
+ 
   useEffect(() => {
     if (categoryId && stats) {
       const matchedCategoryStats = stats.find(

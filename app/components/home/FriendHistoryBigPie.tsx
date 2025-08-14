@@ -1,6 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
-import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
+import React, { useEffect, useState } from "react"; 
 import Pie from "../headers/Pie";
 import CategoryFriendHistoryModal from "../headers/CategoryFriendHistoryModal";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -12,64 +11,39 @@ type Props = {
 
   radius: number;
   labelsSize: number;
-  onLongPress: (categoryId: number | null) => void;
+ 
   showFooterLabel: boolean;
 };
 
-const FriendCategoryHistoryChart = ({
+const FriendHistoryBigPie = ({
   friendData,
-  listData,
+ 
   showPercentages = false,
   radius = 80,
   labelsSize = 9,
   showLabels = true,
-  onLongPress,
+  seriesData,
+ 
   showFooterLabel,
-}: Props) => {
-  //  console.log(`listdata in friendhistorychart chart`, listData);
-  const [friendHistorySortedList, setFriendHistorySortedList] = useState([]);
+}: Props) => {  
   const [historyModalVisible, setHistoryModalVisible] = useState(false);
   const { themeStyles } = useGlobalStyle();
   const [viewCategoryId, setViewCategoryId] = useState(null);
   const [viewCategoryName, setViewCategoryName] = useState(null);
-  const [friendHistoryHasAnyCapsules, setFriendHistoryHasAnyCapsules] =
-    useState(false);
-  const { categoryHistorySizes } = useStatsSortingFunctions({
-    listData: listData,
-  });
-
-  useEffect(() => {
-    if (listData) {
-      // console.log(`LIST DATA`, listData);
-      let categories = categoryHistorySizes();
-
-      setFriendHistorySortedList(categories.sortedList);
-      setFriendHistoryHasAnyCapsules(categories.hasAnyCapsules);
-    }
-  }, [listData]);
-
+ 
+ 
+ 
   const handleCategoryPress = (categoryId, categoryName) => {
     setViewCategoryId(categoryId);
-    setViewCategoryName(categoryName);
-    // handleGetCategoryCapsules(categoryId);
+    setViewCategoryName(categoryName); 
     setHistoryModalVisible(true);
     console.log(`category ${categoryId} -- ${categoryName} pressed!`);
   };
 
-  //   useFocusEffect(
-  //     useCallback(() => {
-  //       if (!userStats || userStats?.length < 1) {
-  //         return;
-  //       }
-
-  //       let categories = categoryHistorySizes();
-  //         console.log(categories);
-  //       setUserHistorySortedList(categories.sortedList);
-  //     }, [])
-  //   );
+ 
   return (
     <>
-      {friendHistorySortedList && friendHistoryHasAnyCapsules && (
+   
         <View
           style={{
             height: "100%",
@@ -79,12 +53,12 @@ const FriendCategoryHistoryChart = ({
           }}
         >
           <Pie
+          seriesData={seriesData}
             showPercentages={showPercentages}
             showLabels={showLabels}
-            data={friendHistorySortedList}
+        
             widthAndHeight={radius * 2}
-            labelsSize={labelsSize}
-            // onSectionPress={() => console.log("hi!")}
+            labelsSize={labelsSize} 
             onSectionPress={handleCategoryPress}
           />
           {showFooterLabel && (
@@ -100,7 +74,7 @@ const FriendCategoryHistoryChart = ({
             </View>
           )}
         </View>
-      )}
+ 
       {historyModalVisible &&
         viewCategoryId &&
         viewCategoryName &&
@@ -120,4 +94,4 @@ const FriendCategoryHistoryChart = ({
   );
 };
 
-export default FriendCategoryHistoryChart;
+export default FriendHistoryBigPie;

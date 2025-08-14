@@ -1,25 +1,19 @@
-import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Modal, Pressable, Text, Image } from "react-native";
+import React, {
+  useEffect,
+  useState,
+  useRef, 
+  useCallback,
+} from "react";
+import { StyleSheet, View, Modal } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, {
-  SharedValue,
-  SlideInLeft,
-  SlideOutRight,
-  FadeIn,
   FadeInUp,
   FadeOutUp,
-  SlideInUp,
-  SlideOutDown,
-  FadeOutDown,
   useSharedValue,
-  useAnimatedStyle,
-  useAnimatedReaction,
+  useAnimatedStyle, 
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
-import ModalBarBack from "../buttons/scaffolding/ModalBarBack";
-import GlobalPressable from "../appwide/button/GlobalPressable";
 import TreeModalBigButton from "./TreeModalBigButton";
 import HelpButton from "./HelpButton";
 import QuickView from "./QuickView";
@@ -29,7 +23,7 @@ import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
   isVisible: boolean;
-  isFullscreen?: boolean; 
+  isFullscreen?: boolean;
   children: React.ReactElement;
   borderRadius?: number;
   contentPadding?: number;
@@ -43,10 +37,9 @@ interface Props {
   infoItem?: React.ReactElement;
   helperMessageText?: string;
   helpModeTitle: string;
-    quickView?: ItemViewProps | null; // set modal data in parent, render from this component to keep above footer button like helper message
-    nullQuickView?: () => void;
-  }
-
+  quickView?: ItemViewProps | null; // set modal data in parent, render from this component to keep above footer button like helper message
+  nullQuickView?: () => void;
+}
 
 const ModalScaleLikeTree: React.FC<Props> = ({
   isVisible,
@@ -55,19 +48,17 @@ const ModalScaleLikeTree: React.FC<Props> = ({
   buttonTitle = "",
   children,
   borderRadius = 40,
-  contentPadding = 10,
   bottomSpacer = 0,
   rightSideButtonItem,
   friendTheme,
   infoItem,
   helperMessageText = "helper message goes here",
   helpModeTitle = "Help mode",
-    quickView,
+  quickView,
   nullQuickView,
   onClose,
 }) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  // const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
@@ -107,18 +98,19 @@ const ModalScaleLikeTree: React.FC<Props> = ({
     return { opacity: opacityAnim.value };
   });
 
-  // const formHeight = 610;
-  // const headerHeight = "auto";
-  // const buttonHeight = 50;
-  // const headerSpacing = 10;
-  // const headerPaddingTop = 10;
+  // Add these near the top, after your useState hooks
+  const handleHelpButtonPress = useCallback(() => {
+    setHelperMessage({
+      text: `${helperMessageText}`,
+      error: false,
+    });
+  }, [helperMessageText]);
 
   useEffect(() => {
     if (internalIsVisible) {
       xAnim.value = withTiming(0, { duration: 280 });
       scaleAnim.value = withTiming(1, { duration: 200 });
       scaleWidthAnim.value = withDelay(100, withTiming(1, { duration: 200 }));
-      //   opacityAnim.value = withDelay(300, withTiming(1, { duration: 300 })); //withDelay value works with durations of two lines above
 
       opacityAnim.value = withTiming(1, { duration: 300 }); //withDelay value works with durations of two lines above
     }
@@ -133,15 +125,9 @@ const ModalScaleLikeTree: React.FC<Props> = ({
     }
   }, [internalIsVisible]);
 
-  return (
-    <>
-      <Modal
-        transparent={!isFullscreen}
-        visible={isVisible}
-        style={{}}
-        //   style={modalAnimationStyle}
-        animationType="slide"
-      >
+  const handleRenderHelperMessage = useCallback(() => {
+    return (
+      <>
         {helperMessage && (
           <HelperMessage
             isInsideModal={true}
@@ -151,8 +137,13 @@ const ModalScaleLikeTree: React.FC<Props> = ({
             onClose={() => setHelperMessage(null)}
           />
         )}
+      </>
+    );
+  }, [helperMessage, setHelperMessage]);
 
-        
+  const handleRenderQuickView = useCallback(() => {
+    return (
+      <>
         {quickView && (
           <QuickView
             topBarText={quickView.topBarText}
@@ -163,19 +154,24 @@ const ModalScaleLikeTree: React.FC<Props> = ({
             onClose={nullQuickView}
           />
         )}
-        <Animated.View
-          style={[
-            modalAnimationStyle,
-            styles.modalContainer,
+      </>
+    );
+  }, [quickView, nullQuickView]);
 
-            {
-              //   marginBottom: bottomSpacer,
-              //   borderColor:
-              //     themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-              //   borderRadius: borderRadius,
-            },
-          ]}
-        >
+  return (
+    <>
+      <Modal
+        transparent={!isFullscreen}
+        visible={isVisible}
+        style={{}}
+        //   style={modalAnimationStyle}
+        animationType="slide"
+      >
+        {handleRenderHelperMessage()}
+
+        {handleRenderQuickView()}
+
+        <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
           <Animated.View //if you put padding here it will affect the info item
             style={[
               styles.modalContent,
@@ -184,7 +180,6 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                 borderColor:
                   themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
                 borderRadius: borderRadius,
-                // backgroundColor: 'yellow',
               },
             ]}
           >
@@ -196,9 +191,6 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                   flex: 1,
                   flexDirection: "column",
                   justifyContent: "space-between",
-
-                  // padding: contentPadding,
-                  // paddingBottom: contentPadding * 1.7,
                 },
               ]}
             >
@@ -217,9 +209,6 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                       borderRadius: 30,
                       borderTopLeftRadius: 0,
                       borderTopRightRadius: 0,
-                      //borderWidth: StyleSheet.hairlineWidth,
-                      //  backgroundColor: "red",
-                      //  borderColor: manualGradientColors.lightColor,
                       padding: 30,
                       paddingTop: 18,
                       paddingBottom: 26,
@@ -228,23 +217,13 @@ const ModalScaleLikeTree: React.FC<Props> = ({
                         themeStyles.lighterOverlayBackgroundColor
                           .backgroundColor,
 
-                      // marginBottom: 0,
-                      //  backgroundColor: "orange",
-
                       alignItems: "center",
                       height: "auto",
-                      //  height: 100,
                     }}
                   >
                     {infoItem}
-                    <HelpButton
-                      onPress={() =>
-                        setHelperMessage({
-                          text: `${helperMessageText}`,
-                          error: false,
-                        })
-                      }
-                    />
+
+                    <HelpButton onPress={handleHelpButtonPress} />
                   </Animated.View>
                 )}
               </View>
@@ -300,19 +279,14 @@ const styles = StyleSheet.create({
     minHeight: 200, // Minimum height to prevent collapse
     height: "auto",
     flex: 1,
-    //flexGrow: 1,
-
     borderWidth: 2,
     alignItems: "center",
     backgroundColor: "white", // Ensure it's visible
     flexDirection: "column",
     justifyContent: "space-between",
-
-    // overflow: 'hidden',
   },
   bodyContainer: {
     flex: 1,
-    // paddingBottom: 10,
 
     textAlign: "left",
   },

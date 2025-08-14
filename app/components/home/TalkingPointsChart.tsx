@@ -1,25 +1,20 @@
 import { View, Text, Pressable } from "react-native";
-import React, { useCallback, useState, useEffect, useRef } from "react";
+import React, { useCallback, useState, useEffect, useRef, useMemo } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
- 
+
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import {  Ionicons } from "@expo/vector-icons";
 import Donut from "../headers/Donut";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { AppState, AppStateStatus } from "react-native";
-import FriendHistorySmallChart from "./FriendHistorySmallChart";
-import UserHistorySmallChart from "./UserHistorySmallChart";
+import FriendHistoryPieDataWrap from "./FriendHistoryPieDataWrap";
+import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap";
 import { useFriendList } from "@/src/context/FriendListContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
-import CategoryDetailsModal from "../headers/CategoryDetailsModal";
-
-// import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
-
 import { useCategories } from "@/src/context/CategoriesContext";
-// import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
 
 type Props = {
   selectedFriend: boolean;
@@ -27,17 +22,20 @@ type Props = {
 };
 
 const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
-  const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
- 
+  const { themeStyles, appFontStyles } = useGlobalStyle();
+
   const { navigateToMoments, navigateToMomentFocus } = useAppNavigations();
   const { capsuleList } = useCapsuleList();
-  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const { themeAheadOfLoading } = useFriendList();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
-  const [colors, setColors] = useState<string[]>([]);
+  // const [colors, setColors] = useState<string[]>([]);
   const { userCategories } = useCategories();
 
   const [showHistory, setShowHistory] = useState(false);
+
+  const toggleShowHistory = useCallback(() => {
+  setShowHistory(prev => !prev);
+}, []);
 
   const appState = useRef(AppState.currentState);
   const SMALL_CHART_RADIUS = 30;
@@ -69,10 +67,9 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
     return () => subscription.remove(); // cleanup
   }, [capsuleList]);
 
-  const { categorySizes, generateGradientColors, generateRandomColors } =
-    useMomentSortingFunctions({
-      listData: capsuleList,
-    });
+  const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
+    listData: capsuleList,
+  });
 
   const HEIGHT = 420;
   const PADDING = 20;
@@ -89,33 +86,22 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
 
-  const [viewCategoryId, setViewCategoryId] = useState(null);
+  const handleMomentScreenScrollTo = useCallback(
+    (categoryId) => {
+      if (categoryId) {
+        navigateToMoments({ scrollTo: categoryId });
+      }
+    },
+    [navigateToMoments]
+  );
 
-  const handleSetCategoryDetailsModal = (categoryId) => {
-    if (!categoryId) {
-      return;
-    }
-    setViewCategoryId(categoryId);
-    setDetailsModalVisible(true);
-  };
+  const handleMomentScreenNoScroll = useCallback(() => {
+    navigateToMoments({ scrollTo: null });
+  }, [navigateToMoments]);
 
-  const handleMomentScreenScrollTo = (categoryId) => {
-    if (!categoryId) {
-      return;
-    }
-    navigateToMoments({scrollTo: categoryId});
-    // navigation.navigate("Moments", { scrollTo: categoryId });
-  };
-
-  const handleMomentScreenNoScroll = () => {
- 
-    navigateToMoments({scrollTo: null});
-    // navigation.navigate("Moments", { scrollTo: null });
-  };
-
-  const handleNavigateToCreateNew = () => {
-    navigateToMomentFocus({screenCameFrom: 1});
-  };
+  const handleNavigateToCreateNew = useCallback(() => {
+    navigateToMomentFocus({ screenCameFrom: 1 });
+  }, [navigateToMomentFocus]);
 
   useFocusEffect(
     useCallback(() => {
@@ -124,7 +110,13 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
       }
 
       let categories = categorySizes();
-      setTempCategoriesSortedList(categories.sortedList);
+      // setTempCategoriesSortedList(categories.sortedList);
+      if (
+        JSON.stringify(categories.sortedList) !==
+        JSON.stringify(tempCategoriesSortedList)
+      ) {
+        setTempCategoriesSortedList(categories.sortedList);
+      }
     }, [capsuleList])
   );
 
@@ -133,37 +125,39 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
       setCategoryColors(
         generateGradientColors(
           userCategories,
-          // manualGradientColors.lightColor,
           themeAheadOfLoading.lightColor,
-          //  manualGradientColors.homeDarkColor
           themeAheadOfLoading.darkColor
         )
       );
-      //         setCategoryColors(
-      //     generateRandomColors(
-      //       userCategories
-      //     )
-      //   );
     }
   }, [userCategories, themeAheadOfLoading]);
 
-  useEffect(() => {
-    if (categoryColors && tempCategoriesSortedList) {
-      const userCategorySet = new Set(
-        tempCategoriesSortedList.map((item) => item.user_category)
-      );
+  // useEffect(() => {
+  //   if (categoryColors && tempCategoriesSortedList) {
+  //     const userCategorySet = new Set(
+  //       tempCategoriesSortedList.map((item) => item.user_category)
+  //     );
 
-      const filteredColors = categoryColors
-        .filter((item) => userCategorySet.has(item.user_category))
-        .map((item) => item.color);
-      setColors(filteredColors);
-    }
-  }, [categoryColors, tempCategoriesSortedList]);
+  //     const filteredColors = categoryColors
+  //       .filter((item) => userCategorySet.has(item.user_category))
+  //       .map((item) => item.color);
+  //     setColors(filteredColors);
+  //   }
+  // }, [categoryColors, tempCategoriesSortedList]);
+
+
+  const colors = useMemo(() => {
+  if (!categoryColors || !tempCategoriesSortedList) return [];
+  const userCategorySet = new Set(tempCategoriesSortedList.map(item => item.user_category));
+  return categoryColors
+    .filter(item => userCategorySet.has(item.user_category))
+    .map(item => item.color);
+}, [categoryColors, tempCategoriesSortedList]);
 
   return (
     <>
       <Pressable
-        onPress={() => setShowHistory((prev) => !prev)}
+        onPress={toggleShowHistory}
         style={{
           height: 30,
           paddingHorizontal: PADDING,
@@ -172,29 +166,34 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
           elevation: 20000,
           top: 370,
           right: 0,
-          alignItems: 'center',
+          alignItems: "center",
           width: "100%",
-          flexDirection: 'row',
+          flexDirection: "row",
         }}
       >
         <Ionicons
-          name={!showHistory ? "pie-chart" : 'close'}
+          name={!showHistory ? "pie-chart" : "close"}
           size={30}
           color={themeStyles.primaryText.color}
         />
         {!showHistory && (
-          
-        <Text style={[themeStyles.primaryText, {fontFamily: 'Poppins-Regular', fontSize: 13}]}>
-          {"   "}category history
-        </Text>
-        
+          <Text
+            style={[
+              themeStyles.primaryText,
+              { fontFamily: "Poppins-Regular", fontSize: 13 },
+            ]}
+          >
+            {"   "}category history
+          </Text>
         )}
       </Pressable>
       <View
         style={[
           {
             overflow: "hidden",
-            height: !showHistory ? HEIGHT : HEIGHT + (SMALL_CHART_RADIUS * 2 + SMALL_CHART_BORDER * 2),
+            height: !showHistory
+              ? HEIGHT
+              : HEIGHT + (SMALL_CHART_RADIUS * 2 + SMALL_CHART_BORDER * 2),
             flexGrow: 1,
             flex: 1,
             padding: PADDING,
@@ -211,32 +210,11 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
             width: "100%",
             alignItems: "center",
             justifyContent: "space-between",
-
-            // backgroundColor: 'orange',
-           // marginBottom: outerPadding,
+ 
           }}
         >
           <View style={{ flexDirection: "row" }}>
-            {/* <MaterialCommunityIcons
-            // name="comment-edit-outline"
-            //  name="heart-multiple-outline"
-            name="head-heart"
-            // name="heart-flash"
-            // name="graph"
-            size={20}
-            color={themeStyles.primaryText.color}
-            style={{ marginBottom: 0 }}
-          /> */}
-            {/* <Text
-            style={[
-              themeStyles.primaryText,
-              {
-                marginLeft: 6,
-                marginRight: 12,
-                fontWeight: "bold",
-              },
-            ]}
-          > */}
+  
             <Text
               style={[
                 {
@@ -263,7 +241,7 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
         >
           <Donut
             onCategoryPress={handleMomentScreenScrollTo}
-            onCategoryLongPress={handleSetCategoryDetailsModal}
+            // onCategoryLongPress={handleSetCategoryDetailsModal}
             onCenterPress={handleMomentScreenNoScroll}
             onPlusPress={handleNavigateToCreateNew}
             radius={CHART_RADIUS}
@@ -284,9 +262,9 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-             // backgroundColor: themeStyles.primaryBackground.backgroundColor,
+              // backgroundColor: themeStyles.primaryBackground.backgroundColor,
               width: "100%",
-              bottom:0,
+              bottom: 0,
               // backgroundColor: 'teal',
               height: SMALL_CHART_RADIUS * 2 + SMALL_CHART_BORDER * 2,
             }}
@@ -308,7 +286,7 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
               >
                 History{"  "}
               </Text>
-              <FriendHistorySmallChart
+              <FriendHistoryPieDataWrap
                 chartBorder={SMALL_CHART_BORDER}
                 chartBorderColor={themeStyles.primaryBackground.backgroundColor}
                 showLabels={false}
@@ -325,7 +303,7 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
               All time{"  "}
             </Text>
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-              <UserHistorySmallChart
+              <UserHistoryPieDataWrap
                 chartBorder={SMALL_CHART_BORDER}
                 chartBorderColor={themeStyles.primaryBackground.backgroundColor}
                 showLabels={false}
@@ -336,15 +314,6 @@ const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
         )}
 
         {/* <View style={{ width: "100%", height: 10 }}></View> */}
-        {detailsModalVisible && (
-          <View>
-            <CategoryDetailsModal
-              isVisible={detailsModalVisible}
-              closeModal={() => setDetailsModalVisible(false)}
-              categoryId={viewCategoryId}
-            />
-          </View>
-        )}
       </View>
     </>
   );

@@ -1,11 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Modal, Pressable, Text, Image } from "react-native";
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import { StyleSheet, View, Modal } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, {
-  SharedValue,
-  SlideInLeft,
-  SlideOutRight,
-  FadeIn,
+ 
   FadeInUp,
   FadeOutUp,
   SlideInUp,
@@ -17,10 +14,6 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
-import ModalBarBack from "../buttons/scaffolding/ModalBarBack";
-import GlobalPressable from "../appwide/button/GlobalPressable";
-import TreeModalBigButton from "./TreeModalBigButton";
 import ListViewModalBigButton from "./ListViewModalBigButton";
 import HelpButton from "./HelpButton";
 import QuickView from "./QuickView";
@@ -59,7 +52,6 @@ const ModalListWithView: React.FC<Props> = ({
   buttonTitle = "",
   children,
   borderRadius = 40,
-  contentPadding = 10,
   bottomSpacer = 0,
   rightSideButtonItem,
   friendTheme,
@@ -74,7 +66,6 @@ const ModalListWithView: React.FC<Props> = ({
   secondInfoItem,
 }) => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  // const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
@@ -132,25 +123,9 @@ const ModalListWithView: React.FC<Props> = ({
     }
   }, [internalIsVisible]);
 
-  return (
-    <>
-      <Modal
-        transparent={!isFullscreen}
-        visible={isVisible}
-        style={{}}
-        //   style={modalAnimationStyle}
-        animationType="slide"
-      >
-        {helperMessage && (
-          <HelperMessage
-            isInsideModal={true}
-            topBarText={helpModeTitle}
-            message={helperMessage.text}
-            error={helperMessage.error}
-            onClose={() => setHelperMessage(null)}
-          />
-        )}
-
+  const handleRenderQuickView = useCallback(() => {
+    return (
+      <>
         {quickView && (
           <QuickView
             topBarText={quickView.topBarText}
@@ -161,7 +136,31 @@ const ModalListWithView: React.FC<Props> = ({
             onClose={nullQuickView}
           />
         )}
-                {textInputView && (
+      </>
+    );
+  }, [quickView, nullQuickView]);
+
+  const handleRenderHelperMessage = useCallback(() => {
+    return (
+      <>
+        {helperMessage && (
+          <HelperMessage
+            isInsideModal={true}
+            topBarText={helpModeTitle}
+            message={helperMessage.text}
+            error={helperMessage.error}
+            onClose={() => setHelperMessage(null)}
+          />
+        )}
+      </>
+    );
+  }, [helperMessage, setHelperMessage]);
+
+
+    const handleRenderTextInputView = useCallback(() => {
+    return (
+      <>
+        {textInputView && (
           <TextInputView
             topBarText={textInputView.topBarText}
             isInsideModal={true}
@@ -171,19 +170,28 @@ const ModalListWithView: React.FC<Props> = ({
             onClose={nullTextInputView}
           />
         )}
-        <Animated.View
-          style={[
-            modalAnimationStyle,
-            styles.modalContainer,
+      </>
+    );
+  }, [textInputView, nullTextInputView]);
 
-            {
-              //   marginBottom: bottomSpacer,
-              //   borderColor:
-              //     themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
-              //   borderRadius: borderRadius,
-            },
-          ]}
-        >
+  return (
+    <>
+      <Modal
+        transparent={!isFullscreen}
+        visible={isVisible}
+        style={{}}
+        //   style={modalAnimationStyle}
+        animationType="slide"
+      >
+        {handleRenderHelperMessage()}
+
+        {handleRenderQuickView()}
+
+        {handleRenderTextInputView()}
+
+
+
+        <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
           <Animated.View //if you put padding here it will affect the info item
             style={[
               styles.modalContent,
@@ -192,7 +200,6 @@ const ModalListWithView: React.FC<Props> = ({
                 borderColor:
                   themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
                 borderRadius: borderRadius,
-                // backgroundColor: 'yellow',
               },
             ]}
           >
@@ -204,9 +211,6 @@ const ModalListWithView: React.FC<Props> = ({
                   flex: 1,
                   flexDirection: "column",
                   justifyContent: "space-between",
-
-                  // padding: contentPadding,
-                  // paddingBottom: contentPadding * 1.7,
                 },
               ]}
             >
@@ -224,9 +228,6 @@ const ModalListWithView: React.FC<Props> = ({
                       borderRadius: 30,
                       borderTopLeftRadius: 0,
                       borderTopRightRadius: 0,
-                      //borderWidth: StyleSheet.hairlineWidth,
-                      //  backgroundColor: "red",
-                      //  borderColor: manualGradientColors.lightColor,
                       padding: 30,
                       paddingTop: 18,
                       paddingBottom: 26,
@@ -356,7 +357,6 @@ const styles = StyleSheet.create({
   },
   bodyContainer: {
     flex: 1,
-    // paddingBottom: 10,
 
     textAlign: "left",
   },
@@ -369,7 +369,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     justifyContent: "center",
     width: "100%",
-    // height: "8%",
     alignItems: "center",
   },
 });

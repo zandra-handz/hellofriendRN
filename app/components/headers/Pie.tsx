@@ -1,94 +1,92 @@
-import { View,   StyleSheet  } from "react-native";
-import React, {   useMemo } from "react";
- 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { View, StyleSheet } from "react-native";
+import React from "react";
+
+// import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+// import { useFriendList } from "@/src/context/FriendListContext";
 
 import AnimatedPieChart from "./AnimatedPieChart";
-const Pie = ({ data, showPercentages = false, showLabels=true, widthAndHeight=50, labelsSize=9, onSectionPress=null, onLongSectionPress=null }) => {
-    const { manualGradientColors, themeStyles } = useGlobalStyle();
-    const { themeAheadOfLoading } = useFriendList();
+
+type Props = {
  
-// console.log('pie component rerendered, size: ', widthAndHeight);
+  showPercentages: boolean,
+  showLabels: boolean;
+  widthAndHeight: number;
 
-//   console.log(`sortedListLength: `, data.length);
-//   console.log(data);
-  // const [seriesData, setSeriesData ] = useState([]);
-
-
-
-  const generateGradientColors = (count) => {
-  const hexToRgb = (hex) => hex.match(/\w\w/g).map((c) => parseInt(c, 16));
-  const rgbToHex = (rgb) =>
-    '#' + rgb.map((c) => c.toString(16).padStart(2, '0')).join('');
-
-  const start = hexToRgb(manualGradientColors.darkColor);
-  const end = hexToRgb(themeAheadOfLoading.darkColor);
-
-  return Array.from({ length: count }, (_, i) => {
-    const t = i / Math.max(count - 1, 1);
-    const interpolated = start.map((s, j) =>
-      Math.round(s + (end[j] - s) * t)
-    );
-    return rgbToHex(interpolated);
-  });
 };
 
+const Pie = ({
+ 
+  showPercentages = false,
+  showLabels = true,
+  widthAndHeight = 50,
+  labelsSize = 9,
+  onSectionPress = null,
+ 
+  seriesData,
+  // onLongSectionPress = null,
+}) => {
+  // const { manualGradientColors, themeStyles } = useGlobalStyle();
+  // const { themeAheadOfLoading } = useFriendList();
 
-  const seriesData = useMemo(() => {
-    if (!data) {
-      return;
-    }
+ 
+//   const colors = useMemo(() => {
+//   if (!data) return [];
 
-    const dataCountList = data.filter((item) => Number(item.size) > 0);
-    // console.log('new count: ', dataCountList.length);
+//   const count = data.filter((item) => Number(item.size) > 0).length;
+//   const hexToRgb = (hex) => hex.match(/\w\w/g).map((c) => parseInt(c, 16));
+//   const rgbToHex = (rgb) =>
+//     "#" + rgb.map((c) => c.toString(16).padStart(2, "0")).join("");
 
-    let colors = generateGradientColors(dataCountList.length);
-    if (!colors) {
-        return;
-    }
-    let series = [];
-    series = dataCountList.map((item, index) => ({
-      ...item, 
-      label: { text: item.name.slice(0,4), fontFamily: 'Poppins-Regular', color: themeStyles.primaryText.color, fontSize: labelsSize },
-       
-      color: colors[index],
-    }));
+//   const start = hexToRgb(manualGradientColors.darkColor);
+//   const end = hexToRgb(themeAheadOfLoading.darkColor);
 
-    // console.log(typeof series);
+//   return Array.from({ length: count }, (_, i) => {
+//     const t = i / Math.max(count - 1, 1);
+//     const interpolated = start.map((s, j) =>
+//       Math.round(s + (end[j] - s) * t)
+//     );
+//     return rgbToHex(interpolated);
+//   });
+// }, [data, manualGradientColors.darkColor, themeAheadOfLoading.darkColor]);
 
-    return series;
-  }, [data]);
+ 
+
+//   const seriesData = useMemo(() => {
+//   if (!data) return;
+
+//   const dataCountList = data.filter((item) => Number(item.size) > 0);
+//   return dataCountList.map((item, index) => ({
+//     ...item,
+//     label: {
+//       text: item.name.slice(0, 4),
+//       fontFamily: "Poppins-Regular",
+//       color: themeStyles.primaryText.color,
+//       fontSize: labelsSize,
+//     },
+//     color: colors[index],
+//   }));
+// }, [data, colors, themeStyles.primaryText.color, labelsSize]);
 
 
-
-
-
-//   console.log(seriesData);
-
-  // const handleGetSlices = () => {
-  //     let newArray = [];
-  // newArray = data.map((item, index) =>
-  // ...item,
-  //  value = item.size,
-  // color = colorList[index],
-
-   
  
   return (
-    // <ScrollView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        {/* <PieChart widthAndHeight={widthAndHeight} series={seriesData} /> */}
-        <AnimatedPieChart data={seriesData} showLabels={showLabels} showPercentages={showPercentages} labelsSize={labelsSize} size={widthAndHeight} radius={widthAndHeight / 2} onSectionPress={onSectionPress} onLongSectionPress={onLongSectionPress} />
-
-       
-      </View>
-    // </ScrollView>
+    <View style={styles.container}>
+      <AnimatedPieChart
+        data={seriesData}
+        showLabels={showLabels}
+        showPercentages={showPercentages}
+        labelsSize={labelsSize}
+        size={widthAndHeight}
+        radius={widthAndHeight / 2}
+        onSectionPress={onSectionPress ? onSectionPress : null}
+        // onLongSectionPress={onLongSectionPress}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center"},
+  container: { flex: 1, alignItems: "center" },
   title: { fontSize: 24, margin: 10 },
 });
 

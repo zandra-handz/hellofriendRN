@@ -37,7 +37,7 @@ import Animated, {
 } from "react-native-reanimated";
 import GradientBackground from "../appwide/display/GradientBackground";
 import CategoryDetailsModal from "./CategoryDetailsModal";
-import PieChartModal from "./PieChartModal";
+import UserHistoryModal from "./UserHistoryModal";
 
 const UserCategorySelector = ({
   onPress,
@@ -580,7 +580,7 @@ const UserCategorySelector = ({
       )}
       {pieChartModalVisible && (
         <View>
-          <PieChartModal
+          <UserHistoryModal
             isVisible={pieChartModalVisible}
             closeModal={() => setPieChartModalVisible(false)}
             data={tempCategoriesSortedList}

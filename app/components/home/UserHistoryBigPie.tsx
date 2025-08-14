@@ -11,63 +11,38 @@ type Props = {
   showPercentages: boolean;
   radius: number;
   labelsSize: number;
-  onLongPress: () => void;
+  // onLongPress: () => void;
   showFooterLabel: boolean;
 };
 
-const UserCategoryHistoryChart = ({
+const UserHistoryBigPie = ({
+  data,
+  seriesData,
   listData,
   showLabels = true,
   showPercentages = false,
   radius = 80,
   labelsSize = 9,
-  onLongPress,
+ 
   showFooterLabel = true,
 }: Props) => {
-  // console.log(`listdata in usercategoryhistory chart`, listData);
-  const [userHistorySortedList, setUserHistorySortedList] = useState([]);
+ 
   const [historyModalVisible, setHistoryModalVisible] = useState(false);
   const { themeStyles } = useGlobalStyle();
   const [viewCategoryId, setViewCategoryId] = useState(null);
   const [viewCategoryName, setViewCategoryName] = useState(null);
-  const [userHistoryHasAnyCapsules, setUserHistoryHasAnyCapsules] =
-    useState(false);
-  const { categoryHistorySizes } = useStatsSortingFunctions({
-    listData: listData,
-  });
-
-  useEffect(() => {
-    if (listData) {
-      //  console.log(`LIST DATA`, listData);
-      let categories = categoryHistorySizes();
-
-      setUserHistorySortedList(categories.sortedList);
-      setUserHistoryHasAnyCapsules(categories.hasAnyCapsules);
-    }
-  }, [listData]);
+ 
 
   const handleCategoryPress = (categoryId, categoryName) => {
     setViewCategoryId(categoryId);
-    setViewCategoryName(categoryName);
-    // handleGetCategoryCapsules(categoryId);
+    setViewCategoryName(categoryName); 
     setHistoryModalVisible(true);
     console.log(`category ${categoryId} -- ${categoryName} pressed!`);
   };
 
-  //   useFocusEffect(
-  //     useCallback(() => {
-  //       if (!userStats || userStats?.length < 1) {
-  //         return;
-  //       }
-
-  //       let categories = categoryHistorySizes();
-  //         console.log(categories);
-  //       setUserHistorySortedList(categories.sortedList);
-  //     }, [])
-  //   );
+ 
   return (
-    <>
-      {userHistorySortedList && userHistoryHasAnyCapsules && (
+    <> 
         <View
           style={{
             height: "100%",
@@ -77,13 +52,14 @@ const UserCategoryHistoryChart = ({
           }}
         >
           <Pie
+          seriesData={seriesData}
             showPercentages={showPercentages}
             showLabels={showLabels}
-            data={userHistorySortedList}
+      
             widthAndHeight={radius * 2}
             labelsSize={labelsSize}
             onSectionPress={handleCategoryPress}
-            onLongSectionPress={onLongPress}
+    
           />
           {showFooterLabel && (
             <View style={{}}>
@@ -98,7 +74,7 @@ const UserCategoryHistoryChart = ({
             </View>
           )}
         </View>
-      )}
+    
       {historyModalVisible && viewCategoryId && viewCategoryName && (
         <View>
           <CategoryHistoryModal
@@ -113,4 +89,4 @@ const UserCategoryHistoryChart = ({
   );
 };
 
-export default UserCategoryHistoryChart;
+export default UserHistoryBigPie;

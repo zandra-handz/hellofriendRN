@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import {  StyleSheet } from "react-native";
+import React, { useState } from "react"; 
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
   
