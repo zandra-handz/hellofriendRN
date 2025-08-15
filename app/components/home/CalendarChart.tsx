@@ -1,19 +1,28 @@
 import { View, Text, Pressable } from "react-native";
-import React, { useState } from "react";
-import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
+import React, { useState  } from "react"; 
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MonthModal from "../headers/MonthModal";
-import PlainSafeView from "../appwide/format/PlainSafeView";
+// import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+// import useHelloesManips from "@/src/hooks/useHelloesManips";
+// import { useHelloes } from "@/src/context/HelloesContext";
 
-type Props = {
-  selectedFriend: boolean;
+type Props = { 
   outerPadding: DimensionValue;
+  combinedData: any;
 };
 
-const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
+const CalendarChart = ({   outerPadding=10, combinedData }: Props) => {
+
+    // const { helloesList } = useHelloes();
+    // const { selectedFriend } = useSelectedFriend();
+  
+  //  const reversedHelloesList = Array.isArray(helloesList) ? [...helloesList].reverse() : [];
+  //   const { helloesListMonthYear, monthsInRange } = useHelloesManips({helloesData: reversedHelloesList});
+  
+       
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
 
@@ -29,6 +38,32 @@ const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
     setMonthModalVisible(true);
 
   };
+  console.warn('calendarChart rerendered');
+
+  //   const combineMonthRangeAndHelloesDates = (months, helloes) => {
+  //   if (months && helloes) {
+  //     // console.warn(helloes);
+  //     return months.map((month) => {
+  //       const helloData =
+  //         helloes.find((hello) => hello.monthYear === month.monthYear) || null;
+  
+  //       return {
+  //         monthData: month,
+  //         helloData,
+  //       };
+  //     });
+  //   }
+  //   return []; // Return an empty array if months or helloes is undefined/null
+  // };
+ 
+  // const combinedData = useMemo(() => {
+  //   if (monthsInRange && helloesListMonthYear) {
+  //     return (
+  //       combineMonthRangeAndHelloesDates(monthsInRange, helloesListMonthYear)
+  //     )
+  //   }
+
+  // }, [monthsInRange, helloesListMonthYear]);
 
   return (
     <>
@@ -89,15 +124,16 @@ const CalendarChart = ({ selectedFriend, outerPadding }: Props) => {
           </Text>
         </Pressable>
       </View>
-      {selectedFriend && (
+   
         <HomeScrollCalendarLights
         onMonthPress={handleMonthPress}
+        combinedData={combinedData}
           itemColor={themeStyles.primaryText.color}
           backgroundColor={themeStyles.overlayBackgroundColor.backgroundColor}
           height={70}
           borderRadius={20}
         />
-      )}
+  
       <View style={{ width: "100%", height: 10 }}></View>
       
     </View>

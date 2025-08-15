@@ -43,13 +43,13 @@ const QuickView = ({
   
   useEffect(() => {
     fade.value = 1;
-    scale.value = withTiming(1, { duration: 300 }); 
-    translateX.value = withDelay(100, withTiming(1, { duration: 200 }))
+    scale.value = withTiming(1, { duration: 200 }); 
+    translateX.value = withDelay(100, withTiming(1, { duration: 100 }))
   }, [update]);
 
   const handleManualClose = () => {
        translateX.value = withTiming(-600, { duration: 40 })
-    scale.value = withTiming(0, { duration: 300 }, (finished) => {
+    scale.value = withTiming(0, { duration: 200 }, (finished) => {
       if (finished) {
         runOnJS(onClose)(); 
       }
@@ -67,9 +67,9 @@ const QuickView = ({
 
   }));
 
-  useEffect(() => {
-    console.log("change in update in flashmessage:", update);
-  }, [update]);
+  // useEffect(() => {
+  //   console.log("change in update in quickmessage:", update);
+  // }, [update]);
 
     const insets = useSafeAreaInsets();
 
@@ -218,4 +218,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QuickView;
+// export default QuickView;
+export default React.memo(QuickView, (prevProps, nextProps) => {
+  return (
+    prevProps.message === nextProps.message &&
+    prevProps.view === nextProps.view &&
+    prevProps.isInsideModal === nextProps.isInsideModal &&
+    prevProps.update === nextProps.update &&
+    prevProps.duration === nextProps.duration &&
+    prevProps.topBarText === nextProps.topBarText &&
+    prevProps.onClose === nextProps.onClose
+  );
+});

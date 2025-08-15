@@ -208,4 +208,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HelperMessage;
+// export default HelperMessage;
+export default React.memo(HelperMessage, (prevProps, nextProps) => {
+  // Only re-render if relevant props change
+  return (
+    prevProps.message === nextProps.message &&
+    prevProps.isInsideModal === nextProps.isInsideModal &&
+    prevProps.update === nextProps.update &&
+    prevProps.topBarText === nextProps.topBarText &&
+    prevProps.duration === nextProps.duration &&
+    prevProps.onClose === nextProps.onClose
+  );
+});

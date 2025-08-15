@@ -211,33 +211,27 @@ export default Sentry.wrap(function App() {
                   <UserStatsProvider>
                     <UpcomingHelloesProvider>
                       <FriendListProvider>
-                        <SelectedFriendProvider>
-                          {/* <PhoneStatusBar /> */}
+                        <SelectedFriendProvider> 
                           <CapsuleListProvider>
-                            <DeviceLocationProvider>
-                              <LocationsProvider>
-                                <HelloesProvider>
-                                  <FriendLocationsProvider>
-                                    <SelectedFriendStatsProvider>
-                                      <MessageContextProvider>
-                                        <SafeAreaProvider>
-                                          <RootSiblingParent>
-                                            {/* <SafeView  // in screen components instead
-                                style={{
-                                  flex: 1,
-                                  backgroundColor: "transparent",
-                                }}
-                              > */}
+                            <LocationsProvider>
+                              <HelloesProvider>
+                                <FriendLocationsProvider>
+                                  <SelectedFriendStatsProvider>
+                                    <MessageContextProvider>
+                                      <SafeAreaProvider>
+                                        <RootSiblingParent>
+                                          <DeviceLocationProvider>
+                            
                                             <Layout />
-                                          </RootSiblingParent>
-                                          {/* </SafeView> */}
-                                        </SafeAreaProvider>
-                                      </MessageContextProvider>
-                                    </SelectedFriendStatsProvider>
-                                  </FriendLocationsProvider>
-                                </HelloesProvider>
-                              </LocationsProvider>
-                            </DeviceLocationProvider>
+                                          </DeviceLocationProvider>
+                                        </RootSiblingParent> 
+                                      </SafeAreaProvider>
+                                    </MessageContextProvider>
+                                  </SelectedFriendStatsProvider>
+                                </FriendLocationsProvider>
+                              </HelloesProvider>
+                            </LocationsProvider>
+                            {/* </DeviceLocationProvider> */}
                           </CapsuleListProvider>
                         </SelectedFriendProvider>
                       </FriendListProvider>

@@ -225,7 +225,7 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
                   height: "100%",
                   justifyContent: "flex-start",
                   height: 200,
-                  backgroundColor: "orange",
+                  // backgroundColor: "orange",
                   width: "100%",
                 }}
               >
@@ -240,7 +240,7 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
                     style={{
                       width: "100%",
                       height: 200,
-                      backgroundColor: "red",
+                      //   backgroundColor: "red",
                     }}
                   >
                     <FlatList

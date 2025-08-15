@@ -15,11 +15,9 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
-import useCurrentLocation from "@/src/hooks/useCurrentLocation";
-import { useFocusEffect } from "@react-navigation/native";
+ 
 import { useRoute } from "@react-navigation/native";
-import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
-
+ 
 import useMenues from "@/src/hooks/useMenues";
 
 const ScreenLocationSearch = () => {

@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState, useEffect } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
+
 import {
   Pressable,
   Text,
@@ -8,15 +9,17 @@ import {
   DimensionValue,
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, useAnimatedStyle, useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
-import CalendarChart from "./CalendarChart"; 
+import CalendarChart from "./CalendarChart";
 import TalkingPointsChart from "./TalkingPointsChart";
-import Pics from "./Pics"; 
+import Pics from "./Pics";
 import SuggestedHello from "./SuggestedHello";
+import useHelloesManips from "@/src/hooks/useHelloesManips";
+import { useHelloes } from "@/src/context/HelloesContext";
 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
@@ -35,25 +38,73 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
     appFontStyles,
   } = useGlobalStyle();
 
-  const headerRef = useRef(null);
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const handleScroll = (event) => {
-    if (headerRef.current) {
-      headerRef.current.measure((x, y, width, height, pageX, pageY) => {
-        const scrollY = event.nativeEvent.contentOffset.y;
-        // Adjust threshold based on when you consider it "out of view"
-        const isVisible = pageY - scrollY >= 0;
-        setIsHeaderVisible(isVisible);
+      const { helloesList } = useHelloes();
+
+
+     const reversedHelloesList = Array.isArray(helloesList) ? [...helloesList].reverse() : [];
+      const { helloesListMonthYear, monthsInRange } = useHelloesManips({helloesData: reversedHelloesList});
+    
+         
+    const combineMonthRangeAndHelloesDates = (months, helloes) => {
+    if (months && helloes) {
+      // console.warn(helloes);
+      return months.map((month) => {
+        const helloData =
+          helloes.find((hello) => hello.monthYear === month.monthYear) || null;
+  
+        return {
+          monthData: month,
+          helloData,
+        };
       });
     }
+    return []; // Return an empty array if months or helloes is undefined/null
   };
 
-  useEffect(() => {
-    if (!isHeaderVisible) {
-      console.log("Header scrolled out of view");
-      // trigger animation, collapse UI, etc.
+        const combinedData = useMemo(() => {
+          if (monthsInRange && helloesListMonthYear) {
+            return (
+              combineMonthRangeAndHelloesDates(monthsInRange, helloesListMonthYear)
+            )
+          }
+      
+        }, [monthsInRange, helloesListMonthYear]);
+      
+
+  const headerRef = useRef(null); 
+  const handleScroll = (event) => {
+    if (!headerRef.current) return;
+
+    headerRef.current.measure((x, y, width, height, pageX, pageY) => {
+      const scrollY = event.nativeEvent.contentOffset.y;
+      const isVisibleNow = pageY - scrollY >= 0;
+      if (isVisibleNow !== true) {
+        smallHeaderVisibility.value = withTiming(1, {duration: 300});
+      //   setIsHeaderVisible(isVisibleNow);
+      } else {
+          smallHeaderVisibility.value = withTiming(0, {duration: 20});
+      }
+    });
+  };
+
+  const smallHeaderVisibility = useSharedValue(0);
+
+  const smallHeaderAnimationStyle = useAnimatedStyle(() => {
+    return {
+      opacity: smallHeaderVisibility.value,
     }
-  }, [isHeaderVisible]);
+
+  });
+
+  // useEffect(() => {
+  //   if (!isHeaderVisible) {
+  //     console.log("Header scrolled out of view");
+  //     // trigger animation, collapse UI, etc.
+  //   }
+  // }, [isHeaderVisible]);
+
+
+
   const PADDING_HORIZONTAL = 4;
 
   const spacerAroundCalendar = 10;
@@ -61,7 +112,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const {
     selectedFriend,
     friendLoaded,
-    friendDashboardData,
+ 
     isPending,
     isLoading,
     loadingNewFriend,
@@ -76,20 +127,16 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   // const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
   const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
   const SELECTED_FRIEND_CARD_PADDING = 20;
+
+  const MemoCalendarChart = React.memo(CalendarChart);
+  const MemoTalkingPointsChart = React.memo(TalkingPointsChart);
+  const MemoPics = React.memo(Pics);
  
-  // useEffect(() => {
-  //   if (selectedFriend) {
-  //     fetchCompletedMomentsAPI(selectedFriend.id);
-
-  //   }
-
-  // }, [selectedFriend]);
 
   const navigateToMoments = () => {
     navigation.navigate("Moments", { scrollTo: null });
   };
 
- 
   const navigateToAddMoment = () => {
     navigation.navigate("MomentFocus");
   };
@@ -146,11 +193,12 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               paddingBottom: 0, // change this to change were the bottom fadingEdge of scrollview starts
             }}
           >
-            {!isHeaderVisible && (
+            {/* {!isHeaderVisible && ( */}
+        
               <Animated.View
-                entering={FadeIn.duration(200)}
-                exiting={FadeOut.duration(200)}
-                style={{
+                // entering={FadeIn.duration(200)}
+                // exiting={FadeOut.duration(200)}
+                style={[smallHeaderAnimationStyle, {
                   position: "absolute",
                   width: "100%",
                   top: 0,
@@ -160,7 +208,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     themeStyles.primaryBackground.backgroundColor,
                   zIndex: 5000,
                   elevation: 5000,
-                }}
+                }]}
               >
                 <Text
                   style={[
@@ -171,7 +219,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   {selectedFriend.name}
                 </Text>
               </Animated.View>
-            )}
+            {/* )} */}
             <ScrollView
               onScroll={handleScroll}
               scrollEventThrottle={16}
@@ -220,7 +268,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     height={SELECTED_FRIEND_CARD_HEIGHT}
                     borderRadius={borderRadius}
                   />
-                   
                 )}
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
@@ -235,15 +282,17 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     outerPadding={spacerAroundCalendar}
                   />
                 </View>
-                
-                {!loadingNewFriend && (
+
+                {!loadingNewFriend && combinedData && (
                   <View style={{ marginVertical: 3 }}>
                     <CalendarChart
-                      selectedFriend={!!selectedFriend}
-                      outerPadding={spacerAroundCalendar}
+                    combinedData={combinedData}
+                    // selectedFriend={!!selectedFriend}
+                    // outerPadding={spacerAroundCalendar}
                     />
                   </View>
                 )}
+
                 <View style={{ width: "100%", height: 130 }}></View>
               </View>
             </ScrollView>

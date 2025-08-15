@@ -5,11 +5,12 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import CalendarLightsDataPrepLayer from "../foranimations/CalendarLightsDataPrepLayer";
-import LoadingPage from "../appwide/spinner/LoadingPage";
+ 
 
 const HomeScrollCalendarLights = ({
   itemColor,
   onMonthPress,
+  combinedData,
   backgroundColor,
   height,
   borderRadius = 20,
@@ -28,11 +29,12 @@ const HomeScrollCalendarLights = ({
       onMonthPress={onMonthPress}
         daySquareBorderRadius={20}
         daySquareBorderColor={itemColor}
+        combinedData={combinedData}
         opacityMinusAnimation={0.2}
         animationColor={themeAheadOfLoading.lightColor}
       />
     ),
-    [friendDashboardData, themeAheadOfLoading, themeStyles, itemColor]
+    [friendDashboardData, themeAheadOfLoading, itemColor]
   );
 
   return (
@@ -48,7 +50,7 @@ const HomeScrollCalendarLights = ({
         },
       ]}
     >
-      {isLoading && !upcomingHelloes && (
+      {/* {isLoading && !upcomingHelloes && (
         <View style={styles.loadingWrapper}>
           <LoadingPage
             loading={isLoading}
@@ -59,7 +61,7 @@ const HomeScrollCalendarLights = ({
             spinnerType={themeStyleSpinners?.homeScreen}
           />
         </View>
-      )}
+      )} */}
       {!isLoading && (
         <>
           <View style={styles.headerContainer}></View>

@@ -12,7 +12,7 @@ type Props = {
 };
 
 const useHelloesManips = ({ helloesData }: Props) => {
-  console.log("HELLOES DATA IN MANIP: ", helloesData);
+  // console.log("HELLOES DATA IN MANIP: ", helloesData);
 
   const flattenHelloes = useMemo(() => {
     if (helloesData && helloesData.length > 0) {

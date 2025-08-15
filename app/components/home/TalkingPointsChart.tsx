@@ -23,7 +23,7 @@ type Props = {
 
 const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
-
+console.warn('talking points rerendered');
   const { navigateToMoments, navigateToMomentFocus } = useAppNavigations();
   const { capsuleList } = useCapsuleList();
   const { themeAheadOfLoading } = useFriendList();

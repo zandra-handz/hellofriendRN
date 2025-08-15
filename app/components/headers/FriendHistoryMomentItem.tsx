@@ -68,7 +68,7 @@ const FriendHistoryMomentItem = ({
               <GlobalPressable
                 hitSlop={20}
                 style={{
-                  backgroundColor: "red",
+                 // backgroundColor: "red",
                   padding: 20,
                   zIndex: 40000,
                   elevation: 40000,
@@ -84,9 +84,9 @@ const FriendHistoryMomentItem = ({
                 />
               </GlobalPressable>
             </View>
-            <Text style={[styles.momentItemText, themeStyles.primaryText]}>
+            {/* <Text style={[styles.momentItemText, themeStyles.primaryText]}>
               {item.time_score}
-            </Text>
+            </Text> */}
             <Text style={[styles.momentItemText, themeStyles.primaryText]}>
               {item.capsule}
             </Text>
