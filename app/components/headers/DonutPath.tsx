@@ -44,13 +44,7 @@ const DonutPath = ({
     return withTiming(sum + gap, {
       duration: 1000,
     });
-  });
-
-  // const start = useDerivedValue(() => {
-  //   const slice = decimalsValue.value.slice(0, index);
-  //   const sum = slice.reduce((acc, v) => acc + v, 0);
-  //   return withTiming(sum + index * gap, { duration: 1000 });
-  // });
+  }); 
 
   const end = useDerivedValue(() => {
     if (index === decimalsValue.value.length - 1) {
@@ -63,14 +57,7 @@ const DonutPath = ({
     return withTiming(sum, {
       duration: 1000,
     });
-  });
-
-
-//   const end = useDerivedValue(() => {
-//   const slice = decimalsValue.value.slice(0, index + 1);
-//   const sum = slice.reduce((acc, v) => acc + v, 0);
-//   return withTiming(sum + (index + 1) * gap, { duration: 1000 });
-// });
+  }); 
 
   return (
     <Path

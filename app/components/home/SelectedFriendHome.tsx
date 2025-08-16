@@ -269,6 +269,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     borderRadius={borderRadius}
                   />
                 )}
+                
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
                     selectedFriend={!!selectedFriend}

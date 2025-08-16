@@ -1,68 +1,159 @@
-// import { Canvas, Path } from "@shopify/react-native-skia";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
+import {
+  Group,
+  Path,
+  usePathValue,
+  processTransform2d,
+ 
+} from "@shopify/react-native-skia";
+import {
+  useSharedValue,
+  useDerivedValue,
+  withTiming,
+  withDelay,
+  Easing,
+  runOnJS,
+} from "react-native-reanimated"; 
 
-// const accountPath = "M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z" 
+// const leafPath =
+//   "M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z";
 
-// export default function LeafPath({ count, x, y, size, color }) {
-//   return (
-//     // <Canvas style={{ flex: 1 }}>
-//       <Path
-//         path={accountPath}
-//         color={'red'}
-//         style="fill"
-//         transform={[
-//           { translateX: x },
-//           { translateY: y },
-//           { scale: size / 24 } // 24 is the default icon viewbox size
-//         ]}
-//       />
-//     // </Canvas>
-//   );
-// }
+import { Skia } from "@shopify/react-native-skia";
 
-import React from "react";
-import { Canvas, Group, Path } from "@shopify/react-native-skia";
-import { useSharedValue, useDerivedValue } from "react-native-reanimated";
+function LeafInstance({
+  leafPath,
+  x,
+  y,
+  size,
+  index,
+  color,
+}: {
+  leafPath: SkPath;
+  x: number;
+  y: number;
+  size: number;
+  index: number;
+  color: string;
+}) {
+  const scale = useSharedValue(0);
+ 
+  useEffect(() => {
+    scale.value = withDelay(
+      index * 120, 
+      withTiming((index + 1) * 0.5, {
+        duration: 500,
+        easing: Easing.out(Easing.exp),
+      })
+    );
+  }, []);
+ 
+  const clip = usePathValue((path) => {
+    "worklet";
+    path.transform(processTransform2d([{ scale: scale.value }]));
+  }, leafPath);
 
-const leafPath =
-  "M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z";
+  return (
+    <Path
+      path={clip}
+      color={color}
+      style="fill"
+      transform={[{ translateX: x }, { translateY: y }, { scale: size }]}
+    />
+  );
+}
 
 interface LeafPathProps {
   count: ReturnType<typeof useSharedValue>; // Reanimated shared value
   centerX: number;
   centerY: number;
-  radius: number;
-  size: number;
-  color: string;
+  radius: number; 
+  colors: string[]; // not sure h/o
 }
 
-export default function LeafPath({ count, centerX, centerY, radius, size, color }: LeafPathProps) {
-  // Derived value that computes leaf positions from the shared value
-  const positions = useDerivedValue(() => {
-    const arr: { x: number; y: number }[] = [];
-    const n = Math.floor(count.value);
-    for (let i = 0; i < n; i++) {
-      const angle = (i / n) * Math.PI * 2;
-      arr.push({
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle),
-      });
-    }
-    return arr;
-  }, [count]);
+export default function LeafPath({
+  count,
+  categoryTotals,
+  categoryStops,
+  decimals,
+  centerX,
+  centerY,
+  radius, 
+  colors,
+}: LeafPathProps) {
+  const leafPath = Skia.Path.MakeFromSVGString(
+    "M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"
+  );
 
+  const scale = useSharedValue(0);
+ 
+  const [positionsJS, setPositionsJS] = useState([]);
+ 
+  useDerivedValue(() => {
+    if (!count || !categoryTotals || !decimals || decimals?.value?.length < 1) {
+        runOnJS(setPositionsJS)([]);
+      return;
+    }
+    const arr: { x: number; y: number }[] = [];
+
+    const n = Math.floor(categoryTotals.value);
+
+    const boxSize = radius * 2; // max distance from center
+    const columns = Math.ceil(Math.sqrt(n - 1)); // leave one for center
+    const rows = Math.ceil((n - 1) / columns);
+
+    for (let i = 0; i < n; i++) {
+      const decSize = decimals.value[i];
+
+      if (i === 0) {
+        // first leaf in center
+        arr.push({
+          x: centerX - (decSize * 10),
+          y: centerY,
+          size: decSize * 10,
+          color: colors[0],
+        });
+      } else {
+        const index = i - 1; // adjust for center leaf
+        const col = index % columns;
+        const row = Math.floor(index / columns);
+
+        // evenly spread inside box around center
+        const offsetX = ((col + 0.5) / columns - 0.5) * boxSize * 2;
+        const offsetY = ((row + 0.5) / rows - 0.5) * boxSize * 2;
+
+        arr.push({
+          x: centerX + offsetX,
+          y: centerY + offsetY,
+          size: decSize * 10,
+          color: colors[i]
+        });
+      }
+
+      // animate each one in with stagger
+      scale.value = withDelay(
+        i * 120,
+        withTiming((i + 1) * 0.5, {
+          duration: 100,
+          easing: Easing.out(Easing.exp),
+        })
+      );
+    }
+
+    runOnJS(setPositionsJS)(arr);
+  }, [count, categoryTotals, decimals, colors]);
+ 
   return (
-    <Group>
-      {positions.value?.map((p, i) => (
-        <Path
+    <Group blendMode="multiply">
+      {positionsJS?.map((p, i) => (
+        <LeafInstance
           key={i}
-          path={leafPath}
-          color={color}
-          style="fill"
-          transform={[
-            { translateX: p.x },
-            { translateY: p.y },
-            { scale: size / 24 },
-          ]}
+          leafPath={leafPath}
+          x={p.x}
+          y={p.y}
+          size={p.size}
+          index={i}
+          color={p.color}
         />
       ))}
     </Group>

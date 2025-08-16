@@ -14,25 +14,38 @@ import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap";
 import { useFriendList } from "@/src/context/FriendListContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
+import Demo from "../headers/SkiaDemo";
 import { useCategories } from "@/src/context/CategoriesContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
 type Props = {
   selectedFriend: boolean;
   outerPadding: DimensionValue;
 };
 
-const TalkingPointsChart = ({ selectedFriend, outerPadding }: Props) => {
+const TalkingPointsChart = ({ outerPadding }: Props) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
-console.warn('talking points rerendered');
-  const { navigateToMoments, navigateToMomentFocus } = useAppNavigations();
+ 
+  const { navigateToMoments, navigateToMomentView, navigateToMomentFocus } = useAppNavigations();
   const { capsuleList } = useCapsuleList();
   const { themeAheadOfLoading } = useFriendList();
+  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
+  
+  const {   categoryStartIndices } = useTalkingPCategorySorting({
+    listData: capsuleList,
+  });
   // const [colors, setColors] = useState<string[]>([]);
   const { userCategories } = useCategories();
 
   const [showHistory, setShowHistory] = useState(false);
+  const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
+    listData: capsuleList,
+  });
 
+  const categories = categorySizes();
+  console.warn(`caegrgioergrfevd`,categories);
   const toggleShowHistory = useCallback(() => {
   setShowHistory(prev => !prev);
 }, []);
@@ -56,7 +69,7 @@ console.warn('talking points rerendered');
             return;
           }
 
-          let categories = categorySizes();
+          // let categories = categorySizes();
           setTempCategoriesSortedList(categories.sortedList);
         }
 
@@ -67,9 +80,7 @@ console.warn('talking points rerendered');
     return () => subscription.remove(); // cleanup
   }, [capsuleList]);
 
-  const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
-    listData: capsuleList,
-  });
+
 
   const HEIGHT = 420;
   const PADDING = 20;
@@ -86,13 +97,23 @@ console.warn('talking points rerendered');
 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
 
-  const handleMomentScreenScrollTo = useCallback(
-    (categoryId) => {
-      if (categoryId) {
-        navigateToMoments({ scrollTo: categoryId });
+  // const handleMomentScreenScrollTo = useCallback(
+  //   (categoryId) => {
+  //     if (categoryId) {
+  //       navigateToMoments({ scrollTo: categoryId });
+  //     }
+  //   },
+  //   [navigateToMoments]
+  // );
+
+    const handleMomentViewScrollTo = useCallback(
+    (categoryLabel) => {
+      if (categoryLabel && categoryStartIndices) {
+ 
+        navigateToMomentView({ index: categoryStartIndices[categoryLabel] });
       }
     },
-    [navigateToMoments]
+    [navigateToMomentView, categoryStartIndices]
   );
 
   const handleMomentScreenNoScroll = useCallback(() => {
@@ -103,13 +124,13 @@ console.warn('talking points rerendered');
     navigateToMomentFocus({ screenCameFrom: 1 });
   }, [navigateToMomentFocus]);
 
-  useFocusEffect(
+  useEffect(
     useCallback(() => {
       if (!capsuleList || capsuleList?.length < 1) {
         return;
-      }
+      } 
 
-      let categories = categorySizes();
+      // let categories = categorySizes();
       // setTempCategoriesSortedList(categories.sortedList);
       if (
         JSON.stringify(categories.sortedList) !==
@@ -117,7 +138,7 @@ console.warn('talking points rerendered');
       ) {
         setTempCategoriesSortedList(categories.sortedList);
       }
-    }, [capsuleList])
+    }, [capsuleList, categories])
   );
 
   useEffect(() => {
@@ -132,30 +153,26 @@ console.warn('talking points rerendered');
     }
   }, [userCategories, themeAheadOfLoading]);
 
-  // useEffect(() => {
-  //   if (categoryColors && tempCategoriesSortedList) {
-  //     const userCategorySet = new Set(
-  //       tempCategoriesSortedList.map((item) => item.user_category)
-  //     );
-
-  //     const filteredColors = categoryColors
-  //       .filter((item) => userCategorySet.has(item.user_category))
-  //       .map((item) => item.color);
-  //     setColors(filteredColors);
-  //   }
-  // }, [categoryColors, tempCategoriesSortedList]);
+ 
 
 
   const colors = useMemo(() => {
-  if (!categoryColors || !tempCategoriesSortedList) return [];
-  const userCategorySet = new Set(tempCategoriesSortedList.map(item => item.user_category));
+  if (!categoryColors || !categories?.sortedList || categories?.sortedList.length < 1) return [];
+ 
+ 
+  const userCategorySet = new Set(categories.sortedList.map(item => item.user_category));
   return categoryColors
     .filter(item => userCategorySet.has(item.user_category))
     .map(item => item.color);
-}, [categoryColors, tempCategoriesSortedList]);
+}, [categoryColors, categories]);
 
   return (
     <>
+    {/* <View style={{width: '100%', height: 100, }}>
+      
+    <Demo />
+    
+    </View> */}
       <Pressable
         onPress={toggleShowHistory}
         style={{
@@ -239,9 +256,10 @@ console.warn('talking points rerendered');
             height: "74%",
           }}
         >
+       
+            
           <Donut
-            onCategoryPress={handleMomentScreenScrollTo}
-            // onCategoryLongPress={handleSetCategoryDetailsModal}
+            onCategoryPress={handleMomentViewScrollTo} 
             onCenterPress={handleMomentScreenNoScroll}
             onPlusPress={handleNavigateToCreateNew}
             radius={CHART_RADIUS}
@@ -251,13 +269,15 @@ console.warn('talking points rerendered');
             labelsSize={LABELS_SIZE}
             labelsDistanceFromCenter={LABELS_DISTANCE_FROM_CENTER}
             labelsSliceEnd={LABELS_SLICE_END}
-            data={tempCategoriesSortedList}
+            data={categories?.sortedList || []}
             colors={colors}
             centerTextSize={CENTER_TEXT_SIZE}
           />
+          
+        
         </View>
 
-        {showHistory && (
+        {showHistory && selectedFriend && !loadingNewFriend && (
           <View
             style={{
               flexDirection: "row",
@@ -312,8 +332,7 @@ console.warn('talking points rerendered');
             </View>
           </View>
         )}
-
-        {/* <View style={{ width: "100%", height: 10 }}></View> */}
+ 
       </View>
     </>
   );

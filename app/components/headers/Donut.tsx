@@ -9,7 +9,7 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import { useSharedValue, withTiming } from "react-native-reanimated";
+import { useSharedValue, withTiming, useDerivedValue  } from "react-native-reanimated";
 
 import DonutChart from "./DonutChart";
 import { useFont } from "@shopify/react-native-skia";
@@ -51,13 +51,14 @@ const Donut = ({
   labelsSliceEnd = 1,
   centerTextSize = 26,
 }: Props) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { themeStyles  } = useGlobalStyle();
  
   // console.log(`colors in donut: `, colors);
+  //   console.log(`data in donut: `, data);
 const { themeAheadOfLoading } = useFriendList();
   const { calculatePercentage } = useMomentSortingFunctions(data);
   const totalValue = useSharedValue(0);
-  const decimalsValue = useSharedValue<number[]>([]);
+  const decimalsValue = useSharedValue<number[]>([]); 
   const labelsValue = useSharedValue<string[]>([]);
   // const [ labelsJS, setLabelsJS ] = useState([]);
 
@@ -91,6 +92,7 @@ const { themeAheadOfLoading } = useFriendList();
   // const GAP = 0.05;
 
   const getPieChartDataMetrics = (data) => {
+    // console.warn(`DATA TO MAKE SERIES DATA: `, data);
     const total = data.reduce(
       (acc, currentValue) => acc + currentValue.size,
       0
@@ -100,8 +102,6 @@ const { themeAheadOfLoading } = useFriendList();
       name: item.name,
       user_category: item.user_category,
     }));
-
-    // const percentages = data.map((item) => (item.size / total) * 100);
     const percentages = calculatePercentage(data, total);
 
     const decimals = percentages.map(
@@ -124,35 +124,74 @@ const { themeAheadOfLoading } = useFriendList();
     const dataCountList = data.filter((item) => Number(item.size) > 0);
     const { total, labels, percentages, decimals } =
       getPieChartDataMetrics(dataCountList);
-
-    // const series = dataCountList.map((item, index) => ({
-    //   ...item,
-    //   label: {
-    //     text: item.name,
-    //     fontFamily: "Poppins-Regular",
-    //     fontSize: labelSize,
-    //     color: "transparent",
-    //   },
-    //   color: colors[index],
-    //   percentage: percentages[index],
-    // }));
-
+ 
     return {
-      // series,
+    
       labels,
       total,
       decimals,
+      percentages,
     };
   }, [data, colors]); //, labelSize]);
+ 
+  const categoryStopsValue = useSharedValue<number[]>([]);
+
+// useEffect(() => {
+//   if (!seriesData) return;
+
+//   // cumulative totals per category
+//   let cumulative = 0;
+//   const categoryCounts = seriesData.decimals.map(d => {
+//     const count = Math.round(seriesData.total * d);
+//     cumulative += count;
+//     return cumulative;
+//   });
+
+//   console.log(`~~~~~~~~~~~~~!@#$%~~~~~~~~~~~`, seriesData, categoryCounts);
+//   // Animate to these new totals
+//   categoryTotals.value = withTiming(categoryCounts, { duration: 1000 });
+// }, [seriesData]);
 
   // ⬇ useEffect to set shared values
   useEffect(() => {
     if (!seriesData) return;
     totalValue.value = withTiming(seriesData.total, { duration: 1000 });
+    
     decimalsValue.value = [...seriesData.decimals];
-    labelsValue.value = [...seriesData.labels];
-    // setLabelsJS(seriesData.labels);
+   labelsValue.value = [...seriesData.labels];
+
+
+  let cumulative = 0;
+  const categoryCounts = seriesData.decimals.map(d => {
+    const count = Math.round(seriesData.total * d);
+    cumulative += count;
+    return cumulative;
+  });
+
+  // console.log(`~~~~~~~~~~~~~!@#$%~~~~~~~~~~~`, seriesData, categoryCounts);
+  // Animate to these new totals
+  categoryStopsValue.value = categoryCounts; 
+
+  
+
+ 
   }, [seriesData]);
+
+
+  const categoryTotals = useDerivedValue(() => {
+  if (!categoryStopsValue.value || categoryStopsValue.value.length === 0) return 0;
+
+  const total = Math.ceil(totalValue.value); // round up to match “current item”
+  
+  for (let i = 0; i < categoryStopsValue.value.length; i++) {
+    if (total <= categoryStopsValue.value[i]) {
+      return i + 1; // +1 because categories start at 1
+    }
+  }
+
+  return categoryStopsValue.value.length; // fallback to last category
+});
+ 
 
   const font = useFont(
     require("@/app/assets/fonts/Poppins-Regular.ttf"),
@@ -196,6 +235,8 @@ const { themeAheadOfLoading } = useFriendList();
           strokeWidth={STROKE_WIDTH}
           outerStrokeWidth={OUTER_STROKE_WIDTH}
           totalValue={totalValue}
+          categoryTotals={categoryTotals}
+          categoryStopsValue={categoryStopsValue}
           font={font}
           smallFont={smallFont}
           color={fontColor}
@@ -203,7 +244,7 @@ const { themeAheadOfLoading } = useFriendList();
           backgroundColor={backgroundColor}
           n={n}
           gap={GAP}
-          decimalsValue={decimalsValue}
+          decimalsValue={decimalsValue} 
           labelsValue={labelsValue}
           // labelsJS={labelsJS} // using derived value internally
           colors={colors}

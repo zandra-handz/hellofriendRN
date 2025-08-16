@@ -11,7 +11,7 @@ type Props = {
   label: string;
 };
 
-const EscortBarMinusWidth = ({ onPress, label = "navigator" }: Props) => {
+const EscortBarMinusWidth = ({ onPress, label = "categories" }: Props) => {
   const { navigateBack } = useAppNavigations();
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   return (

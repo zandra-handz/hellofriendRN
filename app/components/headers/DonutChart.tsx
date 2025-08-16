@@ -5,6 +5,7 @@ import {
   useDerivedValue,
   useSharedValue,
   runOnJS,
+  useAnimatedReaction,
 } from "react-native-reanimated";
 import {
   BlurMaskFilterProps,
@@ -13,6 +14,9 @@ import {
   SkFont,
   Skia,
   Text,
+  Rect,
+  
+  vec,
 } from "@shopify/react-native-skia";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import DonutPath from "./DonutPath";
@@ -44,6 +48,7 @@ type Props = {
   labelsValue: SharedValue<object[]>;
   labelsJS: object[];
   decimalsValue: SharedValue<number[]>;
+  categoryStopsValue: SharedValue<number[]>;
   colors: string[];
   labelsSize: number;
   labelsDistanceFromCenter: number;
@@ -64,9 +69,11 @@ const DonutChart = ({
   font,
   smallFont,
   totalValue,
+  categoryStopsValue,
   n,
   gap,
   decimalsValue,
+  categoryTotals,
   labelsValue,
   colors,
   labelsSize,
@@ -102,7 +109,7 @@ const DonutChart = ({
     if (lastRoundedValue.value !== rounded) {
       lastRoundedValue.value = rounded;
       runOnJS(setTotalJS)(totalSnapshot);
-      console.warn(`total value`, totalSnapshot);
+      // console.warn(`total value`, totalSnapshot);
     }
   }, [totalValue]);
   // useDerivedValue(() => {
@@ -119,7 +126,10 @@ const DonutChart = ({
     []
   );
   // console.log(`n in donut chart: `, n);
-
+  const targetCategories = useDerivedValue(
+    () => `${Math.round(categoryTotals.value)}`,
+    []
+  );
   const fontSize = font.measureText("$0");
   // const smallFontSize = smallFont.measureText("Total");
 
@@ -155,8 +165,7 @@ const DonutChart = ({
 
     return (
       <Pressable
-        onPress={() => onCategoryPress(categoryLabel)}
-        onLongPress={() => onCategoryLongPress(categoryId)}
+        onPress={() => onCategoryPress(categoryLabel)} 
         key={index}
         style={({ pressed }) => [
           {
@@ -190,58 +199,7 @@ const DonutChart = ({
     );
   });
 
-  // const RenderLeaves = array.map((_, index) => {
-  //   const categoryLabel = labelsJS[index]?.name || "";
-  //   const categoryId = labelsJS[index]?.user_category || "";
-  //   const decimal = decimalsJS[index];
-  //   if (!decimal) return null;
-
-  //   const centerX = radius;
-  //   const centerY = radius;
-
-  //   const start = decimalsJS.slice(0, index).reduce((acc, v) => acc + v, 0);
-  //   const end = start + decimal;
-
-  //   const midAngle = ((start + end) / 2) * 2 * Math.PI;
-  //   const labelRadius = radius + (labelsDistanceFromCenter - 60);
-
-  //   const x = centerX + labelRadius * Math.cos(midAngle);
-  //   const y = centerY + labelRadius * Math.sin(midAngle);
-
-  //   const labelText = categoryLabel.slice(0, labelsSliceEnd);
-
-  //   const approxCharWidth = labelsSize * 0.55; // works well for Poppins-Regular
-  //   const textWidth = (labelText.length * approxCharWidth * 3);
-  //   const textHeight = textWidth;
-
-  //   return (
-  //     <View
-  //       key={index}
-  //       style={
-  //         {
-  //           zIndex: 66666,
-  //           elevation: 66666,
-  //           position: "absolute",
-  //           left: x,
-  //           top: y,
-  //           transform: [
-  //             { translateX: -textWidth / 2 },
-  //             { translateY: -textHeight / 2 },
-  //           ],
-  //           padding: 0,
-  //           borderRadius: 10,
-  //         }}
-  //     >
-  //       <MaterialCommunityIcons
-  //         style={{ paddingTop: 0, opacity: .2, zIndex: 0 }}
-  //         name={"leaf"}
-  //         size={textWidth}
-  //         color={color}
-  //       />
-  //     </View>
-  //   );
-  // });
-
+ 
   return (
     <View style={styles.container}>
       <Canvas style={styles.container}>
@@ -271,21 +229,41 @@ const DonutChart = ({
             </React.Fragment>
           );
         })}
-        <Text
+        
+
+        <Rect
+          x={radius - 22}
+          y={radius - 22}
+      
+          width={fontSize.width}
+          height={fontSize.height}
+        opacity={.5}
+          color="black" // your desired background color
+        />
+
+        
+ 
+        <LeafPath
+          count={targetText}
+          decimals={decimalsValue}
+          categoryStops={categoryStopsValue}
+          categoryTotals={targetCategories}
+          centerX={radius - labelsSize - 10} // offset right of text
+          centerY={radius - labelsSize - 10} // align vertically with text
+          radius={radius / 4}
+          size={24} 
+          colors={colors}
+      
+        />
+
+               <Text
           x={textX}
           y={radius + fontSize.height / 3.4}
           text={targetText}
           font={font}
           color={color}
         />
-        <LeafPath
-        count={targetText}
-          centerX={totalJS + fontSize.width + 10} // offset right of text
-          centerY={radius - 10} // align vertically with text
-         radius={radius / 2}
-          size={24}
-          color={color}
-        />
+        
       </Canvas>
       <View style={StyleSheet.absoluteFill}>{LabelOverlays}</View>
       {onPlusPress && onCenterPress && (
