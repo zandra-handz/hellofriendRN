@@ -45,7 +45,7 @@ const ScreenHome = () => {
   const { user, reInitialize, onSignOut } = useUser();
 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { friendList, friendListLength } = useFriendList();
+  const { friendList } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
   const { requestPermission, imageUri, resizeImage } =
@@ -330,7 +330,7 @@ const ScreenHome = () => {
             {!isKeyboardVisible && !loadingNewFriend && (
               <BelowKeyboardComponents
                 slideAnim={slideAnim}
-                friendListLength={friendListLength}
+                friendListLength={friendList?.length || 0}
                 isFriendSelected={!!selectedFriend}
                 onPress={navigateToAddMomentScreen}
               />

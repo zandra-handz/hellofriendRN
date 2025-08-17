@@ -187,15 +187,15 @@ export default Sentry.wrap(function App() {
     QuickActions.setItems([
       {
         id: 'moments',
-        title: 'Moments',
-        subtitle: 'Go to Moments',
+        title: 'Next up',
+        subtitle: 'Go to ideas for next up',
         icon: 'heart',
         params: { screen: 'Moments' },
       },
       {
         id: 'momentFocus',
-        title: 'Moment Focus',
-        subtitle: 'Focus on a Moment',
+        title: 'Add idea',
+        subtitle: 'Add a new idea',
         icon: 'star',
         params: { screen: 'MomentFocus' },
       },

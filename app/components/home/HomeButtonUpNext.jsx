@@ -1,6 +1,6 @@
 import React from "react";
 import {  Pressable, Text, StyleSheet, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
@@ -19,7 +19,7 @@ const HomeButtonUpNext = ({
   borderColor = "transparent",
 }) => {
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { friendList, friendListLength, getThemeAheadOfLoading } =
+  const { friendList, getThemeAheadOfLoading } =
     useFriendList();
   const { themeStyles, appFontStyles, themeStyleSpinners, manualGradientColors } =
     useGlobalStyle(); 
@@ -92,7 +92,7 @@ const HomeButtonUpNext = ({
               ]}
             >
               {upcomingHelloes &&
-              friendListLength &&
+              friendList?.length > 0 &&
               !isLoading &&
               upcomingHelloes[0]
                 ? upcomingHelloes[0].friend.name

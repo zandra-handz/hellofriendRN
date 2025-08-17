@@ -35,8 +35,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
   
   const {   categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
-  });
-  // const [colors, setColors] = useState<string[]>([]);
+  }); 
   const { userCategories } = useCategories();
 
   const [showHistory, setShowHistory] = useState(false);
@@ -45,7 +44,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
   });
 
   const categories = categorySizes();
-  console.warn(`caegrgioergrfevd`,categories);
+ 
   const toggleShowHistory = useCallback(() => {
   setShowHistory(prev => !prev);
 }, []);
@@ -100,14 +99,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
 
-  // const handleMomentScreenScrollTo = useCallback(
-  //   (categoryId) => {
-  //     if (categoryId) {
-  //       navigateToMoments({ scrollTo: categoryId });
-  //     }
-  //   },
-  //   [navigateToMoments]
-  // );
+ 
 
     const handleMomentViewScrollTo = useCallback(
     (categoryLabel) => {
@@ -253,7 +245,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
         </View>
         <View
           style={{
-            marginHorizontal: 10,
+            marginHorizontal: 0,
             alignItems: "center",
             flexDirection: "column",
             height: "74%",

@@ -119,8 +119,10 @@ export default function LeafPath({
         const row = Math.floor(index / columns);
 
         // evenly spread inside box around center
-        const offsetX = ((col + 0.5) / columns - 0.5) * boxSize * 2;
-        const offsetY = ((row + 0.5) / rows - 0.5) * boxSize * 2;
+        // const offsetX = ((col + 0.5) / columns - 0.5) * boxSize * 2.4;
+        // const offsetY = ((row + 0.5) / rows - 0.5) * boxSize * 2.4;
+        const offsetX = ((col + 0.5) / columns - 0.5) * boxSize * 2.4 + decSize * 5;
+const offsetY = ((row + 0.5) / rows - 0.5) * boxSize * 2.4 + decSize * 5;
 
         arr.push({
           x: centerX + offsetX,

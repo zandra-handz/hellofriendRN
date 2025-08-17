@@ -11,7 +11,6 @@ import { fetchFriendList } from "../calls/api";
 import { useQuery } from "@tanstack/react-query";
 import { Friend, ThemeAheadOfLoading } from "../types/FriendTypes";
 
- 
 interface FriendListContextType {
   friendList: Friend[];
   setFriendList: (friends: Friend[]) => void;
@@ -156,7 +155,7 @@ export const FriendListProvider: React.FC<FriendListProviderProps> = ({
     });
   };
 
-  const friendListLength = friendList.length;
+  // const friendListLength = friendList.length;
 
   const updateFriend = (updatedFriend: Friend) => {
     setFriendList((prev) =>
@@ -226,26 +225,40 @@ export const FriendListProvider: React.FC<FriendListProviderProps> = ({
     });
   };
 
-  const contextValue = useMemo(
-    () => ({
-      friendList,
-      friendListLength,
-      setFriendList,
-      themeAheadOfLoading,
-      setThemeAheadOfLoading,
-      getThemeAheadOfLoading,
-      resetTheme,
-      addToFriendList,
-      removeFromFriendList,
-      updateFriend,
-      updateFriendListColors,
-      updateFriendListColorsExcludeSaved,
-      useGradientInSafeView,
-      setUseGradientInSafeView,
-      updateSafeViewGradient,
-    }),
-    [friendList, friendListLength, themeAheadOfLoading, useGradientInSafeView]
-  );
+const contextValue = useMemo(
+  () => ({
+    friendList, 
+    setFriendList,
+    themeAheadOfLoading,
+    setThemeAheadOfLoading,
+    getThemeAheadOfLoading,
+    resetTheme,
+    addToFriendList,
+    removeFromFriendList,
+    updateFriend,
+    updateFriendListColors,
+    updateFriendListColorsExcludeSaved,
+    useGradientInSafeView,
+    setUseGradientInSafeView,
+    updateSafeViewGradient,
+  }),
+  [
+    friendList,
+    setFriendList,
+    themeAheadOfLoading,
+    setThemeAheadOfLoading,
+    getThemeAheadOfLoading,
+    resetTheme,
+    addToFriendList,
+    removeFromFriendList,
+    updateFriend,
+    updateFriendListColors,
+    updateFriendListColorsExcludeSaved,
+    useGradientInSafeView,
+    setUseGradientInSafeView,
+    updateSafeViewGradient,
+  ]
+);
 
   return (
     <FriendListContext.Provider value={contextValue}>

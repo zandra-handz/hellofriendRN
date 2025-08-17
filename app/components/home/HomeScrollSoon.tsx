@@ -28,7 +28,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   const navigation = useNavigation();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { setFriend, selectFriend } = useSelectedFriend();
-  const { friendList, friendListLength, getThemeAheadOfLoading } =
+  const { friendList,  getThemeAheadOfLoading } =
     useFriendList();
 
 
@@ -51,6 +51,10 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
 
   const handlePress = useCallback(
     (hello) => {
+
+      if (!friendList || friendList.length < 1) {
+        return;
+      }
       const id = hello.friend.id;
       const name = hello.friend.name;
       const selectedFriend = id === null ? null : { id: id, name: name };
@@ -149,7 +153,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
       {!isLoading && (
         <> 
 
-          {friendListLength === 0 && (
+          {friendList?.length === 0 && (
             <View style={styles.noFriendsTextContainer}>
               <Text
                 style={[
@@ -164,7 +168,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
             </View>
           )}
 
-          {friendListLength > 0 && (
+          {friendList.length > 0 && (
             <View style={[styles.buttonContainer]}>
               <>{renderUpcomingHelloes()}</>
             </View>

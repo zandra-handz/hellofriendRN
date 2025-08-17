@@ -19,7 +19,7 @@ const HomeScrollCalendarLights = ({
   const { themeStyles, themeStyleSpinners } = useGlobalStyle();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { friendDashboardData } = useSelectedFriend();
-  const { friendListLength, themeAheadOfLoading } = useFriendList();
+  const { friendList, themeAheadOfLoading } = useFriendList();
 
   const calendarButtonHeight = height / 0.6;
 
@@ -66,7 +66,7 @@ const HomeScrollCalendarLights = ({
         <>
           <View style={styles.headerContainer}></View>
 
-          {friendListLength === 0 && (
+          {friendList?.length === 0 && (
             <View style={styles.noFriendsTextContainer}>
               <Text
                 style={[
@@ -81,18 +81,13 @@ const HomeScrollCalendarLights = ({
             </View>
           )}
 
-          {friendListLength > 0 && (
+          {friendList?.length > 0 && (
             <View
               style={[styles.buttonContainer, { height: calendarButtonHeight }]}
             >
-              {/* {selectedFriend &&
-                friendListLength > 0 &&
-                helloesList &&
-                friendDashboardData && ( */}
-              {/* <>  */}
+           
               <RenderCalendarLights />
-              {/* </>
-                )} */}
+          
             </View>
           )}
         </>

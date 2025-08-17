@@ -219,8 +219,10 @@ const { themeAheadOfLoading } = useFriendList();
           {
             height: DIAMETER,
             width: DIAMETER,
+         
             borderRadius: RADIUS,
             backgroundColor: backgroundColor,
+          
           },
         ]}
       >

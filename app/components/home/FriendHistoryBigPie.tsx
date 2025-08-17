@@ -7,10 +7,9 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import Pie from "../headers/Pie";
-import CategoryFriendHistoryModal from "../headers/CategoryFriendHistoryModal";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+  
 type Props = {
-  friendData: object;
+  friendData: object; 
   listData: object[];
   showLabels: boolean;
   showPercentages: boolean;
@@ -19,6 +18,7 @@ type Props = {
   labelsSize: number;
 
   showFooterLabel: boolean;
+    upDrillCategoryId: () => void;
 };
 
 const FriendHistoryBigPie = ({
@@ -29,11 +29,8 @@ const FriendHistoryBigPie = ({
   labelsSize = 9,
   showLabels = true,
   seriesData,
-
-  showFooterLabel,
-}: Props) => {
-  const [historyModalVisible, setHistoryModalVisible] = useState(false);
-  const { themeStyles } = useGlobalStyle();
+ 
+}: Props) => {  
   const [viewCategoryId, setViewCategoryId] = useState(null);
   const [viewCategoryName, setViewCategoryName] = useState(null);
 
@@ -48,7 +45,7 @@ const FriendHistoryBigPie = ({
     upDrillCategoryId(categoryId);
     setViewCategoryName(categoryName);
     // setHistoryModalVisible(true);
-    console.log(`category ${categoryId} -- ${categoryName} pressed!`);
+    // console.log(`category ${categoryId} -- ${categoryName} pressed!`);
   };
 
   const pieScale = useSharedValue(1);
@@ -97,35 +94,10 @@ const FriendHistoryBigPie = ({
           labelsSize={labelsSize}
           onSectionPress={handleCategoryPress}
         />
-        {showFooterLabel && (
-          <View style={{}}>
-            <Text
-              style={[
-                themeStyles.primaryText,
-                { fontWeight: "bold", fontSize: 13 },
-              ]}
-            >
-              {friendData?.name}
-            </Text>
-          </View>
-        )}
+ 
       </Animated.View>
 
-      {/* {historyModalVisible &&
-        viewCategoryId &&
-        viewCategoryName &&
-        friendData && (
-          <View>
-            <CategoryFriendHistoryModal
-              isVisible={historyModalVisible}
-              closeModal={() => setHistoryModalVisible(false)}
-              categoryId={viewCategoryId}
-              categoryName={viewCategoryName}
-              friendId={friendData.id}
-              title={viewCategoryName}
-            />
-          </View>
-        )} */}
+ 
     </>
   );
 };

@@ -12,6 +12,7 @@ import {
   SkFont,
   Skia,
   Text,
+  Group,
   Rect,
   vec,
 } from "@shopify/react-native-skia";
@@ -175,34 +176,42 @@ const DonutChart = ({
 
   return (
     <View style={styles.container}>
-      <Canvas style={styles.container}>
-        <Path
-          path={path}
-          color={backgroundColor}
-          style={"stroke"}
-          strokeWidth={outerStrokeWidth}
-          strokeCap="round"
-          strokeJoin="round"
-          start={0}
-          end={1}
-        />
+      <Canvas
+        style={[
+          styles.canvasContainer,
+          { width: radius * 2 + 40,  // the + 40 here just adds space on the left without changing the position of the chart for the total text
+            height: radius * 2 },
+        ]}
+      >
+        <Group transform={[{ translateX: 0 }, { translateY: 0 }]}>
+          <Path
+            path={path}
+            color={backgroundColor}
+            style={"stroke"}
+            strokeWidth={outerStrokeWidth}
+            strokeCap="round"
+            strokeJoin="round"
+            start={0}
+            end={1}
+          />
 
-        {array.map((_, index) => {
-          return (
-            <React.Fragment key={index}>
-              <DonutPath
-                radius={radius}
-                strokeWidth={strokeWidth}
-                outerStrokeWidth={outerStrokeWidth}
-                color={colors[index]}
-                decimalsValue={decimalsValue}
-                index={index}
-                gap={gap}
-              />
-            </React.Fragment>
-          );
-        })}
+          {array.map((_, index) => {
+            return (
+              <React.Fragment key={index}>
+                <DonutPath
+                  radius={radius}
+                  strokeWidth={strokeWidth}
+                  outerStrokeWidth={outerStrokeWidth}
+                  color={colors[index]}
+                  decimalsValue={decimalsValue}
+                  index={index}
+                  gap={gap}
+                />
+              </React.Fragment>
+            );
+          })}
 
+          {/* DONT DELETE MIGHT NEED 
         <Rect
           x={radius - 22}
           //  y={radius - 22}
@@ -215,31 +224,32 @@ const DonutChart = ({
           opacity={0.0}
           color={themeStyles.overlayBackgroundColor.backgroundColor} // your desired background color
           color={"pink"}
-        />
+        /> */}
 
-        <LeafPath
-          count={targetText}
-          decimals={decimalsValue}
-          categoryStops={categoryStopsValue}
-          categoryTotals={targetCategories}
-          centerX={radius - labelsSize - 10} // WEIRD EYEBALL
-          centerY={radius - labelsSize - 10} // WEIRD EYEBALL
-          radius={radius / 4}
-          size={24}
-          colors={colors}
-        />
+          <LeafPath
+            count={targetText}
+            decimals={decimalsValue}
+            categoryStops={categoryStopsValue}
+            categoryTotals={targetCategories}
+            centerX={radius - labelsSize - 40} // WEIRD EYEBALL
+            centerY={radius - labelsSize - 40} // WEIRD EYEBALL
+            radius={radius / 4}
+            size={24}
+            colors={colors}
+          />
 
-        <Text
-          x={textX}
-          //  x={0}
-          x={260}
-          //  y={radius + fontSize.height / 3.4}
-          y={300}
-          text={targetText}
-          font={font}
-          color={color}
-          opacity={1}
-        />
+          <Text
+            x={textX}
+            //  x={0}
+            x={278}
+            //  y={radius + fontSize.height / 3.4}
+            y={300}
+            text={targetText}
+            font={font}
+            color={color}
+            opacity={1}
+          />
+        </Group>
       </Canvas>
       <View style={StyleSheet.absoluteFill}>{LabelOverlays}</View>
       {onPlusPress && onCenterPress && (
@@ -264,7 +274,7 @@ const DonutChart = ({
           <MaterialCommunityIcons
             style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
             name={"leaf"}
-            size={180}
+            size={200}
             color={color}
           />
         </View>
@@ -279,8 +289,9 @@ const DonutChart = ({
       >
         <MaterialCommunityIcons
           name={"lightning-bolt-outline"} //pencil-plus
-          name={"playlist-plus"}
-          size={25}
+          // name={"playlist-plus"}
+            name={"plus"}
+          size={12}
           color={manualGradientColors.homeDarkColor}
         />
       </Pressable>
@@ -293,6 +304,12 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 2,
   },
+  canvasContainer: {
+    flex: 1,
+    zIndex: 2,
+
+    // backgroundColor: "pink",
+  },
   centerWrapper: {
     justifyContent: "center",
     alignItems: "center",
@@ -300,13 +317,12 @@ const styles = StyleSheet.create({
   centerButton: {
     position: "absolute",
     padding: 4,
-    borderRadius: 999,
-    // borderRadius: 4,
-    backgroundColor: "green",
-    zIndex: 1,
+    //borderRadius: 999,
+    borderRadius: 4,
+    zIndex: 2,
 
-    right: -40,
-    bottom: -10,
+    right: -48,
+    bottom: -2,
   },
 });
 

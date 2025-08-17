@@ -1,5 +1,9 @@
 import React, { useState, useCallback } from "react";
-import Animated, { SlideInDown, SlideUpOut, SlideOutDown } from "react-native-reanimated";
+import Animated, {
+  SlideInDown,
+  SlideUpOut,
+  SlideOutDown,
+} from "react-native-reanimated";
 import { View, StyleSheet } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -119,27 +123,24 @@ const FriendHistoryModal: React.FC<Props> = ({
                 />
               )}
 
-                {viewCategoryId &&  (
-              <Animated.View
-              entering={SlideInDown.duration(200)} // have to match the timing in pie scaling
-               exiting={SlideOutDown.duration(200)} // have to match the timing in pie scaling
-
-                style={{
-                //  backgroundColor: "red",
-                  height: viewCategoryId ? "75%" : "0%",
-                  flexGrow: 1,
-                  width: "100%",
-                }}
-              >
-              
+              {viewCategoryId && (
+                <Animated.View
+                  entering={SlideInDown.duration(200)} // have to match the timing in pie scaling
+                  exiting={SlideOutDown.duration(200)} // have to match the timing in pie scaling
+                  style={{
+                    //  backgroundColor: "red",
+                    height: viewCategoryId ? "75%" : "0%",
+                    flexGrow: 1,
+                    width: "100%",
+                  }}
+                >
                   <CategoryFriendHistoryList
                     categoryId={viewCategoryId}
                     closeModal={handleFakeClose}
                     onViewHelloPress={handleViewHello}
                   />
-              
-              </Animated.View>
-                )}
+                </Animated.View>
+              )}
             </View>
           </View>
         }

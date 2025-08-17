@@ -20,7 +20,7 @@ const CategoryHistoryModal: React.FC<Props> = ({
   title,
   categoryId = 3,
 }) => {
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const {  manualGradientColors } = useGlobalStyle();
 
   const { stats } = useUserStats();
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState(0);

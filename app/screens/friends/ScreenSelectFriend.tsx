@@ -1,5 +1,5 @@
-import { View, Text } from "react-native";
-import React, { useEffect, useState, useMemo } from "react";
+import { View  } from "react-native";
+import React, {   useMemo } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -21,26 +21,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   
   const locale = "en-US";
 
-  // useEffect(() => {
-  //   if (friendList && friendList.length > 0) {
-  //     //!! IN PLACE. added slice() to make a shallow copy
-  //     // const summaryOfSorted = friendList.sort((a,b) => a.name.localeCompare(b.name, locale, {sensitivity: 'case'}))
-
-  //     //case shouldn't be necessary, set to base to ignore case
-  //     const summaryOfSorted = friendList
-  //       .slice()
-  //       .sort((a, b) =>
-  //         a.name.localeCompare(b.name, locale, { sensitivity: "case" })
-  //       );
-  //     if (summaryOfSorted) {
-  //       setAlphabFriendList(summaryOfSorted);
-  //     }
-  //     // console.log(
-  //     //   `finished friend sort: `,
-  //     //   summaryOfSorted.map((friend) => friend.name)
-  //     // );
-  //   }
-  // }, [friendList]);
+ 
 
   const alphabFriendList: object[] = useMemo(() => {
     if (!friendList || !(friendList?.length > 0)) {

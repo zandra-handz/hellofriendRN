@@ -1,17 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { View, StyleSheet } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import FriendHistoryBigPie from "../home/FriendHistoryBigPie";
 import UserHistoryBigPie from "../home/UserHistoryBigPie";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
+import UserCategoryHistoryList from "./UserCategoryHistoryList";
 
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
   onSearchPress: () => void;
- 
+
   listData: object[];
   radius: number;
   labelsSize: number;
@@ -22,7 +23,7 @@ interface Props {
 const UserHistoryModal: React.FC<Props> = ({
   isVisible,
   closeModal,
- 
+
   listData,
   radius = 180, //default instead of multiplying the radius of the preview
   labelsSize,
@@ -30,6 +31,16 @@ const UserHistoryModal: React.FC<Props> = ({
   // onLongPress,
 }) => {
   const { manualGradientColors } = useGlobalStyle();
+
+  const [viewCategoryId, setViewCategoryId] = useState(undefined);
+
+  const handleUpDrillCategoryId = (categoryId) => {
+    if (categoryId) {
+      setViewCategoryId(categoryId);
+    } else {
+      setViewCategoryId(null);
+    }
+  };
 
   const BOTTOM_SPACER = 60;
 
@@ -52,16 +63,30 @@ const UserHistoryModal: React.FC<Props> = ({
       children={
         <View style={styles.bodyContainer}>
           <View>
-  
-              <UserHistoryBigPie
-                showPercentages={true}
-                listData={listData}
-                radius={radius}
-                labelsSize={labelsSize} 
-                showFooterLabel={false}
-                seriesData={seriesData}
-              />
-       
+            <UserHistoryBigPie
+             upDrillCategoryId={handleUpDrillCategoryId}
+              showPercentages={true}
+              listData={listData}
+              radius={radius}
+              labelsSize={labelsSize}
+              showFooterLabel={false}
+              seriesData={seriesData}
+            />
+
+            {viewCategoryId && (
+              <Animated.View
+                entering={SlideInDown.duration(200)} // have to match the timing in pie scaling
+                exiting={SlideOutDown.duration(200)} // have to match the timing in pie scaling
+                style={{
+                  //  backgroundColor: "red",
+                  height: viewCategoryId ? "75%" : "0%",
+                  flexGrow: 1,
+                  width: "100%",
+                }}
+              >
+                <UserCategoryHistoryList categoryId={viewCategoryId} />
+              </Animated.View>
+            )}
           </View>
         </View>
       }
@@ -81,7 +106,6 @@ const styles = StyleSheet.create({
     margin: "2%",
   },
   sectionContainer: {
- 
     width: "100%",
   },
   headerText: {
