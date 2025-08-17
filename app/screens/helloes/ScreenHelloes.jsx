@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { useHelloes } from "@/src/context/HelloesContext";
 import useHelloesManips from "@/src/hooks/useHelloesManips";
 import { useNavigation } from "@react-navigation/native";
@@ -7,14 +7,16 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import HelloesTabs from "@/app/components/helloes/HelloesTabs";
 import Loading from "@/app/components/appwide/display/Loading";
-
+import CalendarChart from "@/app/components/home/CalendarChart";
 import HelloesListNew from "@/app/components/helloes/HelloesListNew";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 const ScreenHelloes = () => {
   const navigation = useNavigation();
   const { selectedFriend } = useSelectedFriend();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
   const [triggerFetchAll, setTriggerFetchAll] = useState(false);
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll});
@@ -103,27 +105,38 @@ const ScreenHelloes = () => {
   }, [helloesData, flattenHelloes, toggleHelloesFiltering, handleSearchPress, handleOpenSearch]);
 
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground
+      backgroundOverlayHeight=""
+      includeBackgroundOverlay={true}
+      useOverlay={true}
+      style={{ flex: 1 }}
+    >
       {/* not sure if will work: */}
-      <Loading isLoading={!helloesListFull} />
+      <CalendarChart showTopBar={false} useBackgroundOverlay={false}/>
+            <View
+              style={{
+                padding: 20,
+                alignItems: "center",
+              //  backgroundColor: themeStyles.primaryBackground.backgroundColor,
+                borderRadius: 30,
+                height: "auto",
+                marginVertical: 0,
+              }}
+            >
+              <Text
+                numberOfLines={2}
+                style={[themeStyles.primaryText, appFontStyles.welcomeText]}
+              >
+                Hello history for {selectedFriend?.name}
+              </Text>
+            </View>
+      {/* <Loading isLoading={!helloesListFull} /> */}
+
 
       {helloesListFull && (
-        <>
-          {/* <GlobalAppHeaderIconVersion
-            title={"Helloes with"}
-            navigateTo="Helloes"
-            icon={
-              <MaterialCommunityIcons
-                // name="hand-wave-outline"
-                name="calendar-heart"
-                size={30}
-                color={themeAheadOfLoading.fontColorSecondary}
-              />
-            }
-          /> */}
+        <> 
 
           <View style={{ flex: 1 }}>
-            {/* {helloesData && <HelloesListNew triggerScroll={triggerScroll} data={helloesData} onPress={navigateToSingleView} />} */}
             {selectedFriend && helloesDataFiltered && helloesDataFiltered.length > 0 && (
               <HelloesListNew
               friendName={selectedFriend.name}

@@ -28,7 +28,7 @@ const HelloesScreenFooter = ({
  
  
   const { themeStyles } = useGlobalStyle();
-  const { selectedFriend, deselectFriend } = useSelectedFriend();
+  const { selectedFriend  } = useSelectedFriend();
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
@@ -37,13 +37,7 @@ const HelloesScreenFooter = ({
   const footerHeight = 90;
   const footerPaddingBottom = 20;
   const footerIconSize = 28;
-
-  useEffect(() => {
-    if (flattenHelloes) {
-      console.log('flatten helloes in footer!', flattenHelloes);
-    }
-
-  }, [flattenHelloes]);
+ 
  
  const [ filterOn, setFilterOn ] = useState(false);
 

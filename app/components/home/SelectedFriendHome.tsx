@@ -17,10 +17,9 @@ import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 import CalendarChart from "./CalendarChart";
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
+import Helloes from "./Helloes";
 import SuggestedHello from "./SuggestedHello";
-import useHelloesManips from "@/src/hooks/useHelloesManips";
-import { useHelloes } from "@/src/context/HelloesContext";
-
+ 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -32,44 +31,13 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 }) => {
   const navigation = useNavigation();
   const {
-    themeStyleSpinners,
-    manualGradientColors,
+    themeStyleSpinners, 
     themeStyles,
     appFontStyles,
   } = useGlobalStyle();
 
-      const { helloesList } = useHelloes();
-
-
-     const reversedHelloesList = Array.isArray(helloesList) ? [...helloesList].reverse() : [];
-      const { helloesListMonthYear, monthsInRange } = useHelloesManips({helloesData: reversedHelloesList});
-    
-         
-    const combineMonthRangeAndHelloesDates = (months, helloes) => {
-    if (months && helloes) {
-      // console.warn(helloes);
-      return months.map((month) => {
-        const helloData =
-          helloes.find((hello) => hello.monthYear === month.monthYear) || null;
-  
-        return {
-          monthData: month,
-          helloData,
-        };
-      });
-    }
-    return []; // Return an empty array if months or helloes is undefined/null
-  };
-
-        const combinedData = useMemo(() => {
-          if (monthsInRange && helloesListMonthYear) {
-            return (
-              combineMonthRangeAndHelloesDates(monthsInRange, helloesListMonthYear)
-            )
-          }
-      
-        }, [monthsInRange, helloesListMonthYear]);
-      
+ 
+ 
 
   const headerRef = useRef(null); 
   const handleScroll = (event) => {
@@ -284,15 +252,20 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   />
                 </View>
 
-                {!loadingNewFriend && combinedData && (
+                <View style={{ width: "100%", marginVertical: 3 }}>
+                  <Helloes
+                    selectedFriend={!!selectedFriend}
+                    outerPadding={spacerAroundCalendar}
+                  />
+                </View>
+                {/* {!loadingNewFriend  && (
                   <View style={{ marginVertical: 3 }}>
-                    <CalendarChart
-                    combinedData={combinedData}
+                    <CalendarChart 
                     // selectedFriend={!!selectedFriend}
                     // outerPadding={spacerAroundCalendar}
                     />
                   </View>
-                )}
+                )} */}
 
                 <View style={{ width: "100%", height: 130 }}></View>
               </View>

@@ -11,25 +11,11 @@ type Props = {
 
 const formatDate = (createdOn) => {
   if (!createdOn) return "";
+  console.log('running format date');
 
   const date = new Date(createdOn);
   const now = new Date();
-//   const month = date.getUTCMonth() + 1; // Get UTC month
-//     const year = date.getUTCFullYear();
-//     console.log(date.toUTCString);
-
-//     console.log(month);
-//     console.log(year);
-
-//   const isCurrentYear = date.getFullYear() === now.getFullYear();
-
-//   return date.toUTCString("en-US", {
-//     weekday: "long",
-//     month: "long",
-//     day: "numeric",
-//     ...(isCurrentYear ? {} : { year: "numeric" }),
-//   });
-// };
+ 
   const isCurrentYear = date.getUTCFullYear() === now.getUTCFullYear();
 
   return new Intl.DateTimeFormat("en-US", {
@@ -37,7 +23,7 @@ const formatDate = (createdOn) => {
     month: "long",
     day: "numeric",
     ...(isCurrentYear ? {} : { year: "numeric" }),
-    timeZone: "UTC", // <-- ensures UTC values are used
+    timeZone: "UTC", 
   }).format(date);
 };
 
@@ -56,10 +42,10 @@ const HelloItem = ({
         {
           height: itemHeight,
           marginBottom: bottomMargin,
-          backgroundColor:
-            index % 2 === 0
-              ? themeStyles.primaryBackground.backgroundColor
-              : themeStyles.overlayBackgroundColor.backgroundColor
+          // backgroundColor:
+          //   index % 2 === 0
+          //     ? themeStyles.primaryBackground.backgroundColor
+          //     : themeStyles.overlayBackgroundColor.backgroundColor
         },
       ]}
     >

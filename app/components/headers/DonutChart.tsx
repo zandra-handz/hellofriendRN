@@ -1,8 +1,12 @@
 import { View, StyleSheet, Pressable } from "react-native";
-import React, { useState } from "react";
-import {
+import React, {  useEffect, useState } from "react";
+import Animated, {
+  withDelay,
+  withTiming,
   SharedValue,
   useDerivedValue,
+  useSharedValue,
+  useAnimatedStyle,
   runOnJS,
   useAnimatedReaction,
 } from "react-native-reanimated";
@@ -49,6 +53,7 @@ type Props = {
 };
 
 const DonutChart = ({
+  totalJS,
   onCategoryPress,
   onPlusPress,
   onCenterPress,
@@ -77,6 +82,28 @@ const DonutChart = ({
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
 
+
+  const fadeInValue = useSharedValue(0);
+
+  const LabelOverlayStyle = useAnimatedStyle(() => {
+    return {
+      opacity: fadeInValue.value,
+      zIndex: 4,
+    }
+
+  }, [fadeInValue]);
+
+
+  useEffect(() => {
+    if (!totalJS) {
+      return;
+    } 
+    
+
+    fadeInValue.value = withDelay(totalJS * 80, withTiming(1, {duration: 500}));
+
+  }, [totalJS]);
+
   useDerivedValue(() => {
     const labelsSnapshot = labelsValue.value;
     runOnJS(setLabelsJS)(labelsSnapshot);
@@ -98,11 +125,11 @@ const DonutChart = ({
     () => `${Math.round(categoryTotals.value)}`,
     []
   );
-  const fontSize = font.measureText("$0");
+  // const fontSize = font.measureText("$0");
 
   const textX = useDerivedValue(() => {
     const _fontSize = font.measureText(targetText.value);
-    return radius - _fontSize.width / 1.8;
+    return radius - _fontSize.width / 1.8 + 170;
   });
 
   const LabelOverlays = array.map((_, index) => {
@@ -179,8 +206,10 @@ const DonutChart = ({
       <Canvas
         style={[
           styles.canvasContainer,
-          { width: radius * 2 + 40,  // the + 40 here just adds space on the left without changing the position of the chart for the total text
-            height: radius * 2 },
+          {
+            width: radius * 2 + 40, // the + 40 here just adds space on the left without changing the position of the chart for the total text
+            height: radius * 2,
+          },
         ]}
       >
         <Group transform={[{ translateX: 0 }, { translateY: 0 }]}>
@@ -241,7 +270,7 @@ const DonutChart = ({
           <Text
             x={textX}
             //  x={0}
-            x={278}
+          //  x={278}
             //  y={radius + fontSize.height / 3.4}
             y={300}
             text={targetText}
@@ -251,7 +280,9 @@ const DonutChart = ({
           />
         </Group>
       </Canvas>
-      <View style={StyleSheet.absoluteFill}>{LabelOverlays}</View>
+      <Animated.View style={[LabelOverlayStyle, StyleSheet.absoluteFill]}>
+        {LabelOverlays}
+      </Animated.View>
       {onPlusPress && onCenterPress && (
         <View style={[StyleSheet.absoluteFill, styles.centerWrapper]}>
           <Pressable
@@ -283,16 +314,17 @@ const DonutChart = ({
         onPress={onPlusPress}
         style={[
           styles.centerButton,
-          { backgroundColor: manualGradientColors.lightColor },
+          // { backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor },
         ]}
-        hitSlop={10}
+        hitSlop={30}
       >
         <MaterialCommunityIcons
           name={"lightning-bolt-outline"} //pencil-plus
           // name={"playlist-plus"}
-            name={"plus"}
-          size={12}
-          color={manualGradientColors.homeDarkColor}
+          name={"plus"}
+          size={70}
+          opacity={.2}
+          color={themeStyles.primaryText.color}
         />
       </Pressable>
     </View>
@@ -308,7 +340,7 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 2,
 
-    // backgroundColor: "pink",
+   // backgroundColor: "pink",
   },
   centerWrapper: {
     justifyContent: "center",
@@ -316,13 +348,13 @@ const styles = StyleSheet.create({
   },
   centerButton: {
     position: "absolute",
-    padding: 4,
+    padding: 0,
     //borderRadius: 999,
     borderRadius: 4,
     zIndex: 2,
 
-    right: -48,
-    bottom: -2,
+    right: -58,
+    bottom: -20,
   },
 });
 

@@ -18,7 +18,7 @@ interface BelowKeyboardComponentsProps {
 }
 
 const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
-  slideAnim,
+ 
   friendListLength,
   isFriendSelected,
   onPress,
@@ -31,9 +31,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
       exiting={FadeOutDown}
       style={[
         {
-          alignItems: "center",
-          //flexDirection: "column",
-          //justifyContent: "space-between",
+          alignItems: "center", 
           flex: 1, 
           width: '100%',   
         },
@@ -56,13 +54,10 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
               borderRadius={10}
               borderColor="black"
               height={"100%"}
-            />
-              
-            {/* <HomeFriendItems borderRadius={10} height={100} /> */}
+            /> 
           </View>
         )}  
-         
-      {/* </Animated.View> */}
+          
     </Animated.View>
   );
 };

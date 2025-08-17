@@ -81,6 +81,20 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
 
 
 
+
+useFocusEffect(
+  useCallback(() => {
+    // This runs when the screen gains focus (do nothing here)
+    
+    return () => {
+      // This runs when the screen loses focus
+      if (showHistory) {
+        setShowHistory(false);
+      }
+    };
+  }, [showHistory])
+);
+
   const HEIGHT = 420;
   const PADDING = 20;
 
@@ -257,6 +271,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
             onCategoryPress={handleMomentViewScrollTo} 
             onCenterPress={handleMomentScreenNoScroll}
             onPlusPress={handleNavigateToCreateNew}
+            totalJS={capsuleList?.length}
             radius={CHART_RADIUS}
             strokeWidth={CHART_STROKE_WIDTH}
             outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}

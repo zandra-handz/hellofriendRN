@@ -56,27 +56,21 @@ const HelloesListNew = ({
     }
   };
 
-  const handleNavigateToSingleView = (index) => {
-    onPress(index);
-  };
-
+  const handleNavigateToSingleView = useCallback(
+    (index: number) => {
+      onPress(index);
+    },
+    [onPress]
+  );
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `hello-${index}`;
 
-  const getItemLayout = (item, index) => {
-    return {
-      length: COMBINED_HEIGHT,
-      offset: COMBINED_HEIGHT * index,
-      index,
-    };
-  };
-
+  // 2️⃣ Use it in renderHelloItem without creating a new arrow function
   const renderHelloItem = useCallback(
     ({ item, index }) => (
       <Pressable
-        onPress={() => handleNavigateToSingleView(index)}
+        onPress={handleNavigateToSingleView.bind(null, index)}
         style={{
-          height: 40,
           width: "100%",
           height: COMBINED_HEIGHT,
         }}
@@ -95,13 +89,9 @@ const HelloesListNew = ({
 
   return (
     <View style={{ paddingTop: 0, flex: 1, paddingHorizontal: 4 }}>
-      <View style={{padding: 20, alignItems: 'center', backgroundColor: themeStyles.primaryBackground.backgroundColor, borderRadius: 30, height: 'auto', marginVertical: 10 }}>
-<Text numberOfLines={2} style={[themeStyles.primaryText, appFontStyles.welcomeText]}>
-Hello history for {friendName}
-</Text>
-      </View>
+
       <Animated.FlatList
-      fadingEdgeLength={20}
+        fadingEdgeLength={20}
         ref={flatListRef}
         data={helloesListFull}
         // data={filteredData}

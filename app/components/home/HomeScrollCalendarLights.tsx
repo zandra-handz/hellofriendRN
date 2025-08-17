@@ -2,22 +2,18 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback } from "react";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import CalendarLightsDataPrepLayer from "../foranimations/CalendarLightsDataPrepLayer";
- 
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+ import CalendarLights from "../foranimations/CalendarLights";
 
 const HomeScrollCalendarLights = ({
   itemColor,
   onMonthPress,
-  combinedData,
-  backgroundColor,
+  combinedData, 
   height,
   borderRadius = 20,
   borderColor = "transparent",
-}) => {
-  const { themeStyles, themeStyleSpinners } = useGlobalStyle();
-  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
+}) => { 
+  const {   isLoading } = useUpcomingHelloes();
   const { friendDashboardData } = useSelectedFriend();
   const { friendList, themeAheadOfLoading } = useFriendList();
 
@@ -25,7 +21,7 @@ const HomeScrollCalendarLights = ({
 
   const RenderCalendarLights = useCallback(
     () => (
-      <CalendarLightsDataPrepLayer
+      <CalendarLights 
       onMonthPress={onMonthPress}
         daySquareBorderRadius={20}
         daySquareBorderColor={itemColor}
@@ -49,19 +45,7 @@ const HomeScrollCalendarLights = ({
           backgroundColor: "transparent",
         },
       ]}
-    >
-      {/* {isLoading && !upcomingHelloes && (
-        <View style={styles.loadingWrapper}>
-          <LoadingPage
-            loading={isLoading}
-            includeLabel={false}
-            label=""
-            spinnerSize={70}
-            color="#000002"
-            spinnerType={themeStyleSpinners?.homeScreen}
-          />
-        </View>
-      )} */}
+    > 
       {!isLoading && (
         <>
           <View style={styles.headerContainer}></View>

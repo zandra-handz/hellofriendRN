@@ -215,17 +215,8 @@ const ScreenHome = () => {
       return () => {};
     }, [])
   );
-
-  //const [slideAnim] = useState(new Animated.Value(1)); // Value for animating the button container
-  const slideAnim = useSharedValue(1);
-  // Trigger the slide-in animation when the screen mounts
-  // useEffect(() => {
-  //   Animated.timing(slideAnim, {
-  //     toValue: 0, // Slide in from the right
-  //     duration: 500,
-  //     useNativeDriver: true,
-  //   }).start();
-  // }, []);
+   const slideAnim = useSharedValue(1);
+ 
 
   const clearNewMomentText = () => {
     if (newMomentTextRef && newMomentTextRef.current) {

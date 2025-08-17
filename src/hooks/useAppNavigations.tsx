@@ -29,6 +29,7 @@ type NavToMomentFocusProp = {
 interface hookReturns {
   navigateToAddFriend: () => void;
   navigateToFinalize: () => void; 
+  navigateToHelloes: () => void;
   navigateToHelloView: ({startingIndex, inPersonFilter}: NavToHelloViewProps) => void;
   navigateToLocationSearch: () => void;
   navigateToMomentFocus: ({screenCameFrom }: NavToMomentFocusProp) => void;
@@ -43,6 +44,11 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToAddFriend = () => {
     navigation.navigate("AddFriend");
+  };
+
+
+      const navigateToHelloes = () => {
+    navigation.navigate("Helloes");
   };
 
 
@@ -78,6 +84,7 @@ const useAppNavigations = (): hookReturns => {
   return {
     navigateToAddFriend,
     navigateToFinalize,
+    navigateToHelloes,
     navigateToHelloView,
     navigateToLocationSearch,
     navigateToMomentFocus,

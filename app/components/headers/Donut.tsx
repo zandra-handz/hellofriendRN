@@ -40,6 +40,7 @@ const Donut = ({
   onCategoryLongPress,
   onPlusPress,
   onCenterPress,
+  totalJS,
   data,
   radius = 40,
   strokeWidth = 6,
@@ -68,28 +69,8 @@ const { themeAheadOfLoading } = useFriendList();
   const OUTER_STROKE_WIDTH = outerStrokeWidth;
   const GAP = gap;
   const n = colors.length;
-  // console.log(`n in donut`, n);
-  // const total = data.reduce(
-  //   (acc, currentValue) => acc + currentValue.size,
-  //   0
-  // );
-
-  //  const generatePercentages = calculatePercentage(data, total);
-
-  //  const generateDecimals = generatePercentages.map(
-  //     number => Number(number.toFixed(0)) / 100,
-  //  );
-
-  // const RADIUS = 160;
-  // const STROKE_WIDTH = 30;
-  // const OUTER_STROKE_WIDTH = 46;
-  // const GAP = 0.04;
-
-  // const RADIUS = 40;
-  // const DIAMETER = RADIUS * 2;
-  // const STROKE_WIDTH = 8;
-  // const OUTER_STROKE_WIDTH = 10;
-  // const GAP = 0.05;
+ 
+ 
 
   const getPieChartDataMetrics = (data) => {
     // console.warn(`DATA TO MAKE SERIES DATA: `, data);
@@ -227,6 +208,7 @@ const { themeAheadOfLoading } = useFriendList();
         ]}
       >
         <DonutChart
+        totalJS={totalJS}
           onCategoryPress={onCategoryPress}
           onCategoryLongPress={onCategoryLongPress}
           onPlusPress={onPlusPress}

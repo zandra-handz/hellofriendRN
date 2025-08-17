@@ -64,74 +64,7 @@ const useHelloesManips = ({ helloesData }: Props) => {
     return `${month}/${year}`;
   };
 
-  // const helloesListMonthYear = useMemo(() => {
-  //     if (helloesData && helloesData.length > 0) {
-  //     if (!Array.isArray(helloesData)) {
-  //       console.error(
-  //         "Invalid data passed to groupByMonthAndYear:",
-  //         helloesData
-  //       );
-  //       return [];
-  //     }
-
-  //     const groupedData = helloesData.reduce((acc, item) => {
-  //       const createdDate = new Date(item.date + "T00:00:00");
-
-  //       if (isNaN(createdDate)) {
-  //         // console.error("Invalid date:", item.date);
-  //         return acc;
-  //       }
-
-  //       const monthYear = `${createdDate.getMonth() + 1}/${createdDate.getFullYear()}`;
-
-  //       if (!acc[monthYear]) {
-  //         acc[monthYear] = {
-  //           data: [],
-  //           days: [],
-  //         };
-  //       }
-
-  //       acc[monthYear].data.push(item);
-
-  //       const dayOfMonth = createdDate.getDate();
-  //       if (!acc[monthYear].days.includes(dayOfMonth)) {
-  //         acc[monthYear].days.push(dayOfMonth);
-  //       }
-
-  //       return acc;
-  //     }, {});
-
-  //     const allDates = helloesData.map(
-  //       (item) => new Date(item.date + "T00:00:00")
-  //     );
-  //     const minDate = new Date(Math.min(...allDates));
-  //     const maxDate = new Date(Math.max(...allDates));
-
-  //     const monthsList = [];
-  //     const start = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
-  //     const end = new Date(maxDate.getFullYear(), maxDate.getMonth(), 1);
-
-  //     while (start <= end) {
-  //       const monthYear = `${start.getMonth() + 1}/${start.getFullYear()}`;
-  //       monthsList.push(monthYear);
-  //       start.setMonth(start.getMonth() + 1);
-  //     }
-
-  //     console.error(groupedData);
-
-  //     const sortedMonths = monthsList.map((monthYear, index) => {
-  //       return {
-  //         monthYear,
-  //         index,
-  //         data: groupedData[monthYear]?.data || [],
-  //         days: groupedData[monthYear]?.days || [],
-  //       };
-  //     });
-
-  //     return sortedMonths;
-  //   }
-  //   return [];
-  // }, [helloesData]);
+  
   const helloesListMonthYear = useMemo(() => {
     if (helloesData && helloesData.length > 0) {
       if (!Array.isArray(helloesData)) {
@@ -259,18 +192,39 @@ const useHelloesManips = ({ helloesData }: Props) => {
     }
   }, [helloesData]);
 
-  //  useEffect(() => {
-  //   if (flattenHelloes) {
-  //       console.log('flattenhelloes !!');
-  //       console.log(flattenHelloes.length);
-  //   }
+         
+    const combineMonthRangeAndHelloesDates = (months, helloes) => {
+    if (months && helloes) {
+      // console.warn(helloes);
+      return months.map((month) => {
+        const helloData =
+          helloes.find((hello) => hello.monthYear === month.monthYear) || null;
+  
+        return {
+          monthData: month,
+          helloData,
+        };
+      });
+    }
+    return [];  
+  };
 
-  //  }, [flattenHelloes]);
+          const combinedData = useMemo(() => {
+          if (monthsInRange && helloesListMonthYear) {
+            return (
+              combineMonthRangeAndHelloesDates(monthsInRange, helloesListMonthYear)
+            )
+          }
+      
+        }, [monthsInRange, helloesListMonthYear]);
+
+ 
 
   return {
     flattenHelloes,
     helloesListMonthYear,
     monthsInRange,
+    combinedData,
   };
 };
 

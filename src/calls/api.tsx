@@ -1035,7 +1035,7 @@ export const fetchPastHelloes = async (friendId: number) => {
     );
     if (response && response.data) {
 
-      console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
+   //   console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
       
       return response.data;
     } else {
