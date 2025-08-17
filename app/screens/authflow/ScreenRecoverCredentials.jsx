@@ -28,7 +28,7 @@ import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButt
 const ScreenRecoverCredentials = () => {
   const { showMessage } = useMessage();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const [showSignIn, setShowSignIn] = useState(true);
+ 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [resetCode, setResetCode] = useState("");

@@ -209,13 +209,11 @@ const { themeAheadOfLoading } = useFriendList();
 
   const fontColor = themeStyles.primaryText.color;
   const iconColor = themeAheadOfLoading.lightColor;
-  const backgroundColor = themeStyles.primaryBackground.backgroundColor;
-  //const backgroundColor = 'transparent';
+  //const backgroundColor = themeStyles.overlayBackgroundColor.backgroundColor;
+  const backgroundColor = 'transparent';
 
-  return (
-    // <ScrollView style={{ flex: 1 }}>
-    <View style={styles.container}>
-      {/* <PieChart widthAndHeight={widthAndHeight} series={seriesData} /> */}
+  return ( 
+    <View style={styles.container}> 
       <View
         style={[
           {

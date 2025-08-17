@@ -27,7 +27,7 @@ const ScreenAuth = () => {
   const createNewAccount = route.params?.createNewAccount ?? false;
 
   const { showSigninErrorMessage } = useMessageCentralizer();
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const {  manualGradientColors } = useGlobalStyle();
   const [showSignIn, setShowSignIn] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -36,7 +36,7 @@ const ScreenAuth = () => {
   const [loading, setLoading] = useState(false);
   const [isSignInScreen, setSignInScreen] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const { onSignin, signinMutation, onSignUp, isAuthenticated } = useUser();
+  const { onSignin, signinMutation, onSignUp  } = useUser();
   const [success, setSuccess] = useState(false);
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
@@ -113,6 +113,7 @@ const ScreenAuth = () => {
   const handleAuthentication = async () => {
     let result;
     if (isSignInScreen) {
+      console.log('signing user in');
       try {
         onSignin(username, password);
       } catch (error) {
@@ -124,6 +125,7 @@ const ScreenAuth = () => {
         // showMessage(true, null, "Oops! Passwords do not match");
         return;
       }
+      console.log('signing up new user');
       result = await onSignUp(username, email, password);
       if (result && result.status === 201) {
         alert("Sign up was successful!");

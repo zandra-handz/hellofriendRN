@@ -1,4 +1,5 @@
 import React, { useEffect, createRef } from "react";
+import * as QuickActions from "expo-quick-actions";
 import { useFonts } from "expo-font";
 import TopLevelNavigationHandler from "./TopLevelNavigationHandler"; // Adjust import path if necessary
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
@@ -131,6 +132,7 @@ Sentry.init({
 });
 
 const Stack = createNativeStackNavigator();
+const navigationRef = createRef();
 
 export default Sentry.wrap(function App() {
   const [fontsLoaded] = useFonts({
@@ -168,13 +170,6 @@ export default Sentry.wrap(function App() {
   }, [hasShareIntent, shareIntent]);
 
   useEffect(() => {
-    // const fetchFonts = async () => {
-    //   await loadFonts();
-    //   setFontsLoaded(true);
-    // };
-
-    // fetchFonts();
-
     const notificationSubscription =
       Notifications.addNotificationReceivedListener((notification) => {
         console.log("Notification received in foreground:", notification);
@@ -186,9 +181,42 @@ export default Sentry.wrap(function App() {
     return () => notificationSubscription.remove();
   }, []);
 
-  //const colorScheme = useColorScheme();
 
-  // If fonts or other resources are not ready, show a loading placeholder
+    useEffect(() => {
+    // Define the home screen quick actions
+    QuickActions.setItems([
+      {
+        id: 'moments',
+        title: 'Moments',
+        subtitle: 'Go to Moments',
+        icon: 'heart',
+        params: { screen: 'Moments' },
+      },
+      {
+        id: 'momentFocus',
+        title: 'Moment Focus',
+        subtitle: 'Focus on a Moment',
+        icon: 'star',
+        params: { screen: 'MomentFocus' },
+      },
+    ]);
+
+    // Listen for quick action presses
+    const subscription = QuickActions.addListener((action) => {
+      if (!action) return;
+
+      switch (action.id) {
+        case 'moments':
+          navigationRef.current?.navigate('Moments');
+          break;
+        case 'momentFocus':
+          navigationRef.current?.navigate('MomentFocus');
+          break;
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -211,7 +239,7 @@ export default Sentry.wrap(function App() {
                   <UserStatsProvider>
                     <UpcomingHelloesProvider>
                       <FriendListProvider>
-                        <SelectedFriendProvider> 
+                        <SelectedFriendProvider>
                           <CapsuleListProvider>
                             <LocationsProvider>
                               <HelloesProvider>
@@ -221,10 +249,9 @@ export default Sentry.wrap(function App() {
                                       <SafeAreaProvider>
                                         <RootSiblingParent>
                                           <DeviceLocationProvider>
-                            
                                             <Layout />
                                           </DeviceLocationProvider>
-                                        </RootSiblingParent> 
+                                        </RootSiblingParent>
                                       </SafeAreaProvider>
                                     </MessageContextProvider>
                                   </SelectedFriendStatsProvider>
@@ -254,7 +281,9 @@ const PACKAGE_NAME =
   Constants.expoConfig?.android?.package ||
   Constants.expoConfig?.ios?.bundleIdentifier;
 
-const navigationRef = createRef();
+
+
+
 
 const linking = {
   prefixes: [
@@ -365,6 +394,8 @@ const linking = {
     return url;
   },
 };
+
+
 
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle();

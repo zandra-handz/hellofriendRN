@@ -86,13 +86,16 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
   const PADDING = 20;
 
   const CHART_RADIUS = 150;
-  const CHART_STROKE_WIDTH = 20;
-  const CHART_OUTER_STROKE_WIDTH = 26;
-  const GAP = 0.03;
+  // const CHART_STROKE_WIDTH = 20;
+  // const CHART_OUTER_STROKE_WIDTH = 26;
+    const CHART_STROKE_WIDTH = 4;
+  const CHART_OUTER_STROKE_WIDTH = 7;
+  // const GAP = 0.03;
+    const GAP = 0.01;
 
   const LABELS_SIZE = 11;
-  const LABELS_DISTANCE_FROM_CENTER = -50;
-  const LABELS_SLICE_END = 5;
+  const LABELS_DISTANCE_FROM_CENTER = -10;
+  const LABELS_SLICE_END = 10;
   const CENTER_TEXT_SIZE = 40;
 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);

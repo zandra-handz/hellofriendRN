@@ -3,30 +3,22 @@ import React, { useState } from "react";
 import {
   SharedValue,
   useDerivedValue,
-  useSharedValue,
   runOnJS,
   useAnimatedReaction,
 } from "react-native-reanimated";
 import {
-  BlurMaskFilterProps,
   Canvas,
   Path,
   SkFont,
   Skia,
   Text,
   Rect,
-  
   vec,
 } from "@shopify/react-native-skia";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
-import {
-  MaterialCommunityIcons,
-  EvilIcons,
-  FontAwesome,
-  FontAwesome6,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LeafPath from "./LeafPath";
 
 type Props = {
@@ -57,17 +49,14 @@ type Props = {
 
 const DonutChart = ({
   onCategoryPress,
-  onCategoryLongPress,
   onPlusPress,
   onCenterPress,
   radius,
   strokeWidth,
   outerStrokeWidth,
   color,
-  iconColor,
   backgroundColor,
   font,
-  smallFont,
   totalValue,
   categoryStopsValue,
   n,
@@ -83,40 +72,19 @@ const DonutChart = ({
   const array = Array.from({ length: n });
 
   const innerRadius = radius - outerStrokeWidth / 2;
-  const { manualGradientColors } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
-  const [totalJS, setTotalJS] = useState([]);
 
   useDerivedValue(() => {
     const labelsSnapshot = labelsValue.value;
     runOnJS(setLabelsJS)(labelsSnapshot);
-    console.log(`labels value`, labelsValue.value);
   }, [labelsValue]);
 
   useDerivedValue(() => {
     const decimalsSnapshot = decimalsValue.value;
     runOnJS(setDecimalsJS)(decimalsSnapshot);
-    console.log(`decimals value`, decimalsValue.value);
   }, [decimalsValue]);
-
-  const lastRoundedValue = useSharedValue(null);
-
-  useDerivedValue(() => {
-    const totalSnapshot = totalValue.value;
-    const rounded = Math.ceil(totalSnapshot); // round up, no decimals
-
-    if (lastRoundedValue.value !== rounded) {
-      lastRoundedValue.value = rounded;
-      runOnJS(setTotalJS)(totalSnapshot);
-      // console.warn(`total value`, totalSnapshot);
-    }
-  }, [totalValue]);
-  // useDerivedValue(() => {
-  //   const totalSnapshot = totalValue.value;
-  //   runOnJS(setTotalJS)(totalSnapshot);
-  //   console.warn(`total value`, totalValue.value);
-  // }, [totalValue]);
 
   const path = Skia.Path.Make();
   path.addCircle(radius, radius, innerRadius);
@@ -125,13 +93,11 @@ const DonutChart = ({
     () => `${Math.round(totalValue.value)}`,
     []
   );
-  // console.log(`n in donut chart: `, n);
   const targetCategories = useDerivedValue(
     () => `${Math.round(categoryTotals.value)}`,
     []
   );
   const fontSize = font.measureText("$0");
-  // const smallFontSize = smallFont.measureText("Total");
 
   const textX = useDerivedValue(() => {
     const _fontSize = font.measureText(targetText.value);
@@ -140,7 +106,7 @@ const DonutChart = ({
 
   const LabelOverlays = array.map((_, index) => {
     const categoryLabel = labelsJS[index]?.name || "";
-    const categoryId = labelsJS[index]?.user_category || "";
+    // const categoryId = labelsJS[index]?.user_category || "";
     const decimal = decimalsJS[index];
     if (!decimal) return null;
 
@@ -165,7 +131,7 @@ const DonutChart = ({
 
     return (
       <Pressable
-        onPress={() => onCategoryPress(categoryLabel)} 
+        onPress={() => onCategoryPress(categoryLabel)}
         key={index}
         style={({ pressed }) => [
           {
@@ -191,6 +157,14 @@ const DonutChart = ({
             color: color,
             fontSize: labelsSize,
             fontFamily: "Poppins-Regular",
+            fontWeight: "bold",
+            backgroundColor:
+              themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+
+            alignSelf: "center",
+            padding: 4,
+            borderRadius: 4,
+            paddingHorizontal: 10,
           }}
         >
           {labelText}
@@ -199,7 +173,6 @@ const DonutChart = ({
     );
   });
 
- 
   return (
     <View style={styles.container}>
       <Canvas style={styles.container}>
@@ -229,41 +202,44 @@ const DonutChart = ({
             </React.Fragment>
           );
         })}
-        
 
         <Rect
           x={radius - 22}
-          y={radius - 22}
-      
+          //  y={radius - 22}
+          y={20}
+          x={240}
+          //  y={radius + fontSize.height / 3.4}
+          y={270}
           width={fontSize.width}
-          height={fontSize.height}
-        opacity={.5}
-          color="black" // your desired background color
+          height={fontSize.height + 10}
+          opacity={0.0}
+          color={themeStyles.overlayBackgroundColor.backgroundColor} // your desired background color
+          color={"pink"}
         />
 
-        
- 
         <LeafPath
           count={targetText}
           decimals={decimalsValue}
           categoryStops={categoryStopsValue}
           categoryTotals={targetCategories}
-          centerX={radius - labelsSize - 10} // offset right of text
-          centerY={radius - labelsSize - 10} // align vertically with text
+          centerX={radius - labelsSize - 10} // WEIRD EYEBALL
+          centerY={radius - labelsSize - 10} // WEIRD EYEBALL
           radius={radius / 4}
-          size={24} 
+          size={24}
           colors={colors}
-      
         />
 
-               <Text
+        <Text
           x={textX}
-          y={radius + fontSize.height / 3.4}
+          //  x={0}
+          x={260}
+          //  y={radius + fontSize.height / 3.4}
+          y={300}
           text={targetText}
           font={font}
           color={color}
+          opacity={1}
         />
-        
       </Canvas>
       <View style={StyleSheet.absoluteFill}>{LabelOverlays}</View>
       {onPlusPress && onCenterPress && (
@@ -284,40 +260,30 @@ const DonutChart = ({
               transform: [{ translateX: -20 }, { translateY: -20 }],
             }}
           />
-          {/* 
-          <View
-            style={[
-              StyleSheet.absoluteFill,
-              { backgroundColor: "orange" },
-            ]}
-          >
-            {RenderLeaves}
-          </View> */}
 
           <MaterialCommunityIcons
-            style={{ paddingTop: 30, opacity: 0.2, zIndex: 0 }}
+            style={{ paddingTop: 30, opacity: 0.1, zIndex: 0 }}
             name={"leaf"}
             size={180}
             color={color}
           />
-
-          <Pressable
-            onPress={onPlusPress}
-            style={[
-              styles.centerButton,
-              { backgroundColor: manualGradientColors.lightColor },
-            ]}
-            hitSlop={10}
-          >
-            <MaterialCommunityIcons
-              name={"lightning-bolt-outline"} //pencil-plus
-              name={"playlist-plus"}
-              size={25}
-              color={manualGradientColors.homeDarkColor}
-            />
-          </Pressable>
         </View>
       )}
+      <Pressable
+        onPress={onPlusPress}
+        style={[
+          styles.centerButton,
+          { backgroundColor: manualGradientColors.lightColor },
+        ]}
+        hitSlop={10}
+      >
+        <MaterialCommunityIcons
+          name={"lightning-bolt-outline"} //pencil-plus
+          name={"playlist-plus"}
+          size={25}
+          color={manualGradientColors.homeDarkColor}
+        />
+      </Pressable>
     </View>
   );
 };
@@ -333,12 +299,14 @@ const styles = StyleSheet.create({
   },
   centerButton: {
     position: "absolute",
-    padding: 6,
+    padding: 4,
     borderRadius: 999,
+    // borderRadius: 4,
     backgroundColor: "green",
-    zIndex: 3,
-    top: 160,
-    right: 86,
+    zIndex: 1,
+
+    right: -40,
+    bottom: -10,
   },
 });
 
