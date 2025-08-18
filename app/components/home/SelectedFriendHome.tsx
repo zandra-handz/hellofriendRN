@@ -1,7 +1,6 @@
-import React, { useMemo, useRef, useState, useEffect } from "react";
+import React, { useRef } from "react";
 
 import {
-  Pressable,
   Text,
   StyleSheet,
   View,
@@ -9,9 +8,13 @@ import {
   DimensionValue,
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import Animated, { FadeIn, FadeOut, useAnimatedStyle, useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useNavigation } from "@react-navigation/native";
+
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 import CalendarChart from "./CalendarChart";
@@ -19,7 +22,7 @@ import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
 import SuggestedHello from "./SuggestedHello";
- 
+
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
   borderColor: string;
@@ -29,17 +32,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   borderRadius = 20,
   borderColor = "transparent",
 }) => {
-  const navigation = useNavigation();
-  const {
-    themeStyleSpinners, 
-    themeStyles,
-    appFontStyles,
-  } = useGlobalStyle();
+  const { themeStyleSpinners, themeStyles, appFontStyles } = useGlobalStyle();
 
- 
- 
-
-  const headerRef = useRef(null); 
+  const headerRef = useRef(null);
   const handleScroll = (event) => {
     if (!headerRef.current) return;
 
@@ -47,10 +42,9 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
       const scrollY = event.nativeEvent.contentOffset.y;
       const isVisibleNow = pageY - scrollY >= 0;
       if (isVisibleNow !== true) {
-        smallHeaderVisibility.value = withTiming(1, {duration: 300});
-      //   setIsHeaderVisible(isVisibleNow);
+        smallHeaderVisibility.value = withTiming(1, { duration: 300 });
       } else {
-          smallHeaderVisibility.value = withTiming(0, {duration: 20});
+        smallHeaderVisibility.value = withTiming(0, { duration: 20 });
       }
     });
   };
@@ -60,75 +54,24 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const smallHeaderAnimationStyle = useAnimatedStyle(() => {
     return {
       opacity: smallHeaderVisibility.value,
-    }
-
+    };
   });
-
-  // useEffect(() => {
-  //   if (!isHeaderVisible) {
-  //     console.log("Header scrolled out of view");
-  //     // trigger animation, collapse UI, etc.
-  //   }
-  // }, [isHeaderVisible]);
-
-
 
   const PADDING_HORIZONTAL = 4;
 
   const spacerAroundCalendar = 10;
-  //friendLoaded = dashboard data retrieved successfully
   const {
     selectedFriend,
     friendLoaded,
- 
+
     isPending,
     isLoading,
     loadingNewFriend,
   } = useSelectedFriend();
 
-  const DOUBLE_PRESS_DELAY = 300;
-
-  const lastPress = useRef(0);
-  const pressTimeout = useRef(null);
-
   const SELECTED_FRIEND_CARD_HEIGHT = 120;
-  // const SELECTED_FRIEND_CARD_MARGIN_TOP = 194;
   const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
   const SELECTED_FRIEND_CARD_PADDING = 20;
-
-  const MemoCalendarChart = React.memo(CalendarChart);
-  const MemoTalkingPointsChart = React.memo(TalkingPointsChart);
-  const MemoPics = React.memo(Pics);
- 
-
-  const navigateToMoments = () => {
-    navigation.navigate("Moments", { scrollTo: null });
-  };
-
-  const navigateToAddMoment = () => {
-    navigation.navigate("MomentFocus");
-  };
-
-  const handleSinglePress = () => {
-    navigateToMoments();
-  };
-
-  const handleDoublePress = () => {
-    navigateToAddMoment();
-  };
-
-  const onPress = () => {
-    const now = Date.now();
-    if (now - lastPress.current < DOUBLE_PRESS_DELAY) {
-      clearTimeout(pressTimeout.current);
-      handleDoublePress();
-    } else {
-      pressTimeout.current = setTimeout(() => {
-        handleSinglePress();
-      }, DOUBLE_PRESS_DELAY);
-    }
-    lastPress.current = now;
-  };
 
   return (
     <View
@@ -136,7 +79,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
         styles.container,
         {
           marginTop: SELECTED_FRIEND_CARD_MARGIN_TOP,
-          // borderRadius: borderRadius,
           borderColor: borderColor,
           paddingHorizontal: 0,
         },
@@ -154,19 +96,15 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
           <View
             style={{
               flex: 1,
-              //height: 200,
               width: "100%",
-              // backgroundColor: 'pink',
               alignItems: "center",
-              paddingBottom: 0, // change this to change were the bottom fadingEdge of scrollview starts
+              paddingBottom: 0,
             }}
           >
-            {/* {!isHeaderVisible && ( */}
-        
-              <Animated.View
-                // entering={FadeIn.duration(200)}
-                // exiting={FadeOut.duration(200)}
-                style={[smallHeaderAnimationStyle, {
+            <Animated.View
+              style={[
+                smallHeaderAnimationStyle,
+                {
                   position: "absolute",
                   width: "100%",
                   top: 0,
@@ -176,27 +114,24 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     themeStyles.primaryBackground.backgroundColor,
                   zIndex: 5000,
                   elevation: 5000,
-                }]}
+                },
+              ]}
+            >
+              <Text
+                style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}
               >
-                <Text
-                  style={[
-                    themeStyles.primaryText,
-                    appFontStyles.subWelcomeText,
-                  ]}
-                >
-                  {selectedFriend.name}
-                </Text>
-              </Animated.View>
+                {selectedFriend.name}
+              </Text>
+            </Animated.View>
             {/* )} */}
             <ScrollView
               onScroll={handleScroll}
               scrollEventThrottle={16}
               showsHorizontalScrollIndicator={false}
               style={{ width: "100%" }}
-              // fadingEdgeLength={30}
               contentContainerStyle={{
                 paddingHorizontal: 0,
-                alignItems: "center", // optional
+                alignItems: "center",
               }}
             >
               <View style={{ flex: 1, width: "100%" }} ref={headerRef}>
@@ -206,7 +141,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   }
                   borderBottomLeftRadius={0}
                   borderBottomRightRadius={0}
-                  // isKeyboardVisible={isKeyboardVisible}
                   onPress={() => console.log("nada!")}
                 />
               </View>
@@ -237,7 +171,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     borderRadius={borderRadius}
                   />
                 )}
-                
+
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
                     selectedFriend={!!selectedFriend}
@@ -252,20 +186,20 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   />
                 </View>
 
-                {/* <View style={{ width: "100%", marginVertical: 3 }}>
+                <View style={{ width: "100%", marginVertical: 3 }}>
                   <Helloes
                     selectedFriend={!!selectedFriend}
                     outerPadding={spacerAroundCalendar}
                   />
-                </View> */}
-                {!loadingNewFriend  && (
+                </View>
+                {/* {!loadingNewFriend  && (
                   <View style={{ marginVertical: 3 }}>
                     <CalendarChart 
                     // selectedFriend={!!selectedFriend}
                     // outerPadding={spacerAroundCalendar}
                     />
                   </View>
-                )}
+                )} */}
 
                 <View style={{ width: "100%", height: 130 }}></View>
               </View>
@@ -278,14 +212,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 };
 
 const styles = StyleSheet.create({
-  // container: {
-  //   overflow: 'hidden',
-  //   width: "100%",
-  //   flex: 1,
-  //   alignContent: "center",
-  //   alignItems: "center",
-  // },
-
   container: {
     flexDirection: "row",
     width: "100%",
@@ -310,7 +236,6 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     zIndex: 5,
-    // flexDirection: "column",
     width: "100%",
     flexWrap: "wrap",
     height: "100%",
@@ -321,7 +246,6 @@ const styles = StyleSheet.create({
   },
   loadingWrapper: {
     flex: 1,
-    // height: "100%",
     justifyContent: "center",
     alignItems: "center",
   },

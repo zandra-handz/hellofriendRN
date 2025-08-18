@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Pressable, Text } from "react-native";
+import { Pressable, StyleProp, ViewStyle } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,16 +8,16 @@ import Animated, {
 type Props = {
   onPress?: () => void;
   onLongPress?: () => void;
-  hitSlop: number;
+  hitSlop?: number;
   zIndex?: number;
-  style: object;
+  style?: StyleProp<ViewStyle>;
   children?: ReactNode;
 };
 
 const GlobalPressable = ({
   onPress,
   onLongPress,
-  hitSlop=10,
+  hitSlop = 10,
   zIndex = 1,
   style,
   children,
@@ -31,7 +31,7 @@ const GlobalPressable = ({
 
   return (
     <Pressable
-    hitSlop={hitSlop}
+      hitSlop={hitSlop}
       style={{ zIndex: zIndex }}
       onPress={onPress ? onPress : null}
       onLongPress={onLongPress ? onLongPress : null}

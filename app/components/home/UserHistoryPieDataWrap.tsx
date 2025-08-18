@@ -1,7 +1,6 @@
 import { View,  Pressable } from "react-native";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import React, { useEffect, useState, useMemo, useCallback } from "react"; 
-import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+import React, { useEffect, useState, useMemo, useCallback } from "react";  
 import { useUserStats } from "@/src/context/UserStatsContext";
 import UserHistoryModal from "../headers/UserHistoryModal";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
@@ -23,8 +22,7 @@ const UserHistoryPieDataWrap = ({
   chartBorderColor = "hotpink",
   labelsSize = 9,
   showLabels = false,
-}: Props) => {
-  const { selectedFriendStats } = useSelectedFriendStats();
+}: Props) => { 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendList();
   const { stats } = useUserStats();
@@ -37,6 +35,8 @@ const UserHistoryPieDataWrap = ({
   const { categoryHistorySizes } = useStatsSortingFunctions({
     listData: stats,
   });
+
+  
  
   useEffect(() => {
     if (stats) { 
@@ -110,7 +110,7 @@ const UserHistoryPieDataWrap = ({
 
   return (
     <>
-      {selectedFriendStats &&
+      {stats &&
         userHistorySortedList &&
         userHistoryHasAnyCapsules && (
           <View
