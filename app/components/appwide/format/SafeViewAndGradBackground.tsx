@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ReactElement, useMemo } from "react";
-import { DimensionValue, StyleProp, View, ViewStyle } from "react-native";
+import { DimensionValue, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import CustomStatusBar from "../statusbar/CustomStatusBar";
+
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -121,8 +121,7 @@ useEffect(() => {
           }}
         ></View>
       )}
-
-      {/* {includeCustomStatusBar && <CustomStatusBar />} */}
+ 
       {Header && (
         <View style={{ height: standardizedHeaderHeight }}>
           <Header />

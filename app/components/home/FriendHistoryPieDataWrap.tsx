@@ -1,8 +1,9 @@
-import { View, Pressable } from "react-native";
+import { View } from "react-native";
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
  import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendHistoryMiniPie from "./FriendHistoryMiniPie";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -24,7 +25,7 @@ const FriendHistoryPieDataWrap = React.memo(
     showLabels = false,
   }: Props) => {
     const { selectedFriendStats } = useSelectedFriendStats();
-    const { themeAheadOfLoading } = useFriendList();
+    const { themeAheadOfLoading } = useFriendStyle();
     const { themeStyles, manualGradientColors } = useGlobalStyle();
     const { selectedFriend } = useSelectedFriend();
     const [largeFriendChartVisible, setLargeFriendChartVisible] =

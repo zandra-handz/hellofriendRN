@@ -4,8 +4,8 @@ import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import { useFriendList } from "@/src/context/FriendListContext";
-import CarouselSlider from "@/app/components/appwide/CarouselSlider";
+import { useFriendList } from "@/src/context/FriendListContext"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
 import { useCategories } from "@/src/context/CategoriesContext";
@@ -15,7 +15,7 @@ const ScreenMomentView = () => {
   const moment = route.params?.moment ?? null;
   const { userCategories } = useCategories();
   const currentIndex = route.params?.index ?? null;
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
 
   const {

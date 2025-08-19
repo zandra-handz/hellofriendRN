@@ -20,27 +20,27 @@ const UserCategoryHistoryList = ({
 //   onViewHelloPress, // data not available for unselected friends
 }: Props) => {
   const { friendList } = useFriendList();
-  const [categoryID, setCategoryID] = useState(null);
-  const [completedCapsuleCount, setCompletedCapsuleCount] = useState(0);
+  // const [categoryID, setCategoryID] = useState(null);
+  // const [completedCapsuleCount, setCompletedCapsuleCount] = useState(0);
   const { themeStyles } = useGlobalStyle();
 
   const { stats } = useUserStats();
 
-  useEffect(() => {
-    if (categoryId && stats) {
-      setCategoryID(categoryId);
+  // useEffect(() => {
+  //   if (categoryId && stats) {
+  //     // setCategoryID(categoryId);
 
-      const matchedCategoryStats = stats.find(
-        (category) => category.id === categoryId
-      );
+  //     const matchedCategoryStats = stats.find(
+  //       (category) => category.id === categoryId
+  //     );
 
-      if (matchedCategoryStats && matchedCategoryStats?.capsule_ids) {
-        const count = matchedCategoryStats?.capsule_ids?.length;
+  //     if (matchedCategoryStats && matchedCategoryStats?.capsule_ids) {
+  //       const count = matchedCategoryStats?.capsule_ids?.length;
 
-        setCompletedCapsuleCount(count);
-      }
-    }
-  }, [categoryId, stats]);
+  //       setCompletedCapsuleCount(count);
+  //     }
+  //   }
+  // }, [categoryId, stats]);
 
   const {
     categoryHistory,

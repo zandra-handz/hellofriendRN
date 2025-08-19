@@ -12,7 +12,7 @@ import SectionLocationImages from '@/app/components/locations/SectionLocationIma
 import SectionCustomerReviews from '@/app/components/locations/SectionCustomerReviews';
 import CallNumberLink from '@/app/components/locations/CallNumberLink';
 import DirectionsLink from '@/app/components/locations/DirectionsLink';
-import { useFriendList } from '@/src/context/FriendListContext';
+import { useFriendStyle } from '@/src/context/FriendStyleContext';
 import DisplayParkingScore from '@/app/components/locations/DisplayParkingScore';
 import DisplayLocationNotes from '@/app/components/locations/DisplayLocationNotes';
 import { useLocations } from '@/src/context/LocationsContext';
@@ -22,7 +22,7 @@ import StarsRatingUI from './StarsRatingUI';
 
 const ContentLocationView = ({ location, favorite }) => {
     const { themeStyles } = useGlobalStyle();
-    const { themeAheadOfLoading } = useFriendList();
+    const { themeAheadOfLoading } = useFriendStyle();
     const { loadingAdditionalDetails, useFetchAdditionalDetails, clearAdditionalDetails, deleteLocationMutation } = useLocations();
    
 

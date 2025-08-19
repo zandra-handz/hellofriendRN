@@ -6,14 +6,12 @@ import {
   Alert,
   Keyboard,
   KeyboardAvoidingView,
-  Platform,
-  Pressable,
+  Platform, 
 } from "react-native";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 import TopBarHome from "@/app/components/home/TopBarHome";
-import { AppState, AppStateStatus } from "react-native";
-import ConditionalMessageUI from "@/app/components/home/ConditionalMessageUI";
+import { AppState, AppStateStatus } from "react-native"; 
 // import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -34,7 +32,7 @@ import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 import * as FileSystem from "expo-file-system";
 import * as SecureStore from "expo-secure-store";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import FriendHeaderMessageUI from "@/app/components/home/FriendHeaderMessageUI";
+ 
 
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();

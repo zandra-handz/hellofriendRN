@@ -10,6 +10,7 @@ import { useRoute } from "@react-navigation/native";
 import usePrefetches from "@/src/hooks/usePrefetches";
 import { useCategories } from "@/src/context/CategoriesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 
@@ -23,8 +24,11 @@ const ScreenMoments = () => {
   });
 
   const { userCategories } = useCategories();
-  const { friendList, themeAheadOfLoading, getThemeAheadOfLoading } =
+  const { friendList } =
     useFriendList();
+
+  const {  themeAheadOfLoading, getThemeAheadOfLoading } =
+    useFriendStyle();
   const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend();
 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();

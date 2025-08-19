@@ -38,6 +38,7 @@ import { GlobalStyleProvider } from "./src/context/GlobalStyleContext";
 import { UserStatsProvider } from "./src/context/UserStatsContext";
 
 import { FriendListProvider } from "./src/context/FriendListContext";
+import { FriendStyleProvider } from "./src/context/FriendStyleContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
 import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
@@ -181,23 +182,22 @@ export default Sentry.wrap(function App() {
     return () => notificationSubscription.remove();
   }, []);
 
-
-    useEffect(() => {
+  useEffect(() => {
     // Define the home screen quick actions
     QuickActions.setItems([
       {
-        id: 'moments',
-        title: 'Next up',
-        subtitle: 'Go to ideas for next up',
-        icon: 'heart',
-        params: { screen: 'Moments' },
+        id: "moments",
+        title: "Next up",
+        subtitle: "Go to ideas for next up",
+        icon: "heart",
+        params: { screen: "Moments" },
       },
       {
-        id: 'momentFocus',
-        title: 'Add idea',
-        subtitle: 'Add a new idea',
-        icon: 'star',
-        params: { screen: 'MomentFocus' },
+        id: "momentFocus",
+        title: "Add idea",
+        subtitle: "Add a new idea",
+        icon: "star",
+        params: { screen: "MomentFocus" },
       },
     ]);
 
@@ -206,11 +206,11 @@ export default Sentry.wrap(function App() {
       if (!action) return;
 
       switch (action.id) {
-        case 'moments':
-          navigationRef.current?.navigate('Moments');
+        case "moments":
+          navigationRef.current?.navigate("Moments");
           break;
-        case 'momentFocus':
-          navigationRef.current?.navigate('MomentFocus');
+        case "momentFocus":
+          navigationRef.current?.navigate("MomentFocus");
           break;
       }
     });
@@ -234,38 +234,43 @@ export default Sentry.wrap(function App() {
         <QueryClientProvider client={queryClient}>
           <UserProvider>
             <UserSettingsProvider>
-              <GlobalStyleProvider>
-                <CategoriesProvider>
-                  <UserStatsProvider>
-                    <UpcomingHelloesProvider>
-                      <FriendListProvider>
-                        <SelectedFriendProvider>
-                          <CapsuleListProvider>
-                            <LocationsProvider>
-                              <HelloesProvider>
-                                <FriendLocationsProvider>
-                                  <SelectedFriendStatsProvider>
-                                    <MessageContextProvider>
-                                      <SafeAreaProvider>
-                                        <RootSiblingParent>
-                                          <DeviceLocationProvider>
-                                            <Layout />
-                                          </DeviceLocationProvider>
-                                        </RootSiblingParent>
-                                      </SafeAreaProvider>
-                                    </MessageContextProvider>
-                                  </SelectedFriendStatsProvider>
-                                </FriendLocationsProvider>
-                              </HelloesProvider>
-                            </LocationsProvider>
-                            {/* </DeviceLocationProvider> */}
-                          </CapsuleListProvider>
-                        </SelectedFriendProvider>
-                      </FriendListProvider>
-                    </UpcomingHelloesProvider>
-                  </UserStatsProvider>
-                </CategoriesProvider>
-              </GlobalStyleProvider>
+              <CategoriesProvider>
+                <UserStatsProvider>
+                  <UpcomingHelloesProvider>
+                    <FriendListProvider>
+                      <SelectedFriendProvider>
+                        <CapsuleListProvider>
+                          <LocationsProvider>
+                            <HelloesProvider>
+                              <FriendLocationsProvider>
+                                <SelectedFriendStatsProvider>
+                                  <MessageContextProvider>
+                                    <SafeAreaProvider>
+                                       <GlobalStyleProvider>
+                                      <RootSiblingParent>
+                                        <DeviceLocationProvider>
+                                          <FriendStyleProvider>
+                                           
+                                              <Layout />
+                                          
+                                          </FriendStyleProvider>
+                                        </DeviceLocationProvider>
+                                      </RootSiblingParent>
+                                        </GlobalStyleProvider>
+                                    </SafeAreaProvider>
+                                  </MessageContextProvider>
+                                </SelectedFriendStatsProvider>
+                              </FriendLocationsProvider>
+                            </HelloesProvider>
+                          </LocationsProvider>
+                          {/* </DeviceLocationProvider> */}
+                        </CapsuleListProvider>
+                      </SelectedFriendProvider>
+                    </FriendListProvider>
+                  </UpcomingHelloesProvider>
+                </UserStatsProvider>
+              </CategoriesProvider>
+              {/* </GlobalStyleProvider> */}
             </UserSettingsProvider>
           </UserProvider>
         </QueryClientProvider>
@@ -280,10 +285,6 @@ const PREFIX = Linking.createURL("/");
 const PACKAGE_NAME =
   Constants.expoConfig?.android?.package ||
   Constants.expoConfig?.ios?.bundleIdentifier;
-
-
-
-
 
 const linking = {
   prefixes: [
@@ -394,8 +395,6 @@ const linking = {
     return url;
   },
 };
-
-
 
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle();

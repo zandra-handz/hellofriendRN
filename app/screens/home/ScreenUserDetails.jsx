@@ -6,8 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { LinearGradient } from "expo-linear-gradient";
 import DoubleChecker from "@/app/components/alerts/DoubleChecker"; 
 import DetailRow from "@/app/components/appwide/display/DetailRow";
@@ -16,11 +15,11 @@ import WrenchOutlineSvg from "@/app/assets/svgs/wrench-outline.svg";
 import { useUser } from "@/src/context/UserContext";
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 const ScreenUserDetails = () => {
   const { user, isAuthenticated } = useUser();
   const { themeStyles, gradientColorsHome } = useGlobalStyle();
-  const { updateSafeViewGradient } = useFriendList();
+  const { updateSafeViewGradient } = useFriendStyle();
   const { darkColor, lightColor } = gradientColorsHome;
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
   useEffect(() => {

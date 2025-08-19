@@ -1,7 +1,7 @@
 import React, { ReactNode, useMemo, useEffect, useState } from "react";
 import { ViewStyle, StyleProp, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { LinearGradient } from "expo-linear-gradient"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { ColorValue } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, {
@@ -29,7 +29,7 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   additionalStyles,
   children,
 }) => {
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { manualGradientColors } = useGlobalStyle();
 
   const direction = useMemo(() => {
@@ -38,23 +38,6 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
     return [0, 1, 1, 0];
   }, [useFriendColors, reverse]);
 
-  // Memoized next gradient colors
-//   const nextColors: ColorValue[] = useMemo(() => {
-//     return [
-//       useFriendColors ? themeAheadOfLoading.darkColor : startColor || manualGradientColors.lightColor,
-//       useFriendColors ? themeAheadOfLoading.lightColor : endColor || manualGradientColors.darkColor,
-//     ];
-//   }, [useFriendColors, themeAheadOfLoading, startColor, endColor, manualGradientColors]);
-
-// const [currentColors, setCurrentColors] = useState<readonly [ColorValue, ColorValue]>([
-//   nextColors[0],
-//   nextColors[1],
-// ]);
-
-// const [previousColors, setPreviousColors] = useState<readonly [ColorValue, ColorValue]>([
-//   nextColors[0],
-//   nextColors[1],
-// ]);
 
 
 

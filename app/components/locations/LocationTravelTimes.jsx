@@ -11,8 +11,8 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import {
   SimpleLineIcons, 
   FontAwesome5,
-} from "@expo/vector-icons";
-import { useFriendList } from "@/src/context/FriendListContext";
+} from "@expo/vector-icons"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";  
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
@@ -25,7 +25,7 @@ const LocationTravelTimes = ({
   friendAddress, 
   iconSize = 34,
 }) => {
-  const { themeAheadOfLoading } = useFriendList(); 
+  const { themeAheadOfLoading } = useFriendStyle(); 
   const { themeStyles, appContainerStyles } = useGlobalStyle();  
   const { defaultUserAddress } = useStartingUserAddresses();
   const { defaultAddress } = useStartingFriendAddresses();

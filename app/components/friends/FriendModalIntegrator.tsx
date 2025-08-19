@@ -2,8 +2,9 @@ import React, { useCallback } from "react";
 import { View, Text, Pressable, DimensionValue } from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import LoadingPage from "../appwide/spinner/LoadingPage";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 import { useNavigation } from "@react-navigation/native";
@@ -41,7 +42,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   const navigation = useNavigation();
   const { selectedFriend, friendLoaded, loadingNewFriend } =
     useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   const firstSelectLabel = customLabel ? customLabel : `Pick friend: `;
 

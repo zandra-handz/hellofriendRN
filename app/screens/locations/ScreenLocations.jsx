@@ -16,8 +16,8 @@ import { useLocations } from '@/src/context/LocationsContext';
 import {   useQueryClient } from "@tanstack/react-query";
 
 import { useNavigation  } from "@react-navigation/native";
-
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import MomentsSearchBar from "@/app/components/moments/MomentsSearchBar";
@@ -31,7 +31,7 @@ const ScreenLocations = ({}) => {
   const { locationList, faveLocationList,  handleAddToFaves, handleRemoveFromFaves } =
     useLocations();
   const [viewingAllLocations, setViewingAllLocations] = useState(false);
-  const { themeAheadOfLoading  } = useFriendList();
+  const { themeAheadOfLoading  } = useFriendStyle();
  
   const { selectedFriend  } = useSelectedFriend();
   const queryClient = useQueryClient();

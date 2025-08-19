@@ -6,10 +6,10 @@ import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import ImageViewPage from "@/app/components/images/ImageViewPage";
-import ImageMenuButton from "@/app/components/images/ImageMenuButton";
-import GradientBackground from "../display/GradientBackground";
+ 
 
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -21,7 +21,7 @@ const ScreenImageView = () => {
   const startingIndex = route.params?.index ?? null;
   const { imageList, deleteImage, deleteImageMutation } = useImageFunctions();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   const totalCount = imageList.length;
 

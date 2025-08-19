@@ -2,9 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- 
-import { useFriendList } from "@/src/context/FriendListContext";
-
+  
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
  import SlideToAdd from "../foranimations/SlideToAdd";
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
@@ -13,7 +12,7 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 const NewHelloView = ({ data, onSliderPull }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
  
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
  
  

@@ -5,14 +5,14 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import ContentAddLocation from "@/app/components/locations/ContentAddLocation";
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const ScreenLocationCreate = () => {
   const route = useRoute();
   const location = route.params?.location ?? null;
 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   const navigation = useNavigation();
 

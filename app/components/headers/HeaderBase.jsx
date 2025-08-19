@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 import { useSelectedFriend } from '@/src/context/SelectedFriendContext';
-import { useFriendList } from '@/src/context/FriendListContext';
+import { useFriendStyle } from '@/src/context/FriendStyleContext';
 import LizardSvg from '@/app/assets/svgs/lizard.svg';
 import ClockOutlineSvg from '@/app/assets/svgs/clock-outline.svg';
 import DistanceZigZagSvg from "@/app/assets/svgs/distance-zigzag.svg";
@@ -29,7 +29,7 @@ const HeaderBase = ({
   icon,
 }) => {
   const { themeStyles, appContainerStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { loadingNewFriend } = useSelectedFriend();
   const navigation = useNavigation();
 

@@ -55,21 +55,25 @@ export const GlobalStyleProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (settings) {
-      // console.log("settings triggered globalstyles");
 
-      const newFontSize = settings.large_text ? 20 : 16;
-      const newHighContrast = settings.high_contrast_mode;
-      const newScreenReader = settings.screen_reader;
-      const newReceiveNotifications = settings.receive_notifications;
+    if (!colorScheme) {
+      return;
+    }
+    if (settings) {
+       console.log("settings triggered globalstyles");
+
+      // const newFontSize = settings.large_text ? 20 : 16;
+      // const newHighContrast = settings.high_contrast_mode;
+      // const newScreenReader = settings.screen_reader;
+      // const newReceiveNotifications = settings.receive_notifications;
       const newTheme = determineTheme();
 
       setStyles((prevStyles) => {
         if (
-          prevStyles.fontSize === newFontSize &&
-          prevStyles.highContrast === newHighContrast &&
-          prevStyles.screenReader === newScreenReader &&
-          prevStyles.receiveNotifications === newReceiveNotifications &&
+          // prevStyles.fontSize === newFontSize &&
+          // prevStyles.highContrast === newHighContrast &&
+          // prevStyles.screenReader === newScreenReader &&
+          // prevStyles.receiveNotifications === newReceiveNotifications &&
           prevStyles.theme === newTheme
         ) {
           return prevStyles; // No changes, skip re-render
@@ -77,10 +81,10 @@ export const GlobalStyleProvider = ({ children }) => {
 
         return {
           ...prevStyles,
-          fontSize: newFontSize,
-          highContrast: newHighContrast,
-          screenReader: newScreenReader,
-          receiveNotifications: newReceiveNotifications,
+          // fontSize: newFontSize,
+          // highContrast: newHighContrast,
+          // screenReader: newScreenReader,
+          // receiveNotifications: newReceiveNotifications,
           theme: newTheme,
         };
       });
@@ -99,45 +103,45 @@ export const GlobalStyleProvider = ({ children }) => {
   }, [settings, colorScheme]);
 
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    // console.log('useeffect in global styles triggered by styles.theme');
-    const isLight = styles.theme === "light";
+  //    console.log('useeffect in global styles triggered by styles.theme');
+  //   const isLight = styles.theme === "light";
 
-    setStyles((prev) => {
-      const newGradient = isLight
-        ? {
-            darkColor: "#ffffff",
-            lightColor: "#ffffff",
-          }
-        : {
-            darkColor: "#4caf50",
-            lightColor: "#a0f143",
-          };
+  //   setStyles((prev) => {
+  //     const newGradient = isLight
+  //       ? {
+  //           darkColor: "#ffffff",
+  //           lightColor: "#ffffff",
+  //         }
+  //       : {
+  //           darkColor: "#4caf50",
+  //           lightColor: "#a0f143",
+  //         };
 
-      const newHome = isLight
-        ? {
-            darkColor: "#ffffff",
-            lightColor: "#ffffff",
-          }
-        : {
-            darkColor: "#000002",
-            lightColor: "#163805",
-          };
+  //     const newHome = isLight
+  //       ? {
+  //           darkColor: "#ffffff",
+  //           lightColor: "#ffffff",
+  //         }
+  //       : {
+  //           darkColor: "#000002",
+  //           lightColor: "#163805",
+  //         };
 
-      const gradientsUnchanged =
-        JSON.stringify(prev.gradientColors) === JSON.stringify(newGradient) &&
-        JSON.stringify(prev.gradientColorsHome) === JSON.stringify(newHome);
+  //     const gradientsUnchanged =
+  //       JSON.stringify(prev.gradientColors) === JSON.stringify(newGradient) &&
+  //       JSON.stringify(prev.gradientColorsHome) === JSON.stringify(newHome);
 
-      if (gradientsUnchanged) return prev;
+  //     if (gradientsUnchanged) return prev;
 
-      return {
-        ...prev,
-        gradientColors: newGradient,
-        gradientColorsHome: newHome,
-      };
-    });
-  }, [styles.theme]);
+  //     return {
+  //       ...prev,
+  //       gradientColors: newGradient,
+  //       gradientColorsHome: newHome,
+  //     };
+  //   });
+  // }, [styles.theme]);
 
 
   const themeStyles =

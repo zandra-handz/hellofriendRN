@@ -1,15 +1,13 @@
-import { View, ScrollView, Text, FlatList } from "react-native";
+import { View,  Text, FlatList } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import useFullHelloes from "@/src/hooks/useFullHelloes";
-import { useHelloes } from "@/src/context/HelloesContext";
+import useFullHelloes from "@/src/hooks/useFullHelloes"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FullHello } from "@/src/types/HelloTypes";
 import ModalInfoText from "../headers/ModalInfoText";
-import LoadingPage from "../appwide/spinner/LoadingPage";
-import { useFriendList } from "@/src/context/FriendListContext";
-import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
+import LoadingPage from "../appwide/spinner/LoadingPage"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
 
 type Props = {
   data: FullHello;
@@ -18,16 +16,13 @@ type Props = {
 };
 
 const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
-  const { themeStyles, appFontStyle } = useGlobalStyle();
+  const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
-
-  // console.error(data);
-  // console.error(momentOriginalId);
-
+  const { themeAheadOfLoading } = useFriendStyle();
+ 
   const [highlightedMoment, setHighlightedMoment] = useState(undefined);
 
-  const SPINNER_SIZE = 30; // ?? not sure if right can't find my main spinner comp?
+  const SPINNER_SIZE = 30;  
   const renderListItem = useCallback(
     ({ item, index }: { item: [string, any]; index: number }) => (
       <View
@@ -50,9 +45,7 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
   const {
     helloesListFull,
     fetchUntilIndex,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage,
+ 
   } = useFullHelloes({ friendId: selectedFriend?.id, indexNeeded: index });
 
   fetchUntilIndex(index);
@@ -61,16 +54,7 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
   const [helloCapsuleData, setHelloCapsuleData] = useState(undefined);
 
   const helloCapsules = helloToView?.thought_capsules_shared ?? null;
-
-  // useEffect(() => {
-  //   if (helloCapsules) {
-
-  //   console.log(helloCapsules);
-  //   const keyz = Object.keys(helloCapsules);
-
-  //   }
-
-  // }, [helloCapsules]);
+ 
 
   useEffect(() => {
     if (helloCapsules) {
@@ -87,8 +71,7 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
           console.warn(highlight);
           setHighlightedMoment(highlight[0]);
         }
-      }
-      // Example: [['key1', value1], ['key2', value2], ...]
+      } 
     }
   }, [helloCapsules]);
 
@@ -100,8 +83,7 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
 
   const ICON_MARGIN_RIGHT = 10;
   const ICON_SIZE = 20;
-
-  // console.log(helloToView);
+ 
   return (
     <>
       {!helloToView && (
@@ -116,8 +98,7 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
           }}
         >
           <LoadingPage
-            loading={true}
-            // includeLabel={true}
+            loading={true} 
             spinnerType="circle"
             spinnerSize={SPINNER_SIZE}
             color={themeAheadOfLoading.lightColor}
@@ -224,8 +205,7 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
                   flexDirection: "column",
                   height: "100%",
                   justifyContent: "flex-start",
-                  height: 200,
-                  // backgroundColor: "orange",
+                  height: 200, 
                   width: "100%",
                 }}
               >
@@ -239,8 +219,7 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
                   <View
                     style={{
                       width: "100%",
-                      height: 200,
-                      //   backgroundColor: "red",
+                      height: 200, 
                     }}
                   >
                     <FlatList
@@ -251,96 +230,10 @@ const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
                   </View>
                 )}
               </View>
-
-              {/* <ModalInfoText infoText={helloToView.thought_capsules_shared} /> */}
+ 
             </View>
           )}
-
-          {/* {helloToView?.additional_notes && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingVertical: 4,
-                flexWrap: "flex",
-                paddingRight: 10,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "column",
-                  height: "100%",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"pencil"}
-                  color={themeStyles.primaryText.color}
-                  size={ICON_SIZE}
-                  style={{ marginRight: ICON_MARGIN_RIGHT }}
-                />
-              </View>
-              <ModalInfoText infoText={helloToView.additional_notes} />
-            </View>
-            
-          )}
-
-                    {helloToView?.additional_notes && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingVertical: 4,
-                flexWrap: "flex",
-                paddingRight: 10,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "column",
-                  height: "100%",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"pencil"}
-                  color={themeStyles.primaryText.color}
-                  size={ICON_SIZE}
-                  style={{ marginRight: ICON_MARGIN_RIGHT }}
-                />
-              </View>
-              <ModalInfoText infoText={helloToView.additional_notes} />
-            </View>
-            
-          )}
-                    {helloToView?.additional_notes && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingVertical: 4,
-                flexWrap: "flex",
-                paddingRight: 10,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "column",
-                  height: "100%",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"pencil"}
-                  color={themeStyles.primaryText.color}
-                  size={ICON_SIZE}
-                  style={{ marginRight: ICON_MARGIN_RIGHT }}
-                />
-              </View>
-              <ModalInfoText infoText={helloToView.additional_notes} />
-            </View>
-            
-          )} */}
+ 
         </View>
       )}
     </>

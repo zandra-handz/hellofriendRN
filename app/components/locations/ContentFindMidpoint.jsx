@@ -7,14 +7,14 @@ import PickerSimpleButtonsBase from "../selectors/PickerSimpleButtonsBase";
 import InputMidpointKeyword from "./InputMidpointKeyword";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import { LinearGradient } from "expo-linear-gradient";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 import BodyStyling from "../scaffolding/BodyStyling";
 
 const ContentFindMidpoint = ({ userAddress, friendAddress }) => {
   
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { themeStyles } = useGlobalStyle();
   const [showResults, setShowResults] = useState(false);
   const [radius, setRadius] = useState("5000");

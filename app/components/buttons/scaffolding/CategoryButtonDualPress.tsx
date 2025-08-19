@@ -1,6 +1,6 @@
 import React from "react";
-import { Pressable, Text } from "react-native";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { Pressable, Text } from "react-native"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 type Props = {
   onPress: () => void;
@@ -22,7 +22,7 @@ const CategoryButtonDualPress = ({
   width = 100,
   height,
 }: Props) => {
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   return (
     <Pressable

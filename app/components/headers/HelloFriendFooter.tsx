@@ -21,13 +21,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const HelloFriendFooter = () => {
   const { onSignOut } = useUser();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
-  const { resetTheme } = useFriendList();
+  const { resetTheme } = useFriendStyle();
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [reportModalVisible, setReportModalVisible] = useState(false);

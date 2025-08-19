@@ -14,8 +14,8 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
-import AlertList from "../alerts/AlertList";
-import { useFriendList } from "@/src/context/FriendListContext";
+import AlertList from "../alerts/AlertList"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import NotesOutlineSvg from "@/app/assets/svgs/notes-outline.svg"; 
 import { useNavigation } from "@react-navigation/native";
@@ -25,7 +25,7 @@ const LocationCategory = ({
   location,
  
 }) => {
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const [isModalVisible, setModalVisible] = useState(false);
   const { themeStyles } = useGlobalStyle(); 
   const [hasCategory, setHasCategory] = useState(false);

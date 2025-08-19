@@ -4,15 +4,15 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import ArrowLeftCircleOutline from "@/app/assets/svgs/arrow-left-circle-outline.svg";
 import { useNavigation } from "@react-navigation/native";
-import LoadingPage from "../appwide/spinner/LoadingPage";
-import { useFriendList } from "@/src/context/FriendListContext";
+import LoadingPage from "../appwide/spinner/LoadingPage"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { LinearGradient } from "expo-linear-gradient"; 
 import LocationPinMapSvg from '@/app/assets/svgs/location-pin-map.svg';
 
 const HeaderLocation = ({ title = "LOCATIONS", addView = false }) => {
   const { themeStyles } = useGlobalStyle();
   const { loadingNewFriend, selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const navigation = useNavigation();
 
   const handleNavigateBack = () => {

@@ -1,12 +1,11 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text  } from "react-native";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import React, { useCallback } from "react";
+import React  from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import LoadingPage from "../appwide/spinner/LoadingPage";
+ 
 
 type Props = {
   fontSize: number;
@@ -19,16 +18,15 @@ type Props = {
 
 //similar to topbar but has its own spinner instead of centering based on parent component
 const SwitchFriend = ({
-  fontSize = 13,
-  hideLabel = false,
+  fontSize = 13, 
   editMode = false,
   iconSize = 20,
   maxWidth = 100,
   zIndex = 3,
 }: Props) => {
   const { appFontStyles, themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+ 
+  const { selectedFriend  } = useSelectedFriend();
   const navigation = useNavigation();
   // const friendModalButtonHeight = 16;
 

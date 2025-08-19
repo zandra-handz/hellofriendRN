@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
  
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
-import { useFriendList} from '@/src/context/FriendListContext';
-
+import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; 
+import { useFriendStyle } from '@/src/context/FriendStyleContext';
 import ArrowLeftCircleOutline from '@/app/assets/svgs/arrow-left-circle-outline.svg';
 
 import { useNavigation } from '@react-navigation/native';
@@ -17,7 +16,7 @@ const HeaderBaseButtonComponent = ({
 }) => {
  
     const { themeStyles } = useGlobalStyle(); 
-    const { themeAheadOfLoading } = useFriendList();
+    const { themeAheadOfLoading } = useFriendStyle();
     const navigation = useNavigation();
 
     const handleNavigateBack = () => {

@@ -4,8 +4,8 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useUserStats } from "@/src/context/UserStatsContext";
 import UserHistoryModal from "../headers/UserHistoryModal";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import UserHistoryMiniPie from "./UserHistoryMiniPie";
 
 type Props = {
@@ -24,7 +24,7 @@ const UserHistoryPieDataWrap = ({
   showLabels = false,
 }: Props) => { 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { stats } = useUserStats();
   const [largeUserChartVisible, setLargeUserChartVisible] = useState(false);
  

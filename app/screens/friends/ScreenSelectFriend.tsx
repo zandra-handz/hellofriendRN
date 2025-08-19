@@ -1,5 +1,5 @@
-import { View  } from "react-native";
-import React, {   useMemo } from "react";
+import { View } from "react-native";
+import React, { useMemo } from "react";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -7,6 +7,7 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import FriendListUI from "@/app/components/alerts/FriendListUI";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 type Props = {
   navigationDisabled: boolean;
@@ -14,14 +15,12 @@ type Props = {
 
 const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   const { themeStyles } = useGlobalStyle();
-  const { friendList, getThemeAheadOfLoading } = useFriendList();
+  const { friendList } = useFriendList();
+  const { getThemeAheadOfLoading, resetTheme } = useFriendStyle();
   const navigation = useNavigation();
   const { selectedFriend, selectFriend } = useSelectedFriend();
-  // const [alphabFriendList, setAlphabFriendList] = useState<object[]>([]); //back end friend model orders friends by next_meet date
-  
-  const locale = "en-US";
 
- 
+  const locale = "en-US";
 
   const alphabFriendList: object[] = useMemo(() => {
     if (!friendList || !(friendList?.length > 0)) {
@@ -45,9 +44,16 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
     const selectedOption = friendList.find((friend) => friend.id === itemId);
 
     const selectedFriend = selectedOption || null;
-
-    selectFriend(selectedFriend);
+    if (selectedOption) {
+         selectFriend(selectedFriend);
     getThemeAheadOfLoading(selectedFriend);
+
+    } else {
+      selectFriend(null);
+      resetTheme();
+
+    }
+ 
 
     if (!navigationDisabled) {
       navigation.goBack();
@@ -74,33 +80,8 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
             name="account-switch-outline"
             size={26}
             color={themeStyles.primaryText.color}
-          /> 
+          />
         </View>
-        {/* {selectedFriend && (
-          <View
-            style={{
-              width: "100%",
-              backgroundColor: themeStyles.primaryBackground.backgroundColor,
-              height: "auto",
-              flexShrink: 1,
-
-              borderRadius: 10,
-              justifyContent: "center",
-              padding: 20,
-              paddingVertical: 20,
-            }}
-          >
-            <Text
-              style={[
-                themeStyles.primaryText,
-                appFontStyles.welcomeText,
-                { fontSize: 26 },
-              ]}
-            >
-              Selected: {selectedFriend.name}
-            </Text>
-          </View>
-        )} */}
         <View style={{ width: "100%", flex: 1 }}>
           {alphabFriendList && alphabFriendList.length > 0 && (
             <FriendListUI

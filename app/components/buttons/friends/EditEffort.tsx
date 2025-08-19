@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUser } from "@/src/context/UserContext";
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
@@ -11,7 +11,7 @@ import EffortSettingSlider from "../../friends/EffortSettingSlider";
 const EditEffort = ({ iconSize = 15, value = "None" }) => {
   const { user } = useUser();
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   const [effort, setEffort] = useState(
     friendDashboardData?.suggestion_settings?.effort_required || null

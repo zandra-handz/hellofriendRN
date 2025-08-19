@@ -4,8 +4,8 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import ArrowLeftCircleOutline from "@/app/assets/svgs/arrow-left-circle-outline.svg";
 import { useNavigation } from "@react-navigation/native";
-import LoadingPage from "../appwide/spinner/LoadingPage";
-import { useFriendList } from "@/src/context/FriendListContext";
+import LoadingPage from "../appwide/spinner/LoadingPage"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { LinearGradient } from "expo-linear-gradient";
  
 
@@ -27,7 +27,7 @@ const GlobalAppHeaderIconVersion: React.FC<GlobalAppHeaderIconVersionProps> = ({
 }) => {
   const { appContainerStyles, appFontStyles } = useGlobalStyle();
   const { loadingNewFriend, selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const navigation = useNavigation();
 
   const handleNavigateBack = () => {

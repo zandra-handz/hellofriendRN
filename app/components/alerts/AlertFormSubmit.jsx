@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated } from 'react-native';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
-import { useFriendList } from '@/src/context/FriendListContext';  
+import { TouchableOpacity, StyleSheet, View, Modal, Text, Animated, Pressable } from 'react-native';
+import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; 
+import { useFriendStyle } from '@/src/context/FriendStyleContext';
 import ButtonBottomSaveMoment from '../buttons/moments/ButtonBottomSaveMoment';
 
 const AlertFormSubmit = ({
@@ -21,7 +21,7 @@ const AlertFormSubmit = ({
   showButtons = true  
 }) => {
   const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity of 0
 
   
@@ -91,7 +91,8 @@ const AlertFormSubmit = ({
            )}
            
            {saveMoment && (
-            <ButtonBottomSaveMoment onPress={onConfirm} />
+            <Pressable onPress={onConfirm} style={{width: '100%', height: 40, backgroundColor: 'red'}}/>
+ 
            )}
            </>
         )}

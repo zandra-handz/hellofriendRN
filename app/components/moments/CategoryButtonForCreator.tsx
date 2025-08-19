@@ -1,10 +1,8 @@
-import { TouchableOpacity, Text, Pressable } from "react-native";
-import React, { useCallback, useEffect } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { TouchableOpacity  } from "react-native";
+import React, {  useEffect } from "react"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, { SharedValue } from "react-native-reanimated";
-
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -44,8 +42,7 @@ const CategoryButtonForCreator = ({
     appFontStyles,
     manualGradientColors,
   } = useGlobalStyle();
-  
-  const { themeAheadOfLoading } = useFriendList();
+   
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
 

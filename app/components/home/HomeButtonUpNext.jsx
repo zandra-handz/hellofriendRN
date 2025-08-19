@@ -5,7 +5,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import LoadingPage from "../appwide/spinner/LoadingPage"; 
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
@@ -19,8 +19,9 @@ const HomeButtonUpNext = ({
   borderColor = "transparent",
 }) => {
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { friendList, getThemeAheadOfLoading } =
+  const { friendList } =
     useFriendList();
+    const { getThemeAheadOfLoading } = useFriendStyle();
   const { themeStyles, appFontStyles, themeStyleSpinners, manualGradientColors } =
     useGlobalStyle(); 
   const { setFriend, loadingNewFriend } = useSelectedFriend();

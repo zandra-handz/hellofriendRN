@@ -1,12 +1,9 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text  } from "react-native";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import React, { useCallback } from "react";
+import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import LoadingPage from "../appwide/spinner/LoadingPage";
+ 
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
 type Props = {
   fontSize: number;

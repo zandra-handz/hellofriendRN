@@ -2,8 +2,7 @@ import { TouchableOpacity, Text, Pressable } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, { SharedValue } from "react-native-reanimated";
-
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -41,8 +40,7 @@ const CategoryButton = ({
     appFontStyles,
     manualGradientColors,
   } = useGlobalStyle();
-console.log(highlightColor);
-  const { themeAheadOfLoading } = useFriendList();
+console.log(highlightColor); 
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
 

@@ -17,6 +17,7 @@ import ModalAddNewLocation from "./ModalAddNewLocation";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useLocations } from '@/src/context/LocationsContext';
 import HeartAddOutlineSvg from "@/app/assets/svgs/heart-add-outline.svg";
@@ -37,7 +38,7 @@ const LocationSavingActionsForCard = ({
 
   const {   handleAddToFaves,
     handleRemoveFromFaves } = useLocations();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend, friendFavesData, getFaveLocationIds } = useSelectedFriend();
   const { friendFaveLocations } = friendFavesData;
  

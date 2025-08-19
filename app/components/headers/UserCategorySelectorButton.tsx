@@ -7,7 +7,8 @@ import {
 } from "react-native";
 import React, { useMemo } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { TextHeightBehavior } from "@shopify/react-native-skia";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 type Props = {
@@ -33,8 +34,8 @@ const UserCategorySelectorButton = ({
   width,
   marginRight,
 }: Props) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeStyles  } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendStyle();
   return (
     <Pressable
       onPress={() => onPress(item, index)}

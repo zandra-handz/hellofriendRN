@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 // import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 //may need to configure friendlist theme color before using as a button
 const ButtonSelectFriend = ({
@@ -15,7 +15,7 @@ const ButtonSelectFriend = ({
   height = 70,
 }) => {
   const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { themeStyles } = useGlobalStyle();
  
   const [textColor, setTextColor] = useState(themeStyles.genericText.color);

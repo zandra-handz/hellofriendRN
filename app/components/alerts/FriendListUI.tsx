@@ -11,6 +11,7 @@ import Animated, {
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
 import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";

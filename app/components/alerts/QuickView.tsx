@@ -1,21 +1,16 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Pressable  } from "react-native";
 import Animated, {
   runOnJS,
   useSharedValue,
   useAnimatedStyle,
-  withTiming,
-  SlideInLeft,
-  FadeIn,
-  FadeInLeft,
-  SlideInUp,
-  FadeOut,
+  withTiming, 
   withDelay,
   
 } from "react-native-reanimated";
 import PlainSafeView from "../appwide/format/PlainSafeView";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons  } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
  
 const QuickView = ({
@@ -65,11 +60,7 @@ const QuickView = ({
     transform: [{ translateX: translateX.value}]
 
 
-  }));
-
-  // useEffect(() => {
-  //   console.log("change in update in quickmessage:", update);
-  // }, [update]);
+  })); 
 
     const insets = useSafeAreaInsets();
 
@@ -79,9 +70,7 @@ const QuickView = ({
       style={[StyleSheet.absoluteFillObject, styles.overlay]}
     > 
         
-      <Animated.View
-        // entering={SlideInLeft.duration(100).delay(100)}
-        // exiting={FadeOut.duration(20)}
+      <Animated.View 
         style={[topBarStyle, {
           flexDirection: "row",
           position: "absolute",
@@ -133,24 +122,12 @@ const QuickView = ({
       >
  
         {!update && (
-        //   <ScrollView
-        //     contentContainerStyle={{ flexDirection: "row", alignItems: "center",   padding: 10 }}
-        //   >
+      
             <View style={{  flex: 1,  padding: 10 }}
      >
                 
               {view != undefined && view}
-            {/* <Text
-              style={[
-                themeStyles.primaryText,
-                appFontStyles.subWelcomeText,
-                { lineHeight: 24 },
-              ]}
-            >
-              {" "}
-              {message}
-            </Text> */}
-            
+ 
       
        
           </View>
@@ -169,11 +146,7 @@ const QuickView = ({
             justifyContent: "center",
 
             flexDirection: "row",
-            borderRadius: 999,
-            // position: "absolute",
-            // top: 10,
-            // right: 10,
-            //  backgroundColor: "blue",
+            borderRadius: 999, 
           }}
         >
           <Text
@@ -186,8 +159,7 @@ const QuickView = ({
           </Text>
           <MaterialCommunityIcons
             name={"check-circle"}
-            size={24}
-           // color={themeStyles.primaryText.color}
+            size={24} 
             color={manualGradientColors.lightColor}
           />
         </Pressable>

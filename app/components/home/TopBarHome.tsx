@@ -4,6 +4,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 
@@ -11,7 +12,7 @@ type Props = {};
 
 const TopBarHome = (props: Props) => {
   const { appFontStyles, themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const navigation = useNavigation();
   // const friendModalButtonHeight = 16;

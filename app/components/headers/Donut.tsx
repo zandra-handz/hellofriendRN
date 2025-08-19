@@ -1,16 +1,13 @@
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
+  View, 
+  StyleSheet, 
   DimensionValue,
-} from "react-native";
-import { useFriendList } from "@/src/context/FriendListContext";
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+} from "react-native"; 
+import React, {   useMemo,  useEffect } from "react";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { useSharedValue, withTiming, useDerivedValue  } from "react-native-reanimated";
-
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import DonutChart from "./DonutChart";
 import { useFont } from "@shopify/react-native-skia";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
@@ -56,7 +53,7 @@ const Donut = ({
  
   // console.log(`colors in donut: `, colors);
   //   console.log(`data in donut: `, data);
-const { themeAheadOfLoading } = useFriendList();
+const { themeAheadOfLoading } = useFriendStyle();
   const { calculatePercentage } = useMomentSortingFunctions(data);
   const totalValue = useSharedValue(0);
   const decimalsValue = useSharedValue<number[]>([]); 

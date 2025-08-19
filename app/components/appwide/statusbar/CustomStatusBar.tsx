@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo  } from 'react';
 // import { StatusBar } from 'react-native'; 
-import { StatusBar } from 'expo-status-bar';
-import { useUser } from '@/src/context/UserContext'; 
+import { StatusBar } from 'expo-status-bar'; 
 import { useColorScheme } from "react-native";  
 import { useUserSettings } from '@/src/context/UserSettingsContext';
 

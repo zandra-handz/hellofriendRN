@@ -4,8 +4,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import ImageGallerySingleOutlineSvg from "@/app/assets/svgs/image-gallery-single-outline.svg";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 // state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ContentAddImage from "@/app/components/images/ContentAddImage";
@@ -18,7 +17,7 @@ const ScreenAddImage = () => {
   const imageUri = route.params?.imageUri ?? false;
 
   const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
 
   const renderHeader = useCallback(

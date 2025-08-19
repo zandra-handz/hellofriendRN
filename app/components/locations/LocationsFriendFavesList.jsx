@@ -1,7 +1,7 @@
 import React, { useEffect,  useRef } from 'react';
 import { View, Dimensions, StyleSheet,  Animated } from 'react-native'; 
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
-import { useFriendList } from '@/src/context/FriendListContext'; 
+import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; 
+import { useFriendStyle } from '@/src/context/FriendStyleContext';
 import ShopOutlineSvg from '@/app/assets/svgs/shop-outline.svg'; 
 import LocationCard from "./LocationCard";
 import { LinearTransition } from 'react-native-reanimated';
@@ -15,7 +15,7 @@ const LocationsFriendFavesList = ({
 }) => {
     const { locationList } = useLocations();
     const { themeStyles } = useGlobalStyle();
-    const { themeAheadOfLoading } = useFriendList();   
+    const { themeAheadOfLoading } = useFriendStyle();   
  
  
         const flatListRef = useRef(null);

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
-
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../../appwide/spinner/LoadingPage";
@@ -17,7 +17,7 @@ const FriendProfileButton = ({ onPress }) => {
     loadingNewFriend,
   } = useSelectedFriend();
   const { themeStyles, appFontStyles, appContainerStyles, manualGradientColors } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
 
   const circleSize = 27;

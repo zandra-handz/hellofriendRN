@@ -3,6 +3,7 @@ import { StyleSheet, Pressable, View, Text } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import useReadableColors from "@/src/hooks/useReadableColors";
@@ -16,11 +17,14 @@ import Toggle from "../../user/Toggle";
 const EditTheme = ({ iconSize = 15, value = "None" }) => {
  
   const { selectedFriend, friendDashboardData, handleUpdateFavesTheme } = useSelectedFriend();
-  const {
-    themeAheadOfLoading,
-    updateFriendListColorsExcludeSaved,
+  const { 
     friendList,
   } = useFriendList();
+    const {
+    themeAheadOfLoading,
+    updateFriendListColorsExcludeSaved,
+ 
+  } = useFriendStyle();
 
   const [isMakingCall, setIsMakingCall] = useState(false);
     const formRef = useRef(null);

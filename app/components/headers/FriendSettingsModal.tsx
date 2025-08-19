@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React  from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { TouchableOpacity, AccessibilityInfo } from "react-native";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { TouchableOpacity, AccessibilityInfo } from "react-native"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
@@ -25,7 +25,7 @@ const FriendSettingsModal: React.FC<Props> = ({
   closeModal,
 }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   const headerIconSize = 26;
 

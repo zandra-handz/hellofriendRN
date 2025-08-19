@@ -1,9 +1,9 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text  } from "react-native";
 import React, { useCallback } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
+ 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
 
@@ -17,13 +17,7 @@ const ForFriend = ({fontSize=13}: Props) => {
   const { appFontStyles, themeStyles } = useGlobalStyle();
  
   const { selectedFriend,  loadingNewFriend } = useSelectedFriend();
-  const navigation = useNavigation();
-  // const friendModalButtonHeight = 16;
-
-  const handleNavigateToFriendSelect = () => {
-    navigation.navigate("SelectFriend");
-  };
-
+ 
   const RenderIcon = useCallback(
     () => (
       <View

@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import { useFriendList } from "@/src/context/FriendListContext";
+
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import ImageMenuButton from "@/app/components/images/ImageMenuButton";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
 import ImagesList from "@/app/components/images/ImagesList"; 
@@ -13,7 +14,7 @@ import ImageGalleryOutlineSvg from "@/app/assets/svgs/image-gallery-outline.svg"
 
 const ScreenImages = () => {
   const { imageList } = useImageFunctions();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
 
     const renderHeader = useCallback(

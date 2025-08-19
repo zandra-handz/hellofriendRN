@@ -10,8 +10,8 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { AppState, AppStateStatus } from "react-native";
 import FriendHistoryPieDataWrap from "./FriendHistoryPieDataWrap";
-import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap";
-import { useFriendList } from "@/src/context/FriendListContext";
+import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 import Demo from "../headers/SkiaDemo";
@@ -29,7 +29,7 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
  
   const { navigateToMoments, navigateToMomentView, navigateToMomentFocus } = useAppNavigations();
   const { capsuleList } = useCapsuleList();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
   

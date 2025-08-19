@@ -8,14 +8,13 @@ import {
 } from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
-import { MaterialCommunityIcons, Foundation } from "@expo/vector-icons";
+ 
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendList } from "@/src/context/FriendListContext";
-import { useHelloes } from "@/src/context/HelloesContext";
-import GlobalPressable from "../appwide/button/GlobalPressable";
+import { useHelloes } from "@/src/context/HelloesContext"; 
 import FriendHistoryMomentItem from "./FriendHistoryMomentItem";
  
 

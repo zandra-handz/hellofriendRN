@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, Keyboard, Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import MultilineInputModal from "../headers/MultilineInputModal";
 // import useLocationFunctions from "../hooks/useLocationFunctions";
 import Animated from "react-native-reanimated";
@@ -28,7 +28,7 @@ const LocationInviteBody = ({
 
   const { themeStyles, appContainerStyles, appSpacingStyles, appFontStyles } =
     useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
  
   const { checkIfOpen } = useLocationDetailFunctions();

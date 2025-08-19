@@ -3,11 +3,10 @@ import { View, Text } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
-import { useCategories } from "@/src/context/CategoriesContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useCategories } from "@/src/context/CategoriesContext"; 
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
 import Animated, {
   SlideInDown,
@@ -24,7 +23,7 @@ const ScreenMomentFocus = () => {
   const existingMomentObject = route.params?.existingMomentObject ?? null;
   const { capsuleList } = useCapsuleList();
   const { userCategories } = useCategories();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });

@@ -10,8 +10,8 @@ import {
   StyleSheet,
   FlatList, 
 } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const PickerMenuOptions = ({
   title = "title here",
@@ -31,7 +31,7 @@ const PickerMenuOptions = ({
   const oneFourthWidth = '25%';  
 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   return (
     <View style={[

@@ -12,8 +12,8 @@ import {
   Text, 
   Pressable,
   StyleSheet,
-} from "react-native";
-import { useFriendList } from "@/src/context/FriendListContext";
+} from "react-native"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 
@@ -25,7 +25,7 @@ const LocationNotes = ({
   openEditModal,
   closeEditModal,
 }) => {
-  const { themeAheadOfLoading } = useFriendList(); 
+  const { themeAheadOfLoading } = useFriendStyle(); 
   const { themeStyles } = useGlobalStyle();
   // const [hasNotes, setHasNotes] = useState(false);
 

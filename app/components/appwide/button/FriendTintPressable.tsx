@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { ColorValue } from "react-native";
+import { ColorValue } from "react-native"; 
 
 // HARD CODED COLOR 
 import { LinearGradient } from "expo-linear-gradient";

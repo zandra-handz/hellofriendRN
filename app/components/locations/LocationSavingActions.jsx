@@ -14,7 +14,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 const LocationSavingActions = ({
@@ -27,7 +28,7 @@ const LocationSavingActions = ({
 
   style,
 }) => {
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
   const { handleAddToFaves, handleRemoveFromFaves } =
     useFriendLocationsContext();

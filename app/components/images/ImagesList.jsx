@@ -1,6 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { View, StyleSheet, Dimensions } from "react-native"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
  
 import { useNavigation } from "@react-navigation/native";
@@ -16,7 +16,7 @@ const windowWidth = Dimensions.get("window").width;
 
 const ImagesList = ({ width, height, containerWidth = "100%" }) => {
   const { imageList } = useImageFunctions(); 
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const navigation = useNavigation();
  
   const openImageNav = (image, index) => {

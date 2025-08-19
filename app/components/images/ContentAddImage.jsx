@@ -19,8 +19,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import useImageFunctions from "@/src/hooks/useImageFunctions";
-import { useFriendList } from "@/src/context/FriendListContext";
+import useImageFunctions from "@/src/hooks/useImageFunctions"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 
@@ -32,7 +32,7 @@ const ContentAddImage = ({ imageUri }) => {
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
   const [canContinue, setCanContinue] = useState("");
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const [imageTitle, setImageTitle] = useState("");
   const [imageCategory, setImageCategory] = useState("Misc");
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);

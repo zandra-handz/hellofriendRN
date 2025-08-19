@@ -4,10 +4,11 @@ import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 import { useSelectedFriend } from '@/src/context/SelectedFriendContext'; // Adjust the import path as necessary
 import tinycolor from 'tinycolor2';
 import { useFriendList } from '@/src/context/FriendListContext';
+import { useFriendStyle } from '@/src/context/FriendStyleContext';
 const PhoneStatusBar = () => {
 const { theme, nonCustomHeaderPage } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const [ color, setColor ] = useState('');
 
 

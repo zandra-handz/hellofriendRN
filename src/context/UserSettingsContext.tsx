@@ -5,8 +5,8 @@ import React, {
   useMemo,
   ReactNode,
   useState,
-} from "react"; 
-import { useQuery, useMutation } from "@tanstack/react-query";
+} from "react";
+import { useQuery, useMutation, useQueryClient  } from "@tanstack/react-query";
 import {
   updateUserAccessibilitySettings,
   updateSubscription,
@@ -14,7 +14,7 @@ import {
 } from "../calls/api";
 
 import { useUser } from "./UserContext";
-import isEqual from 'lodash.isequal'; 
+import isEqual from "lodash.isequal";
 
 interface UserSettings {
   id: number | null;
@@ -52,20 +52,17 @@ interface UserSettingsProviderProps {
 export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
   children,
 }) => {
- 
- 
   const { user, isAuthenticated, isInitializing } = useUser();
+const queryClient = useQueryClient();
   
- 
 
   const {
-    data: userSettings,
-    isLoading,
-    isFetching,
+   // data: userSettings,
+ data: settings,
     isSuccess,
-    isError,
+ 
   } = useQuery({
-      queryKey: ["userSettings", user?.id], // removed user id since entire cache should clear if user not logged in
+    queryKey: ["userSettings", user?.id], // removed user id since entire cache should clear if user not logged in
     // queryKey: user?.id ? ["userSettings", user.id] : undefined,
     queryFn: () => getUserSettings(),
     enabled: !!(user?.id && isAuthenticated && !isInitializing),
@@ -73,38 +70,27 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 
+  // useEffect(() => {
+  //   console.error("user triggering settings!!!", user);
+  // }, [user]);
 
-  useEffect(() => {
-    console.error('user triggering settings!!!', user);
+  // const [settings, setSettings] = useState<Record<string, any> | null>(null);
 
-  }, [user]);
+  // useEffect(() => {
+  //   if (!isSuccess || !userSettings) {
+  //     return;
+  //   }
+  //   console.log('use effect in settings getting fired');
+  //   setSettings((prev) => (isEqual(prev, userSettings) ? prev : userSettings));
+  // }, [isSuccess, userSettings]);
 
-  const [settings, setSettings] = useState<Record<string, any> | null>(null);
-
-
-
-
-useEffect(() => {
-
-  if (!isSuccess || !userSettings) {
-    return;
-  } 
- setSettings(prev => (isEqual(prev, userSettings) ? prev : userSettings));
- 
- 
-}, [isSuccess, userSettings]);
-
- 
- 
-
- 
   const updateSettingsMutation = useMutation({
     mutationFn: (data) => updateUserAccessibilitySettings(data.setting),
     onSuccess: (data) => {
-      setSettings(data); // Assuming the API returns updated settings
-      console.log("APP SETTNGS RESET");
+      // ✅ update the cache so consumers re-render immediately
+      queryClient.setQueryData(["userSettings", user?.id], data);
 
-   
+      console.log("APP SETTINGS RESET");
     },
     onError: (error) => {
       console.error("Update app settings error:", error);
@@ -123,21 +109,13 @@ useEffect(() => {
     }
   };
 
- 
- 
-
   const contextValue = useMemo(
-    () => ({ 
-      settings,  
+    () => ({
+      settings,
       updateSettings,
-     updateSettingsMutation,  
+      updateSettingsMutation,
     }),
-    [
-    
-      settings,  
-      updateSettings,
-     updateSettingsMutation, 
-    ]
+    [settings, updateSettings, updateSettingsMutation]
   );
 
   return (

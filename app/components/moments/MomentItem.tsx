@@ -1,15 +1,11 @@
-import React, { useEffect } from "react";
+import React  from "react";
 import {
   View,
   Text,
-  Pressable,
-  TouchableOpacity,
-  TouchableHighlight,
-  DimensionValue,
+  Pressable, 
 } from "react-native";
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
+  useAnimatedStyle, 
   interpolate,
   interpolateColor,
   Extrapolation,
@@ -20,9 +16,8 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useWindowDimensions } from "react-native";
 import { SharedValue } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-import { useFriendList } from "@/src/context/FriendListContext";
-
+ 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { Moment } from "@/src/types/MomentContextTypes";
 
 // interface Moment {
@@ -63,7 +58,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
   const startingPosition = index * combinedHeight;
   const { height } = useWindowDimensions();
   const containerHeight = height - 410;
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const textContainerWidth = "100%";
   const talkingPointNumberOfLines = 3;
   const cardBorderRadius = 999;

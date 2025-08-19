@@ -3,8 +3,8 @@ import { View, StyleSheet, Keyboard } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice";
-import { useFriendList } from "@/src/context/FriendListContext";
-
+ 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
  
 import { useLocations } from "@/src/context/LocationsContext";
@@ -39,7 +39,7 @@ const ScreenLocationEdit = () => {
   const { handleUpdateLocation, updateLocationMutation, handleDeleteLocation, deleteLocationMutation } = useLocations();
 
   const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading   } = useFriendList();
+  const { themeAheadOfLoading   } = useFriendStyle();
  
   const editedTextRef = useRef(null);
   const editedCategoryRef = useRef(null);

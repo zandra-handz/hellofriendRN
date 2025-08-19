@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const BodyStyling = ({
   height = "100%",
@@ -17,7 +17,7 @@ const BodyStyling = ({
   justifyContent = 'space-between',
 }) => {
   const { themeStyles, appContainerStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   return (
     <View

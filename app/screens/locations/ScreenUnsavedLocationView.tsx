@@ -7,8 +7,8 @@ import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
 import LeavesTwoFallingOutlineThickerSvg from "@/app/assets/svgs/leaves-two-falling-outline-thicker.svg";
  
 import CarouselSlider from "@/app/components/appwide/CarouselSlider"; 
-import { useFriendList } from "@/src/context/FriendListContext";
  
+ import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 import LocationViewPage from "@/app/components/locations/LocationViewPage";
 
@@ -17,7 +17,7 @@ const ScreenUnsavedLocationView = () => {
   const unsavedLocation = route.params?.unsavedLocation ?? null; 
   // const [currentIndex, setCurrentIndex] = useState(0);
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendList(); 
+  const { themeAheadOfLoading } = useFriendStyle(); 
 
   const renderHeader = useCallback(
     () => (

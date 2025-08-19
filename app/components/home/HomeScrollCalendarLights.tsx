@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useCallback } from "react";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
  import CalendarLights from "../foranimations/CalendarLights";
 
@@ -15,7 +16,8 @@ const HomeScrollCalendarLights = ({
 }) => { 
   const {   isLoading } = useUpcomingHelloes();
   const { friendDashboardData } = useSelectedFriend();
-  const { friendList, themeAheadOfLoading } = useFriendList();
+  const { friendList  } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
 
   const calendarButtonHeight = height / 0.6;
 

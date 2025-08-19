@@ -22,11 +22,11 @@ import {
   FlatList,
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import LocationOverMapButton from "./LocationOverMapButton";
+ 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFriendList } from "@/src/context/FriendListContext";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 import FocusedLocationCardUI from "./FocusedLocationCardUI"; 
 import { useLocations } from "@/src/context/LocationsContext";
@@ -58,7 +58,7 @@ const LocationsMapView = ({
   const { currentLocationDetails, currentRegion } = useCurrentLocation();
   const navigation = useNavigation();
   const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendList();
+  const { themeAheadOfLoading } = useFriendStyle();
   const [focusedLocation, setFocusedLocation] = useState(null); 
 
   const listItemIconSize = 15;

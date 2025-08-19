@@ -70,7 +70,6 @@ export const PreAuthSafeViewAndGradientBackground = ({
             right: 0,
             left: 0,
             opacity: 1,
-            // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
             backgroundColor: themeStyles.primaryBackground.backgroundColor,
             borderBottomLeftRadius: backgroundOverlayBottomRadius,
             borderBottomRightRadius: backgroundOverlayBottomRadius,
