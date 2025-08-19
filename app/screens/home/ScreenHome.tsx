@@ -40,7 +40,7 @@ const ScreenHome = () => {
   // using DeviceLocationContext now
   // useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles } = useGlobalStyle();
-  const { user, reInitialize, onSignOut } = useUser();
+  const { user, onSignOut } = useUser();
 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { friendList } = useFriendList();
@@ -61,40 +61,37 @@ const ScreenHome = () => {
  
   // console.log("HOME SCREEN RERENDEREEEEEEEEEEEEERded");
 
-   const appState = useRef(AppState.currentState);
-    useEffect(() => {
-      const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
-        console.log("Welcome screen: App state changed:", nextState);
+  //  const appState = useRef(AppState.currentState);
+  //   useEffect(() => {
+  //     const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
+  //       console.log("Welcome screen: App state changed:", nextState);
   
         
-        if (
-          appState.current.match(/inactive|background/) &&
-          nextState === "active"
-        ) {
+  //       if (
+  //         appState.current.match(/inactive|background/) &&
+  //         nextState === "active"
+  //       ) {
   
   
-          console.log("Weclome screen: App has come to the foreground!"); 
+  //         console.log("Weclome screen: App has come to the foreground!"); 
           
-          console.warn(`CHEKING IF SGINED IN   `);
+  //         console.warn(`CHEKING IF SGINED IN   `);
           
-          checkIfSignedIn();
-          if (!reInitialize) {
-          return;
-        }
+  //         checkIfSignedIn();
+  //         if (!reInitialize) {
+  //         return;
+  //       }
     
-        }
+  //       }
   
-        appState.current = nextState;
-      });
+  //       appState.current = nextState;
+  //     });
   
-      return () => subscription.remove(); // cleanup
-    }, [reInitialize]);
+  //     return () => subscription.remove(); // cleanup
+  //   }, [reInitialize]);
 
 
-    useEffect(() => {
-      console.log('user changed!!!!!!!');
-
-    }, [user]);
+ 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
 
