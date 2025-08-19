@@ -37,25 +37,18 @@ interface UserStatsProviderProps {
 export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
   children,
 }) => {
-  const { user, isInitializing, isAuthenticated } = useUser();
+  const { user, isInitializing } = useUser();
  
-  // console.log("USER STATS CONTEXT");
-
-  // const [stats, setStats] = useState<
-  //   Record<string, any>
-  // >([]);
+ 
   const queryClient = useQueryClient();
 
   const {
     data: stats,
-    isLoading,
-    isFetching,
-    isSuccess,
-    isError,
+  
   } = useQuery({
     queryKey: ["userStats", user?.id],
     queryFn: () => fetchCategoriesHistoryCountAPI({returnNonZeroesOnly: true}), //return non-empty categories only
-    enabled: !!(user?.id),
+      enabled: !!user?.id && !isInitializing,
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   
   });
@@ -79,7 +72,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
 
  
  const refetchUserStats = () => {
-     if (user && isAuthenticated && !isInitializing) {
+     if (user && !isInitializing) {
     queryClient.refetchQueries(["userStats", user.id]);  //also manually added this to categories context
   }
 
@@ -87,7 +80,7 @@ export const UserStatsProvider: React.FC<UserStatsProviderProps> = ({
 
 
 const invalidateUserStats = () => {
-     if (user && user.id && isAuthenticated && !isInitializing) {
+     if (user && user.id && !isInitializing) {
     queryClient.invalidateQueries(["userStats", user.id]);
   }
 

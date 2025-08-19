@@ -9,9 +9,8 @@ import React, {
 import { useUser } from "./UserContext";
 // import { useCategories } from "./CategoriesContext"; 
 import { useSelectedFriend } from "./SelectedFriendContext";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
-  fetchCategoriesFriendHistoryAPI,
+import { useQuery,   useQueryClient } from "@tanstack/react-query";
+import {  
   fetchCategoriesHistoryCountAPI,
  
 } from "../calls/api";
@@ -39,10 +38,8 @@ interface SelectedFriendStatsProviderProps {
 export const SelectedFriendStatsProvider: React.FC<
   SelectedFriendStatsProviderProps
 > = ({ children }) => {
-  const { user, isInitializing, isAuthenticated } = useUser();
-  // const { userCategories } = useCategories();
-  const { selectedFriend } = useSelectedFriend();
-  // console.log("SELECTED FRIEND STATS CONTEXT");
+  const { user, isInitializing } = useUser(); 
+  const { selectedFriend } = useSelectedFriend(); 
 
   // const [selectedFriendStats, setSelectedFriendStats] = useState<
   //   Record<string, any>
@@ -60,9 +57,8 @@ export const SelectedFriendStatsProvider: React.FC<
       queryFn: () => fetchCategoriesHistoryCountAPI({friendId: selectedFriend?.id, returnNonZeroesOnly: true}),
     // queryFn: () => fetchCategoriesFriendHistoryAPI(selectedFriend.id, false), //return non-empty categories only
     enabled: !!(
-      user &&
-      user.id &&
-      isAuthenticated &&
+     
+      user?.id &&
       !isInitializing &&
       selectedFriend && selectedFriend?.id
     ),
@@ -85,7 +81,7 @@ export const SelectedFriendStatsProvider: React.FC<
 
 
 const refetchFriendStats = () => {
-     if (user && user.id && isAuthenticated && !isInitializing && selectedFriend) {
+     if ( user?.id  && !isInitializing && selectedFriend) {
     queryClient.refetchQueries(["selectedFriendStats", user.id, selectedFriend.id]);
   }
 
@@ -93,7 +89,7 @@ const refetchFriendStats = () => {
 
 
 const invalidateFriendStats = () => {
-     if (user && user.id && isAuthenticated && !isInitializing && selectedFriend) {
+     if (user?.id && !isInitializing && selectedFriend) {
     queryClient.invalidateQueries(["selectedFriendStats", user.id, selectedFriend.id]);
   }
 

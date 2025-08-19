@@ -22,7 +22,7 @@ import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/forma
 
 const ScreenWelcome = () => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { reInitialize, isAuthenticated } = useUser();
+  const { user, isAuthenticated, isInitializing } = useUser();
   const navigation = useNavigation<AuthScreenNavigationProp>();
 
   const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
@@ -32,36 +32,28 @@ const ScreenWelcome = () => {
     navigation.navigate("Auth", { createNewAccount: !!userHitCreateAccount });
   };
 
-  //  const appState = useRef(AppState.currentState);
+ 
 
-  //     useEffect(() => {
-  //       const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
-  //         console.log("Welcome screen: App state changed:", nextState);
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     checkIfSignedIn();
+  //   }, [])
+  // );
 
-  //         if (
-  //           appState.current.match(/inactive|background/) &&
-  //           nextState === "active"
-  //         ) {
+  useEffect(() => {
+    if (user) {
+      setConfirmedUserNotSignedIn(false);
+    }
 
-  //           console.log("Weclome screen: App has come to the foreground!");
-  //           checkIfSignedIn();
-  //           if (!reInitialize) {
-  //           return;
-  //         }
+  }, [user]);
 
-  //         }
 
-  //         appState.current = nextState;
-  //       });
+    useEffect(() => {
+    if (!user && !isInitializing) {
+      setConfirmedUserNotSignedIn(true);
+    }
 
-  //       return () => subscription.remove(); // cleanup
-  //     }, [reInitialize]);
-
-  useFocusEffect(
-    useCallback(() => {
-      checkIfSignedIn();
-    }, [])
-  );
+  }, [user, isInitializing]);
 
   // experimenting with this, not super great right now
 
@@ -77,18 +69,18 @@ const ScreenWelcome = () => {
     };
   });
 
-  const checkIfSignedIn = async () => {
-    try {
-      const token = await SecureStore.getItemAsync("accessToken");
-      if (token) {
-        reInitialize();
-      } else {
-        setConfirmedUserNotSignedIn(true);
-      }
-    } catch (error) {
-      console.error("Error checking sign-in status", error);
-    }
-  };
+  // const checkIfSignedIn = async () => {
+  //   try {
+  //     const token = await SecureStore.getItemAsync("accessToken");
+  //     if (token) {
+  //       reInitialize();
+  //     } else {
+  //       setConfirmedUserNotSignedIn(true);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error checking sign-in status", error);
+  //   }
+  // };
 
   // const [ triggerMessage, updateTriggerMessage ] = useState('none');
 

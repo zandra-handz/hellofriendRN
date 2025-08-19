@@ -82,7 +82,6 @@ export const signinWithoutRefresh = async ({
 
     await SecureStore.setItemAsync("accessToken", newAccessToken);
     await SecureStore.setItemAsync("refreshToken", newRefreshToken);
-
     setAuthHeader(newAccessToken);
 
     return response;

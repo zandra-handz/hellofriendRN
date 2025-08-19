@@ -36,7 +36,7 @@ const deleteTokens = async () => {
 const refreshTokenFunct = async () => {
   const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
   if (!storedRefreshToken) {
-    console.warn('No refresh token available');
+    // console.warn('No refresh token available');
     return null;
   }
 
@@ -45,8 +45,11 @@ const refreshTokenFunct = async () => {
       refresh: storedRefreshToken,
     });
 
+    // console.error(`REFETCHING`, response.data);
+
     const newAccessToken = response.data.access;
     await SecureStore.setItemAsync('accessToken', newAccessToken);
+  
     return newAccessToken;
   } catch (error) {
     console.error('Error refreshing token api file:', error);
@@ -75,6 +78,7 @@ helloFriendApiClient.interceptors.response.use(
     const originalRequest = config;
 
     if (response && response.status === 401 && !(originalRequest as any)._retry) {
+      console.error('401 denied');
       if (!isRefreshing) {
         isRefreshing = true;
         (originalRequest as any)._retry = true;

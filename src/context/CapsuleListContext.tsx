@@ -25,7 +25,7 @@ type CapsuleListContextType = {
   categoryNames: string[];
   categoryStartIndices: Record<string, number>;
   sortedByCategory: MomentFromBackendType[];
-  preAdded: number[]; // or whatever type preAdded is
+  preAdded: number[];  
   removeCapsules: (capsuleIdsToRemove: number[]) => void;
   updateCapsule: (input: {
     friendId: number;
@@ -34,23 +34,20 @@ type CapsuleListContextType = {
   }) => void;
   updatePreAdded: () => void;
   updateCapsules: (updatedCapsules: any) => void;
-  sortByCategory: () => void;
-  // add other functions & fields properly typed...
+  sortByCategory: () => void; 
 };
 const CapsuleListContext = createContext<CapsuleListContextType>({ capsuleList: [],
   capsuleCount: 0,
   categoryCount: 0,
   categoryNames: [],
   categoryStartIndices: {},
-  sortedByCategory: [],
-  // newestFirst: [],
+  sortedByCategory: [], 
   preAdded: [],
   removeCapsules: () => {},
   updateCapsule: () => {},
   updatePreAdded: () => {},
   updateCapsules: () => {},
-  sortByCategory: () => {},
-  // sortNewestFirst: () => {},
+  sortByCategory: () => {}, 
 });
 
 export const useCapsuleList = () => {
@@ -66,15 +63,12 @@ export const useCapsuleList = () => {
 
 export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
-  const { user, isInitializing, isAuthenticated } = useUser();
-  const queryClient = useQueryClient();
-  // console.log("CAPSULE LIST RERENDERED");
-  const [sortedByCategory, setSortedByCategory] = useState([]);
+  const { user, isInitializing  } = useUser();
+  const queryClient = useQueryClient(); 
 
-  const { getPreAdded } = useMomentContextFunctions();
-  // const [newestFirst, setNewestFirst] = useState([]);
+  const { getPreAdded } = useMomentContextFunctions(); 
 
-  const { data: sortedCapsuleList, isLoading: isCapsuleContextLoading } =
+  const { data: sortedCapsuleList} =
     useQuery<MomentFromBackendType[]>({
       queryKey: ["Moments", user?.id, selectedFriend?.id],
       queryFn: () => {
@@ -86,7 +80,7 @@ export const CapsuleListProvider = ({ children }) => {
       enabled: !!(
         selectedFriend &&
         selectedFriend.id &&
-        isAuthenticated &&
+        user?.id &&
         !isInitializing
       ),
       // staleTime: 0,
@@ -99,11 +93,9 @@ export const CapsuleListProvider = ({ children }) => {
             categoryCount: 0,
             categoryNames: [],
             categoryStartIndices: {},
-            preAdded: [],
-            // momentsSavedToHello: [],
+            preAdded: [], 
           };
-
-        // const sorted = sortByMomentCategory(data);
+ 
 
         const sorted = [...data].sort((a, b) => {
           if (a.user_category_name < b.user_category_name) return -1;
@@ -128,27 +120,16 @@ export const CapsuleListProvider = ({ children }) => {
         }
 
         return {
-          capsules: sortedWithIndices,
-          // capsules: filterPreAdded,
+          capsules: sortedWithIndices, 
           allCapsules: sorted,
           categoryCount,
           categoryNames,
           categoryStartIndices,
-          preAdded,
-          // momentsSavedToHello,
+          preAdded, 
         };
       },
     });
-
-  // const {
-  //   capsules = [],
-  //   allCapsules = [],
-  //   categoryCount = 0,
-  //   categoryNames = [],
-  //   categoryStartIndices = {},
-  //   preAdded = [],
-  //   // momentsSavedToHello = [],
-  // } = sortedCapsuleList;
+ 
 
   const {
   capsules = [],
@@ -251,33 +232,7 @@ export const CapsuleListProvider = ({ children }) => {
     );
   };
 
-  // const updateCacheWithEditedMoment = () => {
-  //   if (momentData) {
-  //     queryClient.setQueryData(
-  //       ["Moments", user?.id, selectedFriend?.id],
-  //       (oldMoments) => {
-  //         if (!oldMoments) return [momentData];
-
-  //         const updatedMoments = [...oldMoments];
-  //         const momentIndex = oldMoments.findIndex(
-  //           (moment) => moment.id === momentData.id
-  //         );
-  //         if (momentIndex !== -1) {
-  //           updatedMoments[momentIndex] = {
-  //             ...updatedMoments[momentIndex],
-  //             ...momentData,
-  //             //preAdded: true,
-  //           };
-  //         } else {
-  //           updatedMoments.unshift(momentData); // Add new moment if it doesn't exist
-  //         }
-  //         updateCapsuleMutation.reset();
-
-  //         return updatedMoments;
-  //       }
-  //     );
-  //   }
-  // };
+ 
 
   const updateCapsule = ({
     friendId,
@@ -347,7 +302,6 @@ const updateCapsuleMutation = useMutation({
       }, 500);
     },
     onSuccess: (data) => {
-      // console.log(`successfully connected category!`, data.user_category);
       const formattedMoment = {
         id: data.id,
         typedCategory: data.typed_category || "Uncategorized",
@@ -357,8 +311,7 @@ const updateCapsuleMutation = useMutation({
         user_category: data.user_category || null,
         user_category_name: data.user_category_name || null,
       };
-
-      console.log("formatted moments data", formattedMoment);
+ 
 
       queryClient.setQueryData(
         ["Moments", user?.id, selectedFriend?.id],
@@ -377,15 +330,12 @@ const updateCapsuleMutation = useMutation({
     setMomentText("");
   };
 
-  const handleCreateMoment = async (momentData) => {
-    console.log(`moment data in handleCreateMoment`, momentData);
+  const handleCreateMoment = async (momentData) => { 
     const moment = {
        user: momentData.user,
-     // user: 'oop!',
+ 
       friend: momentData.friend,
-
-     // typed_category: momentData.selectedCategory, // OBSOLETE/ CAN BE NULL/BLANK ON BACKEND
-      capsule: momentData.moment,
+  capsule: momentData.moment,
       user_category: momentData.selectedUserCategory,
     };
 
@@ -443,21 +393,7 @@ const updateCapsuleMutation = useMutation({
     );
   };
 
-  const sortByCategory = () => {
-    const sorted = [...capsules].sort((a, b) => {
-      if (a.typedCategory < b.typedCategory) return -1;
-      if (a.typedCategory > b.typedCategory) return 1;
-      return new Date(b.created) - new Date(a.created);
-    });
-
-    setSortedByCategory(sorted);
-  };
-
-  // const sortNewestFirst = () =>
-  //   setNewestFirst(
-  //     [...capsules].sort((a, b) => new Date(b.created) - new Date(a.created))
-  //   );
-
+ 
   const contextValue = useMemo(
     () => ({
       updateCacheWithNewPreAdded,

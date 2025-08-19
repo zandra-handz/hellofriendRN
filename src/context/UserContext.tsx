@@ -8,8 +8,8 @@ import React, {
   useEffect,
 } from "react";
 import * as SecureStore from "expo-secure-store";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
- 
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+
 import {
   signup,
   signin,
@@ -60,55 +60,61 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [authenticated, setAuthenticated] = useState(false);
+ 
 
   const queryClient = useQueryClient();
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // console.log("user context rerendered");
-  const isReinitializingRef = useRef(false);
+  // check SecureStore on mount
+  const {
+    data: user,
+    isError,
+    isPending, //this is just pre-fetch
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUser,
+    enabled: false, // never auto-run
+    retry: 3, //default anyway
+  });
 
-  const reInitialize = useCallback(async () => {
-    if (isReinitializingRef.current) return;
-    isReinitializingRef.current = true;
-
-    try {
-      const token = await SecureStore.getItemAsync(TOKEN_KEY);
-      if (token) {
-        let userData = null;
-
-        try {
-          userData = await getCurrentUser();
-        } catch (error) {
-          await onSignOut();
-          return;
-        }
-
-        if (userData) {
-          setUser((prev) => {
-            const isEqual = JSON.stringify(prev) === JSON.stringify(userData);
-            return !isEqual ? userData : prev;
-          });
-
-          setAuthenticated((prev) => (!prev ? true : prev));
-        } else {
-          await onSignOut();
-        }
-      } else {
-        await onSignOut();
-      }
-    } finally {
-      isReinitializingRef.current = false;
+  const onSignOut = async () => {
+    await signout();
+    // setUser((prev) => (prev !== null ? null : prev));
+    // setAuthenticated((prev) => (prev !== false ? false : prev));
+ 
+    await queryClient.resetQueries(["currentUser"], { exact: true });
+    queryClient.clear();
+ 
+  };
+  
+  useEffect(() => {
+    if (isError) {
+      onSignOut();
     }
-  }, [onSignOut]);
+  }, [isError]);
+
+  
+  useEffect(() => {
+    (async () => {
+      const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
+      // console.warn("CHECKIGN IN CONTEXCREGKERFEFD");
+      if (storedToken) {
+        await refetch(); // only fetch if token exists
+      } else {
+        onSignOut();
+      }
+    })();
+  }, []);
 
   const signinMutation = useMutation({
     mutationFn: signinWithoutRefresh,
     onSuccess: () => {
-      console.log("sign in successful!");
-      reInitialize();
+      // console.log("sign in successful!");
+      //  reInitialize();
+      refetch();
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -180,15 +186,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
-  const onSignOut = async () => {
-    await signout();
-    setUser((prev) => (prev !== null ? null : prev));
-    setAuthenticated((prev) => (prev !== false ? false : prev));
-    // setUser(null);
-    // setAuthenticated(false);
-    queryClient.clear();
-  };
-
   //   const deleteUserAccountMutation = useMutation({
   //     mutationFn: deleteUserAccount,
   //     onSuccess: () => {
@@ -225,26 +222,25 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const contextValue = useMemo(
     () => ({
-      user,
-      isAuthenticated: authenticated,
-      isInitializing: isReinitializingRef.current,
+      user, 
+
+      isAuthenticated: !!user,
+      isInitializing: isLoading,
       onSignin,
       onSignUp,
       onSignOut,
-      reInitialize,
+      //reInitialize,
       signinMutation,
       signupMutation,
     }),
     [
-      user,
-      authenticated,
+      user, 
       onSignin,
       onSignUp,
       onSignOut,
-      reInitialize,
+      // reInitialize,
       signinMutation,
       signupMutation,
-      isReinitializingRef,
     ]
   );
 

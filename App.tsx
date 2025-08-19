@@ -250,9 +250,7 @@ export default Sentry.wrap(function App() {
                                       <RootSiblingParent>
                                         <DeviceLocationProvider>
                                           <FriendStyleProvider>
-                                           
                                               <Layout />
-                                          
                                           </FriendStyleProvider>
                                         </DeviceLocationProvider>
                                       </RootSiblingParent>
@@ -262,15 +260,13 @@ export default Sentry.wrap(function App() {
                                 </SelectedFriendStatsProvider>
                               </FriendLocationsProvider>
                             </HelloesProvider>
-                          </LocationsProvider>
-                          {/* </DeviceLocationProvider> */}
+                          </LocationsProvider> 
                         </CapsuleListProvider>
                       </SelectedFriendProvider>
                     </FriendListProvider>
                   </UpcomingHelloesProvider>
                 </UserStatsProvider>
-              </CategoriesProvider>
-              {/* </GlobalStyleProvider> */}
+              </CategoriesProvider> 
             </UserSettingsProvider>
           </UserProvider>
         </QueryClientProvider>
@@ -669,16 +665,7 @@ export const Layout = () => {
                 }}
               />
             </>
-          ) : (
-            // ) : (
-            //   <Stack.Screen
-            //     name="Setup"
-            //     component={ScreenOnboardingFlow}
-            //     options={{
-            //       headerShown: false,
-            //     }}
-            //   />
-            // )
+          ) : ( 
             <>
               <Stack.Screen
                 name="Welcome"

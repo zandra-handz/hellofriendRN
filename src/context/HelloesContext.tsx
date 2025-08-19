@@ -41,7 +41,7 @@ export const HelloesProvider = ({ children }) => {
   const { refetchUpcomingHelleos } = useUpcomingHelloes();
   const queryClient = useQueryClient();
   const { selectedFriend } = useSelectedFriend();
-  const { user, isAuthenticated, isInitializing } = useUser();
+  const { user, isInitializing } = useUser();
 
   const timeoutRef = useRef(null);
 
@@ -56,7 +56,7 @@ export const HelloesProvider = ({ children }) => {
     queryFn: () => {
       return fetchPastHelloes(selectedFriend.id);
     },
-    enabled: !!(user && isAuthenticated && !isInitializing && selectedFriend),
+    enabled: !!(user?.id && !isInitializing && selectedFriend),
     staleTime: 1000 * 60 * 20, // 20 minutes, same as selected friend data
   });
 

@@ -69,7 +69,7 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
   children,
 }) => {
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
-  const { user } = useUser();
+  const { user, isInitializing } = useUser();
 
   const queryClient = useQueryClient();
 
@@ -86,7 +86,7 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
     queryKey: ["friendDashboardData", user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendDashboard(selectedFriend?.id),
 
-    enabled: !!(user && selectedFriend),
+    enabled: !!(user && !isInitializing && selectedFriend),
     staleTime: 1000 * 60 * 20,
   });
 

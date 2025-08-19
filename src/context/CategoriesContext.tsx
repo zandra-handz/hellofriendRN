@@ -52,7 +52,7 @@ interface CategoriesProviderProps {
 export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
   children,
 }) => {
-  const { user, isInitializing, isAuthenticated } = useUser();
+  const { user, isInitializing  } = useUser();
   // console.log("CATEGORIES CONTEXT");
 
   const queryClient = useQueryClient();
@@ -60,56 +60,36 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
     const timeoutRef = useRef(null);
 
   const {
-    data: categories,
-    isLoading,
-    isFetching,
-    isSuccess,
-    isError,
+    data: userCategories,
+   
+    isSuccess, 
   } = useQuery({
     queryKey: ["categories", user?.id],
     queryFn: () => getUserCategories(user?.id),
-    enabled: !!(user && user.id && isAuthenticated && !isInitializing),
+    enabled: !!(user?.id && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 
 
   
-  useEffect(() => {
-    if (isSuccess && categories) {
-      //   console.log('resetting user categories', categories);
-
-      setUserCategories(categories || []);
-    }
-  }, [isSuccess, categories]);
-
-  const [userCategories, setUserCategories] = useState<any[]>([]);
-
-  // reset
   // useEffect(() => {
-  //   if (!isInitializing && !isAuthenticated) {
-  //     console.log("user not authenticated, resetting user categories");
+  //   if (isSuccess && categories) { 
 
-  //     setUserCategories(null);
+  //     setUserCategories(categories || []);
   //   }
-  // }, [isAuthenticated, isInitializing]);
+  // }, [isSuccess, categories]);
+
+  // const [userCategoriez, setUserCategories] = useState<any[]>([]);
+ 
 
   const createNewCategoryMutation = useMutation({
     mutationFn: (data) => createUserCategory(user?.id, data),
-    onSuccess: (data) => {
-      // Update local state
-      setUserCategories((prev) => [...prev, data]);
-
-      // queryClient.setQueryData(["categories", user?.id], (oldData) => {
-
-      //   if (!oldData) return oldData;
-
-      //   const updatedData = {
-      //     ...oldData,
-      //     user_categories: [...(oldData || []), data],
-      //   };
+    onSuccess: (data) => { 
+      // setUserCategories((prev) => [...prev, data]);
+ 
 
       queryClient.setQueryData(["categories", user?.id], (oldData: any[]) => {
-        if (!oldData) return [data]; // just the new one if no cache yet
+        if (!oldData) return [data];  
 
         handleSyncStats();
 
@@ -125,14 +105,14 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
   const updateCategoryMutation = useMutation({
     mutationFn: (data) => updateUserCategory(user?.id, data.id, data.updates),
     onSuccess: (data) => {
-      setUserCategories((prev) => {
-        const updated = prev.map((cat) => (cat.id === data.id ? data : cat));
+      // setUserCategories((prev) => {
+      //   const updated = prev.map((cat) => (cat.id === data.id ? data : cat));
 
-        return updated;
-      });
+      //   return updated;
+      // });
 
       // console.log("After updating cached categories:", updatedCategories);
-      handleSyncStats();
+   
       // return updatedCategories;
 
       queryClient.setQueryData(["categories", user?.id], (oldData: any[]) => {
@@ -140,6 +120,7 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
         console.log(oldData.map((cat) => (cat.id === data.id ? data : cat)));
         return oldData.map((cat) => (cat.id === data.id ? data : cat));
       });
+         handleSyncStats();
 
             if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -169,29 +150,17 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
     onSuccess: (data) => {
       // console.log("Deleted category data:", data);
 
-      setUserCategories((prev) =>
-        prev.filter((category) => category.id !== data.id)
-      );
-
-      // queryClient.setQueryData(["categories", user?.id], (oldData) => {
-      //   if (!oldData) return oldData;
-
-      //   const updatedData = {
-      //     ...oldData,
-      //     user_categories: oldData.filter(
-      //       (category) => category.id !== data.id
-      //     ),
-      //   };
+      // setUserCategories((prev) =>
+      //   prev.filter((category) => category.id !== data.id)
+      // );
+ 
 
       handleSyncStats();
-
-      // Log after updating
-      // console.log("Cache after delete update:", updatedData);
+ 
 
       queryClient.setQueryData(["categories", user?.id], (oldData: any[]) => {
         if (!oldData) return oldData;
-
-        // console.log(oldData.filter((cat) => cat.id !== data.id));
+ 
 
         return oldData.filter((cat) => cat.id !== data.id);
       });
@@ -235,17 +204,11 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
   const handleSyncStats = () => {
     queryClient.refetchQueries({ queryKey: ["userStats"] });
     queryClient.refetchQueries({ queryKey: ["selectedFriendStats"] });
-    //  queryClient.refetchQueries(["userStats", user.id]);
-    //   queryClient.refetchQueries(["selectedFriendStats", user.id]); // just refresh all of em
-  };
-  //  const handleSyncStats = async () => {
-  //   const result = await queryClient.refetchQueries(["userStats", user.id]);
-  //   console.log('Stats updated, now doing next step...');
-  //   // do something here that needs the *fresh* stats
-  // };
-
+ 
+  }; 
   const contextValue = useMemo(
     () => ({
+      // categories,
       userCategories,
       createNewCategory,
       createNewCategoryMutation,

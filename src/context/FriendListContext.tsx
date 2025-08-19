@@ -40,7 +40,7 @@ interface FriendListProviderProps {
 export const FriendListProvider: React.FC<FriendListProviderProps> = ({
   children,
 }) => {
-  const { user, isAuthenticated, isInitializing, onSignOut } = useUser();
+  const { user, isInitializing, onSignOut } = useUser();
   const [friendList, setFriendList] = useState<Friend[]>([]);
  
  
@@ -53,7 +53,7 @@ export const FriendListProvider: React.FC<FriendListProviderProps> = ({
     queryKey: ["friendList", user?.id],
     queryFn: () => fetchFriendList(),
     retry: 3,
-    enabled: !!(user && isAuthenticated && !isInitializing),
+    enabled: !!(user?.id && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 

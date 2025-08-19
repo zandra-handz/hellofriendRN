@@ -57,6 +57,8 @@ const ScreenHome = () => {
   const isNewUser =
     new Date(user?.created_on).toDateString() === new Date().toDateString();
 
+
+ 
   // console.log("HOME SCREEN RERENDEREEEEEEEEEEEEERded");
 
    const appState = useRef(AppState.currentState);
@@ -72,6 +74,9 @@ const ScreenHome = () => {
   
   
           console.log("Weclome screen: App has come to the foreground!"); 
+          
+          console.warn(`CHEKING IF SGINED IN   `);
+          
           checkIfSignedIn();
           if (!reInitialize) {
           return;
