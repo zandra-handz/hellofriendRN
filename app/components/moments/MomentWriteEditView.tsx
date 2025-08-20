@@ -5,8 +5,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
-} from "react-native";
-import { useUser } from "@/src/context/UserContext";
+} from "react-native"; 
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import TextMomentBox from "./TextMomentBox";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -14,7 +13,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
-import EscortBar from "./EscortBar";
+ 
 import { Moment } from "@/src/types/MomentContextTypes";
 import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 import LoadingPage from "../appwide/spinner/LoadingPage";
@@ -59,8 +58,7 @@ const MomentWriteEditView = ({
 
   const { navigateBack, navigateToMoments, navigateToMomentView } =
     useAppNavigations();
-
-  const { user } = useUser();
+ 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const momentTextRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -76,11 +74,11 @@ const MomentWriteEditView = ({
     }
   };
 
-  const handleResetUserChangedCategoryState = () => {
-    if (userChangedCategory) {
-      setUserChangedCategory(false);
-    }
-  };
+  // const handleResetUserChangedCategoryState = () => {
+  //   if (userChangedCategory) {
+  //     setUserChangedCategory(false);
+  //   }
+  // };
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -94,28 +92,8 @@ const MomentWriteEditView = ({
 
   const userChangedCategoryRef = useRef(false);
 
-  const handleUserChangedCategory = () => {
-    if (!userChangedCategoryRef.current) {
-      userChangedCategoryRef.current = true;
-    }
-  };
-
-  const handleResetUserChangedCategory = () => {
-    if (userChangedCategoryRef.current) {
-      userChangedCategoryRef.current = false;
-    }
-  };
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     userChangedCategoryRef.current = false;
-
-  //     return () => {
-  //       userChangedCategoryRef.current = false;
-  //     };
-  //   }, [])
-  // );
-
+ 
+ 
   const TEXT_INPUT_PADDING_TOP = 42;
   const TOPPER_PADDING_TOP = 0;
 
@@ -253,14 +231,12 @@ const MomentWriteEditView = ({
         if (selectedFriend) {
           if (!updateExistingMoment) {
             const requestData = {
-              // these are the props in the context function that get converted to backend
-              user: user.id,
+          
               friend: selectedFriend.id,
               // selectedCategory: selectedCategory, // just need ID below
               selectedUserCategory: selectedUserCategory,
               moment: momentTextRef.current.getText(),
-            };
-            // console.log(requestData);
+            }; 
             showFlashMessage("Idea saved!", false, 2000);
             await handleCreateMoment(requestData);
           } else {

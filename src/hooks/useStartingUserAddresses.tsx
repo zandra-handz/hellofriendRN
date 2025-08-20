@@ -17,31 +17,21 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 Geocoder.init(GOOGLE_API_KEY);
 
 const useStartingUserAddresses = () => {
-  const { user, isAuthenticated, isInitializing } = useUser();
+  const { user,   isInitializing } = useUser();
   const queryClient = useQueryClient();
-  const { showMessage } = useMessage();
-  const [userAddressMenu, setUserAddressMenu] = useState([]);
+  const { showMessage } = useMessage(); 
   const [defaultUserAddress, setDefaultUserAddress] = useState(null);
   const [usingCurrent, setUsingCurrent] = useState(false);
   const { currentLocationDetails } = useCurrentLocation();
-  //useEffect(() => {
-  // if (currentLocationDetails) {
-  //   console.log('formatted location data', currentLocationDetails);
-
-  // }
-
-  //}, [currentLocationDetails]);
+ 
 
   const {
     data: userAddresses = [],
-    isLoadingUserAddresses,
-    isFetchingUserAddresses,
-    isSuccessUserAddresses,
-    isErrorUserAddresses,
+ 
   } = useQuery({
     queryKey: ["userAddresses", user?.id],
     queryFn: () => fetchUserAddresses(),
-    enabled: !!(isAuthenticated && !isInitializing),
+    enabled: !!(user?.id && !isInitializing),
     staleTime: 1000 * 60 * 20, // 20 minutes
  
   });

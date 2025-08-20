@@ -12,15 +12,10 @@ import MakeDefaultCats from "./MakeDefaultCats";
 import CatDescriptEditable from "./CatDescriptEditable";
 
 import {
-  View,
-  Text,
-  Pressable,
+  View, 
   StyleSheet,
-  ScrollView,
-  TextInput,
-  FlatList,
-} from "react-native";
-import { useUser } from "@/src/context/UserContext";
+ 
+} from "react-native"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
@@ -53,9 +48,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
     ? userCategories.find((category) => category.id === categoryId) || null
     : null;
 
-  // console.log(`category in modal: `, category);
-
-  const { user } = useUser();
+ 
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   const { selectedFriend, friendDashboardData, handleUpdateDefaultCategory } =
     useSelectedFriend();
@@ -202,17 +195,7 @@ const handleToggleTextInputView = (view) => {
       });
   };
 
-  const handleUpdateCategory = () => {
-    updateCategory({
-      user: user?.id,
-      id: categoryId,
-
-      updates: { description: textInputRef.current.value },
-    });
-
-    setShowEdit(false);
-  };
-
+ 
   const FOOTER_BUTTON_SPACE = 40;
   return (
     <ModalListWithView

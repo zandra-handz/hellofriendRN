@@ -9,7 +9,7 @@ import useFriendFunctions from "@/src/hooks/useFriendFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import PrioritySettingSlider from "../../friends/PrioritySettingSlider";
 const EditPriority = ({ iconSize = 15, value = "None" }) => {
-  const { user } = useUser();
+ 
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
 
@@ -22,7 +22,7 @@ const EditPriority = ({ iconSize = 15, value = "None" }) => {
   const handleSave = () => {
     try {
       handleUpdateFriendSettings(
-        user.id,
+     
         selectedFriend.id,
         priorityRef.current.getValue()
       );

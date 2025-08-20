@@ -12,12 +12,11 @@ import {
 
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { Linking } from "react-native";
-import { useUser } from "@/src/context/UserContext";
+ 
 
 const CarouselItemModal = ({ isVisible, closeModal,   display, icon, title, type, onPress }) => {
-  const { user } = useUser();
-  const { themeStyles, appSpacingStyles, manualGradientColors } =
+ 
+  const { themeStyles,  manualGradientColors } =
     useGlobalStyle();
 
  

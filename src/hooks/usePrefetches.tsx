@@ -9,14 +9,14 @@ import { fetchUserAddresses, fetchFriendAddresses } from "@/src/calls/api";
 const usePrefetches = () => {
   const queryClient = useQueryClient();
   const { selectedFriend } = useSelectedFriend();
-  const { user, isAuthenticated, isInitializing } = useUser();
+  const { user, isInitializing } = useUser();
  
   const prefetchUserAddresses = async () => {
    
     await queryClient.prefetchQuery({
       queryKey: ["userAddresses", user?.id],
       queryFn: () => fetchUserAddresses(),
-      enabled: !!(isAuthenticated && !isInitializing),
+      enabled: !!(user?.id && !isInitializing),
       staleTime: 1000 * 60 * 20, // 20 minutes
     });
   };

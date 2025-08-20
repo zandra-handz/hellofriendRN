@@ -8,7 +8,7 @@ import {
   FlatList,
   Alert,
 } from "react-native";
-import { useUser } from "@/src/context/UserContext";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
@@ -27,8 +27,7 @@ const SectionUserCategories = () => {
     updateCategoryMutation,
     deleteCategoryMutation,
   } = useCategories();
-
-  const { user } = useUser();
+ 
   const [showEdit, setShowEdit] = useState(false);
 
   // const [showList, setShowList] = useState(true);
@@ -66,22 +65,21 @@ const SectionUserCategories = () => {
   };
 
   const handleDeleteCategory = () => {
-    deleteCategory({
-      user: user?.id,
+    deleteCategory({ 
       id: editId,
     });
   };
 
   const handleCreateCategory = () => {
     createNewCategory({
-      user: user?.id,
+   
       name: newCategoryRef.current.value,
     });
   };
 
   const handleUpdateCategory = () => {
     updateCategory({
-      user: user?.id,
+   
       id: editId,
 
       updates: { name: newCategoryRef.current.value },

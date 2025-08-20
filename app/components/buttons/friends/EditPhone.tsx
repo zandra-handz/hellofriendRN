@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Alert, StyleSheet, Pressable, View, Text, TextInput } from "react-native";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+ 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext";
-import Reset from "../../appwide/button/Reset";
+ 
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 const EditPhone = ({ iconSize = 15, value='None' }) => {
-  const { user } = useUser();
-  const { handleRemixAllNextHelloes, remixAllNextHelloesMutation } =
-    useUpcomingHelloes(); // MOVE TO CONTEXT
+ 
 const { selectedFriend, friendDashboardData } = useSelectedFriend();
 
   const [phoneNumber, setPhoneNumber] = useState(
@@ -44,7 +41,7 @@ const { selectedFriend, friendDashboardData } = useSelectedFriend();
     const handleUpdatePhoneNumber = () => {
     if (phoneNumber) {
       handleUpdateFriendSettings(
-        user?.id,
+      
         selectedFriend.id,
         friendDashboardData.suggestion_settings.effort_required,
         friendDashboardData.suggestion_settings.priority_level,

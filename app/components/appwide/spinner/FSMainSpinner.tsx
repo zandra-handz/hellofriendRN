@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React  from "react";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -11,24 +11,13 @@ import LoadingPage from "./LoadingPage";
 type Props = {};
 
 const FSMainSpinner = (props: Props) => {
-  const { user, isAuthenticated, isInitializing, signinMutation } = useUser();
+  const {  isInitializing, signinMutation } = useUser();
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { manualGradientColors } = useGlobalStyle(); 
 
 
 
-   
-
-// useEffect(() => {
-//     if ((signinMutation && signinMutation.isPending) || isInitializing || loadingNewFriend) {
-//         console.log('setting isLoading');
-//         setIsLoading(true);
-
-//     } else {
-//         setIsLoading(true);
-//     }
-
-// }, [signinMutation, isInitializing, loadingNewFriend]);
+    
 
 
   return (
@@ -53,8 +42,7 @@ const FSMainSpinner = (props: Props) => {
         >
           <GradientBackground useFriendColors={!!(selectedFriend)}>
             <LoadingPage
-              loading={true}
-              // includeLabel={true}
+              loading={true} 
               label={"Just a moment"}
               spinnerType="circle"
               spinnerSize={40}

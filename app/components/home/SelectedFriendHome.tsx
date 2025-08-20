@@ -192,14 +192,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                     outerPadding={spacerAroundCalendar}
                   />
                 </View>
-                {/* {!loadingNewFriend  && (
-                  <View style={{ marginVertical: 3 }}>
-                    <CalendarChart 
-                    // selectedFriend={!!selectedFriend}
-                    // outerPadding={spacerAroundCalendar}
-                    />
-                  </View>
-                )} */}
+      
 
                 <View style={{ width: "100%", height: 130 }}></View>
               </View>

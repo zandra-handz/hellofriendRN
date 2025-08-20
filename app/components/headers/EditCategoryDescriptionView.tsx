@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useCategories } from "@/src/context/CategoriesContext";
-import { useUser } from "@/src/context/UserContext";
+ 
 export default function EditCategoryDescriptionView({
   categoryId,
   startingText,
@@ -18,7 +18,7 @@ export default function EditCategoryDescriptionView({
   onSave: (newText: string) => void;
 }) {
   const { themeStyles } = useGlobalStyle();
-  const { user } = useUser();
+ 
   const { updateCategory, updateCategoryMutation } = useCategories();
   const [text, setText] = useState(startingText || "");
   const textInputRef = useRef<TextInput>(null);
@@ -36,7 +36,7 @@ useEffect(() => {
   
   const handleUpdateCategory = () => {
     updateCategory({
-      user: user?.id,
+     
       id: categoryId,
 
       updates: { description: text },

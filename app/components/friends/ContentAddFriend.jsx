@@ -17,16 +17,16 @@ import MessagePage from "../alerts/MessagePage";
 import AlertList from "../alerts/AlertList";
 import AlertSuccessFail from "../alerts/AlertSuccessFail";
 
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
 import { useFriendList } from "@/src/context/FriendListContext"; 
 
 const ContentAddFriend = () => {
-  const { user } = useUser(); 
+  // const { user } = useUser(); 
   const { friendList  } = useFriendList();
 
   const navigation = useNavigation();
 
-  const { handleCreateFriend, handleUpdateFriendSettings } =
+  const { handleCreateFriend  } =
     useFriendFunctions();
 
   const [friendName, setFriendName] = useState("");
@@ -81,10 +81,10 @@ const ContentAddFriend = () => {
       await handleCreateFriend(postData);
 
 
-      if (!user.app_setup_complete) {
-        //move this into RQ onSuccess when refactoring?
-        await updateAppSetup();
-      }
+      // if (!user.app_setup_complete) {
+      //   //move this into RQ onSuccess when refactoring?
+      //   await updateAppSetup();
+      // }
       setSuccessModalVisible(true);
     } catch (error) {
       console.error("Failed to save data:", error);

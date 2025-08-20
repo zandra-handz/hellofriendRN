@@ -27,7 +27,7 @@ const useCategoryHistoryLookup = ({
   categoryId: number;
   friendId?: number | null;
 }) => {
-  const { user, isAuthenticated, isInitializing } = useUser();
+  const { user,  isInitializing } = useUser();
 
   const {
     data,
@@ -63,7 +63,7 @@ const useCategoryHistoryLookup = ({
       return Number(nextUrl.searchParams.get("page"));
     },
     initialPageParam: 1,
-    enabled: !!(categoryId && user?.id && isAuthenticated && !isInitializing),
+    enabled: !!(categoryId && user?.id && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10,
   });
 

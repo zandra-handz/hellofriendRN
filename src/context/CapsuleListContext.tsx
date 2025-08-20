@@ -331,8 +331,9 @@ const updateCapsuleMutation = useMutation({
   };
 
   const handleCreateMoment = async (momentData) => { 
+ 
     const moment = {
-       user: momentData.user,
+       user: user?.id,
  
       friend: momentData.friend,
   capsule: momentData.moment,

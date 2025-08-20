@@ -34,7 +34,7 @@ const SafeViewAndGradientBackground = ({
   header: Header,
 } : Props) => {
   const insets = useSafeAreaInsets();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend  } = useSelectedFriend();
 
 
   const route = useRoute();

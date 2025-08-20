@@ -394,7 +394,7 @@ const linking = {
 
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle();
-  const { isAuthenticated, user, isInitializing } = useUser();
+  const { user, isInitializing } = useUser();
   const { settings } = useUserSettings();
 
   const receiveNotifications =
@@ -419,9 +419,7 @@ export const Layout = () => {
       <CustomStatusBar />
 
       <TopLevelNavigationHandler>
-        <Stack.Navigator
-          // detachInactiveScreens={true}  doesn't apply to the native navigator
-          //options={{ unmountOnBlur: true }} won't work either
+        <Stack.Navigator 
 
           screenOptions={{
             headerShown: true,
@@ -432,7 +430,7 @@ export const Layout = () => {
             cardStyle: { backgroundColor: "#000002" },
           }}
         >
-          {isAuthenticated && user && !isInitializing ? (
+          {user?.id && !isInitializing ? (
             // user.app_setup_complete || !user.app_setup_complete ? (
             <>
               <Stack.Screen

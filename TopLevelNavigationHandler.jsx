@@ -7,7 +7,7 @@ import { useUser } from './src/context/UserContext';
 
 const TopLevelNavigationHandler = ({ children }) => {
     const navigation = useNavigation();
-    const { isAuthenticated, isInitializing, onSignOut } = useUser();
+    const { user, isInitializing, onSignOut } = useUser();
  
  
 
@@ -20,7 +20,7 @@ const TopLevelNavigationHandler = ({ children }) => {
                 return; // Wait until loading is complete
             }
  
-            if (!isAuthenticated) {
+            if (!user?.id) {
                 console.log('nav useeffect triggerd! not authenticated');
              
                  
@@ -31,13 +31,13 @@ const TopLevelNavigationHandler = ({ children }) => {
                 // }
             }
 
-            if (isAuthenticated) {
+            if (user?.id) {
                    console.log('nav useeffect triggerd! authenticated, not doing anything');
             }
         };
 
         checkAuthentication();
-    }, [  navigation, onSignOut,  isInitializing, isAuthenticated]);
+    }, [  navigation, isInitializing, user]);
  
 
     return <>{children}</>;

@@ -20,7 +20,7 @@ import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const HelloFriendFooter = () => {

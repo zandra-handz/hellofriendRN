@@ -47,102 +47,72 @@ export const GlobalStyleProvider = ({ children }) => {
     gradientDirection: { x: 1, y: 0 },
   });
 
-  const determineTheme = () => {
-    if (settings.manual_dark_mode !== null) {
-      return settings.manual_dark_mode ? "dark" : "light";
-    }
-    return colorScheme || "light";
-  };
+  // const determineTheme = () => {
+  //   if (settings.manual_dark_mode !== null) {
+  //     return settings.manual_dark_mode ? "dark" : "light";
+  //   }
+  //   return colorScheme || "light";
+  // };
 
   useEffect(() => {
+  if (!settings) return;
+  const newTheme = settings.manual_dark_mode !== null 
+    ? settings.manual_dark_mode ? "dark" : "light"
+    : colorScheme || "light";
 
-    if (!colorScheme) {
-      return;
-    }
-    if (settings) {
-       console.log("settings triggered globalstyles");
-
-      // const newFontSize = settings.large_text ? 20 : 16;
-      // const newHighContrast = settings.high_contrast_mode;
-      // const newScreenReader = settings.screen_reader;
-      // const newReceiveNotifications = settings.receive_notifications;
-      const newTheme = determineTheme();
-
-      setStyles((prevStyles) => {
-        if (
-          // prevStyles.fontSize === newFontSize &&
-          // prevStyles.highContrast === newHighContrast &&
-          // prevStyles.screenReader === newScreenReader &&
-          // prevStyles.receiveNotifications === newReceiveNotifications &&
-          prevStyles.theme === newTheme
-        ) {
-          return prevStyles; // No changes, skip re-render
-        }
-
-        return {
-          ...prevStyles,
-          // fontSize: newFontSize,
-          // highContrast: newHighContrast,
-          // screenReader: newScreenReader,
-          // receiveNotifications: newReceiveNotifications,
-          theme: newTheme,
-        };
-      });
-    } else {
-      const fallbackTheme = colorScheme || "light";
-
-      setStyles((prevStyles) => {
-        if (prevStyles.theme === fallbackTheme) return prevStyles;
-
-        return {
-          ...prevStyles,
-          theme: fallbackTheme,
-        };
-      });
-    }
-  }, [settings, colorScheme]);
+  setStyles(prev => prev.theme === newTheme ? prev : { ...prev, theme: newTheme });
+}, [settings?.manual_dark_mode, colorScheme]);
 
 
   // useEffect(() => {
 
-  //    console.log('useeffect in global styles triggered by styles.theme');
-  //   const isLight = styles.theme === "light";
+  //   if (!colorScheme) {
+  //     return;
+  //   }
+  //   if (settings) {
+  //      console.log("settings triggered globalstyles");
 
-  //   setStyles((prev) => {
-  //     const newGradient = isLight
-  //       ? {
-  //           darkColor: "#ffffff",
-  //           lightColor: "#ffffff",
-  //         }
-  //       : {
-  //           darkColor: "#4caf50",
-  //           lightColor: "#a0f143",
-  //         };
+  //     // const newFontSize = settings.large_text ? 20 : 16;
+  //     // const newHighContrast = settings.high_contrast_mode;
+  //     // const newScreenReader = settings.screen_reader;
+  //     // const newReceiveNotifications = settings.receive_notifications;
+  //     const newTheme = determineTheme();
 
-  //     const newHome = isLight
-  //       ? {
-  //           darkColor: "#ffffff",
-  //           lightColor: "#ffffff",
-  //         }
-  //       : {
-  //           darkColor: "#000002",
-  //           lightColor: "#163805",
-  //         };
+  //     setStyles((prevStyles) => {
+  //       if (
+  //         // prevStyles.fontSize === newFontSize &&
+  //         // prevStyles.highContrast === newHighContrast &&
+  //         // prevStyles.screenReader === newScreenReader &&
+  //         // prevStyles.receiveNotifications === newReceiveNotifications &&
+  //         prevStyles.theme === newTheme
+  //       ) {
+  //         return prevStyles; // No changes, skip re-render
+  //       }
 
-  //     const gradientsUnchanged =
-  //       JSON.stringify(prev.gradientColors) === JSON.stringify(newGradient) &&
-  //       JSON.stringify(prev.gradientColorsHome) === JSON.stringify(newHome);
+  //       return {
+  //         ...prevStyles,
+  //         // fontSize: newFontSize,
+  //         // highContrast: newHighContrast,
+  //         // screenReader: newScreenReader,
+  //         // receiveNotifications: newReceiveNotifications,
+  //         theme: newTheme,
+  //       };
+  //     });
+  //   } else {
+  //     const fallbackTheme = colorScheme || "light";
 
-  //     if (gradientsUnchanged) return prev;
+  //     setStyles((prevStyles) => {
+  //       if (prevStyles.theme === fallbackTheme) return prevStyles;
 
-  //     return {
-  //       ...prev,
-  //       gradientColors: newGradient,
-  //       gradientColorsHome: newHome,
-  //     };
-  //   });
-  // }, [styles.theme]);
+  //       return {
+  //         ...prevStyles,
+  //         theme: fallbackTheme,
+  //       };
+  //     });
+  //   }
+  // }, [settings, colorScheme]);
 
+ 
 
   const themeStyles =
     styles.theme === "dark" ? darkThemeStyles : lightThemeStyles;
@@ -177,7 +147,7 @@ export const GlobalStyleProvider = ({ children }) => {
   appCrossThemeStyles,
   themeStyleSpinners,
 ]);
-
+ 
 
   return (
 <GlobalStyleContext.Provider value={contextValue}>

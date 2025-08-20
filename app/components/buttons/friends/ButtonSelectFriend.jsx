@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-// import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
+import { View, Text, StyleSheet } from "react-native"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-
-//may need to configure friendlist theme color before using as a button
+ 
 const ButtonSelectFriend = ({
   disabled=false,
   friend,
@@ -80,8 +78,7 @@ const ButtonSelectFriend = ({
              justifyContent: "center",
         },
       ]}
-    >
-      {/* {renderProfileIcon()} */}
+    > 
       <View
         style={{
           backgroundColor: !disabled ? themeStyles.overlayBackgroundColor.backgroundColor : 'transparent',

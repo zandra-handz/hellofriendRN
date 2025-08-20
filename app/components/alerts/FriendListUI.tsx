@@ -71,7 +71,7 @@ const FriendListUI = ({
           </FriendTintPressable>
         )}
 
-        {item && "id" in item && item.id === selectedId && (
+        {item && ("id" in item) && (item.id === selectedId) && (
           <View
             style={[
               styles.friendContainer,
@@ -138,8 +138,7 @@ const FriendListUI = ({
           data={[...data, { message: "add friend" }]}
           keyExtractor={extractItemKey}
           renderItem={renderFriendSelectItem}
-          numColumns={1}
-          //  estimatedItemSize={100}
+          numColumns={1} 
           showsVerticalScrollIndicator={false}
         />
       )}

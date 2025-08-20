@@ -11,8 +11,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Animated, { SlideInLeft } from "react-native-reanimated";
 import { useCategories } from "@/src/context/CategoriesContext";
-import { useUser } from "@/src/context/UserContext";
-import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+ 
 import FlashMessage from "../alerts/FlashMessage";
 
 type Props = {
@@ -36,7 +35,7 @@ const AddNewCategory = ({
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
-  const { user } = useUser();
+ 
 
   const ENTER_MESSAGE_WIDTH = 60;
 
@@ -170,12 +169,10 @@ const AddNewCategory = ({
       text: `Added!`,
       error: false,
       duration: 1000,
-    });
-    // showFlashMessage(`Added!`, false, 1000);
+    }); 
     try {
       const updatedData = await createNewCategory({
-        user: user?.id,
-        //  name: newCategoryRef.current.value,
+   
         name: newCategory,
       });
 

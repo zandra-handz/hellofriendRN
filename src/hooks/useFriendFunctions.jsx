@@ -77,9 +77,9 @@ const useFriendFunctions = () => {
     });
 
 
-    const handleUpdateFriendSettings = async (userId, friendId, effort, priority, phoneNumber) => {
+    const handleUpdateFriendSettings = async (  friendId, effort, priority, phoneNumber) => {
         const update = {
-            user: userId,
+            user: user?.id,
             friend: friendId,
             effort_required: effort,
             priority_level: priority,

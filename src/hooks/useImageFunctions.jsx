@@ -12,14 +12,14 @@ import { useUser } from "../context/UserContext";
 
 const useImageFunctions = () => {
   const { selectedFriend } = useSelectedFriend();
-  const { user, isAuthenticated, isInitializing } = useUser();
+  const { user,  isInitializing } = useUser();
   const queryClient = useQueryClient();
   const { showMessage } = useMessage();
 
   const { data: imageList = [], isLoading: isImageContextLoading } = useQuery({
     queryKey: ["friendImages", user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendImagesByCategory(selectedFriend.id),
-    enabled: !!(selectedFriend && isAuthenticated && !isInitializing), 
+    enabled: !!(selectedFriend && user?.id && !isInitializing), 
     staleTime: 1000 * 60 * 20, // 20 minutes
     select: (imagesData) => { 
       const flattenedImages = [];

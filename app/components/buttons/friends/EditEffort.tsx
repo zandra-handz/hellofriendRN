@@ -33,7 +33,7 @@ const EditEffort = ({ iconSize = 15, value = "None" }) => {
     }
   };
 
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { themeStyles  } = useGlobalStyle();
   const { handleUpdateFriendSettings } = useFriendFunctions();
 
   const [showEdit, setShowEdit] = useState(false);

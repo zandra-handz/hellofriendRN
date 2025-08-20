@@ -11,13 +11,12 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  Pressable,
-  FlatList,
+  Pressable, 
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 // app state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCategories } from "@/src/context/CategoriesContext";
 
@@ -26,9 +25,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import UserCategorySelectorButton from "./UserCategorySelectorButton";
 import Donut from "./Donut";
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
+import Animated, { 
   SlideInLeft,
   SlideInRight,
   SlideOutRight,
@@ -41,12 +38,11 @@ import UserHistoryModal from "./UserHistoryModal";
 
 const UserCategorySelector = ({
   onPress,
-  onSave,
-  existingCategory,
+  onSave, 
   updatingExisting,
   existingId,
 }) => {
-  const { user } = useUser();
+ 
 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
@@ -352,7 +348,7 @@ const UserCategorySelector = ({
   const handleCreateCategory = async () => {
     try {
       const updatedData = await createNewCategory({
-        user: user?.id,
+      
         name: newCategoryRef.current.value,
       });
 

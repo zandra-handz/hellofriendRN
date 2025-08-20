@@ -11,8 +11,7 @@ import {
   ScrollView,
   TextInput,
   FlatList,
-} from "react-native";
-import { useUser } from "@/src/context/UserContext";
+} from "react-native"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
@@ -40,9 +39,7 @@ const CategoryDetailsModal: React.FC<Props> = ({
     ? userCategories.find((category) => category.id === categoryId) || null
     : null;
 
-  // console.log(`category in modal: `, category);
-
-  const { user } = useUser();
+ 
   const { themeStyles, appFontStyles, appSpacingStyles } = useGlobalStyle();
   const { selectedFriend, friendDashboardData, handleUpdateDefaultCategory } = useSelectedFriend();
   const { capsuleList } = useCapsuleList();
@@ -111,8 +108,7 @@ const CategoryDetailsModal: React.FC<Props> = ({
   };
 
   const handleUpdateCategory = () => {
-    updateCategory({
-      user: user?.id,
+    updateCategory({ 
       id: categoryId,
 
       updates: { description: textInputRef.current.value },

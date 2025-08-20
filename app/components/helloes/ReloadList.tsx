@@ -7,14 +7,14 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
-import { useUser } from "@/src/context/UserContext";
+ 
 import EscortBar from "../moments/EscortBar";
 import CheckboxListItem from "../moments/CheckboxListItem";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
 const ReloadList = ({ helloId, items }) => {
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { user } = useUser();
+ 
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
@@ -65,7 +65,7 @@ const ReloadList = ({ helloId, items }) => {
   const handleBulkCreateMoments = () => {
     selectedMoments.map((moment) => {
       const momentData = {
-        user: user.id,
+     
         friend: selectedFriend.id,
 
         selectedCategory: moment.typed_category,

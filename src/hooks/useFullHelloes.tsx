@@ -10,7 +10,7 @@ type Props = {
 };
 
 const useFullHelloes = ({ friendId, fetchAll = false, indexNeeded = 0 }: Props) => {
-  const { user } = useUser();
+  const { user, isInitializing } = useUser();
 
   const itemsPerPageOnBackend = 30;
 
@@ -45,7 +45,7 @@ const pagesFetchedRef = useRef(1); // starts at 1 because page 1 is fetched init
       return Number(nextUrl.searchParams.get("page"));
     },
     initialPageParam: 1,
-    enabled: !!(friendId && user?.id),
+    enabled: !!(friendId && user?.id && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10,
   });
 
