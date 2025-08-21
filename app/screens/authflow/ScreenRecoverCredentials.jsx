@@ -9,11 +9,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useMessage } from "@/src/context/MessageContext";
+ 
 
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import {
   sendResetCodeEmail,
   verifyResetCodeEmail,
@@ -26,7 +27,7 @@ import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 
 const ScreenRecoverCredentials = () => {
-  const { showMessage } = useMessage();
+ 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
  
   const [username, setUsername] = useState("");
@@ -67,45 +68,46 @@ const ScreenRecoverCredentials = () => {
     //need to do something to prevent double calling probably?
     if (!isRequestCodeScreen && !isValidateCodeScreen) {
       try {
-        showMessage(true, null, `Resetting password for ${resetCode}`);
-        const reset = await resetPassword({ email, resetCode, newPassword });
+        // showMessage(true, null, `Resetting password for ${resetCode}`);
 
-        showMessage(false, null, "Password reset successfully! Please log in.");
+          await resetPassword({ email, resetCode, newPassword });
+
+        // showMessage(false, null, "Password reset successfully! Please log in.");
 
         handleNavigateBackToAuthScreen();
       } catch (error) {
         console.error(error);
-        showMessage(true, null, `Error! Couldn't reset password.`);
+        // showMessage(true, null, `Error! Couldn't reset password.`);
       }
     }
     if (isRequestCodeScreen) {
       try {
-        showMessage(true, null, "Sending email...");
+        // showMessage(true, null, "Sending email...");
 
         sendResetCodeEmail(email);
         setIsRequestCodeScreen(false);
         setIsValidateCodeScreen(true);
       } catch (error) {
         console.error(error);
-        showMessage(true, null, `Error! Can't send email.`);
+        // showMessage(true, null, `Error! Can't send email.`);
       }
     }
     setLoading(false);
 
     if (isValidateCodeScreen) {
       try {
-        showMessage(
-          true,
-          null,
-          `Checking reset code... ${resetCode}, ${email}`
-        );
-        const verify = await verifyResetCodeEmail({ email, resetCode });
+        // showMessage(
+        //   true,
+        //   null,
+        //   `Checking reset code... ${resetCode}, ${email}`
+        // );
+        await verifyResetCodeEmail({ email, resetCode });
  
-        showMessage(false, null, "Reset code verified successfully!");
+        // showMessage(false, null, "Reset code verified successfully!");
         setIsValidateCodeScreen(false);
       } catch (error) {
         console.error(error);
-        showMessage(true, null, `Error! Couldn't verify reset code.`);
+        // showMessage(true, null, `Error! Couldn't verify reset code.`);
       }
     }
   };

@@ -23,7 +23,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
   } = useQuery({
     queryKey: ["upcomingHelloes", user?.id],
     queryFn: () => fetchUpcomingHelloes(),
-       enabled: !!user?.id && !isInitializing,
+    enabled: !!user?.id, //removed isInitializing to test
     retry: 3,
     staleTime: 1000 * 60 * 20, // 20 minutes
  
@@ -36,6 +36,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
     },
   });
 
+ 
 
   useEffect(() => {
     if (isError) {

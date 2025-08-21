@@ -2,10 +2,10 @@ import { View, Text, FlatList, StyleSheet } from "react-native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import InfiniteScrollSpinner from "../appwide/InfiniteScrollSpinner";
-import { useUserStats } from "@/src/context/UserStatsContext";
+ 
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { Foundation } from "@expo/vector-icons";
+ 
 import UserHistoryMomentItem from "./UserHistoryMomentItem";
 
 type Props = {
@@ -24,7 +24,7 @@ const UserCategoryHistoryList = ({
   // const [completedCapsuleCount, setCompletedCapsuleCount] = useState(0);
   const { themeStyles } = useGlobalStyle();
 
-  const { stats } = useUserStats();
+  
 
   // useEffect(() => {
   //   if (categoryId && stats) {

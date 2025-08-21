@@ -141,18 +141,18 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         },
       ]}
     >
-      {isLoading && !upcomingHelloes && (
+      {/* {isLoading && upcomingHelloes && (
         <View style={styles.loadingWrapper}>
           <LoadingPage
             loading={isLoading}
             includeLabel={false}
             label=""
             spinnerSize={70}
-            color="#000002"
+            color="red"
             spinnerType={themeStyleSpinners?.homeScreen}
           />
         </View>
-      )}
+      )} */}
       {!isLoading && (
         <> 
 

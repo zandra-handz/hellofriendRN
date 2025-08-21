@@ -13,7 +13,7 @@ import Animated, {
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 interface GradientBackgroundProps {
-  useFriendColors?: boolean;
+  useFriendColors?: boolean | null;
   startColor?: string;
   endColor?: string;
   reverse?: boolean;

@@ -6,19 +6,17 @@ import {
   Alert,
   Keyboard,
   KeyboardAvoidingView,
-  Platform, 
+  Platform,
 } from "react-native";
 import WelcomeMessageUI from "@/app/components/home/WelcomeMessageUI";
 import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 import TopBarHome from "@/app/components/home/TopBarHome";
-import { AppState, AppStateStatus } from "react-native"; 
-// import { useGeolocationWatcher } from "@/src/hooks/useCurrentLocationAndWatcher";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext"; //to check if any friends, don't render Up Next component or upcoming scroll if so
-
+import { useFriendList } from "@/src/context/FriendListContext";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useMessage } from "@/src/context/MessageContext";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useNavigation } from "@react-navigation/native";
 import BelowKeyboardComponents from "@/app/components/home/BelowKeyboardComponents";
 import { useFocusEffect } from "@react-navigation/native";
@@ -30,17 +28,14 @@ import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
 
 import * as FileSystem from "expo-file-system";
-import * as SecureStore from "expo-secure-store";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
- 
 
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
   const navigation = useNavigation();
-  // using DeviceLocationContext now
-  // useGeolocationWatcher(); // Starts watching for location changes
   const { themeStyles } = useGlobalStyle();
-  const { user, onSignOut } = useUser();
+  const { navigateToMomentFocusWithText } = useAppNavigations();
+  const { user } = useUser();
 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const { friendList } = useFriendList();
@@ -50,48 +45,12 @@ const ScreenHome = () => {
     useImageUploadFunctions();
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const { showMessage } = useMessage();
 
   const newMomentTextRef = useRef(null);
   const username = user?.username;
   const isNewUser =
     new Date(user?.created_on).toDateString() === new Date().toDateString();
 
-
- 
-  // console.log("HOME SCREEN RERENDEREEEEEEEEEEEEERded");
-
-  //  const appState = useRef(AppState.currentState);
-  //   useEffect(() => {
-  //     const subscription = AppState.addEventListener("change", (nextState: AppStateStatus) => {
-  //       console.log("Welcome screen: App state changed:", nextState);
-  
-        
-  //       if (
-  //         appState.current.match(/inactive|background/) &&
-  //         nextState === "active"
-  //       ) {
-  
-  
-  //         console.log("Weclome screen: App has come to the foreground!"); 
-          
-  //         console.warn(`CHEKING IF SGINED IN   `);
-          
-  //         checkIfSignedIn();
-  //         if (!reInitialize) {
-  //         return;
-  //       }
-    
-  //       }
-  
-  //       appState.current = nextState;
-  //     });
-  
-  //     return () => subscription.remove(); // cleanup
-  //   }, [reInitialize]);
-
-
- 
   useEffect(() => {
     if (!hasShareIntent || !shareIntent) return;
 
@@ -109,14 +68,15 @@ const ScreenHome = () => {
     if (hasShareIntent && shareIntent?.text?.length > 0) {
       const sharedText = shareIntent.text.replace(/^["']|["']$/g, "");
       if (sharedText) {
-        navigation.navigate("MomentFocus", {
+        navigateToMomentFocusWithText({
+          screenCameFrom: 0, //goes back to home screen that is now selected friend screen
           momentText: sharedText,
         });
       } else {
-        showMessage(
+        showFlashMessage(
+          `length in shared text but data structure passed here is not valid`,
           true,
-          null,
-          `length in shared text but data structure passed here is not valid`
+          2000
         );
       }
     }
@@ -151,23 +111,6 @@ const ScreenHome = () => {
     }
   };
 
-  //just checks if token, if no token stored, signs out which will cause redirect to welcome screen
-  //NO REINIT/API CALL HERE, OTHER PARTS OF THE CODE WILL HANDLE THAT IF 401 ERROR OCCURS
-  const checkIfSignedIn = async () => {
-    try {
-      const token = await SecureStore.getItemAsync("accessToken");
-      if (token) {
-        // reInitialize();
-        console.log('good to go!');
-      } else {
-        onSignOut();
-      }
-    } catch (error) {
-      console.error("Error checking sign-in status", error);
-      onSignOut();
-    }
-  };
-
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -189,7 +132,6 @@ const ScreenHome = () => {
       const textLengthPrev = newMomentTextRef.current.getText().length;
       if (textLengthPrev === 0) {
         if (text.length - textLengthPrev > 1) {
-          //this is here to check if something is copy-pasted in or shared in
           setShowMomentScreenButton(true);
         }
       }
@@ -215,8 +157,7 @@ const ScreenHome = () => {
       return () => {};
     }, [])
   );
-   const slideAnim = useSharedValue(1);
- 
+  const slideAnim = useSharedValue(1);
 
   const clearNewMomentText = () => {
     if (newMomentTextRef && newMomentTextRef.current) {
@@ -226,10 +167,13 @@ const ScreenHome = () => {
   };
 
   const navigateToAddMomentScreen = () => {
-    navigation.navigate("MomentFocus", {
-      momentText: newMomentTextRef.current.getText(),
-    });
-    clearNewMomentText();
+    if (newMomentTextRef && newMomentTextRef.current) {
+      navigateToMomentFocusWithText({
+        screenCameFrom: 0, //goes back to home screen that is now selected friend screen
+        momentText: newMomentTextRef.current.getText(),
+      });
+      clearNewMomentText();
+    }
   };
 
   const navigateToAddImageScreen = () => {
@@ -248,7 +192,7 @@ const ScreenHome = () => {
 
   const handleFocusPress = () => {
     if (newMomentTextRef & newMomentTextRef.current) {
-      console.log("focusing");
+      // console.log("focusing");
       newMomentTextRef.current.focus();
     }
   };
@@ -277,12 +221,9 @@ const ScreenHome = () => {
               flexDirection: "column",
               paddingHorizontal: 0,
             }}
-          > 
+          >
             <View style={{ width: "100%", paddingHorizontal: 0, marginTop: 0 }}>
-           
-              {selectedFriend && (
-                <TopBarHome /> 
-              )}
+              {selectedFriend && <TopBarHome />}
             </View>
 
             {/* // )} */}

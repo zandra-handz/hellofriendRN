@@ -1,28 +1,19 @@
-import { useMessage } from "@/src/context/MessageContext";
+
+import { showFlashMessage } from "../utils/ShowFlashMessage";
 
 const useMessageCentralizer = () => {
-  const { showMessage } = useMessage();
+ 
 
-  const errorMessageFormat = ({ itemType, actionType }) => {
-    return `Oops! Could not ${actionType} ${itemType}.`;
-  };
-
-  const successMessageFormat = ({ itemType, actionType }) => {
-    return `Success! ${itemType} ${actionType}.`;
-  };
-
+ 
   // ScreenAuth wrapped in signinMutation.isPending
-  const showVerifyingCredentialsMessage = () => {
-    showMessage(true, null, "Signing you in..");
-  };
+ 
 
   // ScreenAuth wrapped in signinMutation.isError
   const showSigninErrorMessage = () => {
-    showMessage(true, null, "Oops! Could not sign you in.");
+   showFlashMessage(`Oops! Couldn't sign in`, false, 2000);
   };
 
-  return {
-    showVerifyingCredentialsMessage,
+  return { 
     showSigninErrorMessage,
   }
 };

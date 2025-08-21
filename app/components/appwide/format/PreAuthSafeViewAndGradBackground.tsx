@@ -1,11 +1,22 @@
 import React, { useMemo } from "react";
-import { View } from "react-native";
+import { View, DimensionValue } from "react-native";
 import CustomStatusBar from "../statusbar/CustomStatusBar";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+type Props = {
+  children: React.ReactNode;
+  style: object;
+  includeCustomStatusBar?: boolean;
+  includeBackgroundOverlay?: boolean;
+  primaryBackground?: boolean;
+  backgroundOverlayHeight?: DimensionValue;
+  backgroundOverlayBottomRadius?: number;
+};
+
 export const PreAuthSafeViewAndGradientBackground = ({
   children,
   style,
@@ -14,13 +25,10 @@ export const PreAuthSafeViewAndGradientBackground = ({
   primaryBackground = false,
   backgroundOverlayHeight = "100%",
   backgroundOverlayBottomRadius = 0,
-  header: Header,
-}) => {
+}: Props) => {
   const { selectedFriend } = useSelectedFriend();
 
   const route = useRoute();
-
-  const standardizedHeaderHeight = 44;
 
   const { themeStyles } = useGlobalStyle();
 
@@ -56,34 +64,29 @@ export const PreAuthSafeViewAndGradientBackground = ({
       useFriendColors={useFriendColors}
       additionalStyles={[paddingStyle, style]}
     >
-      <SafeAreaView style={{flex: 1}}>
-        
-      {includeBackgroundOverlay && (
-        <View
-          style={{
-            position: "absolute",
-            zIndex: 0,
-            height: backgroundOverlayHeight,
-            with: "100%",
-            top: 0,
-            bottom: 0,
-            right: 0,
-            left: 0,
-            opacity: 1,
-            backgroundColor: themeStyles.primaryBackground.backgroundColor,
-            borderBottomLeftRadius: backgroundOverlayBottomRadius,
-            borderBottomRightRadius: backgroundOverlayBottomRadius,
-          }}
-        ></View>
-      )}
+      <SafeAreaView style={{ flex: 1 }}>
+        {includeBackgroundOverlay && (
+          <View
+            style={{
+              position: "absolute",
+              zIndex: 0,
+              height: backgroundOverlayHeight,
+              width: "100%",
+              top: 0,
+              bottom: 0,
+              right: 0,
+              left: 0,
+              opacity: 1,
+              backgroundColor: themeStyles.primaryBackground.backgroundColor,
+              borderBottomLeftRadius: backgroundOverlayBottomRadius,
+              borderBottomRightRadius: backgroundOverlayBottomRadius,
+            }}
+          ></View>
+        )}
 
-      {includeCustomStatusBar && <CustomStatusBar />}
-      {Header && (
-        <View style={{ height: standardizedHeaderHeight }}>
-          <Header />
-        </View>
-      )}
-      {children}
+        {includeCustomStatusBar && <CustomStatusBar />}
+
+        {children}
       </SafeAreaView>
     </GradientBackground>
   );

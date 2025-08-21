@@ -8,7 +8,6 @@ import { RootStackParamList } from "../types/NavigationTypes";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type NavToHelloViewProps = {
-
   startingIndex: number | null; // can this be null?
   inPersonFilter: boolean;
 };
@@ -24,15 +23,27 @@ type NavToMomentViewProps = {
 
 type NavToMomentFocusProp = {
   screenCameFrom: number; // 0 = nav back after moment save, 1 = stay after moment save
-}
+ 
+};
+type NavToMomentFocusWithTextProp = {
+  screenCameFrom: number; // 0 = nav back after moment save, 1 = stay after moment save
+  momentText?: string | null;
+};
 
 interface hookReturns {
   navigateToAddFriend: () => void;
-  navigateToFinalize: () => void; 
+  navigateToFinalize: () => void;
   navigateToHelloes: () => void;
-  navigateToHelloView: ({startingIndex, inPersonFilter}: NavToHelloViewProps) => void;
+  navigateToHelloView: ({
+    startingIndex,
+    inPersonFilter,
+  }: NavToHelloViewProps) => void;
   navigateToLocationSearch: () => void;
-  navigateToMomentFocus: ({screenCameFrom }: NavToMomentFocusProp) => void;
+  navigateToMomentFocus: ({ screenCameFrom }: NavToMomentFocusProp) => void;
+  navigateToMomentFocusWithText: ({
+    screenCameFrom,
+    momentText,
+  }: NavToMomentFocusWithTextProp) => void;
   navigateToMoments: ({ scrollTo }: NavToMomentsProp) => void;
   navigateToMomentView: ({ moment, index }: NavToMomentViewProps) => void;
 
@@ -46,19 +57,32 @@ const useAppNavigations = (): hookReturns => {
     navigation.navigate("AddFriend");
   };
 
-
-      const navigateToHelloes = () => {
+  const navigateToHelloes = () => {
     navigation.navigate("Helloes");
   };
 
-
-    const navigateToHelloView = ({ startingIndex, inPersonFilter }: NavToHelloViewProps) => {
+  const navigateToHelloView = ({
+    startingIndex,
+    inPersonFilter,
+  }: NavToHelloViewProps) => {
     navigation.navigate("HelloView", { startingIndex, inPersonFilter });
   };
 
+  const navigateToMomentFocus = ({ screenCameFrom }: NavToMomentFocusProp) => {
+    navigation.navigate("MomentFocus", {
+      screenCameFrom: screenCameFrom,
+      
+    });
+  };
 
-  const navigateToMomentFocus = ({screenCameFrom}: NavToMomentFocusProp) => {
-    navigation.navigate("MomentFocus", {screenCameFrom: screenCameFrom });
+  const navigateToMomentFocusWithText = ({
+    screenCameFrom,
+    momentText,
+  }: NavToMomentFocusWithTextProp) => {
+    navigation.navigate("MomentFocus", {
+      screenCameFrom: screenCameFrom,
+      momentText: momentText,
+    });
   };
 
   const navigateToMoments = ({ scrollTo }: NavToMomentsProp) => {
@@ -88,6 +112,7 @@ const useAppNavigations = (): hookReturns => {
     navigateToHelloView,
     navigateToLocationSearch,
     navigateToMomentFocus,
+    navigateToMomentFocusWithText,
     navigateToMoments,
     navigateToMomentView,
 

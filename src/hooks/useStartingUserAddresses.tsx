@@ -7,8 +7,7 @@ import {
   updateUserAddress,
   deleteUserAddress,
   fetchUserAddresses,
-} from "@/src/calls/api";
-import { useMessage } from "../context/MessageContext";
+} from "@/src/calls/api"; 
 
 import useCurrentLocation from "./useCurrentLocation";
 
@@ -18,8 +17,7 @@ Geocoder.init(GOOGLE_API_KEY);
 
 const useStartingUserAddresses = () => {
   const { user,   isInitializing } = useUser();
-  const queryClient = useQueryClient();
-  const { showMessage } = useMessage(); 
+  const queryClient = useQueryClient(); 
   const [defaultUserAddress, setDefaultUserAddress] = useState(null);
   const [usingCurrent, setUsingCurrent] = useState(false);
   const { currentLocationDetails } = useCurrentLocation();
@@ -84,7 +82,7 @@ const useStartingUserAddresses = () => {
   const createUserAddressMutation = useMutation({
     mutationFn: (data) => addUserAddress(data),
     onSuccess: () => {
-      showMessage(true, null, `Address added`);
+ 
 
       queryClient.invalidateQueries(["userAddresses"]);
       if (timeoutRef.current) {
@@ -99,8 +97,7 @@ const useStartingUserAddresses = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-
-      showMessage(true, null, "Oops! Error adding address");
+ 
       console.error("Error adding address:", error);
       timeoutRef.current = setTimeout(() => {
         createUserAddressMutation.reset();
@@ -111,7 +108,7 @@ const useStartingUserAddresses = () => {
   const updateUserAddressMutation = useMutation({
     mutationFn: ({ id, fieldUpdates }) => updateUserAddress(id, fieldUpdates),
     onSuccess: () => {
-      showMessage(true, null, `Address updated!`);
+ 
       queryClient.invalidateQueries(["userAddresses"]);
 
       if (timeoutRef.current) {
@@ -125,9 +122,7 @@ const useStartingUserAddresses = () => {
     onError: (error) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
-      }
-
-      showMessage(true, null, "Oops! Error updating user address");
+      } 
       console.error("Error updating address:", error);
 
       timeoutRef.current = setTimeout(() => {
@@ -138,8 +133,7 @@ const useStartingUserAddresses = () => {
 
   const deleteUserAddressMutation = useMutation({
     mutationFn: (data) => deleteUserAddress(data),
-    onSuccess: () => {
-      showMessage(true, null, `Address deleted!`);
+    onSuccess: () => { 
 
       queryClient.invalidateQueries(["userAddresses"]);
       if (timeoutRef.current) {
@@ -154,8 +148,7 @@ const useStartingUserAddresses = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-
-      showMessage(true, null, "Oops! Error deleting address");
+ 
       console.error("Error deleting address:", error);
       timeoutRef.current = setTimeout(() => {
         deleteUserAddressMutation.reset();

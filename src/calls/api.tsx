@@ -55,6 +55,7 @@ export const deleteTokens = async () => {
 };
 
 export const signout = async () => {
+  console.error('sign out triggered');
   try {
     await deleteTokens();
     setAuthHeader(null);
@@ -908,6 +909,7 @@ export const updateFriendFavesColorTheme = async (
 
 export const fetchUpcomingHelloes = async () => {
   try {
+    console.error('FETCHING UPCOMING');
     const response = await helloFriendApiClient.get("/friends/upcoming/");
     // console.error(response.data);
     return response.data;

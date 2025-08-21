@@ -5,6 +5,7 @@ export type RootStackParamList = {
   UserDetails: undefined;
   MomentFocus: {
     screenCameFrom: number;
+    momentText?: string | null;
   }
   Moments: {
     scrollTo: number | null;

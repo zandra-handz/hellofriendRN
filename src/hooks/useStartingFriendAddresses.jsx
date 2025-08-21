@@ -6,16 +6,14 @@ import {
   updateFriendAddress,
   fetchFriendAddresses,
   deleteFriendAddress,
-} from "@/src/calls/api";
-import { useMessage } from "../context/MessageContext";
+} from "@/src/calls/api"; 
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const useStartingFriendAddresses = () => {
   const { user } = useUser();
   const { selectedFriend } = useSelectedFriend();
-  const queryClient = useQueryClient();
-  const { showMessage } = useMessage(); 
+  const queryClient = useQueryClient(); 
   const [defaultAddress, setDefaultAddress] = useState(null);
 
   const {
@@ -48,8 +46,7 @@ const useStartingFriendAddresses = () => {
   const createFriendAddressMutation = useMutation({
     mutationFn: (data) => addFriendAddress(selectedFriend.id, data),
     onSuccess: (newAddress) => {
-      showMessage(true, null, `Address added for ${selectedFriend.name}!`);
-
+ 
       queryClient.setQueryData(
         ["friendAddresses", user?.id, selectedFriend?.id],
         (oldData) => { 
@@ -79,8 +76,7 @@ const useStartingFriendAddresses = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-
-      showMessage(true, null, "Oops! Error adding address");
+ 
       console.error("Error adding address:", error);
       timeoutRef.current = setTimeout(() => {
         createFriendAddressMutation.reset();
@@ -91,8 +87,7 @@ const useStartingFriendAddresses = () => {
   const deleteFriendAddressMutation = useMutation({
     mutationFn: (data) => deleteFriendAddress(selectedFriend.id, data),
     onSuccess: (data) => {
-      showMessage(true, null, `Address deleted for ${selectedFriend.name}!`);
-
+ 
       queryClient.setQueryData(
         ["friendAddresses", user?.id, selectedFriend?.id],
         (oldData) => {
@@ -114,7 +109,7 @@ const useStartingFriendAddresses = () => {
         clearTimeout(timeoutRef.current);
       }
 
-      showMessage(true, null, "Oops! Error deleting address");
+ 
       console.error("Error deleting address:", error);
       timeoutRef.current = setTimeout(() => {
         deleteFriendAddressMutation.reset();
@@ -126,8 +121,7 @@ const useStartingFriendAddresses = () => {
       updateFriendAddress(friend, id, fieldUpdates),
 
     onSuccess: (updatedAddress) => {
-      showMessage(true, null, `Address updated for ${selectedFriend.name}!`);
-
+ 
       queryClient.setQueryData(
         ["friendAddresses", user?.id, selectedFriend?.id],
         (oldData) => {
@@ -163,8 +157,7 @@ const useStartingFriendAddresses = () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-
-      showMessage(true, null, "Oops! Error updating address");
+ 
       console.error("Error updating address:", error);
 
       timeoutRef.current = setTimeout(() => {

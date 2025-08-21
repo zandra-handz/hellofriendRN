@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useFocusEffect } from "@react-navigation/native";
-import { useMessage } from "@/src/context/MessageContext";
+  
 import SignInButton from "@/app/components/user/SignInButton";
-import * as SecureStore from "expo-secure-store";
+ 
 import { useNavigation } from "@react-navigation/native";
 import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller";
-import { AppState, AppStateStatus } from "react-native"; 
+ 
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import Animated, {
   useSharedValue,
@@ -33,13 +32,6 @@ const ScreenWelcome = () => {
   };
 
  
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     checkIfSignedIn();
-  //   }, [])
-  // );
-
   useEffect(() => {
     if (user) {
       setConfirmedUserNotSignedIn(false);
@@ -54,8 +46,7 @@ const ScreenWelcome = () => {
     }
 
   }, [user, isInitializing]);
-
-  // experimenting with this, not super great right now
+ 
 
   const translateY = useSharedValue(500);
 
@@ -69,33 +60,7 @@ const ScreenWelcome = () => {
     };
   });
 
-  // const checkIfSignedIn = async () => {
-  //   try {
-  //     const token = await SecureStore.getItemAsync("accessToken");
-  //     if (token) {
-  //       reInitialize();
-  //     } else {
-  //       setConfirmedUserNotSignedIn(true);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error checking sign-in status", error);
-  //   }
-  // };
-
-  // const [ triggerMessage, updateTriggerMessage ] = useState('none');
-
-  //   useEffect(() => {
-  //     if (triggerMessage === 'validating') {
-  //      // showMessage(true, null, "Validating...");
-  //       updateTriggerMessage('none');
-
-  //     } else if (triggerMessage === 'signedout') {
-  //       showMessage(true, null, "Signed out");
-  //       updateTriggerMessage('none');
-
-  //     }
-
-  // },[triggerMessage] );
+ 
 
   return (
     <PreAuthSafeViewAndGradientBackground style={{ flex: 1 }}>

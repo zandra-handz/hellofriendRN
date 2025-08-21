@@ -21,6 +21,7 @@ import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButt
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 
 import useMessageCentralizer from "@/src/hooks/useMessageCentralizer";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
@@ -42,8 +43,7 @@ const ScreenAuth = () => {
   const passwordInputRef = useRef(null);
   const verifyPasswordInputRef = useRef(null);
   const emailInputRef = useRef(null);
-  const [isUsernameFocused, setIsUsernameFocused] = useState(false);
-  // const [usernameInputVisible, setUsernameInputVisible] = useState(true);
+  const [isUsernameFocused, setIsUsernameFocused] = useState(false); 
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const navigation = useNavigation();
@@ -55,9 +55,18 @@ const ScreenAuth = () => {
   useEffect(() => {
     if (signinMutation.isSuccess) {
       setSuccess(true);
+      console.log(`sign in successful!`);
+      showFlashMessage(`Success!`, false, 3000);
     }
-  }, [signinMutation]);
+  }, [signinMutation.isSuccess]);
 
+
+    useEffect(() => {
+    if (signinMutation.isLoading) {
+    console.log('is signing in');
+      showFlashMessage(`Is loading`, false, 10000);
+    }
+  }, [signinMutation.isLoading]);
   useLayoutEffect(() => {
     if (createNewAccount === true) {
       toggleMode();
@@ -120,9 +129,7 @@ const ScreenAuth = () => {
         console.error(error);
       }
     } else {
-      if (password !== verifyPassword) {
-        //alert("Passwords do not match!");
-        // showMessage(true, null, "Oops! Passwords do not match");
+      if (password !== verifyPassword) { 
         return;
       }
       console.log('signing up new user');
@@ -171,7 +178,7 @@ const ScreenAuth = () => {
 
   return (
     <PreAuthSafeViewAndGradientBackground
-      style={{ flex: 1, useFriendColors: false }}
+      style={{ flex: 1 }}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

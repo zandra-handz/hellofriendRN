@@ -24,7 +24,7 @@ const HomeButtonUpNext = ({
     const { getThemeAheadOfLoading } = useFriendStyle();
   const { themeStyles, appFontStyles, themeStyleSpinners, manualGradientColors } =
     useGlobalStyle(); 
-  const { setFriend, loadingNewFriend } = useSelectedFriend();
+  const { setFriend } = useSelectedFriend();
 
   const onPress = () => {
     const { id, name } = upcomingHelloes[0].friend;
@@ -34,6 +34,8 @@ const HomeButtonUpNext = ({
     getThemeAheadOfLoading(friend);
   };
 
+
+  console.log('home button up next rendered!');
   return (
     <View
       style={[
@@ -41,34 +43,23 @@ const HomeButtonUpNext = ({
         {
           borderRadius: borderRadius,
           borderColor: borderColor,
-          height: height, 
-         // backgroundColor: 'teal',
-          // maxHeight: maxHeight,
+          height: height,  
         },
       ]}
-    >
-      {/* <LinearGradient
-       // colors={[darkColor, lightColor]}
-         colors={['transparent', 'transparent']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          ...StyleSheet.absoluteFillObject,
-        }}
-      /> */}
-      {loadingNewFriend ||
-        (isLoading && (
+    > 
+   
+        {isLoading && ( // used to include loadingNewFriend too and I'm honestly not sure why
           <View style={styles.loadingWrapper}>
             <LoadingPage
-              loading={loadingNewFriend || isLoading}
+              loading={true}
               spinnerSize={30}
-              color="#000002"
+              color="red"
               spinnerType={themeStyleSpinners?.homeScreen}
             />
           </View>
-        ))}
+        )}
 
-      {!loadingNewFriend && !isLoading && (
+      {!isLoading && ( 
         <View
           style={{
             height: "100%",
@@ -93,8 +84,8 @@ const HomeButtonUpNext = ({
               ]}
             >
               {upcomingHelloes &&
-              friendList?.length > 0 &&
-              !isLoading &&
+              // friendList?.length > 0 &&
+              
               upcomingHelloes[0]
                 ? upcomingHelloes[0].friend.name
                 : "Please add a friend to use this feature!"}
@@ -102,7 +93,7 @@ const HomeButtonUpNext = ({
 
             <Text style={[styles.subtitleText, appFontStyles.subWelcomeText]}>
               Say hi on{" "}
-              {upcomingHelloes && !isLoading && upcomingHelloes[0]
+              {upcomingHelloes && upcomingHelloes[0]
                 ? upcomingHelloes[0].future_date_in_words
                 : ""}
               !

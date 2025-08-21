@@ -11,8 +11,8 @@ import LoadingPage from "./LoadingPage";
 type Props = {};
 
 const FSMainSpinner = (props: Props) => {
-  const {  isInitializing, signinMutation } = useUser();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const {  isInitializing, signinMutation  } = useUser();
+  const { selectedFriend } = useSelectedFriend();
   const { manualGradientColors } = useGlobalStyle(); 
 
 
@@ -46,7 +46,7 @@ const FSMainSpinner = (props: Props) => {
               label={"Just a moment"}
               spinnerType="circle"
               spinnerSize={40}
-              color={manualGradientColors.homeDarkColor}
+              color={ !isInitializing ? manualGradientColors.homeDarkColor : 'red'}
             />
           </GradientBackground>
         </View>

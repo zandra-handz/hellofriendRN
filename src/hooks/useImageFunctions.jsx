@@ -7,14 +7,14 @@ import {
 } from "@/src/calls/api";  
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";  
-import { useMessage } from "@/src/context/MessageContext";
+ 
 import { useUser } from "../context/UserContext";
 
 const useImageFunctions = () => {
   const { selectedFriend } = useSelectedFriend();
   const { user,  isInitializing } = useUser();
   const queryClient = useQueryClient();
-  const { showMessage } = useMessage();
+  // const { showMessage } = useMessage();
 
   const { data: imageList = [], isLoading: isImageContextLoading } = useQuery({
     queryKey: ["friendImages", user?.id, selectedFriend?.id],
@@ -62,7 +62,7 @@ const useImageFunctions = () => {
   const deleteImageMutation = useMutation({
     mutationFn: (id) => deleteFriendImage(selectedFriend.id, id), // Pass friendId and imageId
     onSuccess: () => {
-      showMessage(true, null, "Image deleted!");
+      // showMessage(true, null, "Image deleted!");
       queryClient.invalidateQueries(["friendImages"]);
 
       if (timeoutRef.current) {
@@ -79,7 +79,7 @@ const useImageFunctions = () => {
       }
 
       console.error("Error deleting image:", error);
-      showMessage(true, null, "Oops! Image not deleted");
+      // showMessage(true, null, "Oops! Image not deleted");
       timeoutRef.current = setTimeout(() => {
         deleteImageMutation.reset();
       }, 2000);
@@ -93,7 +93,7 @@ const useImageFunctions = () => {
   const createImageMutation = useMutation({
     mutationFn: (formData) => createFriendImage(selectedFriend.id, formData), // Use the imported function
     onSuccess: () => {
-      showMessage(true, null, "Image uploaded!");
+      // showMessage(true, null, "Image uploaded!");
       queryClient.invalidateQueries(["friendImages"]);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -108,7 +108,7 @@ const useImageFunctions = () => {
         clearTimeout(timeoutRef.current);
       }
 
-      showMessage(true, null, "Oops! Error uploading image");
+      // showMessage(true, null, "Oops! Error uploading image");
       console.error("Error uploading image:", error);
       timeoutRef.current = setTimeout(() => {
         createImageMutation.reset();

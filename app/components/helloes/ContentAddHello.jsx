@@ -17,13 +17,12 @@ import {
   Keyboard,
   Dimensions,
 } from "react-native";
-import { useMessage } from "@/src/context/MessageContext";
+ 
  
 import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
 import TitleContainerUI from "./TitleContainerUI";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useUserStats } from "@/src/context/UserStatsContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
@@ -34,8 +33,7 @@ import PickerDate from "../selectors/PickerDate";
 import PickerHelloType from "../selectors/PickerHelloType";
 import PickerHelloLocation from "../selectors/PickerHelloLocation";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
-import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
+import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave"; 
 
 import DoubleChecker from "@/app/components/alerts/DoubleChecker";
 import HelloNotesModal from "../headers/HelloNotesModal";
@@ -48,7 +46,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 const ContentAddHello = () => {
   const navigation = useNavigation();
   const { refetchUpcomingHelloes } = useUpcomingHelloes();
-  const { showMessage } = useMessage();
+ 
  
   const { preAdded, allCapsulesList } = useCapsuleList(); 
   const { refetchUserStats } = useUserStats();

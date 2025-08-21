@@ -13,7 +13,7 @@ import Animated, {
   SlideInUp,
   SlideOutUp,
 } from "react-native-reanimated";
-import TopBarLikeMinusWidth from "./TopBarLikeMinusWidth";
+import TopBarLikeMinusWidth from "./TopBarLikeMinusWidth"; 
 
 const ScreenMomentFocus = () => {
   const route = useRoute();
@@ -21,6 +21,7 @@ const ScreenMomentFocus = () => {
   const screenCameFrom = route.params?.screenCameFrom ?? 0; // 0 = nav back, 1 = do not nav after save
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
   const existingMomentObject = route.params?.existingMomentObject ?? null;
+ 
   const { capsuleList } = useCapsuleList();
   const { userCategories } = useCategories();
   const { themeAheadOfLoading } = useFriendStyle();

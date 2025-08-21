@@ -17,16 +17,14 @@ import * as SplashScreen from "expo-splash-screen";
 import useNotificationsRegistration from "./src/hooks/useNotificationsRegistration";
 import Constants from "expo-constants";
 import {
-  LinkingOptions,
   NavigationContainer,
-  NavigationContainerRef,
   getStateFromPath,
 } from "@react-navigation/native";
 
 import { RootSiblingParent } from "react-native-root-siblings";
 import { Alert, useColorScheme, Platform } from "react-native";
 import { DeviceLocationProvider } from "./src/context/DeviceLocationContext";
-import { MessageContextProvider } from "./src/context/MessageContext";
+// import { MessageContextProvider } from "./src/context/MessageContext";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { UserProvider, useUser } from "./src/context/UserContext";
 import {
@@ -56,7 +54,7 @@ import * as Linking from "expo-linking";
 import * as MediaLibrary from "expo-media-library";
 
 import { useGlobalStyle } from "./src/context/GlobalStyleContext";
-import ResultMessage from "./app/components/alerts/ResultMessage";
+// import ResultMessage from "./app/components/alerts/ResultMessage";
 import FSMainSpinner from "./app/components/appwide/spinner/FSMainSpinner";
 import ScreenHome from "./app/screens/home/ScreenHome";
 import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
@@ -99,18 +97,13 @@ import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLoca
 import ScreenSelectFriend from "./app/screens/friends/ScreenSelectFriend";
 
 import HeaderLocation from "./app/components/headers/HeaderLocation";
-import HeaderBase from "./app/components/headers/HeaderBase";
+
 import HeaderLocationSingle from "./app/components/headers/HeaderLocationSingle";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-// import SafeView from "./app/components/appwide/format/SafeView";
-
-// import { RootStackParamList } from "./types";
-
 const queryClient = new QueryClient();
 
-// import PhoneStatusBar from "./app/components/appwide/statusbar/PhoneStatusBar";
 import * as Sentry from "@sentry/react-native";
 
 Sentry.init({
@@ -234,39 +227,39 @@ export default Sentry.wrap(function App() {
         <QueryClientProvider client={queryClient}>
           <UserProvider>
             <UserSettingsProvider>
-              <CategoriesProvider>
-                <UserStatsProvider>
-                  <UpcomingHelloesProvider>
-                    <FriendListProvider>
+              <FriendListProvider>
+                <UpcomingHelloesProvider>
+                  <CategoriesProvider>
+                    <UserStatsProvider>
                       <SelectedFriendProvider>
                         <CapsuleListProvider>
                           <LocationsProvider>
                             <HelloesProvider>
                               <FriendLocationsProvider>
                                 <SelectedFriendStatsProvider>
-                                  <MessageContextProvider>
-                                    <SafeAreaProvider>
-                                       <GlobalStyleProvider>
+                                  {/* <MessageContextProvider> */}
+                                  <SafeAreaProvider>
+                                    <GlobalStyleProvider>
                                       <RootSiblingParent>
                                         <DeviceLocationProvider>
                                           <FriendStyleProvider>
-                                              <Layout />
+                                            <Layout />
                                           </FriendStyleProvider>
                                         </DeviceLocationProvider>
                                       </RootSiblingParent>
-                                        </GlobalStyleProvider>
-                                    </SafeAreaProvider>
-                                  </MessageContextProvider>
+                                    </GlobalStyleProvider>
+                                  </SafeAreaProvider>
+                                  {/* </MessageContextProvider> */}
                                 </SelectedFriendStatsProvider>
                               </FriendLocationsProvider>
                             </HelloesProvider>
-                          </LocationsProvider> 
+                          </LocationsProvider>
                         </CapsuleListProvider>
                       </SelectedFriendProvider>
-                    </FriendListProvider>
-                  </UpcomingHelloesProvider>
-                </UserStatsProvider>
-              </CategoriesProvider> 
+                    </UserStatsProvider>
+                  </CategoriesProvider>
+                </UpcomingHelloesProvider>
+              </FriendListProvider>
             </UserSettingsProvider>
           </UserProvider>
         </QueryClientProvider>
@@ -415,12 +408,11 @@ export const Layout = () => {
   return (
     <NavigationContainer ref={navigationRef} linking={linking}>
       <FSMainSpinner />
-      <ResultMessage />
+      {/* <ResultMessage /> */}
       <CustomStatusBar />
 
       <TopLevelNavigationHandler>
-        <Stack.Navigator 
-
+        <Stack.Navigator
           screenOptions={{
             headerShown: true,
             headerMode: "screen",
@@ -430,7 +422,7 @@ export const Layout = () => {
             cardStyle: { backgroundColor: "#000002" },
           }}
         >
-          {user?.id && !isInitializing ? (
+          {user?.id ? (
             // user.app_setup_complete || !user.app_setup_complete ? (
             <>
               <Stack.Screen
@@ -607,30 +599,20 @@ export const Layout = () => {
                 component={ScreenLocationSearch}
                 options={{
                   headerShown: false,
-                  header: () => <HeaderBase headerTitle="Search locations" />,
                 }}
               />
               <Stack.Screen
                 name="MidpointLocationSearch"
                 component={ScreenMidpointLocationSearch}
                 options={{
-                  headerShown: true,
-                  header: () => (
-                    <HeaderBase headerTitle="Find midpoint locations" />
-                  ),
+                  headerShown: false,
                 }}
               />
               <Stack.Screen
                 name="CalculateTravelTimes"
                 component={ScreenCalculateTravelTimes}
                 options={{
-                  headerShown: true,
-                  header: () => (
-                    <HeaderBase
-                      headerTitle="Compare driving times"
-                      icon="distanceZigZag"
-                    />
-                  ),
+                  headerShown: false,
                 }}
               />
 
@@ -663,7 +645,7 @@ export const Layout = () => {
                 }}
               />
             </>
-          ) : ( 
+          ) : (
             <>
               <Stack.Screen
                 name="Welcome"

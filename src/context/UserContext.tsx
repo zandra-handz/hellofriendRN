@@ -85,8 +85,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     // setUser((prev) => (prev !== null ? null : prev));
     // setAuthenticated((prev) => (prev !== false ? false : prev));
  
-    await queryClient.resetQueries(["currentUser"], { exact: true });
-    queryClient.clear();
+queryClient.resetQueries(["currentUser"], { exact: true, refetchActive: false });
+
+  queryClient.removeQueries({ exact: false }); // removes all queries
+      queryClient.cancelQueries(); // cancel inflight queries
+ //   queryClient.clear();
+  
  
   };
   
@@ -135,6 +139,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       }, 2000);
     },
   });
+
 
   const onSignin = useCallback(
     async (username: string, password: string) => {
