@@ -7,38 +7,10 @@ import Animated, {
   useAnimatedProps,
   withTiming,
   interpolate,
-} from "react-native-reanimated";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
-// Animated version of SVG Path
+} from "react-native-reanimated"; 
+ 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
-// const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-// Worklet-safe arc generator
-// const getArcPath = (cx, cy, r, startAngle, endAngle) => {
-//   "worklet";
-
-//   const toRad = (angle) => (angle - 90) * (Math.PI / 180);
-//   const polarToCartesian = (cx, cy, r, angle) => {
-//     const a = toRad(angle);
-//     return {
-//       x: cx + r * Math.cos(a),
-//       y: cy + r * Math.sin(a),
-//     };
-//   };
-
-//   const start = polarToCartesian(cx, cy, r, endAngle);
-//   const end = polarToCartesian(cx, cy, r, startAngle);
-//   const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-//   return [
-//     `M ${start.x} ${start.y}`,
-//     `A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
-//     `L ${cx} ${cy}`,
-//     `Z`,
-//   ].join(" ");
-// };
+ 
 
 const getArcPath = (cx, cy, r, startAngle, endAngle) => {
   "worklet";
@@ -51,8 +23,7 @@ const getArcPath = (cx, cy, r, startAngle, endAngle) => {
       y: cy + r * Math.sin(a),
     };
   };
-
-  // Cap endAngle at 359.99 to avoid full-circle issue
+ 
   const safeEndAngle = Math.min(endAngle, startAngle + 359.99);
 
   const start = polarToCartesian(cx, cy, r, safeEndAngle);
@@ -68,6 +39,7 @@ const getArcPath = (cx, cy, r, startAngle, endAngle) => {
 };
 
 const AnimatedPieSlice = ({
+
   startAngle,
   endAngle,
   radius,
@@ -91,19 +63,22 @@ const AnimatedPieSlice = ({
 };
 
 export default function AnimatedPieChart({
+    darkerOverlayBackgroundColor,
+  primaryColor,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
+  primaryOverlayColor,
   data = [],
   size = 200,
   radius = 100,
   duration = 500,
   showPercentages = false,
   showLabels = true,
-  onSectionPress = null,
-  // onLongSectionPress = () => console.log("placeholder"),
+  onSectionPress = null, 
   labelsSize = 9,
 }) {
   const progress = useSharedValue(0);
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  // console.log("data in pie chart changed", Date.now());
+  
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
   useEffect(() => {
@@ -177,17 +152,17 @@ export default function AnimatedPieChart({
                   {showPercentages && (
                     <Text
                       style={[
-                        appFontStyles.welcomeText,
+                       welcomeTextStyle,
                         {
                           backgroundColor:
-                            themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+                            darkerOverlayBackgroundColor,
                           padding: 2,
                           paddingHorizontal: 10,
                           paddingVertical: 10,
                           borderRadius: 20,
                           fontSize:
                             labelsSize * (1.2 + (slice.value / total) * 5.3), // scale from 1.2x upward
-                          color: themeStyles.primaryText.color,
+                          color: primaryColor,
                         },
                       ]}
                     >
@@ -199,15 +174,15 @@ export default function AnimatedPieChart({
 
                   <Text
                     style={[
-                      appFontStyles.subWelcomeText,
+                      subWelcomeTextStyle,
                       {
                         backgroundColor:
-                          themeStyles.overlayBackgroundColor.backgroundColor,
+                          primaryOverlayColor,
                         padding: 2,
                         paddingHorizontal: 6,
                         borderRadius: 6,
                         fontSize: labelsSize,
-                        color: themeStyles.primaryText.color,
+                        color: primaryColor,
                       },
                     ]}
                   >

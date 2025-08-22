@@ -27,18 +27,21 @@ export const useFriendLocationsContext = () =>
 
 export const FriendLocationsProvider = ({ children }) => {
   const { user  } = useUser();
-
+ 
   const { selectedFriend, friendDashboardData  } =
     useSelectedFriend();
   const { locationList } = useLocations();
   const { helloesList } = useHelloes();
   const [stickToLocation, setStickToLocation] = useState(null);
   const queryClient = useQueryClient();
+ 
+   
 
     const [friendFavesData, setFriendFavesData] = useState(null);
 
 
       const favesData = useMemo(() => {
+        
         if (!friendDashboardData) return null;
         return friendDashboardData?.friend_faves?.locations || null;
       }, [friendDashboardData]);
@@ -230,6 +233,7 @@ export const FriendLocationsProvider = ({ children }) => {
 
   const inPersonHelloes = useMemo(() => {
     if (helloesList) {
+ 
       return helloesList?.filter((hello) => hello.type === "in person");
     }
   }, [helloesList]);

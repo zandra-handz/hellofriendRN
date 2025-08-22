@@ -24,7 +24,7 @@ import GradientBackground from "../appwide/display/GradientBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const HelloFriendFooter = () => {
-  const { onSignOut } = useUser();
+  const { user, onSignOut } = useUser();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
@@ -35,8 +35,7 @@ const HelloFriendFooter = () => {
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
     useState(false);
-
-  const [currentlyOpen, setCurrentlyOpen] = useState<string | null>(null);
+ 
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -234,9 +233,10 @@ const HelloFriendFooter = () => {
         </>
       </View>
 
-      {settingsModalVisible && (
+      {settingsModalVisible && user?.id && (
         <View>
           <UserSettingsModal
+          userId={user?.id}
             isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}

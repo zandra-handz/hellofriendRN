@@ -4,10 +4,9 @@ import {
   DimensionValue,
 } from "react-native"; 
 import React, {   useMemo,  useEffect } from "react";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+ 
 import { useSharedValue, withTiming, useDerivedValue  } from "react-native-reanimated";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 import DonutChart from "./DonutChart";
 import { useFont } from "@shopify/react-native-skia";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
@@ -33,6 +32,9 @@ type Props = {
 };
 
 const Donut = ({
+  friendStyle,
+  primaryColor, 
+   darkerOverlayBackgroundColor,
   onCategoryPress,
   onCategoryLongPress,
   onPlusPress,
@@ -48,12 +50,10 @@ const Donut = ({
   labelsDistanceFromCenter = -17,
   labelsSliceEnd = 1,
   centerTextSize = 26,
-}: Props) => {
-  const { themeStyles  } = useGlobalStyle();
+}: Props) => { 
  
   // console.log(`colors in donut: `, colors);
-  //   console.log(`data in donut: `, data);
-const { themeAheadOfLoading } = useFriendStyle();
+  //   console.log(`data in donut: `, data); 
   const { calculatePercentage } = useMomentSortingFunctions(data);
   const totalValue = useSharedValue(0);
   const decimalsValue = useSharedValue<number[]>([]); 
@@ -185,9 +185,8 @@ const { themeAheadOfLoading } = useFriendStyle();
     return <View />;
   }
 
-  const fontColor = themeStyles.primaryText.color;
-  const iconColor = themeAheadOfLoading.lightColor;
-  //const backgroundColor = themeStyles.overlayBackgroundColor.backgroundColor;
+  const fontColor = primaryColor;
+  const iconColor = friendStyle.lightColor; 
   const backgroundColor = 'transparent';
 
   return ( 
@@ -206,6 +205,8 @@ const { themeAheadOfLoading } = useFriendStyle();
       >
         <DonutChart
         totalJS={totalJS}
+          primaryColor={primaryColor}
+   darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
           onCategoryPress={onCategoryPress}
           onCategoryLongPress={onCategoryLongPress}
           onPlusPress={onPlusPress}

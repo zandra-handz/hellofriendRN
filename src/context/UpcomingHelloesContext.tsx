@@ -1,8 +1,14 @@
-import React, { createContext, useContext, useRef, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 import { useUser } from "./UserContext";
-import { fetchUpcomingHelloes, remixAllNextHelloes } from "../calls/api";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { fetchUpcomingHelloes } from "../calls/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+// remix helloes is in a separate hook
 const UpcomingHelloesContext = createContext({});
 
 export const useUpcomingHelloes = () => {
@@ -11,13 +17,13 @@ export const useUpcomingHelloes = () => {
 
 export const UpcomingHelloesProvider = ({ children }) => {
   const queryClient = useQueryClient();
-  const { user, isInitializing, onSignOut } = useUser();
-  const timeoutRef = useRef(null);
+  const { user, onSignOut } = useUser();
+ 
 
   const {
     data: upcomingHelloes,
     isLoading,
-    isPending,
+    isFetching,
     isSuccess,
     isError,
   } = useQuery({
@@ -26,8 +32,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
     enabled: !!user?.id, //removed isInitializing to test
     retry: 3,
     staleTime: 1000 * 60 * 20, // 20 minutes
- 
- 
+
     select: (data) => {
       if (isError) {
         return [];
@@ -36,70 +41,31 @@ export const UpcomingHelloesProvider = ({ children }) => {
     },
   });
 
- 
-
   useEffect(() => {
     if (isError) {
       onSignOut();
     }
-
   }, [isError]);
 
-  const upcomingHelloesIsFetching = isPending;
-  const upcomingHelloesIsSuccess = isSuccess;
-
   const refetchUpcomingHelloes = () => {
-    // console.log('refetched upcoming!');
-    // queryClient.invalidateQueries({ queryKey: ["upcomingHelloes", user?.id] });
     queryClient.refetchQueries({ queryKey: ["upcomingHelloes", user?.id] });
   };
 
-  const remixAllNextHelloesMutation = useMutation({
-    mutationFn: (data) => remixAllNextHelloes(data),
-    onSuccess: (data) => {
-      refetchUpcomingHelloes();
+  const contextValue = useMemo(
+    () => ({
+      upcomingHelloes,
+      upcomingHelloesIsFetching: isFetching,
+      upcomingHelloesIsSuccess: isSuccess,
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      refetchUpcomingHelloes,
 
-      timeoutRef.current = setTimeout(() => {
-        remixAllNextHelloesMutation.reset();
-      }, 2000);
-    },
-    onError: (error) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        remixAllNextHelloesMutation.reset();
-      }, 2000);
-    },
-  });
-
-  const handleRemixAllNextHelloes = () => {
-    try {
-      remixAllNextHelloesMutation.mutate(user?.id);
-    } catch (error) {
-      console.log(`Error remixing helloes: `, error);
-    }
-  };
+      isLoading,
+    }),
+    [upcomingHelloes, isFetching, isSuccess, refetchUpcomingHelloes, isLoading]
+  );
 
   return (
-    <UpcomingHelloesContext.Provider
-      value={{
-        upcomingHelloes,
-        upcomingHelloesIsFetching,
-        upcomingHelloesIsSuccess,
-
-        refetchUpcomingHelloes,
-        handleRemixAllNextHelloes,
-        remixAllNextHelloesMutation,
-
-        isLoading,
-      }}
-    >
+    <UpcomingHelloesContext.Provider value={contextValue}>
       {children}
     </UpcomingHelloesContext.Provider>
   );

@@ -13,12 +13,14 @@ import SectionUserCategories from "../friends/SectionUserCategories";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 interface Props {
+  userId: number;
   isVisible: boolean;
   bottomSpacer: number;
   closeModal: () => void;
 }
 
 const UserSettingsModal: React.FC<Props> = ({
+  userId,
   isVisible,
   bottomSpacer,
   closeModal,
@@ -62,11 +64,9 @@ const UserSettingsModal: React.FC<Props> = ({
             <SectionAccessibilitySettings />
           </View>
           <View style={styles.sectionContainer}>
-            <SectionFriendManagerSettings />
+            <SectionFriendManagerSettings userId={userId} />
           </View>
-          {/* <View style={styles.sectionContainer}>
-            <SectionUserCategories />
-          </View> */}
+   
 
           <View style={styles.headerContainer}>
             <SectionAccountSettings />

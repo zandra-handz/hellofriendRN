@@ -1,12 +1,9 @@
 import { View } from "react-native";
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 import { useSelectedFriendStats } from "@/src/context/SelectedFriendStatsContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
- import GlobalPressable from "../appwide/button/GlobalPressable";
+
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import FriendHistoryMiniPie from "./FriendHistoryMiniPie";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import useStatsSortingFunctions from "@/src/hooks/useStatsSortingFunctions";
 import FriendHistoryModal from "../headers/FriendHistoryModal";
 type Props = {
@@ -23,11 +20,17 @@ const FriendHistoryPieDataWrap = React.memo(
     chartBorderColor = "hotpink",
     labelsSize = 9,
     showLabels = false,
+    friendStyle,
+    selectedFriendName,
+    primaryColor,
+    appColorsStyle,
+    welcomeTextStyle,
+    subWelcomeTextStyle,
+    primaryOverlayColor,
+    darkerOverlayBackgroundColor,
   }: Props) => {
     const { selectedFriendStats } = useSelectedFriendStats();
-    const { themeAheadOfLoading } = useFriendStyle();
-    const { themeStyles, manualGradientColors } = useGlobalStyle();
-    const { selectedFriend } = useSelectedFriend();
+
     const [largeFriendChartVisible, setLargeFriendChartVisible] =
       useState(false);
 
@@ -49,18 +52,18 @@ const FriendHistoryPieDataWrap = React.memo(
       }
     }, [selectedFriendStats]);
 
-
-
     const colors = useMemo(() => {
       if (!friendHistorySortedList) return [];
 
-      const count = friendHistorySortedList.filter((item) => Number(item.size) > 0).length;
+      const count = friendHistorySortedList.filter(
+        (item) => Number(item.size) > 0
+      ).length;
       const hexToRgb = (hex) => hex.match(/\w\w/g).map((c) => parseInt(c, 16));
       const rgbToHex = (rgb) =>
         "#" + rgb.map((c) => c.toString(16).padStart(2, "0")).join("");
 
-      const start = hexToRgb(manualGradientColors.darkColor);
-      const end = hexToRgb(themeAheadOfLoading.darkColor);
+      const start = hexToRgb(appColorsStyle.darkColor);
+      const end = hexToRgb(friendStyle.darkColor);
 
       return Array.from({ length: count }, (_, i) => {
         const t = i / Math.max(count - 1, 1);
@@ -71,36 +74,33 @@ const FriendHistoryPieDataWrap = React.memo(
       });
     }, [
       friendHistorySortedList,
-      manualGradientColors.darkColor,
-      themeAheadOfLoading.darkColor,
+      appColorsStyle.darkColor,
+      friendStyle.darkColor,
     ]);
 
     const seriesData = useMemo(() => {
       if (!friendHistorySortedList) return;
 
-      const dataCountList = friendHistorySortedList.filter((item) => Number(item.size) > 0);
+      const dataCountList = friendHistorySortedList.filter(
+        (item) => Number(item.size) > 0
+      );
       return dataCountList.map((item, index) => ({
         ...item,
         label: {
           text: item.name.slice(0, 4),
           fontFamily: "Poppins-Regular",
-          color: themeStyles.primaryText.color,
+          color: primaryColor,
           fontSize: labelsSize,
         },
         color: colors[index],
       }));
-    }, [
-      friendHistorySortedList,
-      colors,
-      themeStyles.primaryText.color,
-      labelsSize,
-    ]);
+    }, [friendHistorySortedList, colors, primaryColor, labelsSize]);
 
     const handleOpenLargeChart = useCallback(() => {
       setLargeFriendChartVisible(true);
     }, []);
 
-        const handleCloseLargeChart = useCallback(() => {
+    const handleCloseLargeChart = useCallback(() => {
       setLargeFriendChartVisible(false);
     }, []);
 
@@ -127,18 +127,22 @@ const FriendHistoryPieDataWrap = React.memo(
                   }}
                 >
                   {friendHistorySortedList && (
-                    
-                  <FriendHistoryMiniPie
-                  colors={colors}
-                  seriesData={seriesData}
-                    data={friendHistorySortedList}
-                    showLabels={showLabels}
-                    friendData={selectedFriend}
-                    listData={selectedFriendStats}
-                    radius={chartRadius}
-                    labelsSize={labelsSize}
-                  />
-                  
+                    <FriendHistoryMiniPie
+                      darkerOverlayBackgroundColor={
+                        darkerOverlayBackgroundColor
+                      }
+                      primaryColor={primaryColor}
+                      primaryOverlayColor={primaryOverlayColor}
+                      welcomeTextStyle={welcomeTextStyle}
+                      subWelcomeTextStyle={subWelcomeTextStyle}
+                      colors={colors}
+                      seriesData={seriesData}
+                      data={friendHistorySortedList}
+                      showLabels={showLabels}
+                      listData={selectedFriendStats}
+                      radius={chartRadius}
+                      labelsSize={labelsSize}
+                    />
                   )}
                 </View>
               </GlobalPressable>
@@ -148,10 +152,15 @@ const FriendHistoryPieDataWrap = React.memo(
         {largeFriendChartVisible && (
           <View>
             <FriendHistoryModal
-            seriesData={seriesData}
+              darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+              primaryColor={primaryColor}
+              primaryOverlayColor={primaryOverlayColor}
+              welcomeTextStyle={welcomeTextStyle}
+              subWelcomeTextStyle={subWelcomeTextStyle}
+              seriesData={seriesData}
               isVisible={largeFriendChartVisible}
               closeModal={handleCloseLargeChart}
-              friendData={selectedFriend}
+              friendName={selectedFriendName}
               listData={selectedFriendStats}
               labelsSize={labelsSize * 1.4}
             />

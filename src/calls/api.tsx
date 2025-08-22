@@ -24,7 +24,7 @@ export function handleApiError(e: unknown, contextMessage = "API error") {
 
   if (axios.isAxiosError(e)) {
     if (e.response) {
-      console.log("Server responded with: REMOVED THIS it is html doc") //, e.response.data);
+      console.log("Server responded with: REMOVED THIS it is html doc"); //, e.response.data);
 
       const msg = (e.response.data as { msg?: string })?.msg;
       throw new Error(msg || "Invalid credentials");
@@ -55,7 +55,7 @@ export const deleteTokens = async () => {
 };
 
 export const signout = async () => {
-  console.error('sign out triggered');
+  console.error("sign out triggered");
   try {
     await deleteTokens();
     setAuthHeader(null);
@@ -209,9 +209,14 @@ export const getUserSettings = async () => {
   // console.log("Default common headers:", helloFriendApiClient.defaults.headers);
 
   try {
-    const response = await helloFriendApiClient.get(`/users/settings/`);
-    console.log("API GET Call getUserSettings", response.data);
+    //         const start = Date.now(); // log start time
+    // console.log("\x1b[35m%s\x1b[35m", "FETCHING USER SETTINGS at", new Date(start).toISOString());
 
+    const response = await helloFriendApiClient.get(`/users/settings/`);
+    // console.log("API GET Call getUserSettings", response.data);
+    // const end = Date.now(); // log end time
+    // console.log("\x1b[35m%s\x1b[35m", "FETCHED USER SETTINGS at", new Date(end).toISOString());
+    // console.log("\x1b[35m%s\x1b[35m", "Duration (ms):", end - start);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getUserSettings");
@@ -220,11 +225,24 @@ export const getUserSettings = async () => {
 
 export const getUserCategories = async (userId: number) => {
   try {
+    // const start = Date.now(); // log start time
+    // console.log(
+    //   "\x1b[33m%s\x1b[33m",
+    //   "FETCHING CATEGORIES at",
+    //   new Date(start).toISOString()
+    // );
+
     const response = await helloFriendApiClient.get(
       `/users/${userId}/categories/`
     );
     // console.log("API GET Call getUserCategories", response.data);
-
+    // const end = Date.now(); // log end time
+    // console.log(
+    //   "\x1b[33m%s\x1b[33m",
+    //   "FETCHED CATEGORIES at",
+    //   new Date(end).toISOString()
+    // );
+    // console.log("\x1b[33m%s\x1b[33m", "Duration (ms):", end - start);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getUserCategories");
@@ -381,9 +399,22 @@ export const deleteUserCategory = async (
 
 export const getCurrentUser = async () => {
   try {
+    // const start = Date.now(); // log start time
+    // console.log(
+    //   "\x1b[30m%s\x1b[30m",
+    //   "FETCHING CURRENT USER at",
+    //   new Date(start).toISOString()
+    // );
+
     const response = await helloFriendApiClient.get("/users/get-current/");
     console.log("API GET Call getCurrentUser");
-
+    // const end = Date.now(); // log end time
+    // console.log(
+    //   "\x1b[30m%s\x1b[30m",
+    //   "FETCHED CURRENT USER at",
+    //   new Date(end).toISOString()
+    // );
+    // console.log("\x1b[30m%s\x1b[30m", "Duration (ms):", end - start);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during getCurrentUser");
@@ -422,8 +453,21 @@ export const refreshAccessToken = async (refToken: string) => {
 
 export const fetchFriendList = async () => {
   try {
-    const response = await helloFriendApiClient.get("/friends/all/");
+    // const start = Date.now(); // log start time
+    // console.log(
+    //   "\x1b[34m%s\x1b[34m",
+    //   "FETCHING FRIENDLIST at",
+    //   new Date(start).toISOString()
+    // );
 
+    const response = await helloFriendApiClient.get("/friends/all/");
+    // const end = Date.now(); // log end time
+    // console.log(
+    //   "\x1b[34m%s\x1b[34m",
+    //   "FETCHED FRIENDLIST at",
+    //   new Date(end).toISOString()
+    // );
+    // console.log("\x1b[34m%s\x1b[34m", "Duration (ms):", end - start);
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchFriendList");
@@ -628,7 +672,7 @@ export const updateUserAccessibilitySettings = async (fieldUpdates: object) => {
       fieldUpdates
     );
     console.log("API PATCH CALL updateUserAccessibilitySettings");
-    console.log('API response:', response.data); // Log the response data
+    console.log("API response:", response.data); // Log the response data
     return response.data; // Ensure this returns the expected structure
   } catch (e: unknown) {
     handleApiError(e, "Error during updateUserAccessibilitySettings");
@@ -658,24 +702,22 @@ export const updateUserProfile = async (
 };
 
 export const fetchFriendDashboard = async (friendId: number) => {
-  const startTime = Date.now(); // TIMER START
+  // const startTime = Date.now(); // TIMER START
 
   try {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/dashboard/`
     );
 
-    const endTime = Date.now(); // TIMER END
-    const duration = endTime - startTime;
+    // const endTime = Date.now(); // TIMER END
+    // const duration = endTime - startTime;
 
-    
-
-    console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
+    // console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
 
     return response.data[0] || null;
   } catch (error) {
-    const endTime = Date.now(); // TIMER END FOR ERROR CASE TOO
-    const duration = endTime - startTime;
+    // const endTime = Date.now(); // TIMER END FOR ERROR CASE TOO
+    // const duration = endTime - startTime;
     console.error(
       `Error fetching friend dashboard (after ${duration}ms):`,
       error
@@ -737,7 +779,6 @@ export const removeFromFriendFavesLocations = async (
     handleApiError(e, "Error during removeFromFriendFavesLocations");
   }
 };
-
 
 export const updateFriendDefaultCategory = async ({
   userId,
@@ -909,16 +950,28 @@ export const updateFriendFavesColorTheme = async (
 
 export const fetchUpcomingHelloes = async () => {
   try {
-    console.error('FETCHING UPCOMING');
+    // const start = Date.now(); // log start time
+    // console.log(
+    //   "\x1b[32m%s\x1b[32m",
+    //   "FETCHING UPCOMING at",
+    //   new Date(start).toISOString()
+    // );
+
     const response = await helloFriendApiClient.get("/friends/upcoming/");
-    // console.error(response.data);
+
+    // const end = Date.now(); // log end time
+    // console.log(
+    //   "\x1b[32m%s\x1b[32m",
+    //   "FETCHED UPCOMING at",
+    //   new Date(end).toISOString()
+    // );
+    // console.log("\x1b[32m%s\x1b[32m", "Duration (ms):", end - start);
+
     return response.data;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchUpcomingHelloes");
   }
 };
-
-
 
 export const fetchMomentsAPI = async (friendId: number) => {
   // console.log('~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~~~!~~~~~~~~~~!fetchMomentsAPI called');
@@ -987,8 +1040,8 @@ export const fetchCategoriesFriendHistoryAPI = async (
       `/users/categories/history/?only_with_capsules=${returnNonZeroesOnly}&friend_id=${friendId}`
     );
 
-       console.log(`FRIEND HISTORY`, response.data);
- 
+    console.log(`FRIEND HISTORY`, response.data);
+
     if (response && response.data) {
       return response.data;
     } else {
@@ -1035,9 +1088,8 @@ export const fetchPastHelloes = async (friendId: number) => {
       `/friends/${friendId}/combinedhelloes/summary/`
     );
     if (response && response.data) {
+      //   console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
 
-   //   console.error("API GET CALL fetchPastHelloes", response.data); //, response.data);
-      
       return response.data;
     } else {
       return [];
@@ -1047,7 +1099,7 @@ export const fetchPastHelloes = async (friendId: number) => {
   }
 };
 
-export const saveMomentAPI = async (requestData: {friend: number}) => {
+export const saveMomentAPI = async (requestData: { friend: number }) => {
   console.log(`saving moment with data: `, requestData);
   try {
     const response = await helloFriendApiClient.post(
@@ -1114,7 +1166,7 @@ export const fetchPastHelloesFull = async ({
   }
 };
 
-export const saveHello = async (requestData: {friend: number}) => {
+export const saveHello = async (requestData: { friend: number }) => {
   try {
     const response = await helloFriendApiClient.post(
       `/friends/${requestData.friend}/helloes/add/`,
@@ -1126,7 +1178,7 @@ export const saveHello = async (requestData: {friend: number}) => {
   }
 };
 
-export const deleteMomentAPI = async (data: {friend: number; id: number}) => {
+export const deleteMomentAPI = async (data: { friend: number; id: number }) => {
   try {
     const response = await helloFriendApiClient.delete(
       `/friends/${data.friend}/thoughtcapsule/${data.id}/`
@@ -1141,7 +1193,7 @@ export const updateMomentAPI = async (
   friendId: number,
   capsuleId: number,
   capsuleData: object
-) => { 
+) => {
   try {
     const response = await helloFriendApiClient.patch(
       `/friends/${friendId}/thoughtcapsule/${capsuleId}/`,
@@ -1154,12 +1206,10 @@ export const updateMomentAPI = async (
   }
 };
 
-
 export type CapsulesAndChangesDataType = {
   id: number;
   fieldsToUpdate: object;
-}
-
+};
 
 export const updateMultMomentsAPI = async (
   friendId: number,
@@ -1167,10 +1217,12 @@ export const updateMultMomentsAPI = async (
 ) => {
   try {
     const capsuleData = {
-      capsules: capsulesAndChanges.map((capsule: CapsulesAndChangesDataType) => ({
-        id: capsule.id,
-        fields_to_update: capsule.fieldsToUpdate,
-      })),
+      capsules: capsulesAndChanges.map(
+        (capsule: CapsulesAndChangesDataType) => ({
+          id: capsule.id,
+          fields_to_update: capsule.fieldsToUpdate,
+        })
+      ),
     };
 
     console.log("updateThoughtCapsules payload data: ", capsuleData);
@@ -1185,47 +1237,66 @@ export const updateMultMomentsAPI = async (
   }
 };
 
-
 export type LocationFromBackendType = {
-id: number;
-address: string;
-zip_code: string;
-latitude: string;
-longitude: string;
-category: number;
-parking_score: string;
-title: string;
-personal_experience_info: string;
-validated_address: string;
-friends: number[];
-
-
-}
+  id: number;
+  address: string;
+  zip_code: string;
+  latitude: string;
+  longitude: string;
+  category: number;
+  parking_score: string;
+  title: string;
+  personal_experience_info: string;
+  validated_address: string;
+  friends: number[];
+};
 
 export const fetchAllLocations = async () => {
   try {
-    const response = await helloFriendApiClient.get("/friends/locations/all/");
+    // const start = Date.now(); // log start time
+    // console.log(
+    //   "\x1b[31m%s\x1b[31m",
+    //   "FETCHING LOCATIONS at",
+    //   new Date(start).toISOString()
+    // );
 
+    const response = await helloFriendApiClient.get("/friends/locations/all/");
+    // const end = Date.now(); // log end time
+    // console.log(
+    //   "\x1b[31m%s\x1b[31m",
+    //   "FETCHED LOCATIONS at",
+    //   new Date(end).toISOString()
+    // );
+    // console.log("\x1b[31m%s\x1b[31m", "Duration (ms):", end - start);
     // why did i do this?
-    const formattedLocations = response.data.map((location: LocationFromBackendType) => ({
-      id: location.id,
-      address: location.address,
-      zipCode: location.zip_code,
-      latitude: location.latitude,
-      longitude: location.longitude,
-      category: location.category,
-      parking_score: location.parking_score,
-      title: location.title,
-      personal_experience_info: location.personal_experience_info,
-      validatedAddress: location.validated_address,
-      friendsCount: location.friends ? location.friends.length : 0,
-      friends: location.friends
-        ? location.friends.map((friend) => ({
-            id: friend,
-            name: friend,
-          }))
-        : [],
-    }));
+    const formattedLocations = response.data.map(
+      (location: LocationFromBackendType) => ({
+        id: location.id,
+        address: location.address,
+        zipCode: location.zip_code,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        category: location.category,
+        parking_score: location.parking_score,
+        title: location.title,
+        personal_experience_info: location.personal_experience_info,
+        validatedAddress: location.validated_address,
+        friendsCount: location.friends ? location.friends.length : 0,
+        friends: location.friends
+          ? location.friends.map((friend) => ({
+              id: friend,
+              name: friend,
+            }))
+          : [],
+      })
+    );
+
+    // const dataManipTime = Date.now();
+    // console.log(
+    //   "\x1b[31m%s\x1b[31m",
+    //   "Duration of data manip (ms):",
+    //   dataManipTime - start
+    // );
     return formattedLocations;
   } catch (e: unknown) {
     handleApiError(e, "Error during fetchAllLocations");
@@ -1325,7 +1396,9 @@ export const deleteFriend = async (friendId: number) => {
   }
 };
 
-export const updateFriendSugSettings = async (SugSettingsData: {friend: number}) => {
+export const updateFriendSugSettings = async (SugSettingsData: {
+  friend: number;
+}) => {
   try {
     const res = await helloFriendApiClient.put(
       `/friends/${SugSettingsData.friend}/settings/update/`,

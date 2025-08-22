@@ -25,7 +25,7 @@ export const useLocations = () => {
 export const LocationsProvider = ({ children }) => {
   const [faveLocationList, setFaveLocationList] = useState([]); 
  
-  const { user, isInitializing } = useUser();
+  const { user  } = useUser();
   const queryClient = useQueryClient(); 
   const [stickToLocation, setStickToLocation] = useState(null); 
 
@@ -41,7 +41,8 @@ export const LocationsProvider = ({ children }) => {
   } = useQuery({
     queryKey: ["locationList", user?.id],
     queryFn: () => fetchAllLocations(),
-    enabled: !!(user?.id && !isInitializing),
+    enabled: !!(user?.id),
+   // enabled: false,
     staleTime: 1000 * 60 * 20, // 20 minutes
     
  

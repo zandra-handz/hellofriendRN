@@ -3,13 +3,14 @@ import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ButtonResetHelloes from "../../buttons/helloes/ButtonResetHelloes";
 interface Props {
+  userId: number;
   label: string;
   icon: React.ReactElement; 
   value: boolean;
   onPress: () => void;
 }
 
-const Reset: React.FC<Props> = ({ label, icon  }) => {
+const Reset: React.FC<Props> = ({ userId, label, icon  }) => {
   const { themeStyles } = useGlobalStyle();
   return (
     <View style={{ flexDirection: "row", justifyContent: 'space-between', marginVertical: 6, alignItems: 'center' }}>
@@ -21,7 +22,7 @@ const Reset: React.FC<Props> = ({ label, icon  }) => {
       <Text style={[styles.label, themeStyles.modalText]}>{label}</Text>
       
      </View>
-      <ButtonResetHelloes/>
+      <ButtonResetHelloes userId={userId}/>
     </View>
   );
 };

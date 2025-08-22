@@ -1,14 +1,9 @@
 import { View, Text, Pressable, TouchableOpacity } from "react-native";
-import React, { useEffect } from "react";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React  from "react"; 
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  SlideInLeft,
-  FadeOut,
-  ZoomInEasyUp,
+ 
+  SlideInLeft, 
 } from "react-native-reanimated";
 
 interface WelcomeMessageUIProps {
@@ -24,6 +19,9 @@ interface WelcomeMessageUIProps {
 }
 
 const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
+  primaryColor,
+  welcomeTextStyle,
+   subWelcomeTextStyle,
   username = "",
   isNewUser = false,
   borderBottomRightRadius = 10,
@@ -32,20 +30,15 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
   isKeyboardVisible = false,
   onPress = () => {},
 }) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
+ 
 
-  const AnimatedPressable = Animated.createAnimatedComponent(TouchableOpacity);
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
   const message = isNewUser
     ? `Hi ${username}! Welcome to hellofriend!`
     : `Hi ${username}! What would you like to do?`;
 
-  const compositionMessage = selectedFriend
-    ? `Talking point for ${selectedFriend.name}`
-    : `Who is this talking point for?`;
-
-  const friendModalButtonHeight = 20;
+ 
 
   return (
     <AnimatedPressable
@@ -72,9 +65,9 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
       <>
         <Animated.Text
           style={[
-            appFontStyles.welcomeText,
+            welcomeTextStyle,
             {
-              color: themeStyles.primaryText.color,
+              color: primaryColor,
               fontSize: 46,
               lineHeight: 48,
             },
@@ -84,7 +77,7 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
           
           <View
             style={{
-              height: appFontStyles.welcomeText.fontSize - 2,
+              height: welcomeTextStyle.fontSize - 2,
               opacity: 0.6,
             
             }}
@@ -94,9 +87,9 @@ const WelcomeMessageUI: React.FC<WelcomeMessageUIProps> = ({
             <FriendModalIntegrator
               includeLabel={true}
               height={"100%"}
-              iconSize={appFontStyles.subWelcomeText.fontSize + 4}
+              iconSize={subWelcomeTextStyle.fontSize + 4}
               customLabel={"Pick friend"}
-              customFontStyle={appFontStyles.subWelcomeText}
+              customFontStyle={subWelcomeTextStyle}
               navigationDisabled={true}
               useGenericTextColor={true}
             />

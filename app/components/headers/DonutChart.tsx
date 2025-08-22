@@ -7,8 +7,7 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
   useAnimatedStyle,
-  runOnJS,
-  useAnimatedReaction,
+  runOnJS, 
 } from "react-native-reanimated";
 import {
   Canvas,
@@ -16,11 +15,8 @@ import {
   SkFont,
   Skia,
   Text,
-  Group,
-  Rect,
-  vec,
-} from "@shopify/react-native-skia";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+  Group, 
+} from "@shopify/react-native-skia"; 
 import DonutPath from "./DonutPath";
 import { Text as RNText } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -54,6 +50,8 @@ type Props = {
 
 const DonutChart = ({
   totalJS,
+  primaryColor,
+   darkerOverlayBackgroundColor,
   onCategoryPress,
   onPlusPress,
   onCenterPress,
@@ -78,7 +76,7 @@ const DonutChart = ({
   const array = Array.from({ length: n });
 
   const innerRadius = radius - outerStrokeWidth / 2;
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+ 
   const [labelsJS, setLabelsJS] = useState([]);
   const [decimalsJS, setDecimalsJS] = useState([]);
 
@@ -187,7 +185,7 @@ const DonutChart = ({
             fontFamily: "Poppins-Regular",
             fontWeight: "bold",
             backgroundColor:
-              themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+              darkerOverlayBackgroundColor,
 
             alignSelf: "center",
             padding: 4,
@@ -324,7 +322,7 @@ const DonutChart = ({
           name={"plus"}
           size={70}
           opacity={.2}
-          color={themeStyles.primaryText.color}
+          color={primaryColor}
         />
       </Pressable>
     </View>

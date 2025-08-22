@@ -25,7 +25,7 @@
 
 
 import {Gesture, GestureDetector} from "react-native-gesture-handler";
-import {usePathValue, Canvas, Path, processTransform3d, Skia} from "@shopify/react-native-skia";
+import {usePathValue, Canvas, Path, useFont, processTransform3d, Text, Skia} from "@shopify/react-native-skia";
 
 //const rrct = Skia.Path.Make();
   const rrct = Skia.Path.MakeFromSVGString(
@@ -34,7 +34,7 @@ import {usePathValue, Canvas, Path, processTransform3d, Skia} from "@shopify/rea
 
 rrct.addRRect(Skia.RRectXY(Skia.XYWHRect(0, 0, 100, 100), 10, 10));
 
-  const Demo = () => {
+  const Demo = ({text='hi'}) => {
   const rotateY = useSharedValue(0);
   const scale = useSharedValue(1);
 
@@ -43,7 +43,11 @@ rrct.addRRect(Skia.RRectXY(Skia.XYWHRect(0, 0, 100, 100), 10, 10));
 
     scale.value -= event.changeX / 400;
   });
-
+ 
+    const smallFont = useFont(
+      require("@/app/assets/fonts/Poppins-Regular.ttf"),
+      14
+    );
   const clip = usePathValue((path) => {
     "worklet";
     path.transform(
@@ -59,7 +63,17 @@ rrct.addRRect(Skia.RRectXY(Skia.XYWHRect(0, 0, 100, 100), 10, 10));
   return (
     <GestureDetector gesture={gesture}>
       <Canvas style={{ flex: 1 }}>
+                     {text && (
+          <Text
+            x={100} // adjust as needed
+            y={100} // adjust as needed
+            text={text}
+            font={smallFont}
+            color="red"
+          />
+        )}
         <Path path={clip} />
+ 
       </Canvas>
     </GestureDetector>
   );

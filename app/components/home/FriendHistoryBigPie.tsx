@@ -7,9 +7,8 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import Pie from "../headers/Pie";
-  
+
 type Props = {
-  friendData: object; 
   listData: object[];
   showLabels: boolean;
   showPercentages: boolean;
@@ -18,28 +17,31 @@ type Props = {
   labelsSize: number;
 
   showFooterLabel: boolean;
-    upDrillCategoryId: () => void;
+  upDrillCategoryId: () => void;
 };
 
 const FriendHistoryBigPie = ({
-  friendData,
   upDrillCategoryId,
   showPercentages = false,
   radius = 80,
   labelsSize = 9,
   showLabels = true,
   seriesData,
- 
-}: Props) => {  
+  darkerOverlayBackgroundColor,
+  primaryColor,
+  primaryOverlayColor,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
+}: Props) => {
   const [viewCategoryId, setViewCategoryId] = useState(null);
   const [viewCategoryName, setViewCategoryName] = useState(null);
 
   const handleCategoryPress = (categoryId, categoryName) => {
     if (categoryId === viewCategoryId) {
-        setViewCategoryId(null);
-    upDrillCategoryId(null);
-    setViewCategoryName(null);
-    return;
+      setViewCategoryId(null);
+      upDrillCategoryId(null);
+      setViewCategoryName(null);
+      return;
     }
     setViewCategoryId(categoryId);
     upDrillCategoryId(categoryId);
@@ -55,8 +57,11 @@ const FriendHistoryBigPie = ({
   useEffect(() => {
     if (viewCategoryId) {
       pieScale.value = withTiming(0.5, { duration: 200 });
-      pieX.value = withSpring(-radius * 1.2, withTiming(-radius * 1.2, { duration: 200 }));
-      pieY.value = withTiming(-radius * .6, { duration: 200 });
+      pieX.value = withSpring(
+        -radius * 1.2,
+        withTiming(-radius * 1.2, { duration: 200 })
+      );
+      pieY.value = withTiming(-radius * 0.6, { duration: 200 });
     } else {
       pieScale.value = withTiming(1, { duration: 200 });
       pieX.value = withTiming(1, { duration: 200 });
@@ -66,7 +71,11 @@ const FriendHistoryBigPie = ({
 
   const pieScaleStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ scale: pieScale.value }, { translateX: pieX.value }, { translateY: pieY.value}],
+      transform: [
+        { scale: pieScale.value },
+        { translateX: pieX.value },
+        { translateY: pieY.value },
+      ],
     };
   });
 
@@ -82,11 +91,16 @@ const FriendHistoryBigPie = ({
             //  marginHorizontal: 10,
             alignItems: "center",
             flexDirection: "column",
-          //  backgroundColor: "orange",
+            //  backgroundColor: "orange",
           },
         ]}
       >
         <Pie
+          darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+          primaryColor={primaryColor}
+          primaryOverlayColor={primaryOverlayColor}
+          welcomeTextStyle={welcomeTextStyle}
+          subWelcomeTextStyle={subWelcomeTextStyle}
           seriesData={seriesData}
           showPercentages={showPercentages}
           showLabels={showLabels}
@@ -94,10 +108,7 @@ const FriendHistoryBigPie = ({
           labelsSize={labelsSize}
           onSectionPress={handleCategoryPress}
         />
- 
       </Animated.View>
-
- 
     </>
   );
 };

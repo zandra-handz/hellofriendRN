@@ -19,8 +19,7 @@ import {
   Pressable,
   Keyboard,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
  
 import { useUserSettings } from "@/src/context/UserSettingsContext"; 
 // import { useFriendList } from "@/src/context/FriendListContext";
@@ -36,6 +35,8 @@ interface QuickWriteMomentProps {
   height?: string | number;
   multiline?: boolean;
   friendModalOpened: boolean;
+
+
 }
 
 // Forwarding ref to the parent to expose the TextInput value
@@ -45,13 +46,14 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
       mountingText = "Start typing",
       onTextChange, 
       multiline = true, 
+      primaryTextStyle,
+  
+        primaryBackgroundColor,
+        primaryOverlayColor,
+        newMomentContainerStyle,
     },
     ref
-  ) => {
-    const {
-      themeStyles, 
-      appContainerStyles,
-    } = useGlobalStyle();
+  ) => { 
 
     const { settings } = useUserSettings(); 
     const [editedMessage, setEditedMessage] = useState(mountingText); // Use the starting text passed as prop
@@ -131,7 +133,7 @@ const handleManualFocus = useCallback(() => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View
           style={[
-            appContainerStyles.homeScreenNewMomentContainer,
+            newMomentContainerStyle,
             {
               width: "100%",
               height: multiline ? "100%" : 30,
@@ -140,11 +142,9 @@ const handleManualFocus = useCallback(() => {
               paddingTop: multiline ? 0 : 0,
               borderRadius: 0,
               backgroundColor: multiline
-                ? themeStyles.primaryBackground.backgroundColor
+                ? primaryBackgroundColor
                 : // ? manualGradientColors.homeDarkColor
-                  themeStyles.overlayBackgroundColor.backgroundColor
-              //  backgroundColor: 'red',
-                // backgroundColor: 'teal',
+                  primaryOverlayColor
             },
           
           ]}
@@ -175,19 +175,19 @@ const handleManualFocus = useCallback(() => {
                         justifyContent: "center",
                         borderRadius: addIconSize / 2,
                         borderWidth: 1,
-                        borderColor: themeStyles.primaryText.color,
+                        borderColor: primaryTextStyle.color,
                       }}
                     >
                       <MaterialCommunityIcons
                         name="plus"
-                        color={themeStyles.primaryText.color}
+                        color={primaryTextStyle.color}
                         size={20}
                       />
                     </View>
                     <Text
                       style={[
                         styles.helperText,
-                        themeStyles.primaryText,
+                        primaryTextStyle,
                         { fontFamily: "Poppins-Regular" },
                       ]}
                     >
@@ -229,19 +229,19 @@ const handleManualFocus = useCallback(() => {
                             justifyContent: "center",
                             borderRadius: addIconSize / 2,
                             borderWidth: 1,
-                            borderColor: themeStyles.primaryText.color,
+                            borderColor: primaryTextStyle.color,
                           }}
                         >
                           <MaterialCommunityIcons
                             name="plus"
-                            color={themeStyles.primaryText.color}
+                            color={primaryTextStyle.color}
                             size={20}
                           />
                         </View>
                         <Text
                           style={[
                             styles.helperText,
-                            themeStyles.primaryText,
+                           primaryTextStyle,
                             { fontFamily: "Poppins-Regular" },
                           ]}
                         >
@@ -279,12 +279,12 @@ const handleManualFocus = useCallback(() => {
                             justifyContent: "center",
                             borderRadius: addIconSize / 2,
                             borderWidth: 1,
-                            borderColor: themeStyles.primaryText.color,
+                            borderColor: primaryTextStyle.color,
                           }}
                         >
                           <MaterialCommunityIcons
                             name="plus"
-                            color={themeStyles.primaryText.color}
+                            color={primaryTextStyle.color}
                             size={20}
                           />
                         </View>
@@ -292,8 +292,8 @@ const handleManualFocus = useCallback(() => {
                           // numberOfLines={1}
                           style={[
                             styles.helperText,
-                            themeStyles.primaryText,
-                            { fontFamily: "Poppins-Regular" },
+                            primaryTextStyle,
+                            {  fontFamily: "Poppins-Regular" },
                           ]}
                         >
                           {"  "}Upload
@@ -326,7 +326,7 @@ const handleManualFocus = useCallback(() => {
                     <TextInput
                       ref={textInputRef}
                       autoFocus={settings.simplify_app_for_focus}
-                      style={[styles.textInput, themeStyles.genericText]}
+                      style={[styles.textInput, primaryTextStyle]}
                       value={editedMessage}
                       placeholder={""}
                       onBlur={() => console.log('lost focus')}

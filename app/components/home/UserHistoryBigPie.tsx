@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   withSpring,
 } from "react-native-reanimated";
-import Pie from "../headers/Pie"; 
+import Pie from "../headers/Pie";
 type Props = {
   listData: object[];
   showLabels: boolean;
@@ -15,36 +15,37 @@ type Props = {
   labelsSize: number;
   // onLongPress: () => void;
   showFooterLabel: boolean;
-    upDrillCategoryId: () => void;
+  upDrillCategoryId: () => void;
 };
 
 const UserHistoryBigPie = ({
- 
   upDrillCategoryId,
   seriesData,
- 
+
   showLabels = true,
   showPercentages = false,
   radius = 80,
   labelsSize = 9,
-  
-}: Props) => { 
- 
+
+  darkerOverlayBackgroundColor,
+  primaryColor,
+  primaryOverlayColor,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
+}: Props) => {
   const [viewCategoryId, setViewCategoryId] = useState(null);
   const [viewCategoryName, setViewCategoryName] = useState(null);
- 
-
 
   const handleCategoryPress = (categoryId, categoryName) => {
-        if (categoryId === viewCategoryId) {
-        setViewCategoryId(null);
-    upDrillCategoryId(null);
-    setViewCategoryName(null);
-    return;
+    if (categoryId === viewCategoryId) {
+      setViewCategoryId(null);
+      upDrillCategoryId(null);
+      setViewCategoryName(null);
+      return;
     }
     setViewCategoryId(categoryId);
-    setViewCategoryName(categoryName); 
-       upDrillCategoryId(categoryId);
+    setViewCategoryName(categoryName);
+    upDrillCategoryId(categoryId);
     // setHistoryModalVisible(true);
     // console.log(`category ${categoryId} -- ${categoryName} pressed!`);
   };
@@ -53,26 +54,33 @@ const UserHistoryBigPie = ({
   const pieY = useSharedValue(1);
   const pieX = useSharedValue(1);
 
-    useEffect(() => {
-      if (viewCategoryId) {
-        pieScale.value = withTiming(0.5, { duration: 200 });
-        pieX.value = withSpring(-radius * 1.2, withTiming(-radius * 1.2, { duration: 200 }));
-        pieY.value = withTiming(-radius * .6, { duration: 200 });
-      } else {
-        pieScale.value = withTiming(1, { duration: 200 });
-        pieX.value = withTiming(1, { duration: 200 });
-        pieY.value = withTiming(1, { duration: 200 });
-      }
-    }, [viewCategoryId]);
+  useEffect(() => {
+    if (viewCategoryId) {
+      pieScale.value = withTiming(0.5, { duration: 200 });
+      pieX.value = withSpring(
+        -radius * 1.2,
+        withTiming(-radius * 1.2, { duration: 200 })
+      );
+      pieY.value = withTiming(-radius * 0.6, { duration: 200 });
+    } else {
+      pieScale.value = withTiming(1, { duration: 200 });
+      pieX.value = withTiming(1, { duration: 200 });
+      pieY.value = withTiming(1, { duration: 200 });
+    }
+  }, [viewCategoryId]);
 
-      const pieScaleStyle = useAnimatedStyle(() => {
-        return {
-          transform: [{ scale: pieScale.value }, { translateX: pieX.value }, { translateY: pieY.value}],
-        };
-      });
- 
+  const pieScaleStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { scale: pieScale.value },
+        { translateX: pieX.value },
+        { translateY: pieY.value },
+      ],
+    };
+  });
+
   return (
-    <>  
+    <>
       <Animated.View
         style={[
           pieScaleStyle,
@@ -83,23 +91,24 @@ const UserHistoryBigPie = ({
             //  marginHorizontal: 10,
             alignItems: "center",
             flexDirection: "column",
-          //  backgroundColor: "orange",
+            //  backgroundColor: "orange",
           },
         ]}
       >
-          <Pie
+        <Pie
+          darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+          primaryColor={primaryColor}
+          primaryOverlayColor={primaryOverlayColor}
+          welcomeTextStyle={welcomeTextStyle}
+          subWelcomeTextStyle={subWelcomeTextStyle}
           seriesData={seriesData}
-            showPercentages={showPercentages}
-            showLabels={showLabels}
-      
-            widthAndHeight={radius * 2}
-            labelsSize={labelsSize}
-            onSectionPress={handleCategoryPress}
-    
-          />
- 
-        </Animated.View>
- 
+          showPercentages={showPercentages}
+          showLabels={showLabels}
+          widthAndHeight={radius * 2}
+          labelsSize={labelsSize}
+          onSectionPress={handleCategoryPress}
+        />
+      </Animated.View>
     </>
   );
 };

@@ -52,20 +52,7 @@ const HomeScrollCalendarLights = ({
         <>
           <View style={styles.headerContainer}></View>
 
-          {friendList?.length === 0 && (
-            <View style={styles.noFriendsTextContainer}>
-              <Text
-                style={[
-                  {
-                    color: itemColor,
-                    fontSize: 18,
-                  },
-                ]}
-              >
-                Suggested meet up dates will go here.
-              </Text>
-            </View>
-          )}
+    
 
           {friendList?.length > 0 && (
             <View

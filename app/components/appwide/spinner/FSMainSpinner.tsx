@@ -3,6 +3,7 @@ import React  from "react";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 // import SafeViewAndGradientBackground from "../format/SafeViewAndGradBackground";
 import GradientBackground from "../display/GradientBackground";
 
@@ -12,6 +13,7 @@ type Props = {};
 
 const FSMainSpinner = (props: Props) => {
   const {  isInitializing, signinMutation  } = useUser();
+  const { isLoading } = useUpcomingHelloes();
   const { selectedFriend } = useSelectedFriend();
   const { manualGradientColors } = useGlobalStyle(); 
 
@@ -24,7 +26,7 @@ const FSMainSpinner = (props: Props) => {
     <> 
     {/* //   {isLoading && ( */}
      {/* //   {loadingNewFriend && ( */}
-         {((signinMutation && (signinMutation.isPending || signinMutation.isSuccess)) || isInitializing) && (
+         {((signinMutation && (signinMutation.isPending)) || isInitializing || isLoading) && (
         <View
           style={{
             zIndex: 100000,

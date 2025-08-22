@@ -1,41 +1,38 @@
-import { View, Pressable } from "react-native";
+import {  Pressable } from "react-native";
 import React from "react";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import FriendModalIntegrator from "../friends/FriendModalIntegrator";
+ 
+ 
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  SlideInLeft,
+ 
   FadeOut,
-  FadeIn,
-  ZoomInEasyUp,
+  FadeIn, 
 } from "react-native-reanimated";
 
 interface FriendHeaderMessageUIProps {
   borderBottomRightRadius: number;
   borderBottomLeftRadius: number;
   backgroundColor: string;
+  selectedFriendName: string;
+  loadingNewFriend: boolean;
   // isKeyboardVisible: boolean; // indirect condition to change message to friend picker
   onPress: () => void; // see WelcomeMessageUI for explanation; this component is the same
 }
 
 const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
-  //  isKeyboardVisible = false,
-  borderBottomRightRadius=10,
-  borderBottomLeftRadius=10,
+  primaryColor,
+  welcomeTextStyle, 
   backgroundColor='red',
+  selectedFriendName='',
+  loadingNewFriend=false,
   
   onPress,
 }) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  
 
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-  const friendModalButtonHeight = 16;
-  const message = `${selectedFriend.name}`;
-  const compositionMessage = `Talking point for ${selectedFriend.name}`;
+ 
+  const message = `${selectedFriendName}`;
+  const compositionMessage = `Talking point for ${selectedFriendName}`;
 
   return (
     <AnimatedPressable
@@ -46,11 +43,7 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
       exiting={FadeOut}
       style={[
         {
-          backgroundColor: backgroundColor,
-          // borderBottomLeftRadius: borderBottomLeftRadius,
-          // borderBottomRightRadius: borderBottomRightRadius,
-          borderRadius: 0,
-          //alignItems: "center",
+          backgroundColor: backgroundColor, 
           alignText: "center",
           flexWrap: "flex",
           width: "100%",
@@ -63,35 +56,20 @@ const FriendHeaderMessageUI: React.FC<FriendHeaderMessageUIProps> = ({
     >
       <Animated.Text
         style={[
-          appFontStyles.welcomeText,
+          welcomeTextStyle,
           {
-            color: themeStyles.primaryText.color,
+            color: primaryColor,
             fontSize: 28,
             lineHeight: 38,
           },
         ]}
       >
-        {selectedFriend && !loadingNewFriend // && !isKeyboardVisible
+        {selectedFriendName && !loadingNewFriend  
           ? message
-          : selectedFriend && !loadingNewFriend // && isKeyboardVisible
+          : selectedFriendName && !loadingNewFriend 
             ? compositionMessage
             : ""}{" "}
-        {/* <View
-          style={{
-            height: appFontStyles.welcomeText.fontSize,
-            width: "auto",
-          }}
-        >
-          <FriendModalIntegrator
-            includeLabel={true}
-            height={appFontStyles.welcomeText.fontSize}
-            iconSize={friendModalButtonHeight}
-            customLabel={"Pick friend"}
-            customFontStyle={appFontStyles.subWelcomeText}
-            navigationDisabled={true}
-            useGenericTextColor={true}
-          />
-        </View> */}
+  
       </Animated.Text>
     </AnimatedPressable>
   );

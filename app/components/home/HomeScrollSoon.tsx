@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View, Animated, DimensionValue } from "react-native";
+import   { StyleSheet, Text, View, DimensionValue } from "react-native";
 import React, { useCallback } from "react";
+import Animated, {SlideInDown, SlideOutDown, FadeIn, FadeOut } from 'react-native-reanimated';
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
@@ -8,7 +9,6 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
-
 
 interface HomeScrollSoonProps {
   startAtIndex: number;
@@ -26,18 +26,16 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   borderRadius = 20,
   borderColor = "transparent",
 }) => {
-  const { themeStyles, themeStyleSpinners } = useGlobalStyle();
+  const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { setFriend, selectFriend } = useSelectedFriend();
-  const { friendList } =
-    useFriendList();
-    const { getThemeAheadOfLoading } = useFriendStyle();
+  const { friendList } = useFriendList();
+  const { getThemeAheadOfLoading } = useFriendStyle();
 
-
-
-    const itemColor = themeStyles.primaryText.color;
-    const elementBackgroundColor = themeStyles.overlayBackgroundColor.backgroundColor;
+  const itemColor = themeStyles.primaryText.color;
+  const elementBackgroundColor =
+    themeStyles.overlayBackgroundColor.backgroundColor;
 
   const handleDoublePress = useCallback(
     (hello) => {
@@ -54,7 +52,6 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
 
   const handlePress = useCallback(
     (hello) => {
-
       if (!friendList || friendList.length < 1) {
         return;
       }
@@ -71,7 +68,11 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
 
   const renderListItem = useCallback(
     ({ item, index }) => (
+      // <Animated.View
+      // entering={FadeIn}
+      // exiting={FadeOut}
       <View
+
         style={{
           marginBottom: 2,
           height: 50,
@@ -80,8 +81,8 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         }}
       >
         <SoonItemButton
-        textColor={itemColor}
-        backgroundColor={elementBackgroundColor}
+          textColor={itemColor}
+          backgroundColor={elementBackgroundColor}
           height={"100%"}
           friendName={item.friend.name}
           date={item.future_date_in_words}
@@ -89,7 +90,8 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
           onPress={() => handlePress(item)}
           onDoublePress={() => handleDoublePress(item)}
         />
-      </View>
+      {/* </Animated.View> */}
+            </View>
     ),
     [handlePress, itemColor, elementBackgroundColor]
   );
@@ -100,36 +102,24 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
   const renderUpcomingHelloes = () => {
     return (
       <>
-      {upcomingHelloes && upcomingHelloes.length > 0 && (
-        
-      <Animated.FlatList
-        data={upcomingHelloes.slice(0).slice(startAtIndex, 8)} // skip first
-        //horizontal={true}
-        // getItemLayout={(data, index) => ({
-        //   length: soonButtonWidth,
-        //   offset: soonButtonWidth * index,
-        //   index,
-        // })}
-        renderItem={renderListItem}
-        keyExtractor={extractItemKey}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={10}
-        removeClippedSubviews={true}
-        showsVerticalScrollIndicator={false}
-        ListFooterComponent={() => <View style={{ height: 500 }} />}
-        //  snapToAlignment="start" // Align items to the top of the list when snapped
-        // decelerationRate="fast"
-      />
-      
-      )}
-      
+        {upcomingHelloes && upcomingHelloes.length > 0 && (
+          <Animated.FlatList
+            data={upcomingHelloes.slice(0).slice(startAtIndex, 8)}
+            renderItem={renderListItem}
+            keyExtractor={extractItemKey}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={10}
+            removeClippedSubviews={true}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={() => <View style={{ height: 500 }} />}
+          />
+        )}
       </>
     );
   };
 
   return (
-  
     <View
       style={[
         styles.container,
@@ -141,21 +131,8 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         },
       ]}
     >
-      {/* {isLoading && upcomingHelloes && (
-        <View style={styles.loadingWrapper}>
-          <LoadingPage
-            loading={isLoading}
-            includeLabel={false}
-            label=""
-            spinnerSize={70}
-            color="red"
-            spinnerType={themeStyleSpinners?.homeScreen}
-          />
-        </View>
-      )} */}
       {!isLoading && (
-        <> 
-
+        <>
           {friendList?.length === 0 && (
             <View style={styles.noFriendsTextContainer}>
               <Text
@@ -172,7 +149,7 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
           )}
 
           {friendList.length > 0 && (
-            <View style={[styles.buttonContainer]}>
+           <View style={[styles.buttonContainer]}>
               <>{renderUpcomingHelloes()}</>
             </View>
           )}

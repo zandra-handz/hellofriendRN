@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Alert, StyleSheet, Pressable } from "react-native";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+ import { useRemixUpcomingHelloes } from "@/src/hooks/useRemixUpcomingHelloes";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
-const ButtonResetHelloes = ({ iconSize = 15 }) => {
-  const { handleRemixAllNextHelloes, remixAllNextHelloesMutation } =
-    useUpcomingHelloes(); // MOVE TO CONTEXT
+const ButtonResetHelloes = ({ userId, iconSize = 15 }) => {
+  const { handleRemixAllNextHelloes } =
+    useRemixUpcomingHelloes({userId}); // MOVE TO CONTEXT
 
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const {   manualGradientColors } = useGlobalStyle();
 
   const handleOnPress = () => {
     Alert.alert(
@@ -24,19 +24,7 @@ const ButtonResetHelloes = ({ iconSize = 15 }) => {
       ]
     );
   };
-  const confirmResetHelloes = async () => {
-    await handleRemixAllNextHelloes();
-  };
-
-  // useEffect(() => {
-  //   if (remixAllNextHelloesMutation.isSuccess) {
-
-  //     // showMessage(true, null, `All friend dates reset!`);
-  //   } else if (remixAllNextHelloesMutation.isError) {
-  //     console.log('error');
-  //   }
-
-  // }, [remixAllNextHelloesMutation]);
+console.log('user id!', userId); 
   return (
     <Pressable
       onPress={handleOnPress}

@@ -1,22 +1,26 @@
 import { View, Text, Pressable } from "react-native";
-import React, { useCallback, useState, useEffect, useRef, useMemo } from "react";
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+} from "react";
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import {  Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import Donut from "../headers/Donut";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { AppState, AppStateStatus } from "react-native";
 import FriendHistoryPieDataWrap from "./FriendHistoryPieDataWrap";
-import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 import Demo from "../headers/SkiaDemo";
 import { useCategories } from "@/src/context/CategoriesContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
 type Props = {
@@ -24,18 +28,29 @@ type Props = {
   outerPadding: DimensionValue;
 };
 
-const TalkingPointsChart = ({ outerPadding }: Props) => {
+const TalkingPointsChart = ({
+  friendStyle,
+  appColorsStyle,
+  loadingNewFriend,
+  selectedFriendId,
+  selectedFriendName,
+  primaryColor,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
+  primaryOverlayColor,
+  darkerOverlayBackgroundColor,
+  outerPadding,
+}: Props) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
- 
-  const { navigateToMoments, navigateToMomentView, navigateToMomentFocus } = useAppNavigations();
+
+  const { navigateToMoments, navigateToMomentView, navigateToMomentFocus } =
+    useAppNavigations();
   const { capsuleList } = useCapsuleList();
-  const { themeAheadOfLoading } = useFriendStyle();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
-  
-  const {   categoryStartIndices } = useTalkingPCategorySorting({
+
+  const { categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
-  }); 
+  });
   const { userCategories } = useCategories();
 
   const [showHistory, setShowHistory] = useState(false);
@@ -44,10 +59,10 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
   });
 
   const categories = categorySizes();
- 
+
   const toggleShowHistory = useCallback(() => {
-  setShowHistory(prev => !prev);
-}, []);
+    setShowHistory((prev) => !prev);
+  }, []);
 
   const appState = useRef(AppState.currentState);
   const SMALL_CHART_RADIUS = 30;
@@ -79,21 +94,18 @@ const TalkingPointsChart = ({ outerPadding }: Props) => {
     return () => subscription.remove(); // cleanup
   }, [capsuleList]);
 
+  useFocusEffect(
+    useCallback(() => {
+      // This runs when the screen gains focus (do nothing here)
 
-
-
-useFocusEffect(
-  useCallback(() => {
-    // This runs when the screen gains focus (do nothing here)
-    
-    return () => {
-      // This runs when the screen loses focus
-      if (showHistory) {
-        setShowHistory(false);
-      }
-    };
-  }, [showHistory])
-);
+      return () => {
+        // This runs when the screen loses focus
+        if (showHistory) {
+          setShowHistory(false);
+        }
+      };
+    }, [showHistory])
+  );
 
   const HEIGHT = 420;
   const PADDING = 20;
@@ -101,10 +113,10 @@ useFocusEffect(
   const CHART_RADIUS = 150;
   // const CHART_STROKE_WIDTH = 20;
   // const CHART_OUTER_STROKE_WIDTH = 26;
-    const CHART_STROKE_WIDTH = 4;
+  const CHART_STROKE_WIDTH = 4;
   const CHART_OUTER_STROKE_WIDTH = 7;
   // const GAP = 0.03;
-    const GAP = 0.01;
+  const GAP = 0.01;
 
   const LABELS_SIZE = 11;
   const LABELS_DISTANCE_FROM_CENTER = -10;
@@ -113,12 +125,9 @@ useFocusEffect(
 
   const [tempCategoriesSortedList, setTempCategoriesSortedList] = useState([]);
 
- 
-
-    const handleMomentViewScrollTo = useCallback(
+  const handleMomentViewScrollTo = useCallback(
     (categoryLabel) => {
       if (categoryLabel && categoryStartIndices) {
- 
         navigateToMomentView({ index: categoryStartIndices[categoryLabel] });
       }
     },
@@ -137,7 +146,7 @@ useFocusEffect(
     useCallback(() => {
       if (!capsuleList || capsuleList?.length < 1) {
         return;
-      } 
+      }
 
       // let categories = categorySizes();
       // setTempCategoriesSortedList(categories.sortedList);
@@ -155,33 +164,36 @@ useFocusEffect(
       setCategoryColors(
         generateGradientColors(
           userCategories,
-          themeAheadOfLoading.lightColor,
-          themeAheadOfLoading.darkColor
+          friendStyle.lightColor,
+          friendStyle.darkColor
         )
       );
     }
-  }, [userCategories, themeAheadOfLoading]);
-
- 
-
+  }, [userCategories, friendStyle]);
 
   const colors = useMemo(() => {
-  if (!categoryColors || !categories?.sortedList || categories?.sortedList.length < 1) return [];
- 
- 
-  const userCategorySet = new Set(categories.sortedList.map(item => item.user_category));
-  return categoryColors
-    .filter(item => userCategorySet.has(item.user_category))
-    .map(item => item.color);
-}, [categoryColors, categories]);
+    if (
+      !categoryColors ||
+      !categories?.sortedList ||
+      categories?.sortedList.length < 1
+    )
+      return [];
+
+    const userCategorySet = new Set(
+      categories.sortedList.map((item) => item.user_category)
+    );
+    return categoryColors
+      .filter((item) => userCategorySet.has(item.user_category))
+      .map((item) => item.color);
+  }, [categoryColors, categories]);
 
   return (
     <>
-    {/* <View style={{width: '100%', height: 100, }}>
+      {/*  DON'T DELETE OR WILL BE SAD
       
-    <Demo />
-    
-    </View> */}
+      <View style={{ width: "100%", height: 100 }}>
+        <Demo text={"lalala"} />
+      </View> */}
       <Pressable
         onPress={toggleShowHistory}
         style={{
@@ -236,11 +248,9 @@ useFocusEffect(
             width: "100%",
             alignItems: "center",
             justifyContent: "space-between",
- 
           }}
         >
           <View style={{ flexDirection: "row" }}>
-  
             <Text
               style={[
                 {
@@ -265,10 +275,11 @@ useFocusEffect(
             height: "74%",
           }}
         >
-       
-            
           <Donut
-            onCategoryPress={handleMomentViewScrollTo} 
+            friendStyle={friendStyle}
+            primaryColor={primaryColor}
+            darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+            onCategoryPress={handleMomentViewScrollTo}
             onCenterPress={handleMomentScreenNoScroll}
             onPlusPress={handleNavigateToCreateNew}
             totalJS={capsuleList?.length}
@@ -283,11 +294,9 @@ useFocusEffect(
             colors={colors}
             centerTextSize={CENTER_TEXT_SIZE}
           />
-          
-        
         </View>
 
-        {showHistory && selectedFriend && !loadingNewFriend && (
+        {showHistory && selectedFriendId && !loadingNewFriend && (
           <View
             style={{
               flexDirection: "row",
@@ -317,6 +326,14 @@ useFocusEffect(
                 History{"  "}
               </Text>
               <FriendHistoryPieDataWrap
+                friendStyle={friendStyle}
+                selectedFriendName={selectedFriendName}
+                primaryColor={primaryColor}
+                primaryOverlayColor={primaryOverlayColor}
+                darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                welcomeTextStyle={welcomeTextStyle}
+                subWelcomeTextStyle={subWelcomeTextStyle}
+                appColorsStyle={appColorsStyle}
                 chartBorder={SMALL_CHART_BORDER}
                 chartBorderColor={themeStyles.primaryBackground.backgroundColor}
                 showLabels={false}
@@ -334,6 +351,13 @@ useFocusEffect(
             </Text>
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
               <UserHistoryPieDataWrap
+              friendStyle={friendStyle}
+                primaryColor={primaryColor}
+                primaryOverlayColor={primaryOverlayColor}
+                darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                welcomeTextStyle={welcomeTextStyle}
+                subWelcomeTextStyle={subWelcomeTextStyle}
+                appColorsStyle={appColorsStyle}
                 chartBorder={SMALL_CHART_BORDER}
                 chartBorderColor={themeStyles.primaryBackground.backgroundColor}
                 showLabels={false}
@@ -342,7 +366,6 @@ useFocusEffect(
             </View>
           </View>
         )}
- 
       </View>
     </>
   );

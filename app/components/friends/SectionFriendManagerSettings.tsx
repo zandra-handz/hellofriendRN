@@ -5,7 +5,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 
-const SectionFriendManagerSettings = () => {
+const SectionFriendManagerSettings = ({userId}) => {
   const { themeStyles } = useGlobalStyle();
 
   return (
@@ -21,6 +21,7 @@ const SectionFriendManagerSettings = () => {
 
       
       <Reset
+      userId={userId}
         label="Reset all hello dates"
         icon={
           <MaterialCommunityIcons

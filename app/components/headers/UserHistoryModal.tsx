@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
-import { View, StyleSheet } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { View, StyleSheet } from "react-native"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import UserHistoryBigPie from "../home/UserHistoryBigPie";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
@@ -16,8 +15,7 @@ interface Props {
   listData: object[];
   radius: number;
   labelsSize: number;
-  seriesData: any;
-  // onLongPress: (categoryId: number | null) => void;
+  seriesData: any; 
 }
 
 const UserHistoryModal: React.FC<Props> = ({
@@ -28,9 +26,14 @@ const UserHistoryModal: React.FC<Props> = ({
   radius = 180, //default instead of multiplying the radius of the preview
   labelsSize,
   seriesData,
+  appColorsStyle,
+    darkerOverlayBackgroundColor,
+  primaryColor,
+  primaryOverlayColor,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
   // onLongPress,
-}) => {
-  const { manualGradientColors } = useGlobalStyle();
+}) => { 
 
   const [viewCategoryId, setViewCategoryId] = useState(undefined);
 
@@ -56,7 +59,7 @@ const UserHistoryModal: React.FC<Props> = ({
         <MaterialCommunityIcons
           name={`chart-pie`}
           size={50}
-          color={manualGradientColors.darkHomeColor}
+          color={appColorsStyle.darkHomeColor}
         />
       }
       buttonTitle={"All category history"}
@@ -71,6 +74,11 @@ const UserHistoryModal: React.FC<Props> = ({
               labelsSize={labelsSize}
               showFooterLabel={false}
               seriesData={seriesData}
+                        darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+          primaryColor={primaryColor}
+          primaryOverlayColor={primaryOverlayColor}
+          welcomeTextStyle={welcomeTextStyle}
+          subWelcomeTextStyle={subWelcomeTextStyle}
             />
 
             {viewCategoryId && (

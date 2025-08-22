@@ -14,6 +14,7 @@ import TopBarHome from "@/app/components/home/TopBarHome";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendList } from "@/src/context/FriendListContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -33,11 +34,33 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
   const navigation = useNavigation();
-  const { themeStyles } = useGlobalStyle();
+  const { appContainerStyles,appFontStyles, manualGradientColors, themeStyleSpinners, themeStyles,  } = useGlobalStyle();
+  const welcomeTextStyle = appFontStyles.welcomeText;
+  const subWelcomeTextStyle = appFontStyles.subWelcomeText;
+  const primaryTextStyle = themeStyles.primaryText;
+  const primaryColor = themeStyles.primaryText.color;
+  const primaryBackgroundColor = themeStyles.primaryBackground.backgroundColor;
+  const primaryOverlayColor =
+    themeStyles.overlayBackgroundColor.backgroundColor;
+    const darkerOverlayBackgroundColor = themeStyles.darkerOverlayBackgroundColor.backgroundColor;
+  const newMomentContainerStyle =
+    appContainerStyles.homeScreenNewMomentContainer;
+
+    const spinnerStyle = themeStyleSpinners.homeScreen;
+
+
+  const { themeAheadOfLoading } = useFriendStyle();
+
+
+  const appColorsStyle = manualGradientColors;
+  const themeAheadOfLoadingStyle = themeAheadOfLoading;
+
   const { navigateToMomentFocusWithText } = useAppNavigations();
   const { user } = useUser();
 
   const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+
+
   const { friendList } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
 
@@ -230,6 +253,9 @@ const ScreenHome = () => {
             {!selectedFriend && (
               <>
                 <WelcomeMessageUI
+                  primaryColor={primaryColor}
+                  welcomeTextStyle={welcomeTextStyle}
+                  subWelcomeTextStyle={subWelcomeTextStyle}
                   username={username}
                   isNewUser={isNewUser}
                   backgroundColor={
@@ -242,6 +268,11 @@ const ScreenHome = () => {
                   isKeyboardVisible={isKeyboardVisible}
                 />
                 <QuickWriteMoment
+                  primaryTextStyle={primaryTextStyle}
+                  primaryBackgroundColor={primaryBackgroundColor}
+                  primaryOverlayColor={primaryOverlayColor}
+                  darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                  newMomentContainerStyle={newMomentContainerStyle}
                   width={"100%"}
                   height={"100%"}
                   ref={newMomentTextRef}
@@ -261,10 +292,22 @@ const ScreenHome = () => {
             )}
             {!isKeyboardVisible && !loadingNewFriend && (
               <BelowKeyboardComponents
+              appColorsStyle={appColorsStyle}
+              friendStyle={themeAheadOfLoadingStyle}
+              selectedFriendId={selectedFriend?.id}
+              selectedFriendName={selectedFriend?.name}
+primaryOverlayColor={primaryOverlayColor}
+                primaryTextStyle={primaryTextStyle}
+                welcomeTextStyle={welcomeTextStyle}
+                subWelcomeTextStyle={subWelcomeTextStyle}
+                primaryBackgroundColor={primaryBackgroundColor}
+                darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                spinnerStyle={spinnerStyle}
                 slideAnim={slideAnim}
                 friendListLength={friendList?.length || 0}
                 isFriendSelected={!!selectedFriend}
                 onPress={navigateToAddMomentScreen}
+                loadingNewFriend={loadingNewFriend}
               />
             )}
           </View>

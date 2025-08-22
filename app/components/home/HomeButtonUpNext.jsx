@@ -9,6 +9,7 @@ import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import LoadingPage from "../appwide/spinner/LoadingPage"; 
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
+import Animated, {SlideInDown, SlideOutDown, FadeIn, FadeOut, SlideOutRight } from 'react-native-reanimated';
 
 
 // Press function is internal
@@ -18,11 +19,11 @@ const HomeButtonUpNext = ({
   borderRadius = 20,
   borderColor = "transparent",
 }) => {
-  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
+  const { upcomingHelloes  } = useUpcomingHelloes();
   const { friendList } =
     useFriendList();
     const { getThemeAheadOfLoading } = useFriendStyle();
-  const { themeStyles, appFontStyles, themeStyleSpinners, manualGradientColors } =
+  const { themeStyles, appFontStyles,   manualGradientColors } =
     useGlobalStyle(); 
   const { setFriend } = useSelectedFriend();
 
@@ -35,7 +36,7 @@ const HomeButtonUpNext = ({
   };
 
 
-  console.log('home button up next rendered!');
+
   return (
     <View
       style={[
@@ -48,18 +49,8 @@ const HomeButtonUpNext = ({
       ]}
     > 
    
-        {isLoading && ( // used to include loadingNewFriend too and I'm honestly not sure why
-          <View style={styles.loadingWrapper}>
-            <LoadingPage
-              loading={true}
-              spinnerSize={30}
-              color="red"
-              spinnerType={themeStyleSpinners?.homeScreen}
-            />
-          </View>
-        )}
-
-      {!isLoading && ( 
+ 
+      {upcomingHelloes && (  //used tp be isLoading
         <View
           style={{
             height: "100%",
@@ -70,7 +61,9 @@ const HomeButtonUpNext = ({
             padding: 10,
           }}
         >
-          <View style={{width: '100%', height: 200}}>
+          <Animated.View     
+          entering={FadeIn}
+          exiting={FadeOut} style={{width: '100%', height: 200}}>
           <Pressable onPress={onPress} style={[styles.textContainer ]}>
             <Text style={[styles.headerText, appFontStyles.welcomeText]}>{header}</Text>
 
@@ -100,9 +93,11 @@ const HomeButtonUpNext = ({
             </Text>
           </Pressable>
 
-          </View>
+          </Animated.View>
 
-          <View
+          <Animated.View
+          entering={SlideInDown.delay(100)}
+          exiting={SlideOutDown}
             style={{
               zIndex: 30000,
               height: '100%', 
@@ -115,8 +110,10 @@ const HomeButtonUpNext = ({
               borderRadius={10}
               borderColor="black"
             />
-          </View>
-          <View
+          </Animated.View>
+          <Animated.View
+          entering={FadeIn}
+       exiting={SlideOutRight}
             style={{
               position: "absolute",
               right: -56,
@@ -126,7 +123,7 @@ const HomeButtonUpNext = ({
             }}
           >
             <GeckoSvg color={manualGradientColors.homeDarkColor} width={200} height={200} />
-          </View>
+          </Animated.View>
         </View>
       )}
     </View>
@@ -152,7 +149,7 @@ const styles = StyleSheet.create({
   textContainer: {
     zIndex: 5,
     position: "absolute",
-    width: '82%',
+    width: '82%', 
    
     flexDirection: "column",
  

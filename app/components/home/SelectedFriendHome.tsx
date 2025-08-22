@@ -7,17 +7,15 @@ import {
   ScrollView,
   DimensionValue,
 } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
-import CalendarChart from "./CalendarChart";
+
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
@@ -29,11 +27,21 @@ interface SelectedFriendHomeProps {
 }
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
+  friendStyle,
+  appColorsStyle,
   borderRadius = 20,
   borderColor = "transparent",
+  primaryTextStyle,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
+  primaryBackgroundColor,
+  primaryOverlayColor,
+  darkerOverlayBackgroundColor,
+  spinnerStyle,
+  loadingNewFriend,
+  selectedFriendId,
+  selectedFriendName,
 }) => {
-  const { themeStyleSpinners, themeStyles, appFontStyles } = useGlobalStyle();
-
   const headerRef = useRef(null);
   const handleScroll = (event) => {
     if (!headerRef.current) return;
@@ -60,14 +68,6 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   const PADDING_HORIZONTAL = 4;
 
   const spacerAroundCalendar = 10;
-  const {
-    selectedFriend,
-    friendLoaded,
-
-    isPending,
-    isLoading,
-    loadingNewFriend,
-  } = useSelectedFriend();
 
   const SELECTED_FRIEND_CARD_HEIGHT = 120;
   const SELECTED_FRIEND_CARD_MARGIN_TOP = 0;
@@ -110,17 +110,14 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   top: 0,
                   height: "auto",
                   padding: 6,
-                  backgroundColor:
-                    themeStyles.primaryBackground.backgroundColor,
+                  backgroundColor: primaryBackgroundColor,
                   zIndex: 5000,
                   elevation: 5000,
                 },
               ]}
             >
-              <Text
-                style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}
-              >
-                {selectedFriend.name}
+              <Text style={[primaryTextStyle, subWelcomeTextStyle]}>
+                {selectedFriendName}
               </Text>
             </Animated.View>
             {/* )} */}
@@ -136,11 +133,11 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
             >
               <View style={{ flex: 1, width: "100%" }} ref={headerRef}>
                 <FriendHeaderMessageUI
-                  backgroundColor={
-                    themeStyles.primaryBackground.backgroundColor
-                  }
-                  borderBottomLeftRadius={0}
-                  borderBottomRightRadius={0}
+                  selectedFriendName={`${selectedFriendName}`}
+                  loadingNewFriend={loadingNewFriend}
+                  primaryColor={primaryTextStyle.color}
+                  welcomeTextStyle={welcomeTextStyle}
+                  backgroundColor={primaryBackgroundColor}
                   onPress={() => console.log("nada!")}
                 />
               </View>
@@ -153,18 +150,15 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   width: "100%",
                 }}
               >
-                {isLoading && !friendLoaded && (
+                {loadingNewFriend && (
                   <>
                     <View style={styles.loadingWrapper}>
-                      <LoadingPage
-                        loading={isPending}
-                        spinnerType={themeStyleSpinners.homeScreen}
-                      />
+                      <LoadingPage loading={true} spinnerType={spinnerStyle} />
                     </View>
                   </>
                 )}
 
-                {!loadingNewFriend && friendLoaded && (
+                {!loadingNewFriend && selectedFriendId && (
                   <SuggestedHello
                     padding={SELECTED_FRIEND_CARD_PADDING}
                     height={SELECTED_FRIEND_CARD_HEIGHT}
@@ -174,25 +168,33 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
-                    selectedFriend={!!selectedFriend}
+                  appColorsStyle={appColorsStyle}
+                    friendStyle={friendStyle}
+                    primaryColor={primaryTextStyle.color}
+                    darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                   primaryOverlayColor={primaryOverlayColor}
+                   welcomeTextStyle={welcomeTextStyle}
+                   subWelcomeTextStyle={subWelcomeTextStyle}
+                    loadingNewFriend={loadingNewFriend}
+                    selectedFriendId={!!selectedFriendId}
+                    selectedFriendName={selectedFriendName}
                     outerPadding={spacerAroundCalendar}
                   />
                 </View>
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Pics
-                    selectedFriend={!!selectedFriend}
+                    selectedFriend={!!selectedFriendId}
                     outerPadding={spacerAroundCalendar}
                   />
                 </View>
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Helloes
-                    selectedFriend={!!selectedFriend}
+                    selectedFriend={!!selectedFriendId}
                     outerPadding={spacerAroundCalendar}
                   />
                 </View>
-      
 
                 <View style={{ width: "100%", height: 130 }}></View>
               </View>

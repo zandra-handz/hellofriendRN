@@ -13,14 +13,12 @@ import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
 import { daysSincedDateField } from "@/src/utils/DaysSince";
 import { useHelloes } from "@/src/context/HelloesContext";
 import HelloQuickView from "../alerts/HelloQuickView";
-import QuickView from "../alerts/QuickView";
-import ModalListWithView from "../alerts/ModalListWithView";
 
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
   onSearchPress: () => void;
-  friendData?: object;
+  friendName?: string;
   listData: object[];
   radius: number;
   labelsSize: number;
@@ -29,9 +27,14 @@ interface Props {
 }
 
 const FriendHistoryModal: React.FC<Props> = ({
+  darkerOverlayBackgroundColor,
+  primaryColor,
+  primaryOverlayColor,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
   isVisible,
   closeModal,
-  friendData,
+  friendName,
   listData,
   radius = 180, //default instead of multiplying the radius of the preview
   labelsSize,
@@ -103,17 +106,19 @@ const FriendHistoryModal: React.FC<Props> = ({
             color={manualGradientColors.darkHomeColor}
           />
         }
-        buttonTitle={
-          friendData ? `${friendData?.name}` : "All category history"
-        }
+        buttonTitle={friendName ? `${friendName}` : "All category history"}
         children={
           <View style={styles.bodyContainer}>
             <View>
-              {friendData && (
+              {friendName && (
                 <FriendHistoryBigPie
+                  darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                  primaryColor={primaryColor}
+                  primaryOverlayColor={primaryOverlayColor}
+                  welcomeTextStyle={welcomeTextStyle}
+                  subWelcomeTextStyle={subWelcomeTextStyle}
                   upDrillCategoryId={handleUpDrillCategoryId}
                   showPercentages={true}
-                  friendData={friendData}
                   listData={listData}
                   showLabels={true}
                   radius={radius}
