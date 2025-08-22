@@ -1,13 +1,13 @@
  
 import React, { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useUser } from './src/context/UserContext';
+ 
 
-
+import { useUser } from '../context/UserContext';
 
 const TopLevelNavigationHandler = ({ children }) => {
     const navigation = useNavigation();
-    const { user, isInitializing, onSignOut } = useUser();
+    const { user, isInitializing } = useUser();
  
  
 

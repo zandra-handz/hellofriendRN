@@ -1,7 +1,8 @@
 import React, { useEffect, createRef } from "react";
-import * as QuickActions from "expo-quick-actions";
+// import * as QuickActions from "expo-quick-actions";
 import { useFonts } from "expo-font";
-import TopLevelNavigationHandler from "./TopLevelNavigationHandler"; // Adjust import path if necessary
+import TopLevelNavigationHandler from "./src/handlers/TopLevelNavigationHandler";
+ import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
 import {
   useShareIntentContext,
@@ -175,41 +176,41 @@ export default Sentry.wrap(function App() {
     return () => notificationSubscription.remove();
   }, []);
 
-  useEffect(() => {
-    // Define the home screen quick actions
-    QuickActions.setItems([
-      {
-        id: "moments",
-        title: "Next up",
-        subtitle: "Go to ideas for next up",
-        icon: "heart",
-        params: { screen: "Moments" },
-      },
-      {
-        id: "momentFocus",
-        title: "Add idea",
-        subtitle: "Add a new idea",
-        icon: "star",
-        params: { screen: "MomentFocus" },
-      },
-    ]);
+  // useEffect(() => {
+  //   // Define the home screen quick actions
+  //   QuickActions.setItems([
+  //     {
+  //       id: "moments",
+  //       title: "Next up",
+  //       subtitle: "Go to ideas for next up",
+  //       icon: "heart",
+  //       params: { screen: "Moments" },
+  //     },
+  //     {
+  //       id: "momentFocus",
+  //       title: "Add idea",
+  //       subtitle: "Add a new idea",
+  //       icon: "star",
+  //       params: { screen: "MomentFocus" },
+  //     },
+  //   ]);
 
-    // Listen for quick action presses
-    const subscription = QuickActions.addListener((action) => {
-      if (!action) return;
+  //   // Listen for quick action presses
+  //   const subscription = QuickActions.addListener((action) => {
+  //     if (!action) return;
 
-      switch (action.id) {
-        case "moments":
-          navigationRef.current?.navigate("Moments");
-          break;
-        case "momentFocus":
-          navigationRef.current?.navigate("MomentFocus");
-          break;
-      }
-    });
+  //     switch (action.id) {
+  //       case "moments":
+  //         navigationRef.current?.navigate("Moments");
+  //         break;
+  //       case "momentFocus":
+  //         navigationRef.current?.navigate("MomentFocus");
+  //         break;
+  //     }
+  //   });
 
-    return () => subscription.remove();
-  }, []);
+  //   return () => subscription.remove();
+  // }, []);
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -411,6 +412,8 @@ export const Layout = () => {
       {/* <ResultMessage /> */}
       <CustomStatusBar />
 
+
+<QuickActionsHandler navigationRef={navigationRef} />
       <TopLevelNavigationHandler>
         <Stack.Navigator
           screenOptions={{
