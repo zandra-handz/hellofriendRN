@@ -4,13 +4,14 @@ import { useFocusEffect } from "@react-navigation/native";
 
 // app state
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 // app components
 import AboutAppModal from "./AboutAppModal";
 import UserSettingsModal from "./UserSettingsModal.";
-
+ 
+import useSignOut from "@/src/hooks/UserCalls/useSignOut";
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion"; 
 import SetAddressesModal from "./SetAddressesModal";
@@ -24,7 +25,7 @@ const MapScreenFooter = ({
   friendAddress,
   setFriendAddress,
 }) => { 
-  const { onSignOut } = useUser();
+  const { onSignOut } = useSignOut();
  
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();

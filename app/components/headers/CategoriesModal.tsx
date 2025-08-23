@@ -59,9 +59,13 @@ const CategoriesModal: React.FC<Props> = ({
       }
       helperMessageText={`Your categories are yours to decide! They can be broad or narrow in scope, silly or serious, every-day or outlandish, niche or normal. All that matters is that they are important to you and you enjoy sharing them! You can rename, delete, and create new categories whenever you like. If you delete a category, all pending ideas in that category will get permanently moved to the Grab Bag. Items already hello'ed to deleted categories will be removed from your history charts.`}
       infoItem={
-        <InfoItem
-          infoText={`${userCategories.length} / ${userCategories[0].max_active} added`}
-        />
+        <>
+          {useCategories.length > 0 && (
+            <InfoItem
+              infoText={`${userCategories.length} / ${userCategories[0].max_active} added`}
+            />
+          )}
+        </>
       }
       onClose={closeModal}
     />

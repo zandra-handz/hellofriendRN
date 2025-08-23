@@ -80,8 +80,9 @@ export const CapsuleListProvider = ({ children }) => {
       enabled: !!(
         selectedFriend &&
         selectedFriend.id &&
-        user?.id &&
-        !isInitializing
+        user?.id 
+        //&& // testing removing this
+       // !isInitializing
       ),
       // staleTime: 0,
       staleTime: 1000 * 60 * 20, // 20 minutes

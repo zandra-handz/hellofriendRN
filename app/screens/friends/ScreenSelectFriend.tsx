@@ -83,7 +83,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
           />
         </View>
         <View style={{ width: "100%", flex: 1 }}>
-          {alphabFriendList && alphabFriendList.length > 0 && (
+          {alphabFriendList && (
             <FriendListUI
               data={alphabFriendList}
               selectedFriendId={selectedFriend ? selectedFriend?.id : null}

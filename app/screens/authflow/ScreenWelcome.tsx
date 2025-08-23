@@ -20,8 +20,8 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 
 const ScreenWelcome = () => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { user, isAuthenticated, isInitializing } = useUser();
+  const { manualGradientColors } = useGlobalStyle();
+  const { user,  isInitializing } = useUser();
   const navigation = useNavigation<AuthScreenNavigationProp>();
 
   const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
@@ -84,7 +84,7 @@ const ScreenWelcome = () => {
           }}
         >
           <>
-            {(!confirmedUserNotSignedIn || isAuthenticated) && (
+            {(!confirmedUserNotSignedIn || user?.id) && (
               <LoadingPage
                 loading={true}
                 includeLabel={true}
@@ -95,7 +95,7 @@ const ScreenWelcome = () => {
                 labelColor={manualGradientColors.homeDarkColor}
               />
             )}
-            {confirmedUserNotSignedIn && !isAuthenticated && (
+            {confirmedUserNotSignedIn && !user?.id && (
               <>
                 <Animated.View
                   style={[

@@ -59,25 +59,11 @@ export const SelectedFriendStatsProvider: React.FC<
     enabled: !!(
      
       user?.id &&
-      !isInitializing &&
+    //  !isInitializing && testing removing this
       selectedFriend && selectedFriend?.id
     ),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
-  });
-
-  // useEffect(() => {
-  //   if (isSuccess && friendStats) {
-  //   //   console.log("resetting selected friend stats", friendStats);
-  //     setSelectedFriendStats(friendStats || []);
-  //   }
-  // }, [isSuccess, friendStats]);
-
-
-// useEffect(() => {
-//   if (user && user.id && isAuthenticated && !isInitializing && selectedFriend) {
-//     queryClient.refetchQueries(["selectedFriendStats", user.id, selectedFriend.id]);
-//   }
-// }, [userCategories]);
+  }); 
 
 
 const refetchFriendStats = () => {

@@ -32,8 +32,7 @@ const useFriendFunctions = () => {
       first_name: data.first_name,
       last_name: data.last_name,
       first_meet_entered: data.first_meet_entered,
-      friendEffort: data.friendEffort,
-      friendPriority: data.friendPriority,
+ 
     };
 
     // console.log("Payload in RQ function before sending:", friend);
@@ -41,8 +40,8 @@ const useFriendFunctions = () => {
     try {
       await createFriendMutation.mutateAsync({
         ...friend,
-        effort: data.friendEffort,
-        priority: data.friendPriority,
+        effort_required: data.effort_required,
+        priority_level: data.priority_level,
       });
     } catch (error) {
       console.error("Error saving new friend in RQ function: ", error);
@@ -110,7 +109,9 @@ const useFriendFunctions = () => {
       }, 2000);
     },
     onSuccess: (data, variables) => {
-      const { effort, priority } = variables; 
+      // console.log(`!!!!!!!!!!!!!!!~~~~~~~~~!!!!!!!!!!~~~~~~~~~~~!!!!!!!!!!!!!~~~~~~~~`,variables);
+      
+      const { effort_required, priority_level } = variables; 
 
       queryClient.setQueryData("newFriend", (oldData) => ({
         ...oldData, 
@@ -119,12 +120,13 @@ const useFriendFunctions = () => {
       refetchUpcomingHelloes();
  
       const friendId = data?.id;  
+      // console.log(`1111$$$$$$$$$$$$$$$$$$`, friendId);
 
       addToFriendList(data);
  
 
       if (friendId) { 
-        handleUpdateFriendSettings(user, friendId, effort, priority);
+        handleUpdateFriendSettings(friendId, effort_required, priority_level);
       }
     },
     onError: (error) => {

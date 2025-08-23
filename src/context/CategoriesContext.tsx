@@ -66,7 +66,7 @@ export const CategoriesProvider: React.FC<CategoriesProviderProps> = ({
   } = useQuery({
     queryKey: ["categories", user?.id],
     queryFn: () => getUserCategories(user?.id),
-    enabled: !!(user?.id && !isInitializing),
+    enabled: !!(user?.id), // testing removing this  && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 

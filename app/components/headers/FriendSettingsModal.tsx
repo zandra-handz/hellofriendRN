@@ -1,6 +1,6 @@
-import React  from "react";
+import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { TouchableOpacity, AccessibilityInfo } from "react-native"; 
+import { TouchableOpacity, AccessibilityInfo } from "react-native";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -11,8 +11,11 @@ import SectionFriendStats from "../friends/SectionFriendStats";
 import SectionFriendTheme from "../friends/SectionFriendTheme";
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
+import DeleteFriend from "../friends/DeleteFriend";
+
 interface Props {
   isVisible: boolean;
+  friendId: number;
   friendName: string;
   bottomSpacer: number;
   closeModal: () => void;
@@ -20,6 +23,7 @@ interface Props {
 
 const FriendSettingsModal: React.FC<Props> = ({
   isVisible,
+  friendId,
   friendName = "",
   bottomSpacer,
   closeModal,
@@ -57,18 +61,21 @@ const FriendSettingsModal: React.FC<Props> = ({
       }
       buttonTitle={`${friendName}`}
       children={
-        <ScrollView contentContainerStyle={styles.bodyContainer}>
-          <View style={styles.sectionContainer}>
-            <SectionFriendStats />
-          </View>
-          <View style={styles.sectionContainer}>
-            <SectionFriendSettings />
-          </View>
+        <View style={{flex: 1}}>
+          <ScrollView contentContainerStyle={styles.bodyContainer}>
+            <View style={styles.sectionContainer}>
+              <SectionFriendStats />
+            </View>
+            <View style={styles.sectionContainer}>
+              <SectionFriendSettings />
+            </View>
 
-          <View style={styles.headerContainer}>
-            <SectionFriendTheme />
-          </View>
-        </ScrollView>
+            <View style={styles.headerContainer}>
+              <SectionFriendTheme />
+            </View>
+          </ScrollView>
+          <DeleteFriend  friendId={friendId} friendName={friendName}/>
+        </View>
       }
       onClose={closeModal}
     />
@@ -83,10 +90,10 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   headerContainer: {
-    margin: "2%",
+    marginVertical: 8,
   },
   sectionContainer: {
-    margin: "2%",
+    marginVertical: 8,
   },
   headerText: {
     fontWeight: "bold",

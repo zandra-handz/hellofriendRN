@@ -15,7 +15,8 @@ import CategoriesModal from "./CategoriesModal";
 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
-
+ 
+import useSignOut from "@/src/hooks/UserCalls/useSignOut";
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -24,7 +25,8 @@ import GradientBackground from "../appwide/display/GradientBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const HelloFriendFooter = () => {
-  const { user, onSignOut } = useUser();
+  const { user } = useUser();
+  const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend, deselectFriend } = useSelectedFriend();
@@ -248,6 +250,7 @@ const HelloFriendFooter = () => {
         <View>
           <FriendSettingsModal
             isVisible={friendSettingsModalVisible}
+            friendId={selectedFriend?.id}
             friendName={selectedFriend.name}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setFriendSettingsModalVisible(false)}

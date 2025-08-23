@@ -4,8 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-import { updateAppSetup } from "@/src/calls/api";
+ 
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
 import InputAddFriendName from "./InputAddFriendName";
  
@@ -75,8 +74,8 @@ const ContentAddFriend = () => {
         first_name: "Add First Name",
         last_name: "Add Last Name",
         first_meet_entered: formattedDate,
-        friendEffort: friendEffort,
-        friendPriority: friendPriority,
+        effort_required: friendEffort,
+        priority_level: friendPriority,
       };
       await handleCreateFriend(postData);
 

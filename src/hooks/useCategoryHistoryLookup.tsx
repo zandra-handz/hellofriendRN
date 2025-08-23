@@ -63,7 +63,7 @@ const useCategoryHistoryLookup = ({
       return Number(nextUrl.searchParams.get("page"));
     },
     initialPageParam: 1,
-    enabled: !!(categoryId && user?.id && !isInitializing),
+    enabled: !!(categoryId && user?.id), // testing removing this && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10,
   });
 

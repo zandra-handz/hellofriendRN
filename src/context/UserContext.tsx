@@ -1,25 +1,24 @@
 import React, {
   createContext,
   useContext,
-  useState,
   useRef,
   useMemo,
-  useCallback,
   useEffect,
 } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
+import useSignOut from "../hooks/UserCalls/useSignOut";
 import {
   signup,
   signin,
   signinWithoutRefresh,
-  signout,
   getCurrentUser,
   updateUserAccessibilitySettings,
   updateSubscription,
 } from "../calls/api";
-
+import useSignIn from "../hooks/UserCalls/useSignIn";
+import useSignUp from "../hooks/UserCalls/useSignUp";
 import { User } from "../types/UserContextTypes";
 
 interface UserContextType {
@@ -28,16 +27,7 @@ interface UserContextType {
   isInitializing: boolean;
   userAppSettings: Record<string, any | null>;
   userNotificationSettings: Record<string, any>;
-  onSignin: (username: string, password: string) => Promise<void>;
-  onSignOut: () => void;
-  onSignUp: (
-    username: string,
-    email: string,
-    password: string
-  ) => Promise<void>;
-  reInitialize: () => Promise<void>;
-  updateSettings: (newSettings: Record<string, any>) => Promise<void>;
-  deAuthUser: () => void;
+
   handleDeleteUserAccount: () => void;
 }
 
@@ -60,13 +50,10 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
- 
-
-  const queryClient = useQueryClient();
+  const { onSignOut } = useSignOut();
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // check SecureStore on mount
   const {
     data: user,
     isError,
@@ -80,27 +67,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     retry: 3, //default anyway
   });
 
-  const onSignOut = async () => {
-    await signout();
-    // setUser((prev) => (prev !== null ? null : prev));
-    // setAuthenticated((prev) => (prev !== false ? false : prev));
- 
-queryClient.resetQueries(["currentUser"], { exact: true, refetchActive: false });
+  const { onSignIn } = useSignIn({ refetchUser: refetch });
+  const { onSignUp } = useSignUp({ signInNewUser: onSignIn });
 
-  queryClient.removeQueries({ exact: false }); // removes all queries
-      queryClient.cancelQueries(); // cancel inflight queries
- //   queryClient.clear();
-  
- 
-  };
-  
   useEffect(() => {
     if (isError) {
       onSignOut();
     }
   }, [isError]);
 
-  
   useEffect(() => {
     (async () => {
       const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
@@ -113,83 +88,44 @@ queryClient.resetQueries(["currentUser"], { exact: true, refetchActive: false })
     })();
   }, []);
 
-  const signinMutation = useMutation({
-    mutationFn: signinWithoutRefresh,
-    onSuccess: () => {
-      // console.log("sign in successful!");
-      //  reInitialize();
-      refetch();
+  // const signupMutation = useMutation({
+  //   mutationFn: signup,
+  //   onSuccess: async (result) => {
+  //     // if (result.data) {
+  //     //     await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
+  //     //     await reInitialize(); // Refetch user data after sign-up
+  //     // }
+  //     if (timeoutRef.current) {
+  //       clearTimeout(timeoutRef.current);
+  //     }
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+  //     timeoutRef.current = setTimeout(() => {
+  //       signupMutation.reset();
+  //     }, 2000);
+  //   },
+  //   onError: () => {
+  //     if (timeoutRef.current) {
+  //       clearTimeout(timeoutRef.current);
+  //     }
+  //     timeoutRef.current = setTimeout(() => {
+  //       signupMutation.reset();
+  //     }, 2000);
+  //   },
+  // });
 
-      timeoutRef.current = setTimeout(() => {
-        signinMutation.reset();
-      }, 2000);
-    },
-    onError: (error) => {
-      console.error("Sign in mutation error:", error);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        signinMutation.reset();
-      }, 2000);
-    },
-  });
-
-
-  const onSignin = useCallback(
-    async (username: string, password: string) => {
-      try {
-        await signinMutation.mutateAsync({ username, password });
-      } catch (error) {
-        console.error("Sign in error", error);
-      }
-    },
-    [signinMutation]
-  );
-
-  const signupMutation = useMutation({
-    mutationFn: signup,
-    onSuccess: async (result) => {
-      // if (result.data) {
-      //     await SecureStore.setItemAsync(TOKEN_KEY, result.data.token);
-      //     await reInitialize(); // Refetch user data after sign-up
-      // }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        signupMutation.reset();
-      }, 2000);
-    },
-    onError: () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      timeoutRef.current = setTimeout(() => {
-        signupMutation.reset();
-      }, 2000);
-    },
-  });
-
-  const onSignUp = async (
-    username: string,
-    email: string,
-    password: string
-  ) => {
-    try {
-      const credentials = { username, email, password };
-      await signupMutation.mutateAsync(credentials);
-      onSignin(username, password);
-    } catch (error) {
-      console.error("Sign up error", error);
-    }
-  };
+  // const onSignUp = async (
+  //   username: string,
+  //   email: string,
+  //   password: string
+  // ) => {
+  //   try {
+  //     const credentials = { username, email, password };
+  //     await signupMutation.mutateAsync(credentials);
+  //     onSignIn(username, password);
+  //   } catch (error) {
+  //     console.error("Sign up error", error);
+  //   }
+  // };
 
   //   const deleteUserAccountMutation = useMutation({
   //     mutationFn: deleteUserAccount,
@@ -227,24 +163,11 @@ queryClient.resetQueries(["currentUser"], { exact: true, refetchActive: false })
 
   const contextValue = useMemo(
     () => ({
-      user, 
-
-      isAuthenticated: !!user,
+      user,
       isInitializing: isLoading,
-      onSignin,
-      onSignUp,
-      onSignOut, 
-      signinMutation,
-      signupMutation,
+      refetch,
     }),
-    [
-      user, 
-      onSignin,
-      onSignUp,
-      onSignOut, 
-      signinMutation,
-      signupMutation,
-    ]
+    [user, isLoading, refetch]
   );
 
   return (

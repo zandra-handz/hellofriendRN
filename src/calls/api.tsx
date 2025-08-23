@@ -958,7 +958,7 @@ export const fetchUpcomingHelloes = async () => {
     // );
 
     const response = await helloFriendApiClient.get("/friends/upcoming/");
-
+console.log(`UPCOMING HELLOES: `, response.data);
     // const end = Date.now(); // log end time
     // console.log(
     //   "\x1b[32m%s\x1b[32m",
@@ -1378,6 +1378,7 @@ export const updateLocation = async (
 
 export const createFriend = async (friendData: object) => {
   try {
+    console.log(friendData);
     const res = await helloFriendApiClient.post("/friends/create/", friendData);
     return res.data;
   } catch (e: unknown) {

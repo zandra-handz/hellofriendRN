@@ -4,12 +4,12 @@ import { StyleSheet, Pressable, View, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext";
+// import { useUser } from "@/src/context/UserContext";
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import EffortSettingSlider from "../../friends/EffortSettingSlider";
 const EditEffort = ({ iconSize = 15, value = "None" }) => {
-  const { user } = useUser();
+  // const { user } = useUser();
   const { selectedFriend, friendDashboardData } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
 
@@ -22,7 +22,7 @@ const EditEffort = ({ iconSize = 15, value = "None" }) => {
   const handleSave = () => {
     try {
       handleUpdateFriendSettings(
-        user.id,
+        // user.id,
         selectedFriend.id,
         effortRef.current.getValue()
       );

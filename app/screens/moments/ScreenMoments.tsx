@@ -42,6 +42,8 @@ const ScreenMoments = () => {
     getThemeAheadOfLoading(friend);
   };
 
+
+  // BUG this will let selected friend override, it needs to be able to know if navigating here from quick actions
   useEffect(() => {
     if (loadingNewFriend || isLoading) {
       return;

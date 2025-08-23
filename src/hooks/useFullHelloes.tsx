@@ -45,7 +45,7 @@ const pagesFetchedRef = useRef(1); // starts at 1 because page 1 is fetched init
       return Number(nextUrl.searchParams.get("page"));
     },
     initialPageParam: 1,
-    enabled: !!(friendId && user?.id && !isInitializing),
+    enabled: !!(friendId && user?.id), // testing removing this && !isInitializing),
     staleTime: 1000 * 60 * 60 * 10,
   });
 

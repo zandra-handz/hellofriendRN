@@ -29,7 +29,7 @@ const useStartingUserAddresses = () => {
   } = useQuery({
     queryKey: ["userAddresses", user?.id],
     queryFn: () => fetchUserAddresses(),
-    enabled: !!(user?.id && !isInitializing),
+    enabled: !!(user?.id), // testing removing this && !isInitializing),
     staleTime: 1000 * 60 * 20, // 20 minutes
  
   });

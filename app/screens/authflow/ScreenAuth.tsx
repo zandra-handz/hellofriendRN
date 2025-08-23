@@ -23,6 +23,8 @@ import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 import useMessageCentralizer from "@/src/hooks/useMessageCentralizer";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 
+import useSignIn from "@/src/hooks/UserCalls/useSignIn";
+import useSignUp from "@/src/hooks/UserCalls/useSignUp";
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const createNewAccount = route.params?.createNewAccount ?? false;
@@ -37,7 +39,10 @@ const ScreenAuth = () => {
   const [loading, setLoading] = useState(false);
   const [isSignInScreen, setSignInScreen] = useState(true);
   const [signUpSuccess, setSignUpSuccess] = useState(false);
-  const { onSignin, signinMutation, onSignUp  } = useUser();
+  const {  refetch  } = useUser();
+  const { onSignIn, signinMutation } = useSignIn({refetchUser: refetch});
+
+  const { onSignUp } = useSignUp({signInNewUser: onSignIn});
   const [success, setSuccess] = useState(false);
   const usernameInputRef = useRef(null);
   const passwordInputRef = useRef(null);
@@ -124,7 +129,7 @@ const ScreenAuth = () => {
     if (isSignInScreen) {
       console.log('signing user in');
       try {
-        onSignin(username, password);
+        onSignIn(username, password);
       } catch (error) {
         console.error(error);
       }

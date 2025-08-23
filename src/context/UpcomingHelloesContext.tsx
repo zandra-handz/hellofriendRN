@@ -8,6 +8,8 @@ import { useUser } from "./UserContext";
 import { fetchUpcomingHelloes } from "../calls/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+import useSignOut from "../hooks/UserCalls/useSignOut";
+
 // remix helloes is in a separate hook
 const UpcomingHelloesContext = createContext({});
 
@@ -17,7 +19,8 @@ export const useUpcomingHelloes = () => {
 
 export const UpcomingHelloesProvider = ({ children }) => {
   const queryClient = useQueryClient();
-  const { user, onSignOut } = useUser();
+  const { user  } = useUser();
+  const { onSignOut } = useSignOut();
  
 
   const {

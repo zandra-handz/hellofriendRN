@@ -4,7 +4,7 @@ import { StyleSheet, Pressable, View, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext";
+ 
 import useFriendFunctions from "@/src/hooks/useFriendFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import PrioritySettingSlider from "../../friends/PrioritySettingSlider";

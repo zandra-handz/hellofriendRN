@@ -2,12 +2,11 @@
 import { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { remixAllNextHelloes } from "../calls/api";
-import { useUser } from "../context/UserContext";
-
+ 
 export const useRemixUpcomingHelloes = ({userId}) => {
   const queryClient = useQueryClient();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-const { user } = useUser();
+ 
   const remixMutation = useMutation({
     mutationFn: () => remixAllNextHelloes(userId),
     onSuccess: () => {

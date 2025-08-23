@@ -6,13 +6,15 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 // import SafeViewAndGradientBackground from "../format/SafeViewAndGradBackground";
 import GradientBackground from "../display/GradientBackground";
-
+ 
+import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 
 import LoadingPage from "./LoadingPage";
 type Props = {};
 
 const FSMainSpinner = (props: Props) => {
-  const {  isInitializing, signinMutation  } = useUser();
+  const {  isInitializing, refetch  } = useUser();
+  const { signinMutation } = useSignIn({refetchUser: refetch});
   const { isLoading } = useUpcomingHelloes();
   const { selectedFriend } = useSelectedFriend();
   const { manualGradientColors } = useGlobalStyle(); 

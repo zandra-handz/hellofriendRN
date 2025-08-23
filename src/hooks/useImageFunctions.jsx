@@ -19,7 +19,7 @@ const useImageFunctions = () => {
   const { data: imageList = [], isLoading: isImageContextLoading } = useQuery({
     queryKey: ["friendImages", user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendImagesByCategory(selectedFriend.id),
-    enabled: !!(selectedFriend && user?.id && !isInitializing), 
+    enabled: !!(selectedFriend && user?.id), // testng removing this && !isInitializing), 
     staleTime: 1000 * 60 * 20, // 20 minutes
     select: (imagesData) => { 
       const flattenedImages = [];

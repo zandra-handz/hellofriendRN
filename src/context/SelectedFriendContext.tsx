@@ -86,7 +86,7 @@ export const SelectedFriendProvider: React.FC<SelectedFriendProviderProps> = ({
     queryKey: ["friendDashboardData", user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendDashboard(selectedFriend?.id),
 
-    enabled: !!(user && !isInitializing && selectedFriend),
+    enabled: !!(user?.id && selectedFriend), //testing removing !isInitializing
     staleTime: 1000 * 60 * 20,
   });
 
