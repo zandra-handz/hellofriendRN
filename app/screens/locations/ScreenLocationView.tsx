@@ -8,21 +8,23 @@ import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
  
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
-import LocationViewPage from "@/app/components/locations/LocationViewPage";
+ import LocationViewPage from "@/app/components/locations/LocationViewPage";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
-import PreAuthSafeViewBackground from "@/app/components/appwide/format/PreAuthSafeViewBackground";
+ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 const ScreenLocationView = () => {
   const route = useRoute();
-  const startingLocation = route.params?.startingLocation ?? null;
+  // const startingLocation = route.params?.startingLocation ?? null;
   const currentIndex = route.params?.index ?? null;
   const userAddress = route?.params?.userAddress ?? null;
   const friendAddress = route?.params?.friendAddress ?? null;
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { themeAheadOfLoading } = useFriendStyle();
+  const { selectedFriend } = useSelectedFriend();
   const { currentDay, getNumOfDaysFrom } = useLocationDetailFunctions();
   const now = new Date();
-  const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
+  // const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
   const navigation = useNavigation();
   // const [currentIndex, setCurrentIndex] = useState(0);
  
@@ -94,7 +96,15 @@ useEffect(() => {
     // <PreAuthSafeViewBackground>
 
 
-    <SafeViewAndGradientBackground  style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground  
+    
+        startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
+      style={{ flex: 1 }}>
 
       
 

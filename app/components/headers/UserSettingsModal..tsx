@@ -4,12 +4,11 @@ import { TouchableOpacity, AccessibilityInfo } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
+ 
 import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
-import SectionFriendSettings from "../friends/SectionFriendSettings";
+ 
 import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
-import SectionAccountSettings from "../user/SectionAccountSettings";
-import SectionUserCategories from "../friends/SectionUserCategories";
+import SectionAccountSettings from "../user/SectionAccountSettings"; 
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 interface Props {

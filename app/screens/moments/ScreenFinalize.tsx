@@ -10,7 +10,7 @@ import FinalizeList from "@/app/components/moments/FinalizeList";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
-
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 const ScreenFinalize = () => {
   const { allCapsulesList, capsuleList, preAdded } = useCapsuleList();
   const { categoryNames } = useTalkingPCategorySorting({
@@ -21,9 +21,9 @@ const ScreenFinalize = () => {
   const [categoryNamesOnly, setCategoryNamesOnly] = useState(
     categoryNames.map(c => c.category)
   );
-
+const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
 
   useFocusEffect(
@@ -41,7 +41,15 @@ const ScreenFinalize = () => {
   );
 
   return (
-    <SafeViewAndGradientBackground backgroundOverlayHeight="" includeBackgroundOverlay={true} useOverlay={true} style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground 
+    
+        startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
+      backgroundOverlayHeight="" includeBackgroundOverlay={true} useOverlay={true} style={{ flex: 1 }}>
       {selectedFriend && (
         <View
           style={[
@@ -62,6 +70,7 @@ const ScreenFinalize = () => {
           </Text>
           {preAdded && uniqueCategories?.length > 0 && categoryNamesOnly && (categoryNamesOnly !== undefined) && (
             <FinalizeList
+            friendId={selectedFriend?.id}
               data={allCapsulesList}
               preSelected={preAdded}
               categories={categoryNamesOnly}

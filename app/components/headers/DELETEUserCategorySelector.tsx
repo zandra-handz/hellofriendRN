@@ -35,6 +35,8 @@ import Animated, {
 import GradientBackground from "../appwide/display/GradientBackground";
 import CategoryDetailsModal from "./CategoryDetailsModal";
 import UserHistoryModal from "./UserHistoryModal";
+import { useUser } from "@/src/context/UserContext";
+import useCreateNewCategory from "@/src/hooks/CategoryCalls/useCreateNewCategory";
 
 const UserCategorySelector = ({
   onPress,
@@ -46,10 +48,13 @@ const UserCategorySelector = ({
 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
-
+const { user } = useUser();
   const { capsuleList } = useCapsuleList();
-  const { userCategories, createNewCategory, createNewCategoryMutation } =
+  const { userCategories } =
     useCategories();
+
+
+    const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory({userId: user?.id});
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
 
   const topperHeight = 60;
@@ -517,6 +522,10 @@ const UserCategorySelector = ({
   return (
     <GradientBackground
       useFriendColors={!!selectedFriend}
+           startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[
         styles.container,
         {

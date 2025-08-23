@@ -1,68 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native"; 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { View, Text, StyleSheet } from "react-native";  
  
 const ButtonSelectFriend = ({
+  friendId,
   disabled=false,
   friend,
   backgroundColor,
   borderRadius,
   color,
   height = 70,
-}) => {
-  const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendStyle();
-  const { themeStyles } = useGlobalStyle();
+  themeAheadOfLoading,
+  themeTextColor,
+  backgroundOverlayColor,
+}) => {  
  
-  const [textColor, setTextColor] = useState(themeStyles.genericText.color);
+  const [textColor, setTextColor] = useState(themeTextColor);
 
   useEffect(() => {
-    if (selectedFriend && themeAheadOfLoading) {
-      if (friend.id === selectedFriend.id) { 
+    if (friendId && themeAheadOfLoading) {
+      if (friend.id === friendId) { 
         setTextColor(themeAheadOfLoading.fontColor);
       } 
     }
-  }, [selectedFriend]);
+  }, [friendId, themeAheadOfLoading]);
 
-  //to restore gradient: [1] - [0]
-  // const renderProfileIcon = () => {
-  //   return (
-  //     <View
-  //       style={{
-  //         overflow: "hidden",
-  //         height: 40,
-  //         width: 40,
-  //         position: "absolute",
-  //         borderRadius: 20,
-  //         padding: 10,
-  //         right: 0,
-  //         backgroundColor: backgroundColor,
-  //       }}
-  //     >
-  //       {/* <View
-  //         style={{
-  //           position: "absolute",
-  //           opacity: 0.9,
-  //           position: "absolute",
-  //           top: -20,
-  //           right: -10,
-  //           transform: [{ rotate: "200deg" }],
-  //           zIndex: 50000,
-  //           elevation: 50000,
-  //         }}
-  //       >
-  //         <GeckoSolidSvg
-  //           width={50}
-  //           height={50}
-  //           color={color}
-  //           style={{ opacity: 1 }}
-  //         />
-  //       </View> */}
-  //     </View>
-  //   );
-  // };
+ 
 
   return (
     <View
@@ -81,7 +43,7 @@ const ButtonSelectFriend = ({
     > 
       <View
         style={{
-          backgroundColor: !disabled ? themeStyles.overlayBackgroundColor.backgroundColor : 'transparent',
+          backgroundColor: !disabled ?  backgroundOverlayColor : 'transparent',
           borderRadius: 999, width: 'auto', paddingHorizontal: 14, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'
           
         }}

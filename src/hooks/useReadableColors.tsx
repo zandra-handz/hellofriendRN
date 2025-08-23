@@ -28,10 +28,10 @@ export interface Friend {
 }
 
 
-const useReadableColors = (friendList: Friend[], selectedFriend) => {
+const useReadableColors = (friendList: Friend[], selectedFriendId) => {
   const getSavedColorTheme = () => {
     const currentFriend = friendList.find(
-      (friend) => friend.id === selectedFriend.id
+      (friend) => friend.id === selectedFriendId
     );
 
     if (!currentFriend) {

@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { View, ViewToken, Pressable, Alert, Text } from "react-native";
+import { View, ViewToken, Pressable } from "react-native";
 import GeckoToHelloButton from "./GeckoToHelloButton";
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBarMinusWidth from "./EscortBarMinusWidth";
@@ -13,9 +13,7 @@ import MomentsAdded from "./MomentsAdded";
 import CategoryNavigator from "./CategoryNavigator";
 import MomentItem from "./MomentItem";
 import LargeCornerLizard from "./LargeCornerLizard";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
-import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
- 
+
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import SwipeDown from "./SwipeDown";
 import Animated, {
@@ -38,36 +36,38 @@ import Animated, {
   withSpring,
   SlideInRight,
   SlideOutRight,
-  SlideOutLeft,
-  SlideInLeft,
 } from "react-native-reanimated";
 
-import { useNavigation } from "@react-navigation/native";
+const MomentsList = ({
+  friendColor,
 
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+  primaryBackgroundColor,
+  homeDarkColor,
+  appLightColor,
+  primaryTextStyle,
+  primaryOverlayColor,
+  subWelcomeTextStyle,
+  navigateBack, // escort bar
 
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-// import { enableLayoutAnimations } from "react-native-reanimated";
-// enableLayoutAnimations(true);
-// import { enableFreeze } from "react-native-screens";
-// enableFreeze(true);
+  categoryNames,
+  categoryStartIndices,
+  capsuleList,
+  updateCapsule,
+  navigateToMomentView,
 
-//const ITEM_HEIGHT = 290;
-
-const MomentsList = ({ scrollTo, categoryColorsMap }) => {
+  friendId,
+  scrollTo,
+  categoryColorsMap,
+}) => {
   useEffect(() => {
     if (scrollTo) {
       scrollToCategoryStart(scrollTo);
     }
   }, [scrollTo]);
-  const { selectedFriend } = useSelectedFriend();
-  const { capsuleList, updateCapsule } = useCapsuleList();
-  const { navigateToMomentView } = useAppNavigations();
 
-  const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
-    listData: capsuleList,
-  });
-  const navigation = useNavigation();
+  // const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
+  //   listData: capsuleList,
+  // });
   const ITEM_HEIGHT = 80;
   const ITEM_BOTTOM_MARGIN = 18;
   const COMBINED_HEIGHT = ITEM_HEIGHT + ITEM_BOTTOM_MARGIN;
@@ -109,41 +109,32 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
     }
   };
 
-  // const scrollToRandomItem = () => {
-  //   if (capsuleList.length === 0) return;
-
-  //   const randomIndex = Math.floor(Math.random() * capsuleList.length);
-  //   // flatListRef.current?.scrollToIndex({
-  //   flatListRef.current?.scrollToOffset({
-  //     offset: ITEM_HEIGHT * randomIndex,
-  //     // index: randomIndex,
-  //     animated: false,
-  //   });
-  // };
-
   const saveToHello = useCallback((moment) => {
-    if (!selectedFriend?.id || !moment) {
-       showFlashMessage(`Oops! Missing data required to save idea to hello`, true, 1000);
+    if (!friendId || !moment) {
+      showFlashMessage(
+        `Oops! Missing data required to save idea to hello`,
+        true,
+        1000
+      );
       return;
     }
 
-    
     try {
       showFlashMessage(`Added to hello!`, false, 1000);
       updateCapsule({
-        friendId: selectedFriend?.id,
+        friendId: friendId,
         capsuleId: moment.id,
         isPreAdded: true,
       });
     } catch (error) {
-      showFlashMessage(`Oops! Either showFlashMessage or updateCapsule has errored`, true, 1000);
+      showFlashMessage(
+        `Oops! Either showFlashMessage or updateCapsule has errored`,
+        true,
+        1000
+      );
       console.error("Error during pre-save:", error);
     }
   }, []);
-
-  // const scrollToEnd = () => {
-  //   flatListRef.current?.scrollToEnd({ animated: true });
-  // };
 
   const scrollToCategoryStart = (category) => {
     console.log(category);
@@ -175,44 +166,34 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
     });
   }, [capsuleList]);
 
-
   useEffect(() => {
     if (capsuleList.length < 1) {
-      console.log('capsule list is empty');
-          listVisibility.value = withTiming(0);
-    } else if (capsuleList.length === 1)
-      {
-       listVisibility.value = withTiming(1);
+      console.log("capsule list is empty");
+      listVisibility.value = withTiming(0);
+    } else if (capsuleList.length === 1) {
+      listVisibility.value = withTiming(1);
     }
-
   }, [capsuleList]);
 
-
-    useEffect(() => {
-   
+  useEffect(() => {
     if (!memoizedMomentData || memoizedMomentData.length < 1) {
-       console.log('memoized data triggerd this!', memoizedMomentData);
+      console.log("memoized data triggerd this!", memoizedMomentData);
       listVisibility.value = withTiming(0);
     }
-
   }, [memoizedMomentData]);
-
 
   const categoryNavVisibility = useSharedValue(1);
   const listVisibility = useSharedValue(1);
 
-
   useFocusEffect(
     useCallback(() => {
-      console.log('running useFocusEffect');
+      console.log("running useFocusEffect");
       if (capsuleList.length > 0) {
-        
-      listVisibility.value = withSpring(1, { duration: 100 }); //800
+        listVisibility.value = withSpring(1, { duration: 100 }); //800
 
-      return () => {
-        listVisibility.value = withTiming(0, { duration: 2000 }); //NEEDED OR ELSE LISTVISIBILITY BEING ZERO WILL TRIGGER PREADDED BUTTON TO APPEAR just looks bad :)
-      };
-      
+        return () => {
+          listVisibility.value = withTiming(0, { duration: 2000 }); //NEEDED OR ELSE LISTVISIBILITY BEING ZERO WILL TRIGGER PREADDED BUTTON TO APPEAR just looks bad :)
+        };
       }
     }, [])
   );
@@ -264,6 +245,7 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
         })}
       >
         <MomentItem
+          friendColor={friendColor}
           momentData={item}
           combinedHeight={COMBINED_HEIGHT}
           index={index} //ADD to component if want to alternative moment item layout
@@ -278,13 +260,7 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
         />
       </Pressable>
     ),
-    [
-      // viewableItemsArray,
-      // momentIdToAnimate,
-      // fadeAnim,
-      categoryColorsMap,
-      // saveToHello,
-    ]
+    [categoryColorsMap]
   );
 
   const extractItemKey = (item, index) =>
@@ -370,7 +346,7 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
             removeClippedSubviews={true}
             showsVerticalScrollIndicator={false}
             ListFooterComponent={() => (
-              <View style={{ height: momentListBottomSpacer  }} />
+              <View style={{ height: momentListBottomSpacer }} />
             )}
             // onScrollToIndexFailed={(info) => {
             //   //scroll to beginning maybe instead? not sure what this is doing
@@ -394,6 +370,11 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
           categoryColorsMap &&
           Object.keys(categoryColorsMap).length > 0 && (
             <CategoryNavigator
+              capsuleList={capsuleList}
+              textStyle={primaryTextStyle}
+              backgroundColor={primaryBackgroundColor}
+              homeDarkColor={homeDarkColor}
+              arrowBackgroundColor={appLightColor}
               onClose={() => setCategoryNavigatorVisible(false)}
               visibilityValue={listVisibility}
               viewableItemsArray={viewableItemsArray}
@@ -433,6 +414,12 @@ const MomentsList = ({ scrollTo, categoryColorsMap }) => {
           {!categoryNavigatorVisible && (
             <>
               <EscortBarMinusWidth
+                backgroundColor={primaryBackgroundColor}
+                overlayColor={primaryOverlayColor}
+                textStyle={primaryTextStyle}
+                specialTextStyle={subWelcomeTextStyle}
+                homeDarkColor={homeDarkColor}
+                navigateBack={navigateBack}
                 onPress={() => setCategoryNavigatorVisible(true)}
               />
             </>

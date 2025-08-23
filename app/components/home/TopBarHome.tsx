@@ -1,21 +1,25 @@
 import { View, Text, Pressable } from "react-native";
-import React, { useCallback } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useCallback } from "react"; 
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 import LoadingPage from "../appwide/spinner/LoadingPage";
+import { ThemeAheadOfLoading } from "@/src/types/FriendTypes";
 
-type Props = {};
+type Props = {
+  loading: boolean;
+  style: ThemeAheadOfLoading; // friendStyle
+  textStyle: object;
+  textColor: string;
+  specialTextStyle: object; // appFontStyles.subWelcomeText
+  backgroundColor: string; // themeStyles.primaryBackground
+  onPress: () => void;
+};
 
-const TopBarHome = (props: Props) => {
-  const { appFontStyles, themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendStyle();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-  const navigation = useNavigation();
-  // const friendModalButtonHeight = 16;
+const TopBarHome = ({loading, style, textStyle,textColor, specialTextStyle, backgroundColor, onPress}: Props) => {
+ 
+ 
+  const navigation = useNavigation(); 
 
   const handleNavigateToFriendSelect = () => {
     navigation.navigate("SelectFriend");
@@ -27,18 +31,18 @@ const TopBarHome = (props: Props) => {
         onPress={handleNavigateToFriendSelect}
         style={{ flexDirection: "row" }}
       >
-        <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+        <Text style={[textStyle, specialTextStyle]}>
           Switch
         </Text>
         <MaterialCommunityIcons
           name="account-switch-outline"
           size={20}
-          color={themeStyles.primaryText.color}
+          color={textColor}
           style={{ marginHorizontal: 10 }}
         />
       </Pressable>
     ),
-    [appFontStyles, handleNavigateToFriendSelect, themeStyles]
+    [ handleNavigateToFriendSelect, textStyle, specialTextStyle]
   );
   return (
     <View
@@ -46,24 +50,24 @@ const TopBarHome = (props: Props) => {
         height: "auto",
         paddingBottom: 10,
         width: "100%",
-        backgroundColor: themeStyles.primaryBackground.backgroundColor,
+        backgroundColor: backgroundColor,
         paddingHorizontal: 10,
         flexDirection: "row",
         alignItems: "center",
       }}
     >
-      {loadingNewFriend && (
+      {loading && (
         <View style={{ width: "100%" }}>
           <LoadingPage
-            loading={loadingNewFriend}
+            loading={true}
             spinnerType="flow"
             spinnerSize={30}
-            color={themeAheadOfLoading.darkColor}
+            color={style.darkColor}
             includeLabel={false}
           />
         </View>
       )}
-      {!loadingNewFriend && <RenderIcon />}
+      {!loading && <RenderIcon />}
     </View>
   );
 };

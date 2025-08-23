@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SectionUserCategories from "../friends/SectionUserCategories";
@@ -7,8 +7,7 @@ import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import { useCategories } from "@/src/context/CategoriesContext";
 import HelperMessage from "../alerts/HelperMessage";
 import InfoItem from "./InfoItem";
-
-import ModalInfoText from "./ModalInfoText";
+ 
 interface Props {
   isVisible: boolean;
   closeModal: () => void;

@@ -1,42 +1,23 @@
-import React, {  useMemo } from "react";
-import {  View  } from "react-native";
+import React from "react";
+import { View } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-   
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
- 
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- import NoToggle from "../user/NoToggle";
 
-const SectionFriendStats = () => {
- 
-  const { themeStyles } = useGlobalStyle(); 
-const { friendDashboardData } = useSelectedFriend();
+import NoToggle from "../user/NoToggle";
 
-const daysSince = useMemo(() => {
-   return friendDashboardData.days_since_words || '';
+const SectionFriendStats = ({ friendDaysSince, friendTimeScore }) => {
+  const { themeStyles } = useGlobalStyle();
 
-}, [friendDashboardData]);
-
-const timeScore = useMemo(() => {
-  return friendDashboardData.time_score || '';
-
-}, [friendDashboardData]);
-
-
- 
-  
   return (
     <View
       style={{
-        // borderTopLeftRadius: 0,
-        // borderTopRightRadius: 0,
-        // padding: 0,
         width: "100%",
         alignSelf: "flex-start",
       }}
     >
       <NoToggle
-        label={daysSince}
+        label={friendDaysSince}
         icon={
           <MaterialCommunityIcons
             name={"timer"}
@@ -48,7 +29,7 @@ const timeScore = useMemo(() => {
       />
 
       <NoToggle
-        label={timeScore}
+        label={friendTimeScore}
         icon={
           <MaterialCommunityIcons
             name={"heart"}
@@ -58,8 +39,6 @@ const timeScore = useMemo(() => {
         }
         onPress={() => {}}
       />
- 
- 
     </View>
   );
 };

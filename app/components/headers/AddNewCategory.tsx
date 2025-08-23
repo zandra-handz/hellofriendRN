@@ -8,9 +8,11 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {  MaterialIcons } from "@expo/vector-icons";
 import Animated, { SlideInLeft } from "react-native-reanimated";
 import { useCategories } from "@/src/context/CategoriesContext";
+import { useUser } from "@/src/context/UserContext";
+import useCreateNewCategory from "@/src/hooks/CategoryCalls/useCreateNewCategory";
  
 import FlashMessage from "../alerts/FlashMessage";
 
@@ -35,7 +37,7 @@ const AddNewCategory = ({
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
- 
+ const { user} = useUser();
 
   const ENTER_MESSAGE_WIDTH = 60;
 
@@ -45,38 +47,24 @@ const AddNewCategory = ({
     duration: number;
   }>(null);
 
-  const { userCategories, createNewCategory, createNewCategoryMutation } =
+  const { userCategories } =
     useCategories();
+
+
+    const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory({userId: user?.id});
   const [inputActive, setInputActive] = useState(false);
 
-  const clearInput = () => {
-    console.log("clearing input");
-    // setNewCategory("");
-    // if (newCategoryRef && newCategoryRef.current) {
-    //   newCategoryRef.current.clear();
+  // const clearInput = () => {
+  //   console.log("clearing input");
+ 
+  //   setNewCategory("");
+  // };
 
-    // }
-    setNewCategory("");
-  };
+  // useEffect(() => {
+  //   console.log(`new category changed:`, newCategory);
+  // }, [newCategory]);
 
-  useEffect(() => {
-    console.log(`new category changed:`, newCategory);
-  }, [newCategory]);
-
-  const handleRefocus = () => {
-    console.log("refocusing");
-    setNewCategory("");
-
-    // if (newCategoryRef && newCategoryRef.current) {
-    //   console.log('refocus input');
-    //   newCategoryRef.current.blur();
-    //   newCategoryRef.current.focus();
-    //   // setNewCategory(newCategoryRef.current.value);
-
-    // } else {
-    //   console.log('no ref');
-    // }
-  };
+ 
 
   useEffect(() => {
     if (inputActive && newCategoryRef.current) {
@@ -92,14 +80,7 @@ const AddNewCategory = ({
       }, 50);
     }
   }, [inputActive]);
-
-  // useEffect(() => {
-  //   console.log("resetting");
-  //   if (newCategoryRef && newCategoryRef.current) {
-  //     newCategoryRef.current.blur();
-  //     newCategoryRef.current.focus();
-  //   }
-  // }, []);
+ 
 
   useEffect(() => {
     if (createNewCategoryMutation.isSuccess) {
@@ -121,6 +102,8 @@ const AddNewCategory = ({
   const remaining = useMemo(() => {
     if (userCategories && userCategories.length > 0) {
       return userCategories[0].max_active - userCategories.length;
+    } else {
+      return 1;
     }
   }, [userCategories]);
 
@@ -172,7 +155,7 @@ const AddNewCategory = ({
     }); 
     try {
       const updatedData = await createNewCategory({
-   
+ 
         name: newCategory,
       });
 

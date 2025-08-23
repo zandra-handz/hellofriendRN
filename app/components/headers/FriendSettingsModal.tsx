@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { TouchableOpacity, AccessibilityInfo } from "react-native";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { TouchableOpacity, AccessibilityInfo } from "react-native"; 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
@@ -13,32 +12,33 @@ import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
 import DeleteFriend from "../friends/DeleteFriend";
 
+import { FriendDashboardData } from "@/src/types/FriendTypes"; 
+
 interface Props {
   isVisible: boolean;
+  userId: number;
   friendId: number;
   friendName: string;
+  friendDash: FriendDashboardData;
   bottomSpacer: number;
   closeModal: () => void;
+
 }
 
 const FriendSettingsModal: React.FC<Props> = ({
+  userId,
   isVisible,
   friendId,
   friendName = "",
+  friendDash,
   bottomSpacer,
   closeModal,
+    themeAheadOfLoading,
 }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendStyle();
-
-  const headerIconSize = 26;
-
-  // React.useEffect(() => {
-  //   if (isModalVisible) {
-  //     AccessibilityInfo.announceForAccessibility("Information opened");
-  //   }
-  // }, [isModalVisible]);
-
+ 
+//  console.log(friendDash?.friend_faves?.use_friend_color_theme);
+//  console.log(friendDash);
   return (
     <ModalScaleLikeTree
       bottomSpacer={bottomSpacer}
@@ -61,20 +61,35 @@ const FriendSettingsModal: React.FC<Props> = ({
       }
       buttonTitle={`${friendName}`}
       children={
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={styles.bodyContainer}>
             <View style={styles.sectionContainer}>
-              <SectionFriendStats />
+              <SectionFriendStats
+ 
+                friendDaysSince={friendDash?.days_since_words}
+                friendTimeScore={friendDash?.time_score}
+              />
             </View>
             <View style={styles.sectionContainer}>
-              <SectionFriendSettings />
+              <SectionFriendSettings
+              themeAheadOfLoading={themeAheadOfLoading}
+                friendId={friendId}
+                friendPhone={friendDash?.suggestion_settings?.phone_number}
+                friendEffort={friendDash?.suggestion_settings?.effort_required}
+                friendPriority={friendDash?.suggestion_settings?.priority_level}
+              />
             </View>
 
             <View style={styles.headerContainer}>
-              <SectionFriendTheme />
+              <SectionFriendTheme
+              themeAheadOfLoading={themeAheadOfLoading}
+                userId={userId}
+                friendId={friendId}
+                manualThemeOn={friendDash?.friend_faves?.use_friend_color_theme}
+              />
             </View>
           </ScrollView>
-          <DeleteFriend  friendId={friendId} friendName={friendName}/>
+          <DeleteFriend friendId={friendId} friendName={friendName} />
         </View>
       }
       onClose={closeModal}

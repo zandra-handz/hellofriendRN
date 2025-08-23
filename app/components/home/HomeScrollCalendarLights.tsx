@@ -1,30 +1,30 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useCallback } from "react";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
- import CalendarLights from "../foranimations/CalendarLights";
+// import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 
+import CalendarLights from "../foranimations/CalendarLights";
+ 
 const HomeScrollCalendarLights = ({
+  friendId,
   itemColor,
   onMonthPress,
-  combinedData, 
+  combinedData,
   height,
   borderRadius = 20,
   borderColor = "transparent",
-}) => { 
-  const {   isLoading } = useUpcomingHelloes();
-  const { friendDashboardData } = useSelectedFriend();
-  const { friendList  } = useFriendList();
-  const { themeAheadOfLoading } = useFriendStyle();
+  themeAheadOfLoading,
+  helloesList,
+}) => {
+  // const { isLoading } = useUpcomingHelloes(); 
 
   const calendarButtonHeight = height / 0.6;
 
   const RenderCalendarLights = useCallback(
     () => (
-      <CalendarLights 
-      onMonthPress={onMonthPress}
+      <CalendarLights
+        helloesList={helloesList}
+        friendId={friendId}
+        onMonthPress={onMonthPress}
         daySquareBorderRadius={20}
         daySquareBorderColor={itemColor}
         combinedData={combinedData}
@@ -32,7 +32,7 @@ const HomeScrollCalendarLights = ({
         animationColor={themeAheadOfLoading.lightColor}
       />
     ),
-    [friendDashboardData, themeAheadOfLoading, itemColor]
+    [helloesList, themeAheadOfLoading, itemColor]
   );
 
   return (
@@ -47,24 +47,20 @@ const HomeScrollCalendarLights = ({
           backgroundColor: "transparent",
         },
       ]}
-    > 
-      {!isLoading && (
+    >
+      {/* {!isLoading && ( */}
         <>
           <View style={styles.headerContainer}></View>
 
-    
-
-          {friendList?.length > 0 && (
-            <View
-              style={[styles.buttonContainer, { height: calendarButtonHeight }]}
-            >
-           
-              <RenderCalendarLights />
-          
-            </View>
-          )}
+          {/* {friendList?.length > 0 && ( */}
+          <View
+            style={[styles.buttonContainer, { height: calendarButtonHeight }]}
+          >
+            <RenderCalendarLights />
+          </View>
+          {/* )} */}
         </>
-      )}
+      {/* )} */}
     </View>
   );
 };

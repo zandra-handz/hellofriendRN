@@ -16,16 +16,10 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useWindowDimensions } from "react-native";
 import { SharedValue } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
- 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+  
 import { Moment } from "@/src/types/MomentContextTypes";
 
-// interface Moment {
-//   typedCategory: string;  // string value should always exist here per backend, I am like 90% sure
-//   capsule: string;
-//   created: string;
-// }
-
+ 
 interface MomentItemsProps {
   index: number;
   momentData: Moment;
@@ -41,6 +35,7 @@ interface MomentItemsProps {
 }
 
 const MomentItem: React.FC<MomentItemsProps> = ({
+  friendColor,
   index,
   momentData,
   momentDate,
@@ -57,8 +52,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
 
   const startingPosition = index * combinedHeight;
   const { height } = useWindowDimensions();
-  const containerHeight = height - 410;
-  const { themeAheadOfLoading } = useFriendStyle();
+  const containerHeight = height - 410; 
   const textContainerWidth = "100%";
   const talkingPointNumberOfLines = 3;
   const cardBorderRadius = 999;
@@ -108,7 +102,7 @@ const MomentItem: React.FC<MomentItemsProps> = ({
       ? interpolateColor(
           pulseValue.value,
           [0, 1],
-          [manualGradientColors.lightColor, themeAheadOfLoading.darkColor]
+          [manualGradientColors.lightColor, friendColor]
         )
       : "transparent"; // manualGradientColors.homeDarkColor;
 

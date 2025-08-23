@@ -3,7 +3,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import { View, Button, StyleSheet, Text, TouchableOpacity, Pressable } from "react-native";
+import { View, Button, StyleSheet, Text, TouchableOpacity } from "react-native";
 import ColorPicker, { Panel1, HueSlider } from "reanimated-color-picker"; // Correct import
 import { updateFriendFavesColorTheme } from "@/src/calls/api"; // Import the updateFriendFavesColorTheme function
 import { useUser } from "@/src/context/UserContext";

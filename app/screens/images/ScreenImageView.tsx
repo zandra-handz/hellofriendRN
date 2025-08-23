@@ -2,28 +2,29 @@ import React, { useCallback, useMemo } from "react";
 import { View, Alert } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
+ 
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+ import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import ImageViewPage from "@/app/components/images/ImageViewPage";
- 
+ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-
-import ImageGalleryOutlineSvg from "@/app/assets/svgs/image-gallery-outline.svg";
+ 
 
 const ScreenImageView = () => {
   const route = useRoute();
   const startingIndex = route.params?.index ?? null;
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { imageList, deleteImage, deleteImageMutation } = useImageFunctions();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend  } = useSelectedFriend();
+  const { loadingDash } = useFriendDash();
   const { themeAheadOfLoading } = useFriendStyle();
 
-  const totalCount = imageList.length;
+  // const totalCount = imageList.length;
 
 
     const handleShare = async (currentIndex) => {
@@ -76,20 +77,20 @@ const ScreenImageView = () => {
   };
 };
 
-  const renderHeader = useCallback(
-    () => (
-      <GlobalAppHeader
-        title="Image"
-        navigateTo="Images"
-        icon={ImageGalleryOutlineSvg}
-        altView={false}
-      />
-    ),
-    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
-  );
+ 
 
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground
+    
+          startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
+    
+    
+    style={{ flex: 1 }}>
       <CarouselSlider
         initialIndex={startingIndex}
         data={imageList}

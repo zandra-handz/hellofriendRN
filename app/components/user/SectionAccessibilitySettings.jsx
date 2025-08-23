@@ -1,19 +1,21 @@
 import React, {  useMemo } from "react";
 import {  View, Alert } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- 
+ import { useUser } from "@/src/context/UserContext";
 import Toggle from "./Toggle"; 
 
 import { useUserSettings } from "@/src/context/UserSettingsContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
  
 const SectionAccessibilitySettings = () => {
+  const { user } = useUser();
   const {
-    settings,
-    updateSettingsMutation,
-    // updateNotificationSettings, no longer a separate state from settings
+    settings,  
  
   } = useUserSettings();
+
+  const { updateSettingsMutation } = useUpdateSettings({userId: user?.id});
   const { themeStyles } = useGlobalStyle(); 
 
   const manualTheme = useMemo(() => {

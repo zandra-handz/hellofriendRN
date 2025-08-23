@@ -8,7 +8,8 @@ import { useUser } from "@/src/context/UserContext";
 import ButtonItemFooterStyle from "@/app/components/headers/ButtonItemFooterStyle";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+ import { useFriendDash } from "@/src/context/FriendDashContext";
+ import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 const ScreenLocationSend = () => {
   const route = useRoute();
@@ -18,15 +19,16 @@ const ScreenLocationSend = () => {
   const selectedDay = route.params?.selectedDay ?? null;
 const { getCurrentDay } = useLocationDetailFunctions();
 const currentDay = getCurrentDay();
-  console.log(`screen location send`, selectedDay);
+  // console.log(`screen location send`, selectedDay);
   const { getCachedAdditionalDetails } = useLocations();
-  const { friendDashboardData, selectedFriend } = useSelectedFriend();
+  const {  selectedFriend } = useSelectedFriend();
+  const { friendDash } = useFriendDash();
   //weekdayTextData is coming from LocationHoursOfOperation component
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   const additionalDetails = getCachedAdditionalDetails(location?.id);
- 
+ const { themeAheadOfLoading } = useFriendStyle();
   const phoneNumber =
-    friendDashboardData?.suggestion_settings?.phone_number || null;
+    friendDash?.suggestion_settings?.phone_number || null;
 
   const [messageData, setMessageData] = useState({
     userMessage: `${user.username} has sent you a meet up site from the hellofriend app!`,
@@ -181,7 +183,14 @@ const currentDay = getCurrentDay();
   };
 
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground 
+    
+        startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}style={{ flex: 1 }}>
       <LocationInviteBody
       currentDay={currentDay}
         messageData={messageData}

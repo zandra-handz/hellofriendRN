@@ -1,6 +1,5 @@
-import { TouchableOpacity, Text, Pressable } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { TouchableOpacity,  StyleSheet } from "react-native";
+import React from "react"; 
 import Animated, { SharedValue } from "react-native-reanimated";
  
 import {
@@ -26,6 +25,8 @@ type Props = {
 };
 
 const CategoryButton = ({
+  homeDarkColor,
+  textStyle,
   viewableItemsArray,
   label,
   onPress,
@@ -34,25 +35,17 @@ const CategoryButton = ({
   pulseDuration = 2000,
   highlightColor = '#ccc',
 }: Props) => {
-  const {
-    themeStyles,
-    appContainerStyles,
-    appFontStyles,
-    manualGradientColors,
-  } = useGlobalStyle();
-console.log(highlightColor); 
+  
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
 
-  // not sure how to add animations to Pressable
-  //   const AnimatedPressable =
-  // Animated.createAnimatedComponent(Pressable);
+ 
 
   const progress = useSharedValue(0);
   const translateYx2 = useSharedValue(0);
   const startColor = useSharedValue("transparent");
   const endColor = useSharedValue("red");
-  const textColor = useSharedValue(themeStyles.genericText.color);
+  const textColor = useSharedValue(textStyle.color);
 
   //  show animation based on if top item in FlatList in parent
   useAnimatedReaction(
@@ -63,12 +56,10 @@ console.log(highlightColor);
     },
     (isVisible, prevIsVisible) => {
       if (isVisible !== prevIsVisible) {
-        if (isVisible) {
-          // startColor.value = themeAheadOfLoading.darkColor;
-           startColor.value = highlightColor;
-          // endColor.value = manualGradientColors.lighterLightColor || "red";
-           endColor.value = themeStyles.primaryText.color || "red";
-          textColor.value = manualGradientColors.homeDarkColor;
+        if (isVisible) { 
+           startColor.value = highlightColor; 
+           endColor.value = textStyle.color || "red";
+          textColor.value = homeDarkColor;
 
           progress.value = withRepeat(
             withTiming(1, { duration: pulseDuration }),
@@ -82,7 +73,7 @@ console.log(highlightColor);
           endColor.value = 'transparent';
           // startColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
           // endColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
-          textColor.value = themeStyles.genericText.color;
+          textColor.value = textStyle.color;
         }
       }
     },
@@ -107,11 +98,10 @@ console.log(highlightColor);
     <AnimatedTouchableOpacity
       style={[
         animatedCardsStyle,
-        appContainerStyles.categoryButton,
+        styles.buttonContainer,
         {
           width: "auto",
-          padding: 10,
-        //  backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          padding: 10, 
           height: height,
         },
       ]}
@@ -123,7 +113,7 @@ console.log(highlightColor);
         numberOfLines={1}
         style={[
           animatedCardsStyle,
-          themeStyles.genericText,
+          textStyle,
           // animatedCardsStyle,
           {
             // fontWeight: "bold",
@@ -145,5 +135,22 @@ console.log(highlightColor);
     </AnimatedTouchableOpacity>
   );
 };
+
+
+const styles = ({
+  buttonContainer: {
+        borderWidth: StyleSheet.hairlineWidth,
+    alignText: "left",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+   
+    borderRadius: 16,
+    height: "auto",
+  }
+})
 
 export default CategoryButton;

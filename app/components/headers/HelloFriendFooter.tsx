@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Keyboard } from "react-native";
-
-// app state
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 // app components
@@ -15,21 +12,30 @@ import CategoriesModal from "./CategoriesModal";
 
 // app display/templates
 import FooterButtonIconVersion from "./FooterButtonIconVersion";
- 
+
 import useSignOut from "@/src/hooks/UserCalls/useSignOut";
 import FriendProfileButton from "../buttons/friends/FriendProfileButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
- 
+
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
-const HelloFriendFooter = () => {
-  const { user } = useUser();
+const HelloFriendFooter = ({
+  manualGradientColors,
+  themeAheadOfLoading,
+  overlayColor,
+  textColor,
+  dividerStyle,
+  userId,
+  friendId,
+  friendName,
+  friendDash,
+}) => {
   const { onSignOut } = useSignOut();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const { themeStyles } = useGlobalStyle();
-  const { selectedFriend, deselectFriend } = useSelectedFriend();
+ 
+  const { deselectFriend } = useSelectedFriend();
   const { resetTheme } = useFriendStyle();
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
@@ -37,7 +43,6 @@ const HelloFriendFooter = () => {
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [friendSettingsModalVisible, setFriendSettingsModalVisible] =
     useState(false);
- 
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -79,13 +84,13 @@ const HelloFriendFooter = () => {
             // name={"keyboard-backspace"}
             name={"logout"}
             size={footerIconSize}
-            color={themeStyles.footerIcon.color}
+            color={textColor}
           />
         }
         onPress={() => onSignOut()}
       />
     ),
-    [themeStyles]
+    [textColor]
   );
 
   const RenderDeselectButton = useCallback(
@@ -101,13 +106,13 @@ const HelloFriendFooter = () => {
             // name={"keyboard-backspace"}
             name={"home-outline"}
             size={footerIconSize}
-            color={themeStyles.footerIcon.color}
+            color={textColor}
           />
         }
         onPress={() => handleDeselectFriend()}
       />
     ),
-    [themeStyles]
+    [textColor]
   );
 
   const RenderSettingsButton = useCallback(
@@ -119,13 +124,13 @@ const HelloFriendFooter = () => {
             name={"settings-suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
             //  name={"app-settings-alt"}
             size={footerIconSize}
-            color={themeStyles.footerIcon.color}
+            color={textColor}
           />
         }
         onPress={() => setSettingsModalVisible(true)}
       />
     ),
-    [themeStyles]
+    [textColor]
   );
 
   const RenderReportIssueButton = useCallback(
@@ -136,18 +141,18 @@ const HelloFriendFooter = () => {
           <MaterialCommunityIcons
             name={"bug-outline"}
             size={footerIconSize}
-            color={themeStyles.footerIcon.color}
+            color={textColor}
           />
         }
         onPress={() => setReportModalVisible(true)}
       />
     ),
-    [themeStyles]
+    [textColor]
   );
 
   const handleCenterButtonToggle = () => {
     console.log("center button toggled!");
-    if (selectedFriend) {
+    if (friendId) {
       setFriendSettingsModalVisible(true);
     } else {
       setCategoriesModalVisible((prev) => !prev);
@@ -155,8 +160,15 @@ const HelloFriendFooter = () => {
   };
 
   const RenderFriendProfileButton = useCallback(
-    () => <FriendProfileButton onPress={() => handleCenterButtonToggle()} />,
-    [themeStyles, selectedFriend]
+    () => (
+      <FriendProfileButton
+      themeAheadOfLoading={themeAheadOfLoading}
+        friendId={friendId}
+        friendName={friendName}
+        onPress={() => handleCenterButtonToggle()}
+      />
+    ),
+    [themeAheadOfLoading, friendId, friendName]
   );
 
   const RenderAboutAppButton = useCallback(
@@ -167,18 +179,22 @@ const HelloFriendFooter = () => {
           <MaterialCommunityIcons
             name={"information-outline"}
             size={footerIconSize}
-            color={themeStyles.footerIcon.color}
+            color={textColor}
           />
         }
         onPress={() => setAboutModalVisible(true)}
       />
     ),
-    [themeStyles]
+    [textColor]
   );
 
   return (
     <GradientBackground
-      useFriendColors={!!selectedFriend}
+      useFriendColors={!!friendId}
+      startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[
         styles.container,
         {
@@ -194,40 +210,40 @@ const HelloFriendFooter = () => {
           {
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            backgroundColor: overlayColor,
           },
         ]}
       >
         <View style={styles.section}>
-          {!selectedFriend ? <RenderSignOutButton /> : <RenderDeselectButton />}
+          {!friendId ? <RenderSignOutButton /> : <RenderDeselectButton />}
         </View>
         {/* <View style={styles.section}>
             <ButtonData />
           </View>
        */}
 
-        <View style={[styles.divider, themeStyles.divider]} />
+        <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
             <RenderSettingsButton />
           </View>
         </>
 
-        <View style={[styles.divider, themeStyles.divider]} />
+        <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
-            <RenderFriendProfileButton />
+            <RenderFriendProfileButton themeAheadOfLoading={themeAheadOfLoading}/>
           </View>
         </>
 
-        <View style={[styles.divider, themeStyles.divider]} />
+        <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
             <RenderReportIssueButton />
           </View>
         </>
 
-        <View style={[styles.divider, themeStyles.divider]} />
+        <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
             <RenderAboutAppButton />
@@ -235,10 +251,10 @@ const HelloFriendFooter = () => {
         </>
       </View>
 
-      {settingsModalVisible && user?.id && (
+      {settingsModalVisible && userId && (
         <View>
           <UserSettingsModal
-          userId={user?.id}
+            userId={userId}
             isVisible={settingsModalVisible}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setSettingsModalVisible(false)}
@@ -246,12 +262,16 @@ const HelloFriendFooter = () => {
         </View>
       )}
 
-      {friendSettingsModalVisible && !!selectedFriend && (
+      {friendSettingsModalVisible && !!friendId && (
         <View>
           <FriendSettingsModal
+            userId={userId}
             isVisible={friendSettingsModalVisible}
-            friendId={selectedFriend?.id}
-            friendName={selectedFriend.name}
+            themeAheadOfLoading={themeAheadOfLoading}
+            
+            friendId={friendId}
+            friendName={friendName}
+            friendDash={friendDash}
             bottomSpacer={footerHeight - 30} //for safe view
             closeModal={() => setFriendSettingsModalVisible(false)}
           />

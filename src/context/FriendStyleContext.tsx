@@ -3,10 +3,12 @@ import React, {
   createContext,
   useContext,
   useState,
-  useMemo, 
+  useMemo,
   ReactNode,
 } from "react";
-import { useFriendList } from "./FriendListContext";
+
+import { useQueryClient } from "@tanstack/react-query";
+import { useUser } from "./UserContext";
 import { Friend, ThemeAheadOfLoading } from "../types/FriendTypes";
 
 interface FriendStyleContextType {
@@ -14,8 +16,7 @@ interface FriendStyleContextType {
   getThemeAheadOfLoading: (friend: Friend) => void;
 }
 
-
- //HARD CODE LIGHT DARK COLOR LOCATION:
+//HARD CODE LIGHT DARK COLOR LOCATION:
 //FRIENDTINTPRESSABLE unlikely to be resorted to but does have hard code to get TS to stop yelling at me
 
 const FriendStyleContext = createContext<FriendStyleContextType>({
@@ -38,7 +39,9 @@ interface FriendStyleProviderProps {
 export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
   children,
 }) => {
-  const {   setFriendList } = useFriendList();
+  const queryClient = useQueryClient();
+
+  const { user } = useUser();
   const [useGradientInSafeView, setUseGradientInSafeView] = useState(false);
   const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
     darkColor: "#4caf50",
@@ -51,8 +54,22 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
     setUseGradientInSafeView((prev) => boolean);
   };
 
-  const getThemeAheadOfLoading = (loadingFriend: Friend) => {
+  const handleSetTheme = ({
+    lightColor,
+    darkColor,
+    fontColor,
+    fontColorSecondary,
+  }) => {
     setThemeAheadOfLoading({
+      lightColor: lightColor,
+      darkColor: darkColor,
+      fontColor: fontColor,
+      fontColorSecondary: fontColorSecondary,
+    });
+  };
+
+  const getThemeAheadOfLoading = (loadingFriend: Friend) => {
+    handleSetTheme({
       lightColor: loadingFriend.theme_color_light || "#a0f143",
       darkColor: loadingFriend.theme_color_dark || "#4caf50",
       fontColor: loadingFriend.theme_color_font || "#000000",
@@ -61,7 +78,7 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
   };
 
   const resetTheme = () => {
-    setThemeAheadOfLoading({
+    handleSetTheme({
       lightColor: "#a0f143",
       darkColor: "#4caf50",
       fontColor: "#000000",
@@ -77,8 +94,10 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
     fontColorSecondary: string
   ) => {
     console.log("updating friend list colors");
-    setFriendList((prevFriendList) =>
-      prevFriendList.map((friend) =>
+    queryClient.setQueryData<Friend[]>(["friendList", user?.id], (oldData) => {
+      if (!oldData) return oldData;
+
+      return oldData.map((friend) =>
         friend.id === friendId
           ? {
               ...friend,
@@ -90,8 +109,8 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
               theme_color_font_secondary: fontColorSecondary,
             }
           : friend
-      )
-    );
+      );
+    });
     setThemeAheadOfLoading({
       lightColor,
       darkColor,
@@ -100,44 +119,47 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
     });
   };
 
-  const updateFriendListColorsExcludeSaved = (
-    friendId: number,
-    darkColor: string,
-    lightColor: string,
-    fontColor: string,
-    fontColorSecondary: string
-  ) => {
-    setFriendList((prevFriendList) =>
-      prevFriendList.map((friend) =>
-        friend.id === friendId
-          ? {
-              ...friend,
-              theme_color_dark: darkColor,
-              theme_color_light: lightColor,
-              theme_color_font: fontColor,
-              theme_color_font_secondary: fontColorSecondary,
-              // saved colors NOT updated here
-            }
-          : friend
-      )
-    );
+  // const updateFriendListColorsExcludeSaved = (
+  //   friendId: number,
+  //   darkColor: string,
+  //   lightColor: string,
+  //   fontColor: string,
+  //   fontColorSecondary: string
+  // ) => {
+  //   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (oldData) => {
+  //     if (!oldData) return oldData;
 
-    setThemeAheadOfLoading({
-      lightColor,
-      darkColor,
-      fontColor,
-      fontColorSecondary,
-    });
-  };
+  //     return oldData.map((friend) =>
+  //       friend.id === friendId
+  //         ? {
+  //             ...friend,
+  //             theme_color_dark: darkColor,
+  //             theme_color_light: lightColor,
+  //             theme_color_font: fontColor,
+  //             theme_color_font_secondary: fontColorSecondary,
+  //             // saved_* not updated here
+  //           }
+  //         : friend
+  //     );
+  //   });
+
+  //   setThemeAheadOfLoading({
+  //     lightColor,
+  //     darkColor,
+  //     fontColor,
+  //     fontColorSecondary,
+  //   });
+  // };
 
   const contextValue = useMemo(
     () => ({
       themeAheadOfLoading,
       setThemeAheadOfLoading,
       getThemeAheadOfLoading,
+      handleSetTheme,
       resetTheme,
       updateFriendListColors,
-      updateFriendListColorsExcludeSaved,
+      // updateFriendListColorsExcludeSaved,
       useGradientInSafeView,
       setUseGradientInSafeView,
       updateSafeViewGradient,
@@ -146,9 +168,9 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
       themeAheadOfLoading,
       getThemeAheadOfLoading,
       resetTheme,
-
+      handleSetTheme,
       updateFriendListColors,
-      updateFriendListColorsExcludeSaved,
+      // updateFriendListColorsExcludeSaved,
       useGradientInSafeView,
       updateSafeViewGradient,
     ]

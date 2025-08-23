@@ -6,35 +6,30 @@ import {
   Text,
   StyleSheet,
   Pressable,
-  TouchableOpacity,
+ 
 } from "react-native";
 import HelloDayWrapper from "@/app/components/helloes/HelloDayWrapper";
-import MomentsSearchBar from "../moments/MomentsSearchBar";
-import { showHelperMessage } from "@/src/utils/ShowHelperMessage";
+ 
 import { ShowQuickView } from "@/src/utils/ShowQuickView";
 import { daysSincedDateField } from "@/src/utils/DaysSince";
-
-import { useHelloes } from "@/src/context/HelloesContext";
+ 
 import HelloQuickView from "../alerts/HelloQuickView";
 
 const CalendarLights = ({
+  helloesList,
+  friendId,
   onMonthPress,
   combinedData,
   daySquareBorderColor = "white",
-  daySquareBorderRadius = 0,
-  // opacityMinusAnimation=1,
+  daySquareBorderRadius = 0, 
   animationColor = "orange",
-}) => {
-  // const [combinedData, setCombinedData] = useState([]);
-  const { helloesList } = useHelloes();
+}) => {  
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
   const backgroundColor = "transparent"; // use this to give just the calendar tray a background color. borderRadius already set
   const opacityMinusAnimation = 1;
   const flatListRef = useRef(null);
 
-  useEffect(() => {
-    // Scroll to the end without animation when the component mounts
-    // doesn't work!
+  useEffect(() => { 
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({ animated: false });
     }
@@ -51,7 +46,7 @@ const CalendarLights = ({
       console.log("helloobject@@");
       ShowQuickView({
         topBarText: `Hello on ${helloObject.past_date_in_words}   |   ${daysSince} ${word} ago`,
-        view: <HelloQuickView data={helloObject} index={helloIndex} />,
+        view: <HelloQuickView friendId={friendId} data={helloObject} index={helloIndex} />,
         message: `hi hi hi`,
         update: false,
       });
@@ -102,8 +97,7 @@ const CalendarLights = ({
               borderColor: daySquareBorderColor,
               backgroundColor: "transparent",
             },
-          ]}
-          // key={`day-${rowStart + index}`}
+          ]} 
         ></View>
       );
     }

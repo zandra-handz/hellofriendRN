@@ -2,10 +2,8 @@ import React, { useState, useMemo } from "react";
 import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
-import AboutAppModal from "./AboutAppModal";
-import ReportIssueModal from "./ReportIssueModal";
-import SettingsModal from "./SettingsModal";
+ 
+ 
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
@@ -42,10 +40,7 @@ const ItemFooter: React.FC<Props> = ({
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
 }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
-
-  const [aboutModalVisible, setAboutModalVisible] = useState(false);
-  const [reportModalVisible, setReportModalVisible] = useState(false);
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+ 
   const [currentIndex, setCurrentIndex] = useState(false);
   //   useEffect(() => {
   //     if (location) {
@@ -56,7 +51,7 @@ const ItemFooter: React.FC<Props> = ({
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
   const footerPaddingBottom = 20;
-  const footerIconSize = 28;
+  // const footerIconSize = 28;
  
   const totalCount = totalItemCount
     ? totalItemCount
@@ -241,32 +236,9 @@ const ItemFooter: React.FC<Props> = ({
         )}
       </Animated.View>
 
-      {settingsModalVisible && (
-        <View>
-          <SettingsModal
-            isVisible={settingsModalVisible}
-            closeModal={() => setSettingsModalVisible(false)}
-          />
-        </View>
-      )}
-
-      {aboutModalVisible && (
-        <View>
-          <AboutAppModal
-            isVisible={aboutModalVisible}
-            closeModal={() => setAboutModalVisible(false)}
-          />
-        </View>
-      )}
-
-      {reportModalVisible && (
-        <View>
-          <ReportIssueModal
-            isVisible={reportModalVisible}
-            closeModal={() => setReportModalVisible(false)}
-          />
-        </View>
-      )}
+ 
+ 
+ 
     </>
   );
 };

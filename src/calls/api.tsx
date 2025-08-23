@@ -351,9 +351,17 @@ export const createUserCategory = async (
   newCategoryData: object
 ) => {
   try {
+    console.log(userId);
+    console.log(newCategoryData);
+
+    const requestData = {
+      user: userId,
+      ...newCategoryData,
+    }
+    console.log(requestData);
     const response = await helloFriendApiClient.post(
       `/users/${userId}/categories/add/`,
-      newCategoryData
+      requestData
     );
     return response.data;
   } catch (e: unknown) {
@@ -366,7 +374,7 @@ export const updateUserCategory = async (
   categoryId: number,
   updates: object
 ) => {
-  console.log(`updates for user category: `, updates);
+  // console.log(`updates for user category: `, updates);
 
   try {
     const response = await helloFriendApiClient.patch(
@@ -958,7 +966,7 @@ export const fetchUpcomingHelloes = async () => {
     // );
 
     const response = await helloFriendApiClient.get("/friends/upcoming/");
-console.log(`UPCOMING HELLOES: `, response.data);
+// console.log(`UPCOMING HELLOES: `, response.data);
     // const end = Date.now(); // log end time
     // console.log(
     //   "\x1b[32m%s\x1b[32m",

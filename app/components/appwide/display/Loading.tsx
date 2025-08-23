@@ -1,16 +1,13 @@
 import { View } from "react-native";
 import React from "react";
-import LoadingPage from "../spinner/LoadingPage";
-// import { useFriendList } from "@/src/context/FriendListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import LoadingPage from "../spinner/LoadingPage"; 
 
 interface LoadingProps {
   isLoading: boolean;
 }
 
-const Loading: React.FC<LoadingProps> = ({ isLoading }) => {
-//   const { themeAheadOfLoading } = useFriendList();
-  const { themeStyles } = useGlobalStyle();
+const Loading: React.FC<LoadingProps> = ({ isLoading, backgroundColor }) => {
+  
   return (
     <>
       {isLoading && (
@@ -19,7 +16,7 @@ const Loading: React.FC<LoadingProps> = ({ isLoading }) => {
             loading={true}
             spinnerSize={30}
             spinnerType={"flow"}
-            color={themeStyles.primaryBackground.backgroundColor}
+            color={backgroundColor}
           />
         </View>
       )}

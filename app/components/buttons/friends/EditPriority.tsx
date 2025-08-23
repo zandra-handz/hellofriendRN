@@ -1,21 +1,16 @@
 import React, { useState, useRef } from "react";
 import { StyleSheet, Pressable, View, Text } from "react-native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";  
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
  
-import useFriendFunctions from "@/src/hooks/useFriendFunctions";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import useFriendFunctions from "@/src/hooks/useFriendFunctions"; 
 import PrioritySettingSlider from "../../friends/PrioritySettingSlider";
-const EditPriority = ({ iconSize = 15, value = "None" }) => {
+const EditPriority = ({  themeAheadOfLoading, friendId, friendPriority}) => {
+  
  
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendStyle();
 
-  const [priority, setPriority] = useState(
-    friendDashboardData?.suggestion_settings?.priority_level || null
-  );
+  const [priority, setPriority] = useState<number>(friendPriority);
 
   const priorityRef = useRef();
 
@@ -23,7 +18,7 @@ const EditPriority = ({ iconSize = 15, value = "None" }) => {
     try {
       handleUpdateFriendSettings(
      
-        selectedFriend.id,
+        friendId,
         priorityRef.current.getValue()
       );
       setPriority(priorityRef.current.getValue());
@@ -33,7 +28,7 @@ const EditPriority = ({ iconSize = 15, value = "None" }) => {
     }
   };
 
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { themeStyles  } = useGlobalStyle();
   const { handleUpdateFriendSettings } = useFriendFunctions();
 
   const [showEdit, setShowEdit] = useState(false);

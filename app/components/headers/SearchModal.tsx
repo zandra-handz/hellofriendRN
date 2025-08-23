@@ -1,27 +1,27 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import React from "react";
+import { View,  StyleSheet } from "react-native";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 import MomentsSearchBar from "../moments/MomentsSearchBar";
 
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-
-
+ 
 interface Props {
   isVisible: boolean;
   closeModal: () => void;
   onSearchPress: () => void;
 }
 
+
+// ICON IS HARD CODED
 const SearchModal: React.FC<Props> = ({
   isVisible,
   closeModal,
   onSearchPress,
-}) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
-  const { capsuleList } = useCapsuleList();
-
+  capsuleList,
+  textColor,
+  primaryBackgroundColor,
+}) => { 
  
 
   const handleSearchPress = (moment) => {
@@ -29,13 +29,7 @@ const SearchModal: React.FC<Props> = ({
     closeModal();
   };
 
-
-  
-  // React.useEffect(() => {
-  //   if (isModalVisible) {
-  //     AccessibilityInfo.announceForAccessibility("Information opened");
-  //   }
-  // }, [isModalVisible]);
+ 
 
   return (
     <ModalWithGoBack
@@ -43,8 +37,8 @@ const SearchModal: React.FC<Props> = ({
       headerIcon={
         <MaterialCommunityIcons
           name={"comment-search-outline"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          size={30}
+          color={textColor}
         />
       }
       questionText="Search talking points"
@@ -52,14 +46,15 @@ const SearchModal: React.FC<Props> = ({
         < View contentContainerStyle={styles.bodyContainer}>
           <View style={styles.sectionContainer}>
             <MomentsSearchBar
+            textColor={textColor}
+            backgroundColor={primaryBackgroundColor}
               data={capsuleList}
               autoFocus={isVisible}
               height={40}
               width={"100%"}
-              borderColor={themeStyles.primaryText.color}
+              borderColor={textColor}
               placeholderText={"Search"}
-              textAndIconColor={themeStyles.primaryText.color}
-              backgroundColor={"transparent"}
+              textAndIconColor={textColor} 
               onPress={handleSearchPress}
               searchKeys={["capsule", "user_category_name"]}
               iconSize={0}

@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
  
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
  
-
+import { useFriendDash } from "@/src/context/FriendDashContext";
 type Props = {
   fontSize: number;
 };
@@ -16,8 +16,8 @@ type Props = {
 const ForFriend = ({fontSize=13}: Props) => {
   const { appFontStyles, themeStyles } = useGlobalStyle();
  
-  const { selectedFriend,  loadingNewFriend } = useSelectedFriend();
- 
+  const { selectedFriend  } = useSelectedFriend();
+ const { loadingDash } = useFriendDash();
   const RenderIcon = useCallback(
     () => (
       <View
@@ -48,7 +48,7 @@ const ForFriend = ({fontSize=13}: Props) => {
         alignItems: "center",
       }}
     > 
-      {!loadingNewFriend && selectedFriend && <RenderIcon />}
+      {!loadingDash && selectedFriend && <RenderIcon />}
     </View>
   );
 };

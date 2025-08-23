@@ -4,29 +4,18 @@ import { useLocations } from "@/src/context/LocationsContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import ContentAddLocation from "@/app/components/locations/ContentAddLocation";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const ScreenLocationCreate = () => {
   const route = useRoute();
   const location = route.params?.location ?? null;
-
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
 
   const navigation = useNavigation();
-
-  const renderHeader = useCallback(
-    () => (
-      <GlobalAppHeader
-        title={"NEW LOCATION"}
-        navigateTo={"Locations"}
-        icon={null}
-        altView={false}
-      />
-    ),
-    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
-  );
+ 
 
   const { createLocationMutation } = useLocations();
 
@@ -37,7 +26,16 @@ const ScreenLocationCreate = () => {
   }, [createLocationMutation]);
 
   return (
-    <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground
+        startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
+ 
+    
+    style={{ flex: 1 }}>
       <ContentAddLocation title={location.title} address={location.address} />
     </SafeViewAndGradientBackground>
   );

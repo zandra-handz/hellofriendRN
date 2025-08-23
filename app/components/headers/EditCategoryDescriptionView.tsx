@@ -4,7 +4,8 @@ import { View, TextInput } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useCategories } from "@/src/context/CategoriesContext";
+import { useUser } from "@/src/context/UserContext"; 
+import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
  
 export default function EditCategoryDescriptionView({
   categoryId,
@@ -18,8 +19,8 @@ export default function EditCategoryDescriptionView({
   onSave: (newText: string) => void;
 }) {
   const { themeStyles } = useGlobalStyle();
- 
-  const { updateCategory, updateCategoryMutation } = useCategories();
+ const { user } = useUser();
+  const { updateCategory, updateCategoryMutation } = useUpdateCategory({userId: user?.id});
   const [text, setText] = useState(startingText || "");
   const textInputRef = useRef<TextInput>(null);
 

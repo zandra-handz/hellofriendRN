@@ -1,43 +1,36 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
- 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { View, Text  } from "react-native";
+  
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import LoadingPage from "../../appwide/spinner/LoadingPage";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../../appwide/button/GlobalPressable";
- 
+import { useFriendDash } from "@/src/context/FriendDashContext";
 
-const FriendProfileButton = ({ onPress }) => {
-  const {
-    selectedFriend,
-    friendLoaded,
-    friendDashboardData,
-    loadingNewFriend,
-  } = useSelectedFriend();
+const FriendProfileButton = ({ themeAheadOfLoading, friendId, friendName, onPress }) => {
+ 
+  const { dashLoaded, loadingDash, friendDash } = useFriendDash();
   const { themeStyles, appFontStyles, appContainerStyles, manualGradientColors } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendStyle();
+ 
 
 
   const circleSize = 27;
   const iconSize = 28;
 
-  const renderProfileIcon = () => {
-    // if (Array.isArray(profileIconColor) && profileIconColor.length === 2) {
+  const renderProfileIcon = () => { 
     return (
       <View
         style={{
-          backgroundColor: selectedFriend ? themeAheadOfLoading.lightColor : manualGradientColors.lightColor,
+          backgroundColor: friendId ? themeAheadOfLoading.lightColor : manualGradientColors.lightColor,
           borderRadius: 999,
-          width: selectedFriend ? circleSize : circleSize + 20,
-          height: selectedFriend ? circleSize : circleSize + 20,
+          width: friendId ? circleSize : circleSize + 20,
+          height: friendId ? circleSize : circleSize + 20,
           alignItems: "center",
           justifyContent: "center",
           alignSelf: "center",
         }}
       >
-        {!selectedFriend && !loadingNewFriend && (
+        {!friendId && !loadingDash && (
           <View
             style={{
               flex: 1,
@@ -64,13 +57,13 @@ const FriendProfileButton = ({ onPress }) => {
             appFontStyles.friendProfileButtonText,
             {
               color:
-                friendLoaded && friendDashboardData && selectedFriend
+                dashLoaded && friendDash && friendId
                   ? themeAheadOfLoading.fontColorSecondary
                   : "black",
             },
           ]}
         >
-          {selectedFriend && friendLoaded && selectedFriend.name.charAt(0)}
+          {friendId && dashLoaded && friendName && friendName.charAt(0)}
         </Text>
       </View>
     );
@@ -87,10 +80,10 @@ const FriendProfileButton = ({ onPress }) => {
         flexDirection: "row",
       }}
     >
-      {loadingNewFriend && (
+      {loadingDash && (
         <View style={appContainerStyles.loadingFriendProfileButtonWrapper}>
           <LoadingPage
-            loading={loadingNewFriend}
+            loading={true}
             color={themeAheadOfLoading.darkColor}
             spinnerType="flow"
             spinnerSize={30}
@@ -99,7 +92,7 @@ const FriendProfileButton = ({ onPress }) => {
         </View>
       )}
 
-      {!loadingNewFriend && (
+      {!loadingDash && (
         <GlobalPressable
           onPress={onPress}
           // onPress={onPress? onPress : () => navigation.navigate("FriendFocus")}
@@ -115,7 +108,7 @@ const FriendProfileButton = ({ onPress }) => {
                 zIndex: 1000,
               }}
             >
-              {selectedFriend && (
+              {friendId && (
                 <MaterialIcons
                   name="display-settings"
                   size={iconSize - 2}

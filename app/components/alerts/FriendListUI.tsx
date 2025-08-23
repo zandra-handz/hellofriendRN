@@ -10,9 +10,8 @@ import Animated, {
 } from "react-native-reanimated";
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
-import { useFriendList } from "@/src/context/FriendListContext";
  
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+  
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FriendTintPressable from "../appwide/button/FriendTintPressable";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -30,12 +29,13 @@ type FriendListItem = Friend | { message: string };
  
 
 const FriendListUI = ({
+  themeAheadOfLoading,
+  friendList,
+  themeStyles,
   data,
-  selectedFriendId,
+  friendId,
   onPress,
-}: FriendListUIProps) => {
-  const { friendList } = useFriendList();
-  const { themeStyles } = useGlobalStyle(); 
+}: FriendListUIProps) => {  
   const itemColor = themeStyles.primaryText.color;
   const elementBackgroundColor =
     themeStyles.overlayBackgroundColor.backgroundColor;
@@ -46,7 +46,7 @@ const FriendListUI = ({
 
   const ITEM_BORDER_RADIUS = 10;
 
-  const selectedId = selectedFriendId; //can be null
+  const selectedId = friendId; //can be null
 
   const renderFriendSelectItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => (
@@ -56,12 +56,17 @@ const FriendListUI = ({
       >
         {item && "id" in item && item.id !== selectedId && (
           <FriendTintPressable
+          friendList={friendList}
             startingColor={themeStyles.overlayBackgroundColor.backgroundColor}
             style={styles.friendContainer}
             friendId={item.id}
             onPress={() => onPress(item.id)}
           >
             <ButtonSelectFriend
+            themeTextColor={themeStyles.primaryText.color}
+            backgroundOverlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
+            friendId={friendId}
+            themeAheadOfLoading={themeAheadOfLoading}
               borderRadius={ITEM_BORDER_RADIUS}
               backgroundColor={"transparent"}
               color={itemColor}

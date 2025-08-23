@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 
 import {
   View,
@@ -17,6 +18,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
+import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
+import { useUser } from "@/src/context/UserContext";
+import { useFriendDash } from "@/src/context/FriendDashContext";
+import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
+
 
 interface Props {
   isVisible: boolean;
@@ -28,20 +34,27 @@ interface Props {
 const CategoryDetailsModal: React.FC<Props> = ({
   isVisible,
   closeModal,
-  categoryId,
-  onSearchPress,
+  categoryId, 
 }) => {
-  const { userCategories, updateCategory, updateCategoryMutation } =
+  const { user } = useUser();
+  const { userCategories  } =
     useCategories();
 
-  const { settings, updateSettings } = useUserSettings();
+  const { settings } = useUserSettings();
+
+
+  const { updateSettings } = useUpdateSettings({userId: user?.id});
   const category = Array.isArray(userCategories)
     ? userCategories.find((category) => category.id === categoryId) || null
     : null;
 
+
+const { updateCategory } = useUpdateCategory({userId: user?.id});
  
   const { themeStyles, appFontStyles, appSpacingStyles } = useGlobalStyle();
-  const { selectedFriend, friendDashboardData, handleUpdateDefaultCategory } = useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
+const { friendDash } = useFriendDash();
+  const { handleUpdateDefaultCategory } = useUpdateDefaultCategory({userId: user?.id, friendId: selectedFriend?.id})
   const { capsuleList } = useCapsuleList();
 
   const startingText = category?.description || null;
@@ -50,7 +63,7 @@ const CategoryDetailsModal: React.FC<Props> = ({
 
   const isUserDefault = categoryId === settings.user_default_category;
   const isFriendDefault =
-    categoryId === friendDashboardData?.friend_faves.friend_default_category;
+    categoryId === friendDash?.friend_faves.friend_default_category;
 
   useFocusEffect(
     useCallback(() => {

@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'react-native';
 import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
 import { useSelectedFriend } from '@/src/context/SelectedFriendContext'; // Adjust the import path as necessary
-import tinycolor from 'tinycolor2';
-import { useFriendList } from '@/src/context/FriendListContext';
+import tinycolor from 'tinycolor2'; 
 import { useFriendStyle } from '@/src/context/FriendStyleContext';
 const PhoneStatusBar = () => {
 const { theme, nonCustomHeaderPage } = useGlobalStyle();

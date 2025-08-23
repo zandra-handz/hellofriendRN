@@ -4,36 +4,39 @@ import { StyleSheet, Pressable, View, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import useReadableColors from "@/src/hooks/useReadableColors";
 import ColorSwatchesSvg from "../../friends/ColorSwatchesSvg";
-
+import useUpdateFaveTheme from "@/src/hooks/SelectedFriendCalls/useUpdateFavesTheme";
 import FormFriendColorThemeUpdate from "@/src/forms/FormFriendColorThemeUpdate";
- 
+
+import useUpdateFriendListColors from "@/src/hooks/useUpdateFriendListColors";
 
 import Toggle from "../../user/Toggle";
 
-const EditTheme = ({ iconSize = 15, value = "None" }) => {
+const EditTheme = ({ userId, friendId, manualThemeOn }) => {
  
-  const { selectedFriend, friendDashboardData, handleUpdateFavesTheme } = useSelectedFriend();
-  const { 
-    friendList,
-  } = useFriendList();
-    const {
-    themeAheadOfLoading,
-    updateFriendListColorsExcludeSaved,
- 
-  } = useFriendStyle();
+  const { friendList } = useFriendList();
+  const { themeAheadOfLoading,  handleSetTheme  } =
+    useFriendStyle();
 
-  const [isMakingCall, setIsMakingCall] = useState(false);
-    const formRef = useRef(null);
+
+    const {updateFriendListColorsExcludeSaved} = useUpdateFriendListColors({userId: userId, setThemeState: handleSetTheme})
+  const { handleUpdateFavesTheme } = useUpdateFaveTheme({
+    userId: userId,
+    friendId: friendId,
+  });
+
+  // const [isMakingCall, setIsMakingCall] = useState(false);
+  const formRef = useRef(null);
   const { getSavedColorTheme, getFontColor, getFontColorSecondary } =
-    useReadableColors(friendList, selectedFriend);
+    useReadableColors(friendList, friendId);
 
-  const [manualTheme, setManualTheme] = useState(
-    friendDashboardData?.friend_faves?.use_friend_color_theme || false
-  );
+  // console.log(friendDashboardData);
+    const [manualTheme, setManualTheme] = useState<boolean>(!!manualThemeOn);
+
+
+ 
 
   const toggleUseFriendColorTheme = async () => {
     const newValue = !manualTheme;
@@ -42,29 +45,25 @@ const EditTheme = ({ iconSize = 15, value = "None" }) => {
   };
 
   const updateColorThemeSetting = async (setting) => {
-    setIsMakingCall(true);
+    // setIsMakingCall(true);
 
     if (manualTheme) {
       // if state before toggling Color Theme is off
       console.log("turning manual off");
       try {
-
-        
-         await handleUpdateFavesTheme({ 
+        await handleUpdateFavesTheme({
           manualThemeOn: false,
-          
-      });
-
+        });
 
         updateFriendListColorsExcludeSaved(
-          selectedFriend.id,
+          friendId,
           "#4caf50",
           "#a0f143",
           "#000000",
           "#000000"
         );
       } finally {
-        setIsMakingCall(false);
+        // setIsMakingCall(false);
       }
     } else {
       try {
@@ -84,17 +83,16 @@ const EditTheme = ({ iconSize = 15, value = "None" }) => {
         console.log(response);
 
         // await updateFriendFavesColorThemeSetting(
-         await handleUpdateFavesTheme({
-         savedDarkColor: response.savedDarkColor,
-        
+        await handleUpdateFavesTheme({
+          savedDarkColor: response.savedDarkColor,
+
           savedLightColor: response.savedLightColor,
           manualThemeOn: true,
-          
-      });
+        });
 
         //This also includes setThemeAheadOfLoading
         updateFriendListColorsExcludeSaved(
-          selectedFriend.id,
+          friendId,
           response.savedDarkColor,
           response.savedLightColor,
           fontColor,
@@ -103,12 +101,12 @@ const EditTheme = ({ iconSize = 15, value = "None" }) => {
 
         // setFriendColorTheme((prev) => ({ ...prev, useFriendColorTheme: setting }));
       } finally {
-        setIsMakingCall(false);
+        // setIsMakingCall(false);
       }
     }
   };
 
-  const { themeStyles  } = useGlobalStyle();
+  const { themeStyles } = useGlobalStyle();
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -117,13 +115,12 @@ const EditTheme = ({ iconSize = 15, value = "None" }) => {
   };
 
   const handleSaveNewTheme = async () => {
-           if (formRef.current) {
-                    setIsMakingCall(true);
-                    await formRef.current.submit();
-                    setIsMakingCall(false);
-                    toggleThemeEdit(); // Toggle invisible after submission completes
-                }
-
+    if (formRef.current) {
+      // setIsMakingCall(true);
+      await formRef.current.submit();
+      // setIsMakingCall(false);
+      toggleThemeEdit(); // Toggle invisible after submission completes
+    }
   };
 
   return (
@@ -134,34 +131,36 @@ const EditTheme = ({ iconSize = 15, value = "None" }) => {
 
         width: "100%",
         alignSelf: "flex-start",
-        backgroundColor: showEdit ? themeStyles.lighterOverlayBackgroundColor.backgroundColor : "transparent",
+        backgroundColor: showEdit
+          ? themeStyles.lighterOverlayBackgroundColor.backgroundColor
+          : "transparent",
         padding: showEdit ? 10 : 0,
         borderRadius: showEdit ? 10 : 0,
       }}
-    > 
-        <Toggle
-          label="Manual theme"
-          icon={
-            <MaterialCommunityIcons
-              name={"palette"}
-              size={20}
-              color={themeStyles.primaryText.color}
-            />
-          }
-          value={manualTheme}
-          onPress={toggleUseFriendColorTheme}
-        /> 
+    >
+      <Toggle
+        label="Manual theme"
+        icon={
+          <MaterialCommunityIcons
+            name={"palette"}
+            size={20}
+            color={themeStyles.primaryText.color}
+          />
+        }
+        value={manualTheme}
+        onPress={toggleUseFriendColorTheme}
+      />
 
       {manualTheme && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginVertical: 6,
-                  alignItems: "center",
-                }}
-              > 
-          <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginVertical: 6,
+            alignItems: "center",
+          }}
+        >
+          <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
             <View
               style={{
                 width: 40,
@@ -169,24 +168,19 @@ const EditTheme = ({ iconSize = 15, value = "None" }) => {
                 justifyContent: "flex-start",
                 flexDirection: "row",
               }}
-            >
-                
-            </View>
+            ></View>
             <Text style={[styles.label, themeStyles.modalText]}></Text>
-            </View>
+          </View>
 
-            {!showEdit && (
-
-    
+          {!showEdit && (
             <Pressable onPress={toggleThemeEdit}>
-         
-               <ColorSwatchesSvg
-                    onPress={toggleThemeEdit}
-                    darkColor={themeAheadOfLoading.darkColor}
-                    lightColor={themeAheadOfLoading.lightColor}
-                  />
+              <ColorSwatchesSvg
+                onPress={toggleThemeEdit}
+                darkColor={themeAheadOfLoading.darkColor}
+                lightColor={themeAheadOfLoading.lightColor}
+              />
             </Pressable>
-            )}
+          )}
 
           {showEdit && (
             <>
@@ -206,23 +200,18 @@ const EditTheme = ({ iconSize = 15, value = "None" }) => {
               </Pressable>
             </>
           )}
-        
-      
         </View>
       )}
       {showEdit && (
-        <View style={{flex: 1}}>
-
-             <FormFriendColorThemeUpdate
-                    ref={formRef}
-                    onMakingCallChange={(isMakingCall) => {
-                        setIsMakingCall(isMakingCall); 
-                        console.log("Is making callaaa:", isMakingCall); 
-                    }}
-                />
-
-                </View>
-
+        <View style={{ flex: 1 }}>
+          <FormFriendColorThemeUpdate
+            ref={formRef}
+            // onMakingCallChange={(false) => {
+            //   // setIsMakingCall(isMakingCall);
+            //   // console.log("Is making callaaa:", isMakingCall);
+            // }}
+          />
+        </View>
       )}
     </View>
   );

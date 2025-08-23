@@ -4,10 +4,9 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import GlobalPressable from "../appwide/button/GlobalPressable";
- 
-import { useCategories } from "@/src/context/CategoriesContext";
+ import { useUser } from "@/src/context/UserContext"; 
 import EditDescriptionButton from "../home/EditDescriptionButton";
-
+import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
 import EditCategoryDescriptionView from "./EditCategoryDescriptionView";
 type Props = {
   categoryObject: object;
@@ -17,9 +16,10 @@ type Props = {
 
 const CatDescriptEditable = ({ nullTextInputView, categoryObject, editEnabled = true, onToggle }: Props) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { user } = useUser();
   const [showEdit, setShowEdit] = useState(false);
  
-  const { updateCategory } = useCategories();
+  const { updateCategory } = useUpdateCategory({userId: user?.id});
 
 
   const textInputRef = useRef(null);

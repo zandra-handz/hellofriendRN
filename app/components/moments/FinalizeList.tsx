@@ -13,9 +13,8 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBar from "./EscortBar";
-import { Moment } from "@/src/types/MomentContextTypes";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import CheckboxListItem from "./CheckboxListItem";
+import { Moment } from "@/src/types/MomentContextTypes"; 
+ 
 interface FinalizeListProps {
   data: [];
   categories: [];
@@ -23,6 +22,7 @@ interface FinalizeListProps {
 }
 
 const FinalizeList: React.FC<FinalizeListProps> = ({
+  friendId,
   data,
   categories,
   preSelected,
@@ -34,7 +34,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   const [selectedMoments, setSelectedMoments] = useState<Moment[]>([]);
   const [changedMoments, setChangedMoments] = useState<Moment[]>([]);
   const [visibleCategories, setVisibleCategories] = useState<Moment[]>(data); //so that we can use the same value for All and for individual ones
-  const { selectedFriend } = useSelectedFriend();
+ 
   const navigation = useNavigation();
   const { updateCapsule } = useCapsuleList(); // also need to update cache
   const { themeStyles, manualGradientColors } = useGlobalStyle();
@@ -151,11 +151,10 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   // };
 
   const handleUpdateMoments = () => {
-    if (!selectedFriend) {
+    if (!friendId) {
       return;
     }
-
-    const friendId = selectedFriend.id;
+ 
     changedMoments.forEach((moment) => {
       updateCapsule({
         friendId: friendId,

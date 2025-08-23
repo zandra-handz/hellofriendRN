@@ -16,10 +16,13 @@ import { useUser } from "@/src/context/UserContext";
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
+
+
+
 const ScreenUserDetails = () => {
   const { user  } = useUser();
-  const { themeStyles, gradientColorsHome } = useGlobalStyle();
-  const { updateSafeViewGradient } = useFriendStyle();
+  const { themeStyles, gradientColorsHome, manualGradientColors } = useGlobalStyle();
+  const { updateSafeViewGradient, themeAheadOfLoading } = useFriendStyle();
   const { darkColor, lightColor } = gradientColorsHome;
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
   useEffect(() => {
@@ -35,7 +38,15 @@ const ScreenUserDetails = () => {
   };
 
   return (
-    <SafeViewAndGradientBackground style={{flex: 1}}>
+    <SafeViewAndGradientBackground
+    
+            startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
+    style={{flex: 1}}>
       <LinearGradient
         colors={[darkColor, lightColor]}
         start={{ x: 0, y: 0 }}

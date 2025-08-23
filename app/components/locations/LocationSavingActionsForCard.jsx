@@ -29,6 +29,9 @@ import LoadingPage from "../appwide/spinner/LoadingPage";
 
 //UPDATE THE RERENDER WAS USING USELOCATIONFUNCTIONS DIRECTLY, I HAD TO GO UP TO LOCATIONS SCREEN AND DRILL IT DOWN INSTEAD
 
+
+
+// SCREENLOCATIONS IS NOT BEING USED I DONT THINK ??? DELETE
 const LocationSavingActionsForCard = ({
   location,  
   iconSize = 34,
@@ -39,6 +42,8 @@ const LocationSavingActionsForCard = ({
   const {   handleAddToFaves,
     handleRemoveFromFaves } = useLocations();
   const { themeAheadOfLoading } = useFriendStyle();
+
+  // FRIEND FAVES DATA AND FAVE LOCATION IDS NO LONGER EXIST
   const { selectedFriend, friendFavesData, getFaveLocationIds } = useSelectedFriend();
   const { friendFaveLocations } = friendFavesData;
  

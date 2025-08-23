@@ -2,28 +2,38 @@ import { View, Text, ScrollView } from "react-native";
 import React from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
-import { useCategories } from "@/src/context/CategoriesContext";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { useUser } from "@/src/context/UserContext";
+
+import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
+
+import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 
 type Props = {
   categoryId: number;
 };
 
 const MakeDefaultCats = ({ categoryId }: Props) => {
+  const { user } = useUser();
   const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { selectedFriend, friendDashboardData, handleUpdateDefaultCategory } =
+  const { selectedFriend } =
     useSelectedFriend();
-  const { settings } = useUserSettings();
-  const { userCategories, updateCategory, updateCategoryMutation } =
-    useCategories();
 
-  const { updateSettings } = useUserSettings();
+    const { friendDash } = useFriendDash();
+  const { settings } = useUserSettings();
+ 
+
+  const { updateSettings } = useUpdateSettings({userId: user?.id});
+  const {handleUpdateDefaultCategory } = useUpdateDefaultCategory({userId: user?.id, friendId: selectedFriend?.id})
 
   const isUserDefault = categoryId === settings.user_default_category;
   const isFriendDefault =
-    categoryId === friendDashboardData?.friend_faves.friend_default_category;
+    categoryId === friendDash?.friend_faves.friend_default_category;
 
   const handleRemoveUserDefault = async () => {
     await updateSettings({ user_default_category: null });

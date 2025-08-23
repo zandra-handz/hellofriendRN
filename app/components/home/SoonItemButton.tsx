@@ -8,8 +8,7 @@ import {
   DimensionValue,
 } from "react-native";
 import UICalendarPageDynamic from "@/app/components/foranimations/UICalendarPageDynamic"; // Import the calendar component
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import GradientBackground from "../appwide/display/GradientBackground";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { LinearGradient } from "expo-linear-gradient";
 interface SoonItemButtonProps {
   width: DimensionValue;

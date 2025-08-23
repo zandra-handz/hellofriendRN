@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import { View, DimensionValue } from "react-native";
-import CustomStatusBar from "../statusbar/CustomStatusBar";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import CustomStatusBar from "../statusbar/CustomStatusBar"; 
+ 
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,17 +19,21 @@ type Props = {
 export const PreAuthSafeViewAndGradientBackground = ({
   children,
   style,
+  startColor,
+  endColor,
+  friendColorLight,
+  friendColorDark,
+  backgroundOverlayColor,
+  friendId,
   includeCustomStatusBar = true,
   includeBackgroundOverlay = false,
   primaryBackground = false,
   backgroundOverlayHeight = "100%",
   backgroundOverlayBottomRadius = 0,
-}: Props) => {
-  const { selectedFriend } = useSelectedFriend();
+}: Props) => { 
 
   const route = useRoute();
-
-  const { themeStyles } = useGlobalStyle();
+ 
 
   const isSettingsScreen = useMemo(
     () => route.name === "UserDetails" || route.name === "FriendFocus",
@@ -42,8 +45,8 @@ export const PreAuthSafeViewAndGradientBackground = ({
   );
 
   const useFriendColors = useMemo(
-    () => selectedFriend && !isSettingsScreen && !isHomeScreen,
-    [selectedFriend, isSettingsScreen, isHomeScreen]
+    () => friendId && !isSettingsScreen && !isHomeScreen,
+    [friendId, isSettingsScreen, isHomeScreen]
   );
 
   const paddingStyle = useMemo(
@@ -53,15 +56,19 @@ export const PreAuthSafeViewAndGradientBackground = ({
       paddingLeft: 0,
       paddingRight: 0,
       backgroundColor: primaryBackground
-        ? themeStyles.primaryBackground.backgroundColor
+        ? backgroundOverlayColor
         : "transparent",
     }),
-    [primaryBackground, themeStyles]
+    [primaryBackground, backgroundOverlayColor]
   );
 
   return (
     <GradientBackground
       useFriendColors={useFriendColors}
+      startColor={startColor}
+      endColor={endColor}
+      friendColorDark={friendColorDark}
+      friendColorLight={friendColorLight}
       additionalStyles={[paddingStyle, style]}
     >
       <SafeAreaView style={{ flex: 1 }}>
@@ -77,7 +84,7 @@ export const PreAuthSafeViewAndGradientBackground = ({
               right: 0,
               left: 0,
               opacity: 1,
-              backgroundColor: themeStyles.primaryBackground.backgroundColor,
+              backgroundColor: backgroundOverlayColor,
               borderBottomLeftRadius: backgroundOverlayBottomRadius,
               borderBottomRightRadius: backgroundOverlayBottomRadius,
             }}

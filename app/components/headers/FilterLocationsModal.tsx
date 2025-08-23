@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
-import SectionFriendSettings from "../friends/SectionFriendSettings";
+// import SectionFriendSettings from "../friends/SectionFriendSettings";
 import SectionAccountSettings from "../user/SectionAccountSettings";
 
 interface Props {
@@ -42,9 +42,9 @@ const FilterLocationsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
             <View style={styles.sectionContainer}>
               <SectionAccessibilitySettings />
             </View>
-            <View style={styles.sectionContainer}>
+            {/* <View style={styles.sectionContainer}>
              <SectionFriendSettings/>
-            </View>
+            </View> */}
 
             <View style={styles.headerContainer}>
               <SectionAccountSettings />

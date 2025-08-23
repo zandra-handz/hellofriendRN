@@ -13,6 +13,7 @@ import NoFriendsMessageUI from "@/app/components/home/NoFriendsMessageUI";
 import TopBarHome from "@/app/components/home/TopBarHome";
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
@@ -34,7 +35,13 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
   const navigation = useNavigation();
-  const { appContainerStyles,appFontStyles, manualGradientColors, themeStyleSpinners, themeStyles,  } = useGlobalStyle();
+  const {
+    appContainerStyles,
+    appFontStyles,
+    manualGradientColors,
+    themeStyleSpinners,
+    themeStyles,
+  } = useGlobalStyle();
   const welcomeTextStyle = appFontStyles.welcomeText;
   const subWelcomeTextStyle = appFontStyles.subWelcomeText;
   const primaryTextStyle = themeStyles.primaryText;
@@ -42,24 +49,24 @@ const ScreenHome = () => {
   const primaryBackgroundColor = themeStyles.primaryBackground.backgroundColor;
   const primaryOverlayColor =
     themeStyles.overlayBackgroundColor.backgroundColor;
-    const darkerOverlayBackgroundColor = themeStyles.darkerOverlayBackgroundColor.backgroundColor;
+  const darkerOverlayBackgroundColor =
+    themeStyles.darkerOverlayBackgroundColor.backgroundColor;
   const newMomentContainerStyle =
     appContainerStyles.homeScreenNewMomentContainer;
 
-    const spinnerStyle = themeStyleSpinners.homeScreen;
-
+  const spinnerStyle = themeStyleSpinners.homeScreen;
 
   const { themeAheadOfLoading } = useFriendStyle();
-
 
   const appColorsStyle = manualGradientColors;
   const themeAheadOfLoadingStyle = themeAheadOfLoading;
 
-  const { navigateToMomentFocusWithText } = useAppNavigations();
+  const { navigateToMomentFocusWithText, navigateToSelectFriend } =
+    useAppNavigations();
   const { user } = useUser();
 
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
-
+  const { friendDash, loadingDash } = useFriendDash();
+  const { selectedFriend } = useSelectedFriend();
 
   const { friendList } = useFriendList();
   const [showMomentScreenButton, setShowMomentScreenButton] = useState(false);
@@ -222,15 +229,19 @@ const ScreenHome = () => {
 
   return (
     <SafeViewAndGradientBackground
+      startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
       includeBackgroundOverlay={true}
       backgroundOverlayHeight={isKeyboardVisible ? "100%" : 90}
       backgroundOverlayBottomRadius={0}
       useFriendColors={selectedFriend ? true : false}
       style={{ flex: 1 }}
       // header={HellofriendHeader}
-    >
-      {/* <Pressable onPress={handleFocusPress} style={{  position: 'absolute', width: '100%', top: 55, zIndex: 1000, height: 190 }}></Pressable>
-       */}
+    > 
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -246,7 +257,17 @@ const ScreenHome = () => {
             }}
           >
             <View style={{ width: "100%", paddingHorizontal: 0, marginTop: 0 }}>
-              {selectedFriend && <TopBarHome />}
+              {selectedFriend && (
+                <TopBarHome
+                  loading={loadingDash}
+                  style={themeAheadOfLoadingStyle}
+                  textStyle={primaryTextStyle}
+                  textColor={primaryColor}
+                  specialTextStyle={welcomeTextStyle}
+                  backgroundColor={primaryBackgroundColor}
+                  onPress={navigateToSelectFriend}
+                />
+              )}
             </View>
 
             {/* // )} */}
@@ -290,13 +311,13 @@ const ScreenHome = () => {
                 />
               </>
             )}
-            {!isKeyboardVisible && !loadingNewFriend && (
+            {!isKeyboardVisible && !loadingDash && (
               <BelowKeyboardComponents
-              appColorsStyle={appColorsStyle}
-              friendStyle={themeAheadOfLoadingStyle}
-              selectedFriendId={selectedFriend?.id}
-              selectedFriendName={selectedFriend?.name}
-primaryOverlayColor={primaryOverlayColor}
+                appColorsStyle={appColorsStyle}
+                friendStyle={themeAheadOfLoadingStyle}
+                selectedFriendId={selectedFriend?.id}
+                selectedFriendName={selectedFriend?.name}
+                primaryOverlayColor={primaryOverlayColor}
                 primaryTextStyle={primaryTextStyle}
                 welcomeTextStyle={welcomeTextStyle}
                 subWelcomeTextStyle={subWelcomeTextStyle}
@@ -307,7 +328,8 @@ primaryOverlayColor={primaryOverlayColor}
                 friendListLength={friendList?.length || 0}
                 isFriendSelected={!!selectedFriend}
                 onPress={navigateToAddMomentScreen}
-                loadingNewFriend={loadingNewFriend}
+                loadingDash={loadingDash}
+                friendDash={friendDash}
               />
             )}
           </View>
@@ -319,7 +341,17 @@ primaryOverlayColor={primaryOverlayColor}
         )}
       </KeyboardAvoidingView>
 
-      <HelloFriendFooter />
+      <HelloFriendFooter
+        manualGradientColors={manualGradientColors}
+        themeAheadOfLoading={themeAheadOfLoading}
+        overlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
+        textColor={themeStyles.primaryText.color}
+        dividerStyle={themeStyles.divider}
+        userId={user?.id}
+        friendId={selectedFriend?.id}
+        friendName={selectedFriend?.name}
+        friendDash={friendDash}
+      />
     </SafeViewAndGradientBackground>
   );
 };

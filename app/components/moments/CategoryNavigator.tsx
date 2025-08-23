@@ -1,24 +1,20 @@
 // MEMOIZED VERSION
 // performs better than non-memoized, per DevTools profiling
-import React, { useMemo, useState, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import React, { useMemo, useState  } from "react";
+import { View,   ScrollView, StyleSheet, Pressable } from "react-native";
 import Animated, {
   useAnimatedStyle,
-  SlideInUp,
+ 
   SlideInDown,
   SlideOutDown,
-} from "react-native-reanimated";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+} from "react-native-reanimated"; 
 import CategoryButton from "./CategoryButton";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import SearchModal from "../headers/SearchModal";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "@/src/types/NavigationTypes";
  
-import { useNavigation } from "@react-navigation/native";
+  
 import { SharedValue } from "react-native-reanimated";
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+ 
 
 type Props = {
   visibilityValue: SharedValue;
@@ -30,7 +26,12 @@ type Props = {
   onClose: () => void;
 };
 const CategoryNavigator = ({
+  textStyle, // because cat button needs the full style
+  backgroundColor,
+  homeDarkColor,
+  arrowBackgroundColor,
   visibilityValue,
+  capsuleList,
   viewableItemsArray,
   categoryNames,
   onPress,
@@ -38,17 +39,8 @@ const CategoryNavigator = ({
   categoryColorsMap,
   onClose,
 }: Props) => {
-  const {
-    themeStyles,
-    manualGradientColors,
-    gradientColorsHome,
-    appContainerStyles,
-    appSpacingStyles,
-  } = useGlobalStyle();
-  const isVisible = true;
-
  
-  // console.log(categoryColorsMap);
+  
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
 
@@ -56,7 +48,8 @@ const CategoryNavigator = ({
     opacity: visibilityValue.value,
   }));
 
-  const iconSize = 26;
+  // const iconSize = 26; HARD CODED 
+  
 
   const memoizedSearchIcon = useMemo(
     () => (
@@ -64,11 +57,9 @@ const CategoryNavigator = ({
         onPress={() => setSearchModalVisible(true)}
         style={({ pressed }) => ({
           flexDirection: "row",
-          alignItems: "center",
-       //   backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+          alignItems: "center", 
           justifyContent: "center",
-          borderRadius: 999,
-          // paddingHorizontal: 20,
+          borderRadius: 999, 
           paddingVertical: 5,
 
           textAlign: "center",
@@ -77,16 +68,13 @@ const CategoryNavigator = ({
       >
         <MaterialCommunityIcons
           name={"text-search"}
-          size={iconSize}
-          color={themeStyles.genericText.color}
+          size={26}
+          color={textStyle.color}
           style={{}}
-        />
-        {/* <Text style={[themeStyles.genericText, styles.categoryLabel]}>
-          Search
-        </Text> */}
+        /> 
       </Pressable>
     ),
-    [iconSize, themeStyles]
+    [textStyle.color]
   );
   const renderedButtons = useMemo(
     () => (
@@ -101,6 +89,8 @@ const CategoryNavigator = ({
               style={styles.buttonWrapper}
             >
               <CategoryButton
+              homeDarkColor={homeDarkColor}
+              textStyle={textStyle}
                 height={"auto"}
                 viewableItemsArray={viewableItemsArray}
                 label={category}
@@ -115,27 +105,7 @@ const CategoryNavigator = ({
     [categoryNames, categoryColorsMap, onPress, viewableItemsArray]
   );
 
-  // const renderedButtons = useMemo(
-  //   () => (
-  //     <View style={styles.buttonRow}>
-  //       {memoizedSearchIcon}
-  //       {categoryNames.map((categoryName) => (
-  //         <View
-  //           key={categoryName || "Uncategorized"}
-  //           style={styles.buttonWrapper}
-  //         >
-  //           <CategoryButton
-  //             height={"auto"}
-  //             viewableItemsArray={viewableItemsArray}
-  //             label={categoryName}
-  //             onPress={() => onPress(categoryName)}
-  //           />
-  //         </View>
-  //       ))}
-  //     </View>
-  //   ),
-  //   [categoryNames, onPress, viewableItemsArray]
-  // );
+ 
 
   return (
     <>
@@ -147,9 +117,8 @@ const CategoryNavigator = ({
             styles.categoryNavigatorContainer,
             styles.momentsScreenPrimarySpacing,
             {
-              backgroundColor:
-                // themeStyles.overlayBackgroundColor.backgroundColor,
-                themeStyles.primaryBackground.backgroundColor,
+              backgroundColor: 
+                backgroundColor,
             },
             visibilityStyle,
           ]}
@@ -172,11 +141,11 @@ const CategoryNavigator = ({
           >
             <MaterialIcons
               name={"keyboard-arrow-down"}
-              color={themeStyles.primaryText.color}
-              color={manualGradientColors.homeDarkColor}
+              color={textStyle.color}
+              color={homeDarkColor}
               size={16}
                             style={{
-                backgroundColor: manualGradientColors.lightColor,
+                backgroundColor: arrowBackgroundColor,
                 borderRadius: 999,
               }}
             />
@@ -195,6 +164,9 @@ const CategoryNavigator = ({
       {searchModalVisible && (
         <View>
           <SearchModal
+          textColor={textStyle.color}
+          primaryBackgroundColor={backgroundColor}
+          capsuleList={capsuleList}
             isVisible={searchModalVisible}
             closeModal={() => setSearchModalVisible(false)}
             onSearchPress={onSearchPress}

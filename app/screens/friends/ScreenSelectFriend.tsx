@@ -14,9 +14,10 @@ type Props = {
 };
 
 const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { friendList } = useFriendList();
-  const { getThemeAheadOfLoading, resetTheme } = useFriendStyle();
+  const { getThemeAheadOfLoading, themeAheadOfLoading, resetTheme } =
+    useFriendStyle();
   const navigation = useNavigation();
   const { selectedFriend, selectFriend } = useSelectedFriend();
 
@@ -45,15 +46,12 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
 
     const selectedFriend = selectedOption || null;
     if (selectedOption) {
-         selectFriend(selectedFriend);
-    getThemeAheadOfLoading(selectedFriend);
-
+      selectFriend(selectedFriend);
+      getThemeAheadOfLoading(selectedFriend);
     } else {
       selectFriend(null);
       resetTheme();
-
     }
- 
 
     if (!navigationDisabled) {
       navigation.goBack();
@@ -61,7 +59,15 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
   };
 
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground
+      startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
+      style={{ flex: 1 }}
+    >
       <View style={{ paddingHorizontal: 10, flex: 1 }}>
         <View
           style={[
@@ -85,8 +91,11 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
         <View style={{ width: "100%", flex: 1 }}>
           {alphabFriendList && (
             <FriendListUI
+            themeAheadOfLoading={themeAheadOfLoading}
+            friendList={friendList}
+            themeStyles={themeStyles}
               data={alphabFriendList}
-              selectedFriendId={selectedFriend ? selectedFriend?.id : null}
+              friendId={selectedFriend ? selectedFriend?.id : null}
               onPress={handleSelectFriend}
             />
           )}

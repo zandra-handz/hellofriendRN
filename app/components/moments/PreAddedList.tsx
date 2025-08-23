@@ -3,20 +3,17 @@ import React, { useState } from "react";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { FlashList } from "@shopify/flash-list";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage"; // no error message for this one
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
+import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 import CheckboxListItem from "./CheckboxListItem";
 import EscortBar from "./EscortBar";
-const PreAddedList = () => {
+const PreAddedList = ({ updateCapsule, preADded, allCapsulesList, textStyle, specialTextStyle, friendId }) => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
 
-  const { updateCapsule, preAdded, allCapsulesList } = useCapsuleList(); // also need to update cache
-  const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
+ 
   const { navigateToMoments } = useAppNavigations();
 
   const renderListItem = ({ item, index }) => {
@@ -34,10 +31,7 @@ const PreAddedList = () => {
       />
     );
   };
-
-  //   useEffect(() => {
-
-  //   }, [updateCapsuleMutation]);
+ 
 
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)
@@ -49,7 +43,7 @@ const PreAddedList = () => {
   // };
 
   const handleRestore = () => {
-    if (!selectedFriend?.id) {
+    if (!friendId) {
       return;
     }
 
@@ -58,22 +52,22 @@ const PreAddedList = () => {
     }
     selectedMoments.forEach((moment) => {
       updateCapsule({
-        friendId: selectedFriend?.id,
+        friendId: friendId,
         capsuleId: moment.id,
         isPreAdded: false,
       }); // Replace with your actual function
     });
 
     showFlashMessage(`Ideas restored!`, false, 1000);
-    navigateToMoments({scrollTo: 0}); 
+    navigateToMoments({ scrollTo: 0 });
   };
 
   const handleSelectAll = () => {
     setSelectedMoments(allCapsulesList);
   };
 
-    const handleDeSelectAll = () => {
-      console.log('deselect pressed');
+  const handleDeSelectAll = () => {
+    console.log("deselect pressed");
     setSelectedMoments([]);
   };
 
@@ -104,41 +98,51 @@ const PreAddedList = () => {
       >
         <Text
           style={[
-            themeStyles.primaryText,
-            appFontStyles.welcomeText,
+            textStyle,
+           specialTextStyle,
             { fontSize: 22 },
           ]}
         >
           Undo add
         </Text>
-        <View style={{ height: "100%", alignItems: "center" , flexDirection: 'row'}}>
- 
-        <Pressable
-          onPress={handleSelectAll}
-          style={{ height: "100%", alignItems: "center" , flexDirection: 'row'}}
+        <View
+          style={{ height: "100%", alignItems: "center", flexDirection: "row" }}
         >
-          <Text
-            style={[
-              themeStyles.primaryText,
-              { fontSize: 12, fontWeight: "bold" },
-            ]}
+          <Pressable
+            onPress={handleSelectAll}
+            style={{
+              height: "100%",
+              alignItems: "center",
+              flexDirection: "row",
+            }}
           >
-            Select all
-          </Text>
-        </Pressable>
-                <Pressable
-          onPress={handleDeSelectAll}
-          style={{ height: "100%", alignItems: "center" , marginLeft: 20, flexDirection: 'row'}}
-        >
-          <Text
-            style={[
-              themeStyles.primaryText,
-              { fontSize: 12, fontWeight: "bold" },
-            ]}
+            <Text
+              style={[
+                textStyle,
+                { fontSize: 12, fontWeight: "bold" },
+              ]}
+            >
+              Select all
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={handleDeSelectAll}
+            style={{
+              height: "100%",
+              alignItems: "center",
+              marginLeft: 20,
+              flexDirection: "row",
+            }}
           >
-            Reset
-          </Text>
-        </Pressable>
+            <Text
+              style={[
+                textStyle,
+                { fontSize: 12, fontWeight: "bold" },
+              ]}
+            >
+              Reset
+            </Text>
+          </Pressable>
         </View>
       </View>
       <View style={[{ flex: 1, flexShrink: 1, width: "100%" }]}>

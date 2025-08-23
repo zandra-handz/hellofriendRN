@@ -1,16 +1,18 @@
-import React  from "react";
-import {  View   } from "react-native";
- 
+import React from "react";
+import { View } from "react-native";
 
- import EditPhone from "../buttons/friends/EditPhone";
- import EditEffort from "../buttons/friends/EditEffort";
- import EditPriority from "../buttons/friends/EditPriority";
- 
+import EditPhone from "../buttons/friends/EditPhone";
+import EditEffort from "../buttons/friends/EditEffort";
+import EditPriority from "../buttons/friends/EditPriority";
 
-const SectionFriendSettings = () => {
- 
- 
- // .days_since_words && .time_Score
+const SectionFriendSettings = ({
+ themeAheadOfLoading,
+  friendId,
+  friendPhone,
+  friendEffort,
+  friendPriority,
+}) => {
+  // .days_since_words && .time_Score
   return (
     <View
       style={{
@@ -20,12 +22,21 @@ const SectionFriendSettings = () => {
         width: "100%",
         alignSelf: "flex-start",
       }}
-    > 
-<EditPhone />
-      <EditEffort />
-      <EditPriority /> 
- 
- 
+    >
+      <EditPhone  
+        friendId={friendId}
+        friendPhone={friendPhone}
+      />
+      <EditEffort
+       themeAheadOfLoading={themeAheadOfLoading}
+        friendId={friendId}
+        friendEffort={friendEffort}
+      />
+      <EditPriority
+         themeAheadOfLoading={themeAheadOfLoading}
+        friendId={friendId}
+        friendPriority={friendPriority}
+      />
     </View>
   );
 };

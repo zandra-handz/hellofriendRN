@@ -23,6 +23,8 @@ import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
 import TitleContainerUI from "./TitleContainerUI";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import { useFriendDash } from "@/src/context/FriendDashContext";
+
 import { useUserStats } from "@/src/context/UserStatsContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
@@ -62,10 +64,10 @@ const ContentAddHello = () => {
 
   const {
     selectedFriend,
-    deselectFriend,
-    loadingNewFriend,
-    friendDashboardData,
+    deselectFriend,  
   } = useSelectedFriend();
+
+  const { friendDash, loadingDash } = useFriendDash();
   const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -124,14 +126,14 @@ const ContentAddHello = () => {
   }, []);
 
   const faveLocations = useMemo(() => {
-    if (!locationList || !friendDashboardData?.friend_faves?.locations) {
+    if (!locationList || !friendDash?.friend_faves?.locations) {
       return [];
     }
 
     return locationList.filter((location) =>
-      friendDashboardData.friend_faves.locations.includes(location.id)
+      friendDash.friend_faves.locations.includes(location.id)
     );
-  }, [locationList, friendDashboardData]);
+  }, [locationList, friendDash]);
 
   const openDoubleChecker = () => {
     setIsDoubleCheckerVisible(true);
@@ -480,7 +482,7 @@ const ContentAddHello = () => {
               onPress={openDoubleChecker}
               isDisabled={
                 selectedFriend &&
-                !loadingNewFriend &&
+                !loadingDash &&
                 selectedTypeChoice !== null &&
                 helloDate
                   ? false

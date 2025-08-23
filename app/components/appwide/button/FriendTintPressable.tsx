@@ -13,8 +13,7 @@ import { ColorValue } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
-import { useFriendList } from "@/src/context/FriendListContext";
-
+ 
 type Props = {
   onPress: () => void;
   friendId: number;
@@ -27,6 +26,7 @@ type Props = {
  
 
 const FriendTintPressable = ({
+  friendList,
   onPress,
   style,
   friendId,
@@ -34,8 +34,7 @@ const FriendTintPressable = ({
   children,
   useFriendColors = true,
   reverse = false,
-}: Props) => {
-  const { friendList } = useFriendList();
+}: Props) => { 
 
   const scale = useSharedValue(1);
   const gradientScale = useSharedValue(0);

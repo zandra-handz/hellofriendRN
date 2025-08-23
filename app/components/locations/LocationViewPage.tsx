@@ -11,8 +11,7 @@ import LocationNumber from "./LocationNumber";
 import LocationAddress from "./LocationAddress";
 
 import { useLocations } from "@/src/context/LocationsContext";
-import LocationUtilityTray from "./LocationUtilityTray";
-import SafeViewAndGradientBackground from "../appwide/format/SafeViewAndGradBackground";
+import LocationUtilityTray from "./LocationUtilityTray"; 
 import Animated, {
   useSharedValue,
   SharedValue,

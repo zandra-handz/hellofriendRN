@@ -1,30 +1,30 @@
 import { View, Pressable, Text } from "react-native";
 import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
-
-// no props rn 
+// no props rn
 // type Props = {
 //   onPress: () => void;
 // };
 
 //TopBar is based on this
-const TopBarWithAddMoment = () => {
-  const { navigateToMomentFocus } = useAppNavigations();
-
+const TopBarWithAddMoment = ({
+  navigateToMomentFocus,
+  textColor,
+  backgroundColor,
+  manualGradientColors,
+}) => {
   const handleNavigateToCreateNew = () => {
-    navigateToMomentFocus({screenCameFrom: 0}); //meaning, moment save will trigger nav back
-
+    navigateToMomentFocus({ screenCameFrom: 0 }); //meaning, moment save will trigger nav back
   };
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
   return (
     <View style={{ paddingHorizontal: 10 }}>
       <View //could make whole bar a pressable instead
         style={[
-          themeStyles.primaryBackground,
           {
+            backgroundColor: backgroundColor,
             paddingHorizontal: 20,
             flexDirection: "row",
             paddingVertical: 10,
@@ -49,11 +49,7 @@ const TopBarWithAddMoment = () => {
             />
           </View>
 
-          <MaterialCommunityIcons
-            name="leaf"
-            size={26}
-            color={themeStyles.primaryText.color}
-          />
+          <MaterialCommunityIcons name="leaf" size={26} color={textColor} />
         </Pressable>
       </View>
     </View>

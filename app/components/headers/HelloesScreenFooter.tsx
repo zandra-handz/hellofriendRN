@@ -15,7 +15,7 @@ import ButtonData from "../buttons/scaffolding/ButtonData";
  
 import {  MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
-import FilterLocationsModal from "./FilterLocationsModal";
+ 
  
 
 const HelloesScreenFooter = ({
@@ -24,6 +24,8 @@ const HelloesScreenFooter = ({
   onFilterPress,
   addToModalOpenPress,
   onSearchPress,
+  themeAheadOfLoading,
+  manualGradientColors,
 }) => {
  
  
@@ -31,8 +33,7 @@ const HelloesScreenFooter = ({
   const { selectedFriend  } = useSelectedFriend();
 
   const [searchModalVisible, setSearchModalVisible] = useState(false);
-  const [filterModalVisible, setFilterModalVisible] = useState(false);
-
+ 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
   const footerPaddingBottom = 20;
@@ -123,6 +124,10 @@ const handleOpenSearchModal = () => {
   return (
     <GradientBackground
       useFriendColors={!!selectedFriend}
+                  startColor={manualGradientColors.lightColor}
+            endColor={manualGradientColors.darkColor}
+            friendColorDark={themeAheadOfLoading.darkColor}
+            friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[
         styles.container,
         {
@@ -187,14 +192,7 @@ const handleOpenSearchModal = () => {
       )}
 
  
-      {filterModalVisible && (
-        <View>
-          <FilterLocationsModal
-            isVisible={filterModalVisible}
-            closeModal={() => setFilterModalVisible(false)}
-          />
-        </View>
-      )}
+ 
     </GradientBackground>
   );
 };

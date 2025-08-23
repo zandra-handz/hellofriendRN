@@ -1,19 +1,16 @@
-import { View, Text, TouchableOpacity, FlatList, Alert } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { FlashList } from "@shopify/flash-list";
-import { CheckBox } from "react-native-elements";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { View, Alert } from "react-native";
+import React, { useCallback, useState } from "react"; 
+import { FlashList } from "@shopify/flash-list"; 
 import { useNavigation } from "@react-navigation/native";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
  
+
 import EscortBar from "../moments/EscortBar";
 import CheckboxListItem from "../moments/CheckboxListItem";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
-const ReloadList = ({ helloId, items }) => {
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
+const ReloadList = ({capsuleList, handleCreateMoment, friendId, friendDash, items }) => {
  
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
@@ -21,23 +18,19 @@ const ReloadList = ({ helloId, items }) => {
   const [selectedMoments, setSelectedMoments] = useState([]);
   const navigation = useNavigation();
 
-  const { capsuleList, handleCreateMoment } = useCapsuleList(); // also need to update cache
-
+ 
   const { categoryNames, categoryCount } = useTalkingPCategorySorting({
     listData: capsuleList,
-  });
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  }); 
   //i added id to category names at a later date to get category colors for charts, simplest way to update this component is to remove extra data here
   const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(
     categoryNames.map((c) => c.category)
   );
 
-  //  const { helloesList } = useHelloes();
-  //  const hello = helloesList.find((hello) => hello.id === helloId);
-
-  const { getLargestCategory, getCategoryCap } = useTalkingPFunctions({
+ 
+  const { getCategoryCap } = useTalkingPFunctions({
     listData: capsuleList,
-    friendData: friendDashboardData,
+    friendData: friendDash,
     categoryCount,
   });
 
@@ -48,25 +41,22 @@ const ReloadList = ({ helloId, items }) => {
       );
 
       return (
-            <CheckboxListItem
-      item={item}
-      selectedItems={selectedMoments}
-      isSelected={isSelected}
-      height={ITEM_HEIGHT}
-      onPress={handleCheckboxChange}
-
-      /> 
-         
+        <CheckboxListItem
+          item={item}
+          selectedItems={selectedMoments}
+          isSelected={isSelected}
+          height={ITEM_HEIGHT}
+          onPress={handleCheckboxChange}
+        />
       );
     },
-    [selectedMoments, manualGradientColors, themeStyles]
+    [selectedMoments ]
   );
 
   const handleBulkCreateMoments = () => {
     selectedMoments.map((moment) => {
       const momentData = {
-     
-        friend: selectedFriend.id,
+        friend: friendId,
 
         selectedCategory: moment.typed_category,
         selectedUserCategory: moment.user_category,

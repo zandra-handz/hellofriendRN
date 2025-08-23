@@ -6,21 +6,23 @@ import { useNavigation } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 // import HelloesTabs from "@/app/components/helloes/HelloesTabs";
-import Loading from "@/app/components/appwide/display/Loading";
+ 
 import CalendarChart from "@/app/components/home/CalendarChart";
 import HelloesListNew from "@/app/components/helloes/HelloesListNew";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 const ScreenHelloes = () => {
   const navigation = useNavigation();
   const { selectedFriend } = useSelectedFriend();
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   const [triggerFetchAll, setTriggerFetchAll] = useState(false);
+  const { helloesList } = useHelloes();
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
-    useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll});
-
+    useFullHelloes({ friendId: selectedFriend?.id, fetchAll: triggerFetchAll });
+const { navigateToHelloes } = useAppNavigations();
   // console.log(helloesListFull);
   const { flattenHelloes } = useHelloesManips({ helloesData: helloesListFull });
   //  console.log(`FLATTEENEEDDEDD`, flattenHelloes);
@@ -41,6 +43,7 @@ const ScreenHelloes = () => {
   const [triggerScroll, setTriggerScroll] = useState(undefined);
   const [inPersonFilter, setInPersonFilter] = useState(false);
 
+  const { themeAheadOfLoading } = useFriendStyle();
   const toggleHelloesFiltering = (turnOn) => {
     if (turnOn) {
       setHelloesData(
@@ -77,10 +80,7 @@ const ScreenHelloes = () => {
   );
 
   const handleOpenSearch = () => {
-    
     setTriggerFetchAll(true);
-    
-
   };
 
   const handleSearchPress = (item) => {
@@ -100,54 +100,76 @@ const ScreenHelloes = () => {
         onFilterPress={toggleHelloesFiltering}
         addToModalOpenPress={handleOpenSearch}
         onSearchPress={handleSearchPress}
+        themeAheadOfLoading={themeAheadOfLoading}
+        manualGradientColors={manualGradientColors}
       />
     );
-  }, [helloesData, flattenHelloes, toggleHelloesFiltering, handleSearchPress, handleOpenSearch]);
+  }, [
+    helloesData,
+    flattenHelloes,
+    themeAheadOfLoading,
+    manualGradientColors,
+    toggleHelloesFiltering,
+    handleSearchPress,
+    handleOpenSearch,
+  ]);
 
   return (
     <SafeViewAndGradientBackground
+      startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
       useOverlay={true}
       style={{ flex: 1 }}
-    >
-      {/* not sure if will work: */}
-      <CalendarChart showTopBar={false} useBackgroundOverlay={false}/>
-            <View
-              style={{
-                padding: 20,
-                alignItems: "center",
-              //  backgroundColor: themeStyles.primaryBackground.backgroundColor,
-                borderRadius: 30,
-                height: "auto",
-                marginVertical: 0,
-              }}
-            >
-              <Text
-                numberOfLines={2}
-                style={[themeStyles.primaryText, appFontStyles.welcomeText]}
-              >
-                Hello history for {selectedFriend?.name}
-              </Text>
-            </View>
+    > 
+      <CalendarChart
+      helloesList={helloesList}
+      navigateToHelloes={navigateToHelloes}
+        friendId={selectedFriend?.id}
+        themeAheadOfLoading={themeAheadOfLoading}
+        themeStyles={themeStyles}
+        showTopBar={false}
+        useBackgroundOverlay={false}
+      />
+      <View
+        style={{
+          padding: 20,
+          alignItems: "center", 
+          borderRadius: 30,
+          height: "auto",
+          marginVertical: 0,
+        }}
+      >
+        <Text
+          numberOfLines={2}
+          style={[themeStyles.primaryText, appFontStyles.welcomeText]}
+        >
+          Hello history for {selectedFriend?.name}
+        </Text>
+      </View>
       {/* <Loading isLoading={!helloesListFull} /> */}
 
-
       {helloesListFull && (
-        <> 
-
+        <>
           <View style={{ flex: 1 }}>
-            {selectedFriend && helloesDataFiltered && helloesDataFiltered.length > 0 && (
-              <HelloesListNew
-              friendName={selectedFriend.name}
-                triggerScroll={triggerScroll}
-                helloesListFull={helloesDataFiltered}
-                isFetchingNextPage={isFetchingNextPage}
-                fetchNextPage={fetchNextPage}
-                hasNextPage={hasNextPage}
-                onPress={navigateToSingleView}
-              />
-            )}
+            {selectedFriend &&
+              helloesDataFiltered &&
+              helloesDataFiltered.length > 0 && (
+                <HelloesListNew
+                  friendName={selectedFriend.name}
+                  triggerScroll={triggerScroll}
+                  helloesListFull={helloesDataFiltered}
+                  isFetchingNextPage={isFetchingNextPage}
+                  fetchNextPage={fetchNextPage}
+                  hasNextPage={hasNextPage}
+                  onPress={navigateToSingleView}
+                />
+              )}
           </View>
         </>
       )}

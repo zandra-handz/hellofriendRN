@@ -2,8 +2,7 @@ import { StyleSheet, Text, View, Dimensions, Animated } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
 
-import FriendItemButton from "../friends/FriendItemButton";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import FriendItemButton from "../friends/FriendItemButton"; 
 
 import { useNavigation } from "@react-navigation/native";
 
@@ -15,9 +14,7 @@ const HomeFriendItems = ({
   borderRadius = 20,
   borderColor = "transparent",
 }) => {
-  const navigation = useNavigation();
-  const { manualGradientColors } = useGlobalStyle();
-  const { darkColor, lightColor } = manualGradientColors;
+  const navigation = useNavigation(); 
   const { selectedFriend } = useSelectedFriend();
 
   const soonListRightSpacer = Dimensions.get("screen").width - 136;

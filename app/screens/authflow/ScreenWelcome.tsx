@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useUser } from "@/src/context/UserContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-  
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import SignInButton from "@/app/components/user/SignInButton";
- 
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useNavigation } from "@react-navigation/native";
 import LogoSmaller from "@/app/components/appwide/logo/LogoSmaller";
- 
+
 import GradientBackground from "@/app/components/appwide/display/GradientBackground";
 import Animated, {
   useSharedValue,
@@ -20,8 +20,10 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
 
 const ScreenWelcome = () => {
-  const { manualGradientColors } = useGlobalStyle();
-  const { user,  isInitializing } = useUser();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
+
+  const { user, isInitializing } = useUser();
+  const { selectedFriend } = useSelectedFriend();
   const navigation = useNavigation<AuthScreenNavigationProp>();
 
   const [confirmedUserNotSignedIn, setConfirmedUserNotSignedIn] =
@@ -31,22 +33,17 @@ const ScreenWelcome = () => {
     navigation.navigate("Auth", { createNewAccount: !!userHitCreateAccount });
   };
 
- 
   useEffect(() => {
     if (user) {
       setConfirmedUserNotSignedIn(false);
     }
-
   }, [user]);
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (!user && !isInitializing) {
       setConfirmedUserNotSignedIn(true);
     }
-
   }, [user, isInitializing]);
- 
 
   const translateY = useSharedValue(500);
 
@@ -60,12 +57,22 @@ const ScreenWelcome = () => {
     };
   });
 
- 
-
   return (
-    <PreAuthSafeViewAndGradientBackground style={{ flex: 1 }}>
+    <PreAuthSafeViewAndGradientBackground
+      startColor={manualGradientColors.darkColor}
+      endColor={manualGradientColors.lightColor}
+      friendColorLight={null}
+      friendColorDark={null}
+      friendId={selectedFriend?.id}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      style={{
+        flex: 1,
+      }}
+    >
       <GradientBackground
         useFriendColors={false}
+        friendColorLight={null}
+        friendColorDark={null}
         startColor={manualGradientColors.darkColor}
         endColor={manualGradientColors.lightColor}
         reverse={false}

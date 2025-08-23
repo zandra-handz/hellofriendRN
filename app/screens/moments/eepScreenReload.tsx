@@ -3,29 +3,40 @@ import { View } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
-import ReloadList from "@/app/components/helloes/ReloadList"; 
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import ReloadList from "@/app/components/helloes/ReloadList";
 import { useRoute } from "@react-navigation/native";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
 
 const eeScreenReload = () => {
   const route = useRoute();
 
   const items = route.params?.items ?? false;
   console.log(`items in screen reload`, items);
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
+  const { themeAheadOfLoading } = useFriendStyle();
+  const { loadingDash } = useFriendDash();
+  const { capsuleList, handleCreateMoment } = useCapsuleList(); // also need to update cache
 
-  const { themeStyles } = useGlobalStyle();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
 
   const useDimAppBackground = true;
 
   return (
     <SafeViewAndGradientBackground
+      startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
       includeBackgroundOverlay={useDimAppBackground}
       style={{ flex: 1 }}
     >
-      {loadingNewFriend && (
+      {loadingDash && (
         <View style={{ flex: 1, width: "100%" }}>
           <LoadingPage
             loading={true}
@@ -35,8 +46,8 @@ const eeScreenReload = () => {
           />
         </View>
       )}
-      {selectedFriend && !loadingNewFriend && (
-        <View style={{ flex: 1 }}>{<ReloadList items={items} />}</View>
+      {selectedFriend && !loadingDash && (
+        <View style={{ flex: 1 }}>{<ReloadList capsuleList={capsuleList} handleCreateMoment={handleCreateMoment} items={items} />}</View>
       )}
     </SafeViewAndGradientBackground>
   );

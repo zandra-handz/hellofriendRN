@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-import { useFriendList } from "@/src/context/FriendListContext"; 
+ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
@@ -17,7 +18,7 @@ const ScreenMomentView = () => {
   const currentIndex = route.params?.index ?? null;
   const { themeAheadOfLoading } = useFriendStyle();
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
-
+const { themeStyles, manualGradientColors } = useGlobalStyle();
   const {
     capsuleList,
     deleteMomentRQuery,
@@ -26,7 +27,8 @@ const ScreenMomentView = () => {
   } = useCapsuleList();
 
   // const [currentIndex, setCurrentIndex] = useState(0);
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend  } = useSelectedFriend();
+  const { loadingDash } = useFriendDash();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });
@@ -48,55 +50,7 @@ const ScreenMomentView = () => {
   }, [userCategories, themeAheadOfLoading]);
 
 
-
-  // const renderHeader = useCallback(
-  //   () => (
-  //     <GlobalAppHeader
-  //       title={"MOMENTS: "}
-  //       navigateTo={"Moments"}
-  //       icon={LeavesTwoFallingOutlineThickerSvg}
-  //       altView={false}
-  //     />
-  //   ),
-  //   [selectedFriend, loadingNewFriend, themeAheadOfLoading]
-  // );
-
-  //Updates if one is edited
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (capsuleList) {
-  //       const matchingMoment = capsuleList.find((mom) => mom.id === moment.id);
-  //       const index = capsuleList.findIndex((mom) => mom.id === moment.id);
-  //       setCurrentIndex(index);
-  //       setMomentInView(matchingMoment);
-  //     }
-  //   }, [capsuleList, moment.id]) // dependencies for the useCallback
-  // );
-
-  //manually closing this for right now because I give up
-  // DONT THINK WE NEED THIS WITH THE NEW CAROUSEL COMPONENT
-  // useEffect(() => {
-  //   if (deleteMomentMutation.isSuccess) {
-  //     if (capsuleList?.length < 1) {
-  //       // closeModal();
-  //     }
-
-  //     let lastIndex = capsuleList.length - 1;
-  //     console.log(
-  //       `lastIndex value: ${lastIndex}, currentIndex value: ${currentIndex}, capsuleCount: ${capsuleCount}`
-  //     );
-  //     if (currentIndex != lastIndex) {
-  //       if (currentIndex < lastIndex) {
-  //         goToPreviousMoment();
-  //       } else {
-  //         goToNextMomentAfterRemovedPrev();
-  //       }
-  //     } else {
-  //       goToFirstMoment();
-  //     }
-  //   }
-  // }, [deleteMomentMutation.isSuccess]);
+ 
 
   useEffect(() => {
     //This runs before capsule list length updates
@@ -118,26 +72,19 @@ const ScreenMomentView = () => {
     } catch (error) {
       console.error("Error deleting moment:", error);
     }
-  };
-
-  //manually close if no more moments, since there is a delay in the update pre-add cache getting updated causing the modal to stay open
-  // and continue to display the last moment after it is added to pre-add
-  // useEffect(() => {
-  //   if (capsuleList) {
-  //     if (capsuleCount < 1) {
-  //       console.log(
-  //         `currentIndex: ${currentIndex}, capsuleCount: ${capsuleCount}, total moments length: ${capsuleList?.length || "0"}`
-  //       );
-
-  //       closeModal();
-  //     }
-  //   }
-  // }, [currentIndex, capsuleList]);
+  }; 
 
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground
+    
+        startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}style={{ flex: 1 }}>
       {selectedFriend &&
-        !loadingNewFriend &&
+        !loadingDash &&
         capsuleList &&
         categoryColorsMap && 
         themeAheadOfLoading && (

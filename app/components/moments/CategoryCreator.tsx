@@ -11,8 +11,7 @@ import Animated, {
   SlideOutDown,
 } from "react-native-reanimated";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialIcons } from "@expo/vector-icons";
-
+import { MaterialIcons } from "@expo/vector-icons"; 
 import AddNewCategory from "../headers/AddNewCategory";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -20,8 +19,7 @@ import { RootStackParamList } from "@/src/types/NavigationTypes";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useCategories } from "@/src/context/CategoriesContext";
-import CategoryButtonForCreator from "./CategoryButtonForCreator";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import CategoryButtonForCreator from "./CategoryButtonForCreator"; 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type Props = {
@@ -39,6 +37,8 @@ type Props = {
 };
 const CategoryCreator = ({
   freezeCategory,
+  friendDefaultCategory,
+ 
   isVisible,
   onPress,
   addToOnPress,
@@ -50,8 +50,7 @@ const CategoryCreator = ({
   const { capsuleList } = useCapsuleList();
   const { userCategories } = useCategories();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-
-  const { friendDashboardData } = useSelectedFriend();
+  
 
   const {
     categorySizes,
@@ -144,13 +143,12 @@ const CategoryCreator = ({
       return;
     }
 
-    if (friendDashboardData && friendDashboardData?.friend_faves && userCategories && (userCategories.length > 0)) {
+    if (friendDefaultCategory && userCategories && (userCategories.length > 0)) {
       console.log(
         `friend default:`,
-        friendDashboardData.friend_faves.friend_default_category
+        friendDefaultCategory
       );
-      const friendDefault =
-        friendDashboardData?.friend_faves?.friend_default_category;
+      const friendDefault = friendDefaultCategory;
       const name = userCategories.find(
         (category) => category.id === friendDefault
       );
@@ -181,7 +179,7 @@ const CategoryCreator = ({
     }
   }, [
     categoriesSortedList,
-    friendDashboardData,
+    friendDefaultCategory,
     userCategories,
     updatingExisting,
     existingId,
@@ -214,7 +212,7 @@ const CategoryCreator = ({
     ),
     [
       userCategories,
-      friendDashboardData,
+      friendDefaultCategory,
       categoryColorsMap,
       onPress,
       selectedId,

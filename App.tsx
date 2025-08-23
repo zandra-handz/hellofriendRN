@@ -2,7 +2,7 @@ import React, { useEffect, createRef } from "react";
 // import * as QuickActions from "expo-quick-actions";
 import { useFonts } from "expo-font";
 import TopLevelNavigationHandler from "./src/handlers/TopLevelNavigationHandler";
- import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
+import QuickActionsHandler from "./src/handlers/QuickActionsHandler";
 import CustomStatusBar from "./app/components/appwide/statusbar/CustomStatusBar";
 import {
   useShareIntentContext,
@@ -45,6 +45,7 @@ import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
 import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
 import { SelectedFriendProvider } from "./src/context/SelectedFriendContext";
+import { FriendDashProvider } from "./src/context/FriendDashContext";
 import { SelectedFriendStatsProvider } from "./src/context/SelectedFriendStatsContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 // import * as Font from "expo-font";
@@ -75,7 +76,8 @@ import ScreenRecoverCredentials from "./app/screens/authflow/ScreenRecoverCreden
 import ScreenMomentFocus from "./app/screens/moments/ScreenMomentFocus";
 import ScreenLocation from "./app/screens/locations/ScreenLocation";
 
-import ScreenUserDetails from "./app/screens/home/ScreenUserDetails";
+// Don't think I am using
+// import ScreenUserDetails from "./app/screens/home/ScreenUserDetails";
 
 import ScreenLocationCreate from "./app/screens/locations/ScreenLocationCreate";
 import ScreenLocationEdit from "./app/screens/locations/ScreenLocationEdit";
@@ -233,29 +235,31 @@ export default Sentry.wrap(function App() {
                   <CategoriesProvider>
                     <UserStatsProvider>
                       <SelectedFriendProvider>
-                        <CapsuleListProvider>
-                          <LocationsProvider>
-                            <HelloesProvider>
-                              <FriendLocationsProvider>
-                                <SelectedFriendStatsProvider>
-                                  {/* <MessageContextProvider> */}
-                                  <SafeAreaProvider>
-                                    <GlobalStyleProvider>
-                                      <RootSiblingParent>
-                                        <DeviceLocationProvider>
-                                          <FriendStyleProvider>
-                                            <Layout />
-                                          </FriendStyleProvider>
-                                        </DeviceLocationProvider>
-                                      </RootSiblingParent>
-                                    </GlobalStyleProvider>
-                                  </SafeAreaProvider>
-                                  {/* </MessageContextProvider> */}
-                                </SelectedFriendStatsProvider>
-                              </FriendLocationsProvider>
-                            </HelloesProvider>
-                          </LocationsProvider>
-                        </CapsuleListProvider>
+                        <FriendDashProvider>
+                          <CapsuleListProvider>
+                            <LocationsProvider>
+                              <HelloesProvider>
+                                <FriendLocationsProvider>
+                                  <SelectedFriendStatsProvider>
+                                    {/* <MessageContextProvider> */}
+                                    <SafeAreaProvider>
+                                      <GlobalStyleProvider>
+                                        <RootSiblingParent>
+                                          <DeviceLocationProvider>
+                                            <FriendStyleProvider>
+                                              <Layout />
+                                            </FriendStyleProvider>
+                                          </DeviceLocationProvider>
+                                        </RootSiblingParent>
+                                      </GlobalStyleProvider>
+                                    </SafeAreaProvider>
+                                    {/* </MessageContextProvider> */}
+                                  </SelectedFriendStatsProvider>
+                                </FriendLocationsProvider>
+                              </HelloesProvider>
+                            </LocationsProvider>
+                          </CapsuleListProvider>
+                        </FriendDashProvider>
                       </SelectedFriendProvider>
                     </UserStatsProvider>
                   </CategoriesProvider>
@@ -412,8 +416,7 @@ export const Layout = () => {
       {/* <ResultMessage /> */}
       <CustomStatusBar />
 
-
-<QuickActionsHandler navigationRef={navigationRef} />
+      <QuickActionsHandler navigationRef={navigationRef} />
       <TopLevelNavigationHandler>
         <Stack.Navigator
           screenOptions={{
@@ -435,13 +438,13 @@ export const Layout = () => {
                   headerShown: false,
                 }}
               />
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="UserDetails"
                 component={ScreenUserDetails}
                 options={{
                   headerShown: false,
                 }}
-              />
+              /> */}
 
               <Stack.Screen
                 name="MomentFocus"

@@ -34,6 +34,7 @@ const CategoryFriendHistoryList = ({
   const { themeStyles, appFontStyles } = useGlobalStyle();
   const { helloesList } = useHelloes();
   const [completedCapsuleCount, setCompletedCapsuleCount] = useState<number>(0);
+  
   const [quickView, setQuickView] = useState<null | {
     topBarText: String;
     view: React.ReactElement;

@@ -6,6 +6,8 @@ import { useHelloes } from "@/src/context/HelloesContext";
 import CarouselSliderInfinite from "@/app/components/appwide/CarouselSliderInfinite";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
 import HelloViewPage from "@/app/components/helloes/HelloViewPage";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const ScreenHelloView = () => {
   const route = useRoute();
@@ -13,6 +15,9 @@ const ScreenHelloView = () => {
   const inPersonFilter = route.params?.inPersonFilter ?? false;
   const { selectedFriend } = useSelectedFriend();
   const { helloesList } = useHelloes();
+     const { themeStyles, manualGradientColors } = useGlobalStyle();
+ 
+   const { themeAheadOfLoading } = useFriendStyle();
 
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useFullHelloes({ friendId: selectedFriend?.id, indexNeeded: startingIndex });
@@ -52,7 +57,16 @@ const ScreenHelloView = () => {
  }, [inPersonFilter, helloesDataFiltered, helloesList]);
 
   return (
-    <SafeViewAndGradientBackground style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground 
+         startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
+    
+    
+    style={{ flex: 1 }}>
       <CarouselSliderInfinite
       totalItemCount={totalHelloesCount}
       isFiltered={inPersonFilter}

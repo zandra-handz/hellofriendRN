@@ -3,11 +3,14 @@ import { View, Text } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentWriteEditView from "@/app/components/moments/MomentWriteEditView";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import { useCategories } from "@/src/context/CategoriesContext"; 
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated, {
   SlideInDown,
   SlideInUp,
@@ -17,11 +20,13 @@ import TopBarLikeMinusWidth from "./TopBarLikeMinusWidth";
 
 const ScreenMomentFocus = () => {
   const route = useRoute();
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
   const momentText = route.params?.momentText ?? null;
   const screenCameFrom = route.params?.screenCameFrom ?? 0; // 0 = nav back, 1 = do not nav after save
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
   const existingMomentObject = route.params?.existingMomentObject ?? null;
- 
+ const { selectedFriend } = useSelectedFriend();
+ const {   friendDash } = useFriendDash();
   const { capsuleList } = useCapsuleList();
   const { userCategories } = useCategories();
   const { themeAheadOfLoading } = useFriendStyle();
@@ -94,6 +99,12 @@ const ScreenMomentFocus = () => {
 
   return (
     <SafeViewAndGradientBackground
+        startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
       addColorChangeDelay={true}
       backgroundOverlayHeight={"10%"}
       includeBackgroundOverlay={catCreatorVisible}
@@ -128,6 +139,8 @@ const ScreenMomentFocus = () => {
           }}
         >
           <MomentWriteEditView
+          friendId={selectedFriend?.id}
+          friendFaves={friendDash?.friend_faves}
             screenCameFromToParent={screenCameFrom}
             triggerSaveFromLateral={triggerSaveFromLateral}
             catCreatorVisible={catCreatorVisible}

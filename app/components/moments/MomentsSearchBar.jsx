@@ -1,27 +1,25 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   View,
   TextInput,
   FlatList,
   Text,
   TouchableOpacity,
-  Pressable,
+ 
   TouchableWithoutFeedback,
   Keyboard,
   StyleSheet,
 } from "react-native";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import SearchBigMagSvg from "@/app/assets/svgs/search-big-mag.svg";
+ 
 
 const MomentsSearchBar = ({
   data,
-  height = "100%",
   width = "100%",
+  textColor,
   backgroundColor,
   textAndIconColor = "gray",
   placeholderText = "Search",
-  borderColor = "#ccc",
   onPress,
   autoFocus,
   searchKeys,
@@ -29,7 +27,6 @@ const MomentsSearchBar = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
 
   const textInputRef = useRef(null);
 
@@ -47,7 +44,7 @@ const MomentsSearchBar = ({
     if (autoFocus) {
       const timeout = setTimeout(() => {
         setTriggerAutoFocus(true);
-        console.log("autofocus triggered");
+        // console.log("autofocus triggered");
         if (textInputRef && textInputRef.current) {
           textInputRef.current.focus();
         }
@@ -93,22 +90,14 @@ const MomentsSearchBar = ({
         <TouchableOpacity
           onPress={() => handleItemPress(item)}
           style={[
-            appContainerStyles.searchBarResultListItem,
+            styles.searchBarResultListItem,
             {
               borderBottomColor:
-                filteredData?.length > 1
-                  ? themeStyles.genericText.color
-                  : "transparent",
+                filteredData?.length > 1 ? textColor : "transparent",
             },
           ]}
         >
-          <Text
-            numberOfLines={1}
-            style={[
-              appFontStyles.searchBarResultListItemText,
-              themeStyles.genericText,
-            ]}
-          >
+          <Text numberOfLines={1} style={[{ color: textColor, fontSize: 15 }]}>
             {searchKeys.map((key) => item[key]).join(" - ")}{" "}
           </Text>
         </TouchableOpacity>
@@ -118,7 +107,7 @@ const MomentsSearchBar = ({
   );
 
   return (
-    <View style={[appContainerStyles.searchBarContainer, { width: width }]}>
+    <View style={[{ width: width, zIndex: 2 }]}>
       <TouchableWithoutFeedback onPress={handleOutsidePress}>
         {/* <View
           style={[
@@ -133,17 +122,18 @@ const MomentsSearchBar = ({
         <View
           style={[
             styles.inputContainer,
-            themeStyles.genericTextBackground,
+
             {
+              backgroundColor: backgroundColor,
               borderRadius: INPUT_CONTAINER_BORDER_RADIUS,
-              borderColor: themeStyles.primaryText.color,
+              borderColor: textColor,
             },
           ]}
         >
           <TextInput
             ref={textInputRef}
             // style={appFontStyles.searchBarInputText}
-            style={[styles.searchInput, themeStyles.genericText]}
+            style={[styles.searchInput, { color: textColor }]}
             autoFocus={triggerAutoFocus}
             placeholder={placeholderText}
             placeholderTextColor={textAndIconColor}
@@ -153,31 +143,27 @@ const MomentsSearchBar = ({
             onBlur={handleBlur} // Clears when user moves away from the input
           />
           <View>
-            <SearchBigMagSvg
-              height={iconSize}
-              width={iconSize}
-              color={textAndIconColor}
+            <MaterialCommunityIcons
+              name={"comment-search-outline"}
+              size={iconSize}
+              color={textColor}
               style={{ paddingHorizontal: 10, overflow: "hidden" }}
             />
           </View>
         </View>
       </TouchableWithoutFeedback>
       {filteredData && filteredData.length > 0 && searchQuery.length > 0 && (
-        // <View
-        //   style={[
-        //     appContainerStyles.searchBarDropDownContainer,
-        //     themeStyles.genericTextBackground,
-        //     { width: width, top: height },
-        //   ]}
-        // >
         <View
-          style={[styles.dropdownContainer, themeStyles.genericTextBackground]}
+          style={[
+            styles.dropdownContainer,
+            { backgroundColor: backgroundColor },
+          ]}
         >
           <FlatList
             data={filteredData}
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderSearchResultItem}
-            style={appContainerStyles.searchBarResultsListContainer}
+            style={styles.listContainer}
             keyboardShouldPersistTaps="handled"
             nestedScrollEnabled // Enable nested scroll for the FlatList
           />
@@ -189,6 +175,26 @@ const MomentsSearchBar = ({
 
 //took this from searchsavedlocations
 const styles = StyleSheet.create({
+  searchBarResultListItem: {
+    paddingVertical: 6,
+    marginVertical: 4,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    textAlign: "left",
+    justifyContent: "flex-start",
+
+    height: "auto",
+    borderBottomWidth: 1,
+    borderRadius: 0,
+  },
+  listContainer: {
+    paddingHorizontal: 6,
+
+    borderRadius: 20,
+    zIndex: 1000,
+  },
+
   inputContainer: {
     flexDirection: "row-reverse",
     alignItems: "center",

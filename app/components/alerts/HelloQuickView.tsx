@@ -15,7 +15,7 @@ type Props = {
   index: number;
 };
 
-const HelloQuickView = ({ data, momentOriginalId, index }: Props) => {
+const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
   const { themeStyles } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();

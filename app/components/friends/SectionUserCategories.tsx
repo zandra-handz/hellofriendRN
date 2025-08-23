@@ -8,26 +8,36 @@ import {
   FlatList,
   Alert,
 } from "react-native";
- 
+
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
 import Animated, { FadeInUp } from "react-native-reanimated";
+import { useUser } from "@/src/context/UserContext";
+import useCreateNewCategory from "@/src/hooks/CategoryCalls/useCreateNewCategory";
+import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
+import useDeleteCategory from "@/src/hooks/CategoryCalls/useDeleteCategory";
 
 import AddNewCategory from "../headers/AddNewCategory";
 
 const SectionUserCategories = () => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
-  const {
-    userCategories,
-    createNewCategory,
-    updateCategory,
-    deleteCategory,
-    createNewCategoryMutation,
-    updateCategoryMutation,
-    deleteCategoryMutation,
-  } = useCategories();
- 
+  const { user } = useUser();
+  const { userCategories } =
+    useCategories();
+
+  const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory(
+    { userId: user?.id }
+  );
+  const { updateCategory, updateCategoryMutation } = useUpdateCategory({
+    userId: user?.id,
+  });
+
+    const { deleteCategory, deleteCategoryMutation } = useDeleteCategory({
+    userId: user?.id,
+  });
+
+
   const [showEdit, setShowEdit] = useState(false);
 
   // const [showList, setShowList] = useState(true);
@@ -65,21 +75,19 @@ const SectionUserCategories = () => {
   };
 
   const handleDeleteCategory = () => {
-    deleteCategory({ 
+    deleteCategory({
       id: editId,
     });
   };
 
   const handleCreateCategory = () => {
     createNewCategory({
-   
       name: newCategoryRef.current.value,
     });
   };
 
   const handleUpdateCategory = () => {
     updateCategory({
-   
       id: editId,
 
       updates: { name: newCategoryRef.current.value },
@@ -124,49 +132,6 @@ const SectionUserCategories = () => {
       }
     }
   }, [updateCategoryMutation.isSuccess]);
-
-  const renderHeaderItem = useCallback(({}) => (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        // height: 40,
-
-        borderRadius: 10,
-        width: "100%",
-        marginBottom: 6,
-        alignItems: "center",
-      }}
-    >
-      <View
-        style={{
-          width: 40,
-          alignItems: "center",
-          justifyContent: "start",
-          flexDirection: "row",
-        }}
-      >
-        <Pressable onPress={toggleAddNew}>
-          <MaterialCommunityIcons
-            name={"plus"}
-            size={20}
-            color={themeStyles.primaryText.color}
-          />
-        </Pressable>
-      </View>
-
-      <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-        <Text
-          style={[
-            themeStyles.primaryText,
-            { fontSize: 14, fontFamily: "Poppins-Bold" },
-          ]}
-        >
-          Add new
-        </Text>
-      </View>
-    </View>
-  ));
 
   const renderCategoryItem = useCallback(({ item, index }) => {
     const indexForCalc = index === 0 ? 0.5 : index;
@@ -235,7 +200,6 @@ const SectionUserCategories = () => {
   };
 
   const toggleAddNew = () => {
-  
     setShowEdit(true);
 
     setEditId(null);
@@ -339,12 +303,11 @@ const SectionUserCategories = () => {
       )}
 
       {userCategories &&
-        userCategories.length > 0 && !showEdit && ( //showList && (
-          <View style={{ width: "100%", flexShrink: 1  }}>
+        !showEdit && ( //showList && (
+          <View style={{ width: "100%", flexShrink: 1 }}>
             <AddNewCategory fontStyle={2} />
+
             <FlatList
-              // ListHeaderComponent={renderHeaderItem}
-             // stickyHeaderIndices={[0]}
               data={userCategories}
               renderItem={renderCategoryItem}
               keyExtractor={extractItemKey}
@@ -355,8 +318,8 @@ const SectionUserCategories = () => {
               showsVerticalScrollIndicator={false}
               ListFooterComponent={() => <View style={{ height: 40 }} />}
             />
-            <View> 
-            </View>
+
+            <View></View>
           </View>
         )}
     </View>

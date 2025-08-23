@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { View, Text, Pressable, DimensionValue } from "react-native";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- 
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -40,8 +40,8 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
   // console.log("FRIEND SELECTOR RERENDERED");
   const { themeStyles } = useGlobalStyle();
   const navigation = useNavigation();
-  const { selectedFriend, friendLoaded, loadingNewFriend } =
-    useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
+  const { loadingDash } = useFriendDash();
   const { themeAheadOfLoading } = useFriendStyle();
 
   const firstSelectLabel = customLabel ? customLabel : `Pick friend: `;
@@ -68,17 +68,13 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
         numberOfLines={1}
         ellipsizeMode="tail"
       >
-        {(friendLoaded &&
-          !useGenericTextColor &&
-          `For:  ${selectedFriend?.name}`) ||
-        friendLoaded
-          ? "switch friend"
-          : firstSelectLabel}
+        {(!useGenericTextColor && `For:  ${selectedFriend?.name}`) ||
+          firstSelectLabel}
       </Text>
     ),
     [
       customFontStyle,
-      friendLoaded,
+
       defaultLabelStyle,
       selectedFriend,
       themeAheadOfLoading,
@@ -92,7 +88,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
         name="account-switch-outline"
         size={iconSize}
         color={
-          loadingNewFriend
+          loadingDash
             ? "transparent"
             : selectedFriend && !useGenericTextColor
               ? color || themeAheadOfLoading.fontColorSecondary
@@ -100,7 +96,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
         }
       />
     ),
-    [loadingNewFriend, selectedFriend, themeAheadOfLoading, themeStyles]
+    [loadingDash, selectedFriend, themeAheadOfLoading, themeStyles]
   );
 
   return (
@@ -127,10 +123,10 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
             alignItems: "flex-end",
           }}
         >
-          {loadingNewFriend && (
+          {loadingDash && (
             <View style={{ paddingRight: "14%" }}>
               <LoadingPage
-                loading={loadingNewFriend}
+                loading={true}
                 spinnerType="flow"
                 spinnerSize={30}
                 color={themeAheadOfLoading.darkColor}
@@ -139,7 +135,7 @@ const FriendModalIntegrator: React.FC<FriendModalIntegratorProps> = ({
             </View>
           )}
 
-          {!loadingNewFriend && includeLabel && <RenderText />}
+          {!loadingDash && includeLabel && <RenderText />}
 
           <View style={{ paddingLeft: 0, marginLeft: 6 }}>
             <RenderIcon />

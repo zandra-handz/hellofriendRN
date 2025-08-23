@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 import useImageFunctions from "@/src/hooks/useImageFunctions";
  
 import { useNavigation } from "@react-navigation/native";
@@ -14,9 +14,8 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 
 const windowWidth = Dimensions.get("window").width;
 
-const ImagesList = ({ width, height, containerWidth = "100%" }) => {
-  const { imageList } = useImageFunctions(); 
-  const { themeAheadOfLoading } = useFriendStyle();
+const ImagesList = ({ themeAheadOfLoading, width, height, containerWidth = "100%" }) => {
+  const { imageList } = useImageFunctions();  
   const navigation = useNavigation();
  
   const openImageNav = (image, index) => {

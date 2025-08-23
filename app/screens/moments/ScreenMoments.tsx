@@ -4,6 +4,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import MomentsList from "@/app/components/moments/MomentsList";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import TopBarWithAddMoment from "./TopBarWithAddMoment";
 import Loading from "@/app/components/appwide/display/Loading";
 import { useRoute } from "@react-navigation/native";
@@ -13,23 +14,32 @@ import { useFriendList } from "@/src/context/FriendListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import useAppNavigations from "@/src/hooks/useAppNavigations";
+import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 const ScreenMoments = () => {
   const route = useRoute();
   const scrollTo = route?.params?.scrollTo ?? null;
-  const { capsuleList } = useCapsuleList();
+  const { capsuleList, updateCapsule } = useCapsuleList();
+
+  const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
+    listData: capsuleList,
+  }); 
+
+  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { navigateToMomentView,navigateToMomentFocus, navigateBack } = useAppNavigations();
+
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
   });
 
   const { userCategories } = useCategories();
-  const { friendList } =
-    useFriendList();
+  const { friendList } = useFriendList();
 
-  const {  themeAheadOfLoading, getThemeAheadOfLoading } =
-    useFriendStyle();
-  const { selectedFriend, setFriend, loadingNewFriend } = useSelectedFriend();
+  const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
+  const { selectedFriend, setFriend } = useSelectedFriend();
+  const { loadingDash } = useFriendDash();
 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
@@ -42,10 +52,9 @@ const ScreenMoments = () => {
     getThemeAheadOfLoading(friend);
   };
 
-
   // BUG this will let selected friend override, it needs to be able to know if navigating here from quick actions
   useEffect(() => {
-    if (loadingNewFriend || isLoading) {
+    if (loadingDash || isLoading) {
       return;
     }
 
@@ -58,13 +67,7 @@ const ScreenMoments = () => {
     }
 
     handleSelectUpNext();
-  }, [
-    selectedFriend,
-    loadingNewFriend,
-    isLoading,
-    friendList,
-    upcomingHelloes,
-  ]);
+  }, [selectedFriend, loadingDash, isLoading, friendList, upcomingHelloes]);
 
   //flow has changed so do we want to do this here still?
   prefetchUserAddresses();
@@ -82,21 +85,23 @@ const ScreenMoments = () => {
     }
   }, [userCategories, themeAheadOfLoading]);
 
-  //     const categoryColorsMap = useMemo(() => {
-  //   if (!userCategories || userCategories.length === 0) return {};
-  //   return generateGradientColorsMap(
-  //     userCategories,
-  //     themeAheadOfLoading.lightColor,
-  //     themeAheadOfLoading.darkColor
-  //   );
-  // }, [userCategories, themeAheadOfLoading.lightColor, themeAheadOfLoading.darkColor]);
-
   return (
     <SafeViewAndGradientBackground
+      startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
       backgroundOverlayHeight={120}
       style={{ flex: 1 }}
     >
-      <TopBarWithAddMoment />
+      <TopBarWithAddMoment
+      navigateToMomentFocus={navigateToMomentFocus}
+        textColor={themeStyles.primaryText.color}
+        backgroundColor={themeStyles.primaryBackground.backgroundColor}
+        manualGradientColors={manualGradientColors}
+      />
       <View
         style={{
           width: "100%",
@@ -112,13 +117,37 @@ const ScreenMoments = () => {
         }}
       ></View>
       <View style={{ width: "100%", height: 4 }}></View>
-      <Loading isLoading={loadingNewFriend} />
+      <Loading
+        backgroundColor={themeStyles.primaryBackground.backgroundColor}
+        isLoading={loadingDash}
+      />
 
-      {selectedFriend && !loadingNewFriend && (
+      {selectedFriend && !loadingDash && (
         <>
           <View style={{ flex: 1 }}>
             {capsuleList && categoryColorsMap && (
               <MomentsList
+                capsuleList={capsuleList}
+                updateCapsule={updateCapsule}
+                categoryNames={categoryNames}
+                categoryStartIndices={categoryStartIndices}
+                navigateToMomentView={navigateToMomentView}
+
+                // EscortBarMinusWidth
+                navigateBack={navigateBack}
+
+                // Moment item
+                friendColor={themeAheadOfLoading.darkColor}
+
+                primaryBackgroundColor={themeStyles.primaryBackground.backgroundColor}
+                homeDarkColor={manualGradientColors.homeDarkColor}
+                appLightColor={manualGradientColors.lightColor}
+                primaryTextStyle={themeStyles.primaryText}
+                primaryOverlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
+                subWelcomeTextStyle={themeStyles.subwelcomeText}
+
+
+                friendId={selectedFriend?.id}
                 scrollTo={scrollTo}
                 categoryColorsMap={categoryColorsMap}
               />

@@ -38,7 +38,8 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
   spinnerStyle,
-  loadingNewFriend,
+  loadingDash,
+  friendDash,
   selectedFriendId,
   selectedFriendName,
 }) => {
@@ -134,7 +135,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
               <View style={{ flex: 1, width: "100%" }} ref={headerRef}>
                 <FriendHeaderMessageUI
                   selectedFriendName={`${selectedFriendName}`}
-                  loadingNewFriend={loadingNewFriend}
+                  loadingNewFriend={loadingDash}
                   primaryColor={primaryTextStyle.color}
                   welcomeTextStyle={welcomeTextStyle}
                   backgroundColor={primaryBackgroundColor}
@@ -150,7 +151,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   width: "100%",
                 }}
               >
-                {loadingNewFriend && (
+                {loadingDash && (
                   <>
                     <View style={styles.loadingWrapper}>
                       <LoadingPage loading={true} spinnerType={spinnerStyle} />
@@ -158,8 +159,10 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   </>
                 )}
 
-                {!loadingNewFriend && selectedFriendId && (
+                {!loadingDash && selectedFriendId && (
                   <SuggestedHello
+                  friendId={selectedFriendId}
+                  friendFutureDate={friendDash?.future_date_in_words || "No date available"}
                     padding={SELECTED_FRIEND_CARD_PADDING}
                     height={SELECTED_FRIEND_CARD_HEIGHT}
                     borderRadius={borderRadius}
@@ -175,7 +178,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                    primaryOverlayColor={primaryOverlayColor}
                    welcomeTextStyle={welcomeTextStyle}
                    subWelcomeTextStyle={subWelcomeTextStyle}
-                    loadingNewFriend={loadingNewFriend}
+                    loadingNewFriend={loadingDash}
                     selectedFriendId={!!selectedFriendId}
                     selectedFriendName={selectedFriendName}
                     outerPadding={spacerAroundCalendar}

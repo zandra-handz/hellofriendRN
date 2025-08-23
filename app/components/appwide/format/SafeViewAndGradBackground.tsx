@@ -2,12 +2,8 @@ import React, { useEffect, useState, ReactElement, useMemo } from "react";
 import { DimensionValue, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useRoute } from "@react-navigation/native";
 import GradientBackground from "../display/GradientBackground";
-
 
 type Props = {
   children: ReactElement;
@@ -18,24 +14,27 @@ type Props = {
   backgroundOverlayHeight: DimensionValue;
   backgroundOverlayBottomRadius: number;
   header?: React.ComponentType;
-
 };
-
 
 const SafeViewAndGradientBackground = ({
   children,
-  style, 
-  addColorChangeDelay= false,
+  style,
+  startColor,
+  endColor,
+  friendColorLight='white',
+  friendColorDark='red',
+  backgroundOverlayColor,
+  friendId,
+  backgroundTransparentOverlayColor,
+  addColorChangeDelay = false,
   includeBackgroundOverlay = false,
   useOverlay = false,
   primaryBackground = false,
   backgroundOverlayHeight = "100%",
   backgroundOverlayBottomRadius = 0,
   header: Header,
-} : Props) => {
+}: Props) => {
   const insets = useSafeAreaInsets();
-  const { selectedFriend  } = useSelectedFriend();
-
 
   const route = useRoute();
 
@@ -44,25 +43,25 @@ const SafeViewAndGradientBackground = ({
   const left = typeof insets.left === "number" ? insets.left : 0;
   const right = typeof insets.right === "number" ? insets.right : 0;
 
-  const { themeStyles } = useGlobalStyle();
+  const [showColorOverlay, setShowColorOverlay] = useState(
+    includeBackgroundOverlay
+  );
 
-  const [showColorOverlay, setShowColorOverlay ] = useState(includeBackgroundOverlay);
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-useEffect(() => {
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    if (addColorChangeDelay && includeBackgroundOverlay) {
+      timeoutId = setTimeout(() => {
+        setShowColorOverlay(true);
+      }, 100);
+    } else {
+      setShowColorOverlay(includeBackgroundOverlay);
+    }
 
-  if (addColorChangeDelay && includeBackgroundOverlay) {
-    timeoutId = setTimeout(() => {
-      setShowColorOverlay(true);
-    }, 100); 
-  } else {
-    setShowColorOverlay(includeBackgroundOverlay);
-  }
-
-  return () => {
-    if (timeoutId) clearTimeout(timeoutId);
-  };
-}, [includeBackgroundOverlay, addColorChangeDelay]);
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [includeBackgroundOverlay, addColorChangeDelay]);
 
   const paddingStyle = useMemo(
     () => ({
@@ -71,10 +70,10 @@ useEffect(() => {
       paddingLeft: left,
       paddingRight: right,
       backgroundColor: primaryBackground
-        ? themeStyles.primaryBackground.backgroundColor
+        ? backgroundOverlayColor
         : "transparent",
     }),
-    [top, bottom, left, right, primaryBackground, themeStyles]
+    [top, bottom, left, right, primaryBackground, backgroundOverlayColor]
   );
 
   const standardizedHeaderHeight = 44;
@@ -93,14 +92,18 @@ useEffect(() => {
   );
 
   const useFriendColors = useMemo(
-    () => selectedFriend && !isSettingsScreen, // && !isHomeScreen,
-    [selectedFriend, isSettingsScreen, isHomeScreen]
+    () => friendId && !isSettingsScreen, // && !isHomeScreen,
+    [friendId, isSettingsScreen, isHomeScreen]
   );
 
   return (
     <GradientBackground
       useFriendColors={useFriendColors || undefined}
       additionalStyles={[paddingStyle, style]}
+      startColor={startColor}
+      endColor={endColor}
+      friendColorDark={friendColorDark}
+      friendColorLight={friendColorLight}
     >
       {showColorOverlay && (
         <View
@@ -115,13 +118,15 @@ useEffect(() => {
             left: 0,
             opacity: 1,
             // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-            backgroundColor: !useOverlay ? themeStyles.primaryBackground.backgroundColor : themeStyles.overlayBackgroundColor.backgroundColor,
+            backgroundColor: !useOverlay
+              ? backgroundOverlayColor
+              : backgroundTransparentOverlayColor,
             borderBottomLeftRadius: backgroundOverlayBottomRadius,
             borderBottomRightRadius: backgroundOverlayBottomRadius,
           }}
         ></View>
       )}
- 
+
       {Header && (
         <View style={{ height: standardizedHeaderHeight }}>
           <Header />

@@ -24,7 +24,7 @@ import ModalListWithView from "../alerts/ModalListWithView";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
 import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
-
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
   isVisible: boolean;
@@ -39,19 +39,21 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   categoryId,
   onSearchPress,
 }) => {
-  const { userCategories, updateCategory, updateCategoryMutation } =
+  const { userCategories  } =
     useCategories();
 
-  const { settings, updateSettings } = useUserSettings();
+  const { settings  } = useUserSettings();
   const { helloesList } = useHelloes();
   const category = Array.isArray(userCategories)
     ? userCategories.find((category) => category.id === categoryId) || null
     : null;
 
  
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
-  const { selectedFriend, friendDashboardData, handleUpdateDefaultCategory } =
+  const { themeStyles,   manualGradientColors } = useGlobalStyle();
+  const { selectedFriend  } =
     useSelectedFriend();
+
+    const { friendDash } = useFriendDash();
   const { capsuleList } = useCapsuleList();
 
   const startingText = category?.description || null;
@@ -68,7 +70,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
 
   const isUserDefault = categoryId === settings.user_default_category;
   const isFriendDefault =
-    categoryId === friendDashboardData?.friend_faves.friend_default_category;
+    categoryId === friendDash?.friend_faves.friend_default_category;
 
   const {
     categoryHistory,

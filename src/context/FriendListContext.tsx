@@ -41,19 +41,18 @@ export const FriendListProvider: React.FC<FriendListProviderProps> = ({
   children,
 }) => {
   const { user, isInitializing  } = useUser();
-  const { onSignOut } = useSignOut();
-  // const [friendList, setFriendList] = useState<Friend[]>([]);
+  const { onSignOut } = useSignOut(); 
 const queryClient = useQueryClient();
 
   const {
   data: friendList = [],
-  isSuccess: friendListIsSuccess,
+  isSuccess,
   isError,
 } = useQuery({
   queryKey: ["friendList", user?.id],
   queryFn: () => fetchFriendList(),
   retry: 3,
-  enabled: !!user?.id,
+  enabled: !!user?.id && !isInitializing,
   staleTime: 1000 * 60 * 60 * 10, // 10 hours
 });
 
@@ -63,7 +62,7 @@ useEffect(() => {
   }
 }, [isError]);
 
-// Add friend
+ 
 const addToFriendList = (newFriend: Friend) => {
   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (old = []) => {
     const isAlreadyFriend = old.some((friend) => friend.id === newFriend.id);
@@ -74,7 +73,7 @@ const addToFriendList = (newFriend: Friend) => {
   });
 };
 
-// Remove friend(s)
+ 
 const removeFromFriendList = (friendIdToRemove: number | number[]) => {
   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (old = []) => {
     const idsToRemove = Array.isArray(friendIdToRemove)
@@ -84,7 +83,7 @@ const removeFromFriendList = (friendIdToRemove: number | number[]) => {
   });
 };
 
-// Update friend
+ 
 const updateFriend = (updatedFriend: Friend) => {
   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (old = []) =>
     old.map((friend) =>
@@ -92,76 +91,12 @@ const updateFriend = (updatedFriend: Friend) => {
     )
   );
 };
- 
- 
-  // const {
-  //   data: friendListData = [],
- 
-  //   isSuccess: friendListIsSuccess,
-  //   isError,
-  // } = useQuery({
-  //   queryKey: ["friendList", user?.id],
-  //   queryFn: () => fetchFriendList(),
-  //   retry: 3,
-  //   enabled: !!(user?.id), // && !isInitializing),  testing removing this
-  //   staleTime: 1000 * 60 * 60 * 10, // 10 hours
-  // });
-
-  // useEffect(() => {
-  //   if (isError) {
-  //     onSignOut();
-  //   }
-  // }, [isError]);
-
-  // useEffect(() => {
-  //   if (friendListIsSuccess && friendListData) {
-  //     setFriendList(friendListData);
-  //   }
-  // }, [friendListIsSuccess, friendListData]);
-
-  // const addToFriendList = (newFriend: Friend) => {
-  //   setFriendList((prevFriendList) => {
-  //     const isAlreadyFriend = prevFriendList.some(
-  //       (friend) => friend.id === newFriend.id
-  //     );
-  //     if (!isAlreadyFriend) {
-  //       return [...prevFriendList, newFriend];
-  //     }
-  //     return prevFriendList;
-  //   });
-  // };
-
-  // const removeFromFriendList = (friendIdToRemove: number | number[]) => {
-  //   setFriendList((prevFriendList) => {
-  //     try {
-  //       const idsToRemove = Array.isArray(friendIdToRemove)
-  //         ? friendIdToRemove
-  //         : [friendIdToRemove]; 
-  //       return prevFriendList.filter(
-  //         (friend) => !idsToRemove.includes(friend.id)
-  //       );
-  //     } catch (error) {
-  //       console.log("error removing friend from list: ", error);
-  //       return prevFriendList;
-  //     }
-  //   });
-  // };
- 
-
-  // const updateFriend = (updatedFriend: Friend) => {
-  //   setFriendList((prev) =>
-  //     prev.map((friend) =>
-  //       friend.id === updatedFriend.id ? updatedFriend : friend
-  //     )
-  //   );
-  // };
-
+  
  
 
   const contextValue = useMemo(
     () => ({
-      friendList,
-      // setFriendList, 
+      friendList, 
       addToFriendList,
       removeFromFriendList,
       updateFriend, 

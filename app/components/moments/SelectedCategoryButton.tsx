@@ -3,9 +3,11 @@ import React, { useEffect, useState, useRef } from "react";
 import GlobalPressable from "../appwide/button/GlobalPressable";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import CategoryFriendDetailsModal from "../headers/CategoryFriendHistoryCombinedModal";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import { useUser } from "@/src/context/UserContext";
+import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { RefObject } from "react";
 
 type Props = {
@@ -23,6 +25,9 @@ type Props = {
 };
 
 const SelectedCategoryButton = ({
+  friendId,
+  friendDefaultCategory,
+
   zIndex = 3,
   categoryId,
   freezeCategory,
@@ -35,19 +40,21 @@ const SelectedCategoryButton = ({
   maxWidth = 100,
   iconSize = 20,
 }: Props) => {
+
+  const { user } = useUser();
   const { themeStyles, appFontStyles } = useGlobalStyle();
-  const {
-    friendDashboardData,
+ 
+  const { 
     handleUpdateDefaultCategory,
     updateFriendDefaultCategoryMutation,
-  } = useSelectedFriend();
+  } = useUpdateDefaultCategory({userId: user?.id, friendId: friendId});
 
   const handleMakeFriendDefault = () => {
     handleUpdateDefaultCategory({ categoryId: categoryId });
   };
 
   const isFriendDefault =
-    categoryId === friendDashboardData?.friend_faves?.friend_default_category ||
+    categoryId === friendDefaultCategory ||
     false;
 
   const isFrozen = freezeCategory;

@@ -1,13 +1,10 @@
 import { View, Text, Pressable } from "react-native";
-import React, { useState } from "react"; 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useState } from "react";
 import HomeScrollCalendarLights from "./HomeScrollCalendarLights";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import MonthModal from "../headers/MonthModal"; 
+import MonthModal from "../headers/MonthModal";
 import useHelloesManips from "@/src/hooks/useHelloesManips";
-import { useHelloes } from "@/src/context/HelloesContext";
-import useAppNavigations from "@/src/hooks/useAppNavigations";
-
+ 
 type Props = {
   outerPadding: DimensionValue;
   combinedData: any;
@@ -16,12 +13,15 @@ type Props = {
 };
 
 const CalendarChart = ({
+  helloesList,
+  navigateToHelloes,
+  friendId,
   showTopBar = true,
   useBackgroundOverlay = true,
   outerPadding = 10,
-}: Props) => {
-  const { helloesList } = useHelloes();
-const { navigateToHelloes } = useAppNavigations();
+  themeAheadOfLoading,
+  themeStyles,
+}: Props) => { 
 
   const reversedHelloesList = Array.isArray(helloesList)
     ? [...helloesList].reverse()
@@ -29,9 +29,6 @@ const { navigateToHelloes } = useAppNavigations();
   const { combinedData } = useHelloesManips({
     helloesData: reversedHelloesList,
   });
-
-  const { themeStyles } = useGlobalStyle();
- 
 
   const [monthModalVisible, setMonthModalVisible] = useState(false);
   const [monthData, setMonthData] = useState(null);
@@ -43,10 +40,7 @@ const { navigateToHelloes } = useAppNavigations();
     setMonthData(data);
     console.log(data);
     setMonthModalVisible(true);
-  }; 
-
-
- 
+  };
 
   return (
     <>
@@ -96,10 +90,7 @@ const { navigateToHelloes } = useAppNavigations();
               </Text>
             </View>
 
-            <Pressable
-              hitSlop={10}
-              onPress={navigateToHelloes}
-            >
+            <Pressable hitSlop={10} onPress={navigateToHelloes}>
               <Text
                 style={[
                   themeStyles.primaryText,
@@ -113,12 +104,15 @@ const { navigateToHelloes } = useAppNavigations();
         )}
         {combinedData && (
           <HomeScrollCalendarLights
+            helloesList={helloesList}
+            friendId={friendId}
             onMonthPress={handleMonthPress}
             combinedData={combinedData}
             itemColor={themeStyles.primaryText.color}
             backgroundColor={themeStyles.overlayBackgroundColor.backgroundColor}
             height={70}
             borderRadius={20}
+            themeAheadOfLoading={themeAheadOfLoading}
           />
         )}
         <View style={{ width: "100%", height: 10 }}></View>

@@ -1,34 +1,34 @@
 import { View } from "react-native";
-import React  from "react";
+import React from "react";
 import { useUser } from "@/src/context/UserContext";
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 // import SafeViewAndGradientBackground from "../format/SafeViewAndGradBackground";
 import GradientBackground from "../display/GradientBackground";
- 
+
 import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 
 import LoadingPage from "./LoadingPage";
 type Props = {};
 
 const FSMainSpinner = (props: Props) => {
-  const {  isInitializing, refetch  } = useUser();
-  const { signinMutation } = useSignIn({refetchUser: refetch});
+  const { isInitializing, refetch } = useUser();
+  const { signinMutation } = useSignIn({ refetchUser: refetch });
   const { isLoading } = useUpcomingHelloes();
   const { selectedFriend } = useSelectedFriend();
-  const { manualGradientColors } = useGlobalStyle(); 
+  const {   manualGradientColors } = useGlobalStyle();
 
-
-
-    
-
+  const { themeAheadOfLoading } = useFriendStyle();
 
   return (
-    <> 
-    {/* //   {isLoading && ( */}
-     {/* //   {loadingNewFriend && ( */}
-         {((signinMutation && (signinMutation.isPending)) || isInitializing || isLoading) && (
+    <>
+      {/* //   {isLoading && ( */}
+      {/* //   {loadingNewFriend && ( */}
+      {((signinMutation && signinMutation.isPending) ||
+        isInitializing ||
+        isLoading) && (
         <View
           style={{
             zIndex: 100000,
@@ -44,13 +44,21 @@ const FSMainSpinner = (props: Props) => {
             backgroundColor: "red",
           }}
         >
-          <GradientBackground useFriendColors={!!(selectedFriend)}>
+          <GradientBackground
+            useFriendColors={!!selectedFriend}
+            startColor={manualGradientColors.lightColor}
+            endColor={manualGradientColors.darkColor}
+            friendColorDark={themeAheadOfLoading.darkColor}
+            friendColorLight={themeAheadOfLoading.lightColor}
+          >
             <LoadingPage
-              loading={true} 
+              loading={true}
               label={"Just a moment"}
               spinnerType="circle"
               spinnerSize={40}
-              color={ !isInitializing ? manualGradientColors.homeDarkColor : 'red'}
+              color={
+                !isInitializing ? manualGradientColors.homeDarkColor : "red"
+              }
             />
           </GradientBackground>
         </View>

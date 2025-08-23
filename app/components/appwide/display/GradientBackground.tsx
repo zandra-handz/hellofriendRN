@@ -1,9 +1,7 @@
 import React, { ReactNode, useMemo, useEffect, useState } from "react";
 import { ViewStyle, StyleProp, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { ColorValue } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { LinearGradient } from "expo-linear-gradient";  
+import { ColorValue } from "react-native"; 
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -14,8 +12,10 @@ const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 interface GradientBackgroundProps {
   useFriendColors?: boolean | null;
-  startColor?: string;
-  endColor?: string;
+  friendColorLight?: string | null;
+  friendColorDark?: string | null;
+  startColor: string;
+  endColor: string;
   reverse?: boolean;
   additionalStyles?: StyleProp<ViewStyle>;
   children: ReactNode;
@@ -26,11 +26,13 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
   startColor,
   endColor,
   reverse = false,
+  friendColorLight='white',
+  friendColorDark='red',
   additionalStyles,
   children,
 }) => {
-  const { themeAheadOfLoading } = useFriendStyle();
-  const { manualGradientColors } = useGlobalStyle();
+  // const { themeAheadOfLoading } = useFriendStyle();
+  // const { manualGradientColors } = useGlobalStyle();
 
   const direction = useMemo(() => {
     if (useFriendColors) return [0, 0, 1, 0];
@@ -42,12 +44,12 @@ const GradientBackground: React.FC<GradientBackgroundProps> = ({
 
 
 const getInitialColors = (): [ColorValue, ColorValue] => [
-  useFriendColors
-    ? themeAheadOfLoading.darkColor
-    : startColor || manualGradientColors.lightColor,
-  useFriendColors
-    ? themeAheadOfLoading.lightColor
-    : endColor || manualGradientColors.darkColor,
+  useFriendColors && friendColorDark
+    ? friendColorDark
+    : startColor, // || manualGradientColors.lightColor,
+  useFriendColors && friendColorLight 
+    ? friendColorLight
+    : endColor, // || manualGradientColors.darkColor,
 ];
 
 const [currentColors, setCurrentColors] = useState<readonly [ColorValue, ColorValue]>(getInitialColors);
@@ -56,13 +58,13 @@ const [previousColors, setPreviousColors] = useState<readonly [ColorValue, Color
   const transition = useSharedValue(1);
 
   const nextColors = useMemo<[ColorValue, ColorValue]>(() => [
-  useFriendColors
-    ? themeAheadOfLoading.darkColor
-    : startColor || manualGradientColors.lightColor,
-  useFriendColors
-    ? themeAheadOfLoading.lightColor
-    : endColor || manualGradientColors.darkColor,
-], [useFriendColors, themeAheadOfLoading, startColor, endColor, manualGradientColors]);
+  useFriendColors && friendColorDark 
+    ? friendColorDark
+    : startColor,
+  useFriendColors && friendColorLight
+    ? friendColorLight
+    : endColor // || manualGradientColors.darkColor,
+], [useFriendColors, friendColorLight, friendColorDark, startColor, endColor]);
 
 
   useEffect(() => {

@@ -7,8 +7,7 @@ import {
   Alert,
 } from "react-native"; 
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-import TextMomentBox from "./TextMomentBox";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import TextMomentBox from "./TextMomentBox"; 
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import CategoryCreator from "./CategoryCreator";
@@ -17,7 +16,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
 import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 import LoadingPage from "../appwide/spinner/LoadingPage";
- 
+ import { FriendDashboardData } from "@/src/types/FriendTypes";
 import MomentFocusTray from "./MomentFocusTray";
 type Props = {
   screenCameFromToParent: number;
@@ -31,6 +30,8 @@ type Props = {
   triggerSaveFromLateral: boolean;
   escortBarSpacer: number;
   cardPadding: number;
+  friendId: number;
+  friendDash: FriendDashboardData;
 };
 
 const MomentWriteEditView = ({
@@ -45,8 +46,9 @@ const MomentWriteEditView = ({
   triggerSaveFromLateral,
   escortBarSpacer,
   cardPadding = 4, // controls padding around the shaded card
-}: Props) => {
-  const { selectedFriend } = useSelectedFriend();
+  friendId,
+  friendFaves,
+}: Props) => { 
   const { themeStyles  } = useGlobalStyle();
   const {
     capsuleList,
@@ -90,11 +92,11 @@ const MomentWriteEditView = ({
   //   }, [])
   // );
 
-  const userChangedCategoryRef = useRef(false);
+  // const userChangedCategoryRef = useRef(false);
 
  
  
-  const TEXT_INPUT_PADDING_TOP = 42;
+  // const TEXT_INPUT_PADDING_TOP = 42;
   const TOPPER_PADDING_TOP = 0;
 
   useFocusEffect(
@@ -117,10 +119,10 @@ const MomentWriteEditView = ({
   }, [catCreatorVisible]);
 
   useEffect(() => {
-    if (!catCreatorVisible && selectedFriend) {
+    if (!catCreatorVisible && friendId) {
       setTriggerReFocus(Date.now());
     }
-  }, [selectedFriend]);
+  }, [friendId]);
 
   useEffect(() => {
     if (momentText) {
@@ -228,11 +230,11 @@ const MomentWriteEditView = ({
       }
 
       try {
-        if (selectedFriend) {
+        if (friendId) {
           if (!updateExistingMoment) {
             const requestData = {
           
-              friend: selectedFriend.id,
+              friend: friendId,
               // selectedCategory: selectedCategory, // just need ID below
               selectedUserCategory: selectedUserCategory,
               moment: momentTextRef.current.getText(),
@@ -359,11 +361,14 @@ const MomentWriteEditView = ({
             >
               <MomentFocusTray
               paddingTop={TOPPER_PADDING_TOP}
+              friendDefaultCategory={friendFaves?.friend_default_category || null}
                 updateExistingMoment={updateExistingMoment}
                 freezeCategory={userChangedCategory}
                 onPress={openCatCreator}
                 label={selectedCategory}
                 categoryId={selectedUserCategory}
+                friendId={friendId}
+             
               />
               {createMomentMutation.isPending && (
                 <View
@@ -409,6 +414,7 @@ const MomentWriteEditView = ({
 
         <CategoryCreator
           freezeCategory={userChangedCategory}
+          friendDefaultCategory={friendFaves?.friend_default_category || null}
           isVisible={catCreatorVisible}
           onPress={handleUserCategorySelect}
           addToOnPress={handleUserChangedCategoryState}

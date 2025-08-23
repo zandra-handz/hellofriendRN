@@ -1,39 +1,30 @@
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-
-// app state
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
  
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
-// app components
-import AboutAppModal from "./AboutAppModal";
-import UserSettingsModal from "./UserSettingsModal.";
  
-import useSignOut from "@/src/hooks/UserCalls/useSignOut";
+ 
 // app display/templates
-import FooterButtonIconVersion from "./FooterButtonIconVersion"; 
+import FooterButtonIconVersion from "./FooterButtonIconVersion";
 import SetAddressesModal from "./SetAddressesModal";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import GradientBackground from "../appwide/display/GradientBackground";
-import FilterLocationsModal from "./FilterLocationsModal";
 
 const MapScreenFooter = ({
   userAddress,
   setUserAddress,
   friendAddress,
   setFriendAddress,
-}) => { 
-  const { onSignOut } = useSignOut();
+  themeAheadOfLoading,
+  manualGradientColors,
+    overlayColor,
  
-  const { themeStyles } = useGlobalStyle();
-  const { selectedFriend, deselectFriend } = useSelectedFriend();
-
-  const [aboutModalVisible, setAboutModalVisible] = useState(false); 
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  dividerStyle,
+  textColor,
+  friendId,
+}) => {  
+ 
   const [addressesModalVisible, setAddressesModalVisible] = useState(false);
-  const [filterModalVisible, setFilterModalVisible] = useState(false);
 
   // these are the only dimensions I foresee potentially changing, hence why they are at top here
   const footerHeight = 90;
@@ -70,68 +61,7 @@ const MapScreenFooter = ({
   const handleTestAlert = () => {
     console.log("removed");
   };
-  // buttons rendered in callbacks, all using the same template except for the friend profile button
-  const RenderSignOutButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        confirmationRequired={true}
-        confirmationTitle={"Just to be sure"}
-        confirmationMessage={"Sign out?"}
-        // label="Deselect"
-        label="Sign out"
-        icon={
-          <MaterialCommunityIcons
-            // name={"keyboard-backspace"}
-            name={"logout"}
-            size={footerIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        onPress={() => onSignOut()}
-      />
-    ),
-    [themeStyles]
-  );
-
-  //   const RenderDeselectButton = useCallback(
-  //     () => (
-  //       <FooterButtonIconVersion
-  //         confirmationRequired={true}
-  //         confirmationTitle={"Just to be sure"}
-  //         confirmationMessage={"Deselect friend?"}
-  //         // label="Deselect"
-  //         label="Home"
-  //         icon={
-  //           <MaterialCommunityIcons
-  //             // name={"keyboard-backspace"}
-  //             name={"home-outline"}
-  //             size={footerIconSize}
-  //             color={themeStyles.footerIcon.color}
-  //           />
-  //         }
-  //         onPress={() => deselectFriend()}
-  //       />
-  //     ),
-  //     [themeStyles]
-  //   );
-
-  const RenderSettingsButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        label="Settings"
-        icon={
-          <MaterialIcons
-            name={"settings-suggest"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
-            //  name={"app-settings-alt"}
-            size={footerIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        onPress={() => setSettingsModalVisible(true)}
-      />
-    ),
-    [themeStyles]
-  );
+ 
 
   const RenderAddressesButton = useCallback(
     () => (
@@ -142,13 +72,13 @@ const MapScreenFooter = ({
             name={"location-pin"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
             //  name={"app-settings-alt"}
             size={footerIconSize}
-            color={themeStyles.footerIcon.color}
+            color={textColor}
           />
         }
         onPress={() => setAddressesModalVisible(true)}
       />
     ),
-    [themeStyles]
+    [textColor]
   );
 
   const RenderFilterButton = useCallback(
@@ -160,35 +90,21 @@ const MapScreenFooter = ({
             name={"filter"} // might just want to use 'settings' here, not sure what 'settings-suggest' actually means, just looks pretty
             //  name={"app-settings-alt"}
             size={footerIconSize}
-            color={themeStyles.footerIcon.color}
+            color={textColor}
           />
         }
         onPress={handleTestAlert}
       />
     ),
-    [themeStyles]
-  );
-
-  const RenderAboutAppButton = useCallback(
-    () => (
-      <FooterButtonIconVersion
-        label="About"
-        icon={
-          <MaterialCommunityIcons
-            name={"information-outline"}
-            size={footerIconSize}
-            color={themeStyles.footerIcon.color}
-          />
-        }
-        onPress={() => setAboutModalVisible(true)}
-      />
-    ),
-    [themeStyles]
+    [textColor]
   );
 
   return (
     <GradientBackground
-      useFriendColors={!!selectedFriend}
+      useFriendColors={!!friendId}
+      endColor={manualGradientColors.darkColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
       additionalStyles={[
         styles.container,
         {
@@ -204,51 +120,29 @@ const MapScreenFooter = ({
           {
             height: footerHeight,
             paddingBottom: footerPaddingBottom,
-            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            backgroundColor: overlayColor,
           },
         ]}
       >
-        {/* <View style={styles.section}>
-          {!selectedFriend ? <RenderSignOutButton /> : <RenderDeselectButton />}
-        </View> 
+ 
 
-        <View style={[styles.divider, themeStyles.divider]} /> */}
-        {/* <>
-          <View style={styles.section}>
-            <RenderSettingsButton />
-          </View>
-        </> */}
-
-        <View style={[styles.divider, themeStyles.divider]} />
+        <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
             <RenderAddressesButton />
           </View>
         </>
 
-        <View style={[styles.divider, themeStyles.divider]} />
+        <View style={[styles.divider, dividerStyle]} />
         <>
           <View style={styles.section}>
             <RenderFilterButton />
           </View>
         </>
 
-        {/* <View style={[styles.divider, themeStyles.divider]} />
-        <>
-          <View style={styles.section}>
-            <RenderAboutAppButton />
-          </View>
-        </> */}
+  
       </View>
-
-      {settingsModalVisible && (
-        <View>
-          <UserSettingsModal
-            isVisible={settingsModalVisible}
-            closeModal={() => setSettingsModalVisible(false)}
-          />
-        </View>
-      )}
+ 
 
       {addressesModalVisible && (
         <View>
@@ -263,23 +157,7 @@ const MapScreenFooter = ({
         </View>
       )}
 
-      {aboutModalVisible && (
-        <View>
-          <AboutAppModal
-            isVisible={aboutModalVisible}
-            closeModal={() => setAboutModalVisible(false)}
-          />
-        </View>
-      )}
-
-      {filterModalVisible && (
-        <View>
-          <FilterLocationsModal
-            isVisible={filterModalVisible}
-            closeModal={() => setFilterModalVisible(false)}
-          />
-        </View>
-      )}
+ 
     </GradientBackground>
   );
 };

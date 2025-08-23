@@ -10,6 +10,7 @@ import React, { useEffect,
 import { useUser } from "./UserContext";
 
 import { useSelectedFriend } from "./SelectedFriendContext";
+import { useFriendDash } from "./FriendDashContext";
 import { useLocations } from "./LocationsContext";
 import { useHelloes } from "./HelloesContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -28,8 +29,10 @@ export const useFriendLocationsContext = () =>
 export const FriendLocationsProvider = ({ children }) => {
   const { user  } = useUser();
  
-  const { selectedFriend, friendDashboardData  } =
+  const { selectedFriend   } =
     useSelectedFriend();
+
+    const { friendDash } = useFriendDash();
   const { locationList } = useLocations();
   const { helloesList } = useHelloes();
   const [stickToLocation, setStickToLocation] = useState(null);
@@ -42,9 +45,9 @@ export const FriendLocationsProvider = ({ children }) => {
 
       const favesData = useMemo(() => {
         
-        if (!friendDashboardData) return null;
-        return friendDashboardData?.friend_faves?.locations || null;
-      }, [friendDashboardData]);
+        if (!friendDash) return null;
+        return friendDash?.friend_faves?.locations || null;
+      }, [friendDash]);
     
       useEffect(() => {
         if (favesData) {

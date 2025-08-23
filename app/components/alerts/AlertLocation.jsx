@@ -5,7 +5,7 @@ import { useLocations } from "@/src/context/LocationsContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import LoadingPage from "../appwide/spinner/LoadingPage"; 
-import GlobalAppHeader from "../headers/GlobalAppHeader";
+ 
 
 
 const AlertLocation = ({
@@ -24,7 +24,7 @@ const AlertLocation = ({
 
   return (
     <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-      <GlobalAppHeader title={'!! Component not configured'} />
+ 
        
       {/* <HeaderBase /> */}
 

@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useMemo, ReactNode } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  updateUserAccessibilitySettings,
-  updateSubscription,
+import { useQuery  } from "@tanstack/react-query";
+import { 
   getUserSettings,
 } from "../calls/api";
 
@@ -45,48 +43,23 @@ export const UserSettingsProvider: React.FC<UserSettingsProviderProps> = ({
   children,
 }) => {
   const { user, isInitializing } = useUser();
-  const queryClient = useQueryClient();
+ 
 
   const { data: settings, isSuccess } = useQuery({
     queryKey: ["userSettings", user?.id],
     queryFn: () => getUserSettings(),
-    enabled: !!user?.id, // && !isInitializing, testing removing this
+    enabled: !!user?.id && !isInitializing,  //testing removing this
     retry: 3,
     staleTime: 1000 * 60 * 60 * 10, // 10 hours
   });
 
-  const updateSettingsMutation = useMutation({
-    mutationFn: (data) => updateUserAccessibilitySettings(data.setting),
-    onSuccess: (data) => {
-      // ✅ update the cache so consumers re-render immediately
-      queryClient.setQueryData(["userSettings", user?.id], data);
-
-      // console.log("APP SETTINGS RESET");
-    },
-    onError: (error) => {
-      console.error("Update app settings error:", error);
-    },
-  });
-
-  const updateSettings = async (newSettings) => {
-    console.log("updating settings!", newSettings);
-    try {
-      await updateSettingsMutation.mutateAsync({
-        // userId: user.user.id, // User ID
-        setting: newSettings, // Pass newSettings directly as fieldUpdates
-      });
-    } catch (error) {
-      console.error("Error updating app settings:", error);
-    }
-  };
-
+ 
+ 
   const contextValue = useMemo(
     () => ({
-      settings,
-      updateSettings,
-      updateSettingsMutation,
+      settings, 
     }),
-    [settings, updateSettings, updateSettingsMutation]
+    [settings ]
   );
 
   return (

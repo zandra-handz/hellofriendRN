@@ -4,21 +4,22 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import GoOptionsModal from "../headers/GoOptionsModal";
 
 type Props = {
+  friendId: number;
   padding: number;
   height: number;
   borderRadius: number;
 };
 
-const SuggestedHello = ({ padding, height, borderRadius = 10 }: Props) => {
+const SuggestedHello = ({ friendId, friendFutureDate, padding, height, borderRadius = 10 }: Props) => {
   const navigation = useNavigation();
   const { navigateToFinalize } = useAppNavigations();
   const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
-  const { selectedFriend, friendDashboardData } = useSelectedFriend();
+ 
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
 
   const [lastPress, setLastPress] = useState<number | null>(null);
@@ -72,7 +73,7 @@ const SuggestedHello = ({ padding, height, borderRadius = 10 }: Props) => {
               },
             ]}
           >
-            {selectedFriend && friendDashboardData ? "Suggested hello" : "None"}
+            {friendId && friendFutureDate ? "Suggested hello" : "None"}
           </Text>
           <Text
             style={[
@@ -86,14 +87,15 @@ const SuggestedHello = ({ padding, height, borderRadius = 10 }: Props) => {
               },
             ]}
           >
-            {friendDashboardData?.future_date_in_words || "No date available"}
+            {friendFutureDate}
+         
           </Text>
         </>
       </View>
     );
   }, [
-    selectedFriend,
-    friendDashboardData,
+    friendId,
+    friendFutureDate,
     appFontStyles,
     themeStyles,
     manualGradientColors,

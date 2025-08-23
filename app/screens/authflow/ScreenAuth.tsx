@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
-
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 
@@ -28,9 +28,9 @@ import useSignUp from "@/src/hooks/UserCalls/useSignUp";
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const createNewAccount = route.params?.createNewAccount ?? false;
-
+const { selectedFriend } = useSelectedFriend();
   const { showSigninErrorMessage } = useMessageCentralizer();
-  const {  manualGradientColors } = useGlobalStyle();
+  const {  themeStyles, manualGradientColors } = useGlobalStyle();
   const [showSignIn, setShowSignIn] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -183,7 +183,15 @@ const ScreenAuth = () => {
 
   return (
     <PreAuthSafeViewAndGradientBackground
-      style={{ flex: 1 }}
+      startColor={manualGradientColors.darkColor}
+      endColor={manualGradientColors.lightColor}
+      friendColorLight={null}
+      friendColorDark={null}
+      friendId={selectedFriend?.id}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      style={{
+        flex: 1,
+      }}
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}

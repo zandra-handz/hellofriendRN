@@ -32,6 +32,7 @@ type NavToMomentFocusWithTextProp = {
 
 interface hookReturns {
   navigateToAddFriend: () => void;
+  navigateToSelectFriend: () => void;
   navigateToFinalize: () => void;
   navigateToHelloes: () => void;
   navigateToHelloView: ({
@@ -55,6 +56,10 @@ const useAppNavigations = (): hookReturns => {
 
   const navigateToAddFriend = () => {
     navigation.navigate("AddFriend");
+  };
+
+    const navigateToSelectFriend = () => {
+    navigation.navigate("SelectFriend");
   };
 
   const navigateToHelloes = () => {
@@ -107,6 +112,7 @@ const useAppNavigations = (): hookReturns => {
 
   return {
     navigateToAddFriend,
+    navigateToSelectFriend,
     navigateToFinalize,
     navigateToHelloes,
     navigateToHelloView,

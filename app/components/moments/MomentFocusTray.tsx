@@ -1,9 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 import SwitchFriend from "../home/SwitchFriend";
-import ForFriend from "../home/ForFriend";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 import SelectedCategoryButton from "./SelectedCategoryButton";
 
 type Props = {
@@ -13,6 +11,7 @@ type Props = {
   onPress: () => void;
   label: string;
   categoryId: number;
+  friendId: number;
 };
 
 const MomentFocusTray = ({
@@ -22,6 +21,8 @@ const MomentFocusTray = ({
   onPress,
   label,
   categoryId,
+  friendId,
+  friendDefaultCategory,
 }: Props) => { 
 
   const ICON_SIZE = 20;
@@ -62,6 +63,8 @@ const MomentFocusTray = ({
         </View>
         <View style={{maxWidth: '50%'}}>
           <SelectedCategoryButton
+            friendId={friendId}
+            friendDefaultCategory={friendDefaultCategory}
             maxWidth={"100%"}
             zIndex={3}
             fontSize={FONT_SIZE}

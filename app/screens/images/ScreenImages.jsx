@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
@@ -7,35 +7,31 @@ import ImageMenuButton from "@/app/components/images/ImageMenuButton";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
 import ImagesList from "@/app/components/images/ImagesList"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import GlobalAppHeader from "@/app/components/headers/GlobalAppHeader";
-import ImageGalleryOutlineSvg from "@/app/assets/svgs/image-gallery-outline.svg";
-
-
+ 
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 const ScreenImages = () => {
   const { imageList } = useImageFunctions();
   const { themeAheadOfLoading } = useFriendStyle();
-  const { selectedFriend, loadingNewFriend } = useSelectedFriend();
+  const { selectedFriend  } = useSelectedFriend();
+ const { themeStyles, manualGradientColors } = useGlobalStyle();
 
-    const renderHeader = useCallback(
-    () => (
-      <GlobalAppHeader
-        title="Images"
-        navigateTo="Images"
-        icon={ImageGalleryOutlineSvg}
-        altView={false}
-      />
-    ),
-    [selectedFriend, loadingNewFriend, themeAheadOfLoading]
-  );
-
+   
   return (
-    <SafeViewAndGradientBackground header={renderHeader} style={{ flex: 1 }}>
+    <SafeViewAndGradientBackground 
+        startColor={manualGradientColors.lightColor}
+      endColor={manualGradientColors.darkColor}
+      friendColorLight={themeAheadOfLoading.lightColor}
+      friendColorDark={themeAheadOfLoading.darkColor}
+      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      friendId={selectedFriend?.id}
+    
+    style={{ flex: 1 }}>
   
         <View style={{ flex: 1 }}>
           {imageList.length > 0 ? (
             <>
-              <ImagesList height={80} width={80} singleLineScroll={false} />
+              <ImagesList themeAheadOfLoading={themeAheadOfLoading} height={80} width={80} singleLineScroll={false} />
             </>
           ) : (
             <Text></Text>
