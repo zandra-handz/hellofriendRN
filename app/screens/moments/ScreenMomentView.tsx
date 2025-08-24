@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { useUser } from "@/src/context/UserContext";
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
@@ -11,23 +11,29 @@ import CarouselSliderMoments from "@/app/components/CarouselSliderMoments";
 import MomentViewPage from "@/app/components/moments/MomentViewPage";
 import { useCategories } from "@/src/context/CategoriesContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
+
+  const { user } = useUser();
+    const { selectedFriend  } = useSelectedFriend();
   const { userCategories } = useCategories();
   const currentIndex = route.params?.index ?? null;
   const { themeAheadOfLoading } = useFriendStyle();
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
 const { themeStyles, manualGradientColors } = useGlobalStyle();
   const {
-    capsuleList,
-    deleteMomentRQuery,
-    updateCapsuleMutation,
-    updateCacheWithNewPreAdded,
+    capsuleList,  
   } = useCapsuleList();
 
+ 
+
+  const { preAddMomentMutation, updateCacheWithNewPreAdded } = usePreAddMoment({userId: user?.id, friendId: selectedFriend?.id})
+
   // const [currentIndex, setCurrentIndex] = useState(0);
-  const { selectedFriend  } = useSelectedFriend();
+
   const { loadingDash } = useFriendDash();
   const { generateGradientColorsMap } = useMomentSortingFunctions({
     listData: capsuleList,
@@ -54,25 +60,13 @@ const { themeStyles, manualGradientColors } = useGlobalStyle();
 
   useEffect(() => {
     //This runs before capsule list length updates
-    if (updateCapsuleMutation.isSuccess) {
-      updateCacheWithNewPreAdded(); //The animation in the screen itself triggers this too but after a delay, not sure if I need this here
-      //  console.log(`capsule list length after update: ${capsuleList?.length}`);
+    if (preAddMomentMutation.isSuccess) {
+      console.log('success!!!!!!!!!!!!!!!!!!!!!!');
+  showFlashMessage(`Success!`, false, 1000);
     }
-  }, [updateCapsuleMutation.isSuccess]);
+  }, [preAddMomentMutation.isSuccess]);
 
-  const handleDelete = (item) => {
-    // console.log("handle delete moment in navigator triggered: ", item);
-    try {
-      const momentData = {
-        friend: selectedFriend.id,
-        id: item.id,
-      };
 
-      deleteMomentRQuery(momentData);
-    } catch (error) {
-      console.error("Error deleting moment:", error);
-    }
-  }; 
 
   return (
     <SafeViewAndGradientBackground
@@ -89,6 +83,8 @@ const { themeStyles, manualGradientColors } = useGlobalStyle();
         categoryColorsMap && 
         themeAheadOfLoading && (
           <CarouselSliderMoments
+          userId={user?.id}
+          friendId={selectedFriend?.id}
             initialIndex={currentIndex}
             categoryColorsMap={categoryColorsMap}
             data={capsuleList}

@@ -121,7 +121,10 @@ const { navigateToHelloes } = useAppNavigations();
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
-      friendId={selectedFriend?.id}
+        backgroundTransparentOverlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
+     
+     
+        friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
       useOverlay={true}

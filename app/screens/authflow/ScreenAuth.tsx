@@ -11,6 +11,7 @@ import {
 } from "react-native";
 
 import { useUser } from "@/src/context/UserContext";
+import { useUserSettings } from "@/src/context/UserSettingsContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute, RouteProp } from "@react-navigation/native";
@@ -22,13 +23,15 @@ import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 
 import useMessageCentralizer from "@/src/hooks/useMessageCentralizer";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-
+import FSMainSpinner from "@/app/components/appwide/spinner/FSMainSpinner";
 import useSignIn from "@/src/hooks/UserCalls/useSignIn";
 import useSignUp from "@/src/hooks/UserCalls/useSignUp";
+import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const createNewAccount = route.params?.createNewAccount ?? false;
 const { selectedFriend } = useSelectedFriend();
+const { settings } = useUserSettings();
   const { showSigninErrorMessage } = useMessageCentralizer();
   const {  themeStyles, manualGradientColors } = useGlobalStyle();
   const [showSignIn, setShowSignIn] = useState(true);
@@ -65,13 +68,7 @@ const { selectedFriend } = useSelectedFriend();
     }
   }, [signinMutation.isSuccess]);
 
-
-    useEffect(() => {
-    if (signinMutation.isLoading) {
-    console.log('is signing in');
-      showFlashMessage(`Is loading`, false, 10000);
-    }
-  }, [signinMutation.isLoading]);
+ 
   useLayoutEffect(() => {
     if (createNewAccount === true) {
       toggleMode();
@@ -93,6 +90,12 @@ const { selectedFriend } = useSelectedFriend();
       keyboardDidHideListener.remove();
     };
   }, []);
+
+
+  useEffect(() => {
+
+  console.log(`signin mutation pending changed!`);
+}, [signinMutation.isPending]);
 
   const toggleMode = () => {
     setUsername("");
@@ -183,6 +186,7 @@ const { selectedFriend } = useSelectedFriend();
 
   return (
     <PreAuthSafeViewAndGradientBackground
+    settings={settings}
       startColor={manualGradientColors.darkColor}
       endColor={manualGradientColors.lightColor}
       friendColorLight={null}
@@ -193,6 +197,35 @@ const { selectedFriend } = useSelectedFriend();
         flex: 1,
       }}
     >
+
+      {signinMutation.isPending && (
+                <View
+                  style={{
+                    zIndex: 100000,
+                    elevation: 100000,
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    flex: 1,
+                    top: 0,
+                    bottom: 0,
+                    right: 0,
+                    left: 0,
+                  }}
+                >
+        <LoadingPage
+        loading={true}
+           spinnerType="circle"
+          spinnerSize={40}
+          color={'yellow'}
+
+        />
+
+                </View>
+
+      )}
+      {!signinMutation.isPending && (
+        
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={[{ flex: 1, paddingHorizontal: 10, width: '100%' }]}
@@ -443,6 +476,8 @@ const { selectedFriend } = useSelectedFriend();
           </>
         )}
       </KeyboardAvoidingView>
+      
+      )}
     </PreAuthSafeViewAndGradientBackground>
   );
 };

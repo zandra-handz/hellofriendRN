@@ -13,8 +13,12 @@ type Props = {
 };
 
 const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
-  const { navigateToMoments, navigateToLocationSearch, navigateToFinalize } =
-    useAppNavigations();
+  const {
+    navigateToMoments,
+    navigateToLocationSearch,
+    navigateToFinalize,
+    navigateToFidget,
+  } = useAppNavigations();
 
   const { themeStyles, appSpacingStyles, appFontStyles, manualGradientColors } =
     useGlobalStyle();
@@ -32,6 +36,11 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
   const handleNavToFinalize = () => {
     closeModal();
     navigateToFinalize();
+  };
+
+  const handleNavToFidget = () => {
+    closeModal();
+    navigateToFidget();
   };
 
   const count = 6; // or however many animated items you have
@@ -163,38 +172,84 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
                   </GlobalPressable>
                 </BouncyEntrance>
               </View>
+
+
               <View style={styles.sectionContainer}>
-                             <BouncyEntrance
+                <BouncyEntrance
+                  delay={staggeredDelays[2]}
+                  style={{ width: "100%" }}
+                >
+                  <GlobalPressable
+                    onPress={handleNavToFidget}
+                    style={{
+                      flexDirection: "row",
+                      width: "100%",
+                      justifyContent: "center",
+                      height: "auto",
+                      padding: 10,
+                      borderRadius: 10,
+                      backgroundColor: manualGradientColors.darkColor,
+                    }}
+                  >
+                    <Text
+                      style={[
+                        themeStyles.primaryText,
+                        appFontStyles.subWelcomeText,
+                        {
+                          backgroundColor:
+                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          borderRadius: 6,
+                          padding: 10,
+                        },
+                      ]}
+                    >
+                      Fidget spinner
+                    </Text>
+                  </GlobalPressable>
+                </BouncyEntrance>
+              </View>
+
+
+
+
+
+
+
+
+
+
+              <View style={styles.sectionContainer}>
+                <BouncyEntrance
                   delay={staggeredDelays[3]}
                   style={{ width: "100%" }}
                 >
-                <GlobalPressable
-                  onPress={closeModal}
-                  style={{
-                    flexDirection: "row",
-                    width: "100%",
-                    justifyContent: "center",
-                    height: "auto",
-                    padding: 10,
-                    borderRadius: 10,
-                    backgroundColor: manualGradientColors.darkColor,
-                  }}
-                >
-                  <Text
-                    style={[
-                      themeStyles.primaryText,
-                      appFontStyles.subWelcomeText,
-                      {
-                        backgroundColor:
-                          themeStyles.overlayBackgroundColor.backgroundColor,
-                        borderRadius: 6,
-                        padding: 10,
-                      },
-                    ]}
+                  <GlobalPressable
+                    onPress={closeModal}
+                    style={{
+                      flexDirection: "row",
+                      width: "100%",
+                      justifyContent: "center",
+                      height: "auto",
+                      padding: 10,
+                      borderRadius: 10,
+                      backgroundColor: manualGradientColors.darkColor,
+                    }}
                   >
-                    Close
-                  </Text>
-                </GlobalPressable>
+                    <Text
+                      style={[
+                        themeStyles.primaryText,
+                        appFontStyles.subWelcomeText,
+                        {
+                          backgroundColor:
+                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          borderRadius: 6,
+                          padding: 10,
+                        },
+                      ]}
+                    >
+                      Close
+                    </Text>
+                  </GlobalPressable>
                 </BouncyEntrance>
               </View>
             </>

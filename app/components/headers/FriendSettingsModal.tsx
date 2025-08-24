@@ -88,8 +88,9 @@ const FriendSettingsModal: React.FC<Props> = ({
                 manualThemeOn={friendDash?.friend_faves?.use_friend_color_theme}
               />
             </View>
+                  <DeleteFriend friendId={friendId} friendName={friendName} />
           </ScrollView>
-          <DeleteFriend friendId={friendId} friendName={friendName} />
+    
         </View>
       }
       onClose={closeModal}

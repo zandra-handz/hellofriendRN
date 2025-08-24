@@ -6,9 +6,7 @@ import React, {
   useMemo,
   ReactNode,
 } from "react";
-
-import { useQueryClient } from "@tanstack/react-query";
-import { useUser } from "./UserContext";
+ 
 import { Friend, ThemeAheadOfLoading } from "../types/FriendTypes";
 
 interface FriendStyleContextType {
@@ -29,6 +27,11 @@ const FriendStyleContext = createContext<FriendStyleContextType>({
   getThemeAheadOfLoading: () => {},
 });
 
+
+
+
+
+
 export const useFriendStyle = (): FriendStyleContextType =>
   useContext(FriendStyleContext);
 
@@ -36,13 +39,12 @@ interface FriendStyleProviderProps {
   children: ReactNode;
 }
 
+
+// I don't think gradient safe view stuff is being used but leaving it in uncommented for a bit
 export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
   children,
-}) => {
-  const queryClient = useQueryClient();
-
-  const { user } = useUser();
-  const [useGradientInSafeView, setUseGradientInSafeView] = useState(false);
+}) => { 
+  // const [useGradientInSafeView, setUseGradientInSafeView] = useState(false);
   const [themeAheadOfLoading, setThemeAheadOfLoading] = useState({
     darkColor: "#4caf50",
     lightColor: "#a0f143",
@@ -50,9 +52,9 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
     fontColorSecondary: "#000000",
   });
 
-  const updateSafeViewGradient = (boolean: boolean) => {
-    setUseGradientInSafeView((prev) => boolean);
-  };
+  // const updateSafeViewGradient = (boolean: boolean) => {
+  //   setUseGradientInSafeView((prev) => boolean);
+  // };
 
   const handleSetTheme = ({
     lightColor,
@@ -86,38 +88,38 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
     });
   };
 
-  const updateFriendListColors = (
-    friendId: number,
-    darkColor: string,
-    lightColor: string,
-    fontColor: string,
-    fontColorSecondary: string
-  ) => {
-    console.log("updating friend list colors");
-    queryClient.setQueryData<Friend[]>(["friendList", user?.id], (oldData) => {
-      if (!oldData) return oldData;
+  // const updateFriendListColors = (
+  //   friendId: number,
+  //   darkColor: string,
+  //   lightColor: string,
+  //   fontColor: string,
+  //   fontColorSecondary: string
+  // ) => {
+  //   console.log("updating friend list colors");
+  //   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (oldData) => {
+  //     if (!oldData) return oldData;
 
-      return oldData.map((friend) =>
-        friend.id === friendId
-          ? {
-              ...friend,
-              theme_color_dark: darkColor,
-              saved_color_dark: darkColor,
-              theme_color_light: lightColor,
-              saved_color_light: lightColor,
-              theme_color_font: fontColor,
-              theme_color_font_secondary: fontColorSecondary,
-            }
-          : friend
-      );
-    });
-    setThemeAheadOfLoading({
-      lightColor,
-      darkColor,
-      fontColor,
-      fontColorSecondary,
-    });
-  };
+  //     return oldData.map((friend) =>
+  //       friend.id === friendId
+  //         ? {
+  //             ...friend,
+  //             theme_color_dark: darkColor,
+  //             saved_color_dark: darkColor,
+  //             theme_color_light: lightColor,
+  //             saved_color_light: lightColor,
+  //             theme_color_font: fontColor,
+  //             theme_color_font_secondary: fontColorSecondary,
+  //           }
+  //         : friend
+  //     );
+  //   });
+  //   setThemeAheadOfLoading({
+  //     lightColor,
+  //     darkColor,
+  //     fontColor,
+  //     fontColorSecondary,
+  //   });
+  // };
 
   // const updateFriendListColorsExcludeSaved = (
   //   friendId: number,
@@ -157,22 +159,18 @@ export const FriendStyleProvider: React.FC<FriendStyleProviderProps> = ({
       setThemeAheadOfLoading,
       getThemeAheadOfLoading,
       handleSetTheme,
-      resetTheme,
-      updateFriendListColors,
-      // updateFriendListColorsExcludeSaved,
-      useGradientInSafeView,
-      setUseGradientInSafeView,
-      updateSafeViewGradient,
+      resetTheme, 
+      // useGradientInSafeView,
+      // setUseGradientInSafeView,
+      // updateSafeViewGradient,
     }),
     [
       themeAheadOfLoading,
       getThemeAheadOfLoading,
       resetTheme,
-      handleSetTheme,
-      updateFriendListColors,
-      // updateFriendListColorsExcludeSaved,
-      useGradientInSafeView,
-      updateSafeViewGradient,
+      handleSetTheme, 
+      // useGradientInSafeView,
+      // updateSafeViewGradient,
     ]
   );
   return (

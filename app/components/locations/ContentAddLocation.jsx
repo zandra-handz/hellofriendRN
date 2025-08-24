@@ -1,19 +1,8 @@
-// <TextInput
-//   style={[styles.input, themeStyles.input]}
-// value={customTitle}
-// onChangeText={setCustomTitle}
-// placeholder='Optional custom title'
-// placeholderTextColor='darkgray'
-// />
-
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
-// import useLocationFunctions from '../hooks/useLocationFunctions';
 import { useLocations } from "@/src/context/LocationsContext";
- 
+
 import { View, Text, TextInput, Keyboard, StyleSheet } from "react-native";
 
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
@@ -24,7 +13,13 @@ import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice";
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 
-const ContentAddLocation = ({ title, address, close }) => {
+const ContentAddLocation = ({
+  themeStyles,
+  themeAheadOfLoading,
+  title,
+  address,
+  close,
+}) => {
   const notesTextRef = useRef(null);
   const categoryRef = useRef(null);
 
@@ -32,11 +27,8 @@ const ContentAddLocation = ({ title, address, close }) => {
 
   const navigation = useNavigation();
 
-  const { themeStyles } = useGlobalStyle(); 
   const { handleCreateLocation, createLocationMutation } = useLocations();
 
-  const [parkingType, setParkingType] = useState(null);
-  const [parkingTypeText, setParkingTypeText] = useState(null);
   const parkingScores = [
     { label: "Free parking", value: "location has free parking lot" },
     { label: "Free parking nearby", value: "free parking lot nearby" },
@@ -90,19 +82,6 @@ const ContentAddLocation = ({ title, address, close }) => {
       parkingScoreRef.current.setText(text);
       console.log("in parent", parkingScoreRef.current.getText());
     }
-  };
-
-  const onParkingTypeChange = (index) => {
-    setParkingType(index);
-    setParkingTypeText(`${typeChoices[index]}`);
-    console.log(`Parking type selected: ${typeChoices[index]}`);
-  };
-
-  const handleFriendSelect = (friendId) => {
-    const updatedFriends = selectedFriends.includes(friendId)
-      ? selectedFriends.filter((id) => id !== friendId)
-      : [...selectedFriends, friendId];
-    setSelectedFriends(updatedFriends);
   };
 
   useEffect(() => {
@@ -201,6 +180,8 @@ const ContentAddLocation = ({ title, address, close }) => {
                     style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}
                   >
                     <FlatListChangeChoice
+                      themeStyles={themeStyles}
+                      themeAheadOfLoading={themeAheadOfLoading}
                       horizontal={true}
                       choicesArray={parkingScores}
                       ref={parkingScoreRef}

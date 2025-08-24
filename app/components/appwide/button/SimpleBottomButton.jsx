@@ -1,10 +1,10 @@
 import {   Pressable, Text, StyleSheet, Image } from "react-native";
- 
+ import GlobalPressable from "./GlobalPressable";
 const SimpleBottomButton = ({ onPress, title, borderRadius=10, backgroundColor='black', labelColor='white' }) => {
  
 
   return (
-    <Pressable
+    <GlobalPressable
       style={{
         ...styles.buttonContainer,
         
@@ -16,7 +16,7 @@ const SimpleBottomButton = ({ onPress, title, borderRadius=10, backgroundColor='
       activeOpacity={0.8}
     >
       <Text style={[styles.buttonText, { color: labelColor }]}>{title}</Text>
-    </Pressable>
+    </GlobalPressable>
   );
 };
 

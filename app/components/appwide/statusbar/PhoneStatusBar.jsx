@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'react-native';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
-import { useSelectedFriend } from '@/src/context/SelectedFriendContext'; // Adjust the import path as necessary
-import tinycolor from 'tinycolor2'; 
-import { useFriendStyle } from '@/src/context/FriendStyleContext';
-const PhoneStatusBar = () => {
-const { theme, nonCustomHeaderPage } = useGlobalStyle();
-  const { selectedFriend } = useSelectedFriend();
-  const { themeAheadOfLoading } = useFriendStyle();
+ 
+
+import tinycolor from 'tinycolor2';  
+const PhoneStatusBar = ({friendId, themeAheadOfLoading, theme, nonCustomHeaderPage}) => {
+   
   const [ color, setColor ] = useState('');
 
 
@@ -26,16 +23,14 @@ const { theme, nonCustomHeaderPage } = useGlobalStyle();
         const readableColor = theme == 'dark' ? null : 'black';
         setColor(readableColor);
     }
-}, [theme, nonCustomHeaderPage, themeAheadOfLoading, selectedFriend]);
+}, [theme, nonCustomHeaderPage, themeAheadOfLoading, friendId]);
    
   return (
-    <>   
+  
     <StatusBar
       barStyle={color ? 'dark-content' : 'light-content'} 
-      translucent={true}
-      //backgroundColor="transparent" 
-    /> 
-    </>
+      translucent={true} 
+    />  
   );
 };
 

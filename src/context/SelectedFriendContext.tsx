@@ -1,11 +1,10 @@
 import React, { createContext, useState, useContext, useMemo } from "react";
-import { Friend, FriendDashboardData } from "../types/FriendTypes";
+import { Friend } from "../types/FriendTypes";
  
 interface SelectedFriendType {
   selectedFriend: Friend | null;
   setSelectedFriend: React.Dispatch<React.SetStateAction<Friend | null>>;
-  loadingNewFriend: boolean;
-  friendDashboardData?: FriendDashboardData;
+  loadingNewFriend: boolean; 
   selectFriend: (friend: Friend | null) => void; //setting as null will deselect, hence why it's allowed (was already an established approach)
  
 }

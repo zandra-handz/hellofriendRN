@@ -7,6 +7,8 @@ import {
 } from "react-native";
 import Animated, {
   SlideInRight, 
+  SlideInDown,
+  FadeOut,
 } from "react-native-reanimated";
 import React, { useCallback } from "react";
 import ButtonSelectFriend from "../buttons/friends/ButtonSelectFriend";
@@ -52,7 +54,9 @@ const FriendListUI = ({
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => (
       <Animated.View
         style={styles.friendContainer}
-        entering={SlideInRight.duration(260).springify(2000)}
+        entering={SlideInDown.duration(200)}
+        exiting={FadeOut}
+        // entering={SlideInRight.duration(260).springify(2000)}
       >
         {item && "id" in item && item.id !== selectedId && (
           <FriendTintPressable

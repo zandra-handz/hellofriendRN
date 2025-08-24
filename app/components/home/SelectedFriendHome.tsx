@@ -27,6 +27,7 @@ interface SelectedFriendHomeProps {
 }
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
+  userCategories,
   friendStyle,
   appColorsStyle,
   borderRadius = 20,
@@ -171,6 +172,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
+                  userCategories={userCategories}
                   appColorsStyle={appColorsStyle}
                     friendStyle={friendStyle}
                     primaryColor={primaryTextStyle.color}

@@ -1,14 +1,9 @@
 import   { StyleSheet, Text, View, DimensionValue } from "react-native";
 import React, { useCallback } from "react";
 import Animated, {SlideInDown, SlideOutDown, FadeIn, FadeOut } from 'react-native-reanimated';
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import SoonItemButton from "./SoonItemButton";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import LoadingPage from "../appwide/spinner/LoadingPage";
+  
+import SoonItemButton from "./SoonItemButton"; 
+import { useNavigation } from "@react-navigation/native"; 
 
 interface HomeScrollSoonProps {
   startAtIndex: number;
@@ -20,19 +15,22 @@ interface HomeScrollSoonProps {
 
 //single press will select friend but remain on home screen, double press will select friend and take user directly to moments screen
 const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
+  upcomingHelloes,
+  isLoading,
+  getThemeAheadOfLoading,
+  setFriend,
+  selectFriend,
+  friendList,
+  themeStyles,
+  manualGradientColors,
   startAtIndex = 1,
   height,
   maxHeight = 130,
   borderRadius = 20,
   borderColor = "transparent",
-}) => {
-  const { themeStyles } = useGlobalStyle();
-  const navigation = useNavigation();
-  const { upcomingHelloes, isLoading } = useUpcomingHelloes();
-  const { setFriend, selectFriend } = useSelectedFriend();
-  const { friendList } = useFriendList();
-  const { getThemeAheadOfLoading } = useFriendStyle();
-
+}) => { 
+  const navigation = useNavigation();  
+ 
   const itemColor = themeStyles.primaryText.color;
   const elementBackgroundColor =
     themeStyles.overlayBackgroundColor.backgroundColor;
@@ -83,6 +81,8 @@ const HomeScrollSoon: React.FC<HomeScrollSoonProps> = ({
         <SoonItemButton
           textColor={itemColor}
           backgroundColor={elementBackgroundColor}
+          themeStyles={themeStyles}
+          manualGradientColors={manualGradientColors}
           height={"100%"}
           friendName={item.friend.name}
           date={item.future_date_in_words}

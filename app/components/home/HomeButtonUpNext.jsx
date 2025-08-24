@@ -1,31 +1,35 @@
 import React from "react";
-import {  Pressable, Text, StyleSheet, View } from "react-native";
- 
+import { Pressable, Text, StyleSheet, View } from "react-native";
+
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import LoadingPage from "../appwide/spinner/LoadingPage"; 
+ 
+// import { useFriendStyle } from "@/src/context/FriendStyleContext";
+
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 import HomeScrollSoon from "./HomeScrollSoon";
-import Animated, {SlideInDown, SlideOutDown, FadeIn, FadeOut, SlideOutRight } from 'react-native-reanimated';
-
+import Animated, {
+  SlideInDown,
+  SlideOutDown,
+  FadeIn,
+  FadeOut,
+  SlideOutRight,
+} from "react-native-reanimated";
 
 // Press function is internal
 const HomeButtonUpNext = ({
+  upcomingHelloes,
+  isLoading,
+  getThemeAheadOfLoading,
+  friendList,
   header = "Up next",
-  height = "100%", 
+  height = "100%",
   borderRadius = 20,
   borderColor = "transparent",
 }) => {
-  const { upcomingHelloes  } = useUpcomingHelloes();
-  const { friendList } =
-    useFriendList();
-    const { getThemeAheadOfLoading } = useFriendStyle();
-  const { themeStyles, appFontStyles,   manualGradientColors } =
-    useGlobalStyle(); 
-  const { setFriend } = useSelectedFriend();
+  // const { getThemeAheadOfLoading } = useFriendStyle();
+  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { setFriend, selectFriend } = useSelectedFriend();
 
   const onPress = () => {
     const { id, name } = upcomingHelloes[0].friend;
@@ -35,8 +39,6 @@ const HomeButtonUpNext = ({
     getThemeAheadOfLoading(friend);
   };
 
-
-
   return (
     <View
       style={[
@@ -44,67 +46,75 @@ const HomeButtonUpNext = ({
         {
           borderRadius: borderRadius,
           borderColor: borderColor,
-          height: height,  
+          height: height,
         },
       ]}
-    > 
-   
- 
-      {upcomingHelloes && (  //used tp be isLoading
+    >
+      {upcomingHelloes && ( //used tp be isLoading
         <View
           style={{
             height: "100%",
             width: "100%",
             flexDirection: "column",
             justifyContent: "space-between",
-            overflow: 'hidden',
+            overflow: "hidden",
             padding: 10,
           }}
         >
-          <Animated.View     
-          entering={FadeIn}
-          exiting={FadeOut} style={{width: '100%', height: 200}}>
-          <Pressable onPress={onPress} style={[styles.textContainer ]}>
-            <Text style={[styles.headerText, appFontStyles.welcomeText]}>{header}</Text>
+          <Animated.View
+            entering={FadeIn}
+            exiting={FadeOut}
+            style={{ width: "100%", height: 200 }}
+          >
+            <Pressable onPress={onPress} style={[styles.textContainer]}>
+              <Text style={[styles.headerText, appFontStyles.welcomeText]}>
+                {header}
+              </Text>
 
-            <Text
-              style={[appFontStyles.welcomeText,
-                {
-                  color: themeStyles.primaryBackground.backgroundColor,
-                  
-                
-                },
-              ]}
-            >
-              {upcomingHelloes &&
-              // friendList?.length > 0 &&
-              
-              upcomingHelloes[0]
-                ? upcomingHelloes[0].friend.name
-                : "Please add a friend to use this feature!"}
-            </Text>
+              <Text
+                style={[
+                  appFontStyles.welcomeText,
+                  {
+                    color: themeStyles.primaryBackground.backgroundColor,
+                  },
+                ]}
+              >
+                {upcomingHelloes &&
+                // friendList?.length > 0 &&
 
-            <Text style={[styles.subtitleText, appFontStyles.subWelcomeText]}>
-              Say hi on{" "}
-              {upcomingHelloes && upcomingHelloes[0]
-                ? upcomingHelloes[0].future_date_in_words
-                : ""}
-              !
-            </Text>
-          </Pressable>
+                upcomingHelloes[0]
+                  ? upcomingHelloes[0].friend.name
+                  : "Please add a friend to use this feature!"}
+              </Text>
 
+              <Text style={[styles.subtitleText, appFontStyles.subWelcomeText]}>
+                Say hi on{" "}
+                {upcomingHelloes && upcomingHelloes[0]
+                  ? upcomingHelloes[0].future_date_in_words
+                  : ""}
+                !
+              </Text>
+            </Pressable>
           </Animated.View>
 
           <Animated.View
-          entering={SlideInDown.delay(100)}
-          exiting={SlideOutDown}
+            entering={SlideInDown.delay(100)}
+            exiting={SlideOutDown}
             style={{
               zIndex: 30000,
-              height: '100%', 
-              width: "100%", 
+              height: "100%",
+              width: "100%",
             }}
           >
             <HomeScrollSoon
+              upcomingHelloes={upcomingHelloes}
+              isLoading={isLoading}
+              getThemeAheadOfLoading={getThemeAheadOfLoading}
+              setFriend={setFriend}
+              selectFriend={selectFriend}
+              friendList={friendList}
+              themeStyles={themeStyles}
+              manualGradientColors={manualGradientColors}
               height={"100%"}
               maxHeight={700}
               borderRadius={10}
@@ -112,17 +122,20 @@ const HomeButtonUpNext = ({
             />
           </Animated.View>
           <Animated.View
-          entering={FadeIn}
-       exiting={SlideOutRight}
+            entering={FadeIn}
+            exiting={SlideOutRight}
             style={{
               position: "absolute",
               right: -56,
               top: 0,
               transform: [{ rotate: "180deg" }],
-          
             }}
           >
-            <GeckoSvg color={manualGradientColors.homeDarkColor} width={200} height={200} />
+            <GeckoSvg
+              color={manualGradientColors.homeDarkColor}
+              width={200}
+              height={200}
+            />
           </Animated.View>
         </View>
       )}
@@ -136,7 +149,7 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 0,
     minHeight: 190,
-    alignContent: "center", 
+    alignContent: "center",
     borderWidth: 0,
     alignItems: "center",
     justifyContent: "space-between",
@@ -149,10 +162,10 @@ const styles = StyleSheet.create({
   textContainer: {
     zIndex: 5,
     position: "absolute",
-    width: '82%', 
-   
+    width: "82%",
+
     flexDirection: "column",
- 
+
     justifyContent: "space-around",
   },
   headerText: {

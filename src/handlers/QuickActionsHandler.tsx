@@ -1,11 +1,13 @@
  
 import { useEffect  } from "react"; 
 import * as QuickActions from "expo-quick-actions";  
-import { useUser } from "../context/UserContext";
+// import { useUser } from "../context/UserContext";
 import { useUpcomingHelloes } from "../context/UpcomingHelloesContext"; 
 
+
+// imports from Layout in App.tsx
 export default function QuickActionsHandler({navigationRef}) {
- const { user } = useUser();
+ 
 
   const { upcomingHelloes  } =  useUpcomingHelloes();
 

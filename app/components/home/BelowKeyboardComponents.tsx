@@ -16,6 +16,11 @@ interface BelowKeyboardComponentsProps {
 }
 
 const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
+  userCategories,
+  upcomingHelloes,
+  isLoading,
+  getThemeAheadOfLoading,
+  friendList,
   friendStyle,
   primaryTextStyle,
   welcomeTextStyle,
@@ -47,6 +52,10 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
     >
       {!isFriendSelected && friendListLength > 0 && (
         <HomeButtonUpNext
+          upcomingHelloes={upcomingHelloes}
+          isLoading={isLoading}
+          getThemeAheadOfLoading={getThemeAheadOfLoading}
+          friendList={friendList}
           onPress={onPress}
           borderRadius={10}
           height={"100%"}
@@ -56,6 +65,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
       {isFriendSelected && (
         <View style={{ height: "100%" }}>
           <SelectedFriendHome
+          userCategories={userCategories}
             appColorsStyle={appColorsStyle}
             friendStyle={friendStyle}
             primaryTextStyle={primaryTextStyle}

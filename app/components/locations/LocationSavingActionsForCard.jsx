@@ -12,11 +12,10 @@ import { useNavigation } from "@react-navigation/native";
 
 import PushPinSolidSvg from "@/app/assets/svgs/push-pin-solid.svg";
 
-import AlertConfirm from "../alerts/AlertConfirm"; 
-import ModalAddNewLocation from "./ModalAddNewLocation";
+import AlertConfirm from "../alerts/AlertConfirm";  
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
-import { useFriendList } from "@/src/context/FriendListContext";
+ 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useLocations } from '@/src/context/LocationsContext';
@@ -47,8 +46,7 @@ const LocationSavingActionsForCard = ({
   const { selectedFriend, friendFavesData, getFaveLocationIds } = useSelectedFriend();
   const { friendFaveLocations } = friendFavesData;
  
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [isModal2Visible, setModal2Visible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false); 
   const { themeStyles } = useGlobalStyle();  
   const [showSpinner, setShowSpinner ] = useState(false); // to distinguish from other copies of this component with dif location data
 
@@ -84,28 +82,19 @@ const LocationSavingActionsForCard = ({
   }, [location, friendFaveLocations, isFave]);
   // Add `friendDashboardData` as a dependency
 
-  const handlePress = () => {
-    setModalVisible(true);
-  };
-
+ 
   const closeModal = () => {
     setModalVisible(false);
   };
 
-  const closeModal2 = () => {
-    setModal2Visible(false);
-  };
-
-  const onClose = () => {
-    setModal2Visible(false);
-  };
+ 
 
   const removeFromFaves = async () => {
     if (selectedFriend && location) {
       
       handleRemoveFromFaves(selectedFriend.id, location.id);
       setIsFave(false);
-      onClose();
+ 
     }
   };
 
@@ -220,14 +209,7 @@ const LocationSavingActionsForCard = ({
         </View>
      
 
-      {location && isModal2Visible && (
-        <ModalAddNewLocation
-          isVisible={isModal2Visible}
-          close={closeModal2}
-          title={location.title}
-          address={location.address}
-        />
-      )}
+ 
 
       {location && isModalVisible && (
         <AlertConfirm

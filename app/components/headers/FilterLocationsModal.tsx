@@ -1,13 +1,10 @@
-import React, { useState } from "react";
+import React  from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { TouchableOpacity, AccessibilityInfo } from "react-native";
  
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
-// import SectionFriendSettings from "../friends/SectionFriendSettings";
-import SectionAccountSettings from "../user/SectionAccountSettings";
+import ModalWithGoBack from "../alerts/ModalWithGoBack";  
 
 interface Props {
   isVisible: boolean;
@@ -17,14 +14,8 @@ interface Props {
 const FilterLocationsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle(); 
 
-    const headerIconSize = 26;
-
  
-  // React.useEffect(() => {
-  //   if (isModalVisible) {
-  //     AccessibilityInfo.announceForAccessibility("Information opened");
-  //   }
-  // }, [isModalVisible]);
+ 
 
   return ( 
       <ModalWithGoBack
@@ -39,16 +30,12 @@ const FilterLocationsModal: React.FC<Props> = ({ isVisible, closeModal }) => {
         questionText="Settings"
         children={
           <ScrollView contentContainerStyle={styles.bodyContainer}>
-            <View style={styles.sectionContainer}>
-              <SectionAccessibilitySettings />
-            </View>
+    
             {/* <View style={styles.sectionContainer}>
              <SectionFriendSettings/>
             </View> */}
 
-            <View style={styles.headerContainer}>
-              <SectionAccountSettings />
-            </View>
+  
             <View style={styles.sectionContainer}>
               <Text style={[styles.text, themeStyles.genericText]}>
                 © Badrainbowz Studio 2025

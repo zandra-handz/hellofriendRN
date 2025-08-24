@@ -1,32 +1,28 @@
 import { View } from "react-native";
-import React from "react";
-import { useUser } from "@/src/context/UserContext";
+import React  from "react";  
+import GradientBackground from "../display/GradientBackground"; 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
-// import SafeViewAndGradientBackground from "../format/SafeViewAndGradBackground";
-import GradientBackground from "../display/GradientBackground";
-
-import useSignIn from "@/src/hooks/UserCalls/useSignIn";
-
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LoadingPage from "./LoadingPage";
 type Props = {};
 
-const FSMainSpinner = (props: Props) => {
-  const { isInitializing, refetch } = useUser();
-  const { signinMutation } = useSignIn({ refetchUser: refetch });
+const FSMainSpinner = ({
+ 
+  isInitializing,
+ 
+}: Props) => { 
+
   const { isLoading } = useUpcomingHelloes();
-  const { selectedFriend } = useSelectedFriend();
-  const {   manualGradientColors } = useGlobalStyle();
 
   const { themeAheadOfLoading } = useFriendStyle();
 
+  const { selectedFriend } = useSelectedFriend();
+ 
   return (
-    <>
-      {/* //   {isLoading && ( */}
-      {/* //   {loadingNewFriend && ( */}
-      {((signinMutation && signinMutation.isPending) ||
+    <> 
+      {(
+         
         isInitializing ||
         isLoading) && (
         <View
@@ -41,13 +37,12 @@ const FSMainSpinner = (props: Props) => {
             bottom: 0,
             right: 0,
             left: 0,
-            backgroundColor: "red",
           }}
         >
           <GradientBackground
-            useFriendColors={!!selectedFriend}
-            startColor={manualGradientColors.lightColor}
-            endColor={manualGradientColors.darkColor}
+            useFriendColors={!!selectedFriend?.id}
+            startColor={ "#a0f143"} // manualGradientColors.lightColor
+            endColor={ "#4caf50"} // manualGradientColors.darkColor
             friendColorDark={themeAheadOfLoading.darkColor}
             friendColorLight={themeAheadOfLoading.lightColor}
           >
@@ -57,7 +52,11 @@ const FSMainSpinner = (props: Props) => {
               spinnerType="circle"
               spinnerSize={40}
               color={
-                !isInitializing ? manualGradientColors.homeDarkColor : "red"
+                isInitializing
+                  ? "hotpink"
+                  : isLoading
+                    ? "cyan"
+                    : "#000002" // manualGradientColors.homeDarkColor
               }
             />
           </GradientBackground>

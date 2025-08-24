@@ -17,10 +17,17 @@ import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
+import { useUser } from "@/src/context/UserContext";
+import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 const ScreenMoments = () => {
   const route = useRoute();
   const scrollTo = route?.params?.scrollTo ?? null;
-  const { capsuleList, updateCapsule } = useCapsuleList();
+
+  const {user } = useUser();
+    const { selectedFriend, setFriend } = useSelectedFriend();
+  const { capsuleList } = useCapsuleList();
+
+  const { handlePreAddMoment } = usePreAddMoment({userId: user?.id, friendId: selectedFriend?.id})
 
   const { categoryNames, categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
@@ -38,7 +45,7 @@ const ScreenMoments = () => {
   const { friendList } = useFriendList();
 
   const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
-  const { selectedFriend, setFriend } = useSelectedFriend();
+
   const { loadingDash } = useFriendDash();
 
   const { prefetchUserAddresses, prefetchFriendAddresses } = usePrefetches();
@@ -128,7 +135,7 @@ const ScreenMoments = () => {
             {capsuleList && categoryColorsMap && (
               <MomentsList
                 capsuleList={capsuleList}
-                updateCapsule={updateCapsule}
+                updateCapsule={handlePreAddMoment}
                 categoryNames={categoryNames}
                 categoryStartIndices={categoryStartIndices}
                 navigateToMomentView={navigateToMomentView}

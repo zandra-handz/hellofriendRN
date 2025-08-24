@@ -13,7 +13,7 @@ import ItemFooterMoments from "./headers/ItemFooterMoments";
 import ItemFooter from "./headers/ItemFooter";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import CarouselItemModal from "./appwide/carouselItemModal";
-
+import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 type Props = {
   initialIndex: number;
   data: object[];
@@ -22,6 +22,8 @@ type Props = {
 };
 
 const CarouselSliderMoments = ({
+  userId,
+  friendId,
   initialIndex,
   data,
   categoryColorsMap,
@@ -34,6 +36,7 @@ const CarouselSliderMoments = ({
 }: Props) => {
   const { height, width } = useWindowDimensions();
   const { stickToLocation, setStickToLocation } = useFriendLocationsContext();
+  const { themeStyles, appFontStyles } = useGlobalStyle();
 
   const ITEM_WIDTH = width - 40;
   const ITEM_MARGIN = 20;
@@ -61,26 +64,23 @@ const CarouselSliderMoments = ({
     };
   };
 
- 
+  const scrollTo = (index: number) => {
+    // Start of simulated drag effects
+    floaterItemsVisibility.value = withTiming(0, { duration: 10 });
+    cardScale.value = withTiming(0.94, { duration: 10 });
 
-const scrollTo = (index: number) => {
-  // Start of simulated drag effects
-  floaterItemsVisibility.value = withTiming(0, { duration: 10 });
-  cardScale.value = withTiming(0.94, { duration: 10 });
+    // Perform the scroll
+    flatListRef.current?.scrollToIndex({
+      index,
+      animated: true,
+    });
 
-  // Perform the scroll
-  flatListRef.current?.scrollToIndex({
-    index,
-    animated: true,
-  });
-
-  // Restore to normal after scroll finishes
-  setTimeout(() => {
-    floaterItemsVisibility.value = withTiming(1, { duration: 400 });
-    cardScale.value = withTiming(1, { duration: 400 });
-  }, 300); // adjust based on scroll animation speed
-};
-
+    // Restore to normal after scroll finishes
+    setTimeout(() => {
+      floaterItemsVisibility.value = withTiming(1, { duration: 400 });
+      cardScale.value = withTiming(1, { duration: 400 });
+    }, 300); // adjust based on scroll animation speed
+  };
 
   const scrollToStart = () => {
     flatListRef.current?.scrollToIndex({
@@ -149,21 +149,31 @@ const scrollTo = (index: number) => {
   const renderPage = useCallback(
     ({ item, index }) => (
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
- 
-        <Children
-          categoryColorsMap={categoryColorsMap}
-          item={item}
-          listLength={data?.length || 0}
-          index={index}
-          width={width}
-          height={height}
-          marginBottom={2} //space between this card and the footer bar (there's already some slight padding around the whole card)
-          currentIndexValue={currentIndex}
-          cardScaleValue={cardScale}
-          openModal={handleSetModalData}
-          closeModal={() => setItemModalVisible(false)}
-          marginKeepAboveFooter={10} //ONLY MOMENT VIEW PAGE HAS THIS PROP RN, this is just to push positioning up a level for readability
-        /> 
+
+      <Children
+        textColor={themeStyles.primaryText.color}
+        darkerOverlayColor={
+          themeStyles.darkerOverlayBackgroundColor.backgroundColor
+        }
+        lighterOverlayColor={
+          themeStyles.lighterOverlayBackgroundColor.backgroundColor
+        }
+        welcomeTextStyle={appFontStyles.welcomeText}
+        userId={userId}
+        friendId={friendId}
+        categoryColorsMap={categoryColorsMap}
+        item={item}
+        listLength={data?.length || 0}
+        index={index}
+        width={width}
+        height={height}
+        marginBottom={2} //space between this card and the footer bar (there's already some slight padding around the whole card)
+        currentIndexValue={currentIndex}
+        cardScaleValue={cardScale}
+        openModal={handleSetModalData}
+        closeModal={() => setItemModalVisible(false)}
+        marginKeepAboveFooter={10} //ONLY MOMENT VIEW PAGE HAS THIS PROP RN, this is just to push positioning up a level for readability
+      />
     ),
     [width, height, currentIndex, categoryColorsMap]
   );

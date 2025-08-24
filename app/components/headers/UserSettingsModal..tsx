@@ -11,6 +11,8 @@ import SectionFriendManagerSettings from "../friends/SectionFriendManagerSetting
 import SectionAccountSettings from "../user/SectionAccountSettings"; 
 import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
+import { useUserSettings } from "@/src/context/UserSettingsContext";
+
 interface Props {
   userId: number;
   isVisible: boolean;
@@ -25,7 +27,7 @@ const UserSettingsModal: React.FC<Props> = ({
   closeModal,
 }) => {
   const { themeStyles, appSpacingStyles, manualGradientColors } = useGlobalStyle();
-
+const { settings } = useUserSettings();
   const headerIconSize = 26;
 
   // React.useEffect(() => {
@@ -60,7 +62,7 @@ const UserSettingsModal: React.FC<Props> = ({
           {/* // <View style={styles.bodyContainer}> */}
 
           <View style={styles.sectionContainer}>
-            <SectionAccessibilitySettings />
+            <SectionAccessibilitySettings userId={userId} primaryColor={themeStyles.primaryText.color} settings={settings} />
           </View>
           <View style={styles.sectionContainer}>
             <SectionFriendManagerSettings userId={userId} />

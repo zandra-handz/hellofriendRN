@@ -18,9 +18,7 @@ import { AppState, AppStateStatus } from "react-native";
 import FriendHistoryPieDataWrap from "./FriendHistoryPieDataWrap";
 import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-
-import Demo from "../headers/SkiaDemo";
-import { useCategories } from "@/src/context/CategoriesContext";
+  
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
 type Props = {
@@ -29,6 +27,7 @@ type Props = {
 };
 
 const TalkingPointsChart = ({
+  userCategories,
   friendStyle,
   appColorsStyle,
   loadingNewFriend,
@@ -50,8 +49,7 @@ const TalkingPointsChart = ({
 
   const { categoryStartIndices } = useTalkingPCategorySorting({
     listData: capsuleList,
-  });
-  const { userCategories } = useCategories();
+  }); 
 
   const [showHistory, setShowHistory] = useState(false);
   const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
@@ -189,11 +187,7 @@ const TalkingPointsChart = ({
 
   return (
     <>
-      {/*  DON'T DELETE OR WILL BE SAD
-      
-      <View style={{ width: "100%", height: 100 }}>
-        <Demo text={"lalala"} />
-      </View> */}
+ 
       <Pressable
         onPress={toggleShowHistory}
         style={{

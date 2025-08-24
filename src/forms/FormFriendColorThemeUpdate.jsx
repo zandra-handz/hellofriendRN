@@ -8,14 +8,16 @@ import ColorPicker, { Panel1, HueSlider } from "reanimated-color-picker"; // Cor
 import { updateFriendFavesColorTheme } from "@/src/calls/api"; // Import the updateFriendFavesColorTheme function
 import { useUser } from "@/src/context/UserContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+import useUpdateFriendListColors from "../hooks/useUpdateFriendListColors";
 import { useFriendStyle } from "../context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import tinycolor from "tinycolor2";
 
 const FormFriendColorThemeUpdate = forwardRef((props, ref) => {
   const { user } = useUser();
-  const { updateFriendListColors, themeAheadOfLoading } = useFriendStyle();
+  const {  themeAheadOfLoading, handleSetTheme } = useFriendStyle();
+
+  const { updateFriendListColors } = useUpdateFriendListColors({userId: user?.id, setThemeState: handleSetTheme });
   const { selectedFriend } = useSelectedFriend();
   const [darkColor, setDarkColor] = useState(
     themeAheadOfLoading.darkColor || "#000000"

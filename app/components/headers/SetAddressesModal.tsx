@@ -1,11 +1,9 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { TouchableOpacity, AccessibilityInfo } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native"; 
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
+import ModalWithGoBack from "../alerts/ModalWithGoBack"; 
 import ActiveAddresses from "../locations/ActiveAddresses"; 
 
 interface Props {
@@ -19,24 +17,8 @@ interface Props {
 
 const SetAddressesModal: React.FC<Props> = ({ isVisible, closeModal, userAddress, setUserAddress, friendAddress, setFriendAddress }) => {
   const { themeStyles, appSpacingStyles } = useGlobalStyle();
-
-  const headerIconSize = 26;
  
-
-//   const [userAddress, setUserAddress] = useState({
-//     address: `No address selected`,
-//     id: "",
-//   });
-//   const [friendAddress, setFriendAddress] = useState({
-//     address: `No address selected`,
-//     id: "",
-//   });
-
-  // React.useEffect(() => {
-  //   if (isModalVisible) {
-  //     AccessibilityInfo.announceForAccessibility("Information opened");
-  //   }
-  // }, [isModalVisible]);
+  
 
   const renderActiveAddresses = useCallback(() => {
   if (userAddress && friendAddress) {

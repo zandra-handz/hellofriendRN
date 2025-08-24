@@ -1,13 +1,10 @@
  
 import React, { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
- 
 
-import { useUser } from '../context/UserContext';
-
-const TopLevelNavigationHandler = ({ children }) => {
+const TopLevelNavigationHandler = ({ userId, isInitializing, children }) => {
     const navigation = useNavigation();
-    const { user, isInitializing } = useUser();
+ 
  
  
 
@@ -20,7 +17,7 @@ const TopLevelNavigationHandler = ({ children }) => {
                 return; // Wait until loading is complete
             }
  
-            if (!user?.id) {
+            if (!userId) {
                 console.log('nav useeffect triggerd! not authenticated');
              
                  
@@ -31,13 +28,13 @@ const TopLevelNavigationHandler = ({ children }) => {
                 // }
             }
 
-            if (user?.id) {
+            if (userId) {
                    console.log('nav useeffect triggerd! authenticated, not doing anything');
             }
         };
 
         checkAuthentication();
-    }, [  navigation, isInitializing, user]);
+    }, [  navigation, isInitializing, userId]);
  
 
     return <>{children}</>;

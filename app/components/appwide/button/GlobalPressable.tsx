@@ -14,6 +14,7 @@ type Props = {
   children?: ReactNode;
 };
 
+//Global just means it is the default that is used everywhere in the app
 const GlobalPressable = ({
   onPress,
   onLongPress,

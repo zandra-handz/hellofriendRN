@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native"; 
+import { View } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -8,13 +8,21 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 import PreAddedList from "@/app/components/moments/PreAddedList";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import { useUser } from "@/src/context/UserContext";
+import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 
-const ScreenPreAdded = () => { 
+const ScreenPreAdded = () => {
   const { selectedFriend } = useSelectedFriend();
+  const { user } = useUser();
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendStyle();
   const { loadingDash } = useFriendDash();
-    const { updateCapsule, preAdded, allCapsulesList } = useCapsuleList();
+  const { preAdded, allCapsulesList } = useCapsuleList();
+
+  const { handlePreAddMoment } = usePreAddMoment({
+    userId: user?.id,
+    friendId: selectedFriend?.id,
+  });
 
   return (
     <SafeViewAndGradientBackground
@@ -23,6 +31,9 @@ const ScreenPreAdded = () => {
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundTransparentOverlayColor={
+        themeStyles.overlayBackgroundColor.backgroundColor
+      }
       friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
       includeBackgroundOverlay={true}
@@ -33,9 +44,9 @@ const ScreenPreAdded = () => {
         <View style={{ flex: 1, padding: 10 }}>
           {preAdded && (
             <PreAddedList
-            updateCapsule={updateCapsule}
-            preAdded={preAdded}
-            allCapsulesList={allCapsulesList}
+              updateCapsule={handlePreAddMoment}
+              preAdded={preAdded}
+              allCapsulesList={allCapsulesList}
               textStyle={themeStyles.primaryText}
               specialTextStyle={appFontStyles.welcomeText}
               friendId={selectedFriend?.id}

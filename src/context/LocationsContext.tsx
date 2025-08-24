@@ -50,19 +50,7 @@ export const LocationsProvider = ({ children }) => {
  
 
 
-  
-  //MIGHT NEED TO REFETCH THIS DATA IF NO LONGER IN CACHE
-  // useEffect(() => {
-  //   if (locationList) {
-  //     queryClient.setQueryData(["locationCategories", user?.id], (oldData) => { 
-  //       const locationCategories = locationList.map((loc) => loc.category);
  
-  //       const uniqueCategories = Array.from(new Set(locationCategories));
- 
-  //       return uniqueCategories;
-  //     });
-  //   }
-  // }, [locationList]);
 
   const locationsIsFetching = isFetching;
 
@@ -108,7 +96,7 @@ export const LocationsProvider = ({ children }) => {
   });
 
   const handleUpdateLocation = async (locationId, locationUpdate) => {
-    //console.log('Updating location:', locationId, locationUpdate);
+ 
 
     try {
       await updateLocationMutation.mutateAsync({

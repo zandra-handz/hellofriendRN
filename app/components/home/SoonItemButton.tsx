@@ -1,14 +1,14 @@
 import React, { useRef } from "react";
 import {
   View,
-  Text,
-  TouchableOpacity,
+  Text, 
   Pressable,
   StyleSheet,
   DimensionValue,
 } from "react-native";
-import UICalendarPageDynamic from "@/app/components/foranimations/UICalendarPageDynamic"; // Import the calendar component
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+
+import GlobalPressable from "../appwide/button/GlobalPressable";
+  
 import { LinearGradient } from "expo-linear-gradient";
 interface SoonItemButtonProps {
   width: DimensionValue;
@@ -30,23 +30,15 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
   disabled = false,
   textColor = "white",
   backgroundColor = "red",
+  themeStyles,
+  manualGradientColors,
 }) => {
   const lastPress = useRef(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const { manualGradientColors, themeStyles } = useGlobalStyle();
+ 
 
   const DOUBLE_PRESS_DELAY = 300;
-
-  const formatNumDate = (dateString) => {
-    const match = dateString.match(/\d+/);
-    return match ? match[0] : "";
-  };
-
-  const formatMonth = (dateString) => {
-    const match = dateString.match(/([a-zA-Z]+)\s+\d+/);
-    return match ? match[1].slice(0, 3) : "";
-  };
+ 
 
   const handlePress = () => {
     const now = Date.now();
@@ -95,47 +87,24 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
           { flex: 1, width: width, alignItems: "center", borderRadius: 20 },
         ]}
       >
-        {/* <View style={[styles.calendarContainer]}>
-        <Text style={{ fontSize: 11, fontWeight: "bold", color: textColor }}>
-          {formatMonth(date)}
-        </Text>
-
-        <UICalendarPageDynamic
-          numberDate={formatNumDate(date)}
-          month={formatMonth(date)}
-          showMonth={false} // Hide the month inside the SVG if showMonth is true
-          width={20}
-          height={20}
-          color={textColor}
-        />
-      </View> */}
+ 
         <View
           style={{
             flexDirection: "row",
             width: "100%",
             height: "100%",
             alignItems: 'center',
-
-            // justifyContent: "center",
+ 
             padding: 10,
-            borderRadius: 10,
-         //   backgroundColor: themeStyles.primaryBackground.backgroundColor,
-            // alignItems: "start",
+            borderRadius: 10, 
           }}
         >
           <View style={[styles.calendarContainer]}>
               <Text style={[styles.text, { color: textColor }]}> {date}
-              {/* {formatMonth(date)} */}
+        
             </Text>
 
-            {/* <UICalendarPageDynamic
-              numberDate={formatNumDate(date)}
-              month={formatMonth(date)}
-              showMonth={false} // Hide the month inside the SVG if showMonth is true
-              width={20}
-              height={20}
-              color={textColor}
-            /> */}
+       
           </View>
           <Text style={[styles.text, { color: textColor }]}>
             {friendName}</Text>
@@ -146,9 +115,7 @@ const SoonItemButton: React.FC<SoonItemButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    // justifyContent: "center",
+  container: { 
     alignItems: "center",
     flexDirection: "row",
     height: 50,

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { View, Text } from "react-native";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -11,9 +11,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { useUser } from "@/src/context/UserContext"; 
 const ScreenFinalize = () => {
   const { allCapsulesList, capsuleList, preAdded } = useCapsuleList();
-  const { categoryNames } = useTalkingPCategorySorting({
+  const { user } = useUser();
+    const { selectedFriend } = useSelectedFriend();
+
+
+    const { categoryNames } = useTalkingPCategorySorting({
     listData: capsuleList,
   });
 
@@ -22,7 +27,7 @@ const ScreenFinalize = () => {
     categoryNames.map(c => c.category)
   );
 const { themeAheadOfLoading } = useFriendStyle();
-  const { selectedFriend } = useSelectedFriend();
+
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
 
@@ -48,6 +53,8 @@ const { themeAheadOfLoading } = useFriendStyle();
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+             backgroundTransparentOverlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
+     
       friendId={selectedFriend?.id}
       backgroundOverlayHeight="" includeBackgroundOverlay={true} useOverlay={true} style={{ flex: 1 }}>
       {selectedFriend && (
@@ -70,6 +77,7 @@ const { themeAheadOfLoading } = useFriendStyle();
           </Text>
           {preAdded && uniqueCategories?.length > 0 && categoryNamesOnly && (categoryNamesOnly !== undefined) && (
             <FinalizeList
+            userId={user?.id}
             friendId={selectedFriend?.id}
               data={allCapsulesList}
               preSelected={preAdded}

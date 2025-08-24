@@ -1,22 +1,16 @@
 import React, {  useMemo } from "react";
-import {  View, Alert } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- import { useUser } from "@/src/context/UserContext";
+import {  View, Alert } from "react-native"; 
 import Toggle from "./Toggle"; 
-
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+ 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
  
-const SectionAccessibilitySettings = () => {
-  const { user } = useUser();
-  const {
-    settings,  
+const SectionAccessibilitySettings = ({userId, primaryColor, settings}) => {
  
-  } = useUserSettings();
+ 
 
-  const { updateSettingsMutation } = useUpdateSettings({userId: user?.id});
-  const { themeStyles } = useGlobalStyle(); 
+  const { updateSettingsMutation } = useUpdateSettings({userId: userId});
+ 
 
   const manualTheme = useMemo(() => {
     if (!settings) return false;
@@ -96,12 +90,13 @@ Alert.alert(
       }}
     >
       <Toggle
+      primaryColor={primaryColor}
         label="Manual theme"
         icon={
           <MaterialCommunityIcons
             name={"theme-light-dark"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         value={manualTheme}
@@ -109,12 +104,13 @@ Alert.alert(
       />
       {manualTheme && (
         <Toggle
+           primaryColor={primaryColor}
           label="Light/Dark"
           icon={
             <MaterialIcons
               name={"settings-display"}
               size={20}
-              color={themeStyles.primaryText.color}
+              color={primaryColor}
             />
           }
           value={settings.manual_dark_mode === true}
@@ -123,12 +119,13 @@ Alert.alert(
       )}
 
       <Toggle
+         primaryColor={primaryColor}
         label="High Contrast Mode"
         icon={
           <MaterialCommunityIcons
             name={"text-shadow"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         value={settings.high_contrast_mode}
@@ -136,12 +133,13 @@ Alert.alert(
       />
 
       <Toggle
+         primaryColor={primaryColor}
         label="Large Text"
         icon={
           <MaterialIcons
             name={"text-fields"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         value={settings.large_text}
@@ -149,12 +147,13 @@ Alert.alert(
       />
 
       <Toggle
+         primaryColor={primaryColor}
         label="Simplify App For Focus"
         icon={
           <MaterialCommunityIcons
             name={"image-filter-center-focus"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         value={settings.simplify_app_for_focus}
@@ -162,12 +161,13 @@ Alert.alert(
       />
 
       <Toggle
+         primaryColor={primaryColor}
        label="Receive Notifications"
         icon={
           <MaterialCommunityIcons
             name={"bell"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         value={settings.receive_notifications}
@@ -175,12 +175,13 @@ Alert.alert(
       />
 
             <Toggle
+               primaryColor={primaryColor}
         label="Screen Reader"
         icon={
           <MaterialIcons
             name={"volume-up"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />}
         value={settings.screen_reader}
         onPress={toggleScreenReader}

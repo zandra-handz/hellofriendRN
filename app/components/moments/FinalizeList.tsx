@@ -5,16 +5,16 @@ import {
   Pressable,
   FlatList,
 } from "react-native";
-import React, { useCallback, useState } from "react";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+import React, { useCallback, useState } from "react"; 
 import { FlashList } from "@shopify/flash-list";
 import { CheckBox } from "react-native-elements";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import EscortBar from "./EscortBar";
-import { Moment } from "@/src/types/MomentContextTypes"; 
- 
+import { Moment } from "@/src/types/MomentContextTypes";
+import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
+
 interface FinalizeListProps {
   data: [];
   categories: [];
@@ -23,6 +23,7 @@ interface FinalizeListProps {
 
 const FinalizeList: React.FC<FinalizeListProps> = ({
   friendId,
+  userId,
   data,
   categories,
   preSelected,
@@ -34,9 +35,14 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
   const [selectedMoments, setSelectedMoments] = useState<Moment[]>([]);
   const [changedMoments, setChangedMoments] = useState<Moment[]>([]);
   const [visibleCategories, setVisibleCategories] = useState<Moment[]>(data); //so that we can use the same value for All and for individual ones
- 
-  const navigation = useNavigation();
-  const { updateCapsule } = useCapsuleList(); // also need to update cache
+
+  const navigation = useNavigation(); 
+
+  const { handlePreAddMoment } = usePreAddMoment({
+    userId: userId,
+    friendId: friendId,
+  });
+
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 
   const handleCategoryFilterPress = (category: string) => {
@@ -94,7 +100,7 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
         >
           <View
             style={{
-              height: "100%", 
+              height: "100%",
               flexShrink: 1,
               paddingHorizontal: 10,
               alignItems: "center",
@@ -154,9 +160,9 @@ const FinalizeList: React.FC<FinalizeListProps> = ({
     if (!friendId) {
       return;
     }
- 
+
     changedMoments.forEach((moment) => {
-      updateCapsule({
+      handlePreAddMoment({
         friendId: friendId,
         capsuleId: moment.id,
         isPreAdded: !moment.preAdded,

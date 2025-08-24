@@ -269,7 +269,7 @@ const ScreenLocations = ({}) => {
           {locationCategories && viewingAllLocations && <View style={{position: 'absolute', zIndex: 3000, top: 94,  height: '4%', paddingHorizontal: '3%'}}>{renderCategoriesButtons()}</View>}
           <Tab.Navigator
             tabBar={(props) => (
-              <CustomTabBar {...props} onTabChange={handleTabChange} />
+              <CustomTabBar {...props} themeStyles={themeStyles} themeAheadOfLoading={themeAheadOfLoading} onTabChange={handleTabChange} />
             )}
             screenOptions={({ route }) => ({
               tabBarStyle: {

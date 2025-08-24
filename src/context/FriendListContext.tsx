@@ -1,7 +1,7 @@
 import React, {
   createContext,
   useContext,
-  useState,
+ 
   useMemo,
   useEffect,
   ReactNode,
@@ -46,6 +46,7 @@ const queryClient = useQueryClient();
 
   const {
   data: friendList = [],
+  isPending,
   isSuccess,
   isError,
 } = useQuery({
@@ -63,49 +64,49 @@ useEffect(() => {
 }, [isError]);
 
  
-const addToFriendList = (newFriend: Friend) => {
-  queryClient.setQueryData<Friend[]>(["friendList", user?.id], (old = []) => {
-    const isAlreadyFriend = old.some((friend) => friend.id === newFriend.id);
-    if (!isAlreadyFriend) {
-      return [...old, newFriend];
-    }
-    return old;
-  });
-};
+// const addToFriendList = (newFriend: Friend) => {
+//   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (old = []) => {
+//     const isAlreadyFriend = old.some((friend) => friend.id === newFriend.id);
+//     if (!isAlreadyFriend) {
+//       return [...old, newFriend];
+//     }
+//     return old;
+//   });
+// };
 
  
-const removeFromFriendList = (friendIdToRemove: number | number[]) => {
-  queryClient.setQueryData<Friend[]>(["friendList", user?.id], (old = []) => {
-    const idsToRemove = Array.isArray(friendIdToRemove)
-      ? friendIdToRemove
-      : [friendIdToRemove];
-    return old.filter((friend) => !idsToRemove.includes(friend.id));
-  });
-};
+// const removeFromFriendList = (friendIdToRemove: number | number[]) => {
+//   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (old = []) => {
+//     const idsToRemove = Array.isArray(friendIdToRemove)
+//       ? friendIdToRemove
+//       : [friendIdToRemove];
+//     return old.filter((friend) => !idsToRemove.includes(friend.id));
+//   });
+// };
 
  
-const updateFriend = (updatedFriend: Friend) => {
-  queryClient.setQueryData<Friend[]>(["friendList", user?.id], (old = []) =>
-    old.map((friend) =>
-      friend.id === updatedFriend.id ? updatedFriend : friend
-    )
-  );
-};
+// const updateFriend = (updatedFriend: Friend) => {
+//   queryClient.setQueryData<Friend[]>(["friendList", user?.id], (old = []) =>
+//     old.map((friend) =>
+//       friend.id === updatedFriend.id ? updatedFriend : friend
+//     )
+//   );
+// };
   
  
 
   const contextValue = useMemo(
     () => ({
       friendList, 
-      addToFriendList,
-      removeFromFriendList,
-      updateFriend, 
+      // isPending,
+      friendListFetched: isSuccess,
+  
     }),
     [
       friendList, 
-      addToFriendList,
-      removeFromFriendList,
-      updateFriend, 
+      // isPending,
+      isSuccess,
+ 
     ]
   );
 

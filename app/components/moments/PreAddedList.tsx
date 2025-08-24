@@ -1,13 +1,13 @@
 import { View, Text, Pressable } from "react-native";
 import React, { useState } from "react";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
+ 
 import { FlashList } from "@shopify/flash-list";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage"; // no error message for this one
  
 import useAppNavigations from "@/src/hooks/useAppNavigations"; 
 import CheckboxListItem from "./CheckboxListItem";
 import EscortBar from "./EscortBar";
-const PreAddedList = ({ updateCapsule, preADded, allCapsulesList, textStyle, specialTextStyle, friendId }) => {
+const PreAddedList = ({ updateCapsule, preAdded, allCapsulesList, textStyle, specialTextStyle, friendId }) => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;

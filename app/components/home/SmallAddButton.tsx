@@ -1,35 +1,58 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View,   StyleSheet } from "react-native";
+import GlobalPressable from "../appwide/button/GlobalPressable";
 import React from "react";
-import { Feather } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const SmallAddButton = ({ label, onPress }) => {
-  const { themeStyles, appFontStyles, appContainerStyles } = useGlobalStyle();
+const SmallAddButton = ({
+  manualGradientColors,
+  primaryBackground,
+size=64,
+  onPress,
+}) => {
   return (
-    <TouchableOpacity
-      style={[
-        appContainerStyles.smallAddButton,
-        {
-          borderColor: themeStyles.primaryBackground.backgroundColor,
-        },
-      ]}
-      onPress={onPress}
-    >
-      <View
-        style={{
-          width: 14,
-          height: "100%",
-          alignItems: "center",
-          marginHorizontal: 2,
-        }}
+    <Animated.View entering={FadeIn.delay(200)}>
+      <GlobalPressable
+        style={[
+          styles.smallAddButton,
+          {
+            borderColor: primaryBackground,
+            backgroundColor: manualGradientColors.lightColor,
+            padding: size / 2,
+          },
+        ]}
+        onPress={onPress}
       >
-        <Feather name="plus" size={14} color={themeStyles.primaryBackground.backgroundColor} />
-      </View>
-      <Text style={[ appFontStyles.smallAddButtonText, {color: themeStyles.primaryBackground.backgroundColor}]}>
-        {label}
-      </Text>
-    </TouchableOpacity>
+        <View
+          style={{
+            width: "auto",
+            borderRadius: 999,
+
+            alignItems: "center",
+          }}
+        >
+          <MaterialCommunityIcons
+            name="account-plus"
+            size={size}
+            color={manualGradientColors.homeDarkColor}
+          />
+        </View>
+      </GlobalPressable>
+    </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  smallAddButton: {
+ 
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+
+  smallAddButtonText: {
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+});
 
 export default SmallAddButton;

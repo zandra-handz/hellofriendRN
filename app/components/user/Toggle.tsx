@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, DimensionValue } from "react-native";
 import React from "react";
-import ToggleButton from "../appwide/button/ToggleButton";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import ToggleButton from "../appwide/button/ToggleButton"; 
 
 interface Props {
   label: string;
@@ -10,8 +9,8 @@ interface Props {
   onPress: () => void;
 }
 
-const Toggle: React.FC<Props> = ({ label, icon, value, onPress }) => {
-  const { themeStyles } = useGlobalStyle();
+const Toggle: React.FC<Props> = ({ label, icon, value, primaryColor, onPress }) => {
+ 
   return (
     <View style={{ flexDirection: "row", justifyContent: 'space-between', marginVertical: 6, alignItems: 'center' }}>
      <View style={{flexDirection: 'row'}}>
@@ -19,7 +18,7 @@ const Toggle: React.FC<Props> = ({ label, icon, value, onPress }) => {
       {icon && <View style={{width: 40, alignItems: 'center', flexDirection: 'row', justifyContent: 'start'}}>
         {icon}
          </View>}
-      <Text style={[styles.label, themeStyles.modalText]}>{label}</Text>
+      <Text style={[styles.label, {color: primaryColor}]}>{label}</Text>
       
      </View>
       <ToggleButton value={value} onToggle={onPress} />

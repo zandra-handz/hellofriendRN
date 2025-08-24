@@ -43,6 +43,8 @@ export type RootStackParamList = {
   SelectFriend: undefined;
   AddFriend: undefined;
 
+  Fidget: undefined;
+
   Welcome: undefined;
   Auth: undefined;
   RecoverCredentials: undefined;

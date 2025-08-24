@@ -19,6 +19,7 @@ type Props = {
 export const PreAuthSafeViewAndGradientBackground = ({
   children,
   style,
+  settings,
   startColor,
   endColor,
   friendColorLight,
@@ -91,7 +92,7 @@ export const PreAuthSafeViewAndGradientBackground = ({
           ></View>
         )}
 
-        {includeCustomStatusBar && <CustomStatusBar />}
+        {includeCustomStatusBar && <CustomStatusBar manualDarkMode={ settings?.manual_dark_mode} />}
 
         {children}
       </SafeAreaView>

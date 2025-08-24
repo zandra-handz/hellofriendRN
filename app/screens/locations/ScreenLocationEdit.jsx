@@ -218,6 +218,8 @@ const ScreenLocationEdit = () => {
 
         <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
           <FlatListChangeChoice
+          themeStyles={themeStyles}
+          themeAheadOfLoading={themeAheadOfLoading}
             horizontal={true}
             choicesArray={parkingScores}
             ref={editedParkingScoreRef}

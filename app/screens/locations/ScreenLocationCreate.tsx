@@ -36,7 +36,7 @@ const { themeStyles, manualGradientColors } = useGlobalStyle();
  
     
     style={{ flex: 1 }}>
-      <ContentAddLocation title={location.title} address={location.address} />
+      <ContentAddLocation themeStyles={themeStyles} themeAheadOfLoading={themeAheadOfLoading} title={location.title} address={location.address} />
     </SafeViewAndGradientBackground>
   );
 };

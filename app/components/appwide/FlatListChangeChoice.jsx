@@ -12,14 +12,15 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+ 
 import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 
 // Forwarding ref to the parent to expose the TextInput value
 const FlatListChangeChoice = forwardRef(
   (
     {
+      themeStyles,
+      themeAheadOfLoading,
       title = "title",
       horizontal = true,
       choicesArray,
@@ -27,9 +28,7 @@ const FlatListChangeChoice = forwardRef(
       onChoiceChange,
     },
     ref
-  ) => {
-    const { themeStyles } = useGlobalStyle();
-    const { themeAheadOfLoading } = useFriendStyle();
+  ) => { 
     const [newChoice, setNewChoice] = useState(oldChoice); // Use the starting text passed as prop
     const choiceRef = useRef();
 

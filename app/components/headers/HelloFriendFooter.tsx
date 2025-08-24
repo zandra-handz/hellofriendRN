@@ -22,6 +22,7 @@ import GradientBackground from "../appwide/display/GradientBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 const HelloFriendFooter = ({
+  userCategories,
   manualGradientColors,
   themeAheadOfLoading,
   overlayColor,
@@ -281,6 +282,8 @@ const HelloFriendFooter = ({
       {categoriesModalVisible && (
         <View>
           <CategoriesModal
+          userCategories={userCategories}
+          manualGradientColors={manualGradientColors}
             isVisible={categoriesModalVisible}
             isKeyboardVisible={isKeyboardVisible}
             bottomSpacer={footerHeight - 30} //for safe view

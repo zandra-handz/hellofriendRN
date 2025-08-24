@@ -139,6 +139,7 @@ const EditTheme = ({ userId, friendId, manualThemeOn }) => {
       }}
     >
       <Toggle
+         primaryColor={themeStyles.primaryText.color}
         label="Manual theme"
         icon={
           <MaterialCommunityIcons

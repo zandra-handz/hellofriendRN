@@ -11,6 +11,7 @@ import { useCapsuleList } from "@/src/context/CapsuleListContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useUser } from "@/src/context/UserContext";
 import Animated, {
   SlideInDown,
   SlideInUp,
@@ -20,6 +21,7 @@ import TopBarLikeMinusWidth from "./TopBarLikeMinusWidth";
 
 const ScreenMomentFocus = () => {
   const route = useRoute();
+  const { user } = useUser();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const momentText = route.params?.momentText ?? null;
   const screenCameFrom = route.params?.screenCameFrom ?? 0; // 0 = nav back, 1 = do not nav after save
@@ -140,6 +142,7 @@ const ScreenMomentFocus = () => {
         >
           <MomentWriteEditView
           friendId={selectedFriend?.id}
+          userId={user?.id}
           friendFaves={friendDash?.friend_faves}
             screenCameFromToParent={screenCameFrom}
             triggerSaveFromLateral={triggerSaveFromLateral}

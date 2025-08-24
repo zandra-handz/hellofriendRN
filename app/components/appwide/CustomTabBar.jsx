@@ -1,14 +1,10 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Dimensions, Text } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
-  
-import { useFriendStyle } from '@/src/context/FriendStyleContext';
-
+ 
 const { width } = Dimensions.get('window');
-const CustomTabBar = ({ state, descriptors, navigation, onTabChange }) => {
-  const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendStyle();
+const CustomTabBar = ({ themeStyles, themeAheadOfLoading, state, descriptors, navigation, onTabChange }) => {
+ 
   const underlinePosition = useSharedValue(0);
   const tabWidth = width / state.routes.length;
 

@@ -88,6 +88,8 @@ import ScreenAddFriend from "./app/screens/friends/ScreenAddFriend";
 import ScreenAddImage from "./app/screens/images/ScreenAddImage";
 import ScreenAddHello from "./app/screens/helloes/ScreenAddHello";
 
+import ScreenFidget from "./app/screens/fidget/ScreenFidget";
+
 //DELETE
 // import ScreenAddLocation from "./app/screens/locations/ScreenAddLocation";
 
@@ -98,10 +100,8 @@ import ScreenLocationView from "./app/screens/locations/ScreenLocationView";
 import ScreenUnsavedLocationView from "./app/screens/locations/ScreenUnsavedLocationView";
 
 import ScreenSelectFriend from "./app/screens/friends/ScreenSelectFriend";
+ 
 
-import HeaderLocation from "./app/components/headers/HeaderLocation";
-
-import HeaderLocationSingle from "./app/components/headers/HeaderLocationSingle";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -393,7 +393,10 @@ const linking = {
 export const Layout = () => {
   const { themeStyles } = useGlobalStyle();
   const { user, isInitializing } = useUser();
+
+  // console.warn('LAYOUT RERENDERED');
   const { settings } = useUserSettings();
+  const manualDarkMode = settings?.manual_dark_mode;
 
   const receiveNotifications =
     settings?.receive_notifications === true
@@ -412,12 +415,14 @@ export const Layout = () => {
   useNotificationsRegistration({ receiveNotifications, expoPushToken });
   return (
     <NavigationContainer ref={navigationRef} linking={linking}>
-      <FSMainSpinner />
-      {/* <ResultMessage /> */}
-      <CustomStatusBar />
+      <FSMainSpinner isInitializing={isInitializing} />
+      <CustomStatusBar manualDarkMode={settings?.manual_dark_mode} />
 
       <QuickActionsHandler navigationRef={navigationRef} />
-      <TopLevelNavigationHandler>
+      <TopLevelNavigationHandler
+        userId={user?.id}
+        isInitializing={isInitializing}
+      >
         <Stack.Navigator
           screenOptions={{
             headerShown: true,
@@ -524,8 +529,8 @@ export const Layout = () => {
                 component={ScreenLocations}
                 options={{
                   headerMode: "screen",
-                  headerShown: true,
-                  header: () => <HeaderLocation headerTitle="Locations" />,
+                  headerShown: false,
+                  // header: () => <HeaderLocation headerTitle="Locations" />,
                 }}
               />
               <Stack.Screen
@@ -556,13 +561,13 @@ export const Layout = () => {
                 name="Location"
                 component={ScreenLocation}
                 options={({ route }) => ({
-                  headerShown: true,
-                  header: () => (
-                    <HeaderLocationSingle
-                      location={route.params?.location}
-                      favorite={route.params?.favorite}
-                    />
-                  ),
+                  headerShown: false,
+                  // header: () => (
+                  //   <HeaderLocationSingle
+                  //     location={route.params?.location}
+                  //     favorite={route.params?.favorite}
+                  //   />
+                  // ),
                 })}
               />
               <Stack.Screen
@@ -646,6 +651,13 @@ export const Layout = () => {
               <Stack.Screen
                 name="AddFriend"
                 component={ScreenAddFriend}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="Fidget"
+                component={ScreenFidget}
                 options={{
                   headerShown: false,
                 }}

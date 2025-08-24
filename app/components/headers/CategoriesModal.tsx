@@ -1,10 +1,8 @@
 import React, { useState } from "react";
- 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+  
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SectionUserCategories from "../friends/SectionUserCategories";
-import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
-import { useCategories } from "@/src/context/CategoriesContext";
+import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree"; 
 import HelperMessage from "../alerts/HelperMessage";
 import InfoItem from "./InfoItem";
  
@@ -16,6 +14,8 @@ interface Props {
 }
 
 const CategoriesModal: React.FC<Props> = ({
+  userCategories,
+  manualGradientColors,
   isVisible,
   isKeyboardVisible = false,
   closeModal,
@@ -24,9 +24,7 @@ const CategoriesModal: React.FC<Props> = ({
   const [helperMessage, setHelperMessage] = useState<null | {
     text: string;
     error: boolean;
-  }>(null);
-  const { userCategories } = useCategories();
-  const { manualGradientColors } = useGlobalStyle();
+  }>(null);  
 
   return (
     <ModalScaleLikeTree
@@ -59,7 +57,7 @@ const CategoriesModal: React.FC<Props> = ({
       helperMessageText={`Your categories are yours to decide! They can be broad or narrow in scope, silly or serious, every-day or outlandish, niche or normal. All that matters is that they are important to you and you enjoy sharing them! You can rename, delete, and create new categories whenever you like. If you delete a category, all pending ideas in that category will get permanently moved to the Grab Bag. Items already hello'ed to deleted categories will be removed from your history charts.`}
       infoItem={
         <>
-          {useCategories.length > 0 && (
+          {userCategories.length > 0 && (
             <InfoItem
               infoText={`${userCategories.length} / ${userCategories[0].max_active} added`}
             />

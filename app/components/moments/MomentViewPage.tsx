@@ -1,13 +1,12 @@
 import { View, Text, DimensionValue, ScrollView } from "react-native";
-import React, { useState } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import React, { useState } from "react"; 
 import { useNavigation } from "@react-navigation/native";
 import SlideToDeleteHeader from "../foranimations/SlideToDeleteHeader";
-
-import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import useDeleteMoment from "@/src/hooks/CapsuleCalls/useDeleteMoment";
+import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
+ 
+ 
+import { MaterialCommunityIcons} from "@expo/vector-icons";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
@@ -30,6 +29,12 @@ interface Props {
 }
 
 const MomentViewPage: React.FC<Props> = ({
+  userId,
+  friendId,
+  textColor,
+  darkerOverlayColor,
+  lighterOverlayColor,
+  welcomeTextStyle,
   item,
   index,
   width,
@@ -37,12 +42,18 @@ const MomentViewPage: React.FC<Props> = ({
   marginBottom,
   categoryColorsMap,
   currentIndexValue,
-  cardScaleValue, 
-}) => {
-  const { themeStyles, appFontStyles  } = useGlobalStyle();
-  const { updateCapsule, deleteMomentRQuery, deleteMomentMutation } =
-    useCapsuleList();
-  const { selectedFriend } = useSelectedFriend();
+  cardScaleValue,
+}) => { 
+ 
+
+  const { handlePreAddMoment } = usePreAddMoment({
+    userId: userId,
+    friendId: friendId,
+  });
+  const { handleDeleteMoment, deleteMomentMutation } = useDeleteMoment({
+    userId: userId,
+    friendId: friendId,
+  });
   const navigation = useNavigation();
 
   const [currentIndex, setCurrentIndex] = useState();
@@ -69,6 +80,13 @@ const MomentViewPage: React.FC<Props> = ({
     transform: [{ scale: cardScaleValue.value }],
   }));
 
+  const renderTrashIcon = () => {
+    return <MaterialCommunityIcons
+    name={'delete'}
+    size={20}
+    color={textColor}/>
+  }
+
   const handleEditMoment = () => {
     navigation.navigate("MomentFocus", {
       momentText: item?.capsule || null,
@@ -78,12 +96,12 @@ const MomentViewPage: React.FC<Props> = ({
   };
 
   const saveToHello = async () => {
-    if (!selectedFriend?.id || !item?.id) {
+    if (!friendId || !item?.id) {
       return;
     }
     try {
-      updateCapsule({
-        friendId: selectedFriend?.id,
+      handlePreAddMoment({
+        friendId: friendId,
         capsuleId: item.id,
         isPreAdded: true,
       });
@@ -96,11 +114,11 @@ const MomentViewPage: React.FC<Props> = ({
     // console.log("handle delete moment in navigator triggered: ", item);
     try {
       const momentData = {
-        friend: selectedFriend.id,
+        friend: friendId,
         id: item.id,
       };
 
-      deleteMomentRQuery(momentData);
+      handleDeleteMoment(momentData);
     } catch (error) {
       console.error("Error deleting moment:", error);
     }
@@ -141,21 +159,21 @@ const MomentViewPage: React.FC<Props> = ({
               zIndex: 1,
               overflow: "hidden",
               backgroundColor:
-                themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+                darkerOverlayColor,
             },
           ]}
         >
           <View
             style={{
-              flexDirection: "row", 
-            //  height: 30,
-            height: 'auto',
+              flexDirection: "row",
+              //  height: 30,
+              height: "auto",
               flexGrow: 1,
-              flexWrap: 'wrap',
+              flexWrap: "wrap",
               alignItems: "top",
               paddingTop: 6, // WEIRD EYEBALLIN
               justifyContent: "space-between",
-            //  flex: 1,
+              //  flex: 1,
               width: "100%",
             }}
           >
@@ -171,14 +189,18 @@ const MomentViewPage: React.FC<Props> = ({
               name={"progress-upload"}
               size={28}
               style={{ position: "absolute", top: 16, right: 20 }}
-              color={themeStyles.primaryText.color}
+              color={textColor}
             />
 
             <Text
               style={[
-                themeStyles.primaryText,
-                appFontStyles.welcomeText,
-                { color: themeStyles.primaryText.color, fontSize: 24, paddingRight: 80 },
+               
+                welcomeTextStyle,
+                {
+                  color: textColor,
+                  fontSize: 24,
+                  paddingRight: 80,
+                },
               ]}
             >
               {" "}
@@ -190,17 +212,16 @@ const MomentViewPage: React.FC<Props> = ({
               name={"pencil-outline"}
               onPress={handleEditMoment}
               size={20}
-              color={themeStyles.lighterOverlayBackgroundColor.backgroundColor}
+              color={lighterOverlayColor}
               color={categoryColor}
             />
           </View>
           <View style={{ height: "90%", width: "100%" }}>
             <ScrollView nestedScrollEnabled style={{ flex: 1 }}>
               <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.welcomeText,
-                  { fontSize: 15, lineHeight: 24 },
+                style={[ 
+                welcomeTextStyle,
+                  {color: textColor, fontSize: 15, lineHeight: 24 },
                 ]}
               >
                 {" "}
@@ -211,8 +232,8 @@ const MomentViewPage: React.FC<Props> = ({
                   itemToDelete={item}
                   onPress={handleDelete}
                   sliderWidth={"100%"}
-                  targetIcon={TrashOutlineSvg}
-                  sliderTextColor={themeStyles.primaryText.color}
+                  targetIcon={renderTrashIcon}
+                  sliderTextColor={textColor}
                 />
               </View>
             </ScrollView>
@@ -223,7 +244,7 @@ const MomentViewPage: React.FC<Props> = ({
           onPress={handleDelete}
           sliderWidth={"100%"}
           targetIcon={TrashOutlineSvg}
-          sliderTextColor={themeStyles.primaryText.color}
+          sliderTextColor={textColor}
         /> */}
       </View>
     </Animated.View>

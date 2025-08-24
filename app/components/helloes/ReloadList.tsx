@@ -1,33 +1,34 @@
 import { View, Alert } from "react-native";
-import React, { useCallback, useState } from "react"; 
-import { FlashList } from "@shopify/flash-list"; 
+import React, { useCallback, useState } from "react";
+import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
 
 import useTalkingPFunctions from "@/src/hooks/useTalkingPFunctions";
- 
+import useCreateMoment from "@/src/hooks/CapsuleCalls/useCreateMoment";
 
 import EscortBar from "../moments/EscortBar";
 import CheckboxListItem from "../moments/CheckboxListItem";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
-const ReloadList = ({capsuleList, handleCreateMoment, friendId, friendDash, items }) => {
- 
+const ReloadList = ({ capsuleList, userId, friendId, friendDash, items }) => {
   const ITEM_HEIGHT = 70;
   const BOTTOM_MARGIN = 4;
   const COMBINED_HEIGHT = ITEM_HEIGHT + BOTTOM_MARGIN;
   const [selectedMoments, setSelectedMoments] = useState([]);
   const navigation = useNavigation();
 
- 
+  const { handleCreateMoment } = useCreateMoment({
+    userId: userId,
+    friendId: friendId,
+  });
   const { categoryNames, categoryCount } = useTalkingPCategorySorting({
     listData: capsuleList,
-  }); 
+  });
   //i added id to category names at a later date to get category colors for charts, simplest way to update this component is to remove extra data here
   const [combinedCategoryTotal, setCombinedCategoryTotal] = useState(
     categoryNames.map((c) => c.category)
   );
 
- 
   const { getCategoryCap } = useTalkingPFunctions({
     listData: capsuleList,
     friendData: friendDash,
@@ -50,7 +51,7 @@ const ReloadList = ({capsuleList, handleCreateMoment, friendId, friendDash, item
         />
       );
     },
-    [selectedMoments ]
+    [selectedMoments]
   );
 
   const handleBulkCreateMoments = () => {

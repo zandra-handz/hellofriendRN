@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
  
-
+import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -27,8 +27,8 @@ import PhoneStatusBar from "@/app/components/appwide/statusbar/PhoneStatusBar";
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 
 const ScreenRecoverCredentials = () => {
- 
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+ const { themeAheadOfLoading } = useFriendStyle();
+  const { themeStyles, manualGradientColors,theme, nonCustomHeaderPage  } = useGlobalStyle();
  
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -118,7 +118,13 @@ const ScreenRecoverCredentials = () => {
 
   return (
     <>
-      <PhoneStatusBar />
+      <PhoneStatusBar
+      friendId={false}
+      themeAheadOfLoading={themeAheadOfLoading}
+      theme={theme}
+      nonCustomHeaderPage={nonCustomHeaderPage}
+      
+      />
       <LinearGradient
         colors={[
           manualGradientColors.darkColor,
