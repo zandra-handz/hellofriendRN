@@ -1,16 +1,15 @@
-import React, {   useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useRoute } from "@react-navigation/native";
- 
 
 import { useNavigation } from "@react-navigation/native";
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
- 
+
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- import LocationViewPage from "@/app/components/locations/LocationViewPage";
+import LocationViewPage from "@/app/components/locations/LocationViewPage";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
- import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 const ScreenLocationView = () => {
@@ -27,30 +26,13 @@ const ScreenLocationView = () => {
   // const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
   const navigation = useNavigation();
   // const [currentIndex, setCurrentIndex] = useState(0);
- 
+
   const {
     faveLocations,
     nonFaveLocations,
     stickToLocation,
     setStickToLocation,
   } = useFriendLocationsContext();
-
-  // const renderHeader = useCallback(
-  //   () => (
-  //     <GlobalAppHeader
-  //       title={"LOCATIONS"}
-  //       navigateTo={"Locations"}
-  //       icon={LeavesTwoFallingOutlineThickerSvg}
-  //       altView={false}
-  //     />
-  //   ),
-  //   [selectedFriend, loadingNewFriend, themeAheadOfLoading]
-  // );
-
-  // useEffect(() => {
-  //   console.log(`stickto location`, stickToLocation);
-
-  // }, [stickToLocation]);
 
   console.log(`current day: `, currentDay.day);
   const numberOfDays = 14;
@@ -59,22 +41,19 @@ const ScreenLocationView = () => {
     getNumOfDaysFrom(numberOfDays).day
   );
 
-const selectedDay = useRef({'index': null, 'day': ''});
+  const selectedDay = useRef({ index: null, day: "" });
 
-useEffect(() => {
-  if (currentDay?.index !== undefined && currentDay?.day !== undefined) {
-    selectedDay.current = {
-      index: currentDay.index,
-      day: currentDay.day,
-    };
-  }
-}, [currentDay]);
-  //  const [selectedDay, setSelectedDay ] = useState(null);
+  useEffect(() => {
+    if (currentDay?.index !== undefined && currentDay?.day !== undefined) {
+      selectedDay.current = {
+        index: currentDay.index,
+        day: currentDay.day,
+      };
+    }
+  }, [currentDay]);
 
   const handleSelectedDay = (object) => {
     if (object) {
-      // console.log(object);
-      // console.log("handleSelectedDay in parent: ", object.day, object.index);
       if (selectedDay.current) {
         selectedDay.current.day = object.day;
         selectedDay.current.index = object.index;
@@ -90,30 +69,23 @@ useEffect(() => {
     });
   };
 
-  return (
-    // <PreAuthSafeViewAndGradientBackground includeBackgroundOverlay={true}  style={{ flex: 1 }}>
- 
-    // <PreAuthSafeViewBackground>
-
-
-    <SafeViewAndGradientBackground  
-    
-        startColor={manualGradientColors.lightColor}
+  return ( 
+    <SafeViewAndGradientBackground
+      startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
       friendId={selectedFriend?.id}
-      style={{ flex: 1 }}>
-
-      
-
+      style={{ flex: 1 }}
+    >
       <CarouselSlider
+        stickToLocation={stickToLocation}
+        setStickToLocation={setStickToLocation}
         initialIndex={currentIndex}
         scrollToEdit={stickToLocation}
         scrollToEditCompleted={() => setStickToLocation(null)}
         data={[...faveLocations, ...nonFaveLocations]}
-        // children={LocationViewPage}
         children={(props) => (
           <LocationViewPage
             {...props}
@@ -126,16 +98,7 @@ useEffect(() => {
         footerData={{ userAddress, friendAddress }}
         onRightPressSecondAction={handleNavToSendText}
       />
-      {/* </PreAuthSafeViewAndGradientBackground> */}
-
-{/* 
-    </PreAuthSafeViewBackground>
-    // </SafeViewAndGradientBackground> */}
-
-
-    
     </SafeViewAndGradientBackground>
-
   );
 };
 

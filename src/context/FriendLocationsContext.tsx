@@ -1,4 +1,5 @@
-import React, { useEffect,
+import React, {
+  useEffect,
   createContext,
   useContext,
   useState,
@@ -27,34 +28,34 @@ export const useFriendLocationsContext = () =>
   useContext(FriendLocationsContext);
 
 export const FriendLocationsProvider = ({ children }) => {
-  const { user  } = useUser();
- 
-  const { selectedFriend   } =
-    useSelectedFriend();
+  const { user } = useUser();
 
-    const { friendDash } = useFriendDash();
+  const { selectedFriend } = useSelectedFriend();
+
+  const { friendDash } = useFriendDash();
+    const favesData = friendDash?.friend_faves?.locations;
+ 
   const { locationList } = useLocations();
   const { helloesList } = useHelloes();
+ 
+
+  const inPersonHelloes = helloesList?.filter(
+    (hello) => hello.type === "in person"
+  );
+
+
   const [stickToLocation, setStickToLocation] = useState(null);
   const queryClient = useQueryClient();
- 
-   
 
-    const [friendFavesData, setFriendFavesData] = useState(null);
+  const [friendFavesData, setFriendFavesData] = useState(null);
 
 
-      const favesData = useMemo(() => {
-        
-        if (!friendDash) return null;
-        return friendDash?.friend_faves?.locations || null;
-      }, [friendDash]);
-    
-      useEffect(() => {
-        if (favesData) {
-          setFriendFavesData(favesData);
-        }
-      }, [favesData]);
-     
+
+  useEffect(() => {
+    if (favesData) {
+      setFriendFavesData(favesData);
+    }
+  }, [favesData]);
 
   const timeoutRef = useRef(null);
 
@@ -67,11 +68,7 @@ export const FriendLocationsProvider = ({ children }) => {
     },
     onSuccess: (data, variables) => {
       setFriendFavesData(data.locations);
-      // const friendData = queryClient.getQueryData([
-      //   "friendDashboardData",
-      //   user?.id,
-      //   selectedFriend?.id,
-      // ]);
+
       queryClient.setQueryData(
         ["friendDashboardData", user?.id, selectedFriend?.id],
         (old) => {
@@ -136,17 +133,10 @@ export const FriendLocationsProvider = ({ children }) => {
 
   const removeFromFavesMutation = useMutation({
     mutationFn: (data) => {
-      // console.log('REMOVING FRO FAVES', data.locationId);
-      // setStickToLocation(data.locationId);
       return removeFromFriendFavesLocations(data);
     },
     onSuccess: (data) => {
       setFriendFavesData(data.locations);
-      // const friendData = queryClient.getQueryData([
-      //   "friendDashboardData",
-      //   user?.id,
-      //   selectedFriend?.id,
-      // ]);
 
       queryClient.setQueryData(
         ["friendDashboardData", user?.id, selectedFriend?.id],
@@ -209,12 +199,11 @@ export const FriendLocationsProvider = ({ children }) => {
     [removeFromFavesMutation, user?.id]
   );
 
-  // console.log("FRIEND LOCATIONS RERENDERED");
   const makeSplitLists = (list, isFaveCondition, helloCheck) => {
     return list.reduce(
       ([fave, notFave], item) => {
         const isFave = isFaveCondition(item);
-        const matchingHelloes = helloCheck(item); // returns an array of matching hellos
+        const matchingHelloes = helloCheck(item);
 
         const helloCount = matchingHelloes.length;
 
@@ -234,45 +223,14 @@ export const FriendLocationsProvider = ({ children }) => {
     );
   };
 
-  const inPersonHelloes = useMemo(() => {
-    if (helloesList) {
- 
-      return helloesList?.filter((hello) => hello.type === "in person");
-    }
-  }, [helloesList]);
-
-  // added together with spread operator, these are the complete list of locations
   const [faveLocations, nonFaveLocations] = useMemo(() => {
-    // console.log(`friend location list`, friendFavesData);
-
-    if (
-      locationList &&
-      inPersonHelloes
-      // friendFavesData?.length > 0
-      //friendDashboardData?.[0]?.friend_faves?.locations
-    ) {
+    if (locationList && inPersonHelloes) {
       return makeSplitLists(
         locationList,
-        // (location) => friendFavesData.includes(location.id),
         friendFavesData?.length
           ? (location) => friendFavesData.includes(location.id)
           : () => false,
-        //  friendDashboardData[0].friend_faves.locations.includes(location.id),
 
-        // if want full hello objects instead:
-
-        //   (location) =>
-        //     inPersonHelloes.filter((hello) => hello.location === location.id)
-        // );
-
-        // just hello ids, to match with helloesList in components:
-        //   (location) =>
-        //     inPersonHelloes
-        //       .filter((hello) => hello.location === location.id)
-        //       .map((hello) => hello.id)
-        // );
-
-        // finally: hello ids and dates:
         (location) =>
           inPersonHelloes
             .filter((hello) => hello.location === location.id)
@@ -293,6 +251,13 @@ export const FriendLocationsProvider = ({ children }) => {
         ...nonFaveLocations,
       ]);
     }
+    console.log(
+      "something missing, cannnot get past helloes",
+      locationList?.length,
+      inPersonHelloes?.length,
+      faveLocations?.length,
+      nonFaveLocations?.length
+    );
     return [];
   }, [locationList, inPersonHelloes, faveLocations]);
 

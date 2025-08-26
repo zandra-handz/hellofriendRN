@@ -6,20 +6,33 @@ import MapScreenFooter from "@/app/components/headers/MapScreenFooter";
 import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+import { useLocations } from "@/src/context/LocationsContext";
 import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+import { useHelloes } from "@/src/context/HelloesContext";
+import { useFriendDash } from "@/src/context/FriendDashContext";
 import useMenues from "@/src/hooks/useMenues";
 
 const ScreenLocationSearch = () => {
   const { themeAheadOfLoading } = useFriendStyle();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { getDefaultAddress, getDefaultUserAddress } = useMenues();
+  const { helloesList } = useHelloes();
+    const inPersonHelloes = helloesList?.filter(
+    (hello) => hello.type === "in person"
+  );
+
+  console.log(`inhperson helloes`, inPersonHelloes);
+
+    const { friendDash } = useFriendDash();
+      const favesData = friendDash?.friend_faves?.locations;
+
+      console.log(`fave data`, favesData);
+   
 
   const { getCurrentDay } = useLocationDetailFunctions();
   const { faveLocations, nonFaveLocations, pastHelloLocations } =

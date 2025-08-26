@@ -1,17 +1,13 @@
 import { View } from "react-native";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { useWindowDimensions } from "react-native";
 import Animated, {
-  useAnimatedRef,
-  runOnJS,
+  useAnimatedRef, 
   useAnimatedScrollHandler,
-  useSharedValue,
-  withSpring,
+  useSharedValue, 
   withTiming,
 } from "react-native-reanimated";
 import ItemFooterMoments from "./headers/ItemFooterMoments";
-import ItemFooter from "./headers/ItemFooter";
-import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 import CarouselItemModal from "./appwide/carouselItemModal";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 type Props = {
@@ -31,11 +27,10 @@ const CarouselSliderMoments = ({
   children: Children,
   onRightPress,
   onRightPressSecondAction,
+  // footerData,
 
-  footerData,
 }: Props) => {
   const { height, width } = useWindowDimensions();
-  const { stickToLocation, setStickToLocation } = useFriendLocationsContext();
   const { themeStyles, appFontStyles } = useGlobalStyle();
 
   const ITEM_WIDTH = width - 40;
@@ -65,33 +60,32 @@ const CarouselSliderMoments = ({
   };
 
   const scrollTo = (index: number) => {
-    // Start of simulated drag effects
     floaterItemsVisibility.value = withTiming(0, { duration: 10 });
     cardScale.value = withTiming(0.94, { duration: 10 });
 
-    // Perform the scroll
+ 
     flatListRef.current?.scrollToIndex({
       index,
       animated: true,
     });
 
-    // Restore to normal after scroll finishes
+ 
     setTimeout(() => {
       floaterItemsVisibility.value = withTiming(1, { duration: 400 });
       cardScale.value = withTiming(1, { duration: 400 });
-    }, 300); // adjust based on scroll animation speed
+    }, 300); 
   };
 
-  const scrollToStart = () => {
-    flatListRef.current?.scrollToIndex({
-      index: 0,
-      animated: true,
-    });
-  };
+  // const scrollToStart = () => {
+  //   flatListRef.current?.scrollToIndex({
+  //     index: 0,
+  //     animated: true,
+  //   });
+  // };
 
-  const scrollToEnd = () => {
-    flatListRef.current?.scrollToEnd({ animated: true });
-  };
+  // const scrollToEnd = () => {
+  //   flatListRef.current?.scrollToEnd({ animated: true });
+  // };
 
   const [modalData, setModalData] = useState({ title: "", data: {} });
 

@@ -9,8 +9,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import ItemFooter from "../headers/ItemFooter";
-import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
+import ItemFooter from "../headers/ItemFooter"; 
 import CarouselItemModal from "./carouselItemModal";
 
 type Props = {
@@ -39,8 +38,7 @@ const CarouselSliderInfinite = ({
 
   footerData,
 }: Props) => {
-  const { height, width } = useWindowDimensions();
-  const { stickToLocation, setStickToLocation } = useFriendLocationsContext();
+  const { height, width } = useWindowDimensions(); 
 
   const ITEM_WIDTH = width - 40;
   const ITEM_MARGIN = 20;
@@ -66,34 +64,19 @@ const CarouselSliderInfinite = ({
     };
   };
 
-  useEffect(() => {
-    if (stickToLocation) {
-      // console.log("scrolling to index for location id", stickToLocation);
-      const newIndex = data.findIndex((item) => item.id === stickToLocation);
-      // console.log("scrolling to index", newIndex);
-      scrollToIndexAfterEdit(newIndex);
-      //scrollToEditCompleted();
-    }
-  }, [stickToLocation]);
+ 
+ 
 
-  const scrollToIndexAfterEdit = (index) => {
-    flatListRef.current?.scrollToIndex({
-      index: index,
-      animated: false,
-    });
-    setStickToLocation(null);
-  };
+  // const scrollToStart = () => {
+  //   flatListRef.current?.scrollToIndex({
+  //     index: 0,
+  //     animated: true,
+  //   });
+  // };
 
-  const scrollToStart = () => {
-    flatListRef.current?.scrollToIndex({
-      index: 0,
-      animated: true,
-    });
-  };
-
-  const scrollToEnd = () => {
-    flatListRef.current?.scrollToEnd({ animated: true });
-  };
+  // const scrollToEnd = () => {
+  //   flatListRef.current?.scrollToEnd({ animated: true });
+  // };
 
   const [modalData, setModalData] = useState({ title: "", data: {} });
 

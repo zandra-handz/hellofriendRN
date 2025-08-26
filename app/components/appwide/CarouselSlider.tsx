@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"; 
 import ItemFooter from "../headers/ItemFooter"; 
-import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
+ 
 import CarouselItemModal from "./carouselItemModal"; 
 
 
@@ -18,6 +18,7 @@ type Props = {
   initialIndex: number;
   data: object[];
   useButtons: boolean;
+  
 
 };
 
@@ -28,12 +29,13 @@ const CarouselSlider = ({
   children: Children,
   onRightPress,
   onRightPressSecondAction, 
+  stickToLocation,
+  setStickToLocation,
  
   footerData,
 }: Props) => {
   const { height, width } = useWindowDimensions(); 
-  const { stickToLocation, setStickToLocation } = useFriendLocationsContext();
-
+ 
   const ITEM_WIDTH = width - 40;
   const ITEM_MARGIN = 20;
   const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2;
@@ -71,6 +73,9 @@ const CarouselSlider = ({
   }, [stickToLocation]);
 
   const scrollToIndexAfterEdit = (index) => {
+    if (!setStickToLocation) {
+      return;
+    }
     flatListRef.current?.scrollToIndex({
       index: index,
       animated: false,

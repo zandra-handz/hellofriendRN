@@ -1,35 +1,26 @@
 import React, { createContext, useContext, useMemo, useRef } from "react";
 import { useUser } from "./UserContext";
-import { useSelectedFriend } from "./SelectedFriendContext";
-import { useUpcomingHelloes } from "./UpcomingHelloesContext";
+import { useSelectedFriend } from "./SelectedFriendContext"; 
 
+import useRefetchUpcomingHelloes from "../hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 
-import {
-  fetchPastHelloes,
-  saveHello,
-  deleteHelloAPI, 
-} from "../calls/api";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient, 
-} from "@tanstack/react-query";
+import { fetchPastHelloes, saveHello, deleteHelloAPI } from "../calls/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Hello } from "../types/HelloTypes";
 interface HelloesType {
-        helloesList: Hello[],
-      helloesIsFetching: boolean,
-      helloesIsLoading: boolean,
-      helloesIsError: boolean,
-      helloesIsSuccess: boolean, 
-      flattenHelloes,
-      createHelloMutation,
-      handleCreateHello,
+  helloesList: Hello[];
+  helloesIsFetching: boolean;
+  helloesIsLoading: boolean;
+  helloesIsError: boolean;
+  helloesIsSuccess: boolean;
+  flattenHelloes;
+  createHelloMutation;
+  handleCreateHello;
 
-      handleDeleteHelloRQuery,
-      deleteHelloMutation,
-
-};
+  handleDeleteHelloRQuery;
+  deleteHelloMutation;
+}
 
 const HelloesContext = createContext({});
 
@@ -38,11 +29,13 @@ export const useHelloes = () => {
 };
 
 export const HelloesProvider = ({ children }) => {
-  const { refetchUpcomingHelleos } = useUpcomingHelloes();
-  const queryClient = useQueryClient();
-  const { selectedFriend } = useSelectedFriend();
   const { user } = useUser();
+  const { selectedFriend } = useSelectedFriend();
 
+  const { refetchUpcomingHelleos } = useRefetchUpcomingHelloes({
+    userId: user?.id,
+  });
+  const queryClient = useQueryClient();
   const timeoutRef = useRef(null);
 
   const {
@@ -245,8 +238,7 @@ export const HelloesProvider = ({ children }) => {
   //   }
   // }, [helloesList]);
 
-
-   const flattenHelloes = useMemo(() => {
+  const flattenHelloes = useMemo(() => {
     if (helloesList) {
       return helloesList.flatMap((hello) => {
         const pastCapsules = hello.thought_capsules_shared || [];
@@ -259,7 +251,7 @@ export const HelloesProvider = ({ children }) => {
               locationName: hello.location_name,
               location: hello.location,
               additionalNotes: hello.additional_notes || "", // Keep existing additional notes
-              
+
               capsuleId: capsule.id,
               capsule: capsule.capsule,
               typedCategory: capsule.user_category_name,

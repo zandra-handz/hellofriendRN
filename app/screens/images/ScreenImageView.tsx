@@ -5,8 +5,7 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
  
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 import useImageFunctions from "@/src/hooks/useImageFunctions";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
- import { useFriendDash } from "@/src/context/FriendDashContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import ImageViewPage from "@/app/components/images/ImageViewPage";
  import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
@@ -21,7 +20,7 @@ const ScreenImageView = () => {
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { imageList, deleteImage, deleteImageMutation } = useImageFunctions();
   const { selectedFriend  } = useSelectedFriend();
-  const { loadingDash } = useFriendDash();
+ 
   const { themeAheadOfLoading } = useFriendStyle();
 
   // const totalCount = imageList.length;

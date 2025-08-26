@@ -1,18 +1,13 @@
 import React, {
- 
   createContext,
   useContext,
-  useState,
   useMemo,
 } from "react";
 import { useSelectedFriend } from "./SelectedFriendContext";
 import {
-  fetchMomentsAPI,
- 
-  updateMultMomentsAPI,
- 
+  fetchMomentsAPI, 
 } from "../calls/api";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery  } from "@tanstack/react-query";
 import { useUser } from "./UserContext";
 import { MomentFromBackendType } from "../types/MomentContextTypes";
 import useMomentContextFunctions from "../hooks/useMomentContextFunctions";
@@ -41,9 +36,7 @@ const CapsuleListContext = createContext<CapsuleListContextType>({ capsuleList: 
   categoryNames: [],
   categoryStartIndices: {},
   sortedByCategory: [], 
-  preAdded: [],
-  removeCapsules: () => {},
-  updateCapsule: () => {},
+  preAdded: [], 
   updatePreAdded: () => {},
   updateCapsules: () => {},
   sortByCategory: () => {}, 
@@ -56,14 +49,11 @@ export const useCapsuleList = () => {
   return context;
 };
 
-
-
-
-
+ 
 export const CapsuleListProvider = ({ children }) => {
   const { selectedFriend } = useSelectedFriend();
   const { user, isInitializing  } = useUser();
-  const queryClient = useQueryClient(); 
+
 
   const { getPreAdded } = useMomentContextFunctions(); 
 
@@ -76,9 +66,8 @@ export const CapsuleListProvider = ({ children }) => {
         }
         return fetchMomentsAPI(selectedFriend.id);
       },
-      enabled: !!(
-        selectedFriend &&
-        selectedFriend.id &&
+      enabled: !!( 
+        selectedFriend?.id &&
         user?.id 
         &&  
        !isInitializing
@@ -139,76 +128,24 @@ export const CapsuleListProvider = ({ children }) => {
   categoryStartIndices = {},
   preAdded = [],
 } = sortedCapsuleList ?? {};
-
-  const capsuleCount = capsules.length;
- 
  
 
  
-
-
-
-
-
-
-
-  const updateCapsulesMutation = useMutation({
-    mutationFn: (updatedCapsules) =>
-      updateMultMomentsAPI(selectedFriend?.id, updatedCapsules),
-    onSuccess: () =>
-      //REMOVE/REPLACE MAYBE IF THIS ALSO CAUSES FDD TO RERENDER?
-      //IS THIS MUTATION STILL BEING USED??
-      queryClient.invalidateQueries(["Moments", user?.id, selectedFriend?.id]),
-
-    onError: (error) => console.error("Error updating capsule:", error),
-  });
-
-  const updateCapsules = (updatedCapsules) =>
-    updateCapsulesMutation.mutate(updatedCapsules);
-
- 
-
-  const resetCreateMomentInputs = ({ setMomentText }) => {
-    setMomentText("");
-  };
-
- 
- 
-  const removeCapsules = (capsuleIdsToRemove) => {
-    queryClient.setQueryData(
-      ["Moments", user?.id, selectedFriend?.id],
-      (oldCapsules) =>
-        oldCapsules.filter(
-          (capsule) => !capsuleIdsToRemove.includes(capsule.id)
-        )
-    );
-  };
-
  
   const contextValue = useMemo(
     () => ({
   
       capsuleList: capsules,
       allCapsulesList: allCapsules,
-      capsuleCount,
-      preAdded,
-      updateCapsules, 
-      removeCapsules, 
-      resetCreateMomentInputs,
-      // updateCapsule,
-      // updateCapsuleMutation,
+ 
+      preAdded, 
  
     }),
     [ 
       capsules,
       allCapsules,
-      capsuleCount,
-      preAdded,
-      updateCapsules, 
-      removeCapsules, 
-      resetCreateMomentInputs,
-      // updateCapsule,
-      // updateCapsuleMutation,
+   
+      preAdded, 
  
     ]
   );

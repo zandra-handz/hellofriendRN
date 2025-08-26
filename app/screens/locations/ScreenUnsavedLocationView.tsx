@@ -3,6 +3,8 @@ import { View, Text } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
+// import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
+
 
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 
@@ -19,6 +21,13 @@ const ScreenUnsavedLocationView = () => {
 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
 
+
+  // Don't think we need this here
+  // const { 
+  //   stickToLocation,
+  //   setStickToLocation,
+  // } = useFriendLocationsContext();
+
   return (
     <SafeViewAndGradientBackground
       startColor={manualGradientColors.lightColor}
@@ -32,6 +41,8 @@ const ScreenUnsavedLocationView = () => {
       style={{ flex: 1 }}
     >
       <CarouselSlider
+        // stickToLocation={stickToLocation}
+        // setStickToLocation={setStickToLocation}
         initialIndex={0}
         data={[unsavedLocation]}
         children={LocationViewPage}

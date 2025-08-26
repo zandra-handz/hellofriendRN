@@ -46,7 +46,7 @@ const LocationsMapView = ({
   bermudaCoordsDrilledOnce,
 }) => {
   const MemoizedDualLocationSearcher = React.memo(DualLocationSearcher);
-
+console.log(`past helloes`,pastHelloLocations);
   const combinedLocations = [...faveLocations, ...nonFaveLocations];
 
   //i think when i put this in the parent screen it starts up faster?

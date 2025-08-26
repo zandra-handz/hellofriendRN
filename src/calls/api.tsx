@@ -327,7 +327,10 @@ export const fetchCategoriesHistoryCountAPI = async ({
     const params = new URLSearchParams();
     params.append("only_with_capsules", returnNonZeroesOnly.toString());
     if (friendId != null) {
+       console.warn('gettin friend stats!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! yolo');
       params.append("friend_id", friendId.toString());
+    } else {
+      console.warn('gettin user stats!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! yolo');
     }
     // const url = `/users/categories/history/summary/?${params.toString()}`;
 

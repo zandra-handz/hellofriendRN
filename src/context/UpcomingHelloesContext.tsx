@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { useUser } from "./UserContext";
 import { fetchUpcomingHelloes } from "../calls/api";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import useSignOut from "../hooks/UserCalls/useSignOut";
 
@@ -18,8 +18,8 @@ export const useUpcomingHelloes = () => {
 };
 
 export const UpcomingHelloesProvider = ({ children }) => {
-  const queryClient = useQueryClient();
-  const { user  } = useUser();
+ 
+  const { user, isInitializing  } = useUser();
   const { onSignOut } = useSignOut();
  
 
@@ -32,7 +32,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
   } = useQuery({
     queryKey: ["upcomingHelloes", user?.id],
     queryFn: () => fetchUpcomingHelloes(),
-    enabled: !!user?.id, //removed isInitializing to test
+    enabled: !!user?.id && !isInitializing, //removed isInitializing to test
     retry: 3,
     staleTime: 1000 * 60 * 20, // 20 minutes
 
@@ -50,9 +50,7 @@ export const UpcomingHelloesProvider = ({ children }) => {
     }
   }, [isError]);
 
-  const refetchUpcomingHelloes = () => {
-    queryClient.refetchQueries({ queryKey: ["upcomingHelloes", user?.id] });
-  };
+ 
 
   const contextValue = useMemo(
     () => ({
@@ -60,11 +58,10 @@ export const UpcomingHelloesProvider = ({ children }) => {
       upcomingHelloesIsFetching: isFetching,
       upcomingHelloesIsSuccess: isSuccess,
 
-      refetchUpcomingHelloes,
-
+ 
       isLoading,
     }),
-    [upcomingHelloes, isFetching, isSuccess, refetchUpcomingHelloes, isLoading]
+    [upcomingHelloes, isFetching, isSuccess, isLoading]
   );
 
   return (

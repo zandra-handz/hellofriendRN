@@ -9,8 +9,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useUser } from "@/src/context/UserContext";
 import { useFriendList } from "@/src/context/FriendListContext";
-import { showFlashMessage } from "../utils/ShowFlashMessage";
-import { useUpcomingHelloes } from "../context/UpcomingHelloesContext";
+import { showFlashMessage } from "../utils/ShowFlashMessage"; 
+import useRefetchUpcomingHelloes from "./UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 
 import {
   createFriend,
@@ -22,7 +22,7 @@ const useFriendFunctions = () => {
   const { addToFriendList, removeFromFriendList } = useFriendList();
   const { user } = useUser();
   const queryClient = useQueryClient();
-  const { refetchUpcomingHelloes } = useUpcomingHelloes();
+  const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({userId: user?.id});
 
   const timeoutRef = useRef(null);
 

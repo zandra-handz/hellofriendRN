@@ -20,8 +20,7 @@ import {
  
  
 import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
-import TitleContainerUI from "./TitleContainerUI";
-import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
+import TitleContainerUI from "./TitleContainerUI"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useFriendDash } from "@/src/context/FriendDashContext";
 
@@ -42,14 +41,13 @@ import HelloNotesModal from "../headers/HelloNotesModal";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import { useFocusEffect } from "@react-navigation/native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
-
+import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
-const ContentAddHello = () => {
-  const navigation = useNavigation();
-  const { refetchUpcomingHelloes } = useUpcomingHelloes();
+const ContentAddHello = ({userId}) => {
+  const navigation = useNavigation(); 
  
- 
+ const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({userId: userId});
   const { preAdded, allCapsulesList } = useCapsuleList(); 
   const { refetchUserStats } = useUserStats();
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>

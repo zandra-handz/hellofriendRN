@@ -1,8 +1,8 @@
-import React, { createContext,  useContext, useMemo } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 import { useUser } from "./UserContext";
 import { fetchFriendDashboard } from "../calls/api";
 import { useQuery } from "@tanstack/react-query";
-import {  FriendDashboardData } from "../types/FriendTypes";
+import { FriendDashboardData } from "../types/FriendTypes";
 
 import { useSelectedFriend } from "./SelectedFriendContext";
 
@@ -20,7 +20,6 @@ export const useFriendDash = () => {
   }
   return context;
 };
- 
 
 interface FriendDashProviderProps {
   children: React.ReactNode;
@@ -29,8 +28,7 @@ interface FriendDashProviderProps {
 export const FriendDashProvider: React.FC<FriendDashProviderProps> = ({
   children,
 }) => {
-  const { selectedFriend } = 
-  useSelectedFriend();
+  const { selectedFriend } = useSelectedFriend();
 
   const { user, isInitializing } = useUser();
 
@@ -48,37 +46,18 @@ export const FriendDashProvider: React.FC<FriendDashProviderProps> = ({
     staleTime: 1000 * 60 * 20,
   });
 
- 
-
   const contextValue = useMemo(
     () => ({
- 
       loadingDash: isLoading,
-      isPending,
-      isLoading,
-      isSuccess,
       dashLoaded: isSuccess,
-      friendDash,
-      friendDashboardData: friendDash,
-    }),
-    [
-     
-isSuccess,
-      isLoading,
-      isPending,
       friendDash, 
-    ]
+    }),
+    [isSuccess, isLoading, isPending, friendDash]
   );
 
   return (
-    <FriendDashContext.Provider
-      value={
-        contextValue
-  
-      }
-    >
+    <FriendDashContext.Provider value={contextValue}>
       {children}
     </FriendDashContext.Provider>
   );
 };
- 
