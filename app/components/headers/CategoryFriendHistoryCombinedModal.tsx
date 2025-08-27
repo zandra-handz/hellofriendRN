@@ -21,10 +21,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useCategories } from "@/src/context/CategoriesContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import ModalListWithView from "../alerts/ModalListWithView";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
-import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
+
+// import { useUserSettings } from "@/src/context/UserSettingsContext";
+// import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
+
 import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
-import { useFriendDash } from "@/src/context/FriendDashContext";
+
+// import { useFriendDash } from "@/src/context/FriendDashContext";
+
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {
   isVisible: boolean;
@@ -42,7 +46,7 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
   const { userCategories  } =
     useCategories();
 
-  const { settings  } = useUserSettings();
+  // const { settings  } = useUserSettings();
   const { helloesList } = useHelloes();
   const category = Array.isArray(userCategories)
     ? userCategories.find((category) => category.id === categoryId) || null
@@ -50,10 +54,10 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
 
  
   const { themeStyles,   manualGradientColors } = useGlobalStyle();
-  const { selectedFriend  } =
-    useSelectedFriend();
+  // const { selectedFriend  } =
+  //   useSelectedFriend();
 
-    const { friendDash } = useFriendDash();
+  //   const { friendDash } = useFriendDash();
   const { capsuleList } = useCapsuleList();
 
   const startingText = category?.description || null;
@@ -68,22 +72,22 @@ const CategoryFriendHistoryCombinedModal: React.FC<Props> = ({
 
   const textInputRef = useRef(null);
 
-  const isUserDefault = categoryId === settings.user_default_category;
-  const isFriendDefault =
-    categoryId === friendDash?.friend_faves.friend_default_category;
+  // const isUserDefault = categoryId === settings.user_default_category;
+  // const isFriendDefault =
+  //   categoryId === friendDash?.friend_faves.friend_default_category;
 
-  const {
-    categoryHistory,
-    isLoading,
-    isFetching,
-    isFetchingNextPage,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-  } = useCategoryHistoryLookup({
-    categoryId: categoryId,
-    friendId: selectedFriend?.id,
-  });
+  // const {
+  //   categoryHistory,
+  //   isLoading,
+  //   isFetching,
+  //   isFetchingNextPage,
+  //   isError,
+  //   fetchNextPage,
+  //   hasNextPage,
+  // } = useCategoryHistoryLookup({
+  //   categoryId: categoryId,
+  //   friendId: selectedFriend?.id,
+  // });
 
 
     const [textInputView, setTextInputView] = useState<null | ItemViewProps>(null);

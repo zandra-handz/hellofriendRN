@@ -33,7 +33,7 @@ const CategoryFriendHistoryModal: React.FC<Props> = ({
   categoryId = 3,
   categoryName = 'Category name',
 }) => {
-  const { themeStyles, appSpacingStyles, appFontStyles, manualGradientColors } =
+  const {   manualGradientColors } =
     useGlobalStyle(); 
   const { helloesList } = useHelloes();
 

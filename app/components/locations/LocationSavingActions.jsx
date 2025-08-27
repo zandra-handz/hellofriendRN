@@ -1,7 +1,7 @@
 // old version, updateFriendDashboard is an empty function now. preserving this in case i need to revert something
 // if (friendDashboardData && friendDashboardData.length > 0) {
 //    friendDashboardData[0].friend_faves = updatedFaves;
-//    console.log(friendDashboardData);
+//    console.log(friendDashboardData);sel
 //    updateFriendDashboardData(friendDashboardData);
 //   console.log('Location added to friend\'s favorites.');
 //  }
@@ -10,31 +10,35 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { View, Text, StyleSheet, Alert, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
-import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
- 
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
+ import useAddToFaves from "@/src/hooks/FriendLocationCalls/useAddToFaves";
+ import useRemoveFromFaves from "@/src/hooks/FriendLocationCalls/useRemoveFromFaves";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 const LocationSavingActions = ({
+  userId,
+  friendId,
+  friendName,
   location,
   iconSize = 26,
   fadeOpacity,
   favorite = false,
+  handleAddToFaves,
+  handleRemoveFromFaves,
 
   family = "Poppins-Bold",
 
   style,
 }) => {
   const { themeAheadOfLoading } = useFriendStyle();
-  const { selectedFriend } = useSelectedFriend();
-  const { handleAddToFaves, handleRemoveFromFaves } =
-    useFriendLocationsContext();
-
+ 
+ 
   const { themeStyles } = useGlobalStyle();
 
+  // const { handleAddToFaves } = useAddToFaves({userId: userId, friendId: friendId })
+  //   const { handleRemoveFromFaves } = useRemoveFromFaves({userId: userId, friendId: friendId })
+  
   const navigation = useNavigation();
 
   const [isFave, setIsFave] = useState(location.isFave);
@@ -53,7 +57,7 @@ const handlePressAdd = useCallback(() => {
   if (location && !isFave) {
     Alert.alert(
       `Bookmark`,
-      `Add ${location.title} to ${selectedFriend.name}'s bookmarks?`,
+      `Add ${location.title} to ${friendName}'s bookmarks?`,
       [
         { text: "Cancel", onPress: () => {} },
         {
@@ -66,13 +70,13 @@ const handlePressAdd = useCallback(() => {
       ]
     );
   }
-}, [location, isFave, selectedFriend, addToFaves]);
+}, [location, isFave, friendName, addToFaves]);
 
 const handlePressRemove = useCallback(() => {
   if (location && isFave) {
     Alert.alert(
       `Remove`,
-      `Remove ${location.title} from ${selectedFriend.name}'s bookmarks? (This can be readded, but will not be connected to any Helloes.)`,
+      `Remove ${location.title} from ${friendName}'s bookmarks? (This can be readded, but will not be connected to any Helloes.)`,
       [
         { text: "Cancel", onPress: () => {} },
         {
@@ -85,14 +89,15 @@ const handlePressRemove = useCallback(() => {
       ]
     );
   }
-}, [location, isFave, selectedFriend, removeFromFaves]);
+}, [location, isFave, friendName, removeFromFaves]);
 
 
 const removeFromFaves = useCallback(async () => {
-  if (selectedFriend && location && isFave) {
-    handleRemoveFromFaves(selectedFriend.id, location.id);
+  if (friendId && location && isFave) {
+    console.log('removing!');
+    handleRemoveFromFaves({locationId: location?.id});
   }
-}, [selectedFriend, location, isFave, handleRemoveFromFaves]);
+}, [friendId, userId, location, isFave, handleRemoveFromFaves]);
 
 const addToFaves = useCallback(async () => {
   try {
@@ -103,14 +108,14 @@ const addToFaves = useCallback(async () => {
 
       setIsEditing(false);
     } else {
-      if (selectedFriend && location) {
-        handleAddToFaves(selectedFriend.id, location.id);
+      if (friendId && location) {
+        handleAddToFaves({locationId: location?.id});
       }
     }
   } catch (error) {
     console.error("Error saving new location in handleSave:", error);
   }
-}, [location, selectedFriend, handleAddToFaves]);
+}, [location, friendId, userId, handleAddToFaves]);
 
   const memoizedAddIcon = useMemo(
     () => (

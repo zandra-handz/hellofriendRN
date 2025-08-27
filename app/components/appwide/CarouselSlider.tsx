@@ -64,10 +64,16 @@ const CarouselSlider = ({
 
   useEffect(() => {
     if (stickToLocation) {
-      // console.log("scrolling to index for location id", stickToLocation);
+       console.log("scrolling to index for location id", stickToLocation);
+
       const newIndex = data.findIndex((item) => item.id === stickToLocation);
-      // console.log("scrolling to index", newIndex);
-      scrollToIndexAfterEdit(newIndex);
+      console.log("scrolling to index", newIndex);
+
+      if ((newIndex >= 0) && newIndex < data.length) {
+
+
+     scrollToIndexAfterEdit(newIndex);
+           }
       //scrollToEditCompleted();
     }
   }, [stickToLocation]);

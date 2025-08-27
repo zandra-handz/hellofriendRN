@@ -7,8 +7,7 @@ import { View, Text, TextInput, Keyboard, StyleSheet } from "react-native";
 
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 
-import BodyStyling from "../scaffolding/BodyStyling";
-import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
+import BodyStyling from "../scaffolding/BodyStyling"; 
 
 import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice";
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
@@ -113,16 +112,11 @@ const ContentAddLocation = ({
 
   return (
     <View style={styles.container}>
-      <BelowHeaderContainer
-        height={30}
-        minHeight={30}
-        maxHeight={30}
-        alignItems="center"
-        marginBottom="2%"
-        justifyContent="center"
-        children={null}
+      <View height={30} width={'100%'}
       />
       <BodyStyling
+      backgroundColor={themeStyles.primaryBackground.backgroundColor}
+friendLightColor={themeAheadOfLoading.lightColor}
         height={"96%"}
         width={"101%"}
         minHeight={"96%"}

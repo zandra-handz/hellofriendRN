@@ -40,7 +40,7 @@ import { FriendListProvider } from "./src/context/FriendListContext";
 import { FriendStyleProvider } from "./src/context/FriendStyleContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
-import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
+// import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
 import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
 import { CategoriesProvider } from "./src/context/CategoriesContext";
 import { CapsuleListProvider } from "./src/context/CapsuleListContext";
@@ -66,7 +66,7 @@ import ScreenMoments from "./app/screens/moments/ScreenMoments";
 import ScreenImages from "./app/screens/images/ScreenImages";
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
 // import ScreenLocationNav from "./app/screens/locations/ScreenLocationNav";
-import ScreenLocations from "./app/screens/locations/ScreenLocations";
+// import ScreenLocations from "./app/screens/locations/ScreenLocations";
 import ScreenLocationSearch from "./app/screens/locations/ScreenLocationSearch";
 import ScreenMidpointLocationSearch from "./app/screens/locations/ScreenMidpointLocationSearch";
 import ScreenCalculateTravelTimes from "./app/screens/locations/ScreenCalculateTravelTimes";
@@ -238,8 +238,7 @@ export default Sentry.wrap(function App() {
                         <FriendDashProvider>
                           <CapsuleListProvider>
                             <LocationsProvider>
-                              <HelloesProvider>
-                                <FriendLocationsProvider>
+                              <HelloesProvider> 
                                   <SelectedFriendStatsProvider>
                                     {/* <MessageContextProvider> */}
                                     <SafeAreaProvider>
@@ -255,7 +254,7 @@ export default Sentry.wrap(function App() {
                                     </SafeAreaProvider>
                                     {/* </MessageContextProvider> */}
                                   </SelectedFriendStatsProvider>
-                                </FriendLocationsProvider>
+                           
                               </HelloesProvider>
                             </LocationsProvider>
                           </CapsuleListProvider>
@@ -524,7 +523,7 @@ export const Layout = () => {
                   headerShown: false,
                 }}
               />
-              <Stack.Screen
+              {/* <Stack.Screen
                 name="Locations"
                 component={ScreenLocations}
                 options={{
@@ -532,7 +531,7 @@ export const Layout = () => {
                   headerShown: false,
                   // header: () => <HeaderLocation headerTitle="Locations" />,
                 }}
-              />
+              /> */}
               <Stack.Screen
                 name="LocationView"
                 component={ScreenLocationView}

@@ -10,14 +10,13 @@ import {
   Pressable,
 } from "react-native";
 
-import { useUser } from "@/src/context/UserContext";
-import { useUserSettings } from "@/src/context/UserSettingsContext";
+import { useUser } from "@/src/context/UserContext"; 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PreAuthSafeViewAndGradientBackground from "@/app/components/appwide/format/PreAuthSafeViewAndGradBackground";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
+ 
 import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButton";
 import { AuthScreenParams } from "@/src/types/ScreenPropTypes";
 
@@ -30,8 +29,8 @@ import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 const ScreenAuth = () => {
   const route = useRoute<RouteProp<Record<string, AuthScreenParams>, string>>();
   const createNewAccount = route.params?.createNewAccount ?? false;
-const { selectedFriend } = useSelectedFriend();
-const { settings } = useUserSettings();
+ 
+ 
   const { showSigninErrorMessage } = useMessageCentralizer();
   const {  themeStyles, manualGradientColors } = useGlobalStyle();
   const [showSignIn, setShowSignIn] = useState(true);
@@ -186,12 +185,12 @@ const { settings } = useUserSettings();
 
   return (
     <PreAuthSafeViewAndGradientBackground
-    settings={settings}
+    settings={null}
       startColor={manualGradientColors.darkColor}
       endColor={manualGradientColors.lightColor}
       friendColorLight={null}
       friendColorDark={null}
-      friendId={selectedFriend?.id}
+      friendId={null}
       backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
       style={{
         flex: 1,

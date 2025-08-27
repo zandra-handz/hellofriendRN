@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useRef,
   useMemo,
+
 } from "react";
 import {
   View,
@@ -16,8 +17,9 @@ import {
   Pressable,
   Keyboard,
   Dimensions,
+    Alert,
 } from "react-native";
- 
+  
  
 import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
 import TitleContainerUI from "./TitleContainerUI"; 
@@ -26,8 +28,7 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 
 import { useUserStats } from "@/src/context/UserStatsContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
-import { useHelloes } from "@/src/context/HelloesContext";
+import { useNavigation } from "@react-navigation/native"; 
 import { useLocations } from "@/src/context/LocationsContext";
 import Icon from "react-native-vector-icons/FontAwesome";
 import PickerDate from "../selectors/PickerDate";
@@ -41,6 +42,7 @@ import HelloNotesModal from "../headers/HelloNotesModal";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 import { useFocusEffect } from "@react-navigation/native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
+import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
@@ -55,7 +57,7 @@ const ContentAddHello = ({userId}) => {
   );
 
   const [momentsAdded, setMomentsAdded] = useState([]);
-  const { createHelloMutation, handleCreateHello } = useHelloes();
+  const { createHelloMutation, handleCreateHello } = useCreateHello({userId: userId})
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [notesModalVisible, setNotesModalVisible] = useState(false);
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
@@ -134,7 +136,19 @@ const ContentAddHello = ({userId}) => {
   }, [locationList, friendDash]);
 
   const openDoubleChecker = () => {
-    setIsDoubleCheckerVisible(true);
+
+
+      Alert.alert(`Save`, `Save hello?`, [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+              {text: `Yes`, onPress: () => handleSave()},
+ 
+      ]);
+
+    // setIsDoubleCheckerVisible(true);
   };
 
   const toggleDoubleChecker = () => {
@@ -147,6 +161,7 @@ const ContentAddHello = ({userId}) => {
 
   useEffect(() => {
     if (createHelloMutation.isSuccess) {
+      showFlashMessage(`Hello saved!`, false, 2000);
       deselectFriend(); // this sets selectedFriend to null
       setJustDeselectedFriend(true);
     }

@@ -42,7 +42,7 @@ export const FriendDashProvider: React.FC<FriendDashProviderProps> = ({
     queryKey: ["friendDashboardData", user?.id, selectedFriend?.id],
     queryFn: () => fetchFriendDashboard(selectedFriend?.id),
 
-    enabled: !!(user?.id && selectedFriend && !isInitializing), //testing removing !isInitializing
+    enabled: !!(user?.id && selectedFriend?.id && !isInitializing), //testing removing !isInitializing
     staleTime: 1000 * 60 * 20,
   });
 
@@ -50,9 +50,11 @@ export const FriendDashProvider: React.FC<FriendDashProviderProps> = ({
     () => ({
       loadingDash: isLoading,
       dashLoaded: isSuccess,
-      friendDash, 
+      friendDash,
     }),
-    [isSuccess, isLoading, isPending, friendDash]
+    [isSuccess, isLoading,
+      //  isPending, 
+       friendDash]
   );
 
   return (

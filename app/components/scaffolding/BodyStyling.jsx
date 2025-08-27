@@ -1,9 +1,10 @@
 import React from "react";
-import { View } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
-import { useFriendStyle } from "@/src/context/FriendStyleContext";
+import { View, StyleSheet } from "react-native";
+ 
 
 const BodyStyling = ({
+  backgroundColor, //themeStyles.primaryBackground.backgroundColor
+  friendLightColor, // themeAheadOfLoading.lightColor
   height = "100%",
   width = "100%",
   minHeight = "96%",
@@ -15,20 +16,18 @@ const BodyStyling = ({
   transparentBorder = false,
   children,
   justifyContent = 'space-between',
-}) => {
-  const { themeStyles, appContainerStyles } = useGlobalStyle();
-  const { themeAheadOfLoading } = useFriendStyle();
+}) => { 
 
   return (
     <View
       style={[
-        appContainerStyles.bodyContainer,
+        styles.bodyContainer,
         // themeStyles.genericTextBackground,
         {
           justifyContent: justifyContent,
           backgroundColor: transparentBackground
             ? "transparent"
-            : themeStyles.genericTextBackground.backgroundColor,
+            : backgroundColor,
           width: width,
           height: height,
           minHeight: minHeight,
@@ -38,7 +37,7 @@ const BodyStyling = ({
           borderWidth: borderWidth,
           borderColor: transparentBorder
           ? "transparent" 
-          : themeAheadOfLoading.lightColor,
+          : friendLightColor,
         },
       ]}
     >
@@ -46,6 +45,22 @@ const BodyStyling = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  
+  bodyContainer: {
+    alignContent: "center",
+    alignSelf: "center",
+    borderWidth: 0,
+    width: "100%",
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+    // borderRadius: 30,
+    flexDirection: "column",
+    zIndex: 1,
+    elevation: 1,
+  },
+});
  
 
 export default BodyStyling;

@@ -2,9 +2,8 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
-import LoadedImages from "../buttons/images/LoadedImages";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
+ 
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import useImageFunctions from "@/src/hooks/useImageFunctions";
 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";

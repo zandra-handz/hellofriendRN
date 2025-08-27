@@ -2,20 +2,16 @@ import React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-  
+
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
- import SlideToAdd from "../foranimations/SlideToAdd";
+import SlideToAdd from "../foranimations/SlideToAdd";
 import BodyStyling from "../scaffolding/BodyStyling";
 import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
 
- 
 const NewHelloView = ({ data, onSliderPull }) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
- 
-  const { themeAheadOfLoading } = useFriendStyle();
 
- 
- 
+  const { themeAheadOfLoading } = useFriendStyle();
 
   return (
     <View style={[styles.container]}>
@@ -34,6 +30,8 @@ const NewHelloView = ({ data, onSliderPull }) => {
         }
       />
       <BodyStyling
+        backgroundColor={themeStyles.primaryBackground.backgroundColor}
+        friendLightColor={themeAheadOfLoading.lightColor}
         height={"100%"}
         width={"100%"}
         paddingTop={"6%"}
@@ -54,7 +52,6 @@ const NewHelloView = ({ data, onSliderPull }) => {
                         justifyContent: "space-between",
                       }}
                     >
-
                       {/* <EditPencilOutlineSvg
                         height={20}
                         width={20}
@@ -104,7 +101,6 @@ const NewHelloView = ({ data, onSliderPull }) => {
           targetIcon={TrashOutlineSvg}
           sliderTextColor={themeStyles.primaryText.color}
         /> */}
-        
         {/* <ButtonBaseSpecialSave
           label="ADD TO HELLO "
           maxHeight={80}

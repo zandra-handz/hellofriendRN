@@ -25,7 +25,7 @@ interface Props {
 
 const MonthModal: React.FC<Props> = ({ isVisible, closeModal, monthData }) => {
   const { helloesList } = useHelloes();
-  const { themeStyles, appSpacingStyles, manualGradientColors } =
+  const {  manualGradientColors } =
     useGlobalStyle();
   const opacityMinusAnimation = 1;
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);

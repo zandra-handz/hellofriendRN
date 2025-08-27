@@ -1,14 +1,14 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useHelloes } from "@/src/context/HelloesContext";
-import { useNavigation } from "@react-navigation/native";
-import LoadedImages from "../buttons/images/LoadedImages";
+// import { useNavigation } from "@react-navigation/native";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-import useImageFunctions from "@/src/hooks/useImageFunctions";
+// import useImageFunctions from "@/src/hooks/useImageFunctions";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
+// import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
+
 type Props = {
   selectedFriend: boolean;
   outerPadding: number;
@@ -17,14 +17,16 @@ type Props = {
 const Helloes = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
   const { themeStyles } = useGlobalStyle();
   const { helloesList } = useHelloes();
-  const navigation = useNavigation();
-  const { imageList } = useImageFunctions();
-  const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
-const { navigateToHelloes } = useAppNavigations();
+  // const navigation = useNavigation();
+  // const { imageList } = useImageFunctions();
+  // const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
+  
+  
+  const { navigateToHelloes } = useAppNavigations();
   const PADDING = 20;
-  const navigateToImages = () => {
-    navigation.navigate("ImageView", { startingIndex: 0 });
-  };
+  // const navigateToImages = () => {
+  //   navigation.navigate("ImageView", { startingIndex: 0 });
+  // };
 
   return (
     <>
@@ -75,7 +77,7 @@ const { navigateToHelloes } = useAppNavigations();
               >
                 <MaterialCommunityIcons
                   //  name="image-edit-outline"
-                    name="calendar-heart"
+                  name="calendar-heart"
                   // name="graph"
                   size={20}
                   color={themeStyles.primaryText.color}
@@ -94,23 +96,19 @@ const { navigateToHelloes } = useAppNavigations();
                   Helloes ({helloesList && helloesList.length})
                 </Text>
               </Pressable>
-                          <Pressable
-                            hitSlop={10}
-                            onPress={navigateToHelloes}
-                          >
-                            <Text
-                              style={[
-                                themeStyles.primaryText,
-                                { fontWeight: "bold", fontSize: 13 },
-                              ]}
-                            >
-                              Details
-                            </Text>
-                          </Pressable>
-         
+              <Pressable hitSlop={10} onPress={navigateToHelloes}>
+                <Text
+                  style={[
+                    themeStyles.primaryText,
+                    { fontWeight: "bold", fontSize: 13 },
+                  ]}
+                >
+                  Details
+                </Text>
+              </Pressable>
             </View>
           </View>
-    </View>
+        </View>
       )}
     </>
   );

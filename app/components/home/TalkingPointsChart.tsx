@@ -18,7 +18,7 @@ import { AppState, AppStateStatus } from "react-native";
 import FriendHistoryPieDataWrap from "./FriendHistoryPieDataWrap";
 import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-  
+  import { useIsFocused } from "@react-navigation/native";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 
 type Props = {
@@ -40,6 +40,8 @@ const TalkingPointsChart = ({
   darkerOverlayBackgroundColor,
   outerPadding,
 }: Props) => {
+
+    const isFocused = useIsFocused();
   const { themeStyles, appFontStyles } = useGlobalStyle();
 
   const { navigateToMoments, navigateToMomentView, navigateToMomentFocus } =
@@ -261,6 +263,9 @@ const TalkingPointsChart = ({
             </Text>
           </View>
         </View>
+
+        {isFocused && (
+     
         <View
           style={{
             marginHorizontal: 0,
@@ -289,6 +294,8 @@ const TalkingPointsChart = ({
             centerTextSize={CENTER_TEXT_SIZE}
           />
         </View>
+             
+        )}
 
         {showHistory && selectedFriendId && !loadingNewFriend && (
           <View

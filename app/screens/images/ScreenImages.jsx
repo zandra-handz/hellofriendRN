@@ -31,7 +31,7 @@ const ScreenImages = () => {
         <View style={{ flex: 1 }}>
           {imageList.length > 0 ? (
             <>
-              <ImagesList themeAheadOfLoading={themeAheadOfLoading} height={80} width={80} singleLineScroll={false} />
+              <ImagesList primaryBackground={themeStyles.primaryBackground.backgroundColor} themeAheadOfLoading={themeAheadOfLoading} height={80} width={80} singleLineScroll={false} />
             </>
           ) : (
             <Text></Text>

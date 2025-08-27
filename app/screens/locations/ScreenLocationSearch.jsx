@@ -7,36 +7,49 @@ import useLocationHelloFunctions from "@/src/hooks/useLocationHelloFunctions";
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useLocations } from "@/src/context/LocationsContext";
-import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
+import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
+import { useFriendDash } from "@/src/context/FriendDashContext"; 
 import useStartingFriendAddresses from "@/src/hooks/useStartingFriendAddresses";
 import useStartingUserAddresses from "@/src/hooks/useStartingUserAddresses";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
-import { useFriendDash } from "@/src/context/FriendDashContext";
 import useMenues from "@/src/hooks/useMenues";
+
+import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
 
 const ScreenLocationSearch = () => {
   const { themeAheadOfLoading } = useFriendStyle();
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { getDefaultAddress, getDefaultUserAddress } = useMenues();
+
+  const { friendDash } = useFriendDash();
+  const friendFaveIds = friendDash?.friend_faves?.locations;
+  const { locationList } = useLocations();
+
   const { helloesList } = useHelloes();
-    const inPersonHelloes = helloesList?.filter(
+  const inPersonHelloes = helloesList?.filter(
     (hello) => hello.type === "in person"
   );
 
-  console.log(`inhperson helloes`, inPersonHelloes);
+  // console.log(`inhperson helloes`, inPersonHelloes);
 
-    const { friendDash } = useFriendDash();
-      const favesData = friendDash?.friend_faves?.locations;
+  // console.log(`fave data`, friendFaveIds);
 
-      console.log(`fave data`, favesData);
-   
+  const { faveLocations, nonFaveLocations } = useFriendLocations({
+    inPersonHelloes: inPersonHelloes,
+    locationList: locationList,
+    friendFaveIds: friendFaveIds,
+  });
+  const { getCurrentDay } = useLocationDetailFunctions(); 
 
-  const { getCurrentDay } = useLocationDetailFunctions();
-  const { faveLocations, nonFaveLocations, pastHelloLocations } =
-    useFriendLocationsContext();
+  const { pastHelloLocations } = usePastHelloesLocations({
+    inPersonHelloes: inPersonHelloes,
+    locationList: locationList,
+    faveLocations: faveLocations,
+    nonFaveLocations: nonFaveLocations,
+  });
 
   const { bermudaCoords } = useLocationHelloFunctions();
   const { selectedFriend } = useSelectedFriend();
@@ -87,7 +100,7 @@ const ScreenLocationSearch = () => {
   const renderMapScreenFooter = useCallback(() => {
     return (
       <MapScreenFooter
-      friendId={selectedFriend?.id}
+        friendId={selectedFriend?.id}
         userAddress={userAddress}
         setUserAddress={setUserAddress}
         friendAddress={friendAddress}
@@ -99,13 +112,18 @@ const ScreenLocationSearch = () => {
         dividerStyle={themeStyles.divider}
       />
     );
-  }, [selectedFriend, userAddress, setUserAddress, friendAddress, setFriendAddress]);
+  }, [
+    selectedFriend,
+    userAddress,
+    setUserAddress,
+    friendAddress,
+    setFriendAddress,
+  ]);
 
   return (
     // <GestureHandlerRootView style={{flex: 1}}>
     <SafeViewAndGradientBackground
-
-        startColor={manualGradientColors.lightColor}
+      startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}

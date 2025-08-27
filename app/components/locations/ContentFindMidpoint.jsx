@@ -59,6 +59,8 @@ const ContentFindMidpoint = ({ userAddress, friendAddress }) => {
         ></View>
 
         <BodyStyling
+        backgroundColor={themeStyles.primaryBackground.backgroundColor}
+friendLightColor={themeAheadOfLoading.lightColor}
           minHeight={"100%"}
           paddingTop={"4%"}
           children={

@@ -3,10 +3,10 @@ import { View, StyleSheet, Keyboard } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice";
- 
+
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
- 
+
 import { useLocations } from "@/src/context/LocationsContext";
 
 import ButtonBaseSpecialSave from "@/app/components/buttons/scaffolding/ButtonBaseSpecialSave";
@@ -15,14 +15,11 @@ import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButt
 import BodyStyling from "@/app/components/scaffolding/BodyStyling";
 import BelowHeaderContainer from "@/app/components/scaffolding/BelowHeaderContainer";
 
-import SlideToDeleteHeader from '@/app/components/foranimations/SlideToDeleteHeader';
-
+import SlideToDeleteHeader from "@/app/components/foranimations/SlideToDeleteHeader";
 
 import { LinearGradient } from "expo-linear-gradient";
 
 import TrashOutlineSvg from "@/app/assets/svgs/trash-outline.svg";
-
-
 
 const ScreenLocationEdit = () => {
   const route = useRoute();
@@ -36,11 +33,16 @@ const ScreenLocationEdit = () => {
 
   const navigation = useNavigation();
 
-  const { handleUpdateLocation, updateLocationMutation, handleDeleteLocation, deleteLocationMutation } = useLocations();
+  const {
+    handleUpdateLocation,
+    updateLocationMutation,
+    handleDeleteLocation,
+    deleteLocationMutation,
+  } = useLocations();
 
   const { themeStyles } = useGlobalStyle();
-  const { themeAheadOfLoading   } = useFriendStyle();
- 
+  const { themeAheadOfLoading } = useFriendStyle();
+
   const editedTextRef = useRef(null);
   const editedCategoryRef = useRef(null);
 
@@ -108,17 +110,13 @@ const ScreenLocationEdit = () => {
 
   //weekdayTextData is coming from LocationHoursOfOperation component
 
-
-
   const handleDelete = (location) => {
-    try { 
-
-      handleDeleteLocation(location.id); 
-   } catch (error) {
-    console.log('error, location not deleted: ', error, location);
-   }
-
-};
+    try {
+      handleDeleteLocation(location.id);
+    } catch (error) {
+      console.log("error, location not deleted: ", error, location);
+    }
+  };
 
   const handleSubmit = () => {
     handleUpdateLocation(location.id, {
@@ -139,8 +137,6 @@ const ScreenLocationEdit = () => {
       navigation.goBack();
     }
   }, [deleteLocationMutation]);
-
-
 
   return (
     <LinearGradient
@@ -164,83 +160,87 @@ const ScreenLocationEdit = () => {
         alignItems="center"
         marginBottom="2%"
         justifyContent="center"
-        children={            <View style={styles.sliderContainer}>
-        <SlideToDeleteHeader
-          itemToDelete={location}
-          onPress={handleDelete}
-          sliderWidth={"100%"}
-          targetIcon={TrashOutlineSvg}
-        />
-      </View>}
+        children={
+          <View style={styles.sliderContainer}>
+            <SlideToDeleteHeader
+              itemToDelete={location}
+              onPress={handleDelete}
+              sliderWidth={"100%"}
+              targetIcon={TrashOutlineSvg}
+            />
+          </View>
+        }
       />
 
-<BodyStyling
+      <BodyStyling
+        backgroundColor={themeStyles.primaryBackground.backgroundColor}
+        friendLightColor={themeAheadOfLoading.lightColor}
         height={"96%"}
         width={"101%"}
         minHeight={"96%"}
         paddingTop={"4%"}
         paddingHorizontal={"0%"} //too much padding will cause the Type picker to flow to next line
         children={
-        <>
-        <View
-          style={{
-            height: isKeyboardVisible ? "30%" : "20%",
-            marginBottom: "3%",
-          }}
-        >
-          <TextEditBox
-            ref={editedCategoryRef}
-            autoFocus={focusOn === "focusCategory"}
-            title={"Edit category"}
-            mountingText={category}
-            onTextChange={updateCategoryEditString}
-            multiline={false}
-            height={"100%"}
-          />
-        </View>
+          <>
+            <View
+              style={{
+                height: isKeyboardVisible ? "30%" : "20%",
+                marginBottom: "3%",
+              }}
+            >
+              <TextEditBox
+                ref={editedCategoryRef}
+                autoFocus={focusOn === "focusCategory"}
+                title={"Edit category"}
+                mountingText={category}
+                onTextChange={updateCategoryEditString}
+                multiline={false}
+                height={"100%"}
+              />
+            </View>
 
-        <View
-          style={{
-            height: isKeyboardVisible ? "50%" : "30%",
-            flexGrow: 1,
-            marginBottom: "3%",
-          }}
-        >
-          <TextEditBox
-            ref={editedTextRef}
-            autoFocus={focusOn === "focusNotes"}
-            title={"Edit notes"}
-            mountingText={notes}
-            onTextChange={updateNoteEditString}
-            height={"100%"}
-          />
-        </View>
+            <View
+              style={{
+                height: isKeyboardVisible ? "50%" : "30%",
+                flexGrow: 1,
+                marginBottom: "3%",
+              }}
+            >
+              <TextEditBox
+                ref={editedTextRef}
+                autoFocus={focusOn === "focusNotes"}
+                title={"Edit notes"}
+                mountingText={notes}
+                onTextChange={updateNoteEditString}
+                height={"100%"}
+              />
+            </View>
 
-        <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
-          <FlatListChangeChoice
-          themeStyles={themeStyles}
-          themeAheadOfLoading={themeAheadOfLoading}
-            horizontal={true}
-            choicesArray={parkingScores}
-            ref={editedParkingScoreRef}
-            title={"Change parking score"}
-            oldChoice={parking}
-            onChoiceChange={updateParkingScore}
-          />
-        </View>
-        {!isKeyboardVisible && (
-          <ButtonBaseSpecialSave
-            label="SAVE CHANGES "
-            maxHeight={80}
-            onPress={handleSubmit}
-            isDisabled={false}
-            fontFamily={"Poppins-Bold"}
-            image={require("@/app/assets/shapes/redheadcoffee.png")}
-          />
-        )}
-        </>
+            <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
+              <FlatListChangeChoice
+                themeStyles={themeStyles}
+                themeAheadOfLoading={themeAheadOfLoading}
+                horizontal={true}
+                choicesArray={parkingScores}
+                ref={editedParkingScoreRef}
+                title={"Change parking score"}
+                oldChoice={parking}
+                onChoiceChange={updateParkingScore}
+              />
+            </View>
+            {!isKeyboardVisible && (
+              <ButtonBaseSpecialSave
+                label="SAVE CHANGES "
+                maxHeight={80}
+                onPress={handleSubmit}
+                isDisabled={false}
+                fontFamily={"Poppins-Bold"}
+                image={require("@/app/assets/shapes/redheadcoffee.png")}
+              />
+            )}
+          </>
         }
-      />   
+      />
 
       {/* </View> */}
       {isKeyboardVisible && (
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     justifyContent: "space-between",
-  }, 
+  },
   sliderContainer: {
     //position: "absolute",
     bottom: 0,

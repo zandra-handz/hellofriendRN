@@ -10,6 +10,11 @@ interface LocationUtilityTrayProps {
 }
 
 const LocationUtilityTray: React.FC<LocationUtilityTrayProps> = ({
+  userId,
+  friendId,
+  friendName,
+  onAddPress,
+  onRemovePress,
   location,
   openEditModal,
   closeEditModal,
@@ -27,6 +32,11 @@ const LocationUtilityTray: React.FC<LocationUtilityTrayProps> = ({
       }}
     >
       <LocationSavingActions
+      handleAddToFaves={onAddPress}
+      handleRemoveFromFaves={onRemovePress}
+      userId={userId}
+      friendId={friendId}
+      friendName={friendName}
         location={location}
       
         iconSize={iconSize}

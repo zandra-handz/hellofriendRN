@@ -1,15 +1,14 @@
 import { View, Text, DimensionValue } from "react-native";
 import React, { useCallback, useState } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- 
-import { useNavigation } from "@react-navigation/native";
+  
 import useLocationDetailFunctions from "@/src/hooks/useLocationDetailFunctions";
  
- 
-
+ import { useUser } from "@/src/context/UserContext";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import LocationNumber from "./LocationNumber";
 import LocationAddress from "./LocationAddress";
-
+ import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
 import { useLocations } from "@/src/context/LocationsContext";
 import LocationUtilityTray from "./LocationUtilityTray"; 
 import Animated, {
@@ -20,7 +19,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import LocationCustomerReviews from "./LocationCustomerReviews";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
 
 import Hours from "./Hours";
 
@@ -41,6 +40,10 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   index,
   width,
   height,
+  faveLocations,
+  nonFaveLocations,
+  onAddPress,
+  onRemovePress,
   currentIndexValue,
   cardScaleValue,
   currentDay, // object with .index and .day
@@ -50,13 +53,14 @@ const LocationViewPage: React.FC<LocationPageViewProps> = ({
   closeModal,
 }) => {
   const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
- 
+ const { user } = useUser();
   const { useFetchAdditionalDetails } = useLocations();
- 
+
+
 
   const { checkIfOpen } = useLocationDetailFunctions();
-
-  const navigation = useNavigation();
+const { selectedFriend } = useSelectedFriend();
+ 
   const [currentIndex, setCurrentIndex] = useState();
 
   useAnimatedReaction(
@@ -253,6 +257,11 @@ const renderHoursComponent = useCallback(() => {
             <RenderOpenStatus />
           </View>
           <LocationUtilityTray
+          onAddPress={onAddPress}
+          onRemovePress={onRemovePress}
+          userId={user?.id}
+          friendId={selectedFriend?.id}
+          friendName={selectedFriend?.name}
             location={item}
             openEditModal={openModal}
             closeEditModal={closeModal}
