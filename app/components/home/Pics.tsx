@@ -1,21 +1,19 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { View, Text,  Pressable } from "react-native";
+import React from "react"; 
 import { useNavigation } from "@react-navigation/native";
  
-import { MaterialCommunityIcons } from "@expo/vector-icons"; 
-import useImageFunctions from "@/src/hooks/useImageFunctions";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";  
+import useImages from "@/src/hooks/ImageCalls/useImages";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 type Props = {
-  selectedFriend: boolean;
-  outerPadding: number;
+  userId: number;
+  friendId: number; 
 };
 
-const Pics = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
-  const { themeStyles } = useGlobalStyle();
+const Pics = ({ userId, friendId, primaryColor, primaryOverlayColor }: Props) => {
+ 
   const navigation = useNavigation();
-  const { imageList } = useImageFunctions();
+  const { imageList } = useImages({userId: userId, friendId: friendId});
   const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
 
   const PADDING = 20;
@@ -25,7 +23,7 @@ const Pics = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
 
   return (
     <>
-      {selectedFriend && (
+      {friendId && (
         <View
           style={[
             {
@@ -38,7 +36,7 @@ const Pics = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
               alignItems: "center",
               //   paddingBottom: 10,
               backgroundColor:
-                themeStyles.overlayBackgroundColor.backgroundColor,
+                primaryOverlayColor,
               borderRadius: 16, // the others are at 20 as of 7/7/25, this one is too short to look like it matches when it is also at 20
             },
           ]}
@@ -75,13 +73,13 @@ const Pics = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
                   name="image-multiple-outline"
                   // name="graph"
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                   style={{ marginBottom: 0 }}
                 />
                 <Text
-                  style={[
-                    themeStyles.primaryText,
+                  style={[ 
                     {
+                      color: primaryColor,
                       marginLeft: 6,
                       marginRight: 12,
                       fontWeight: "bold",
@@ -95,8 +93,8 @@ const Pics = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
                 <Pressable hitSlop={10} onPress={handleCaptureImage}>
                   <Text
                     style={[
-                      themeStyles.primaryText,
-                      { fontWeight: "bold", fontSize: 13 },
+              
+                      { color: primaryColor, fontWeight: "bold", fontSize: 13 },
                     ]}
                   >
                     Camera
@@ -108,31 +106,22 @@ const Pics = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
                     height: "100%",
                     opacity: 0.7,
                     marginHorizontal: 10,
-                    backgroundColor: themeStyles.primaryText.color,
+                    backgroundColor: primaryColor,
                   }}
                 ></View>
                 <Pressable
                 hitSlop={10}
                 onPress={handleSelectImage}>
                   <Text
-                    style={[
-                      themeStyles.primaryText,
-                      { fontWeight: "bold", fontSize: 13 },
+                    style={[ 
+                      { color: primaryColor, fontWeight: "bold", fontSize: 13 },
                     ]}
                   >
                     Upload
                   </Text>
                 </Pressable>
               </View>
-              {/* {imageList && imageList.length > 0 && (
-                <LabeledArrowButton
-                  color={themeStyles.primaryText.color}
-                  label="View"
-                  opacity={0.7}
-                  onPress={navigateToImages}
-                  //   onPress={() => navigation.navigate("Images")}
-                />
-              )} */}
+       
             </View>
           </View>
 

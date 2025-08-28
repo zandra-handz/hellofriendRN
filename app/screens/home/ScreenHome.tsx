@@ -363,8 +363,10 @@ const ScreenHome = () => {
                         multiline={isKeyboardVisible}
                       />
                       <KeyboardCoasters
+                      manualGradientColors={manualGradientColors}
+                      primaryColor={themeStyles.primaryText.color}
                         isKeyboardVisible={isKeyboardVisible}
-                        isFriendSelected={!!friendId}
+                        isFriendSelected={friendId}
                         showMomentScreenButton={showMomentScreenButton}
                         onPress={navigateToAddMomentScreen}
                       />
@@ -374,11 +376,13 @@ const ScreenHome = () => {
               )}
               {!isKeyboardVisible && !loadingDash && friendList.length > 0 && (
                 <BelowKeyboardComponents
+                userId={userId}
                   userCategories={userCategories}
                   upcomingHelloes={upcomingHelloes}
                   isLoading={isLoading}
                   getThemeAheadOfLoading={getThemeAheadOfLoading}
                   friendList={friendList}
+                  manualGradientColors={manualGradientColors}
                   appColorsStyle={appColorsStyle}
                   friendStyle={themeAheadOfLoadingStyle}
                   selectedFriendId={friendId}

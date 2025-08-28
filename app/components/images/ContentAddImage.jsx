@@ -3,8 +3,7 @@ import React, {
   useRef,
   useState,
   useEffect,
-  Platform,
-  useLayoutEffect,
+
 } from "react";
 import { View, StyleSheet, Image, Keyboard } from "react-native";
 
@@ -15,22 +14,19 @@ import InputSingleValue from "@/app/components/appwide/input/InputSingleValue";
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 import { useFocusEffect } from "@react-navigation/native";
-
+import useCreateImage from "@/src/hooks/ImageCalls/useCreateImage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useUser } from "@/src/context/UserContext";
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-import useImageFunctions from "@/src/hooks/useImageFunctions"; 
+ 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
-const ContentAddImage = ({ imageUri }) => {
+const ContentAddImage = ({ userId, friendId, imageUri }) => {
   const { resizeImage } = useImageUploadFunctions();
   const { themeStyles } = useGlobalStyle();
-  const { user } = useUser();
-  const { selectedFriend } = useSelectedFriend();
+ 
   const [canContinue, setCanContinue] = useState("");
   const { themeAheadOfLoading } = useFriendStyle();
   const [imageTitle, setImageTitle] = useState("");
@@ -42,7 +38,7 @@ const ContentAddImage = ({ imageUri }) => {
   const imageTitleRef = useRef(null);
   const imageCategoryRef = useRef(null);
 
-  const { createImage, createImageMutation } = useImageFunctions();
+  const { createImage, createImageMutation } = useCreateImage({userId: userId, friendId: friendId})
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -96,7 +92,7 @@ const ContentAddImage = ({ imageUri }) => {
 
   //Can take out if causes accidental premature saving
   const handleCategoryEnterPress = () => {
-    if (selectedFriend && canContinue && imageUri) {
+    if (friendId && canContinue && imageUri) {
       handleSave();
     }
   };
@@ -104,7 +100,7 @@ const ContentAddImage = ({ imageUri }) => {
   const handleSave = async () => {
     console.log(imageUri);
 
-    if (imageUri && imageTitle.trim() && selectedFriend && user) {
+    if (imageUri && imageTitle.trim() && friendId && userId) {
       try {
         const manipResult = await resizeImage(imageUri);
 
@@ -119,8 +115,8 @@ const ContentAddImage = ({ imageUri }) => {
         formData.append("title", imageTitle.trim());
         formData.append("image_category", imageCategory.trim());
         formData.append("image_notes", "");
-        formData.append("friend", selectedFriend.id);
-        formData.append("user", user.id);
+        formData.append("friend", friendId);
+        formData.append("user", userId);
         formData.append("thought_capsules", "");
 
         //removed the await here, the function is not async
@@ -215,7 +211,7 @@ const ContentAddImage = ({ imageUri }) => {
           label="SAVE IMAGE  "
           maxHeight={80}
           onPress={handleSave}
-          isDisabled={selectedFriend && canContinue && imageUri ? false : true}
+          // isDisabled={friendId && canContinue && imageUri ? false : true}
           image={require("@/app/assets/shapes/redheadcoffee.png")}
         />
       )}
@@ -234,9 +230,9 @@ const ContentAddImage = ({ imageUri }) => {
           <KeyboardSaveButton
             label="SAVE IMAGE "
             onPress={handleSave}
-            isDisabled={
-              selectedFriend && canContinue && imageUri ? false : true
-            }
+            // isDisabled={
+            //   friendId && canContinue && imageUri ? false : true
+            // }
             image={false}
           />
         </View>

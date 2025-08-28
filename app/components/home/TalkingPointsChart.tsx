@@ -8,18 +8,16 @@ import React, {
 } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 // import LabeledArrowButton from "../appwide/button/LabeledArrowButton";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 import { Ionicons } from "@expo/vector-icons";
-import Donut from "../headers/Donut";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+import Donut from "../headers/Donut"; 
+// import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions"; // moved to parent
 import { AppState, AppStateStatus } from "react-native";
 import FriendHistoryPieDataWrap from "./FriendHistoryPieDataWrap";
 import UserHistoryPieDataWrap from "./UserHistoryPieDataWrap";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
   import { useIsFocused } from "@react-navigation/native";
-import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
+// import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting"; // moved to parent
 
 type Props = {
   selectedFriend: boolean;
@@ -27,6 +25,10 @@ type Props = {
 };
 
 const TalkingPointsChart = ({
+  capsuleListCount,
+  categoryStartIndices,
+  categorySizes,
+  generateGradientColors,
   userCategories,
   friendStyle,
   appColorsStyle,
@@ -34,6 +36,7 @@ const TalkingPointsChart = ({
   selectedFriendId,
   selectedFriendName,
   primaryColor,
+  primaryBackgroundColor,
   welcomeTextStyle,
   subWelcomeTextStyle,
   primaryOverlayColor,
@@ -41,22 +44,20 @@ const TalkingPointsChart = ({
   outerPadding,
 }: Props) => {
 
-    const isFocused = useIsFocused();
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+    const isFocused = useIsFocused(); 
 
   const { navigateToMoments, navigateToMomentView, navigateToMomentFocus } =
-    useAppNavigations();
-  const { capsuleList } = useCapsuleList();
+    useAppNavigations(); 
   const [categoryColors, setCategoryColors] = useState<string[]>([]);
 
-  const { categoryStartIndices } = useTalkingPCategorySorting({
-    listData: capsuleList,
-  }); 
+  // const { categoryStartIndices } = useTalkingPCategorySorting({
+  //   listData: capsuleList,
+  // }); 
 
   const [showHistory, setShowHistory] = useState(false);
-  const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
-    listData: capsuleList,
-  });
+  // const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
+  //   listData: capsuleList,
+  // });
 
   const categories = categorySizes();
 
@@ -79,7 +80,7 @@ const TalkingPointsChart = ({
           nextState === "active"
         ) {
           console.log("App has come to the foreground!");
-          if (!capsuleList || capsuleList?.length < 1) {
+          if (!capsuleListCount || capsuleListCount < 1) {
             return;
           }
 
@@ -92,7 +93,7 @@ const TalkingPointsChart = ({
     );
 
     return () => subscription.remove(); // cleanup
-  }, [capsuleList]);
+  }, [capsuleListCount]);
 
   useFocusEffect(
     useCallback(() => {
@@ -144,7 +145,7 @@ const TalkingPointsChart = ({
 
   useEffect(
     useCallback(() => {
-      if (!capsuleList || capsuleList?.length < 1) {
+             if (!capsuleListCount || capsuleListCount < 1) {
         return;
       }
 
@@ -156,7 +157,7 @@ const TalkingPointsChart = ({
       ) {
         setTempCategoriesSortedList(categories.sortedList);
       }
-    }, [capsuleList, categories])
+    }, [capsuleListCount, categories])
   );
 
   useEffect(() => {
@@ -208,13 +209,12 @@ const TalkingPointsChart = ({
         <Ionicons
           name={!showHistory ? "pie-chart" : "close"}
           size={30}
-          color={themeStyles.primaryText.color}
+          color={primaryColor}
         />
         {!showHistory && (
           <Text
-            style={[
-              themeStyles.primaryText,
-              { fontFamily: "Poppins-Regular", fontSize: 13 },
+            style={[ 
+              { color: primaryColor, fontFamily: "Poppins-Regular", fontSize: 13 },
             ]}
           >
             {"   "}category history
@@ -232,7 +232,7 @@ const TalkingPointsChart = ({
             flex: 1,
             padding: PADDING,
             paddingBottom: !showHistory ? PADDING : 0,
-            backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+            backgroundColor: primaryOverlayColor,
             borderRadius: 20,
           },
         ]}
@@ -251,9 +251,9 @@ const TalkingPointsChart = ({
               style={[
                 {
                   fontFamily: "Poppins-Bold",
-                  fontSize: appFontStyles.subWelcomeText.fontSize + 3,
+                  fontSize: subWelcomeTextStyle.fontSize + 3,
 
-                  color: themeStyles.primaryText.color,
+                  color: primaryColor,
                   opacity: 0.9,
                   // color: manualGradientColors.homeDarkColor,
                 },
@@ -281,7 +281,7 @@ const TalkingPointsChart = ({
             onCategoryPress={handleMomentViewScrollTo}
             onCenterPress={handleMomentScreenNoScroll}
             onPlusPress={handleNavigateToCreateNew}
-            totalJS={capsuleList?.length}
+            totalJS={capsuleListCount}
             radius={CHART_RADIUS}
             strokeWidth={CHART_STROKE_WIDTH}
             outerStrokeWidth={CHART_OUTER_STROKE_WIDTH}
@@ -318,10 +318,9 @@ const TalkingPointsChart = ({
               }}
             >
               <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.subWelcomeText,
-                  { alignSelf: "center" },
+                style={[ 
+                  subWelcomeTextStyle,
+                  { color: primaryColor, alignSelf: "center" },
                 ]}
               >
                 History{"  "}
@@ -336,16 +335,15 @@ const TalkingPointsChart = ({
                 subWelcomeTextStyle={subWelcomeTextStyle}
                 appColorsStyle={appColorsStyle}
                 chartBorder={SMALL_CHART_BORDER}
-                chartBorderColor={themeStyles.primaryBackground.backgroundColor}
+                chartBorderColor={primaryBackgroundColor}
                 showLabels={false}
                 chartRadius={SMALL_CHART_RADIUS}
               />
             </View>
             <Text
               style={[
-                themeStyles.primaryText,
-                appFontStyles.subWelcomeText,
-                { alignSelf: "center" },
+                subWelcomeTextStyle,
+                { color: primaryColor, alignSelf: "center" },
               ]}
             >
               All time{"  "}
@@ -360,7 +358,7 @@ const TalkingPointsChart = ({
                 subWelcomeTextStyle={subWelcomeTextStyle}
                 appColorsStyle={appColorsStyle}
                 chartBorder={SMALL_CHART_BORDER}
-                chartBorderColor={themeStyles.primaryBackground.backgroundColor}
+                chartBorderColor={primaryBackgroundColor}
                 showLabels={false}
                 chartRadius={SMALL_CHART_RADIUS}
               />

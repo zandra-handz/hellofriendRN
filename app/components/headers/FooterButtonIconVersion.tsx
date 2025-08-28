@@ -1,6 +1,5 @@
 import {  Text,  Pressable, Alert } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import React from "react"; 
 import GlobalPressable from "../appwide/button/GlobalPressable";
  
 
@@ -19,6 +18,7 @@ interface ButtonDeselectProps {
 
 const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
   label = "",
+  primaryColor,
   icon, 
   labelFontSize = 11,
   onPress,
@@ -26,8 +26,7 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
   confirmationTitle = "",
   confirmationMessage = "Are you sure?",
   confirmationActionWord = 'Yes', 
-}) => { 
-  const { themeStyles  } = useGlobalStyle();
+}) => {  
 
   const handleOnPress = () => {
     if (confirmationRequired) {
@@ -66,7 +65,7 @@ const FooterButtonIconVersion: React.FC<ButtonDeselectProps> = ({
           paddingVertical: 4,
           borderRadius: 10,
           fontWeight: "bold",
-          color: themeStyles.footerIcon.color,
+          color: primaryColor,
         }}
       >
         {label}

@@ -75,6 +75,7 @@ const HelloFriendFooter = ({
   const RenderSignOutButton = useCallback(
     () => (
       <FooterButtonIconVersion
+        primaryColor={textColor}
         confirmationRequired={true}
         confirmationTitle={"Just to be sure"}
         confirmationMessage={"Sign out?"}
@@ -97,6 +98,7 @@ const HelloFriendFooter = ({
   const RenderDeselectButton = useCallback(
     () => (
       <FooterButtonIconVersion
+        primaryColor={textColor}
         confirmationRequired={true}
         confirmationTitle={"Just to be sure"}
         confirmationMessage={"Deselect friend?"}
@@ -119,6 +121,7 @@ const HelloFriendFooter = ({
   const RenderSettingsButton = useCallback(
     () => (
       <FooterButtonIconVersion
+        primaryColor={textColor}
         label="Settings"
         icon={
           <MaterialIcons
@@ -137,6 +140,7 @@ const HelloFriendFooter = ({
   const RenderReportIssueButton = useCallback(
     () => (
       <FooterButtonIconVersion
+      primaryColor={textColor}
         label="Report"
         icon={
           <MaterialCommunityIcons
@@ -175,6 +179,7 @@ const HelloFriendFooter = ({
   const RenderAboutAppButton = useCallback(
     () => (
       <FooterButtonIconVersion
+        primaryColor={textColor}
         label="About"
         icon={
           <MaterialCommunityIcons

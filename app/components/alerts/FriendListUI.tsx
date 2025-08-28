@@ -54,7 +54,7 @@ const FriendListUI = ({
     ({ item, index }: ListRenderItemInfo<FriendListItem>) => (
       <Animated.View
         style={styles.friendContainer}
-        entering={SlideInDown.duration(200)}
+        entering={SlideInDown.duration(180)}
         exiting={FadeOut}
         // entering={SlideInRight.duration(260).springify(2000)}
       >

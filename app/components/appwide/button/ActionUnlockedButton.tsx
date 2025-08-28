@@ -1,4 +1,4 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import Animated from "react-native-reanimated";
@@ -15,17 +15,13 @@ import {
 
 const ActionUnlockedButton = ({
   isUnlocked = true, 
+  primaryColor,
+  manualGradientColors,
   label,
   onPress,
   pulseDuration = 2000,
   includeArrow = false,
 }) => {
-  const {
-    themeStyles, 
-    appContainerStyles,
-    appFontStyles,
-    manualGradientColors,
-  } = useGlobalStyle();
  
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
@@ -34,7 +30,7 @@ const ActionUnlockedButton = ({
   const translateYx2 = useSharedValue(0);
   const startColor = useSharedValue("transparent");
   const endColor = useSharedValue("red");
-  const textColor = useSharedValue(themeStyles.genericText.color);
+  const textColor = useSharedValue(primaryColor);
 
   //  show animation based on if top item in FlatList in parent
   useAnimatedReaction(
@@ -60,7 +56,7 @@ const ActionUnlockedButton = ({
           translateYx2.value = withTiming(0, { duration: 200 });
           startColor.value = "transparent";
           endColor.value = "transparent";
-          textColor.value = themeStyles.genericText.color;
+          textColor.value = primaryColor;
         }
       }
     },
@@ -87,7 +83,7 @@ const ActionUnlockedButton = ({
 
   return (
     <AnimatedTouchableOpacity
-      style={[animatedCardsStyle, appContainerStyles.actionUnlockedButton, {alignItems: "center"}]}
+      style={[animatedCardsStyle, styles.actionUnlockedButton, {alignItems: "center"}]}
       onPress={() => {
         onPress(label);
       }}
@@ -95,9 +91,9 @@ const ActionUnlockedButton = ({
       <Animated.Text
         numberOfLines={1}
         style={[
-          appFontStyles.actionUnlockedButtonText,
-          themeStyles.genericText,
-          animatedCardsStyle,
+          styles.buttonText,
+         
+          animatedCardsStyle, {color: primaryColor}
         ]}
       >
          {label}{"  "}
@@ -122,5 +118,33 @@ const ActionUnlockedButton = ({
     </AnimatedTouchableOpacity>
   );
 };
+
+
+const styles = StyleSheet.create({
+  actionUnlockedButton: {
+    // borderBottomWidth: 0.8,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignText: "right",
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    //marginHorizontal: 6,
+    borderRadius: 16,
+    height: "auto",
+    width: "auto",
+  },
+  buttonText: {
+    fontWeight: "bold",
+    fontSize: 13,
+    // textTransform: "uppercase",
+    height: "100%",
+    alignSelf: "center",
+  },
+});
+
 
 export default ActionUnlockedButton;

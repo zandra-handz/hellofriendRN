@@ -1,7 +1,7 @@
 import React  from "react";
 import { View, StyleSheet } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
- 
+ import { useUser } from "@/src/context/UserContext";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
@@ -15,6 +15,7 @@ import { useRoute } from "@react-navigation/native";
 const ScreenAddImage = () => {
   const route = useRoute();
   const imageUri = route.params?.imageUri ?? false;
+  const { user } = useUser();
 
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendStyle();
@@ -33,7 +34,7 @@ const ScreenAddImage = () => {
     
    style={{ flex: 1 }}>
       <View style={[styles.container, themeStyles.container]}>
-        <ContentAddImage imageUri={imageUri} />
+        <ContentAddImage userId={user?.id} friendId={selectedFriend?.id} imageUri={imageUri} />
       </View>
     </SafeViewAndGradientBackground>
   );

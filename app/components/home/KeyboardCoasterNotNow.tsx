@@ -1,19 +1,18 @@
-import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
-
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { Pressable, Text, StyleSheet, View } from "react-native";
+ 
 import BackArrowLongerStemSvg from "@/app/assets/svgs/back-arrow-longer-stem.svg";
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 const KeyboardCoasterNotNow = ({
+  primaryColor,
   onPress,
   borderRadius = 20,
   borderColor = "transparent",
   maxHeight = 100,
-}) => {
-  const { themeStyles } = useGlobalStyle();
+}) => { 
 
   return (
     <View style={styles.absoluteContainer}>
-      <TouchableOpacity
+      <Pressable
         onPress={onPress}
         style={[
           styles.container,
@@ -24,18 +23,7 @@ const KeyboardCoasterNotNow = ({
             maxHeight: maxHeight,
           },
         ]}
-      >
-        {/* <LinearGradient
-          colors={[
-            manualGradientColors.darkColor,
-            manualGradientColors.lightColor,
-          ]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            ...StyleSheet.absoluteFillObject,
-          }}
-        /> */}
+      > 
 
         <View
           style={{
@@ -66,20 +54,20 @@ const KeyboardCoasterNotNow = ({
               <BackArrowLongerStemSvg
                 height={20}
                 width={20}
-                color={themeStyles.primaryText.color}
+                color={primaryColor}
               />
             </View>
           </View>
           <Text
             style={[
-              themeStyles.primaryText,
-              { fontSize: 15, fontWeight: "bold" },
+          
+              { color: primaryColor, fontSize: 15, fontWeight: "bold" },
             ]}
           >
             dashboard
           </Text>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

@@ -1,36 +1,26 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useHelloes } from "@/src/context/HelloesContext";
-// import { useNavigation } from "@react-navigation/native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-// import useImageFunctions from "@/src/hooks/useImageFunctions";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
-// import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
 type Props = {
-  selectedFriend: boolean;
+
   outerPadding: number;
 };
 
-const Helloes = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
-  const { themeStyles } = useGlobalStyle();
-  const { helloesList } = useHelloes();
-  // const navigation = useNavigation();
-  // const { imageList } = useImageFunctions();
-  // const { handleCaptureImage, handleSelectImage } = useImageUploadFunctions();
-  
-  
+const Helloes = ({
+  helloesList,
+  primaryColor,
+  primaryOverlayColor,
+ friendId, 
+}: Props) => {
   const { navigateToHelloes } = useAppNavigations();
   const PADDING = 20;
-  // const navigateToImages = () => {
-  //   navigation.navigate("ImageView", { startingIndex: 0 });
-  // };
 
   return (
     <>
-      {selectedFriend && (
+      {friendId && (
         <View
           style={[
             {
@@ -42,8 +32,7 @@ const Helloes = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
               flexDirection: "row",
               alignItems: "center",
               //   paddingBottom: 10,
-              backgroundColor:
-                themeStyles.overlayBackgroundColor.backgroundColor,
+              backgroundColor: primaryOverlayColor,
               borderRadius: 16, // the others are at 20 as of 7/7/25, this one is too short to look like it matches when it is also at 20
             },
           ]}
@@ -80,13 +69,13 @@ const Helloes = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
                   name="calendar-heart"
                   // name="graph"
                   size={20}
-                  color={themeStyles.primaryText.color}
+                  color={primaryColor}
                   style={{ marginBottom: 0 }}
                 />
                 <Text
                   style={[
-                    themeStyles.primaryText,
                     {
+                      color: primaryColor,
                       marginLeft: 6,
                       marginRight: 12,
                       fontWeight: "bold",
@@ -99,8 +88,7 @@ const Helloes = ({ selectedFriend = false, outerPadding = 10 }: Props) => {
               <Pressable hitSlop={10} onPress={navigateToHelloes}>
                 <Text
                   style={[
-                    themeStyles.primaryText,
-                    { fontWeight: "bold", fontSize: 13 },
+                    { color: primaryColor, fontWeight: "bold", fontSize: 13 },
                   ]}
                 >
                   Details

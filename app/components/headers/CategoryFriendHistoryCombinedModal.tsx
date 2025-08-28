@@ -22,12 +22,9 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import ModalListWithView from "../alerts/ModalListWithView";
 
-// import { useUserSettings } from "@/src/context/UserSettingsContext";
-// import useCategoryHistoryLookup from "@/src/hooks/useCategoryHistoryLookup";
+ 
 
-import CategoryFriendHistoryList from "./CategoryFriendHistoryList";
-
-// import { useFriendDash } from "@/src/context/FriendDashContext";
+import CategoryFriendHistoryList from "./CategoryFriendHistoryList"; 
 
 import { ItemViewProps } from "@/src/types/MiscTypes";
 interface Props {

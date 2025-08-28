@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View } from "react-native";
 import React, { useState, useEffect } from "react"; 
 import OverlayLargeButton from "../appwide/button/OverlayLargeButton";
 import useCurrentLocation from "@/src/hooks/useCurrentLocation";
@@ -12,8 +12,7 @@ import BookmarkAddress from "./BookmarkAddress";
 import SelectAddressModal from "./SelectAddressModal";
 import SelectFriendAddressModal from "./SelectFriendAddressModal";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+ 
 import MakeAddressDefault from "./MakeAddressDefault";
 
 interface ActiveAddressesProps {

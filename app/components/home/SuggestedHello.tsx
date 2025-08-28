@@ -1,10 +1,9 @@
-import { View, Pressable, Text, StyleSheet, Alert } from "react-native";
+import { View, Pressable, Text, StyleSheet } from "react-native";
 import React, { useRef, useMemo, useState } from "react";
-import { FontAwesome6 } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native";
+import { FontAwesome6 } from "@expo/vector-icons"; 
+
 import useAppNavigations from "@/src/hooks/useAppNavigations";
- 
+
 import GeckoSolidSvg from "@/app/assets/svgs/gecko-solid.svg";
 import GoOptionsModal from "../headers/GoOptionsModal";
 
@@ -15,11 +14,20 @@ type Props = {
   borderRadius: number;
 };
 
-const SuggestedHello = ({ friendId, friendFutureDate, padding, height, borderRadius = 10 }: Props) => {
-  const navigation = useNavigation();
-  const { navigateToFinalize } = useAppNavigations();
-  const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
- 
+const SuggestedHello = ({
+  friendId,
+  manualGradientColors,
+  primaryColor,
+  primaryOverlayColor,
+  welcomeTextStyle,
+  subWelcomeTextStyle,
+  friendFutureDate,
+  padding,
+  height,
+  borderRadius = 10,
+}: Props) => {
+  const { navigateToFinalize } = useAppNavigations(); 
+
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
 
   const [lastPress, setLastPress] = useState<number | null>(null);
@@ -28,9 +36,9 @@ const SuggestedHello = ({ friendId, friendFutureDate, padding, height, borderRad
   const DOUBLE_PRESS_DELAY = 300;
 
   const handleGoPress = () => {
- const now = Date.now();
+    const now = Date.now();
 
- if (lastPress && now - lastPress < DOUBLE_PRESS_DELAY) {
+    if (lastPress && now - lastPress < DOUBLE_PRESS_DELAY) {
       // Double press detected
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -38,24 +46,22 @@ const SuggestedHello = ({ friendId, friendFutureDate, padding, height, borderRad
       }
       console.log("double press here!");
       navigateToFinalize();
-  
+
       setLastPress(null);
     } else {
       // First press
       setLastPress(now);
 
       timeoutRef.current = setTimeout(() => {
-       
-    setOptionsModalVisible(true);
+        setOptionsModalVisible(true);
         setLastPress(null);
         timeoutRef.current = null;
       }, DOUBLE_PRESS_DELAY);
     }
-
   };
-  const navigateToMoments = () => {
-    navigation.navigate("Moments", { scrollTo: null });
-  };
+  // const navigateToMoments = () => {
+  //   navigation.navigate("Moments", { scrollTo: null });
+  // };
 
   const renderSuggestedHello = useMemo(() => {
     return (
@@ -65,9 +71,9 @@ const SuggestedHello = ({ friendId, friendFutureDate, padding, height, borderRad
             style={[
               {
                 fontFamily: "Poppins-Regular",
-                fontSize: appFontStyles.subWelcomeText.fontSize + 3,
+                fontSize: subWelcomeTextStyle.fontSize + 3,
 
-                color: themeStyles.primaryText.color,
+                color: primaryColor,
                 opacity: 0.9,
                 // color: manualGradientColors.homeDarkColor,
               },
@@ -77,18 +83,17 @@ const SuggestedHello = ({ friendId, friendFutureDate, padding, height, borderRad
           </Text>
           <Text
             style={[
-              themeStyles.primaryText,
               {
                 // alignSelf: 'center',
+                color: primaryColor,
                 lineHeight: 28,
-                fontSize: appFontStyles.welcomeText.fontSize - 5,
+                fontSize: welcomeTextStyle.fontSize - 5,
                 opacity: 0.9,
                 paddingRight: 50,
               },
             ]}
           >
             {friendFutureDate}
-         
           </Text>
         </>
       </View>
@@ -96,8 +101,8 @@ const SuggestedHello = ({ friendId, friendFutureDate, padding, height, borderRad
   }, [
     friendId,
     friendFutureDate,
-    appFontStyles,
-    themeStyles,
+    welcomeTextStyle, subWelcomeTextStyle,
+    primaryColor,
     manualGradientColors,
     styles,
   ]);
@@ -118,7 +123,7 @@ const SuggestedHello = ({ friendId, friendFutureDate, padding, height, borderRad
         padding: padding,
         paddingRight: 10,
         width: "100%",
-        backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+        backgroundColor: primaryOverlayColor,
       }}
     >
       <View style={styles.textContainer}>

@@ -63,7 +63,7 @@ import ScreenPreAdded from "./app/screens/moments/ScreenPreAdded";
 import ScreenFinalize from "./app/screens/moments/ScreenFinalize";
 import ScreenReload from "./app/screens/helloes/ScreenReload";
 import ScreenMoments from "./app/screens/moments/ScreenMoments";
-import ScreenImages from "./app/screens/images/ScreenImages";
+// import ScreenImages from "./app/screens/images/ScreenImages"; // REINSTATE
 import ScreenHelloes from "./app/screens/helloes/ScreenHelloes";
 // import ScreenLocationNav from "./app/screens/locations/ScreenLocationNav";
 // import ScreenLocations from "./app/screens/locations/ScreenLocations";
@@ -495,13 +495,14 @@ export const Layout = () => {
                   headerShown: false,
                 }}
               />
-              <Stack.Screen
+              {/* REINSTATE
+               <Stack.Screen
                 name="Images"
                 component={ScreenImages}
                 options={{
                   headerShown: false,
                 }}
-              />
+              /> */}
               <Stack.Screen
                 name="ImageView"
                 component={ScreenImageView}

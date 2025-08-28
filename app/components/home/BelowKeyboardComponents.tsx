@@ -9,6 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 interface BelowKeyboardComponentsProps {
+  userId: number;
   slideAnim: SharedValue<number>;
   friendListLength: number;
   isFriendSelected: boolean;
@@ -16,6 +17,7 @@ interface BelowKeyboardComponentsProps {
 }
 
 const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
+  userId,
   userCategories,
   upcomingHelloes,
   isLoading,
@@ -28,6 +30,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   primaryBackgroundColor,
   primaryOverlayColor,
   darkerOverlayBackgroundColor,
+  manualGradientColors,
   appColorsStyle,
   spinnerStyle,
   loadingDash,
@@ -65,7 +68,9 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
       {isFriendSelected && (
         <View style={{ height: "100%" }}>
           <SelectedFriendHome
+          userId={userId}
           userCategories={userCategories}
+          manualGradientColors={manualGradientColors}
             appColorsStyle={appColorsStyle}
             friendStyle={friendStyle}
             primaryTextStyle={primaryTextStyle}

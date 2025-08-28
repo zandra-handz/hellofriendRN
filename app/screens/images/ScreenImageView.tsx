@@ -4,23 +4,30 @@ import { useRoute } from "@react-navigation/native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
  
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
-import useImageFunctions from "@/src/hooks/useImageFunctions";
+ 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import ImageViewPage from "@/app/components/images/ImageViewPage";
  import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
+import { useUser } from "@/src/context/UserContext"; 
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
- 
+ import useImages from "@/src/hooks/ImageCalls/useImages";
+ import useDeleteImage from "@/src/hooks/ImageCalls/useDeleteImage";
 
 const ScreenImageView = () => {
   const route = useRoute();
   const startingIndex = route.params?.index ?? null;
+  const { user } = useUser();
+    const { selectedFriend  } = useSelectedFriend();
+
   const { themeStyles, manualGradientColors } = useGlobalStyle();
-  const { imageList, deleteImage, deleteImageMutation } = useImageFunctions();
-  const { selectedFriend  } = useSelectedFriend();
+  const { imageList  } = useImages({userId: user?.id, friendId: selectedFriend?.id});
+
  
+
+    const { deleteImage, deleteImageMutation } = useDeleteImage({userId: user?.id, friendId: selectedFriend?.id});
+
   const { themeAheadOfLoading } = useFriendStyle();
 
   // const totalCount = imageList.length;

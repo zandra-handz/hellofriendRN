@@ -2,11 +2,7 @@ import { View, Text, DimensionValue, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useNavigation } from "@react-navigation/native";
-import { Image } from "expo-image";
-import useImageFunctions from "@/src/hooks/useImageFunctions";
-
-import BelowHeaderContainer from "../scaffolding/BelowHeaderContainer";
-import SlideToAdd from "../foranimations/SlideToAdd";
+import { Image } from "expo-image"; 
 
 
 import Animated, {

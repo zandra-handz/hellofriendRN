@@ -278,22 +278,6 @@ const containerStyles = StyleSheet.create({
     height: "auto",
   },
 
-  actionUnlockedButton: {
-    // borderBottomWidth: 0.8,
-    borderWidth: StyleSheet.hairlineWidth,
-    alignText: "right",
-    flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 2,
-    paddingHorizontal: 10,
-    //marginHorizontal: 6,
-    borderRadius: 16,
-    height: "auto",
-    width: "auto",
-  },
 
   searchBarContainer: {
     zIndex: 2,
@@ -571,13 +555,7 @@ const fontStyles = StyleSheet.create({
     height: "100%",
     alignSelf: "center",
   },
-  actionUnlockedButtonText: {
-    fontWeight: "bold",
-    fontSize: 13,
-    // textTransform: "uppercase",
-    height: "100%",
-    alignSelf: "center",
-  },
+
   searchBarInputText: {
     flex: 1,
     alignItems: "center",

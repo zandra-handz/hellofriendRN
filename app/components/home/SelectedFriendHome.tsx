@@ -16,10 +16,20 @@ import Animated, {
 import LoadingPage from "../appwide/spinner/LoadingPage";
 import FriendHeaderMessageUI from "./FriendHeaderMessageUI";
 
+
+import { useHelloes } from "@/src/context/HelloesContext";
+import { useCapsuleList } from "@/src/context/CapsuleListContext";
+
+import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
+import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
+
+
+
+
 import TalkingPointsChart from "./TalkingPointsChart";
 import Pics from "./Pics";
 import Helloes from "./Helloes";
-import SuggestedHello from "./SuggestedHello";
+import SuggestedHello from "./SuggestedHello"; 
 
 interface SelectedFriendHomeProps {
   borderRadius: DimensionValue;
@@ -27,7 +37,9 @@ interface SelectedFriendHomeProps {
 }
 
 const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
+  userId,
   userCategories,
+  manualGradientColors,
   friendStyle,
   appColorsStyle,
   borderRadius = 20,
@@ -45,6 +57,21 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   selectedFriendName,
 }) => {
   const headerRef = useRef(null);
+const { capsuleList } = useCapsuleList();
+
+  const { categoryStartIndices } = useTalkingPCategorySorting({
+    listData: capsuleList,
+  }); 
+
+    const { categorySizes, generateGradientColors } = useMomentSortingFunctions({
+    listData: capsuleList,
+  });
+
+
+
+
+  const { helloesList } = useHelloes();
+
   const handleScroll = (event) => {
     if (!headerRef.current) return;
 
@@ -122,7 +149,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                 {selectedFriendName}
               </Text>
             </Animated.View>
-            {/* )} */}
+
             <ScrollView
               onScroll={handleScroll}
               scrollEventThrottle={16}
@@ -152,34 +179,45 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
                   width: "100%",
                 }}
               >
-                {loadingDash && (
+                {/* {loadingDash && (
                   <>
                     <View style={styles.loadingWrapper}>
                       <LoadingPage loading={true} spinnerType={spinnerStyle} />
                     </View>
                   </>
-                )}
+                )} */}
 
-                {!loadingDash && selectedFriendId && (
-                  <SuggestedHello
+                {/* {!loadingDash && selectedFriendId && ( */}
+                <SuggestedHello
                   friendId={selectedFriendId}
-                  friendFutureDate={friendDash?.future_date_in_words || "No date available"}
-                    padding={SELECTED_FRIEND_CARD_PADDING}
-                    height={SELECTED_FRIEND_CARD_HEIGHT}
-                    borderRadius={borderRadius}
-                  />
-                )}
+                  manualGradientColors={manualGradientColors}
+                  primaryOverlayColor={primaryOverlayColor}
+                  primaryColor={primaryTextStyle.color}
+                  welcomeTextStyle={welcomeTextStyle}
+                subWelcomeTextStyle={subWelcomeTextStyle}
+                  friendFutureDate={
+                    friendDash?.future_date_in_words || "No date available"
+                  }
+                  padding={SELECTED_FRIEND_CARD_PADDING}
+                  height={SELECTED_FRIEND_CARD_HEIGHT}
+                  borderRadius={borderRadius}
+                />
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <TalkingPointsChart
-                  userCategories={userCategories}
-                  appColorsStyle={appColorsStyle}
+                  capsuleListCount={capsuleList.length}
+                  categoryStartIndices={categoryStartIndices}
+                  categorySizes={categorySizes}
+                  generateGradientColors={generateGradientColors}
+                    userCategories={userCategories}
+                    appColorsStyle={appColorsStyle}
                     friendStyle={friendStyle}
                     primaryColor={primaryTextStyle.color}
+                    primaryBackgroundColor={primaryBackgroundColor}
                     darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
-                   primaryOverlayColor={primaryOverlayColor}
-                   welcomeTextStyle={welcomeTextStyle}
-                   subWelcomeTextStyle={subWelcomeTextStyle}
+                    primaryOverlayColor={primaryOverlayColor}
+                    welcomeTextStyle={welcomeTextStyle}
+                    subWelcomeTextStyle={subWelcomeTextStyle}
                     loadingNewFriend={loadingDash}
                     selectedFriendId={!!selectedFriendId}
                     selectedFriendName={selectedFriendName}
@@ -189,15 +227,19 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Pics
-                    selectedFriend={!!selectedFriendId}
-                    outerPadding={spacerAroundCalendar}
+                    primaryColor={primaryTextStyle.color}
+                    primaryOverlayColor={primaryOverlayColor}
+                    userId={userId}
+                    friendId={selectedFriendId}
                   />
                 </View>
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Helloes
-                    selectedFriend={!!selectedFriendId}
-                    outerPadding={spacerAroundCalendar}
+                    primaryColor={primaryTextStyle.color}
+                    primaryOverlayColor={primaryOverlayColor}
+                    helloesList={helloesList}
+                    friendId={selectedFriendId}
                   />
                 </View>
 

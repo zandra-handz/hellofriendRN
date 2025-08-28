@@ -713,17 +713,17 @@ export const updateUserProfile = async (
 };
 
 export const fetchFriendDashboard = async (friendId: number) => {
-  // const startTime = Date.now(); // TIMER START
+    const startTime = Date.now(); // TIMER START
 
   try {
     const response = await helloFriendApiClient.get(
       `/friends/${friendId}/dashboard/`
     );
 
-    // const endTime = Date.now(); // TIMER END
-    // const duration = endTime - startTime;
+    const endTime = Date.now(); // TIMER END
+    const duration = endTime - startTime;
 
-    // console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
+    console.log(`API GET CALL fetchFriendDashboard took ${duration}ms`);
 
     return response.data[0] || null;
   } catch (error) {

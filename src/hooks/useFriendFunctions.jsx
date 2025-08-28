@@ -8,8 +8,7 @@ import { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useUser } from "@/src/context/UserContext";
-import { useFriendList } from "@/src/context/FriendListContext";
-import { showFlashMessage } from "../utils/ShowFlashMessage"; 
+import { useFriendList } from "@/src/context/FriendListContext"; 
 import useRefetchUpcomingHelloes from "./UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 
 import {

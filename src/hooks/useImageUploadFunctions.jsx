@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import { useGlobalStyle } from '../context/GlobalStyleContext';
+import React, {  useState } from 'react';
+ 
+ 
 import { useNavigation } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
-import * as Linking from 'expo-linking'; 
+ 
 
 import * as ImageManipulator from 'expo-image-manipulator';
  
