@@ -113,9 +113,10 @@ const CategoryButton = ({
         numberOfLines={1}
         style={[
           animatedCardsStyle,
-          textStyle,
+    
           // animatedCardsStyle,
           {
+            color: primaryColor,
             // fontWeight: "bold",
             fontSize: 14,
             fontFamily: "Poppins-Bold",
