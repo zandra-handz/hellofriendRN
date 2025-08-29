@@ -87,7 +87,7 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
           <MaterialCommunityIcons
             name="account-switch-outline"
             size={26}
-            color={themeStyles.primaryText.color}
+            color={lightDarkTheme.primaryText}
           />
         </View>
         <View style={{ width: "100%", flex: 1 }}>
