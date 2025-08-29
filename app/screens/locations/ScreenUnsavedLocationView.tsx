@@ -5,7 +5,7 @@ import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 // import { useFriendLocationsContext } from "@/src/context/FriendLocationsContext";
 
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import CarouselSlider from "@/app/components/appwide/CarouselSlider";
 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
@@ -18,8 +18,8 @@ const ScreenUnsavedLocationView = () => {
   // const [currentIndex, setCurrentIndex] = useState(0);
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
-
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+const { lightDarkTheme } = useLDTheme();
+  const { manualGradientColors } = useGlobalStyle();
 
 
   // Don't think we need this here
@@ -34,7 +34,7 @@ const ScreenUnsavedLocationView = () => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground }
       friendId={selectedFriend?.id}
       // includeBackgroundOverlay={true}
       // backgroundOverlayHeight={"120%"}

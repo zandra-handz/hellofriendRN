@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useState, useCallback } from "react";
+import React, {   useCallback } from "react";
 import { useWindowDimensions } from "react-native";
 import Animated, {
   useAnimatedRef, 
@@ -7,9 +7,7 @@ import Animated, {
   useSharedValue, 
   withTiming,
 } from "react-native-reanimated";
-import ItemFooterMoments from "./headers/ItemFooterMoments";
-import CarouselItemModal from "./appwide/carouselItemModal";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import ItemFooterMoments from "./headers/ItemFooterMoments"; 
 type Props = {
   initialIndex: number;
   data: object[];
@@ -20,7 +18,9 @@ type Props = {
 const CarouselSliderMoments = ({
   userId,
   friendId,
+  fontStyle,
   initialIndex,
+  lightDarkTheme, 
   data,
   categoryColorsMap,
   useButtons = true,
@@ -31,16 +31,13 @@ const CarouselSliderMoments = ({
 
 }: Props) => {
   const { height, width } = useWindowDimensions();
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+ 
 
   const ITEM_WIDTH = width - 40;
   const ITEM_MARGIN = 20;
   const COMBINED = ITEM_WIDTH + ITEM_MARGIN * 2;
-  const flatListRef = useAnimatedRef(null);
-
-  const [itemModalVisible, setItemModalVisible] = useState(false);
-
-  //  console.log(`category colors in slider`, categoryColorsMap);
+  const flatListRef = useAnimatedRef(null); 
+ 
 
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
@@ -76,39 +73,7 @@ const CarouselSliderMoments = ({
     }, 300); 
   };
 
-  // const scrollToStart = () => {
-  //   flatListRef.current?.scrollToIndex({
-  //     index: 0,
-  //     animated: true,
-  //   });
-  // };
-
-  // const scrollToEnd = () => {
-  //   flatListRef.current?.scrollToEnd({ animated: true });
-  // };
-
-  const [modalData, setModalData] = useState({ title: "", data: {} });
-
-  const handleSetModalData = (data) => {
-    setModalData(data);
-    setItemModalVisible(true);
-  };
-
-  // const handleScroll = useCallback(
-  //   (event) => {
-  //     const offsetX = event.nativeEvent.contentOffset.x;
-  //     const currentIndex = Math.round(offsetX / COMBINED);
-  //     onIndexChange?.(currentIndex);
-  //     setCurrentIndex(currentIndex + 1);
-  //     setCurrentCategory(
-  //       data[currentIndex]?.typedCategory ||
-  //         data[currentIndex]?.category ||
-  //         data[currentIndex]?.date
-  //     );
-  //   },
-  //   [COMBINED, onIndexChange]
-  // );
-
+ 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       const y = event.contentOffset.y;
@@ -145,14 +110,14 @@ const CarouselSliderMoments = ({
       // <View style={{marginHorizontal: ITEM_MARGIN}}>
 
       <Children
-        textColor={themeStyles.primaryText.color}
+        textColor={lightDarkTheme.primaryText}
         darkerOverlayColor={
-          themeStyles.darkerOverlayBackgroundColor.backgroundColor
+          lightDarkTheme.darkerOverlayBackground 
         }
         lighterOverlayColor={
-          themeStyles.lighterOverlayBackgroundColor.backgroundColor
+          lightDarkTheme.lighterOverlayBackground 
         }
-        welcomeTextStyle={appFontStyles.welcomeText}
+        welcomeTextStyle={fontStyle}
         userId={userId}
         friendId={friendId}
         categoryColorsMap={categoryColorsMap}
@@ -164,8 +129,7 @@ const CarouselSliderMoments = ({
         marginBottom={2} //space between this card and the footer bar (there's already some slight padding around the whole card)
         currentIndexValue={currentIndex}
         cardScaleValue={cardScale}
-        openModal={handleSetModalData}
-        closeModal={() => setItemModalVisible(false)}
+    
         marginKeepAboveFooter={10} //ONLY MOMENT VIEW PAGE HAS THIS PROP RN, this is just to push positioning up a level for readability
       />
     ),
@@ -207,6 +171,8 @@ const CarouselSliderMoments = ({
         <ItemFooterMoments //this component is now NOT absolutely positioned, so that it can get calculated with the card above and they won't overlap on different screens
           data={data}
           scrollTo={scrollTo}
+          primaryColor={lightDarkTheme.primaryText}
+          fontStyle={fontStyle}
           height={50} // matches escort read only bar inside
           marginBottom={10} // eyeballed to match finalize styling honestly
           visibilityValue={floaterItemsVisibility}
@@ -222,19 +188,7 @@ const CarouselSliderMoments = ({
         {/* )} */}
       </>
 
-      {itemModalVisible && (
-        <View>
-          <CarouselItemModal
-            // item={data[currentIndex]} not syncing right item, removed it from modal; data solely from the user-facing component
-            icon={modalData?.icon}
-            title={modalData?.title}
-            display={modalData?.contentData}
-            isVisible={itemModalVisible}
-            closeModal={() => setItemModalVisible(false)}
-            onPress={modalData?.onPress}
-          />
-        </View>
-      )}
+ 
     </>
   );
 };

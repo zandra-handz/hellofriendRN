@@ -7,7 +7,6 @@ import React, {
   useCallback,
   useRef,
   useMemo,
-
 } from "react";
 import {
   View,
@@ -17,25 +16,23 @@ import {
   Pressable,
   Keyboard,
   Dimensions,
-    Alert,
+  Alert,
 } from "react-native";
-  
- 
+
 import TotalMomentsAddedUI from "../moments/TotalMomentsAddedUI";
-import TitleContainerUI from "./TitleContainerUI"; 
-import { useSelectedFriend } from "@/src/context/SelectedFriendContext"; 
+import TitleContainerUI from "./TitleContainerUI";
+import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendDash } from "@/src/context/FriendDashContext";
 
-import { useUserStats } from "@/src/context/UserStatsContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { useNavigation } from "@react-navigation/native"; 
+import { useUserStats } from "@/src/context/UserStatsContext"; 
+import { useNavigation } from "@react-navigation/native";
 import { useLocations } from "@/src/context/LocationsContext";
 import Icon from "react-native-vector-icons/FontAwesome";
 import PickerDate from "../selectors/PickerDate";
 import PickerHelloType from "../selectors/PickerHelloType";
 import PickerHelloLocation from "../selectors/PickerHelloLocation";
 import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave"; 
+import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 
 import DoubleChecker from "@/app/components/alerts/DoubleChecker";
 import HelloNotesModal from "../headers/HelloNotesModal";
@@ -46,29 +43,37 @@ import useCreateHello from "@/src/hooks/HelloesCalls/useCreateHello";
 import useRefetchUpcomingHelloes from "@/src/hooks/UpcomingHelloesCalls/useRefetchUpcomingHelloes";
 // WARNING! Need to either remove back button when notes are expanded, or put notes on their own screen
 // otherwise it's too easy to back out of the entire hello and lose what is put there when just trying to back out of editing the notes
-const ContentAddHello = ({userId}) => {
-  const navigation = useNavigation(); 
- 
- const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({userId: userId});
-  const { preAdded, allCapsulesList } = useCapsuleList(); 
+const ContentAddHello = ({
+  userId,
+  containerStyle,
+  fontStyle,
+  primaryColor,
+  backgroundColor,
+  manualGradientColors,
+}) => {
+  const navigation = useNavigation();
+
+  const { refetchUpcomingHelloes } = useRefetchUpcomingHelloes({
+    userId: userId,
+  });
+  const { preAdded, allCapsulesList } = useCapsuleList();
   const { refetchUserStats } = useUserStats();
   const filterOutNonAdded = allCapsulesList.filter((capsule) =>
     preAdded?.includes(capsule.id)
   );
 
   const [momentsAdded, setMomentsAdded] = useState([]);
-  const { createHelloMutation, handleCreateHello } = useCreateHello({userId: userId})
+  const { createHelloMutation, handleCreateHello } = useCreateHello({
+    userId: userId,
+  });
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [notesModalVisible, setNotesModalVisible] = useState(false);
   const [isDoubleCheckerVisible, setIsDoubleCheckerVisible] = useState(false);
 
-  const {
-    selectedFriend,
-    deselectFriend,  
-  } = useSelectedFriend();
+  const { selectedFriend, deselectFriend } = useSelectedFriend();
 
   const { friendDash, loadingDash } = useFriendDash();
-  const { themeStyles, appContainerStyles, appFontStyles } = useGlobalStyle();
+
   const [helloDate, setHelloDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const typeChoices = [
@@ -88,7 +93,7 @@ const ContentAddHello = ({userId}) => {
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [deleteMoments, setDeleteMoments] = useState(false);
 
-  const [ notePreviewText, setNotePreviewText ] = useState("No notes")
+  const [notePreviewText, setNotePreviewText] = useState("No notes");
 
   const editedTextRef = useRef(null);
 
@@ -136,17 +141,14 @@ const ContentAddHello = ({userId}) => {
   }, [locationList, friendDash]);
 
   const openDoubleChecker = () => {
-
-
-      Alert.alert(`Save`, `Save hello?`, [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel",
-        },
-              {text: `Yes`, onPress: () => handleSave()},
- 
-      ]);
+    Alert.alert(`Save`, `Save hello?`, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      { text: `Yes`, onPress: () => handleSave() },
+    ]);
 
     // setIsDoubleCheckerVisible(true);
   };
@@ -173,7 +175,7 @@ const ContentAddHello = ({userId}) => {
 
       refetchUpcomingHelloes();
       refetchUserStats();
-      
+
       navigateToMainScreen();
 
       setJustDeselectedFriend(false); // reset the flag
@@ -202,17 +204,15 @@ const ContentAddHello = ({userId}) => {
     }
   };
 
-    const setPreviewText = () => {
+  const setPreviewText = () => {
     if (editedTextRef && editedTextRef.current) {
-    
-      setNotePreviewText(editedTextRef.current.getText())
+      setNotePreviewText(editedTextRef.current.getText());
     }
   };
-  
+
   const handleCloseModal = () => {
     setPreviewText();
     setNotesModalVisible(false);
-
   };
 
   const onChangeDate = (event, selectedDate) => {
@@ -248,11 +248,10 @@ const ContentAddHello = ({userId}) => {
     setSelectedTypeChoice(index);
     setSelectedTypeChoiceText(`${typeChoices[index]}`);
     if (index === 1 || index === 2) {
-
       toggleLocationModal();
     } else {
       setSelectedHelloLocation("None");
-    } 
+    }
   };
 
   const toggleLocationModal = () => {
@@ -284,32 +283,24 @@ const ContentAddHello = ({userId}) => {
           deleteMoments: deleteMoments ? true : false,
         };
 
-    
         handleCreateHello(requestData);
-            showFlashMessage(`Hello added!`, false, 1000);
+        showFlashMessage(`Hello added!`, false, 1000);
       }
     } catch (error) {
       console.log("catching errors elsewhere, not sure i need this", error);
     }
   };
 
-  // useEffect(() => {
-  //   if (createHelloMutation.isError) {
-  //     showMessage(true, null, "Error saving Hello. Please try again!");
-  //   }
-  // }, [createHelloMutation.isError]);
-
   return (
     <View
       style={[
-        appContainerStyles.talkingPointCard,
+        containerStyle,
         {
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
-          //  paddingTop: 90,
+          backgroundColor: backgroundColor,
         },
       ]}
     >
-      <Text style={[themeStyles.primaryText, appFontStyles.welcomeText, {}]}>
+      <Text style={[fontStyle, { color: primaryColor }]}>
         New hello details
       </Text>
       <>
@@ -330,13 +321,14 @@ const ContentAddHello = ({userId}) => {
                   style={{
                     width: "100%",
                     padding: 10,
-                    backgroundColor:
-                      themeStyles.overlayBackgroundColor.backgroundColor,
+                    backgroundColor: backgroundColor,
                     borderRadius: 30,
                     marginBottom: 10,
                   }}
                 >
                   <PickerHelloType
+                     primaryColor={primaryColor}
+                     manualGradientColors={manualGradientColors}
                     selectedTypeChoice={selectedTypeChoice}
                     onTypeChoiceChange={handleTypeChoiceChange}
                   />
@@ -353,14 +345,13 @@ const ContentAddHello = ({userId}) => {
                             style={{
                               width: "100%",
                               padding: 10,
-                              backgroundColor:
-                                themeStyles.overlayBackgroundColor
-                                  .backgroundColor,
+                              backgroundColor: backgroundColor,
                               borderRadius: 20,
                               marginBottom: 10,
                             }}
                           >
                             <PickerHelloLocation
+                            primaryColor={primaryColor}
                               faveLocations={faveLocations}
                               savedLocations={locationList}
                               onLocationChange={handleLocationChange}
@@ -378,13 +369,13 @@ const ContentAddHello = ({userId}) => {
                         style={{
                           width: "100%",
                           padding: 10,
-                          backgroundColor:
-                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          backgroundColor: backgroundColor,
                           borderRadius: 20,
                           marginBottom: 10,
                         }}
                       >
                         <PickerDate
+                        primaryColor={primaryColor}
                           buttonHeight={36}
                           value={helloDate}
                           mode="date"
@@ -400,8 +391,7 @@ const ContentAddHello = ({userId}) => {
                       style={{
                         width: "100%",
                         padding: 10,
-                        backgroundColor:
-                          themeStyles.overlayBackgroundColor.backgroundColor,
+                        backgroundColor: backgroundColor,
                         borderRadius: 20,
                         marginBottom: 10,
                         height: !isKeyboardVisible
@@ -410,7 +400,7 @@ const ContentAddHello = ({userId}) => {
                       }}
                     >
                       <Pressable
-                       onPress={() => setNotesModalVisible(true)}
+                        onPress={() => setNotesModalVisible(true)}
                         style={{
                           width: "100%",
                           height: 30,
@@ -419,20 +409,19 @@ const ContentAddHello = ({userId}) => {
                       />
                       <View>
                         {notePreviewText && (
-                          
-                        <Text style={themeStyles.primaryText}>
-                          {notePreviewText}
-                        </Text>
-                        
+                          <Text style={{ color: primaryColor }}>
+                            {notePreviewText}
+                          </Text>
                         )}
-                      </View> 
+                      </View>
                     </View>
                     {momentsAdded && momentsAdded.length > 0 && (
                       <TitleContainerUI
+                      primaryColor={primaryColor}
                         height={180}
                         title={`Talked: ${momentsAdded.length}`}
                         children={
-                          <TotalMomentsAddedUI momentsAdded={momentsAdded} />
+                          <TotalMomentsAddedUI momentsAdded={momentsAdded} backgroundColor={backgroundColor} />
                         }
                       />
                     )}
@@ -441,14 +430,14 @@ const ContentAddHello = ({userId}) => {
                       onPress={toggleDeleteMoments}
                       style={[
                         styles.controlButton,
-                        themeStyles.footerIcon,
-                        { height: 40 },
+
+                        { color: primaryColor, height: 40 },
                       ]}
                     >
                       <Text
                         style={[
                           styles.controlButtonText,
-                          { color: themeStyles.footerText.color },
+                          { color: primaryColor },
                         ]}
                       >
                         {"Delete unused?"}
@@ -456,7 +445,7 @@ const ContentAddHello = ({userId}) => {
                       <Icon
                         name={deleteMoments ? "check-square-o" : "square-o"}
                         size={20}
-                        style={[styles.checkbox, themeStyles.footerIcon]}
+                        style={[styles.checkbox, { color: primaryColor }]}
                       />
                     </TouchableOpacity>
                   </>
@@ -512,11 +501,14 @@ const ContentAddHello = ({userId}) => {
             toggleVisible={toggleDoubleChecker}
             singleQuestionText="Ready to save hello?"
             onPress={() => handleSave()}
+            manualGradientColors={manualGradientColors}
+            primaryColor={primaryColor}
           />
         )}
 
         {notesModalVisible && (
           <HelloNotesModal
+          primaryColor={primaryColor}
             isVisible={notesModalVisible}
             closeModal={handleCloseModal}
             textRef={editedTextRef}
@@ -572,7 +564,7 @@ const styles = StyleSheet.create({
   },
   paddingForElements: {
     paddingHorizontal: 0,
-    flex: 1, 
+    flex: 1,
     paddingBottom: 0,
     flexDirection: "column",
     justifyContent: "flex-start",

@@ -1,21 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Button, StyleSheet } from "react-native";
 import ResultsMidpointFinds from "./ResultsMidpointFinds";
- 
 
 import PickerSimpleButtonsBase from "../selectors/PickerSimpleButtonsBase";
 import InputMidpointKeyword from "./InputMidpointKeyword";
 import ButtonBaseSpecialSave from "../buttons/scaffolding/ButtonBaseSpecialSave";
 import { LinearGradient } from "expo-linear-gradient";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 
 import BodyStyling from "../scaffolding/BodyStyling";
 
-const ContentFindMidpoint = ({ userAddress, friendAddress }) => {
-  
+const ContentFindMidpoint = ({
+  lightDarkTheme,
+  manualGradientColors,
+  userAddress,
+  friendAddress,
+}) => {
   const { themeAheadOfLoading } = useFriendStyle();
-  const { themeStyles } = useGlobalStyle();
+
   const [showResults, setShowResults] = useState(false);
   const [radius, setRadius] = useState("5000");
   const [length, setLength] = useState("4");
@@ -59,8 +61,8 @@ const ContentFindMidpoint = ({ userAddress, friendAddress }) => {
         ></View>
 
         <BodyStyling
-        backgroundColor={themeStyles.primaryBackground.backgroundColor}
-friendLightColor={themeAheadOfLoading.lightColor}
+          backgroundColor={lightDarkTheme.primaryBackground}
+          friendLightColor={themeAheadOfLoading.lightColor}
           minHeight={"100%"}
           paddingTop={"4%"}
           children={
@@ -90,12 +92,14 @@ friendLightColor={themeAheadOfLoading.lightColor}
                 <View style={styles.mainContainer}>
                   <View style={styles.paddingExludingSaveButton}>
                     <InputMidpointKeyword
-                      labelStyle={themeStyles.genericText}
+                      primaryColor={lightDarkTheme.primaryText}
+                      labelStyle={lightDarkTheme.primaryText}
                       searchKeyword={searchKeyword}
                       setSearchKeyword={setSearchKeyword}
                       ref={inputRef}
                     />
                     <PickerSimpleButtonsBase
+                      primaryColor={lightDarkTheme.primaryText}
                       name="radius (meters)"
                       isScrollable={true}
                       defaultOption={5000}
@@ -104,6 +108,7 @@ friendLightColor={themeAheadOfLoading.lightColor}
                       onValueChange={(itemValue) => setRadius(itemValue)}
                     />
                     <PickerSimpleButtonsBase
+                      primaryColor={lightDarkTheme.primaryText}
                       name="# of search results"
                       isScrollable={true}
                       defaultOption={4}
@@ -120,6 +125,7 @@ friendLightColor={themeAheadOfLoading.lightColor}
         />
       </View>
       <ButtonBaseSpecialSave
+        manualGradientColors={manualGradientColors}
         label="CALCULATE "
         maxHeight={80}
         onPress={handleCalculate}

@@ -1,7 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { Animated } from "react-native";
-import { useDerivedValue } from "react-native-reanimated";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useEffect, useRef  } from "react";
+import { Animated, StyleSheet } from "react-native"; 
 
 // this one will auto height to what is inside it
 // width is 100%
@@ -16,8 +14,7 @@ const FlashAnimNonCircle = ({
   minHeight,
   width = "94%",
   returnAnimation,
-}) => {
-  const { appAnimationStyles, appSpacingStyles } = useGlobalStyle();
+}) => { 
   const flashAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -56,8 +53,8 @@ const FlashAnimNonCircle = ({
   return (
     <Animated.View
       style={[
-        appAnimationStyles.flashAnimMomentsContainer,
-        appSpacingStyles.momentsScreenPrimarySpacing,
+        styles.container,
+        styles.spacingStyle,
         {
           width: width,
           backgroundColor: returnAnimation ? animatedCircleColor : staticColor, 
@@ -66,7 +63,7 @@ const FlashAnimNonCircle = ({
     >
       <Animated.Text
         style={[
-          appAnimationStyles.flashAnimText,
+          styles.flashAnimText,
           {
             color: returnAnimation ? animatedCountColor : staticColor,
             fontSize: circleTextSize,
@@ -78,5 +75,26 @@ const FlashAnimNonCircle = ({
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    alignContents: "center",
+    justifyContent: "center",
+    textAlign: "center",
+
+    height: "auto",
+    minHeight: 130,
+  },
+  spacingStyle: {
+    borderRadius: 40,
+    padding: 20,
+  },
+    flashAnimText: {
+    fontFamily: "Poppins-Bold",
+    alignSelf: "center",
+  },
+
+});
 
 export default FlashAnimNonCircle;

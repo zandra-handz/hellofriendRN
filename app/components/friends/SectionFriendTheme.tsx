@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 import EditTheme from "../buttons/friends/EditTheme";
 
-const SectionFriendTheme = ({userId, friendId, manualThemeOn}) => { 
+const SectionFriendTheme = ({manualGradientColors, userId, friendId, manualThemeOn}) => { 
  
  
  
@@ -17,7 +17,7 @@ const SectionFriendTheme = ({userId, friendId, manualThemeOn}) => {
         alignSelf: "flex-start",
       }}
     >
-      <EditTheme userId={userId} friendId={friendId} manualThemeOn={manualThemeOn} />
+      <EditTheme manualGradientColors={manualGradientColors} userId={userId} friendId={friendId} manualThemeOn={manualThemeOn} />
     </View>
   );
 };

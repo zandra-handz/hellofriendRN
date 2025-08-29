@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
+import moment from 'moment'; 
 import CalendarAddOutlineSvg from '@/app/assets/svgs/calendar-add-outline.svg';
+ 
 
 const PickerDate = ({
+
+  primaryColor,
   title='',
   value,
   mode, 
@@ -14,11 +16,10 @@ const PickerDate = ({
   showDatePicker,
   setShowDatePicker,   
 }) => {
-  
-  const { themeStyles } = useGlobalStyle();
+   
   
   return (
-    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
+    <View style={[styles.container ]}>
       {/* <View
         style={{
           flexDirection: "row",
@@ -34,15 +35,14 @@ const PickerDate = ({
         <TouchableOpacity
           onPress={() => setShowDatePicker(true)}
           style={[
-            styles.button,
-            themeStyles.genericTextBackgroundShadeTwo,
+            styles.button, 
           ]}
           >
             <View style={{paddingRight: 8}}>
-            <CalendarAddOutlineSvg height={20} width={20} color={themeStyles.genericText.color} />
+            <CalendarAddOutlineSvg height={20} width={20} color={primaryColor} />
             </View>
 
-          <Text style={[styles.dateText, themeStyles.genericText]}>
+          <Text style={[styles.dateText, {color: primaryColor}]}>
  
             {moment(value).format('MMM D YYYY')}
           </Text>

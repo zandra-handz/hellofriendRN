@@ -40,6 +40,7 @@ import { FriendListProvider } from "./src/context/FriendListContext";
 import { FriendStyleProvider } from "./src/context/FriendStyleContext";
 import { HelloesProvider } from "./src/context/HelloesContext";
 import { LocationsProvider } from "./src/context/LocationsContext";
+import { LDThemeProvider } from "./src/context/LDThemeContext";
 // import { FriendLocationsProvider } from "./src/context/FriendLocationsContext";
 import { UpcomingHelloesProvider } from "./src/context/UpcomingHelloesContext";
 import { CategoriesProvider } from "./src/context/CategoriesContext";
@@ -242,6 +243,8 @@ export default Sentry.wrap(function App() {
                                   <SelectedFriendStatsProvider>
                                     {/* <MessageContextProvider> */}
                                     <SafeAreaProvider>
+                                      <LDThemeProvider>
+                                        
                                       <GlobalStyleProvider>
                                         <RootSiblingParent>
                                           <DeviceLocationProvider>
@@ -251,6 +254,8 @@ export default Sentry.wrap(function App() {
                                           </DeviceLocationProvider>
                                         </RootSiblingParent>
                                       </GlobalStyleProvider>
+                                      
+                                      </LDThemeProvider>
                                     </SafeAreaProvider>
                                     {/* </MessageContextProvider> */}
                                   </SelectedFriendStatsProvider>

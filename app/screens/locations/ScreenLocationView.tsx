@@ -19,7 +19,7 @@ import { useFriendDash } from "@/src/context/FriendDashContext";
 import useFriendLocations from "@/src/hooks/FriendLocationCalls/useFriendLocations";
 import useAddToFaves from "@/src/hooks/FriendLocationCalls/useAddToFaves";
 import useRemoveFromFaves from "@/src/hooks/FriendLocationCalls/useRemoveFromFaves";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 
 const ScreenLocationView = () => {
   const route = useRoute();
@@ -28,7 +28,8 @@ const ScreenLocationView = () => {
   const currentIndex = route.params?.index ?? null;
   const userAddress = route?.params?.userAddress ?? null;
   const friendAddress = route?.params?.friendAddress ?? null;
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme();
+  const {  manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
   const { currentDay, getNumOfDaysFrom } = useLocationDetailFunctions();
@@ -149,7 +150,7 @@ const ScreenLocationView = () => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       style={{ flex: 1 }}
     >

@@ -13,7 +13,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import {
   sendResetCodeEmail,
@@ -28,7 +28,8 @@ import SimpleBottomButton from "@/app/components/appwide/button/SimpleBottomButt
 
 const ScreenRecoverCredentials = () => {
  const { themeAheadOfLoading } = useFriendStyle();
-  const { themeStyles, manualGradientColors,theme, nonCustomHeaderPage  } = useGlobalStyle();
+ const { lightDarkTheme} = useLDTheme();
+  const {  manualGradientColors,theme, nonCustomHeaderPage  } = useGlobalStyle();
  
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -196,7 +197,7 @@ const ScreenRecoverCredentials = () => {
                 shapePosition="left"
                 shapePositionValue={-48}
                 shapePositionVerticalValue={-23}
-                fontColor={themeStyles.genericText.color}
+                fontColor={lightDarkTheme.primaryText}
                 accessible={true}
                 accessibilityLabel={"Submit button"}
                 accessibilityHint="Press to recover username or reset password"
@@ -218,7 +219,7 @@ const ScreenRecoverCredentials = () => {
                 <SimpleBottomButton
                   onPress={handleSubmit}
                   title={isRequestCodeScreen ? "Sign in" : "Create account"}
-                  fontColor={themeStyles.genericText.color}
+                  fontColor={lightDarkTheme.primaryText}
                   accessible={true}
                   accessibilityLabel={
                     isRequestCodeScreen

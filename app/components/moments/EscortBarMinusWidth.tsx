@@ -13,7 +13,7 @@ type Props = {
 const EscortBarMinusWidth = ({
   backgroundColor,
   overlayColor,
-  textStyle,
+ primaryColor,
   homeDarkColor,
   specialTextStyle,
   navigateBack,
@@ -72,7 +72,7 @@ const EscortBarMinusWidth = ({
             <MaterialIcons
               name={"keyboard-arrow-left"}
               size={20}
-              color={textStyle.color}
+              color={primaryColor}
             />
           </Pressable>
         </View>
@@ -104,18 +104,17 @@ const EscortBarMinusWidth = ({
             <MaterialIcons
               name={"keyboard-arrow-up"}
               size={16}
-              color={homeDarkColor}
-              color={textStyle.color}
+            //  color={homeDarkColor}
+              color={primaryColor}
               style={{
                 position: "absolute",
                 bottom: 17,
               }}
             />
             <Text
-              style={[
-                textStyle,
+              style={[ 
                 specialTextStyle,
-                { fontSize: 13 },
+                {color: primaryColor, fontSize: 13 },
               ]}
             >
               {label}

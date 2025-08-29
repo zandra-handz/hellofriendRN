@@ -9,7 +9,7 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import ReloadList from "@/app/components/helloes/ReloadList";
 import { useRoute } from "@react-navigation/native";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenReload = () => {
   const route = useRoute();
   const helloId = route.params?.helloId ?? false;
@@ -19,7 +19,8 @@ const ScreenReload = () => {
   const { selectedFriend } = useSelectedFriend();
 const { capsuleList} = useCapsuleList();
   const { friendDash, loadingDash } = useFriendDash();
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
   console.log('reload screen');
 
   return (
@@ -28,8 +29,8 @@ const { capsuleList} = useCapsuleList();
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
-             backgroundTransparentOverlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
+             backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
      
       friendId={selectedFriend?.id}
       backgroundOverlayHeight=""
@@ -40,10 +41,9 @@ const { capsuleList} = useCapsuleList();
       {selectedFriend && !loadingDash && (
         <View style={{ flex: 1, padding: 10 }}>
           <Text
-            style={[
-              themeStyles.primaryText,
+            style={[ 
               appFontStyles.welcomeText,
-              { fontSize: 22 },
+              {color: lightDarkTheme.primaryText, fontSize: 22 },
             ]}
           >
             Reload ideas

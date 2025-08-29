@@ -1,6 +1,5 @@
 import { View, Pressable, Text } from "react-native";
-import React from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React from "react"; 
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Animated from "react-native-reanimated";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
@@ -17,6 +16,10 @@ type Props = {
 };
 
 const TopBarLikeMinusWidth = ({
+  backgroundColor,
+  primaryBackground,
+  primaryColor,
+  fontStyle,
   forwardFlowOn = true,
   onPress,
   onPressLabel='Save',
@@ -24,15 +27,15 @@ const TopBarLikeMinusWidth = ({
  marginTop = 6,
   label = "categories",
   
-}: Props) => {
-  const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
+}: Props) => { 
   const { navigateBack } = useAppNavigations();
   return (
     <View style={{ paddingHorizontal: 10 }}>
       <View //could make whole bar a pressable instead
         style={[
-          themeStyles.primaryBackground,
+        
           {
+            backgroundColor: primaryBackground,
             height: 50,
             paddingHorizontal: 10,
             flexDirection: "row", 
@@ -82,9 +85,9 @@ const TopBarLikeMinusWidth = ({
             />
             <Text
               style={[
-                themeStyles.primaryText,
-                appFontStyles.subWelcomeText,
-                { fontSize: 13 },
+           
+                fontStyle,
+                { color: primaryColor, fontSize: 13 },
               ]}
             >
               {label}
@@ -115,16 +118,15 @@ const TopBarLikeMinusWidth = ({
             <MaterialIcons
               name={"keyboard-arrow-left"}
               size={20}
-              color={themeStyles.primaryText.color}
+              color={primaryColor}
             />
           </Pressable>
 
           <View style={{ alignItems: "center", flexDirection: "row" }}>
             <Text
-              style={[
-                themeStyles.primaryText,
-                appFontStyles.subWelcomeText,
-                { fontSize: 13, marginRight: 12 },
+              style={[ 
+                fontStyle,
+                {color: primaryColor, fontSize: 13, marginRight: 12 },
               ]}
             >
               {onPressLabel}

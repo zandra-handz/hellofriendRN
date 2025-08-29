@@ -1,13 +1,12 @@
 import React from "react";
-import { View } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { View } from "react-native"; 
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import NoToggle from "../user/NoToggle";
 
-const SectionFriendStats = ({ friendDaysSince, friendTimeScore }) => {
-  const { themeStyles } = useGlobalStyle();
+const SectionFriendStats = ({ primaryColor, friendDaysSince, friendTimeScore }) => {
+ 
 
   return (
     <View
@@ -17,12 +16,13 @@ const SectionFriendStats = ({ friendDaysSince, friendTimeScore }) => {
       }}
     >
       <NoToggle
+      primaryColor={primaryColor}
         label={friendDaysSince}
         icon={
           <MaterialCommunityIcons
             name={"timer"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         onPress={() => {}}
@@ -34,7 +34,7 @@ const SectionFriendStats = ({ friendDaysSince, friendTimeScore }) => {
           <MaterialCommunityIcons
             name={"heart"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         onPress={() => {}}

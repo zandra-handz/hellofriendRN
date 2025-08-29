@@ -4,9 +4,10 @@ import CoffeeMugSolidHeart from "@/app/assets/svgs/coffee-mug-solid-heart";
 import PhoneChatMessageHeartSvg from "@/app/assets/svgs/phone-chat-message-heart";
 import CoffeeMugFancySteamSvg from "@/app/assets/svgs/coffee-mug-fancy-steam";
 import CelebrationSparkOutlineSvg from "@/app/assets/svgs/celebration-spark-outline";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
+ 
 const PickerHelloType = ({
+  primaryColor,
+  manualGradientColors,
   title = "",
   selectedTypeChoice,
   onTypeChoiceChange, 
@@ -28,8 +29,7 @@ const PickerHelloType = ({
 
   const HEIGHT = 120;
   const oneFifthWidth = "23%";
-
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+ 
 
   return (
     <View
@@ -46,7 +46,7 @@ const PickerHelloType = ({
           width: "100%",
         }}
       >
-        <Text style={[styles.title, themeStyles.genericText]}>{title}</Text>
+        <Text style={[styles.title,{color: primaryColor}]}>{title}</Text>
       </View>
 
       <View style={[styles.optionsContainer, { width: "100%" }]}>
@@ -56,11 +56,11 @@ const PickerHelloType = ({
               key={index}
               style={[
                 styles.optionButton,
-                themeStyles.genericIcon,
-                themeStyles.genericTextBackgroundShadeTwo,
+                // themeStyles.genericIcon,
+                // themeStyles.genericTextBackgroundShadeTwo,
                 {
                   height: "100%",
-                  borderColor: themeStyles.genericText.color,
+                  borderColor: primaryColor,
                 },
                 selectedTypeChoice === index && [
                   styles.selectedOptionButton,
@@ -82,7 +82,7 @@ const PickerHelloType = ({
                       color:
                         selectedTypeChoice === index
                           ? manualGradientColors.lightColor
-                          : themeStyles.genericText.color,
+                          : primaryColor,
                     })}
 
                     {labels[index] && (
@@ -93,7 +93,7 @@ const PickerHelloType = ({
                             color:
                               selectedTypeChoice === index
                                 ? manualGradientColors.lightColor
-                                : themeStyles.genericText.color,
+                                : primaryColor,
                           }, 
                         ]}
                       >

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useGlobalStyle } from "../context/GlobalStyleContext";
-
+ 
 import { useQuery } from "@tanstack/react-query";
 
 // endpoint data: additionalDetails.data.open_now

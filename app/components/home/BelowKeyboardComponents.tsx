@@ -24,7 +24,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
   getThemeAheadOfLoading,
   friendList,
   friendStyle,
-  primaryTextStyle,
+  primaryColor,
   welcomeTextStyle,
   subWelcomeTextStyle,
   primaryBackgroundColor,
@@ -73,7 +73,7 @@ const BelowKeyboardComponents: React.FC<BelowKeyboardComponentsProps> = ({
           manualGradientColors={manualGradientColors}
             appColorsStyle={appColorsStyle}
             friendStyle={friendStyle}
-            primaryTextStyle={primaryTextStyle}
+            primaryColor={primaryColor}
             welcomeTextStyle={welcomeTextStyle}
             subWelcomeTextStyle={subWelcomeTextStyle}
             primaryOverlayColor={primaryOverlayColor}

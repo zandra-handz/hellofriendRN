@@ -26,7 +26,7 @@ type Props = {
   onClose: () => void;
 };
 const CategoryNavigator = ({
-  textStyle, // because cat button needs the full style
+ primaryColor, // because cat button needs the full style
   backgroundColor,
   homeDarkColor,
   arrowBackgroundColor,
@@ -69,12 +69,12 @@ const CategoryNavigator = ({
         <MaterialCommunityIcons
           name={"text-search"}
           size={26}
-          color={textStyle.color}
+          color={primaryColor}
           style={{}}
         /> 
       </Pressable>
     ),
-    [textStyle.color]
+    [primaryColor]
   );
   const renderedButtons = useMemo(
     () => (
@@ -90,7 +90,7 @@ const CategoryNavigator = ({
             >
               <CategoryButton
               homeDarkColor={homeDarkColor}
-              textStyle={textStyle}
+                 primaryColor={primaryColor}
                 height={"auto"}
                 viewableItemsArray={viewableItemsArray}
                 label={category}
@@ -141,7 +141,7 @@ const CategoryNavigator = ({
           >
             <MaterialIcons
               name={"keyboard-arrow-down"}
-              color={textStyle.color}
+              color={primaryColor}
               color={homeDarkColor}
               size={16}
                             style={{
@@ -164,7 +164,7 @@ const CategoryNavigator = ({
       {searchModalVisible && (
         <View>
           <SearchModal
-          textColor={textStyle.color}
+          textColor={primaryColor}
           primaryBackgroundColor={backgroundColor}
           capsuleList={capsuleList}
             isVisible={searchModalVisible}

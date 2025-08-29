@@ -9,7 +9,7 @@ interface Props {
   onPress: () => void;
 }
 
-const Toggle: React.FC<Props> = ({ label, icon, value, primaryColor, onPress }) => {
+const Toggle: React.FC<Props> = ({ manualGradientColors, label, icon, value, primaryColor, onPress }) => {
  
   return (
     <View style={{ flexDirection: "row", justifyContent: 'space-between', marginVertical: 6, alignItems: 'center' }}>
@@ -21,7 +21,7 @@ const Toggle: React.FC<Props> = ({ label, icon, value, primaryColor, onPress }) 
       <Text style={[styles.label, {color: primaryColor}]}>{label}</Text>
       
      </View>
-      <ToggleButton value={value} onToggle={onPress} />
+      <ToggleButton  manualGradientColors={manualGradientColors} value={value} onToggle={onPress} />
     </View>
   );
 };

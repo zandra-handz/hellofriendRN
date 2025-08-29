@@ -8,7 +8,7 @@ import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useLocations } from "@/src/context/LocationsContext";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import ButtonBaseSpecialSave from "@/app/components/buttons/scaffolding/ButtonBaseSpecialSave";
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
 
@@ -39,8 +39,7 @@ const ScreenLocationEdit = () => {
     handleDeleteLocation,
     deleteLocationMutation,
   } = useLocations();
-
-  const { themeStyles } = useGlobalStyle();
+const { lightDarkTheme } = useLDTheme(); 
   const { themeAheadOfLoading } = useFriendStyle();
 
   const editedTextRef = useRef(null);
@@ -143,7 +142,7 @@ const ScreenLocationEdit = () => {
       colors={[themeAheadOfLoading.darkColor, themeAheadOfLoading.lightColor]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      style={[styles.container, themeStyles.signinContainer]}
+      style={[styles.container]}
     >
       {/* <View
                 style={{
@@ -173,7 +172,7 @@ const ScreenLocationEdit = () => {
       />
 
       <BodyStyling
-        backgroundColor={themeStyles.primaryBackground.backgroundColor}
+        backgroundColor={lightDarkTheme.primaryBackground}
         friendLightColor={themeAheadOfLoading.lightColor}
         height={"96%"}
         width={"101%"}
@@ -218,7 +217,7 @@ const ScreenLocationEdit = () => {
 
             <View style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}>
               <FlatListChangeChoice
-                themeStyles={themeStyles}
+                lightDarkTheme={lightDarkTheme}
                 themeAheadOfLoading={themeAheadOfLoading}
                 horizontal={true}
                 choicesArray={parkingScores}

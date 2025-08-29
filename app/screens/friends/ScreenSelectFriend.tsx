@@ -8,13 +8,14 @@ import FriendListUI from "@/app/components/alerts/FriendListUI";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 type Props = {
   navigationDisabled: boolean;
 };
 
 const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme();
+  const {   manualGradientColors } = useGlobalStyle();
   const { friendList } = useFriendList();
   const { getThemeAheadOfLoading, themeAheadOfLoading, resetTheme } =
     useFriendStyle();
@@ -64,15 +65,16 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       style={{ flex: 1 }}
     >
       <View style={{ paddingHorizontal: 10, flex: 1 }}>
         <View
           style={[
-            themeStyles.primaryBackground,
+         
             {
+              backgroundColor: lightDarkTheme.primaryBackground,
               paddingHorizontal: 20,
               paddingVertical: 10,
               alignItems: "center",
@@ -93,7 +95,8 @@ const ScreenSelectFriend = ({ navigationDisabled = false }: Props) => {
             <FriendListUI
             themeAheadOfLoading={themeAheadOfLoading}
             friendList={friendList}
-            themeStyles={themeStyles}
+            lightDarkTheme={lightDarkTheme}
+      
               data={alphabFriendList}
               friendId={selectedFriend ? selectedFriend?.id : null}
               onPress={handleSelectFriend}

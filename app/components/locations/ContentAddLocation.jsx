@@ -13,7 +13,8 @@ import FlatListChangeChoice from "@/app/components/appwide/FlatListChangeChoice"
 import TextEditBox from "@/app/components/appwide/input/TextEditBox";
 
 const ContentAddLocation = ({
-  themeStyles,
+
+  lightDarkTheme,
   themeAheadOfLoading,
   title,
   address,
@@ -115,7 +116,7 @@ const ContentAddLocation = ({
       <View height={30} width={'100%'}
       />
       <BodyStyling
-      backgroundColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundColor={lightDarkTheme.primaryBackground}
 friendLightColor={themeAheadOfLoading.lightColor}
         height={"96%"}
         width={"101%"}
@@ -128,12 +129,12 @@ friendLightColor={themeAheadOfLoading.lightColor}
               <>
                 <View style={styles.locationDetailsContainer}>
                   <Text
-                    style={[styles.locationTitle, themeStyles.subHeaderText]}
+                    style={[styles.locationTitle ]}
                   >
                     {title}
                   </Text>
                   <Text
-                    style={[styles.locationAddress, themeStyles.genericText]}
+                    style={[styles.locationAddress, {color: lightDarkTheme.primaryText}]}
                   >
                     {address}
                   </Text>
@@ -174,7 +175,7 @@ friendLightColor={themeAheadOfLoading.lightColor}
                     style={{ height: "20%", flexShrink: 1, marginBottom: "3%" }}
                   >
                     <FlatListChangeChoice
-                      themeStyles={themeStyles}
+                      lightDarkTheme={lightDarkTheme}
                       themeAheadOfLoading={themeAheadOfLoading}
                       horizontal={true}
                       choicesArray={parkingScores}
@@ -197,7 +198,7 @@ friendLightColor={themeAheadOfLoading.lightColor}
               /> */}
 
                   <TextInput
-                    style={[themeStyles.input, styles.textArea]}
+                    style={[styles.textArea]} // removed themeStyles.input
                     value={personalExperience}
                     onChangeText={setPersonalExperience}
                     placeholder="Optional notes"

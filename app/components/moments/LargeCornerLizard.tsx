@@ -1,10 +1,11 @@
 import React from "react";
+import { StyleSheet } from 'react-native';
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import LizardSvg from "@/app/assets/svgs/lizard.svg";
+ 
 import GeckoSvg from "@/app/assets/svgs/gecko-solid.svg";
 
-const LargeCornerLizard = () => {
-  const { themeStyles, appContainerStyles } = useGlobalStyle();
+const LargeCornerLizard = ({color}) => {
+  const { themeStyles  } = useGlobalStyle();
   return (
     //   <LizardSvg
     //     height={300}
@@ -16,10 +17,27 @@ const LargeCornerLizard = () => {
     <GeckoSvg
       height={300}
       width={300}
-      color={themeStyles.darkerOverlayBackgroundColor.backgroundColor}
-      style={appContainerStyles.bigGeckoRotate}
+      color={color}
+      style={styles.bigGeckoRotate}
     />
   );
 };
+
+const styles = StyleSheet.create({
+    bigGeckoRotate: {
+    zIndex: 50000,
+    elevation: 50000,
+    position: "absolute",
+    zIndex: 0,
+    bottom: -90,
+    left: -90,
+    transform: [
+      { rotate: "-0deg" },
+      // Flip horizontally (mirror image)
+    ],
+    opacity: 1,
+  },
+
+});
 
 export default LargeCornerLizard;

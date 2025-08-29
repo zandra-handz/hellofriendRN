@@ -12,6 +12,7 @@ import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import TinyFlashMessage from "@/app/components/alerts/TinyFlashMessage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useUser } from "@/src/context/UserContext";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import Animated, {
   SlideInDown,
   SlideInUp,
@@ -22,7 +23,8 @@ import TopBarLikeMinusWidth from "./TopBarLikeMinusWidth";
 const ScreenMomentFocus = () => {
   const route = useRoute();
   const { user } = useUser();
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const {lightDarkTheme} = useLDTheme();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
   const momentText = route.params?.momentText ?? null;
   const screenCameFrom = route.params?.screenCameFrom ?? 0; // 0 = nav back, 1 = do not nav after save
   const updateExistingMoment = route.params?.updateExistingMoment ?? false;
@@ -105,7 +107,7 @@ const ScreenMomentFocus = () => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground }
       friendId={selectedFriend?.id}
       addColorChangeDelay={true}
       backgroundOverlayHeight={"10%"}
@@ -119,6 +121,9 @@ const ScreenMomentFocus = () => {
           style={{ height: topBarTotalHeight, zIndex: 60000 }}
         >
           <TopBarLikeMinusWidth
+          primaryColor={lightDarkTheme.primaryText}
+          primaryBackground={lightDarkTheme.primaryBackground}
+          fontStyle={appFontStyles.subWelcomeText}
             forwardFlowOn={false}
             marginTop={topBarMarginTop}
             onExpandPress={handleOpenCatCreator}
@@ -143,6 +148,9 @@ const ScreenMomentFocus = () => {
           <MomentWriteEditView
           friendId={selectedFriend?.id}
           userId={user?.id}
+          primaryColor={lightDarkTheme.primaryText}
+          darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
+          welcomeTextStyle={appFontStyles.welcomeText}
           friendFaves={friendDash?.friend_faves}
             screenCameFromToParent={screenCameFrom}
             triggerSaveFromLateral={triggerSaveFromLateral}

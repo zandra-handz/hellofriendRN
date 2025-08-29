@@ -19,7 +19,7 @@ import EditPencilOutlineSvg from "@/app/assets/svgs/edit-pencil-outline.svg";
 const FlatListChangeChoice = forwardRef(
   (
     {
-      themeStyles,
+      lightDarkTheme,
       themeAheadOfLoading,
       title = "title",
       horizontal = true,
@@ -68,7 +68,7 @@ const FlatListChangeChoice = forwardRef(
 
     return (
       <View
-        style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}
+        style={[styles.container ]}
       >
         <View
           style={{
@@ -78,7 +78,7 @@ const FlatListChangeChoice = forwardRef(
             height: "auto",
           }}
         >
-          <Text style={[styles.title, themeStyles.genericText]}>
+          <Text style={[styles.title, {color: lightDarkTheme.primaryText}]}>
             {title}
           </Text>
           <EditPencilOutlineSvg height={30} width={30} color={"red"} />
@@ -97,19 +97,20 @@ const FlatListChangeChoice = forwardRef(
                   onPress={() => handleChoiceChange(String(item.value))}
                   style={[
                     styles.itemBox,
-                    themeStyles.genericTextBackground,
+                    
                     {
                       width: 130,
                       borderWidth: 1,
+                      backgroundColor: lightDarkTheme.primaryBackground,
                       borderColor:
                         item.value === newChoice
                           ? themeAheadOfLoading.darkColor
-                          : themeStyles.genericTextBackground.backgroundColor,
+                          : lightDarkTheme.primaryBackground,
                     },
                   ]}
                 >
-                  <Text style={[themeStyles.genericText]}>{index + 1}</Text>
-                  <Text style={[themeStyles.genericText]}>{item.label}</Text>
+                  <Text style={[lightDarkTheme.priamryText]}>{index + 1}</Text>
+                  <Text style={[lightDarkTheme.priamryText]}>{item.label}</Text>
                 </TouchableOpacity>
               </View>
             )}

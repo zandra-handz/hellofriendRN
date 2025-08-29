@@ -23,8 +23,7 @@ interface Props {
   categoryColorsMap: object;
   currentIndexValue: SharedValue;
   cardScaleValue: SharedValue;
-  openModal: () => void;
-  closeModal: () => void;
+ 
   marginKeepAboveFooter: number;
 }
 

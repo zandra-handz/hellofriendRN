@@ -5,9 +5,7 @@ import {
   Pressable,
   DimensionValue,
 } from "react-native";
-import React from "react";
-import ToggleButton from "../appwide/button/ToggleButton";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React from "react"; 
 
 interface Props {
   label: string;
@@ -16,8 +14,8 @@ interface Props {
   onPress: () => void;
 }
 
-const NoToggle: React.FC<Props> = ({ label, icon, onPress }) => {
-  const { themeStyles } = useGlobalStyle();
+const NoToggle: React.FC<Props> = ({ primaryColor, label, icon, onPress }) => {
+ 
   return (
     <Pressable
       onPress={onPress}
@@ -43,7 +41,7 @@ const NoToggle: React.FC<Props> = ({ label, icon, onPress }) => {
             {icon}
           </View>
         )}
-        <Text style={[styles.label, themeStyles.modalText]}>{label}</Text>
+        <Text style={[styles.label, {color: primaryColor}]}>{label}</Text>
       </View>
     </Pressable>
   );

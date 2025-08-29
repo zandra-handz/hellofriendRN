@@ -9,14 +9,14 @@ import {
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import {  MaterialIcons } from "@expo/vector-icons";
-import Animated, { SlideInLeft } from "react-native-reanimated";
-import { useCategories } from "@/src/context/CategoriesContext";
-import { useUser } from "@/src/context/UserContext";
+import Animated, { SlideInLeft } from "react-native-reanimated"; 
+ 
 import useCreateNewCategory from "@/src/hooks/CategoryCalls/useCreateNewCategory";
  
 import FlashMessage from "../alerts/FlashMessage";
 
 type Props = {
+  userId: number;
   height: number;
   fontStyle?: number;
   addToOnPress?: ({
@@ -29,6 +29,8 @@ type Props = {
 };
 
 const AddNewCategory = ({
+  userId,
+  userCategories,
   height = 60,
   fontStyle = 1,
   addToOnPress,
@@ -37,8 +39,7 @@ const AddNewCategory = ({
   const { themeStyles, manualGradientColors } = useGlobalStyle();
   const newCategoryRef = useRef(null);
   const [newCategory, setNewCategory] = useState("");
- const { user} = useUser();
-
+ 
   const ENTER_MESSAGE_WIDTH = 60;
 
   const [flashMessage, setFlashMessage] = useState<null | {
@@ -47,23 +48,13 @@ const AddNewCategory = ({
     duration: number;
   }>(null);
 
-  const { userCategories } =
-    useCategories();
+ 
 
 
-    const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory({userId: user?.id});
+    const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory({userId: userId});
   const [inputActive, setInputActive] = useState(false);
 
-  // const clearInput = () => {
-  //   console.log("clearing input");
  
-  //   setNewCategory("");
-  // };
-
-  // useEffect(() => {
-  //   console.log(`new category changed:`, newCategory);
-  // }, [newCategory]);
-
  
 
   useEffect(() => {
@@ -174,14 +165,9 @@ const AddNewCategory = ({
   };
 
   const handleUpdateNewCategoryText = (text: string) => {
-    console.log("updatin tedxt");
-    // if (newCategoryRef?.current) {
-    //   // newCategoryRef.current.value = text;
+ 
     setNewCategory(text);
-    // }
-    // else {
-    //   console.warn('ref not current');
-    // }
+ 
   };
 
   return (

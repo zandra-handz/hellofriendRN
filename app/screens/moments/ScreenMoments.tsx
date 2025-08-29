@@ -18,11 +18,12 @@ import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import { useUser } from "@/src/context/UserContext";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
 const ScreenMoments = () => {
   const route = useRoute();
   const scrollTo = route?.params?.scrollTo ?? null;
-
+const { lightDarkTheme } = useLDTheme();
   const {user } = useUser();
     const { selectedFriend, setFriend } = useSelectedFriend();
   const { capsuleList } = useCapsuleList();
@@ -33,7 +34,7 @@ const ScreenMoments = () => {
     listData: capsuleList,
   }); 
 
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { appFontStyles, manualGradientColors } = useGlobalStyle();
   const { navigateToMomentView,navigateToMomentFocus, navigateBack } = useAppNavigations();
 
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
@@ -98,15 +99,15 @@ const ScreenMoments = () => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       backgroundOverlayHeight={120}
       style={{ flex: 1 }}
     >
       <TopBarWithAddMoment
       navigateToMomentFocus={navigateToMomentFocus}
-        textColor={themeStyles.primaryText.color}
-        backgroundColor={themeStyles.primaryBackground.backgroundColor}
+        textColor={lightDarkTheme.primaryText}
+        backgroundColor={lightDarkTheme.primaryBackground}
         manualGradientColors={manualGradientColors}
       />
       <View
@@ -125,7 +126,7 @@ const ScreenMoments = () => {
       ></View>
       <View style={{ width: "100%", height: 4 }}></View>
       <Loading
-        backgroundColor={themeStyles.primaryBackground.backgroundColor}
+        backgroundColor={lightDarkTheme.primaryBackground }
         isLoading={loadingDash}
       />
 
@@ -139,6 +140,7 @@ const ScreenMoments = () => {
                 categoryNames={categoryNames}
                 categoryStartIndices={categoryStartIndices}
                 navigateToMomentView={navigateToMomentView}
+                darkerOverlayColor={lightDarkTheme.darkerOverlayBackground}
 
                 // EscortBarMinusWidth
                 navigateBack={navigateBack}
@@ -146,12 +148,12 @@ const ScreenMoments = () => {
                 // Moment item
                 friendColor={themeAheadOfLoading.darkColor}
 
-                primaryBackgroundColor={themeStyles.primaryBackground.backgroundColor}
+                primaryBackgroundColor={lightDarkTheme.primaryBackground}
                 homeDarkColor={manualGradientColors.homeDarkColor}
                 appLightColor={manualGradientColors.lightColor}
-                primaryTextStyle={themeStyles.primaryText}
-                primaryOverlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
-                subWelcomeTextStyle={themeStyles.subwelcomeText}
+                primaryColor={lightDarkTheme.primaryText}
+                primaryOverlayColor={lightDarkTheme.overlayBackground}
+                subWelcomeTextStyle={appFontStyles.subwelcomeText}
 
 
                 friendId={selectedFriend?.id}

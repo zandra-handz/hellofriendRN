@@ -12,12 +12,14 @@ import HelloesListNew from "@/app/components/helloes/HelloesListNew";
 import HelloesScreenFooter from "@/app/components/headers/HelloesScreenFooter";
 import useFullHelloes from "@/src/hooks/useFullHelloes";
 import useAppNavigations from "@/src/hooks/useAppNavigations";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 const ScreenHelloes = () => {
   const navigation = useNavigation();
   const { selectedFriend } = useSelectedFriend();
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme();
+  const {   appFontStyles, manualGradientColors } = useGlobalStyle();
   const [triggerFetchAll, setTriggerFetchAll] = useState(false);
   const { helloesList } = useHelloes();
   const { helloesListFull, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -120,8 +122,8 @@ const { navigateToHelloes } = useAppNavigations();
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
-        backgroundTransparentOverlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground }
+        backgroundTransparentOverlayColor={lightDarkTheme.overlayBackground}
      
      
         friendId={selectedFriend?.id}
@@ -135,7 +137,8 @@ const { navigateToHelloes } = useAppNavigations();
       navigateToHelloes={navigateToHelloes}
         friendId={selectedFriend?.id}
         themeAheadOfLoading={themeAheadOfLoading}
-        themeStyles={themeStyles}
+     
+        lightDarkTheme={lightDarkTheme}
         showTopBar={false}
         useBackgroundOverlay={false}
       />
@@ -150,7 +153,7 @@ const { navigateToHelloes } = useAppNavigations();
       >
         <Text
           numberOfLines={2}
-          style={[themeStyles.primaryText, appFontStyles.welcomeText]}
+          style={[ appFontStyles.welcomeText, {color: lightDarkTheme.primaryText}]}
         >
           Hello history for {selectedFriend?.name}
         </Text>

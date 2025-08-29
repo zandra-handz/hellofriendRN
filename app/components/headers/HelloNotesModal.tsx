@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import ModalWithGoBack from "../alerts/ModalWithGoBack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import MomentsSearchBar from "../moments/MomentsSearchBar";
+ 
 import TextEditBox from "../appwide/input/TextEditBox"; 
 
 interface Props {
@@ -16,6 +15,7 @@ interface Props {
 }
 
 const HelloNotesModal: React.FC<Props> = ({
+  primaryColor,
   isVisible,
   closeModal,
   onEnter,
@@ -23,9 +23,7 @@ const HelloNotesModal: React.FC<Props> = ({
   textRef,
   mountingText,
 }) => {
-
-      const editedTextRef = useRef(null);
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
+ 
  
   const [triggerAutoFocus, setTriggerAutoFocus ] = useState();
 useEffect(() => {
@@ -59,8 +57,8 @@ useEffect(() => {
       headerIcon={
         <MaterialCommunityIcons
           name={"comment-search-outline"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          size={30}
+          color={primaryColor}
         />
       }
       questionText="Search talking points"
@@ -74,7 +72,7 @@ useEffect(() => {
               autoFocus={triggerAutoFocus}
               title={""}
               helperText={"add additional notes here"}
-              iconColor={  themeStyles.primaryText.color}
+              iconColor={ primaryColor}
               mountingText={mountingText}
               onTextChange={onTextChange}
               multiline={true}

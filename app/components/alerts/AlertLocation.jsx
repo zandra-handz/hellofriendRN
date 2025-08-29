@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { TouchableOpacity, StyleSheet, View, Modal, Text } from "react-native";
 
 import { useLocations } from "@/src/context/LocationsContext";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import Ionicons from "react-native-vector-icons/Ionicons"; 
 import LoadingPage from "../appwide/spinner/LoadingPage"; 
  
 
@@ -16,7 +15,7 @@ const AlertLocation = ({
 }) => {
   const { setSelectedLocation, loadingAdditionalDetails } = useLocations();
   const [useSpinner, setUseSpinner] = useState(true);
-  const { themeStyles } = useGlobalStyle();
+ 
   const handleCloseModal = () => {
     setSelectedLocation(null);
     toggleModal();
@@ -28,7 +27,9 @@ const AlertLocation = ({
        
       {/* <HeaderBase /> */}
 
-      <View style={[styles.modalContent, themeStyles.genericTextBackground]}>
+      <View style={[styles.modalContent, 
+        // themeStyles.genericTextBackground
+        ]}>
         <View style={styles.header}>
           <TouchableOpacity
             onPress={handleCloseModal}
@@ -37,11 +38,11 @@ const AlertLocation = ({
             <Ionicons
               name="arrow-back"
               size={23}
-              color={themeStyles.modalIconColor.color}
+              color={'red'}
             />
           </TouchableOpacity>
           {modalTitle && (
-            <Text style={[styles.modalTitle, themeStyles.genericText]}>
+            <Text style={[styles.modalTitle, {color: 'red'}]}>
               {modalTitle}
             </Text>
           )}

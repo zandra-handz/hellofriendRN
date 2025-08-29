@@ -8,14 +8,15 @@ import useFullHelloes from "@/src/hooks/useFullHelloes";
 import HelloViewPage from "@/app/components/helloes/HelloViewPage";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenHelloView = () => {
   const route = useRoute();
   const startingIndex = route.params?.startingIndex ?? 0;
   const inPersonFilter = route.params?.inPersonFilter ?? false;
   const { selectedFriend } = useSelectedFriend();
   const { helloesList } = useHelloes();
-     const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme();
+     const {   manualGradientColors } = useGlobalStyle();
  
    const { themeAheadOfLoading } = useFriendStyle();
 
@@ -62,7 +63,7 @@ const ScreenHelloView = () => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
     
     

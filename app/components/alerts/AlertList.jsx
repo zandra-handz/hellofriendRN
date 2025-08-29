@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useEffect, useRef } from "react"; 
 import {
   TouchableOpacity, 
   StyleSheet,
@@ -38,8 +37,7 @@ const AlertList = ({
   confirmText = "OK",
   cancelText = "Nevermind",
   type = "success",
-}) => {
-  const { themeStyles } = useGlobalStyle();
+}) => { 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const modalHeight = Dimensions.get("window").height * 0.86;
 
@@ -79,16 +77,18 @@ const AlertList = ({
           <View
             style={[
               styles.modalContent,
-              themeStyles.genericTextBackground,
+              // themeStyles.genericTextBackground,
               {
                 height: modalHeight,
-                borderColor:
-                  themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+                // borderColor:
+                //   themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
               },
             ]}
           >
             {headerContent && (
-              <View style={[styles.headerContainer, themeStyles.genericText]}>
+              <View style={[styles.headerContainer, 
+              // themeStyles.genericText
+              ]}>
                 <View style={styles.firstSection}>
                   {!includeBottomButtons && (
                     <TouchableOpacity
@@ -98,7 +98,7 @@ const AlertList = ({
                       <ArrowLeftCircleOutlineSvg
                         width={40}
                         height={40}
-                        color={themeStyles.genericText.color}
+                        color={'red'}
                       />
                     </TouchableOpacity>
                   )}
@@ -131,7 +131,7 @@ const AlertList = ({
             {questionText && (
                 
             <View style={styles.questionTextContainer}>
-              <Text style={[styles.questionText, themeStyles.genericText]}>
+              <Text style={[styles.questionText, {color: 'red'}]}>
                 {questionText}
               </Text>
               

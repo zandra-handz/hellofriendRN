@@ -13,6 +13,7 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import useMomentSortingFunctions from "@/src/hooks/useMomentSortingFunctions";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import usePreAddMoment from "@/src/hooks/CapsuleCalls/usePreAddMoment";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenMomentView = () => {
   const route = useRoute();
   const moment = route.params?.moment ?? null;
@@ -23,7 +24,8 @@ const ScreenMomentView = () => {
   const currentIndex = route.params?.index ?? null;
   const { themeAheadOfLoading } = useFriendStyle();
   const [categoryColorsMap, setCategoryColorsMap] = useState<string[]>([]);
-const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme();
+const { appFontStyles,  manualGradientColors } = useGlobalStyle();
   const {
     capsuleList,  
   } = useCapsuleList();
@@ -75,7 +77,7 @@ const { themeStyles, manualGradientColors } = useGlobalStyle();
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}style={{ flex: 1 }}>
       {selectedFriend &&
         !loadingDash &&
@@ -83,6 +85,9 @@ const { themeStyles, manualGradientColors } = useGlobalStyle();
         categoryColorsMap && 
         themeAheadOfLoading && (
           <CarouselSliderMoments
+          manualGradientColors={manualGradientColors}
+          lightDarkTheme={lightDarkTheme}
+          fontStyle={appFontStyles.welcomeText}
           userId={user?.id}
           friendId={selectedFriend?.id}
             initialIndex={currentIndex}

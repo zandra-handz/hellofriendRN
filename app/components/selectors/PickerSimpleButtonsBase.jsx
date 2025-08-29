@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
-
-const PickerSimpleButtonsBase = ({ name, selectedOption, options, onValueChange, isScrollable = false, defaultOption }) => {
-  const { themeStyles } = useGlobalStyle();
+ 
+const PickerSimpleButtonsBase = ({ primaryColor, name, selectedOption, options, onValueChange, isScrollable = false, defaultOption }) => {
+ 
   const [currentSelection, setCurrentSelection] = useState(selectedOption);
 
    useEffect(() => {
@@ -14,7 +13,7 @@ const PickerSimpleButtonsBase = ({ name, selectedOption, options, onValueChange,
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.label, themeStyles.genericText, {marginBottom: '2%'}]}>Select {name}</Text>
+      <Text style={[styles.label, {color: primaryColor, marginBottom: '2%'}]}>Select {name}</Text>
       {isScrollable ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollViewContainer}>
           {options.map((option, index) => (

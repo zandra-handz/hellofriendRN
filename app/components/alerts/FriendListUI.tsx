@@ -33,14 +33,14 @@ type FriendListItem = Friend | { message: string };
 const FriendListUI = ({
   themeAheadOfLoading,
   friendList,
-  themeStyles,
+  lightDarkTheme,
   data,
   friendId,
   onPress,
 }: FriendListUIProps) => {  
-  const itemColor = themeStyles.primaryText.color;
+  const itemColor = lightDarkTheme.primaryText;
   const elementBackgroundColor =
-    themeStyles.overlayBackgroundColor.backgroundColor;
+    lightDarkTheme.overlayBackground;
 
     const {navigateToAddFriend } = useAppNavigations();
 
@@ -61,14 +61,14 @@ const FriendListUI = ({
         {item && "id" in item && item.id !== selectedId && (
           <FriendTintPressable
           friendList={friendList}
-            startingColor={themeStyles.overlayBackgroundColor.backgroundColor}
+            startingColor={lightDarkTheme.overlayBackground}
             style={styles.friendContainer}
             friendId={item.id}
             onPress={() => onPress(item.id)}
           >
             <ButtonSelectFriend
-            themeTextColor={themeStyles.primaryText.color}
-            backgroundOverlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
+            themeTextColor={lightDarkTheme.primaryText}
+            backgroundOverlayColor={lightDarkTheme.overlayBackground}
             friendId={friendId}
             themeAheadOfLoading={themeAheadOfLoading}
               borderRadius={ITEM_BORDER_RADIUS}
@@ -108,7 +108,7 @@ const FriendListUI = ({
             style={[
               styles.friendContainer,
               {
-                backgroundColor: themeStyles.primaryBackground.backgroundColor,
+                backgroundColor: lightDarkTheme.primaryBackground,
                 borderRadius: 10,
                 alignItems: "center",
                 justifyContent: "center",
@@ -120,7 +120,7 @@ const FriendListUI = ({
             <MaterialCommunityIcons
               name={"account-plus"}
               size={26}
-              color={themeStyles.primaryText.color}
+              color={lightDarkTheme.primaryText}
             />
           </Pressable>
         )}

@@ -1,21 +1,12 @@
-import React, { useState } from "react";
-import { View,   StyleSheet } from "react-native"; 
+import React from "react";
+import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import NoToggle from "./NoToggle"; 
+import NoToggle from "./NoToggle";
 
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 
-const SectionAccountSettings = () => {
-  const { themeStyles } = useGlobalStyle();
-  const [isMakingCall, setIsMakingCall] = useState(false);
+const SectionAccountSettings = ({ primaryColor }) => {
   const navigation = useNavigation();
-
-  const navigateToUserDetails = () => {
-    if (selectedFriend) {
-      navigation.navigate("UserDetails");
-    }
-  };
 
   return (
     <View
@@ -28,12 +19,13 @@ const SectionAccountSettings = () => {
       }}
     >
       <NoToggle
+        primaryColor={primaryColor}
         label="Account"
         icon={
           <MaterialCommunityIcons
             name={"account"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         onPress={() => navigation.navigate("UserDetails")}
@@ -42,11 +34,7 @@ const SectionAccountSettings = () => {
       <NoToggle
         label="Password"
         icon={
-          <MaterialIcons
-            name={"password"}
-            size={20}
-            color={themeStyles.primaryText.color}
-          />
+          <MaterialIcons name={"password"} size={20} color={primaryColor} />
         }
         onPress={() => navigation.navigate("UserDetails")}
       />
@@ -56,11 +44,11 @@ const SectionAccountSettings = () => {
           <MaterialCommunityIcons
             name={"delete"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
         onPress={() => navigation.navigate("UserDetails")}
-      /> 
+      />
     </View>
   );
 };

@@ -8,25 +8,22 @@ import {
   Text,
   AccessibilityInfo,
 } from "react-native";
+
+import ModalWithGoBack from "../alerts/ModalWithGoBack"; 
+
+const CarouselItemModal = ({
+  manualGradientColors,
+  primaryColor,
+  isVisible,
+  closeModal,
+  display,
+  icon,
+  title,
+  type,
+  onPress,
+}) => { 
  
-
-import ModalWithGoBack from "../alerts/ModalWithGoBack";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
  
-
-const CarouselItemModal = ({ isVisible, closeModal,   display, icon, title, type, onPress }) => {
- 
-  const { themeStyles,  manualGradientColors } =
-    useGlobalStyle();
-
- 
-
-  //   React.useEffect(() => {
-  //     if (isModalVisible) {
-  //       AccessibilityInfo.announceForAccessibility("Information opened");
-  //     }
-  //   }, [isModalVisible]);
-
   return (
     <ModalWithGoBack
       isVisible={isVisible}
@@ -34,22 +31,20 @@ const CarouselItemModal = ({ isVisible, closeModal,   display, icon, title, type
       questionText={title}
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
-        
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, {color: primaryColor}]}>
               {display}
- 
             </Text>
-                          <Text
-                onPress={() => onPress()}
-                style={[
-                  styles.linkText,
-                  themeStyles.genericText,
-                  { color: manualGradientColors.lightColor },
-                ]}
-              >
-                {` edit `}
-              </Text>
+            <Text
+              onPress={() => onPress()}
+              style={[
+                styles.linkText,
+              
+                { color: manualGradientColors.lightColor },
+              ]}
+            >
+              {` edit `}
+            </Text>
           </View>
         </ScrollView>
       }
@@ -83,7 +78,7 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     fontSize: 14,
   },
-  linkText: { 
+  linkText: {
     fontSize: 14,
     fontWeight: "bold",
   },

@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import { ScrollView, StyleSheet, View, Pressable, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import HalfScreenModal from "../alerts/HalfScreenModal";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import HalfScreenModal from "../alerts/HalfScreenModal"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 import Animated from "react-native-reanimated";
 import GlobalPressable from "../appwide/button/GlobalPressable";
@@ -12,16 +11,22 @@ type Props = {
   closeModal: () => void;
 };
 
-const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
+const GoOptionsModal = ({
+  isVisible,
+  primaryColor,
+  backgroundColor,
+  modalBackgroundColor,
+  manualGradientColors,
+  subWelcomeTextStyle,
+  closeModal,
+}: Props) => {
   const {
     navigateToMoments,
     navigateToLocationSearch,
     navigateToFinalize,
     navigateToFidget,
   } = useAppNavigations();
-
-  const { themeStyles, appSpacingStyles, appFontStyles, manualGradientColors } =
-    useGlobalStyle();
+ 
 
   const handleNavToMoments = () => {
     closeModal();
@@ -55,13 +60,15 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
   }, [count, speed]);
   return (
     <HalfScreenModal
+    primaryColor={primaryColor}
+    backgroundColor={modalBackgroundColor}
       isFullscreen={false}
       isVisible={isVisible}
       headerIcon={
         <MaterialCommunityIcons
           name={"storefront-outline"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          size={30}
+          color={primaryColor}
         />
       }
       questionText="What would you like to do?"
@@ -88,11 +95,10 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
                   >
                     <Text
                       style={[
-                        themeStyles.primaryText,
-                        appFontStyles.subWelcomeText,
+                        subWelcomeTextStyle,
                         {
-                          backgroundColor:
-                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          color: primaryColor,
+                          backgroundColor: backgroundColor,
                           borderRadius: 6,
                           padding: 10,
                         },
@@ -123,11 +129,10 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
                   >
                     <Text
                       style={[
-                        themeStyles.primaryText,
-                        appFontStyles.subWelcomeText,
+                        subWelcomeTextStyle,
                         {
-                          backgroundColor:
-                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          color: primaryColor,
+                          backgroundColor: backgroundColor,
                           borderRadius: 6,
                           padding: 10,
                         },
@@ -157,11 +162,10 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
                   >
                     <Text
                       style={[
-                        themeStyles.primaryText,
-                        appFontStyles.subWelcomeText,
+                        subWelcomeTextStyle,
                         {
-                          backgroundColor:
-                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          color: primaryColor,
+                          backgroundColor: backgroundColor,
                           borderRadius: 6,
                           padding: 10,
                         },
@@ -172,7 +176,6 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
                   </GlobalPressable>
                 </BouncyEntrance>
               </View>
-
 
               <View style={styles.sectionContainer}>
                 <BouncyEntrance
@@ -193,11 +196,10 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
                   >
                     <Text
                       style={[
-                        themeStyles.primaryText,
-                        appFontStyles.subWelcomeText,
+                        subWelcomeTextStyle,
                         {
-                          backgroundColor:
-                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          color: primaryColor,
+                          backgroundColor: backgroundColor,
                           borderRadius: 6,
                           padding: 10,
                         },
@@ -208,15 +210,6 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
                   </GlobalPressable>
                 </BouncyEntrance>
               </View>
-
-
-
-
-
-
-
-
-
 
               <View style={styles.sectionContainer}>
                 <BouncyEntrance
@@ -237,11 +230,10 @@ const GoOptionsModal = ({ isVisible, closeModal }: Props) => {
                   >
                     <Text
                       style={[
-                        themeStyles.primaryText,
-                        appFontStyles.subWelcomeText,
+                        subWelcomeTextStyle,
                         {
-                          backgroundColor:
-                            themeStyles.overlayBackgroundColor.backgroundColor,
+                          color: primaryColor,
+                          backgroundColor: backgroundColor,
                           borderRadius: 6,
                           padding: 10,
                         },

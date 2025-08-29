@@ -1,14 +1,14 @@
-import React  from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
- import { useUser } from "@/src/context/UserContext";
+import { useUser } from "@/src/context/UserContext";
 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import ContentAddImage from "@/app/components/images/ContentAddImage";
- 
+
 // nav
 import { useRoute } from "@react-navigation/native";
 
@@ -16,25 +16,28 @@ const ScreenAddImage = () => {
   const route = useRoute();
   const imageUri = route.params?.imageUri ?? false;
   const { user } = useUser();
-
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme();
+  const { manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendStyle();
-  const { selectedFriend  } = useSelectedFriend();
- 
+  const { selectedFriend } = useSelectedFriend();
 
- 
   return (
-    <SafeViewAndGradientBackground 
-          startColor={manualGradientColors.lightColor}
+    <SafeViewAndGradientBackground
+      startColor={manualGradientColors.lightColor}
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
-    
-   style={{ flex: 1 }}>
-      <View style={[styles.container, themeStyles.container]}>
-        <ContentAddImage userId={user?.id} friendId={selectedFriend?.id} imageUri={imageUri} />
+      style={{ flex: 1 }}
+    >
+      <View style={[styles.container]}>
+        <ContentAddImage
+          userId={user?.id}
+          friendId={selectedFriend?.id}
+          imageUri={imageUri}
+          backgroundColor={lightDarkTheme.primaryBackground}
+        />
       </View>
     </SafeViewAndGradientBackground>
   );

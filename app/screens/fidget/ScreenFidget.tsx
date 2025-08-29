@@ -5,12 +5,13 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 type Props = {};
 
 const ScreenFidget = (props: Props) => {
   const { themeAheadOfLoading } = useFriendStyle();
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme();
+  const { manualGradientColors } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   return (
     <SafeViewAndGradientBackground
@@ -18,7 +19,7 @@ const ScreenFidget = (props: Props) => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       backgroundOverlayHeight={120}
       style={{ flex: 1 }}

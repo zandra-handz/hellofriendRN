@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-  
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import SectionUserCategories from "../friends/SectionUserCategories";
-import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree"; 
+import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 import HelperMessage from "../alerts/HelperMessage";
 import InfoItem from "./InfoItem";
- 
+
 interface Props {
+  userId: number;
   isVisible: boolean;
   closeModal: () => void;
   isKeyboardVisible: boolean;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 const CategoriesModal: React.FC<Props> = ({
+  userId,
   userCategories,
   manualGradientColors,
   isVisible,
@@ -24,7 +26,7 @@ const CategoriesModal: React.FC<Props> = ({
   const [helperMessage, setHelperMessage] = useState<null | {
     text: string;
     error: boolean;
-  }>(null);  
+  }>(null);
 
   return (
     <ModalScaleLikeTree
@@ -44,7 +46,11 @@ const CategoriesModal: React.FC<Props> = ({
       buttonTitle="Categories"
       children={
         <>
-          <SectionUserCategories />
+          <SectionUserCategories
+            userId={userId}
+            userCategories={userCategories}
+            manualGradientColors={manualGradientColors}
+          />
           {helperMessage && (
             <HelperMessage
               message={helperMessage.text}

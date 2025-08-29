@@ -1,8 +1,7 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { TouchableOpacity, AccessibilityInfo } from "react-native"; 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 
 import SectionFriendSettings from "../friends/SectionFriendSettings";
 
@@ -33,9 +32,11 @@ const FriendSettingsModal: React.FC<Props> = ({
   friendDash,
   bottomSpacer,
   closeModal,
+  lightDarkTheme,
     themeAheadOfLoading,
+    manualGradientColors,
 }) => {
-  const { themeStyles, appSpacingStyles } = useGlobalStyle();
+ 
  
 //  console.log(friendDash?.friend_faves?.use_friend_color_theme);
 //  console.log(friendDash);
@@ -47,8 +48,8 @@ const FriendSettingsModal: React.FC<Props> = ({
       headerIcon={
         <MaterialCommunityIcons
           name={"wrench"}
-          size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          size={30}
+          color={lightDarkTheme.priamryText}
         />
       }
       useModalBar={true}
@@ -65,6 +66,7 @@ const FriendSettingsModal: React.FC<Props> = ({
           <ScrollView contentContainerStyle={styles.bodyContainer}>
             <View style={styles.sectionContainer}>
               <SectionFriendStats
+              priamryColor={lightDarkTheme.primaryText}
  
                 friendDaysSince={friendDash?.days_since_words}
                 friendTimeScore={friendDash?.time_score}
@@ -82,6 +84,7 @@ const FriendSettingsModal: React.FC<Props> = ({
 
             <View style={styles.headerContainer}>
               <SectionFriendTheme
+              manualGradientColors={manualGradientColors}
               themeAheadOfLoading={themeAheadOfLoading}
                 userId={userId}
                 friendId={friendId}

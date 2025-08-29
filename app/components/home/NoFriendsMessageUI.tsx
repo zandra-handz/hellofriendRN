@@ -1,18 +1,16 @@
 import { View, Text } from "react-native";
 import React from "react";
-import SmallAddButton from "./SmallAddButton";
-import { useNavigation } from "@react-navigation/native";
+import SmallAddButton from "./SmallAddButton"; 
 import useAppNavigations from "@/src/hooks/useAppNavigations";
 
 const NoFriendsMessageUI = ({
   manualGradientColors,
-  backgroundColor,
-  primaryTextStyle,
+  primaryColor,
+  backgroundColor, 
   welcomeTextStyle,
   username,
   userCreatedOn,
-}) => {
-  const navigation = useNavigation();
+}) => { 
 
   const { navigateToAddFriend } = useAppNavigations();
 
@@ -36,15 +34,14 @@ const NoFriendsMessageUI = ({
        
       }}
     >
-      <Text style={[primaryTextStyle, welcomeTextStyle, { fontSize: 60, lineHeight:90}]}>
+      <Text style={[ welcomeTextStyle, { color: primaryColor, fontSize: 60, lineHeight:90}]}>
         {new Date(userCreatedOn).toDateString() === new Date().toDateString()
           ? `Hi ${username}!`
           : `Hi ${username}!`}
       </Text>
       <Text
-        style={[
-          primaryTextStyle,
-         welcomeTextStyle, { fontSize: 20}
+        style={[ 
+         welcomeTextStyle, { color: primaryColor, fontSize: 20}
         ]}
       >
         Add a friend to get started
@@ -53,7 +50,7 @@ const NoFriendsMessageUI = ({
         <SmallAddButton
           size={ICON_SIZE}
           manualGradientColors={manualGradientColors}
-          primaryColor={primaryTextStyle.color}
+          primaryColor={primaryColor}
           primaryBackground={backgroundColor}
           label={"Add friend"}
           onPress={navigateToAddFriend}

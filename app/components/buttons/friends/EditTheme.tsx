@@ -14,7 +14,7 @@ import useUpdateFriendListColors from "@/src/hooks/useUpdateFriendListColors";
 
 import Toggle from "../../user/Toggle";
 
-const EditTheme = ({ userId, friendId, manualThemeOn }) => {
+const EditTheme = ({ manualGradientColors, userId, friendId, manualThemeOn }) => {
  
   const { friendList } = useFriendList();
   const { themeAheadOfLoading,  handleSetTheme  } =
@@ -139,6 +139,7 @@ const EditTheme = ({ userId, friendId, manualThemeOn }) => {
       }}
     >
       <Toggle
+          manualGradientColors={manualGradientColors}
          primaryColor={themeStyles.primaryText.color}
         label="Manual theme"
         icon={

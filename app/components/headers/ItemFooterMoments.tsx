@@ -4,8 +4,7 @@ import { View, StyleSheet, Text, Pressable, Alert } from "react-native";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 import EscortBarReadOnly from "../moments/EscortBarReadOnly";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+ 
 import Animated, {
   SharedValue,
   useAnimatedReaction,
@@ -33,6 +32,8 @@ const ItemFooterMoments: React.FC<Props> = ({
   height,
   scrollTo,
   marginBottom,
+  fontStyle,
+  primaryColor,
   isPartialData, // if is partial then will add 'loaded' to total item count
   currentIndexValue,
   visibilityValue,
@@ -42,7 +43,7 @@ const ItemFooterMoments: React.FC<Props> = ({
   onRightPress = () => {},
   onRightPressSecondAction = () => {}, // when extraData, this will send location item to send direction link text screen. need to get additionalData from cache (if exists) in this screen
 }) => {
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+ 
 
   const [currentIndex, setCurrentIndex] = useState(false);
 
@@ -127,18 +128,16 @@ const ItemFooterMoments: React.FC<Props> = ({
               }}
             >
               <Text
-                style={[
-                  themeStyles.primaryText,
-                  appFontStyles.welcomeText,
-                  { fontSize: 44 },
+                style={[ 
+                  fontStyle,
+                  { color: primaryColor, fontSize: 44 },
                 ]}
               >
                 {currentIndex + 1}
                 <Text
-                  style={[
-                    themeStyles.primaryText,
-                    appFontStyles.welcomeText,
-                    { fontSize: 22 },
+                  style={[ 
+                    fontStyle,
+                    {color: primaryColor, fontSize: 22 },
                   ]}
                 >
                   {/* /{data.length}{" "} */}/{totalCount}{" "}

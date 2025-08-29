@@ -9,8 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native"; 
-import LoadingPage from "../appwide/spinner/LoadingPage";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import LoadingPage from "../appwide/spinner/LoadingPage"; 
 
 const AlertSingleInput = ({
   isModalVisible,
@@ -29,8 +28,7 @@ const AlertSingleInput = ({
   height = 200,
   type = "success",
   maxLength = 100,
-}) => {
-  const { themeStyles } = useGlobalStyle();
+}) => { 
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef(null);
 
@@ -63,7 +61,7 @@ const AlertSingleInput = ({
           <View
             style={[
               styles.modalContent,
-              themeStyles.genericTextBackgroundShadeTwo,
+              // themeStyles.genericTextBackgroundShadeTwo,
               fixedHeight && { height },
             ]}
           >
@@ -75,13 +73,15 @@ const AlertSingleInput = ({
             ) : (
               <View style={styles.contentContainer}>
                 {questionText && (
-                  <Text style={[styles.questionText, themeStyles.genericText]}>
+                  <Text style={[styles.questionText, {color: 'red'}]}>
                     {questionText}
                   </Text>
                 )}
                 <TextInput
                   ref={inputRef}
-                  style={[styles.input, themeStyles.input]}
+                  style={[styles.input, 
+                    // themeStyles.input // it is copy pasted below if want back
+                  ]}
                   value={inputValue}
                   onChangeText={handleInputChange}
                   placeholder="Type here..."
@@ -194,3 +194,33 @@ const styles = StyleSheet.create({
 });
 
 export default AlertSingleInput;
+
+
+  // input: {
+  //   color: "#d3d3d3",
+  //   borderWidth: 1,
+  //   borderColor: "#d3d3d3",
+  //   backgroundColor: "#121212",
+  //   placeholderTextColor: "darkgray",
+  //   borderWidth: 1,
+  //   borderRadius: 20,
+  //   padding: 10,
+  //   width: "100%",
+  //   fontFamily: "Poppins-Regular",
+  //   textAlign: "left",
+  //   fontSize: 16,
+  // },
+
+  //   input: {
+  //   color: "#121212",
+  //   borderWidth: 1,
+  //   borderRadius: 20,
+  //   padding: 10,
+  //   width: "100%",
+  //   borderColor: "lightgray",
+  //   backgroundColor: "white",
+  //   placeholderTextColor: "lightgray",
+  //   fontFamily: "Poppins-Regular",
+  //   textAlign: "left",
+  //   fontSize: 16,
+  // },

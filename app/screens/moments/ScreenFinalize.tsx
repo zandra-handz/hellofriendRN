@@ -12,12 +12,13 @@ import { Moment } from "@/src/types/MomentContextTypes";
 import useTalkingPCategorySorting from "@/src/hooks/useTalkingPCategorySorting";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useUser } from "@/src/context/UserContext"; 
+import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenFinalize = () => {
   const { allCapsulesList, capsuleList, preAdded } = useCapsuleList();
   const { user } = useUser();
     const { selectedFriend } = useSelectedFriend();
 
-
+const {lightDarkTheme} = useLDTheme();
     const { categoryNames } = useTalkingPCategorySorting({
     listData: capsuleList,
   });
@@ -28,7 +29,7 @@ const ScreenFinalize = () => {
   );
 const { themeAheadOfLoading } = useFriendStyle();
 
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const {  appFontStyles, manualGradientColors } = useGlobalStyle();
   const [uniqueCategories, setUniqueCategories] = useState<string[]>([]);
 
   useFocusEffect(
@@ -52,8 +53,8 @@ const { themeAheadOfLoading } = useFriendStyle();
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
-             backgroundTransparentOverlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
+             backgroundTransparentOverlayColor={lightDarkTheme.overlayBackgroundColor}
      
       friendId={selectedFriend?.id}
       backgroundOverlayHeight="" includeBackgroundOverlay={true} useOverlay={true} style={{ flex: 1 }}>
@@ -71,7 +72,7 @@ const { themeAheadOfLoading } = useFriendStyle();
           ]}
         >
           <Text
-            style={[themeStyles.primaryText, appFontStyles.welcomeText, {fontSize: 22}]}
+            style={[ appFontStyles.welcomeText, {color: lightDarkTheme.primaryText, fontSize: 22}]}
           >
             Finalize ideas shared
           </Text>

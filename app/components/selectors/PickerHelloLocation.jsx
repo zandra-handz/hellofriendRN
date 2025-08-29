@@ -3,11 +3,10 @@ import React from 'react';
  import LocationHeartSolidSvg from '@/app/assets/svgs/location-heart-solid.svg';
 import LocationSolidSvg from '@/app/assets/svgs/location-solid.svg'; 
 
-import PickerComplexList from './PickerComplexList';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
+import PickerComplexList from './PickerComplexList'; 
 
 const PickerHelloLocation = ({
-
+primaryColor,
     selectedLocation, 
     faveLocations=[],
     savedLocations=[],
@@ -19,7 +18,7 @@ const PickerHelloLocation = ({
 
     }) => { 
         
-    const { themeStyles } = useGlobalStyle(); 
+ 
   
 
 
@@ -28,9 +27,10 @@ const PickerHelloLocation = ({
         <> 
        
         <PickerComplexList 
+           primaryColor={primaryColor}
         title={'PICK LOCATION'}
             containerText={
-            <LocationSolidSvg width={20} height={20} color={themeStyles.genericText.color} />}
+            <LocationSolidSvg width={20} height={20} color={primaryColor} />}
             inline={true}
             modalHeader='Select Location'
             allowCustomEntry={true}

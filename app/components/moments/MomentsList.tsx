@@ -45,7 +45,9 @@ const MomentsList = ({
   homeDarkColor,
   appLightColor,
   primaryTextStyle,
+  primaryColor,
   primaryOverlayColor,
+  darkerOverlayColor,
   subWelcomeTextStyle,
   navigateBack, // escort bar
 
@@ -298,7 +300,7 @@ const MomentsList = ({
           entering={FadeIn}
           style={{ flex: 1, position: "absolute", bottom: 0 }}
         >
-          <LargeCornerLizard />
+          <LargeCornerLizard  color={darkerOverlayColor}/>
         </Animated.View>
       )}
 
@@ -371,7 +373,7 @@ const MomentsList = ({
           Object.keys(categoryColorsMap).length > 0 && (
             <CategoryNavigator
               capsuleList={capsuleList}
-              textStyle={primaryTextStyle}
+                primaryColor={primaryColor}
               backgroundColor={primaryBackgroundColor}
               homeDarkColor={homeDarkColor}
               arrowBackgroundColor={appLightColor}
@@ -416,7 +418,7 @@ const MomentsList = ({
               <EscortBarMinusWidth
                 backgroundColor={primaryBackgroundColor}
                 overlayColor={primaryOverlayColor}
-                textStyle={primaryTextStyle}
+                primaryColor={primaryColor}
                 specialTextStyle={subWelcomeTextStyle}
                 homeDarkColor={homeDarkColor}
                 navigateBack={navigateBack}

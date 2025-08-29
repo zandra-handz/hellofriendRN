@@ -1,43 +1,44 @@
-import React, {  useMemo } from "react";
-import {  View, Alert } from "react-native"; 
-import Toggle from "./Toggle"; 
- 
+import React, { useMemo } from "react";
+import { View, Alert } from "react-native";
+import Toggle from "./Toggle";
+
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import useUpdateSettings from "@/src/hooks/SettingsCalls/useUpdateSettings";
- 
-const SectionAccessibilitySettings = ({userId, primaryColor, settings}) => {
- 
- 
 
-  const { updateSettingsMutation } = useUpdateSettings({userId: userId});
- 
+const SectionAccessibilitySettings = ({
+  manualGradientColors,
+  userId,
+  primaryColor,
+  settings,
+}) => {
+  const { updateSettingsMutation } = useUpdateSettings({ userId: userId });
 
   const manualTheme = useMemo(() => {
     if (!settings) return false;
     return settings.manual_dark_mode !== null;
-  }, [settings]); 
+  }, [settings]);
 
   const updateSetting = async (setting) => {
-    console.error('update settings in section');
- 
+    console.error("update settings in section");
+
     try {
       const newSettings = { ...settings, ...setting };
       await updateSettingsMutation.mutateAsync({
         setting: newSettings,
-      }); 
+      });
     } catch (error) {
       console.error("Error updating user settings:", error);
     }
   };
- 
+
   const updateHighContrastMode = () => {
     updateSetting({ high_contrast_mode: !settings.high_contrast_mode });
   };
- 
+
   const updateLargeText = () => {
     updateSetting({ large_text: !settings.large_text });
   };
- 
+
   const updateSimplifyAppForFocus = () => {
     updateSetting({ simplify_app_for_focus: !settings.simplify_app_for_focus });
   };
@@ -66,17 +67,17 @@ const SectionAccessibilitySettings = ({userId, primaryColor, settings}) => {
 
   //Screen reader declares loudly that this button is enabled
   const toggleScreenReader = () => {
-Alert.alert(
-  'Screen Reader Required',
-  'Please enable the screen reader in your device settings to use this feature.',
-  [
-    {
-      text: 'OK',
-      style: 'default',
-    },
-  ],
-  { cancelable: true }
-);
+    Alert.alert(
+      "Screen Reader Required",
+      "Please enable the screen reader in your device settings to use this feature.",
+      [
+        {
+          text: "OK",
+          style: "default",
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   return (
@@ -90,7 +91,7 @@ Alert.alert(
       }}
     >
       <Toggle
-      primaryColor={primaryColor}
+        primaryColor={primaryColor}
         label="Manual theme"
         icon={
           <MaterialCommunityIcons
@@ -104,7 +105,7 @@ Alert.alert(
       />
       {manualTheme && (
         <Toggle
-           primaryColor={primaryColor}
+          primaryColor={primaryColor}
           label="Light/Dark"
           icon={
             <MaterialIcons
@@ -119,7 +120,8 @@ Alert.alert(
       )}
 
       <Toggle
-         primaryColor={primaryColor}
+        manualGradientColors={manualGradientColors}
+        primaryColor={primaryColor}
         label="High Contrast Mode"
         icon={
           <MaterialCommunityIcons
@@ -133,21 +135,20 @@ Alert.alert(
       />
 
       <Toggle
-         primaryColor={primaryColor}
+          manualGradientColors={manualGradientColors}
+        primaryColor={primaryColor}
         label="Large Text"
         icon={
-          <MaterialIcons
-            name={"text-fields"}
-            size={20}
-            color={primaryColor}
-          />
+          <MaterialIcons name={"text-fields"} size={20} color={primaryColor} />
         }
         value={settings.large_text}
         onPress={updateLargeText}
       />
 
       <Toggle
-         primaryColor={primaryColor}
+      
+          manualGradientColors={manualGradientColors}
+        primaryColor={primaryColor}
         label="Simplify App For Focus"
         icon={
           <MaterialCommunityIcons
@@ -161,8 +162,9 @@ Alert.alert(
       />
 
       <Toggle
-         primaryColor={primaryColor}
-       label="Receive Notifications"
+          manualGradientColors={manualGradientColors}
+        primaryColor={primaryColor}
+        label="Receive Notifications"
         icon={
           <MaterialCommunityIcons
             name={"bell"}
@@ -174,22 +176,16 @@ Alert.alert(
         onPress={updateReceiveNotifications}
       />
 
-            <Toggle
-               primaryColor={primaryColor}
+      <Toggle
+          manualGradientColors={manualGradientColors}
+        primaryColor={primaryColor}
         label="Screen Reader"
         icon={
-          <MaterialIcons
-            name={"volume-up"}
-            size={20}
-            color={primaryColor}
-          />}
+          <MaterialIcons name={"volume-up"} size={20} color={primaryColor} />
+        }
         value={settings.screen_reader}
         onPress={toggleScreenReader}
       />
- 
-
- 
- 
     </View>
   );
 };

@@ -1,7 +1,6 @@
 import { View, Text, Alert } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
-import GlobalPressable from "../appwide/button/GlobalPressable";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext"; 
+import GlobalPressable from "../appwide/button/GlobalPressable"; 
 import CategoryFriendDetailsModal from "../headers/CategoryFriendHistoryCombinedModal";
  
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -9,6 +8,7 @@ import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import { useUser } from "@/src/context/UserContext";
 import useUpdateDefaultCategory from "@/src/hooks/SelectedFriendCalls/useUpdateDefaultCategory";
 import { RefObject } from "react";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 
 type Props = {
   userChangedCategory: boolean;
@@ -27,7 +27,7 @@ type Props = {
 const SelectedCategoryButton = ({
   friendId,
   friendDefaultCategory,
-
+welcomeTextStyle,
   zIndex = 3,
   categoryId,
   freezeCategory,
@@ -41,8 +41,8 @@ const SelectedCategoryButton = ({
   iconSize = 20,
 }: Props) => {
 
-  const { user } = useUser();
-  const { themeStyles, appFontStyles } = useGlobalStyle();
+  const { user } = useUser(); 
+  const { lightDarkTheme} = useLDTheme();
  
   const { 
     handleUpdateDefaultCategory,
@@ -129,7 +129,7 @@ const SelectedCategoryButton = ({
                 name={"pencil-outline"}
                 size={iconSize}
                 style={{ height: iconSize }}
-                color={themeStyles.primaryText.color}
+                color={lightDarkTheme.primaryText }
               />
             </View>
           )}
@@ -137,10 +137,10 @@ const SelectedCategoryButton = ({
   numberOfLines={1}
   ellipsizeMode="tail"
   style={[
-    appFontStyles.welcomeText,
+    welcomeTextStyle,
     {
       zIndex: 2,
-      color: themeStyles.primaryText.color,
+      color: lightDarkTheme.primaryText,
       fontSize: editMode ? fontSizeEditMode : fontSize,
       maxWidth: editMode ? maxWidth : maxWidth, // ensure constraint
     },
@@ -161,7 +161,7 @@ const SelectedCategoryButton = ({
                 name={"star"}
                 size={16}
                 style={{ height: 20 }}
-                color={themeStyles.primaryText.color}
+                color={lightDarkTheme.primaryText}
               />
             )}
             {isFrozen && (
@@ -169,7 +169,7 @@ const SelectedCategoryButton = ({
                 name={"pin"}
                 size={16}
                 style={{ height: 20 }}
-                color={themeStyles.primaryText.color}
+                color={lightDarkTheme.primaryText}
               />
             )}
           </View>

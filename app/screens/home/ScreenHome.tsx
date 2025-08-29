@@ -28,38 +28,39 @@ import { useCategories } from "@/src/context/CategoriesContext";
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 import QuickWriteMoment from "@/app/components/moments/QuickWriteMoment";
 import HelloFriendFooter from "@/app/components/headers/HelloFriendFooter";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import LoadingPage from "@/app/components/appwide/spinner/LoadingPage";
 import { useUpcomingHelloes } from "@/src/context/UpcomingHelloesContext";
 
 import * as FileSystem from "expo-file-system";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
-
+import useFontStyles from "@/src/hooks/StylesCalls/useFontStyles"; 
 const ScreenHome = () => {
   const { hasShareIntent, shareIntent } = useShareIntentContext();
   const { userCategories } = useCategories();
+
+  const { lightDarkTheme } = useLDTheme();
   const { upcomingHelloes, isLoading } = useUpcomingHelloes();
   const navigation = useNavigation();
   const {
-    appContainerStyles,
+ 
     appFontStyles,
     manualGradientColors,
-    themeStyleSpinners,
-    themeStyles,
+  
   } = useGlobalStyle();
+
+
+ 
+const { fontStyles } = useFontStyles(appFontStyles);
+
   const welcomeTextStyle = appFontStyles.welcomeText;
   const subWelcomeTextStyle = appFontStyles.subWelcomeText;
-  const primaryTextStyle = themeStyles.primaryText;
-  const primaryColor = themeStyles.primaryText.color;
-  const primaryBackgroundColor = themeStyles.primaryBackground.backgroundColor;
-  const primaryOverlayColor =
-    themeStyles.overlayBackgroundColor.backgroundColor;
-  const darkerOverlayBackgroundColor =
-    themeStyles.darkerOverlayBackgroundColor.backgroundColor;
-  const newMomentContainerStyle =
-    appContainerStyles.homeScreenNewMomentContainer;
+ 
 
-  const spinnerStyle = themeStyleSpinners.homeScreen;
+ 
+ 
+
+  const spinnerStyle = 'flow';
 
   const { themeAheadOfLoading, getThemeAheadOfLoading } = useFriendStyle();
 
@@ -245,8 +246,8 @@ const ScreenHome = () => {
       friendColorDark={themeAheadOfLoading.darkColor}
       backgroundOverlayColor={
         friendList?.length > 0
-          ? themeStyles.primaryBackground.backgroundColor
-          : themeStyles.overlayBackgroundColor.backgroundColor
+          ? lightDarkTheme.primaryBackground 
+          : lightDarkTheme.overlayBackground
       }
       friendId={friendId}
       includeBackgroundOverlay={true}
@@ -304,10 +305,10 @@ const ScreenHome = () => {
                   <TopBarHome
                     loading={loadingDash}
                     style={themeAheadOfLoadingStyle}
-                    textStyle={primaryTextStyle}
-                    textColor={primaryColor}
-                    specialTextStyle={welcomeTextStyle}
-                    backgroundColor={primaryBackgroundColor}
+                  
+                    fontStyle={fontStyles?.welcome}
+                    textColor={lightDarkTheme.primaryText} 
+                    backgroundColor={lightDarkTheme.primaryBackground}
                     onPress={navigateToSelectFriend}
                   />
                 )}
@@ -318,9 +319,10 @@ const ScreenHome = () => {
                   {friendList?.length < 1 && (
                     <NoFriendsMessageUI
                       manualGradientColors={manualGradientColors}
-                      backgroundColor={primaryBackgroundColor}
-                      backgroundColor={primaryOverlayColor}
-                      primaryTextStyle={primaryTextStyle}
+                      backgroundColor={lightDarkTheme.primaryBackgroundColor}
+                      backgroundColor={lightDarkTheme.primaryOverlayColor}
+                      primaryColor={lightDarkTheme.primaryText}
+                   
                       welcomeTextStyle={welcomeTextStyle}
                       username={username || ""}
                       userCreatedOn={userCreatedOn || ""}
@@ -330,13 +332,12 @@ const ScreenHome = () => {
                   {friendList?.length > 0 && (
                     <>
                       <WelcomeMessageUI
-                        primaryColor={primaryColor}
+                        primaryColor={lightDarkTheme.primaryText}
                         welcomeTextStyle={welcomeTextStyle}
                         subWelcomeTextStyle={subWelcomeTextStyle}
                         username={username}
                         isNewUser={isNewUser}
-                        backgroundColor={
-                          themeStyles.primaryBackground.backgroundColor
+                        backgroundColor={lightDarkTheme.primaryBackground
                         }
                         borderBottomLeftRadius={0}
                         borderBottomRightRadius={0}
@@ -345,26 +346,25 @@ const ScreenHome = () => {
                         isKeyboardVisible={isKeyboardVisible}
                       />
 
-                      <QuickWriteMoment
-                        primaryTextStyle={primaryTextStyle}
-                        primaryBackgroundColor={primaryBackgroundColor}
-                        primaryOverlayColor={primaryOverlayColor}
+                      <QuickWriteMoment 
+                        primaryColor={lightDarkTheme.primaryText}
+                        primaryBackgroundColor={lightDarkTheme.primaryBackground}
+                        primaryOverlayColor={lightDarkTheme.overlayBackground}
                         darkerOverlayBackgroundColor={
-                          darkerOverlayBackgroundColor
-                        }
-                        newMomentContainerStyle={newMomentContainerStyle}
+                          lightDarkTheme.darkerOverlayBackground
+                        } 
                         width={"100%"}
                         height={"100%"}
                         ref={newMomentTextRef}
                         title={"Add a new moment?"}
-                        iconColor={themeStyles.genericText.color}
+                        iconColor={lightDarkTheme.primaryText}
                         mountingText={""}
                         onTextChange={updateNewMomentTextString}
                         multiline={isKeyboardVisible}
                       />
                       <KeyboardCoasters
                       manualGradientColors={manualGradientColors}
-                      primaryColor={themeStyles.primaryText.color}
+                      primaryColor={lightDarkTheme.primaryText}
                         isKeyboardVisible={isKeyboardVisible}
                         isFriendSelected={friendId}
                         showMomentScreenButton={showMomentScreenButton}
@@ -387,12 +387,12 @@ const ScreenHome = () => {
                   friendStyle={themeAheadOfLoadingStyle}
                   selectedFriendId={friendId}
                   selectedFriendName={friendName}
-                  primaryOverlayColor={primaryOverlayColor}
-                  primaryTextStyle={primaryTextStyle}
+                  primaryOverlayColor={lightDarkTheme.overlayBackground}
+                  primaryColor={lightDarkTheme.primaryText}
                   welcomeTextStyle={welcomeTextStyle}
                   subWelcomeTextStyle={subWelcomeTextStyle}
-                  primaryBackgroundColor={primaryBackgroundColor}
-                  darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
+                  primaryBackgroundColor={lightDarkTheme.primaryBackground}
+                  darkerOverlayBackgroundColor={lightDarkTheme.darkerOverlayBackground}
                   spinnerStyle={spinnerStyle}
                   slideAnim={slideAnim}
                   friendListLength={friendList?.length || 0}
@@ -410,14 +410,15 @@ const ScreenHome = () => {
       <HelloFriendFooter
         userCategories={userCategories}
         manualGradientColors={manualGradientColors}
+        lightDarkTheme={lightDarkTheme}
         themeAheadOfLoading={themeAheadOfLoading}
         overlayColor={
           friendList?.length > 0
-            ? themeStyles.overlayBackgroundColor.backgroundColor
-            : themeStyles.primaryBackground.backgroundColor
+            ? lightDarkTheme.overlayBackground
+            : lightDarkTheme.primaryBackground
         }
-        textColor={themeStyles.primaryText.color}
-        dividerStyle={themeStyles.divider}
+        textColor={lightDarkTheme.primaryText}
+        dividerStyle={lightDarkTheme.divider}
         userId={userId}
         friendId={friendId}
         friendName={friendName}

@@ -1,12 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Reset from "../appwide/button/Reset";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 
-const SectionFriendManagerSettings = ({userId}) => {
-  const { themeStyles } = useGlobalStyle();
+const SectionFriendManagerSettings = ({userId, primaryColor}) => {
+ 
 
   return (
     <View
@@ -27,7 +27,7 @@ const SectionFriendManagerSettings = ({userId}) => {
           <MaterialCommunityIcons
             name={"timer"}
             size={20}
-            color={themeStyles.primaryText.color}
+            color={primaryColor}
           />
         }
       /> 

@@ -8,6 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import PlainSafeView from "../appwide/format/PlainSafeView";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const FlashMessage = ({
@@ -27,7 +28,8 @@ const FlashMessage = ({
 }) => {
   const scale = useSharedValue(0);
   const fade = useSharedValue(1);
-  const { themeStyles, appFontStyles, manualGradientColors } = useGlobalStyle();
+  const {lightDarkTheme } = useLDTheme();
+  const {  appFontStyles, manualGradientColors } = useGlobalStyle();
 
   useEffect(() => {
     fade.value = 1;
@@ -60,8 +62,8 @@ const FlashMessage = ({
         style={[
           styles.messageContainer,
           animatedStyle,
-          themeStyles.primaryBackground,
-          { borderRadius: 10, marginTop: 0 },
+          
+          { backgroundColor: lightDarkTheme.primaryBackground, borderRadius: 10, marginTop: 0 },
         ]}
       >
         {/* {!updateFriendDefaultCategoryMutation.isError && <Text style={styles.messageText}>{message}</Text>}
@@ -69,7 +71,7 @@ const FlashMessage = ({
 
         {!error && (
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+          <Text style={[ appFontStyles.subWelcomeText, {color: lightDarkTheme.primaryText}]}>
             {" "}
             {message}
           </Text>
@@ -83,7 +85,7 @@ const FlashMessage = ({
             </View>
         )}
         {error && (
-          <Text style={[themeStyles.primaryText, appFontStyles.subWelcomeText]}>
+          <Text style={[ appFontStyles.subWelcomeText, {color: lightDarkTheme.primaryText}]}>
             Error
           </Text>
         )}

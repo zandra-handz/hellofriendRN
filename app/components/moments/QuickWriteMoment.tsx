@@ -45,12 +45,11 @@ const QuickWriteMoment = forwardRef<TextInput, QuickWriteMomentProps>(
     { 
       mountingText = "Start typing",
       onTextChange, 
-      multiline = true, 
-      primaryTextStyle,
+      multiline = true,  
+      primaryColor,
   
         primaryBackgroundColor,
-        primaryOverlayColor,
-        newMomentContainerStyle,
+        primaryOverlayColor, 
     },
     ref
   ) => { 
@@ -133,7 +132,7 @@ const handleManualFocus = useCallback(() => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View
           style={[
-            newMomentContainerStyle,
+            styles.newMomentContainer,
             {
               width: "100%",
               height: multiline ? "100%" : 30,
@@ -175,20 +174,20 @@ const handleManualFocus = useCallback(() => {
                         justifyContent: "center",
                         borderRadius: addIconSize / 2,
                         borderWidth: 1,
-                        borderColor: primaryTextStyle.color,
+                        borderColor: primaryColor,
                       }}
                     >
                       <MaterialCommunityIcons
                         name="plus"
-                        color={primaryTextStyle.color}
+                        color={primaryColor}
                         size={20}
                       />
                     </View>
                     <Text
                       style={[
                         styles.helperText,
-                        primaryTextStyle,
-                        { fontFamily: "Poppins-Regular" },
+                      
+                        { color: primaryColor, fontFamily: "Poppins-Regular" },
                       ]}
                     >
                       {"  "}Add talking point
@@ -229,20 +228,20 @@ const handleManualFocus = useCallback(() => {
                             justifyContent: "center",
                             borderRadius: addIconSize / 2,
                             borderWidth: 1,
-                            borderColor: primaryTextStyle.color,
+                            borderColor: primaryColor,
                           }}
                         >
                           <MaterialCommunityIcons
                             name="plus"
-                            color={primaryTextStyle.color}
+                            color={primaryColor}
                             size={20}
                           />
                         </View>
                         <Text
                           style={[
                             styles.helperText,
-                           primaryTextStyle,
-                            { fontFamily: "Poppins-Regular" },
+                       
+                            { color: primaryColor, fontFamily: "Poppins-Regular" },
                           ]}
                         >
                           {"  "}Pic
@@ -279,21 +278,20 @@ const handleManualFocus = useCallback(() => {
                             justifyContent: "center",
                             borderRadius: addIconSize / 2,
                             borderWidth: 1,
-                            borderColor: primaryTextStyle.color,
+                            borderColor: primaryColor,
                           }}
                         >
                           <MaterialCommunityIcons
                             name="plus"
-                            color={primaryTextStyle.color}
+                            color={primaryColor}
                             size={20}
                           />
                         </View>
                         <Text
                           // numberOfLines={1}
                           style={[
-                            styles.helperText,
-                            primaryTextStyle,
-                            {  fontFamily: "Poppins-Regular" },
+                            styles.helperText, 
+                            { color: primaryColor, fontFamily: "Poppins-Regular" },
                           ]}
                         >
                           {"  "}Upload
@@ -326,7 +324,7 @@ const handleManualFocus = useCallback(() => {
                     <TextInput
                       ref={textInputRef}
                       autoFocus={settings.simplify_app_for_focus}
-                      style={[styles.textInput, primaryTextStyle]}
+                      style={[styles.textInput, {color: primaryColor}]}
                       value={editedMessage}
                       placeholder={""}
                       onBlur={() => console.log('lost focus')}
@@ -353,6 +351,12 @@ const styles = StyleSheet.create({
     maxHeight: 30,
     height: 30, 
   },
+  newMomentContainer: {
+    borderRadius: 30,
+    alignSelf: "center",
+    padding: 4,
+  },
+  
 
   title: {
     fontSize: 15,

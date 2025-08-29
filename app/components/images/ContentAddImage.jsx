@@ -14,8 +14,7 @@ import InputSingleValue from "@/app/components/appwide/input/InputSingleValue";
 import KeyboardSaveButton from "@/app/components/appwide/button/KeyboardSaveButton";
 import FriendModalIntegrator from "../friends/FriendModalIntegrator";
 import { useFocusEffect } from "@react-navigation/native";
-import useCreateImage from "@/src/hooks/ImageCalls/useCreateImage";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import useCreateImage from "@/src/hooks/ImageCalls/useCreateImage"; 
  
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { LinearGradient } from "expo-linear-gradient";
@@ -23,9 +22,9 @@ import { useNavigation } from "@react-navigation/native";
 
 import useImageUploadFunctions from "@/src/hooks/useImageUploadFunctions";
 
-const ContentAddImage = ({ userId, friendId, imageUri }) => {
+const ContentAddImage = ({ userId, friendId, imageUri, backgroundColor }) => {
   const { resizeImage } = useImageUploadFunctions();
-  const { themeStyles } = useGlobalStyle();
+ 
  
   const [canContinue, setCanContinue] = useState("");
   const { themeAheadOfLoading } = useFriendStyle();
@@ -160,8 +159,8 @@ const ContentAddImage = ({ userId, friendId, imageUri }) => {
           <View
             style={[
               styles.backColorContainer,
-              themeStyles.genericTextBackground,
-              { borderColor: themeAheadOfLoading.lightColor },
+             
+              { backgroundColor: backgroundColor, borderColor: themeAheadOfLoading.lightColor },
             ]}
           >
             {imageUri && (
@@ -169,7 +168,7 @@ const ContentAddImage = ({ userId, friendId, imageUri }) => {
                 <View
                   style={[
                     styles.previewContainer,
-                    themeStyles.genericTextBackgroundShadeTwo,
+                  //  themeStyles.genericTextBackgroundShadeTwo,
                   ]}
                 >
                   <View style={[styles.previewImageContainer]}>

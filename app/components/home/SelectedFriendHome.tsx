@@ -44,7 +44,7 @@ const SelectedFriendHome: React.FC<SelectedFriendHomeProps> = ({
   appColorsStyle,
   borderRadius = 20,
   borderColor = "transparent",
-  primaryTextStyle,
+  primaryColor,
   welcomeTextStyle,
   subWelcomeTextStyle,
   primaryBackgroundColor,
@@ -145,7 +145,7 @@ const { capsuleList } = useCapsuleList();
                 },
               ]}
             >
-              <Text style={[primaryTextStyle, subWelcomeTextStyle]}>
+              <Text style={[ subWelcomeTextStyle, { color: primaryColor}]}>
                 {selectedFriendName}
               </Text>
             </Animated.View>
@@ -164,7 +164,7 @@ const { capsuleList } = useCapsuleList();
                 <FriendHeaderMessageUI
                   selectedFriendName={`${selectedFriendName}`}
                   loadingNewFriend={loadingDash}
-                  primaryColor={primaryTextStyle.color}
+                  primaryColor={primaryColor}
                   welcomeTextStyle={welcomeTextStyle}
                   backgroundColor={primaryBackgroundColor}
                   onPress={() => console.log("nada!")}
@@ -192,7 +192,8 @@ const { capsuleList } = useCapsuleList();
                   friendId={selectedFriendId}
                   manualGradientColors={manualGradientColors}
                   primaryOverlayColor={primaryOverlayColor}
-                  primaryColor={primaryTextStyle.color}
+                  primaryColor={primaryColor}
+                  primaryBackground={primaryBackgroundColor}
                   welcomeTextStyle={welcomeTextStyle}
                 subWelcomeTextStyle={subWelcomeTextStyle}
                   friendFutureDate={
@@ -212,7 +213,7 @@ const { capsuleList } = useCapsuleList();
                     userCategories={userCategories}
                     appColorsStyle={appColorsStyle}
                     friendStyle={friendStyle}
-                    primaryColor={primaryTextStyle.color}
+                    primaryColor={primaryColor}
                     primaryBackgroundColor={primaryBackgroundColor}
                     darkerOverlayBackgroundColor={darkerOverlayBackgroundColor}
                     primaryOverlayColor={primaryOverlayColor}
@@ -227,7 +228,7 @@ const { capsuleList } = useCapsuleList();
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Pics
-                    primaryColor={primaryTextStyle.color}
+                    primaryColor={primaryColor}
                     primaryOverlayColor={primaryOverlayColor}
                     userId={userId}
                     friendId={selectedFriendId}
@@ -236,7 +237,7 @@ const { capsuleList } = useCapsuleList();
 
                 <View style={{ width: "100%", marginVertical: 3 }}>
                   <Helloes
-                    primaryColor={primaryTextStyle.color}
+                    primaryColor={primaryColor}
                     primaryOverlayColor={primaryOverlayColor}
                     helloesList={helloesList}
                     friendId={selectedFriendId}

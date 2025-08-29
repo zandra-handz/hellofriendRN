@@ -14,14 +14,15 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
  import useImages from "@/src/hooks/ImageCalls/useImages";
  import useDeleteImage from "@/src/hooks/ImageCalls/useDeleteImage";
+ import { useLDTheme } from "@/src/context/LDThemeContext";
 
 const ScreenImageView = () => {
   const route = useRoute();
   const startingIndex = route.params?.index ?? null;
   const { user } = useUser();
     const { selectedFriend  } = useSelectedFriend();
-
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+const { lightDarkTheme} = useLDTheme();
+  const {  manualGradientColors } = useGlobalStyle();
   const { imageList  } = useImages({userId: user?.id, friendId: selectedFriend?.id});
 
  
@@ -92,7 +93,7 @@ const ScreenImageView = () => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
     
     

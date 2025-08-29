@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, Modal, Text } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { StyleSheet, View, Modal, Text } from "react-native"; 
 import Animated, {
   SharedValue,
   SlideInLeft,
@@ -32,7 +31,8 @@ interface Props {
 
 const HalfScreenModal: React.FC<Props> = ({
   isVisible,
-
+primaryColor,
+backgroundColor,
   headerIcon,
   questionText,
   children,
@@ -40,8 +40,7 @@ const HalfScreenModal: React.FC<Props> = ({
   contentPadding = 10,
 
   onClose,
-}) => {
-  const { themeStyles } = useGlobalStyle();
+}) => { 
 
   const xAnim = useSharedValue(500);
   const scaleAnim = useSharedValue(0);
@@ -103,11 +102,11 @@ const HalfScreenModal: React.FC<Props> = ({
       <Animated.View style={[modalAnimationStyle, styles.modalContainer]}>
         <Animated.View
           style={[
-            styles.modalContent,
-            themeStyles.genericTextBackground,
+            styles.modalContent, 
             {
-              borderColor:
-                themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
+              backgroundColor: backgroundColor,
+              // borderColor:
+              //   themeStyles.genericTextBackgroundShadeTwo.backgroundColor,
               borderRadius: borderRadius,
             },
           ]}
@@ -127,7 +126,7 @@ const HalfScreenModal: React.FC<Props> = ({
           >
             {headerIcon && headerIcon}
             {questionText && (
-              <Text style={[styles.questionText, themeStyles.genericText]}>
+              <Text style={[styles.questionText, {color: primaryColor}]}>
                 {questionText}
               </Text>
             )}

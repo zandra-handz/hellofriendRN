@@ -19,6 +19,7 @@ const SuggestedHello = ({
   manualGradientColors,
   primaryColor,
   primaryOverlayColor,
+  primaryBackground,
   welcomeTextStyle,
   subWelcomeTextStyle,
   friendFutureDate,
@@ -202,6 +203,11 @@ const SuggestedHello = ({
       ></View>
       {optionsModalVisible && (
         <GoOptionsModal
+        primaryColor={primaryColor}
+        backgroundColor={primaryOverlayColor}
+        modalBackgroundColor={primaryBackground}
+        manualGradientColors={manualGradientColors}
+        subWelcomeTextStyle={subWelcomeTextStyle}
           isVisible={optionsModalVisible}
           closeModal={() => setOptionsModalVisible(false)}
         />

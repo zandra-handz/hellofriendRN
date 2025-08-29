@@ -8,8 +8,7 @@ import {
 } from "react-native";
 import { showFlashMessage } from "@/src/utils/ShowFlashMessage";
 import TextMomentBox from "./TextMomentBox";
-import { useCapsuleList } from "@/src/context/CapsuleListContext";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { useCapsuleList } from "@/src/context/CapsuleListContext"; 
 import CategoryCreator from "./CategoryCreator";
 import { useFocusEffect } from "@react-navigation/native";
 import { Moment } from "@/src/types/MomentContextTypes";
@@ -41,6 +40,9 @@ const MomentWriteEditView = ({
   screenCameFromToParent,
   momentText,
   catCreatorVisible,
+  welcomeTextStyle,
+  primaryColor,
+  darkerOverlayColor,
   openCatCreator,
   closeCatCreator,
   categoryColorsMap,
@@ -51,8 +53,7 @@ const MomentWriteEditView = ({
   cardPadding = 4, // controls padding around the shaded card
   friendId,
   friendFaves,
-}: Props) => {
-  const { themeStyles } = useGlobalStyle();
+}: Props) => { 
   const { capsuleList } =
     useCapsuleList(); // NEED THIS TO ADD NEW
 
@@ -340,10 +341,12 @@ const MomentWriteEditView = ({
                 zIndex: 1,
                 overflow: "hidden",
                 backgroundColor:
-                  themeStyles.darkerOverlayBackgroundColor.backgroundColor,
+                  darkerOverlayColor,
               }}
             >
               <MomentFocusTray
+              primaryColor={primaryColor}
+              welcomeTextStyle={welcomeTextStyle}
                 paddingTop={TOPPER_PADDING_TOP}
                 friendDefaultCategory={
                   friendFaves?.friend_default_category || null

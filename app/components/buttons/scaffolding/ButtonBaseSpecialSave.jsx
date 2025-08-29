@@ -1,10 +1,11 @@
 import React from "react";
 import { Pressable, Text, StyleSheet, Image, View } from "react-native";
-
-import { LinearGradient } from "expo-linear-gradient";
+ 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 
 const ButtonBaseSpecialSave = ({
+  manualGradientColors,
+  primaryColor,
   onPress,
   label = "ADD NEW IMAGE",
   labelSize = 20,
@@ -26,7 +27,7 @@ const ButtonBaseSpecialSave = ({
   borderTopLeftRadius = 0,
   isDisabled = true,
 }) => {
-  const { themeStyles, manualGradientColors, appFontStyles } = useGlobalStyle();
+  const {   appFontStyles } = useGlobalStyle();
 
   return (
     <Pressable
@@ -77,7 +78,7 @@ bottom: 0,
           borderBottomRightRadius: borderBottomRightRadius - dynamicPadding,
           borderTopRightRadius: borderTopRightRadius - dynamicPadding,
           borderTopLeftRadius: borderTopLeftRadius - dynamicPadding,
-          backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
+         // backgroundColor: themeStyles.overlayBackgroundColor.backgroundColor,
         }}
       >
         {image && (
@@ -104,14 +105,14 @@ bottom: 0,
         }}
       >
         <Text
-          style={[
-            themeStyles.primaryText,
+          style={[ 
             appFontStyles.welcomeText,
             {
+              color: primaryColor || 'hotpink',
               fontSize: 20,
               lineHeight: 20,
               fontFamily: "Poppins-Bold",
-              color: manualGradientColors.homeDarkColor,
+              color: manualGradientColors?.homeDarkColor || 'orange',
             },
           ]}
         >
@@ -119,12 +120,13 @@ bottom: 0,
         </Text>
         <Text
           style={[
-            themeStyles.primaryText,
+        
             appFontStyles.subWelcomeText,
             {
+              color: primaryColor || 'hotpink',
               fontSize: 14,
               fontFamily: "Poppins-Bold",
-              color: manualGradientColors.homeDarkColor,
+              color: manualGradientColors?.homeDarkColor || 'orange',
             },
           ]}
         >

@@ -8,10 +8,10 @@ import {
   FlatList,
 } from "react-native";
 
-import AlertSingleInput from "../alerts/AlertSingleInput";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import AlertSingleInput from "../alerts/AlertSingleInput"; 
 
 const PickerComplexList = ({
+  primaryColor,
   label = "Select Label",
   title = "title here",
   onLabelChange,
@@ -32,8 +32,7 @@ const PickerComplexList = ({
   iconSize = 34,
   allowCustomEntry = false,
   buttonHeight = "auto",
-}) => {
-  const { themeStyles } = useGlobalStyle();
+}) => { 
   const [isCustomModalVisible, setCustomModalVisible] = useState(false);
   const [customValue, setCustomValue] = useState("");
 
@@ -86,17 +85,17 @@ const PickerComplexList = ({
             <Icon
               width={iconSize}
               height={iconSize}
-              color={themeStyles.genericText.color}
+              color={primaryColor}
             />
           </View>
         )}
         <View style={styles.textContainer}>
           {objects ? (
             <>
-              <Text style={[styles.optionTitleText, themeStyles.genericText]}>
+              <Text style={[styles.optionTitleText, {color: primaryColor}]}>
                 {item.title}
               </Text>
-              <Text style={[styles.optionText, themeStyles.genericText]}>
+              <Text style={[styles.optionText, {color: primaryColor}]}>
                 {item.address}
               </Text>
             </>
@@ -110,7 +109,7 @@ const PickerComplexList = ({
 
   const renderSection = ({ item }) => (
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, themeStyles.genericText]}>
+      <Text style={[styles.sectionTitle, {color: primaryColor}]}>
         {item.type}
       </Text>
       <FlatList
@@ -122,7 +121,7 @@ const PickerComplexList = ({
   );
 
   return (
-    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo]}>
+    <View style={[styles.container ]}>
       {/* <View
         style={{
           flexDirection: "row",
@@ -134,7 +133,7 @@ const PickerComplexList = ({
         <Text style={[styles.title, themeStyles.genericText]}>{title}</Text>
       </View> */}
       <TouchableOpacity
-        style={[styles.button, themeStyles.genericTextBackgroundShadeTwo]}
+        style={[styles.button ]}
         onPress={() => setModalVisible(true)}
       >
         <>
@@ -142,7 +141,7 @@ const PickerComplexList = ({
             {containerText}
           </View>
           <Text
-            style={[styles.buttonText, themeStyles.genericText]}
+            style={[styles.buttonText, {color: primaryColor}]}
             numberOfLines={1}
             ellipsizeMode="tail"
           >
@@ -162,10 +161,10 @@ const PickerComplexList = ({
             <View
               style={[
                 styles.modalContent,
-                themeStyles.genericTextBackgroundShadeTwo,
+            
               ]}
             >
-              <Text style={[styles.modalTitle, themeStyles.genericText]}>
+              <Text style={[styles.modalTitle, {color: primaryColor}]}>
                 {modalHeader}
               </Text>
               {allowCustomEntry && (

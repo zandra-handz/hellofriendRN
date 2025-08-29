@@ -26,7 +26,7 @@ type Props = {
 
 const CategoryButton = ({
   homeDarkColor,
-  textStyle,
+  primaryColor,
   viewableItemsArray,
   label,
   onPress,
@@ -45,7 +45,7 @@ const CategoryButton = ({
   const translateYx2 = useSharedValue(0);
   const startColor = useSharedValue("transparent");
   const endColor = useSharedValue("red");
-  const textColor = useSharedValue(textStyle.color);
+  const textColor = useSharedValue(primaryColor);
 
   //  show animation based on if top item in FlatList in parent
   useAnimatedReaction(
@@ -58,7 +58,7 @@ const CategoryButton = ({
       if (isVisible !== prevIsVisible) {
         if (isVisible) { 
            startColor.value = highlightColor; 
-           endColor.value = textStyle.color || "red";
+           endColor.value = primaryColor || "red";
           textColor.value = homeDarkColor;
 
           progress.value = withRepeat(
@@ -73,7 +73,7 @@ const CategoryButton = ({
           endColor.value = 'transparent';
           // startColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
           // endColor.value = themeStyles.overlayBackgroundColor.backgroundColor;
-          textColor.value = textStyle.color;
+          textColor.value = primaryColor;
         }
       }
     },

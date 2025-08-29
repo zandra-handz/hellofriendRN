@@ -16,12 +16,14 @@ import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { useHelloes } from "@/src/context/HelloesContext";
 import useMenues from "@/src/hooks/useMenues";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 
 import usePastHelloesLocations from "@/src/hooks/FriendLocationCalls/usePastHelloesLocations";
 
 const ScreenLocationSearch = () => {
   const { themeAheadOfLoading } = useFriendStyle();
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme();
+  const {   manualGradientColors } = useGlobalStyle();
   const { getDefaultAddress, getDefaultUserAddress } = useMenues();
 
   const { friendDash } = useFriendDash();
@@ -107,9 +109,9 @@ const ScreenLocationSearch = () => {
         setFriendAddress={setFriendAddress}
         themeAheadOfLoading={themeAheadOfLoading}
         manualGradientColors={manualGradientColors}
-        overlayColor={themeStyles.overlayBackgroundColor.backgroundColor}
-        textColor={themeStyles.primaryText.color}
-        dividerStyle={themeStyles.divider}
+        overlayColor={lightDarkTheme.overlayBackgroundColor}
+        textColor={lightDarkTheme.primaryText}
+        dividerStyle={lightDarkTheme.divider}
       />
     );
   }, [
@@ -127,7 +129,7 @@ const ScreenLocationSearch = () => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       includeBackgroundOverlay={true}
       primaryBackground={true}

@@ -1,5 +1,5 @@
 import { View, Modal, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+ 
 
 import ArrowNextStemlessLineSvg from "@/app/assets/svgs/arrow-next-stemless-line.svg";
 import ArrowPrevStemlessLineSvg from "@/app/assets/svgs/arrow-prev-stemless-line.svg";
@@ -11,8 +11,9 @@ const DoubleChecker = ({
   noButtonText = "go back",
   yesButtonText = "yes",
   onPress,
-}) => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  manualGradientColors,
+  primaryColor,
+}) => { 
 
   return (
     <Modal visible={isVisible} animationType="slide" transparent={true}>
@@ -20,14 +21,15 @@ const DoubleChecker = ({
         <View
           style={[
             styles.modalContainer,
-            themeStyles.genericTextBackgroundShadeTwo,
+
+            // themeStyles.genericTextBackgroundShadeTwo,
             { borderColor: manualGradientColors.lightColor },
           ]}
         >
           <View style={styles.singleQuestionContainer}>
             <Text
               numberOfLines={1}
-              style={[styles.singleQuestionText, themeStyles.genericText]}
+              style={[styles.singleQuestionText, {color: primaryColor}]}
             >
               {singleQuestionText}
             </Text>
@@ -36,7 +38,7 @@ const DoubleChecker = ({
             <TouchableOpacity
               style={[
                 styles.noButton,
-                themeStyles.genericTextBackgroundShadeThree,
+      
                 { borderColor: "transparent" },
               ]}
               onPress={toggleVisible}
@@ -45,28 +47,27 @@ const DoubleChecker = ({
                 style={styles.prevArrowContainer}
                 height={20}
                 width={20}
-                color={themeStyles.genericText.color}
+                color={primaryColor}
               />
-              <Text style={[styles.buttonText, themeStyles.genericText]}>
+              <Text style={[styles.buttonText, {color: primaryColor}]}>
                 {noButtonText}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
-                styles.yesButton,
-                themeStyles.genericTextBackgroundShadeThree,
+                styles.yesButton, 
                 { borderColor: "transparent" },
               ]}
               onPress={onPress}
             >
-              <Text style={[styles.buttonText, themeStyles.genericText]}>
+              <Text style={[styles.buttonText, {primaryColor}]}>
                 {yesButtonText}
               </Text>
               <ArrowNextStemlessLineSvg
                 style={styles.nextArrowContainer}
                 height={20}
                 width={20}
-                color={themeStyles.genericText.color}
+                color={primaryColor}
               />
             </TouchableOpacity>
           </View>

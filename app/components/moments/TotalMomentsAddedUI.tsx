@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet, FlatList, ScrollView } from "react-native";
 import React from "react";
 import MomentAdded from "./MomentAdded";
-import { Moment } from "@/src/types/MomentContextTypes";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import { Moment } from "@/src/types/MomentContextTypes"; 
 
 interface TotalMomentsAddedUIProps {
   momentsAdded: Moment[] | [];
@@ -10,15 +9,16 @@ interface TotalMomentsAddedUIProps {
 
 const TotalMomentsAddedUI: React.FC<TotalMomentsAddedUIProps> = ({
   momentsAdded,
+  backgroundColor,
 }) => {
-  const { themeStyles } = useGlobalStyle(); 
+ 
   const CONTAINER_HEIGHT = 180;
 
   const extractItemKey = (item, index) =>
     item?.id ? item.id.toString() : `totalMoments-${index}`;
 
   return (
-    <View style={[styles.container, themeStyles.genericTextBackgroundShadeTwo, { height: CONTAINER_HEIGHT}]}>
+    <View style={[styles.container,   { height: CONTAINER_HEIGHT}]}>
      
       {/* <View
         style={{
@@ -50,7 +50,7 @@ const TotalMomentsAddedUI: React.FC<TotalMomentsAddedUIProps> = ({
         moment={item}
         iconSize={26}
         size={14}
-        color={themeStyles.primaryBackground.backgroundColor}
+        color={backgroundColor}
         disabled={true}
         sameStyleForDisabled={true}
       />

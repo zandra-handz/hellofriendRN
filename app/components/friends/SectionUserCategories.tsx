@@ -10,31 +10,34 @@ import {
 } from "react-native";
 
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useCategories } from "@/src/context/CategoriesContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { useUser } from "@/src/context/UserContext";
+ 
 import useCreateNewCategory from "@/src/hooks/CategoryCalls/useCreateNewCategory";
 import useUpdateCategory from "@/src/hooks/CategoryCalls/useUpdateCategory";
 import useDeleteCategory from "@/src/hooks/CategoryCalls/useDeleteCategory";
 
 import AddNewCategory from "../headers/AddNewCategory";
 
-const SectionUserCategories = () => {
+type Props = {
+  userId: number;
+  userCategories: object[];
+}
+
+const SectionUserCategories = ({userId, userCategories}) => {
   const { themeStyles, appFontStyles } = useGlobalStyle();
-  const { user } = useUser();
-  const { userCategories } =
-    useCategories();
+ 
+ 
 
   const { createNewCategory, createNewCategoryMutation } = useCreateNewCategory(
-    { userId: user?.id }
+    { userId: userId }
   );
   const { updateCategory, updateCategoryMutation } = useUpdateCategory({
-    userId: user?.id,
+    userId: userId,
   });
 
     const { deleteCategory, deleteCategoryMutation } = useDeleteCategory({
-    userId: user?.id,
+    userId: userId,
   });
 
 
@@ -305,7 +308,7 @@ const SectionUserCategories = () => {
       {userCategories &&
         !showEdit && ( //showList && (
           <View style={{ width: "100%", flexShrink: 1 }}>
-            <AddNewCategory fontStyle={2} />
+            <AddNewCategory userId={userId} userCategories={userCategories} fontStyle={2} />
 
             <FlatList
               data={userCategories}

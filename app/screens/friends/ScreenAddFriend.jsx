@@ -1,13 +1,14 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import ContentAddFriend from "@/app/components/friends/ContentAddFriend";
- 
+ import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeViewAndGradBackground";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 const ScreenAddFriend = () => {
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const { lightDarkTheme } = useLDTheme();
+  const {   manualGradientColors } = useGlobalStyle();
   const { themeAheadOfLoading } = useFriendStyle();
   const { selectedFriend } = useSelectedFriend();
   return (
@@ -16,14 +17,14 @@ const ScreenAddFriend = () => {
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
       backgroundTransparentOverlayColor={
-        themeStyles.overlayBackgroundColor.backgroundColor
+        lightDarkTheme.overlayBackground
       }
       style={{ flex: 1 }}
     >
-      <View style={[styles.container, themeStyles.container]}>
+      <View style={[styles.container ]}>
         {/* <GlobalAppHeader title={"Add new friend"} /> */}
         <View style={styles.mainContainer}>
           <ContentAddFriend />

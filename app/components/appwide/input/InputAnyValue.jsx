@@ -1,19 +1,18 @@
 import React, { forwardRef } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext';
-
-const InputAnyValue = forwardRef(({ value, setValue, placeholder, errorMessage, isError }, ref) => {
+ 
+const InputAnyValue = forwardRef(({ primaryColor='red', value, setValue, placeholder, errorMessage, isError }, ref) => {
     
-    const { themeStyles } = useGlobalStyle();
+ 
     
     return ( 
-            <View style={[styles.inputContainer, themeStyles.genericTextBackgroundShadeTwo, {borderColor: themeStyles.genericText.color}]}>
+            <View style={[styles.inputContainer,  {borderColor: primaryColor}]}>
                 <TextInput
                     ref={ref}
-                    style={[themeStyles.genericText, isError && styles.errorInput]}
+                    style={[  isError && styles.errorInput, {color: primaryColor}]}
                     value={value}
                     placeholder={placeholder}
-                    placeholderTextColor={themeStyles.genericText}
+                    placeholderTextColor={primaryColor}
                     onChangeText={setValue}
                 />
                 {isError && value.length > 0 && (

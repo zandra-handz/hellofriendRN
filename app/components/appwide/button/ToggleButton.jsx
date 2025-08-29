@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
-import { TouchableOpacity, Animated, StyleSheet, Easing } from 'react-native';
-import { useGlobalStyle } from '@/src/context/GlobalStyleContext'; 
-
-const ToggleButton = ({ value, onToggle }) => {
-
+import { useState, useEffect } from "react";
+import { TouchableOpacity, Animated, StyleSheet, Easing } from "react-native";
+ 
+import { useLDTheme } from "@/src/context/LDThemeContext";
+const ToggleButton = ({ manualGradientColors, value, onToggle }) => {
+  const { lightDarkTheme } = useLDTheme();
   const [bounceAnim] = useState(new Animated.Value(value ? 20 : 0));
-  const { themeStyles, manualGradientColors } = useGlobalStyle();
  
 
   useEffect(() => {
@@ -26,7 +25,7 @@ const ToggleButton = ({ value, onToggle }) => {
     ],
   };
 
-  const accessibilityLabel = value ? 'Enabled' : 'Disabled';
+  const accessibilityLabel = value ? "Enabled" : "Disabled";
   const accessibilityState = { selected: value };
 
   return (
@@ -35,12 +34,26 @@ const ToggleButton = ({ value, onToggle }) => {
       accessibilityRole="button"
       accessibilityLabel={`Toggle button. ${accessibilityLabel}`}
       accessibilityState={accessibilityState}
-      style={[styles.container, value ? styles.on : styles.off, {backgroundColor: value ? manualGradientColors.lightColor :  themeStyles.genericText.color}]}
+      style={[
+        styles.container,
+        value ? styles.on : styles.off,
+        {
+          backgroundColor: value
+            ? manualGradientColors.lightColor
+            : lightDarkTheme.primaryText,
+        },
+      ]}
       onPress={() => {
         onToggle();
       }}
     >
-      <Animated.View style={[styles.circle, animatedStyle, {backgroundColor: themeStyles.primaryBackground.backgroundColor}]} />
+      <Animated.View
+        style={[
+          styles.circle,
+          animatedStyle,
+          { backgroundColor: lightDarkTheme.primaryBackground },
+        ]}
+      />
     </TouchableOpacity>
   );
 };
@@ -48,22 +61,22 @@ const ToggleButton = ({ value, onToggle }) => {
 const styles = StyleSheet.create({
   container: {
     width: 38,
-    height: 'auto',
+    height: "auto",
     borderRadius: 15,
-    justifyContent: 'center',
-    paddingHorizontal: '.5%', 
-    paddingVertical: '.5%',
+    justifyContent: "center",
+    paddingHorizontal: ".5%",
+    paddingVertical: ".5%",
   },
   on: {
-    backgroundColor: '#4cd137',
+    backgroundColor: "#4cd137",
   },
   off: {
-    backgroundColor: '#dcdde1',
+    backgroundColor: "#dcdde1",
   },
   circle: {
     width: 15,
     height: 15,
-    borderRadius: 15 / 2, 
+    borderRadius: 15 / 2,
   },
 });
 

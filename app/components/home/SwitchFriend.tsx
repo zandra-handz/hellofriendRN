@@ -1,7 +1,6 @@
 import { View, Text  } from "react-native";
 import GlobalPressable from "../appwide/button/GlobalPressable";
-import React  from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React  from "react"; 
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
@@ -18,13 +17,14 @@ type Props = {
 
 //similar to topbar but has its own spinner instead of centering based on parent component
 const SwitchFriend = ({
+  welcomeTextStyle,
+  primaryColor,
   fontSize = 13, 
   editMode = false,
   iconSize = 20,
   maxWidth = 100,
   zIndex = 3,
-}: Props) => {
-  const { appFontStyles, themeStyles } = useGlobalStyle();
+}: Props) => { 
  
   const { selectedFriend  } = useSelectedFriend();
   const navigation = useNavigation();
@@ -128,7 +128,7 @@ const SwitchFriend = ({
                 name={"pencil-outline"}
                 size={iconSize}
                 style={{ height: iconSize }}
-                color={themeStyles.primaryText.color}
+                color={primaryColor}
               />
             </View>
           )}
@@ -137,10 +137,10 @@ const SwitchFriend = ({
   numberOfLines={1}
   ellipsizeMode="tail"
   style={[
-    appFontStyles.welcomeText,
+    welcomeTextStyle,
     {
       zIndex: 2,
-      color: themeStyles.primaryText.color,
+      color: primaryColor,
       fontSize: fontSize,
       maxWidth: editMode ? maxWidth : maxWidth, // ensure constraint
     },

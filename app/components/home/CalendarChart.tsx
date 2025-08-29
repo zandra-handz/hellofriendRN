@@ -20,7 +20,8 @@ const CalendarChart = ({
   useBackgroundOverlay = true,
   outerPadding = 10,
   themeAheadOfLoading,
-  themeStyles,
+ 
+  lightDarkTheme,
 }: Props) => { 
 
   const reversedHelloesList = Array.isArray(helloesList)
@@ -51,7 +52,7 @@ const CalendarChart = ({
             height: HEIGHT,
             padding: PADDING,
             backgroundColor: useBackgroundOverlay
-              ? themeStyles.overlayBackgroundColor.backgroundColor
+              ? lightDarkTheme.overlayBackground 
               : "transparent",
             borderRadius: 20,
           },
@@ -73,13 +74,13 @@ const CalendarChart = ({
               <MaterialCommunityIcons
                 name="calendar-heart"
                 size={20}
-                color={themeStyles.primaryText.color}
+                color={lightDarkTheme.primaryText}
                 style={{ marginBottom: 0 }}
               />
               <Text
-                style={[
-                  themeStyles.primaryText,
+                style={[ 
                   {
+                    color: lightDarkTheme.primaryText,
                     marginLeft: 6,
                     marginRight: 12,
                     fontWeight: "bold",
@@ -92,9 +93,8 @@ const CalendarChart = ({
 
             <Pressable hitSlop={10} onPress={navigateToHelloes}>
               <Text
-                style={[
-                  themeStyles.primaryText,
-                  { fontWeight: "bold", fontSize: 13 },
+                style={[ 
+                  { color: lightDarkTheme.primaryText, fontWeight: "bold", fontSize: 13 },
                 ]}
               >
                 Details
@@ -108,8 +108,8 @@ const CalendarChart = ({
             friendId={friendId}
             onMonthPress={handleMonthPress}
             combinedData={combinedData}
-            itemColor={themeStyles.primaryText.color}
-            backgroundColor={themeStyles.overlayBackgroundColor.backgroundColor}
+            itemColor={lightDarkTheme.primaryText}
+            backgroundColor={lightDarkTheme.overlayBackground}
             height={70}
             borderRadius={20}
             themeAheadOfLoading={themeAheadOfLoading}

@@ -1,6 +1,5 @@
 import { View,  Text, FlatList } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
+import React, { useCallback, useEffect, useState } from "react"; 
 import useFullHelloes from "@/src/hooks/useFullHelloes"; 
 import { useSelectedFriend } from "@/src/context/SelectedFriendContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -8,6 +7,7 @@ import { FullHello } from "@/src/types/HelloTypes";
 import ModalInfoText from "../headers/ModalInfoText";
 import LoadingPage from "../appwide/spinner/LoadingPage"; 
 import { useFriendStyle } from "@/src/context/FriendStyleContext"; 
+import { useLDTheme } from "@/src/context/LDThemeContext";
 
 type Props = {
   data: FullHello;
@@ -16,7 +16,7 @@ type Props = {
 };
 
 const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
-  const { themeStyles } = useGlobalStyle();
+  const { lightDarkTheme} = useLDTheme(); 
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
  
@@ -116,7 +116,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
           >
             <MaterialCommunityIcons
               name={"calendar"}
-              color={themeStyles.primaryText.color}
+              color={lightDarkTheme.primaryText}
               size={ICON_SIZE}
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
@@ -133,7 +133,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
           >
             <MaterialCommunityIcons
               name={"calendar"}
-              color={themeStyles.primaryText.color}
+              color={lightDarkTheme.primaryText}
               size={ICON_SIZE}
               style={{ marginRight: ICON_MARGIN_RIGHT }}
             />
@@ -151,7 +151,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
             >
               <MaterialCommunityIcons
                 name={"calendar"}
-                color={themeStyles.primaryText.color}
+                color={lightDarkTheme.primaryText}
                 size={ICON_SIZE}
                 style={{ marginRight: ICON_MARGIN_RIGHT }}
               />
@@ -181,7 +181,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
               >
                 <MaterialCommunityIcons
                   name={"pencil"}
-                  color={themeStyles.primaryText.color}
+                  color={lightDarkTheme.primaryText}
                   size={ICON_SIZE}
                   style={{ marginRight: ICON_MARGIN_RIGHT }}
                 />
@@ -211,7 +211,7 @@ const HelloQuickView = ({ data, friendId, momentOriginalId, index }: Props) => {
               >
                 <MaterialCommunityIcons
                   name={"pencil"}
-                  color={themeStyles.primaryText.color}
+                  color={lightDarkTheme.primaryText}
                   size={ICON_SIZE}
                   style={{ marginRight: ICON_MARGIN_RIGHT }}
                 />

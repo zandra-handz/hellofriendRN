@@ -6,11 +6,12 @@ import SafeViewAndGradientBackground from "@/app/components/appwide/format/SafeV
 import ContentAddLocation from "@/app/components/locations/ContentAddLocation";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
 import { useFriendStyle } from "@/src/context/FriendStyleContext";
-
+import { useLDTheme } from "@/src/context/LDThemeContext";
 const ScreenLocationCreate = () => {
   const route = useRoute();
   const location = route.params?.location ?? null;
-const { themeStyles, manualGradientColors } = useGlobalStyle();
+  const {lightDarkTheme} = useLDTheme();
+const {  manualGradientColors } = useGlobalStyle();
   const { selectedFriend } = useSelectedFriend();
   const { themeAheadOfLoading } = useFriendStyle();
 
@@ -31,12 +32,12 @@ const { themeStyles, manualGradientColors } = useGlobalStyle();
       endColor={manualGradientColors.darkColor}
       friendColorLight={themeAheadOfLoading.lightColor}
       friendColorDark={themeAheadOfLoading.darkColor}
-      backgroundOverlayColor={themeStyles.primaryBackground.backgroundColor}
+      backgroundOverlayColor={lightDarkTheme.primaryBackground}
       friendId={selectedFriend?.id}
  
     
     style={{ flex: 1 }}>
-      <ContentAddLocation themeStyles={themeStyles} themeAheadOfLoading={themeAheadOfLoading} title={location.title} address={location.address} />
+      <ContentAddLocation  lightDarkTheme={lightDarkTheme} themeAheadOfLoading={themeAheadOfLoading} title={location.title} address={location.address} />
     </SafeViewAndGradientBackground>
   );
 };

@@ -4,13 +4,13 @@ import { TouchableOpacity, AccessibilityInfo } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGlobalStyle } from "@/src/context/GlobalStyleContext";
- 
-import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
- 
-import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
-import SectionAccountSettings from "../user/SectionAccountSettings"; 
-import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
 
+import SectionAccessibilitySettings from "../user/SectionAccessibilitySettings";
+
+import SectionFriendManagerSettings from "../friends/SectionFriendManagerSettings";
+import SectionAccountSettings from "../user/SectionAccountSettings";
+import ModalScaleLikeTree from "../alerts/ModalScaleLikeTree";
+import { useLDTheme } from "@/src/context/LDThemeContext";
 import { useUserSettings } from "@/src/context/UserSettingsContext";
 
 interface Props {
@@ -26,15 +26,11 @@ const UserSettingsModal: React.FC<Props> = ({
   bottomSpacer,
   closeModal,
 }) => {
-  const { themeStyles, appSpacingStyles, manualGradientColors } = useGlobalStyle();
-const { settings } = useUserSettings();
-  const headerIconSize = 26;
-
-  // React.useEffect(() => {
-  //   if (isModalVisible) {
-  //     AccessibilityInfo.announceForAccessibility("Information opened");
-  //   }
-  // }, [isModalVisible]);
+  const { lightDarkTheme } = useLDTheme();
+  const {   appSpacingStyles, manualGradientColors } =
+    useGlobalStyle();
+  const { settings } = useUserSettings();
+ 
 
   return (
     <ModalScaleLikeTree
@@ -44,40 +40,45 @@ const { settings } = useUserSettings();
         <MaterialCommunityIcons
           name={"wrench"}
           size={appSpacingStyles.modalHeaderIconSize}
-          color={themeStyles.footerIcon.color}
+          color={lightDarkTheme.primaryText}
         />
-      } 
+      }
       buttonTitle="Settings"
       useModalBar={true}
-            rightSideButtonItem={
-              <MaterialCommunityIcons
-                name={`wrench`}
-                size={50}
-                color={manualGradientColors.darkHomeColor}
-              />
-            }
-
+      rightSideButtonItem={
+        <MaterialCommunityIcons
+          name={`wrench`}
+          size={50}
+          color={manualGradientColors.darkHomeColor}
+        />
+      }
       children={
         <ScrollView contentContainerStyle={styles.bodyContainer}>
           {/* // <View style={styles.bodyContainer}> */}
 
           <View style={styles.sectionContainer}>
-            <SectionAccessibilitySettings userId={userId} primaryColor={themeStyles.primaryText.color} settings={settings} />
+            <SectionAccessibilitySettings
+            manualGradientColors={manualGradientColors}
+              userId={userId}
+              primaryColor={lightDarkTheme.primaryText}
+              settings={settings}
+            />
           </View>
           <View style={styles.sectionContainer}>
-            <SectionFriendManagerSettings userId={userId} />
+            <SectionFriendManagerSettings
+              userId={userId}
+              primaryColor={lightDarkTheme.primaryText}
+            />
           </View>
-   
 
           <View style={styles.headerContainer}>
-            <SectionAccountSettings />
+            <SectionAccountSettings primaryColor={lightDarkTheme.primaryText} />
           </View>
           <View style={styles.sectionContainer}>
-            <Text style={[styles.text, themeStyles.genericText]}>
+            <Text style={[styles.text, {color: lightDarkTheme.primaryText}]}>
               © Badrainbowz Studio 2025
             </Text>
-          </View>
-          {/* </View> */}
+          </View> 
         </ScrollView>
       }
       onClose={closeModal}
@@ -88,10 +89,8 @@ const { settings } = useUserSettings();
 const styles = StyleSheet.create({
   bodyContainer: {
     width: "100%",
-    //flexDirection: "column",
-    //justifyContent: "flex-start",
     textAlign: "left",
-    //flex: 1,
+
   },
   headerContainer: {
     margin: "2%",
